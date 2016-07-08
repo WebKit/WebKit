@@ -8164,133 +8164,133 @@ PASS video.src: IDL set to object "test-toString" followed by IDL get
 PASS video.src: IDL set to object "test-valueOf" should not throw 
 PASS video.src: IDL set to object "test-valueOf" followed by getAttribute() 
 PASS video.src: IDL set to object "test-valueOf" followed by IDL get 
-FAIL video.crossOrigin: typeof IDL attribute assert_equals: expected "object" but got "undefined"
-FAIL video.crossOrigin: IDL get with DOM attribute unset assert_equals: expected (object) null but got (undefined) undefined
+PASS video.crossOrigin: typeof IDL attribute 
+PASS video.crossOrigin: IDL get with DOM attribute unset 
 PASS video.crossOrigin: setAttribute() to "" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS video.crossOrigin: setAttribute() to undefined followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to undefined followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to undefined followed by IDL get 
 PASS video.crossOrigin: setAttribute() to 7 followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to 7 followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to 7 followed by IDL get 
 PASS video.crossOrigin: setAttribute() to 1.5 followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to 1.5 followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to 1.5 followed by IDL get 
 PASS video.crossOrigin: setAttribute() to true followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to true followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to true followed by IDL get 
 PASS video.crossOrigin: setAttribute() to false followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to false followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to false followed by IDL get 
 PASS video.crossOrigin: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to object "[object Object]" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to NaN followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to NaN followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to NaN followed by IDL get 
 PASS video.crossOrigin: setAttribute() to Infinity followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to Infinity followed by IDL get 
 PASS video.crossOrigin: setAttribute() to -Infinity followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to -Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to -Infinity followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "\0" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "\0" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to null followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to null followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to null followed by IDL get 
 PASS video.crossOrigin: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to object "test-toString" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "anonymous" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "anonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "anonymous" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "xanonymous" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "xanonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "xanonymous" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "anonymous\0" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "anonymous\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "anonymous\0" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "nonymous" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "nonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "nonymous" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "ANONYMOUS" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "ANONYMOUS" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "ANONYMOUS" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "use-credentials" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "use-credentials" followed by IDL get assert_equals: expected (string) "use-credentials" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "use-credentials" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "xuse-credentials" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "xuse-credentials" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "xuse-credentials" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "use-credentials\0" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "use-credentials\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "use-credentials\0" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "se-credentials" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "se-credentials" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "se-credentials" followed by IDL get 
 PASS video.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by getAttribute() 
-FAIL video.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by IDL get assert_equals: expected (string) "use-credentials" but got (undefined) undefined
+PASS video.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by IDL get 
 PASS video.crossOrigin: IDL set to "" should not throw 
-FAIL video.crossOrigin: IDL set to "" followed by getAttribute() assert_equals: expected "" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "" followed by IDL get assert_equals: expected "anonymous" but got ""
+PASS video.crossOrigin: IDL set to "" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "" followed by IDL get 
 PASS video.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " should not throw 
-FAIL video.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() assert_equals: expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "anonymous" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS video.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
+PASS video.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS video.crossOrigin: IDL set to undefined should not throw 
-FAIL video.crossOrigin: IDL set to undefined followed by getAttribute() assert_equals: expected (object) null but got (string) "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to undefined followed by IDL get assert_equals: expected (object) null but got (undefined) undefined
+PASS video.crossOrigin: IDL set to undefined followed by getAttribute() 
+PASS video.crossOrigin: IDL set to undefined followed by IDL get 
 PASS video.crossOrigin: IDL set to 7 should not throw 
-FAIL video.crossOrigin: IDL set to 7 followed by getAttribute() assert_equals: expected "7" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to 7 followed by IDL get assert_equals: expected (string) "anonymous" but got (number) 7
+PASS video.crossOrigin: IDL set to 7 followed by getAttribute() 
+PASS video.crossOrigin: IDL set to 7 followed by IDL get 
 PASS video.crossOrigin: IDL set to 1.5 should not throw 
-FAIL video.crossOrigin: IDL set to 1.5 followed by getAttribute() assert_equals: expected "1.5" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to 1.5 followed by IDL get assert_equals: expected (string) "anonymous" but got (number) 1.5
+PASS video.crossOrigin: IDL set to 1.5 followed by getAttribute() 
+PASS video.crossOrigin: IDL set to 1.5 followed by IDL get 
 PASS video.crossOrigin: IDL set to true should not throw 
-FAIL video.crossOrigin: IDL set to true followed by getAttribute() assert_equals: expected "true" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to true followed by IDL get assert_equals: expected (string) "anonymous" but got (boolean) true
+PASS video.crossOrigin: IDL set to true followed by getAttribute() 
+PASS video.crossOrigin: IDL set to true followed by IDL get 
 PASS video.crossOrigin: IDL set to false should not throw 
-FAIL video.crossOrigin: IDL set to false followed by getAttribute() assert_equals: expected "false" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to false followed by IDL get assert_equals: expected (string) "anonymous" but got (boolean) false
+PASS video.crossOrigin: IDL set to false followed by getAttribute() 
+PASS video.crossOrigin: IDL set to false followed by IDL get 
 PASS video.crossOrigin: IDL set to object "[object Object]" should not throw 
-FAIL video.crossOrigin: IDL set to object "[object Object]" followed by getAttribute() assert_equals: expected "[object Object]" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to object "[object Object]" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "[object Object]"
+PASS video.crossOrigin: IDL set to object "[object Object]" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to object "[object Object]" followed by IDL get 
 PASS video.crossOrigin: IDL set to NaN should not throw 
-FAIL video.crossOrigin: IDL set to NaN followed by getAttribute() assert_equals: expected "NaN" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to NaN followed by IDL get assert_equals: expected (string) "anonymous" but got (number) NaN
+PASS video.crossOrigin: IDL set to NaN followed by getAttribute() 
+PASS video.crossOrigin: IDL set to NaN followed by IDL get 
 PASS video.crossOrigin: IDL set to Infinity should not throw 
-FAIL video.crossOrigin: IDL set to Infinity followed by getAttribute() assert_equals: expected "Infinity" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (number) Infinity
+PASS video.crossOrigin: IDL set to Infinity followed by getAttribute() 
+PASS video.crossOrigin: IDL set to Infinity followed by IDL get 
 PASS video.crossOrigin: IDL set to -Infinity should not throw 
-FAIL video.crossOrigin: IDL set to -Infinity followed by getAttribute() assert_equals: expected "-Infinity" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to -Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (number) -Infinity
+PASS video.crossOrigin: IDL set to -Infinity followed by getAttribute() 
+PASS video.crossOrigin: IDL set to -Infinity followed by IDL get 
 PASS video.crossOrigin: IDL set to "\0" should not throw 
-FAIL video.crossOrigin: IDL set to "\0" followed by getAttribute() assert_equals: expected "\0" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "\0" followed by IDL get assert_equals: expected "anonymous" but got "\0"
+PASS video.crossOrigin: IDL set to "\0" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "\0" followed by IDL get 
 PASS video.crossOrigin: IDL set to null should not throw 
-FAIL video.crossOrigin: IDL set to null followed by getAttribute() assert_equals: expected (object) null but got (string) "USE-CREDENTIALS"
+PASS video.crossOrigin: IDL set to null followed by getAttribute() 
 PASS video.crossOrigin: IDL set to null followed by IDL get 
 PASS video.crossOrigin: IDL set to object "test-toString" should not throw 
-FAIL video.crossOrigin: IDL set to object "test-toString" followed by getAttribute() assert_equals: expected "test-toString" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to object "test-toString" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "test-toString"
+PASS video.crossOrigin: IDL set to object "test-toString" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to object "test-toString" followed by IDL get 
 PASS video.crossOrigin: IDL set to object "test-valueOf" should not throw 
-FAIL video.crossOrigin: IDL set to object "test-valueOf" followed by getAttribute() assert_equals: expected "test-valueOf" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "test-valueOf"
+PASS video.crossOrigin: IDL set to object "test-valueOf" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to object "test-valueOf" followed by IDL get 
 PASS video.crossOrigin: IDL set to "anonymous" should not throw 
-FAIL video.crossOrigin: IDL set to "anonymous" followed by getAttribute() assert_equals: expected "anonymous" but got "USE-CREDENTIALS"
+PASS video.crossOrigin: IDL set to "anonymous" followed by getAttribute() 
 PASS video.crossOrigin: IDL set to "anonymous" followed by IDL get 
 PASS video.crossOrigin: IDL set to "xanonymous" should not throw 
-FAIL video.crossOrigin: IDL set to "xanonymous" followed by getAttribute() assert_equals: expected "xanonymous" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "xanonymous" followed by IDL get assert_equals: expected "anonymous" but got "xanonymous"
+PASS video.crossOrigin: IDL set to "xanonymous" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "xanonymous" followed by IDL get 
 PASS video.crossOrigin: IDL set to "anonymous\0" should not throw 
-FAIL video.crossOrigin: IDL set to "anonymous\0" followed by getAttribute() assert_equals: expected "anonymous\0" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "anonymous\0" followed by IDL get assert_equals: expected "anonymous" but got "anonymous\0"
+PASS video.crossOrigin: IDL set to "anonymous\0" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "anonymous\0" followed by IDL get 
 PASS video.crossOrigin: IDL set to "nonymous" should not throw 
-FAIL video.crossOrigin: IDL set to "nonymous" followed by getAttribute() assert_equals: expected "nonymous" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "nonymous" followed by IDL get assert_equals: expected "anonymous" but got "nonymous"
+PASS video.crossOrigin: IDL set to "nonymous" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "nonymous" followed by IDL get 
 PASS video.crossOrigin: IDL set to "ANONYMOUS" should not throw 
-FAIL video.crossOrigin: IDL set to "ANONYMOUS" followed by getAttribute() assert_equals: expected "ANONYMOUS" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "ANONYMOUS" followed by IDL get assert_equals: expected "anonymous" but got "ANONYMOUS"
+PASS video.crossOrigin: IDL set to "ANONYMOUS" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "ANONYMOUS" followed by IDL get 
 PASS video.crossOrigin: IDL set to "use-credentials" should not throw 
-FAIL video.crossOrigin: IDL set to "use-credentials" followed by getAttribute() assert_equals: expected "use-credentials" but got "USE-CREDENTIALS"
+PASS video.crossOrigin: IDL set to "use-credentials" followed by getAttribute() 
 PASS video.crossOrigin: IDL set to "use-credentials" followed by IDL get 
 PASS video.crossOrigin: IDL set to "xuse-credentials" should not throw 
-FAIL video.crossOrigin: IDL set to "xuse-credentials" followed by getAttribute() assert_equals: expected "xuse-credentials" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "xuse-credentials" followed by IDL get assert_equals: expected "anonymous" but got "xuse-credentials"
+PASS video.crossOrigin: IDL set to "xuse-credentials" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "xuse-credentials" followed by IDL get 
 PASS video.crossOrigin: IDL set to "use-credentials\0" should not throw 
-FAIL video.crossOrigin: IDL set to "use-credentials\0" followed by getAttribute() assert_equals: expected "use-credentials\0" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "use-credentials\0" followed by IDL get assert_equals: expected "anonymous" but got "use-credentials\0"
+PASS video.crossOrigin: IDL set to "use-credentials\0" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "use-credentials\0" followed by IDL get 
 PASS video.crossOrigin: IDL set to "se-credentials" should not throw 
-FAIL video.crossOrigin: IDL set to "se-credentials" followed by getAttribute() assert_equals: expected "se-credentials" but got "USE-CREDENTIALS"
-FAIL video.crossOrigin: IDL set to "se-credentials" followed by IDL get assert_equals: expected "anonymous" but got "se-credentials"
+PASS video.crossOrigin: IDL set to "se-credentials" followed by getAttribute() 
+PASS video.crossOrigin: IDL set to "se-credentials" followed by IDL get 
 PASS video.crossOrigin: IDL set to "USE-CREDENTIALS" should not throw 
 PASS video.crossOrigin: IDL set to "USE-CREDENTIALS" followed by getAttribute() 
-FAIL video.crossOrigin: IDL set to "USE-CREDENTIALS" followed by IDL get assert_equals: expected "use-credentials" but got "USE-CREDENTIALS"
+PASS video.crossOrigin: IDL set to "USE-CREDENTIALS" followed by IDL get 
 PASS video.preload: typeof IDL attribute 
 PASS video.preload: setAttribute() to "none" followed by getAttribute() 
 PASS video.preload: setAttribute() to "none" followed by IDL get 
@@ -9795,133 +9795,133 @@ PASS audio.src: IDL set to object "test-toString" followed by IDL get
 PASS audio.src: IDL set to object "test-valueOf" should not throw 
 PASS audio.src: IDL set to object "test-valueOf" followed by getAttribute() 
 PASS audio.src: IDL set to object "test-valueOf" followed by IDL get 
-FAIL audio.crossOrigin: typeof IDL attribute assert_equals: expected "object" but got "undefined"
-FAIL audio.crossOrigin: IDL get with DOM attribute unset assert_equals: expected (object) null but got (undefined) undefined
+PASS audio.crossOrigin: typeof IDL attribute 
+PASS audio.crossOrigin: IDL get with DOM attribute unset 
 PASS audio.crossOrigin: setAttribute() to "" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to undefined followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to undefined followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to undefined followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to 7 followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to 7 followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to 7 followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to 1.5 followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to 1.5 followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to 1.5 followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to true followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to true followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to true followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to false followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to false followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to false followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to object "[object Object]" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to NaN followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to NaN followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to NaN followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to Infinity followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to Infinity followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to -Infinity followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to -Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to -Infinity followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "\0" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "\0" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to null followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to null followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to null followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to object "test-toString" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "anonymous" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "anonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "anonymous" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "xanonymous" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "xanonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "xanonymous" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "anonymous\0" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "anonymous\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "anonymous\0" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "nonymous" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "nonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "nonymous" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "ANONYMOUS" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "ANONYMOUS" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "ANONYMOUS" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "use-credentials" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "use-credentials" followed by IDL get assert_equals: expected (string) "use-credentials" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "use-credentials" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "xuse-credentials" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "xuse-credentials" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "xuse-credentials" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "use-credentials\0" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "use-credentials\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "use-credentials\0" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "se-credentials" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "se-credentials" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "se-credentials" followed by IDL get 
 PASS audio.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by getAttribute() 
-FAIL audio.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by IDL get assert_equals: expected (string) "use-credentials" but got (undefined) undefined
+PASS audio.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "" should not throw 
-FAIL audio.crossOrigin: IDL set to "" followed by getAttribute() assert_equals: expected "" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "" followed by IDL get assert_equals: expected "anonymous" but got ""
+PASS audio.crossOrigin: IDL set to "" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "" followed by IDL get 
 PASS audio.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " should not throw 
-FAIL audio.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() assert_equals: expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "anonymous" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS audio.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS audio.crossOrigin: IDL set to undefined should not throw 
-FAIL audio.crossOrigin: IDL set to undefined followed by getAttribute() assert_equals: expected (object) null but got (string) "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to undefined followed by IDL get assert_equals: expected (object) null but got (undefined) undefined
+PASS audio.crossOrigin: IDL set to undefined followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to undefined followed by IDL get 
 PASS audio.crossOrigin: IDL set to 7 should not throw 
-FAIL audio.crossOrigin: IDL set to 7 followed by getAttribute() assert_equals: expected "7" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to 7 followed by IDL get assert_equals: expected (string) "anonymous" but got (number) 7
+PASS audio.crossOrigin: IDL set to 7 followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to 7 followed by IDL get 
 PASS audio.crossOrigin: IDL set to 1.5 should not throw 
-FAIL audio.crossOrigin: IDL set to 1.5 followed by getAttribute() assert_equals: expected "1.5" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to 1.5 followed by IDL get assert_equals: expected (string) "anonymous" but got (number) 1.5
+PASS audio.crossOrigin: IDL set to 1.5 followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to 1.5 followed by IDL get 
 PASS audio.crossOrigin: IDL set to true should not throw 
-FAIL audio.crossOrigin: IDL set to true followed by getAttribute() assert_equals: expected "true" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to true followed by IDL get assert_equals: expected (string) "anonymous" but got (boolean) true
+PASS audio.crossOrigin: IDL set to true followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to true followed by IDL get 
 PASS audio.crossOrigin: IDL set to false should not throw 
-FAIL audio.crossOrigin: IDL set to false followed by getAttribute() assert_equals: expected "false" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to false followed by IDL get assert_equals: expected (string) "anonymous" but got (boolean) false
+PASS audio.crossOrigin: IDL set to false followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to false followed by IDL get 
 PASS audio.crossOrigin: IDL set to object "[object Object]" should not throw 
-FAIL audio.crossOrigin: IDL set to object "[object Object]" followed by getAttribute() assert_equals: expected "[object Object]" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to object "[object Object]" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "[object Object]"
+PASS audio.crossOrigin: IDL set to object "[object Object]" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to object "[object Object]" followed by IDL get 
 PASS audio.crossOrigin: IDL set to NaN should not throw 
-FAIL audio.crossOrigin: IDL set to NaN followed by getAttribute() assert_equals: expected "NaN" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to NaN followed by IDL get assert_equals: expected (string) "anonymous" but got (number) NaN
+PASS audio.crossOrigin: IDL set to NaN followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to NaN followed by IDL get 
 PASS audio.crossOrigin: IDL set to Infinity should not throw 
-FAIL audio.crossOrigin: IDL set to Infinity followed by getAttribute() assert_equals: expected "Infinity" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (number) Infinity
+PASS audio.crossOrigin: IDL set to Infinity followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to Infinity followed by IDL get 
 PASS audio.crossOrigin: IDL set to -Infinity should not throw 
-FAIL audio.crossOrigin: IDL set to -Infinity followed by getAttribute() assert_equals: expected "-Infinity" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to -Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (number) -Infinity
+PASS audio.crossOrigin: IDL set to -Infinity followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to -Infinity followed by IDL get 
 PASS audio.crossOrigin: IDL set to "\0" should not throw 
-FAIL audio.crossOrigin: IDL set to "\0" followed by getAttribute() assert_equals: expected "\0" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "\0" followed by IDL get assert_equals: expected "anonymous" but got "\0"
+PASS audio.crossOrigin: IDL set to "\0" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "\0" followed by IDL get 
 PASS audio.crossOrigin: IDL set to null should not throw 
-FAIL audio.crossOrigin: IDL set to null followed by getAttribute() assert_equals: expected (object) null but got (string) "USE-CREDENTIALS"
+PASS audio.crossOrigin: IDL set to null followed by getAttribute() 
 PASS audio.crossOrigin: IDL set to null followed by IDL get 
 PASS audio.crossOrigin: IDL set to object "test-toString" should not throw 
-FAIL audio.crossOrigin: IDL set to object "test-toString" followed by getAttribute() assert_equals: expected "test-toString" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to object "test-toString" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "test-toString"
+PASS audio.crossOrigin: IDL set to object "test-toString" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to object "test-toString" followed by IDL get 
 PASS audio.crossOrigin: IDL set to object "test-valueOf" should not throw 
-FAIL audio.crossOrigin: IDL set to object "test-valueOf" followed by getAttribute() assert_equals: expected "test-valueOf" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "test-valueOf"
+PASS audio.crossOrigin: IDL set to object "test-valueOf" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to object "test-valueOf" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "anonymous" should not throw 
-FAIL audio.crossOrigin: IDL set to "anonymous" followed by getAttribute() assert_equals: expected "anonymous" but got "USE-CREDENTIALS"
+PASS audio.crossOrigin: IDL set to "anonymous" followed by getAttribute() 
 PASS audio.crossOrigin: IDL set to "anonymous" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "xanonymous" should not throw 
-FAIL audio.crossOrigin: IDL set to "xanonymous" followed by getAttribute() assert_equals: expected "xanonymous" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "xanonymous" followed by IDL get assert_equals: expected "anonymous" but got "xanonymous"
+PASS audio.crossOrigin: IDL set to "xanonymous" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "xanonymous" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "anonymous\0" should not throw 
-FAIL audio.crossOrigin: IDL set to "anonymous\0" followed by getAttribute() assert_equals: expected "anonymous\0" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "anonymous\0" followed by IDL get assert_equals: expected "anonymous" but got "anonymous\0"
+PASS audio.crossOrigin: IDL set to "anonymous\0" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "anonymous\0" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "nonymous" should not throw 
-FAIL audio.crossOrigin: IDL set to "nonymous" followed by getAttribute() assert_equals: expected "nonymous" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "nonymous" followed by IDL get assert_equals: expected "anonymous" but got "nonymous"
+PASS audio.crossOrigin: IDL set to "nonymous" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "nonymous" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "ANONYMOUS" should not throw 
-FAIL audio.crossOrigin: IDL set to "ANONYMOUS" followed by getAttribute() assert_equals: expected "ANONYMOUS" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "ANONYMOUS" followed by IDL get assert_equals: expected "anonymous" but got "ANONYMOUS"
+PASS audio.crossOrigin: IDL set to "ANONYMOUS" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "ANONYMOUS" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "use-credentials" should not throw 
-FAIL audio.crossOrigin: IDL set to "use-credentials" followed by getAttribute() assert_equals: expected "use-credentials" but got "USE-CREDENTIALS"
+PASS audio.crossOrigin: IDL set to "use-credentials" followed by getAttribute() 
 PASS audio.crossOrigin: IDL set to "use-credentials" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "xuse-credentials" should not throw 
-FAIL audio.crossOrigin: IDL set to "xuse-credentials" followed by getAttribute() assert_equals: expected "xuse-credentials" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "xuse-credentials" followed by IDL get assert_equals: expected "anonymous" but got "xuse-credentials"
+PASS audio.crossOrigin: IDL set to "xuse-credentials" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "xuse-credentials" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "use-credentials\0" should not throw 
-FAIL audio.crossOrigin: IDL set to "use-credentials\0" followed by getAttribute() assert_equals: expected "use-credentials\0" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "use-credentials\0" followed by IDL get assert_equals: expected "anonymous" but got "use-credentials\0"
+PASS audio.crossOrigin: IDL set to "use-credentials\0" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "use-credentials\0" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "se-credentials" should not throw 
-FAIL audio.crossOrigin: IDL set to "se-credentials" followed by getAttribute() assert_equals: expected "se-credentials" but got "USE-CREDENTIALS"
-FAIL audio.crossOrigin: IDL set to "se-credentials" followed by IDL get assert_equals: expected "anonymous" but got "se-credentials"
+PASS audio.crossOrigin: IDL set to "se-credentials" followed by getAttribute() 
+PASS audio.crossOrigin: IDL set to "se-credentials" followed by IDL get 
 PASS audio.crossOrigin: IDL set to "USE-CREDENTIALS" should not throw 
 PASS audio.crossOrigin: IDL set to "USE-CREDENTIALS" followed by getAttribute() 
-FAIL audio.crossOrigin: IDL set to "USE-CREDENTIALS" followed by IDL get assert_equals: expected "use-credentials" but got "USE-CREDENTIALS"
+PASS audio.crossOrigin: IDL set to "USE-CREDENTIALS" followed by IDL get 
 PASS audio.preload: typeof IDL attribute 
 PASS audio.preload: setAttribute() to "none" followed by getAttribute() 
 PASS audio.preload: setAttribute() to "none" followed by IDL get 

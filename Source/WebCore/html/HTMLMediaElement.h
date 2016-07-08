@@ -166,6 +166,9 @@ public:
     void setSrcObject(ScriptExecutionContext&, MediaStream*);
 #endif
 
+    void setCrossOrigin(const AtomicString&);
+    String crossOrigin() const;
+
 // network state
     using HTMLMediaElementEnums::NetworkState;
     NetworkState networkState() const;

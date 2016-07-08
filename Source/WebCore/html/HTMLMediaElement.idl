@@ -36,6 +36,7 @@
     // network state
     [Reflect, URL] attribute DOMString src;
     [URL] readonly attribute DOMString currentSrc;
+    attribute DOMString? crossOrigin;
 
     const unsigned short NETWORK_EMPTY = 0;
     const unsigned short NETWORK_IDLE = 1;

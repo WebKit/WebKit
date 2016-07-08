@@ -2042,7 +2042,7 @@ PASS HTMLVideoElement interface: document.createElement("video") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "error" with the proper type (0) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "src" with the proper type (1) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "currentSrc" with the proper type (2) 
-FAIL HTMLMediaElement interface: document.createElement("video") must inherit property "crossOrigin" with the proper type (3) assert_inherits: property "crossOrigin" not found in prototype chain
+PASS HTMLMediaElement interface: document.createElement("video") must inherit property "crossOrigin" with the proper type (3) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "NETWORK_EMPTY" with the proper type (4) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "NETWORK_IDLE" with the proper type (5) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "NETWORK_LOADING" with the proper type (6) 
@@ -2098,7 +2098,7 @@ PASS Stringification of document.createElement("audio")
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "error" with the proper type (0) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "src" with the proper type (1) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "currentSrc" with the proper type (2) 
-FAIL HTMLMediaElement interface: document.createElement("audio") must inherit property "crossOrigin" with the proper type (3) assert_inherits: property "crossOrigin" not found in prototype chain
+PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "crossOrigin" with the proper type (3) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "NETWORK_EMPTY" with the proper type (4) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "NETWORK_IDLE" with the proper type (5) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "NETWORK_LOADING" with the proper type (6) 
@@ -2149,7 +2149,7 @@ PASS Stringification of new Audio()
 PASS HTMLMediaElement interface: new Audio() must inherit property "error" with the proper type (0) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "src" with the proper type (1) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "currentSrc" with the proper type (2) 
-FAIL HTMLMediaElement interface: new Audio() must inherit property "crossOrigin" with the proper type (3) assert_inherits: property "crossOrigin" not found in prototype chain
+PASS HTMLMediaElement interface: new Audio() must inherit property "crossOrigin" with the proper type (3) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "NETWORK_EMPTY" with the proper type (4) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "NETWORK_IDLE" with the proper type (5) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "NETWORK_LOADING" with the proper type (6) 
@@ -2253,7 +2253,7 @@ PASS HTMLMediaElement interface: existence and properties of interface prototype
 PASS HTMLMediaElement interface: attribute error 
 PASS HTMLMediaElement interface: attribute src 
 PASS HTMLMediaElement interface: attribute currentSrc 
-FAIL HTMLMediaElement interface: attribute crossOrigin assert_true: The prototype object must have a property "crossOrigin" expected true got false
+PASS HTMLMediaElement interface: attribute crossOrigin 
 PASS HTMLMediaElement interface: constant NETWORK_EMPTY on interface object 
 PASS HTMLMediaElement interface: constant NETWORK_EMPTY on interface prototype object 
 PASS HTMLMediaElement interface: constant NETWORK_IDLE on interface object 
