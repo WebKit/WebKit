@@ -100,28 +100,37 @@ void RenderMathMLRoot::updateFromElement()
 
 void RenderMathMLRoot::updateStyle()
 {
-    // We set some constants to draw the radical, as defined in the OpenType MATH tables.
-
-    m_ruleThickness = 0.05f * style().fontCascade().size();
-
-    // FIXME: The recommended default for m_verticalGap in displaystyle is rule thickness + 1/4 x-height (https://bugs.webkit.org/show_bug.cgi?id=118737).
-    m_verticalGap = 11 * m_ruleThickness / 4;
-    m_extraAscender = m_ruleThickness;
-    m_kernBeforeDegree = 5 * style().fontCascade().size() / 18;
-    m_kernAfterDegree = -10 * style().fontCascade().size() / 18;
-    m_degreeBottomRaisePercent = 0.6f;
-
+    // We try and read constants to draw the radical from the OpenType MATH and use fallback values otherwise.
     const auto& primaryFont = style().fontCascade().primaryFont();
     if (auto* mathData = style().fontCascade().primaryFont().mathData()) {
-        // FIXME: m_verticalGap should use RadicalDisplayStyleVertical in display mode (https://bugs.webkit.org/show_bug.cgi?id=118737).
-        m_verticalGap = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalVerticalGap);
         m_ruleThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalRuleThickness);
+        m_verticalGap = mathData->getMathConstant(primaryFont, mathMLStyle()->displayStyle() ? OpenTypeMathData::RadicalDisplayStyleVerticalGap : OpenTypeMathData::RadicalVerticalGap);
         m_extraAscender = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalExtraAscender);
 
         if (m_kind == RootWithIndex) {
             m_kernBeforeDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalKernBeforeDegree);
             m_kernAfterDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalKernAfterDegree);
             m_degreeBottomRaisePercent = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalDegreeBottomRaisePercent);
+        }
+    } else {
+        // RadicalVerticalGap: Suggested value is 5/4 default rule thickness.
+        // RadicalDisplayStyleVerticalGap: Suggested value is default rule thickness + 1/4 x-height.
+        // RadicalRuleThickness: Suggested value is default rule thickness.
+        // RadicalExtraAscender: Suggested value is RadicalRuleThickness.
+        // RadicalKernBeforeDegree: No suggested value provided. OT Math Illuminated mentions 5/18 em, Gecko uses 0.
+        // RadicalKernAfterDegree: Suggested value is -10/18 of em.
+        // RadicalDegreeBottomRaisePercent: Suggested value is 60%.
+        m_ruleThickness = ruleThicknessFallback();
+        if (mathMLStyle()->displayStyle())
+            m_verticalGap = m_ruleThickness + style().fontMetrics().xHeight() / 4;
+        else
+            m_verticalGap = 5 * m_ruleThickness / 4;
+
+        if (m_kind == RootWithIndex) {
+            m_extraAscender = m_ruleThickness;
+            m_kernBeforeDegree = 5 * style().fontCascade().size() / 18;
+            m_kernAfterDegree = -10 * style().fontCascade().size() / 18;
+            m_degreeBottomRaisePercent = 0.6f;
         }
     }
 }

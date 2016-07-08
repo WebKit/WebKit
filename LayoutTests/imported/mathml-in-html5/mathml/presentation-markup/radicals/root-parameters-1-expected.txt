@@ -1,0 +1,9 @@
+
+PASS RadicalDegreeBottomRaisePercent 
+PASS RadicalDisplayStyleVerticalGap 
+PASS RadicalExtraAscender 
+PASS RadicalKernAfterDegree 
+PASS RadicalKernBeforeDegree 
+PASS RadicalRuleThickness 
+PASS RadicalVerticalGap 
+

@@ -1,3 +1,33 @@
+2016-07-08  Frederic Wang  <fwang@igalia.com>
+
+        Use Radical* constants from the OpenType MATH table.
+        https://bugs.webkit.org/show_bug.cgi?id=155638
+
+        Reviewed by Brent Fulgham.
+
+        Import a test from the MathML in HTML5 test suite to verify all the Radical* parameters.
+        For test RadicalDegreeBottomRaisePercent, WebKit's drawing of one of the radical sign
+        is weird. This causes unexpected height of the radical and a fortiori wrong vertical
+        position of the index. For now, we tweak that height to make the test pass.
+
+        * imported/mathml-in-html5/fonts/radical-degreebottomraisepercent25-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/radical-displaystyleverticalgap7000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/radical-extraascender3000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/radical-kernafterdegreeminus5000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/radical-kernbeforedegree4000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/radical-rulethickness8000.woff: Added.
+        * imported/mathml-in-html5/fonts/radical-verticalgap6000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/radicals/root-parameters-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/radicals/root-parameters-1.html: Added.
+        * platform/gtk/mathml/radical-fallback-expected.png: Updated to take into account new rendering.
+        * platform/gtk/mathml/radical-fallback-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/mac/mathml/radical-fallback-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/mo-stretch-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/radical-fallback-expected.txt: Ditto.
+
 2016-07-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Inline size is never indefinite during layout
