@@ -1,3 +1,19 @@
+2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unexpected "Out of memory" error for "x".repeat(-1)
+        https://bugs.webkit.org/show_bug.cgi?id=159529
+
+        Reviewed by Benjamin Poulain.
+
+        Extended test coverage for:
+
+          - function properties
+          - fast path with invalid counts
+          - observable side effects for fast path which were wrong before
+
+        * js/script-tests/string-repeat.js:
+        * js/string-repeat-expected.txt:
+
 2016-07-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace scoped flag in Event by composed flag

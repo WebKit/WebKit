@@ -49,9 +49,9 @@ function shouldThrow(func, errorMessage) {
     shouldBe(String.prototype.repeat.call("", 0xFFFFFFFFF), "");
     shouldThrow(() => {
         String.prototype.repeat.call("", Infinity);
-    }, `RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity`);
+    }, `RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity`);
 
     shouldThrow(() => {
         String.prototype.repeat.call("", -2000);
-    }, `RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity`);
+    }, `RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity`);
 }

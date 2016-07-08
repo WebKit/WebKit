@@ -1,3 +1,29 @@
+2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unexpected "Out of memory" error for "x".repeat(-1)
+        https://bugs.webkit.org/show_bug.cgi?id=159529
+
+        Reviewed by Benjamin Poulain.
+
+        * builtins/StringPrototype.js:
+        (globalPrivate.repeatSlowPath):
+        (repeat):
+        Move the @toInteger and range checking to the always path,
+        since the spec does say it should always happen. Also remove
+        the duplication of the fast path here.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::repeatCharacter):
+        Remove unused function.
+
+        (JSC::stringProtoFuncRepeatCharacter):
+        ASSERT if given a negative number. This is a private function
+        only used internally.
+
+        * tests/stress/string-repeat-edge-cases.js:
+        (shouldThrow):
+        Update expected error message.
+
 2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Array.prototype[Symbol.unscopables] should have the "includes" property

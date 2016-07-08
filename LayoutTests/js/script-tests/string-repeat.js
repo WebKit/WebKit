@@ -1,4 +1,13 @@
-description("This test checks the ES6 string functions repeat().");
+description("This test checks String.prototype.repeat.");
+
+shouldBe('String.prototype.repeat.length', '1');
+shouldBeEqualToString('String.prototype.repeat.name', 'repeat');
+shouldBe('Object.getOwnPropertyDescriptor(String.prototype, "repeat").configurable', 'true');
+shouldBe('Object.getOwnPropertyDescriptor(String.prototype, "repeat").enumerable', 'false');
+shouldBe('Object.getOwnPropertyDescriptor(String.prototype, "repeat").writable', 'true');
+shouldBe('Object.getOwnPropertyDescriptor(String.prototype, "repeat").get', 'undefined');
+shouldBe('Object.getOwnPropertyDescriptor(String.prototype, "repeat").set', 'undefined');
+shouldBe('Object.getOwnPropertyDescriptor(String.prototype, "repeat").value', 'String.prototype.repeat');
 
 shouldBe("'foo bar'.repeat(+0)", "''");
 shouldBe("'foo bar'.repeat(-0)", "''");
@@ -31,9 +40,12 @@ shouldBe("''.repeat(0xFFFFFFFF)", "''");
 shouldBe("''.repeat(0xFFFFFFFF + 1)", "''");
 
 // Check range errors.
-shouldThrow("'foo bar'.repeat(-1)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity'");
-shouldThrow("'foo bar'.repeat(Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity'");
-shouldThrow("'foo bar'.repeat(-Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity'");
+shouldThrow("'x'.repeat(-1)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity'");
+shouldThrow("'x'.repeat(Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity'");
+shouldThrow("'x'.repeat(-Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity'");
+shouldThrow("'foo bar'.repeat(-1)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity'");
+shouldThrow("'foo bar'.repeat(Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity'");
+shouldThrow("'foo bar'.repeat(-Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity'");
 
 // Check out of memory errors.
 shouldThrow("'f'.repeat(0xFFFFFFFF)", "'Error: Out of memory'");
@@ -43,39 +55,48 @@ shouldThrow("'foo'.repeat(0xFFFFFFFFF + 1)", "'Error: Out of memory'");
 shouldThrow("'foo bar'.repeat(0xFFFFFFFF)", "'Error: Out of memory'");
 shouldThrow("'foo bar'.repeat(0xFFFFFFFF + 1)", "'Error: Out of memory'");
 
-// Check side effects in repeat.
-var sideEffect = "";
-var stringRepeated = new String("foo bar");
-stringRepeated.toString = function() {
-    sideEffect += "A";
-    return this;
-}
-var count = new Number(2);
-count.valueOf = function() {
-    sideEffect += "B";
-    return this;
-}
-// Calling stringRepeated.repeat implicitly calls stringRepeated.toString(),
-// and count.valueOf(), in that respective order.
-shouldBe("stringRepeated.repeat(count)", "'foo barfoo bar'");
-shouldBe("sideEffect == 'AB'", "true");
+var sideEffect, stringRepeated, count;
+function checkSideEffects(str) {
+    // Check side effects in repeat.
+    sideEffect = "";
+    stringRepeated = new String(str);
+    stringRepeated.toString = function() {
+        sideEffect += "A";
+        return this;
+    }
+    count = new Number(2);
+    count.valueOf = function() {
+        sideEffect += "B";
+        return this;
+    }
+    // Calling stringRepeated.repeat implicitly calls stringRepeated.toString(),
+    // and count.valueOf(), in that respective order.
+    shouldBe("stringRepeated.repeat(count)", "'" + str + str + "'");
+    shouldBe("sideEffect == 'AB'", "true");
 
-// If stringRepeated throws an exception count.valueOf() is not called.
-stringRepeated.toString = function() {
-    throw "error";
-}
-sideEffect = "";
-shouldThrow("stringRepeated.repeat(count)", "'error'");
-shouldBe("sideEffect == ''", "true");
+    // If stringRepeated.toString() throws an exception count.valueOf() is not called.
+    stringRepeated.toString = function() {
+        throw "error";
+    }
+    sideEffect = "";
+    shouldThrow("stringRepeated.repeat(count)", "'error'");
+    shouldBe("sideEffect == ''", "true");
 
-// If count throws an exception stringRepeated.toString() was called.
-stringRepeated.toString = function() {
-    sideEffect += "A";
-    return this;
+    // If count throws an exception stringRepeated.toString() was called.
+    stringRepeated.toString = function() {
+        sideEffect += "A";
+        return this;
+    }
+    count.valueOf = function() {
+        throw "error";
+    }
+    sideEffect = "";
+    shouldThrow("stringRepeated.repeat(count)", "'error'");
+    shouldBe("sideEffect == 'A'", "true");
 }
-count.valueOf = function() {
-    throw "error";
-}
-sideEffect = "";
-shouldThrow("stringRepeated.repeat(count)", "'error'");
-shouldBe("sideEffect == 'A'", "true");
+
+// Fast path for single character string.
+checkSideEffects("x");
+
+// Slow path for any other string.
+checkSideEffects("foo bar");

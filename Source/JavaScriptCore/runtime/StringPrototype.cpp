@@ -749,25 +749,14 @@ static inline bool checkObjectCoercible(JSValue thisValue)
 }
 
 template <typename CharacterType>
-static inline JSValue repeatCharacter(ExecState* exec, CharacterType character, unsigned repeatCount)
-{
-    CharacterType* buffer = nullptr;
-    auto impl = StringImpl::tryCreateUninitialized(repeatCount, buffer);
-    if (!impl)
-        return throwOutOfMemoryError(exec);
-
-    std::fill_n(buffer, repeatCount, character);
-
-    return jsString(exec, WTFMove(impl));
-}
-
-template <typename CharacterType>
 static inline JSString* repeatCharacter(ExecState& exec, CharacterType character, unsigned repeatCount)
 {
     CharacterType* buffer = nullptr;
     auto impl = StringImpl::tryCreateUninitialized(repeatCount, buffer);
-    if (!impl)
-        return throwOutOfMemoryError(&exec), nullptr;
+    if (!impl) {
+        throwOutOfMemoryError(&exec);
+        return nullptr;
+    }
 
     std::fill_n(buffer, repeatCount, character);
 
@@ -788,6 +777,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
         return JSValue::encode(jsNull());
 
     int32_t repeatCount = exec->uncheckedArgument(1).asInt32();
+    ASSERT(repeatCount >= 0);
+
     UChar character = string->view(exec)[0];
     if (!(character & ~0xff))
         return JSValue::encode(repeatCharacter(*exec, static_cast<LChar>(character), repeatCount));
