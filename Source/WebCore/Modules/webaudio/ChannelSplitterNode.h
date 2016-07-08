@@ -26,7 +26,6 @@
 #define ChannelSplitterNode_h
 
 #include "AudioNode.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

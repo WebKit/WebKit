@@ -67,7 +67,7 @@ AudioSourceProvider* MediaStreamAudioSource::audioSourceProvider()
     return nullptr;
 }
 
-void MediaStreamAudioSource::addAudioConsumer(PassRefPtr<AudioDestinationConsumer> consumer)
+void MediaStreamAudioSource::addAudioConsumer(AudioDestinationConsumer* consumer)
 {
     LockHolder locker(m_audioConsumersLock);
     m_audioConsumers.append(consumer);

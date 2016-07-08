@@ -27,7 +27,6 @@
 
 #include "AudioNode.h"
 #include "AudioParam.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {

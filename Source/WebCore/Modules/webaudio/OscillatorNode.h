@@ -29,7 +29,6 @@
 #include "AudioParam.h"
 #include "AudioScheduledSourceNode.h"
 #include <wtf/Lock.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

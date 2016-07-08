@@ -32,7 +32,6 @@
 #include "AudioContext.h"
 #include <runtime/Float32Array.h>
 #include <wtf/Lock.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -76,13 +75,13 @@ private:
             LastType
         };
 
-        ParamEvent(Type type, float value, float time, float timeConstant, float duration, PassRefPtr<Float32Array> curve)
+        ParamEvent(Type type, float value, float time, float timeConstant, float duration, RefPtr<Float32Array>&& curve)
             : m_type(type)
             , m_value(value)
             , m_time(time)
             , m_timeConstant(timeConstant)
             , m_duration(duration)
-            , m_curve(curve)
+            , m_curve(WTFMove(curve))
         {
         }
 

@@ -31,7 +31,6 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

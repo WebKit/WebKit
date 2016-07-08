@@ -56,7 +56,7 @@ public:
     void setAudioFormat(size_t numberOfChannels, float sampleRate);
     void consumeAudio(AudioBus*, size_t numberOfFrames);
 
-    void addAudioConsumer(PassRefPtr<AudioDestinationConsumer>);
+    void addAudioConsumer(AudioDestinationConsumer*);
     bool removeAudioConsumer(AudioDestinationConsumer*);
     const Vector<RefPtr<AudioDestinationConsumer>>& audioConsumers() const { return m_audioConsumers; }
 

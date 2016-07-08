@@ -33,7 +33,6 @@
 #include "MultiChannelResampler.h"
 #include <memory>
 #include <wtf/Lock.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

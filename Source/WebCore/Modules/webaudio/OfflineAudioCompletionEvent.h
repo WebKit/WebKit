@@ -27,7 +27,6 @@
 
 #include "AudioBuffer.h"
 #include "Event.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -36,7 +35,7 @@ class AudioBuffer;
     
 class OfflineAudioCompletionEvent : public Event {
 public:
-    static Ref<OfflineAudioCompletionEvent> create(PassRefPtr<AudioBuffer> renderedBuffer);
+    static Ref<OfflineAudioCompletionEvent> create(RefPtr<AudioBuffer>&& renderedBuffer);
     
     virtual ~OfflineAudioCompletionEvent();
 
@@ -45,7 +44,7 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    explicit OfflineAudioCompletionEvent(PassRefPtr<AudioBuffer> renderedBuffer);
+    explicit OfflineAudioCompletionEvent(RefPtr<AudioBuffer>&& renderedBuffer);
 
     RefPtr<AudioBuffer> m_renderedBuffer;
 };

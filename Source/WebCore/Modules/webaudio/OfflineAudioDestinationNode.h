@@ -27,7 +27,6 @@
 
 #include "AudioBuffer.h"
 #include "AudioDestinationNode.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 
