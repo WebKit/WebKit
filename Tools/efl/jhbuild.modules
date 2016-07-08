@@ -310,9 +310,9 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch repo="nice.freedesktop.org" module="releases/libnice-0.1.10.tar.gz" checkoutdir="libnice" version="0.1.10"
-            hash="sha256:1dbfb663b730889ae8cab13a2913fe557d581f70b513c918bbbd0b7d3eefebc9"
-            md5sum="27b62d0093ce29a39df1c6fcf0bb4396" size="903083">
+    <branch repo="nice.freedesktop.org" module="releases/libnice-0.1.13.tar.gz" checkoutdir="libnice" version="0.1.13"
+            hash="sha256:61112d9f3be933a827c8365f20551563953af6718057928f51f487bfe88419e1"
+            md5sum="3226faeaf48a9150ada00da2e2865959" size="912374">
     </branch>
   </autotools>
 
@@ -321,10 +321,9 @@
       <dep package="gst-plugins-openwebrtc"/>
       <dep package="libnice"/>
      </dependencies>
-    <branch repo="github.com" module="EricssonResearch/openwebrtc/archive/13516c7f79a0c48bb411464f7613d4b426c70f5b.tar.gz" checkoutdir="openwebrtc" version="13516c7f79a0c48bb411464f7613d4b426c70f5b"
-            hash="sha256:c849d36d97c17a198a5d9c180f13f14c7897c9236e2384ea11029e23b09b59ac"
-            md5sum="13516c7f79a0c48bb411464f7613d4b426c70f5b.tar.gz" size="258936">
-      <patch file="openwebrtc-clang-warning-fix.patch" strip="1"/>
+    <branch repo="github.com" module="EricssonResearch/openwebrtc/archive/f511ea1fa79a33fa3d52bfd1c0969c28084aeb35.tar.gz" checkoutdir="openwebrtc" version="f511ea1fa79a33fa3d52bfd1c0969c28084aeb35"
+            hash="sha256:af80b80512b5f5a6b82b4cf43afa28da9c94c86800f6fadd10762361079fb5e3"
+            md5sum="4555d20821af8f5334f74b4f0327f178" size="296143">
     </branch>
   </autotools>
 
