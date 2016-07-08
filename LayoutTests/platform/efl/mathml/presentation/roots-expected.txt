@@ -6,7 +6,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 177x17
           text run at (0,0) width 177: "square root (should be red): "
-        RenderMathMLMath {math} at (177,1) size 27x18 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (177,1) size 23x18 [padding: 0 1 0 1]
           RenderMathMLRoot {msqrt} at (1,0) size 21x18 [color=#FF0000]
             RenderMathMLToken {mn} at (13,2) size 8x13
               RenderBlock (anonymous) at (0,0) size 8x12
@@ -15,7 +15,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 110x17
           text run at (0,0) width 110: "long square root: "
-        RenderMathMLMath {math} at (110,1) size 56x18 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (110,1) size 52x18 [padding: 0 1 0 1]
           RenderMathMLRoot {msqrt} at (1,0) size 50x18
             RenderMathMLRow {mrow} at (13,2) size 37x14
               RenderMathMLToken {mi} at (0,3) size 9x9 [padding: 0 2 0 0]
@@ -33,7 +33,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,68) size 784x20
         RenderText {#text} at (0,2) size 222x17
           text run at (0,2) width 222: "long square root with implied row: "
-        RenderMathMLMath {math} at (222,0) size 62x19 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (222,0) size 58x19 [padding: 0 1 0 1]
           RenderMathMLRoot {msqrt} at (1,0) size 56x19
             RenderMathMLScripts {msup} at (13,2) size 16x15
               RenderMathMLToken {mi} at (0,5) size 9x10 [padding: 0 2 0 0]
@@ -55,7 +55,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,104) size 784x40
         RenderText {#text} at (0,8) size 113x17
           text run at (0,8) width 113: "root of a fraction: "
-        RenderMathMLMath {math} at (113,0) size 56x41 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (113,0) size 55x41 [padding: 0 1 0 1]
           RenderMathMLRoot {msqrt} at (1,0) size 53x41
             RenderMathMLFraction {mfrac} at (16,2) size 37x34
               RenderMathMLRow {mrow} at (0,0) size 37x13
@@ -87,7 +87,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,160) size 784x18
         RenderText {#text} at (0,0) size 173x17
           text run at (0,0) width 173: "cube root (should be blue): "
-        RenderMathMLMath {math} at (173,1) size 28x18 [color=#0000FF] [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (173,1) size 24x18 [color=#0000FF] [padding: 0 1 0 1]
           RenderMathMLRoot {mroot} at (1,0) size 22x18
             RenderMathMLToken {mn} at (13,2) size 9x13
               RenderBlock (anonymous) at (0,0) size 8x12
@@ -100,7 +100,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,194) size 784x18
         RenderText {#text} at (0,0) size 75x17
           text run at (0,0) width 75: "long index: "
-        RenderMathMLMath {math} at (75,0) size 58x19 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (75,0) size 54x19 [padding: 0 1 0 1]
           RenderMathMLRoot {mroot} at (1,0) size 52x19
             RenderMathMLToken {mn} at (43,2) size 9x13
               RenderBlock (anonymous) at (0,0) size 8x12
@@ -130,7 +130,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,228) size 784x40
         RenderText {#text} at (0,8) size 185x17
           text run at (0,8) width 185: "long index w/ complex base: "
-        RenderMathMLMath {math} at (185,0) size 86x41 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (185,0) size 85x41 [padding: 0 1 0 1]
           RenderMathMLRoot {mroot} at (1,0) size 83x41
             RenderMathMLFraction {mfrac} at (46,2) size 37x34
               RenderMathMLRow {mrow} at (0,0) size 37x13
@@ -183,7 +183,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,284) size 784x34
         RenderText {#text} at (0,16) size 75x17
           text run at (0,16) width 75: "high index: "
-        RenderMathMLMath {math} at (75,0) size 28x35 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (75,0) size 24x35 [padding: 0 1 0 1]
           RenderMathMLRoot {mroot} at (1,0) size 22x35
             RenderMathMLToken {mn} at (13,18) size 9x13
               RenderBlock (anonymous) at (0,0) size 8x12
@@ -206,7 +206,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,334) size 784x54
         RenderText {#text} at (0,14) size 155x17
           text run at (0,14) width 155: "Imbricated square roots: "
-        RenderMathMLMath {math} at (155,0) size 340x55 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (155,0) size 332x55 [padding: 0 1 0 1]
           RenderMathMLRoot {msqrt} at (1,0) size 330x55
             RenderMathMLToken {mn} at (17,17) size 8x13
               RenderBlock (anonymous) at (0,0) size 8x12
@@ -285,7 +285,7 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,404) size 784x56
         RenderText {#text} at (0,24) size 110x17
           text run at (0,24) width 110: "Imbricated roots: "
-        RenderMathMLMath {math} at (110,0) size 360x57 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (110,0) size 353x57 [padding: 0 1 0 1]
           RenderMathMLRoot {mroot} at (1,0) size 351x57
             RenderMathMLRow {mrow} at (17,2) size 334x55
               RenderMathMLToken {mn} at (0,25) size 8x12
@@ -411,8 +411,8 @@ layer at (0,0) size 800x564
       RenderBlock {p} at (0,476) size 784x56
         RenderText {#text} at (0,24) size 74x17
           text run at (0,24) width 74: "RTL roots: "
-        RenderMathMLMath {math} at (74,0) size 360x57 [padding: 0 1 0 1]
-          RenderMathMLRoot {mroot} at (8,0) size 351x57
+        RenderMathMLMath {math} at (74,0) size 353x57 [padding: 0 1 0 1]
+          RenderMathMLRoot {mroot} at (1,0) size 351x57
             RenderMathMLRow {mrow} at (0,2) size 333x55
               RenderMathMLToken {mn} at (324,25) size 9x12
                 RenderBlock (anonymous) at (0,0) size 8x12
