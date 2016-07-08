@@ -1,3 +1,29 @@
+2016-07-07  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(184445): Need to insert a StoreBarrier when we don't know child's epoch
+        https://bugs.webkit.org/show_bug.cgi?id=159537
+
+        Reviewed by Benjamin Poulain.
+
+        We weren't checking the case of a child node with a null epoch.  The problem surfaces
+        when the base node of a PutByVal variant has a non-null epoch, because it represents an
+        allocation in the current function, while the child of the same node has an unknown epoch.
+        Added a check that the child node is not null before comparing the epochs of the base and
+        child nodes.
+
+        The added test creates the problem circumstance by doing a full GC to place an array in
+        remembered space, allocating a new object followed by an eden GC.  The new object is
+        only referenced by the array and therefore won't be visited Without the store barrier.
+        The test may crash or more likely get the wrong answer with the bug.
+
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * tests/stress/regress-159537.js: Added test.
+        (MyNumber):
+        (MyNumber.prototype.plusOne):
+        (bar):
+        (foo):
+        (test):
+
 2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unexpected "Out of memory" error for "x".repeat(-1)

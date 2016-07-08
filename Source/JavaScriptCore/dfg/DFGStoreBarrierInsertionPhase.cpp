@@ -459,12 +459,12 @@ private:
         // Something we watch out for here is that the null epoch is a catch-all for objects
         // allocated before we did any epoch tracking. Two objects being in the null epoch
         // means that we don't know their epoch relationship.
-        if (!!base->epoch() && base->epoch() >= child->epoch()) {
+        if (!!base->epoch() && !!child->epoch() && base->epoch() >= child->epoch()) {
             if (verbose)
                 dataLog("            Rejecting because of epoch ordering.\n");
             return;
         }
-        
+
         considerBarrier(base);
     }
     
