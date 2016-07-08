@@ -61,7 +61,6 @@ class Bug(object):
     # FIXME: This information should be stored in some sort of webkit_config.py instead of here.
     unassigned_emails = frozenset([
         "webkit-unassigned@lists.webkit.org",
-        "webkit-qt-unassigned@trolltech.com",
     ])
 
     def is_unassigned(self):
