@@ -1,3 +1,11 @@
+2016-07-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/shadow-dom/trusted-event-scoped-flags.html for ios-simulator after r202953.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/shadow-dom/trusted-event-scoped-flags-expected.txt:
+
 2016-07-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202944.
