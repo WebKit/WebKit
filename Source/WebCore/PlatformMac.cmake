@@ -596,6 +596,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     storage
     style
     svg
+    workers
 
     Modules/applepay
     Modules/geolocation
