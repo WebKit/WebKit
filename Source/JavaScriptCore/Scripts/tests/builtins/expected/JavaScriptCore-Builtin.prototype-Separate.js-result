@@ -1,6 +1,6 @@
 ### Begin File: BuiltinPrototypeBuiltins.h
 /*
- * Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (c) 2014, 2015, 2016 Apple Inc. All rights reserved.
  * Copyright (c) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,7 @@ JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 ### Begin File: BuiltinPrototypeBuiltins.cpp
 /*
- * Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (c) 2014, 2015, 2016 Apple Inc. All rights reserved.
  * Copyright (c) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  * 
  * Redistribution and use in source and binary forms, with or without

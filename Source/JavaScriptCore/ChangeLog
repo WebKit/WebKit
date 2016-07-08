@@ -1,3 +1,28 @@
+2016-07-08  Youenn Fablet  <youenn@apple.com>
+
+        Built-in generator should generate files with a default copyright
+        https://bugs.webkit.org/show_bug.cgi?id=159561
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/builtins/builtins_model.py:
+        (BuiltinsCollection._parse_copyright_lines): Adding default copyright to the parsed copyrights.
+        * Scripts/builtins/builtins_templates.py:
+        (BuiltinsGeneratorTemplates): Adding a default copyright.
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result: Rebasing with added default copyright.
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result: Ditto.
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result: Ditto.
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result: Ditto.
+
+
 2016-07-08  Keith Miller  <keith_miller@apple.com>
 
         TypedArrays need more isNeutered checks.

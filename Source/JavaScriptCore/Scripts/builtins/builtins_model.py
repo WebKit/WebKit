@@ -27,6 +27,8 @@ import logging
 import re
 import os
 
+from builtins_templates import BuiltinsGeneratorTemplates as Templates
+
 log = logging.getLogger('global')
 
 _FRAMEWORK_CONFIG_MAP = {
@@ -219,7 +221,7 @@ class BuiltinsCollection:
         licenseBlock = multilineCommentRegExp.findall(text)[0]
         licenseBlock = licenseBlock[:licenseBlock.index("Redistribution")]
 
-        copyrightLines = []
+        copyrightLines = [Templates.DefaultCopyright]
         for line in licenseBlock.split("\n"):
             line = line.replace("/*", "")
             line = line.replace("*/", "")

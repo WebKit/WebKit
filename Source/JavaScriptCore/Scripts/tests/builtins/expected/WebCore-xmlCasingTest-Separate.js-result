@@ -1,6 +1,7 @@
 ### Begin File: xmlCasingTestBuiltins.h
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -170,6 +171,7 @@ inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 ### Begin File: xmlCasingTestBuiltins.cpp
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
