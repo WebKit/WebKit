@@ -372,7 +372,14 @@ set(WEBKIT_IDL_DEPENDENCIES
     win/Interfaces/Accessible2/AccessibleText.idl
     win/Interfaces/Accessible2/AccessibleText2.idl
     win/Interfaces/Accessible2/IA2CommonTypes.idl
+    "${DERIVED_SOURCES_WEBKIT_DIR}/include/autoversion.h"
 )
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/include/autoversion.h
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${DERIVED_SOURCES_WEBKIT_DIR}
+    VERBATIM)
 
 GENERATE_INTERFACE(win/Interfaces/WebKit.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
 GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleApplication.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
