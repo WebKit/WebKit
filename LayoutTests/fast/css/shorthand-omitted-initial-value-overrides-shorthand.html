@@ -24,6 +24,13 @@ testStyle("transition-timing-function: linear; transition: none;", "transition-t
 testStyle("transition-delay: 1s; transition: none;", "transition-delay", "0s");
 
 debug("");
+debug("Prefixed transition properties");
+testStyle("-webkit-transition-property: none; transition: 1s;", "transition-property", "all");
+testStyle("-webkit-transition-property: none; -webkit-transition: 1s;", "transition-property", "all");
+testStyle("transition-property: none; transition: 1s;", "transition-property", "all");
+testStyle("transition-property: none; -webkit-transition: 1s;", "transition-property", "all");
+
+debug("");
 debug("Animation properties");
 testStyle("animation-name: foo; animation: 1s;", "animation-name", "none");
 testStyle("animation-duration: 1s; animation: none;", "animation-duration", "0s");
@@ -33,6 +40,13 @@ testStyle("animation-direction: reverse; animation: none;", "animation-direction
 testStyle("animation-play-state: paused; animation: none;", "animation-play-state", "running");
 testStyle("animation-delay: 1s; animation: none;", "animation-delay", "0s");
 testStyle("animation-fill-mode: forwards; animation: none;", "animation-fill-mode", "none");
+
+debug("");
+debug("Prefixed animation properties");
+testStyle("-webkit-animation-name: foo; -webkit-animation: none;", "-webkit-animation-name", "none");
+testStyle("-webkit-animation-name: foo; animation: none;", "animation-name", "none");
+testStyle("animation-name: foo; -webkit-animation: none;", "-webkit-animation-name", "none");
+testStyle("animation-name: foo; animation: none;", "animation-name", "none");
 
 debug("");
 successfullyParsed = true;

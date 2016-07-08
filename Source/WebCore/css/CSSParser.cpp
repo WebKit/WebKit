@@ -3812,16 +3812,39 @@ bool CSSParser::parseAnimationShorthand(CSSPropertyID propId, bool important)
             return false;
     }
 
+    // Fill in any remaining properties with the initial value.
     for (i = 0; i < numProperties; ++i) {
-        // If we didn't find the property, set an intial value.
         if (!parsedProperty[i])
             addAnimationValue(values[i], cssValuePool.createImplicitInitialValue());
-
-        addProperty(shorthand.properties()[i], WTFMove(values[i]), important);
     }
+
+    // Now add all of the properties we found.
+    // In this case we have to explicitly set the variant form as well,
+    // to make sure that a shorthand clears all existing prefixed and
+    // unprefixed values.
+    for (i = 0; i < numProperties; ++i)
+        addPropertyWithPrefixingVariant(shorthand.properties()[i], WTFMove(values[i]), important);
 
     return true;
 }
+
+void CSSParser::addPropertyWithPrefixingVariant(CSSPropertyID propId, RefPtr<CSSValue>&& value, bool important, bool implicit)
+{
+    addProperty(propId, value.copyRef(), important, implicit);
+
+    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propId);
+    if (prefixingVariant == propId)
+        return;
+
+    if (m_currentShorthand) {
+        // We can't use ShorthandScope here as we can already be inside one (e.g we are parsing CSSTransition).
+        m_currentShorthand = prefixingVariantForPropertyId(m_currentShorthand);
+        addProperty(prefixingVariant, WTFMove(value), important, implicit);
+        m_currentShorthand = prefixingVariantForPropertyId(m_currentShorthand);
+    } else
+        addProperty(prefixingVariant, WTFMove(value), important, implicit);
+}
+
 
 RefPtr<CSSPrimitiveValue> CSSParser::parseColumnWidth()
 {
@@ -3950,8 +3973,11 @@ bool CSSParser::parseTransitionShorthand(CSSPropertyID propId, bool important)
     }
 
     // Now add all of the properties we found.
+    // In this case we have to explicitly set the variant form as well,
+    // to make sure that a shorthand clears all existing prefixed and
+    // unprefixed values.
     for (i = 0; i < numProperties; ++i)
-        addProperty(shorthand.properties()[i], WTFMove(values[i]), important);
+        addPropertyWithPrefixingVariant(shorthand.properties()[i], WTFMove(values[i]), important);
 
     return true;
 }

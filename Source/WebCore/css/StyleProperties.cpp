@@ -639,7 +639,16 @@ bool MutableStyleProperties::removeShorthandProperty(CSSPropertyID propertyID)
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length())
         return false;
-    return removePropertiesInSet(shorthand.properties(), shorthand.length());
+
+    bool propertiesWereRemoved = removePropertiesInSet(shorthand.properties(), shorthand.length());
+
+    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propertyID);
+    if (prefixingVariant == propertyID)
+        return propertiesWereRemoved;
+
+    StylePropertyShorthand shorthandPrefixingVariant = shorthandForProperty(prefixingVariant);
+    bool prefixedVariantPropertiesWereRemoved = removePropertiesInSet(shorthandPrefixingVariant.properties(), shorthandPrefixingVariant.length());
+    return propertiesWereRemoved || prefixedVariantPropertiesWereRemoved;
 }
 
 bool MutableStyleProperties::removeProperty(CSSPropertyID propertyID, String* returnText)

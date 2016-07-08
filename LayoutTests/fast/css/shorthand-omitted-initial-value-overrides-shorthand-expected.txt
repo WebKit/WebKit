@@ -9,6 +9,12 @@ PASS transition-duration
 PASS transition-timing-function
 PASS transition-delay
 
+Prefixed transition properties
+PASS transition-property
+PASS transition-property
+PASS transition-property
+PASS transition-property
+
 Animation properties
 PASS animation-name
 PASS animation-duration
@@ -18,6 +24,12 @@ PASS animation-direction
 PASS animation-play-state
 PASS animation-delay
 PASS animation-fill-mode
+
+Prefixed animation properties
+PASS -webkit-animation-name
+PASS animation-name
+PASS -webkit-animation-name
+PASS animation-name
 
 PASS successfullyParsed is true
 

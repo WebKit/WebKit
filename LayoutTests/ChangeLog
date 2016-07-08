@@ -1,3 +1,17 @@
+2016-07-07  Dean Jackson  <dino@apple.com>
+
+        REGRESSION(r200769): animations are no longer overridden
+        https://bugs.webkit.org/show_bug.cgi?id=159450
+        <rdar://problem/27120570>
+
+        Reviewed by Zalan Bujtas.
+
+        Update an existing test to exercise a prefixed form applying
+        to non-prefixed longhands.
+
+        * fast/css/shorthand-omitted-initial-value-overrides-shorthand-expected.txt:
+        * fast/css/shorthand-omitted-initial-value-overrides-shorthand.html:
+
 2016-07-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening after r202826
