@@ -383,7 +383,7 @@
         "Loader": [ "japhet@chromium.org", "cdumez@apple.com" ],
         "JavaScriptCore": [ "keith_miller@apple.com", "sbarati@apple.com", "mark.lam@apple.com", "msaboff@apple.com" ],
         "MacAndIOSTextLayoutAndRendering": [ "mmaxfield@apple.com" ],
-        "MathML": [ "dbarton@mathscribe.com", "mrobinson@webkit.org", "fred.wang@free.fr" ],
+        "MathML": [ "dbarton@mathscribe.com", "fred.wang@free.fr" ],
         "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com", "philipj@opera.com", "sergio.correia@openbossa.org" ],
         "MSEEME": [ "eric.carlson@apple.com", "calvaris@igalia.com" ],
         "NetworkCache": [ "cgarcia@igalia.com", "cdumez@apple.com" ],

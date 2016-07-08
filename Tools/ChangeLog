@@ -1,3 +1,12 @@
+2016-07-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove mrobinson from the MathML watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=159559
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitpy/common/config/watchlist: Remove my email from the watchlist.
+
 2016-07-08  Brady Eidson  <beidson@apple.com>
 
         Clearing LocalStorage doesn't also delete -wal and -shm files.
