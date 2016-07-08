@@ -3,5 +3,5 @@ PASS HTMLTableRowElement deleteCell(0)
 PASS HTMLTableRowElement deleteCell(-1) 
 PASS HTMLTableRowElement deleteCell(-2) 
 PASS HTMLTableRowElement deleteCell(cells.length) 
-FAIL HTMLTableRowElement deleteCell(-1) with no cells IndexSizeError: DOM Exception 1
+PASS HTMLTableRowElement deleteCell(-1) with no cells 
 

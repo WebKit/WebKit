@@ -1,5 +1,18 @@
 2016-07-07  Chris Dumez  <cdumez@apple.com>
 
+        tdody.deleteRow(-1) and tr.deleteCell(-1) should not throw when there are no rows / cells
+        https://bugs.webkit.org/show_bug.cgi?id=159527
+        <rdar://problem/27232261>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/deleteRow-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/deleteCell-expected.txt:
+
+2016-07-07  Chris Dumez  <cdumez@apple.com>
+
         HTMLTitleElement.text should only account for direct children Text nodes
         https://bugs.webkit.org/show_bug.cgi?id=159536
 

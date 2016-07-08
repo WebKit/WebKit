@@ -85,8 +85,12 @@ void HTMLTableSectionElement::deleteRow(int index, ExceptionCode& ec)
 {
     Ref<HTMLCollection> children = rows();
     int numRows = children->length();
-    if (index == -1)
+    if (index == -1) {
+        if (!numRows)
+            return;
+
         index = numRows - 1;
+    }
     if (index >= 0 && index < numRows)
         HTMLElement::removeChild(*children->item(index), ec);
     else
