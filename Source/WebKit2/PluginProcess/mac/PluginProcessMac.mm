@@ -238,7 +238,7 @@ static void setModal(bool modalWindowIsShowing)
     PluginProcess::singleton().setModalWindowIsShowing(modalWindowIsShowing);
 }
 
-static unsigned modalCount = 0;
+static unsigned modalCount;
 
 static void beginModal()
 {
@@ -271,11 +271,70 @@ static NSInteger replacedRunModalForWindow(id self, SEL _cmd, NSWindow* window)
     return result;
 }
 
-#if defined(__i386__)
+static bool oldPluginProcessNameShouldEqualNewPluginProcessNameForAdobeReader;
+
+static bool isAdobeAcrobatAddress(const void* address)
+{
+    Dl_info imageInfo;
+    if (!dladdr(address, &imageInfo))
+        return false;
+
+    const char* pathSuffix = "/Contents/Frameworks/Acrobat.framework/Acrobat";
+
+    int pathSuffixLength = strlen(pathSuffix);
+    int imageFilePathLength = strlen(imageInfo.dli_fname);
+
+    if (imageFilePathLength < pathSuffixLength)
+        return false;
+
+    if (strcmp(imageInfo.dli_fname + (imageFilePathLength - pathSuffixLength), pathSuffix))
+        return false;
+
+    return true;
+}
+
+static bool stringCompare(CFStringRef a, CFStringRef b, CFStringCompareFlags options, void* returnAddress, CFComparisonResult& result)
+{
+    if (pthread_main_np() != 1)
+        return false;
+
+    if (!oldPluginProcessNameShouldEqualNewPluginProcessNameForAdobeReader)
+        return false;
+
+    if (options != kCFCompareCaseInsensitive)
+        return false;
+
+    const char* aCString = CFStringGetCStringPtr(a, kCFStringEncodingASCII);
+    if (!aCString)
+        return false;
+
+    const char* bCString = CFStringGetCStringPtr(b, kCFStringEncodingASCII);
+    if (!bCString)
+        return false;
+
+    if (strcmp(aCString, "com.apple.WebKit.PluginProcess"))
+        return false;
+
+    if (strcmp(bCString, "com.apple.WebKit.Plugin.64"))
+        return false;
+
+    // Check if the LHS string comes from the Acrobat framework.
+    if (!isAdobeAcrobatAddress(a))
+        return false;
+
+    // Check if the return adress is part of the Acrobat framework as well.
+    if (!isAdobeAcrobatAddress(returnAddress))
+        return false;
+
+    result = kCFCompareEqualTo;
+    return true;
+}
+
 static void initializeShim()
 {
     // Initialize the shim for 32-bit only.
     const PluginProcessShimCallbacks callbacks = {
+#if defined(__i386__)
         shouldCallRealDebugger,
         isWindowActive,
         getCurrentEventButtonState,
@@ -286,12 +345,13 @@ static void initializeShim()
         setModal,
         openCFURLRef,
         shouldMapMemoryExecutable,
+#endif
+        stringCompare,
     };
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
     initFunc(callbacks);
 }
-#endif
 
 static void (*NSConcreteTask_launch)(NSTask *, SEL);
 
@@ -447,9 +507,7 @@ void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParamet
 
 void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
 {
-#if defined(__i386__)
     initializeShim();
-#endif
 
     initializeCocoaOverrides();
 
@@ -466,6 +524,9 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
         return;
 
     m_pluginBundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
+
+    if (m_pluginBundleIdentifier == "com.adobe.acrobat.pdfviewerNPAPI")
+        oldPluginProcessNameShouldEqualNewPluginProcessNameForAdobeReader = true;
 
 #if defined(__i386__)
     if (m_pluginBundleIdentifier == "com.microsoft.SilverlightPlugin") {

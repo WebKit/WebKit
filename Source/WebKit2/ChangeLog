@@ -1,3 +1,28 @@
+2016-07-07  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r196321): Adobe Reader DC + Safari : Zoom level pulldown is not displayed at the correct position
+        https://bugs.webkit.org/show_bug.cgi?id=159531
+        rdar://problem/26382579
+
+        Reviewed by Tim Horton.
+
+        There's code in the Adobe Acrobat framework that checks if the main bundle identifier is "com.apple.WebKit.PluginProcess"
+        and assumes that it's running inside the Adobe Reader app if it's something else. Since we're now using the XPC service
+        for all plug-ins, the bundle identifier is "com.apple.WebKit.Plugin.64", so the Acrobat framework assumes it's running in the app
+        and doesn't use any special tricks to show the popup menu.
+        
+        Work around this by shimming CFStringCompare, and looking for the exact conditions when this can happen and return kCFCompareEqualTo
+        when all conditions are true.
+        
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::isAdobeAcrobatAddress):
+        (WebKit::stringCompare):
+        (WebKit::initializeShim):
+        (WebKit::PluginProcess::platformInitializeProcess):
+        * PluginProcess/mac/PluginProcessShim.h:
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shimCFStringCompare):
+
 2016-07-08  Brady Eidson  <beidson@apple.com>
 
         Unreviewed: Fix case-sensitive filesystem build.

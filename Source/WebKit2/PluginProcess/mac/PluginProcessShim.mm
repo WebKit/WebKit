@@ -136,6 +136,7 @@ DYLD_INTERPOSE(shimShowWindow, ShowWindow);
 DYLD_INTERPOSE(shimHideWindow, HideWindow);
 DYLD_INTERPOSE(shimLSOpenCFURLRef, LSOpenCFURLRef);
 DYLD_INTERPOSE(shimMachVMMap, mach_vm_map);
+DYLD_INTERPOSE(shimCFStringCompare, CFStringCompare);
 
 #pragma clang diagnostic pop
 
@@ -329,6 +330,20 @@ DYLD_INTERPOSE(shim_shmat, shmat);
 DYLD_INTERPOSE(shim_shmdt, shmdt);
 DYLD_INTERPOSE(shim_shmget, shmget);
 DYLD_INTERPOSE(shim_shmctl, shmctl);
+
+static CFComparisonResult shimCFStringCompare(CFStringRef a, CFStringRef b, CFStringCompareFlags options)
+{
+    if (pluginProcessShimCallbacks.stringCompare) {
+        CFComparisonResult result;
+        if (pluginProcessShimCallbacks.stringCompare(a, b, options, __builtin_return_address(0), result))
+            return result;
+    }
+
+    return CFStringCompare(a, b, options);
+}
+
+DYLD_INTERPOSE(shimCFStringCompare, CFStringCompare);
+
 
 __attribute__((visibility("default")))
 void WebKitPluginProcessShimInitialize(const PluginProcessShimCallbacks& callbacks)

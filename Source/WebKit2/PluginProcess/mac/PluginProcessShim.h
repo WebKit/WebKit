@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessShim_h
-#define PluginProcessShim_h
+#pragma once
 
 @class NSWindow;
 
@@ -33,6 +32,7 @@
 namespace WebKit {
 
 struct PluginProcessShimCallbacks {
+#if defined(__i386__)
     bool (*shouldCallRealDebugger)();
     bool (*isWindowActive)(WindowRef, bool& result);
     UInt32 (*getCurrentEventButtonState)();
@@ -43,10 +43,10 @@ struct PluginProcessShimCallbacks {
     void (*setModal)(bool);
     bool (*openCFURLRef)(CFURLRef, int32_t& returnValue, CFURLRef* launchedURL);
     bool (*shouldMapMemoryExecutable)(int flags);
+#endif
+    bool (*stringCompare)(CFStringRef a, CFStringRef b, CFStringCompareFlags options, void* returnAddress, CFComparisonResult& result);
 };
 
 typedef void (*PluginProcessShimInitializeFunc)(const PluginProcessShimCallbacks&);
 
 }
-
-#endif // PluginProcessShim_h
