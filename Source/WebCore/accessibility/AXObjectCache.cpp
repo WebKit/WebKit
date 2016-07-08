@@ -41,6 +41,7 @@
 #include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
+#include "AccessibilityMathMLElement.h"
 #include "AccessibilityMediaControls.h"
 #include "AccessibilityMenuList.h"
 #include "AccessibilityMenuListOption.h"
@@ -73,10 +74,12 @@
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "InlineElementBox.h"
+#include "MathMLElement.h"
 #include "Page.h"
 #include "RenderAttachment.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
+#include "RenderMathMLOperator.h"
 #include "RenderMenuList.h"
 #include "RenderMeter.h"
 #include "RenderProgress.h"
@@ -443,6 +446,15 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
     
     if (is<SVGElement>(node))
         return AccessibilitySVGElement::create(renderer);
+
+#if ENABLE(MATHML)
+    // The mfenced element creates anonymous RenderMathMLOperators which should be treated
+    // as MathML elements and assigned the MathElementRole so that platform logic regarding
+    // inclusion and role mapping is not bypassed.
+    bool isAnonymousOperator = renderer->isAnonymous() && is<RenderMathMLOperator>(*renderer);
+    if (isAnonymousOperator || is<MathMLElement>(node))
+        return AccessibilityMathMLElement::create(renderer, isAnonymousOperator);
+#endif
 
     if (is<RenderBoxModelObject>(*renderer)) {
         RenderBoxModelObject& cssBox = downcast<RenderBoxModelObject>(*renderer);

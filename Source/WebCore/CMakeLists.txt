@@ -1053,6 +1053,7 @@ set(WebCore_SOURCES
     accessibility/AccessibilityList.cpp
     accessibility/AccessibilityListBox.cpp
     accessibility/AccessibilityListBoxOption.cpp
+    accessibility/AccessibilityMathMLElement.cpp
     accessibility/AccessibilityMediaControls.cpp
     accessibility/AccessibilityMenuList.cpp
     accessibility/AccessibilityMenuListOption.cpp

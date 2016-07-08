@@ -35,6 +35,7 @@
 #include "AccessibilityList.cpp"
 #include "AccessibilityListBox.cpp"
 #include "AccessibilityListBoxOption.cpp"
+#include "AccessibilityMathMLElement.cpp"
 #include "AccessibilityMediaControls.cpp"
 #include "AccessibilityMenuList.cpp"
 #include "AccessibilityMenuListOption.cpp"
