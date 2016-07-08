@@ -30,6 +30,7 @@
 
 #import <Foundation/NSURLSession.h>
 #import <wtf/HashSet.h>
+#import <wtf/Lock.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -63,6 +64,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     RetainPtr<NSOperationQueue> _queue;
     NSString *_sessionDescription;
     HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks;
+    Lock _dataTasksLock;
     BOOL _invalidated;
     BOOL _hasSingleSecurityOrigin;
     NSUInteger _nextTaskIdentifier;
