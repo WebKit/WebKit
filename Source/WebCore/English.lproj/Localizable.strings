@@ -1117,3 +1117,5 @@
 /* An ARIA accessibility group that acts as an dialog. */
 "web dialog" = "web dialog";
 
+/* WebKitErrorFrameLoadBlockedByContentFilter description */
+"The URL was blocked by a content filter" = "The URL was blocked by a content filter";

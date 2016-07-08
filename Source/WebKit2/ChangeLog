@@ -1,3 +1,27 @@
+2016-07-08  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Load blocked pages more like other error pages are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=159485
+        <rdar://problem/26014076>
+
+        Reviewed by Brady Eidson.
+
+        * Shared/API/c/WKErrorRef.h: Defined kWKErrorCodeFrameLoadBlockedByContentFilter.
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::platformPathsWithAssumedReadAccess): Added the resource directories
+        of WebCore.framework and WebKit.framework as paths with assumed read access.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::hasAssumedReadAccessToURL): Checked platformPathsWithAssumedReadAccess()
+        as well as m_localPathsWithAssumedReadAccess.
+        (WebKit::WebProcessProxy::platformPathsWithAssumedReadAccess): Added a non-Cocoa implementation.
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebCoreSupport/WebErrors.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::blockedByContentFilterError): Called WebKit::blockedByContentFilterError().
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (WebKit::blockedByContentFilterError): Returned a ResourceError for kWKErrorCodeFrameLoadBlockedByContentFilter.
+
 2016-07-08  Anders Carlsson  <andersca@apple.com>
 
         Fix 32-bit build.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessProxy_h
-#define WebProcessProxy_h
+#pragma once
 
 #include "APISession.h"
 #include "ChildProcessProxy.h"
@@ -191,6 +190,8 @@ private:
     void releaseIconForPageURL(const String& pageURL);
     void releaseRemainingIconsForPageURLs();
 
+    static const HashSet<String>& platformPathsWithAssumedReadAccess();
+
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
@@ -258,5 +259,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebProcessProxy_h

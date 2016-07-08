@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@ enum {
     kWKErrorCodeFrameLoadInterruptedByPolicyChange =             102,
     kWKErrorCodeCannotUseRestrictedPort =                        103,
     kWKErrorCodeFrameLoadBlockedByContentBlocker =               104,
+    kWKErrorCodeFrameLoadBlockedByContentFilter =                105,
     kWKErrorCodeCannotFindPlugIn =                               200,
     kWKErrorCodeCannotLoadPlugIn =                               201,
     kWKErrorCodeJavaUnavailable =                                202,
