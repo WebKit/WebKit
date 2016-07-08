@@ -1,3 +1,14 @@
+2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] String.prototype[Symbol.iterator] needs a name
+        https://bugs.webkit.org/show_bug.cgi?id=159541
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/script-tests/string-iterator.js: Added.
+        * js/string-iterator-expected.txt: Added.
+        * js/string-iterator.html: Added.
+
 2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unexpected "Out of memory" error for "x".repeat(-1)

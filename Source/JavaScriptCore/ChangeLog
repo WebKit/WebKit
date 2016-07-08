@@ -1,3 +1,16 @@
+2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] String.prototype[Symbol.iterator] needs a name
+        https://bugs.webkit.org/show_bug.cgi?id=159541
+
+        Reviewed by Yusuke Suzuki.
+
+        A man needs a name.
+        Spec: https://tc39.github.io/ecma262/#sec-string.prototype-@@iterator
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2016-07-07  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(184445): Need to insert a StoreBarrier when we don't know child's epoch
