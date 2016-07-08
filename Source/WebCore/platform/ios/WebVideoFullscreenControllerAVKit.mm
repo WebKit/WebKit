@@ -661,8 +661,8 @@ void WebVideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& vide
         WebThreadRun([protectedThis, this, viewRef, mode] {
             m_model = WebVideoFullscreenModelVideoElement::create(WebPlaybackSessionModelMediaElement::create().get());
             m_model->setWebVideoFullscreenInterface(this);
-            m_model->setVideoElement(m_videoElement.get());
             m_model->playbackSessionModel().setMediaElement(m_videoElement.get());
+            m_model->setVideoElement(m_videoElement.get());
 
             IntRect videoElementClientRect = elementRectInWindow(m_videoElement.get());
             FloatRect videoLayerFrame = FloatRect(FloatPoint(), videoElementClientRect.size());
