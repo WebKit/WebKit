@@ -1,3 +1,15 @@
+2016-07-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Define DYLD_MACOSX_VERSION_10_12
+        https://bugs.webkit.org/show_bug.cgi?id=159525
+        <rdar://problem/26250296>
+
+        Reviewed by Brent Fulgham.
+
+        * WebView/WebView.mm:
+        (shouldConvertInvalidURLsToBlank):
+        Replace 0x000A0C00 with DYLD_MACOSX_VERSION_10_12.
+
 2016-07-07  Beth Dakin  <bdakin@apple.com>
 
         API Test DoNotLeakWebView.ViewThatLoadsEditableArea times out on macOS Sierra

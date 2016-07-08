@@ -891,7 +891,7 @@ static bool shouldConvertInvalidURLsToBlank()
 #if PLATFORM(IOS)
     static bool shouldConvertInvalidURLsToBlank = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_10_0;
 #elif PLATFORM(MAC)
-    static bool shouldConvertInvalidURLsToBlank = dyld_get_program_sdk_version() >= 0x000A0C00;
+    static bool shouldConvertInvalidURLsToBlank = dyld_get_program_sdk_version() >= DYLD_MACOSX_VERSION_10_12;
 #else
     static bool shouldConvertInvalidURLsToBlank = true;
 #endif
