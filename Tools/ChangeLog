@@ -1,3 +1,15 @@
+2016-07-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The test http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade.https.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=159510
+
+        Reviewed by Brent Fulgham.
+
+        Allow any https certificate when running tests.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+
 2016-07-07  Beth Dakin  <bdakin@apple.com>
 
         API Test DoNotLeakWebView.ViewThatLoadsEditableArea times out on macOS Sierra

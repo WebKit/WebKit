@@ -173,7 +173,9 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsAnyRoot, kCFBooleanTrue);
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsExpiredRoots, kCFBooleanTrue);
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsExpiredCertificates, kCFBooleanTrue);
+#if !PLATFORM(WIN) // Remove platform #ifdef when <rdar://problem/26768077> is fixed.
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
+#endif
     }
 
     auto clientCert = clientCertificates().find(firstRequest().url().host());
