@@ -235,14 +235,15 @@ public:
     bool isCSSGridLayoutEnabled() const;
     RefPtr<CSSValue> parseGridPosition();
     bool parseGridItemPositionShorthand(CSSPropertyID, bool important);
-    RefPtr<CSSValue> parseGridTemplateColumns();
+    enum TrackListType { AllowRepeat, DisallowRepeat };
+    RefPtr<CSSValue> parseGridTemplateColumns(TrackListType = AllowRepeat);
     bool parseGridTemplateRowsAndAreasAndColumns(bool important);
     bool parseGridTemplateShorthand(bool important);
     bool parseGridShorthand(bool important);
     bool parseGridAreaShorthand(bool important);
     bool parseGridGapShorthand(bool important);
     bool parseSingleGridAreaLonghand(RefPtr<CSSValue>&);
-    RefPtr<CSSValue> parseGridTrackList();
+    RefPtr<CSSValue> parseGridTrackList(TrackListType = AllowRepeat);
     bool parseGridTrackRepeatFunction(CSSValueList&, bool& isAutoRepeat, bool& allTracksAreFixedSized);
     RefPtr<CSSValue> parseGridTrackSize(CSSParserValueList& inputList);
     RefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue&);

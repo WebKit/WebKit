@@ -5631,13 +5631,13 @@ bool CSSParser::parseGridGapShorthand(bool important)
     return true;
 }
 
-RefPtr<CSSValue> CSSParser::parseGridTemplateColumns()
+RefPtr<CSSValue> CSSParser::parseGridTemplateColumns(TrackListType trackListType)
 {
     ASSERT(isCSSGridLayoutEnabled());
 
     if (!(m_valueList->current() && isForwardSlashOperator(*m_valueList->current()) && m_valueList->next()))
         return nullptr;
-    if (auto columnsValue = parseGridTrackList()) {
+    if (auto columnsValue = parseGridTrackList(trackListType)) {
         if (m_valueList->current())
             return nullptr;
         return columnsValue;
@@ -5690,11 +5690,11 @@ bool CSSParser::parseGridTemplateRowsAndAreasAndColumns(bool important)
             trailingIdentWasAdded = parseGridLineNames(*m_valueList, templateRows);
     }
 
-    // [<track-list> /]?
+    // [/ <explicit-track-list> ]?
     RefPtr<CSSValue> templateColumns;
     if (m_valueList->current()) {
         ASSERT(isForwardSlashOperator(*m_valueList->current()));
-        templateColumns = parseGridTemplateColumns();
+        templateColumns = parseGridTemplateColumns(DisallowRepeat);
         if (!templateColumns)
             return false;
         // The template-columns <track-list> can't be 'none'.
@@ -5930,7 +5930,7 @@ static bool isGridTrackFixedSized(const CSSValue& value)
     return isGridTrackFixedSized(min) || isGridTrackFixedSized(max);
 }
 
-RefPtr<CSSValue> CSSParser::parseGridTrackList()
+RefPtr<CSSValue> CSSParser::parseGridTrackList(TrackListType trackListType)
 {
     ASSERT(isCSSGridLayoutEnabled());
 
@@ -5953,6 +5953,8 @@ RefPtr<CSSValue> CSSParser::parseGridTrackList()
         if (isForwardSlashOperator(*currentValue))
             break;
         if (currentValue->unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(currentValue->function->name, "repeat(")) {
+            if (trackListType == DisallowRepeat)
+                return nullptr;
             bool isAutoRepeat;
             if (!parseGridTrackRepeatFunction(values, isAutoRepeat, allTracksAreFixedSized))
                 return nullptr;
