@@ -27,7 +27,7 @@
 #include "LocalStorageDatabaseTracker.h"
 
 #include <WebCore/FileSystem.h>
-#include <WebCore/SQLiteFilesystem.h>
+#include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/TextEncoding.h>
