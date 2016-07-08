@@ -1,5 +1,16 @@
 2016-07-07  Frederic Wang  <fwang@igalia.com>
 
+        Rebaseline some MathML tests on Windows after r202934
+
+        Unreviewed test gardening.
+
+        * platform/win/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/win/mathml/opentype/vertical-expected.txt:
+        * platform/win/mathml/presentation/mo-stretch-expected.txt:
+        * platform/win/mathml/presentation/roots-expected.txt:
+
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
         Rebaseline MathML pixels tests
         https://bugs.webkit.org/show_bug.cgi?id=159348
 

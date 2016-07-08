@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x282
   RenderBlock {HTML} at (0,0) size 800x282
     RenderBody {BODY} at (8,8) size 784x266
-      RenderMathMLMath {math} at (0,0) size 149x35 [padding: 0 1 0 1]
+      RenderMathMLMath {math} at (0,0) size 115x35 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 113x35
           RenderMathMLOperator {mo} at (0,4) size 8x27
             RenderBlock (anonymous) at (0,0) size 7x16
@@ -61,10 +61,10 @@ layer at (0,0) size 800x282
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,-1) size 7x16
                 text run at (0,-1) width 7: "\x{2225}"
-      RenderText {#text} at (148,8) size 5x18
-        text run at (148,8) width 5: " "
+      RenderText {#text} at (114,8) size 5x18
+        text run at (114,8) width 5: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderMathMLMath {math} at (0,34) size 149x143 [padding: 0 1 0 1]
+      RenderMathMLMath {math} at (0,34) size 142x143 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 140x143
           RenderMathMLOperator {mo} at (0,0) size 12x143
             RenderBlock (anonymous) at (0,0) size 7x16
@@ -123,9 +123,9 @@ layer at (0,0) size 800x282
               RenderText {#text} at (0,-1) size 7x16
                 text run at (0,-1) width 7: "\x{2225}"
           RenderMathMLSpace {mspace} at (139,0) size 0x76
-      RenderText {#text} at (148,95) size 5x18
-        text run at (148,95) width 5: " "
-      RenderMathMLMath {math} at (152,59) size 149x93 [padding: 0 1 0 1]
+      RenderText {#text} at (141,95) size 5x18
+        text run at (141,95) width 5: " "
+      RenderMathMLMath {math} at (145,59) size 141x93 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 139x93
           RenderMathMLOperator {mo} at (0,0) size 12x93
             RenderBlock (anonymous) at (0,0) size 7x16
@@ -184,9 +184,9 @@ layer at (0,0) size 800x282
               RenderText {#text} at (0,-1) size 7x16
                 text run at (0,-1) width 7: "\x{2225}"
           RenderMathMLSpace {mspace} at (138,0) size 0x51
-      RenderText {#text} at (300,95) size 5x18
-        text run at (300,95) width 5: " "
-      RenderMathMLMath {math} at (304,84) size 149x41 [padding: 0 1 0 1]
+      RenderText {#text} at (285,95) size 5x18
+        text run at (285,95) width 5: " "
+      RenderMathMLMath {math} at (289,84) size 121x41 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 119x41
           RenderMathMLOperator {mo} at (0,0) size 9x41
             RenderBlock (anonymous) at (0,0) size 7x16
@@ -245,10 +245,10 @@ layer at (0,0) size 800x282
               RenderText {#text} at (0,-1) size 7x16
                 text run at (0,-1) width 7: "\x{2225}"
           RenderMathMLSpace {mspace} at (118,5) size 0x21
-      RenderText {#text} at (452,95) size 5x18
-        text run at (452,95) width 5: " "
+      RenderText {#text} at (409,95) size 5x18
+        text run at (409,95) width 5: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderMathMLMath {math} at (0,176) size 161x91 [padding: 0 1 0 1]
+      RenderMathMLMath {math} at (0,176) size 151x91 [padding: 0 1 0 1]
         RenderMathMLRoot {msqrt} at (1,0) size 149x91
           RenderMathMLOperator {mo} at (12,5) size 12x70
             RenderBlock (anonymous) at (0,0) size 7x16
