@@ -49,6 +49,7 @@ public:
 
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    void updateStyle();
 
 protected:
     void paint(PaintInfo&, const LayoutPoint&) final;
@@ -59,7 +60,6 @@ private:
     RenderBox& getIndex() const;
     bool isRenderMathMLRoot() const final { return true; }
     const char* renderName() const final { return "RenderMathMLRoot"; }
-    void updateStyle();
 
     MathOperator m_radicalOperator;
     LayoutUnit m_verticalGap;

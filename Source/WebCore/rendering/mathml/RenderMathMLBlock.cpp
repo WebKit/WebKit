@@ -46,12 +46,14 @@ using namespace MathMLNames;
 
 RenderMathMLBlock::RenderMathMLBlock(Element& container, RenderStyle&& style)
     : RenderBlock(container, WTFMove(style), 0)
+    , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
 RenderMathMLBlock::RenderMathMLBlock(Document& document, RenderStyle&& style)
     : RenderBlock(document, WTFMove(style), 0)
+    , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.
 }

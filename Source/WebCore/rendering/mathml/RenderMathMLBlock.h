@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLStyle.h"
 #include "RenderBlock.h"
 #include "RenderTable.h"
 #include "StyleInheritedData.h"
@@ -44,6 +45,8 @@ public:
     RenderMathMLBlock(Element&, RenderStyle&&);
     RenderMathMLBlock(Document&, RenderStyle&&);
     virtual ~RenderMathMLBlock();
+
+    MathMLStyle* mathMLStyle() const { return const_cast<MathMLStyle*>(&m_mathMLStyle.get()); }
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
@@ -80,20 +83,27 @@ private:
     bool avoidsFloats() const final { return true; }
     bool canDropAnonymousBlockChild() const final { return false; }
     void layoutItems(bool relayoutChildren);
+
+    Ref<MathMLStyle> m_mathMLStyle;
 };
 
 class RenderMathMLTable final : public RenderTable {
 public:
     explicit RenderMathMLTable(Element& element, RenderStyle&& style)
         : RenderTable(element, WTFMove(style))
+        , m_mathMLStyle(MathMLStyle::create())
     {
     }
 
     Optional<int> firstLineBaseline() const override;
 
+    MathMLStyle* mathMLStyle() const { return const_cast<MathMLStyle*>(&m_mathMLStyle.get()); }
+
 private:
     bool isRenderMathMLTable() const override { return true; }
     const char* renderName() const override { return "RenderMathMLTable"; }
+
+    Ref<MathMLStyle> m_mathMLStyle;
 };
 
 // Parsing functions for MathML Length values

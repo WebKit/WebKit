@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Open Type MATH - large operators - displaystyle</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      @font-face {
+        font-family: stretchy;
+        src: url("stretchy.woff");
+      }
+      div.largeop_test * {
+        font-family: stretchy;
+        font-size: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="largeop_test">
+      <math class="update" display="block"><mo>&#x2A1B;</mo></math>
+      <math class="update" display="inline"><mo>&#x2A1B;</mo></math>
+      <math class="update" displaystyle="true"><mo>&#x2A1B;</mo></math>
+      <math class="update" displaystyle="false"><mo>&#x2A1B;</mo></math>
+      <math class="update"><mstyle class="update" displaystyle="true"><mo>&#x2A1B;</mo></mstyle></math>
+      <math class="update"><mstyle class="update" displaystyle="false"><mo>&#x2A1B;</mo></mstyle></math>
+      <math class="update" displaystyle="false"><mtable><mtr><mtd><mo>&#x2A1B;</mo></mtd></mtr></mtable></math>
+      <math class="update"><mtable class="update" displaystyle="false"><mtr><mtd><mo>&#x2A1B;</mo></mtd></mtr></mtable></math>
+      <math class="update" displaystyle="false"><mtable class="update" displaystyle="true"><mtr><mtd><mo>&#x2A1B;</mo></mtd></mtr></mtable></math>
+      <math class="update" displaystyle="false"><mfrac><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></mfrac></math>
+      <math class="update" displaystyle="false"><mroot><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></mroot></math>
+      <math class="update" displaystyle="false"><msub><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></msub></math>
+      <math class="update" displaystyle="false"><msup><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></msup></math>
+      <math class="update" displaystyle="false"><msubsup><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></msubsup></math>
+      <math class="update" displaystyle="false"><mmultiscripts><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo><mprescripts/><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></mmultiscripts></math>
+      <math class="update" displaystyle="false"><munder><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></munder></math>
+      <math class="update" displaystyle="false"><mover><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></mover></math>
+      <math class="update" displaystyle="false"><munderover><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo><mo>&#x2A1B;</mo></munderover></math>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function updatePageAfterRendering()
+        {
+            setTimeout(function()
+                {
+                    // Switch the value of display/displaystyle attributes.
+                    var mathmlElements = document.getElementsByClassName("update");
+                    for (var i = 0; i < mathmlElements.length; i++) {
+                        var e = mathmlElements[i];
+                        if (e.hasAttribute("displaystyle"))
+                          e.setAttribute("displaystyle", e.getAttribute("displaystyle") == "true" ? "false" : "true");
+                        if (e.hasAttribute("display"))
+                          e.setAttribute("display", e.getAttribute("display") == "block" ? "inline" : "block");
+                    }
+                    if (window.testRunner)
+                      testRunner.notifyDone();
+                }, 50);
+        }
+
+        addEventListener('load', updatePageAfterRendering, false);
+    </script>
+  </body>
+</html>

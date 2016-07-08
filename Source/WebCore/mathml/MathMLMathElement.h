@@ -36,8 +36,12 @@ class MathMLMathElement : public MathMLInlineContainerElement {
 public:
     static Ref<MathMLMathElement> create(const QualifiedName& tagName, Document&);
 
+protected:
+    void didAttachRenderers() final;
+
 private:
     MathMLMathElement(const QualifiedName& tagName, Document&);
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 };

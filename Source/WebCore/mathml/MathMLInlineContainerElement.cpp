@@ -83,6 +83,14 @@ RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(Ren
     return createRenderer<RenderMathMLBlock>(*this, WTFMove(style));
 }
 
+void MathMLInlineContainerElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+{
+    if (name == displaystyleAttr && (hasTagName(mstyleTag) || hasTagName(mtableTag)) && renderer())
+        MathMLStyle::resolveMathMLStyleTree(renderer());
+
+    MathMLElement::parseAttribute(name, value);
+}
+
 }
 
 #endif // ENABLE(MATHML)

@@ -61,6 +61,8 @@ private:
 
 }
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLUnderOver, isRenderMathMLUnderOver())
+
 #endif // ENABLE(MATHML)
 
 #endif // RenderMathMLUnderOver_h

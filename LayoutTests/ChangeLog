@@ -1,5 +1,28 @@
 2016-07-07  Frederic Wang  <fwang@igalia.com>
 
+        Implement an internal style property for displaystyle.
+        https://bugs.webkit.org/show_bug.cgi?id=133845
+
+        Reviewed by Brent Fulgham.
+
+        This is based on a patch by Alejandro G. Castro <alex@igalia.com>
+
+        Add two new tests to verify that the displaystyle property is correctly inherited
+        on various MathML elements.
+        large-operators-displaystyle verifies that large operators are only drawn bigger when
+        the displaystyle is true.
+        large-operators-displaystyle-dynamic verifies the same displaystyle is calculated when
+        the display and displaystyle attributes are changed dynamically.
+
+        * mathml/opentype/large-operators-displaystyle-dynamic-expected.html: Added.
+        * mathml/opentype/large-operators-displaystyle-dynamic.html: Added.
+        * mathml/opentype/large-operators-displaystyle-expected.txt: Added.
+        * imported/mathml-in-html5/fonts/math/largeop-displayoperatorminheight5000.woff: Added.
+        * imported/mathml-in-html5/mathml/relations/css-styling/displaystyle-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/css-styling/displaystyle-1-expected.txt: Added.
+
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
         Rebaseline some MathML tests on Windows after r202934
 
         Unreviewed test gardening.
