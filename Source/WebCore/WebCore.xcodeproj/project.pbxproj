@@ -5415,7 +5415,7 @@
 		B59DD6A911902A71007E9684 /* JSSQLStatementErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B59DD6A711902A71007E9684 /* JSSQLStatementErrorCallback.h */; };
 		B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59DD6A811902A71007E9684 /* JSSQLStatementErrorCallback.cpp */; };
 		B59ED23B18272679006D564C /* RenderAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = B59ED23A18272679006D564C /* RenderAncestorIterator.h */; };
-		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
+		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
 		B5B65874186FDE4C009C26E8 /* RenderPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = ADE16736181050C300463A2E /* RenderPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5B7A17017C10AA800E4AA0A /* ElementData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5B7A16F17C1080600E4AA0A /* ElementData.cpp */; };

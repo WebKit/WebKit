@@ -88,7 +88,7 @@ public:
     // Deletes a database file.
     //
     // fileName - The file name.
-    static bool deleteDatabaseFile(const String& fileName);
+    WEBCORE_EXPORT static bool deleteDatabaseFile(const String& fileName);
 
 #if PLATFORM(IOS)
     // Truncates a database file. Used when MobileSafariSettings deletes a database file,

@@ -1,3 +1,14 @@
+2016-07-08  Brady Eidson  <beidson@apple.com>
+
+        Clearing LocalStorage doesn't also delete -wal and -shm files.
+        <rdar://problem/27206772> and https://bugs.webkit.org/show_bug.cgi?id=159566
+
+        Reviewed by Brent Fulgham.
+        Also helpfully picked over by Andy "Never Forgets" Estes.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::removeDatabaseWithOriginIdentifier):
+
 2016-07-07  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Load blocked pages more like other error pages are loaded

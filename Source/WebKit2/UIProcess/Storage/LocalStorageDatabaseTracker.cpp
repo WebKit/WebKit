@@ -27,6 +27,7 @@
 #include "LocalStorageDatabaseTracker.h"
 
 #include <WebCore/FileSystem.h>
+#include <WebCore/SQLiteFilesystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/TextEncoding.h>
@@ -336,13 +337,13 @@ void LocalStorageDatabaseTracker::removeDatabaseWithOriginIdentifier(const Strin
         return;
     }
 
-    deleteFile(path);
+    SQLiteFileSystem::deleteDatabaseFile(path);
 
     m_origins.remove(originIdentifier);
     if (m_origins.isEmpty()) {
         // There are no origins left; delete the tracker database.
         m_database.close();
-        deleteFile(trackerDatabasePath());
+        SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath());
         deleteEmptyDirectory(m_localStorageDirectory);
     }
 
