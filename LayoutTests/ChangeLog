@@ -1,3 +1,37 @@
+2016-07-08  Frederic Wang  <fwang@igalia.com>
+
+        Add support for movablelimits.
+        https://bugs.webkit.org/show_bug.cgi?id=155542
+
+        Reviewed by Brent Fulgham.
+
+        We import some reftests from Mozilla and write more tests in order to verify the effect of
+        movablelimits. We also adjust one existing test due to change in how munderover handles
+        invalid markup.
+
+        * mathml/presentation/displaystyle-1.html: Added. Imported from Mozilla. This verifies the
+        inheritance of displaystyle via its effect on movablelimits.
+        * mathml/presentation/displaystyle-1-expected.html: Added.
+        * mathml/presentation/displaystyle-2.html: Added. Imported from Mozilla. Test the effect of
+        displaystyle on munder, mover and munderover with a movablelimits base.
+        * mathml/presentation/displaystyle-2-expected.html: Added.
+        * mathml/presentation/displaystyle-3.html: Added. Imported from Mozilla. Test dynamic change
+        of displaystyle via its effect on movablelimits.
+        * mathml/presentation/displaystyle-3-expected.html: Added.
+        * mathml/presentation/mo-movablelimits-default.html: Added. Test that the default
+        movablelimits value from the operator dictionary is correctly read.
+        * mathml/presentation/mo-movablelimits-default-expected.html: Added.
+        * mathml/presentation/mo-movablelimits-dynamic.html: Added. Imported from Mozilla.
+        Test dynamic change of movablelimits.
+        * mathml/presentation/mo-movablelimits-dynamic-expected.html: Added.
+        * mathml/presentation/mo-movablelimits.html: Added. Basic test to check the effect of
+        movablelimits on munder.
+        * mathml/presentation/mo-movablelimits-expected.html: Added.
+        * mathml/presentation/underover-scriptshifts.html: Added. This verifies that script shifts
+        do not have any effect on munderover/mover/munder elements when their limits are rendered
+        as postscripts.
+        * mathml/presentation/underover-scriptshifts-expected.html: Added.
+
 2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         padStart/padEnd with Infinity produces unexpected result

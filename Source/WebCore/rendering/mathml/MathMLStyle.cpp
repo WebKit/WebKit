@@ -83,6 +83,7 @@ RenderObject* MathMLStyle::getMathMLParentNode(RenderObject* renderer)
 void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplayStyle)
 {
     if (oldDisplayStyle != m_displayStyle) {
+        renderer->setPreferredLogicalWidthsDirty(true);
         if (is<RenderMathMLToken>(renderer))
             downcast<RenderMathMLToken>(renderer)->updateTokenContent();
         else if (is<RenderMathMLRoot>(renderer))

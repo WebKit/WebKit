@@ -29,34 +29,28 @@
 
 #if ENABLE(MATHML)
 
-#include "RenderMathMLBlock.h"
+#include "RenderMathMLScripts.h"
 
 namespace WebCore {
 
-class RenderMathMLUnderOver final : public RenderMathMLBlock {
+class RenderMathMLUnderOver final : public RenderMathMLScripts {
 public:
     RenderMathMLUnderOver(Element&, RenderStyle&&);
-
-    RenderMathMLOperator* unembellishedOperator() override;
-
-    Optional<int> firstLineBaseline() const override;
-
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
 
 private:
+    bool isRenderMathMLScripts() const final { return false; }
     bool isRenderMathMLUnderOver() const override { return true; }
     const char* renderName() const override { return "RenderMathMLUnderOver"; }
 
     void computeOperatorsHorizontalStretch();
     bool isValid() const;
+    bool shouldMoveLimits();
     RenderBox& base() const;
     RenderBox& under() const;
     RenderBox& over() const;
     LayoutUnit horizontalOffset(const RenderBox&) const;
-
-    enum UnderOverType { Under, Over, UnderOver };
-    UnderOverType m_scriptType;
 };
 
 }

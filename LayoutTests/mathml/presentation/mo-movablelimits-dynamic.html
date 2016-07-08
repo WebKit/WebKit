@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+   <head>
+     <title>mo@movablelimits</title>
+     <meta charset="utf-8"/>
+     <script type="text/javascript">
+       function doTest() {
+         document.getElementById('a').removeAttribute('movablelimits');
+         document.documentElement.removeAttribute("class");
+       }
+       window.addEventListener("load",doTest, false);
+     </script>
+    </head>
+    <body>
+    <math>
+      <munder>
+          <mo id="a" movablelimits="false">∑</mo>
+          <mi>x</mi>
+      </munder>
+    </math>
+    </body>
+</html>

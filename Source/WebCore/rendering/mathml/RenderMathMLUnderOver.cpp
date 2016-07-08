@@ -40,34 +40,8 @@ namespace WebCore {
 using namespace MathMLNames;
 
 RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element, RenderStyle&& style)
-    : RenderMathMLBlock(element, WTFMove(style))
+    : RenderMathMLScripts(element, WTFMove(style))
 {
-    // Determine what kind of under/over expression we have by element name
-    if (element.hasTagName(MathMLNames::munderTag))
-        m_scriptType = Under;
-    else if (element.hasTagName(MathMLNames::moverTag))
-        m_scriptType = Over;
-    else {
-        ASSERT(element.hasTagName(MathMLNames::munderoverTag));
-        m_scriptType = UnderOver;
-    }
-}
-
-RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()
-{
-    auto* base = firstChildBox();
-    if (!is<RenderMathMLBlock>(base))
-        return nullptr;
-    return downcast<RenderMathMLBlock>(*base).unembellishedOperator();
-}
-
-Optional<int> RenderMathMLUnderOver::firstLineBaseline() const
-{
-    auto* base = firstChildBox();
-    if (!base)
-        return Optional<int>();
-
-    return Optional<int>(static_cast<int>(lroundf(ascentForChild(*base) + base->logicalTop())));
 }
 
 void RenderMathMLUnderOver::computeOperatorsHorizontalStretch()
@@ -124,6 +98,13 @@ bool RenderMathMLUnderOver::isValid() const
     }
 }
 
+bool RenderMathMLUnderOver::shouldMoveLimits()
+{
+    if (auto* renderOperator = unembellishedOperator())
+        return renderOperator->shouldMoveLimits();
+    return false;
+}
+
 RenderBox& RenderMathMLUnderOver::base() const
 {
     ASSERT(isValid());
@@ -156,6 +137,11 @@ void RenderMathMLUnderOver::computePreferredLogicalWidths()
         return;
     }
 
+    if (shouldMoveLimits()) {
+        RenderMathMLScripts::computePreferredLogicalWidths();
+        return;
+    }
+
     LayoutUnit preferredWidth = base().maxPreferredLogicalWidth();
 
     if (m_scriptType == Under || m_scriptType == UnderOver)
@@ -174,7 +160,7 @@ LayoutUnit RenderMathMLUnderOver::horizontalOffset(const RenderBox& child) const
     return (logicalWidth() - child.logicalWidth()) / 2;
 }
 
-void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit)
+void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
 
@@ -185,6 +171,11 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit)
         setLogicalWidth(0);
         setLogicalHeight(0);
         clearNeedsLayout();
+        return;
+    }
+
+    if (shouldMoveLimits()) {
+        RenderMathMLScripts::layoutBlock(relayoutChildren, pageLogicalHeight);
         return;
     }
 

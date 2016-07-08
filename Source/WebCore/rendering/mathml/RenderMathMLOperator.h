@@ -50,6 +50,7 @@ public:
 
     bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const { return m_operatorFlags & flag; }
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp) && mathMLStyle()->displayStyle(); }
+    bool shouldMoveLimits() const { return hasOperatorFlag(MathMLOperatorDictionary::MovableLimits) && !mathMLStyle()->displayStyle(); }
     bool isVertical() const { return m_isVertical; }
     LayoutUnit italicCorrection() const { return m_mathOperator.italicCorrection(); }
 

@@ -34,26 +34,26 @@
 
 namespace WebCore {
 // Render a base with scripts.
-class RenderMathMLScripts final : public RenderMathMLBlock {
+class RenderMathMLScripts : public RenderMathMLBlock {
 public:
     RenderMathMLScripts(Element&, RenderStyle&&);
     RenderMathMLOperator* unembellishedOperator() final;
     Optional<int> firstLineBaseline() const final;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
+
+protected:
+    bool isRenderMathMLScripts() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLScripts"; }
+    void computePreferredLogicalWidths() override;
+
+    enum ScriptsType { Sub, Super, SubSup, Multiscripts, Under, Over, UnderOver };
+    ScriptsType m_scriptType;
 
 private:
-    bool isRenderMathMLScripts() const final { return true; }
-    const char* renderName() const final { return "RenderMathMLScripts"; }
-
     bool getBaseAndScripts(RenderBox*& base, RenderBox*& firstPostScript, RenderBox*& firstPreScript);
     LayoutUnit spaceAfterScript();
     LayoutUnit italicCorrection(RenderBox* base);
-    void computePreferredLogicalWidths() override;
     void getScriptMetricsAndLayoutIfNeeded(RenderBox* base, RenderBox* script, LayoutUnit& minSubScriptShift, LayoutUnit& minSupScriptShift, LayoutUnit& maxScriptDescent, LayoutUnit& maxScriptAscent);
-
-    enum ScriptsType { Sub, Super, SubSup, Multiscripts };
-
-    ScriptsType m_scriptType;
 };
 
 } // namespace WebCore
