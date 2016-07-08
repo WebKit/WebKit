@@ -185,8 +185,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
     setOperatorProperties();
     if (hasOperatorFlag(MathMLOperatorDictionary::Symmetric)) {
         // We make the operator stretch symmetrically above and below the axis.
-        // FIXME: We should read the axis from the MATH table (https://bugs.webkit.org/show_bug.cgi?id=122297). For now, we use the same value as in RenderMathMLFraction::firstLineBaseline().
-        LayoutUnit axis = style().fontMetrics().xHeight() / 2;
+        LayoutUnit axis = mathAxisHeight();
         LayoutUnit halfStretchSize = std::max(m_stretchHeightAboveBaseline - axis, m_stretchDepthBelowBaseline + axis);
         m_stretchHeightAboveBaseline = halfStretchSize + axis;
         m_stretchDepthBelowBaseline = halfStretchSize - axis;

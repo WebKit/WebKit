@@ -1,3 +1,18 @@
+2016-07-08  Frederic Wang  <fwang@igalia.com>
+
+        Use OpenType MATH constant AxisHeight.
+        https://bugs.webkit.org/show_bug.cgi?id=133567
+
+        Reviewed by Brent Fulgham.
+
+        Import tests from the MathML in HTML5 test suite to verify the AxisHeight parameter.
+
+        * imported/mathml-in-html5/fonts/math/axisheight5000-verticalarrow14000.woff: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-1.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/tables/table-axis-height.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-expected.txt: Added.
+
 2016-07-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Disallow repeat() in grid-template shorthand

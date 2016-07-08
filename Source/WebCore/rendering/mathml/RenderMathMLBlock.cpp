@@ -67,13 +67,21 @@ bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderSt
     return is<Element>(child.node());
 }
 
-LayoutUnit RenderMathMLBlock::mathAxisHeight() const
+static LayoutUnit axisHeight(const RenderStyle& style)
 {
-    const auto& primaryFont = style().fontCascade().primaryFont();
+    // If we have a MATH table we just return the AxisHeight constant.
+    const auto& primaryFont = style.fontCascade().primaryFont();
     if (auto* mathData = primaryFont.mathData())
         return mathData->getMathConstant(primaryFont, OpenTypeMathData::AxisHeight);
 
-    return style().fontMetrics().xHeight() / 2;
+    // Otherwise, the idea is to try and use the middle of operators as the math axis which we thus approximate by "half of the x-height".
+    // Note that Gecko has a slower but more accurate version that measures half of the height of U+2212 MINUS SIGN.
+    return style.fontMetrics().xHeight() / 2;
+}
+
+LayoutUnit RenderMathMLBlock::mathAxisHeight() const
+{
+    return axisHeight(style());
 }
 
 LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth) const
@@ -304,10 +312,9 @@ bool parseMathMLNamedSpace(const String& string, LayoutUnit& lengthValue, const 
 
 Optional<int> RenderMathMLTable::firstLineBaseline() const
 {
-    // In legal MathML, we'll have a MathML parent. That RenderFlexibleBox parent will use our firstLineBaseline() for baseline alignment, per
-    // http://dev.w3.org/csswg/css3-flexbox/#flex-baselines. We want to vertically center an <mtable>, such as a matrix. Essentially the whole <mtable> element fits on a
-    // single line, whose baseline gives this centering. This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
-    return (logicalHeight() + style().fontMetrics().xHeight()) / 2;
+    // By default the vertical center of <mtable> is aligned on the math axis.
+    // This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
+    return Optional<int>(logicalHeight() / 2 + axisHeight(style()));
 }
 
 void RenderMathMLBlock::layoutItems(bool relayoutChildren)
