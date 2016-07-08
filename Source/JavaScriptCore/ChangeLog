@@ -1,3 +1,17 @@
+2016-07-08  Keith Miller  <keith_miller@apple.com>
+
+        speculateTypedArrayIsNotNeutered has an inverted speculation
+        https://bugs.webkit.org/show_bug.cgi?id=159571
+
+        Reviewed by Mark Lam.
+
+        For some confusing reason FTLLowerDFGToB3 takes the condition the
+        speculation wants to be false. This issue caused
+        typedarray-access-monomorphic-neutered.js to fail on the bots.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTypedArrayIsNotNeutered):
+
 2016-07-08  Mark Lam  <mark.lam@apple.com>
 
         Rename jsCPUStackLimit to osStackLimitWithReserve and jsEmulatedStackLimit to cloopStackLimit.

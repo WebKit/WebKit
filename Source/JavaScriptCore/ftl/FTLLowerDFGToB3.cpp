@@ -10604,7 +10604,7 @@ private:
 
         LBasicBlock lastNext = m_out.appendTo(isWasteful, continuation);
         LValue vector = m_out.loadPtr(base, m_heaps.JSArrayBufferView_vector);
-        speculate(Uncountable, jsValueValue(vector), m_node, m_out.notZero64(vector));
+        speculate(Uncountable, jsValueValue(vector), m_node, m_out.isZero64(vector));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
