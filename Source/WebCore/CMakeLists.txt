@@ -1238,8 +1238,6 @@ set(WebCore_SOURCES
     bindings/js/ScriptGlobalObject.cpp
     bindings/js/ScriptState.cpp
     bindings/js/SerializedScriptValue.cpp
-    bindings/js/WebCoreJSBuiltinInternals.cpp
-    bindings/js/WebCoreJSBuiltins.cpp
     bindings/js/WebCoreTypedArrayController.cpp
     bindings/js/WorkerScriptController.cpp
 
@@ -3736,25 +3734,31 @@ set(BUILTINS_GENERATOR_SCRIPTS
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_combined_implementation.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_header.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_implementation.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_wrapper_header.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_wrapper_implementation.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_internals_wrapper_header.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_internals_wrapper_implementation.py
     ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
     ${JavaScriptCore_SCRIPTS_DIR}/lazywriter.py
 )
 
 foreach (_builtinSource ${WebCore_BUILTINS_SOURCES})
     get_filename_component(_objectName ${_builtinSource} NAME_WE)
-    add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.cpp
-               ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h
-        MAIN_DEPENDENCY ${_builtinSource}
-        DEPENDS ${BUILTINS_GENERATOR_SCRIPTS}
-        COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework WebCore --output-directory ${DERIVED_SOURCES_WEBCORE_DIR} ${_builtinSource}
-        VERBATIM)
-    list(APPEND WebCore_DERIVED_SOURCES
-        ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h
-    )
-    ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/bindings/js/WebCoreJSBuiltins.cpp ${_objectName}Builtins.cpp)
+    list(APPEND WebCore_GENERATED_BUILTINS ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h)
+    list(APPEND WebCore_GENERATED_BUILTINS ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.cpp)
 endforeach ()
+list(APPEND WebCore_GENERATED_BUILTINS ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.h)
+list(APPEND WebCore_GENERATED_BUILTINS ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.h)
+list(APPEND WebCore_GENERATED_BUILTINS ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.cpp)
 
+add_custom_command(
+    OUTPUT ${WebCore_GENERATED_BUILTINS}
+    MAIN_DEPENDENCY ${WebCore_BUILTINS_SOURCES}
+    DEPENDS ${BUILTINS_GENERATOR_SCRIPTS}
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --wrappers --framework WebCore --output-directory ${DERIVED_SOURCES_WEBCORE_DIR} ${WebCore_BUILTINS_SOURCES}
+    VERBATIM)
+
+list(APPEND WebCore_DERIVED_SOURCES ${WebCore_GENERATED_BUILTINS})
 
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 

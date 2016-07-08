@@ -1206,6 +1206,10 @@ set(BUILTINS_GENERATOR_SCRIPTS
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_combined_implementation.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_header.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_implementation.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_wrapper_header.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_wrapper_implementation.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_internals_wrapper_header.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_internals_wrapper_implementation.py
     ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
     ${JavaScriptCore_SCRIPTS_DIR}/lazywriter.py
 )

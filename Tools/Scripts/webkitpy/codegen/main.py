@@ -26,7 +26,6 @@
 import os
 import os.path
 import shutil
-import sys
 import tempfile
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.system.executive import ScriptError
@@ -38,7 +37,7 @@ class BuiltinsGeneratorTests:
         self.reset_results = reset_results
         self.executive = executive
 
-    def generate_from_js_builtins(self, builtins_file, output_directory, framework_name="", combined_outputs=False):
+    def generate_from_js_builtins(self, builtins_file, output_directory, framework_name="", combined_outputs=False, generate_wrapper=False):
         cmd = ['python',
                'JavaScriptCore/Scripts/generate-js-builtins.py',
                '--output-directory', output_directory,
@@ -48,6 +47,9 @@ class BuiltinsGeneratorTests:
 
         if combined_outputs:
             cmd.append('--combined')
+
+        if generate_wrapper:
+            cmd.append('--with-wrapper-files')
 
         cmd.append(builtins_file)
 
@@ -110,7 +112,8 @@ class BuiltinsGeneratorTests:
                 continue
 
             combined_outputs = output_mode == "Combined"
-            if self.generate_from_js_builtins(os.path.join(input_directory, input_file), work_directory, framework_name=framework_name, combined_outputs=combined_outputs):
+            generate_wrapper = framework_name == "WebCore"
+            if self.generate_from_js_builtins(os.path.join(input_directory, input_file), work_directory, framework_name=framework_name, combined_outputs=combined_outputs, generate_wrapper=generate_wrapper):
                 passed = False
 
             if self.reset_results:

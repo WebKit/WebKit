@@ -92,7 +92,7 @@ namespace WebCore {
 
     private:
         void addBuiltinGlobals(JSC::VM&);
-        friend void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject&, JSC::VM&);
+        friend void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject&);
 
         JSBuiltinInternalFunctions m_builtinInternalFunctions;
     };

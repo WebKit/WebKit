@@ -1,3 +1,30 @@
+2016-07-08  Youenn Fablet  <youenn@apple.com>
+
+        Generate WebCore builtin wrapper files
+        https://bugs.webkit.org/show_bug.cgi?id=159461
+
+        Reviewed by Brian Burg.
+
+        Updating builtin generator to generate wrapper files used in WebCore (See WebCore change log).
+        Rebasing builtins generator test results according generator changes by activating wrapper file generation for
+        WebCore builtins tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/builtins/builtins.py: Adding new generators.
+        * Scripts/builtins/builtins_generate_internals_wrapper_header.py: Added to generate WebCoreJSBuiltinInternals.h.
+        * Scripts/builtins/builtins_generate_internals_wrapper_implementation.py: Added to generate WebCoreJSBuiltinInternals.cpp.
+        * Scripts/builtins/builtins_generate_wrapper_header.py: Added to generate WebCoreJSBuiltins.h.
+        * Scripts/builtins/builtins_generate_wrapper_implementation.py: Added to generate WebCoreJSBuiltins.cpp.
+        * Scripts/generate-js-builtins.py: Adding new option to activate generation of the wrapper files.
+        (generate_bindings_for_builtins_files):
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+
 2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         padStart/padEnd with Infinity produces unexpected result

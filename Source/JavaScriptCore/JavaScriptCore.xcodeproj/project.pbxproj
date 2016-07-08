@@ -1474,6 +1474,10 @@
 		99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A91BD5993100F4575C /* builtins_generate_separate_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00AA1BD5993100F4575C /* builtins_generate_separate_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A11BD5992700F4575C /* builtins_generate_separate_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Resources */ = {isa = PBXBuildFile; fileRef = 412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		412952781D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_implementation.py in Resources */ = {isa = PBXBuildFile; fileRef = 412952741D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		412952791D2CF6BC00E78B89 /* builtins_generate_wrapper_header.py in Resources */ = {isa = PBXBuildFile; fileRef = 412952751D2CF6AC00E78B89 /* builtins_generate_wrapper_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		4129527A1D2CF6BC00E78B89 /* builtins_generate_wrapper_implementation.py in Resources */ = {isa = PBXBuildFile; fileRef = 412952761D2CF6AC00E78B89 /* builtins_generate_wrapper_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00AF1BD5994E00F4575C /* generate-js-builtins.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00B01BD5994E00F4575C /* lazywriter.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AD1BD5993E00F4575C /* lazywriter.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AE1BD5993E00F4575C /* UpdateContents.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3287,6 +3291,10 @@
 		2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureIDTable.cpp; sourceTree = "<group>"; };
 		2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDTable.h; sourceTree = "<group>"; };
 		371D842C17C98B6E00ECF994 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_internals_wrapper_header.py; sourceTree = "<group>"; };
+		412952741D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_internals_wrapper_implementation.py; sourceTree = "<group>"; };
+		412952751D2CF6AC00E78B89 /* builtins_generate_wrapper_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_wrapper_header.py; sourceTree = "<group>"; };
+		412952761D2CF6AC00E78B89 /* builtins_generate_wrapper_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_wrapper_implementation.py; sourceTree = "<group>"; };
 		41DEA1311B9F3154006D65DD /* BuiltinUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinUtils.h; sourceTree = "<group>"; };
 		4319DA011C1BE3C1001D260B /* B3LowerMacrosAfterOptimizations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3LowerMacrosAfterOptimizations.cpp; path = b3/B3LowerMacrosAfterOptimizations.cpp; sourceTree = "<group>"; };
 		4319DA021C1BE3C1001D260B /* B3LowerMacrosAfterOptimizations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3LowerMacrosAfterOptimizations.h; path = b3/B3LowerMacrosAfterOptimizations.h; sourceTree = "<group>"; };
@@ -6710,6 +6718,10 @@
 				99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */,
 				99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */,
 				99DA00A11BD5992700F4575C /* builtins_generate_separate_implementation.py */,
+				412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */,
+				412952741D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_implementation.py */,
+				412952751D2CF6AC00E78B89 /* builtins_generate_wrapper_header.py */,
+				412952761D2CF6AC00E78B89 /* builtins_generate_wrapper_implementation.py */,
 				99DA009A1BD5992700F4575C /* builtins_generator.py */,
 				99DA009B1BD5992700F4575C /* builtins_model.py */,
 				99DA009C1BD5992700F4575C /* builtins_templates.py */,
@@ -7124,6 +7136,10 @@
 				FEA0C4031CDD7D1D00481991 /* FunctionWhitelist.h in Headers */,
 				99DA00AA1BD5993100F4575C /* builtins_generate_separate_implementation.py in Headers */,
 				99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */,
+				412952781D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_implementation.py in Headers */,
+				412952791D2CF6BC00E78B89 /* builtins_generate_wrapper_header.py in Headers */,
+				4129527A1D2CF6BC00E78B89 /* builtins_generate_wrapper_implementation.py in Headers */,
+				412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */,
 				FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */,
 				99DA00A41BD5993100F4575C /* builtins_model.py in Headers */,
 				99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */,

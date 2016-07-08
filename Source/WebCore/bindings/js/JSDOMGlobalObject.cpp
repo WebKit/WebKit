@@ -63,7 +63,7 @@ void JSDOMGlobalObject::destroy(JSCell* cell)
 
 void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 {
-    m_builtinInternalFunctions.initialize(*this, vm);
+    m_builtinInternalFunctions.initialize(*this);
 
 #if ENABLE(STREAMS_API)
     JSObject* privateReadableStreamControllerConstructor = createReadableStreamControllerPrivateConstructor(vm, *this);

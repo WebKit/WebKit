@@ -1,3 +1,14 @@
+2016-07-08  Youenn Fablet  <youenn@apple.com>
+
+        Generate WebCore builtin wrapper files
+        https://bugs.webkit.org/show_bug.cgi?id=159461
+
+        Reviewed by Brian Burg.
+
+        * Scripts/webkitpy/codegen/main.py:
+        (BuiltinsGeneratorTests.generate_from_js_builtins): Adding generate_wrapper option.
+        (BuiltinsGeneratorTests.run_tests): Using this option in WebCore test cases.
+
 2016-07-08  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Fix build when media-stream is enabled.

@@ -143,6 +143,16 @@ class BuiltinsGenerator:
     # Helper methods.
 
     @staticmethod
+    def wrap_with_guard(guard, text):
+        if not guard:
+            return text
+        return '\n'.join([
+            '#if %s' % guard,
+            text,
+            '#endif // %s' % guard,
+        ])
+
+    @staticmethod
     def mangledNameForObject(object):
         if not isinstance(object, BuiltinObject):
             raise Exception("Invalid argument passed to mangledNameForObject()")
