@@ -984,3 +984,10 @@ media/video-contained-in-fullscreen-element-going-into-pip.html [ WontFix ]
 webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Skip ]
 
 [ Debug ] js/regress/misc-bugs-847389-jpeg2000.html [ Skip ]
+
+# These tests time out due to https://bugs.webkit.org/show_bug.cgi?id=158884
+imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1.html [ Timeout ]
+imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-1.html [ Timeout ]
+imported/mathml-in-html5/mathml/presentation-markup/radicals/root-parameters-1.html [ Timeout ]
+imported/mathml-in-html5/mathml/presentation-markup/tables/table-axis-height.html [ Timeout ]
+imported/mathml-in-html5/mathml/relations/css-styling/displaystyle-1.html [ Timeout ]
