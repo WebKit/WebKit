@@ -66,4 +66,9 @@ EventInterface CompositionEvent::eventInterface() const
     return CompositionEventInterfaceType;
 }
 
+bool CompositionEvent::isCompositionEvent() const
+{
+    return true;
+}
+
 } // namespace WebCore

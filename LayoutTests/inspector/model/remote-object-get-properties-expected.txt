@@ -48,8 +48,7 @@ DISPLAYABLE PROPERTIES:
     eventPhase
     bubbles
     cancelable
-    scoped
-    relatedTargetScoped
+    composed
     timeStamp
     defaultPrevented
     srcElement
@@ -67,8 +66,7 @@ ALL PROPERTIES:
     eventPhase
     bubbles
     cancelable
-    scoped
-    relatedTargetScoped
+    composed
     timeStamp
     defaultPrevented
     srcElement

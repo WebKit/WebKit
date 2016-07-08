@@ -58,8 +58,7 @@
     readonly attribute unsigned short   eventPhase;
     [InitializedByEventConstructor] readonly attribute boolean bubbles;
     [InitializedByEventConstructor] readonly attribute boolean cancelable;
-    [InitializedByEventConstructor, EnabledAtRuntime=ShadowDOM] readonly attribute boolean scoped;
-    [InitializedByEventConstructor, EnabledAtRuntime=ShadowDOM] readonly attribute boolean relatedTargetScoped;
+    [InitializedByEventConstructor, EnabledAtRuntime=ShadowDOM] readonly attribute boolean composed;
     readonly attribute DOMTimeStamp     timeStamp;
 
     [EnabledAtRuntime=ShadowDOM] sequence<Node> composedPath();

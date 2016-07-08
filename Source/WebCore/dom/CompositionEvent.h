@@ -65,6 +65,8 @@ private:
     CompositionEvent(const AtomicString& type, AbstractView*, const String&);
     CompositionEvent(const AtomicString& type, const CompositionEventInit&);
 
+    bool isCompositionEvent() const override;
+
     String m_data;
 };
 

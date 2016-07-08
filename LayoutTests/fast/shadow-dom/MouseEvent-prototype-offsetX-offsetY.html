@@ -41,7 +41,7 @@ test(function () {
     var container = host.querySelector('#container');
 
     var eventLogs = attachLoggers([target, container, host, document.body]);
-    var mouseEvent = new MouseEvent('mousedown', {clientX: 51, clientY: 37, scoped: false, bubbles: true});
+    var mouseEvent = new MouseEvent('mousedown', {clientX: 51, clientY: 37, composed: true, bubbles: true});
     target.dispatchEvent(mouseEvent);
 
     assert_equals(host.offsetLeft, 20, 'The host must be at (20px, 10px)');
@@ -78,7 +78,7 @@ test(function () {
     var container = shadowRoot.querySelector('#container');
 
     var eventLogs = attachLoggers([target, container, shadowRoot, host, document.body]);
-    var mouseEvent = new MouseEvent('mousedown', {clientX: 51, clientY: 37, scoped: false, bubbles: true});
+    var mouseEvent = new MouseEvent('mousedown', {clientX: 51, clientY: 37, composed: true, bubbles: true});
     target.dispatchEvent(mouseEvent);
 
     assert_equals(host.offsetLeft, 20, 'The host must be at (20px, 10px)');

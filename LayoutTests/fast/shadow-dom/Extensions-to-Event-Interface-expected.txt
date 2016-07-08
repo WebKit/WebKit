@@ -2,20 +2,15 @@
 PASS composedPath() must exist on Event 
 PASS composedPath() must return an empty array when the event has not been dispatched 
 PASS composedPath() must return an empty array when the event is no longer dispatched 
-PASS scoped must exist on Event 
-PASS scoped on EventInit must default to false 
-PASS scoped on EventInit must set the scoped flag 
-PASS relatedTargetScoped must exist on Event 
-PASS relatedTargetScoped on EventInit must default to false 
-PASS relatedTargetScoped on EventInit must set the scoped flag 
-PASS The event must propagate out of open mode shadow boundaries when the scoped flag is unset 
-PASS The event must propagate out of closed mode shadow boundaries when the scoped flag is unset 
-PASS The event must not propagate out of open mode shadow boundaries when the scoped flag is set 
-PASS The event must not propagate out of closed mode shadow boundaries when the scoped flag is set 
-PASS The event must propagate out of open mode shadow boundaries when the scoped flag is unset on an event with relatedTarget 
-PASS The event must propagate out of closed mode shadow boundaries when the scoped flag is unset on an event with relatedTarget 
-PASS The event must not propagate out of open mode shadow boundaries when the scoped flag is set on an event with relatedTarget 
-PASS The event must not propagate out of closed mode shadow boundaries when the scoped flag is set on an event with relatedTarget 
+PASS composed must exist on Event 
+PASS composed on EventInit must default to false 
+PASS composed on EventInit must set the composed flag 
+PASS The event must propagate out of open mode shadow boundaries when the composed flag is set 
+PASS The event must propagate out of closed mode shadow boundaries when the composed flag is set 
+PASS The event must not propagate out of open mode shadow boundaries when the composed flag is unset 
+PASS The event must not propagate out of closed mode shadow boundaries when the composed flag is unset 
+PASS The event must not propagate out of open mode shadow boundaries when the composed flag is unset on an event with relatedTarget 
+PASS The event must not propagate out of closed mode shadow boundaries when the composed flag is unset on an event with relatedTarget 
 PASS The event must not propagate out of open mode shadow tree of the target but must propagate out of inner shadow trees when the scoped flag is set 
 PASS The event must not propagate out of closed mode shadow tree of the target but must propagate out of inner shadow trees when the scoped flag is set 
 PASS The event must propagate out of open mode shadow tree in which the relative target and the relative related target are the same 

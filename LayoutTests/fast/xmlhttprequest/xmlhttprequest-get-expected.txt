@@ -47,6 +47,7 @@ bubbles : 'false'
 cancelBubble : 'false'
 cancelable : 'false'
 clipboardData : 'undefined'
+composed : 'false'
 composedPath : 'function composedPath() {
     [native code]
 }'
@@ -63,9 +64,7 @@ position : '174'
 preventDefault : 'function preventDefault() {
     [native code]
 }'
-relatedTargetScoped : 'false'
 returnValue : 'true'
-scoped : 'true'
 srcElement : '[object XMLHttpRequest]'
 stopImmediatePropagation : 'function stopImmediatePropagation() {
     [native code]

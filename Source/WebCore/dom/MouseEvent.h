@@ -121,8 +121,6 @@ protected:
 
     MouseEvent();
 
-    bool relatedTargetScoped() const override;
-
 private:
     unsigned short m_button;
     bool m_buttonDown;

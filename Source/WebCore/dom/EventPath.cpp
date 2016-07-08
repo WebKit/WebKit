@@ -50,7 +50,7 @@ static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shad
 #endif
 
     bool targetIsInShadowRoot = targetNode && &targetNode->treeScope().rootNode() == &shadowRoot;
-    return !targetIsInShadowRoot || !event.scoped();
+    return !targetIsInShadowRoot || event.composed();
 }
 
 static Node* nodeOrHostIfPseudoElement(Node* node)
@@ -84,7 +84,6 @@ private:
 };
 
 EventPath::EventPath(Node& originalTarget, Event& event)
-    : m_event(event)
 {
     bool isMouseOrFocusEvent = event.isMouseEvent() || event.isFocusEvent();
 #if ENABLE(TOUCH_EVENTS)
@@ -141,7 +140,6 @@ void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
     RelatedNodeRetargeter retargeter(*relatedNode, *m_path[0]->node());
 
     bool originIsRelatedTarget = &origin == relatedNode;
-    bool relatedTargetScoped = m_event.relatedTargetScoped();
     Node& rootNodeInOriginTreeScope = origin.treeScope().rootNode();
     TreeScope* previousTreeScope = nullptr;
     size_t originalEventPathSize = m_path.size();
@@ -154,14 +152,14 @@ void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
             retargeter.moveToNewTreeScope(previousTreeScope, currentTreeScope);
 
         Node* currentRelatedNode = retargeter.currentNode(currentTarget);
-        if (UNLIKELY(relatedTargetScoped && !originIsRelatedTarget && context.target() == currentRelatedNode)) {
+        if (UNLIKELY(!originIsRelatedTarget && context.target() == currentRelatedNode)) {
             m_path.shrink(contextIndex);
             break;
         }
 
         context.setRelatedTarget(currentRelatedNode);
 
-        if (UNLIKELY(relatedTargetScoped && originIsRelatedTarget && context.node() == &rootNodeInOriginTreeScope)) {
+        if (UNLIKELY(originIsRelatedTarget && context.node() == &rootNodeInOriginTreeScope)) {
             m_path.shrink(contextIndex + 1);
             break;
         }

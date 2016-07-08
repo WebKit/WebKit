@@ -69,7 +69,6 @@ private:
     void retargetTouch(TouchEventContext::TouchListType, const Touch&);
 #endif
 
-    Event& m_event;
     Vector<std::unique_ptr<EventContext>, 32> m_path;
 };
 

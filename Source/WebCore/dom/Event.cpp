@@ -37,8 +37,8 @@ Event::Event()
 }
 
 Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
-    : m_isInitialized(true)
-    , m_type(eventType)
+    : m_type(eventType)
+    , m_isInitialized(true)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
     , m_isTrusted(true)
@@ -47,8 +47,8 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
 }
 
 Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, double timestamp)
-    : m_isInitialized(true)
-    , m_type(eventType)
+    : m_type(eventType)
+    , m_isInitialized(true)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
     , m_isTrusted(true)
@@ -57,12 +57,11 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
 }
 
 Event::Event(const AtomicString& eventType, const EventInit& initializer)
-    : m_isInitialized(true)
-    , m_type(eventType)
+    : m_type(eventType)
+    , m_isInitialized(true)
     , m_canBubble(initializer.bubbles)
     , m_cancelable(initializer.cancelable)
-    , m_scoped(initializer.scoped)
-    , m_relatedTargetScoped(initializer.relatedTargetScoped)
+    , m_composed(initializer.composed)
     , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }
@@ -87,25 +86,23 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_cancelable = cancelableArg;
 }
 
-bool Event::scoped() const
+bool Event::composed() const
 {
-    if (m_scoped)
+    if (m_composed)
         return true;
 
     // http://w3c.github.io/webcomponents/spec/shadow/#scoped-flag
     if (!isTrusted())
         return false;
 
-    return m_type == eventNames().abortEvent
-        || m_type == eventNames().changeEvent
-        || m_type == eventNames().errorEvent
-        || m_type == eventNames().loadEvent
-        || m_type == eventNames().resetEvent
-        || m_type == eventNames().resizeEvent
-        || m_type == eventNames().scrollEvent
-        || m_type == eventNames().selectEvent
-        || m_type == eventNames().selectstartEvent
-        || m_type == eventNames().slotchangeEvent;
+    return m_type == eventNames().inputEvent
+        || m_type == eventNames().textInputEvent
+        || isCompositionEvent()
+        || isClipboardEvent()
+        || isFocusEvent()
+        || isKeyboardEvent()
+        || isMouseEvent()
+        || isTouchEvent();
 }
 
 EventInterface Event::eventInterface() const
@@ -129,6 +126,11 @@ bool Event::isFocusEvent() const
 }
 
 bool Event::isKeyboardEvent() const
+{
+    return false;
+}
+
+bool Event::isCompositionEvent() const
 {
     return false;
 }

@@ -43,8 +43,7 @@ class HTMLIFrameElement;
 struct EventInit {
     bool bubbles { false };
     bool cancelable { false };
-    bool scoped { false };
-    bool relatedTargetScoped { false };
+    bool composed { false };
 };
 
 enum EventInterface {
@@ -117,8 +116,7 @@ public:
 
     bool bubbles() const { return m_canBubble; }
     bool cancelable() const { return m_cancelable; }
-    bool scoped() const;
-    virtual bool relatedTargetScoped() const { return m_relatedTargetScoped; }
+    bool composed() const;
 
     DOMTimeStamp timeStamp() const { return m_createTime; }
 
@@ -147,6 +145,7 @@ public:
     virtual bool isMouseEvent() const;
     virtual bool isFocusEvent() const;
     virtual bool isKeyboardEvent() const;
+    virtual bool isCompositionEvent() const;
     virtual bool isTouchEvent() const;
 
     // Drag events are a subset of mouse events.
@@ -206,12 +205,12 @@ protected:
     bool dispatched() const { return m_target; }
 
 private:
-    bool m_isInitialized { false };
     AtomicString m_type;
+
+    bool m_isInitialized { false };
     bool m_canBubble { false };
     bool m_cancelable { false };
-    bool m_scoped { false };
-    bool m_relatedTargetScoped { false };
+    bool m_composed { false };
 
     bool m_propagationStopped { false };
     bool m_immediatePropagationStopped { false };

@@ -75,7 +75,7 @@
             test(function () {
                 var shadow = createShadowHostWithAssignedGrandChild(mode);
 
-                log = dispatchEventWithLog(shadow, new Event('foo', {bubbles: true}));
+                log = dispatchEventWithLog(shadow, new Event('foo', {bubbles: true, composed: true}));
 
                 assert_equals(log.length, 6, 'EventPath must contain [target, target parent, slot, slot parent, shadow root, shadow host]');
                 assert_array_equals(log[0], [shadow.target, shadow.target], 'EventPath[0] must be the target');
@@ -96,7 +96,7 @@
                 var shadow = createShadowHostWithAssignedGrandChild(mode);
                 document.body.appendChild(shadow.host);
 
-                log = dispatchEventWithLog(shadow, new Event('foo', {bubbles: true}));
+                log = dispatchEventWithLog(shadow, new Event('foo', {bubbles: true, composed: true}));
 
                 assert_equals(log.length, 9, 'EventPath must contain [target, target parent, slot, slot parent, shadow root, shadow host, body, html, document]');
                 assert_array_equals(log[0], [shadow.target, shadow.target], 'EventPath[0] must be the target');
@@ -174,7 +174,7 @@
             test(function () {
                 var shadow = createNestedShadowTreesWithSlots(innerMode, outerUpperMode, outerLowerMode);
 
-                log = dispatchEventWithLog(shadow, new Event('foo', {bubbles: true}));
+                log = dispatchEventWithLog(shadow, new Event('foo', {bubbles: true, composed: true}));
 
                 assert_equals(log.length, 15, 'EventPath must contain 15 targets');
 
@@ -224,7 +224,7 @@
                 shadow.deepestNodeInLightDOM = shadow.target; // Needed for dispatchEventWithLog to attach event listeners. 
                 shadow.target = shadow.innerSlot;
 
-                log = dispatchEventWithLog(shadow, new Event('foo', {bubbles: true}));
+                log = dispatchEventWithLog(shadow, new Event('foo', {bubbles: true, composed: true}));
 
                 assert_equals(log.length, 12, 'EventPath must contain 12 targets');
 

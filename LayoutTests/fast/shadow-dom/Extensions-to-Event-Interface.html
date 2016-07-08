@@ -31,40 +31,22 @@ test(function () {
 }, 'composedPath() must return an empty array when the event is no longer dispatched');
 
 test(function () {
-    assert_true('scoped' in Event.prototype);
-    assert_true('scoped' in new Event('my-event'));
-}, 'scoped must exist on Event');
+    assert_true('composed' in Event.prototype);
+    assert_true('composed' in new Event('my-event'));
+}, 'composed must exist on Event');
 
 test(function () {
     var event = new Event('my-event');
-    assert_false(event.scoped);
-}, 'scoped on EventInit must default to false');
+    assert_false(event.composed);
+}, 'composed on EventInit must default to false');
 
 test(function () {
-    var event = new Event('my-event', {scoped: true});
-    assert_true(event.scoped);
+    var event = new Event('my-event', {composed: true});
+    assert_true(event.composed);
 
-    event = new Event('my-event', {scoped: false});
-    assert_false(event.scoped);
-}, 'scoped on EventInit must set the scoped flag');
-
-test(function () {
-    assert_true('relatedTargetScoped' in Event.prototype);
-    assert_true('relatedTargetScoped' in new Event('my-event'));
-}, 'relatedTargetScoped must exist on Event');
-
-test(function () {
-    var event = new Event('my-event');
-    assert_false(event.relatedTargetScoped);
-}, 'relatedTargetScoped on EventInit must default to false');
-
-test(function () {
-    var event = new Event('my-event', {relatedTargetScoped: true});
-    assert_true(event.relatedTargetScoped);
-
-    event = new Event('my-event', {relatedTargetScoped: false});
-    assert_false(event.relatedTargetScoped);
-}, 'relatedTargetScoped on EventInit must set the scoped flag');
+    event = new Event('my-event', {composed: false});
+    assert_false(event.composed);
+}, 'composed on EventInit must set the composed flag');
 
 /*
 -SR: ShadowRoot  -S: Slot  target: (~)  *: indicates start  digit: event path order
@@ -76,10 +58,10 @@ A (4) --------------------------- A-SR (3)
                                       + B1b2
 */
 
-function testUnscopedEvent(mode) {
+function testComposedEvent(mode) {
     test(function () {
         var nodes = createTestTree(mode);
-        var log = dispatchEventWithLog(nodes, nodes.A1a, new Event('my-event', {scoped: false, bubbles: true}));
+        var log = dispatchEventWithLog(nodes, nodes.A1a, new Event('my-event', {composed: true, bubbles: true}));
 
         var expectedPath = ['A1a', 'A1-SR', 'A1', 'A-SR', 'A'];
         assert_array_equals(log.eventPath, expectedPath);
@@ -88,11 +70,11 @@ function testUnscopedEvent(mode) {
         assert_array_equals(log.pathAtTargets[1], expectedPath);
         assert_array_equals(log.pathAtTargets[2], mode == 'open' ? expectedPath : ['A1', 'A-SR', 'A'],
             'composedPath must only contain unclosed nodes of the current target.');
-    }, 'The event must propagate out of ' + mode + ' mode shadow boundaries when the scoped flag is unset');
+    }, 'The event must propagate out of ' + mode + ' mode shadow boundaries when the composed flag is set');
 }
 
-testUnscopedEvent('open');
-testUnscopedEvent('closed');
+testComposedEvent('open');
+testComposedEvent('closed');
 
 /*
 -SR: ShadowRoot  -S: Slot  target: (~)  *: indicates start  digit: event path order
@@ -104,53 +86,21 @@ A ------------------------------- A-SR
                                     + B1b2
 */
 
-function testScopedEvent(mode) {
+function testNonComposedEvent(mode) {
     test(function () {
         var nodes = createTestTree(mode);
-        var log = dispatchEventWithLog(nodes, nodes.A1a, new Event('my-event', {scoped: true, bubbles: true}));
+        var log = dispatchEventWithLog(nodes, nodes.A1a, new Event('my-event', {composed: false, bubbles: true}));
 
         var expectedPath = ['A1a', 'A1-SR'];
         assert_array_equals(log.eventPath, expectedPath);
         assert_array_equals(log.eventPath.length, log.pathAtTargets.length);
         assert_array_equals(log.pathAtTargets[0], expectedPath);
         assert_array_equals(log.pathAtTargets[1], expectedPath);
-    }, 'The event must not propagate out of ' + mode + ' mode shadow boundaries when the scoped flag is set');
+    }, 'The event must not propagate out of ' + mode + ' mode shadow boundaries when the composed flag is unset');
 }
 
-testScopedEvent('open');
-testScopedEvent('closed');
-
-/*
--SR: ShadowRoot  -S: Slot  target: (~)  relatedTarget: [~]  *: indicates start  digit: event path order
-A (4) [4] ----------------------- A-SR (3)
-+ B ------------ B-SR             + A1 (2) ------- A1-SR (1)
-  + C            + B1 --- B1-SR   + A2-S [*; 0-3]  + A1a (*; 0)
-  + D --- D-SR     + B1a  + B1b --- B1b-SR
-          + D1            + B1c-S   + B1b1
-                                    + B1b2
-*/
-
-function testUnscopedEventWithUnscopedRelatedTarget(mode) {
-    test(function () {
-        var nodes = createTestTree(mode);
-        var log = dispatchEventWithLog(nodes, nodes.A1a, new MouseEvent('foo', {scoped: false, relatedTargetScoped: false, bubbles: true, relatedTarget: nodes['A2-S']}));
-
-        var expectedPath = ['A1a', 'A1-SR', 'A1', 'A-SR', 'A'];
-        var pathExposedToA1 = ['A1', 'A-SR', 'A'];
-        var pathExposedToA = ['A'];
-        assert_array_equals(log.eventPath, expectedPath);
-        assert_array_equals(log.eventPath.length, log.pathAtTargets.length);
-        assert_array_equals(log.pathAtTargets[0], expectedPath);
-        assert_array_equals(log.pathAtTargets[1], expectedPath);
-        assert_array_equals(log.pathAtTargets[2], mode == 'open' ? expectedPath : pathExposedToA1);
-        assert_array_equals(log.pathAtTargets[3], mode == 'open' ? expectedPath : pathExposedToA1);
-        assert_array_equals(log.pathAtTargets[4], mode == 'open' ? expectedPath : pathExposedToA);
-        assert_array_equals(log.relatedTargets, ['A2-S', 'A2-S', 'A2-S', 'A2-S', 'A']);
-    }, 'The event must propagate out of ' + mode + ' mode shadow boundaries when the scoped flag is unset on an event with relatedTarget');
-}
-
-testUnscopedEventWithUnscopedRelatedTarget('open');
-testUnscopedEventWithUnscopedRelatedTarget('closed');
+testNonComposedEvent('open');
+testNonComposedEvent('closed');
 
 /*
 -SR: ShadowRoot  -S: Slot  target: (~)  relatedTarget: [~]  *: indicates start  digit: event path order
@@ -162,10 +112,10 @@ A ------------------------------- A-SR
                                     + B1b2
 */
 
-function testScopedEventWithUnscopedRelatedTarget(mode) {
+function testNonComposedEventWithRelatedTarget(mode) {
     test(function () {
         var nodes = createTestTree(mode);
-        var log = dispatchEventWithLog(nodes, nodes.A1a, new MouseEvent('foo', {scoped: true, relatedTargetScoped: false, bubbles: true, relatedTarget: nodes['A2-S']}));
+        var log = dispatchEventWithLog(nodes, nodes.A1a, new MouseEvent('foo', {composed: false, bubbles: true, relatedTarget: nodes['A2-S']}));
 
         var expectedPath = ['A1a', 'A1-SR'];
         assert_array_equals(log.eventPath, expectedPath);
@@ -173,11 +123,11 @@ function testScopedEventWithUnscopedRelatedTarget(mode) {
         assert_array_equals(log.pathAtTargets[0], expectedPath);
         assert_array_equals(log.pathAtTargets[1], expectedPath);
         assert_array_equals(log.relatedTargets, ['A2-S', 'A2-S']);
-    }, 'The event must not propagate out of ' + mode + ' mode shadow boundaries when the scoped flag is set on an event with relatedTarget');
+    }, 'The event must not propagate out of ' + mode + ' mode shadow boundaries when the composed flag is unset on an event with relatedTarget');
 }
 
-testScopedEventWithUnscopedRelatedTarget('open');
-testScopedEventWithUnscopedRelatedTarget('closed');
+testNonComposedEventWithRelatedTarget('open');
+testNonComposedEventWithRelatedTarget('closed');
 
 /*
 -SR: ShadowRoot  -S: Slot  target: (~)  relatedTarget: [~]  *: indicates start  digit: event path order
@@ -220,10 +170,10 @@ A ------------------------------- A-SR (3)
                                     + B1b2
 */
 
-function testUnscopedEventWithScopedRelatedTarget(mode) {
+function testComposedEventWithRelatedTarget(mode) {
     test(function () {
         var nodes = createTestTree(mode);
-        log = dispatchEventWithLog(nodes, nodes.A1a, new MouseEvent('foo', {scoped: false, relatedTargetScoped: true, bubbles: true, relatedTarget: nodes['A2-S']}));
+        log = dispatchEventWithLog(nodes, nodes.A1a, new MouseEvent('foo', {composed: true, bubbles: true, relatedTarget: nodes['A2-S']}));
 
         var expectedPath = ['A1a', 'A1-SR', 'A1', 'A-SR'];
         var pathExposedToA1 = ['A1', 'A-SR'];
@@ -237,8 +187,8 @@ function testUnscopedEventWithScopedRelatedTarget(mode) {
     }, 'The event must propagate out of ' + mode + ' mode shadow tree in which the relative target and the relative related target are the same');
 }
 
-testUnscopedEventWithScopedRelatedTarget('open');
-testUnscopedEventWithScopedRelatedTarget('closed');
+testComposedEventWithRelatedTarget('open');
+testComposedEventWithRelatedTarget('closed');
 
 /*
 -SR: ShadowRoot  -S: Slot  target: (~)  relatedTarget: [~]  *: indicates start  digit: event path order
@@ -250,10 +200,10 @@ A (8) [0-5,8] ---------------------------------------- A-SR (7)
                                                 + B1b2
 */
 
-function testUnscopedEventWithScopedRelatedTargetThroughSlot(mode) {
+function testComposedEventThroughSlot(mode) {
     test(function () {
         var nodes = createTestTree(mode);
-        log = dispatchEventWithLog(nodes, nodes.B1a, new MouseEvent('foo', {scoped: false, relatedTargetScoped: true, bubbles: true, relatedTarget: nodes.A1a}));
+        log = dispatchEventWithLog(nodes, nodes.B1a, new MouseEvent('foo', {composed: true, bubbles: true, relatedTarget: nodes.A1a}));
 
         var expectedPath =          ['B1a', 'B1c-S', 'B1-SR', 'B1', 'B-SR', 'B', 'A2-S', 'A-SR', 'A'];
         var expectedRelatedTarget = ['A',   'A',     'A',     'A',   'A',   'A', 'A1',   'A1',   'A'];
@@ -277,8 +227,8 @@ function testUnscopedEventWithScopedRelatedTargetThroughSlot(mode) {
     }, 'composedPath() must contain and only contain the unclosed nodes of target in ' + mode + ' mode shadow trees');
 }
 
-testUnscopedEventWithScopedRelatedTargetThroughSlot('open');
-testUnscopedEventWithScopedRelatedTargetThroughSlot('closed');
+testComposedEventThroughSlot('open');
+testComposedEventThroughSlot('closed');
 
 </script>
 </body>

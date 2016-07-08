@@ -52,9 +52,4 @@ FocusEvent::FocusEvent(const AtomicString& type, const FocusEventInit& initializ
 {
 }
 
-bool FocusEvent::relatedTargetScoped() const
-{
-    return (isTrusted() && m_relatedTarget) || UIEvent::relatedTargetScoped();
-}
-
 } // namespace WebCore
