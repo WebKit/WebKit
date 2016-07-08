@@ -1,3 +1,27 @@
+2016-07-08  Michael Saboff  <msaboff@apple.com>
+
+        Dumping the object graph doesn't work with verbose GC logging
+        https://bugs.webkit.org/show_bug.cgi?id=159569
+
+        Reviewed by Mark Lam.
+
+        The current object graph logging code tries to revisits the graph.  This doesn't work
+        correctly and asking around it isn't used.  The only way to dump the true object graph
+        is to log while we GC and that has obvious performance implications.
+        Therefore I eliminated GCLogging::dumpObjectGraph() and related code.  
+
+        * heap/GCLogging.cpp:
+        (JSC::GCLogging::levelAsString):
+        (JSC::LoggingFunctor::LoggingFunctor): Deleted.
+        (JSC::LoggingFunctor::~LoggingFunctor): Deleted.
+        (JSC::LoggingFunctor::operator()): Deleted.
+        (JSC::LoggingFunctor::log): Deleted.
+        (JSC::LoggingFunctor::reviveCells): Deleted.
+        (JSC::LoggingFunctor::returnValue): Deleted.
+        (JSC::GCLogging::dumpObjectGraph): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::didFinishCollection):
+
 2016-07-08  Keith Miller  <keith_miller@apple.com>
 
         speculateTypedArrayIsNotNeutered has an inverted speculation

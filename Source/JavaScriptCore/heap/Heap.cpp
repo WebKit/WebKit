@@ -1463,9 +1463,6 @@ void Heap::didFinishCollection(double gcStartTime)
     if (Options::dumpObjectStatistics())
         HeapStatistics::dumpObjectStatistics(this);
 
-    if (Options::logGC() == GCLogging::Verbose)
-        GCLogging::dumpObjectGraph(this);
-
     if (HeapProfiler* heapProfiler = m_vm->heapProfiler()) {
         gatherExtraHeapSnapshotData(*heapProfiler);
         removeDeadHeapSnapshotNodes(*heapProfiler);

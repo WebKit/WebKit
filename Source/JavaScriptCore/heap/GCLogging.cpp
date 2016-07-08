@@ -50,69 +50,6 @@ const char* GCLogging::levelAsString(Level level)
     }
 }
 
-class LoggingFunctor {
-public:
-    LoggingFunctor(SlotVisitor& slotVisitor)
-        : m_slotVisitor(slotVisitor)
-    {
-        m_savedMarkStack.resize(m_slotVisitor.markStack().size());
-        m_slotVisitor.markStack().fillVector(m_savedMarkStack);
-    }
-
-    ~LoggingFunctor()
-    {
-        reviveCells();
-    }
-
-    IterationStatus operator()(JSCell* cell)
-    {
-        m_liveCells.append(cell);
-        MarkedBlock::blockFor(cell)->clearMarked(cell);
-        return IterationStatus::Continue;
-    }
-
-    void log()
-    {
-        m_slotVisitor.clearMarkStack();
-        for (JSCell* cell : m_liveCells) {
-            cell->methodTable()->visitChildren(cell, m_slotVisitor);
-            dataLog("\n", *cell, ":\n", m_slotVisitor);
-            for (const JSCell* neighbor : m_slotVisitor.markStack())
-                MarkedBlock::blockFor(neighbor)->clearMarked(neighbor);
-            m_slotVisitor.clearMarkStack();
-        }
-        m_slotVisitor.reset();
-    }
-
-    void reviveCells()
-    {
-        for (JSCell* cell : m_liveCells)
-            MarkedBlock::blockFor(cell)->setMarked(cell);
-
-        for (const JSCell* cell : m_savedMarkStack) {
-            m_slotVisitor.markStack().append(cell);
-            cell->setCellState(CellState::OldGrey);
-        }
-    }
-
-    typedef void ReturnType;
-
-    void returnValue() { };
-
-private:
-    Vector<const JSCell*> m_savedMarkStack;
-    Vector<JSCell*> m_liveCells;
-    SlotVisitor& m_slotVisitor;
-};
-
-void GCLogging::dumpObjectGraph(Heap* heap)
-{
-    LoggingFunctor loggingFunctor(heap->m_slotVisitor);
-    HeapIterationScope iterationScope(*heap);
-    heap->objectSpace().forEachLiveCell(iterationScope, loggingFunctor);
-    loggingFunctor.log();
-}
-
 } // namespace JSC
 
 namespace WTF {
