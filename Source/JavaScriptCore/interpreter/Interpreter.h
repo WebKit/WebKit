@@ -262,12 +262,12 @@ namespace JSC {
         // aligned size. Align the size here.
         argumentCountIncludingThis = WTF::roundUpToMultipleOf(
             stackAlignmentRegisters(),
-            argumentCountIncludingThis + JSStack::CallFrameHeaderSize) - JSStack::CallFrameHeaderSize;
+            argumentCountIncludingThis + CallFrame::headerSizeInRegisters) - CallFrame::headerSizeInRegisters;
 
         // Align the frame offset here.
         unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(
             stackAlignmentRegisters(),
-            numUsedStackSlots + argumentCountIncludingThis + JSStack::CallFrameHeaderSize);
+            numUsedStackSlots + argumentCountIncludingThis + CallFrame::headerSizeInRegisters);
         return CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
     }
 

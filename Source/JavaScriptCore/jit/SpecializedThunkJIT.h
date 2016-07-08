@@ -46,7 +46,7 @@ namespace JSC {
             emitFunctionPrologue();
             emitSaveThenMaterializeTagRegisters();
             // Check that we have the expected number of arguments
-            m_failures.append(branch32(NotEqual, payloadFor(JSStack::ArgumentCount), TrustedImm32(expectedArgCount + 1)));
+            m_failures.append(branch32(NotEqual, payloadFor(CallFrameSlot::argumentCount), TrustedImm32(expectedArgCount + 1)));
         }
         
         explicit SpecializedThunkJIT(VM* vm)

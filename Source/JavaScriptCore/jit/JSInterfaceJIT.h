@@ -71,10 +71,10 @@ namespace JSC {
 
         Jump emitJumpIfNotType(RegisterID baseReg, JSType);
 
-        void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
-        void emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
-        void emitPutToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry);
-        void emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
+        void emitGetFromCallFrameHeaderPtr(int entry, RegisterID to, RegisterID from = callFrameRegister);
+        void emitPutToCallFrameHeader(RegisterID from, int entry);
+        void emitPutToCallFrameHeader(void* value, int entry);
+        void emitPutCellToCallFrameHeader(RegisterID from, int entry);
 
         inline Address payloadFor(int index, RegisterID base = callFrameRegister);
         inline Address intPayloadFor(int index, RegisterID base = callFrameRegister);
@@ -221,12 +221,12 @@ namespace JSC {
         return branch8(NotEqual, Address(baseReg, JSCell::typeInfoTypeOffset()), TrustedImm32(type));
     }
 
-    ALWAYS_INLINE void JSInterfaceJIT::emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
+    ALWAYS_INLINE void JSInterfaceJIT::emitGetFromCallFrameHeaderPtr(int entry, RegisterID to, RegisterID from)
     {
         loadPtr(Address(from, entry * sizeof(Register)), to);
     }
 
-    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(RegisterID from, int entry)
     {
 #if USE(JSVALUE32_64)
         storePtr(from, payloadFor(entry, callFrameRegister));
@@ -235,12 +235,12 @@ namespace JSC {
 #endif
     }
 
-    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry entry)
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(void* value, int entry)
     {
         storePtr(TrustedImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
     }
 
-    ALWAYS_INLINE void JSInterfaceJIT::emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutCellToCallFrameHeader(RegisterID from, int entry)
     {
 #if USE(JSVALUE32_64)
         store32(TrustedImm32(JSValue::CellTag), tagFor(entry, callFrameRegister));

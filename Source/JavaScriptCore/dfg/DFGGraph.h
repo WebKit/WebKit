@@ -709,9 +709,9 @@ public:
             
             if (inlineCallFrame) {
                 if (inlineCallFrame->isClosureCall)
-                    functor(stackOffset + JSStack::Callee);
+                    functor(stackOffset + CallFrameSlot::callee);
                 if (inlineCallFrame->isVarargs())
-                    functor(stackOffset + JSStack::ArgumentCount);
+                    functor(stackOffset + CallFrameSlot::argumentCount);
             }
             
             CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);

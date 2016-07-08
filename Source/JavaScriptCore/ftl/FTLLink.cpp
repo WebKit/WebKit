@@ -130,7 +130,7 @@ void link(State& state)
         CCallHelpers::JumpList mainPathJumps;
     
         jit.load32(
-            frame.withOffset(sizeof(Register) * JSStack::ArgumentCount),
+            frame.withOffset(sizeof(Register) * CallFrameSlot::argumentCount),
             GPRInfo::regT1);
         mainPathJumps.append(jit.branch32(
             CCallHelpers::AboveOrEqual, GPRInfo::regT1,

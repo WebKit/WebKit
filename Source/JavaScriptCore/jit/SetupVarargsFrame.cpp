@@ -47,7 +47,7 @@ void emitSetVarargsFrame(CCallHelpers& jit, GPRReg lengthGPR, bool lengthInclude
     jit.andPtr(CCallHelpers::TrustedImm32(~(stackAlignmentRegisters() - 1)), resultGPR);
 
     jit.addPtr(lengthGPR, resultGPR);
-    jit.addPtr(CCallHelpers::TrustedImm32(JSStack::CallFrameHeaderSize + (lengthIncludesThis? 0 : 1)), resultGPR);
+    jit.addPtr(CCallHelpers::TrustedImm32(CallFrame::headerSizeInRegisters + (lengthIncludesThis? 0 : 1)), resultGPR);
     
     // resultGPR now has the required frame size in Register units
     // Round resultGPR to next multiple of stackAlignmentRegisters()
@@ -85,7 +85,7 @@ void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GP
     slowCase.append(jit.branchPtr(CCallHelpers::Above, CCallHelpers::AbsoluteAddress(jit.vm()->osStackLimitWithReserve()), scratchGPR2));
 
     // Initialize ArgumentCount.
-    jit.store32(scratchGPR1, CCallHelpers::Address(scratchGPR2, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset));
+    jit.store32(scratchGPR1, CCallHelpers::Address(scratchGPR2, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset));
 
     // Copy arguments.
     jit.signExtend32ToPtr(scratchGPR1, scratchGPR1);
@@ -131,7 +131,7 @@ void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GP
             firstArgumentReg = VirtualRegister(0);
     } else {
         argumentCountRecovery = ValueRecovery::displacedInJSStack(
-            VirtualRegister(JSStack::ArgumentCount), DataFormatInt32);
+            VirtualRegister(CallFrameSlot::argumentCount), DataFormatInt32);
         firstArgumentReg = VirtualRegister(CallFrame::argumentOffset(0));
     }
     emitSetupVarargsFrameFastCase(jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3, argumentCountRecovery, firstArgumentReg, firstVarArgOffset, slowCase);

@@ -55,7 +55,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     Call nativeCall;
 
     emitFunctionPrologue();
-    emitPutToCallFrameHeader(0, JSStack::CodeBlock);
+    emitPutToCallFrameHeader(0, CallFrameSlot::codeBlock);
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 
 #if CPU(X86)
@@ -81,7 +81,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     // Host function signature is f(ExecState*).
     move(callFrameRegister, argumentGPR0);
 
-    emitGetFromCallFrameHeaderPtr(JSStack::Callee, argumentGPR1);
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, argumentGPR1);
     loadPtr(Address(argumentGPR1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
 
     // call the function
@@ -997,7 +997,7 @@ void JIT::emit_op_enter(Instruction* currentInstruction)
 void JIT::emit_op_get_scope(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, regT0);
     loadPtr(Address(regT0, JSFunction::offsetOfScopeChain()), regT0);
     emitStoreCell(dst, regT0);
 }

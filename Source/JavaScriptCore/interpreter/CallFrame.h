@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2008, 2011, 2013-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007-2008, 2011, 2013-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,7 +24,6 @@
 #define CallFrame_h
 
 #include "AbstractPC.h"
-#include "JSStack.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 #include "StackVisitor.h"
@@ -34,8 +33,14 @@
 namespace JSC  {
 
     class Arguments;
+    class ExecState;
     class Interpreter;
+    class JSCallee;
     class JSScope;
+
+    struct Instruction;
+
+    typedef ExecState CallFrame;
 
     struct CallSiteIndex {
         CallSiteIndex()
@@ -60,15 +65,32 @@ namespace JSC  {
         uint32_t m_bits;
     };
 
+    struct CallerFrameAndPC {
+        CallFrame* callerFrame;
+        Instruction* pc;
+        static const int sizeInRegisters = 2 * sizeof(void*) / sizeof(Register);
+    };
+    static_assert(CallerFrameAndPC::sizeInRegisters == sizeof(CallerFrameAndPC) / sizeof(Register), "CallerFrameAndPC::sizeInRegisters is incorrect.");
+
+    struct CallFrameSlot {
+        static const int codeBlock = CallerFrameAndPC::sizeInRegisters;
+        static const int callee = codeBlock + 1;
+        static const int argumentCount = callee + 1;
+        static const int thisArgument = argumentCount + 1;
+        static const int firstArgument = thisArgument + 1;
+    };
+
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
     class ExecState : private Register {
     public:
-        JSValue calleeAsValue() const { return this[JSStack::Callee].jsValue(); }
-        JSObject* callee() const { return this[JSStack::Callee].object(); }
-        SUPPRESS_ASAN JSValue unsafeCallee() const { return this[JSStack::Callee].asanUnsafeJSValue(); }
-        CodeBlock* codeBlock() const { return this[JSStack::CodeBlock].Register::codeBlock(); }
-        SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const { return this[JSStack::CodeBlock].Register::asanUnsafeCodeBlock(); }
+        static const int headerSizeInRegisters = CallFrameSlot::argumentCount + 1;
+
+        JSValue calleeAsValue() const { return this[CallFrameSlot::callee].jsValue(); }
+        JSObject* callee() const { return this[CallFrameSlot::callee].object(); }
+        SUPPRESS_ASAN JSValue unsafeCallee() const { return this[CallFrameSlot::callee].asanUnsafeJSValue(); }
+        CodeBlock* codeBlock() const { return this[CallFrameSlot::codeBlock].Register::codeBlock(); }
+        SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const { return this[CallFrameSlot::codeBlock].Register::asanUnsafeCodeBlock(); }
         JSScope* scope(int scopeRegisterOffset) const
         {
             ASSERT(this[scopeRegisterOffset].Register::scope());
@@ -164,17 +186,7 @@ namespace JSC  {
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
 
-        ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC,
-            CallFrame* callerFrame, int argc, JSObject* callee) 
-        { 
-            ASSERT(callerFrame == noCaller() || callerFrame->stack()->containsAddress(this)); 
-
-            setCodeBlock(codeBlock); 
-            setCallerFrame(callerFrame); 
-            setReturnPC(vPC); // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*. 
-            setArgumentCountIncludingThis(argc); // original argument count (for the sake of the "arguments" object) 
-            setCallee(callee); 
-        }
+        static void initGlobalExec(ExecState* globalExec, JSCallee* globalCallee);
 
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(int);
@@ -185,9 +197,9 @@ namespace JSC  {
 
         // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
-        size_t argumentCountIncludingThis() const { return this[JSStack::ArgumentCount].payload(); }
-        static int argumentOffset(int argument) { return (JSStack::FirstArgument + argument); }
-        static int argumentOffsetIncludingThis(int argument) { return (JSStack::ThisArgument + argument); }
+        size_t argumentCountIncludingThis() const { return this[CallFrameSlot::argumentCount].payload(); }
+        static int argumentOffset(int argument) { return (CallFrameSlot::firstArgument + argument); }
+        static int argumentOffsetIncludingThis(int argument) { return (CallFrameSlot::thisArgument + argument); }
 
         // In the following (argument() and setArgument()), the 'argument'
         // parameter is the index of the arguments of the target function of
@@ -233,13 +245,13 @@ namespace JSC  {
 
         JSValue argumentAfterCapture(size_t argument);
 
-        static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + JSStack::ThisArgument - 1; }
+        static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + CallFrameSlot::thisArgument - 1; }
 
         static CallFrame* noCaller() { return 0; }
 
-        void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[JSStack::ArgumentCount].payload() = count; }
-        void setCallee(JSObject* callee) { static_cast<Register*>(this)[JSStack::Callee] = callee; }
-        void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[JSStack::CodeBlock] = codeBlock; }
+        void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[CallFrameSlot::argumentCount].payload() = count; }
+        void setCallee(JSObject* callee) { static_cast<Register*>(this)[CallFrameSlot::callee] = callee; }
+        void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[CallFrameSlot::codeBlock] = codeBlock; }
         void setReturnPC(void* value) { callerFrameAndPC().pc = reinterpret_cast<Instruction*>(value); }
 
         String friendlyFunctionName();
@@ -279,10 +291,10 @@ namespace JSC  {
             int offset = reg - this->registers();
 
             // The offset is defined (based on argumentOffset()) to be:
-            //       offset = JSStack::FirstArgument - argIndex;
+            //       offset = CallFrameSlot::firstArgument - argIndex;
             // Hence:
-            //       argIndex = JSStack::FirstArgument - offset;
-            size_t argIndex = offset - JSStack::FirstArgument;
+            //       argIndex = CallFrameSlot::firstArgument - offset;
+            size_t argIndex = offset - CallFrameSlot::firstArgument;
             return argIndex;
         }
 
@@ -290,7 +302,9 @@ namespace JSC  {
         const CallerFrameAndPC& callerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
         SUPPRESS_ASAN const CallerFrameAndPC& unsafeCallerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
 
+#if !ENABLE(JIT)
         friend class JSStack;
+#endif
     };
 
 } // namespace JSC

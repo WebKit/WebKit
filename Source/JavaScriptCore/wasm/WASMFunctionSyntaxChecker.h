@@ -270,9 +270,9 @@ private:
     void updateTempStackHeightForCall(size_t argumentCount)
     {
         // Boxed arguments + this argument + call frame header + maximum padding.
-        m_tempStackTop += argumentCount + 1 + JSStack::CallFrameHeaderSize + 1;
+        m_tempStackTop += argumentCount + 1 + CallFrame::headerSizeInRegisters + 1;
         updateTempStackHeight();
-        m_tempStackTop -= argumentCount + 1 + JSStack::CallFrameHeaderSize + 1;
+        m_tempStackTop -= argumentCount + 1 + CallFrame::headerSizeInRegisters + 1;
     }
 
     unsigned m_numberOfLocals;

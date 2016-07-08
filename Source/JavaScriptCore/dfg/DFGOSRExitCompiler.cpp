@@ -70,7 +70,7 @@ void OSRExitCompiler::emitRestoreArguments(const Operands<ValueRecovery>& operan
         
         if (!inlineCallFrame || inlineCallFrame->isClosureCall) {
             m_jit.loadPtr(
-                AssemblyHelpers::addressFor(stackOffset + JSStack::Callee),
+                AssemblyHelpers::addressFor(stackOffset + CallFrameSlot::callee),
                 GPRInfo::regT0);
         } else {
             m_jit.move(
@@ -80,7 +80,7 @@ void OSRExitCompiler::emitRestoreArguments(const Operands<ValueRecovery>& operan
         
         if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
             m_jit.load32(
-                AssemblyHelpers::payloadFor(stackOffset + JSStack::ArgumentCount),
+                AssemblyHelpers::payloadFor(stackOffset + CallFrameSlot::argumentCount),
                 GPRInfo::regT1);
         } else {
             m_jit.move(

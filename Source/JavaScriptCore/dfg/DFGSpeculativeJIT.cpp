@@ -152,7 +152,7 @@ void SpeculativeJIT::emitGetLength(InlineCallFrame* inlineCallFrame, GPRReg leng
     else {
         VirtualRegister argumentCountRegister;
         if (!inlineCallFrame)
-            argumentCountRegister = VirtualRegister(JSStack::ArgumentCount);
+            argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
         else
             argumentCountRegister = inlineCallFrame->argumentCountRegister;
         m_jit.load32(JITCompiler::payloadFor(argumentCountRegister), lengthGPR);
@@ -179,7 +179,7 @@ void SpeculativeJIT::emitGetCallee(CodeOrigin origin, GPRReg calleeGPR)
                 calleeGPR);
         }
     } else
-        m_jit.loadPtr(JITCompiler::addressFor(JSStack::Callee), calleeGPR);
+        m_jit.loadPtr(JITCompiler::addressFor(CallFrameSlot::callee), calleeGPR);
 }
 
 void SpeculativeJIT::emitGetArgumentStart(CodeOrigin origin, GPRReg startGPR)
@@ -6217,7 +6217,7 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
 
         VirtualRegister argumentCountRegister;
         if (!node->origin.semantic.inlineCallFrame)
-            argumentCountRegister = VirtualRegister(JSStack::ArgumentCount);
+            argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
         else
             argumentCountRegister = node->origin.semantic.inlineCallFrame->argumentCountRegister;
         m_jit.load32(JITCompiler::payloadFor(argumentCountRegister), lengthGPR);
@@ -6292,7 +6292,7 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
                 scratch1GPR);
         }
     } else
-        m_jit.loadPtr(JITCompiler::addressFor(JSStack::Callee), scratch1GPR);
+        m_jit.loadPtr(JITCompiler::addressFor(CallFrameSlot::callee), scratch1GPR);
 
     // Don't need a memory barriers since we just fast-created the activation, so the
     // activation must be young.

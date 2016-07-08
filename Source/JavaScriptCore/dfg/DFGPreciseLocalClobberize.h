@@ -125,14 +125,14 @@ private:
                 // Read the outermost arguments and argument count.
                 for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)
                     m_read(virtualRegisterForArgument(i));
-                m_read(VirtualRegister(JSStack::ArgumentCount));
+                m_read(VirtualRegister(CallFrameSlot::argumentCount));
                 break;
             }
             
             for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
             if (inlineCallFrame->isVarargs())
-                m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount));
+                m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
             break;
         }
             
@@ -142,7 +142,7 @@ private:
                 m_read(virtualRegisterForArgument(i));
         
             // The stack header is read.
-            for (unsigned i = 0; i < JSStack::ThisArgument; ++i)
+            for (unsigned i = 0; i < CallFrameSlot::thisArgument; ++i)
                 m_read(VirtualRegister(i));
         
             // Read all of the inline arguments and call frame headers that we didn't already capture.
@@ -150,9 +150,9 @@ private:
                 for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
                     m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
                 if (inlineCallFrame->isClosureCall)
-                    m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::Callee));
+                    m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee));
                 if (inlineCallFrame->isVarargs())
-                    m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount));
+                    m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
             }
             break;
         } }

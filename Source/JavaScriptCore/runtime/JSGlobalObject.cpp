@@ -320,8 +320,6 @@ void JSGlobalObject::init(VM& vm)
 
     Base::setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure()));
 
-    JSGlobalObject::globalExec()->init(0, 0, CallFrame::noCaller(), 0, 0);
-
     m_debugger = 0;
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -331,15 +329,16 @@ void JSGlobalObject::init(VM& vm)
     m_consoleClient = m_inspectorController->consoleClient();
 #endif
 
-    ExecState* exec = JSGlobalObject::globalExec();
-
     m_functionPrototype.set(vm, this, FunctionPrototype::create(vm, FunctionPrototype::createStructure(vm, this, jsNull()))); // The real prototype will be set once ObjectPrototype is created.
     m_calleeStructure.set(vm, this, JSCallee::createStructure(vm, this, jsNull()));
 
     m_globalLexicalEnvironment.set(vm, this, JSGlobalLexicalEnvironment::create(vm, JSGlobalLexicalEnvironment::createStructure(vm, this), this));
     // Need to create the callee structure (above) before creating the callee.
-    m_globalCallee.set(vm, this, JSCallee::create(vm, this, globalScope()));
-    exec->setCallee(m_globalCallee.get());
+    JSCallee* globalCallee = JSCallee::create(vm, this, globalScope());
+    m_globalCallee.set(vm, this, globalCallee);
+
+    ExecState::initGlobalExec(JSGlobalObject::globalExec(), globalCallee);
+    ExecState* exec = JSGlobalObject::globalExec();
 
     m_functionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
     m_customGetterSetterFunctionStructure.initLater(

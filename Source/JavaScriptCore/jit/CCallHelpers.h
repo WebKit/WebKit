@@ -2278,13 +2278,13 @@ public:
             GPRReg oldFrameSizeGPR = temp2;
             {
                 GPRReg argCountGPR = oldFrameSizeGPR;
-                load32(Address(framePointerRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset), argCountGPR);
+                load32(Address(framePointerRegister, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset), argCountGPR);
 
                 {
                     GPRReg numParametersGPR = temp1;
                     {
                         GPRReg codeBlockGPR = numParametersGPR;
-                        loadPtr(Address(framePointerRegister, JSStack::CodeBlock * static_cast<int>(sizeof(Register))), codeBlockGPR);
+                        loadPtr(Address(framePointerRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register))), codeBlockGPR);
                         load32(Address(codeBlockGPR, CodeBlock::offsetOfNumParameters()), numParametersGPR);
                     }
 
@@ -2294,7 +2294,7 @@ public:
                     argumentCountWasNotFixedUp.link(this);
                 }
 
-                add32(TrustedImm32(stackAlignmentRegisters() + JSStack::CallFrameHeaderSize - 1), argCountGPR, oldFrameSizeGPR);
+                add32(TrustedImm32(stackAlignmentRegisters() + CallFrame::headerSizeInRegisters - 1), argCountGPR, oldFrameSizeGPR);
                 and32(TrustedImm32(-stackAlignmentRegisters()), oldFrameSizeGPR);
                 // We assume < 2^28 arguments
                 mul32(TrustedImm32(sizeof(Register)), oldFrameSizeGPR, oldFrameSizeGPR);
@@ -2307,9 +2307,9 @@ public:
             // The new frame size is just the number of arguments plus the
             // frame header size, aligned
             ASSERT(newFrameSizeGPR != newFramePointer);
-            load32(Address(stackPointerRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)),
+            load32(Address(stackPointerRegister, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)),
                 newFrameSizeGPR);
-            add32(TrustedImm32(stackAlignmentRegisters() + JSStack::CallFrameHeaderSize - 1), newFrameSizeGPR);
+            add32(TrustedImm32(stackAlignmentRegisters() + CallFrame::headerSizeInRegisters - 1), newFrameSizeGPR);
             and32(TrustedImm32(-stackAlignmentRegisters()), newFrameSizeGPR);
             // We assume < 2^28 arguments
             mul32(TrustedImm32(sizeof(Register)), newFrameSizeGPR, newFrameSizeGPR);

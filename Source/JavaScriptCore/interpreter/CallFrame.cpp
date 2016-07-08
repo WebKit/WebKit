@@ -36,6 +36,15 @@
 
 namespace JSC {
 
+void ExecState::initGlobalExec(ExecState* globalExec, JSCallee* globalCallee)
+{
+    globalExec->setCodeBlock(nullptr);
+    globalExec->setCallerFrame(noCaller());
+    globalExec->setReturnPC(0);
+    globalExec->setArgumentCountIncludingThis(0);
+    globalExec->setCallee(globalCallee);
+}
+
 bool CallFrame::callSiteBitsAreBytecodeOffset() const
 {
     ASSERT(codeBlock());
@@ -76,12 +85,12 @@ bool CallFrame::callSiteBitsAreCodeOriginIndex() const
 
 unsigned CallFrame::callSiteAsRawBits() const
 {
-    return this[JSStack::ArgumentCount].tag();
+    return this[CallFrameSlot::argumentCount].tag();
 }
 
 SUPPRESS_ASAN unsigned CallFrame::unsafeCallSiteAsRawBits() const
 {
-    return this[JSStack::ArgumentCount].unsafeTag();
+    return this[CallFrameSlot::argumentCount].unsafeTag();
 }
 
 CallSiteIndex CallFrame::callSiteIndex() const
@@ -111,7 +120,7 @@ Instruction* CallFrame::currentVPC() const
 void CallFrame::setCurrentVPC(Instruction* vpc)
 {
     CallSiteIndex callSite(vpc);
-    this[JSStack::ArgumentCount].tag() = callSite.bits();
+    this[CallFrameSlot::argumentCount].tag() = callSite.bits();
 }
 
 unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
@@ -131,7 +140,7 @@ Instruction* CallFrame::currentVPC() const
 void CallFrame::setCurrentVPC(Instruction* vpc)
 {
     CallSiteIndex callSite(vpc - codeBlock()->instructions().begin());
-    this[JSStack::ArgumentCount].tag() = static_cast<int32_t>(callSite.bits());
+    this[CallFrameSlot::argumentCount].tag() = static_cast<int32_t>(callSite.bits());
 }
 
 unsigned CallFrame::callSiteBitsAsBytecodeOffset() const

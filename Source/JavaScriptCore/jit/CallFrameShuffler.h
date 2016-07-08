@@ -103,7 +103,7 @@ public:
 
         CallFrameShuffleData data;
         data.numLocals = numLocals();
-        data.callee = getNew(VirtualRegister { JSStack::Callee })->recovery();
+        data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
         data.args.resize(argCount());
         for (size_t i = 0; i < argCount(); ++i)
             data.args[i] = getNew(virtualRegisterForArgument(i))->recovery();
@@ -129,7 +129,7 @@ public:
     {
         ASSERT(isUndecided());
         ASSERT(!getNew(jsValueRegs));
-        CachedRecovery* cachedRecovery { getNew(VirtualRegister(JSStack::Callee)) };
+        CachedRecovery* cachedRecovery { getNew(VirtualRegister(CallFrameSlot::callee)) };
         ASSERT(cachedRecovery);
         addNew(jsValueRegs, cachedRecovery->recovery());
     }
@@ -142,7 +142,7 @@ public:
     void assumeCalleeIsCell()
     {
 #if USE(JSVALUE32_64)
-        CachedRecovery& calleeCachedRecovery = *getNew(VirtualRegister(JSStack::Callee));
+        CachedRecovery& calleeCachedRecovery = *getNew(VirtualRegister(CallFrameSlot::callee));
         switch (calleeCachedRecovery.recovery().technique()) {
         case InPair:
             updateRecovery(
@@ -297,17 +297,17 @@ private:
 
     int numLocals() const
     {
-        return m_oldFrame.size() - JSStack::CallerFrameAndPCSize;
+        return m_oldFrame.size() - CallerFrameAndPC::sizeInRegisters;
     }
 
     CachedRecovery* getOld(VirtualRegister reg) const
     {
-        return m_oldFrame[JSStack::CallerFrameAndPCSize - reg.offset() - 1];
+        return m_oldFrame[CallerFrameAndPC::sizeInRegisters - reg.offset() - 1];
     }
 
     void setOld(VirtualRegister reg, CachedRecovery* cachedRecovery)
     {
-        m_oldFrame[JSStack::CallerFrameAndPCSize - reg.offset() - 1] = cachedRecovery;
+        m_oldFrame[CallerFrameAndPC::sizeInRegisters - reg.offset() - 1] = cachedRecovery;
     }
 
     VirtualRegister firstOld() const
@@ -317,7 +317,7 @@ private:
 
     VirtualRegister lastOld() const
     {
-        return VirtualRegister { JSStack::CallerFrameAndPCSize - 1 };
+        return VirtualRegister { CallerFrameAndPC::sizeInRegisters - 1 };
     }
 
     bool isValidOld(VirtualRegister reg) const
@@ -339,7 +339,7 @@ private:
 
     size_t argCount() const
     {
-        return m_newFrame.size() - JSStack::CallFrameHeaderSize;
+        return m_newFrame.size() - CallFrame::headerSizeInRegisters;
     }
 
     CachedRecovery* getNew(VirtualRegister newRegister) const

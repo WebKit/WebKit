@@ -60,9 +60,9 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializat
     int argumentCountIncludingThis = exec->argumentCountIncludingThis();
     
     ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
-    int frameSize = argumentCountIncludingThis + JSStack::CallFrameHeaderSize;
+    int frameSize = argumentCountIncludingThis + CallFrame::headerSizeInRegisters;
     int alignedFrameSizeForParameters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(),
-        newCodeBlock->numParameters() + JSStack::CallFrameHeaderSize);
+        newCodeBlock->numParameters() + CallFrame::headerSizeInRegisters);
     int paddedStackSpace = alignedFrameSizeForParameters - frameSize;
 
     if (!stack->ensureCapacityFor(exec->registers() - paddedStackSpace % stackAlignmentRegisters()))

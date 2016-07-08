@@ -73,7 +73,7 @@ namespace JSC {
 
         RegisterID* thisRegister() { return m_argv[0].get(); }
         RegisterID* argumentRegister(unsigned i) { return m_argv[i + 1].get(); }
-        unsigned stackOffset() { return -m_argv[0]->index() + JSStack::CallFrameHeaderSize; }
+        unsigned stackOffset() { return -m_argv[0]->index() + CallFrame::headerSizeInRegisters; }
         unsigned argumentCountIncludingThis() { return m_argv.size() - m_padding; }
         ArgumentsNode* argumentsNode() { return m_argumentsNode; }
 
@@ -809,7 +809,7 @@ namespace JSC {
             if (reg.isLocal())
                 return m_calleeLocals[reg.toLocal()];
 
-            if (reg.offset() == JSStack::Callee)
+            if (reg.offset() == CallFrameSlot::callee)
                 return m_calleeRegister;
 
             ASSERT(m_parameters.size());

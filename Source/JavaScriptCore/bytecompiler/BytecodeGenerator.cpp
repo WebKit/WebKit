@@ -306,7 +306,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     allocateAndEmitScope();
 
-    m_calleeRegister.setIndex(JSStack::Callee);
+    m_calleeRegister.setIndex(CallFrameSlot::callee);
 
     initializeParameters(parameters);
     ASSERT(!(isSimpleParameterList && m_restParameter));
@@ -742,7 +742,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     allocateAndEmitScope();
 
-    m_calleeRegister.setIndex(JSStack::Callee);
+    m_calleeRegister.setIndex(CallFrameSlot::callee);
 
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
 
@@ -3130,8 +3130,8 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     }
     
     // Reserve space for call frame.
-    Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize, UnsafeVectorOverflow> callFrame;
-    for (int i = 0; i < JSStack::CallFrameHeaderSize; ++i)
+    Vector<RefPtr<RegisterID>, CallFrame::headerSizeInRegisters, UnsafeVectorOverflow> callFrame;
+    for (int i = 0; i < CallFrame::headerSizeInRegisters; ++i)
         callFrame.append(newTemporary());
 
     emitExpressionInfo(divot, divotStart, divotEnd);
@@ -3315,8 +3315,8 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     }
 
     // Reserve space for call frame.
-    Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize, UnsafeVectorOverflow> callFrame;
-    for (int i = 0; i < JSStack::CallFrameHeaderSize; ++i)
+    Vector<RefPtr<RegisterID>, CallFrame::headerSizeInRegisters, UnsafeVectorOverflow> callFrame;
+    for (int i = 0; i < CallFrame::headerSizeInRegisters; ++i)
         callFrame.append(newTemporary());
 
     emitExpressionInfo(divot, divotStart, divotEnd);

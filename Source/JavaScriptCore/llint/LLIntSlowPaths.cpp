@@ -1326,7 +1326,7 @@ inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpec
     ExecState* execCallee = exec - pc[4].u.operand;
     
     execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
-    execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
+    execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
     
     ASSERT(pc[5].u.callLinkInfo);
@@ -1405,7 +1405,7 @@ inline SlowPathReturnType varargsSetup(ExecState* exec, Instruction* pc, CodeSpe
         setupForwardArgumentsFrameAndSetThis(exec, execCallee, LLINT_OP_C(3).jsValue(), vm.varargsLength);
 
     execCallee->setCallerFrame(exec);
-    execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
+    execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     exec->setCurrentVPC(pc);
 
     return setUpCall(execCallee, pc, kind, calleeAsValue);
@@ -1436,7 +1436,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     
     execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->setCallerFrame(exec);
-    execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
+    execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     execCallee->setReturnPC(LLInt::getCodePtr(llint_generic_return_point));
     execCallee->setCodeBlock(0);
     exec->setCurrentVPC(pc);

@@ -177,14 +177,14 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         if (inlineCallFrame->isVarargs()) {
             // Record how to read each argument and the argument count.
             Availability argumentCount =
-                m_availability.m_locals.operand(inlineCallFrame->stackOffset + JSStack::ArgumentCount);
+                m_availability.m_locals.operand(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount);
             
             m_availability.m_heap.set(PromotedHeapLocation(ArgumentCountPLoc, node), argumentCount);
         }
         
         if (inlineCallFrame->isClosureCall) {
             Availability callee = m_availability.m_locals.operand(
-                inlineCallFrame->stackOffset + JSStack::Callee);
+                inlineCallFrame->stackOffset + CallFrameSlot::callee);
             m_availability.m_heap.set(PromotedHeapLocation(ArgumentsCalleePLoc, node), callee);
         }
         

@@ -103,7 +103,7 @@ SlowPathCall callOperation(
     if (callSiteIndex) {
         jit.store32(
             CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-            CCallHelpers::tagFor(JSStack::ArgumentCount));
+            CCallHelpers::tagFor(CallFrameSlot::argumentCount));
     }
     return callOperation(usedRegisters, jit, exceptionTarget, function, resultGPR, arguments...);
 }

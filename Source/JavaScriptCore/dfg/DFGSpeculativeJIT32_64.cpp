@@ -835,7 +835,7 @@ void SpeculativeJIT::emitCall(Node* node)
                 shuffleData.args[i] = info.recovery(argEdge->virtualRegister());
             }
         } else {
-            m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), m_jit.calleeFramePayloadSlot(JSStack::ArgumentCount));
+            m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), m_jit.calleeFramePayloadSlot(CallFrameSlot::argumentCount));
         
             for (int i = 0; i < numPassedArgs; i++) {
                 Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
@@ -855,8 +855,8 @@ void SpeculativeJIT::emitCall(Node* node)
         calleeTagGPR = callee.tagGPR();
         calleePayloadGPR = callee.payloadGPR();
         use(calleeEdge);
-        m_jit.store32(calleePayloadGPR, m_jit.calleeFramePayloadSlot(JSStack::Callee));
-        m_jit.store32(calleeTagGPR, m_jit.calleeFrameTagSlot(JSStack::Callee));
+        m_jit.store32(calleePayloadGPR, m_jit.calleeFramePayloadSlot(CallFrameSlot::callee));
+        m_jit.store32(calleeTagGPR, m_jit.calleeFrameTagSlot(CallFrameSlot::callee));
 
         if (!isTail)
             flushRegisters();
@@ -4116,14 +4116,14 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetCallee: {
         GPRTemporary result(this);
-        m_jit.loadPtr(JITCompiler::payloadFor(JSStack::Callee), result.gpr());
+        m_jit.loadPtr(JITCompiler::payloadFor(CallFrameSlot::callee), result.gpr());
         cellResult(result.gpr(), node);
         break;
     }
         
     case GetArgumentCountIncludingThis: {
         GPRTemporary result(this);
-        m_jit.load32(JITCompiler::payloadFor(JSStack::ArgumentCount), result.gpr());
+        m_jit.load32(JITCompiler::payloadFor(CallFrameSlot::argumentCount), result.gpr());
         int32Result(result.gpr(), node);
         break;
     }

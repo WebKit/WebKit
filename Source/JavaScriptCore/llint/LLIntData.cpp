@@ -96,18 +96,18 @@ void Data::performAssertions(VM& vm)
 
     STATIC_ASSERT(sizeof(void*) == PtrSize);
     STATIC_ASSERT(sizeof(Register) == SlotSize);
-    STATIC_ASSERT(JSStack::CallFrameHeaderSize == CallFrameHeaderSlots);
+    STATIC_ASSERT(CallFrame::headerSizeInRegisters == CallFrameHeaderSlots);
 
     ASSERT(!CallFrame::callerFrameOffset());
-    STATIC_ASSERT(JSStack::CallerFrameAndPCSize == (PtrSize * 2) / SlotSize);
+    STATIC_ASSERT(CallerFrameAndPC::sizeInRegisters == (PtrSize * 2) / SlotSize);
     ASSERT(CallFrame::returnPCOffset() == CallFrame::callerFrameOffset() + PtrSize);
-    ASSERT(JSStack::CodeBlock * sizeof(Register) == CallFrame::returnPCOffset() + PtrSize);
-    STATIC_ASSERT(JSStack::Callee * sizeof(Register) == JSStack::CodeBlock * sizeof(Register) + SlotSize);
-    STATIC_ASSERT(JSStack::ArgumentCount * sizeof(Register) == JSStack::Callee * sizeof(Register) + SlotSize);
-    STATIC_ASSERT(JSStack::ThisArgument * sizeof(Register) == JSStack::ArgumentCount * sizeof(Register) + SlotSize);
-    STATIC_ASSERT(JSStack::CallFrameHeaderSize == JSStack::ThisArgument);
+    ASSERT(CallFrameSlot::codeBlock * sizeof(Register) == CallFrame::returnPCOffset() + PtrSize);
+    STATIC_ASSERT(CallFrameSlot::callee * sizeof(Register) == CallFrameSlot::codeBlock * sizeof(Register) + SlotSize);
+    STATIC_ASSERT(CallFrameSlot::argumentCount * sizeof(Register) == CallFrameSlot::callee * sizeof(Register) + SlotSize);
+    STATIC_ASSERT(CallFrameSlot::thisArgument * sizeof(Register) == CallFrameSlot::argumentCount * sizeof(Register) + SlotSize);
+    STATIC_ASSERT(CallFrame::headerSizeInRegisters == CallFrameSlot::thisArgument);
 
-    ASSERT(CallFrame::argumentOffsetIncludingThis(0) == JSStack::ThisArgument);
+    ASSERT(CallFrame::argumentOffsetIncludingThis(0) == CallFrameSlot::thisArgument);
 
 #if CPU(BIG_ENDIAN)
     ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) == 0);

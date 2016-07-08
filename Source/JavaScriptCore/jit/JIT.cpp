@@ -569,7 +569,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         nop();
 
     emitFunctionPrologue();
-    emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+    emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
     Label beginLabel(this);
 
@@ -627,9 +627,9 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         m_arityCheck = label();
         store8(TrustedImm32(0), &m_codeBlock->m_shouldAlwaysBeInlined);
         emitFunctionPrologue();
-        emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+        emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
-        load32(payloadFor(JSStack::ArgumentCount), regT1);
+        load32(payloadFor(CallFrameSlot::argumentCount), regT1);
         branch32(AboveOrEqual, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
 
         m_bytecodeOffset = 0;

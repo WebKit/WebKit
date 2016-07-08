@@ -118,7 +118,7 @@ public:
             
             if (inlineCallFrame->isVarargs()) {
                 usedLocals.set(VirtualRegister(
-                    JSStack::ArgumentCount + inlineCallFrame->stackOffset).toLocal());
+                    CallFrameSlot::argumentCount + inlineCallFrame->stackOffset).toLocal());
             }
             
             for (unsigned argument = inlineCallFrame->arguments.size(); argument-- > 1;) {
@@ -184,7 +184,7 @@ public:
             
             if (inlineCallFrame->isVarargs()) {
                 inlineCallFrame->argumentCountRegister = assign(
-                    allocation, VirtualRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount));
+                    allocation, VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
             }
             
             for (unsigned argument = inlineCallFrame->arguments.size(); argument-- > 1;) {

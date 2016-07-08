@@ -293,7 +293,7 @@ void AssemblyHelpers::jitAssertIsNull(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertArgumentCountSane()
 {
-    Jump ok = branch32(Below, payloadFor(JSStack::ArgumentCount), TrustedImm32(10000000));
+    Jump ok = branch32(Below, payloadFor(CallFrameSlot::argumentCount), TrustedImm32(10000000));
     abortWithReason(AHInsaneArgumentCount);
     ok.link(this);
 }
@@ -544,7 +544,7 @@ void AssemblyHelpers::emitRandomThunk(JSGlobalObject* globalObject, GPRReg scrat
 
 void AssemblyHelpers::emitRandomThunk(GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, FPRReg result)
 {
-    emitGetFromCallFrameHeaderPtr(JSStack::Callee, scratch3);
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, scratch3);
     emitLoadStructure(scratch3, scratch3, scratch0);
     loadPtr(Address(scratch3, Structure::globalObjectOffset()), scratch3);
     // Now, scratch3 holds JSGlobalObject*.

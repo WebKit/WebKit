@@ -44,14 +44,14 @@ inline unsigned stackAlignmentRegisters()
 // an "unaligned" count of registers.
 inline unsigned roundArgumentCountToAlignFrame(unsigned argumentCount)
 {
-    return WTF::roundUpToMultipleOf(stackAlignmentRegisters(), argumentCount + JSStack::CallFrameHeaderSize) - JSStack::CallFrameHeaderSize;
+    return WTF::roundUpToMultipleOf(stackAlignmentRegisters(), argumentCount + CallFrame::headerSizeInRegisters) - CallFrame::headerSizeInRegisters;
 }
 
 // Align local register count to make the last local end on a stack aligned address given the
-// CallFrame is at an address that is stack aligned minus JSStack::CallerFrameAndPCSize
+// CallFrame is at an address that is stack aligned minus CallerFrameAndPC::sizeInRegisters
 inline unsigned roundLocalRegisterCountForFramePointerOffset(unsigned localRegisterCount)
 {
-    return WTF::roundUpToMultipleOf(stackAlignmentRegisters(), localRegisterCount + JSStack::CallerFrameAndPCSize) - JSStack::CallerFrameAndPCSize;
+    return WTF::roundUpToMultipleOf(stackAlignmentRegisters(), localRegisterCount + CallerFrameAndPC::sizeInRegisters) - CallerFrameAndPC::sizeInRegisters;
 }
 
 inline unsigned logStackAlignmentRegisters()

@@ -303,12 +303,12 @@ private:
                     if (InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame) {
                         if (inlineCallFrame->isVarargs()) {
                             isClobberedByBlock |= clobberedByThisBlock.operand(
-                                inlineCallFrame->stackOffset + JSStack::ArgumentCount);
+                                inlineCallFrame->stackOffset + CallFrameSlot::argumentCount);
                         }
                         
                         if (!isClobberedByBlock || inlineCallFrame->isClosureCall) {
                             isClobberedByBlock |= clobberedByThisBlock.operand(
-                                inlineCallFrame->stackOffset + JSStack::Callee);
+                                inlineCallFrame->stackOffset + CallFrameSlot::callee);
                         }
                         
                         if (!isClobberedByBlock) {

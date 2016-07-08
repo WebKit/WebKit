@@ -185,7 +185,7 @@ public:
         m_proc.addFastConstant(m_tagTypeNumber->key());
         m_proc.addFastConstant(m_tagMask->key());
         
-        m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
+        m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(CallFrameSlot::codeBlock));
 
         // Stack Overflow Check.
         unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
@@ -212,7 +212,7 @@ public:
                     stackOverflow.link(&jit);
                     jit.store32(
                         MacroAssembler::TrustedImm32(callSiteIndex.bits()),
-                        CCallHelpers::tagFor(VirtualRegister(JSStack::ArgumentCount)));
+                        CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
                     jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
 
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -3046,7 +3046,7 @@ private:
         else {
             VirtualRegister argumentCountRegister;
             if (!inlineCallFrame)
-                argumentCountRegister = VirtualRegister(JSStack::ArgumentCount);
+                argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
             else
                 argumentCountRegister = inlineCallFrame->argumentCountRegister;
             limit = m_out.sub(m_out.load32(payloadFor(argumentCountRegister)), m_out.int32One);
@@ -4732,12 +4732,12 @@ private:
     
     void compileGetCallee()
     {
-        setJSValue(m_out.loadPtr(addressFor(JSStack::Callee)));
+        setJSValue(m_out.loadPtr(addressFor(CallFrameSlot::callee)));
     }
     
     void compileGetArgumentCountIncludingThis()
     {
-        setInt32(m_out.load32(payloadFor(JSStack::ArgumentCount)));
+        setInt32(m_out.load32(payloadFor(CallFrameSlot::argumentCount)));
     }
     
     void compileGetScope()
@@ -5062,7 +5062,7 @@ private:
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
 
-        unsigned frameSize = JSStack::CallFrameHeaderSize + numArgs;
+        unsigned frameSize = CallFrame::headerSizeInRegisters + numArgs;
         unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
 
         // JS->JS calling convention requires that the caller allows this much space on top of stack to
@@ -5085,12 +5085,12 @@ private:
 
         auto addArgument = [&] (LValue value, VirtualRegister reg, int offset) {
             intptr_t offsetFromSP =
-                (reg.offset() - JSStack::CallerFrameAndPCSize) * sizeof(EncodedJSValue) + offset;
+                (reg.offset() - CallerFrameAndPC::sizeInRegisters) * sizeof(EncodedJSValue) + offset;
             arguments.append(ConstrainedValue(value, ValueRep::stackArgument(offsetFromSP)));
         };
 
-        addArgument(jsCallee, VirtualRegister(JSStack::Callee), 0);
-        addArgument(m_out.constInt32(numArgs), VirtualRegister(JSStack::ArgumentCount), PayloadOffset);
+        addArgument(jsCallee, VirtualRegister(CallFrameSlot::callee), 0);
+        addArgument(m_out.constInt32(numArgs), VirtualRegister(CallFrameSlot::argumentCount), PayloadOffset);
         for (unsigned i = 0; i < numArgs; ++i)
             addArgument(lowJSValue(m_graph.varArgChild(node, 1 + i)), virtualRegisterForArgument(i), 0);
 
@@ -5117,7 +5117,7 @@ private:
 
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-                    CCallHelpers::tagFor(VirtualRegister(JSStack::ArgumentCount)));
+                    CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
 
@@ -5235,7 +5235,7 @@ private:
                 // with the call site index of our frame. Bad things happen if it's not set.
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-                    CCallHelpers::tagFor(VirtualRegister(JSStack::ArgumentCount)));
+                    CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
 
                 CallFrameShuffler slowPathShuffler(jit, shuffleData);
                 slowPathShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
@@ -5340,7 +5340,7 @@ private:
 
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-                    CCallHelpers::tagFor(VirtualRegister(JSStack::ArgumentCount)));
+                    CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
                 CallVarargsData* data = node->callVarargsData();
@@ -5469,7 +5469,7 @@ private:
                     thisLateRep.emitRestore(jit, thisGPR);
                 }
                 
-                jit.store64(GPRInfo::regT0, CCallHelpers::calleeFrameSlot(JSStack::Callee));
+                jit.store64(GPRInfo::regT0, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
                 jit.store64(thisGPR, CCallHelpers::calleeArgumentSlot(0));
                 
                 CallLinkInfo::CallType callType;
@@ -7152,7 +7152,7 @@ private:
 
         m_out.storePtr(m_callFrame, packet, m_heaps.ShadowChicken_Packet_frame);
         m_out.storePtr(m_out.loadPtr(addressFor(0)), packet, m_heaps.ShadowChicken_Packet_callerFrame);
-        m_out.storePtr(m_out.loadPtr(payloadFor(JSStack::Callee)), packet, m_heaps.ShadowChicken_Packet_callee);
+        m_out.storePtr(m_out.loadPtr(payloadFor(CallFrameSlot::callee)), packet, m_heaps.ShadowChicken_Packet_callee);
         m_out.storePtr(scope, packet, m_heaps.ShadowChicken_Packet_scope);
     }
     
@@ -7220,7 +7220,7 @@ private:
             
             VirtualRegister argumentCountRegister;
             if (!inlineCallFrame)
-                argumentCountRegister = VirtualRegister(JSStack::ArgumentCount);
+                argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
             else
                 argumentCountRegister = inlineCallFrame->argumentCountRegister;
             length.value = m_out.sub(m_out.load32(payloadFor(argumentCountRegister)), m_out.int32One);
@@ -7241,7 +7241,7 @@ private:
                 return m_out.loadPtr(addressFor(frame->calleeRecovery.virtualRegister()));
             return weakPointer(frame->calleeRecovery.constant().asCell());
         }
-        return m_out.loadPtr(addressFor(JSStack::Callee));
+        return m_out.loadPtr(addressFor(CallFrameSlot::callee));
     }
     
     LValue getArgumentsStart(InlineCallFrame* inlineCallFrame)
@@ -10702,7 +10702,7 @@ private:
         CallSiteIndex callSiteIndex = m_ftlState.jitCode->common.addCodeOrigin(codeOrigin);
         m_out.store32(
             m_out.constInt32(callSiteIndex.bits()),
-            tagFor(JSStack::ArgumentCount));
+            tagFor(CallFrameSlot::argumentCount));
     }
 
     void callPreflight()

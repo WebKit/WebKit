@@ -29,7 +29,6 @@
 #ifndef JSStack_h
 #define JSStack_h
 
-#include "ExecutableAllocator.h"
 #include "Register.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PageReservation.h>
@@ -39,34 +38,13 @@ namespace JSC {
 
     class CodeBlockSet;
     class ConservativeRoots;
-    class ExecState;
     class JITStubRoutineSet;
     class VM;
     class LLIntOffsetsExtractor;
 
-    struct Instruction;
-    typedef ExecState CallFrame;
-
-    struct CallerFrameAndPC {
-        CallFrame* callerFrame;
-        Instruction* pc;
-    };
-
     class JSStack {
         WTF_MAKE_NONCOPYABLE(JSStack);
     public:
-        enum CallFrameHeaderEntry {
-            CallerFrameAndPCSize = sizeof(CallerFrameAndPC) / sizeof(Register),
-            CodeBlock = CallerFrameAndPCSize,
-            Callee,
-            ArgumentCount,
-            CallFrameHeaderSize,
-
-            // The following entries are not part of the CallFrameHeader but are provided here as a convenience:
-            ThisArgument = CallFrameHeaderSize,
-            FirstArgument,
-        };
-
         // Allow 8k of excess registers before we start trying to reap the stack
         static const ptrdiff_t maxExcessCapacity = 8 * 1024;
 
@@ -77,10 +55,7 @@ namespace JSC {
         bool containsAddress(Register* address) { return (lowAddress() <= address && address < highAddress()); }
         static size_t committedByteCount();
 
-#if ENABLE(JIT)
-        void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&) { }
-        void sanitizeStack() { }
-#else
+#if !ENABLE(JIT)
         ~JSStack();
 
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);

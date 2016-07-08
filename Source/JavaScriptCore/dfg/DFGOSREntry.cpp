@@ -264,7 +264,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     unsigned baselineFrameSize = entry->m_expectedValues.numberOfLocals();
     unsigned maxFrameSize = std::max(frameSize, baselineFrameSize);
 
-    Register* scratch = bitwise_cast<Register*>(vm->scratchBufferForSize(sizeof(Register) * (2 + JSStack::CallFrameHeaderSize + maxFrameSize))->dataBuffer());
+    Register* scratch = bitwise_cast<Register*>(vm->scratchBufferForSize(sizeof(Register) * (2 + CallFrame::headerSizeInRegisters + maxFrameSize))->dataBuffer());
     
     *bitwise_cast<size_t*>(scratch + 0) = frameSize;
     
@@ -274,9 +274,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     RELEASE_ASSERT(targetPC);
     *bitwise_cast<void**>(scratch + 1) = targetPC;
     
-    Register* pivot = scratch + 2 + JSStack::CallFrameHeaderSize;
+    Register* pivot = scratch + 2 + CallFrame::headerSizeInRegisters;
     
-    for (int index = -JSStack::CallFrameHeaderSize; index < static_cast<int>(baselineFrameSize); ++index) {
+    for (int index = -CallFrame::headerSizeInRegisters; index < static_cast<int>(baselineFrameSize); ++index) {
         VirtualRegister reg(-1 - index);
         
         if (reg.isLocal()) {
@@ -329,7 +329,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     // 7) Fix the call frame to have the right code block.
     
-    *bitwise_cast<CodeBlock**>(pivot - 1 - JSStack::CodeBlock) = codeBlock;
+    *bitwise_cast<CodeBlock**>(pivot - 1 - CallFrameSlot::codeBlock) = codeBlock;
     
     if (Options::verboseOSR())
         dataLogF("    OSR returning data buffer %p.\n", scratch);

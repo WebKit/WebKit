@@ -394,7 +394,7 @@ static void compileStub(
         jit.store64(GPRInfo::regT0, unwindScratch + i);
     }
     
-    jit.load32(CCallHelpers::payloadFor(JSStack::ArgumentCount), GPRInfo::regT2);
+    jit.load32(CCallHelpers::payloadFor(CallFrameSlot::argumentCount), GPRInfo::regT2);
     
     // Let's say that the FTL function had failed its arity check. In that case, the stack will
     // contain some extra stuff.

@@ -37,7 +37,7 @@ void CCallHelpers::logShadowChickenProloguePacket(GPRReg shadowPacket, GPRReg sc
     storePtr(GPRInfo::callFrameRegister, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, frame)));
     loadPtr(Address(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame)), scratch1);
     storePtr(scratch1, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callerFrame)));
-    loadPtr(addressFor(JSStack::Callee), scratch1);
+    loadPtr(addressFor(CallFrameSlot::callee), scratch1);
     storePtr(scratch1, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)));
     storePtr(scope, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, scope)));
 }

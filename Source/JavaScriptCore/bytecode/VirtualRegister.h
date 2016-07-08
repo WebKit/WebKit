@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ public:
     bool isValid() const { return (m_virtualRegister != s_invalidVirtualRegister); }
     bool isLocal() const { return operandIsLocal(m_virtualRegister); }
     bool isArgument() const { return operandIsArgument(m_virtualRegister); }
-    bool isHeader() const { return m_virtualRegister >= 0 && m_virtualRegister < JSStack::ThisArgument; }
+    bool isHeader() const { return m_virtualRegister >= 0 && m_virtualRegister < CallFrameSlot::thisArgument; }
     bool isConstant() const { return m_virtualRegister >= s_firstConstantRegisterIndex; }
     int toLocal() const { ASSERT(isLocal()); return operandToLocal(m_virtualRegister); }
     int toArgument() const { ASSERT(isArgument()); return operandToArgument(m_virtualRegister); }

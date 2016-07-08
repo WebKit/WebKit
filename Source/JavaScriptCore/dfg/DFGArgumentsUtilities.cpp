@@ -38,11 +38,11 @@ bool argumentsInvolveStackSlot(InlineCallFrame* inlineCallFrame, VirtualRegister
         return (reg.isArgument() && reg.toArgument()) || reg.isHeader();
     
     if (inlineCallFrame->isClosureCall
-        && reg == VirtualRegister(inlineCallFrame->stackOffset + JSStack::Callee))
+        && reg == VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee))
         return true;
     
     if (inlineCallFrame->isVarargs()
-        && reg == VirtualRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount))
+        && reg == VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount))
         return true;
     
     unsigned numArguments = inlineCallFrame->arguments.size() - 1;
@@ -78,7 +78,7 @@ Node* emitCodeToGetArgumentsArrayLength(
     if (!inlineCallFrame)
         argumentCount = insertionSet.insertNode(nodeIndex, SpecInt32Only, GetArgumentCountIncludingThis, origin);
     else {
-        VirtualRegister argumentCountRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount);
+        VirtualRegister argumentCountRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount);
         
         argumentCount = insertionSet.insertNode(
             nodeIndex, SpecInt32Only, GetStack, origin,

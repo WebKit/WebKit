@@ -947,7 +947,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
         jit.store32(
             CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-            CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+            CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCount)));
 
         if (m_type == Getter || m_type == Setter) {
             // Create a JS call using a JS call inline cache. Assume that:
@@ -1002,7 +1002,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             CCallHelpers::Jump returnUndefined = jit.branchTestPtr(
                 CCallHelpers::Zero, loadedValueGPR);
 
-            unsigned numberOfRegsForCall = JSStack::CallFrameHeaderSize + numberOfParameters;
+            unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + numberOfParameters;
 
             unsigned numberOfBytesForCall =
                 numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
@@ -1020,10 +1020,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
             jit.store32(
                 CCallHelpers::TrustedImm32(numberOfParameters),
-                calleeFrame.withOffset(JSStack::ArgumentCount * sizeof(Register) + PayloadOffset));
+                calleeFrame.withOffset(CallFrameSlot::argumentCount * sizeof(Register) + PayloadOffset));
 
             jit.storeCell(
-                loadedValueGPR, calleeFrame.withOffset(JSStack::Callee * sizeof(Register)));
+                loadedValueGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
             jit.storeCell(
                 baseForGetGPR,
@@ -1260,7 +1260,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.store32(
                     CCallHelpers::TrustedImm32(
                         state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-                    CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+                    CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCount)));
                 
                 jit.makeSpaceOnStackForCCall();
                 

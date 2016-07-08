@@ -130,7 +130,7 @@ public:
         m_codeBlock->setCalleeSaveRegisters(RegisterSet::webAssemblyCalleeSaveRegisters());
 
         emitFunctionPrologue();
-        emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+        emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
         m_beginLabel = label();
 
@@ -217,7 +217,7 @@ public:
         // FIXME: Implement arity check.
         Label arityCheck = label();
         emitFunctionPrologue();
-        emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+        emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
         jump(m_beginLabel);
 
         if (!m_divideErrorJumpList.empty()) {
@@ -1347,7 +1347,7 @@ private:
     void boxArgumentsAndAdjustStackPointer(const Vector<WASMType>& arguments)
     {
         size_t argumentCount = arguments.size();
-        int stackOffset = -m_calleeSaveSpace - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_numberOfLocals + m_tempStackTop + argumentCount + 1 + JSStack::CallFrameHeaderSize);
+        int stackOffset = -m_calleeSaveSpace - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_numberOfLocals + m_tempStackTop + argumentCount + 1 + CallFrame::headerSizeInRegisters);
 
         storeTrustedValue(jsUndefined(), Address(GPRInfo::callFrameRegister, (stackOffset + CallFrame::thisArgumentOffset()) * sizeof(Register)));
 
@@ -1384,17 +1384,17 @@ private:
         m_tempStackTop -= argumentCount;
 
         addPtr(TrustedImm32(stackOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, stackPointerRegister);
-        store32(TrustedImm32(argumentCount + 1), Address(stackPointerRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+        store32(TrustedImm32(argumentCount + 1), Address(stackPointerRegister, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
     }
 
     void callAndUnboxResult(WASMExpressionType returnType)
     {
         // regT0 holds callee.
 #if USE(JSVALUE64)
-        store64(GPRInfo::regT0, Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
+        store64(GPRInfo::regT0, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
 #else
-        store32(GPRInfo::regT0, Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
-        store32(TrustedImm32(JSValue::CellTag), Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) + TagOffset - sizeof(CallerFrameAndPC)));
+        store32(GPRInfo::regT0, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+        store32(TrustedImm32(JSValue::CellTag), Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) + TagOffset - sizeof(CallerFrameAndPC)));
 #endif
 
         DataLabelPtr addressOfLinkedFunctionCheck;

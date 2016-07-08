@@ -1,3 +1,257 @@
+2016-07-08  Mark Lam  <mark.lam@apple.com>
+
+        Move CallFrame header info from JSStack.h to CallFrame.h
+        https://bugs.webkit.org/show_bug.cgi?id=159549
+
+        Reviewed by Geoffrey Garen.
+
+        CallFrame.h is a much better location for CallFrame header info.
+
+        Replaced CallFrame::init() with ExecState::initGlobalExec() because normal
+        CallFrames are setup by a different mechanism now.  Only the globalExec is still
+        using it.  So, might as well change it to be specifically for the globalExec.
+
+        Removed the use of JSStack::containsAddress() in ExecState::initGlobalExec()
+        because it is not relevant to the globalExec.
+
+        Also removed some unused code: JSStack::gatherConservativeRoots() and
+        JSStack::sanitizeStack() is never called for JIT builds.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/VirtualRegister.h:
+        (JSC::VirtualRegister::isValid):
+        (JSC::VirtualRegister::isLocal):
+        (JSC::VirtualRegister::isArgument):
+        (JSC::VirtualRegister::isHeader):
+        (JSC::VirtualRegister::isConstant):
+        (JSC::VirtualRegister::toLocal):
+        (JSC::VirtualRegister::toArgument):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::CallArguments::thisRegister):
+        (JSC::CallArguments::argumentRegister):
+        (JSC::CallArguments::stackOffset):
+        (JSC::CallArguments::argumentCountIncludingThis):
+        (JSC::CallArguments::argumentsNode):
+        (JSC::BytecodeGenerator::registerFor):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitHomeObjectForCallee):
+        (JSC::emitGetSuperFunctionForConstruct):
+        (JSC::CallArguments::CallArguments):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::argumentsInvolveStackSlot):
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        (JSC::DFG::ByteCodeParser::getArgumentCount):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileSetupRegistersForEntry):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::emitStoreCallSiteIndex):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExitCompiler.cpp:
+        (JSC::DFG::OSRExitCompiler::emitRestoreArguments):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        (JSC::DFG::adjustFrameAndStackInOSRExitCompilerThunk):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitGetLength):
+        (JSC::DFG::SpeculativeJIT::emitGetCallee):
+        (JSC::DFG::SpeculativeJIT::emitGetArgumentStart):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetCallee):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArgumentCountIncludingThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetScope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLogShadowChickenPrologue):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsLength):
+        (JSC::FTL::DFG::LowerDFGToB3::getCurrentCallee):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsStart):
+        (JSC::FTL::DFG::LowerDFGToB3::callPreflight):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * interpreter/CallFrame.cpp:
+        (JSC::ExecState::initGlobalExec):
+        (JSC::CallFrame::callSiteBitsAreBytecodeOffset):
+        (JSC::CallFrame::callSiteAsRawBits):
+        (JSC::CallFrame::unsafeCallSiteAsRawBits):
+        (JSC::CallFrame::callSiteIndex):
+        (JSC::CallFrame::setCurrentVPC):
+        (JSC::CallFrame::callSiteBitsAsBytecodeOffset):
+        * interpreter/CallFrame.h:
+        (JSC::CallSiteIndex::CallSiteIndex):
+        (JSC::ExecState::calleeAsValue):
+        (JSC::ExecState::callee):
+        (JSC::ExecState::unsafeCallee):
+        (JSC::ExecState::codeBlock):
+        (JSC::ExecState::unsafeCodeBlock):
+        (JSC::ExecState::scope):
+        (JSC::ExecState::setCallerFrame):
+        (JSC::ExecState::setScope):
+        (JSC::ExecState::argumentCount):
+        (JSC::ExecState::argumentCountIncludingThis):
+        (JSC::ExecState::argumentOffset):
+        (JSC::ExecState::argumentOffsetIncludingThis):
+        (JSC::ExecState::offsetFor):
+        (JSC::ExecState::noCaller):
+        (JSC::ExecState::setArgumentCountIncludingThis):
+        (JSC::ExecState::setCallee):
+        (JSC::ExecState::setCodeBlock):
+        (JSC::ExecState::setReturnPC):
+        (JSC::ExecState::argIndexForRegister):
+        (JSC::ExecState::callerFrameAndPC):
+        (JSC::ExecState::unsafeCallerFrameAndPC):
+        (JSC::ExecState::init): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        * interpreter/Interpreter.h:
+        (JSC::calleeFrameForVarargs):
+        * interpreter/JSStack.h:
+        (JSC::JSStack::containsAddress):
+        (JSC::JSStack::gatherConservativeRoots): Deleted.
+        (JSC::JSStack::sanitizeStack): Deleted.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitAssertArgumentCountSane):
+        (JSC::AssemblyHelpers::emitRandomThunk):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::restoreReturnAddressBeforeReturn):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeaderPtr):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeader32):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeader64):
+        (JSC::AssemblyHelpers::emitPutToCallFrameHeader):
+        (JSC::AssemblyHelpers::emitPutToCallFrameHeaderBeforePrologue):
+        (JSC::AssemblyHelpers::emitPutPayloadToCallFrameHeaderBeforePrologue):
+        (JSC::AssemblyHelpers::emitPutTagToCallFrameHeaderBeforePrologue):
+        (JSC::AssemblyHelpers::calleeFrameSlot):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::logShadowChickenProloguePacket):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        (JSC::CallFrameShuffler::dump):
+        (JSC::CallFrameShuffler::extendFrameIfNeeded):
+        (JSC::CallFrameShuffler::prepareForSlowPath):
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::snapshot):
+        (JSC::CallFrameShuffler::setCalleeJSValueRegs):
+        (JSC::CallFrameShuffler::assumeCalleeIsCell):
+        (JSC::CallFrameShuffler::numLocals):
+        (JSC::CallFrameShuffler::getOld):
+        (JSC::CallFrameShuffler::setOld):
+        (JSC::CallFrameShuffler::firstOld):
+        (JSC::CallFrameShuffler::lastOld):
+        (JSC::CallFrameShuffler::isValidOld):
+        (JSC::CallFrameShuffler::argCount):
+        (JSC::CallFrameShuffler::getNew):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::getConstantOperand):
+        (JSC::JIT::emitPutIntToCallFrameHeader):
+        (JSC::JIT::updateTopCallFrame):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_scope):
+        (JSC::JIT::emit_op_argument_count):
+        (JSC::JIT::emit_op_get_rest_length):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_get_scope):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitJumpIfNotType):
+        (JSC::JSInterfaceJIT::emitGetFromCallFrameHeaderPtr):
+        (JSC::JSInterfaceJIT::emitPutToCallFrameHeader):
+        (JSC::JSInterfaceJIT::emitPutCellToCallFrameHeader):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetVarargsFrame):
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::genericCall):
+        (JSC::LLInt::varargsSetup):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        * runtime/StackAlignment.h:
+        (JSC::roundArgumentCountToAlignFrame):
+        (JSC::roundLocalRegisterCountForFramePointerOffset):
+        (JSC::logStackAlignmentRegisters):
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+        (JSC::WASMFunctionCompiler::endFunction):
+        (JSC::WASMFunctionCompiler::boxArgumentsAndAdjustStackPointer):
+        (JSC::WASMFunctionCompiler::callAndUnboxResult):
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::updateTempStackHeightForCall):
+
 2016-07-08  Chris Dumez  <cdumez@apple.com>
 
         Object.defineProperty() should maintain existing getter / setter if not overridden in the new descriptor

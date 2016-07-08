@@ -108,7 +108,7 @@ void JITCompiler::compileEntry()
     // check) which will be dependent on stack layout. (We'd need to account for this in
     // both normal return code and when jumping to an exception handler).
     emitFunctionPrologue();
-    emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+    emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 }
 
 void JITCompiler::compileSetupRegistersForEntry()
@@ -443,7 +443,7 @@ void JITCompiler::compileFunction()
     m_arityCheck = label();
     compileEntry();
 
-    load32(AssemblyHelpers::payloadFor((VirtualRegister)JSStack::ArgumentCount), GPRInfo::regT1);
+    load32(AssemblyHelpers::payloadFor((VirtualRegister)CallFrameSlot::argumentCount), GPRInfo::regT1);
     branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
     if (maxFrameExtentForSlowPathCall)

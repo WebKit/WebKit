@@ -165,7 +165,7 @@ static RegisterID* emitHomeObjectForCallee(BytecodeGenerator& generator)
     }
 
     RegisterID callee;
-    callee.setIndex(JSStack::Callee);
+    callee.setIndex(CallFrameSlot::callee);
     return generator.emitGetById(generator.newTemporary(), &callee, generator.propertyNames().builtinNames().homeObjectPrivateName());
 }
 
@@ -181,7 +181,7 @@ static RegisterID* emitGetSuperFunctionForConstruct(BytecodeGenerator& generator
         return generator.emitGetById(generator.newTemporary(), generator.emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment(), generator.propertyNames().underscoreProto);
 
     RegisterID callee;
-    callee.setIndex(JSStack::Callee);
+    callee.setIndex(CallFrameSlot::callee);
     return generator.emitGetById(generator.newTemporary(), &callee, generator.propertyNames().underscoreProto);
 }
 
@@ -724,7 +724,7 @@ CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argume
     }
 
     // We need to ensure that the frame size is stack-aligned
-    while ((JSStack::CallFrameHeaderSize + m_argv.size()) % stackAlignmentRegisters()) {
+    while ((CallFrame::headerSizeInRegisters + m_argv.size()) % stackAlignmentRegisters()) {
         m_argv.insert(0, generator.newTemporary());
         m_padding++;
     }

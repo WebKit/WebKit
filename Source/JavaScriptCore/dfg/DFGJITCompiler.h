@@ -156,7 +156,7 @@ public:
 
     void emitStoreCallSiteIndex(CallSiteIndex callSite)
     {
-        store32(TrustedImm32(callSite.bits()), tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+        store32(TrustedImm32(callSite.bits()), tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCount)));
     }
 
     // Add a call out from JIT code, without an exception check.
