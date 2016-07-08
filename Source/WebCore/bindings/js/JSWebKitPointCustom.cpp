@@ -32,21 +32,21 @@ using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL constructJSWebKitPoint(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSWebKitPoint(ExecState& exec)
 {
-    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
 
     float x = 0;
     float y = 0;
-    if (exec->argumentCount() >= 2) {
-        x = static_cast<float>(exec->argument(0).toNumber(exec));
-        y = static_cast<float>(exec->argument(1).toNumber(exec));
+    if (exec.argumentCount() >= 2) {
+        x = static_cast<float>(exec.uncheckedArgument(0).toNumber(&exec));
+        y = static_cast<float>(exec.uncheckedArgument(1).toNumber(&exec));
         if (std::isnan(x))
             x = 0;
         if (std::isnan(y))
             y = 0;
     }
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), WebKitPoint::create(x, y))));
+    return JSValue::encode(asObject(toJSNewlyCreated(&exec, jsConstructor->globalObject(), WebKitPoint::create(x, y))));
 }
 
 } // namespace WebCore

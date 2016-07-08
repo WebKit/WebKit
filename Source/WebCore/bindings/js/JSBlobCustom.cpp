@@ -60,51 +60,51 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Blob& blob)
     return wrap(state, globalObject, blob);
 }
 
-EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 {
-    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return throwVMError(exec, createReferenceError(exec, "Blob constructor associated document is unavailable"));
+        return throwVMError(&exec, createReferenceError(&exec, "Blob constructor associated document is unavailable"));
 
-    if (!exec->argumentCount()) {
+    if (!exec.argumentCount()) {
         return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), Blob, Blob::create()));
     }
 
     unsigned blobPartsLength = 0;
-    JSObject* blobParts = toJSSequence(exec, exec->argument(0), blobPartsLength);
-    if (exec->hadException())
+    JSObject* blobParts = toJSSequence(&exec, exec.uncheckedArgument(0), blobPartsLength);
+    if (exec.hadException())
         return JSValue::encode(jsUndefined());
     ASSERT(blobParts);
 
     String type;
     String endings = ASCIILiteral("transparent");
 
-    if (exec->argumentCount() > 1) {
-        JSValue blobPropertyBagValue = exec->argument(1);
+    if (exec.argumentCount() > 1) {
+        JSValue blobPropertyBagValue = exec.uncheckedArgument(1);
 
         if (!blobPropertyBagValue.isObject())
-            return throwVMTypeError(exec, "Second argument of the constructor is not of type Object");
+            return throwVMTypeError(&exec, "Second argument of the constructor is not of type Object");
 
         // Given the above test, this will always yield an object.
-        JSObject* blobPropertyBagObject = blobPropertyBagValue.toObject(exec);
+        JSObject* blobPropertyBagObject = blobPropertyBagValue.toObject(&exec);
 
         // Create the dictionary wrapper from the initializer object.
-        JSDictionary dictionary(exec, blobPropertyBagObject);
+        JSDictionary dictionary(&exec, blobPropertyBagObject);
 
         // Attempt to get the endings property and validate it.
         bool containsEndings = dictionary.get("endings", endings);
-        if (exec->hadException())
+        if (exec.hadException())
             return JSValue::encode(jsUndefined());
 
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
-                return throwVMTypeError(exec, "The endings property must be either \"transparent\" or \"native\"");
+                return throwVMTypeError(&exec, "The endings property must be either \"transparent\" or \"native\"");
         }
 
         // Attempt to get the type property.
         dictionary.get("type", type);
-        if (exec->hadException())
+        if (exec.hadException())
             return JSValue::encode(jsUndefined());
     }
 
@@ -113,8 +113,8 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)
     BlobBuilder blobBuilder;
 
     for (unsigned i = 0; i < blobPartsLength; ++i) {
-        JSValue item = blobParts->get(exec, i);
-        if (exec->hadException())
+        JSValue item = blobParts->get(&exec, i);
+        if (exec.hadException())
             return JSValue::encode(jsUndefined());
 
         if (ArrayBuffer* arrayBuffer = toArrayBuffer(item))
@@ -124,8 +124,8 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)
         else if (Blob* blob = JSBlob::toWrapped(item))
             blobBuilder.append(blob);
         else {
-            String string = item.toString(exec)->value(exec);
-            if (exec->hadException())
+            String string = item.toWTFString(&exec);
+            if (exec.hadException())
                 return JSValue::encode(jsUndefined());
             blobBuilder.append(string, endings);
         }

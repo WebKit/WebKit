@@ -39,26 +39,26 @@ using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL constructJSMediaSession(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSMediaSession(ExecState& exec)
 {
-    auto* castedThis = jsCast<DOMConstructorObject*>(exec->callee());
+    auto* castedThis = jsCast<DOMConstructorObject*>(exec.callee());
+
     auto* context = castedThis->scriptExecutionContext();
     if (!context)
-        return throwConstructorDocumentUnavailableError(*exec, "MediaSession");
+        return throwConstructorDocumentUnavailableError(exec, "MediaSession");
 
     String kind;
-    if (exec->argumentCount() > 0) {
-        JSString* kindString = exec->argument(0).toString(exec);
-        if (UNLIKELY(exec->hadException()))
+    if (exec.argumentCount() > 0) {
+        JSString* kindString = exec.uncheckedArgument(0).toString(&exec);
+        if (UNLIKELY(exec.hadException()))
             return JSValue::encode(jsUndefined());
-        kind = kindString->value(exec);
+        kind = kindString->value(&exec);
         if (kind != "content" && kind != "transient" && kind != "transient-solo" && kind != "ambient")
-            return throwArgumentMustBeEnumError(*exec, 0, "kind", "MediaSession", nullptr, "\"content\", \"transient\", \"transient-solo\", \"ambient\"");
+            return throwArgumentMustBeEnumError(exec, 0, "kind", "MediaSession", nullptr, "\"content\", \"transient\", \"transient-solo\", \"ambient\"");
     } else
         kind = "content";
 
-    auto object = MediaSession::create(*context, kind);
-    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object)));
+    return JSValue::encode(toJSNewlyCreated(&exec, castedThis->globalObject(), MediaSession::create(*context, kind)));
 }
 
 } // namespace WebCore

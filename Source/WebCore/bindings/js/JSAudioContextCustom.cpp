@@ -44,69 +44,69 @@ using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState& exec)
 {
-    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
     if (!jsConstructor)
-        return throwVMError(exec, createReferenceError(exec, "AudioContext constructor callee is unavailable"));
+        return throwVMError(&exec, createReferenceError(&exec, "AudioContext constructor callee is unavailable"));
 
     ScriptExecutionContext* scriptExecutionContext = jsConstructor->scriptExecutionContext();
     if (!scriptExecutionContext)
-        return throwVMError(exec, createReferenceError(exec, "AudioContext constructor script execution context is unavailable"));
-        
+        return throwVMError(&exec, createReferenceError(&exec, "AudioContext constructor script execution context is unavailable"));
+
     if (!is<Document>(*scriptExecutionContext))
-        return throwVMError(exec, createReferenceError(exec, "AudioContext constructor called in a script execution context which is not a document"));
+        return throwVMError(&exec, createReferenceError(&exec, "AudioContext constructor called in a script execution context which is not a document"));
 
     Document& document = downcast<Document>(*scriptExecutionContext);
 
     RefPtr<AudioContext> audioContext;
-    
-    if (!exec->argumentCount()) {
+
+    if (!exec.argumentCount()) {
         // Constructor for default AudioContext which talks to audio hardware.
         ExceptionCode ec = 0;
         audioContext = AudioContext::create(document, ec);
         if (ec) {
-            setDOMException(exec, ec);
+            setDOMException(&exec, ec);
             return JSValue::encode(JSValue());
         }
         if (!audioContext.get())
-            return throwVMError(exec, createSyntaxError(exec, "audio resources unavailable for AudioContext construction"));
+            return throwVMError(&exec, createSyntaxError(&exec, "audio resources unavailable for AudioContext construction"));
     } else {
 #if ENABLE(LEGACY_WEB_AUDIO)
         // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
         // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
         document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Deprecated AudioContext constructor: use OfflineAudioContext instead"));
 
-        if (exec->argumentCount() < 3)
-            return throwVMError(exec, createNotEnoughArgumentsError(exec));
+        if (exec.argumentCount() < 3)
+            return throwVMError(&exec, createNotEnoughArgumentsError(&exec));
 
-        int32_t numberOfChannels = exec->argument(0).toInt32(exec);
-        int32_t numberOfFrames = exec->argument(1).toInt32(exec);
-        float sampleRate = exec->argument(2).toFloat(exec);
-        
+        int32_t numberOfChannels = exec.uncheckedArgument(0).toInt32(&exec);
+        int32_t numberOfFrames = exec.uncheckedArgument(1).toInt32(&exec);
+        float sampleRate = exec.uncheckedArgument(2).toFloat(&exec);
+
         if (numberOfChannels <= 0 || numberOfChannels > 10)
-            return throwVMError(exec, createSyntaxError(exec, "Invalid number of channels"));
+            return throwVMError(&exec, createSyntaxError(&exec, "Invalid number of channels"));
 
         if (numberOfFrames <= 0)
-            return throwVMError(exec, createSyntaxError(exec, "Invalid number of frames"));
+            return throwVMError(&exec, createSyntaxError(&exec, "Invalid number of frames"));
 
         if (sampleRate <= 0)
-            return throwVMError(exec, createSyntaxError(exec, "Invalid sample rate"));
+            return throwVMError(&exec, createSyntaxError(&exec, "Invalid sample rate"));
 
 
         ExceptionCode ec = 0;
         audioContext = OfflineAudioContext::create(document, numberOfChannels, numberOfFrames, sampleRate, ec);
         if (ec) {
-            setDOMException(exec, ec);
-            return throwVMError(exec, createSyntaxError(exec, "Error creating OfflineAudioContext"));
+            setDOMException(&exec, ec);
+            return throwVMError(&exec, createSyntaxError(&exec, "Error creating OfflineAudioContext"));
         }
 #else
-        return throwVMError(exec, createSyntaxError(exec, "Illegal AudioContext constructor"));
+        return throwVMError(&exec, createSyntaxError(&exec, "Illegal AudioContext constructor"));
 #endif
     }
 
     if (!audioContext)
-        return throwVMError(exec, createReferenceError(exec, "Error creating AudioContext"));
+        return throwVMError(&exec, createReferenceError(&exec, "Error creating AudioContext"));
 
     return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), AudioContext, audioContext.releaseNonNull()));
 }

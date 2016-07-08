@@ -42,19 +42,19 @@ using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL constructJSMutationObserver(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSMutationObserver(ExecState& exec)
 {
-    if (exec->argumentCount() < 1)
-        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    if (exec.argumentCount() < 1)
+        return throwVMError(&exec, createNotEnoughArgumentsError(&exec));
 
-    JSObject* object = exec->argument(0).getObject();
+    JSObject* object = exec.uncheckedArgument(0).getObject();
     CallData callData;
     if (!object || object->methodTable()->getCallData(object, callData) == CallType::None)
-        return throwVMTypeError(exec, ASCIILiteral("Callback argument must be a function"));
+        return throwVMTypeError(&exec, ASCIILiteral("Callback argument must be a function"));
 
-    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
     auto callback = JSMutationCallback::create(object, jsConstructor->globalObject());
-    JSObject* jsObserver = asObject(toJS(exec, jsConstructor->globalObject(), MutationObserver::create(WTFMove(callback))));
+    JSObject* jsObserver = asObject(toJSNewlyCreated(&exec, jsConstructor->globalObject(), MutationObserver::create(WTFMove(callback))));
     PrivateName propertyName;
     jsObserver->putDirect(jsConstructor->globalObject()->vm(), propertyName, object);
     return JSValue::encode(jsObserver);

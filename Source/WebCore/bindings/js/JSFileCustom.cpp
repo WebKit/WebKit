@@ -40,47 +40,47 @@ using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
 {
-    auto* constructor = jsCast<DOMConstructorObject*>(exec->callee());
+    auto* constructor = jsCast<DOMConstructorObject*>(exec.callee());
     ScriptExecutionContext* context = constructor->scriptExecutionContext();
     if (!context)
-        return throwVMError(exec, createReferenceError(exec, "File constructor associated document is unavailable"));
+        return throwVMError(&exec, createReferenceError(&exec, "File constructor associated document is unavailable"));
 
-    JSValue arg = exec->argument(0);
+    JSValue arg = exec.argument(0);
     if (arg.isUndefinedOrNull())
-        return throwVMTypeError(exec, ASCIILiteral("First argument to File constructor must be a valid sequence, was undefined or null"));
+        return throwVMTypeError(&exec, ASCIILiteral("First argument to File constructor must be a valid sequence, was undefined or null"));
 
     unsigned blobPartsLength = 0;
-    JSObject* blobParts = toJSSequence(exec, arg, blobPartsLength);
-    if (exec->hadException())
+    JSObject* blobParts = toJSSequence(&exec, arg, blobPartsLength);
+    if (exec.hadException())
         return JSValue::encode(jsUndefined());
     ASSERT(blobParts);
 
-    arg = exec->argument(1);
+    arg = exec.argument(1);
     if (arg.isUndefined())
-        return throwVMTypeError(exec, ASCIILiteral("Second argument to File constructor must be a valid string, was undefined"));
+        return throwVMTypeError(&exec, ASCIILiteral("Second argument to File constructor must be a valid string, was undefined"));
 
-    String filename = arg.toWTFString(exec).replace('/', ':');
-    if (exec->hadException())
+    String filename = arg.toWTFString(&exec).replace('/', ':');
+    if (exec.hadException())
         return JSValue::encode(jsUndefined());
 
     String normalizedType;
     Optional<int64_t> lastModified;
 
-    arg = exec->argument(2);
+    arg = exec.argument(2);
     if (!arg.isUndefinedOrNull()) {
         JSObject* filePropertyBagObject = arg.getObject();
         if (!filePropertyBagObject)
-            return throwVMTypeError(exec, ASCIILiteral("Third argument of the constructor is not of type Object"));
+            return throwVMTypeError(&exec, ASCIILiteral("Third argument of the constructor is not of type Object"));
 
         // Create the dictionary wrapper from the initializer object.
-        JSDictionary dictionary(exec, filePropertyBagObject);
+        JSDictionary dictionary(&exec, filePropertyBagObject);
 
         // Attempt to get the type property.
         String type;
         dictionary.get("type", type);
-        if (exec->hadException())
+        if (exec.hadException())
             return JSValue::encode(jsUndefined());
 
         normalizedType = Blob::normalizedContentType(type);
@@ -88,7 +88,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState* exec)
         // Only try to parse the lastModified date if there was not an invalid type argument.
         if (type.isEmpty() ||  !normalizedType.isEmpty()) {
             dictionary.get("lastModified", lastModified);
-            if (exec->hadException())
+            if (exec.hadException())
                 return JSValue::encode(jsUndefined());
         }
     }
@@ -99,8 +99,8 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState* exec)
     BlobBuilder blobBuilder;
 
     for (unsigned i = 0; i < blobPartsLength; ++i) {
-        JSValue item = blobParts->get(exec, i);
-        if (exec->hadException())
+        JSValue item = blobParts->get(&exec, i);
+        if (exec.hadException())
             return JSValue::encode(jsUndefined());
 
         if (ArrayBuffer* arrayBuffer = toArrayBuffer(item))
@@ -110,8 +110,8 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState* exec)
         else if (Blob* blob = JSBlob::toWrapped(item))
             blobBuilder.append(blob);
         else {
-            String string = item.toWTFString(exec);
-            if (exec->hadException())
+            String string = item.toWTFString(&exec);
+            if (exec.hadException())
                 return JSValue::encode(jsUndefined());
             blobBuilder.append(string, ASCIILiteral("transparent"));
         }

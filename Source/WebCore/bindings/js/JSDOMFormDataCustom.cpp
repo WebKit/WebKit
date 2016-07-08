@@ -46,27 +46,27 @@ static HTMLFormElement* toHTMLFormElementOrNull(JSC::JSValue value)
     return value.inherits(JSHTMLFormElement::info()) ? &jsCast<JSHTMLFormElement*>(asObject(value))->wrapped() : nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL constructJSDOMFormData(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructJSDOMFormData(ExecState& exec)
 {
-    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
+    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
 
-    HTMLFormElement* form = toHTMLFormElementOrNull(exec->argument(0));
+    HTMLFormElement* form = toHTMLFormElementOrNull(exec.argument(0));
     auto domFormData = DOMFormData::create(form);
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), domFormData)));
+    return JSValue::encode(toJSNewlyCreated(&exec, jsConstructor->globalObject(), WTFMove(domFormData)));
 }
 
-JSValue JSDOMFormData::append(ExecState& state)
+JSValue JSDOMFormData::append(ExecState& exec)
 {
-    if (state.argumentCount() >= 2) {
-        String name = state.argument(0).toString(&state)->value(&state);
-        JSValue value = state.argument(1);
+    if (exec.argumentCount() >= 2) {
+        String name = exec.uncheckedArgument(0).toWTFString(&exec);
+        JSValue value = exec.uncheckedArgument(1);
         if (value.inherits(JSBlob::info())) {
             String filename;
-            if (state.argumentCount() >= 3 && !state.argument(2).isUndefinedOrNull())
-                filename = state.argument(2).toString(&state)->value(&state);
+            if (exec.argumentCount() >= 3 && !exec.uncheckedArgument(2).isUndefinedOrNull())
+                filename = exec.uncheckedArgument(2).toWTFString(&exec);
             wrapped().append(name, JSBlob::toWrapped(value), filename);
         } else
-            wrapped().append(name, value.toString(&state)->value(&state));
+            wrapped().append(name, value.toWTFString(&exec));
     }
 
     return jsUndefined();

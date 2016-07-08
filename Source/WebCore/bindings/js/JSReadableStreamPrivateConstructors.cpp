@@ -34,23 +34,23 @@ using namespace JSC;
 namespace WebCore {
 
 // Public JS ReadableStreamReder and ReadableStreamController constructor callbacks.
-EncodedJSValue JSC_HOST_CALL constructJSReadableStreamController(ExecState* state)
+EncodedJSValue JSC_HOST_CALL constructJSReadableStreamController(ExecState& exec)
 {
-    return throwVMTypeError(state, ASCIILiteral("ReadableStreamController constructor should not be called directly"));
+    return throwVMTypeError(&exec, ASCIILiteral("ReadableStreamController constructor should not be called directly"));
 }
 
-EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState* state)
+EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState& exec)
 {
-    JSReadableStream* stream = jsDynamicCast<JSReadableStream*>(state->argument(0));
+    JSReadableStream* stream = jsDynamicCast<JSReadableStream*>(exec.argument(0));
     if (!stream)
-        return throwVMTypeError(state, ASCIILiteral("ReadableStreamReader constructor parameter is not a ReadableStream"));
+        return throwVMTypeError(&exec, ASCIILiteral("ReadableStreamReader constructor parameter is not a ReadableStream"));
 
-    JSValue jsFunction = stream->get(state, Identifier::fromString(state, "getReader"));
+    JSValue jsFunction = stream->get(&exec, Identifier::fromString(&exec, "getReader"));
 
     CallData callData;
     CallType callType = getCallData(jsFunction, callData);
     MarkedArgumentBuffer noArguments;
-    return JSValue::encode(call(state, jsFunction, callType, callData, stream, noArguments));
+    return JSValue::encode(call(&exec, jsFunction, callType, callData, stream, noArguments));
 }
 
 // Private JS ReadableStreamReder and ReadableStreamController constructors.
