@@ -136,7 +136,6 @@ DYLD_INTERPOSE(shimShowWindow, ShowWindow);
 DYLD_INTERPOSE(shimHideWindow, HideWindow);
 DYLD_INTERPOSE(shimLSOpenCFURLRef, LSOpenCFURLRef);
 DYLD_INTERPOSE(shimMachVMMap, mach_vm_map);
-DYLD_INTERPOSE(shimCFStringCompare, CFStringCompare);
 
 #pragma clang diagnostic pop
 
