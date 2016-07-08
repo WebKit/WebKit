@@ -1,0 +1,23 @@
+Tests that using defineProperty() does not clear existing getter if the new descriptor only has a setter
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+oldDescriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")
+PASS oldDescriptor.get is an instance of Function
+PASS oldDescriptor.set is an instance of Function
+PASS oldDescriptor.enumerable is true
+PASS oldDescriptor.configurable is true
+
+Override only the setter
+Object.defineProperty(HTMLInputElement.prototype, "value", { set: newSetter })
+
+newDescriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")
+PASS newDescriptor.get is oldDescriptor.get
+PASS newDescriptor.set is newSetter
+PASS newDescriptor.enumerable is true
+PASS newDescriptor.configurable is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

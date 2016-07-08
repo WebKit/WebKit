@@ -1,3 +1,23 @@
+2016-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Object.defineProperty() should maintain existing getter / setter if not overridden in the new descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=159576
+        <rdar://problem/27242197>
+
+        Reviewed by Mark Lam.
+
+        Object.defineProperty() should maintain existing getter / setter if not
+        overridden in the new descriptor. Previously, if the property is a had
+        a custom getter / setter, and if the new descriptor only had a setter
+        (or only a getter), JSC would clear the existing getter (or setter).
+        This behavior did not match the EcmaScript specification or Firefox /
+        Chrome. This patch fixes the issue.
+
+        This fixes searching and search suggestions on www.iciba.com.
+
+        * runtime/JSObject.cpp:
+        (JSC::validateAndApplyPropertyDescriptor):
+
 2016-07-08  Michael Saboff  <msaboff@apple.com>
 
         Dumping the object graph doesn't work with verbose GC logging

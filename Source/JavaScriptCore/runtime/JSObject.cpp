@@ -3056,9 +3056,14 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
         return false;
     GetterSetter* getterSetter;
     bool getterSetterChanged = false;
-    if (accessor.isCustomGetterSetter())
+    if (accessor.isCustomGetterSetter()) {
         getterSetter = GetterSetter::create(exec->vm(), exec->lexicalGlobalObject());
-    else {
+        auto* customGetterSetter = jsCast<CustomGetterSetter*>(accessor);
+        if (customGetterSetter->setter())
+            getterSetter->setSetter(exec->vm(), exec->lexicalGlobalObject(), getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Setter));
+        if (customGetterSetter->getter())
+            getterSetter->setGetter(exec->vm(), exec->lexicalGlobalObject(), getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Getter));
+    } else {
         ASSERT(accessor.isGetterSetter());
         getterSetter = asGetterSetter(accessor);
     }

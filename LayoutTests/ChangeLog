@@ -1,3 +1,20 @@
+2016-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Object.defineProperty() should maintain existing getter / setter if not overridden in the new descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=159576
+        <rdar://problem/27242197>
+
+        Reviewed by Mark Lam.
+
+        Add test coverage.
+
+        * js/dom/customAccessor-defineProperty-expected.txt: Added.
+        * js/dom/customAccessor-defineProperty.html: Added.
+        * js/dom/customAccessor-defineProperty_getterOnly-expected.txt: Added.
+        * js/dom/customAccessor-defineProperty_getterOnly.html: Added.
+        * js/dom/customAccessor-defineProperty_setterOnly-expected.txt: Added.
+        * js/dom/customAccessor-defineProperty_setterOnly.html: Added.
+
 2016-07-08  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Load blocked pages more like other error pages are loaded
