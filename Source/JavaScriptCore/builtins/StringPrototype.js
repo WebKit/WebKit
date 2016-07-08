@@ -138,20 +138,23 @@ function padStart(maxLength/*, fillString*/)
 
     var string = @toString(this);
     maxLength = @toLength(maxLength);
-    var fillString = arguments[1];
 
     var stringLength = string.length;
     if (maxLength <= stringLength)
         return string;
 
     var filler;
-    if (arguments[1] === @undefined)
+    var fillString = arguments[1];
+    if (fillString === @undefined)
         filler = " ";
     else {
-        filler = @toString(arguments[1]);
+        filler = @toString(fillString);
         if (filler === "")
             return string;
     }
+
+    if (maxLength > @MAX_STRING_LENGTH)
+        throw new @Error("Out of memory");
 
     var fillLength = maxLength - stringLength;
     var truncatedStringFiller;
@@ -181,13 +184,17 @@ function padEnd(maxLength/*, fillString*/)
         return string;
 
     var filler;
-    if (arguments[1] === @undefined)
+    var fillString = arguments[1];
+    if (fillString === @undefined)
         filler = " ";
     else {
-        filler = @toString(arguments[1]);
+        filler = @toString(fillString);
         if (filler === "")
             return string;
     }
+
+    if (maxLength > @MAX_STRING_LENGTH)
+        throw new @Error("Out of memory");
 
     var fillLength = maxLength - stringLength;
     var truncatedStringFiller;

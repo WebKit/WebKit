@@ -7,16 +7,6 @@ function shouldBe(expected, actual, msg) {
         throw new Error('bad value' + msg + ': ' + actual + '. Expected ' + expected);
 }
 
-function shouldThrow(func, errorType) {
-    try {
-        func();
-        throw new Error('Expected ' + func + '() to throw ' + errorType.name + ', but did not throw.');
-    } catch (e) {
-        if (e instanceof errorType) return;
-        throw new Error('Expected ' + func + '() to throw ' + errorType.name + ', but threw ' + e);
-    }
-}
-
 function shouldBeDataProperty(expected, value, name) {
     if (name === void 0)
         name = '<property descriptor>';

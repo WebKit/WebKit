@@ -7,14 +7,19 @@ function shouldBe(expected, actual, msg) {
         throw new Error('bad value' + msg + ': ' + actual + '. Expected ' + expected);
 }
 
-function shouldThrow(func, errorType) {
+function shouldThrow(func, errorMessage) {
+    var errorThrown = false;
+    var error = null;
     try {
         func();
-        throw new Error('Expected ' + func + '() to throw ' + errorType.name + ', but did not throw.');
     } catch (e) {
-        if (e instanceof errorType) return;
-        throw new Error('Expected ' + func + '() to throw ' + errorType.name + ', but threw ' + e);
+        errorThrown = true;
+        error = e;
     }
+    if (!errorThrown)
+        throw new Error('not thrown');
+    if (String(error) !== errorMessage)
+        throw new Error(`bad error: ${String(error)}`);
 }
 
 function shouldBeDataProperty(expected, value, name) {
@@ -38,13 +43,13 @@ function shouldBeDataProperty(expected, value, name) {
     shouldBe(true, propertyDescriptor.writable);
     shouldBe(true, propertyDescriptor.configurable);
 
-    shouldThrow(() => new Object.getOwnPropertyDescriptors({}), TypeError);
+    shouldThrow(() => new Object.getOwnPropertyDescriptors({}), "TypeError: function is not a constructor (evaluating 'new Object.getOwnPropertyDescriptors({})')");
 })();
 
 (function testToObject() {
-    shouldThrow(() => Object.getOwnPropertyDescriptors(null), TypeError);
-    shouldThrow(() => Object.getOwnPropertyDescriptors(undefined), TypeError);
-    shouldThrow(() => Object.getOwnPropertyDescriptors(), TypeError);
+    shouldThrow(() => Object.getOwnPropertyDescriptors(null), "TypeError: null is not an object (evaluating 'Object.getOwnPropertyDescriptors(null)')");
+    shouldThrow(() => Object.getOwnPropertyDescriptors(undefined), "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptors(undefined)')");
+    shouldThrow(() => Object.getOwnPropertyDescriptors(), "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptors()')");
 })();
 
 (function testPrototypeProperties() {

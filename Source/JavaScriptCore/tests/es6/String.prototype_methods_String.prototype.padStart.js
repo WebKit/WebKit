@@ -7,14 +7,19 @@ function shouldBe(expected, actual, msg) {
         throw new Error('bad value' + msg + ': ' + actual + '. Expected ' + expected);
 }
 
-function shouldThrow(func, errorType) {
+function shouldThrow(func, errorMessage) {
+    var errorThrown = false;
+    var error = null;
     try {
         func();
-        throw new Error('Expected ' + func + '() to throw ' + errorType.name + ', but did not throw.');
     } catch (e) {
-        if (e instanceof errorType) return;
-        throw new Error('Expected ' + func + '() to throw ' + errorType.name + ', but threw ' + e);
+        errorThrown = true;
+        error = e;
     }
+    if (!errorThrown)
+        throw new Error('not thrown');
+    if (String(error) !== errorMessage)
+        throw new Error(`bad error: ${String(error)}`);
 }
 
 (function TestMeta() {
@@ -31,13 +36,13 @@ function shouldThrow(func, errorType) {
     shouldBe(true, descriptor.writable);
     shouldBe(String.prototype.padStart, descriptor.value);
 
-    shouldThrow(() => new Function(`${String.prototype.padStart}`), SyntaxError);
+    shouldThrow(() => new Function(`${String.prototype.padStart}`), "SyntaxError: Unexpected identifier 'code'. Expected either a closing ']' or a ',' following an array element.");
 })();
 
 (function TestRequireObjectCoercible() {
     var padStart = String.prototype.padStart;
-    shouldThrow(() => padStart.call(null, 4, "test"), TypeError);
-    shouldThrow(() => padStart.call(undefined, 4, "test"), TypeError);
+    shouldThrow(() => padStart.call(null, 4, "test"), "TypeError: String.prototype.padStart requires that |this| not be null");
+    shouldThrow(() => padStart.call(undefined, 4, "test"), "TypeError: String.prototype.padStart requires that |this| not be undefined");
     shouldBe("   123", padStart.call({
         __proto__: null,
         valueOf() { return 123; }
@@ -63,7 +68,7 @@ function shouldThrow(func, errorType) {
 })();
 
 (function TestToLength() {
-    shouldThrow(() => "123".padStart(Symbol("16")), TypeError);
+    shouldThrow(() => "123".padStart(Symbol("16")), "TypeError: Cannot convert a symbol to a number");
     shouldBe("123", "123".padStart(-1));
     shouldBe("123", "123".padStart({ toString() { return -1; } }));
     shouldBe("123", "123".padStart(-0));
@@ -96,9 +101,9 @@ function shouldThrow(func, errorType) {
 })();
 
 (function TestMemoryLimits() {
-    shouldThrow(() => ".".padStart(0x80000000, "o"), Error);
-    shouldThrow(() => ".".padStart({ valueOf() { return 0x80000000; } }, "o"), Error);
-    shouldThrow(() => ".".padStart("0x80000000", "o"), Error);
+    shouldThrow(() => ".".padStart(0x80000000, "o"), "Error: Out of memory");
+    shouldThrow(() => ".".padStart({ valueOf() { return 0x80000000; } }, "o"), "Error: Out of memory");
+    shouldThrow(() => ".".padStart("0x80000000", "o"), "Error: Out of memory");
 })();
 
 (function TestFillerRepetition() {

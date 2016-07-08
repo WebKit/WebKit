@@ -1,0 +1,57 @@
+This test checks the String.prototype.padStart.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String.prototype.padStart.length is 1
+PASS String.prototype.padStart.name is "padStart"
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padStart").configurable is true
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padStart").enumerable is false
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padStart").writable is true
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padStart").get is undefined
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padStart").set is undefined
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padStart").value is String.prototype.padStart
+PASS 'foo'.padStart() is 'foo'
+PASS 'foo'.padStart(+0) is 'foo'
+PASS 'foo'.padStart(-0) is 'foo'
+PASS 'foo'.padStart(1) is 'foo'
+PASS 'foo'.padStart(2) is 'foo'
+PASS 'foo'.padStart(-2) is 'foo'
+PASS 'foo'.padStart(10) is '       foo'
+PASS 'foo'.padStart(10, undefined) is '       foo'
+PASS 'foo'.padStart(10, 'x') is 'xxxxxxxfoo'
+PASS 'foo'.padStart(10.5, 'z') is 'zzzzzzzfoo'
+PASS 'foo'.padStart(10, 'bar') is 'barbarbfoo'
+PASS 'foo'.padStart(10, '123456789') is '1234567foo'
+PASS 'foo'.padStart(999, '') is 'foo'
+PASS ''.padStart(1, '') is ''
+PASS ''.padStart(2, 'bar') is 'ba'
+PASS 'x'.padStart(2, 'bar') is 'bx'
+PASS 'xx'.padStart(2, 'bar') is 'xx'
+PASS 'xx'.padStart(Math.PI, 'bar') is 'bxx'
+PASS ''.padStart(true, 'ABC') is 'A'
+PASS ''.padStart(false, 'ABC') is ''
+PASS ''.padStart(null, 'ABC') is ''
+PASS ''.padStart({}, 'ABC') is ''
+PASS ''.padStart(NaN, 'ABC') is ''
+PASS 'ABC'.padStart(10, true) is 'truetruABC'
+PASS 'ABC'.padStart(10, false) is 'falsefaABC'
+PASS 'ABC'.padStart(10, null) is 'nullnulABC'
+PASS 'ABC'.padStart(10, {}) is '[objectABC'
+PASS 'ABC'.padStart(10, NaN) is 'NaNNaNNABC'
+PASS "x".padStart(Infinity, "") did not throw exception.
+PASS "x".padStart(Infinity, "x") threw exception Error: Out of memory.
+PASS "x".padStart(0x80000000, "x") threw exception Error: Out of memory.
+PASS "x".padStart(0xFFFFFFFF, "x") threw exception Error: Out of memory.
+PASS String.prototype.padStart.call(thisObject, lengthObject, fillObject) is "XXXfoo bar"
+PASS sideEffects is "ABC"
+PASS String.prototype.padStart.call(thisObject, lengthObject, fillObject) threw exception ERROR.
+PASS sideEffects is ""
+PASS String.prototype.padStart.call(thisObject, lengthObject, fillObject) threw exception ERROR.
+PASS sideEffects is "A"
+PASS String.prototype.padStart.call(thisObject, lengthObject, fillObject) threw exception ERROR.
+PASS sideEffects is "AB"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

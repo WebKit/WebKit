@@ -1,3 +1,39 @@
+2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        padStart/padEnd with Infinity produces unexpected result
+        https://bugs.webkit.org/show_bug.cgi?id=159543
+
+        Reviewed by Benjamin Poulain.
+
+        * builtins/GlobalOperations.js:
+        (globalPrivate.toLength):
+        Fix style.
+
+        * builtins/StringPrototype.js:
+        (padStart):
+        (padEnd):
+        After all observable operations, and after empty string has been handled,
+        throw an out of memory error if the resulting string would be greater
+        than the maximum string size.
+
+        * tests/es6/Object_static_methods_Object.getOwnPropertyDescriptors-proxy.js:
+        (shouldThrow): Deleted.
+        * tests/es6/Object_static_methods_Object.getOwnPropertyDescriptors.js:
+        (shouldThrow):
+        (testMeta):
+        * tests/es6/String.prototype_methods_String.prototype.padEnd.js:
+        (shouldThrow):
+        (TestToLength):
+        (TestMemoryLimits):
+        (TestMeta): Deleted.
+        * tests/es6/String.prototype_methods_String.prototype.padStart.js:
+        (shouldThrow):
+        (TestToLength):
+        (TestMemoryLimits):
+        Replace incorrect shouldThrow(..., errorType) with explicit shouldThrow(..., errorMessage).
+        The old shouldThrow would incorrectly succeed if the expected error type was just "Error".
+        Now we explicitly check the error message.
+
 2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] String.prototype[Symbol.iterator] needs a name

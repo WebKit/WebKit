@@ -1,0 +1,57 @@
+This test checks the String.prototype.padEnd.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String.prototype.padEnd.length is 1
+PASS String.prototype.padEnd.name is "padEnd"
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padEnd").configurable is true
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padEnd").enumerable is false
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padEnd").writable is true
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padEnd").get is undefined
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padEnd").set is undefined
+PASS Object.getOwnPropertyDescriptor(String.prototype, "padEnd").value is String.prototype.padEnd
+PASS 'foo'.padEnd() is 'foo'
+PASS 'foo'.padEnd(+0) is 'foo'
+PASS 'foo'.padEnd(-0) is 'foo'
+PASS 'foo'.padEnd(1) is 'foo'
+PASS 'foo'.padEnd(2) is 'foo'
+PASS 'foo'.padEnd(-2) is 'foo'
+PASS 'foo'.padEnd(10) is 'foo       '
+PASS 'foo'.padEnd(10, undefined) is 'foo       '
+PASS 'foo'.padEnd(10, 'x') is 'fooxxxxxxx'
+PASS 'foo'.padEnd(10.5, 'z') is 'foozzzzzzz'
+PASS 'foo'.padEnd(10, 'bar') is 'foobarbarb'
+PASS 'foo'.padEnd(10, '123456789') is 'foo1234567'
+PASS 'foo'.padEnd(999, '') is 'foo'
+PASS ''.padEnd(1, '') is ''
+PASS ''.padEnd(2, 'bar') is 'ba'
+PASS 'x'.padEnd(2, 'bar') is 'xb'
+PASS 'xx'.padEnd(2, 'bar') is 'xx'
+PASS 'xx'.padEnd(Math.PI, 'bar') is 'xxb'
+PASS ''.padEnd(true, 'ABC') is 'A'
+PASS ''.padEnd(false, 'ABC') is ''
+PASS ''.padEnd(null, 'ABC') is ''
+PASS ''.padEnd({}, 'ABC') is ''
+PASS ''.padEnd(NaN, 'ABC') is ''
+PASS 'ABC'.padEnd(10, true) is 'ABCtruetru'
+PASS 'ABC'.padEnd(10, false) is 'ABCfalsefa'
+PASS 'ABC'.padEnd(10, null) is 'ABCnullnul'
+PASS 'ABC'.padEnd(10, {}) is 'ABC[object'
+PASS 'ABC'.padEnd(10, NaN) is 'ABCNaNNaNN'
+PASS "x".padEnd(Infinity, "") did not throw exception.
+PASS "x".padEnd(Infinity, "x") threw exception Error: Out of memory.
+PASS "x".padEnd(0x80000000, "x") threw exception Error: Out of memory.
+PASS "x".padEnd(0xFFFFFFFF, "x") threw exception Error: Out of memory.
+PASS String.prototype.padEnd.call(thisObject, lengthObject, fillObject) is "foo barXXX"
+PASS sideEffects is "ABC"
+PASS String.prototype.padEnd.call(thisObject, lengthObject, fillObject) threw exception ERROR.
+PASS sideEffects is ""
+PASS String.prototype.padEnd.call(thisObject, lengthObject, fillObject) threw exception ERROR.
+PASS sideEffects is "A"
+PASS String.prototype.padEnd.call(thisObject, lengthObject, fillObject) threw exception ERROR.
+PASS sideEffects is "AB"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

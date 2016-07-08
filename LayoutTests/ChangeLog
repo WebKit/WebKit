@@ -1,3 +1,25 @@
+2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        padStart/padEnd with Infinity produces unexpected result
+        https://bugs.webkit.org/show_bug.cgi?id=159543
+
+        Reviewed by Benjamin Poulain.
+
+        * js/script-tests/string-padend.js: Added.
+        (thisObject.toString):
+        (lengthObject.valueOf):
+        (fillObject.toString):
+        * js/script-tests/string-padstart.js: Added.
+        (thisObject.toString):
+        (lengthObject.valueOf):
+        (fillObject.toString):
+        * js/string-padend-expected.txt: Added.
+        * js/string-padend.html: Added.
+        * js/string-padstart-expected.txt: Added.
+        * js/string-padstart.html: Added.
+        Add some basic String.prototype.padStart/padEnd test coverage
+        that is not just in the JavaScriptCore/tests/es6 directory.
+
 2016-07-07  Frederic Wang  <fwang@igalia.com>
 
         Bug 155792 - Basic implementation of mpadded
