@@ -1,5 +1,17 @@
 2016-07-07  Chris Dumez  <cdumez@apple.com>
 
+        HTMLTitleElement.text should only account for direct children Text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=159536
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/semantics/document-metadata/the-title-element/title.text-01-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-title-element/title.text-02-expected.txt:
+
+2016-07-07  Chris Dumez  <cdumez@apple.com>
+
         td / th should be exposed as HTMLTableCellElement objects
         https://bugs.webkit.org/show_bug.cgi?id=159518
         <rdar://problem/27225436>

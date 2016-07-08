@@ -74,7 +74,10 @@ void HTMLTitleElement::childrenChanged(const ChildChange& change)
 
 String HTMLTitleElement::text() const
 {
-    return TextNodeTraversal::contentsAsString(*this);
+    StringBuilder result;
+    for (Text* text = TextNodeTraversal::firstChild(*this); text; text = TextNodeTraversal::nextSibling(*text))
+        result.append(text->data());
+    return result.toString();
 }
 
 StringWithDirection HTMLTitleElement::computedTextWithDirection()
