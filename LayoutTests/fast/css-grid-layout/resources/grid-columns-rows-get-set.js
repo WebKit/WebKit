@@ -3,9 +3,9 @@ description('Test that setting and getting grid-template-columns and grid-templa
 debug("Test getting grid-template-columns and grid-template-rows set through CSS");
 testGridTemplatesValues(document.getElementById("gridWithNoneElement"), "none", "none");
 testGridTemplatesValues(document.getElementById("gridWithFixedElement"), "10px", "15px");
-testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "424px", "162px");
+testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "400px", "162px");
 testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSize"), "0px", "0px");
-testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSizeWithChildren"), "7px", "11px");
+testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSizeWithChildren"), "3.5px", "11px");
 testGridTemplatesValues(document.getElementById("gridWithAutoElement"), "0px", "0px");
 testGridTemplatesValues(document.getElementById("gridWithAutoWithChildrenElement"), "7px", "11px");
 testGridTemplatesValues(document.getElementById("gridWithEMElement"), "100px", "150px");

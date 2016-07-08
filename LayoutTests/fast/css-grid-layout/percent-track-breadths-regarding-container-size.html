@@ -89,9 +89,9 @@
 
     <div class="fit-content indefiniteHeight">
         <div class="grid calculatedSize justifyContentStart">
-            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="20" data-expected-height="10">XX</div>
-            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="50" data-expected-height="10">XXXXX</div>
-            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="30" data-expected-height="10">XXX</div>
+            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="44" data-expected-height="10">XX</div>
+            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="110" data-expected-height="10">XXXXX</div>
+            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="66" data-expected-height="10">XXX</div>
         </div>
     </div>
 
@@ -105,9 +105,9 @@
 
     <div class="fit-content indefiniteHeight">
         <div class="grid percentageSize">
-            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="20" data-expected-height="10">XX</div>
-            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="50" data-expected-height="10">XXXXX</div>
-            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="30" data-expected-height="10">XXX</div>
+            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="10" data-expected-height="10">XX</div>
+            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="25" data-expected-height="10">XXXXX</div>
+            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="15" data-expected-height="10">XXX</div>
         </div>
     </div>
 
@@ -119,19 +119,22 @@
         </div>
     </div>
 
+    <!-- FIXME: The height of the row is wrong calculated in the following 2 examples because of a bug in
+         RenderBox::hasDefiniteLogicalHeight() that considers that any positioned element has a definite height.
+         See: https://bugs.webkit.org/show_bug.cgi?id=159251 -->
     <div class="fit-content indefiniteHeight">
         <div class="grid absolutelyPositioned">
-            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XX</div>
-            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XXXXX</div>
-            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XXX</div>
+            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="20" data-expected-height="10">XX</div>
+            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="50" data-expected-height="10">XXXXX</div>
+            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="30" data-expected-height="10">XXX</div>
         </div>
     </div>
 
     <div class="unconstrainedContainer">
         <div class="grid absolutelyPositioned">
-            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XX</div>
-            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XXXXX</div>
-            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XXX</div>
+            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="20" data-expected-height="10">XX</div>
+            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="50" data-expected-height="10">XXXXX</div>
+            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="30" data-expected-height="10">XXX</div>
         </div>
     </div>
 

@@ -6,11 +6,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Test getting grid-template-columns and grid-template-rows set through CSS
 PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('grid-template-columns') is "[first] 10px"
 PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('grid-template-rows') is "[first] 15px"
-PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('grid-template-columns') is "424px [last]"
+PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('grid-template-columns') is "400px [last]"
 PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('grid-template-rows') is "162px [last]"
 PASS window.getComputedStyle(gridWithPercentWithoutSize, '').getPropertyValue('grid-template-columns') is "0px [last]"
 PASS window.getComputedStyle(gridWithPercentWithoutSize, '').getPropertyValue('grid-template-rows') is "0px [last]"
-PASS window.getComputedStyle(gridWithPercentWithoutSizeWithChildren, '').getPropertyValue('grid-template-columns') is "77px [last]"
+PASS window.getComputedStyle(gridWithPercentWithoutSizeWithChildren, '').getPropertyValue('grid-template-columns') is "38.5px [last]"
 PASS window.getComputedStyle(gridWithPercentWithoutSizeWithChildren, '').getPropertyValue('grid-template-rows') is "22px [last]"
 PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('grid-template-columns') is "[first] 0px"
 PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('grid-template-rows') is "0px [last]"

@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Test getting |grid-template-columns| and |grid-template-rows| set through CSS
 PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('grid-template-columns') is "7px 11px"
 PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('grid-template-rows') is "17px 2px"
-PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('grid-template-columns') is "424px 792px"
+PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('grid-template-columns') is "400px 800px"
 PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('grid-template-rows') is "162px 312px"
-PASS window.getComputedStyle(gridWithPercentWithoutSize, '').getPropertyValue('grid-template-columns') is "7px 0px"
+PASS window.getComputedStyle(gridWithPercentWithoutSize, '').getPropertyValue('grid-template-columns') is "3.5px 7px"
 PASS window.getComputedStyle(gridWithPercentWithoutSize, '').getPropertyValue('grid-template-rows') is "11px 0px"
 PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('grid-template-columns') is "0px 17px"
 PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('grid-template-rows') is "0px 3px"
