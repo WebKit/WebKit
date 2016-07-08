@@ -6723,6 +6723,10 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 {
 }
 
+- (void)forceRequestCandidatesForTesting
+{
+}
+
 - (BOOL)shouldRequestCandidates
 {
     return NO;

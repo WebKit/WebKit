@@ -62,6 +62,7 @@ static bool didCallShowCandidates = false;
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
+    [sender forceRequestCandidatesForTesting];
     didFinishLoad = true;
 }
 

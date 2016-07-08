@@ -1,3 +1,15 @@
+2016-07-07  Beth Dakin  <bdakin@apple.com>
+
+        API Test DoNotLeakWebView.ViewThatLoadsEditableArea times out on macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=159532
+        -and corresponding-
+        rdar://problem/27177179
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/mac/ViewWithEditableAreaLeak.mm:
+        (-[DoNotLeakFrameLoadDelegate webView:didFinishLoadForFrame:]):
+
 2016-07-07  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Load blocked pages more like other error pages are loaded

@@ -1069,6 +1069,7 @@ Could be worth adding to the API.
 
 @interface WebView (WebShowCandidates)
 - (void)showCandidates:(NSArray *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString forSelectedRange:(NSRange)range view:(NSView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock;
+- (void)forceRequestCandidatesForTesting;
 @end
 
 #ifdef __cplusplus
