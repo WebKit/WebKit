@@ -1138,7 +1138,6 @@ static void runTest(const string& inputLine)
 
     request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
     request->setHTTPMethod(methodBStr);
-    request->setAllowsAnyHTTPSCertificate();
     frame->loadRequest(request.get());
 
     while (true) {
