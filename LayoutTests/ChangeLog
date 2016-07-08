@@ -1,3 +1,14 @@
+2016-07-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] The callback passed to document.fonts.ready should always be called
+        https://bugs.webkit.org/show_bug.cgi?id=158884
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        * fast/text/font-face-set-ready-fire-expected.txt: Added.
+        * fast/text/font-face-set-ready-fire.html: Added.
+
 2016-07-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/shadow-dom/trusted-event-scoped-flags.html for ios-simulator after r202953.

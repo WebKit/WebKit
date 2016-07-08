@@ -197,6 +197,7 @@ bool FontFaceSet::canSuspendForDocumentSuspension() const
 void FontFaceSet::startedLoading()
 {
     // FIXME: Fire a "loading" event asynchronously.
+    m_isReady = false;
 }
 
 void FontFaceSet::completedLoading()

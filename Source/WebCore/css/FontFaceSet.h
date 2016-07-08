@@ -111,7 +111,7 @@ private:
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<CSSFontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     Optional<ReadyPromise> m_promise;
-    bool m_isReady { false };
+    bool m_isReady { true };
 };
 
 }
