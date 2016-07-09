@@ -157,7 +157,7 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTFoot()
     if (HTMLTableSectionElement* existingFoot = tFoot())
         return *existingFoot;
     Ref<HTMLTableSectionElement> foot = HTMLTableSectionElement::create(tfootTag, document());
-    setTFoot(WTFMove(foot), IGNORE_EXCEPTION);
+    setTFoot(foot.copyRef(), IGNORE_EXCEPTION);
     return foot;
 }
 
