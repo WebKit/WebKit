@@ -35,7 +35,7 @@ function initializeFetchHeaders(headersInit)
     if (!@isObject(headersInit))
         throw new @TypeError("headersInit must be an object");
 
-    if (headersInit instanceof this.constructor) {
+    if (headersInit instanceof @Headers) {
         this.@fillFromJS(headersInit);
         return this;
     }

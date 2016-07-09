@@ -1,3 +1,13 @@
+2016-07-09  Youenn Fablet  <youenn@apple.com>
+
+        Make use of PrivateIdentifier to simplify Fetch Headers built-in checks
+        https://bugs.webkit.org/show_bug.cgi?id=159554
+
+        Reviewed by Alex Christensen.
+
+        * fetch/header-constructor-overriden-expected.txt: Added.
+        * fetch/header-constructor-overriden.html: Added.
+
 2016-07-08  Chris Dumez  <cdumez@apple.com>
 
         adoptNode() changes css class to lowercase for document loaded with XHR responseType = "document"

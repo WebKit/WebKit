@@ -32,8 +32,9 @@
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
     InterfaceName=Headers,
-    JSBuiltinConstructor
-]
+    JSBuiltinConstructor,
+    PrivateIdentifier,
+    PublicIdentifier]
 interface FetchHeaders {
     [RaisesException] void append(DOMString name, DOMString value);
     [RaisesException, ImplementedAs=remove] void delete(DOMString name);

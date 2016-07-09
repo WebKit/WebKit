@@ -75,6 +75,7 @@ namespace WebCore {
     macro(underlyingSink) \
     macro(underlyingSource) \
     macro(writing) \
+    macro(Headers) \
     macro(MediaStream) \
     macro(MediaStreamTrack) \
     macro(ReadableStream) \

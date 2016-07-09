@@ -35,11 +35,10 @@ function initializeFetchResponse(body, init)
             throw new @TypeError("Response init must be an object");
         parameters.status = init.status;
         parameters.statusText = init.statusText;
-        // FIXME: Shield this from user scripts.
         if (init.headers)
-            parameters.headers = (this.headers.constructor === init.headers.constructor) ? init.headers : new this.headers.constructor(init.headers);
+            parameters.headers = (init.headers instanceof @Headers) ? init.headers : new @Headers(init.headers);
     }
- 
+
     if (parameters.status === @undefined)
         parameters.status = 200;
     if (parameters.statusText === @undefined)
