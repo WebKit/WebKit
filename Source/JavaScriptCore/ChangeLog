@@ -1,3 +1,23 @@
+2016-07-08  Saam Barati  <sbarati@apple.com>
+
+        We may add a ReadOnly property without setting the corresponding bit on Structure
+        https://bugs.webkit.org/show_bug.cgi?id=159542
+        <rdar://problem/27084591>
+
+        Reviewed by Benjamin Poulain.
+
+        The reason this usually is OK is due to happenstance. Often, instances that putDirectWithoutTransition
+        also happen to have a static property table. Having a static property table causes the
+        HasReadOnlyOrGetterSetterPropertiesExcludingProto on the structure to be set. However, 
+        there are times where an object calls putDirectWithoutTransition, and it doesn't have a
+        static property hash table. The fix is simple, putDirectWithTransition needs to set the
+        HasReadOnlyOrGetterSetterPropertiesExcludingProto if it puts a ReadOnly property.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectWithoutTransition):
+        * tests/stress/proper-property-store-with-prototype-property-that-is-not-writable.js: Added.
+        (assert):
+
 2016-07-08  Michael Saboff  <msaboff@apple.com>
 
         ASSERTION FAILED: Heap::isMarked(cell) in SlotVisitor::appendToMarkStack(JSC::JSCell *)

@@ -1565,6 +1565,8 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
         newButterfly = growOutOfLineStorage(vm, structure()->outOfLineCapacity(), structure()->suggestedNewOutOfLineStorageCapacity());
     Structure* structure = this->structure();
     PropertyOffset offset = structure->addPropertyWithoutTransition(vm, propertyName, attributes);
+    if (attributes & ReadOnly)
+        structure->setContainsReadOnlyProperties();
     bool shouldOptimize = false;
     structure->willStoreValueForNewTransition(vm, propertyName, value, shouldOptimize);
     setStructureAndButterfly(vm, structure, newButterfly);
