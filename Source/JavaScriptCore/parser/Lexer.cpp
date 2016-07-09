@@ -1393,13 +1393,25 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
                     record16(escape);
                 shift();
             } else if (UNLIKELY(isLineTerminator(m_current))) {
+                // Normalize <CR>, <CR><LF> to <LF>.
                 if (m_current == '\r') {
+                    if (shouldBuildStrings) {
+                        ASSERT_WITH_MESSAGE(rawStringStart != currentSourcePtr(), "We should have at least shifted the escape.");
+
+                        if (rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings) {
+                            m_bufferForRawTemplateString16.append(rawStringStart, currentSourcePtr() - rawStringStart);
+                            m_bufferForRawTemplateString16.append('\n');
+                        }
+                    }
+
                     lineNumberAdder.add(m_current);
                     shift();
                     if (m_current == '\n') {
                         lineNumberAdder.add(m_current);
                         shift();
                     }
+
+                    rawStringStart = currentSourcePtr();
                 } else {
                     lineNumberAdder.add(m_current);
                     shift();

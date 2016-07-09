@@ -1,3 +1,23 @@
+2016-07-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Fix the Template Raw Value of \ (escape) + LineTerminatorSequence
+        https://bugs.webkit.org/show_bug.cgi?id=159595
+
+        Reviewed by Yusuke Suzuki.
+
+        The spec (https://tc39.github.io/ecma262/#sec-static-semantics-tv-and-trv)
+        says:
+        "The TRV of LineContinuation::\LineTerminatorSequence is the sequence
+         consisting of the code unit value 0x005C followed by the code units
+         of TRV of LineTerminatorSequence."
+        
+        We were not normalizing the LineTerminatorSequence in that case, but it should
+        be as it is the TRV of LineTerminatorSequence.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseTemplateLiteral):
+        * tests/stress/tagged-templates-raw-strings.js:
+
 2016-07-08  Saam Barati  <sbarati@apple.com>
 
         We may add a ReadOnly property without setting the corresponding bit on Structure

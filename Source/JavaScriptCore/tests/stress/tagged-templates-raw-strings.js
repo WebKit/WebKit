@@ -53,7 +53,7 @@ testEval("Hello\n\r\n\nWorld", [ "Hello\n\n\nWorld" ]);
 testEval("Hello\r\n\n\nWorld", [ "Hello\n\n\nWorld" ]);
 
 testEval("Hello\\\n\r\rWorld", [ "Hello\\\n\n\nWorld" ]);
-testEval("Hello\\\r\n\n\nWorld", [ "Hello\\\r\n\n\nWorld" ]);
+testEval("Hello\\\r\n\n\nWorld", [ "Hello\\\n\n\nWorld" ]);
 testEval("Hello\\\n\r\n\nWorld", [ "Hello\\\n\n\nWorld" ]);
 testEval("Hello\\\n\r\r\nWorld", [ "Hello\\\n\n\nWorld" ]);
 
