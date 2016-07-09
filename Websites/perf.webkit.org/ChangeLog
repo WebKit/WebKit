@@ -1,3 +1,23 @@
+2016-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: manifest.json generation takes multiple seconds on perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=159596
+
+        Reviewed by Chris Dumez.
+
+        The most of CPU time was spent looking for a duplicate entry in an array of metrics by array_search.
+        This patch moves to postgres by using aggregate functions in the query. Also moved the code to convert
+        datetime to UNIX epoch timestamp from PHP to within postgres query.
+
+        These improvements reduce total runtime of Manifest::generate from ~4s to ~350ms on my machine.
+
+        * public/include/manifest.php:
+        (Manifest::generate): No longer fetches test_configurations table as this is done in Manifest::platforms now.
+        Also moved calls to each method in the class to separate lines for easier instrumentation.
+        (Manifest::platforms): Group test configurations (current, baseline, target) by platform and metric.
+        Use the max of the last modified dates in UNIX epoch timestamps (ms to be compatible with JS's representation).
+        A given platform, metric pair is considered to be in the v1 dashboard if any test configuration is in.
+
 2016-07-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         bundle-v3-scripts.py should compress HTML/CSS templates

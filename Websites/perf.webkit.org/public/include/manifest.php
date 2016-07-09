@@ -14,7 +14,6 @@ class ManifestGenerator {
     function generate() {
         $start_time = microtime(true);
 
-        $config_table = $this->db->fetch_table('test_configurations');
         $platform_table = $this->db->fetch_table('platforms');
         $repositories_table = $this->db->fetch_table('repositories');
 
@@ -26,13 +25,19 @@ class ManifestGenerator {
         foreach ($repositories_with_commit as &$row)
             $row = $row['commit_repository'];
 
+        $tests = (object)$this->tests();
+        $metrics = (object)$this->metrics();
+        $platforms = (object)$this->platforms($platform_table, false);
+        $dashboard = (object)$this->platforms($platform_table, true);
+        $repositories = (object)$this->repositories($repositories_table, $repositories_with_commit);
+
         $this->manifest = array(
             'siteTitle' => config('siteTitle', 'Performance Dashboard'),
-            'tests' => (object)$this->tests(),
-            'metrics' => (object)$this->metrics(),
-            'all' => (object)$this->platforms($config_table, $platform_table, false),
-            'dashboard' => (object)$this->platforms($config_table, $platform_table, true),
-            'repositories' => (object)$this->repositories($repositories_table, $repositories_with_commit),
+            'tests' => &$tests,
+            'metrics' => &$metrics,
+            'all' => &$platforms,
+            'dashboard' => &$dashboard,
+            'repositories' => &$repositories,
             'builders' => (object)$this->builders(),
             'bugTrackers' => (object)$this->bug_trackers($repositories_table),
             'dashboards' => (object)config('dashboards'),
@@ -79,32 +84,33 @@ class ManifestGenerator {
         return $metrics;
     }
 
-    private function platforms($config_table, $platform_table, $is_dashboard) {
+    private function platforms($platform_table, $is_dashboard) {
+        $metrics = $this->db->query_and_fetch_all('SELECT config_metric AS metric_id, config_platform AS platform_id,
+            extract(epoch from max(config_runs_last_modified)) * 1000 AS last_modified, bool_or(config_is_in_dashboard) AS in_dashboard
+            FROM test_configurations GROUP BY config_metric, config_platform ORDER BY config_platform');
+
         $platform_metrics = array();
-        if ($config_table) {
-            foreach ($config_table as $config_row) {
-                if ($is_dashboard && !Database::is_true($config_row['config_is_in_dashboard']))
+
+        if ($metrics) {
+            $current_platform_entry = null;
+            foreach ($metrics as $metric_row) {
+                if ($is_dashboard && !Database::is_true($metric_row['in_dashboard']))
                     continue;
 
-                $new_last_modified = array_get($config_row, 'config_runs_last_modified', 0);
-                if ($new_last_modified)
-                    $new_last_modified = strtotime($config_row['config_runs_last_modified']) * 1000;
+                $platform_id = $metric_row['platform_id'];
+                if (!$current_platform_entry || $current_platform_entry['id'] != $platform_id) {
+                    $current_platform_entry = &array_ensure_item_has_array($platform_metrics, $platform_id);
+                    $current_platform_entry['id'] = $platform_id;
+                    array_ensure_item_has_array($current_platform_entry, 'metrics');
+                    array_ensure_item_has_array($current_platform_entry, 'last_modified');
+                }
 
-                $platform = &array_ensure_item_has_array($platform_metrics, $config_row['config_platform']);
-                $metrics = &array_ensure_item_has_array($platform, 'metrics');
-                $last_modified = &array_ensure_item_has_array($platform, 'last_modified');
-
-                $metric_id = $config_row['config_metric'];
-                $index = array_search($metric_id, $metrics);
-                if ($index === FALSE) {
-                    array_push($metrics, $metric_id);
-                    array_push($last_modified, $new_last_modified);
-                } else
-                    $last_modified[$index] = max($last_modified[$index], $new_last_modified);
+                array_push($current_platform_entry['metrics'], $metric_row['metric_id']);
+                array_push($current_platform_entry['last_modified'], $metric_row['last_modified']);
             }
         }
         $configurations = array();
-        
+
         $platforms = array();
         if ($platform_table) {
             foreach ($platform_table as $platform_row) {
