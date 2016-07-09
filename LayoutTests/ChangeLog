@@ -1,3 +1,18 @@
+2016-07-08  Chris Dumez  <cdumez@apple.com>
+
+        adoptNode() changes css class to lowercase for document loaded with XHR responseType = "document"
+        https://bugs.webkit.org/show_bug.cgi?id=159555
+        <rdar://problem/27252541>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test coverage for id and class attributes.
+
+        * fast/dom/Document/adoptNode-quirks-mismatch-expected.txt: Added.
+        * fast/dom/Document/adoptNode-quirks-mismatch.html: Added.
+        * fast/dom/Document/resources/document-quirks-class.html: Added.
+        * fast/dom/Document/resources/document-quirks-id.html: Added.
+
 2016-07-08  Daniel Bates  <dabates@apple.com>
 
         Setting table.tFoot or calling table.createTFoot() should append HTML tfont element to the end of the table
