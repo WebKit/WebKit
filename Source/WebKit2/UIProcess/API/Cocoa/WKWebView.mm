@@ -3373,6 +3373,18 @@ static int32_t activeOrientation(WKWebView *webView)
     return adoptNS([[_WKSessionState alloc] _initWithSessionState:_page->sessionState()]).autorelease();
 }
 
+- (_WKSessionState *)_sessionStateWithFilter:(BOOL (^)(WKBackForwardListItem *item))filter
+{
+    WebKit::SessionState sessionState = _page->sessionState([filter](WebKit::WebBackForwardListItem& item) {
+        if (!filter)
+            return true;
+
+        return (bool)filter(wrapper(item));
+    });
+
+    return adoptNS([[_WKSessionState alloc] _initWithSessionState:sessionState]).autorelease();
+}
+
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData
 {
     // FIXME: This should not use the legacy session state decoder.

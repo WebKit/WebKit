@@ -1,3 +1,19 @@
+2016-07-08  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        When WKWebView prepares the session state blob, we should be able to filter it.
+        https://bugs.webkit.org/show_bug.cgi?id=159410
+
+        Add a SPI to WKWebView so that a client can decide how to filter backforward items
+        when WKWebView perparing session state.
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _sessionStateWithFilter:]): When preparing session state, check each
+        backforward item against the filter block.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Add the SPI _sessionStateWithFilter:
+
+
 2016-07-08  Tim Horton  <timothy_horton@apple.com>
 
         Mail messages don't start loading until scrolling completes

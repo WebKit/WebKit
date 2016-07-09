@@ -100,6 +100,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 @property (nonatomic, readonly) _WKSessionState *_sessionState;
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate;
+- (_WKSessionState *)_sessionStateWithFilter:(BOOL (^)(WKBackForwardListItem *item))filter;
 
 @property (nonatomic, setter=_setAllowsRemoteInspection:) BOOL _allowsRemoteInspection;
 @property (nonatomic, copy, setter=_setRemoteInspectionNameOverride:) NSString *_remoteInspectionNameOverride WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
