@@ -1,3 +1,18 @@
+2016-07-08  Tim Horton  <timothy_horton@apple.com>
+
+        Mail messages don't start loading until scrolling completes
+        https://bugs.webkit.org/show_bug.cgi?id=159585
+        <rdar://problem/27088405>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        (-[WKCustomProtocolLoader initWithCustomProtocolManagerProxy:customProtocolID:request:connection:]):
+        When scrolling, NSDefaultRunLoopMode isn't run, but NSRunLoopCommonModes are.
+        CFNetwork uses NSDefaultRunLoopMode if we tell NSURLConnection to "start immediately",
+        but we can instead schedule our NSURLConnection into NSRunLoopCommonModes
+        and start it ourselves, ensuring that it will be able to do work while scrolling is happening.
+
 2016-07-08  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Load blocked pages more like other error pages are loaded
