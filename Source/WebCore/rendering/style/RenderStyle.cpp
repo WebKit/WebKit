@@ -80,7 +80,7 @@ struct SameSizeAsRenderStyle {
     struct NonInheritedFlags {
         uint64_t m_flags;
     } noninherited_flags;
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     bool deletionCheck;
 #endif
 };
@@ -184,8 +184,8 @@ RenderStyle::RenderStyle(const RenderStyle& other, CloneTag)
 
 RenderStyle::~RenderStyle()
 {
-#if !ASSERT_DISABLED
-    ASSERT(!m_deletionHasBegun);
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
     m_deletionHasBegun = true;
 #endif
 }

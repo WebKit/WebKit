@@ -468,7 +468,7 @@ protected:
 // don't inherit
     NonInheritedFlags noninherited_flags;
 
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     bool m_deletionHasBegun { false };
 #endif
 
@@ -498,7 +498,7 @@ public:
     static RenderStyle createAnonymousStyleWithDisplay(const RenderStyle& parentStyle, EDisplay);
     static RenderStyle createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle);
 
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     bool deletionHasBegun() const { return m_deletionHasBegun; }
 #endif
 
