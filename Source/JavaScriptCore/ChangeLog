@@ -1,3 +1,38 @@
+2016-07-09  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(201900): validation failure for GetByOffset/PutByOffset in VALIDATE((node), node->child1().node() == node->child2().node() || node->child1()->result() == NodeResultStorage)
+        https://bugs.webkit.org/show_bug.cgi?id=159603
+
+        Reviewed by Keith Miller.
+        
+        This removes an incorrect validation rule and replaces it with a FIXME about how to make this
+        aspect of IR easier to validate soundly.
+        
+        It's not valid to assert that two children of a node are the same. It should always be valid
+        to take:
+        
+        Foo(@x, @x)
+        
+        and turn it into:
+        
+        a: ValueRep(@x)
+        b: ValueRep(@x)
+        Foo(@a, @b)
+        
+        or even something like:
+        
+        y: Identity(@y)
+        Foo(@x, @y)
+        
+        That's because it should be possible to rewire any data flow edge something that produces an
+        equivalent value.
+        
+        The validation rule that this patch removes meant that such rewirings were invalid on
+        GetByOffset/PutByOffset. FixupPhase did such a rewiring sometimes.
+
+        * dfg/DFGValidate.cpp:
+        * tests/stress/get-by-offset-double.js: Added.
+
 2016-07-09  Keith Miller  <keith_miller@apple.com>
 
         appendMemcpy might fail in concatAppendOne

@@ -299,7 +299,12 @@ public:
                     break;
                 case GetByOffset:
                 case PutByOffset:
-                    VALIDATE((node), node->child1().node() == node->child2().node() || node->child1()->result() == NodeResultStorage);
+                    // FIXME: We should be able to validate that GetByOffset and PutByOffset are
+                    // using the same object for storage and base. I think this means finally
+                    // splitting these nodes into two node types, one for inline and one for
+                    // out-of-line. The out-of-line one will require that the first node is storage,
+                    // while the inline one will not take a storage child at all.
+                    // https://bugs.webkit.org/show_bug.cgi?id=159602
                     break;
                 default:
                     break;
