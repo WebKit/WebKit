@@ -73,7 +73,7 @@ The apache logs are located at `/private/var/log/apache2`.
  2. Add the following directives to enable gzip:
 
         <IfModule mod_deflate.c>
-            AddOutputFilterByType DEFLATE text/html text/xml text/plain application/json application/xml application/xhtml+xml
+            AddOutputFilterByType DEFLATE text/html text/xml text/javascript application/javascript text/plain application/json application/xml application/xhtml+xml
         </IfModule>
 
  3. Add the following directives to enable zlib compression and MultiViews on DocumentRoot (perf.webkit.org/public):
