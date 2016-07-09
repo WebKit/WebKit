@@ -77,7 +77,7 @@ HTMLTableCaptionElement* HTMLTableElement::caption() const
     return nullptr;
 }
 
-void HTMLTableElement::setCaption(PassRefPtr<HTMLTableCaptionElement> newCaption, ExceptionCode& ec)
+void HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&& newCaption, ExceptionCode& ec)
 {
     deleteCaption();
     if (newCaption)
@@ -93,7 +93,7 @@ HTMLTableSectionElement* HTMLTableElement::tHead() const
     return nullptr;
 }
 
-void HTMLTableElement::setTHead(PassRefPtr<HTMLTableSectionElement> newHead, ExceptionCode& ec)
+void HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& newHead, ExceptionCode& ec)
 {
     if (UNLIKELY(newHead && !newHead->hasTagName(theadTag))) {
         ec = HIERARCHY_REQUEST_ERR;
@@ -106,9 +106,10 @@ void HTMLTableElement::setTHead(PassRefPtr<HTMLTableSectionElement> newHead, Exc
         return;
 
     Node* child;
-    for (child = firstChild(); child; child = child->nextSibling())
+    for (child = firstChild(); child; child = child->nextSibling()) {
         if (child->isElementNode() && !child->hasTagName(captionTag) && !child->hasTagName(colgroupTag))
             break;
+    }
 
     insertBefore(*newHead, child, ec);
 }
@@ -142,7 +143,7 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTHead()
     if (HTMLTableSectionElement* existingHead = tHead())
         return *existingHead;
     Ref<HTMLTableSectionElement> head = HTMLTableSectionElement::create(theadTag, document());
-    setTHead(head.ptr(), IGNORE_EXCEPTION);
+    setTHead(head.copyRef(), IGNORE_EXCEPTION);
     return head;
 }
 
@@ -180,7 +181,7 @@ Ref<HTMLTableCaptionElement> HTMLTableElement::createCaption()
     if (HTMLTableCaptionElement* existingCaption = caption())
         return *existingCaption;
     Ref<HTMLTableCaptionElement> caption = HTMLTableCaptionElement::create(captionTag, document());
-    setCaption(caption.ptr(), IGNORE_EXCEPTION);
+    setCaption(caption.copyRef(), IGNORE_EXCEPTION);
     return caption;
 }
 
