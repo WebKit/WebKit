@@ -1,3 +1,19 @@
+2016-07-08  Michael Saboff  <msaboff@apple.com>
+
+        ASSERTION FAILED: Heap::isMarked(cell) in SlotVisitor::appendToMarkStack(JSC::JSCell *)
+        https://bugs.webkit.org/show_bug.cgi?id=159588
+
+        Reviewed by Geoffrey Garen.
+
+        We were jettisoning a CodeBlock during GC that won't survive and its owning script
+        won't survive either.  We can't install any code on the owning script as that involves
+        a write barrier that will "pull" the script back into the remembered set.  Badness would
+        ensue.  Added an early return in CodeBlock::jettison() when we are garbage collecting
+        and the owning script isn't marked.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+
 2016-07-08  Mark Lam  <mark.lam@apple.com>
 
         Move CallFrame header info from JSStack.h to CallFrame.h

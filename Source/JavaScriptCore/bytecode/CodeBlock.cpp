@@ -3477,6 +3477,11 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         tallyFrequentExitSites();
 #endif // ENABLE(DFG_JIT)
 
+    // Jettison can happen during GC. We don't want to install code to a dead executable
+    // because that would add a dead object to the remembered set.
+    if (m_vm->heap.isCollecting() && !Heap::isMarked(ownerScriptExecutable()))
+        return;
+
     // This accomplishes (2).
     ownerScriptExecutable()->installCode(
         m_globalObject->vm(), alternative(), codeType(), specializationKind());
