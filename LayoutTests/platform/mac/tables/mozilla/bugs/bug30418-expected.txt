@@ -30,32 +30,6 @@ layer at (0,0) size 800x98
             RenderTableCell {TD} at (243,2) size 33x22 [border: (1px inset #808080)] [r=0 c=7 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x18
                 text run at (2,2) width 16: "h7"
-        RenderTableSection {TFOOT} at (4,54) size 278x24
-          RenderTableRow {TR} at (0,0) size 278x22
-            RenderTableCell {TD} at (2,0) size 33x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x18
-                text run at (2,2) width 14: "f0"
-            RenderTableCell {TD} at (36,0) size 33x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x18
-                text run at (2,2) width 14: "f1"
-            RenderTableCell {TD} at (70,0) size 34x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x18
-                text run at (2,2) width 14: "f2"
-            RenderTableCell {TD} at (105,0) size 33x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x18
-                text run at (2,2) width 14: "f3"
-            RenderTableCell {TD} at (139,0) size 34x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x18
-                text run at (2,2) width 14: "f4"
-            RenderTableCell {TD} at (174,0) size 33x22 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x18
-                text run at (2,2) width 14: "f5"
-            RenderTableCell {TD} at (208,0) size 34x22 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x18
-                text run at (2,2) width 14: "f6"
-            RenderTableCell {TD} at (243,0) size 33x22 [border: (1px inset #808080)] [r=0 c=7 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x18
-                text run at (2,2) width 14: "f7"
         RenderTableSection {TBODY} at (4,30) size 278x24
           RenderTableRow {TR} at (0,0) size 278x22
             RenderTableCell {TD} at (2,0) size 33x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -82,3 +56,29 @@ layer at (0,0) size 800x98
             RenderTableCell {TD} at (243,0) size 33x22 [border: (1px inset #808080)] [r=0 c=7 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x18
                 text run at (2,2) width 29: "r0c7"
+        RenderTableSection {TFOOT} at (4,54) size 278x24
+          RenderTableRow {TR} at (0,0) size 278x22
+            RenderTableCell {TD} at (2,0) size 33x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "f0"
+            RenderTableCell {TD} at (36,0) size 33x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "f1"
+            RenderTableCell {TD} at (70,0) size 34x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "f2"
+            RenderTableCell {TD} at (105,0) size 33x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "f3"
+            RenderTableCell {TD} at (139,0) size 34x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "f4"
+            RenderTableCell {TD} at (174,0) size 33x22 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "f5"
+            RenderTableCell {TD} at (208,0) size 34x22 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "f6"
+            RenderTableCell {TD} at (243,0) size 33x22 [border: (1px inset #808080)] [r=0 c=7 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "f7"

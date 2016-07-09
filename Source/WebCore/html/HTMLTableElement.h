@@ -47,7 +47,7 @@ public:
     void setTHead(PassRefPtr<HTMLTableSectionElement>, ExceptionCode&);
 
     HTMLTableSectionElement* tFoot() const;
-    void setTFoot(PassRefPtr<HTMLTableSectionElement>, ExceptionCode&);
+    void setTFoot(RefPtr<HTMLTableSectionElement>&&, ExceptionCode&);
 
     Ref<HTMLTableSectionElement> createTHead();
     void deleteTHead();

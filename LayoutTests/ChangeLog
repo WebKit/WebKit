@@ -1,3 +1,19 @@
+2016-07-08  Daniel Bates  <dabates@apple.com>
+
+        Setting table.tFoot or calling table.createTFoot() should append HTML tfont element to the end of the table
+        https://bugs.webkit.org/show_bug.cgi?id=159583
+        <rdar://problem/27255292>
+
+        Reviewed by Chris Dumez.
+
+        Update expected results now that we append the HTML tfoot element to the end of the table.
+
+        * platform/efl/tables/mozilla/bugs/bug30418-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug30418-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug30418-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30418-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug30418-expected.txt:
+
 2016-07-08  Chris Dumez  <cdumez@apple.com>
 
         Object.defineProperty() should maintain existing getter / setter if not overridden in the new descriptor

@@ -122,7 +122,7 @@ HTMLTableSectionElement* HTMLTableElement::tFoot() const
     return nullptr;
 }
 
-void HTMLTableElement::setTFoot(PassRefPtr<HTMLTableSectionElement> newFoot, ExceptionCode& ec)
+void HTMLTableElement::setTFoot(RefPtr<HTMLTableSectionElement>&& newFoot, ExceptionCode& ec)
 {
     if (UNLIKELY(newFoot && !newFoot->hasTagName(tfootTag))) {
         ec = HIERARCHY_REQUEST_ERR;
@@ -134,12 +134,7 @@ void HTMLTableElement::setTFoot(PassRefPtr<HTMLTableSectionElement> newFoot, Exc
     if (!newFoot)
         return;
 
-    Node* child;
-    for (child = firstChild(); child; child = child->nextSibling())
-        if (child->isElementNode() && !child->hasTagName(captionTag) && !child->hasTagName(colgroupTag) && !child->hasTagName(theadTag))
-            break;
-
-    insertBefore(*newFoot, child, ec);
+    appendChild(*newFoot, ec);
 }
 
 Ref<HTMLTableSectionElement> HTMLTableElement::createTHead()
@@ -162,7 +157,7 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTFoot()
     if (HTMLTableSectionElement* existingFoot = tFoot())
         return *existingFoot;
     Ref<HTMLTableSectionElement> foot = HTMLTableSectionElement::create(tfootTag, document());
-    setTFoot(foot.ptr(), IGNORE_EXCEPTION);
+    setTFoot(WTFMove(foot), IGNORE_EXCEPTION);
     return foot;
 }
 
