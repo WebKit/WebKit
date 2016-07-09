@@ -1047,25 +1047,19 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
     unsigned firstArraySize = firstButterfly->publicLength();
 
     IndexingType type = first->mergeIndexingTypeForCopying(indexingTypeForValue(second) | IsArray);
-    JSArray* result;
-    if (type == NonArray) {
-        result = constructEmptyArray(exec, nullptr, firstArraySize + 1);
-        if (vm.exception())
-            return JSValue::encode(JSValue());
+    if (type == NonArray)
+        type = ArrayWithUndecided;
 
+    Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
+    JSArray* result = JSArray::create(vm, resultStructure, firstArraySize + 1);
+    if (!result)
+        return JSValue::encode(throwOutOfMemoryError(exec));
+
+    if (!result->appendMemcpy(exec, vm, 0, first)) {
         if (!moveElements(exec, vm, result, 0, first, firstArraySize)) {
             ASSERT(vm.exception());
             return JSValue::encode(JSValue());
         }
-
-    } else {
-        Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
-        result = JSArray::tryCreateUninitialized(vm, resultStructure, firstArraySize + 1);
-        if (!result)
-            return JSValue::encode(throwOutOfMemoryError(exec));
-
-        bool memcpyResult = result->appendMemcpy(exec, vm, 0, first);
-        RELEASE_ASSERT(memcpyResult);
     }
 
     result->putDirectIndex(exec, firstArraySize, second);

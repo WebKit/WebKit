@@ -1,3 +1,19 @@
+2016-07-09  Keith Miller  <keith_miller@apple.com>
+
+        appendMemcpy might fail in concatAppendOne
+        https://bugs.webkit.org/show_bug.cgi?id=159601
+
+        Reviewed by Mark Lam.
+
+        Add new microbenchmark testing the performance of concat
+        when appending one new element. This patch appears to be
+        about a 13% progression on this test.
+
+        * js/regress/concat-append-one-expected.txt: Added.
+        * js/regress/concat-append-one.html: Added.
+        * js/regress/script-tests/concat-append-one.js: Added.
+        (test):
+
 2016-07-09  Youenn Fablet  <youenn@apple.com>
 
         Make use of PrivateIdentifier to simplify Fetch Headers built-in checks

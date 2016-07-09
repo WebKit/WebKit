@@ -1,3 +1,23 @@
+2016-07-09  Keith Miller  <keith_miller@apple.com>
+
+        appendMemcpy might fail in concatAppendOne
+        https://bugs.webkit.org/show_bug.cgi?id=159601
+        <rdar://problem/27211300>
+
+        Reviewed by Mark Lam.
+
+        There are multiple reasons why we might fail appendMemcpy. One
+        reason, which I suspect was the source of the crashes, is that one
+        of the Array prototypes has an indexed property. This patch
+        consolidates the two old cases by just creating an array then
+        attempting to memcpy append. If that fails, we fall back to
+        moveElements.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::concatAppendOne):
+        * tests/stress/concat-with-holesMustForwardToPrototype.js: Added.
+        (arrayEq):
+
 2016-07-09  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Fix the Template Raw Value of \ (escape) + LineTerminatorSequence
