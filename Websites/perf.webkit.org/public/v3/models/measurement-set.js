@@ -150,18 +150,23 @@ class MeasurementSet {
     hasFetchedRange(startTime, endTime)
     {
         console.assert(startTime < endTime);
-        var hasHole = false;
+        var foundStart = false;
         var previousEndTime = null;
         for (var cluster of this._sortedClusters) {
-            if (cluster.startTime() < startTime && startTime < cluster.endTime())
-                hasHole = false;
-            if (previousEndTime !== null && previousEndTime != cluster.startTime())
-                hasHole = true;
-            if (cluster.startTime() < endTime && endTime < cluster.endTime())
-                break;
+            var containsStart = cluster.startTime() <= startTime && startTime <= cluster.endTime();
+            var containsEnd = cluster.startTime() <= endTime && endTime <= cluster.endTime();
+            var preceedingClusterIsMissing = previousEndTime !== null && previousEndTime != cluster.startTime();
+            if (containsStart && containsEnd)
+                return true;
+            if (containsStart)
+                foundStart = true;
+            if (foundStart && preceedingClusterIsMissing)
+                return false;
+            if (containsEnd)
+                return foundStart; // Return true iff there were not missing clusters from the one that contains startTime
             previousEndTime = cluster.endTime();
         }
-        return !hasHole;
+        return false; // Didn't find a cluster that contains startTime or endTime
     }
 
     fetchedTimeSeries(configType, includeOutliers, extendToFuture)

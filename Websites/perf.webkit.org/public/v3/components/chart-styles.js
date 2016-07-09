@@ -87,7 +87,6 @@ class ChartStyles {
     static dashboardOptions(valueFormatter)
     {
         return {
-            updateOnRequestAnimationFrame: true,
             axis: {
                 yAxisWidth: 4, // rem
                 xAxisHeight: 2, // rem

@@ -1,5 +1,51 @@
 2016-07-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard can consume 50-70% of CPU on MacBook even if user is not interacting at all
+        https://bugs.webkit.org/show_bug.cgi?id=159597
+
+        Reviewed by Chris Dumez.
+
+        TimeSeriesChart and InteractiveTimeSeriesChart had been relying on continually polling on requestAnimationFrame
+        to update itself in response to its canvas resizing. Even though there as an early exit in the case there was
+        nothing to update, this is still causing a significant power drain when the user is not interacting at all.
+
+        Let TimeSeriesChart use the regular top-down render path like other components with exceptions of listening to
+        window's resize eventas well as when new JSONs are fetched from the server. The render() call to the latter case
+        will be coerced into a single callback on requestAnimationFrame to avoid DOM-mutation-layout churn.
+
+        * public/v3/components/base.js:
+        (ComponentBase.isElementInViewport): Deleted.
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.render): Enqueue charts to render.
+        * public/v3/components/chart-styles.js:
+        (ChartStyles.dashboardOptions): Removed updateOnRequestAnimationFrame which is no longer an available option.
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart): Replaced the code to register itself for rAF by the code to listen to resize events on window.
+        (TimeSeriesChart._updateOnRAF): Deleted.
+        (TimeSeriesChart._updateAllCharts): Added.
+        (TimeSeriesChart.prototype._enqueueToRender): Added.
+        (TimeSeriesChart._renderEnqueuedCharts): Added.
+        (TimeSeriesChart.prototype.fetchMeasurementSets): Avoid calling fetchBetween when the range had been fetched.
+        Without this change, we can incur a significant number of redundant calls to render() when adjusting the domain
+        in charts page by the slider. When no new JSON is fetched, simply enqueue this chart to render on rAF.
+        (TimeSeriesChart.prototype._didFetchMeasurementSet): Enqueue this chart to render on rAF.
+        (TimeSeriesChart.prototype.render): Removed the check for isElementInViewport since we no longer get render() call
+        when this chart moves into the viewport (as we no longer listen to every rAF or scroll event).
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet.prototype.hasFetchedRange): Fixed various bugs revealed by the new use in fetchMeasurementSets.
+        * public/v3/pages/chart-pane-status-view.js:
+        (ChartPaneStatusView.prototype._updateRevisionListForNewCurrentRepository): Removed the dead code. It was probably
+        copied from when this code was in InteractiveTimeSeries chart. There is no this._forceRender in this component.
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype.render): Enqueue charts to render. 
+        * public/v3/pages/heading.js:
+        (SummaryPage.prototype.open): Removed the call to isElementInViewport. This wasn't really doing anything useful in
+        this component.
+        * unit-tests/measurement-set-tests.js: Added tests for hasFetchedRange.
+        (.waitForMeasurementSet): Moved to be used in a newly added test case.
+
+2016-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION: manifest.json generation takes multiple seconds on perf dashboard
         https://bugs.webkit.org/show_bug.cgi?id=159596
 

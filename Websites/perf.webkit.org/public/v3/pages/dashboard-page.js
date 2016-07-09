@@ -109,6 +109,9 @@ class DashboardPage extends PageWithHeading {
             this._needsTableConstruction = false;
         }
 
+        for (var chart of this._charts)
+            chart.enqueueToRender();
+
         if (this._needsStatusUpdate) {
             for (var statusView of this._statusViews)
                 statusView.render();

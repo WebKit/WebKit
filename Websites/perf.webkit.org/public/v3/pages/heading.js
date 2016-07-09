@@ -52,8 +52,7 @@ class Heading extends ComponentBase {
         if (this._toolbar)
             this._toolbar.render();
 
-        // Workaround the bounding rects being 0x0 when the content is empty.
-        if (this._renderedOnce && !Heading.isElementInViewport(this.element()))
+        if (this._renderedOnce)
             return;
 
         var title = this.content().querySelector('.heading-title a');

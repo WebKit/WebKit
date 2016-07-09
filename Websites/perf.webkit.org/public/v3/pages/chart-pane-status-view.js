@@ -117,7 +117,6 @@ class ChartPaneStatusView extends ChartStatusView {
     {
         this.updateStatusIfNeeded();
 
-        this._forceRender = true;
         for (var info of this._revisionList) {
             if (info.repository == this._currentRepository) {
                 this._setRevisionRange(false, info.repository, info.from, info.to);

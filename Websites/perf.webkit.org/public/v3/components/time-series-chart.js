@@ -21,12 +21,11 @@ class TimeSeriesChart extends ComponentBase {
         this._contextScaleY = 1;
         this._rem = null;
 
-        if (this._options.updateOnRequestAnimationFrame) {
-            if (!TimeSeriesChart._chartList)
-                TimeSeriesChart._chartList = [];
-            TimeSeriesChart._chartList.push(this);
-            TimeSeriesChart._updateOnRAF();
+        if (!TimeSeriesChart._chartList) {
+            TimeSeriesChart._chartList = [];
+            window.addEventListener('resize', TimeSeriesChart._updateAllCharts.bind(TimeSeriesChart));
         }
+        TimeSeriesChart._chartList.push(this);
     }
 
     _ensureCanvas()
@@ -51,14 +50,25 @@ class TimeSeriesChart extends ComponentBase {
         return document.createElement('canvas');
     }
 
-    static _updateOnRAF()
+    static _updateAllCharts()
     {
-        var self = this;
-        window.requestAnimationFrame(function ()
-        {
-            TimeSeriesChart._chartList.map(function (chart) { chart.render(); });
-            self._updateOnRAF();
-        });
+        TimeSeriesChart._chartList.map(function (chart) { chart.render(); });
+    }
+
+    enqueueToRender()
+    {
+        if (!TimeSeriesChart._chartQueue) {
+            TimeSeriesChart._chartQueue = new Set;
+            window.requestAnimationFrame(TimeSeriesChart._renderEnqueuedCharts.bind(TimeSeriesChart));
+        }
+        TimeSeriesChart._chartQueue.add(this);
+    }
+
+    static _renderEnqueuedCharts()
+    {
+        for (var chart of TimeSeriesChart._chartQueue)
+            chart.render();
+        TimeSeriesChart._chartQueue = null;
     }
 
     setDomain(startTime, endTime)
@@ -77,13 +87,21 @@ class TimeSeriesChart extends ComponentBase {
 
     fetchMeasurementSets(noCache)
     {
+        var fetching = false;
         for (var source of this._sourceList) {
-            if (source.measurementSet)
+            if (source.measurementSet) {
+                if (source.measurementSet.hasFetchedRange(this._startTime, this._endTime))
+                    continue;
                 source.measurementSet.fetchBetween(this._startTime, this._endTime, this._didFetchMeasurementSet.bind(this, source.measurementSet), noCache);
+                fetching = true;
+            }
+
         }
         this._sampledTimeSeriesData = null;
         this._valueRangeCache = null;
         this._annotationRows = null;
+        if (!fetching)
+            this.enqueueToRender();
     }
 
     _didFetchMeasurementSet(set)
@@ -92,6 +110,8 @@ class TimeSeriesChart extends ComponentBase {
         this._sampledTimeSeriesData = null;
         this._valueRangeCache = null;
         this._annotationRows = null;
+
+        this.enqueueToRender();
     }
 
     // FIXME: Figure out a way to make this readonly.
@@ -135,8 +155,6 @@ class TimeSeriesChart extends ComponentBase {
 
         // FIXME: Also detect horizontal scrolling.
         var canvas = this._ensureCanvas();
-        if (!TimeSeriesChart.isElementInViewport(canvas))
-            return;
 
         var metrics = this._layout();
         if (!metrics.doneWork)

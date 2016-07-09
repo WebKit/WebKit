@@ -75,16 +75,6 @@ class ComponentBase {
         }
     }
 
-    static isElementInViewport(element)
-    {
-        var viewportHeight = window.innerHeight;
-        var boundingRect = element.getBoundingClientRect();
-        if (viewportHeight < boundingRect.top || boundingRect.bottom < 0
-            || !boundingRect.width || !boundingRect.height)
-            return false;
-        return true;
-    }
-
     static defineElement(name, elementInterface)
     {
         if (!ComponentBase._map)

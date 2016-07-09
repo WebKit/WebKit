@@ -197,6 +197,12 @@ class ChartPaneBase extends ComponentBase {
 
         super.render();
 
+        if (this._overviewChart)
+            this._overviewChart.enqueueToRender();
+
+        if (this._mainChart)
+            this._mainChart.enqueueToRender();
+
         if (this._errorMessage) {
             this.renderReplace(this.content().querySelector('.chart-pane-main'), this._errorMessage);
             return;
