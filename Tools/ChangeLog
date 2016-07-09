@@ -1,3 +1,15 @@
+2016-07-09  Dan Bernstein  <mitz@apple.com>
+
+        Give git-add-reviewer an option to say “Rubber-stamped by” in non-interactive mode
+        https://bugs.webkit.org/show_bug.cgi?id=159600
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/git-add-reviewer:
+        Added the -s|--rubber-stamp option.
+        (nonInteractive): Set the rubberstamp key in the item passed to addReviewer() based on the
+          new option.
+
 2016-07-08  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Load blocked pages more like other error pages are loaded

@@ -61,6 +61,7 @@ sub writeCommitMessageToFile($);
 
 my $interactive = 0;
 my $showHelp = 0;
+my $rubberStamp = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -79,11 +80,13 @@ the `reviewer` will be added.
 Options:
   -h|--help          Display this message
   -i|--interactive   Interactive mode
+  -s|--rubber-stamp  Change `Reviewed by` to `Rubber-stamped by`
 EOF
 
 my $getOptionsResult = GetOptions(
     'h|help' => \$showHelp,
     'i|interactive' => \$interactive,
+    's|rubber-stamp' => \$rubberStamp,
 );
 
 my $gitDirectory = gitDirectory();
@@ -181,6 +184,7 @@ sub nonInteractive()
 
     my %item = (
         reviewer => $reviewer,
+        rubberstamp => $rubberStamp,
         commit => $commit,
     );
 
