@@ -1458,8 +1458,8 @@ void Element::didMoveToNewDocument(Document* oldDocument)
 {
     Node::didMoveToNewDocument(oldDocument);
 
-    if (oldDocument->inQuirksMode() && !document().inQuirksMode()) {
-        // ElementData::m_classNames or ElementData::m_idForStyleResolution have folded case, we need to update them.
+    if (oldDocument->inQuirksMode() != document().inQuirksMode()) {
+        // ElementData::m_classNames or ElementData::m_idForStyleResolution need to be updated with the right case.
         if (hasID())
             attributeChanged(idAttr, nullAtom, getIdAttribute());
         if (hasClass())

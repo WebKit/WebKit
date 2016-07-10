@@ -1,3 +1,18 @@
+2016-07-10  Chris Dumez  <cdumez@apple.com>
+
+        adoptNode() changes css class to lowercase for document loaded with XHR responseType = "document"
+        https://bugs.webkit.org/show_bug.cgi?id=159555
+        <rdar://problem/27252541>
+
+        Reviewed by Benjamin Poulain.
+
+        Add test coverage.
+
+        * fast/dom/Document/adoptNode-quirks-mismatch2-expected.txt: Added.
+        * fast/dom/Document/adoptNode-quirks-mismatch2.html: Added.
+        * fast/dom/Document/resources/document-noquirks-class.html: Added.
+        * fast/dom/Document/resources/document-noquirks-id.html: Added.
+
 2016-07-10  Caio Lima  <ticaiolima@gmail.com>
 
         ECMAScript 2016: %TypedArray%.prototype.includes implementation
