@@ -269,7 +269,7 @@ static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UC
         bool shouldContinue = false;
         U16_NEXT(iterator, markLength, end - iterator, nextCharacter);
 
-        if (isVariationSelector(nextCharacter) || isEmojiModifier(nextCharacter))
+        if (isVariationSelector(nextCharacter) || isEmojiFitzpatrickModifier(nextCharacter))
             shouldContinue = true;
 
         if (sawJoiner && isEmojiGroupCandidate(nextCharacter))

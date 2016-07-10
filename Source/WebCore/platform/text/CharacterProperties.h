@@ -23,19 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CharacterProperties_h
-#define CharacterProperties_h
+#pragma once
 
 namespace WebCore {
 
 static inline bool isEmojiGroupCandidate(UChar32 character)
 {
-    return (character >= 0x1F466 && character <= 0x1F469) || character == 0x2764 || character == 0x1F48B
-        || character == 0x1F441 || character == 0x1F5E8;
+    // U+1F466 - BOY
+    // U+1F467 - GIRL
+    // U+1F468 - MAN
+    // U+1F469 - WOMAN
+    // U+2764  - HEAVY BLACK HEART
+    // U+1F48B - KISS MARK
+    // U+1F441 - EYE
+    // U+1F5E8 - LEFT SPEECH BUBBLE
+
+    return (character >= 0x1F466 && character <= 0x1F469) || character == 0x2764 || character == 0x1F48B || character == 0x1F441 || character == 0x1F5E8;
 }
 
-static inline bool isEmojiModifier(UChar32 character)
+static inline bool isEmojiFitzpatrickModifier(UChar32 character)
 {
+    // U+1F3FB - EMOJI MODIFIER FITZPATRICK TYPE-1-2
+    // U+1F3FC - EMOJI MODIFIER FITZPATRICK TYPE-3
+    // U+1F3FD - EMOJI MODIFIER FITZPATRICK TYPE-4
+    // U+1F3FE - EMOJI MODIFIER FITZPATRICK TYPE-5
+    // U+1F3FF - EMOJI MODIFIER FITZPATRICK TYPE-6
+
     return character >= 0x1F3FB && character <= 0x1F3FF;
 }
 
@@ -45,5 +58,3 @@ inline bool isVariationSelector(UChar32 character)
 }
 
 }
-
-#endif

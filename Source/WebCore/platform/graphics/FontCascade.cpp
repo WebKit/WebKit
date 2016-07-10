@@ -726,7 +726,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
                 previousCharacterIsEmojiGroupCandidate = true;
                 continue;
             }
-            if (isEmojiModifier(supplementaryCharacter))
+            if (isEmojiFitzpatrickModifier(supplementaryCharacter))
                 return Complex;
             if (supplementaryCharacter < 0xE0100) // U+E0100 through U+E01EF Unicode variation selectors.
                 continue;
