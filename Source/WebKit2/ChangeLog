@@ -1,5 +1,14 @@
 2016-07-10  Alex Christensen  <achristensen@webkit.org>
 
+        Add self to WebKit2 Owners
+        https://bugs.webkit.org/show_bug.cgi?id=159499
+
+        Reviewed by Sam Weinig.
+
+        * Owners:
+
+2016-07-10  Alex Christensen  <achristensen@webkit.org>
+
         Fix client certificate authentication after r200463
         https://bugs.webkit.org/show_bug.cgi?id=159574
         <rdar://problem/26931006>
