@@ -39,31 +39,33 @@ namespace WebKit {
 static SecCertificateRef leafCertificate(const CertificateInfo& certificateInfo)
 {
 #if HAVE(SEC_TRUST_SERIALIZATION)
-    return SecTrustGetCertificateAtIndex(certificateInfo.trust(), 0);
-#else
+    if (certificateInfo.type() == CertificateInfo::Type::Trust)
+        return SecTrustGetCertificateAtIndex(certificateInfo.trust(), 0);
+#endif
+    ASSERT(certificateInfo.type() == CertificateInfo::Type::CertificateChain);
     ASSERT(CFArrayGetCount(certificateInfo.certificateChain()));
     return (SecCertificateRef)CFArrayGetValueAtIndex(certificateInfo.certificateChain(), 0);
-#endif
 }
 
 static NSArray *chain(const CertificateInfo& certificateInfo)
 {
 #if HAVE(SEC_TRUST_SERIALIZATION)
-    CFIndex count = SecTrustGetCertificateCount(certificateInfo.trust());
-    if (count < 2)
-        return nil;
+    if (certificateInfo.type() == CertificateInfo::Type::Trust) {
+        CFIndex count = SecTrustGetCertificateCount(certificateInfo.trust());
+        if (count < 2)
+            return nil;
 
-    NSMutableArray *array = [NSMutableArray array];
-    for (CFIndex i = 1; i < count; ++i)
-        [array addObject:(id)SecTrustGetCertificateAtIndex(certificateInfo.trust(), i)];
-        
-    return array;
-#else
+        NSMutableArray *array = [NSMutableArray array];
+        for (CFIndex i = 1; i < count; ++i)
+            [array addObject:(id)SecTrustGetCertificateAtIndex(certificateInfo.trust(), i)];
+            
+        return array;
+    }
+#endif
+    ASSERT(certificateInfo.type() == CertificateInfo::Type::CertificateChain);
     CFIndex chainCount = CFArrayGetCount(certificateInfo.certificateChain());
     return chainCount > 1 ? [(NSArray *)certificateInfo.certificateChain() subarrayWithRange:NSMakeRange(1, chainCount - 1)] : nil;
-#endif
 }
-
 
 // FIXME: This function creates an identity from a certificate, which should not be needed. We should pass an identity over IPC (as we do on iOS).
 bool AuthenticationManager::tryUseCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const CertificateInfo& certificateInfo, const ChallengeCompletionHandler& completionHandler)

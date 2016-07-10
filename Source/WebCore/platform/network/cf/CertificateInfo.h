@@ -53,7 +53,7 @@ public:
     {
     }
  
-    SecTrustRef trust() const { return m_trust.get(); }
+    SecTrustRef trust() const { ASSERT(m_trust); return m_trust.get(); }
 #endif
 
     CertificateInfo(RetainPtr<CFArrayRef>&& certificateChain)
