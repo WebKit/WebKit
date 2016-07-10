@@ -26,7 +26,6 @@
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
 #include "TextBoundaries.cpp"
-#include "TextBreakIterator.cpp"
 #include "TextCodec.cpp"
 #include "TextCodecICU.cpp"
 #include "TextCodecLatin1.cpp"
@@ -38,6 +37,3 @@
 #include "TextEncodingDetectorICU.cpp"
 #include "TextEncodingRegistry.cpp"
 #include "TextStream.cpp"
-#include "UTextProvider.cpp"
-#include "UTextProviderLatin1.cpp"
-#include "UTextProviderUTF16.cpp"
