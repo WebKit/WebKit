@@ -22,9 +22,9 @@
 #ifndef break_lines_h
 #define break_lines_h
 
-#include "TextBreakIterator.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

@@ -51,7 +51,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
-#include "TextBreakIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 #include "TextControlInnerElements.h"
 #include "TextEvent.h"
 #include "TextIterator.h"

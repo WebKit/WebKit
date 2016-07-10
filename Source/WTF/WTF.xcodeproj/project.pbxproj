@@ -89,6 +89,15 @@
 		1ACADD841884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACADD821884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm */; };
 		1AFDE648195201C300C48FFA /* TypeCastsCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDE647195201C300C48FFA /* TypeCastsCF.h */; };
 		1AFDE6531953B23D00C48FFA /* Optional.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDE6521953B23D00C48FFA /* Optional.h */; };
+		1C181C7F1D3078DA00F5FA16 /* TextBreakIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C7D1D3078DA00F5FA16 /* TextBreakIterator.cpp */; };
+		1C181C801D3078DA00F5FA16 /* TextBreakIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C181C7E1D3078DA00F5FA16 /* TextBreakIterator.h */; };
+		1C181C8F1D307AB800F5FA16 /* UTextProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C891D307AB800F5FA16 /* UTextProvider.cpp */; };
+		1C181C901D307AB800F5FA16 /* UTextProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C181C8A1D307AB800F5FA16 /* UTextProvider.h */; };
+		1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C8B1D307AB800F5FA16 /* UTextProviderLatin1.cpp */; };
+		1C181C921D307AB800F5FA16 /* UTextProviderLatin1.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C181C8C1D307AB800F5FA16 /* UTextProviderLatin1.h */; };
+		1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C8D1D307AB800F5FA16 /* UTextProviderUTF16.cpp */; };
+		1C181C941D307AB800F5FA16 /* UTextProviderUTF16.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C181C8E1D307AB800F5FA16 /* UTextProviderUTF16.h */; };
+		1C181C961D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C951D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm */; };
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
 		1FA47C8B152502DA00568D1B /* WebCoreThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA47C89152502DA00568D1B /* WebCoreThread.h */; };
 		26147B0A15DDCCDC00DDB907 /* IntegerToStringConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */; };
@@ -414,6 +423,17 @@
 		1ACADD821884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeprecatedSymbolsUsedBySafari.mm; sourceTree = "<group>"; };
 		1AFDE647195201C300C48FFA /* TypeCastsCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastsCF.h; sourceTree = "<group>"; };
 		1AFDE6521953B23D00C48FFA /* Optional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Optional.h; sourceTree = "<group>"; };
+		1C181C7D1D3078DA00F5FA16 /* TextBreakIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIterator.cpp; sourceTree = "<group>"; };
+		1C181C7E1D3078DA00F5FA16 /* TextBreakIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBreakIterator.h; sourceTree = "<group>"; };
+		1C181C811D30797C00F5FA16 /* LineBreakIteratorPoolICU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LineBreakIteratorPoolICU.h; sourceTree = "<group>"; };
+		1C181C821D3079AC00F5FA16 /* TextBreakIteratorInternalICU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorInternalICU.h; sourceTree = "<group>"; };
+		1C181C891D307AB800F5FA16 /* UTextProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTextProvider.cpp; sourceTree = "<group>"; };
+		1C181C8A1D307AB800F5FA16 /* UTextProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProvider.h; sourceTree = "<group>"; };
+		1C181C8B1D307AB800F5FA16 /* UTextProviderLatin1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTextProviderLatin1.cpp; sourceTree = "<group>"; };
+		1C181C8C1D307AB800F5FA16 /* UTextProviderLatin1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProviderLatin1.h; sourceTree = "<group>"; };
+		1C181C8D1D307AB800F5FA16 /* UTextProviderUTF16.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTextProviderUTF16.cpp; sourceTree = "<group>"; };
+		1C181C8E1D307AB800F5FA16 /* UTextProviderUTF16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProviderUTF16.h; sourceTree = "<group>"; };
+		1C181C951D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextBreakIteratorInternalICUMac.mm; path = mac/TextBreakIteratorInternalICUMac.mm; sourceTree = "<group>"; };
 		1FA47C88152502DA00568D1B /* WebCoreThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreThread.cpp; sourceTree = "<group>"; };
 		1FA47C89152502DA00568D1B /* WebCoreThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThread.h; sourceTree = "<group>"; };
 		26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegerToStringConversion.h; sourceTree = "<group>"; };
@@ -688,6 +708,19 @@
 			name = Libraries;
 			sourceTree = "<group>";
 		};
+		1C181C881D307AB800F5FA16 /* icu */ = {
+			isa = PBXGroup;
+			children = (
+				1C181C891D307AB800F5FA16 /* UTextProvider.cpp */,
+				1C181C8A1D307AB800F5FA16 /* UTextProvider.h */,
+				1C181C8B1D307AB800F5FA16 /* UTextProviderLatin1.cpp */,
+				1C181C8C1D307AB800F5FA16 /* UTextProviderLatin1.h */,
+				1C181C8D1D307AB800F5FA16 /* UTextProviderUTF16.cpp */,
+				1C181C8E1D307AB800F5FA16 /* UTextProviderUTF16.h */,
+			);
+			path = icu;
+			sourceTree = "<group>";
+		};
 		1FA47C87152502DA00568D1B /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -751,6 +784,7 @@
 		A5BA15F11824339F00A82E69 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				1C181C951D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm */,
 				A5BA15F41824348000A82E69 /* StringImplMac.mm */,
 				A5BA15F2182433A900A82E69 /* StringMac.mm */,
 				93934BD218A1E8C300D0D6A1 /* StringViewObjC.mm */,
@@ -1043,6 +1077,7 @@
 		A8A4731B151A825B004123FF /* text */ = {
 			isa = PBXGroup;
 			children = (
+				1C181C881D307AB800F5FA16 /* icu */,
 				A5BA15F61824359E00A82E69 /* cf */,
 				A5BA15F11824339F00A82E69 /* mac */,
 				A8A4731C151A825B004123FF /* ASCIIFastPath.h */,
@@ -1079,6 +1114,10 @@
 				70ECA60C1B02426800449739 /* UniquedStringImpl.h */,
 				A8A4732D151A825B004123FF /* WTFString.cpp */,
 				A8A4732E151A825B004123FF /* WTFString.h */,
+				1C181C7D1D3078DA00F5FA16 /* TextBreakIterator.cpp */,
+				1C181C7E1D3078DA00F5FA16 /* TextBreakIterator.h */,
+				1C181C811D30797C00F5FA16 /* LineBreakIteratorPoolICU.h */,
+				1C181C821D3079AC00F5FA16 /* TextBreakIteratorInternalICU.h */,
 			);
 			path = text;
 			sourceTree = "<group>";
@@ -1247,6 +1286,7 @@
 				2C05385415BC819000F21B96 /* GregorianDateTime.h in Headers */,
 				A8A473D3151A825B004123FF /* HashCountedSet.h in Headers */,
 				A8A4742D151A825B004123FF /* Hasher.h in Headers */,
+				1C181C901D307AB800F5FA16 /* UTextProvider.h in Headers */,
 				A8A473D4151A825B004123FF /* HashFunctions.h in Headers */,
 				A8A473D5151A825B004123FF /* HashIterators.h in Headers */,
 				A8A473D6151A825B004123FF /* HashMap.h in Headers */,
@@ -1263,6 +1303,7 @@
 				7CDD7FFA186D2A54007433CD /* IteratorRange.h in Headers */,
 				93AC91A818942FC400244939 /* LChar.h in Headers */,
 				A70DA0851799F04D00529A9B /* ListDump.h in Headers */,
+				1C181C941D307AB800F5FA16 /* UTextProviderUTF16.h in Headers */,
 				A8A473E1151A825B004123FF /* ListHashSet.h in Headers */,
 				0FE1646B1B6FFC9600400E7C /* Lock.h in Headers */,
 				A8A473E3151A825B004123FF /* Locker.h in Headers */,
@@ -1272,6 +1313,7 @@
 				A8A473E8151A825B004123FF /* MathExtras.h in Headers */,
 				A8A473EA151A825B004123FF /* MD5.h in Headers */,
 				CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */,
+				1C181C801D3078DA00F5FA16 /* TextBreakIterator.h in Headers */,
 				A8A473EB151A825B004123FF /* MessageQueue.h in Headers */,
 				A8A473ED151A825B004123FF /* MetaAllocator.h in Headers */,
 				A8A473EE151A825B004123FF /* MetaAllocatorHandle.h in Headers */,
@@ -1332,6 +1374,7 @@
 				A748745317A0BDAE00FA04CB /* SixCharacterHash.h in Headers */,
 				A8A47426151A825B004123FF /* Spectrum.h in Headers */,
 				A8A47428151A825B004123FF /* StackBounds.h in Headers */,
+				1C181C921D307AB800F5FA16 /* UTextProviderLatin1.h in Headers */,
 				FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */,
 				A8A47429151A825B004123FF /* StaticConstructors.h in Headers */,
 				A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */,
@@ -1502,6 +1545,7 @@
 				A8A4739A151A825B004123FF /* CryptographicallyRandomNumber.cpp in Sources */,
 				E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */,
 				A8A47439151A825B004123FF /* CString.cpp in Sources */,
+				1C181C961D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm in Sources */,
 				A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */,
 				A8A4739E151A825B004123FF /* DataLog.cpp in Sources */,
 				A8A473A0151A825B004123FF /* DateMath.cpp in Sources */,
@@ -1515,6 +1559,7 @@
 				A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */,
 				DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */,
 				0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */,
+				1C181C8F1D307AB800F5FA16 /* UTextProvider.cpp in Sources */,
 				A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */,
 				1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */,
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
@@ -1529,6 +1574,7 @@
 				A8A473F7151A825B004123FF /* OSAllocatorPosix.cpp in Sources */,
 				A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */,
 				A8A47402151A825B004123FF /* PageBlock.cpp in Sources */,
+				1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */,
 				0FFF19DC1BB334EB00886D91 /* ParallelHelperPool.cpp in Sources */,
 				0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */,
 				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
@@ -1558,6 +1604,8 @@
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
 				93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
+				1C181C7F1D3078DA00F5FA16 /* TextBreakIterator.cpp in Sources */,
+				1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */,
 				70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */,
 				A8A47448151A825B004123FF /* ThreadIdentifierDataPthreads.cpp in Sources */,
 				A8A4744A151A825B004123FF /* Threading.cpp in Sources */,

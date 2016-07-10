@@ -24,7 +24,7 @@
 
 #include <Language.h>
 #include <glib.h>
-#include <text/TextBreakIterator.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 

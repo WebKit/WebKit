@@ -30,7 +30,7 @@
 #include "StringTruncator.h"
 
 #include "FontCascade.h"
-#include "TextBreakIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 #include "TextRun.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>

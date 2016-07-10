@@ -18,6 +18,8 @@ list(APPEND WTF_SOURCES
     SchedulePairCF.cpp
     SchedulePairMac.mm
 
+    text/mac/TextBreakIteratorInternalICUMac.mm
+
     cf/RunLoopCF.cpp
 
     cocoa/WorkQueueCocoa.cpp

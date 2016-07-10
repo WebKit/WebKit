@@ -2370,7 +2370,6 @@ set(WebCore_SOURCES
     platform/text/QuotedPrintable.cpp
     platform/text/SegmentedString.cpp
     platform/text/TextBoundaries.cpp
-    platform/text/TextBreakIterator.cpp
     platform/text/TextCodec.cpp
     platform/text/TextCodecICU.cpp
     platform/text/TextCodecLatin1.cpp
@@ -2382,10 +2381,6 @@ set(WebCore_SOURCES
     platform/text/TextEncodingDetectorICU.cpp
     platform/text/TextEncodingRegistry.cpp
     platform/text/TextStream.cpp
-
-    platform/text/icu/UTextProvider.cpp
-    platform/text/icu/UTextProviderLatin1.cpp
-    platform/text/icu/UTextProviderUTF16.cpp
 
     plugins/DOMMimeType.cpp
     plugins/DOMMimeTypeArray.cpp

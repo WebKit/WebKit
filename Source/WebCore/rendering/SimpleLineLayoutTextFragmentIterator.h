@@ -28,7 +28,7 @@
 
 #include "RenderLineBreak.h"
 #include "SimpleLineLayoutFlowContents.h"
-#include "TextBreakIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 #include "break_lines.h"
 
 namespace WebCore {

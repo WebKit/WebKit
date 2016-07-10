@@ -28,12 +28,12 @@
 #include "config.h"
 #include "TextChecker.h"
 
-#include "TextBreakIterator.h"
 #include "TextCheckerState.h"
 #include "WebProcessPool.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/TextCheckerEnchant.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/TextBreakIterator.h>
 
 using namespace WebCore;
 

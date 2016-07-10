@@ -32,9 +32,9 @@
 #include "TextCheckerState.h"
 
 #if ENABLE(SPELLCHECK)
-#include "TextBreakIterator.h"
 #include "TextCheckerClientEfl.h"
 #include "WebTextChecker.h"
+#include <wtf/text/TextBreakIterator.h>
 #endif
 
 using namespace WebCore;

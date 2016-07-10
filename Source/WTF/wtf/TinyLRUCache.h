@@ -29,7 +29,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
+namespace WTF {
 
 template<typename KeyType, typename ValueType>
 struct TinyLRUCachePolicy {
@@ -77,5 +77,8 @@ private:
 };
 
 }
+
+using WTF::TinyLRUCache;
+using WTF::TinyLRUCachePolicy;
 
 #endif // TinyLRUCache_h

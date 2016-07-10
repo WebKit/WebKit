@@ -212,8 +212,6 @@ list(APPEND WebCore_SOURCES
     platform/text/Hyphenation.cpp
     platform/text/LocaleICU.cpp
 
-    platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
-
     platform/text/enchant/TextCheckerEnchant.cpp
 
     platform/text/hyphen/HyphenationLibHyphen.cpp

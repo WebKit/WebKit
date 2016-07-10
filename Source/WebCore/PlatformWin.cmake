@@ -109,8 +109,6 @@ list(APPEND WebCore_SOURCES
 
     platform/text/cf/HyphenationCF.cpp
 
-    platform/text/win/TextBreakIteratorInternalICUWin.cpp
-
     platform/win/BString.cpp
     platform/win/BitmapInfo.cpp
     platform/win/ClipboardUtilitiesWin.cpp

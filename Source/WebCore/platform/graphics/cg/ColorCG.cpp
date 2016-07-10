@@ -40,6 +40,20 @@
 #endif // !PLATFORM(IOS)
 
 namespace WebCore {
+static CGColorRef leakCGColor(const Color&);
+}
+
+namespace WTF {
+
+template<>
+RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>::createValueForKey(const WebCore::Color& color)
+{
+    return adoptCF(WebCore::leakCGColor(color));
+}
+
+} // namespace WTF
+
+namespace WebCore {
 
 #if PLATFORM(IOS)
 static CGColorRef createCGColorWithDeviceRGBA(CGColorRef sourceColor)
@@ -106,12 +120,6 @@ static CGColorRef leakCGColor(const Color& color)
     CGFloat components[4];
     color.getRGBA(components[0], components[1], components[2], components[3]);
     return CGColorCreate(sRGBColorSpaceRef(), components);
-}
-
-template<>
-RetainPtr<CGColorRef> TinyLRUCachePolicy<Color, RetainPtr<CGColorRef>>::createValueForKey(const Color& color)
-{
-    return adoptCF(leakCGColor(color));
 }
 
 CGColorRef cachedCGColor(const Color& color)

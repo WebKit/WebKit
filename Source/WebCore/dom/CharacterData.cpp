@@ -33,8 +33,8 @@
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
-#include "TextBreakIterator.h"
 #include <wtf/Ref.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 

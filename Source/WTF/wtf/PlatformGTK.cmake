@@ -8,6 +8,8 @@ list(APPEND WTF_SOURCES
     glib/MainThreadGLib.cpp
     glib/RunLoopGLib.cpp
     PlatformUserPreferredLanguagesUnix.cpp
+
+    text/gtk/TextBreakIteratorInternalICUGtk.cpp
 )
 
 list(APPEND WTF_LIBRARIES

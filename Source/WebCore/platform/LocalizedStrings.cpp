@@ -29,9 +29,9 @@
 
 #include "IntSize.h"
 #include "NotImplemented.h"
-#include "TextBreakIterator.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if USE(CF)

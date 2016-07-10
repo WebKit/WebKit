@@ -43,7 +43,7 @@
 #include "Settings.h"
 #include "SimpleLineLayoutFunctions.h"
 #include "Text.h"
-#include "TextBreakIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 #include "TextResourceDecoder.h"
 #include "VisiblePosition.h"
 #include "break_lines.h"

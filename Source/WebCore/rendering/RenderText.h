@@ -27,8 +27,8 @@
 #include "RenderTextLineBoxes.h"
 #include "SimpleLineLayout.h"
 #include "Text.h"
-#include "TextBreakIterator.h"
 #include <wtf/Forward.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 

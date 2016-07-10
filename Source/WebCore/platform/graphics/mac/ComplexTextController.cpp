@@ -30,7 +30,7 @@
 #include "FontCascade.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
-#include "TextBreakIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 #include "TextRun.h"
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>

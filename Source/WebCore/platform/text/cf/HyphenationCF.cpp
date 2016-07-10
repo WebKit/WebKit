@@ -27,13 +27,13 @@
 #include "Hyphenation.h"
 
 #include "Language.h"
-#include "TextBreakIteratorInternalICU.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/TextBreakIteratorInternalICU.h>
 
-namespace WebCore {
+namespace WTF {
 
 template<>
 class TinyLRUCachePolicy<AtomicString, RetainPtr<CFLocaleRef>>
@@ -54,7 +54,7 @@ public:
     {
         // CF hyphenation functions use locale (regional formats) language, which doesn't necessarily match primary UI language,
         // so we can't use default locale here. See <rdar://problem/14897664>.
-        RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
+        RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, WebCore::defaultLanguage().createCFString().get()));
         return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
     }
 
@@ -65,6 +65,9 @@ public:
         return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
     }
 };
+}
+
+namespace WebCore {
 
 bool canHyphenate(const AtomicString& localeIdentifier)
 {

@@ -33,7 +33,7 @@
 
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
-#include "TextBreakIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 

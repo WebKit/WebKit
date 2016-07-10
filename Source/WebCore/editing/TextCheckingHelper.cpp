@@ -32,7 +32,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "Settings.h"
-#include "TextBreakIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"

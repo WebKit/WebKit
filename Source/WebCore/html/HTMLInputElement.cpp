@@ -60,9 +60,9 @@
 #include "ScopedEventQueue.h"
 #include "SearchInputType.h"
 #include "StyleResolver.h"
-#include "TextBreakIterator.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
+#include <wtf/text/TextBreakIterator.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "TouchEvent.h"

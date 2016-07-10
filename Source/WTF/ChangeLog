@@ -1,3 +1,132 @@
+2016-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move breaking iterator code to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=159594
+
+        Reviewed by Alex Christensen.
+
+        This is in preparation for giving StringView a GraphemeClusters iterator.
+        Such an interator needs to be implemented on top of our breaking iterator
+        code.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * icu/unicode/ubrk.h: Added.
+        * icu/unicode/utext.h: Renamed from Source/WebCore/icu/unicode/utext.h.
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/TinyLRUCache.h:
+        * wtf/text/LineBreakIteratorPoolICU.h: Renamed from Source/WebCore/platform/text/LineBreakIteratorPoolICU.h.
+        (WTF::LineBreakIteratorPool::LineBreakIteratorPool):
+        (WTF::LineBreakIteratorPool::sharedPool):
+        (WTF::LineBreakIteratorPool::makeLocaleWithBreakKeyword):
+        (WTF::LineBreakIteratorPool::take):
+        (WTF::LineBreakIteratorPool::put):
+        * wtf/text/TextBreakIterator.cpp: Renamed from Source/WebCore/platform/text/TextBreakIterator.cpp.
+        (WTF::initializeIterator):
+        (WTF::initializeIteratorWithRules):
+        (WTF::setTextForIterator):
+        (WTF::setContextAwareTextForIterator):
+        (WTF::wordBreakIterator):
+        (WTF::sentenceBreakIterator):
+        (WTF::cursorMovementIterator):
+        (WTF::acquireLineBreakIterator):
+        (WTF::releaseLineBreakIterator):
+        (WTF::mapLineIteratorModeToRules):
+        (WTF::isCJKLocale):
+        (WTF::openLineBreakIterator):
+        (WTF::closeLineBreakIterator):
+        (WTF::compareAndSwapNonSharedCharacterBreakIterator):
+        (WTF::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator):
+        (WTF::NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator):
+        (WTF::textBreakFirst):
+        (WTF::textBreakLast):
+        (WTF::textBreakNext):
+        (WTF::textBreakPrevious):
+        (WTF::textBreakPreceding):
+        (WTF::textBreakFollowing):
+        (WTF::textBreakCurrent):
+        (WTF::isTextBreak):
+        (WTF::isWordTextBreak):
+        (WTF::numGraphemeClusters):
+        (WTF::numCharactersInGraphemeClusters):
+        * wtf/text/TextBreakIterator.h: Renamed from Source/WebCore/platform/text/TextBreakIterator.h.
+        (WTF::LazyLineBreakIterator::LazyLineBreakIterator):
+        (WTF::LazyLineBreakIterator::~LazyLineBreakIterator):
+        (WTF::LazyLineBreakIterator::string):
+        (WTF::LazyLineBreakIterator::isLooseCJKMode):
+        (WTF::LazyLineBreakIterator::lastCharacter):
+        (WTF::LazyLineBreakIterator::secondToLastCharacter):
+        (WTF::LazyLineBreakIterator::setPriorContext):
+        (WTF::LazyLineBreakIterator::updatePriorContext):
+        (WTF::LazyLineBreakIterator::resetPriorContext):
+        (WTF::LazyLineBreakIterator::priorContextLength):
+        (WTF::LazyLineBreakIterator::get):
+        (WTF::LazyLineBreakIterator::resetStringAndReleaseIterator):
+        (WTF::NonSharedCharacterBreakIterator::operator TextBreakIterator*):
+        * wtf/text/TextBreakIteratorInternalICU.h: Renamed from Source/WebCore/platform/text/TextBreakIteratorInternalICU.h.
+        * wtf/text/efl/TextBreakIteratorInternalICUEfl.cpp: Renamed from Source/WebCore/platform/text/efl/TextBreakIteratorInternalICUEfl.cpp.
+        (WebCore::currentSearchLocaleID):
+        (WebCore::currentTextBreakLocaleID):
+        * wtf/text/gtk/TextBreakIteratorInternalICUGtk.cpp: Renamed from Source/WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp.
+        (WebCore::currentSearchLocaleID):
+        (WebCore::currentTextBreakLocaleID):
+        * wtf/text/icu/UTextProvider.cpp: Renamed from Source/WebCore/platform/text/icu/UTextProvider.cpp.
+        (WTF::fixPointer):
+        (WTF::uTextCloneImpl):
+        * wtf/text/icu/UTextProvider.h: Renamed from Source/WebCore/platform/text/icu/UTextProvider.h.
+        (WTF::uTextProviderContext):
+        (WTF::initializeContextAwareUTextProvider):
+        (WTF::uTextAccessPinIndex):
+        (WTF::uTextAccessInChunkOrOutOfRange):
+        * wtf/text/icu/UTextProviderLatin1.cpp: Renamed from Source/WebCore/platform/text/icu/UTextProviderLatin1.cpp.
+        (WTF::uTextLatin1Clone):
+        (WTF::uTextLatin1NativeLength):
+        (WTF::uTextLatin1Access):
+        (WTF::uTextLatin1Extract):
+        (WTF::uTextLatin1MapOffsetToNative):
+        (WTF::uTextLatin1MapNativeIndexToUTF16):
+        (WTF::uTextLatin1Close):
+        (WTF::openLatin1UTextProvider):
+        (WTF::textLatin1ContextAwareGetCurrentContext):
+        (WTF::textLatin1ContextAwareMoveInPrimaryContext):
+        (WTF::textLatin1ContextAwareSwitchToPrimaryContext):
+        (WTF::textLatin1ContextAwareMoveInPriorContext):
+        (WTF::textLatin1ContextAwareSwitchToPriorContext):
+        (WTF::uTextLatin1ContextAwareClone):
+        (WTF::uTextLatin1ContextAwareNativeLength):
+        (WTF::uTextLatin1ContextAwareAccess):
+        (WTF::uTextLatin1ContextAwareExtract):
+        (WTF::uTextLatin1ContextAwareClose):
+        (WTF::openLatin1ContextAwareUTextProvider):
+        * wtf/text/icu/UTextProviderLatin1.h: Renamed from Source/WebCore/platform/text/icu/UTextProviderLatin1.h.
+        * wtf/text/icu/UTextProviderUTF16.cpp: Renamed from Source/WebCore/platform/text/icu/UTextProviderUTF16.cpp.
+        (WTF::textUTF16ContextAwareGetCurrentContext):
+        (WTF::textUTF16ContextAwareMoveInPrimaryContext):
+        (WTF::textUTF16ContextAwareSwitchToPrimaryContext):
+        (WTF::textUTF16ContextAwareMoveInPriorContext):
+        (WTF::textUTF16ContextAwareSwitchToPriorContext):
+        (WTF::uTextUTF16ContextAwareClone):
+        (WTF::uTextUTF16ContextAwareNativeLength):
+        (WTF::uTextUTF16ContextAwareAccess):
+        (WTF::uTextUTF16ContextAwareExtract):
+        (WTF::uTextUTF16ContextAwareClose):
+        (WTF::openUTF16ContextAwareUTextProvider):
+        * wtf/text/icu/UTextProviderUTF16.h: Renamed from Source/WebCore/platform/text/icu/UTextProviderUTF16.h.
+        * wtf/text/mac/TextBreakIteratorInternalICUMac.mm: Renamed from Source/WebCore/platform/text/mac/TextBreakIteratorInternalICUMac.mm.
+        (WTF::textBreakLocalePreference):
+        (WTF::topLanguagePreference):
+        (WTF::getLocale):
+        (WTF::getSearchLocale):
+        (WTF::currentSearchLocaleID):
+        (WTF::getTextBreakLocale):
+        (WTF::currentTextBreakLocaleID):
+        * wtf/text/win/TextBreakIteratorInternalICUWin.cpp: Renamed from Source/WebCore/platform/text/win/TextBreakIteratorInternalICUWin.cpp.
+        (WebCore::currentSearchLocaleID):
+        (WebCore::currentTextBreakLocaleID):
+
 2016-07-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202799.

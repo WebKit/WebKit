@@ -166,13 +166,17 @@ private:
     HyphenDictUniquePtr m_libhyphenDictionary;
 };
 
+} // namespace WebCore
+
+namespace WTF {
+
 template<>
-class TinyLRUCachePolicy<AtomicString, RefPtr<HyphenationDictionary>>
+class TinyLRUCachePolicy<AtomicString, RefPtr<WebCore::HyphenationDictionary>>
 {
 public:
-    static TinyLRUCache<AtomicString, RefPtr<HyphenationDictionary>>& cache()
+    static TinyLRUCache<AtomicString, RefPtr<WebCore::HyphenationDictionary>>& cache()
     {
-        static NeverDestroyed<TinyLRUCache<AtomicString, RefPtr<HyphenationDictionary>>> cache;
+        static NeverDestroyed<TinyLRUCache<AtomicString, RefPtr<WebCore::HyphenationDictionary>>> cache;
         return cache;
     }
 
@@ -181,16 +185,20 @@ public:
         return localeIdentifier.isNull();
     }
 
-    static RefPtr<HyphenationDictionary> createValueForNullKey()
+    static RefPtr<WebCore::HyphenationDictionary> createValueForNullKey()
     {
-        return HyphenationDictionary::createNull();
+        return WebCore::HyphenationDictionary::createNull();
     }
 
-    static RefPtr<HyphenationDictionary> createValueForKey(const AtomicString& dictionaryPath)
+    static RefPtr<WebCore::HyphenationDictionary> createValueForKey(const AtomicString& dictionaryPath)
     {
-        return HyphenationDictionary::create(fileSystemRepresentation(dictionaryPath.string()));
+        return WebCore::HyphenationDictionary::create(WebCore::fileSystemRepresentation(dictionaryPath.string()));
     }
 };
+
+} // namespace WTF
+
+namespace WebCore {
 
 static void countLeadingSpaces(const CString& utf8String, int32_t& pointerOffset, int32_t& characterOffset)
 {
@@ -233,7 +241,7 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomicStr
     String lowercaseLocaleIdentifier = AtomicString(localeIdentifier.string().convertToASCIILowercase());
     ASSERT(availableLocales().contains(lowercaseLocaleIdentifier));
     for (const auto& dictionaryPath : availableLocales().get(lowercaseLocaleIdentifier)) {
-        RefPtr<HyphenationDictionary> dictionary = TinyLRUCachePolicy<AtomicString, RefPtr<HyphenationDictionary>>::cache().get(AtomicString(dictionaryPath));
+        RefPtr<HyphenationDictionary> dictionary = WTF::TinyLRUCachePolicy<AtomicString, RefPtr<HyphenationDictionary>>::cache().get(AtomicString(dictionaryPath));
 
         char** replacements = nullptr;
         int* positions = nullptr;

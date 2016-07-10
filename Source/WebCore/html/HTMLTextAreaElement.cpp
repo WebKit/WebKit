@@ -45,7 +45,7 @@
 #include "RenderTextControlMultiLine.h"
 #include "ShadowRoot.h"
 #include "Text.h"
-#include "TextBreakIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"

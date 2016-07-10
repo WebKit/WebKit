@@ -1,5 +1,7 @@
 list(APPEND WTF_SOURCES
-    PLatformUserPreferredLanguagesWin.cpp
+    PlatformUserPreferredLanguagesWin.cpp
+
+    text/win/TextBreakIteratorInternalICUWin.cpp
 
     text/cf/AtomicStringImplCF.cpp
     text/cf/StringCF.cpp

@@ -182,8 +182,6 @@ list(APPEND WebCore_SOURCES
 
     platform/text/enchant/TextCheckerEnchant.cpp
 
-    platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
-
     platform/text/hyphen/HyphenationLibHyphen.cpp
 
     platform/unix/LoggingUnix.cpp

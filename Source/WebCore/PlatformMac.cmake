@@ -566,7 +566,6 @@ list(APPEND WebCore_SOURCES
 
     platform/text/mac/LocaleMac.mm
     platform/text/mac/TextBoundaries.mm
-    platform/text/mac/TextBreakIteratorInternalICUMac.mm
     platform/text/mac/TextCodecMac.cpp
 
     rendering/RenderThemeMac.mm

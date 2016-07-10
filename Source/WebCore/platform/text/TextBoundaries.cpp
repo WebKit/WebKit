@@ -27,8 +27,8 @@
 #include "config.h"
 #include "TextBoundaries.h"
 
-#include "TextBreakIterator.h"
 #include <wtf/text/StringImpl.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 

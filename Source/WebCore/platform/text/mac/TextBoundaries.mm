@@ -26,8 +26,6 @@
 #import "config.h"
 #import "TextBoundaries.h"
 
-#import "TextBreakIterator.h"
-#import "TextBreakIteratorInternalICU.h"
 #import <CoreFoundation/CFStringTokenizer.h>
 #import <Foundation/Foundation.h>
 #import <unicode/ubrk.h>
@@ -36,6 +34,8 @@
 #import <unicode/utypes.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringView.h>
+#import <wtf/text/TextBreakIterator.h>
+#import <wtf/text/TextBreakIteratorInternalICU.h>
 #import <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
