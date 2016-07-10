@@ -70,10 +70,10 @@ static Vector<uint8_t> calculateSignature(gnutls_mac_algorithm_t algorithm, cons
 
 void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
+    UNUSED_PARAM(failureCallback);
     gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);
     if (algorithm == GNUTLS_MAC_UNKNOWN) {
         ec = NOT_SUPPORTED_ERR;
-        failureCallback();
         return;
     }
 
@@ -84,10 +84,10 @@ void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& paramete
 
 void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
+    UNUSED_PARAM(failureCallback);
     gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);
     if (algorithm == GNUTLS_MAC_UNKNOWN) {
         ec = NOT_SUPPORTED_ERR;
-        failureCallback();
         return;
     }
 

@@ -27,13 +27,14 @@
 #define CryptoAlgorithmParameters_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmParameters {
+class CryptoAlgorithmParameters : public RefCounted<CryptoAlgorithmParameters> {
     WTF_MAKE_NONCOPYABLE(CryptoAlgorithmParameters);
 public:
     CryptoAlgorithmParameters() { }

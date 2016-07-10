@@ -46,9 +46,9 @@ CryptoAlgorithmHMAC::~CryptoAlgorithmHMAC()
 {
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmHMAC::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmHMAC::create()
 {
-    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmHMAC);
+    return adoptRef(*new CryptoAlgorithmHMAC);
 }
 
 CryptoAlgorithmIdentifier CryptoAlgorithmHMAC::identifier() const

@@ -47,9 +47,9 @@ CryptoAlgorithmRSA_OAEP::~CryptoAlgorithmRSA_OAEP()
 {
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRSA_OAEP::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmRSA_OAEP::create()
 {
-    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmRSA_OAEP);
+    return adoptRef(*new CryptoAlgorithmRSA_OAEP);
 }
 
 CryptoAlgorithmIdentifier CryptoAlgorithmRSA_OAEP::identifier() const

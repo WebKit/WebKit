@@ -40,7 +40,7 @@ public:
     static const char* const s_name;
     static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5;
 
-    static std::unique_ptr<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> create();
 
     CryptoAlgorithmIdentifier identifier() const override;
 

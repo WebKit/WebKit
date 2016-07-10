@@ -42,9 +42,9 @@ CryptoAlgorithmSHA512::~CryptoAlgorithmSHA512()
 {
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmSHA512::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmSHA512::create()
 {
-    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmSHA512);
+    return adoptRef(*new CryptoAlgorithmSHA512);
 }
 
 CryptoAlgorithmIdentifier CryptoAlgorithmSHA512::identifier() const

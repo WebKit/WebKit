@@ -39,27 +39,25 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaP
 {
     notImplemented();
     ec = NOT_SUPPORTED_ERR;
-    failureCallback();
 
     UNUSED_PARAM(parameters);
     UNUSED_PARAM(key);
     UNUSED_PARAM(data);
     UNUSED_PARAM(callback);
-    UNUSED_PARAM(ec);
+    UNUSED_PARAM(failureCallback);
 }
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoAlgorithmRsaSsaParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     notImplemented();
     ec = NOT_SUPPORTED_ERR;
-    failureCallback();
 
     UNUSED_PARAM(parameters);
     UNUSED_PARAM(key);
     UNUSED_PARAM(signature);
     UNUSED_PARAM(data);
     UNUSED_PARAM(callback);
-    UNUSED_PARAM(ec);
+    UNUSED_PARAM(failureCallback);
 }
 
 } // namespace WebCore

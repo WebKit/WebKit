@@ -42,9 +42,9 @@ CryptoAlgorithmSHA224::~CryptoAlgorithmSHA224()
 {
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmSHA224::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmSHA224::create()
 {
-    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmSHA224);
+    return adoptRef(*new CryptoAlgorithmSHA224);
 }
 
 CryptoAlgorithmIdentifier CryptoAlgorithmSHA224::identifier() const

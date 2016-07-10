@@ -46,9 +46,9 @@ CryptoAlgorithmAES_CBC::~CryptoAlgorithmAES_CBC()
 {
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmAES_CBC::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmAES_CBC::create()
 {
-    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmAES_CBC);
+    return adoptRef(*new CryptoAlgorithmAES_CBC);
 }
 
 CryptoAlgorithmIdentifier CryptoAlgorithmAES_CBC::identifier() const

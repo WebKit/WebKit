@@ -148,31 +148,31 @@ JSCryptoKeySerializationJWK::~JSCryptoKeySerializationJWK()
 {
 }
 
-static std::unique_ptr<CryptoAlgorithmParameters> createHMACParameters(CryptoAlgorithmIdentifier hashFunction)
+static Ref<CryptoAlgorithmParameters> createHMACParameters(CryptoAlgorithmIdentifier hashFunction)
 {
-    std::unique_ptr<CryptoAlgorithmHmacParams> hmacParameters = std::make_unique<CryptoAlgorithmHmacParams>();
+    auto hmacParameters = adoptRef(*new CryptoAlgorithmHmacParams);
     hmacParameters->hash = hashFunction;
     return WTFMove(hmacParameters);
 }
 
-static std::unique_ptr<CryptoAlgorithmParameters> createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier hashFunction)
+static Ref<CryptoAlgorithmParameters> createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier hashFunction)
 {
-    std::unique_ptr<CryptoAlgorithmRsaKeyParamsWithHash> rsaKeyParameters = std::make_unique<CryptoAlgorithmRsaKeyParamsWithHash>();
+    auto rsaKeyParameters = adoptRef(*new CryptoAlgorithmRsaKeyParamsWithHash);
     rsaKeyParameters->hasHash = true;
     rsaKeyParameters->hash = hashFunction;
     return WTFMove(rsaKeyParameters);
 }
 
-bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>& suggestedAlgorithm, std::unique_ptr<CryptoAlgorithmParameters>& suggestedParameters) const
+Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(CryptoAlgorithm* suggestedAlgorithm, CryptoAlgorithmParameters* suggestedParameters) const
 {
     if (!getStringFromJSON(m_exec, m_json.get(), "alg", m_jwkAlgorithmName)) {
         // Algorithm is optional in JWK.
-        return true;
+        return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
     }
 
     auto& algorithmRegisty = CryptoAlgorithmRegistry::singleton();
-    std::unique_ptr<CryptoAlgorithm> algorithm;
-    std::unique_ptr<CryptoAlgorithmParameters> parameters;
+    RefPtr<CryptoAlgorithm> algorithm;
+    RefPtr<CryptoAlgorithmParameters> parameters;
     if (m_jwkAlgorithmName == "HS256") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::HMAC);
         parameters = createHMACParameters(CryptoAlgorithmIdentifier::SHA_256);
@@ -193,60 +193,63 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_512);
     } else if (m_jwkAlgorithmName == "RSA1_5") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5);
-        parameters = std::make_unique<CryptoAlgorithmRsaKeyParamsWithHash>();
+        parameters = adoptRef(*new CryptoAlgorithmRsaKeyParamsWithHash);
     } else if (m_jwkAlgorithmName == "RSA-OAEP") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSA_OAEP);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_1);
     } else if (m_jwkAlgorithmName == "A128CBC") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
-        parameters = std::make_unique<CryptoAlgorithmParameters>();
+        parameters = adoptRef(*new CryptoAlgorithmParameters);
     } else if (m_jwkAlgorithmName == "A192CBC") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
-        parameters = std::make_unique<CryptoAlgorithmParameters>();
+        parameters = adoptRef(*new CryptoAlgorithmParameters);
     } else if (m_jwkAlgorithmName == "A256CBC") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
-        parameters = std::make_unique<CryptoAlgorithmParameters>();
+        parameters = adoptRef(*new CryptoAlgorithmParameters);
     } else if (m_jwkAlgorithmName == "A128KW") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
-        parameters = std::make_unique<CryptoAlgorithmParameters>();
+        parameters = adoptRef(*new CryptoAlgorithmParameters);
     } else if (m_jwkAlgorithmName == "A192KW") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
-        parameters = std::make_unique<CryptoAlgorithmParameters>();
+        parameters = adoptRef(*new CryptoAlgorithmParameters);
     } else if (m_jwkAlgorithmName == "A256KW") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
-        parameters = std::make_unique<CryptoAlgorithmParameters>();
+        parameters = adoptRef(*new CryptoAlgorithmParameters);
     } else {
         throwTypeError(m_exec, "Unsupported JWK algorithm " + m_jwkAlgorithmName);
-        return false;
+        return Nullopt;
     }
 
-    if (!suggestedAlgorithm) {
-        suggestedAlgorithm = WTFMove(algorithm);
-        suggestedParameters =  WTFMove(parameters);
-        return true;
-    }
+    if (!suggestedAlgorithm)
+        return CryptoAlgorithmPair { algorithm, parameters };
 
     if (!algorithm)
-        return true;
+        return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
 
     if (algorithm->identifier() != suggestedAlgorithm->identifier())
-        return false;
+        return Nullopt;
 
-    if (algorithm->identifier() == CryptoAlgorithmIdentifier::HMAC)
-        return downcast<CryptoAlgorithmHmacParams>(*parameters).hash == downcast<CryptoAlgorithmHmacParams>(*suggestedParameters).hash;
+    if (algorithm->identifier() == CryptoAlgorithmIdentifier::HMAC) {
+        if (downcast<CryptoAlgorithmHmacParams>(*parameters).hash != downcast<CryptoAlgorithmHmacParams>(*suggestedParameters).hash)
+            return Nullopt;
+        return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
+    }
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5
         || algorithm->identifier() == CryptoAlgorithmIdentifier::RSA_OAEP) {
         CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(*parameters);
         CryptoAlgorithmRsaKeyParamsWithHash& suggestedRSAKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(*suggestedParameters);
         ASSERT(rsaKeyParameters.hasHash);
-        if (suggestedRSAKeyParameters.hasHash)
-            return suggestedRSAKeyParameters.hash == rsaKeyParameters.hash;
+        if (suggestedRSAKeyParameters.hasHash) {
+            if (suggestedRSAKeyParameters.hash != rsaKeyParameters.hash)
+                return Nullopt;
+            return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
+        }
         suggestedRSAKeyParameters.hasHash = true;
         suggestedRSAKeyParameters.hash = rsaKeyParameters.hash;
     }
 
     // Other algorithms don't have parameters.
-    return true;
+    return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
 }
 
 static bool tryJWKKeyOpsValue(ExecState* exec, CryptoKeyUsage& usages, const String& operation, const String& tryOperation, CryptoKeyUsage tryUsage)

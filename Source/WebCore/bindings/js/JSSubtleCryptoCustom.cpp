@@ -61,7 +61,7 @@ enum class CryptoKeyFormat {
     JWK
 };
 
-static std::unique_ptr<CryptoAlgorithm> createAlgorithmFromJSValue(ExecState& state, JSValue value)
+static RefPtr<CryptoAlgorithm> createAlgorithmFromJSValue(ExecState& state, JSValue value)
 {
     CryptoAlgorithmIdentifier algorithmIdentifier;
     if (!JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(&state, value, algorithmIdentifier)) {
@@ -443,7 +443,7 @@ JSValue JSSubtleCrypto::generateKey(ExecState& state)
     return promiseDeferred->promise();
 }
 
-static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperationData data, std::unique_ptr<CryptoAlgorithm> algorithm, std::unique_ptr<CryptoAlgorithmParameters> parameters, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
+static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperationData data, RefPtr<CryptoAlgorithm> algorithm, RefPtr<CryptoAlgorithmParameters> parameters, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
 {
     std::unique_ptr<CryptoKeySerialization> keySerialization;
     switch (keyFormat) {
@@ -468,7 +468,8 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
 
     ASSERT(keySerialization);
 
-    if (!keySerialization->reconcileAlgorithm(algorithm, parameters)) {
+    Optional<CryptoAlgorithmPair> reconciledResult = keySerialization->reconcileAlgorithm(algorithm.get(), parameters.get());
+    if (!reconciledResult) {
         if (!state.hadException())
             throwTypeError(&state, ASCIILiteral("Algorithm specified in key is not compatible with one passed to importKey as argument"));
         return;
@@ -476,6 +477,8 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
     if (state.hadException())
         return;
 
+    algorithm = reconciledResult->algorithm;
+    parameters = reconciledResult->parameters;
     if (!algorithm) {
         throwTypeError(&state, ASCIILiteral("Neither key nor function argument has crypto algorithm specified"));
         return;
@@ -517,8 +520,8 @@ JSValue JSSubtleCrypto::importKey(ExecState& state)
         return jsUndefined();
     }
 
-    std::unique_ptr<CryptoAlgorithm> algorithm;
-    std::unique_ptr<CryptoAlgorithmParameters> parameters;
+    RefPtr<CryptoAlgorithm> algorithm;
+    RefPtr<CryptoAlgorithmParameters> parameters;
     if (!state.uncheckedArgument(2).isNull()) {
         algorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(2));
         if (!algorithm) {
@@ -666,39 +669,28 @@ JSValue JSSubtleCrypto::wrapKey(ExecState& state)
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
 
-    CryptoAlgorithm* algorithmPtr = algorithm.release();
-    CryptoAlgorithmParameters* parametersPtr = parameters.release();
-
-    auto exportSuccessCallback = [keyFormat, algorithmPtr, parametersPtr, wrappingKey, wrapper](const Vector<uint8_t>& exportedKeyData) mutable {
-        auto encryptSuccessCallback = [wrapper, algorithmPtr, parametersPtr](const Vector<uint8_t>& encryptedData) mutable {
-            delete algorithmPtr;
-            delete parametersPtr;
+    auto exportSuccessCallback = [keyFormat, algorithm, parameters, wrappingKey, wrapper](const Vector<uint8_t>& exportedKeyData) mutable {
+        auto encryptSuccessCallback = [wrapper](const Vector<uint8_t>& encryptedData) mutable {
             fulfillPromiseWithArrayBuffer(wrapper, encryptedData.data(), encryptedData.size());
         };
-        auto encryptFailureCallback = [wrapper, algorithmPtr, parametersPtr]() mutable {
-            delete algorithmPtr;
-            delete parametersPtr;
+        auto encryptFailureCallback = [wrapper]() mutable {
             wrapper.reject(nullptr);
         };
         ExceptionCode ec = 0;
-        algorithmPtr->encryptForWrapKey(*parametersPtr, *wrappingKey, std::make_pair(exportedKeyData.data(), exportedKeyData.size()), WTFMove(encryptSuccessCallback), WTFMove(encryptFailureCallback), ec);
+        algorithm->encryptForWrapKey(*parameters, *wrappingKey, std::make_pair(exportedKeyData.data(), exportedKeyData.size()), WTFMove(encryptSuccessCallback), WTFMove(encryptFailureCallback), ec);
         if (ec) {
             // FIXME: Report failure details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
-            encryptFailureCallback();
+            wrapper.reject(nullptr);
         }
     };
 
-    auto exportFailureCallback = [wrapper, algorithmPtr, parametersPtr]() mutable {
-        delete algorithmPtr;
-        delete parametersPtr;
+    auto exportFailureCallback = [wrapper]() mutable {
         wrapper.reject(nullptr);
     };
 
     ExceptionCode ec = 0;
     WebCore::exportKey(state, keyFormat, *key, WTFMove(exportSuccessCallback), WTFMove(exportFailureCallback));
     if (ec) {
-        delete algorithmPtr;
-        delete parametersPtr;
         setDOMException(&state, ec);
         return jsUndefined();
     }
@@ -733,21 +725,19 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState& state)
         return jsUndefined();
     }
 
-    std::unique_ptr<CryptoAlgorithm> unwrapAlgorithm;
-    std::unique_ptr<CryptoAlgorithmParameters> unwrapAlgorithmParameters;
-    unwrapAlgorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(3));
+    auto unwrapAlgorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(3));
     if (!unwrapAlgorithm) {
         ASSERT(state.hadException());
         return jsUndefined();
     }
-    unwrapAlgorithmParameters = JSCryptoAlgorithmDictionary::createParametersForDecrypt(&state, unwrapAlgorithm->identifier(), state.uncheckedArgument(3));
+    auto unwrapAlgorithmParameters = JSCryptoAlgorithmDictionary::createParametersForDecrypt(&state, unwrapAlgorithm->identifier(), state.uncheckedArgument(3));
     if (!unwrapAlgorithmParameters) {
         ASSERT(state.hadException());
         return jsUndefined();
     }
 
-    std::unique_ptr<CryptoAlgorithm> unwrappedKeyAlgorithm;
-    std::unique_ptr<CryptoAlgorithmParameters> unwrappedKeyAlgorithmParameters;
+    RefPtr<CryptoAlgorithm> unwrappedKeyAlgorithm;
+    RefPtr<CryptoAlgorithmParameters> unwrappedKeyAlgorithmParameters;
     if (!state.uncheckedArgument(4).isNull()) {
         unwrappedKeyAlgorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(4));
         if (!unwrappedKeyAlgorithm) {
@@ -780,10 +770,7 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState& state)
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
     Strong<JSDOMGlobalObject> domGlobalObject(state.vm(), globalObject());
 
-    CryptoAlgorithm* unwrappedKeyAlgorithmPtr = unwrappedKeyAlgorithm.release();
-    CryptoAlgorithmParameters* unwrappedKeyAlgorithmParametersPtr = unwrappedKeyAlgorithmParameters.release();
-
-    auto decryptSuccessCallback = [domGlobalObject, keyFormat, unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, wrapper](const Vector<uint8_t>& result) mutable {
+    auto decryptSuccessCallback = [domGlobalObject, keyFormat, unwrappedKeyAlgorithm, unwrappedKeyAlgorithmParameters, extractable, keyUsages, wrapper](const Vector<uint8_t>& result) mutable {
         auto importSuccessCallback = [wrapper](CryptoKey& key) mutable {
             wrapper.resolve(key);
         };
@@ -791,25 +778,21 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState& state)
             wrapper.reject(nullptr);
         };
         ExecState& state = *domGlobalObject->globalExec();
-        WebCore::importKey(state, keyFormat, std::make_pair(result.data(), result.size()), std::unique_ptr<CryptoAlgorithm>(unwrappedKeyAlgorithmPtr), std::unique_ptr<CryptoAlgorithmParameters>(unwrappedKeyAlgorithmParametersPtr), extractable, keyUsages, WTFMove(importSuccessCallback), WTFMove(importFailureCallback));
+        WebCore::importKey(state, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithm, unwrappedKeyAlgorithmParameters, extractable, keyUsages, WTFMove(importSuccessCallback), WTFMove(importFailureCallback));
         if (state.hadException()) {
             // FIXME: Report exception details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
             state.clearException();
-            importFailureCallback();
+            wrapper.reject(nullptr);
         }
     };
 
-    auto decryptFailureCallback = [wrapper, unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr]() mutable {
-        delete unwrappedKeyAlgorithmPtr;
-        delete unwrappedKeyAlgorithmParametersPtr;
+    auto decryptFailureCallback = [wrapper]() mutable {
         wrapper.reject(nullptr);
     };
 
     ExceptionCode ec = 0;
     unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, wrappedKeyData, WTFMove(decryptSuccessCallback), WTFMove(decryptFailureCallback), ec);
     if (ec) {
-        delete unwrappedKeyAlgorithmPtr;
-        delete unwrappedKeyAlgorithmParametersPtr;
         setDOMException(&state, ec);
         return jsUndefined();
     }

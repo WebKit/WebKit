@@ -45,9 +45,9 @@ CryptoAlgorithmAES_KW::~CryptoAlgorithmAES_KW()
 {
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmAES_KW::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmAES_KW::create()
 {
-    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmAES_KW);
+    return adoptRef(*new CryptoAlgorithmAES_KW);
 }
 
 CryptoAlgorithmIdentifier CryptoAlgorithmAES_KW::identifier() const

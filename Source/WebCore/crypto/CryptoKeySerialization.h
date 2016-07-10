@@ -28,6 +28,8 @@
 
 #include "CryptoKeyUsage.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
+#include <wtf/RefPtr.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -39,6 +41,11 @@ class CryptoKeyData;
 
 typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
 
+struct CryptoAlgorithmPair {
+    RefPtr<CryptoAlgorithm> algorithm;
+    RefPtr<CryptoAlgorithmParameters> parameters;
+};
+
 class CryptoKeySerialization {
     WTF_MAKE_NONCOPYABLE(CryptoKeySerialization);
 public:
@@ -46,7 +53,7 @@ public:
     virtual ~CryptoKeySerialization() { }
 
     // Returns false if suggested algorithm was not compatible with one stored in the serialization.
-    virtual bool reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>&, std::unique_ptr<CryptoAlgorithmParameters>&) const = 0;
+    virtual Optional<CryptoAlgorithmPair> reconcileAlgorithm(CryptoAlgorithm*, CryptoAlgorithmParameters*) const = 0;
 
     virtual void reconcileUsages(CryptoKeyUsage&) const = 0;
     virtual void reconcileExtractable(bool&) const = 0;

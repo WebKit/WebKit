@@ -70,7 +70,7 @@ String CryptoAlgorithmRegistry::nameForIdentifier(CryptoAlgorithmIdentifier iden
     return m_identifierToNameMap.get(static_cast<unsigned>(identifier)).isolatedCopy();
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifier identifier)
+RefPtr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifier identifier)
 {
     std::lock_guard<StaticLock> lock(registryMutex);
 

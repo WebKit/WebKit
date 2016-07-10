@@ -39,24 +39,24 @@ void CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParams
 {
     notImplemented();
     ec = NOT_SUPPORTED_ERR;
-    failureCallback();
 
     UNUSED_PARAM(parameters);
     UNUSED_PARAM(key);
     UNUSED_PARAM(data);
     UNUSED_PARAM(callback);
+    UNUSED_PARAM(failureCallback);
 }
 
 void CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     notImplemented();
     ec = NOT_SUPPORTED_ERR;
-    failureCallback();
 
     UNUSED_PARAM(parameters);
     UNUSED_PARAM(key);
     UNUSED_PARAM(data);
     UNUSED_PARAM(callback);
+    UNUSED_PARAM(failureCallback);
 }
 
 } // namespace WebCore

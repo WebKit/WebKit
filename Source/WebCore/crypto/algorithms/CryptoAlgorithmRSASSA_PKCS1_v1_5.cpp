@@ -47,9 +47,9 @@ CryptoAlgorithmRSASSA_PKCS1_v1_5::~CryptoAlgorithmRSASSA_PKCS1_v1_5()
 {
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRSASSA_PKCS1_v1_5::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmRSASSA_PKCS1_v1_5::create()
 {
-    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmRSASSA_PKCS1_v1_5);
+    return adoptRef(*new CryptoAlgorithmRSASSA_PKCS1_v1_5);
 }
 
 CryptoAlgorithmIdentifier CryptoAlgorithmRSASSA_PKCS1_v1_5::identifier() const

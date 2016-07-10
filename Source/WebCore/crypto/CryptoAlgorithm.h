@@ -30,6 +30,7 @@
 #include "CryptoKeyUsage.h"
 #include <functional>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -46,7 +47,7 @@ class CryptoKeyData;
 // Data is mutable, so async operations should copy it first.
 typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
 
-class CryptoAlgorithm {
+class CryptoAlgorithm : public RefCounted<CryptoAlgorithm> {
     WTF_MAKE_NONCOPYABLE(CryptoAlgorithm)
 public:
     virtual ~CryptoAlgorithm();

@@ -42,9 +42,9 @@ CryptoAlgorithmSHA256::~CryptoAlgorithmSHA256()
 {
 }
 
-std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmSHA256::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmSHA256::create()
 {
-    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmSHA256);
+    return adoptRef(*new CryptoAlgorithmSHA256);
 }
 
 CryptoAlgorithmIdentifier CryptoAlgorithmSHA256::identifier() const

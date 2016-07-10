@@ -27,6 +27,7 @@
 #define JSCryptoAlgorithmDictionary_h
 
 #include "CryptoAlgorithmIdentifier.h"
+#include <wtf/RefPtr.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -43,16 +44,16 @@ class JSCryptoAlgorithmDictionary {
 public:
     static bool getAlgorithmIdentifier(JSC::ExecState*, JSC::JSValue, CryptoAlgorithmIdentifier&);
 
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForEncrypt(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForDecrypt(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForSign(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForVerify(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForDigest(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForGenerateKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForDeriveKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForDeriveBits(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForImportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForExportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForEncrypt(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForDecrypt(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForSign(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForVerify(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForDigest(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForGenerateKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForDeriveKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForDeriveBits(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForImportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParameters> createParametersForExportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
 };
 
 }
