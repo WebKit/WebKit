@@ -1,3 +1,22 @@
+2016-07-10  Caio Lima  <ticaiolima@gmail.com>
+
+        ECMAScript 2016: %TypedArray%.prototype.includes implementation
+        https://bugs.webkit.org/show_bug.cgi?id=159385
+
+        Reviewed by Benjamin Poulain.
+
+        This patch implements test case to ECMAScript 2016:
+        %TypedArray%.prototype.includes implementation
+        following spec 22.2.3.14
+        https://tc39.github.io/ecma262/2016/#sec-%typedarray%.prototype.includes
+
+        * js/regress/script-tests/typed-array-includes.js: Added.
+        (assertProperError):
+        (testIntTypedArray):
+        (testFloatTypedArray):
+        * js/typed-array-includes-expected.txt: Added.
+        * js/typed-array-includes.html: Added.
+
 2016-07-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK] Crash on https://diafygi.github.io/webcrypto-examples with ENABLE_SUBTLE_CRYPTO

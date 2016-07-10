@@ -1,3 +1,21 @@
+2016-07-10  Caio Lima  <ticaiolima@gmail.com>
+
+        ECMAScript 2016: %TypedArray%.prototype.includes implementation
+        https://bugs.webkit.org/show_bug.cgi?id=159385
+
+        Reviewed by Benjamin Poulain.
+
+        This patch implements the ECMAScript 2016:
+        %TypedArray%.prototype.includes
+        following spec 22.2.3.14
+        https://tc39.github.io/ecma262/2016/#sec-%typedarray%.prototype.includes
+
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewProtoFuncIncludes):
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+
 2016-07-09  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(201900): validation failure for GetByOffset/PutByOffset in VALIDATE((node), node->child1().node() == node->child2().node() || node->child1()->result() == NodeResultStorage)
