@@ -1,0 +1,89 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=0.5">
+    <style>
+        button {
+            display: block;
+        }
+        iframe {
+            margin-top: 800px;
+        }
+    </style>
+    
+    <script src="resources/zooming-test-utils.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    if (window.internals)
+        internals.settings.setFrameFlatteningEnabled(true);
+
+    function getTypingUIScript()
+    {
+        return `
+            (function() {
+                uiController.typeCharacterUsingHardwareKeyboard('delete', function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`
+    }
+
+    function buttonClicked()
+    {
+        document.getElementById('frame').contentDocument.getElementById('input').focus();
+    }
+    
+    function pageDidScroll()
+    {
+        document.getElementById('result').textContent = 'FAIL: page scrolled to ' + document.scrollingElement.scrollTop;
+    }
+
+    function testTyping()
+    {
+        window.addEventListener('scroll', pageDidScroll, false);
+
+        var uiScript = getTypingUIScript();
+        testRunner.runUIScript(uiScript, function() {
+            // Wait for any scroll to happen.
+            window.setTimeout(function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 100);
+        });
+    }
+
+    function doTest()
+    {
+        // Get the text field focused via a user event so we zoom to it.
+        var point = getPointInsideElement(document.getElementById('target'), 10, 10);
+
+        var uiScript = zoomAfterSingleTapUIScript(point.x, point.y, true);
+        testRunner.runUIScript(uiScript, function(result) {
+            window.setTimeout(function() {
+                testTyping();
+            }, 0);
+        });
+    }
+
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<p>Tests that typing into a text input in an iframe should not scroll.</p>
+<div id="result">
+    PASS: page did not scroll.
+</div>
+
+<button id="target" onclick="buttonClicked()">Click to focus input</button>
+
+<iframe id="frame" srcdoc="<style>input { margin: 400px 20px; }</style>
+<input id='input' type='text' value='aaa'>
+"></iframe>
+
+</body>
+</html>

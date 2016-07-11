@@ -1,3 +1,14 @@
+2016-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Deleting in a text input inside an iframe causes the page to scroll incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=159654
+        rdar://problem/26805722
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/forms/ios/delete-in-input-in-iframe-expected.txt: Added.
+        * fast/forms/ios/delete-in-input-in-iframe.html: Added.
+
 2016-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Honor the second argument to FontFaceSet.load and FontFaceSet.check
