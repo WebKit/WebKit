@@ -20,8 +20,7 @@
     Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebResourceLoadScheduler_h
-#define WebResourceLoadScheduler_h
+#pragma once
 
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LoaderStrategy.h>
@@ -47,9 +46,9 @@ public:
 
     RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
     void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>&) override;
-    void remove(WebCore::ResourceLoader*) override;
-    void setDefersLoading(WebCore::ResourceLoader*, bool) override;
-    void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) override;
+    void remove(WebCore::ResourceLoader&) override;
+    void setDefersLoading(WebCore::ResourceLoader&, bool) override;
+    void crossOriginRedirectReceived(WebCore::ResourceLoader&, const WebCore::URL& redirectURL) override;
     
     void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority = WebCore::ResourceLoadPriority::VeryLow) override;
     void suspendPendingRequests() override;
@@ -66,7 +65,7 @@ protected:
     virtual ~WebResourceLoadScheduler();
 
 private:
-    void scheduleLoad(WebCore::ResourceLoader*);
+    void scheduleLoad(WebCore::ResourceLoader&);
     void scheduleServePendingRequests();
     void requestTimerFired();
 
@@ -79,20 +78,20 @@ private:
         ~HostInformation();
         
         const String& name() const { return m_name; }
-        void schedule(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriority::VeryLow);
-        void addLoadInProgress(WebCore::ResourceLoader*);
-        void remove(WebCore::ResourceLoader*);
+        void schedule(WebCore::ResourceLoader&, WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriority::VeryLow);
+        void addLoadInProgress(WebCore::ResourceLoader&);
+        void remove(WebCore::ResourceLoader&);
         bool hasRequests() const;
         bool limitRequests(WebCore::ResourceLoadPriority) const;
 
-        typedef Deque<RefPtr<WebCore::ResourceLoader>> RequestQueue;
+        typedef Deque<Ref<WebCore::ResourceLoader>> RequestQueue;
         RequestQueue& requestsPending(WebCore::ResourceLoadPriority priority) { return m_requestsPending[priorityToIndex(priority)]; }
 
     private:
         static unsigned priorityToIndex(WebCore::ResourceLoadPriority);
 
         std::array<RequestQueue, WebCore::resourceLoadPriorityCount> m_requestsPending;
-        typedef HashSet<RefPtr<WebCore::ResourceLoader>> RequestMap;
+        typedef HashSet<Ref<WebCore::ResourceLoader>> RequestMap;
         RequestMap m_requestsLoading;
         const String m_name;
         const unsigned m_maxRequestsInFlight;
@@ -104,16 +103,13 @@ private:
     };
     
     HostInformation* hostForURL(const WebCore::URL&, CreateHostPolicy = FindOnly);
-    WEBCORE_EXPORT void servePendingRequests(HostInformation*, WebCore::ResourceLoadPriority);
+    void servePendingRequests(HostInformation&, WebCore::ResourceLoadPriority);
 
-    typedef HashMap<String, HostInformation*, StringHash> HostMap;
-    HostMap m_hosts;
-    HostInformation* m_nonHTTPProtocolHost;
+    HashMap<String, std::unique_ptr<HostInformation>> m_hosts;
+    HostInformation m_nonHTTPProtocolHost;
         
     WebCore::Timer m_requestTimer;
 
     unsigned m_suspendPendingRequestsCount;
     bool m_isSerialLoadingEnabled;
 };
-
-#endif

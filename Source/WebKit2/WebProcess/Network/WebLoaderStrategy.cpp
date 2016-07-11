@@ -217,17 +217,19 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 
 void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader& resourceLoader)
 {
-    m_internallyFailedResourceLoaders.add(&resourceLoader);
+    m_internallyFailedResourceLoaders.add(resourceLoader);
     m_internallyFailedLoadTimer.startOneShot(0);
 }
 
 void WebLoaderStrategy::internallyFailedLoadTimerFired()
 {
-    Vector<RefPtr<ResourceLoader>> internallyFailedResourceLoaders;
-    copyToVector(m_internallyFailedResourceLoaders, internallyFailedResourceLoaders);
+    Vector<Ref<ResourceLoader>> internallyFailedResourceLoaders;
+    internallyFailedResourceLoaders.reserveInitialCapacity(m_internallyFailedResourceLoaders.size());
+    for (auto& loader : m_internallyFailedResourceLoaders)
+        internallyFailedResourceLoaders.uncheckedAppend(loader.copyRef());
     
-    for (size_t i = 0; i < internallyFailedResourceLoaders.size(); ++i)
-        internallyFailedResourceLoaders[i]->didFail(internalError(internallyFailedResourceLoaders[i]->url()));
+    for (auto& loader : internallyFailedResourceLoaders)
+        loader->didFail(internalError(loader->url()));
 }
 
 void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
@@ -236,17 +238,16 @@ void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
     m_webResourceLoaders.set(resourceLoader.identifier(), WebResourceLoader::create(resourceLoader));
 }
 
-void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
+void WebLoaderStrategy::remove(ResourceLoader& resourceLoader)
 {
-    ASSERT(resourceLoader);
-    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::remove, url '%s'", resourceLoader->url().string().utf8().data());
+    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::remove, url '%s'", resourceLoader.url().string().utf8().data());
 
     if (m_internallyFailedResourceLoaders.contains(resourceLoader)) {
         m_internallyFailedResourceLoaders.remove(resourceLoader);
         return;
     }
     
-    ResourceLoadIdentifier identifier = resourceLoader->identifier();
+    ResourceLoadIdentifier identifier = resourceLoader.identifier();
     if (!identifier) {
         LOG_ERROR("WebLoaderStrategy removing a ResourceLoader that has no identifier.");
         return;
@@ -264,13 +265,13 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
     loader->detachFromCoreLoader();
 }
 
-void WebLoaderStrategy::setDefersLoading(ResourceLoader* resourceLoader, bool defers)
+void WebLoaderStrategy::setDefersLoading(ResourceLoader& resourceLoader, bool defers)
 {
-    ResourceLoadIdentifier identifier = resourceLoader->identifier();
+    ResourceLoadIdentifier identifier = resourceLoader.identifier();
     WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::SetDefersLoading(identifier, defers), 0);
 }
 
-void WebLoaderStrategy::crossOriginRedirectReceived(ResourceLoader*, const URL&)
+void WebLoaderStrategy::crossOriginRedirectReceived(ResourceLoader&, const URL&)
 {
     // We handle cross origin redirects entirely within the NetworkProcess.
     // We override this call in the WebProcess to make it a no-op.

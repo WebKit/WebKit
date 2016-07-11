@@ -1,3 +1,19 @@
+2016-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Use refs for ResourceLoaders
+        https://bugs.webkit.org/show_bug.cgi?id=159592
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleInternallyFailedLoad):
+        (WebKit::WebLoaderStrategy::internallyFailedLoadTimerFired):
+        (WebKit::WebLoaderStrategy::startLocalLoad):
+        (WebKit::WebLoaderStrategy::remove):
+        (WebKit::WebLoaderStrategy::setDefersLoading):
+        (WebKit::WebLoaderStrategy::crossOriginRedirectReceived):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2016-07-11  Antti Koivisto  <antti@apple.com>
 
         Update stable cache version in NetworkCache::Storage::deleteOldVersions()
