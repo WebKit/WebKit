@@ -57,6 +57,7 @@ private:
     RenderMathMLOperator* unembellishedOperator() final;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
+    bool isStack() const { return !m_lineThickness; }
     bool isValid() const;
     RenderBox& numerator() const;
     RenderBox& denominator() const;
@@ -69,14 +70,23 @@ private:
     LayoutUnit horizontalOffset(RenderBox&, FractionAlignment);
 
     LayoutUnit m_ascent;
-    LayoutUnit m_defaultLineThickness = 1;
+    LayoutUnit m_defaultLineThickness { 1 };
     LayoutUnit m_lineThickness;
-    LayoutUnit m_numeratorGapMin;
+    union {
+        LayoutUnit m_numeratorGapMin;
+        LayoutUnit m_gapMin;
+    };
     LayoutUnit m_denominatorGapMin;
-    LayoutUnit m_numeratorMinShiftUp;
-    LayoutUnit m_denominatorMinShiftDown;
-    FractionAlignment m_numeratorAlign = FractionAlignmentCenter;
-    FractionAlignment m_denominatorAlign = FractionAlignmentCenter;
+    union {
+        LayoutUnit m_numeratorMinShiftUp;
+        LayoutUnit m_topShiftUp;
+    };
+    union {
+        LayoutUnit m_denominatorMinShiftDown;
+        LayoutUnit m_bottomShiftDown;
+    };
+    FractionAlignment m_numeratorAlign { FractionAlignmentCenter };
+    FractionAlignment m_denominatorAlign { FractionAlignmentCenter };
 };
 
 } // namespace WebCore
