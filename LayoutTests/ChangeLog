@@ -1,5 +1,16 @@
 2016-07-11  Frederic Wang  <fwang@igalia.com>
 
+        Update expectations for some MathML pixel tests on Windows.
+
+        Unreviewed test gardening.
+
+        * platform/win/mathml/opentype/vertical-expected.txt:
+        * platform/win/mathml/presentation/mo-stretch-expected.txt:
+        * platform/win/mathml/presentation/roots-expected.txt:
+        * platform/win/mathml/radical-fallback-expected.txt:
+
+2016-07-11  Frederic Wang  <fwang@igalia.com>
+
         Update expectations for some MathML pixel tests on EFL.
 
         Unreviewed test gardening.
