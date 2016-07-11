@@ -2511,10 +2511,12 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
                 // node on mouse down if it's selected and inside a focused node. It will be
                 // focused if the user does a mouseup over it, however, because the mouseup
                 // will set a selection inside it, which will call setFocuseNodeIfNeeded.
-                if (m_frame.selection().isRange()
-                    && m_frame.selection().toNormalizedRange()->compareNode(*element, IGNORE_EXCEPTION) == Range::NODE_INSIDE
-                    && element->isDescendantOf(m_frame.document()->focusedElement()))
-                    return true;
+                if (m_frame.selection().isRange()) {
+                    if (auto range = m_frame.selection().toNormalizedRange()) {
+                        if (range->compareNode(*element, IGNORE_EXCEPTION) == Range::NODE_INSIDE && element->isDescendantOf(m_frame.document()->focusedElement()))
+                            return true;
+                    }
+                }
                     
                 break;
             }
