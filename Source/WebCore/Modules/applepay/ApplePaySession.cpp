@@ -806,15 +806,18 @@ void ApplePaySession::begin(ExceptionCode& ec)
         return;
     }
 
-    paymentCoordinator().beginPaymentSession(*this);
-
     Vector<URL> linkIconURLs;
     for (auto& icon : LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
         linkIconURLs.append(icon.url);
 
-    m_state = State::Active;
+    if (!paymentCoordinator().beginPaymentSession(*this, document.url(), linkIconURLs, m_paymentRequest)) {
+        window.printErrorMessage("There is already has an active payment session.");
 
-    paymentCoordinator().showPaymentUI(document.url(), linkIconURLs, m_paymentRequest);
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    m_state = State::Active;
 
     setPendingActivity(this);
 }

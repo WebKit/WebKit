@@ -55,8 +55,9 @@ void WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard(const String&, c
     });
 }
 
-void WebPaymentCoordinatorClient::showPaymentUI(const WebCore::URL&, const Vector<WebCore::URL>&, const WebCore::PaymentRequest&)
+bool WebPaymentCoordinatorClient::showPaymentUI(const WebCore::URL&, const Vector<WebCore::URL>&, const WebCore::PaymentRequest&)
 {
+    return false;
 }
 
 void WebPaymentCoordinatorClient::completeMerchantValidation(const WebCore::PaymentMerchantSession&)

@@ -59,18 +59,15 @@ void PaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIde
     m_client.canMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
-void PaymentCoordinator::beginPaymentSession(ApplePaySession& paymentSession)
+bool PaymentCoordinator::beginPaymentSession(ApplePaySession& paymentSession, const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest& paymentRequest)
 {
     ASSERT(!m_activeSession);
 
+    if (!m_client.showPaymentUI(originatingURL, linkIconURLs, paymentRequest))
+        return false;
+
     m_activeSession = &paymentSession;
-}
-
-void PaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest& paymentRequest)
-{
-    ASSERT(m_activeSession);
-
-    m_client.showPaymentUI(originatingURL, linkIconURLs, paymentRequest);
+    return true;
 }
 
 void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession& paymentMerchantSession)

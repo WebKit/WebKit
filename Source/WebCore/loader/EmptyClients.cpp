@@ -56,7 +56,7 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     bool supportsVersion(unsigned) override { return false; }
     bool canMakePayments() override { return false; }
     void canMakePaymentsWithActiveCard(const String&, const String&, std::function<void (bool)> completionHandler) override { callOnMainThread([completionHandler] { completionHandler(false); }); }
-    void showPaymentUI(const URL&, const Vector<URL>&, const PaymentRequest&) override { }
+    bool showPaymentUI(const URL&, const Vector<URL>&, const PaymentRequest&) override { return false; }
     void completeMerchantValidation(const PaymentMerchantSession&) override { }
 
     void completeShippingMethodSelection(PaymentAuthorizationStatus, Optional<PaymentRequest::TotalAndLineItems>) override { }

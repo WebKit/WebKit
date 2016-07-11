@@ -52,8 +52,7 @@ public:
 
     bool hasActiveSession() const { return m_activeSession; }
 
-    void beginPaymentSession(ApplePaySession&);
-    void showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest&);
+    bool beginPaymentSession(ApplePaySession&, const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest&);
     void completeMerchantValidation(const PaymentMerchantSession&);
     void completeShippingMethodSelection(PaymentAuthorizationStatus, Optional<PaymentRequest::TotalAndLineItems> newItems);
     void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>& newShippingMethods, Optional<PaymentRequest::TotalAndLineItems> newItems);

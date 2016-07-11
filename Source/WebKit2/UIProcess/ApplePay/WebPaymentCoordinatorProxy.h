@@ -76,7 +76,7 @@ private:
     // Message handlers.
     void canMakePayments(bool& reply);
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
-    void showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::PaymentRequest&);
+    void showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::PaymentRequest&, bool& result);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completeShippingMethodSelection(uint32_t opaqueStatus, const Optional<WebCore::PaymentRequest::TotalAndLineItems>&);
     void completeShippingContactSelection(uint32_t opaqueStatus, const Vector<WebCore::PaymentRequest::ShippingMethod>& newShippingMethods, const Optional<WebCore::PaymentRequest::TotalAndLineItems>&);

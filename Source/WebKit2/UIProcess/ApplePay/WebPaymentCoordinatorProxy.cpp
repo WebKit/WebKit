@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+static bool isShowingPaymentUI;
+
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_weakPtrFactory(this)
@@ -70,10 +72,16 @@ void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& mer
     });
 }
 
-void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::PaymentRequest& paymentRequest)
+void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::PaymentRequest& paymentRequest, bool& result)
 {
     // FIXME: Make this a message check.
     ASSERT(canBegin());
+
+    if (isShowingPaymentUI) {
+        result = false;
+        return;
+    }
+    isShowingPaymentUI = true;
 
     m_state = State::Activating;
 
@@ -92,6 +100,8 @@ void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLStrin
 
         m_state = State::Active;
     });
+
+    result = true;
 }
 
 static bool isValidEnum(WebCore::PaymentAuthorizationStatus status)
@@ -315,6 +325,9 @@ void WebPaymentCoordinatorProxy::didReachFinalState()
 {
     m_state = State::Idle;
     m_merchantValidationState = MerchantValidationState::Idle;
+
+    ASSERT(isShowingPaymentUI);
+    isShowingPaymentUI = false;
 }
 
 }

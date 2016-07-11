@@ -1,3 +1,17 @@
+2016-07-11  Anders Carlsson  <andersca@apple.com>
+
+        Able to open multiple payment sheets in Safari at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=159637
+        rdar://problem/26411339
+
+        Reviewed by Beth Dakin.
+
+        Update for WebCore changes.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::showPaymentUI):
+
 2016-07-08  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Load blocked pages more like other error pages are loaded
