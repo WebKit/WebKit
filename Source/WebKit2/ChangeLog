@@ -1,5 +1,12 @@
 2016-07-11  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix the macOS build.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction description]):
+
+2016-07-11  Dan Bernstein  <mitz@apple.com>
+
         Cleaned up API availability.
 
         Requested by Tim Horton.

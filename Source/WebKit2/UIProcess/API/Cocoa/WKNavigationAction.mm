@@ -125,7 +125,13 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; syntheticClickType = %ld; request = %@; sourceFrame = %@; targetFrame = %@>", NSStringFromClass(self.class), self,
-        (long)self.navigationType, (long)self._syntheticClickType, self.request, self.sourceFrame, self.targetFrame];
+        (long)self.navigationType,
+#if PLATFORM(IOS)
+        (long)self._syntheticClickType,
+#else
+        0L,
+#endif
+        self.request, self.sourceFrame, self.targetFrame];
 }
 
 - (WKFrameInfo *)sourceFrame
