@@ -28,7 +28,7 @@ for (let constructor of typedArrays) {
     test("array[0]", array);
     test("delete array[0]", array);
     test("Object.getOwnPropertyDescriptor(array, 0)", array);
-    test("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: true, enumerable: true })", array);
+    test("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: false, enumerable: true })", array);
     test("array[0] = 1", array);
     test("array[i] = 1", array);
 }
@@ -48,7 +48,7 @@ for (let constructor of typedArrays) {
     testFTL("array[0]", array, failArray);
     testFTL("delete array[0]", array, failArray);
     testFTL("Object.getOwnPropertyDescriptor(array, 0)", array, failArray);
-    testFTL("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: true, enumerable: true })", array, failArray);
+    testFTL("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: false, enumerable: true })", array, failArray);
     testFTL("array[0] = 1", array, failArray);
     testFTL("array[i] = 1", array, failArray);
 }

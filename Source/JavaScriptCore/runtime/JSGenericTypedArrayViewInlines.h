@@ -348,8 +348,11 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
         if (descriptor.isAccessorDescriptor())
             return reject(exec, shouldThrow, "Attempting to store accessor indexed property on a typed array.");
 
-        if (descriptor.attributes() & (DontEnum | DontDelete | ReadOnly))
-            return reject(exec, shouldThrow, "Attempting to store non-enumerable, non-configurable or non-writable indexed property on a typed array.");
+        if (descriptor.configurable())
+            return reject(exec, shouldThrow, "Attempting to configure non-configurable property.");
+
+        if (!descriptor.enumerable() || !descriptor.writable())
+            return reject(exec, shouldThrow, "Attempting to store non-enumerable or non-writable indexed property on a typed array.");
 
         if (descriptor.value()) {
             PutPropertySlot unused(JSValue(thisObject), shouldThrow);

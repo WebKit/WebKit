@@ -1,3 +1,25 @@
+2016-07-11  Keith Miller  <keith_miller@apple.com>
+
+        defineProperty on a index of a TypedArray should throw if configurable
+        https://bugs.webkit.org/show_bug.cgi?id=159653
+
+        Reviewed by Saam Barati.
+
+        When I fixed this before I misread the spec and thought it said we
+        should throw if the descriptor said the proprety is not
+        configurable. This is the opposite. We should throw if the
+        descriptor says the property is configurable.
+
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        * tests/stress/typedarray-access-monomorphic-neutered.js:
+        * tests/stress/typedarray-access-neutered.js:
+        * tests/stress/typedarray-configure-index.js: Added.
+        (assert):
+        (assertThrows):
+        (makeDescriptor):
+        (test):
+
 2016-07-11  Saam Barati  <sbarati@apple.com>
 
         some paths in Array.prototype.splice don't account for the array not having certain indexed properties
