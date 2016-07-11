@@ -1,3 +1,25 @@
+2016-07-11  Saam Barati  <sbarati@apple.com>
+
+        some paths in Array.prototype.splice don't account for the array not having certain indexed properties
+        https://bugs.webkit.org/show_bug.cgi?id=159641
+        <rdar://problem/27171999>
+
+        Reviewed by Filip Pizlo and Keith Miller.
+
+        Array.prototype.splice was incorrectly putting properties on
+        the result array even if the |this| array didn't have those
+        properties. This is not the behavior of the spec. However, this
+        could also cause a crash because we can construct a program where
+        we would putByIndex on a typed array where the value we are
+        putting is JSValue(). This is bad because the typed array will
+        try to convert JSValue() into an integer.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+        * tests/stress/array-prototype-splice-making-typed-array.js: Added.
+        (assert):
+        (test):
+
 2016-07-11  Mark Lam  <mark.lam@apple.com>
 
         Refactor JSStack to only be the stack data structure for the C Loop.

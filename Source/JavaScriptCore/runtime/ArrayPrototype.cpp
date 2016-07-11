@@ -885,6 +885,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                 JSValue v = getProperty(exec, thisObj, k + begin);
                 if (UNLIKELY(vm.exception()))
                     return JSValue::encode(jsUndefined());
+                if (UNLIKELY(!v))
+                    continue;
                 result->putByIndexInline(exec, k, v, true);
                 if (UNLIKELY(vm.exception()))
                     return JSValue::encode(jsUndefined());
@@ -898,6 +900,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                 JSValue v = getProperty(exec, thisObj, k + begin);
                 if (UNLIKELY(vm.exception()))
                     return JSValue::encode(jsUndefined());
+                if (UNLIKELY(!v))
+                    continue;
                 result->initializeIndex(vm, k, v);
             }
         }
