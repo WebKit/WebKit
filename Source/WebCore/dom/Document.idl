@@ -174,7 +174,7 @@
     // Moved down from HTMLDocument
 
     // FIXME: Should not have [TreatNullAs=EmptyString].
-    [TreatNullAs=EmptyString] attribute DOMString title;
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString title;
 
     readonly attribute DOMString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

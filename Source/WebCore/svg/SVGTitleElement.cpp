@@ -63,25 +63,4 @@ void SVGTitleElement::childrenChanged(const ChildChange& change)
     document().titleElementTextChanged(*this);
 }
 
-void SVGTitleElement::setText(const String& value)
-{
-    Ref<SVGTitleElement> protectedThis(*this);
-
-    if (!value.isEmpty() && hasOneChild() && is<Text>(*firstChild())) {
-        downcast<Text>(*firstChild()).setData(value);
-        return;
-    }
-
-    // We make a copy here because entity of "value" argument can be Document::m_title,
-    // which goes empty during removeChildren() invocation below,
-    // which causes SVGTitleElement::childrenChanged(), which ends up calling Document::setTitle().
-    String valueCopy(value);
-
-    if (hasChildNodes())
-        removeChildren();
-
-    if (!valueCopy.isEmpty())
-        appendChild(document().createTextNode(valueCopy), IGNORE_EXCEPTION);
-}
-
 }

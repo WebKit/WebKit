@@ -92,25 +92,9 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
     return StringWithDirection(text(), direction);
 }
 
-void HTMLTitleElement::setText(const String& value)
+void HTMLTitleElement::setText(const String& value, ExceptionCode& ec)
 {
-    Ref<HTMLTitleElement> protectedThis(*this);
-    
-    if (!value.isEmpty() && hasOneChild() && is<Text>(*firstChild())) {
-        downcast<Text>(*firstChild()).setData(value);
-        return;
-    }
-
-    // We make a copy here because entity of "value" argument can be Document::m_title,
-    // which goes empty during removeChildren() invocation below,
-    // which causes HTMLTitleElement::childrenChanged(), which ends up calling Document::setTitle().
-    String valueCopy(value);
-
-    if (hasChildNodes())
-        removeChildren();
-
-    if (!valueCopy.isEmpty())
-        appendChild(document().createTextNode(valueCopy), IGNORE_EXCEPTION);
+    setTextContent(value, ec);
 }
 
 }

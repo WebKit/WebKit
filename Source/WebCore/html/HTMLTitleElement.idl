@@ -18,6 +18,6 @@
  */
 
 interface HTMLTitleElement : HTMLElement {
-    attribute DOMString text;
+    [SetterRaisesException] attribute DOMString text;
 };
 

@@ -32,7 +32,7 @@ public:
     static Ref<HTMLTitleElement> create(const QualifiedName&, Document&);
 
     String text() const;
-    void setText(const String&);
+    void setText(const String&, ExceptionCode&);
 
     const StringWithDirection& textWithDirection() const { return m_title; }
 
