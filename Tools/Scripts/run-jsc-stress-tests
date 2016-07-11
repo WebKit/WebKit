@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -426,7 +426,8 @@ end
 $numFailures = 0
 $numPasses = 0
 
-BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true"]
+# We force all tests to use a smaller (1.5M) stack so that stack overflow tests can run faster.
+BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--maxPerThreadStackUsage=1572864"]
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000"]
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100"]
 FTL_OPTIONS = ["--useFTLJIT=true"]

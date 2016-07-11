@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -74,6 +74,10 @@ def main(argv, stdout, stderr):
         return EXCEPTIONAL_EXIT_STATUS
 
     try:
+        # Force all tests to use a smaller stack so that stack overflow tests can run faster.
+        stackSizeInBytes = 1.5 * 1024 * 1024
+        options.additional_env_var.append('JSC_maxPerThreadStackUsage=' + str(stackSizeInBytes))
+        options.additional_env_var.append('__XPC_JSC_maxPerThreadStackUsage=' + str(stackSizeInBytes))
         run_details = run(port, options, args, stderr)
         if run_details.exit_code != -1 and not run_details.initial_results.keyboard_interrupted:
             bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
