@@ -1,3 +1,15 @@
+2016-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r202992): JSC varargs tests are broken
+        https://bugs.webkit.org/show_bug.cgi?id=159616
+
+        Reviewed by Csaba Osztrogonác.
+
+        The substitution miss in r202992 causes varargs tests failures in GTK port.
+
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+
 2016-07-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Promise.{all,race} no longer use @@species
