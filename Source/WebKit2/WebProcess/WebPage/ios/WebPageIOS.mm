@@ -517,7 +517,7 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
 
     WKBeginObservingContentChanges(true);
 
-    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0, WebCore::ForceAtClick));
+    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0, WebCore::ForceAtClick, WebCore::NoTap));
     mainframe.document()->updateStyleIfNeeded();
 
     WKStopObservingContentChanges();
@@ -535,7 +535,7 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
         m_pendingSyntheticClickLocation = location;
         return;
     case WKContentNoChange:
-        completeSyntheticClick(nodeRespondingToClick, location);
+        completeSyntheticClick(nodeRespondingToClick, location, WebCore::OneFingerTap);
         return;
     }
     ASSERT_NOT_REACHED();
@@ -547,13 +547,13 @@ void WebPage::completePendingSyntheticClickForContentChangeObserver()
         return;
     // Only dispatch the click if the document didn't get changed by any timers started by the move event.
     if (WKObservedContentChange() == WKContentNoChange)
-        completeSyntheticClick(m_pendingSyntheticClickNode.get(), m_pendingSyntheticClickLocation);
+        completeSyntheticClick(m_pendingSyntheticClickNode.get(), m_pendingSyntheticClickLocation, WebCore::OneFingerTap);
 
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = FloatPoint();
 }
 
-void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore::FloatPoint& location)
+void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore::FloatPoint& location, SyntheticClickType syntheticClickType)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
     Frame& mainframe = m_page->mainFrame();
@@ -564,8 +564,8 @@ void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore:
 
     bool tapWasHandled = false;
     m_lastInteractionLocation = roundedAdjustedPoint;
-    tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0, WebCore::ForceAtClick));
-    tapWasHandled |= mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0, WebCore::ForceAtClick));
+    tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0, WebCore::ForceAtClick, syntheticClickType));
+    tapWasHandled |= mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0, WebCore::ForceAtClick, syntheticClickType));
 
     RefPtr<Frame> newFocusedFrame = m_page->focusController().focusedFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
@@ -637,15 +637,20 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
 #endif
 }
 
-void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t callbackID)
+void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
 {
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
-    Element* element = (nodeRespondingToClick && is<Element>(*nodeRespondingToClick)) ? downcast<Element>(nodeRespondingToClick) : nullptr;
-    String url;
-    if (element && element->isLink())
-        url = [(NSURL *)element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(HTMLNames::hrefAttr))) absoluteString];
-    send(Messages::WebPageProxy::StringCallback(url, callbackID));
+    if (!nodeRespondingToClick || !nodeRespondingToClick->renderer()) {
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
+        return;
+    }
+    sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick);
+    if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
+        requestPositionInformation(roundedIntPoint(adjustedPoint));
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
+    } else
+        completeSyntheticClick(nodeRespondingToClick, adjustedPoint, WebCore::TwoFingerTap);
 }
 
 void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position)
@@ -722,7 +727,7 @@ void WebPage::inspectorNodeSearchMovedToPosition(const FloatPoint& position)
     IntPoint adjustedPoint = roundedIntPoint(position);
     Frame& mainframe = m_page->mainFrame();
 
-    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(adjustedPoint, adjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0, 0));
+    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(adjustedPoint, adjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0, 0, WebCore::NoTap));
     mainframe.document()->updateStyleIfNeeded();
 }
 

@@ -58,6 +58,17 @@ static WebMouseEvent::Button mouseButtonForMouseEvent(const MouseEvent* mouseEve
     return static_cast<WebMouseEvent::Button>(mouseEvent->button());
 }
 
+static WebMouseEvent::SyntheticClickType syntheticClickTypeForMouseEvent(const MouseEvent* mouseEvent)
+{
+    if (!mouseEvent)
+        return WebMouseEvent::NoTap;
+    
+    if (!mouseEvent->buttonDown() || !mouseEvent->isTrusted())
+        return WebMouseEvent::NoTap;
+    
+    return static_cast<WebMouseEvent::SyntheticClickType>(mouseEvent->syntheticClickType());
+}
+
 WebEvent::Modifiers InjectedBundleNavigationAction::modifiersForNavigationAction(const NavigationAction& navigationAction)
 {
     uint32_t modifiers = 0;
@@ -81,6 +92,10 @@ WebMouseEvent::Button InjectedBundleNavigationAction::mouseButtonForNavigationAc
     return mouseButtonForMouseEvent(mouseEventForNavigationAction(navigationAction));
 }
 
+WebMouseEvent::SyntheticClickType InjectedBundleNavigationAction::syntheticClickTypeForNavigationAction(const NavigationAction& navigationAction)
+{
+    return syntheticClickTypeForMouseEvent(mouseEventForNavigationAction(navigationAction));
+}
 
 Ref<InjectedBundleNavigationAction> InjectedBundleNavigationAction::create(WebFrame* frame, const NavigationAction& action, PassRefPtr<FormState> formState)
 {
@@ -98,6 +113,7 @@ InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, 
     if (const MouseEvent* mouseEvent = mouseEventForNavigationAction(navigationAction)) {
         m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation()));
         m_mouseButton   = mouseButtonForMouseEvent(mouseEvent);
+        m_syntheticClickType = syntheticClickTypeForNavigationAction(navigationAction);
     }
 
     RefPtr<FormState> formState = prpFormState;

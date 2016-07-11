@@ -568,15 +568,9 @@ void WebPageProxy::getSelectionContext(std::function<void(const String&, const S
     m_process->send(Messages::WebPage::GetSelectionContext(callbackID), m_pageID);
 }
 
-void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, std::function<void(const String&, CallbackBase::Error)> callbackFunction)
+void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
 {
-    if (!isValid()) {
-        callbackFunction(String(), CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
-    process().send(Messages::WebPage::HandleTwoFingerTapAtPoint(point, callbackID), m_pageID);
+    process().send(Messages::WebPage::HandleTwoFingerTapAtPoint(point, requestID), m_pageID);
 }
 
 void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)> callbackFunction)

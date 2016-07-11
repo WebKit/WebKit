@@ -46,7 +46,7 @@ public:
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget, double force);
+        PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*,
         int detail, int screenX, int screenY, int pageX, int pageY,
@@ -54,14 +54,14 @@ public:
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget, double force, PassRefPtr<DataTransfer>, bool isSimulated = false);
+        PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType, PassRefPtr<DataTransfer>, bool isSimulated = false);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, AbstractView*, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
 
     static Ref<MouseEvent> create(const AtomicString& eventType, bool canBubble, bool cancelable, AbstractView*,
         int detail, int screenX, int screenY, int clientX, int clientY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        unsigned short button, PassRefPtr<EventTarget> relatedTarget);
+        unsigned short button, unsigned short syntheticClickType, PassRefPtr<EventTarget> relatedTarget);
 
     static Ref<MouseEvent> createForBindings()
     {
@@ -80,6 +80,7 @@ public:
     // WinIE uses 1,4,2 for left/middle/right but not for click (just for mousedown/up, maybe others),
     // but we will match the standard DOM.
     unsigned short button() const { return m_button; }
+    unsigned short syntheticClickType() const { return m_syntheticClickType; }
     bool buttonDown() const { return m_buttonDown; }
     EventTarget* relatedTarget() const final { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
@@ -110,12 +111,12 @@ protected:
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget, double force, PassRefPtr<DataTransfer>, bool isSimulated);
+        PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType, PassRefPtr<DataTransfer>, bool isSimulated);
 
     MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
         int detail, int screenX, int screenY, int clientX, int clientY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        unsigned short button, PassRefPtr<EventTarget> relatedTarget);
+        unsigned short button, unsigned short syntheticClickType, PassRefPtr<EventTarget> relatedTarget);
 
     MouseEvent(const AtomicString& type, const MouseEventInit&);
 
@@ -123,6 +124,7 @@ protected:
 
 private:
     unsigned short m_button;
+    unsigned short m_syntheticClickType;
     bool m_buttonDown;
     RefPtr<EventTarget> m_relatedTarget;
     double m_force { 0 };

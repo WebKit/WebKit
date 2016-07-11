@@ -130,12 +130,14 @@ public:
         RightButton
     };
 
+    enum SyntheticClickType { NoTap, OneFingerTap, TwoFingerTap };
+
     WebMouseEvent();
 
 #if PLATFORM(MAC)
-    WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp, double force, int eventNumber = -1, int menuType = 0);
+    WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp, double force, SyntheticClickType = NoTap, int eventNumber = -1, int menuType = 0);
 #else
-    WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp, double force = 0);
+    WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp, double force = 0, SyntheticClickType = NoTap);
 #endif
 
     Button button() const { return static_cast<Button>(m_button); }
@@ -150,6 +152,7 @@ public:
     int32_t menuTypeForEvent() const { return m_menuTypeForEvent; }
 #endif
     double force() const { return m_force; }
+    SyntheticClickType syntheticClickType() const { return static_cast<SyntheticClickType>(m_syntheticClickType); }
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebMouseEvent&);
@@ -169,6 +172,7 @@ private:
     int32_t m_menuTypeForEvent;
 #endif
     double m_force { 0 };
+    uint32_t m_syntheticClickType { NoTap };
 };
 
 // FIXME: Move this class to its own header file.

@@ -49,7 +49,7 @@ private:
 #if ENABLE(POINTER_LOCK)
                      0, 0,
 #endif
-                     false, false, false, false, 0, 0, 0, 0, true)
+                     false, false, false, false, 0, 0, 0, 0, 0, true)
     {
         if (UIEventWithKeyState* keyStateEvent = findEventWithKeyState(underlyingEvent.get())) {
             m_ctrlKey = keyStateEvent->ctrlKey();

@@ -48,9 +48,9 @@ WebMouseEvent::WebMouseEvent()
 }
 
 #if PLATFORM(MAC)
-WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp, double force, int eventNumber, int menuType)
+WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp, double force, SyntheticClickType syntheticClickType, int eventNumber, int menuType)
 #else
-WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp, double force)
+WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp, double force, SyntheticClickType syntheticClickType)
 #endif
     : WebEvent(type, modifiers, timestamp)
     , m_button(button)
@@ -65,6 +65,7 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position,
     , m_menuTypeForEvent(menuType)
 #endif
     , m_force(force)
+    , m_syntheticClickType(syntheticClickType)
 {
     ASSERT(isMouseEventType(type));
 }
@@ -85,6 +86,7 @@ void WebMouseEvent::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_menuTypeForEvent;
 #endif
     encoder << m_force;
+    encoder << m_syntheticClickType;
 }
 
 bool WebMouseEvent::decode(IPC::ArgumentDecoder& decoder, WebMouseEvent& result)
@@ -113,6 +115,9 @@ bool WebMouseEvent::decode(IPC::ArgumentDecoder& decoder, WebMouseEvent& result)
         return false;
 #endif
     if (!decoder.decode(result.m_force))
+        return false;
+
+    if (!decoder.decode(result.m_syntheticClickType))
         return false;
 
     return true;

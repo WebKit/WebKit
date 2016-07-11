@@ -1369,21 +1369,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_twoFingerSingleTapGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
-    _page->tapHighlightAtPosition(gestureRecognizer.centroid, ++_latestTapID);
     _isTapHighlightIDValid = YES;
-    RetainPtr<WKContentView> view = self;
-    WKWebView *webView = _webView;
-    _page->handleTwoFingerTapAtPoint(roundedIntPoint(gestureRecognizer.centroid), [view, webView](const String& string, CallbackBase::Error error) {
-        if (error != CallbackBase::Error::None)
-            return;
-        if (!string.isEmpty()) {
-            id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([webView UIDelegate]);
-            if ([uiDelegate respondsToSelector:@selector(_webView:alternateActionForURL:)])
-                [uiDelegate _webView:webView alternateActionForURL:[NSURL _web_URLWithWTFString:string]];
-            [view _finishInteraction];
-        } else
-            [view _cancelInteraction];
-    });
+    _isExpectingFastSingleTapCommit = YES;
+    _page->handleTwoFingerTapAtPoint(roundedIntPoint(gestureRecognizer.centroid), ++_latestTapID);
 }
 
 - (void)_longPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer

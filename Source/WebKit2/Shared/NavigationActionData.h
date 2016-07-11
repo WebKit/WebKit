@@ -43,6 +43,7 @@ struct NavigationActionData {
     WebCore::NavigationType navigationType { WebCore::NavigationType::Other };
     WebEvent::Modifiers modifiers { };
     WebMouseEvent::Button mouseButton { WebMouseEvent::NoButton };
+    WebMouseEvent::SyntheticClickType syntheticClickType { WebMouseEvent::NoTap };
     bool isProcessingUserGesture { false };
     bool canHandleRequest { false };
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };

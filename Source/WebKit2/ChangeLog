@@ -1,3 +1,89 @@
+2016-07-11  Enrica Casucci  <enrica@apple.com>
+
+        Add synthetic click origin to WKNavigationAction.
+        https://bugs.webkit.org/show_bug.cgi?id=159584
+        rdar://problem/25610422
+
+        Reviewed by Tim Horton.
+
+        Adds a private property to WKNavigationAction to retrieve
+        the origin of the synthetic click.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * Shared/WebEvent.h:
+        (WebKit::WebMouseEvent::button):
+        (WebKit::WebMouseEvent::menuTypeForEvent):
+        (WebKit::WebMouseEvent::force):
+        (WebKit::WebMouseEvent::syntheticClickType):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::encode):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (toWKNavigationType):
+        (toWKSyntheticClickType):
+        (-[WKNavigationAction description]):
+        (-[WKNavigationAction sourceFrame]):
+        (-[WKNavigationAction request]):
+        (-[WKNavigationAction _syntheticClickType]):
+        (-[WKNavigationAction modifierFlags]):
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+        (-[WKContentView _longPressRecognized:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::getSelectionContext):
+        (WebKit::WebPageProxy::handleTwoFingerTapAtPoint):
+        (WebKit::WebPageProxy::selectWithTwoTouches):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::mouseButtonForMouseEvent):
+        (WebKit::syntheticClickTypeForMouseEvent):
+        (WebKit::InjectedBundleNavigationAction::modifiersForNavigationAction):
+        (WebKit::InjectedBundleNavigationAction::mouseButtonForNavigationAction):
+        (WebKit::InjectedBundleNavigationAction::syntheticClickTypeForNavigationAction):
+        (WebKit::InjectedBundleNavigationAction::create):
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+        (WebKit::InjectedBundleNavigationAction::navigationType):
+        (WebKit::InjectedBundleNavigationAction::modifiers):
+        (WebKit::InjectedBundleNavigationAction::mouseButton):
+        (WebKit::InjectedBundleNavigationAction::hitTestResult):
+        (WebKit::InjectedBundleNavigationAction::formElement):
+        (WebKit::InjectedBundleNavigationAction::syntheticClickType):
+        (WebKit::InjectedBundleNavigationAction::shouldOpenExternalURLs):
+        (WebKit::InjectedBundleNavigationAction::shouldTryAppLinks):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+        (WebKit::WebPage::contextMenuAtPointInWindow):
+        (WebKit::WebPage::dragEnded):
+        (WebKit::WebPage::simulateMouseDown):
+        (WebKit::WebPage::simulateMouseUp):
+        (WebKit::WebPage::simulateMouseMotion):
+        (WebKit::WebPage::setCompositionForTesting):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+        (WebKit::WebPage::completePendingSyntheticClickForContentChangeObserver):
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+        (WebKit::WebPage::handleTwoFingerTapAtPoint):
+        (WebKit::WebPage::potentialTapAtPosition):
+        (WebKit::WebPage::inspectorNodeSearchMovedToPosition):
+
 2016-07-11  Anders Carlsson  <andersca@apple.com>
 
         Able to open multiple payment sheets in Safari at the same time

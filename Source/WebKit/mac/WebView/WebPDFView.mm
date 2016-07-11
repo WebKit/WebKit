@@ -1042,7 +1042,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
             [nsEvent modifierFlags] & NSShiftKeyMask,
             [nsEvent modifierFlags] & NSCommandKeyMask,
 #pragma clang diagnostic pop
-            button, 0, WebCore::ForceAtClick, 0, true);
+            button, 0, WebCore::ForceAtClick, 0, 0, true);
     }
 
     // Call to the frame loader because this is where our security checks are made.

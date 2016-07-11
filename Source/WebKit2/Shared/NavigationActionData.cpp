@@ -39,6 +39,7 @@ void NavigationActionData::encode(IPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(navigationType);
     encoder.encodeEnum(modifiers);
     encoder.encodeEnum(mouseButton);
+    encoder.encodeEnum(syntheticClickType);
     encoder << isProcessingUserGesture;
     encoder << canHandleRequest;
     encoder.encodeEnum(shouldOpenExternalURLsPolicy);
@@ -52,6 +53,8 @@ bool NavigationActionData::decode(IPC::ArgumentDecoder& decoder, NavigationActio
     if (!decoder.decodeEnum(result.modifiers))
         return false;
     if (!decoder.decodeEnum(result.mouseButton))
+        return false;
+    if (!decoder.decodeEnum(result.syntheticClickType))
         return false;
     if (!decoder.decode(result.isProcessingUserGesture))
         return false;

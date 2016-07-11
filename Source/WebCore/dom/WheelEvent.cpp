@@ -70,7 +70,7 @@ WheelEvent::WheelEvent(const PlatformWheelEvent& event, AbstractView* view)
 #if ENABLE(POINTER_LOCK)
                 , 0, 0
 #endif
-                , event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), 0, 0, 0, 0, false)
+                , event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), 0, 0, 0, 0, 0, false)
     , m_wheelDelta(event.wheelTicksX() * TickMultiplier, event.wheelTicksY() * TickMultiplier)
     , m_deltaX(-event.deltaX())
     , m_deltaY(-event.deltaY())

@@ -471,7 +471,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 #if ENABLE(POINTER_LOCK)
         0, 0,
 #endif
-        false, false, false, false, 0, 0, 0, 0, true);
+        false, false, false, false, 0, 0, 0, 0, 0, true);
 
     // Call to the frame loader because this is where our security checks are made.
     Frame* frame = core([_dataSource webFrame]);

@@ -62,6 +62,7 @@ public:
     WebCore::NavigationType navigationType() const { return m_navigationActionData.navigationType; }
     WebKit::WebEvent::Modifiers modifiers() const { return m_navigationActionData.modifiers; }
     WebKit::WebMouseEvent::Button mouseButton() const { return m_navigationActionData.mouseButton; }
+    WebKit::WebMouseEvent::SyntheticClickType syntheticClickType() const { return m_navigationActionData.syntheticClickType; }
     bool isProcessingUserGesture() const { return m_navigationActionData.isProcessingUserGesture; }
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
     bool shouldOpenExternalSchemes() const { return m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow || m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes; }
