@@ -120,7 +120,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
 static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
-    Vector<int32_t> longArgs = toNativeArguments<int32_t>(state, 0);
+    Vector<int32_t> longArgs = toNativeArguments<int32_t>(*state, 0);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto object = TestOverloadedConstructors::create(longArgs);

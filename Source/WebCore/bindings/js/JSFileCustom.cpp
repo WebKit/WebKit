@@ -52,7 +52,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
         return throwVMTypeError(&exec, ASCIILiteral("First argument to File constructor must be a valid sequence, was undefined or null"));
 
     unsigned blobPartsLength = 0;
-    JSObject* blobParts = toJSSequence(&exec, arg, blobPartsLength);
+    JSObject* blobParts = toJSSequence(exec, arg, blobPartsLength);
     if (exec.hadException())
         return JSValue::encode(jsUndefined());
     ASSERT(blobParts);

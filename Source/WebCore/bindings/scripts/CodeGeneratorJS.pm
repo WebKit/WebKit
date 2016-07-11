@@ -3717,7 +3717,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "        $name.uncheckedAppend(item);\n");
                 push(@$outputArray, "    }\n")
             } else {
-                push(@$outputArray, "    Vector<$nativeElementType> $name = toNativeArguments<$nativeElementType>(state, $argumentIndex);\n");
+                push(@$outputArray, "    Vector<$nativeElementType> $name = toNativeArguments<$nativeElementType>(*state, $argumentIndex);\n");
                 push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
@@ -4454,7 +4454,7 @@ sub JSValueToNative
             AddToImplIncludes("JS${arrayOrSequenceType}.h");
             return ("(toRefPtrNativeArray<${arrayOrSequenceType}, JS${arrayOrSequenceType}>(state, $value, &JS${arrayOrSequenceType}::toWrapped))", 1);
         }
-        return ("toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(state, $value)", 1);
+        return ("toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(*state, $value)", 1);
     }
 
     return ($value, 0) if $type eq "any";

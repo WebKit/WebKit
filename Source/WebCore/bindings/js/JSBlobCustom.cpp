@@ -72,7 +72,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
     }
 
     unsigned blobPartsLength = 0;
-    JSObject* blobParts = toJSSequence(&exec, exec.uncheckedArgument(0), blobPartsLength);
+    JSObject* blobParts = toJSSequence(exec, exec.uncheckedArgument(0), blobPartsLength);
     if (exec.hadException())
         return JSValue::encode(jsUndefined());
     ASSERT(blobParts);

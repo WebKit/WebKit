@@ -247,7 +247,7 @@ JSC::JSValue jsDateOrNull(JSC::ExecState*, double);
 double valueToDate(JSC::ExecState*, JSC::JSValue);
 
 // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.
-JSC::JSObject* toJSSequence(JSC::ExecState*, JSC::JSValue, unsigned& length);
+JSC::JSObject* toJSSequence(JSC::ExecState&, JSC::JSValue, unsigned& length);
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBuffer*);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBufferView*);
@@ -282,8 +282,8 @@ RefPtr<JSC::Float32Array> toFloat32Array(JSC::JSValue);
 RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue);
 
 template<typename T, typename JSType> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState*, JSC::JSValue, T* (*)(JSC::JSValue));
-template<typename T> Vector<T> toNativeArray(JSC::ExecState*, JSC::JSValue);
-template<typename T> Vector<T> toNativeArguments(JSC::ExecState*, size_t startIndex = 0);
+template<typename T> Vector<T> toNativeArray(JSC::ExecState&, JSC::JSValue);
+template<typename T> Vector<T> toNativeArguments(JSC::ExecState&, size_t startIndex = 0);
 
 bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
 bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*);
@@ -477,25 +477,25 @@ inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& 
 }
 
 // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.
-inline JSC::JSObject* toJSSequence(JSC::ExecState* exec, JSC::JSValue value, unsigned& length)
+inline JSC::JSObject* toJSSequence(JSC::ExecState& exec, JSC::JSValue value, unsigned& length)
 {
     JSC::JSObject* object = value.getObject();
     if (!object) {
-        throwSequenceTypeError(*exec);
+        throwSequenceTypeError(exec);
         return nullptr;
     }
 
-    JSC::JSValue lengthValue = object->get(exec, exec->propertyNames().length);
-    if (exec->hadException())
+    JSC::JSValue lengthValue = object->get(&exec, exec.propertyNames().length);
+    if (exec.hadException())
         return nullptr;
 
     if (lengthValue.isUndefinedOrNull()) {
-        throwSequenceTypeError(*exec);
+        throwSequenceTypeError(exec);
         return nullptr;
     }
 
-    length = lengthValue.toUInt32(exec);
-    if (exec->hadException())
+    length = lengthValue.toUInt32(&exec);
+    if (exec.hadException())
         return nullptr;
 
     return object;
@@ -660,21 +660,21 @@ inline RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue value) { return JSC
 template<typename T> struct NativeValueTraits;
 
 template<> struct NativeValueTraits<String> {
-    static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, String& indexedValue)
+    static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, String& indexedValue)
     {
-        indexedValue = jsValue.toWTFString(exec);
+        indexedValue = jsValue.toWTFString(&exec);
         return true;
     }
 };
 
 template<> struct NativeValueTraits<unsigned> {
-    static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, unsigned& indexedValue)
+    static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, unsigned& indexedValue)
     {
         if (!jsValue.isNumber())
             return false;
 
-        indexedValue = jsValue.toUInt32(exec);
-        if (exec->hadException())
+        indexedValue = jsValue.toUInt32(&exec);
+        if (exec.hadException())
             return false;
 
         return true;
@@ -682,18 +682,18 @@ template<> struct NativeValueTraits<unsigned> {
 };
 
 template<> struct NativeValueTraits<float> {
-    static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, float& indexedValue)
+    static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, float& indexedValue)
     {
-        indexedValue = jsValue.toFloat(exec);
-        return !exec->hadException();
+        indexedValue = jsValue.toFloat(&exec);
+        return !exec.hadException();
     }
 };
 
 template<> struct NativeValueTraits<double> {
-    static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, double& indexedValue)
+    static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, double& indexedValue)
     {
-        indexedValue = jsValue.toNumber(exec);
-        return !exec->hadException();
+        indexedValue = jsValue.toNumber(&exec);
+        return !exec.hadException();
     }
 };
 
@@ -718,7 +718,7 @@ template<typename T, typename JST> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::Ex
     return result;
 }
 
-template<typename T> Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
+template<typename T> Vector<T> toNativeArray(JSC::ExecState& exec, JSC::JSValue value)
 {
     JSC::JSObject* object = value.getObject();
     if (!object)
@@ -737,16 +737,16 @@ template<typename T> Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue 
 
     for (unsigned i = 0; i < length; ++i) {
         T indexValue;
-        if (!TraitsType::nativeValue(exec, object->get(exec, i), indexValue))
+        if (!TraitsType::nativeValue(exec, object->get(&exec, i), indexValue))
             return Vector<T>();
         result.uncheckedAppend(indexValue);
     }
     return result;
 }
 
-template<typename T> Vector<T> toNativeArguments(JSC::ExecState* exec, size_t startIndex)
+template<typename T> Vector<T> toNativeArguments(JSC::ExecState& exec, size_t startIndex)
 {
-    size_t length = exec->argumentCount();
+    size_t length = exec.argumentCount();
     ASSERT(startIndex <= length);
 
     Vector<T> result;
@@ -755,7 +755,7 @@ template<typename T> Vector<T> toNativeArguments(JSC::ExecState* exec, size_t st
 
     for (size_t i = startIndex; i < length; ++i) {
         T indexValue;
-        if (!TraitsType::nativeValue(exec, exec->argument(i), indexValue))
+        if (!TraitsType::nativeValue(exec, exec.uncheckedArgument(i), indexValue))
             return Vector<T>();
         result.uncheckedAppend(indexValue);
     }

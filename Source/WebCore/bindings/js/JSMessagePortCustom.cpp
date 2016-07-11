@@ -69,7 +69,7 @@ void fillMessagePortArray(JSC::ExecState& state, JSC::JSValue value, MessagePort
 
     // Validation of sequence types, per WebIDL spec 4.1.13.
     unsigned length = 0;
-    JSObject* object = toJSSequence(&state, value, length);
+    JSObject* object = toJSSequence(state, value, length);
     if (state.hadException())
         return;
 

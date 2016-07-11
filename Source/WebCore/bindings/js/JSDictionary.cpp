@@ -149,11 +149,12 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, String& result)
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& result)
 {
+    ASSERT(exec);
     if (value.isUndefinedOrNull())
         return;
 
     unsigned length = 0;
-    JSObject* object = toJSSequence(exec, value, length);
+    JSObject* object = toJSSequence(*exec, value, length);
     if (exec->hadException())
         return;
 
@@ -210,13 +211,14 @@ void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<TrackBase>& re
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicString>& result)
 {
+    ASSERT(exec);
     result.clear();
 
     if (value.isUndefinedOrNull())
         return;
 
     unsigned length = 0;
-    JSObject* object = toJSSequence(exec, value, length);
+    JSObject* object = toJSSequence(*exec, value, length);
     if (exec->hadException())
         return;
 
@@ -280,11 +282,12 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<RTCR
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<RefPtr<MediaStream>>& result)
 {
+    ASSERT(exec);
     if (value.isUndefinedOrNull())
         return;
 
     unsigned length = 0;
-    JSObject* object = toJSSequence(exec, value, length);
+    JSObject* object = toJSSequence(*exec, value, length);
     if (exec->hadException())
         return;
 

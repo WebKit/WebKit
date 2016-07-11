@@ -4904,7 +4904,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequenc
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto sequence = toNativeArray<String>(state, state->argument(0));
+    auto sequence = toNativeArray<String>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalSequence(WTFMove(sequence));
@@ -4979,7 +4979,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArray(E
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalArray");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto array = state->argument(0).isUndefined() ? Optional<Vector<String>>() : toNativeArray<String>(state, state->uncheckedArgument(0));
+    auto array = state->argument(0).isUndefined() ? Optional<Vector<String>>() : toNativeArray<String>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalArray(WTFMove(array));
@@ -4994,7 +4994,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArrayIs
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalArrayIsEmpty");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto array = toNativeArray<String>(state, state->argument(0));
+    auto array = toNativeArray<String>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalArrayIsEmpty(WTFMove(array));
@@ -5377,7 +5377,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7(ExecSta
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto arrayArg = toNativeArray<String>(state, state->argument(0));
+    auto arrayArg = toNativeArray<String>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.overloadedMethod(WTFMove(arrayArg));
@@ -5411,7 +5411,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9(ExecSta
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto arrayArg = toNativeArray<String>(state, state->argument(0));
+    auto arrayArg = toNativeArray<String>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.overloadedMethod(WTFMove(arrayArg));
@@ -5428,7 +5428,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10(ExecSt
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto arrayArg = toNativeArray<uint32_t>(state, state->argument(0));
+    auto arrayArg = toNativeArray<uint32_t>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.overloadedMethod(WTFMove(arrayArg));
@@ -5674,7 +5674,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSeq
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto unsignedLongSequence = toNativeArray<uint32_t>(state, state->argument(0));
+    auto unsignedLongSequence = toNativeArray<uint32_t>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithUnsignedLongSequence(WTFMove(unsignedLongSequence));
@@ -5692,7 +5692,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    auto values = toNativeArray<String>(state, state->argument(0));
+    auto values = toNativeArray<String>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsArray(state, castedThis->globalObject(), impl.stringArrayFunction(WTFMove(values), ec));
@@ -5733,10 +5733,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNulla
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto arrayArg = toNativeArray<uint32_t>(state, state->argument(0));
+    auto arrayArg = toNativeArray<uint32_t>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto nullableArrayArg = toNativeArray<uint32_t>(state, state->argument(1));
+    auto nullableArrayArg = toNativeArray<uint32_t>(*state, state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithAndWithoutNullableSequence(WTFMove(arrayArg), WTFMove(nullableArrayArg));
@@ -5753,10 +5753,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNulla
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto arrayArg = toNativeArray<uint32_t>(state, state->argument(0));
+    auto arrayArg = toNativeArray<uint32_t>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto nullableArrayArg = toNativeArray<uint32_t>(state, state->argument(1));
+    auto nullableArrayArg = toNativeArray<uint32_t>(*state, state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithAndWithoutNullableSequence2(WTFMove(arrayArg), WTFMove(nullableArrayArg));
@@ -5942,7 +5942,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
         if (UNLIKELY(!objArg))
             return throwArgumentTypeError(*state, 0, "objArg", "TestObj", "strictFunctionWithSequence", "TestObj");
     }
-    auto a = toNativeArray<uint32_t>(state, state->argument(1));
+    auto a = toNativeArray<uint32_t>(*state, state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsBoolean(impl.strictFunctionWithSequence(objArg, WTFMove(a), ec));
@@ -5965,7 +5965,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
     auto objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(!objArg))
         return throwArgumentTypeError(*state, 0, "objArg", "TestObj", "strictFunctionWithArray", "TestObj");
-    auto array = toNativeArray<int32_t>(state, state->argument(1));
+    auto array = toNativeArray<int32_t>(*state, state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsBoolean(impl.strictFunctionWithArray(*objArg, WTFMove(array), ec));
@@ -5987,7 +5987,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
     auto head = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    Vector<String> tail = toNativeArguments<String>(state, 1);
+    Vector<String> tail = toNativeArguments<String>(*state, 1);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.variadicStringMethod(WTFMove(head), WTFMove(tail));
@@ -6007,7 +6007,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
     auto head = convert<double>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    Vector<double> tail = toNativeArguments<double>(state, 1);
+    Vector<double> tail = toNativeArguments<double>(*state, 1);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.variadicDoubleMethod(WTFMove(head), WTFMove(tail));

@@ -122,7 +122,7 @@ template<typename T> struct Converter<Vector<T>> : DefaultConverter<Vector<T>> {
     static Vector<T> convert(JSC::ExecState& state, JSC::JSValue value)
     {
         // FIXME: The toNativeArray function doesn't throw a type error if the value is not an object. Is that OK?
-        return toNativeArray<T>(&state, value);
+        return toNativeArray<T>(state, value);
     }
 };
 

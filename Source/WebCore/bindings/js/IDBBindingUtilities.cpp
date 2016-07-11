@@ -176,7 +176,7 @@ IDBKeyPath idbKeyPathFromValue(ExecState& exec, JSValue keyPathValue)
 {
     IDBKeyPath keyPath;
     if (isJSArray(keyPathValue))
-        keyPath = IDBKeyPath(toNativeArray<String>(&exec, keyPathValue));
+        keyPath = IDBKeyPath(toNativeArray<String>(exec, keyPathValue));
     else
         keyPath = IDBKeyPath(keyPathValue.toWTFString(&exec));
     return keyPath;
