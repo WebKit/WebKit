@@ -1,3 +1,14 @@
+2016-07-10  Beth Dakin  <bdakin@apple.com>
+
+        Update mediaIcon.pdf
+        https://bugs.webkit.org/show_bug.cgi?id=159613
+        -and corresponding-
+        rdar://problem/27268111
+
+        Reviewed by Sam Weinig.
+
+        * Resources/mediaIcon.pdf: Replaced.
+
 2016-07-10  Alex Christensen  <achristensen@webkit.org>
 
         Add self to WebKit2 Owners
