@@ -60,7 +60,6 @@ function installDependenciesWithBrew {
          flex \
          gettext \
          gobject-introspection \
-         icu4c \
          intltool \
          itstool \
          libcroco \
@@ -104,14 +103,11 @@ function installDependenciesWithApt {
         libgtk2.0-dev \
         libgtk-3-dev \
         libgudev-1.0-dev \
-        libharfbuzz-dev \
         libhyphen-dev \
-        libicu-dev \
         libjpeg-dev \
         libmpg123-dev \
         libnotify-dev \
         libopus-dev \
-        liborc-0.4-dev \
         libpango1.0-dev \
         libpng12-dev \
         libpulse-dev \
@@ -166,7 +162,6 @@ function installDependenciesWithApt {
         libjson-glib-dev \
         libinput-dev \
         libmtdev-dev \
-        liborc-0.4-dev \
         libp11-kit-dev \
         libpciaccess-dev \
         libproxy-dev \
@@ -179,8 +174,6 @@ function installDependenciesWithApt {
         libxkbfile-dev \
         libtool-bin \
         libudev-dev \
-        llvm \
-        llvm-dev \
         python-dev \
         ragel \
         x11proto-bigreqs-dev \
@@ -255,9 +248,6 @@ function installDependenciesWithPacman {
         gtk2 \
         gtk3 \
         libsystemd \
-        harfbuzz \
-        harfbuzz-icu \
-        icu \
         libjpeg-turbo \
         mpg123 \
         opus \
@@ -279,7 +269,6 @@ function installDependenciesWithPacman {
         ninja \
         ruby \
         xorg-font-utils \
-        orc \
         wayland"
 
     # These are dependencies necessary for running tests.
@@ -322,7 +311,6 @@ function installDependenciesWithPacman {
         libxfont \
         libxcb \
         libxkbfile \
-        llvm \
         mtdev \
         python2 \
         python2-lxml \
@@ -363,8 +351,6 @@ function installDependenciesWithDnf {
         cmake \
         enchant-devel \
         flex \
-        fontconfig-devel \
-        freetype-devel \
         gcc-c++ \
         geoclue2-devel \
         gettext-devel \
@@ -376,7 +362,6 @@ function installDependenciesWithDnf {
         gtk-doc \
         gtk2-devel \
         gtk3-devel \
-        harfbuzz-devel \
         hyphen-devel \
         intltool \
         json-glib-devel \
@@ -384,7 +369,6 @@ function installDependenciesWithDnf {
         libXtst-devel \
         libedit-devel \
         libgudev1-devel \
-        libicu-devel \
         libjpeg-turbo-devel \
         libnotify-devel \
         libpng-devel \
@@ -394,9 +378,6 @@ function installDependenciesWithDnf {
         libwebp-devel \
         libwayland-client-devel \
         libwayland-server-devel \
-        llvm \
-        llvm-devel \
-        llvm-static \
         mesa-libGL-devel \
         ninja-build \
         openssl-devel \
@@ -406,7 +387,6 @@ function installDependenciesWithDnf {
         perl-version \
         pulseaudio-libs-devel \
         python-devel \
-        orc-devel \
         redhat-rpm-config \
         ruby \
         sqlite-devel"
