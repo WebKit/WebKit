@@ -49,6 +49,8 @@ AccessibilityObject* AccessibilitySpinButton::incrementButton()
 {
     if (!m_haveChildren)
         addChildren();
+    if (!m_haveChildren)
+        return nullptr;
 
     ASSERT(m_children.size() == 2);
 
@@ -59,6 +61,8 @@ AccessibilityObject* AccessibilitySpinButton::decrementButton()
 {
     if (!m_haveChildren)
         addChildren();
+    if (!m_haveChildren)
+        return nullptr;
     
     ASSERT(m_children.size() == 2);
     
@@ -80,14 +84,18 @@ LayoutRect AccessibilitySpinButton::elementRect() const
 
 void AccessibilitySpinButton::addChildren()
 {
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return;
+    
     m_haveChildren = true;
     
-    auto& incrementor = downcast<AccessibilitySpinButtonPart>(*axObjectCache()->getOrCreate(SpinButtonPartRole));
+    auto& incrementor = downcast<AccessibilitySpinButtonPart>(*cache->getOrCreate(SpinButtonPartRole));
     incrementor.setIsIncrementor(true);
     incrementor.setParent(this);
     m_children.append(&incrementor);
 
-    auto& decrementor = downcast<AccessibilitySpinButtonPart>(*axObjectCache()->getOrCreate(SpinButtonPartRole));
+    auto& decrementor = downcast<AccessibilitySpinButtonPart>(*cache->getOrCreate(SpinButtonPartRole));
     decrementor.setIsIncrementor(false);
     decrementor.setParent(this);
     m_children.append(&decrementor);
