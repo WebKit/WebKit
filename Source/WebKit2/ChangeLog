@@ -1,3 +1,21 @@
+2016-07-11  Antti Koivisto  <antti@apple.com>
+
+        Update stable cache version in NetworkCache::Storage::deleteOldVersions()
+        https://bugs.webkit.org/show_bug.cgi?id=159618
+        rdar://problem/26715745
+
+        Reviewed by Chris Dumez.
+
+        NetworkCache::Storage::deleteOldVersions() keeps the previous shipped cache version (4) for Mac around so
+        development WebKit doesn’t clobber system Safari cache. Update this to the current version so old caches
+        go away in customer systems.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+            Move lastStableVersion to header next to the current version.
+
 2016-07-10  Beth Dakin  <bdakin@apple.com>
 
         Update mediaIcon.pdf

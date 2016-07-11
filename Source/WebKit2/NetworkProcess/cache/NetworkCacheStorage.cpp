@@ -1018,10 +1018,7 @@ void Storage::deleteOldVersions()
                 return;
             if (directoryVersion >= version)
                 return;
-
 #if PLATFORM(MAC)
-            // Allow the last stable version of the cache to co-exist with the latest development one on Mac.
-            const unsigned lastStableVersion = 4;
             if (directoryVersion == lastStableVersion)
                 return;
 #endif
