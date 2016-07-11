@@ -1,3 +1,11 @@
+2016-07-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Install missing Fedora dependencies
+
+        Unreviewed.
+
+        * gtk/install-dependencies:
+
 2016-07-09  Dan Bernstein  <mitz@apple.com>
 
         Give git-add-reviewer an option to say “Rubber-stamped by” in non-interactive mode

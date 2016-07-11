@@ -128,6 +128,7 @@ function installDependenciesWithApt {
         libxtst-dev \
         libwayland-dev \
         ninja-build \
+        patch \
         ruby \
         xfonts-utils"
 
@@ -363,6 +364,7 @@ function installDependenciesWithDnf {
         gcc-c++ \
         geoclue2-devel \
         gettext-devel \
+        gnutls-devel \
         gobject-introspection-devel \
         gperf \
         gstreamer1-devel \
@@ -372,6 +374,7 @@ function installDependenciesWithDnf {
         gtk3-devel \
         harfbuzz-devel \
         hyphen-devel \
+        intltool \
 	json-glib-devel \
         libXt-devel \
         libXtst-devel \
@@ -393,12 +396,14 @@ function installDependenciesWithDnf {
         mesa-libGL-devel \
         ninja-build \
 	openssl-devel \
+        patch \
         pcre-devel \
         perl-Switch \
         perl-version \
 	pulseaudio-libs-devel \
         python-devel \
         orc-devel \
+        redhat-rpm-config \
         ruby \
         sqlite-devel"
 
