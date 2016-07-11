@@ -1761,6 +1761,11 @@ bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, 
     if (elementCount && !sawEnabledAttrib && !m_currentProgram->isUsingVertexAttrib0())
         return false;
 
+    if (elementCount && sawEnabledAttrib) {
+        if (!m_boundArrayBuffer && !m_boundVertexArrayObject->getElementArrayBuffer())
+            return false;
+    }
+    
     return true;
 }
 

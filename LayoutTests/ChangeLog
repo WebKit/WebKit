@@ -1,3 +1,14 @@
+2016-07-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Check for existing buffer exists for enabled vertex array attributes before permitting glDrawArrays to execute
+        https://bugs.webkit.org/show_bug.cgi?id=159590
+        <rdar://problem/26865535>
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/webgl-drawarrays-crash-2-expected.txt: Added.
+        * fast/canvas/webgl/webgl-drawarrays-crash-2.html: Added.
+
 2016-07-11  Keith Miller  <keith_miller@apple.com>
 
         STP TypedArray.subarray 5x slowdown compared to 9.1
