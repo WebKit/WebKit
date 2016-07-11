@@ -1,3 +1,15 @@
+2016-07-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Add a test for media control dropoff
+        https://bugs.webkit.org/show_bug.cgi?id=151287
+        <rdar://problem/23544666>
+
+        Unreviewed El Capitan-specific test results after r203057.
+
+        * platform/mac-elcapitan/media/controls: Added.
+        * platform/mac-elcapitan/media/controls/inline-elements-dropoff-order-expected.txt: Added.
+        * platform/mac-yosemite/media/controls: Added.
+
 2016-07-11  Mark Lam  <mark.lam@apple.com>
 
         Change run-webkit-tests.py and run-jsc-stress-tests to use a smaller JS stack size for testing.
