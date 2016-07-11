@@ -1,3 +1,35 @@
+2016-07-11  Nan Wang  <n_wang@apple.com>
+
+        AX: WKWebView should have API to prevent pinch-to-zoom always being allowed
+        https://bugs.webkit.org/show_bug.cgi?id=158364
+
+        Reviewed by Anders Carlsson.
+
+        Added a function in TestRunner so that we can toggle the ignoring viewport
+        scale limits setting. Also added a test option for that in order to change the 
+        configuration of the webview in test.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setNavigationGesturesEnabled):
+        (WTR::TestRunner::setIgnoresViewportScaleLimits):
+        (WTR::nextUIScriptCallbackID):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::shouldDecideNavigationPolicyAfterDelay):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        (WTR::TestController::setNavigationGesturesEnabled):
+        (WTR::TestController::setIgnoresViewportScaleLimits):
+        (WTR::TestController::platformWillRunTest):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setShouldDecideNavigationPolicyAfterDelay):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+
 2016-07-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         [GTK] install-dependencies should not install packages built by jhbuild.

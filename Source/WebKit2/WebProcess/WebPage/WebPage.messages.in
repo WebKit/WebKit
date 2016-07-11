@@ -97,7 +97,7 @@ messages -> WebPage LegacyReceiver {
     GetSelectionContext(uint64_t callbackID)
     SetAllowsMediaDocumentInlinePlayback(bool allows)
     HandleTwoFingerTapAtPoint(WebCore::IntPoint point, uint64_t callbackID)
-    UpdateForceAlwaysUserScalable()
+    SetForceAlwaysUserScalable(bool userScalable)
 #endif
 
     SetControlledByAutomation(bool controlled)

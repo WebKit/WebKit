@@ -314,9 +314,12 @@ void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::Floa
     m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSize(size), m_pageID);
 }
 
-void WebPageProxy::updateForceAlwaysUserScalable()
+void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
 {
-    m_process->send(Messages::WebPage::UpdateForceAlwaysUserScalable(), m_pageID);
+    if (m_forceAlwaysUserScalable == userScalable)
+        return;
+    m_forceAlwaysUserScalable = userScalable;
+    m_process->send(Messages::WebPage::SetForceAlwaysUserScalable(userScalable), m_pageID);
 }
 
 void WebPageProxy::setMaximumUnobscuredSize(const WebCore::FloatSize& size)

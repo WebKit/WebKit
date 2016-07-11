@@ -139,6 +139,7 @@ public:
     void setShouldDecideNavigationPolicyAfterDelay(bool value) { m_shouldDecideNavigationPolicyAfterDelay = value; }
 
     void setNavigationGesturesEnabled(bool value);
+    void setIgnoresViewportScaleLimits(bool);
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);

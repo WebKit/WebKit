@@ -579,7 +579,7 @@ public:
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
     
-    void updateForceAlwaysUserScalable();
+    void setForceAlwaysUserScalable(bool);
 #endif
 
     void setLayerTreeStateIsFrozen(bool);
@@ -1416,7 +1416,7 @@ private:
     bool m_hasPendingBlurNotification;
     bool m_useTestingViewportConfiguration;
     bool m_isInStableState;
-    bool m_forceAlwaysUserScalable { false };
+    bool m_forceAlwaysUserScalable;
     std::chrono::milliseconds m_oldestNonStableUpdateVisibleContentRectsTimestamp;
     std::chrono::milliseconds m_estimatedLatency;
     WebCore::FloatSize m_screenSize;

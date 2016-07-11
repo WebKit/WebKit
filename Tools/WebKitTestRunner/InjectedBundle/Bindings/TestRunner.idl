@@ -79,6 +79,7 @@ interface TestRunner {
     void setPrinting();
     void setShouldDecideNavigationPolicyAfterDelay(boolean value);
     void setNavigationGesturesEnabled(boolean value);
+    void setIgnoresViewportScaleLimits(boolean value);
 
     // Special DOM functions.
     void clearBackForwardList();

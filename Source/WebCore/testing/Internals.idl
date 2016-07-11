@@ -446,7 +446,6 @@ enum UserInterfaceLayoutDirection {
 
     DOMString composedTreeAsText(Node parent);
 
-    void setViewportForceAlwaysUserScalable(boolean scalable);
     void setLinkPreloadSupport(boolean scalable);
 
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT

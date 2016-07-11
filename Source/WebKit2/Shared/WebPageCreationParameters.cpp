@@ -83,6 +83,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << screenSize;
     encoder << availableScreenSize;
     encoder << textAutosizingWidth;
+    encoder << ignoresViewportScaleLimits;
 #endif
     encoder << appleMailPaginationQuirkEnabled;
     encoder << shouldScaleViewToFitDocument;
@@ -186,6 +187,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decode(parameters.availableScreenSize))
         return false;
     if (!decoder.decode(parameters.textAutosizingWidth))
+        return false;
+    if (!decoder.decode(parameters.ignoresViewportScaleLimits))
         return false;
 #endif
 

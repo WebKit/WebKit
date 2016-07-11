@@ -182,6 +182,11 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  */
 @property (nonatomic) WKDataDetectorTypes dataDetectorTypes WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
+/*! @abstract A Boolean value indicating whether the WKWebView should always allow scaling of the web page, regardless of author intent.
+ @discussion This will override the user-scalable property.
+ */
+@property (nonatomic) BOOL ignoresViewportScaleLimits WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 #else
 
 /*! @abstract The directionality of user interface elements.

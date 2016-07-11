@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ ignoresViewportScaleLimits=true ] -->
 <html>
 <head>
 <script src="../../../resources/js-test-pre.js"></script>
@@ -27,7 +27,6 @@
 <script>
     description("This tests that after we set forceAlwaysUserScalable, maximum-scale will be ignored.");
 
-    window.internals.setViewportForceAlwaysUserScalable(true);
     if (window.testRunner) {
         window.jsTestIsAsync = true;
     }
@@ -44,7 +43,7 @@
                 testRunner.runUIScript(uiScript2, function(result) {
                     debug("Maximum zoom scale was: " + result);
                     
-                    window.internals.setViewportForceAlwaysUserScalable(false);
+                    testRunner.setIgnoresViewportScaleLimits(false);
                     testRunner.runUIScript(uiScript2, function(result) {
                         debug("Maximum zoom scale was reset to: " + result);
                         finishJSTest();

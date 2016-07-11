@@ -20,16 +20,16 @@
 <script>
     description("This tests that when the author does not define a scale or width, that zooming in on focused nodes changes the scale.");
 
-    window.internals.setViewportForceAlwaysUserScalable(true);
     if (window.testRunner) {
         window.jsTestIsAsync = true;
+        testRunner.setIgnoresViewportScaleLimits(true);
     }
 
     function runTest()
     {
         if (testRunner.runUIScript) {
             var uiScript = document.getElementById('ui-script').text;
-            window.internals.setViewportForceAlwaysUserScalable(false);
+            testRunner.setIgnoresViewportScaleLimits(false);
             document.getElementById("textfield").focus();
             testRunner.runUIScript(document.getElementById('ui-script').text, function(result) {
                 debug("Maximum zoom scale was: " + Number(result).toFixed(2));

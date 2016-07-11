@@ -1,3 +1,54 @@
+2016-07-11  Nan Wang  <n_wang@apple.com>
+
+        AX: WKWebView should have API to prevent pinch-to-zoom always being allowed
+        https://bugs.webkit.org/show_bug.cgi?id=158364
+
+        Reviewed by Anders Carlsson.
+
+        Added a property in WKWebViewConfiguration so that developers can toggle the ignoring
+        viewport scale limits setting.
+
+        Changes are covered in modified tests.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetResourceCachingDisabled):
+        (WKPageSetIgnoresViewportScaleLimits):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldAllowPictureInPictureMediaPlayback):
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _navigationGestureDidEnd]):
+        (forceAlwaysUserScalableChangedCallback): Deleted.
+        (-[WKWebView _updateForceAlwaysUserScalable]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setViewportConfigurationMinimumLayoutSize):
+        (WebKit::WebPageProxy::setForceAlwaysUserScalable):
+        (WebKit::WebPageProxy::setMaximumUnobscuredSize):
+        (WebKit::WebPageProxy::updateForceAlwaysUserScalable): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::disableInspectorNodeSearch):
+        (WebKit::WebPage::setForceAlwaysUserScalable):
+        (WebKit::innerFrameQuad):
+        (WebKit::WebPage::updateForceAlwaysUserScalable): Deleted.
+
 2016-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Use refs for ResourceLoaders

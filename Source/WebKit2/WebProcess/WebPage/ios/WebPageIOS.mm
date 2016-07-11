@@ -101,16 +101,6 @@
 #import <wtf/MathExtras.h>
 #import <wtf/TemporaryChange.h>
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-#if __has_include(<AccessibilitySupport.h>) 
-#include <AccessibilitySupport.h>
-#else
-extern "C" {
-Boolean _AXSForceAllowWebScaling();
-}
-#endif
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -803,13 +793,10 @@ void WebPage::disableInspectorNodeSearch()
     send(Messages::WebPageProxy::DisableInspectorNodeSearch());
 }
 
-void WebPage::updateForceAlwaysUserScalable()
+void WebPage::setForceAlwaysUserScalable(bool userScalable)
 {
-    bool forceAlwaysUserScalable = m_forceAlwaysUserScalable;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-    forceAlwaysUserScalable |= _AXSForceAllowWebScaling();
-#endif
-    m_viewportConfiguration.setForceAlwaysUserScalable(forceAlwaysUserScalable);
+    m_forceAlwaysUserScalable = userScalable;
+    m_viewportConfiguration.setForceAlwaysUserScalable(userScalable);
 }
 
 static FloatQuad innerFrameQuad(const Frame& frame, const Node& assistedNode)

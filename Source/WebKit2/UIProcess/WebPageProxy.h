@@ -521,7 +521,7 @@ public:
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
     void getSelectionContext(std::function<void(const String&, const String&, const String&, CallbackBase::Error)>);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
-    void updateForceAlwaysUserScalable();
+    void setForceAlwaysUserScalable(bool);
 #endif
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResult(const DataDetectionResult&);
@@ -1855,6 +1855,7 @@ private:
 #if PLATFORM(IOS)
     bool m_hasDeferredStartAssistingNode { false };
     std::unique_ptr<NodeAssistanceArguments> m_deferredNodeAssistanceArguments;
+    bool m_forceAlwaysUserScalable { false };
 #endif
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
