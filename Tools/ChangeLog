@@ -1,3 +1,30 @@
+2016-07-11  Olivier Blin  <olivier.blin@softathome.com>
+
+        System proxy settings not used when building deps with jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=159567
+
+        Reviewed by Michael Catanzaro.
+
+        This adds the gsettings-desktop-schemas-devel build dep to enable
+        the libgiognomeproxy.so gio module in glib-networking, which uses
+        GSettings on org.gnome.system.proxy.
+        This is needed to query system proxy settings for Gnome desktops.
+
+        dconf can be manually added to jhbuild to build the
+        libdconfsettings.so gio module for GSettings, so that
+        libgiognomeproxy.so can access system settings.
+          https://trac.webkit.org/wiki/WebKitGTK/StartHacking#Workingbehindaproxy
+
+        As an alternative to dconf settings, this commit also adds the
+        libproxy-devel build dep to enable the libgiolibproxy.so module in
+        glib-networking (suggested by Fujii Hironori).
+
+        It is useful to read proxy settings from environment variables.
+        From a Gnome desktop, one may unset the GNOME_DESKTOP_SESSION_ID
+        environment variable to force using the envvar module in libproxy.
+
+        * gtk/install-dependencies:
+
 2016-07-11  Mark Lam  <mark.lam@apple.com>
 
         Change run-webkit-tests.py and run-jsc-stress-tests to use a smaller JS stack size for testing.

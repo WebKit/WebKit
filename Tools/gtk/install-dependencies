@@ -151,6 +151,7 @@ function installDependenciesWithApt {
     packages="$packages \
         git \
         gobject-introspection \
+        gsettings-desktop-schemas-dev \
         icon-naming-utils \
         libcroco3-dev \
         libdrm-dev \
@@ -168,6 +169,7 @@ function installDependenciesWithApt {
         liborc-0.4-dev \
         libp11-kit-dev \
         libpciaccess-dev \
+        libproxy-dev \
         libssl-dev \
         libtiff5-dev \
         libv4l-dev \
@@ -303,6 +305,7 @@ function installDependenciesWithPacman {
         expat \
         git \
         gobject-introspection \
+        gsettings-desktop-schemas \
         icon-naming-utils \
         libcroco \
         libdrm \
@@ -313,6 +316,7 @@ function installDependenciesWithPacman {
         libinput \
         p11-kit \
         libpciaccess \
+        libproxy \
         libtiff \
         libxfixes \
         libxfont \
@@ -433,6 +437,7 @@ function installDependenciesWithDnf {
         docbook-utils-pdf \
         git \
         gobject-introspection \
+        gsettings-desktop-schemas-devel \
         icon-naming-utils \
         itstool \
         libXfont-devel \
@@ -445,6 +450,7 @@ function installDependenciesWithDnf {
         libinput-devel \
         libp11-devel \
         libpciaccess-devel \
+        libproxy-devel \
         libtiff-devel \
         libxcb-devel \
         libxkbfile-devel \
