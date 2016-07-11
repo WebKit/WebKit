@@ -1,3 +1,12 @@
+2016-07-11  Dan Bernstein  <mitz@apple.com>
+
+        Cleaned up API availability.
+
+        Requested by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+
 2016-07-11  Enrica Casucci  <enrica@apple.com>
 
         Add synthetic click origin to WKNavigationAction.

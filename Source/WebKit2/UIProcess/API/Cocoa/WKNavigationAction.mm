@@ -55,6 +55,7 @@ static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationTyp
     return WKNavigationTypeOther;
 }
 
+#if PLATFORM(IOS)
 static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::SyntheticClickType syntheticClickType)
 {
     switch (syntheticClickType) {
@@ -68,6 +69,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
     ASSERT_NOT_REACHED();
     return WKSyntheticClickTypeNoTap;
 }
+#endif
 
 #if PLATFORM(MAC)
 
@@ -150,10 +152,12 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
     return _navigationAction->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
 }
 
+#if PLATFORM(IOS)
 - (WKSyntheticClickType)_syntheticClickType
 {
     return toWKSyntheticClickType(_navigationAction->syntheticClickType());
 }
+#endif
 
 #if PLATFORM(MAC)
 - (NSEventModifierFlags)modifierFlags
