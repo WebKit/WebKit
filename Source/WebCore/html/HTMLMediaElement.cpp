@@ -5454,7 +5454,7 @@ void HTMLMediaElement::exitFullscreen()
     if (hasMediaControls())
         mediaControls()->exitedFullscreen();
     if (document().page() && is<HTMLVideoElement>(*this)) {
-        if (m_mediaSession->requiresFullscreenForVideoPlayback(*this) && (!document().settings() || !document().settings()->allowsInlineMediaPlaybackAfterFullscreen()))
+        if (m_mediaSession->requiresFullscreenForVideoPlayback(*this) && (!document().settings() || !document().settings()->allowsInlineMediaPlaybackAfterFullscreen() || isVideoTooSmallForInlinePlayback()))
             pauseInternal();
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -7067,6 +7067,17 @@ void HTMLMediaElement::allowsMediaDocumentInlinePlaybackChanged()
 {
     if (potentiallyPlaying() && m_mediaSession->requiresFullscreenForVideoPlayback(*this) && !isFullscreen())
         enterFullscreen();
+}
+    
+bool HTMLMediaElement::isVideoTooSmallForInlinePlayback()
+{
+    auto* renderer = this->renderer();
+    
+    if (!renderer || !is<RenderVideo>(*renderer))
+        return true;
+    
+    IntRect videoBox = downcast<RenderVideo>(*renderer).videoBox();
+    return (videoBox.width() <= 1 || videoBox.height() <= 1);
 }
 
 static bool mediaElementIsAllowedToAutoplay(const HTMLMediaElement& element)

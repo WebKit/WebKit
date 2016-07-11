@@ -779,6 +779,7 @@ private:
     bool hasPlaybackTargetAvailabilityListeners() const { return m_hasPlaybackTargetAvailabilityListeners; }
 #endif
 
+    bool isVideoTooSmallForInlinePlayback();
     void isVisibleInViewportChanged() final;
     void updateShouldAutoplay();
 
