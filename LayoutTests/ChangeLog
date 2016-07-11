@@ -1,3 +1,14 @@
+2016-07-11  Frederic Wang  <fwang@igalia.com>
+
+        Update expectations for some MathML pixel tests on EFL.
+
+        Unreviewed test gardening.
+
+        * platform/efl/mathml/opentype/vertical-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/efl/mathml/presentation/roots-expected.txt:
+        * platform/efl/mathml/radical-fallback-expected.txt:
+
 2016-07-10  Chris Dumez  <cdumez@apple.com>
 
         Setting document.title reuses <title>'s textnode child
