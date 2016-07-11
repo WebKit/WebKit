@@ -1,5 +1,13 @@
 2016-07-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Whitespace fixes in install-dependencies script
+
+        Unreviewed.
+
+        * gtk/install-dependencies:
+
+2016-07-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Install missing Fedora dependencies
 
         Unreviewed.

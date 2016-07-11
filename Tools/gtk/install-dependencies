@@ -375,7 +375,7 @@ function installDependenciesWithDnf {
         harfbuzz-devel \
         hyphen-devel \
         intltool \
-	json-glib-devel \
+        json-glib-devel \
         libXt-devel \
         libXtst-devel \
         libedit-devel \
@@ -386,7 +386,7 @@ function installDependenciesWithDnf {
         libpng-devel \
         libsecret-devel \
         libsoup-devel \
-	libv4l-devel \
+        libv4l-devel \
         libwebp-devel \
         libwayland-client-devel \
         libwayland-server-devel \
@@ -395,12 +395,12 @@ function installDependenciesWithDnf {
         llvm-static \
         mesa-libGL-devel \
         ninja-build \
-	openssl-devel \
+        openssl-devel \
         patch \
         pcre-devel \
         perl-Switch \
         perl-version \
-	pulseaudio-libs-devel \
+        pulseaudio-libs-devel \
         python-devel \
         orc-devel \
         redhat-rpm-config \
