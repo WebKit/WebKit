@@ -47,16 +47,17 @@ Ref<MathMLStyle> MathMLStyle::create()
     return adoptRef(*new MathMLStyle());
 }
 
-void MathMLStyle::setDisplayStyle(RenderObject* renderer)
+const MathMLStyle* MathMLStyle::getMathMLStyle(RenderObject* renderer)
 {
-    if (!renderer)
-        return;
+    if (renderer) {
+        // FIXME: Should we make RenderMathMLTable derive from RenderMathMLBlock in order to simplify this?
+        if (is<RenderMathMLTable>(renderer))
+            return downcast<RenderMathMLTable>(renderer)->mathMLStyle();
+        if (is<RenderMathMLBlock>(renderer))
+            return downcast<RenderMathMLBlock>(renderer)->mathMLStyle();
+    }
 
-    // FIXME: Should we make RenderMathMLTable derive from RenderMathMLBlock in order to simplify this?
-    if (is<RenderMathMLTable>(renderer))
-        m_displayStyle = downcast<RenderMathMLTable>(renderer)->mathMLStyle()->displayStyle();
-    else if (is<RenderMathMLBlock>(renderer))
-        m_displayStyle = downcast<RenderMathMLBlock>(renderer)->mathMLStyle()->displayStyle();
+    return nullptr;
 }
 
 void MathMLStyle::resolveMathMLStyleTree(RenderObject* renderer)
@@ -80,7 +81,7 @@ RenderObject* MathMLStyle::getMathMLParentNode(RenderObject* renderer)
     return parentRenderer;
 }
 
-void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplayStyle)
+void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplayStyle, MathVariant oldMathVariant)
 {
     if (oldDisplayStyle != m_displayStyle) {
         renderer->setNeedsLayoutAndPrefWidthsRecalc();
@@ -91,6 +92,51 @@ void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplaySty
         else if (is<RenderMathMLFraction>(renderer))
             downcast<RenderMathMLFraction>(renderer)->updateFromElement();
     }
+    if (oldMathVariant != m_mathVariant) {
+        if (is<RenderMathMLToken>(renderer))
+            downcast<RenderMathMLToken>(renderer)->updateTokenContent();
+    }
+}
+
+MathMLStyle::MathVariant MathMLStyle::parseMathVariant(const AtomicString& attributeValue)
+{
+    if (attributeValue == "normal")
+        return Normal;
+    if (attributeValue == "bold")
+        return Bold;
+    if (attributeValue == "italic")
+        return Italic;
+    if (attributeValue == "bold-italic")
+        return BoldItalic;
+    if (attributeValue == "double-struck")
+        return DoubleStruck;
+    if (attributeValue == "bold-fraktur")
+        return BoldFraktur;
+    if (attributeValue == "script")
+        return Script;
+    if (attributeValue == "bold-script")
+        return BoldScript;
+    if (attributeValue == "fraktur")
+        return Fraktur;
+    if (attributeValue == "sans-serif")
+        return SansSerif;
+    if (attributeValue == "bold-sans-serif")
+        return BoldSansSerif;
+    if (attributeValue == "sans-serif-italic")
+        return SansSerifItalic;
+    if (attributeValue == "sans-serif-bold-italic")
+        return SansSerifBoldItalic;
+    if (attributeValue == "monospace")
+        return Monospace;
+    if (attributeValue == "initial")
+        return Initial;
+    if (attributeValue == "tailed")
+        return Tailed;
+    if (attributeValue == "looped")
+        return Looped;
+    if (attributeValue == "stretched")
+        return Stretched;
+    return None;
 }
 
 void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
@@ -98,11 +144,21 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
     ASSERT(renderer);
 
     bool oldDisplayStyle = m_displayStyle;
+    MathVariant oldMathVariant = m_mathVariant;
+    auto* parentRenderer = getMathMLParentNode(renderer);
+    const MathMLStyle* parentStyle = getMathMLStyle(parentRenderer);
 
-    // For anonymous renderers, we just inherit the style from our parent.
+    // By default, we just inherit the style from our parent.
+    m_displayStyle = false;
+    m_mathVariant = None;
+    if (parentStyle) {
+        setDisplayStyle(parentStyle->displayStyle());
+        setMathVariant(parentStyle->mathVariant());
+    }
+
+    // Early return for anonymous renderers.
     if (renderer->isAnonymous()) {
-        setDisplayStyle(getMathMLParentNode(renderer));
-        updateStyleIfNeeded(renderer, oldDisplayStyle);
+        updateStyleIfNeeded(renderer, oldDisplayStyle, oldMathVariant);
         return;
     }
 
@@ -110,8 +166,7 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
         m_displayStyle = downcast<RenderElement>(renderer)->element()->fastGetAttribute(displayAttr) == "block"; // The default displaystyle of the <math> element depends on its display attribute.
     else if (is<RenderMathMLTable>(renderer))
         m_displayStyle = false; // The default displaystyle of <mtable> is false.
-    else if (auto* parentRenderer = getMathMLParentNode(renderer)) {
-        setDisplayStyle(parentRenderer); // The default displaystyle is inherited from our parent.
+    else if (parentRenderer) {
         if (is<RenderMathMLFraction>(parentRenderer))
             m_displayStyle = false; // <mfrac> sets displaystyle to false within its numerator and denominator.
         else if ((is<RenderMathMLRoot>(parentRenderer) && !parentRenderer->isRenderMathMLSquareRoot()) || is<RenderMathMLScripts>(parentRenderer) || is<RenderMathMLUnderOver>(parentRenderer)) {
@@ -134,7 +189,14 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
             m_displayStyle = false;
     }
 
-    updateStyleIfNeeded(renderer, oldDisplayStyle);
+    // The mathvariant attribute on the <math>, <mstyle> or token elements overrides the default behavior.
+    if (is<RenderMathMLMath>(renderer) || is<RenderMathMLToken>(renderer) || tagName == mstyleTag) {
+        MathVariant mathvariant = parseMathVariant(element->fastGetAttribute(mathvariantAttr));
+        if (mathvariant != None)
+            m_mathVariant = mathvariant;
+    }
+
+    updateStyleIfNeeded(renderer, oldDisplayStyle, oldMathVariant);
 }
 
 }

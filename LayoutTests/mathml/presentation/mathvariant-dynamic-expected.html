@@ -1,0 +1,48 @@
+<!doctype html>
+<html class="reftest-wait">
+  <head>
+    <title>mathvariant dynamic</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- Modifying mathvariant on the <math> element -->
+    <math id="m1" mathvariant="script">
+      <mtext>A</mtext>
+    </math><br/>
+    <math id="m2">
+      <mtext>A</mtext>
+    </math><br/>
+    <math id="m3" mathvariant="bold">
+      <mtext>A</mtext>
+    </math><br/>
+
+    <!-- Modifying mathvariant on the <mstyle> element -->
+    <math>
+      <mstyle id="m4" mathvariant="script">
+        <mtext>A</mtext>
+      </mstyle>
+    </math><br/>
+    <math>
+      <mstyle id="m5">
+        <mtext>A</mtext>
+      </mstyle>
+    </math><br/>
+    <math>
+      <mstyle id="m6" mathvariant="bold">
+        <mtext>A</mtext>
+      </mstyle>
+    </math><br/>
+
+    <!-- Modifying mathvariant on a token element -->
+    <math>
+      <mtext id="m7" mathvariant="script">A</mtext>
+    </math><br/>
+    <math>
+      <mtext id="m8">A</mtext>
+    </math><br/>
+    <math>
+      <mtext id="m9" mathvariant="bold">A</mtext>
+    </math>
+  </body>
+</html>

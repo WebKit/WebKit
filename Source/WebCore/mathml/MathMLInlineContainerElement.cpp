@@ -88,7 +88,9 @@ RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(Ren
 
 void MathMLInlineContainerElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == displaystyleAttr && (hasTagName(mstyleTag) || hasTagName(mtableTag)) && renderer())
+    bool displayStyleAttribute = (name == displaystyleAttr && (hasTagName(mstyleTag) || hasTagName(mtableTag)));
+    bool mathVariantAttribute = (name == mathvariantAttr && (hasTagName(mathTag) || hasTagName(mstyleTag)));
+    if ((displayStyleAttribute || mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 
     MathMLElement::parseAttribute(name, value);

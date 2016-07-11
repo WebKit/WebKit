@@ -325,6 +325,7 @@ void RenderMathMLOperator::updateTokenContent(const String& operatorString)
 void RenderMathMLOperator::updateTokenContent()
 {
     ASSERT(!isAnonymous());
+    RenderMathMLToken::updateTokenContent();
     rebuildTokenContent(element().textContent());
 }
 

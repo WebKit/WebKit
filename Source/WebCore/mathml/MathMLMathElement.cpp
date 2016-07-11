@@ -55,7 +55,7 @@ RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(RenderStyle&& 
 
 void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if ((name == displaystyleAttr || name == displayAttr) && hasTagName(mathTag) && renderer())
+    if ((name == displaystyleAttr || name == displayAttr || name == mathvariantAttr) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 
     MathMLInlineContainerElement::parseAttribute(name, value);
