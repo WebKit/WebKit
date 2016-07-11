@@ -86,7 +86,7 @@ protected:
 private:
     virtual void initializeVoiceList();
 
-    bool m_voiceListIsInitialized;
+    bool m_voiceListIsInitialized { false };
     PlatformSpeechSynthesizerClient* m_speechSynthesizerClient;
     
 #if PLATFORM(COCOA)
