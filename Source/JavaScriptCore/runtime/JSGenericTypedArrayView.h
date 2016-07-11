@@ -178,8 +178,6 @@ public:
 
     static ElementType toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue) { return toNativeFromValue<Adaptor>(exec, jsValue); }
 
-    static bool toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue, ElementType& result) { return toNativeFromValue<Adaptor>(exec, jsValue, result); }
-
     bool setRangeToValue(ExecState* exec, unsigned start, unsigned end, JSValue jsValue)
     {
         ASSERT(0 <= start && start <= end && end <= m_length);
