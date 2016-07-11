@@ -51,9 +51,9 @@ public:
     virtual RefPtr<SubresourceLoader> loadResource(Frame&, CachedResource&, const ResourceRequest&, const ResourceLoaderOptions&) = 0;
     virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data) = 0;
 
-    virtual void remove(ResourceLoader&) = 0;
-    virtual void setDefersLoading(ResourceLoader&, bool) = 0;
-    virtual void crossOriginRedirectReceived(ResourceLoader&, const URL& redirectURL) = 0;
+    virtual void remove(ResourceLoader*) = 0;
+    virtual void setDefersLoading(ResourceLoader*, bool) = 0;
+    virtual void crossOriginRedirectReceived(ResourceLoader*, const URL& redirectURL) = 0;
 
     virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriority::VeryLow) = 0;
     virtual void suspendPendingRequests() = 0;

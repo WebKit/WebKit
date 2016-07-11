@@ -46,9 +46,9 @@ public:
     RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
     void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
 
-    void remove(WebCore::ResourceLoader&) override;
-    void setDefersLoading(WebCore::ResourceLoader&, bool) override;
-    void crossOriginRedirectReceived(WebCore::ResourceLoader&, const WebCore::URL& redirectURL) override;
+    void remove(WebCore::ResourceLoader*) override;
+    void setDefersLoading(WebCore::ResourceLoader*, bool) override;
+    void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) override;
     
     void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority) override;
 
@@ -68,7 +68,7 @@ private:
     void internallyFailedLoadTimerFired();
     void startLocalLoad(WebCore::ResourceLoader&);
 
-    HashSet<Ref<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
+    HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;
     
     HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
