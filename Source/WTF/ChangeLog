@@ -1,3 +1,29 @@
+2016-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement grapheme cluster iterator on StringView
+        https://bugs.webkit.org/show_bug.cgi?id=159598
+
+        Reviewed by Anders Carlsson.
+
+        This is in preparation for honoring the second argument to FontFaceSet.load().
+
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::GraphemeClusters::Iterator::Impl::Impl):
+        (WTF::StringView::GraphemeClusters::Iterator::Impl::operator++):
+        (WTF::StringView::GraphemeClusters::Iterator::Impl::operator*):
+        (WTF::StringView::GraphemeClusters::Iterator::Impl::operator==):
+        (WTF::StringView::GraphemeClusters::Iterator::Impl::computeIndexEnd):
+        (WTF::StringView::GraphemeClusters::Iterator::Iterator):
+        (WTF::StringView::GraphemeClusters::Iterator::~Iterator):
+        (WTF::StringView::GraphemeClusters::Iterator::operator*):
+        (WTF::StringView::GraphemeClusters::Iterator::operator==):
+        (WTF::StringView::GraphemeClusters::Iterator::operator!=):
+        * wtf/text/StringView.h:
+        (WTF::StringView::GraphemeClusters::GraphemeClusters):
+        * text/TextBreakIterator.cpp:
+        (WebCore::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator):
+        * text/TextBreakIterator.h:
+
 2016-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move breaking iterator code to WTF

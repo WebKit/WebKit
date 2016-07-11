@@ -198,6 +198,8 @@ public:
     WTF_EXPORT_PRIVATE NonSharedCharacterBreakIterator(StringView);
     WTF_EXPORT_PRIVATE ~NonSharedCharacterBreakIterator();
 
+    NonSharedCharacterBreakIterator(NonSharedCharacterBreakIterator&&);
+
     operator TextBreakIterator*() const { return m_iterator; }
 
 private:

@@ -82,6 +82,9 @@ public:
     class CodePoints;
     CodePoints codePoints() const;
 
+    class GraphemeClusters;
+    GraphemeClusters graphemeClusters() const;
+
     bool is8Bit() const;
     const LChar* characters8() const;
     const UChar* characters16() const;
@@ -580,6 +583,18 @@ inline bool equalIgnoringASCIICase(StringView a, const char* b)
     return equalIgnoringASCIICaseCommon(a, b);
 }
 
+class StringView::GraphemeClusters {
+public:
+    explicit GraphemeClusters(const StringView&);
+
+    class Iterator;
+    Iterator begin() const;
+    Iterator end() const;
+
+private:
+    StringView m_stringView;
+};
+
 class StringView::CodePoints {
 public:
     explicit CodePoints(const StringView&);
@@ -602,6 +617,29 @@ public:
 
 private:
     StringView m_stringView;
+};
+
+class StringView::GraphemeClusters::Iterator {
+public:
+    WTF_EXPORT_PRIVATE Iterator() = delete;
+    WTF_EXPORT_PRIVATE Iterator(const StringView&, unsigned index);
+    WTF_EXPORT_PRIVATE ~Iterator();
+
+    Iterator(const Iterator&) = delete;
+    WTF_EXPORT_PRIVATE Iterator(Iterator&&);
+    Iterator& operator=(const Iterator&) = delete;
+    Iterator& operator=(Iterator&&) = delete;
+
+    WTF_EXPORT_PRIVATE StringView operator*() const;
+    WTF_EXPORT_PRIVATE Iterator& operator++();
+
+    WTF_EXPORT_PRIVATE bool operator==(const Iterator&) const;
+    WTF_EXPORT_PRIVATE bool operator!=(const Iterator&) const;
+
+private:
+    class Impl;
+
+    std::unique_ptr<Impl> m_impl;
 };
 
 class StringView::CodePoints::Iterator {
@@ -637,6 +675,11 @@ private:
     unsigned m_index;
 };
 
+inline auto StringView::graphemeClusters() const -> GraphemeClusters
+{
+    return GraphemeClusters(*this);
+}
+
 inline auto StringView::codePoints() const -> CodePoints
 {
     return CodePoints(*this);
@@ -645,6 +688,21 @@ inline auto StringView::codePoints() const -> CodePoints
 inline auto StringView::codeUnits() const -> CodeUnits
 {
     return CodeUnits(*this);
+}
+
+inline StringView::GraphemeClusters::GraphemeClusters(const StringView& stringView)
+    : m_stringView(stringView)
+{
+}
+
+inline auto StringView::GraphemeClusters::begin() const -> Iterator
+{
+    return Iterator(m_stringView, 0);
+}
+
+inline auto StringView::GraphemeClusters::end() const -> Iterator
+{
+    return Iterator(m_stringView, m_stringView.length());
 }
 
 inline StringView::CodePoints::CodePoints(const StringView& stringView)

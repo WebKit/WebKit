@@ -819,7 +819,7 @@ NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(StringView stri
 {
     m_iterator = nonSharedCharacterBreakIterator;
 
-    bool createdIterator = m_iterator && compareAndSwapNonSharedCharacterBreakIterator(m_iterator, 0);
+    bool createdIterator = m_iterator && compareAndSwapNonSharedCharacterBreakIterator(m_iterator, nullptr);
     if (!createdIterator)
         m_iterator = initializeIterator(UBRK_CHARACTER);
     if (!m_iterator)
@@ -832,6 +832,12 @@ NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
 {
     if (!compareAndSwapNonSharedCharacterBreakIterator(0, m_iterator))
         ubrk_close(reinterpret_cast<UBreakIterator*>(m_iterator));
+}
+
+NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(NonSharedCharacterBreakIterator&& other)
+    : m_iterator(nullptr)
+{
+    std::swap(m_iterator, other.m_iterator);
 }
 
 

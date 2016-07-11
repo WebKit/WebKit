@@ -78,6 +78,14 @@ TEST(WTF, StringViewEmptyVsNull)
         SUCCEED();
 }
 
+bool compareLoopIterations(StringView::GraphemeClusters graphemeClusters, std::vector<StringView> expected)
+{
+    std::vector<StringView> actual;
+    for (auto graphemeCluster : graphemeClusters)
+        actual.push_back(graphemeCluster);
+    return actual == expected;
+}
+
 bool compareLoopIterations(StringView::CodePoints codePoints, std::vector<UChar32> expected)
 {
     std::vector<UChar32> actual;
@@ -103,43 +111,86 @@ static void build(StringBuilder& builder, std::vector<UChar> input)
 
 TEST(WTF, StringViewIterators)
 {
-    compareLoopIterations(StringView().codePoints(), { });
-    compareLoopIterations(StringView().codeUnits(), { });
+    EXPECT_TRUE(compareLoopIterations(StringView().codePoints(), { }));
+    EXPECT_TRUE(compareLoopIterations(StringView().codeUnits(), { }));
+    EXPECT_TRUE(compareLoopIterations(StringView().graphemeClusters(), { }));
 
-    compareLoopIterations(StringView::empty().codePoints(), { });
-    compareLoopIterations(StringView::empty().codeUnits(), { });
+    EXPECT_TRUE(compareLoopIterations(StringView::empty().codePoints(), { }));
+    EXPECT_TRUE(compareLoopIterations(StringView::empty().codeUnits(), { }));
+    EXPECT_TRUE(compareLoopIterations(StringView::empty().graphemeClusters(), { }));
 
-    compareLoopIterations(StringView(String("hello")).codePoints(), {'h', 'e', 'l', 'l', 'o'});
-    compareLoopIterations(StringView(String("hello")).codeUnits(), {'h', 'e', 'l', 'l', 'o'});
+    String helo("helo");
+    StringView heloView(helo);
+
+    EXPECT_TRUE(compareLoopIterations(heloView.codePoints(), {'h', 'e', 'l', 'o'}));
+    EXPECT_TRUE(compareLoopIterations(heloView.codeUnits(), {'h', 'e', 'l', 'o'}));
+    EXPECT_TRUE(compareLoopIterations(heloView.graphemeClusters(), {
+        StringView(heloView.characters8(), 1),
+        StringView(heloView.characters8() + 1, 1),
+        StringView(heloView.characters8() + 2, 1),
+        StringView(heloView.characters8() + 3, 1)}));
 
     StringBuilder b;
     build(b, {0xD800, 0xDD55}); // Surrogates for unicode code point U+10155
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x10155}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 0xDD55}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.toString())}));
 
     build(b, {0xD800}); // Leading surrogate only
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.toString())}));
 
     build(b, {0xD800, 0xD801}); // Two leading surrogates
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800, 0xD801}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 0xD801}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.characters16(), 1), StringView(b.characters16() + 1, 1)}));
 
     build(b, {0xDD55}); // Trailing surrogate only
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xDD55}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xDD55}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.toString())}));
 
     build(b, {0xD800, 'h'}); // Leading surrogate followed by non-surrogate
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800, 'h'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 'h'}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.characters16(), 1), StringView(b.characters16() + 1, 1)}));
 
     build(b, {0x0306}); // "COMBINING BREVE"
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x0306}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x0306}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.toString())}));
 
     build(b, {0x0306, 0xD800, 0xDD55, 'h', 'e', 'l', 'o'}); // Mix of single code unit and multi code unit code points
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x0306, 0x10155, 'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x0306, 0xD800, 0xDD55, 'h', 'e', 'l', 'o'}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
+        StringView(b.characters16(), 1),
+        StringView(b.characters16() + 1, 2),
+        StringView(b.characters16() + 3, 1),
+        StringView(b.characters16() + 4, 1),
+        StringView(b.characters16() + 5, 1),
+        StringView(b.characters16() + 6, 1)}));
+
+    build(b, {'e', 0x0301}); // "COMBINING ACUTE"
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {'e', 0x0301}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {'e', 0x0301}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.toString())}));
+
+    build(b, {'e', 0x0301, 0x0306, 'a'}); // "COMBINING ACUTE" "COMBINING BREVE"
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {'e', 0x0301, 0x0306, 'a'}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {'e', 0x0301, 0x0306, 'a'}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
+        StringView(b.characters16(), 3),
+        StringView(b.characters16() + 3, 1),
+        }));
+
+    build(b, {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}); // Korean combining Jamo
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
+        StringView(b.characters16(), 3),
+        StringView(b.characters16() + 3, 3)}));
 }
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)

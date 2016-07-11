@@ -31,6 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Optional.h>
+#include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/UTF8.h>
 
 namespace WTF {
@@ -89,6 +91,89 @@ CString StringView::utf8(ConversionMode mode) const
 size_t StringView::find(StringView matchString, unsigned start) const
 {
     return findCommon(*this, matchString, start);
+}
+
+class StringView::GraphemeClusters::Iterator::Impl {
+public:
+    Impl(const StringView& stringView, Optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
+        : m_stringView(stringView)
+        , m_iterator(WTFMove(iterator))
+        , m_index(index)
+        , m_indexEnd(computeIndexEnd())
+    {
+    }
+
+    void operator++()
+    {
+        ASSERT(m_indexEnd > m_index);
+        m_index = m_indexEnd;
+        m_indexEnd = computeIndexEnd();
+    }
+
+    StringView operator*() const
+    {
+        if (m_stringView.is8Bit())
+            return StringView(m_stringView.characters8() + m_index, m_indexEnd - m_index);
+        return StringView(m_stringView.characters16() + m_index, m_indexEnd - m_index);
+    }
+
+    bool operator==(const Impl& other) const
+    {
+        ASSERT(&m_stringView == &other.m_stringView);
+        auto result = m_index == other.m_index;
+        ASSERT(!result || m_indexEnd == other.m_indexEnd);
+        return result;
+    }
+
+    unsigned computeIndexEnd()
+    {
+        if (!m_iterator)
+            return 0;
+        if (m_index == m_stringView.length())
+            return m_index;
+        return textBreakFollowing(m_iterator.value(), m_index);
+    }
+
+private:
+    const StringView& m_stringView;
+    Optional<NonSharedCharacterBreakIterator> m_iterator;
+    unsigned m_index;
+    unsigned m_indexEnd;
+};
+
+StringView::GraphemeClusters::Iterator::Iterator(const StringView& stringView, unsigned index)
+    : m_impl(std::make_unique<Impl>(stringView, stringView.isNull() ? Nullopt : Optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
+{
+}
+
+StringView::GraphemeClusters::Iterator::~Iterator()
+{
+}
+
+StringView::GraphemeClusters::Iterator::Iterator(Iterator&& other)
+    : m_impl(WTFMove(other.m_impl))
+{
+}
+
+auto StringView::GraphemeClusters::Iterator::operator++() -> Iterator&
+{
+    ++(*m_impl);
+    return *this;
+}
+
+StringView StringView::GraphemeClusters::Iterator::operator*() const
+{
+    return **m_impl;
+}
+
+bool StringView::GraphemeClusters::Iterator::operator==(const Iterator& other) const
+{
+    return *m_impl == *(other.m_impl);
+}
+
+bool StringView::GraphemeClusters::Iterator::operator!=(const Iterator& other) const
+{
+    return !(*this == other);
 }
 
 #if CHECK_STRINGVIEW_LIFETIME
