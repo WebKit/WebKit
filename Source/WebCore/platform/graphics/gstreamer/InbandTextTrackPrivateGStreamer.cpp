@@ -100,18 +100,18 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
         GRefPtr<GstSample> sample = samples[i];
         GstBuffer* buffer = gst_sample_get_buffer(sample.get());
         if (!buffer) {
-            WARN_MEDIA_MESSAGE("Track %d got sample with no buffer.", m_index);
+            GST_WARNING("Track %d got sample with no buffer.", m_index);
             continue;
         }
         GstMapInfo info;
         gboolean ret = gst_buffer_map(buffer, &info, GST_MAP_READ);
         ASSERT(ret);
         if (!ret) {
-            WARN_MEDIA_MESSAGE("Track %d unable to map buffer.", m_index);
+            GST_WARNING("Track %d unable to map buffer.", m_index);
             continue;
         }
 
-        INFO_MEDIA_MESSAGE("Track %d parsing sample: %.*s", m_index, static_cast<int>(info.size),
+        GST_INFO("Track %d parsing sample: %.*s", m_index, static_cast<int>(info.size),
             reinterpret_cast<char*>(info.data));
         client()->parseWebVTTCueData(this, reinterpret_cast<char*>(info.data), info.size);
         gst_buffer_unmap(buffer, &info);
@@ -127,7 +127,7 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged()
 
     const gchar* streamId;
     gst_event_parse_stream_start(event.get(), &streamId);
-    INFO_MEDIA_MESSAGE("Track %d got stream start for stream %s.", m_index, streamId);
+    GST_INFO("Track %d got stream start for stream %s.", m_index, streamId);
     m_streamId = streamId;
 }
 

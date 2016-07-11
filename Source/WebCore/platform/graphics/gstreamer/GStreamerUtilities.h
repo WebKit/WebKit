@@ -22,22 +22,6 @@
 #include <gst/video/video-format.h>
 #include <gst/video/video-info.h>
 
-#define LOG_MEDIA_MESSAGE(...) do { \
-    GST_DEBUG(__VA_ARGS__); \
-    LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
-
-#define ERROR_MEDIA_MESSAGE(...) do { \
-    GST_ERROR(__VA_ARGS__); \
-    LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
-
-#define INFO_MEDIA_MESSAGE(...) do { \
-    GST_INFO(__VA_ARGS__); \
-    LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
-
-#define WARN_MEDIA_MESSAGE(...) do { \
-    GST_WARNING(__VA_ARGS__); \
-    LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
-
 namespace WebCore {
 
 class IntSize;

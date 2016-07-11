@@ -114,7 +114,7 @@ bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomicString& 
     String language;
     if (getTag(tags, GST_TAG_LANGUAGE_CODE, language)) {
         language = gst_tag_get_language_code_iso_639_1(language.utf8().data());
-        INFO_MEDIA_MESSAGE("Converted track %d's language code to %s.", m_index, language.utf8().data());
+        GST_INFO("Converted track %d's language code to %s.", m_index, language.utf8().data());
         if (language != value) {
             value = language;
             return true;
@@ -128,7 +128,7 @@ bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, S
 {
     GUniqueOutPtr<gchar> tagValue;
     if (gst_tag_list_get_string(tags, tagName, &tagValue.outPtr())) {
-        INFO_MEDIA_MESSAGE("Track %d got %s %s.", m_index, tagName, tagValue.get());
+        GST_INFO("Track %d got %s %s.", m_index, tagName, tagValue.get());
         value = tagValue.get();
         return true;
     }

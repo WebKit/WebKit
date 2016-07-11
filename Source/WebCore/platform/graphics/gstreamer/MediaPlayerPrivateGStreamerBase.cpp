@@ -306,8 +306,8 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     }
 #endif
 
-    LOG_MEDIA_MESSAGE("Original video size: %dx%d", originalSize.width(), originalSize.height());
-    LOG_MEDIA_MESSAGE("Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
+    GST_DEBUG("Original video size: %dx%d", originalSize.width(), originalSize.height());
+    GST_DEBUG("Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
 
     // Calculate DAR based on PAR and video size.
     int displayWidth = originalSize.width() * pixelAspectRatioNumerator;
@@ -321,20 +321,20 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     // Apply DAR to original video size. This is the same behavior as in xvimagesink's setcaps function.
     guint64 width = 0, height = 0;
     if (!(originalSize.height() % displayHeight)) {
-        LOG_MEDIA_MESSAGE("Keeping video original height");
+        GST_DEBUG("Keeping video original height");
         width = gst_util_uint64_scale_int(originalSize.height(), displayWidth, displayHeight);
         height = static_cast<guint64>(originalSize.height());
     } else if (!(originalSize.width() % displayWidth)) {
-        LOG_MEDIA_MESSAGE("Keeping video original width");
+        GST_DEBUG("Keeping video original width");
         height = gst_util_uint64_scale_int(originalSize.width(), displayHeight, displayWidth);
         width = static_cast<guint64>(originalSize.width());
     } else {
-        LOG_MEDIA_MESSAGE("Approximating while keeping original video height");
+        GST_DEBUG("Approximating while keeping original video height");
         width = gst_util_uint64_scale_int(originalSize.height(), displayWidth, displayHeight);
         height = static_cast<guint64>(originalSize.height());
     }
 
-    LOG_MEDIA_MESSAGE("Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
+    GST_DEBUG("Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
     m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
     return m_videoSize;
 }
@@ -344,7 +344,7 @@ void MediaPlayerPrivateGStreamerBase::setVolume(float volume)
     if (!m_volumeElement)
         return;
 
-    LOG_MEDIA_MESSAGE("Setting volume: %f", volume);
+    GST_DEBUG("Setting volume: %f", volume);
     gst_stream_volume_set_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_CUBIC, static_cast<double>(volume));
 }
 
@@ -373,7 +373,7 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange()
 void MediaPlayerPrivateGStreamerBase::volumeChangedCallback(MediaPlayerPrivateGStreamerBase* player)
 {
     // This is called when m_volumeElement receives the notify::volume signal.
-    LOG_MEDIA_MESSAGE("Volume changed to: %f", player->volume());
+    GST_DEBUG("Volume changed to: %f", player->volume());
 
     player->m_notifier.notify(MainThreadNotification::VolumeChanged, [player] { player->notifyPlayerOfVolumeChange(); });
 }
@@ -550,7 +550,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
     }
 
     if (triggerResize) {
-        LOG_MEDIA_MESSAGE("First sample reached the sink, triggering video dimensions update");
+        GST_DEBUG("First sample reached the sink, triggering video dimensions update");
         if (isMainThread())
             m_player->sizeChanged();
         else {
@@ -821,7 +821,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
     GstElement* colorconvert = gst_element_factory_make("glcolorconvert", nullptr);
 
     if (!upload || !colorconvert) {
-        WARN_MEDIA_MESSAGE("Failed to create GstGL elements");
+        GST_WARNING("Failed to create GstGL elements");
         gst_object_unref(videoSink);
 
         if (upload)
@@ -850,7 +850,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
         g_signal_connect(appsink, "new-sample", G_CALLBACK(newSampleCallback), this);
         g_signal_connect(appsink, "new-preroll", G_CALLBACK(newPrerollCallback), this);
     } else {
-        WARN_MEDIA_MESSAGE("Failed to link GstGL elements");
+        GST_WARNING("Failed to link GstGL elements");
         gst_object_unref(videoSink);
         videoSink = nullptr;
     }
@@ -906,12 +906,12 @@ void MediaPlayerPrivateGStreamerBase::setStreamVolumeElement(GstStreamVolume* vo
     // We don't set the initial volume because we trust the sink to keep it for us. See
     // https://bugs.webkit.org/show_bug.cgi?id=118974 for more information.
     if (!m_player->platformVolumeConfigurationRequired()) {
-        LOG_MEDIA_MESSAGE("Setting stream volume to %f", m_player->volume());
+        GST_DEBUG("Setting stream volume to %f", m_player->volume());
         g_object_set(m_volumeElement.get(), "volume", m_player->volume(), NULL);
     } else
-        LOG_MEDIA_MESSAGE("Not setting stream volume, trusting system one");
+        GST_DEBUG("Not setting stream volume, trusting system one");
 
-    LOG_MEDIA_MESSAGE("Setting stream muted %d",  m_player->muted());
+    GST_DEBUG("Setting stream muted %d",  m_player->muted());
     g_object_set(m_volumeElement.get(), "mute", m_player->muted(), NULL);
 
     g_signal_connect_swapped(m_volumeElement.get(), "notify::volume", G_CALLBACK(volumeChangedCallback), this);

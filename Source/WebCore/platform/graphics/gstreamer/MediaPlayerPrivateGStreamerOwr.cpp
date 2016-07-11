@@ -50,7 +50,7 @@ MediaPlayerPrivateGStreamerOwr::MediaPlayerPrivateGStreamerOwr(MediaPlayer* play
 
 MediaPlayerPrivateGStreamerOwr::~MediaPlayerPrivateGStreamerOwr()
 {
-    LOG_MEDIA_MESSAGE("Destroying");
+    GST_TRACE("Destroying");
 
     if (hasAudio())
         m_audioTrack->removeObserver(*this);
@@ -62,7 +62,7 @@ MediaPlayerPrivateGStreamerOwr::~MediaPlayerPrivateGStreamerOwr()
 
 void MediaPlayerPrivateGStreamerOwr::play()
 {
-    LOG_MEDIA_MESSAGE("Play");
+    GST_DEBUG("Play");
 
     if (!m_streamPrivate || !m_streamPrivate->active()) {
         m_readyState = MediaPlayer::HaveNothing;
@@ -76,7 +76,7 @@ void MediaPlayerPrivateGStreamerOwr::play()
 
 void MediaPlayerPrivateGStreamerOwr::pause()
 {
-    LOG_MEDIA_MESSAGE("Pause");
+    GST_DEBUG("Pause");
     m_paused = true;
     stop();
 }
@@ -105,7 +105,7 @@ float MediaPlayerPrivateGStreamerOwr::currentTime() const
     if (static_cast<GstClockTime>(position) != GST_CLOCK_TIME_NONE)
         result = static_cast<double>(position) / GST_SECOND;
 
-    LOG_MEDIA_MESSAGE("Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
+    GST_DEBUG("Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
     gst_query_unref(query);
 
     return result;
@@ -138,7 +138,7 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
     if (!m_audioSink)
         createGSTAudioSinkBin();
 
-    LOG_MEDIA_MESSAGE("Loading MediaStreamPrivate %p", &streamPrivate);
+    GST_DEBUG("Loading MediaStreamPrivate %p", &streamPrivate);
 
     m_streamPrivate = &streamPrivate;
     if (!m_streamPrivate->active()) {
@@ -191,11 +191,11 @@ bool MediaPlayerPrivateGStreamerOwr::internalLoad()
         return false;
     }
 
-    LOG_MEDIA_MESSAGE("Connecting to live stream, descriptor: %p", m_streamPrivate.get());
+    GST_DEBUG("Connecting to live stream, descriptor: %p", m_streamPrivate.get());
 
     for (auto track : m_streamPrivate->tracks()) {
         if (!track->enabled()) {
-            LOG_MEDIA_MESSAGE("Track %s disabled", track->label().ascii().data());
+            GST_DEBUG("Track %s disabled", track->label().ascii().data());
             continue;
         }
 
@@ -222,7 +222,7 @@ bool MediaPlayerPrivateGStreamerOwr::internalLoad()
             track->addObserver(*this);
             break;
         case RealtimeMediaSource::None:
-            WARN_MEDIA_MESSAGE("Loading a track with None type");
+            GST_WARNING("Loading a track with None type");
         }
     }
 
@@ -238,11 +238,11 @@ void MediaPlayerPrivateGStreamerOwr::stop()
 
     m_stopped = true;
     if (m_audioTrack) {
-        LOG_MEDIA_MESSAGE("Stop: disconnecting audio");
+        GST_DEBUG("Stop: disconnecting audio");
         g_object_set(m_audioRenderer.get(), "disabled", TRUE, nullptr);
     }
     if (m_videoTrack) {
-        LOG_MEDIA_MESSAGE("Stop: disconnecting video");
+        GST_DEBUG("Stop: disconnecting video");
         g_object_set(m_videoRenderer.get(), "disabled", TRUE, nullptr);
     }
 }
@@ -286,7 +286,7 @@ bool MediaPlayerPrivateGStreamerOwr::initializeGStreamerAndGStreamerDebugging()
 void MediaPlayerPrivateGStreamerOwr::createGSTAudioSinkBin()
 {
     ASSERT(!m_audioSink);
-    LOG_MEDIA_MESSAGE("Creating audio sink");
+    GST_DEBUG("Creating audio sink");
     // FIXME: volume/mute support: https://webkit.org/b/153828.
 
     GRefPtr<GstElement> sink = gst_element_factory_make("autoaudiosink", 0);
@@ -299,7 +299,7 @@ void MediaPlayerPrivateGStreamerOwr::createGSTAudioSinkBin()
 
 void MediaPlayerPrivateGStreamerOwr::trackEnded(MediaStreamTrackPrivate& track)
 {
-    LOG_MEDIA_MESSAGE("Track ended");
+    GST_DEBUG("Track ended");
 
     if (!m_streamPrivate || !m_streamPrivate->active()) {
         stop();
@@ -314,17 +314,17 @@ void MediaPlayerPrivateGStreamerOwr::trackEnded(MediaStreamTrackPrivate& track)
 
 void MediaPlayerPrivateGStreamerOwr::trackMutedChanged(MediaStreamTrackPrivate&)
 {
-    LOG_MEDIA_MESSAGE("Track muted state changed");
+    GST_DEBUG("Track muted state changed");
 }
 
 void MediaPlayerPrivateGStreamerOwr::trackSettingsChanged(MediaStreamTrackPrivate&)
 {
-    LOG_MEDIA_MESSAGE("Track settings changed");
+    GST_DEBUG("Track settings changed");
 }
 
 void MediaPlayerPrivateGStreamerOwr::trackEnabledChanged(MediaStreamTrackPrivate&)
 {
-    LOG_MEDIA_MESSAGE("Track enabled changed");
+    GST_DEBUG("Track enabled changed");
 }
 
 GstElement* MediaPlayerPrivateGStreamerOwr::createVideoSink()
