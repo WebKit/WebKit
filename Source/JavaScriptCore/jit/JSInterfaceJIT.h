@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 #include "JITCode.h"
 #include "JITOperations.h"
 #include "JSCJSValue.h"
-#include "JSStack.h"
 #include "JSString.h"
 #include "MacroAssembler.h"
 #include <wtf/Vector.h>

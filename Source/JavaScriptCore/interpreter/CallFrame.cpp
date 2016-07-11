@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013-2014, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,14 +102,6 @@ SUPPRESS_ASAN CallSiteIndex CallFrame::unsafeCallSiteIndex() const
 {
     return CallSiteIndex(unsafeCallSiteAsRawBits());
 }
-
-#ifndef NDEBUG
-JSStack* CallFrame::stack()
-{
-    return &interpreter()->stack();
-}
-
-#endif
 
 #if USE(JSVALUE32_64)
 Instruction* CallFrame::currentVPC() const

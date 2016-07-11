@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012, 2013, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #include "JITOperations.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
-#include "JSStack.h"
 #include "MathCommon.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "JSCInlines.h"

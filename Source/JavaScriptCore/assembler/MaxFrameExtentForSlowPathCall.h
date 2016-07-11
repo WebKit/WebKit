@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #ifndef MaxFrameExtentForSlowPathCall_h
 #define MaxFrameExtentForSlowPathCall_h
 
-#include "JSStack.h"
 #include "Register.h"
 #include "StackAlignment.h"
 #include <wtf/Assertions.h>

@@ -27,8 +27,11 @@
  */
 
 #include "config.h"
-#include "JSStackInlines.h"
+#include "CLoopStack.h"
 
+#if !ENABLE(JIT)
+
+#include "CLoopStackInlines.h"
 #include "ConservativeRoots.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
@@ -37,7 +40,6 @@
 
 namespace JSC {
 
-#if !ENABLE(JIT)
 static size_t committedBytesCount = 0;
 
 static size_t commitSize()
@@ -47,17 +49,13 @@ static size_t commitSize()
 }
 
 static StaticLock stackStatisticsMutex;
-#endif // !ENABLE(JIT)
 
-JSStack::JSStack(VM& vm)
+CLoopStack::CLoopStack(VM& vm)
     : m_vm(vm)
     , m_topCallFrame(vm.topCallFrame)
-#if !ENABLE(JIT)
     , m_end(0)
     , m_reservedZoneSizeInRegisters(0)
-#endif
 {
-#if !ENABLE(JIT)
     size_t capacity = Options::maxPerThreadStackUsage();
     ASSERT(capacity && isPageAligned(capacity));
 
@@ -66,13 +64,11 @@ JSStack::JSStack(VM& vm)
     m_commitTop = highAddress();
     
     m_lastStackTop = baseOfStack();
-#endif // !ENABLE(JIT)
 
     m_topCallFrame = 0;
 }
 
-#if !ENABLE(JIT)
-JSStack::~JSStack()
+CLoopStack::~CLoopStack()
 {
     ptrdiff_t sizeToDecommit = reinterpret_cast<char*>(highAddress()) - reinterpret_cast<char*>(m_commitTop);
     m_reservation.decommit(reinterpret_cast<void*>(m_commitTop), sizeToDecommit);
@@ -80,7 +76,7 @@ JSStack::~JSStack()
     m_reservation.deallocate();
 }
 
-bool JSStack::growSlowCase(Register* newTopOfStack)
+bool CLoopStack::grow(Register* newTopOfStack)
 {
     Register* newTopOfStackWithReservedZone = newTopOfStack - m_reservedZoneSizeInRegisters;
 
@@ -108,12 +104,12 @@ bool JSStack::growSlowCase(Register* newTopOfStack)
     return true;
 }
 
-void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
+void CLoopStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
     conservativeRoots.add(topOfStack() + 1, highAddress(), jitStubRoutines, codeBlocks);
 }
 
-void JSStack::sanitizeStack()
+void CLoopStack::sanitizeStack()
 {
 #if !ASAN_ENABLED
     ASSERT(topOfStack() <= baseOfStack());
@@ -128,7 +124,7 @@ void JSStack::sanitizeStack()
 #endif
 }
 
-void JSStack::releaseExcessCapacity()
+void CLoopStack::releaseExcessCapacity()
 {
     Register* highAddressWithReservedZone = highAddress() - m_reservedZoneSizeInRegisters;
     ptrdiff_t delta = reinterpret_cast<char*>(highAddressWithReservedZone) - reinterpret_cast<char*>(m_commitTop);
@@ -137,48 +133,26 @@ void JSStack::releaseExcessCapacity()
     m_commitTop = highAddressWithReservedZone;
 }
 
-void JSStack::addToCommittedByteCount(long byteCount)
+void CLoopStack::addToCommittedByteCount(long byteCount)
 {
     LockHolder locker(stackStatisticsMutex);
     ASSERT(static_cast<long>(committedBytesCount) + byteCount > -1);
     committedBytesCount += byteCount;
 }
 
-void JSStack::setReservedZoneSize(size_t reservedZoneSize)
+void CLoopStack::setReservedZoneSize(size_t reservedZoneSize)
 {
     m_reservedZoneSizeInRegisters = reservedZoneSize / sizeof(Register);
     if (m_commitTop >= (m_end + 1) - m_reservedZoneSizeInRegisters)
-        growSlowCase(m_end + 1);
-}
-#endif // !ENABLE(JIT)
-
-#if ENABLE(JIT)
-Register* JSStack::lowAddress() const
-{
-    ASSERT(wtfThreadData().stack().isGrowingDownward());
-    return reinterpret_cast<Register*>(m_vm.osStackLimitWithReserve());
+        grow(m_end + 1);
 }
 
-Register* JSStack::highAddress() const
+size_t CLoopStack::committedByteCount()
 {
-    ASSERT(wtfThreadData().stack().isGrowingDownward());
-    return reinterpret_cast<Register*>(wtfThreadData().stack().origin());
-}
-#endif // ENABLE(JIT)
-
-size_t JSStack::committedByteCount()
-{
-#if !ENABLE(JIT)
     LockHolder locker(stackStatisticsMutex);
     return committedBytesCount;
-#else
-    // When using the C stack, we don't know how many stack pages are actually
-    // committed. So, we use the current stack usage as an estimate.
-    ASSERT(wtfThreadData().stack().isGrowingDownward());
-    int8_t* current = reinterpret_cast<int8_t*>(&current);
-    int8_t* high = reinterpret_cast<int8_t*>(wtfThreadData().stack().origin());
-    return high - current;
-#endif
 }
 
 } // namespace JSC
+
+#endif // !ENABLE(JIT)

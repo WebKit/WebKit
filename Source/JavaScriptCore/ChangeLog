@@ -1,3 +1,137 @@
+2016-07-11  Mark Lam  <mark.lam@apple.com>
+
+        Refactor JSStack to only be the stack data structure for the C Loop.
+        https://bugs.webkit.org/show_bug.cgi?id=159545
+
+        Reviewed by Geoffrey Garen.
+
+        Changes made:
+        1. Renamed JSStack to CLoopStack.
+        2. Made all of CLoopStack code to conditional on #if !ENABLE(JIT) i.e. they will
+           only be in effect for the C Loop build.
+        3. Changed clients of JSStack to use new equivalent VM APIs:
+            a. JSStack::ensureCapacityFor() => VM::ensureStackCapacityFor()
+            b. JSStack::committedByteCount() => VM::committedStackByteCount()
+        4. Made VM::updateReservedZoneSize() call CLoopStack::setReservedZoneSize()
+           instead of calling it from all the clients of VM::updateReservedZoneSize().
+        5. Removed all unnecessary references to JSStack.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MaxFrameExtentForSlowPathCall.h:
+        * bytecode/BytecodeConventions.h:
+        * dfg/DFGGraph.h:
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::willStartIterating):
+        (JSC::Heap::gatherJSStackRoots):
+        (JSC::Heap::stack): Deleted.
+        * heap/Heap.h:
+        * interpreter/CLoopStack.cpp: Copied from Source/JavaScriptCore/interpreter/JSStack.cpp.
+        (JSC::commitSize):
+        (JSC::CLoopStack::CLoopStack):
+        (JSC::CLoopStack::~CLoopStack):
+        (JSC::CLoopStack::grow):
+        (JSC::CLoopStack::gatherConservativeRoots):
+        (JSC::CLoopStack::sanitizeStack):
+        (JSC::CLoopStack::releaseExcessCapacity):
+        (JSC::CLoopStack::addToCommittedByteCount):
+        (JSC::CLoopStack::setReservedZoneSize):
+        (JSC::CLoopStack::committedByteCount):
+        (JSC::JSStack::JSStack): Deleted.
+        (JSC::JSStack::~JSStack): Deleted.
+        (JSC::JSStack::growSlowCase): Deleted.
+        (JSC::JSStack::gatherConservativeRoots): Deleted.
+        (JSC::JSStack::sanitizeStack): Deleted.
+        (JSC::JSStack::releaseExcessCapacity): Deleted.
+        (JSC::JSStack::addToCommittedByteCount): Deleted.
+        (JSC::JSStack::setReservedZoneSize): Deleted.
+        (JSC::JSStack::lowAddress): Deleted.
+        (JSC::JSStack::highAddress): Deleted.
+        (JSC::JSStack::committedByteCount): Deleted.
+        * interpreter/CLoopStack.h: Copied from Source/JavaScriptCore/interpreter/JSStack.h.
+        (JSC::CLoopStack::containsAddress):
+        (JSC::CLoopStack::lowAddress):
+        (JSC::CLoopStack::highAddress):
+        (JSC::CLoopStack::reservationTop):
+        (JSC::JSStack::containsAddress): Deleted.
+        (JSC::JSStack::lowAddress): Deleted.
+        (JSC::JSStack::highAddress): Deleted.
+        (JSC::JSStack::reservationTop): Deleted.
+        * interpreter/CLoopStackInlines.h: Copied from Source/JavaScriptCore/interpreter/JSStackInlines.h.
+        (JSC::CLoopStack::ensureCapacityFor):
+        (JSC::CLoopStack::topOfFrameFor):
+        (JSC::CLoopStack::topOfStack):
+        (JSC::CLoopStack::shrink):
+        (JSC::CLoopStack::setCLoopStackLimit):
+        (JSC::JSStack::ensureCapacityFor): Deleted.
+        (JSC::JSStack::topOfFrameFor): Deleted.
+        (JSC::JSStack::topOfStack): Deleted.
+        (JSC::JSStack::shrink): Deleted.
+        (JSC::JSStack::grow): Deleted.
+        (JSC::JSStack::setCLoopStackLimit): Deleted.
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::unsafeCallSiteIndex):
+        (JSC::CallFrame::currentVPC):
+        (JSC::CallFrame::stack): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callerFrameAndPC):
+        (JSC::ExecState::unsafeCallerFrameAndPC):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        (JSC::sizeFrameForForwardArguments):
+        (JSC::sizeFrameForVarargs):
+        (JSC::Interpreter::Interpreter):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::cloopStack):
+        (JSC::Interpreter::getOpcode):
+        (JSC::Interpreter::isCallBytecode):
+        (JSC::Interpreter::stack): Deleted.
+        * interpreter/JSStack.cpp: Removed.
+        * interpreter/JSStack.h: Removed.
+        * interpreter/JSStackInlines.h: Removed.
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::dump):
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        * jit/JSInterfaceJIT.h:
+        * jit/SpecializedThunkJIT.h:
+        * jit/ThunkGenerators.cpp:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::llint_stack_check_at_vm_entry):
+        * llint/LLIntThunks.cpp:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/ErrorHandlingScope.cpp:
+        (JSC::ErrorHandlingScope::ErrorHandlingScope):
+        (JSC::ErrorHandlingScope::~ErrorHandlingScope):
+        * runtime/JSGlobalObject.h:
+        * runtime/MemoryStatistics.cpp:
+        (JSC::globalMemoryStatistics):
+        * runtime/StackAlignment.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::updateReservedZoneSize):
+        (JSC::sanitizeStackForVM):
+        (JSC::VM::committedStackByteCount):
+        * runtime/VM.h:
+        (JSC::VM::reservedZoneSize):
+        (JSC::VM::osStackLimitWithReserve):
+        (JSC::VM::addressOfOSStackLimitWithReserve):
+        * runtime/VMInlines.h:
+        (JSC::VM::ensureStackCapacityFor):
+        (JSC::VM::shouldTriggerTermination):
+
 2016-07-11  Keith Miller  <keith_miller@apple.com>
 
         STP TypedArray.subarray 5x slowdown compared to 9.1

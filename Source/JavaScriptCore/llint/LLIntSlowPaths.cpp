@@ -46,7 +46,6 @@
 #include "JSCJSValue.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
-#include "JSStackInlines.h"
 #include "JSString.h"
 #include "JSWithScope.h"
 #include "LLIntCommon.h"
@@ -498,8 +497,8 @@ LLINT_SLOW_PATH_DECL(stack_check)
     // Hence, if we get here, then we know a stack overflow is imminent. So, just
     // throw the StackOverflowError unconditionally.
 #if !ENABLE(JIT)
-    ASSERT(!vm.interpreter->stack().containsAddress(exec->topOfFrame()));
-    if (LIKELY(vm.interpreter->stack().ensureCapacityFor(exec->topOfFrame())))
+    ASSERT(!vm.interpreter->cloopStack().containsAddress(exec->topOfFrame()));
+    if (LIKELY(vm.ensureStackCapacityFor(exec->topOfFrame())))
         LLINT_RETURN_TWO(pc, 0);
 #endif
 
@@ -1352,7 +1351,7 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
     // - Set up a call frame while respecting the variable arguments.
     
     unsigned numUsedStackSlots = -pc[5].u.operand;
-    unsigned length = sizeFrameForVarargs(exec, &vm.interpreter->stack(),
+    unsigned length = sizeFrameForVarargs(exec, vm,
         LLINT_OP_C(4).jsValue(), numUsedStackSlots, pc[6].u.operand);
     LLINT_CALL_CHECK_EXCEPTION(exec, exec);
     
@@ -1371,7 +1370,7 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_forward_arguments)
 
     unsigned numUsedStackSlots = -pc[5].u.operand;
 
-    unsigned arguments = sizeFrameForForwardArguments(exec, &vm.interpreter->stack(), numUsedStackSlots);
+    unsigned arguments = sizeFrameForForwardArguments(exec, vm, numUsedStackSlots);
     LLINT_CALL_CHECK_EXCEPTION(exec, exec);
 
     ExecState* execCallee = calleeFrameForVarargs(exec, numUsedStackSlots, arguments + 1);
@@ -1629,7 +1628,7 @@ extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCall
 #if !ENABLE(JIT)
 extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM* vm, Register* newTopOfStack)
 {
-    bool success = vm->interpreter->stack().ensureCapacityFor(newTopOfStack);
+    bool success = vm->ensureStackCapacityFor(newTopOfStack);
     return encodeResult(reinterpret_cast<void*>(success), 0);
 }
 #endif

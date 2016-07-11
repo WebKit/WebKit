@@ -77,7 +77,6 @@ class JSInternalPromise;
 class JSPromise;
 class JSPromiseConstructor;
 class JSPromisePrototype;
-class JSStack;
 class JSTypedArrayViewConstructor;
 class JSTypedArrayViewPrototype;
 class LLIntOffsetsExtractor;

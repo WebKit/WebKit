@@ -424,6 +424,7 @@ void StackVisitor::Frame::dump(PrintStream& out, Indenter indent, std::function<
 
             indent--;
         }
+        out.print(indent, "vmEntryFrame: ", RawPointer(vmEntryFrame()), "\n");
         indent--;
     }
     out.print(indent, "}\n");

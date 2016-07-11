@@ -30,8 +30,23 @@
 #include "VM.h"
 #include "Watchdog.h"
 
+#if !ENABLE(JIT)
+#include "CLoopStackInlines.h"
+#endif
+
 namespace JSC {
     
+bool VM::ensureStackCapacityFor(Register* newTopOfStack)
+{
+#if ENABLE(JIT)
+    ASSERT(wtfThreadData().stack().isGrowingDownward());
+    return newTopOfStack >= m_osStackLimitWithReserve;
+#else
+    return interpreter->cloopStack().ensureCapacityFor(newTopOfStack);
+#endif
+    
+}
+
 bool VM::shouldTriggerTermination(ExecState* exec)
 {
     if (!watchdog())

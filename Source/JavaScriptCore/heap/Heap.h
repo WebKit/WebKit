@@ -66,7 +66,6 @@ class HeapVerifier;
 class IncrementalSweeper;
 class JITStubRoutine;
 class JSCell;
-class JSStack;
 class JSValue;
 class LLIntOffsetsExtractor;
 class MarkedArgumentBuffer;
@@ -355,8 +354,6 @@ private:
 
     bool shouldDoFullCollection(HeapOperation requestedCollectionType) const;
 
-    JSStack& stack();
-    
     void incrementDeferralDepth();
     void decrementDeferralDepth();
     void decrementDeferralDepthAndGCIfNeeded();

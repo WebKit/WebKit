@@ -178,7 +178,7 @@ static CommonSlowPaths::ArityCheckData* setupArityCheckData(VM& vm, int slotsToA
 SLOW_PATH_DECL(slow_path_call_arityCheck)
 {
     BEGIN();
-    int slotsToAdd = CommonSlowPaths::arityCheckFor(exec, &vm.interpreter->stack(), CodeForCall);
+    int slotsToAdd = CommonSlowPaths::arityCheckFor(exec, vm, CodeForCall);
     if (slotsToAdd < 0) {
         exec = exec->callerFrame();
         ErrorHandlingScope errorScope(exec->vm());
@@ -191,7 +191,7 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
 SLOW_PATH_DECL(slow_path_construct_arityCheck)
 {
     BEGIN();
-    int slotsToAdd = CommonSlowPaths::arityCheckFor(exec, &vm.interpreter->stack(), CodeForConstruct);
+    int slotsToAdd = CommonSlowPaths::arityCheckFor(exec, vm, CodeForConstruct);
     if (slotsToAdd < 0) {
         exec = exec->callerFrame();
         ErrorHandlingScope errorScope(exec->vm());

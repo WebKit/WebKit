@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,10 @@
 #include "CodeBlock.h"
 #include "CodeSpecializationKind.h"
 #include "ExceptionHelpers.h"
-#include "JSStackInlines.h"
 #include "SlowPathReturnType.h"
 #include "StackAlignment.h"
 #include "Symbol.h"
-#include "VM.h"
+#include "VMInlines.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -52,7 +51,7 @@ struct ArityCheckData {
     void* thunkToCall;
 };
 
-ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializationKind kind)
+ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind kind)
 {
     JSFunction* callee = jsCast<JSFunction*>(exec->callee());
     ASSERT(!callee->isHostFunction());
@@ -65,7 +64,7 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializat
         newCodeBlock->numParameters() + CallFrame::headerSizeInRegisters);
     int paddedStackSpace = alignedFrameSizeForParameters - frameSize;
 
-    if (!stack->ensureCapacityFor(exec->registers() - paddedStackSpace % stackAlignmentRegisters()))
+    if (UNLIKELY(!vm.ensureStackCapacityFor(exec->registers() - paddedStackSpace % stackAlignmentRegisters())))
         return -1;
     return paddedStackSpace;
 }

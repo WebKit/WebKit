@@ -42,7 +42,6 @@
 #include "JSGlobalObject.h"
 #include "JSModuleRecord.h"
 #include "JSObject.h"
-#include "JSStack.h"
 #include "JSString.h"
 #include "JSTypeInfo.h"
 #include "JumpTable.h"

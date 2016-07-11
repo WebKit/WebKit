@@ -59,7 +59,6 @@ namespace JSC {
     class Identifier;
     class Interpreter;
     class JSScope;
-    class JSStack;
     class MarkedAllocator;
     class Register;
     class StructureChain;

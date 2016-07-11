@@ -33,8 +33,8 @@
 #include "DFGJITCode.h"
 #include "DFGNode.h"
 #include "JIT.h"
-#include "JSStackInlines.h"
 #include "JSCInlines.h"
+#include "VMInlines.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC { namespace DFG {
@@ -244,7 +244,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    would have otherwise just kept running albeit less quickly.
     
     unsigned frameSizeForCheck = jitCode->common.requiredRegisterCountForExecutionAndExit();
-    if (!vm->interpreter->stack().ensureCapacityFor(&exec->registers()[virtualRegisterForLocal(frameSizeForCheck - 1).offset()])) {
+    if (UNLIKELY(!vm->ensureStackCapacityFor(&exec->registers()[virtualRegisterForLocal(frameSizeForCheck - 1).offset()]))) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because stack growth failed.\n");
         return 0;

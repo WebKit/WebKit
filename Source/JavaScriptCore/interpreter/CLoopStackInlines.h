@@ -23,41 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSStackInlines_h
-#define JSStackInlines_h
+#pragma once
 
+#if !ENABLE(JIT)
+
+#include "CLoopStack.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
-#include "JSStack.h"
 #include "VM.h"
 
 namespace JSC {
 
-inline bool JSStack::ensureCapacityFor(Register* newTopOfStack)
+inline bool CLoopStack::ensureCapacityFor(Register* newTopOfStack)
 {
-#if !ENABLE(JIT)
+    Register* newEnd = newTopOfStack - 1;
+    if (newEnd >= m_end)
+        return true;
     return grow(newTopOfStack);
-#else
-    ASSERT(wtfThreadData().stack().isGrowingDownward());
-    return newTopOfStack >= m_vm.osStackLimitWithReserve();
-#endif
 }
 
-#if !ENABLE(JIT)
-
-inline Register* JSStack::topOfFrameFor(CallFrame* frame)
+inline Register* CLoopStack::topOfFrameFor(CallFrame* frame)
 {
     if (UNLIKELY(!frame))
         return baseOfStack();
     return frame->topOfFrame() - 1;
 }
 
-inline Register* JSStack::topOfStack()
+inline Register* CLoopStack::topOfStack()
 {
     return topOfFrameFor(m_topCallFrame);
 }
 
-inline void JSStack::shrink(Register* newTopOfStack)
+inline void CLoopStack::shrink(Register* newTopOfStack)
 {
     Register* newEnd = newTopOfStack - 1;
     if (newEnd >= m_end)
@@ -66,29 +63,19 @@ inline void JSStack::shrink(Register* newTopOfStack)
     // Note: Clang complains of an unresolved linkage to maxExcessCapacity if
     // invoke std::max() with it as an argument. To work around this, we first
     // assign the constant to a local variable, and use the local instead.
-    ptrdiff_t maxExcessCapacity = JSStack::maxExcessCapacity;
+    ptrdiff_t maxExcessCapacity = CLoopStack::maxExcessCapacity;
     ptrdiff_t maxExcessInRegisters = std::max(maxExcessCapacity, m_reservedZoneSizeInRegisters);
     if (m_end == baseOfStack() && (highAddress() - m_commitTop) >= maxExcessInRegisters)
         releaseExcessCapacity();
 }
 
-inline bool JSStack::grow(Register* newTopOfStack)
-{
-    Register* newEnd = newTopOfStack - 1;
-    if (newEnd >= m_end)
-        return true;
-    return growSlowCase(newTopOfStack);
-}
-
-inline void JSStack::setCLoopStackLimit(Register* newTopOfStack)
+inline void CLoopStack::setCLoopStackLimit(Register* newTopOfStack)
 {
     Register* newEnd = newTopOfStack - 1;
     m_end = newEnd;
     m_vm.setCLoopStackLimit(newTopOfStack);
 }
 
-#endif // !ENABLE(JIT)
-
 } // namespace JSC
 
-#endif // JSStackInlines_h
+#endif // !ENABLE(JIT)

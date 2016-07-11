@@ -34,13 +34,17 @@
 #include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSObject.h"
-#include "JSStack.h"
 #include "Opcode.h"
 #include "SourceProvider.h"
 #include "StackAlignment.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
+
+#if !ENABLE(JIT)
+#include "CLoopStack.h"
+#endif
+
 
 namespace JSC {
 
@@ -180,7 +184,9 @@ namespace JSC {
         
         void initialize();
 
-        JSStack& stack() { return m_stack; }
+#if !ENABLE(JIT)
+        CLoopStack& cloopStack() { return m_cloopStack; }
+#endif
         
         Opcode getOpcode(OpcodeID id)
         {
@@ -241,7 +247,9 @@ namespace JSC {
         bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval) || opcode == getOpcode(op_tail_call); }
 
         VM& m_vm;
-        JSStack m_stack;
+#if !ENABLE(JIT)
+        CLoopStack m_cloopStack;
+#endif
         int m_errorHandlingModeReentry;
         
 #if ENABLE(COMPUTED_GOTO_OPCODES)
@@ -273,8 +281,8 @@ namespace JSC {
 
     unsigned sizeOfVarargs(CallFrame* exec, JSValue arguments, uint32_t firstVarArgOffset);
     static const unsigned maxArguments = 0x10000;
-    unsigned sizeFrameForVarargs(CallFrame* exec, JSStack*, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
-    unsigned sizeFrameForForwardArguments(CallFrame* exec, JSStack*, unsigned numUsedStackSlots);
+    unsigned sizeFrameForVarargs(CallFrame* exec, VM&, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
+    unsigned sizeFrameForForwardArguments(CallFrame* exec, VM&, unsigned numUsedStackSlots);
     void loadVarargs(CallFrame* execCaller, VirtualRegister firstElementDest, JSValue source, uint32_t offset, uint32_t length);
     void setupVarargsFrame(CallFrame* execCaller, CallFrame* execCallee, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
     void setupVarargsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);

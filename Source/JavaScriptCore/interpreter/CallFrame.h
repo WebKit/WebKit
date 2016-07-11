@@ -270,9 +270,6 @@ namespace JSC  {
 
     private:
 
-#ifndef NDEBUG
-        JSStack* stack();
-#endif
         ExecState();
         ~ExecState();
 
@@ -301,10 +298,6 @@ namespace JSC  {
         CallerFrameAndPC& callerFrameAndPC() { return *reinterpret_cast<CallerFrameAndPC*>(this); }
         const CallerFrameAndPC& callerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
         SUPPRESS_ASAN const CallerFrameAndPC& unsafeCallerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
-
-#if !ENABLE(JIT)
-        friend class JSStack;
-#endif
     };
 
 } // namespace JSC

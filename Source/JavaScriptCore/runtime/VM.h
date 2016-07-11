@@ -94,6 +94,7 @@ class JSObject;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
 class RegExpCache;
+class Register;
 class RegisterAtOffsetList;
 #if ENABLE(SAMPLING_PROFILER)
 class SamplingProfiler;
@@ -460,6 +461,9 @@ public:
 
     size_t reservedZoneSize() const { return m_reservedZoneSize; }
     size_t updateReservedZoneSize(size_t reservedZoneSize);
+
+    static size_t committedStackByteCount();
+    inline bool ensureStackCapacityFor(Register* newTopOfStack);
 
     void* osStackLimitWithReserve() { return m_osStackLimitWithReserve; }
     void** addressOfOSStackLimitWithReserve() { return &m_osStackLimitWithReserve; }

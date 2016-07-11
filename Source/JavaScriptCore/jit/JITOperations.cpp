@@ -51,7 +51,6 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
-#include "JSStackInlines.h"
 #include "JSWithScope.h"
 #include "ObjectConstructor.h"
 #include "PolymorphicAccess.h"
@@ -129,9 +128,8 @@ void JIT_OPERATION operationThrowOutOfBoundsAccessError(ExecState* exec)
 int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    JSStack& stack = vm->interpreter->stack();
 
-    int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, &stack, CodeForCall);
+    int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, *vm, CodeForCall);
     if (missingArgCount < 0) {
         VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
         CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
@@ -145,9 +143,8 @@ int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    JSStack& stack = vm->interpreter->stack();
 
-    int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, &stack, CodeForConstruct);
+    int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, *vm, CodeForConstruct);
     if (missingArgCount < 0) {
         VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
         CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
@@ -1924,17 +1921,15 @@ int32_t JIT_OPERATION operationSizeFrameForForwardArguments(ExecState* exec, Enc
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    JSStack* stack = &exec->interpreter()->stack();
-    return sizeFrameForForwardArguments(exec, stack, numUsedStackSlots);
+    return sizeFrameForForwardArguments(exec, vm, numUsedStackSlots);
 }
 
 int32_t JIT_OPERATION operationSizeFrameForVarargs(ExecState* exec, EncodedJSValue encodedArguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    JSStack* stack = &exec->interpreter()->stack();
     JSValue arguments = JSValue::decode(encodedArguments);
-    return sizeFrameForVarargs(exec, stack, arguments, numUsedStackSlots, firstVarArgOffset);
+    return sizeFrameForVarargs(exec, vm, arguments, numUsedStackSlots, firstVarArgOffset);
 }
 
 CallFrame* JIT_OPERATION operationSetupForwardArgumentsFrame(ExecState* exec, CallFrame* newCallFrame, EncodedJSValue, int32_t, int32_t length)

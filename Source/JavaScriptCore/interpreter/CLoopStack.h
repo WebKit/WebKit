@@ -26,8 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSStack_h
-#define JSStack_h
+#pragma once
+
+#if !ENABLE(JIT)
 
 #include "Register.h"
 #include <wtf/Noncopyable.h>
@@ -42,21 +43,19 @@ namespace JSC {
     class VM;
     class LLIntOffsetsExtractor;
 
-    class JSStack {
-        WTF_MAKE_NONCOPYABLE(JSStack);
+    class CLoopStack {
+        WTF_MAKE_NONCOPYABLE(CLoopStack);
     public:
         // Allow 8k of excess registers before we start trying to reap the stack
         static const ptrdiff_t maxExcessCapacity = 8 * 1024;
 
-        JSStack(VM&);
+        CLoopStack(VM&);
+        ~CLoopStack();
         
         bool ensureCapacityFor(Register* newTopOfStack);
 
         bool containsAddress(Register* address) { return (lowAddress() <= address && address < highAddress()); }
         static size_t committedByteCount();
-
-#if !ENABLE(JIT)
-        ~JSStack();
 
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
         void sanitizeStack();
@@ -71,11 +70,9 @@ namespace JSC {
         void setReservedZoneSize(size_t);
 
         inline Register* topOfStack();
-#endif // ENABLE(JIT)
 
     private:
 
-#if !ENABLE(JIT)
         Register* lowAddress() const
         {
             return m_end + 1;
@@ -85,12 +82,7 @@ namespace JSC {
         {
             return reinterpret_cast_ptr<Register*>(static_cast<char*>(m_reservation.base()) + m_reservation.size());
         }
-#else
-        Register* lowAddress() const;
-        Register* highAddress() const;
-#endif // !ENABLE(JIT)
 
-#if !ENABLE(JIT)
         inline Register* topOfFrameFor(CallFrame*);
 
         Register* reservationTop() const
@@ -100,27 +92,23 @@ namespace JSC {
         }
 
         bool grow(Register* newTopOfStack);
-        bool growSlowCase(Register* newTopOfStack);
         void shrink(Register* newTopOfStack);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
 
         void setCLoopStackLimit(Register* newTopOfStack);
-#endif // !ENABLE(JIT)
 
         VM& m_vm;
         CallFrame*& m_topCallFrame;
-#if !ENABLE(JIT)
         Register* m_end;
         Register* m_commitTop;
         PageReservation m_reservation;
         Register* m_lastStackTop;
         ptrdiff_t m_reservedZoneSizeInRegisters;
-#endif // !ENABLE(JIT)
 
         friend class LLIntOffsetsExtractor;
     };
 
 } // namespace JSC
 
-#endif // JSStack_h
+#endif // !ENABLE(JIT)

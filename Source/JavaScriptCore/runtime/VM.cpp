@@ -106,6 +106,10 @@
 #include <wtf/text/AtomicStringTable.h>
 #include <wtf/text/SymbolRegistry.h>
 
+#if !ENABLE(JIT)
+#include "CLoopStack.h"
+#endif
+
 #if ENABLE(DFG_JIT)
 #include "ConservativeRoots.h"
 #endif
@@ -194,9 +198,6 @@ VM::VM(VMType vmType, HeapType heapType)
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
     updateReservedZoneSize(Options::reservedZoneSize());
-#if !ENABLE(JIT)
-    interpreter->stack().setReservedZoneSize(Options::reservedZoneSize());
-#endif
     setLastStackTop(stack.origin());
 
     // Need to be careful to keep everything consistent here
@@ -616,6 +617,9 @@ size_t VM::updateReservedZoneSize(size_t reservedZoneSize)
 {
     size_t oldReservedZoneSize = m_reservedZoneSize;
     m_reservedZoneSize = reservedZoneSize;
+#if !ENABLE(JIT)
+    interpreter->cloopStack().setReservedZoneSize(reservedZoneSize);
+#endif
 
     updateStackLimit();
 
@@ -839,9 +843,23 @@ void sanitizeStackForVM(VM* vm)
 {
     logSanitizeStack(vm);
 #if !ENABLE(JIT)
-    vm->interpreter->stack().sanitizeStack();
+    vm->interpreter->cloopStack().sanitizeStack();
 #else
     sanitizeStackForVMImpl(vm);
+#endif
+}
+
+size_t VM::committedStackByteCount()
+{
+#if ENABLE(JIT)
+    // When using the C stack, we don't know how many stack pages are actually
+    // committed. So, we use the current stack usage as an estimate.
+    ASSERT(wtfThreadData().stack().isGrowingDownward());
+    int8_t* current = reinterpret_cast<int8_t*>(&current);
+    int8_t* high = reinterpret_cast<int8_t*>(wtfThreadData().stack().origin());
+    return high - current;
+#else
+    return CLoopStack::committedByteCount();
 #endif
 }
 
