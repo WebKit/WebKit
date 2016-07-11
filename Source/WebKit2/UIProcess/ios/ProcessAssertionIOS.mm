@@ -31,6 +31,7 @@
 #import "AssertionServicesSPI.h"
 #import <UIKit/UIApplication.h>
 #import <wtf/HashSet.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 
 #if !PLATFORM(IOS_SIMULATOR)
@@ -91,15 +92,28 @@ using WebKit::ProcessAssertionClient;
     _clients.remove(&client);
 }
 
+- (void)_notifyClientsOfImminentSuspension
+{
+    ASSERT(RunLoop::isMain());
+    Vector<ProcessAssertionClient*> clientsToNotify;
+    copyToVector(_clients, clientsToNotify);
+    for (auto* client : clientsToNotify)
+        client->assertionWillExpireImminently();
+}
+
 - (void)_updateBackgroundTask
 {
     if (_needsToRunInBackgroundCount && _backgroundTask == UIBackgroundTaskInvalid) {
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
-            NSLog(@"Background task expired while holding WebKit ProcessAssertion.");
-            Vector<ProcessAssertionClient*> clientsToNotify;
-            copyToVector(_clients, clientsToNotify);
-            for (auto* client : clientsToNotify)
-                client->assertionWillExpireImminently();
+            LOG_ALWAYS_ERROR(true, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
+            // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
+            if (RunLoop::isMain())
+                [self _notifyClientsOfImminentSuspension];
+            else {
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    [self _notifyClientsOfImminentSuspension];
+                });
+            }
             [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
             _backgroundTask = UIBackgroundTaskInvalid;
         }];

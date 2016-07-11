@@ -1,3 +1,21 @@
+2016-07-11  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Intermittent crash in [UIApplication beginBackgroundTaskWithName] expiration handler
+        https://bugs.webkit.org/show_bug.cgi?id=159648
+        <rdar://problem/27219361>
+
+        Reviewed by Anders Carlsson.
+
+        We see an intermittent crash in [UIApplication beginBackgroundTaskWithName] expiration handler.
+        From the traces, we noticed the expiration handler can get called on a non-main thread under
+        certain conditions, which our code is designed to deal with.
+
+        In particular, we get called on a non-main thread when UIKit fails to acquire the assertion.
+        Update our expiration handler to always notify the clients on the main thread.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+
 2016-07-11  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the macOS build.
