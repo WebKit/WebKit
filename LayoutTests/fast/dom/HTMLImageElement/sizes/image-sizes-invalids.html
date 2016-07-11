@@ -7,7 +7,7 @@
 
     var elementId;
     addEventListener("load", function() {
-        for (var i = 1; i < 7; ++i) {
+        for (var i = 1; i <= 9; ++i) {
             elementId = "crash" + i;
             shouldBe('document.getElementById(elementId).clientWidth', '800');
             shouldBe('currentSrcFileName(elementId)', '"image-set-2x.png"');
@@ -16,10 +16,11 @@
 </script>
 <!-- crash tests -->
 <img id="crash1" sizes="1q" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
-<img id="crash1" sizes="1pxllll" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
-<img id="crash2" sizes="1dfsdf4534fddd" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
-<img id="crash3" sizes="calc()" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
-<img id="crash4" sizes="calc(3q)" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
-<img id="crash4" sizes="calcssdff()" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
-<img id="crash5" sizes="calc(2px+dfmjbsf,,,skidkk)" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
-<img id="crash6" sizes="calc(2px+dfmjbsf,,,skidkk) + 2px, 56px" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash2" sizes="1pxllll" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash3" sizes="1dfsdf4534fddd" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash4" sizes="calc()" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash5" sizes="calc(3q)" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash6" sizes="calcssdff()" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash7" sizes="calc(2px+dfmjbsf,,,skidkk)" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash8" sizes="calc(2px+dfmjbsf,,,skidkk) + 2px, 56px" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash9" sizes="1dpi" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">

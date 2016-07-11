@@ -1,3 +1,15 @@
+2016-07-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Using dpi unit in sizes attribute raises SIGSEGV
+        https://bugs.webkit.org/show_bug.cgi?id=159412
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Unskip fast/dom/HTMLImageElement/sizes.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-invalids-expected.txt: Updated.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-invalids.html: Added a dpi unit test case.
+        Renumbering element IDs.
+
 2016-07-11  Eric Carlson  <eric.carlson@apple.com>
 
         Add a test for media control dropoff
