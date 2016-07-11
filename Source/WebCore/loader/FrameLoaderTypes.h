@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameLoaderTypes_h
-#define FrameLoaderTypes_h
+#pragma once
 
 namespace WebCore {
 
-    enum FrameState {
-        FrameStateProvisional,
-        // This state indicates we are ready to commit to a page,
-        // which means the view will transition to use the new data source.
-        FrameStateCommittedPage,
-        FrameStateComplete
-    };
+enum FrameState {
+    FrameStateProvisional,
+    // This state indicates we are ready to commit to a page,
+    // which means the view will transition to use the new data source.
+    FrameStateCommittedPage,
+    FrameStateComplete
+};
 
-    enum PolicyAction {
-        PolicyUse,
-        PolicyDownload,
-        PolicyIgnore
-    };
+enum PolicyAction {
+    PolicyUse,
+    PolicyDownload,
+    PolicyIgnore
+};
 
 enum class FrameLoadType {
     Standard,
@@ -77,59 +76,58 @@ enum class ShouldOpenExternalURLsPolicy {
     ShouldAllow,
 };
 
-    enum ClearProvisionalItemPolicy {
-        ShouldClearProvisionalItem,
-        ShouldNotClearProvisionalItem
-    };
+enum ClearProvisionalItemPolicy {
+    ShouldClearProvisionalItem,
+    ShouldNotClearProvisionalItem
+};
 
-    enum ObjectContentType {
-        ObjectContentNone,
-        ObjectContentImage,
-        ObjectContentFrame,
-        ObjectContentNetscapePlugin,
-        ObjectContentOtherPlugin
-    };
-    
-    enum UnloadEventPolicy {
-        UnloadEventPolicyNone,
-        UnloadEventPolicyUnloadOnly,
-        UnloadEventPolicyUnloadAndPageHide
-    };
+enum ObjectContentType {
+    ObjectContentNone,
+    ObjectContentImage,
+    ObjectContentFrame,
+    ObjectContentNetscapePlugin,
+    ObjectContentOtherPlugin
+};
 
-    enum ShouldSendReferrer {
-        MaybeSendReferrer,
-        NeverSendReferrer
-    };
+enum UnloadEventPolicy {
+    UnloadEventPolicyNone,
+    UnloadEventPolicyUnloadOnly,
+    UnloadEventPolicyUnloadAndPageHide
+};
 
-    // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()
-    // to control whether, in the case of a JavaScript URL, executeIfJavaScriptURL() should
-    // replace the document.  It is a FIXME to eliminate this extra parameter from
-    // executeIfJavaScriptURL(), in which case this enum can go away.
-    enum ShouldReplaceDocumentIfJavaScriptURL {
-        ReplaceDocumentIfJavaScriptURL,
-        DoNotReplaceDocumentIfJavaScriptURL
-    };
+enum ShouldSendReferrer {
+    MaybeSendReferrer,
+    NeverSendReferrer
+};
 
-    enum WebGLLoadPolicy {
-        WebGLBlockCreation,
-        WebGLAllowCreation,
-        WebGLPendingCreation
-    };
+// Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()
+// to control whether, in the case of a JavaScript URL, executeIfJavaScriptURL() should
+// replace the document. It is a FIXME to eliminate this extra parameter from
+// executeIfJavaScriptURL(), in which case this enum can go away.
+enum ShouldReplaceDocumentIfJavaScriptURL {
+    ReplaceDocumentIfJavaScriptURL,
+    DoNotReplaceDocumentIfJavaScriptURL
+};
 
-    enum class LockHistory {
-        Yes,
-        No
-    };
+enum WebGLLoadPolicy {
+    WebGLBlockCreation,
+    WebGLAllowCreation,
+    WebGLPendingCreation
+};
 
-    enum class LockBackForwardList {
-        Yes,
-        No
-    };
+enum class LockHistory {
+    Yes,
+    No
+};
 
-    enum class AllowNavigationToInvalidURL {
-        Yes,
-        No
-    };
-}
+enum class LockBackForwardList {
+    Yes,
+    No
+};
 
-#endif
+enum class AllowNavigationToInvalidURL {
+    Yes,
+    No
+};
+
+} // namespace WebCore
