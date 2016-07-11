@@ -4,6 +4,7 @@ guardFactoryWith="ENABLE(MATHML)"
 attrsNullNamespace
 
 accent
+accentunder
 actiontype
 alttext
 background

@@ -1,0 +1,18 @@
+∑
+∑
+
+∑
+∑
+
+∑
+∑
+
+∑
+∑
+
+
+PASS LowerLimitBaselineDropMin 
+PASS LowerLimitGapMin 
+PASS UpperLimitBaselineRiseMin 
+PASS UpperLimitGapMin 
+

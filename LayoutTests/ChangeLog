@@ -1,5 +1,54 @@
 2016-07-11  Frederic Wang  <fwang@igalia.com>
 
+        Use parameters from the OpenType MATH table for <munderover>
+        https://bugs.webkit.org/show_bug.cgi?id=155756
+
+        Reviewed by Brent Fulgham.
+
+        Import some tests from the MathML in HTML5 test suite to verify
+        the layout of the <munderover> element. We also write a test to
+        verify dynamic change of accent/accentunder attributes and adjust
+        other tests.
+
+        * imported/mathml-in-html5/fonts/math/limits-lowerlimitbaselinedropmin3000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/limits-lowerlimitgapmin11000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/limits-upperlimitbaselinerisemin5000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/limits-upperlimitgapmin7000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/stretchstack-bottomshiftdown3000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/stretchstack-gapabovemin7000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/stretchstack-gapbelowmin11000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/stretchstack-topshiftup5000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/underover-accentbaseheight4000-overbarextraascender3000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/underover-accentbaseheight4000-overbarverticalgap11000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/underover-accentbaseheight4000-underbarextradescender5000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/underover-accentbaseheight4000-underbarverticalgap7000.woff: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-1.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-2-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-2.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-3.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-4-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-4.html: Added.
+        * mathml/presentation/attributes-accent-accentunder-dynamic.html: Added.
+        Test dynamic changes of accent and accentunder.
+        * mathml/presentation/attributes-accent-accentunder-dynamic-expected.html: Added.
+        * mathml/presentation/scripts-underover.html: Remove one of the test since munderover
+        with an empty script is no longer equivalent to munder or mover.
+        * mathml/presentation/scripts-underover-expected.html: Ditto.
+        * platform/gtk/mathml/opentype/horizontal-expected.png: Updated due to change in
+        vertical metrics of scripts.
+        * platform/gtk/mathml/opentype/horizontal-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/horizontal-munderover-expected.png: Ditto.
+        * platform/gtk/mathml/opentype/horizontal-munderover-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/roots-expected.txt: Udapted due to script baseline fix.
+        * platform/gtk/mathml/presentation/roots-expected.png: ditto.
+        * mathml/presentation/underover-nonstretchy-or-vertical.html: Prevent the <mo> to be treated
+        as an accent so that we always get the same spacing as the reference. We also use the Ahem
+        font to make the result more reliable.
+
+2016-07-11  Frederic Wang  <fwang@igalia.com>
+
         Use Stack* parameters from the OpenType MATH table
         https://bugs.webkit.org/show_bug.cgi?id=155714
 
