@@ -249,6 +249,9 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
 {
     ASSERT(!error.isNull());
 
+    if (!frameLoader())
+        return;
+
     if (m_identifierForLoadWithoutResourceLoader) {
         ASSERT(!mainResourceLoader());
         frameLoader()->client().dispatchDidFailLoading(this, m_identifierForLoadWithoutResourceLoader, error);
@@ -262,8 +265,6 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
 
     m_applicationCacheHost->failedLoadingMainResource();
 
-    if (!frameLoader())
-        return;
     setMainDocumentError(error);
     clearMainResourceLoader();
     frameLoader()->receivedMainResourceError(error);
