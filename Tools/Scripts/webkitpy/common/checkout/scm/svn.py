@@ -36,9 +36,10 @@ import string
 import sys
 import tempfile
 
+from webkitpy.common.config.urls import svn_server_host, svn_server_realm
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
-from webkitpy.common.config.urls import svn_server_host, svn_server_realm
+from webkitpy.common.webkit_finder import WebKitFinder
 
 from .scm import AuthenticationError, SCM, commit_error_handler
 
@@ -279,7 +280,7 @@ class SVN(SCM, SVNRepository):
             return ""
         elif changed_files == None:
             changed_files = []
-        script_path = self._filesystem.join(self.checkout_root, "Tools", "Scripts", "svn-create-patch")
+        script_path = WebKitFinder(self._filesystem).path_from_webkit_base("Tools", "Scripts", "svn-create-patch")
         return self.run([script_path, "--no-style"] + changed_files,
             cwd=self.checkout_root, return_stderr=False,
             decode_output=False)
