@@ -1,0 +1,244 @@
+Test control element visibility at different element widths.
+
+This test only runs in DRT!
+
+
+EVENT: error
+PASS: We are using the Apple idiom
+
+*** Test the controls layout without video ***
+
+* Width 60px:
+PASS: Play Button is visible
+PASS: Status Display is visible
+PASS: Rewind Button is not visible
+PASS: Mute Box is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Fullscreen Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 90px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Status Display is visible
+PASS: Mute Box is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Fullscreen Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 200px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Status Display is visible
+PASS: Mute Box is visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Fullscreen Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+
+*** Test the controls layout with video ***
+
+EVENT: canplaythrough
+* Width 60px:
+PASS: Play Button is visible
+PASS: Rewind Button is not visible
+PASS: Status Display is not visible
+PASS: Mute Box is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Fullscreen Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 90px:
+PASS: Play Button is visible
+PASS: Fullscreen Button is visible
+PASS: Rewind Button is not visible
+PASS: Status Display is not visible
+PASS: Mute Box is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 120px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: Mute Box is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 150px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Mute Box is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 200px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Mute Box is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 400px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Timeline is visible
+PASS: Current Time is visible
+PASS: Thumbnail Track is visible
+PASS: Time Remaining is visible
+PASS: Mute Box is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+
+
+*** Test the controls layout with video and a caption track ***
+
+* Width 60px:
+PASS: Play Button is visible
+PASS: Rewind Button is not visible
+PASS: Status Display is not visible
+PASS: Mute Box is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Fullscreen Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 90px:
+PASS: Play Button is visible
+PASS: Fullscreen Button is visible
+PASS: Rewind Button is not visible
+PASS: Status Display is not visible
+PASS: Mute Box is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 120px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: Mute Box is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 150px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Mute Box is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Caption Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 180px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Mute Box is visible
+PASS: Caption Button is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 200px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Mute Box is visible
+PASS: Caption Button is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+PASS: Timeline is not visible
+PASS: Current Time is not visible
+PASS: Thumbnail Track is not visible
+PASS: Time Remaining is not visible
+
+* Width 400px:
+PASS: Play Button is visible
+PASS: Rewind Button is visible
+PASS: Current Time is visible
+PASS: Timeline is visible
+PASS: Thumbnail Track is visible
+PASS: Time Remaining is visible
+PASS: Mute Box is visible
+PASS: Caption Button is visible
+PASS: Fullscreen Button is visible
+PASS: Status Display is not visible
+PASS: AppleTV Device Picker is not visible
+PASS: Picture-in-picture Button is not visible
+
+
+Testing finished.
+

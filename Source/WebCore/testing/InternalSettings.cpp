@@ -227,7 +227,7 @@ InternalSettings::InternalSettings(Page* page)
     , m_backup(page->settings())
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    page->settings().setAllowsAirPlayForMediaPlayback(false);
+    setAllowsAirPlayForMediaPlayback(false);
 #endif
 }
 
@@ -238,7 +238,7 @@ void InternalSettings::resetToConsistentState()
     page()->setCanStartMedia(true);
     page()->settings().setForcePendingWebGLPolicy(false);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    page()->settings().setAllowsAirPlayForMediaPlayback(false);
+    setAllowsAirPlayForMediaPlayback(false);
 #endif
 
     m_backup.restoreTo(*settings());
@@ -381,12 +381,12 @@ void InternalSettings::setCanStartMedia(bool enabled, ExceptionCode& ec)
     m_page->setCanStartMedia(enabled);
 }
 
-void InternalSettings::setWirelessPlaybackDisabled(bool available)
+void InternalSettings::setAllowsAirPlayForMediaPlayback(bool allows)
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    m_page->settings().setAllowsAirPlayForMediaPlayback(available);
+    m_page->settings().setAllowsAirPlayForMediaPlayback(allows);
 #else
-    UNUSED_PARAM(available);
+    UNUSED_PARAM(allows);
 #endif
 }
 

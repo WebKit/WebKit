@@ -1,3 +1,18 @@
+2016-07-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Add a test for media control dropoff
+        https://bugs.webkit.org/show_bug.cgi?id=151287
+        <rdar://problem/23544666>
+
+        Reviewed by Antoine Quint.
+
+        * media/controls/inline-elements-dropoff-order-expected.txt: Added.
+        * media/controls/inline-elements-dropoff-order.html: Added.
+        * platform/mac-yosemite/media/controls: Added.
+        * platform/mac-yosemite/media/controls/inline-elements-dropoff-order-expected.txt: Added.
+        * platform/mac-elcapitan/media/controls: Added.
+        * platform/mac-elcapitan/media/controls/inline-elements-dropoff-order-expected.txt: Added.
+
 2016-07-11  Frederic Wang  <fwang@igalia.com>
 
         Update expectations for some MathML pixel tests on Windows.

@@ -53,7 +53,7 @@
     [RaisesException] void setDefaultVideoPosterURL(DOMString poster);
     [RaisesException] void setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double time);
     [RaisesException] void setMediaTypeOverride(DOMString mediaTypeOverride);
-    void setWirelessPlaybackDisabled(boolean available);
+    void setAllowsAirPlayForMediaPlayback(boolean available);
 
     [RaisesException] void setForcePendingWebGLPolicy(boolean forced);
 
