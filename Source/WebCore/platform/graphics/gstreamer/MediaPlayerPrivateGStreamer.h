@@ -34,7 +34,6 @@
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
-#include <wtf/WeakPtr.h>
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
 #include <wtf/text/AtomicStringHash.h>
@@ -131,8 +130,6 @@ private:
 
     static bool isAvailable();
 
-    WeakPtr<MediaPlayerPrivateGStreamer> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-
     GstElement* createAudioSink() override;
 
     float playbackPosition() const;
@@ -193,8 +190,6 @@ private:
     static void textChangedCallback(MediaPlayerPrivateGStreamer*);
     static GstFlowReturn newTextSampleCallback(MediaPlayerPrivateGStreamer*);
 #endif
-
-    WeakPtrFactory<MediaPlayerPrivateGStreamer> m_weakPtrFactory;
 
     GRefPtr<GstElement> m_source;
 #if ENABLE(VIDEO_TRACK)

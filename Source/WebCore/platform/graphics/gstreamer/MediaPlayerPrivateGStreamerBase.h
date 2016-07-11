@@ -33,6 +33,7 @@
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WeakPtr.h>
 
 #if USE(TEXTURE_MAPPER)
 #include "TextureMapperPlatformLayer.h"
@@ -126,6 +127,10 @@ public:
 
 protected:
     MediaPlayerPrivateGStreamerBase(MediaPlayer*);
+
+    WeakPtrFactory<MediaPlayerPrivateGStreamerBase> m_weakPtrFactory;
+    WeakPtr<MediaPlayerPrivateGStreamerBase> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
     virtual GstElement* createVideoSink();
 
 #if USE(GSTREAMER_GL)
@@ -162,6 +167,7 @@ protected:
 #if ENABLE(VIDEO_TRACK)
         TextChanged = 1 << 5,
 #endif
+        SizeChanged = 1 << 6
     };
 
     MainThreadNotifier<MainThreadNotification> m_notifier;
