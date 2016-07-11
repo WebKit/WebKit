@@ -1,3 +1,18 @@
+2016-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Honor the second argument to FontFaceSet.load and FontFaceSet.check
+        https://bugs.webkit.org/show_bug.cgi?id=159607
+        <rdar://problem/27284902>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/font-face-set-document-expected.txt:
+        * fast/text/font-face-set-document.html:
+        * fast/text/font-face-set-javascript-expected.txt:
+        * fast/text/font-face-set-javascript.html:
+        * fast/text/unicode-range-javascript-expected.txt: Added.
+        * fast/text/unicode-range-javascript.html: Added.
+
 2016-07-11  Nan Wang  <n_wang@apple.com>
 
         AX: Crash when backspacing in number field with spin button

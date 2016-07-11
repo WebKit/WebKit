@@ -133,6 +133,8 @@ public:
         UChar32 to;
     };
 
+    bool rangesMatchCodePoint(UChar32) const;
+
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
     Ref<FontFace> wrapper();
     void setWrapper(FontFace&);

@@ -76,9 +76,8 @@ function startLoading() {
         return document.fonts.load("50px MyFont3");
     }).then(function(x) {
         object = x;
-        shouldBe("object.length", "2");
+        shouldBe("object.length", "1");
         shouldBeEqualToString("object[0].family", "MyFont3");
-        shouldBeEqualToString("object[1].family", "MyFont3");
         object = undefined;
         appliedFont = new FontFace("AppliedFont", "url(\"../../resources/Ahem.otf\")", {});
         document.fonts.add(appliedFont);

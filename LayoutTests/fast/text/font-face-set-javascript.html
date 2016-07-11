@@ -126,7 +126,7 @@ fontFaceSet.load("garbage").then(function(arg) {
     finishJSTest();
 }).then(function(arg) {
     item = arg;
-    shouldBe("item", "[fontFace3, fontFace4]");
+    shouldBe("item", "[fontFace3]");
     fontFaceSet.add(fontFace4);
     fontFaceSet.load("16px family3");
     return fontFaceSet.ready;

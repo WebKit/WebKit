@@ -45,7 +45,7 @@ PASS fontFaceSet.check('16px family3') is true
 PASS fontFaceSet.status is "loaded"
 PASS fontFaceSet.status is "loaded"
 PASS item is [fontFace3]
-PASS item is [fontFace3, fontFace4]
+PASS item is [fontFace3]
 PASS item is fontFaceSet
 PASS fontFaceSet.status is "loaded"
 PASS fontFaceSet.status is "loading"

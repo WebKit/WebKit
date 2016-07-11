@@ -12,9 +12,8 @@ PASS object.value.family is "MyFont2"
 PASS object.done is true
 PASS document.getElementById("testElement").offsetWidth is not originalWidth
 PASS document.getElementById("testElement").offsetWidth is originalWidth
-PASS object.length is 2
+PASS object.length is 1
 PASS object[0].family is "MyFont3"
-PASS object[1].family is "MyFont3"
 PASS document.getElementById("testElement").offsetWidth is not originalWidth
 PASS document.getElementById("testElement").offsetWidth is originalWidth
 PASS successfullyParsed is true

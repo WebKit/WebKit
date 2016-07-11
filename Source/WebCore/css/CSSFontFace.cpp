@@ -370,6 +370,18 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     });
 }
 
+bool CSSFontFace::rangesMatchCodePoint(UChar32 character) const
+{
+    if (m_ranges.isEmpty())
+        return true;
+
+    for (auto& range : m_ranges) {
+        if (range.from <= character && character <= range.to)
+            return true;
+    }
+    return false;
+}
+
 void CSSFontFace::fontLoadEventOccurred()
 {
     Ref<CSSFontFace> protectedThis(*this);

@@ -1,0 +1,17 @@
+This test makes sure that the second argument to FontFaceSet.load() and FontFaceSet.check() is honored.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS faces.length is 1
+PASS faces[0].unicodeRange is "U+41-41"
+PASS document.fonts.check('14px WebFont', 'A') is true
+PASS faces.length is 1
+PASS faces[0].family is "WebFont"
+PASS faces[0].unicodeRange is "U+41-41"
+PASS document.fonts.check('14px WebFont3', 'A') is false
+PASS document.fonts.check('14px WebFont3', 'A') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

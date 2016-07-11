@@ -308,7 +308,23 @@ static Optional<FontTraitsMask> computeFontTraitsMask(MutableStyleProperties& st
     return static_cast<FontTraitsMask>(static_cast<unsigned>(styleMask) | static_cast<unsigned>(weightMask));
 }
 
-Vector<std::reference_wrapper<CSSFontFace>> CSSFontFaceSet::matchingFaces(const String& font, const String&, ExceptionCode& ec)
+static HashSet<UChar32> codePointsFromString(StringView stringView)
+{
+    HashSet<UChar32> result;
+    auto graphemeClusters = stringView.graphemeClusters();
+    for (auto cluster : graphemeClusters) {
+        ASSERT(cluster.length() > 0);
+        UChar32 character = 0;
+        if (cluster.is8Bit())
+            character = cluster[0];
+        else
+            U16_GET(cluster.characters16(), 0, 0, cluster.length(), character);
+        result.add(character);
+    }
+    return result;
+}
+
+Vector<std::reference_wrapper<CSSFontFace>> CSSFontFaceSet::matchingFaces(const String& font, const String& string, ExceptionCode& ec)
 {
     Vector<std::reference_wrapper<CSSFontFace>> result;
     auto style = MutableStyleProperties::create();
@@ -334,20 +350,36 @@ Vector<std::reference_wrapper<CSSFontFace>> CSSFontFaceSet::matchingFaces(const 
     CSSValueList& familyList = downcast<CSSValueList>(*family);
 
     HashSet<AtomicString> uniqueFamilies;
+    Vector<AtomicString> familyOrder;
     for (auto& family : familyList) {
         const CSSPrimitiveValue& primitive = downcast<CSSPrimitiveValue>(family.get());
         if (!primitive.isFontFamily())
             continue;
-        uniqueFamilies.add(primitive.fontFamily().familyName);
+        if (uniqueFamilies.add(primitive.fontFamily().familyName).isNewEntry)
+            familyOrder.append(primitive.fontFamily().familyName);
     }
 
-    for (auto& family : uniqueFamilies) {
-        CSSSegmentedFontFace* faces = getFontFace(fontTraitsMask, family);
-        if (!faces)
-            continue;
-        for (auto& constituentFace : faces->constituentFaces())
-            result.append(constituentFace.get());
+    HashSet<CSSFontFace*> resultConstituents;
+    for (auto codePoint : codePointsFromString(string)) {
+        bool found = false;
+        for (auto& family : familyOrder) {
+            CSSSegmentedFontFace* faces = getFontFace(fontTraitsMask, family);
+            if (!faces)
+                continue;
+            for (auto& constituentFace : faces->constituentFaces()) {
+                if (constituentFace->rangesMatchCodePoint(codePoint)) {
+                    resultConstituents.add(constituentFace.ptr());
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+                break;
+        }
     }
+
+    for (auto* constituent : resultConstituents)
+        result.append(*constituent);
 
     return result;
 }
