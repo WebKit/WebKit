@@ -26,6 +26,32 @@
 // Note that the intrisic @typedArrayLength checks that the argument passed is a typed array
 // and throws if it is not.
 
+
+// Typed Arrays have their own species constructor function since they need
+// to look up their default constructor, which is expensive. If we used the
+// normal speciesConstructor helper we would need to look up the default
+// constructor every time.
+@globalPrivate
+function typedArraySpeciesConstructor(value)
+{
+    "use strict";
+    let constructor = value.constructor;
+    if (constructor === @undefined)
+        return @typedArrayGetOriginalConstructor(value);
+
+    if (!@isObject(constructor))
+        throw new @TypeError("|this|.constructor is not an Object or undefined");
+
+    constructor = constructor.@speciesSymbol;
+    if (constructor == null)
+        return @typedArrayGetOriginalConstructor(value);
+    // The lack of an @isConstructor(constructor) check here is not observable because
+    // the first thing we will do with the value is attempt to construct the result with it.
+    // If any user of this function does not immediately construct the result they need to
+    // verify that the result is a constructor.
+    return constructor;
+}
+
 function values()
 {
     "use strict";
@@ -191,6 +217,23 @@ function sort(comparator)
         @typedArraySort(this);
     
     return this;
+}
+
+function subarray(begin, end)
+{
+    "use strict";
+
+    if (!@isTypedArrayView(this))
+        throw new @TypeError("|this| should be a typed array view");
+
+    let start = @toInteger(begin);
+    let finish;
+    if (end !== @undefined)
+        finish = @toInteger(end);
+
+    let constructor = @typedArraySpeciesConstructor(this);
+
+    return @typedArraySubarrayCreate.@call(this, start, finish, constructor);
 }
 
 function reduce(callback /* [, initialValue] */)

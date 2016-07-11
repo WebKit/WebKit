@@ -1,3 +1,40 @@
+2016-07-11  Keith Miller  <keith_miller@apple.com>
+
+        STP TypedArray.subarray 5x slowdown compared to 9.1
+        https://bugs.webkit.org/show_bug.cgi?id=156404
+        <rdar://problem/26493032>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch moves the species constructor work for
+        %TypedArray%.prototype.subarray to a js wrapper. By moving the
+        species constructor work to JS we are able to completely optimize
+        it out in DFG. The actual work of creating a TypedArray is still
+        done in C++ since we are able to avoid calling into the
+        constructor, which is expensive. This patch also changes the error
+        message when a %TypedArray%.prototype function is passed a non-typed
+        array this value. Finally, we used to check that the this value
+        had not been detached, however, this behavior was incorrect.
+
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArraySpeciesConstructor):
+        (subarray):
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        * runtime/ConstructData.h:
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        (JSC::genericTypedArrayViewProtoFuncSubarray): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewPrivateFuncLength):
+        (JSC::typedArrayViewPrivateFuncSubarrayCreate):
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        (JSC::typedArrayViewProtoFuncSubarray): Deleted.
+        * runtime/JSTypedArrayViewPrototype.h:
+
 2016-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r202992): JSC varargs tests are broken

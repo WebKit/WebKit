@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-JSObject* construct(ExecState* exec, JSValue constructorObject, const ArgList& args, const String& errorMessage)
+JSObject* construct(ExecState* exec, JSValue constructorObject, const ArgList& args, const char* errorMessage)
 {
     ConstructData constructData;
     ConstructType constructType = getConstructData(constructorObject, constructData);

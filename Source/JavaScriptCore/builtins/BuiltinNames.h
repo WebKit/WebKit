@@ -76,6 +76,7 @@ namespace JSC {
     macro(typedArrayLength) \
     macro(typedArraySort) \
     macro(typedArrayGetOriginalConstructor) \
+    macro(typedArraySubarrayCreate) \
     macro(BuiltinLog) \
     macro(homeObject) \
     macro(getTemplateObject) \

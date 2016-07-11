@@ -74,13 +74,12 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
 {
     JSValue argument = exec->argument(0);
     if (!argument.isCell() || !isTypedView(argument.asCell()->classInfo()->typedArrayStorageType))
-        return throwVMTypeError(exec, "Receiver should be a typed array view");
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view"));
 
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(argument);
-    if (!thisObject || thisObject->mode() == DataViewMode)
-        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view"));
+
     if (thisObject->isNeutered())
-        return throwVMTypeError(exec, "Underlying ArrayBuffer has been detached from the view");
+        return throwVMTypeError(exec, ASCIILiteral("Underlying ArrayBuffer has been detached from the view"));
 
     return JSValue::encode(jsNumber(thisObject->length()));
 }
@@ -187,12 +186,12 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncReverse(ExecState* ex
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncReverse);
 }
 
-static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSubarray(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSubarrayCreate(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
-    CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSubarray);
+    CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewPrivateFuncSubarrayCreate);
 }
 
 static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSlice(ExecState* exec)
@@ -276,7 +275,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->set, typedArrayViewProtoFuncSet, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, typedArrayViewProtoFuncSlice, DontEnum, 2);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("some", typedArrayPrototypeSomeCodeGenerator, DontEnum);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->subarray, typedArrayViewProtoFuncSubarray, DontEnum, 2);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->subarray, typedArrayPrototypeSubarrayCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, typedArrayPrototypeToLocaleStringCodeGenerator, DontEnum);
 
     JSFunction* toStringTagFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("get [Symbol.toStringTag]"), typedArrayViewProtoGetterFuncToStringTag, NoIntrinsic);

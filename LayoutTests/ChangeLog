@@ -1,3 +1,18 @@
+2016-07-11  Keith Miller  <keith_miller@apple.com>
+
+        STP TypedArray.subarray 5x slowdown compared to 9.1
+        https://bugs.webkit.org/show_bug.cgi?id=156404
+
+        Reviewed by Geoffrey Garen.
+
+        Add new micro-benchmark for testing subarray performance with small subarray sizes.
+
+        * js/regress/script-tests/typed-array-subarray.js: Added.
+        (createManySubs):
+        (go):
+        * js/regress/typed-array-subarray-expected.txt: Added.
+        * js/regress/typed-array-subarray.html: Added.
+
 2016-07-11  Nan Wang  <n_wang@apple.com>
 
         AX: WKWebView should have API to prevent pinch-to-zoom always being allowed
