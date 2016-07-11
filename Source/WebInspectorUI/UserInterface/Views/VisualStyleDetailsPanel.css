@@ -93,6 +93,11 @@
     margin-right: 11px;
 }
 
+.visual-style-property-container.transition,
+.visual-style-property-container.animation {
+    margin-left: 11px;
+}
+
 .sidebar > .panel.details.css-style .visual.disabled > .details-section:not(.visual-style-selector-section) {
     opacity: 0.5;
     pointer-events: none;

@@ -1,3 +1,14 @@
+2016-07-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Transition and Animation sections in Visual Styles sidebar should have more spacing to their left
+        https://bugs.webkit.org/show_bug.cgi?id=159633
+        <rdar://problem/27281805>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.visual-style-property-container.animation):
+
 2016-07-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Command-Shift-S in the Styles sidebar should always show the save dialog
