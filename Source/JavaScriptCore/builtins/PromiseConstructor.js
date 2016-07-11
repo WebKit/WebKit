@@ -30,11 +30,7 @@ function all(iterable)
     if (!@isObject(this))
         throw new @TypeError("|this| is not a object");
 
-    // FIXME: Fix this code when @@species well-known symbol is landed.
-    // https://bugs.webkit.org/show_bug.cgi?id=146624
-    var constructor = this;
-
-    var promiseCapability = @newPromiseCapability(constructor);
+    var promiseCapability = @newPromiseCapability(this);
 
     var values = [];
     var index = 0;
@@ -62,7 +58,7 @@ function all(iterable)
     try {
         for (var value of iterable) {
             @putByValDirect(values, index, @undefined);
-            var nextPromise = constructor.resolve(value);
+            var nextPromise = this.resolve(value);
             var resolveElement = newResolveElement(index);
             ++remainingElementsCount;
             nextPromise.then(resolveElement, promiseCapability.@reject);
@@ -86,15 +82,11 @@ function race(iterable)
     if (!@isObject(this))
         throw new @TypeError("|this| is not a object");
 
-    // FIXME: Fix this code when @@species well-known symbol is landed.
-    // https://bugs.webkit.org/show_bug.cgi?id=146624
-    var constructor = this;
-
-    var promiseCapability = @newPromiseCapability(constructor);
+    var promiseCapability = @newPromiseCapability(this);
 
     try {
         for (var value of iterable) {
-            var nextPromise = constructor.resolve(value);
+            var nextPromise = this.resolve(value);
             nextPromise.then(promiseCapability.@resolve, promiseCapability.@reject);
         }
     } catch (error) {
