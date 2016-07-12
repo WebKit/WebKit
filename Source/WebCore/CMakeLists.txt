@@ -1987,6 +1987,7 @@ set(WebCore_SOURCES
     mathml/MathMLMathElement.cpp
     mathml/MathMLMencloseElement.cpp
     mathml/MathMLSelectElement.cpp
+    mathml/MathMLSpaceElement.cpp
     mathml/MathMLTextElement.cpp
 
     page/AutoscrollController.cpp

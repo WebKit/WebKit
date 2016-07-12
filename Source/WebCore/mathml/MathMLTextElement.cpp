@@ -32,7 +32,6 @@
 
 #include "MathMLNames.h"
 #include "RenderMathMLOperator.h"
-#include "RenderMathMLSpace.h"
 #include "RenderMathMLToken.h"
 
 namespace WebCore {
@@ -82,8 +81,6 @@ RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(RenderStyle&& 
 {
     if (hasTagName(MathMLNames::moTag))
         return createRenderer<RenderMathMLOperator>(*this, WTFMove(style));
-    if (hasTagName(MathMLNames::mspaceTag))
-        return createRenderer<RenderMathMLSpace>(*this, WTFMove(style));
     if (hasTagName(MathMLNames::annotationTag))
         return MathMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 

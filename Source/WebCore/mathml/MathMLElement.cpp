@@ -516,6 +516,15 @@ MathMLElement::Length MathMLElement::parseMathMLLength(const String& string)
     return parseNamedSpace(stringView);
 }
 
+const MathMLElement::Length& MathMLElement::cachedMathMLLength(const QualifiedName& name, Length& length)
+{
+    if (length.dirty) {
+        length = parseMathMLLength(fastGetAttribute(name));
+        length.dirty = false;
+    }
+    return length;
+}
+
 }
 
 #endif // ENABLE(MATHML)

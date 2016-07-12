@@ -63,6 +63,7 @@ public:
     struct Length {
         LengthType type { LengthType::ParsingFailed };
         float value { 0 };
+        bool dirty { true };
     };
     static Length parseMathMLLength(const String&);
 
@@ -81,6 +82,8 @@ protected:
 
     bool willRespondToMouseClickEvents() override;
     void defaultEventHandler(Event*) override;
+
+    const Length& cachedMathMLLength(const QualifiedName&, Length&);
 
 private:
     virtual void updateSelectedChild() { }

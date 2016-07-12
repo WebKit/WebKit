@@ -36,11 +36,8 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLSpace::RenderMathMLSpace(MathMLTextElement& element, RenderStyle&& style)
+RenderMathMLSpace::RenderMathMLSpace(MathMLSpaceElement& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
-    , m_width(0)
-    , m_height(0)
-    , m_depth(0)
 {
 }
 
@@ -48,34 +45,29 @@ void RenderMathMLSpace::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = m_width;
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = spaceWidth();
 
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderMathMLSpace::updateFromElement()
+LayoutUnit RenderMathMLSpace::spaceWidth() const
 {
-    const auto& spaceElement = element();
+    auto& spaceElement = element();
+    // FIXME: Negative width values are not supported yet.
+    return std::max<LayoutUnit>(0, toUserUnits(spaceElement.width(), style(), 0));
+}
 
-    // This parses the mspace attributes, using 0 as the default values.
-    m_width = 0;
-    m_height = 0;
-    m_depth = 0;
-    parseMathMLLength(spaceElement.getAttribute(MathMLNames::widthAttr), m_width, &style());
-    parseMathMLLength(spaceElement.getAttribute(MathMLNames::heightAttr), m_height, &style());
-    parseMathMLLength(spaceElement.getAttribute(MathMLNames::depthAttr), m_depth, &style());
-
-    // FIXME: Negative width values should be accepted.
-    if (m_width < 0)
-        m_width = 0;
+void RenderMathMLSpace::getSpaceHeightAndDepth(LayoutUnit& height, LayoutUnit& depth) const
+{
+    auto& spaceElement = element();
+    height = toUserUnits(spaceElement.height(), style(), 0);
+    depth = toUserUnits(spaceElement.depth(), style(), 0);
 
     // If the total height is negative, set vertical dimensions to 0.
-    if (m_height + m_depth < 0) {
-        m_height = 0;
-        m_depth = 0;
+    if (height + depth < 0) {
+        height = 0;
+        depth = 0;
     }
-
-    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 void RenderMathMLSpace::layoutBlock(bool relayoutChildren, LayoutUnit)
@@ -85,21 +77,19 @@ void RenderMathMLSpace::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
-    setLogicalWidth(m_width);
-    setLogicalHeight(m_height + m_depth);
+    setLogicalWidth(spaceWidth());
+    LayoutUnit height, depth;
+    getSpaceHeightAndDepth(height, depth);
+    setLogicalHeight(height + depth);
 
     clearNeedsLayout();
 }
 
-void RenderMathMLSpace::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderMathMLBlock::styleDidChange(diff, oldStyle);
-    updateFromElement();
-}
-
 Optional<int> RenderMathMLSpace::firstLineBaseline() const
 {
-    return Optional<int>(m_height);
+    LayoutUnit height, depth;
+    getSpaceHeightAndDepth(height, depth);
+    return Optional<int>(height);
 }
 
 }
