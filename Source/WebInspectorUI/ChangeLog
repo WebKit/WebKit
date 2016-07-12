@@ -1,3 +1,17 @@
+2016-07-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Use separate files for TreeOutline/TreeElement and DataGrid/DataGridNode
+        https://bugs.webkit.org/show_bug.cgi?id=159659
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/DataGrid.js:
+        * UserInterface/Views/DataGridNode.js: Added.
+        * UserInterface/Views/TreeElement.js: Added.
+        * UserInterface/Views/TreeOutline.js:
+        Extra the component classes to their own file.
+
 2016-07-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ProfileView sometimes shows Top Functions data despite Top Functions being disabled
