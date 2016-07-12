@@ -181,7 +181,14 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
 
     _contextMenuHandler(event)
     {
+        if (event.__addedObjectPreviewContextMenuItems)
+            return;
+        if (event.__addedObjectTreeContextMenuItems)
+            return;
+
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+
+        event.__addedObjectTreeContextMenuItems = true;
 
         if (typeof this.treeOutline.objectTreeElementAddContextMenuItems === "function") {
             this.treeOutline.objectTreeElementAddContextMenuItems(this, contextMenu);

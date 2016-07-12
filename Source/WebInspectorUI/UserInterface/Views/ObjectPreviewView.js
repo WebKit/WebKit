@@ -270,6 +270,8 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
     {
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
+        event.__addedObjectPreviewContextMenuItems = true;
+
         contextMenu.appendItem(WebInspector.UIString("Log Value"), () => {
             let remoteObject = this._remoteObject;
             let isImpossible = !this._propertyPath || this._propertyPath.isFullPathImpossible();

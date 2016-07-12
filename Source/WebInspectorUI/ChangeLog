@@ -1,3 +1,23 @@
+2016-07-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r192789): Web Inspector: Log Value context menu appears twice
+        https://bugs.webkit.org/show_bug.cgi?id=159681
+        <rdar://problem/27304804>
+
+        Reviewed by Brian Burg.
+
+        In r192789 contextmenu events may bubble up so that multiple handlers
+        may append ContextMenuItems. In nested ObjectTrees / ObjectPreviews
+        this could result in duplicate items. Add a flag on the bubbling event
+        so that we only include Object Tree context menu items for the deepest
+        part of the Object Tree, but still allow bubbling up to the root.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._contextMenuHandler):
+        (WebInspector.ObjectPreviewView):
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._contextMenuHandler):
+
 2016-07-12  Johan K. Jensen  <johan_jensen@apple.com>
 
         Web Inspector: ER: Copy as cURL
