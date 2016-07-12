@@ -9,7 +9,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -55,7 +55,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     WebCore::PlatformSpeechSynthesizer* m_synthesizerObject;
     // Hold a Ref to the utterance so that it won't disappear until the synth is done with it.
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> m_utterance;
-    
+
     RetainPtr<AVSpeechSynthesizer> m_synthesizer;
 }
 
@@ -70,7 +70,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 {
     if (!(self = [super init]))
         return nil;
-    
+
     m_synthesizerObject = synthesizer;
     return self;
 }
@@ -83,7 +83,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
         rate *= AVSpeechUtteranceDefaultSpeechRate;
     else
         rate = AVSpeechUtteranceDefaultSpeechRate + ((rate - 1) * (AVSpeechUtteranceMaximumSpeechRate - AVSpeechUtteranceDefaultSpeechRate));
-    
+
     return rate;
 }
 
@@ -92,10 +92,10 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     // When speak is called we should not have an existing speech utterance outstanding.
     ASSERT(!m_utterance);
     ASSERT(utterance);
-    
+
     if (!utterance)
         return;
-    
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (!m_synthesizer) {
         m_synthesizer = adoptNS([allocAVSpeechSynthesizerInstance() init]);
@@ -113,7 +113,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
             voiceLanguage = utterance->lang();
     } else
         voiceLanguage = utterance->voice()->lang();
-    
+
     AVSpeechSynthesisVoice *avVoice = nil;
     if (voiceLanguage)
         avVoice = [AVSpeechSynthesisVoiceClass voiceWithLanguage:voiceLanguage];
@@ -125,7 +125,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     [avUtterance setPitchMultiplier:utterance->pitch()];
     [avUtterance setVoice:avVoice];
     m_utterance = utterance;
-    
+
     [m_synthesizer speakUtterance:avUtterance];
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -134,7 +134,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 {
     if (!m_utterance)
         return;
-    
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_synthesizer pauseSpeakingAtBoundary:AVSpeechBoundaryImmediate];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -144,7 +144,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 {
     if (!m_utterance)
         return;
-    
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_synthesizer continueSpeaking];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -154,7 +154,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 {
     if (!m_utterance)
         return;
-    
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_synthesizer stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -166,7 +166,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     UNUSED_PARAM(utterance);
     if (!m_utterance)
         return;
-    
+
     m_synthesizerObject->client()->didStartSpeaking(m_utterance);
 }
 
@@ -176,11 +176,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     UNUSED_PARAM(utterance);
     if (!m_utterance)
         return;
-    
+
     // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> platformUtterance = m_utterance;
     m_utterance = nullptr;
-    
+
     m_synthesizerObject->client()->didFinishSpeaking(platformUtterance);
 }
 
@@ -190,7 +190,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     UNUSED_PARAM(utterance);
     if (!m_utterance)
         return;
-    
+
     m_synthesizerObject->client()->didPauseSpeaking(m_utterance);
 }
 
@@ -200,7 +200,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     UNUSED_PARAM(utterance);
     if (!m_utterance)
         return;
-    
+
     m_synthesizerObject->client()->didResumeSpeaking(m_utterance);
 }
 
@@ -210,11 +210,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     UNUSED_PARAM(utterance);
     if (!m_utterance)
         return;
-    
+
     // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> platformUtterance = m_utterance;
     m_utterance = nullptr;
-    
+
     m_synthesizerObject->client()->didFinishSpeaking(platformUtterance);
 }
 
@@ -222,10 +222,10 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 {
     UNUSED_PARAM(synthesizer);
     UNUSED_PARAM(utterance);
-    
+
     if (!m_utterance)
         return;
-    
+
     // iOS only supports word boundaries.
     m_synthesizerObject->client()->boundaryEventOccurred(m_utterance, WebCore::SpeechWordBoundary, characterRange.location);
 }
@@ -266,11 +266,11 @@ void PlatformSpeechSynthesizer::resume()
     [m_platformSpeechWrapper.get() resume];
 }
 
-void PlatformSpeechSynthesizer::speak(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
+void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     if (!m_platformSpeechWrapper)
         m_platformSpeechWrapper = adoptNS([[WebSpeechSynthesisWrapper alloc] initWithSpeechSynthesizer:this]);
-    
+
     [m_platformSpeechWrapper.get() speakUtterance:utterance.get()];
 }
 
@@ -278,7 +278,7 @@ void PlatformSpeechSynthesizer::cancel()
 {
     [m_platformSpeechWrapper.get() cancel];
 }
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

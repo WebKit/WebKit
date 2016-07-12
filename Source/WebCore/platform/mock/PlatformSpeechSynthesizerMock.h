@@ -32,25 +32,25 @@
 #include "Timer.h"
 
 namespace WebCore {
-    
+
 class PlatformSpeechSynthesizerMock : public PlatformSpeechSynthesizer {
 public:
     explicit PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient*);
 
     virtual ~PlatformSpeechSynthesizerMock();
-    virtual void speak(PassRefPtr<PlatformSpeechSynthesisUtterance>);
+    virtual void speak(RefPtr<PlatformSpeechSynthesisUtterance>&&);
     virtual void pause();
     virtual void resume();
     virtual void cancel();
-    
+
 private:
     virtual void initializeVoiceList();
     void speakingFinished();
-    
+
     Timer m_speakingFinishedTimer;
     RefPtr<PlatformSpeechSynthesisUtterance> m_utterance;
 };
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

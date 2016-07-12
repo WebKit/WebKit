@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef PasteboardStrategy_h
@@ -60,11 +60,11 @@ public:
     virtual String uniqueName() = 0;
     virtual Color color(const String& pasteboardName) = 0;
     virtual URL url(const String& pasteboardName) = 0;
-    
+
     virtual long addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;
     virtual long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;
     virtual long copy(const String& fromPasteboard, const String& toPasteboard) = 0;
-    virtual long setBufferForType(PassRefPtr<SharedBuffer>, const String& pasteboardType, const String& pasteboardName) = 0;
+    virtual long setBufferForType(SharedBuffer*, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual long setPathnamesForType(const Vector<String>&, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) = 0;
 #endif

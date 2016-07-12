@@ -125,7 +125,7 @@ long PlatformPasteboard::setTypes(const Vector<String>&)
     return 0;
 }
 
-long PlatformPasteboard::setBufferForType(PassRefPtr<SharedBuffer>, const String&)
+long PlatformPasteboard::setBufferForType(SharedBuffer*, const String&)
 {
     return 0;
 }

@@ -216,7 +216,7 @@ long WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, cons
     return PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-long WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType, const String& pasteboardName)
+long WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }

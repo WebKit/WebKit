@@ -63,10 +63,10 @@ void PlatformSpeechSynthesizer::resume()
     m_platformSpeechWrapper->resume();
 }
 
-void PlatformSpeechSynthesizer::speak(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
+void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     ASSERT(m_platformSpeechWrapper);
-    m_platformSpeechWrapper->speak(utterance);
+    m_platformSpeechWrapper->speak(WTFMove(utterance));
 }
 
 void PlatformSpeechSynthesizer::cancel()

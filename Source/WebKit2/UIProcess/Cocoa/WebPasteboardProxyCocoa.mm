@@ -116,7 +116,7 @@ void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName
     }
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
-    newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
+    newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer.get(), pasteboardType);
 }
 
 #if PLATFORM(IOS)

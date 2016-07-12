@@ -55,7 +55,7 @@ public:
     void initializeVoiceList(Vector<RefPtr<PlatformSpeechSynthesisVoice>>&);
     void pause();
     void resume();
-    void speak(PassRefPtr<PlatformSpeechSynthesisUtterance>);
+    void speak(RefPtr<PlatformSpeechSynthesisUtterance>&&);
     void cancel();
 private:
     bool engineInit();

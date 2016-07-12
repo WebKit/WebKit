@@ -1,3 +1,19 @@
+2016-07-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr in platform/efl and platform/mac 
+        https://bugs.webkit.org/show_bug.cgi?id=159548
+
+        Reviewed by Alex Christensen.
+
+        Remove all use of PassRefPtr and clean up unnecessary tabs and spaces.
+        WebKit2 codes are also changed because of setBufferForType()'s modification.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2016-07-11  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Intermittent crash in [UIApplication beginBackgroundTaskWithName] expiration handler

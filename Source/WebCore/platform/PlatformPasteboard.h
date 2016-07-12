@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef PlatformPasteboard_h
@@ -55,7 +55,7 @@ public:
     WEBCORE_EXPORT PlatformPasteboard();
 #endif
     WEBCORE_EXPORT static String uniqueName();
-    
+
     WEBCORE_EXPORT void getTypes(Vector<String>& types);
     WEBCORE_EXPORT RefPtr<SharedBuffer> bufferForType(const String& pasteboardType);
     WEBCORE_EXPORT void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType);
@@ -70,7 +70,7 @@ public:
 
     // These methods will return 0 if pasteboard ownership has been taken from us.
     WEBCORE_EXPORT long copy(const String& fromPasteboard);
-    WEBCORE_EXPORT long setBufferForType(PassRefPtr<SharedBuffer>, const String& pasteboardType);
+    WEBCORE_EXPORT long setBufferForType(SharedBuffer*, const String& pasteboardType);
     WEBCORE_EXPORT long setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType);
     WEBCORE_EXPORT long setStringForType(const String&, const String& pasteboardType);
     WEBCORE_EXPORT void write(const PasteboardWebContent&);

@@ -36,7 +36,7 @@ PlatformSpeechSynthesizerMock::PlatformSpeechSynthesizerMock(PlatformSpeechSynth
     , m_speakingFinishedTimer(*this, &PlatformSpeechSynthesizerMock::speakingFinished)
 {
 }
-    
+
 PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock()
 {
 }
@@ -46,10 +46,10 @@ void PlatformSpeechSynthesizerMock::speakingFinished()
     ASSERT(m_utterance.get());
     RefPtr<PlatformSpeechSynthesisUtterance> protect(m_utterance);
     m_utterance = nullptr;
-    
+
     client()->didFinishSpeaking(protect);
 }
-    
+
 void PlatformSpeechSynthesizerMock::initializeVoiceList()
 {
     m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.bruce"), String("bruce"), String("en-US"), true, true));
@@ -57,25 +57,25 @@ void PlatformSpeechSynthesizerMock::initializeVoiceList()
     m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.logan"), String("logan"), String("fr-CA"), true, true));
 }
 
-void PlatformSpeechSynthesizerMock::speak(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
+void PlatformSpeechSynthesizerMock::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     ASSERT(!m_utterance);
-    m_utterance = utterance;
+    m_utterance = WTFMove(utterance);
     client()->didStartSpeaking(m_utterance);
-    
+
     // Fire a fake word and then sentence boundary event.
     client()->boundaryEventOccurred(m_utterance, SpeechWordBoundary, 0);
     client()->boundaryEventOccurred(m_utterance, SpeechSentenceBoundary, m_utterance->text().length());
-    
+
     // Give the fake speech job some time so that pause and other functions have time to be called.
     m_speakingFinishedTimer.startOneShot(.1);
 }
-    
+
 void PlatformSpeechSynthesizerMock::cancel()
 {
     if (!m_utterance)
         return;
-    
+
     m_speakingFinishedTimer.stop();
     client()->speakingErrorOccurred(m_utterance);
     m_utterance = nullptr;

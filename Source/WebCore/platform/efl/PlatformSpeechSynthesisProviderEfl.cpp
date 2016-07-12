@@ -136,14 +136,14 @@ void PlatformSpeechSynthesisProviderEfl::resume()
     notImplemented();
 }
 
-void PlatformSpeechSynthesisProviderEfl::speak(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
+void PlatformSpeechSynthesisProviderEfl::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     if (!engineInit() || !utterance) {
         fireSpeechEvent(SpeechError);
         return;
     }
 
-    m_utterance = utterance;
+    m_utterance = WTFMove(utterance);
     String voice = voiceName(m_utterance);
     espeak_SetVoiceByName(voice.utf8().data());
     espeak_SetParameter(espeakRATE, convertRateToEspeakValue(m_utterance->rate()), 0);

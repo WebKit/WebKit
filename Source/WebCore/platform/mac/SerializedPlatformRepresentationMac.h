@@ -42,7 +42,7 @@ public:
     static Ref<SerializedPlatformRepresentation> create(id);
 
     JSC::JSValue deserialize(JSC::ExecState*) const override;
-    PassRefPtr<ArrayBuffer> data() const override;
+    RefPtr<ArrayBuffer> data() const override;
 
     bool isEqual(const SerializedPlatformRepresentation&) const override;
 
