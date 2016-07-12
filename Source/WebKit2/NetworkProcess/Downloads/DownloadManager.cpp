@@ -54,7 +54,7 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
     parameters.sessionID = sessionID;
     parameters.request = request;
     parameters.clientCredentialPolicy = AskClientForAllCredentials;
-    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(parameters), downloadID));
+    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(parameters), downloadID, *networkSession));
 #else
     auto download = std::make_unique<Download>(*this, downloadID, request, suggestedName);
     download->start();

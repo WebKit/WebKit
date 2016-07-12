@@ -40,11 +40,12 @@ namespace WebKit {
 class DownloadID;
 class NetworkLoad;
 class NetworkLoadParameters;
+class NetworkSession;
     
 class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PendingDownload(NetworkLoadParameters&&, DownloadID);
+    PendingDownload(NetworkLoadParameters&&, DownloadID, NetworkSession&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);
     void continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate);

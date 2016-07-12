@@ -1,5 +1,32 @@
 2016-07-12  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][NetworkSession] Fix unsafe RunLoop::dispatch() in NetworkLoad constructor
+        https://bugs.webkit.org/show_bug.cgi?id=159691
+
+        Reviewed by Brady Eidson.
+
+        Remove unsafe RunLoop::dispatch() in NetworkLoad constructor. It captured |this| but there
+        was no guarantee the NetworkLoad would still be alive by the time the lambda gets executed.
+
+        Instead, the constructor now takes a NetworkSession& parameter so that the call sites
+        have to retrieve the NetworkSession for a given SessionID and deal with the fact that
+        there may be no such NetworkSession before constructing the NetworkLoad.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+
+2016-07-12  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Protect against bad database data in LocalStorageDatabase::importItems()
         https://bugs.webkit.org/show_bug.cgi?id=159663
         <rdar://problem/18995873>
