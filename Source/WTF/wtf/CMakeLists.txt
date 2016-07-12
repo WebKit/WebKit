@@ -317,6 +317,6 @@ if (MSVC)
     add_custom_command(
         TARGET WTF
         POST_BUILD
-        COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/WebKitLibraries/win/tools/scripts/version-stamp.pl ${DERIVED_SOURCES_DIR} $<TARGET_FILE:WTF>
+        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/version-stamp.pl ${DERIVED_SOURCES_DIR} $<TARGET_FILE:WTF>
         VERBATIM)
 endif ()

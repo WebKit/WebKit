@@ -61,6 +61,6 @@ if (MSVC)
     add_custom_command(
         TARGET WebKit
         POST_BUILD
-        COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/WebKitLibraries/win/tools/scripts/version-stamp.pl ${DERIVED_SOURCES_WEBKIT_DIR} $<TARGET_FILE:WebKit>
+        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/version-stamp.pl ${DERIVED_SOURCES_WEBKIT_DIR} $<TARGET_FILE:WebKit>
         VERBATIM)
 endif ()
