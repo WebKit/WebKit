@@ -1,3 +1,25 @@
+2016-07-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Array.prototype.join() fails some conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=159657
+
+        Reviewed by Saam Barati.
+
+        I removed 3 sputnik tests that are incorrect in the latest spec.
+        In ES5, Array.prototype.join() was using ToUint32 on the argument:
+            https://es5.github.io/#x15.4.4.5
+        In ES6, the function uses ToLength:
+            https://tc39.github.io/ecma262/#sec-array.prototype.join
+
+        The test use Infinity and very large integer as the length.
+        They are guaranteed to time out or run out of memory.
+        Even if we waited the hours it takes to run this, the results would be different
+        from what the tests expect.
+
+        * js/array-join-expected.txt: Added.
+        * js/array-join.html: Added.
+        * js/script-tests/array-join.js: Added.
+
 2016-07-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/indexeddb/database-close-private.html as flaky on Mac

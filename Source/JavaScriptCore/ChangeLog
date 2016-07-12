@@ -1,3 +1,35 @@
+2016-07-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Array.prototype.join() fails some conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=159657
+
+        Reviewed by Saam Barati.
+
+        There were a couple of failures:
+        -separator.toString() was called *before* we get the length
+         and process ToLength() on it.
+        -We were using toUInt32() on length instead of ToLength(),
+         failing on big integers and various negative numbers.
+
+        Additionally, I replaced the "fast" ArrayStorage path
+        by a fully generic implementation that does not depends on StringJoiner.
+
+        The reason is StringJoiner was doing poorly on sparse objects
+        in certain cases.
+        If you have a sparse object with a length > INT_MAX but very few
+        indices defined, and you join on the empty string, it should be possible
+        to join the array (albeit very slowly). With StringJoiner, we fail
+        because we try to allocate > INT_MAX empty strings in a contiguous vector.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::slowJoin):
+        (JSC::canUseFastJoin):
+        (JSC::fastJoin):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::join): Deleted.
+        * runtime/JSArray.h:
+        (JSC::toLength):
+
 2016-07-12  Mark Lam  <mark.lam@apple.com>
 
         More stack limit and reserved zone renaming.
