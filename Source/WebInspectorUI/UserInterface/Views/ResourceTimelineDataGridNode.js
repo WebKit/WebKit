@@ -146,6 +146,12 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         return [WebInspector.ResourceTreeElement.ResourceIconStyleClassName, this.resource.type];
     }
 
+    appendContextMenuItems(contextMenu)
+    {
+        if (this._resource.urlComponents.scheme !== "data")
+            contextMenu.appendItem(WebInspector.UIString("Copy as cURL"), () => { this._resource.generateCURLCommand(); });
+    }
+
     // Protected
 
     filterableDataForColumn(columnIdentifier)

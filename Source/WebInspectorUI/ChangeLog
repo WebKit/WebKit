@@ -1,3 +1,23 @@
+2016-07-12  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Web Inspector: ER: Copy as cURL
+        https://bugs.webkit.org/show_bug.cgi?id=159380
+
+        Reviewed by Joseph Pecoraro.
+
+        Inspired by https://chromium.googlesource.com/chromium/src/+/b7c1115dbae65030ad96e773d9a270465a05f5c4/third_party/WebKit/Source/devtools/front_end/network/NetworkLogView.js
+
+        This "Copy as cURL" feature only approximates the original request as only some parts of
+        that request is known to the frontend.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.generateCURLCommand.escapeStringPosix.escapeCharacter):
+        (WebInspector.Resource.prototype.generateCURLCommand.escapeStringPosix):
+        (WebInspector.Resource.prototype.generateCURLCommand):
+        (WebInspector.Resource):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.appendContextMenuItems):
+
 2016-07-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Use separate files for TreeOutline/TreeElement and DataGrid/DataGridNode

@@ -1,3 +1,13 @@
+2016-07-12  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Web Inspector: ER: Copy as cURL
+        https://bugs.webkit.org/show_bug.cgi?id=159380
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/inspector/network/copy-as-curl-expected.txt: Added.
+        * http/tests/inspector/network/copy-as-curl.html: Added.
+
 2016-07-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Array.prototype.join() fails some conformance tests

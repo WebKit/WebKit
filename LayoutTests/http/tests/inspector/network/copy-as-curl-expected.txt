@@ -1,0 +1,35 @@
+Tests that "Copy as cURL" returns valid POSIX output.
+
+
+== Running test suite: GenerateCURLValidPOSIXOutput
+-- Running test case: SimpleURLGenerateCURL
+PASS: Command should contain URL.
+PASS: Command should be a GET request.
+PASS: Command should contain User-Agent header.
+PASS: Command should not contain a custom header.
+
+-- Running test case: SpecialURLGenerateCURL
+PASS: Command should contain valid POSIX escaped URL.
+
+-- Running test case: SpecialHeadersGenerateCURLValidPOSIXOutput
+PASS: Command should have correct custom header 1.
+PASS: Command should have correct custom header 2.
+PASS: Command should have correct custom header 3.
+
+-- Running test case: URLWithUTF8GenerateCURL
+PASS: Command should contain URL with UTF8 characters.
+
+-- Running test case: POSTRequestURLEncodedDataGenerateCURL
+PASS: Command should be a POST request.
+PASS: Command should have correct Content-Type.
+PASS: Command should contain correct data.
+
+-- Running test case: POSTRequestURLEncodedDataUTF8GenerateCURL
+PASS: Command should contain URL with UTF8 characters.
+PASS: Command should contain correct UTF8 data.
+
+-- Running test case: PUTRequestWithJSONGenerateCURL
+PASS: Command should be a PUT request.
+PASS: Command should have JSON Content-Type.
+PASS: Command should contain correct JSON data.
+

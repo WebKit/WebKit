@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createSimpleGETRequest()
+{
+    var request = new XMLHttpRequest();
+    request.open("GET", "resources/url?query=true", true);
+    request.send();
+}
+
+function createGETRequestWithSpecialURL()
+{
+    var request = new XMLHttpRequest();
+    request.open("GET", "resources/url'with$special{1..20}chars[] .html", true);
+    request.send();
+}
+
+function createGETRequestWithSpecialCharsInHeaders()
+{
+    var request = new XMLHttpRequest();
+    request.open("GET", "resources/url", true);
+    request.setRequestHeader("X-Custom1", "test1");
+    request.setRequestHeader("X-Custom2'%", "\'Test'\'1\\'2");
+    request.setRequestHeader("X-Custom3", "\'${PWD}");
+    request.send();
+}
+
+function createGETRequestWithUTF8()
+{
+    var request = new XMLHttpRequest();
+    request.open("GET", "resources/url?utf8=👍", true);
+    request.send();
+}
+
+function createPOSTRequestWithURLEncodedData()
+{
+    var request = new XMLHttpRequest();
+    request.open("POST", "resources/url", true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send("lorem=ipsum&$dolor='sit'&amet={1..20}");
+}
+
+function createPOSTRequestWithUTF8()
+{
+    var request = new XMLHttpRequest();
+    request.open("POST", "resources/url?utf8=👍", true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send("🌨=⛄️");
+}
+
+function createPUTRequestWithJSON()
+{
+    var request = new XMLHttpRequest();
+    request.open("PUT", "resources/url", true);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.send("{\"update\":\"now\"}");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("GenerateCURLValidPOSIXOutput");
+
+    suite.addTestCase({
+        name: "SimpleURLGenerateCURL",
+        description: "Generate cURL command from a simple URL.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createSimpleGETRequest()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                let curl = resource.generateCURLCommand().split(" \\\n");
+
+                InspectorTest.expectThat(curl[0].match("https?://.*?/resources/url\\?query=true") !== null, "Command should contain URL.");
+                InspectorTest.expectThat(curl[1] === "-XGET", "Command should be a GET request.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd.includes('User-Agent')) !== undefined, "Command should contain User-Agent header.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd.includes('X-Custom')) === undefined, "Command should not contain a custom header.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SpecialURLGenerateCURL",
+        description: "Generate cURL command from a URL containing special characters.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createGETRequestWithSpecialURL()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                let curl = resource.generateCURLCommand().split(" \\\n");
+
+                InspectorTest.expectThat(curl[0].match("https?://.*?/resources/url\\\\'with\\$special\\\\{1\.\.20\\\\}chars\\\\\\[\\\\\\]%20.html") !== null, "Command should contain valid POSIX escaped URL.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SpecialHeadersGenerateCURLValidPOSIXOutput",
+        description: "Generate cURL command from a request containing special characters in the headers and verify valid POSIX output.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createGETRequestWithSpecialCharsInHeaders()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                let curl = resource.generateCURLCommand().split(" \\\n");
+
+                InspectorTest.expectThat(curl.find((cmd) => cmd.includes('X-Custom1')) === "-H 'X-Custom1: test1'", "Command should have correct custom header 1.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd.includes('X-Custom2')) === "-H $'X-Custom2\\'%: \\'Test\\'\\'1\\\\\\'2'", "Command should have correct custom header 2.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd.includes('X-Custom3')) === "-H $'X-Custom3: \\'${PWD}'", "Command should have correct custom header 3.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "URLWithUTF8GenerateCURL",
+        description: "Generate cURL command from a URL containing UTF8 characters.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createGETRequestWithUTF8()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                let curl = resource.generateCURLCommand().split(" \\\n");
+
+                InspectorTest.expectThat(curl[0].match("https?://.*?/resources/url\\?utf8=%F0%9F%91%8D") !== null, "Command should contain URL with UTF8 characters.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "POSTRequestURLEncodedDataGenerateCURL",
+        description: "Generate cURL command from a POST request with URL encoded data.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createPOSTRequestWithURLEncodedData()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                let curl = resource.generateCURLCommand().split(" \\\n");
+
+                InspectorTest.expectThat(curl[1] === "-XPOST", "Command should be a POST request.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd.includes('Content-Type')) === "-H 'Content-Type: application/x-www-form-urlencoded'", "Command should have correct Content-Type.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd === "--data $'lorem=ipsum&$dolor=\\'sit\\'&amet={1..20}'") !== undefined, "Command should contain correct data.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "POSTRequestURLEncodedDataUTF8GenerateCURL",
+        description: "Generate cURL command from a POST request with URL encoded UTF8 data.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createPOSTRequestWithUTF8()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                let curl = resource.generateCURLCommand().split(" \\\n");
+
+                InspectorTest.expectThat(curl[0].match("https?://.*?/resources/url\\?utf8=%F0%9F%91%8D") !== null, "Command should contain URL with UTF8 characters.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd === "--data $'\\ud83c\\udf28=\\u26c4\\ufe0f'") !== undefined, "Command should contain correct UTF8 data.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "PUTRequestWithJSONGenerateCURL",
+        description: "Generate cURL command from a PUT request with JSON data.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createPUTRequestWithJSON()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                let curl = resource.generateCURLCommand().split(" \\\n");
+
+                InspectorTest.expectThat(curl[1] === "-XPUT", "Command should be a PUT request.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd.includes('Content-Type')) === "-H 'Content-Type: application/json'", "Command should have JSON Content-Type.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd === "--data-binary '{\"update\":\"now\"}'") !== undefined, "Command should contain correct JSON data.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that "Copy as cURL" returns valid POSIX output.</p>
+</body>
+</html>
