@@ -1439,3 +1439,5 @@ webkit.org/b/158747 [ ElCapitan ] media/restore-from-page-cache.html [ Pass Fail
 webkit.org/b/159533 [ ElCapitan+ ] media/video-main-content-allow-then-deny.html [ Failure ]
 
 webkit.org/b/151287 [ ElCapitan ] media/controls/inline-elements-dropoff-order.html [ Failure ]
+
+webkit.org/b/159683 imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Pass Failure ]
