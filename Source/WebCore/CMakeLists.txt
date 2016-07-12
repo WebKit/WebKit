@@ -1986,6 +1986,7 @@ set(WebCore_SOURCES
     mathml/MathMLInlineContainerElement.cpp
     mathml/MathMLMathElement.cpp
     mathml/MathMLMencloseElement.cpp
+    mathml/MathMLOperatorDictionary.cpp
     mathml/MathMLSelectElement.cpp
     mathml/MathMLSpaceElement.cpp
     mathml/MathMLTextElement.cpp
@@ -2517,7 +2518,6 @@ set(WebCore_SOURCES
     rendering/line/LineWidth.cpp
     rendering/line/TrailingObjects.cpp
 
-    rendering/mathml/MathMLOperatorDictionary.cpp
     rendering/mathml/MathMLStyle.cpp
     rendering/mathml/MathOperator.cpp
     rendering/mathml/RenderMathMLBlock.cpp
