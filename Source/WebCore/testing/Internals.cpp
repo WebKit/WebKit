@@ -428,6 +428,7 @@ Internals::Internals(Document& document)
     if (document.page())
         document.page()->setMockMediaPlaybackTargetPickerEnabled(true);
 #endif
+    RuntimeEnabledFeatures::sharedFeatures().reset();
 }
 
 Document* Internals::contextDocument() const

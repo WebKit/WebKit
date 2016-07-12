@@ -40,78 +40,84 @@
 namespace WebCore {
 
 RuntimeEnabledFeatures::RuntimeEnabledFeatures()
-    : m_isLocalStorageEnabled(true)
-    , m_isSessionStorageEnabled(true)
-    , m_isWebkitNotificationsEnabled(false)
-    , m_isApplicationCacheEnabled(true)
-    , m_isDataTransferItemsEnabled(true)
-    , m_isGeolocationEnabled(true)
-    , m_isTouchEnabled(true)
-    , m_isDeviceMotionEnabled(true)
-    , m_isDeviceOrientationEnabled(true)
-    , m_isLinkPreloadEnabled(false)
-    , m_isLangAttributeAwareFormControlUIEnabled(false)
+{
+    reset();
+}
+
+void RuntimeEnabledFeatures::reset()
+{
+    m_isLocalStorageEnabled = true;
+    m_isSessionStorageEnabled = true;
+    m_isWebkitNotificationsEnabled = false;
+    m_isApplicationCacheEnabled = true;
+    m_isDataTransferItemsEnabled = true;
+    m_isGeolocationEnabled = true;
+    m_isTouchEnabled = true;
+    m_isDeviceMotionEnabled = true;
+    m_isDeviceOrientationEnabled = true;
+    m_isLinkPreloadEnabled = false;
+    m_isLangAttributeAwareFormControlUIEnabled = false;
 #if PLATFORM(IOS)
-    , m_isPluginReplacementEnabled(true)
+    m_isPluginReplacementEnabled = true;
 #else
-    , m_isPluginReplacementEnabled(false)
+    m_isPluginReplacementEnabled = false;
 #endif
-    , m_isResourceTimingEnabled(false)
+    m_isResourceTimingEnabled = false;
 #if ENABLE(INDEXED_DATABASE)
-    , m_isIndexedDBEnabled(false)
+    m_isIndexedDBEnabled = true;
 #endif
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    , m_isIndexedDBWorkersEnabled(true)
+    m_isIndexedDBWorkersEnabled = true;
 #endif
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    , m_isMediaStreamEnabled(false)
+    m_isMediaStreamEnabled = false;
 #endif
 #if ENABLE(WEB_RTC)
-    , m_isPeerConnectionEnabled(true)
+    m_isPeerConnectionEnabled = true;
 #endif
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
-    , m_isLegacyCSSVendorPrefixesEnabled(false)
+    m_isLegacyCSSVendorPrefixesEnabled = false;
 #endif
 #if ENABLE(JAVASCRIPT_I18N_API)
-    , m_isJavaScriptI18NAPIEnabled(false)
+    m_isJavaScriptI18NAPIEnabled = false;
 #endif
 #if ENABLE(INPUT_TYPE_DATE)
-    , m_isInputTypeDateEnabled(true)
+    m_isInputTypeDateEnabled = true;
 #endif
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
-    , m_isInputTypeDateTimeEnabled(false)
+    m_isInputTypeDateTimeEnabled = false;
 #endif
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    , m_isInputTypeDateTimeLocalEnabled(true)
+    m_isInputTypeDateTimeLocalEnabled = true;
 #endif
 #if ENABLE(INPUT_TYPE_MONTH)
-    , m_isInputTypeMonthEnabled(true)
+    m_isInputTypeMonthEnabled = true;
 #endif
 #if ENABLE(INPUT_TYPE_TIME)
-    , m_isInputTypeTimeEnabled(true)
+    m_isInputTypeTimeEnabled = true;
 #endif
 #if ENABLE(INPUT_TYPE_WEEK)
-    , m_isInputTypeWeekEnabled(true)
+    m_isInputTypeWeekEnabled = true;
 #endif
 #if ENABLE(CSP_NEXT)
-    , m_areExperimentalContentSecurityPolicyFeaturesEnabled(false)
+    m_areExperimentalContentSecurityPolicyFeaturesEnabled = false;
 #endif
 #if ENABLE(FONT_LOAD_EVENTS)
-    , m_isFontLoadEventsEnabled(true)
+    m_isFontLoadEventsEnabled = true;
 #endif
 #if ENABLE(GAMEPAD)
-    , m_areGamepadsEnabled(false)
+    m_areGamepadsEnabled = false;
 #endif
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    , m_areAnimationTriggersEnabled(false)
+    m_areAnimationTriggersEnabled = false;
 #endif
 #if ENABLE(WEB_ANIMATIONS)
-    , m_areWebAnimationsEnabled(false)
+    m_areWebAnimationsEnabled = false;
 #endif
 #if ENABLE(CSS_GRID_LAYOUT)
-    , m_cssGridLayoutEnabled(true)
+    m_cssGridLayoutEnabled = true;
 #endif
-{
+
 }
 
 RuntimeEnabledFeatures& RuntimeEnabledFeatures::sharedFeatures()

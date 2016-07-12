@@ -228,6 +228,8 @@ public:
 
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
+    WEBCORE_EXPORT void reset();
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
