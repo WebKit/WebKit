@@ -49,7 +49,7 @@ class BuiltinsGeneratorTests:
             cmd.append('--combined')
 
         if generate_wrapper:
-            cmd.append('--with-wrapper-files')
+            cmd.append('--wrappers')
 
         cmd.append(builtins_file)
 

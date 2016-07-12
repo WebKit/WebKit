@@ -1,3 +1,13 @@
+2016-07-12  Youenn Fablet  <youenn@apple.com>
+
+        Fixing Tools/Scripts/run-builtins-generator-tests after https://trac.webkit.org/changeset/202975
+        https://bugs.webkit.org/show_bug.cgi?id=159564
+
+        Reviewed by Brian Burg.
+
+        * Scripts/webkitpy/codegen/main.py:
+        (BuiltinsGeneratorTests.generate_from_js_builtins): Changing --with-wrapper-files option to --wrappers.
+
 2016-07-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove ENABLE_CSS3_TEXT_LINE_BREAK flag
