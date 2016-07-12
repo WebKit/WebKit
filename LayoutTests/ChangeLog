@@ -1,3 +1,12 @@
+2016-07-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/css/ancestor-of-hovered-element-detached.html as flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=159173
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-07-12  Johan K. Jensen  <johan_jensen@apple.com>
 
         Web Inspector: ER: Copy as cURL
