@@ -1444,3 +1444,5 @@ webkit.org/b/151287 [ ElCapitan ] media/controls/inline-elements-dropoff-order.h
 webkit.org/b/159683 imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Pass Failure ]
 
 webkit.org/b/158741 [ Yosemite Release ] storage/indexeddb/modern/handle-user-delete.html [ Pass Timeout ]
+
+webkit.org/b/158500 storage/indexeddb/database-close-private.html [ Pass Failure ]
