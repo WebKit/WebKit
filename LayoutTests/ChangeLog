@@ -1,3 +1,14 @@
+2016-07-12  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (202694): Audio and Video playback controls: Cannot find a position slider to adjust playback position using VO.
+        https://bugs.webkit.org/show_bug.cgi?id=159661
+        <rdar://problem/27285135>
+
+        Unreviewed. Slight tweak to test to hopefully avoid flakiness.
+
+        * media/controls/default-size-should-show-scrubber-expected.txt:
+        * media/controls/default-size-should-show-scrubber.html:
+
 2016-07-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/css/ancestor-of-hovered-element-detached.html as flaky on Mac

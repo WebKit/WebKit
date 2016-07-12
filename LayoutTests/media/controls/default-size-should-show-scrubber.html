@@ -33,7 +33,7 @@ function runTests()
         .value(tester.media.paused)
         .isTrue();
 
-    ["Timeline", "Time Remaining", "Current Time"].forEach(name => {
+    ["Time Remaining", "Current Time"].forEach(name => {
         const elementState = tester.stateForControlsElement(name);
         tester.test(`${name} is visible`)
           .value(isVisible(elementState))
