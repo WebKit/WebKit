@@ -133,7 +133,7 @@ Controller.prototype = {
         right: 39,
         down: 40
     },
-    MinimumTimelineWidth: 100,
+    MinimumTimelineWidth: 80,
     ButtonWidth: 32,
 
     extend: function(child)

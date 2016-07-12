@@ -1,3 +1,18 @@
+2016-07-11  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (202694): Audio and Video playback controls: Cannot find a position slider to adjust playback position using VO.
+        https://bugs.webkit.org/show_bug.cgi?id=159661
+        <rdar://problem/27285135>
+
+        Reviewed by Eric Carlson.
+
+        Add a test that checks the scrubber is visible on a default media element.
+        Unfortunately this isn't quite an accurate test, since we really want to
+        examine a Media Document, but it's close enough.
+
+        * media/controls/default-size-should-show-scrubber-expected.txt: Added.
+        * media/controls/default-size-should-show-scrubber.html: Added.
+
 2016-07-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/preload/single_download_preload_runner.html as a timeout
