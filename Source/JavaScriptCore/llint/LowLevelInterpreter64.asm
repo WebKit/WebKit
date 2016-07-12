@@ -143,7 +143,7 @@ macro doVMEntry(makeCall)
     if C_LOOP
         bpaeq t3, VM::m_cloopStackLimit[vm], .stackHeightOK
     else
-        bpaeq t3, VM::m_osStackLimitWithReserve[vm], .stackHeightOK
+        bpaeq t3, VM::m_softStackLimit[vm], .stackHeightOK
     end
 
     if C_LOOP

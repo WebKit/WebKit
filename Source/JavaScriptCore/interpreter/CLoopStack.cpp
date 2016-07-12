@@ -54,7 +54,7 @@ CLoopStack::CLoopStack(VM& vm)
     : m_vm(vm)
     , m_topCallFrame(vm.topCallFrame)
     , m_end(0)
-    , m_reservedZoneSizeInRegisters(0)
+    , m_softReservedZoneSizeInRegisters(0)
 {
     size_t capacity = Options::maxPerThreadStackUsage();
     ASSERT(capacity && isPageAligned(capacity));
@@ -78,7 +78,7 @@ CLoopStack::~CLoopStack()
 
 bool CLoopStack::grow(Register* newTopOfStack)
 {
-    Register* newTopOfStackWithReservedZone = newTopOfStack - m_reservedZoneSizeInRegisters;
+    Register* newTopOfStackWithReservedZone = newTopOfStack - m_softReservedZoneSizeInRegisters;
 
     // If we have already committed enough memory to satisfy this request,
     // just update the end pointer and return.
@@ -126,7 +126,7 @@ void CLoopStack::sanitizeStack()
 
 void CLoopStack::releaseExcessCapacity()
 {
-    Register* highAddressWithReservedZone = highAddress() - m_reservedZoneSizeInRegisters;
+    Register* highAddressWithReservedZone = highAddress() - m_softReservedZoneSizeInRegisters;
     ptrdiff_t delta = reinterpret_cast<char*>(highAddressWithReservedZone) - reinterpret_cast<char*>(m_commitTop);
     m_reservation.decommit(m_commitTop, delta);
     addToCommittedByteCount(-delta);
@@ -140,10 +140,10 @@ void CLoopStack::addToCommittedByteCount(long byteCount)
     committedBytesCount += byteCount;
 }
 
-void CLoopStack::setReservedZoneSize(size_t reservedZoneSize)
+void CLoopStack::setSoftReservedZoneSize(size_t reservedZoneSize)
 {
-    m_reservedZoneSizeInRegisters = reservedZoneSize / sizeof(Register);
-    if (m_commitTop >= (m_end + 1) - m_reservedZoneSizeInRegisters)
+    m_softReservedZoneSizeInRegisters = reservedZoneSize / sizeof(Register);
+    if (m_commitTop >= (m_end + 1) - m_softReservedZoneSizeInRegisters)
         grow(m_end + 1);
 }
 

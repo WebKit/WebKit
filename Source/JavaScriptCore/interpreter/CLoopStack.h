@@ -67,7 +67,7 @@ namespace JSC {
 
         size_t size() const { return highAddress() - lowAddress(); }
 
-        void setReservedZoneSize(size_t);
+        void setSoftReservedZoneSize(size_t);
 
         inline Register* topOfStack();
 
@@ -104,7 +104,7 @@ namespace JSC {
         Register* m_commitTop;
         PageReservation m_reservation;
         Register* m_lastStackTop;
-        ptrdiff_t m_reservedZoneSizeInRegisters;
+        ptrdiff_t m_softReservedZoneSizeInRegisters;
 
         friend class LLIntOffsetsExtractor;
     };

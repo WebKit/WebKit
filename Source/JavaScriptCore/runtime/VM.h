@@ -459,14 +459,14 @@ public:
     void* stackPointerAtVMEntry() const { return m_stackPointerAtVMEntry; }
     void setStackPointerAtVMEntry(void*);
 
-    size_t reservedZoneSize() const { return m_reservedZoneSize; }
-    size_t updateReservedZoneSize(size_t reservedZoneSize);
+    size_t softReservedZoneSize() const { return m_currentSoftReservedZoneSize; }
+    size_t updateSoftReservedZoneSize(size_t softReservedZoneSize);
 
     static size_t committedStackByteCount();
     inline bool ensureStackCapacityFor(Register* newTopOfStack);
 
-    void* osStackLimitWithReserve() { return m_osStackLimitWithReserve; }
-    void** addressOfOSStackLimitWithReserve() { return &m_osStackLimitWithReserve; }
+    void* softStackLimit() { return m_softStackLimit; }
+    void** addressOfSoftStackLimit() { return &m_softStackLimit; }
 #if !ENABLE(JIT)
     void* cloopStackLimit() { return m_cloopStackLimit; }
     void setCLoopStackLimit(void* limit) { m_cloopStackLimit = limit; }
@@ -476,7 +476,7 @@ public:
     {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         int8_t* curr = reinterpret_cast<int8_t*>(&curr);
-        int8_t* limit = reinterpret_cast<int8_t*>(m_osStackLimitWithReserve);
+        int8_t* limit = reinterpret_cast<int8_t*>(m_softStackLimit);
         return curr >= limit && static_cast<size_t>(curr - limit) >= neededStackInBytes;
     }
 
@@ -648,8 +648,8 @@ private:
 #endif
 
     void* m_stackPointerAtVMEntry;
-    size_t m_reservedZoneSize;
-    void* m_osStackLimitWithReserve { nullptr };
+    size_t m_currentSoftReservedZoneSize;
+    void* m_softStackLimit { nullptr };
 #if !ENABLE(JIT)
     void* m_cloopStackLimit { nullptr };
 #endif

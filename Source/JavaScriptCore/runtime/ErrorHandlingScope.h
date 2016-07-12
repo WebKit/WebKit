@@ -36,7 +36,7 @@ public:
     JS_EXPORT_PRIVATE ~ErrorHandlingScope();
 private:
     VM& m_vm;
-    size_t m_savedReservedZoneSize;
+    size_t m_savedSoftReservedZoneSize;
 };
 
 } // namespace JSC

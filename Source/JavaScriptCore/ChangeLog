@@ -1,3 +1,73 @@
+2016-07-12  Mark Lam  <mark.lam@apple.com>
+
+        More stack limit and reserved zone renaming.
+        https://bugs.webkit.org/show_bug.cgi?id=159690
+
+        Rubber-stamped by Geoffrey Garen.
+
+        We should rename the following:
+            osStackLimitWithReserve => softStackLimit
+            reservedZoneSize => softReservedZoneSize
+            errorModeReservedZoneSize => reservedZoneSize
+
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (testPingPongStackOverflow):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::CLoopStack):
+        (JSC::CLoopStack::grow):
+        (JSC::CLoopStack::releaseExcessCapacity):
+        (JSC::CLoopStack::addToCommittedByteCount):
+        (JSC::CLoopStack::setSoftReservedZoneSize):
+        (JSC::CLoopStack::setReservedZoneSize): Deleted.
+        * interpreter/CLoopStack.h:
+        (JSC::CLoopStack::size):
+        * interpreter/CLoopStackInlines.h:
+        (JSC::CLoopStack::shrink):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ErrorHandlingScope.cpp:
+        (JSC::ErrorHandlingScope::ErrorHandlingScope):
+        (JSC::ErrorHandlingScope::~ErrorHandlingScope):
+        * runtime/ErrorHandlingScope.h:
+        * runtime/Options.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::setStackPointerAtVMEntry):
+        (JSC::VM::updateSoftReservedZoneSize):
+        (JSC::VM::updateStackLimit):
+        (JSC::VM::updateReservedZoneSize): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::stackPointerAtVMEntry):
+        (JSC::VM::softReservedZoneSize):
+        (JSC::VM::softStackLimit):
+        (JSC::VM::addressOfSoftStackLimit):
+        (JSC::VM::cloopStackLimit):
+        (JSC::VM::setCLoopStackLimit):
+        (JSC::VM::isSafeToRecurse):
+        (JSC::VM::reservedZoneSize): Deleted.
+        (JSC::VM::osStackLimitWithReserve): Deleted.
+        (JSC::VM::addressOfOSStackLimitWithReserve): Deleted.
+        * runtime/VMInlines.h:
+        (JSC::VM::ensureStackCapacityFor):
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+
 2016-07-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove ENABLE_CSS3_TEXT_LINE_BREAK flag

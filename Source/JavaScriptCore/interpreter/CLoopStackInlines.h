@@ -64,7 +64,7 @@ inline void CLoopStack::shrink(Register* newTopOfStack)
     // invoke std::max() with it as an argument. To work around this, we first
     // assign the constant to a local variable, and use the local instead.
     ptrdiff_t maxExcessCapacity = CLoopStack::maxExcessCapacity;
-    ptrdiff_t maxExcessInRegisters = std::max(maxExcessCapacity, m_reservedZoneSizeInRegisters);
+    ptrdiff_t maxExcessInRegisters = std::max(maxExcessCapacity, m_softReservedZoneSizeInRegisters);
     if (m_end == baseOfStack() && (highAddress() - m_commitTop) >= maxExcessInRegisters)
         releaseExcessCapacity();
 }

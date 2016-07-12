@@ -120,13 +120,13 @@ int testPingPongStackOverflow()
     JSC::initializeThreading();
     Options::initialize(); // Ensure options is initialized first.
 
+    auto origSoftReservedZoneSize = Options::softReservedZoneSize();
     auto origReservedZoneSize = Options::reservedZoneSize();
-    auto origErrorModeReservedZoneSize = Options::errorModeReservedZoneSize();
     auto origUseLLInt = Options::useLLInt();
     auto origMaxPerThreadStackUsage = Options::maxPerThreadStackUsage();
 
-    Options::reservedZoneSize() = 128 * KB;
-    Options::errorModeReservedZoneSize() = 64 * KB;
+    Options::softReservedZoneSize() = 128 * KB;
+    Options::reservedZoneSize() = 64 * KB;
 #if ENABLE(JIT)
     // Normally, we want to disable the LLINT to force the use of JITted code which is necessary for
     // reproducing the regression in https://bugs.webkit.org/show_bug.cgi?id=148749. However, we only
@@ -158,7 +158,7 @@ int testPingPongStackOverflow()
     JSStringRelease(PingPongStackOverflowObjectString);
 
     unsigned stackSize = 32 * KB;
-    Options::maxPerThreadStackUsage() = stackSize + Options::reservedZoneSize();
+    Options::maxPerThreadStackUsage() = stackSize + Options::softReservedZoneSize();
 
     exception = nullptr;
     scriptResult = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
@@ -173,8 +173,8 @@ int testPingPongStackOverflow()
         printf("PASS: PingPongStackOverflow test.\n");
     }
 
+    Options::softReservedZoneSize() = origSoftReservedZoneSize;
     Options::reservedZoneSize() = origReservedZoneSize;
-    Options::errorModeReservedZoneSize() = origErrorModeReservedZoneSize;
     Options::useLLInt() = origUseLLInt;
     Options::maxPerThreadStackUsage() = origMaxPerThreadStackUsage;
 

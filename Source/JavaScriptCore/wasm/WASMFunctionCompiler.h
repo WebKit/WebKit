@@ -135,7 +135,7 @@ public:
         m_beginLabel = label();
 
         addPtr(TrustedImm32(-m_calleeSaveSpace - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot) - maxFrameExtentForSlowPathCall), GPRInfo::callFrameRegister, GPRInfo::regT1);
-        m_stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfOSStackLimitWithReserve()), GPRInfo::regT1);
+        m_stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), GPRInfo::regT1);
 
         move(GPRInfo::regT1, stackPointerRegister);
         checkStackPointerAlignment();

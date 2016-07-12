@@ -954,7 +954,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     if C_LOOP
         bpbeq VM::m_cloopStackLimit[t2], t0, .stackHeightOK
     else
-        bpbeq VM::m_osStackLimitWithReserve[t2], t0, .stackHeightOK
+        bpbeq VM::m_softStackLimit[t2], t0, .stackHeightOK
     end
 
     # Stack height check failed - need to call a slow_path.
