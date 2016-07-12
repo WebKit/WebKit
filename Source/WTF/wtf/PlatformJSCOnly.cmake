@@ -1,5 +1,7 @@
 list(APPEND WTF_SOURCES
     PlatformUserPreferredLanguagesUnix.cpp
+
+    text/jsconly/TextBreakIteratorInternalICUJSCOnly.cpp
 )
 
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")

@@ -1,3 +1,15 @@
+2016-07-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        JSCOnly bulidfix after r203078
+        https://bugs.webkit.org/show_bug.cgi?id=159669
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/text/jsconly/TextBreakIteratorInternalICUJSCOnly.cpp: Added.
+        (WTF::currentSearchLocaleID):
+        (WTF::currentTextBreakLocaleID):
+
 2016-07-12  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] DLLs are missing version information.
