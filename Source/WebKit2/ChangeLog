@@ -1,3 +1,21 @@
+2016-07-12  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Protect against bad database data in LocalStorageDatabase::importItems()
+        https://bugs.webkit.org/show_bug.cgi?id=159663
+        <rdar://problem/18995873>
+
+        Reviewed by Benjamin Poulain.
+
+        Protect against bad database data in LocalStorageDatabase::importItems(). We
+        crash if the database contains a null key or a null value so protect against
+        it given that we have evidence it can happen.
+
+        With this change, I can no longer reproduce the UIProcess crash on evernote.com
+        that is documented at <rdar://problem/18995873>.
+
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::importItems):
+
 2016-07-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove ENABLE_CSS3_TEXT_LINE_BREAK flag

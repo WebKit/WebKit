@@ -1,3 +1,21 @@
+2016-07-12  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Protect against bad database data in LocalStorageDatabase::importItems()
+        https://bugs.webkit.org/show_bug.cgi?id=159663
+        <rdar://problem/18995873>
+
+        Reviewed by Benjamin Poulain.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageNullEntries.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageNullEntries.localstorage: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageNullEntries.localstorage-shm: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageNullEntries.mm: Added.
+        (-[LocalStorageNullEntriesMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TEST):
+
 2016-07-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Relax ordering requirements on StringView::CodePoints iterator

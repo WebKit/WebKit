@@ -181,7 +181,10 @@ void LocalStorageDatabase::importItems(StorageMap& storageMap)
 
     int result = query.step();
     while (result == SQLITE_ROW) {
-        items.set(query.getColumnText(0), query.getColumnBlobAsString(1));
+        String key = query.getColumnText(0);
+        String value = query.getColumnBlobAsString(1);
+        if (!key.isNull() && !value.isNull())
+            items.set(key, value);
         result = query.step();
     }
 
