@@ -1,5 +1,18 @@
 @namespace "http://www.w3.org/1998/Math/MathML";
 
+:any-link {
+    color: -webkit-link;
+    cursor: auto;
+}
+
+:any-link:active {
+    color: -webkit-activelink;
+}
+
+:focus {
+    outline: auto 5px -webkit-focus-ring-color
+}
+
 math {
     /*
     We use the exact bounding boxes of glyphs to avoid excessive gaps in mathematical formulas.

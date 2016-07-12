@@ -224,7 +224,7 @@ void MathMLSelectElement::defaultEventHandler(Event* event)
 
 bool MathMLSelectElement::willRespondToMouseClickEvents()
 {
-    return fastGetAttribute(MathMLNames::actiontypeAttr) == "toggle";
+    return fastGetAttribute(MathMLNames::actiontypeAttr) == "toggle" || MathMLInlineContainerElement::willRespondToMouseClickEvents();
 }
 
 void MathMLSelectElement::toggle()

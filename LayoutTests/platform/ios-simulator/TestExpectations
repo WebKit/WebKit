@@ -680,6 +680,10 @@ mathml/presentation/mathvariant-tokens.html [ Skip ]
 # The web font loading & relayout seems to be performed too late.
 imported/mathml-in-html5/mathml/relations/css-styling/mathvariant-transforms-1.html [ Pass ImageOnlyFailure ]
 
+# These tests use key navigation to test MathML links but do not seem to work on iOS simulator.
+webkit.org/b/159662 mathml/presentation/href-enter.html [ Skip ]
+webkit.org/b/159662 mathml/presentation/href-style.html [ Skip ]
+
 # <rdar://problem/19215305> ASSERT(m_cgFont.get()) fails in FontPlatformData::ctFont()
 svg/text/svg-fallback-font-crash.html
 svg/css/font-face-variant-crash.html

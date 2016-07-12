@@ -69,8 +69,19 @@ protected:
     bool isPhrasingContent(const Node&) const;
     bool isFlowContent(const Node&) const;
 
+    bool willRespondToMouseClickEvents() override;
+    void defaultEventHandler(Event*) override;
+
 private:
     virtual void updateSelectedChild() { }
+
+    bool canStartSelection() const final;
+    bool isFocusable() const final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isMouseFocusable() const final;
+    bool isURLAttribute(const Attribute&) const final;
+    bool supportsFocus() const final;
+    int tabIndex() const final;
 };
 
 inline bool Node::hasTagName(const MathMLQualifiedName& name) const

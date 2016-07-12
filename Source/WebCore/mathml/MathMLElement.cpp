@@ -32,6 +32,9 @@
 #include "MathMLElement.h"
 
 #include "ElementIterator.h"
+#include "Event.h"
+#include "EventHandler.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLMapElement.h"
@@ -40,10 +43,12 @@
 #include "MathMLMathElement.h"
 #include "MathMLNames.h"
 #include "MathMLSelectElement.h"
+#include "MouseEvent.h"
 #include "RenderTableCell.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 
@@ -216,7 +221,12 @@ unsigned MathMLElement::rowSpan() const
 
 void MathMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == rowspanAttr) {
+    if (name == hrefAttr) {
+        bool wasLink = isLink();
+        setIsLink(!value.isNull() && !shouldProhibitLinks(this));
+        if (wasLink != isLink())
+            setNeedsStyleRecalc();
+    } else if (name == rowspanAttr) {
         if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
             downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
     } else if (name == columnspanAttr) {
@@ -303,6 +313,88 @@ void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicStri
             downcast<MathMLElement>(*parent).updateSelectedChild();
     }
     StyledElement::attributeChanged(name, oldValue, newValue, reason);
+}
+
+bool MathMLElement::willRespondToMouseClickEvents()
+{
+    return isLink() || StyledElement::willRespondToMouseClickEvents();
+}
+
+void MathMLElement::defaultEventHandler(Event* event)
+{
+    if (isLink()) {
+        if (focused() && isEnterKeyKeydownEvent(event)) {
+            event->setDefaultHandled();
+            dispatchSimulatedClick(event);
+            return;
+        }
+        if (MouseEvent::canTriggerActivationBehavior(*event)) {
+            const AtomicString& href = fastGetAttribute(hrefAttr);
+            String url = stripLeadingAndTrailingHTMLSpaces(href);
+            event->setDefaultHandled();
+            if (Frame* frame = document().frame())
+                frame->loader().urlSelected(document().completeURL(url), "_self", event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
+            return;
+        }
+    }
+
+    StyledElement::defaultEventHandler(event);
+}
+
+bool MathMLElement::canStartSelection() const
+{
+    if (!isLink())
+        return StyledElement::canStartSelection();
+
+    return hasEditableStyle();
+}
+
+bool MathMLElement::isFocusable() const
+{
+    if (renderer() && renderer()->absoluteClippedOverflowRect().isEmpty())
+        return false;
+
+    return StyledElement::isFocusable();
+}
+
+bool MathMLElement::isKeyboardFocusable(KeyboardEvent* event) const
+{
+    if (isFocusable() && StyledElement::supportsFocus())
+        return StyledElement::isKeyboardFocusable(event);
+
+    if (isLink())
+        return document().frame()->eventHandler().tabsToLinks(event);
+
+    return StyledElement::isKeyboardFocusable(event);
+}
+
+bool MathMLElement::isMouseFocusable() const
+{
+    // Links are focusable by default, but only allow links with tabindex or contenteditable to be mouse focusable.
+    // https://bugs.webkit.org/show_bug.cgi?id=26856
+    if (isLink())
+        return StyledElement::supportsFocus();
+
+    return StyledElement::isMouseFocusable();
+}
+
+bool MathMLElement::isURLAttribute(const Attribute& attribute) const
+{
+    return attribute.name().localName() == hrefAttr || StyledElement::isURLAttribute(attribute);
+}
+
+bool MathMLElement::supportsFocus() const
+{
+    if (hasEditableStyle())
+        return StyledElement::supportsFocus();
+    // If not a link we should still be able to focus the element if it has tabIndex.
+    return isLink() || StyledElement::supportsFocus();
+}
+
+int MathMLElement::tabIndex() const
+{
+    // Skip the supportsFocus check in StyledElement.
+    return Element::tabIndex();
 }
 
 }
