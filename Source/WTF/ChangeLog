@@ -1,3 +1,20 @@
+2016-07-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Relax ordering requirements on StringView::CodePoints iterator
+        https://bugs.webkit.org/show_bug.cgi?id=159609
+
+        Reviewed by Darin Adler.
+
+        Previously, there was a requirement where if you use a CodePoints
+        iterator, you couldn't dereference twice in a row or increment
+        twice in a row. This restriction is unnecessary.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::CodePoints::Iterator::Iterator):
+        (WTF::StringView::CodePoints::Iterator::advanceCurrentCodePoint):
+        (WTF::StringView::CodePoints::Iterator::operator*):
+        (WTF::StringView::CodePoints::Iterator::operator==):
+
 2016-07-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         JSCOnly bulidfix after r203078

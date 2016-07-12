@@ -122,6 +122,13 @@ TEST(WTF, StringViewIterators)
     String helo("helo");
     StringView heloView(helo);
 
+    auto codePointsIterator = heloView.codeUnits().begin();
+    EXPECT_EQ(*codePointsIterator, 'h');
+    EXPECT_EQ(*codePointsIterator, 'h');
+    ++codePointsIterator;
+    ++codePointsIterator;
+    EXPECT_EQ(*codePointsIterator, 'l');
+
     EXPECT_TRUE(compareLoopIterations(heloView.codePoints(), {'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(heloView.codeUnits(), {'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(heloView.graphemeClusters(), {

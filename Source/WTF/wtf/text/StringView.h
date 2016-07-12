@@ -654,10 +654,9 @@ public:
 
 private:
     const StringView& m_stringView;
-    mutable unsigned m_index;
-#if !ASSERT_DISABLED
-    mutable bool m_alreadyIncremented { false };
-#endif
+    unsigned m_index;
+    unsigned m_indexEnd;
+    UChar32 m_codePoint;
 };
 
 class StringView::CodeUnits::Iterator {
@@ -713,37 +712,35 @@ inline StringView::CodePoints::CodePoints(const StringView& stringView)
 inline StringView::CodePoints::Iterator::Iterator(const StringView& stringView, unsigned index)
     : m_stringView(stringView)
     , m_index(index)
+    , m_indexEnd(index)
 {
+    operator++();
 }
 
 inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
 {
-#if !ASSERT_DISABLED
-    ASSERT(m_alreadyIncremented);
-    m_alreadyIncremented = false;
-#endif
+    ASSERT(m_indexEnd <= m_stringView.length());
+    m_index = m_indexEnd;
+    if (m_indexEnd == m_stringView.length()) {
+        m_codePoint = 0;
+        return *this;
+    }
+    if (m_stringView.is8Bit())
+        m_codePoint = m_stringView.characters8()[m_indexEnd++];
+    else
+        U16_NEXT(m_stringView.characters16(), m_indexEnd, m_stringView.length(), m_codePoint);
     return *this;
 }
 
 inline UChar32 StringView::CodePoints::Iterator::operator*() const
 {
-#if !ASSERT_DISABLED
-    ASSERT(!m_alreadyIncremented);
-    m_alreadyIncremented = true;
-#endif
-
-    if (m_stringView.is8Bit())
-        return m_stringView.characters8()[m_index++];
-
-    UChar32 codePoint;
-    U16_NEXT(m_stringView.characters16(), m_index, m_stringView.length(), codePoint);
-    return codePoint;
+    ASSERT(m_indexEnd <= m_stringView.length());
+    return m_codePoint;
 }
 
 inline bool StringView::CodePoints::Iterator::operator==(const Iterator& other) const
 {
     ASSERT(&m_stringView == &other.m_stringView);
-    ASSERT(!m_alreadyIncremented);
     return m_index == other.m_index;
 }
 

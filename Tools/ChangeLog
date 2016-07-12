@@ -1,3 +1,13 @@
+2016-07-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Relax ordering requirements on StringView::CodePoints iterator
+        https://bugs.webkit.org/show_bug.cgi?id=159609
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-07-12  Youenn Fablet  <youenn@apple.com>
 
         Fixing Tools/Scripts/run-builtins-generator-tests after https://trac.webkit.org/changeset/202975
