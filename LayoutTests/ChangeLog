@@ -1,5 +1,11 @@
 2016-07-12  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update test expectations for rdar://problem/26590623 after r203117.
+
+        * platform/mac/TestExpectations:
+
+2016-07-12  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking imported/w3c/web-platform-tests/fetch/api/request/request-cache.html as flaky on Mac and ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=159683
 
