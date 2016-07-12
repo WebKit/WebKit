@@ -35,7 +35,9 @@
     test(function() {
       var e = 3;
       var mathAxis = getBox("axis").middle;
-      for (var i = 0; i < 10; i++) {
+      /* Test for stack has been disabled for now.
+         See https://github.com/MathML/MathMLinHTML5-tests/issues/2 */
+      for (var i = 0; i <= 4; i++) {
         var frac = getBox("frac" + i);
         var num = getBox("frac" + i + "num");
         var den = getBox("frac" + i + "den");
