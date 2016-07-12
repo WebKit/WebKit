@@ -67,6 +67,31 @@ PASS Array.from(crazyPants, function (x) { crazyPants.length = x; return x; }) i
 Construction using Set object
 -------
 PASS Array.from(set) is ['zero', 'one', 'two']
+
+"this" is a constructor
+-------
+PASS Array.from.call(CustomConstructor, ['WebKit']).constructor is CustomConstructor
+PASS Object.getPrototypeOf(Array.from.call(CustomConstructor, ['WebKit'])) is CustomConstructor.prototype
+PASS Array.from.call(nonConstructor, ['WebKit']).length is 1
+PASS Array.from.call(nonConstructor, ['WebKit'])[0] is "WebKit"
+PASS Array.from.call(CustomConstructor, nonIterable).constructor is CustomConstructor
+PASS Object.getPrototypeOf(Array.from.call(CustomConstructor, nonIterable)) is CustomConstructor.prototype
+PASS Array.from.call(nonConstructor, nonIterable).length is 2
+PASS Array.from.call(nonConstructor, nonIterable)[0] is "one"
+PASS Array.from.call(nonConstructor, nonIterable)[1] is 2
+
+"this" is not a constructor
+-------
+PASS Array.from.call(nonConstructor, ['WebKit']).constructor is Array
+PASS Object.getPrototypeOf(Array.from.call(nonConstructor, ['WebKit'])) is Array.prototype
+PASS Array.from.call(nonConstructor, ['WebKit']).length is 1
+PASS Array.from.call(nonConstructor, ['WebKit'])[0] is "WebKit"
+PASS nonConstructorWasCalled is false
+PASS Array.from.call(nonConstructor, nonIterable).constructor is Array
+PASS Object.getPrototypeOf(Array.from.call(nonConstructor, nonIterable)) is Array.prototype
+PASS Array.from.call(nonConstructor, nonIterable).length is 2
+PASS Array.from.call(nonConstructor, nonIterable)[0] is "one"
+PASS Array.from.call(nonConstructor, nonIterable)[1] is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

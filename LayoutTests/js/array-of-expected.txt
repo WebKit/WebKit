@@ -17,9 +17,16 @@ PASS x[0].length is 3
 PASS x[1].length is 5
 Check that a setter isn't called.
 PASS Array.of(1, 2, 3) did not throw exception.
+"this" is a constructor
 PASS Array.of.call(Foo, 'a', 'b', 'c') instanceof Foo is true
 PASS Array.of.call(Foo, 'a', 'b', 'c').givenLength is 3
 PASS var foo = Array.of.call(Foo, 'a', 'b', 'c'); [foo.length, foo[0], foo[1], foo[2]] is [3, 'a', 'b', 'c']
+"this" is not a constructor
+PASS Array.of.call(nonConstructor, Foo).constructor is Array
+PASS Object.getPrototypeOf(Array.of.call(nonConstructor, Foo)) is Array.prototype
+PASS Array.of.call(nonConstructor, Foo).length is 1
+PASS Array.of.call(nonConstructor, Foo)[0] is Foo
+PASS nonConstructorWasCalled is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

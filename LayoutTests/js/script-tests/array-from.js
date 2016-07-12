@@ -100,3 +100,47 @@ set.add("zero");
 set.add("one");
 set.add("two");
 shouldBe("Array.from(set)", "['zero', 'one', 'two']");
+
+section("\"this\" is a constructor");
+var CustomConstructor = function (length) { this.givenLength = length; };
+shouldBe("Array.from.call(CustomConstructor, ['WebKit']).constructor", "CustomConstructor");
+shouldBe("Object.getPrototypeOf(Array.from.call(CustomConstructor, ['WebKit']))", "CustomConstructor.prototype");
+shouldBe("Array.from.call(nonConstructor, ['WebKit']).length", "1");
+shouldBeEqualToString("Array.from.call(nonConstructor, ['WebKit'])[0]", "WebKit");
+
+var nonIterable = {
+    get 0() {
+        return "one";
+    },
+    get 1() {
+        return 2;
+    },
+    get 2() {
+        throw "ERROR: this should never be called";
+    },
+    get length() {
+        return 2;
+    }
+};
+
+shouldBe("Array.from.call(CustomConstructor, nonIterable).constructor", "CustomConstructor");
+shouldBe("Object.getPrototypeOf(Array.from.call(CustomConstructor, nonIterable))", "CustomConstructor.prototype");
+shouldBe("Array.from.call(nonConstructor, nonIterable).length", "2");
+shouldBeEqualToString("Array.from.call(nonConstructor, nonIterable)[0]", "one");
+shouldBe("Array.from.call(nonConstructor, nonIterable)[1]", "2");
+
+
+section("\"this\" is not a constructor");
+var nonConstructorWasCalled = false;
+var nonConstructor = () => { nonConstructorWasCalled = true; };
+shouldBe("Array.from.call(nonConstructor, ['WebKit']).constructor", "Array");
+shouldBe("Object.getPrototypeOf(Array.from.call(nonConstructor, ['WebKit']))", "Array.prototype");
+shouldBe("Array.from.call(nonConstructor, ['WebKit']).length", "1");
+shouldBeEqualToString("Array.from.call(nonConstructor, ['WebKit'])[0]", "WebKit");
+shouldBeFalse("nonConstructorWasCalled");
+
+shouldBe("Array.from.call(nonConstructor, nonIterable).constructor", "Array");
+shouldBe("Object.getPrototypeOf(Array.from.call(nonConstructor, nonIterable))", "Array.prototype");
+shouldBe("Array.from.call(nonConstructor, nonIterable).length", "2");
+shouldBeEqualToString("Array.from.call(nonConstructor, nonIterable)[0]", "one");
+shouldBe("Array.from.call(nonConstructor, nonIterable)[1]", "2");

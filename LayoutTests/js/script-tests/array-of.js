@@ -25,7 +25,17 @@ Array.prototype.__defineSetter__("0", function (value) {
 
 shouldNotThrow("Array.of(1, 2, 3)");
 
+debug("\"this\" is a constructor");
 var Foo = function FooBar(length) { this.givenLength = length; };
-shouldBeTrue("Array.of.call(Foo, 'a', 'b', 'c') instanceof Foo")
+shouldBeTrue("Array.of.call(Foo, 'a', 'b', 'c') instanceof Foo");
 shouldBe("Array.of.call(Foo, 'a', 'b', 'c').givenLength", "3");
 shouldBe("var foo = Array.of.call(Foo, 'a', 'b', 'c'); [foo.length, foo[0], foo[1], foo[2]]", "[3, 'a', 'b', 'c']");
+
+debug("\"this\" is not a constructor");
+var nonConstructorWasCalled = false;
+var nonConstructor = () => { nonConstructorWasCalled = true; };
+shouldBe("Array.of.call(nonConstructor, Foo).constructor", "Array");
+shouldBe("Object.getPrototypeOf(Array.of.call(nonConstructor, Foo))", "Array.prototype");
+shouldBe("Array.of.call(nonConstructor, Foo).length", "1");
+shouldBe("Array.of.call(nonConstructor, Foo)[0]", "Foo");
+shouldBeFalse("nonConstructorWasCalled");

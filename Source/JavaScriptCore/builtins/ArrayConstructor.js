@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,7 @@ function of(/* items... */)
     "use strict";
 
     var length = arguments.length;
-    // TODO: Need isConstructor(this) instead of typeof "function" check.
-    var array = typeof this === 'function' ? new this(length) : new @Array(length);
+    var array = @isConstructor(this) ? new this(length) : new @Array(length);
     for (var k = 0; k < length; ++k)
         @putByValDirect(array, k, arguments[k]);
     array.length = length;
@@ -62,8 +61,7 @@ function from(items /*, mapFn, thisArg */)
         if (typeof iteratorMethod !== "function")
             throw new @TypeError("Array.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
 
-        // TODO: Need isConstructor(thisObj) instead of typeof "function" check.
-        var result = (typeof thisObj === "function") ? @Object(new thisObj()) : [];
+        var result = @isConstructor(thisObj) ? new thisObj() : [];
 
         var k = 0;
         var iterator = iteratorMethod.@call(items);
@@ -89,8 +87,7 @@ function from(items /*, mapFn, thisArg */)
     var arrayLike = @Object(items);
     var arrayLikeLength = @toLength(arrayLike.length);
 
-    // TODO: Need isConstructor(thisObj) instead of typeof "function" check.
-    var result = (typeof thisObj === "function") ? @Object(new thisObj(arrayLikeLength)) : new @Array(arrayLikeLength);
+    var result = @isConstructor(thisObj) ? new thisObj(arrayLikeLength) : new @Array(arrayLikeLength);
 
     var k = 0;
     while (k < arrayLikeLength) {

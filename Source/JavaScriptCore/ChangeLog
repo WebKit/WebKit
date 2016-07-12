@@ -1,3 +1,17 @@
+2016-07-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Array.from() and Array.of() try to build objects even if "this" is not a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=159604
+
+        Reviewed by Yusuke Suzuki.
+
+        The spec says IsConstructor(), we were just checking if "this"
+        is any function.
+
+        * builtins/ArrayConstructor.js:
+        (of):
+        (from):
+
 2016-07-11  Keith Miller  <keith_miller@apple.com>
 
         defineProperty on a index of a TypedArray should throw if configurable
