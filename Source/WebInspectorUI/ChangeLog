@@ -1,3 +1,15 @@
+2016-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ProfileView sometimes shows Top Functions data despite Top Functions being disabled
+        https://bugs.webkit.org/show_bug.cgi?id=159660
+        <rdar://problem/27291647>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        (WebInspector.ScriptProfileTimelineView.prototype._profileOrientationButtonClicked):
+        Pass the value of the setting, not the setting itself.
+
 2016-07-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Transition and Animation sections in Visual Styles sidebar should have more spacing to their left

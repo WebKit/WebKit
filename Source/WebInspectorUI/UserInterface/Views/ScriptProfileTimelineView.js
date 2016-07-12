@@ -142,7 +142,7 @@ WebInspector.ScriptProfileTimelineView = class ScriptProfileTimelineView extends
             newOrientation = WebInspector.ScriptProfileTimelineView.ProfileOrientation.TopDown;
 
         WebInspector.ScriptProfileTimelineView.profileOrientationSetting.value = newOrientation;
-        this._showProfileViewForOrientation(newOrientation, WebInspector.ScriptProfileTimelineView.profileTypeSetting);
+        this._showProfileViewForOrientation(newOrientation, WebInspector.ScriptProfileTimelineView.profileTypeSetting.value);
 
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
 
