@@ -1,3 +1,14 @@
+2016-07-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DLLs are missing version information.
+        https://bugs.webkit.org/show_bug.cgi?id=159349
+
+        Reviewed by Brent Fulgham.
+
+        Generate autoversion.h and run perl version stamp utility.
+
+        * CMakeLists.txt:
+
 2016-07-11  Caio Lima  <ticaiolima@gmail.com>
 
         ECMAScript 2016: %TypedArray%.prototype.includes implementation

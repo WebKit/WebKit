@@ -89,6 +89,9 @@ print "Processing version $components{'__VERSION_TEXT__'} for $target\n";
 
 my $TARGET_PATH = File::Spec->canonpath($target);
 
+# Replace forward slashes with backslashes in case we are running Cygwin Perl.
+$TARGET_PATH =~ s/\//\\/g;
+
 print "Adjusting RC_PROJECTSOURCEVERSION and RC_ProjectSourceVersion to be safe for VersionStamper.\n";
 
 my $SAFE_PROJECT_VERSION = "$components{'__FULL_BUILD_MAJOR_VERSION__'}.$components{'__VERSION_MINOR__'}.$components{'__VERSION_TINY__'}";

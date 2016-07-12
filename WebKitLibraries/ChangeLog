@@ -1,3 +1,14 @@
+2016-07-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DLLs are missing version information.
+        https://bugs.webkit.org/show_bug.cgi?id=159349
+
+        Reviewed by Brent Fulgham.
+
+        The version stamping will fail if the target path has forward slashes.
+
+        * win/tools/scripts/version-stamp.pl: Replace forward slashes with backslashes.
+
 2016-06-14  Lucas Forschler  <lforschler@apple.com>
 
         Update existing WebKitSystemInterface Libraries.
