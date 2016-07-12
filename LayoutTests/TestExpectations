@@ -979,3 +979,5 @@ media/video-contained-in-fullscreen-element-going-into-pip.html [ WontFix ]
 webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Skip ]
 
 [ Debug ] js/regress/misc-bugs-847389-jpeg2000.html [ Skip ]
+
+webkit.org/b/159678 http/tests/preload/single_download_preload_runner.html [ Timeout ]
