@@ -397,6 +397,125 @@ int MathMLElement::tabIndex() const
     return Element::tabIndex();
 }
 
+static inline StringView skipLeadingAndTrailingWhitespace(const String& string)
+{
+    unsigned start = 0, stringLength = string.length();
+    while (stringLength > 0 && isHTMLSpace(string[start])) {
+        start++;
+        stringLength--;
+    }
+    while (stringLength > 0 && isHTMLSpace(string[start + stringLength - 1]))
+        stringLength--;
+    return string.substring(start, stringLength);
+}
+
+MathMLElement::Length MathMLElement::parseNumberAndUnit(const StringView& string)
+{
+    LengthType lengthType = LengthType::UnitLess;
+    unsigned stringLength = string.length();
+    UChar lastChar = string[stringLength - 1];
+    if (lastChar == '%') {
+        lengthType = LengthType::Percentage;
+        stringLength--;
+    } else if (stringLength >= 2) {
+        UChar penultimateChar = string[stringLength - 2];
+        if (penultimateChar == 'c' && lastChar == 'm')
+            lengthType = LengthType::Cm;
+        if (penultimateChar == 'e' && lastChar == 'm')
+            lengthType = LengthType::Em;
+        else if (penultimateChar == 'e' && lastChar == 'x')
+            lengthType = LengthType::Ex;
+        else if (penultimateChar == 'i' && lastChar == 'n')
+            lengthType = LengthType::In;
+        else if (penultimateChar == 'm' && lastChar == 'm')
+            lengthType = LengthType::Mm;
+        else if (penultimateChar == 'p' && lastChar == 'c')
+            lengthType = LengthType::Pc;
+        else if (penultimateChar == 'p' && lastChar == 't')
+            lengthType = LengthType::Pt;
+        else if (penultimateChar == 'p' && lastChar == 'x')
+            lengthType = LengthType::Px;
+
+        if (lengthType != LengthType::UnitLess)
+            stringLength -= 2;
+    }
+
+    bool ok;
+    float lengthValue = string.substring(0, stringLength).toFloat(ok);
+    if (!ok)
+        return Length();
+
+    Length length;
+    length.type = lengthType;
+    length.value = lengthValue;
+    return length;
+}
+
+MathMLElement::Length MathMLElement::parseNamedSpace(const StringView& string)
+{
+    // Named space values are case-sensitive.
+    int namedSpaceValue;
+    if (string == "veryverythinmathspace")
+        namedSpaceValue = 1;
+    else if (string == "verythinmathspace")
+        namedSpaceValue = 2;
+    else if (string == "thinmathspace")
+        namedSpaceValue = 3;
+    else if (string == "mediummathspace")
+        namedSpaceValue = 4;
+    else if (string == "thickmathspace")
+        namedSpaceValue = 5;
+    else if (string == "verythickmathspace")
+        namedSpaceValue = 6;
+    else if (string == "veryverythickmathspace")
+        namedSpaceValue = 7;
+    else if (string == "negativeveryverythinmathspace")
+        namedSpaceValue = -1;
+    else if (string == "negativeverythinmathspace")
+        namedSpaceValue = -2;
+    else if (string == "negativethinmathspace")
+        namedSpaceValue = -3;
+    else if (string == "negativemediummathspace")
+        namedSpaceValue = -4;
+    else if (string == "negativethickmathspace")
+        namedSpaceValue = -5;
+    else if (string == "negativeverythickmathspace")
+        namedSpaceValue = -6;
+    else if (string == "negativeveryverythickmathspace")
+        namedSpaceValue = -7;
+    else
+        return Length();
+
+    Length length;
+    length.type = LengthType::MathUnit;
+    length.value = namedSpaceValue;
+    return length;
+}
+
+MathMLElement::Length MathMLElement::parseMathMLLength(const String& string)
+{
+    // The regular expression from the MathML Relax NG schema is as follows:
+    //
+    //   pattern = '\s*((-?[0-9]*([0-9]\.?|\.[0-9])[0-9]*(e[mx]|in|cm|mm|p[xtc]|%)?)|(negative)?((very){0,2}thi(n|ck)|medium)mathspace)\s*'
+    //
+    // We do not perform a strict verification of the syntax of whitespaces and number.
+    // Instead, we just use isHTMLSpace and toFloat to parse these parts.
+
+    // We first skip whitespace from both ends of the string.
+    StringView stringView = skipLeadingAndTrailingWhitespace(string);
+
+    if (stringView.isEmpty())
+        return Length();
+
+    // We consider the most typical case: a number followed by an optional unit.
+    UChar firstChar = stringView[0];
+    if (isASCIIDigit(firstChar) || firstChar == '-' || firstChar == '.')
+        return parseNumberAndUnit(stringView);
+
+    // Otherwise, we try and parse a named space.
+    return parseNamedSpace(stringView);
+}
+
 }
 
 #endif // ENABLE(MATHML)

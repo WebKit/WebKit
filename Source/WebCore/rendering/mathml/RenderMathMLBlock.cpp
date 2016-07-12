@@ -30,11 +30,12 @@
 
 #include "RenderMathMLBlock.h"
 
+#include "CSSHelper.h"
 #include "GraphicsContext.h"
 #include "LayoutRepainter.h"
+#include "MathMLElement.h"
 #include "MathMLNames.h"
 #include "RenderView.h"
-#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(DEBUG_MATH_LAYOUT)
 #include "PaintInfo.h"
@@ -137,177 +138,52 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 }
 #endif // ENABLE(DEBUG_MATH_LAYOUT)
 
-//
-// The MathML specification says:
-// (http://www.w3.org/TR/MathML/chapter2.html#fund.units)
-//
-// "Most presentation elements have attributes that accept values representing
-// lengths to be used for size, spacing or similar properties. The syntax of a
-// length is specified as
-//
-// number | number unit | namedspace
-//
-// There should be no space between the number and the unit of a length."
-//
-// "A trailing '%' represents a percent of the default value. The default
-// value, or how it is obtained, is listed in the table of attributes for each
-// element. [...] A number without a unit is intepreted as a multiple of the
-// default value."
-//
-// "The possible units in MathML are:
-//
-// Unit Description
-// em   an em (font-relative unit traditionally used for horizontal lengths)
-// ex   an ex (font-relative unit traditionally used for vertical lengths)
-// px   pixels, or size of a pixel in the current display
-// in   inches (1 inch = 2.54 centimeters)
-// cm   centimeters
-// mm   millimeters
-// pt   points (1 point = 1/72 inch)
-// pc   picas (1 pica = 12 points)
-// %    percentage of default value"
-//
-// The numbers are defined that way:
-// - unsigned-number: "a string of decimal digits with up to one decimal point
-//   (U+002E), representing a non-negative terminating decimal number (a type of
-//   rational number)"
-// - number: "an optional prefix of '-' (U+002D), followed by an unsigned
-//   number, representing a terminating decimal number (a type of rational
-//   number)"
-//
-bool parseMathMLLength(const String& string, LayoutUnit& lengthValue, const RenderStyle* style, bool allowNegative)
+LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& style, const LayoutUnit& referenceValue)
 {
-    String s = string.simplifyWhiteSpace();
-
-    int stringLength = s.length();
-    if (!stringLength)
-        return false;
-
-    if (parseMathMLNamedSpace(s, lengthValue, style, allowNegative))
-        return true;
-
-    StringBuilder number;
-    String unit;
-
-    // This verifies whether the negative sign is there.
-    int i = 0;
-    UChar c = s[0];
-    if (c == '-') {
-        number.append(c);
-        i++;
+    switch (length.type) {
+    case MathMLElement::LengthType::Cm:
+        return length.value * cssPixelsPerInch / 2.54f;
+    case MathMLElement::LengthType::Em:
+        return length.value * style.fontCascade().size();
+    case MathMLElement::LengthType::Ex:
+        return length.value * style.fontMetrics().xHeight();
+    case MathMLElement::LengthType::In:
+        return length.value * cssPixelsPerInch;
+    case MathMLElement::LengthType::MathUnit:
+        return length.value * style.fontCascade().size() / 18;
+    case MathMLElement::LengthType::Mm:
+        return length.value * cssPixelsPerInch / 25.4f;
+    case MathMLElement::LengthType::Pc:
+        return length.value * cssPixelsPerInch / 6;
+    case MathMLElement::LengthType::Percentage:
+        return referenceValue * length.value / 100;
+    case MathMLElement::LengthType::Pt:
+        return length.value * cssPixelsPerInch / 72;
+    case MathMLElement::LengthType::Px:
+        return length.value;
+    case MathMLElement::LengthType::UnitLess:
+        return referenceValue * length.value;
+    case MathMLElement::LengthType::ParsingFailed:
+        return referenceValue;
+    default:
+        ASSERT_NOT_REACHED();
+        return referenceValue;
     }
-
-    // This gathers up characters that make up the number.
-    bool gotDot = false;
-    for ( ; i < stringLength; i++) {
-        c = s[i];
-        // The string is invalid if it contains two dots.
-        if (gotDot && c == '.')
-            return false;
-        if (c == '.')
-            gotDot = true;
-        else if (!isASCIIDigit(c)) {
-            unit = s.substring(i, stringLength - i);
-            // Some authors leave blanks before the unit, but that shouldn't
-            // be allowed, so don't simplifyWhitespace on 'unit'.
-            break;
-        }
-        number.append(c);
-    }
-
-    // Convert number to floating point
-    bool ok;
-    float floatValue = number.toString().toFloat(&ok);
-    if (!ok)
-        return false;
-    if (floatValue < 0 && !allowNegative)
-        return false;
-
-    if (unit.isEmpty()) {
-        // no explicit unit, this is a number that will act as a multiplier
-        lengthValue *= floatValue;
-        return true;
-    }
-    if (unit == "%") {
-        lengthValue *= floatValue / 100;
-        return true;
-    }
-    if (unit == "em") {
-        lengthValue = floatValue * style->fontCascade().size();
-        return true;
-    }
-    if (unit == "ex") {
-        lengthValue = floatValue * style->fontMetrics().xHeight();
-        return true;
-    }
-    if (unit == "px") {
-        lengthValue = floatValue;
-        return true;
-    }
-    if (unit == "pt") {
-        lengthValue = 4 * (floatValue / 3);
-        return true;
-    }
-    if (unit == "pc") {
-        lengthValue = 16 * floatValue;
-        return true;
-    }
-    if (unit == "in") {
-        lengthValue = 96 * floatValue;
-        return true;
-    }
-    if (unit == "cm") {
-        lengthValue = 96 * (floatValue / 2.54);
-        return true;
-    }
-    if (unit == "mm") {
-        lengthValue = 96 * (floatValue / 25.4);
-        return true;
-    }
-
-    // unexpected unit
-    return false;
 }
 
-bool parseMathMLNamedSpace(const String& string, LayoutUnit& lengthValue, const RenderStyle* style, bool allowNegative)
+bool parseMathMLLength(const String& string, LayoutUnit& lengthValue, const RenderStyle* style, bool allowNegative)
 {
-    float length = 0;
-    // See if it is one of the namedspaces (ranging -7/18em, -6/18, ... 7/18em)
-    if (string == "veryverythinmathspace")
-        length = 1;
-    else if (string == "verythinmathspace")
-        length = 2;
-    else if (string == "thinmathspace")
-        length = 3;
-    else if (string == "mediummathspace")
-        length = 4;
-    else if (string == "thickmathspace")
-        length = 5;
-    else if (string == "verythickmathspace")
-        length = 6;
-    else if (string == "veryverythickmathspace")
-        length = 7;
-    else if (allowNegative) {
-        if (string == "negativeveryverythinmathspace")
-            length = -1;
-        else if (string == "negativeverythinmathspace")
-            length = -2;
-        else if (string == "negativethinmathspace")
-            length = -3;
-        else if (string == "negativemediummathspace")
-            length = -4;
-        else if (string == "negativethickmathspace")
-            length = -5;
-        else if (string == "negativeverythickmathspace")
-            length = -6;
-        else if (string == "negativeveryverythickmathspace")
-            length = -7;
-    }
-    if (length) {
-        lengthValue = length * style->fontCascade().size() / 18;
-        return true;
-    }
-    return false;
+    MathMLElement::Length length = MathMLElement::parseMathMLLength(string);
+    if (length.type == MathMLElement::LengthType::ParsingFailed)
+        return false;
+
+    LayoutUnit value = toUserUnits(length, *style, lengthValue);
+
+    if (!allowNegative && value < 0)
+        return false;
+
+    lengthValue = value;
+    return true;
 }
 
 Optional<int> RenderMathMLTable::firstLineBaseline() const

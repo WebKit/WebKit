@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLElement.h"
 #include "MathMLStyle.h"
 #include "RenderBlock.h"
 #include "RenderTable.h"
@@ -116,7 +117,7 @@ private:
 
 // Parsing functions for MathML Length values
 bool parseMathMLLength(const String&, LayoutUnit&, const RenderStyle*, bool allowNegative = true);
-bool parseMathMLNamedSpace(const String&, LayoutUnit&, const RenderStyle*, bool allowNegative = true);
+LayoutUnit toUserUnits(const MathMLElement::Length&, const RenderStyle&, const LayoutUnit& referenceValue);
 
 } // namespace WebCore
 

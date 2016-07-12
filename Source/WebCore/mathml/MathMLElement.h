@@ -56,6 +56,16 @@ public:
 
     bool hasTagName(const MathMLQualifiedName& name) const { return hasLocalName(name.localName()); }
 
+    // MathML lengths (https://www.w3.org/TR/MathML3/chapter2.html#fund.units)
+    // TeX's Math Unit is used internally for named spaces (1 mu = 1/18 em).
+    // Unitless values are interpreted as a multiple of a reference value.
+    enum class LengthType { Cm, Em, Ex, In, MathUnit, Mm, ParsingFailed, Pc, Percentage, Pt, Px, UnitLess };
+    struct Length {
+        LengthType type { LengthType::ParsingFailed };
+        float value { 0 };
+    };
+    static Length parseMathMLLength(const String&);
+
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
@@ -74,6 +84,8 @@ protected:
 
 private:
     virtual void updateSelectedChild() { }
+    static Length parseNumberAndUnit(const StringView&);
+    static Length parseNamedSpace(const StringView&);
 
     bool canStartSelection() const final;
     bool isFocusable() const final;
