@@ -28,6 +28,7 @@
 #import "CoreSimulatorSPI.h"
 #import "LTPipeRelay.h"
 #import <AppKit/AppKit.h>
+#import <crt_externs.h>
 
 @interface LTRelayController ()
 @property (readonly, strong) dispatch_source_t standardInputDispatchSource;
@@ -190,6 +191,33 @@
                 NSString *nsValue = [NSString stringWithUTF8String:value];
                 [dictionary setObject:nsValue forKey:keyName];
                 [dictionary setObject:nsValue forKey:[@"__XPC_" stringByAppendingString:keyName]];
+            }
+        }
+
+        for (char** envp = *_NSGetEnviron(); *envp; envp++) {
+            const char* env = *envp;
+            if (!strncmp("JSC_", env, 4) || !strncmp("__XPC_JSC_", env, 10)) {
+                const char* equal = strchr(env, '=');
+                if (!equal) {
+                    NSLog(@"Missing '=' in env var '%s'", env);
+                    continue;
+                }
+
+                static const size_t maxKeyLength = 256;
+                size_t keyLength = equal - env;
+                if (keyLength >= maxKeyLength) {
+                    NSLog(@"Env var '%s' is too long", env);
+                    continue;
+                }
+
+                char key[maxKeyLength];
+                strncpy(key, env, keyLength);
+                key[keyLength] = '\0';
+                const char* value = equal + 1;
+
+                NSString *nsKey = [NSString stringWithUTF8String:key];
+                NSString *nsValue = [NSString stringWithUTF8String:value];
+                [dictionary setObject:nsValue forKey:nsKey];
             }
         }
 

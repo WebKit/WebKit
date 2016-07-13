@@ -465,6 +465,7 @@ public:
     static size_t committedStackByteCount();
     inline bool ensureStackCapacityFor(Register* newTopOfStack);
 
+    void* stackLimit() { return m_stackLimit; }
     void* softStackLimit() { return m_softStackLimit; }
     void** addressOfSoftStackLimit() { return &m_softStackLimit; }
 #if !ENABLE(JIT)
@@ -472,12 +473,10 @@ public:
     void setCLoopStackLimit(void* limit) { m_cloopStackLimit = limit; }
 #endif
 
-    bool isSafeToRecurse(size_t neededStackInBytes = 0) const
+    inline bool isSafeToRecurseSoft() const;
+    bool isSafeToRecurse() const
     {
-        ASSERT(wtfThreadData().stack().isGrowingDownward());
-        int8_t* curr = reinterpret_cast<int8_t*>(&curr);
-        int8_t* limit = reinterpret_cast<int8_t*>(m_softStackLimit);
-        return curr >= limit && static_cast<size_t>(curr - limit) >= neededStackInBytes;
+        return isSafeToRecurse(m_stackLimit);
     }
 
     void* lastStackTop() { return m_lastStackTop; }
@@ -626,7 +625,14 @@ private:
     static VM*& sharedInstanceInternal();
     void createNativeThunk();
 
-    void updateStackLimit();
+    void updateStackLimits();
+
+    bool isSafeToRecurse(void* stackLimit) const
+    {
+        ASSERT(wtfThreadData().stack().isGrowingDownward());
+        void* curr = reinterpret_cast<void*>(&curr);
+        return curr >= stackLimit;
+    }
 
     void setException(Exception* exception)
     {
@@ -649,6 +655,7 @@ private:
 
     void* m_stackPointerAtVMEntry;
     size_t m_currentSoftReservedZoneSize;
+    void* m_stackLimit { nullptr };
     void* m_softStackLimit { nullptr };
 #if !ENABLE(JIT)
     void* m_cloopStackLimit { nullptr };

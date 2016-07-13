@@ -88,7 +88,7 @@ bool CLoopStack::grow(Register* newTopOfStack)
     }
 
     // Compute the chunk size of additional memory to commit, and see if we
-    // have it is still within our budget. If not, we'll fail to grow and
+    // have it still within our budget. If not, we'll fail to grow and
     // return false.
     ptrdiff_t delta = reinterpret_cast<char*>(m_commitTop) - reinterpret_cast<char*>(newTopOfStackWithReservedZone);
     delta = WTF::roundUpToMultipleOf(commitSize(), delta);

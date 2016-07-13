@@ -1,3 +1,20 @@
+2016-07-12  Mark Lam  <mark.lam@apple.com>
+
+        We should use different stack limits for stack checks from JS and host code.
+        https://bugs.webkit.org/show_bug.cgi?id=159442
+        <rdar://problem/26889188>
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress-141098-expected.txt:
+        * js/script-tests/regress-141098.js:
+        (testEval):
+        (probeAndRecurse):
+        - Gave all the test constants names.
+        - Tweaked the constants to allow the test to run in the least amount of time, and
+          also to behave consistently across all test configurations.
+        - Re-enable eager tests now that the test should finish quickly.
+
 2016-07-12  Dean Jackson  <dino@apple.com>
 
         REGRESSION (202694): Audio and Video playback controls: Cannot find a position slider to adjust playback position using VO.

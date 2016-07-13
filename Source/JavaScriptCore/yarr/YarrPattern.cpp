@@ -580,7 +580,7 @@ public:
 
     bool setupAlternativeOffsets(PatternAlternative* alternative, unsigned currentCallFrameSize, unsigned initialInputPosition, unsigned& newCallFrameSize) WARN_UNUSED_RETURN
     {
-        if (!isSafeToRecurse())
+        if (UNLIKELY(!isSafeToRecurse()))
             return false;
 
         alternative->m_hasFixedSize = true;
@@ -682,7 +682,7 @@ public:
 
     bool setupDisjunctionOffsets(PatternDisjunction* disjunction, unsigned initialCallFrameSize, unsigned initialInputPosition, unsigned& callFrameSize) WARN_UNUSED_RETURN
     {
-        if (!isSafeToRecurse())
+        if (UNLIKELY(!isSafeToRecurse()))
             return false;
 
         if ((disjunction != m_pattern.m_body) && (disjunction->m_alternatives.size() > 1))

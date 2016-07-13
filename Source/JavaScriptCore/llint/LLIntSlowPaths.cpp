@@ -482,10 +482,9 @@ LLINT_SLOW_PATH_DECL(stack_check)
     dataLogF("Num callee registers = %u.\n", exec->codeBlock()->m_numCalleeLocals);
     dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
 
-#if ENABLE(JIT)
-    dataLogF("Current end is at %p.\n", exec->vm().softStackLimit());
-#else
-    dataLogF("Current end is at %p.\n", exec->vm().cloopStackLimit());
+    dataLogF("Current OS stack end is at %p.\n", exec->vm().softStackLimit());
+#if !ENABLE(JIT)
+    dataLogF("Current C Loop stack end is at %p.\n", exec->vm().cloopStackLimit());
 #endif
 
 #endif

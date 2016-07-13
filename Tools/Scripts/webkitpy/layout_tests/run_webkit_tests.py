@@ -75,7 +75,7 @@ def main(argv, stdout, stderr):
 
     try:
         # Force all tests to use a smaller stack so that stack overflow tests can run faster.
-        stackSizeInBytes = 1.5 * 1024 * 1024
+        stackSizeInBytes = int(1.5 * 1024 * 1024)
         options.additional_env_var.append('JSC_maxPerThreadStackUsage=' + str(stackSizeInBytes))
         options.additional_env_var.append('__XPC_JSC_maxPerThreadStackUsage=' + str(stackSizeInBytes))
         run_details = run(port, options, args, stderr)

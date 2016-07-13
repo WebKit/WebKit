@@ -1,3 +1,111 @@
+2016-07-12  Mark Lam  <mark.lam@apple.com>
+
+        We should use different stack limits for stack checks from JS and host code.
+        https://bugs.webkit.org/show_bug.cgi?id=159442
+        <rdar://problem/26889188>
+
+        Reviewed by Geoffrey Garen.
+
+        We have 2 stack reservedZoneSizes:
+        1. Options::softReservedZoneSize()
+        2. Options::reservedZoneSize()
+
+        Respectively, there are used to define 2 stack limits based on these reserved
+        zone sizes:
+        1. VM::m_softStackLimit
+        2. VM::m_stackLimit
+
+        Options::reservedZoneSize() is the amount of the stack space that JSC guarantees
+        to the VM and client host code for it's use.  Host code that has well known
+        stack usage characteristics (i.e. doesn't call arbitrary code) may do stack
+        checks against the VM::m_stackLimit limit (which is computed using
+        Options::reservedZoneSize()).
+
+        Options::softReservedZoneSize() is a more conservative amount of reserved stack
+        space.  This is used to compute the VM::m_softStackLimit limit.  Any code that
+        is difficult to have its stack usage characterized (i.e. may call arbitrary code)
+        may need more stack space for its work.  Hence, these should do stack checks
+        against the VM::m_softStackLimit limit.
+
+        JS code and host code that may call into JS code falls into the category of code
+        that may call arbitrary code.  Hence, they should do stack checks against the
+        VM::m_softStackLimit limit.
+
+        Accordingly, the VM now provides 2 recursion check functions:
+
+        1. VM::isSafeToRecurseSoft() will do a stack check against VM::m_softStackLimit.
+           In addition, for C Loop builds, VM::isSafeToRecurseSoft() will also
+           check the CLoopStack against VM::m_cloopStackLimit.
+
+        2. VM::isSafeToRecurse() will do a stack check against VM::m_stackLimit.
+
+        Also added a promise-infinite-recursion-should-not-crash.js test.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNodeInTailPosition):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::grow):
+        * interpreter/CLoopStack.h:
+        (JSC::CLoopStack::size):
+        * interpreter/CLoopStackInlines.h:
+        (JSC::CLoopStack::ensureCapacityFor):
+        (JSC::CLoopStack::isSafeToRecurse):
+        (JSC::CLoopStack::topOfFrameFor):
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * parser/Parser.cpp:
+        * runtime/Options.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+        (JSC::ProxyObject::performPut):
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/StringRecursionChecker.h:
+        (JSC::StringRecursionChecker::performCheck):
+        * runtime/VM.cpp:
+        (JSC::VM::setStackPointerAtVMEntry):
+        (JSC::VM::updateSoftReservedZoneSize):
+        (JSC::preCommitStackMemory):
+        (JSC::VM::updateStackLimits):
+        (JSC::VM::updateStackLimit): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::stackLimit):
+        (JSC::VM::softStackLimit):
+        (JSC::VM::addressOfSoftStackLimit):
+        (JSC::VM::setCLoopStackLimit):
+        (JSC::VM::isSafeToRecurse):
+        (JSC::VM::lastStackTop):
+        (JSC::VM::setException):
+        * runtime/VMInlines.h:
+        (JSC::VM::ensureStackCapacityFor):
+        (JSC::VM::isSafeToRecurseSoft):
+        (JSC::VM::shouldTriggerTermination):
+        * tests/stress/promise-infinite-recursion-should-not-crash.js: Added.
+        (testPromise):
+        (promiseFunc):
+        * yarr/YarrPattern.cpp:
+
 2016-07-12  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix for build error when trying to version stamp dll.

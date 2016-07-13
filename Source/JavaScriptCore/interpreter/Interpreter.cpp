@@ -828,7 +828,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
     if (vm.isCollectorBusy())
         return jsNull();
 
-    if (!vm.isSafeToRecurse())
+    if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
     // First check if the "program" is actually just a JSON object. If so,
@@ -988,7 +988,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     }
 
     VMEntryScope entryScope(vm, globalObject);
-    if (!vm.isSafeToRecurse())
+    if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
     if (isJSCall) {
@@ -1050,7 +1050,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     }
 
     VMEntryScope entryScope(vm, globalObject);
-    if (!vm.isSafeToRecurse())
+    if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
     if (isJSConstruct) {
@@ -1147,7 +1147,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         return jsNull();
 
     VMEntryScope entryScope(vm, scope->globalObject());
-    if (!vm.isSafeToRecurse())
+    if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(callFrame));        
 
     unsigned numVariables = eval->numVariables();
@@ -1248,7 +1248,7 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
         return jsNull();
 
     VMEntryScope entryScope(vm, scope->globalObject());
-    if (!vm.isSafeToRecurse())
+    if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
     JSObject* compileError = executable->prepareForExecution(callFrame, nullptr, scope, CodeForCall);

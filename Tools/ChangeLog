@@ -1,3 +1,24 @@
+2016-07-12  Mark Lam  <mark.lam@apple.com>
+
+        We should use different stack limits for stack checks from JS and host code.
+        https://bugs.webkit.org/show_bug.cgi?id=159442
+        <rdar://problem/26889188>
+
+        Reviewed by Geoffrey Garen.
+
+        In http://trac.webkit.org/r203067, we limited the amount of stack that tests will
+        run with to keep stack overflow tests sane.  Turns out, we also need to teach the
+        LayoutTestRelay to pass env vars over to the iOS simulator.  This is needed in
+        order to keep the js/regress-139548.html test happy with this patch.
+
+        Also fixed up run_webkit_tests.py to explicitly pass an int size value for the
+        JSC_maxPerThreadStackUsage option.  Otherwise, it will pass a float value.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController _environmentVariables]):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main):
+
 2016-07-12  Filip Pizlo  <fpizlo@apple.com>
 
         platformUserPreferredLanguages on Mac should not try to put the region into the language

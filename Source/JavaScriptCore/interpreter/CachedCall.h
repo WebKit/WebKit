@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "Interpreter.h"
 #include "ProtoCallFrame.h"
 #include "VMEntryScope.h"
+#include "VMInlines.h"
 
 namespace JSC {
     class CachedCall {
@@ -44,7 +45,7 @@ namespace JSC {
             , m_entryScope(callFrame->vm(), function->scope()->globalObject())
         {
             ASSERT(!function->isHostFunctionNonInline());
-            if (callFrame->vm().isSafeToRecurse()) {
+            if (UNLIKELY(callFrame->vm().isSafeToRecurseSoft())) {
                 m_arguments.resize(argumentCount);
                 m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments.data());
             } else

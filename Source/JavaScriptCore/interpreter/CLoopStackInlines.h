@@ -42,6 +42,12 @@ inline bool CLoopStack::ensureCapacityFor(Register* newTopOfStack)
     return grow(newTopOfStack);
 }
 
+bool CLoopStack::isSafeToRecurse() const
+{
+    void* reservationLimit = reinterpret_cast<int8_t*>(reservationTop() + m_reservedZoneSizeInRegisters);
+    return !m_topCallFrame || (m_topCallFrame->topOfFrame() > reservationLimit);
+}
+
 inline Register* CLoopStack::topOfFrameFor(CallFrame* frame)
 {
     if (UNLIKELY(!frame))

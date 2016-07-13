@@ -68,6 +68,7 @@ namespace JSC {
         size_t size() const { return highAddress() - lowAddress(); }
 
         void setSoftReservedZoneSize(size_t);
+        bool isSafeToRecurse() const;
 
         inline Register* topOfStack();
 

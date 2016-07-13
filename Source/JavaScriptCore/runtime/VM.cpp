@@ -610,7 +610,7 @@ JSObject* VM::throwException(ExecState* exec, JSObject* error)
 void VM::setStackPointerAtVMEntry(void* sp)
 {
     m_stackPointerAtVMEntry = sp;
-    updateStackLimit();
+    updateStackLimits();
 }
 
 size_t VM::updateSoftReservedZoneSize(size_t softReservedZoneSize)
@@ -621,7 +621,7 @@ size_t VM::updateSoftReservedZoneSize(size_t softReservedZoneSize)
     interpreter->cloopStack().setSoftReservedZoneSize(softReservedZoneSize);
 #endif
 
-    updateStackLimit();
+    updateStackLimits();
 
     return oldSoftReservedZoneSize;
 }
@@ -651,21 +651,32 @@ static void preCommitStackMemory(void* stackLimit)
 }
 #endif
 
-inline void VM::updateStackLimit()
+inline void VM::updateStackLimits()
 {
 #if PLATFORM(WIN)
     void* lastSoftStackLimit = m_softStackLimit;
 #endif
 
+    size_t reservedZoneSize = Options::reservedZoneSize();
     if (m_stackPointerAtVMEntry) {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         char* startOfStack = reinterpret_cast<char*>(m_stackPointerAtVMEntry);
         m_softStackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_currentSoftReservedZoneSize);
+        m_stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), reservedZoneSize);
     } else {
         m_softStackLimit = wtfThreadData().stack().recursionLimit(m_currentSoftReservedZoneSize);
+        m_stackLimit = wtfThreadData().stack().recursionLimit(reservedZoneSize);
     }
 
 #if PLATFORM(WIN)
+    // We only need to precommit stack memory dictated by the VM::m_softStackLimit limit.
+    // This is because VM::m_softStackLimit applies to stack usage by LLINT asm or JIT
+    // generated code which can allocate stack space that the C++ compiler does not know
+    // about. As such, we have to precommit that stack memory manually.
+    //
+    // In contrast, we do not need to worry about VM::m_stackLimit because that limit is
+    // used exclusively by C++ code, and the C++ compiler will automatically commit the
+    // needed stack pages.
     if (lastSoftStackLimit != m_softStackLimit)
         preCommitStackMemory(m_softStackLimit);
 #endif
