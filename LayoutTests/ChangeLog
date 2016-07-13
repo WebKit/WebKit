@@ -1,3 +1,21 @@
+2016-07-13  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] spinbutton-crash.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=159723
+
+        Reviewed by Chris Fleizach.
+
+        In ATK, the accessible object for an input element has no children for
+        the text component. As a result, the spinner is the first and only child.
+        In AXAPI, the input element has an AXGroup child for the text component.
+        As a result, the spinner is the second of two children. Therefore, add a
+        helper method to accessibility-helper.js to retrieve the correct child
+        for the current platform use it in spinbutton-crash.html.
+
+        * accessibility/spinbutton-crash.html: Modified.
+        * resources/accessibility-helper.js:
+        (spinnerForTextInput): Added.
+
 2016-07-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm as failing on Mac and ios-sim Release WK2

@@ -1030,7 +1030,19 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
-    // FIXME: implement
+    if (!ATK_IS_OBJECT(m_element.get()))
+        return nullptr;
+
+    // ATK does not have this API. So we're "faking it" here on a case-by-case basis.
+    String attributeString = jsStringToWTFString(attribute);
+    AtkRole role = atk_object_get_role(ATK_OBJECT(m_element.get()));
+    if (role == ATK_ROLE_SPIN_BUTTON && const_cast<AccessibilityUIElement*>(this)->childrenCount() == 2) {
+        if (attributeString == "AXDecrementButton")
+            return const_cast<AccessibilityUIElement*>(this)->childAtIndex(0);
+        if (attributeString == "AXIncrementButton")
+            return const_cast<AccessibilityUIElement*>(this)->childAtIndex(1);
+    }
+
     return nullptr;
 }
 

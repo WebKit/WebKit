@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 
 <body id="body">
@@ -18,7 +19,7 @@
         document.getElementById("number").focus();
 
         var field = accessibilityController.accessibleElementById("number");
-        var spinner1 = field.childAtIndex(1);
+        var spinner1 = spinnerForTextInput(field);
         var spinnerChild = spinner1.uiElementAttributeValue("AXIncrementButton");
         debug("spinner incrementer: " + spinnerChild.role);
 

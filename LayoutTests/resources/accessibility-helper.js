@@ -84,3 +84,8 @@ function platformRoleForComboBox() {
 function platformRoleForStaticText() {
     return accessibilityController.platformName == "atk" ? "AXRole: AXStatic" : "AXRole: AXStaticText";
 }
+
+function spinnerForTextInput(accessibilityObject) {
+    var index = accessibilityController.platformName == "atk" ? 0 : 1;
+    return accessibilityObject.childAtIndex(index);
+}

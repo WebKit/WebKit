@@ -1,3 +1,16 @@
+2016-07-13  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] spinbutton-crash.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=159723
+
+        Reviewed by Chris Fleizach.
+
+        Implement support for AXDecrementButton and AXIncrementButton in
+        ATK's AccessibilityUIElement::uiElementAttributeValue().
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::uiElementAttributeValue):
+
 2016-07-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EFL] [GTK] Enable back crypto subtle on development builds.
