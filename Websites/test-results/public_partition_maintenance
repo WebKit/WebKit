@@ -1,0 +1,5 @@
+#!/bin/bash
+# NOTE: psql must be available in the path.
+psql -U "test-results-user" <<SQL
+SELECT public.partition_maintenance('results'::text, 'public'::text, now()::date );
+SQL

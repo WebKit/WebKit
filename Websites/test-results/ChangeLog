@@ -1,3 +1,25 @@
+2016-07-12  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/22524456> Mitigate performance degradation of the flakiness dashboard
+        
+        Rubber-stamped by Dean Johnson.
+
+        * init-database.sql:
+            Rewrite the init-database.sql file to allow for table partitioning, based on insert date.
+            Some important things to note:
+                The main results table is unchanged, but will no longer contain any rows.
+                Partitioned tables will be generated on demand, and will inherit from 'results'
+                It is possible to query the 'results' table directly, and that will get data from all child tables.
+                This should keep us from requiring any client side code changes.
+                
+        * public_partition_maintenance: Added.
+            Maintenance script which will be called on a nightly schedule to purge expired data.
+            This data will be exported and compressed to a sub-folder, then dropped from the database.
+            I'm not sure how big it will be, so we'll likely need to keep an eye on it.
+            
+        * test-database.sql: Added.
+            Simple helper function to test that results partitions are created/deleted correctly.
+
 2015-11-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Allow , in the builder name.
