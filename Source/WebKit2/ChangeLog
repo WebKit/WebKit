@@ -1,3 +1,25 @@
+2016-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] After zooming and when under memory pressure, page tiles sometimes don't redraw while panning
+        https://bugs.webkit.org/show_bug.cgi?id=159697
+        rdar://problem/26314075
+
+        Reviewed by Benjamin Poulain.
+
+        When under memory pressure, and after pinching back to minimum scale, WebPage::updateVisibleContentRects()
+        would sometimes always bail under the "boundedScale != currentScale..." condition.
+
+        This happened because the visibleContentRectUpdateInfo.scale() is a double, but m_page->pageScaleFactor()
+        is a float, and the constraining between min and max scale (which are doubles) caused boundedScale
+        to be always different from currentScale.
+
+        Fix by using floats throughout.
+
+        No test because there's no way to simulate memory pressure for testing.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2016-07-12  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NetworkSession] Fix unsafe RunLoop::dispatch() in NetworkLoad constructor
