@@ -108,20 +108,20 @@ math {
 }
 
 math {
-    display: inline !important;
+    display: inline;
     padding-left: 1px;
     padding-right: 1px;
 }
 
 math[display="block"] {
-    display: block !important;
+    display: block;
     page-break-inside: avoid;
     /* -webkit-margin-before: 1em; -- FIXME: Ask www-math for a default MathML stylesheet, including this (or margin-top). */
     -webkit-margin-after: 1em;
 }
 
 ms, mspace, mtext, mi, mn, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose, semantics, mpadded, maction {
-    display: block !important;
+    display: block;
 }
 
 ms, mtext, mi, mn, mo, annotation, mtd {
@@ -184,7 +184,7 @@ mtd {
 }
 /* Use inline-block for children so that the text-align property is taken into account */
 mtd > * {
-    display: inline-block !important;
+    display: inline-block;
 }
 
 mtable[columnalign="left"], mtr[columnalign="left"], mtd[columnalign="left"] {
