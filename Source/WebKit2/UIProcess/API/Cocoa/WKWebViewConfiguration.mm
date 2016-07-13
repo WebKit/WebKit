@@ -724,16 +724,6 @@ static NSString *defaultApplicationNameForUserAgent()
 #endif
 }
 
-- (BOOL)_paymentsEnabled
-{
-    return self._applePayEnabled;
-}
-
-- (void)_setPaymentsEnabled:(BOOL)paymentsEnabled
-{
-    [self _setApplePayEnabled:paymentsEnabled];
-}
-
 @end
 
 @implementation WKWebViewConfiguration (WKDeprecated)
