@@ -486,12 +486,71 @@ static inline bool holesMustForwardToPrototype(ExecState& state, JSObject* objec
     return object->structure(vm)->holesMustForwardToPrototype(vm);
 }
 
-static inline JSValue join(ExecState& state, JSObject* thisObject, StringView separator)
+static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separator, uint64_t length)
 {
-    unsigned length = getLength(&state, thisObject);
-    if (state.hadException())
-        return jsUndefined();
+    // 5. If len is zero, return the empty String.
+    if (!length)
+        return jsEmptyString(&exec);
 
+    VM& vm = exec.vm();
+
+    // 6. Let element0 be Get(O, "0").
+    JSValue element0 = thisObject->getIndex(&exec, 0);
+    if (vm.exception())
+        return JSValue();
+
+    // 7. If element0 is undefined or null, let R be the empty String; otherwise, let R be ? ToString(element0).
+    JSString* r = nullptr;
+    if (element0.isUndefinedOrNull())
+        r = jsEmptyString(&exec);
+    else
+        r = element0.toString(&exec);
+    if (vm.exception())
+        return JSValue();
+
+    // 8. Let k be 1.
+    // 9. Repeat, while k < len
+    // 9.e Increase k by 1..
+    for (uint64_t k = 1; k < length; ++k) {
+        // b. Let element be ? Get(O, ! ToString(k)).
+        JSValue element = thisObject->get(&exec, Identifier::fromString(&exec, AtomicString::number(k)));
+        if (vm.exception())
+            return JSValue();
+
+        // c. If element is undefined or null, let next be the empty String; otherwise, let next be ? ToString(element).
+        JSString* next = nullptr;
+        if (element.isUndefinedOrNull()) {
+            if (!separator->length())
+                continue;
+            next = jsEmptyString(&exec);
+        } else
+            next = element.toString(&exec);
+        if (vm.exception())
+            return JSValue();
+
+        // a. Let S be the String value produced by concatenating R and sep.
+        // d. Let R be a String value produced by concatenating S and next.
+        r = JSRopeString::create(vm, r, separator, next);
+    }
+    // 10. Return R.
+    return r;
+}
+
+static inline bool canUseFastJoin(const JSObject* thisObject)
+{
+    switch (thisObject->indexingType()) {
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_INT32_INDEXING_TYPES:
+    case ALL_DOUBLE_INDEXING_TYPES:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+static inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separator, unsigned length)
+{
     switch (thisObject->indexingType()) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
     case ALL_INT32_INDEXING_TYPES: {
@@ -542,25 +601,6 @@ static inline JSValue join(ExecState& state, JSObject* thisObject, StringView se
         }
         return joiner.join(state);
     }
-    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
-        auto& storage = *thisObject->butterfly()->arrayStorage();
-        if (length > storage.vectorLength())
-            break;
-        if (storage.hasHoles() && thisObject->structure(state.vm())->holesMustForwardToPrototype(state.vm()))
-            break;
-        JSStringJoiner joiner(state, separator, length);
-        if (state.hadException())
-            return jsUndefined();
-        auto data = storage.vector().data();
-        for (unsigned i = 0; i < length; ++i) {
-            if (JSValue value = data[i].get()) {
-                if (!joiner.appendWithoutSideEffects(state, value))
-                    goto generalCase;
-            } else
-                joiner.appendEmptyString();
-        }
-        return joiner.join(state);
-    }
     }
 
 generalCase:
@@ -580,6 +620,7 @@ generalCase:
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 {
+    // 1. Let O be ? ToObject(this value).
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     if (!thisObject)
         return JSValue::encode(JSValue());
@@ -588,16 +629,43 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
+    // 2. Let len be ? ToLength(? Get(O, "length")).
+    double length = toLength(exec, thisObject);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+
+    // 3. If separator is undefined, let separator be the single-element String ",".
     JSValue separatorValue = exec->argument(0);
     if (separatorValue.isUndefined()) {
         const LChar comma = ',';
-        return JSValue::encode(join(*exec, thisObject, { &comma, 1 }));
+
+        if (UNLIKELY(length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject))) {
+            uint64_t length64 = static_cast<uint64_t>(length);
+            ASSERT(static_cast<double>(length64) == length);
+            JSString* jsSeparator = jsSingleCharacterString(exec, comma);
+            if (exec->hadException())
+                return JSValue::encode(JSValue());
+
+            return JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64));
+        }
+
+        unsigned unsignedLength = static_cast<unsigned>(length);
+        ASSERT(static_cast<double>(unsignedLength) == length);
+        return JSValue::encode(fastJoin(*exec, thisObject, { &comma, 1 }, unsignedLength));
     }
 
-    JSString* separator = separatorValue.toString(exec);
+    // 4. Let sep be ? ToString(separator).
+    JSString* jsSeparator = separatorValue.toString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(join(*exec, thisObject, separator->view(exec).get()));
+
+    if (UNLIKELY(length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject))) {
+        uint64_t length64 = static_cast<uint64_t>(length);
+        ASSERT(static_cast<double>(length64) == length);
+        return JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64));
+    }
+
+    return JSValue::encode(fastJoin(*exec, thisObject, jsSeparator->view(exec).get(), length));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)

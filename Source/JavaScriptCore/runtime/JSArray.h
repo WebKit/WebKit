@@ -353,6 +353,18 @@ ALWAYS_INLINE unsigned getLength(ExecState* exec, JSObject* obj)
     return lengthValue.toUInt32(exec);
 }
 
+ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
+{
+    if (isJSArray(obj))
+        return jsCast<JSArray*>(obj)->length();
+
+    VM& vm = exec->vm();
+    JSValue lengthValue = obj->get(exec, vm.propertyNames->length);
+    if (UNLIKELY(vm.exception()))
+        return PNaN;
+    return lengthValue.toLength(exec);
+}
+
 } // namespace JSC
 
 #endif // JSArray_h

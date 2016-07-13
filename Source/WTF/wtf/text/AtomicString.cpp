@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2008, 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2008, 2013-2014, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -88,6 +88,16 @@ AtomicString AtomicString::number(int number)
 }
 
 AtomicString AtomicString::number(unsigned number)
+{
+    return numberToStringUnsigned<AtomicString>(number);
+}
+
+AtomicString AtomicString::number(unsigned long number)
+{
+    return numberToStringUnsigned<AtomicString>(number);
+}
+
+AtomicString AtomicString::number(unsigned long long number)
 {
     return numberToStringUnsigned<AtomicString>(number);
 }

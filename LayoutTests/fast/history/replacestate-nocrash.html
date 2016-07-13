@@ -6,7 +6,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 Object.prototype.__defineSetter__("foo",function(){history.replaceState("")});
-history.replaceState({foo:1,zzz:Array(1<<22).join("a")});
+history.replaceState({foo:1,zzz:"a".repeat(1<<22)});
 history.state.length;
 </script>
 </html>

@@ -1,3 +1,14 @@
+2016-07-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Array.prototype.join() fails some conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=159657
+
+        Reviewed by Saam Barati.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::number):
+        * wtf/text/AtomicString.h:
+
 2016-07-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r203131.
