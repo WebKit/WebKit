@@ -530,7 +530,7 @@ static Optional<PaymentRequest> createPaymentRequest(DOMWindow& window, const Di
         paymentRequest.setRequiredBillingContactFields(*requiredBillingContactFields);
     } else if (auto requiredBillingAddressFieldsArray = dictionary.get<ArrayValue>("requiredBillingAddressFields")) {
         if (PageConsoleClient* pageConsole = window.console())
-            pageConsole->addMessage(MessageSource::JS, MessageLevel::Warning, "\"requiredShippingAddressFields\" has been deprecated and will stop working shortly. Please switch to \"requiredShippingContactFields\" instead.");
+            pageConsole->addMessage(MessageSource::JS, MessageLevel::Warning, "\"requiredBillingAddressFields\" has been deprecated and will stop working shortly. Please switch to \"requiredBillingContactFields\" instead.");
 
         auto requiredBillingAddressFields = createContactFields(window, *requiredBillingAddressFieldsArray);
         if (!requiredBillingAddressFields)
