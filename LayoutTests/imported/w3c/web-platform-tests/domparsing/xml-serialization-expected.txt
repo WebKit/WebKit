@@ -1,0 +1,17 @@
+
+PASS Comment: containing -- 
+PASS Comment: starting with - 
+PASS Comment: ending with - 
+PASS Comment: containing --> 
+FAIL DocumentType: empty public and system id assert_equals: expected "<!DOCTYPE html>" but got "<!DOCTYPE html PUBLIC \"\" \"\">"
+FAIL DocumentType: empty system id assert_equals: expected "<!DOCTYPE html PUBLIC \"a\">" but got "<!DOCTYPE html PUBLIC \"a\" \"\">"
+FAIL DocumentType: empty public id assert_equals: expected "<!DOCTYPE html SYSTEM \"a\">" but got "<!DOCTYPE html PUBLIC \"\" \"a\">"
+PASS DocumentType: non-empty public and system id 
+PASS DocumentType: 'APOSTROPHE' (U+0027) 
+PASS DocumentType: 'QUOTATION MARK' (U+0022) 
+PASS DocumentType: 'APOSTROPHE' (U+0027) and 'QUOTATION MARK' (U+0022) 
+PASS ProcessingInstruction: empty data 
+PASS ProcessingInstruction: non-empty data 
+PASS ProcessingInstruction: target contains xml 
+PASS ProcessingInstruction: target contains a 'COLON' (U+003A) 
+

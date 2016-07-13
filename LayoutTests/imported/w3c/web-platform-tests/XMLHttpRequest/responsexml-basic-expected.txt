@@ -1,4 +1,4 @@
 
-FAIL XMLHttpRequest: responseXML basic test assert_equals: getElementById("n2") expected null but got Element node <p xmlns="namespacesarejuststrings" id="n2">2</p>
+FAIL XMLHttpRequest: responseXML basic test undefined is not an object (evaluating 'client.responseXML.documentElement.childrenNodes')
 PASS responseXML on empty response documents 
 

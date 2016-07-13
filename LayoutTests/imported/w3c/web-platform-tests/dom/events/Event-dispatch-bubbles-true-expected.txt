@@ -1,0 +1,7 @@
+
+PASS In window.document with click event 
+PASS In window.document with load event 
+FAIL In window.document.cloneNode(true) assert_array_equals: targets lengths differ, expected 14 got 0
+FAIL In new Document() assert_array_equals: targets lengths differ, expected 14 got 0
+FAIL In DOMImplementation.createHTMLDocument() assert_array_equals: targets lengths differ, expected 14 got 0
+

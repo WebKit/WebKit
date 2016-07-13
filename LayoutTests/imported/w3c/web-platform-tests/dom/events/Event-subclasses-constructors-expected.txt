@@ -1,0 +1,47 @@
+
+PASS Event constructor (no argument) 
+PASS Event constructor (undefined argument) 
+PASS Event constructor (null argument) 
+PASS Event constructor (empty argument) 
+PASS Event constructor (argument with default values) 
+PASS Event constructor (argument with non-default values) 
+PASS UIEvent constructor (no argument) 
+PASS UIEvent constructor (undefined argument) 
+PASS UIEvent constructor (null argument) 
+PASS UIEvent constructor (empty argument) 
+PASS UIEvent constructor (argument with default values) 
+PASS UIEvent constructor (argument with non-default values) 
+PASS FocusEvent constructor (no argument) 
+PASS FocusEvent constructor (undefined argument) 
+PASS FocusEvent constructor (null argument) 
+PASS FocusEvent constructor (empty argument) 
+PASS FocusEvent constructor (argument with default values) 
+PASS FocusEvent constructor (argument with non-default values) 
+FAIL MouseEvent constructor (no argument) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
+FAIL MouseEvent constructor (undefined argument) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
+FAIL MouseEvent constructor (null argument) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
+FAIL MouseEvent constructor (empty argument) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
+FAIL MouseEvent constructor (argument with default values) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
+FAIL MouseEvent constructor (argument with non-default values) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
+FAIL WheelEvent constructor (no argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
+FAIL WheelEvent constructor (undefined argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
+FAIL WheelEvent constructor (null argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
+FAIL WheelEvent constructor (empty argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
+FAIL WheelEvent constructor (argument with default values) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
+FAIL WheelEvent constructor (argument with non-default values) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
+FAIL KeyboardEvent constructor (no argument) assert_true: Event object "[object KeyboardEvent]" should have a key property expected true got false
+FAIL KeyboardEvent constructor (undefined argument) assert_true: Event object "[object KeyboardEvent]" should have a key property expected true got false
+FAIL KeyboardEvent constructor (null argument) assert_true: Event object "[object KeyboardEvent]" should have a key property expected true got false
+FAIL KeyboardEvent constructor (empty argument) assert_true: Event object "[object KeyboardEvent]" should have a key property expected true got false
+FAIL KeyboardEvent constructor (argument with default values) assert_true: Event object "[object KeyboardEvent]" should have a key property expected true got false
+FAIL KeyboardEvent constructor (argument with non-default values) assert_true: Event object "[object KeyboardEvent]" should have a key property expected true got false
+PASS CompositionEvent constructor (no argument) 
+PASS CompositionEvent constructor (undefined argument) 
+PASS CompositionEvent constructor (null argument) 
+PASS CompositionEvent constructor (empty argument) 
+PASS CompositionEvent constructor (argument with default values) 
+PASS CompositionEvent constructor (argument with non-default values) 
+FAIL UIEvent constructor (view argument with wrong type) assert_throws: function "function () {
+    new UIEvent("x", { view: 7 })
+  }" did not throw
+

@@ -2568,27 +2568,29 @@ PASS TrackEvent interface object name
 PASS TrackEvent interface: existence and properties of interface prototype object 
 PASS TrackEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS TrackEvent interface: attribute track 
-FAIL TrackEvent must be primary interface of new TrackEvent("addtrack"; {track:document.createElement("track").track}) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Stringification of new TrackEvent("addtrack"; {track:document.createElement("track").track}) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL TrackEvent interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "track" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "type" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "target" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "currentTarget" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "NONE" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "CAPTURING_PHASE" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "AT_TARGET" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "BUBBLING_PHASE" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "eventPhase" with the proper type (7) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "stopPropagation" with the proper type (8) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "stopImmediatePropagation" with the proper type (9) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "bubbles" with the proper type (10) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "cancelable" with the proper type (11) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "preventDefault" with the proper type (12) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "defaultPrevented" with the proper type (13) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must have own property "isTrusted" assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "timeStamp" with the proper type (15) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "initEvent" with the proper type (16) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
-FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new TrackEvent("addtrack"; {track:document.createElement("track").track}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end an..."
+PASS TrackEvent must be primary interface of new TrackEvent("addtrack", {track:document.createElement("track").track}) 
+PASS Stringification of new TrackEvent("addtrack", {track:document.createElement("track").track}) 
+FAIL TrackEvent interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "track" with the proper type (0) Unrecognized type [object Object],[object Object],[object Object]
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "type" with the proper type (0) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "target" with the proper type (1) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "currentTarget" with the proper type (2) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "NONE" with the proper type (3) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "CAPTURING_PHASE" with the proper type (4) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "AT_TARGET" with the proper type (5) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "BUBBLING_PHASE" with the proper type (6) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "eventPhase" with the proper type (7) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "stopPropagation" with the proper type (8) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "stopImmediatePropagation" with the proper type (9) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "bubbles" with the proper type (10) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "cancelable" with the proper type (11) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "preventDefault" with the proper type (12) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "defaultPrevented" with the proper type (13) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must have own property "isTrusted" 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "timeStamp" with the proper type (15) 
+PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "initEvent" with the proper type (16) 
+FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new TrackEvent("addtrack", {track:document.createElement("track").track}) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
 PASS HTMLMapElement interface: existence and properties of interface object 
 PASS HTMLMapElement interface object length 
 PASS HTMLMapElement interface object name 
@@ -6150,44 +6152,9 @@ FAIL BroadcastChannel interface: attribute name assert_own_property: self does n
 FAIL BroadcastChannel interface: operation postMessage(any) assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
 FAIL BroadcastChannel interface: operation close() assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
 FAIL BroadcastChannel interface: attribute onmessage assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL WorkerGlobalScope interface: existence and properties of interface object assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface object length assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface object name assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: attribute self assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: attribute location assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation close() assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: attribute onerror assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: attribute onlanguagechange assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: attribute onoffline assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: attribute ononline assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation importScripts(DOMString) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: attribute navigator assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation createImageBitmap(ImageBitmapSource,long,long,long,long) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation setTimeout(Function,long,any) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation setTimeout(DOMString,long,any) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation clearTimeout(long) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation setInterval(Function,long,any) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation setInterval(DOMString,long,any) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation clearInterval(long) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation btoa(DOMString) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL WorkerGlobalScope interface: operation atob(DOMString) assert_own_property: self does not have own property "WorkerGlobalScope" expected property "WorkerGlobalScope" missing
-FAIL DedicatedWorkerGlobalScope interface: existence and properties of interface object assert_own_property: self does not have own property "DedicatedWorkerGlobalScope" expected property "DedicatedWorkerGlobalScope" missing
-FAIL DedicatedWorkerGlobalScope interface object length assert_own_property: self does not have own property "DedicatedWorkerGlobalScope" expected property "DedicatedWorkerGlobalScope" missing
-FAIL DedicatedWorkerGlobalScope interface object name assert_own_property: self does not have own property "DedicatedWorkerGlobalScope" expected property "DedicatedWorkerGlobalScope" missing
-FAIL DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object assert_own_property: self does not have own property "DedicatedWorkerGlobalScope" expected property "DedicatedWorkerGlobalScope" missing
-FAIL DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DedicatedWorkerGlobalScope" expected property "DedicatedWorkerGlobalScope" missing
-FAIL DedicatedWorkerGlobalScope interface: operation postMessage(any,[object Object]) assert_own_property: self does not have own property "DedicatedWorkerGlobalScope" expected property "DedicatedWorkerGlobalScope" missing
-FAIL DedicatedWorkerGlobalScope interface: attribute onmessage assert_own_property: self does not have own property "DedicatedWorkerGlobalScope" expected property "DedicatedWorkerGlobalScope" missing
-FAIL SharedWorkerGlobalScope interface: existence and properties of interface object assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
-FAIL SharedWorkerGlobalScope interface object length assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
-FAIL SharedWorkerGlobalScope interface object name assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
-FAIL SharedWorkerGlobalScope interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
-FAIL SharedWorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
-FAIL SharedWorkerGlobalScope interface: attribute name assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
-FAIL SharedWorkerGlobalScope interface: attribute applicationCache assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
-FAIL SharedWorkerGlobalScope interface: attribute onconnect assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
+PASS WorkerGlobalScope interface: existence and properties of interface object 
+PASS DedicatedWorkerGlobalScope interface: existence and properties of interface object 
+PASS SharedWorkerGlobalScope interface: existence and properties of interface object 
 PASS Worker interface: existence and properties of interface object 
 PASS Worker interface object length 
 PASS Worker interface object name 
@@ -6204,35 +6171,8 @@ FAIL SharedWorker interface: existence and properties of interface prototype obj
 FAIL SharedWorker interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
 FAIL SharedWorker interface: attribute port assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
 FAIL SharedWorker interface: attribute onerror assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL WorkerNavigator interface: existence and properties of interface object assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface object length assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface object name assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute appCodeName assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute appName assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute appVersion assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute platform assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute product assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: operation taintEnabled() assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute userAgent assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute language assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute languages assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerNavigator interface: attribute onLine assert_own_property: self does not have own property "WorkerNavigator" expected property "WorkerNavigator" missing
-FAIL WorkerLocation interface: existence and properties of interface object assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface object length assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface object name assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute href assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute origin assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute protocol assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute host assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute hostname assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute port assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute pathname assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute search assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL WorkerLocation interface: attribute hash assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
+PASS WorkerNavigator interface: existence and properties of interface object 
+PASS WorkerLocation interface: existence and properties of interface object 
 PASS Storage interface: existence and properties of interface object 
 PASS Storage interface object length 
 PASS Storage interface object name 

@@ -39,6 +39,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-languages-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-languages-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-noembed-noframes-iframe.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown-child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed-2.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed.py

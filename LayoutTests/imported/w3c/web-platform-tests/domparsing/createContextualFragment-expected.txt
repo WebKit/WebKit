@@ -1,0 +1,15 @@
+
+PASS Must not throw INVALID_STATE_ERR for a detached node. 
+FAIL Must throw TypeError when calling without arguments assert_throws: function "function () {
+                range.createContextualFragm..." did not throw
+PASS Simple test with paragraphs 
+PASS Don't auto-create <body> when applied to <html> 
+PASS <script>s should be run when appended to the document (but not before) 
+PASS <html> and <body> must work the same, 1 
+PASS <html> and <body> must work the same, 2 
+PASS Implicit <body> creation 
+FAIL Namespace generally shouldn't matter NotSupportedError: DOM Exception 9
+FAIL <html> in a different namespace shouldn't be special NotSupportedError: DOM Exception 9
+PASS null should be stringified 
+PASS undefined should be stringified 
+

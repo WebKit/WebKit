@@ -30,9 +30,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-head-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-head.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-head.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.js

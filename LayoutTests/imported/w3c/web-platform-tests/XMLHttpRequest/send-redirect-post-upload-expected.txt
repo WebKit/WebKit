@@ -1,0 +1,6 @@
+
+PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (301) 
+PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (302) 
+PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (303) 
+PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (307) 
+

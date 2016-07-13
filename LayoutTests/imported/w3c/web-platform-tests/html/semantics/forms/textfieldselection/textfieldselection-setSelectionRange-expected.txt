@@ -7,6 +7,8 @@ PASS input typeof(input.setSelectionRange)'
 PASS input setSelectionRange return void 
 PASS input setSelectionRange(0,1) 
 PASS input setSelectionRange(0,input.value.length+1) 
+PASS input setSelectionRange(input.value.length+1,input.value.length+1) 
+PASS input setSelectionRange(input.value.length+1,input.value.length+1) 
 PASS input setSelectionRange(2,2) 
 PASS input setSelectionRange(2,1) 
 PASS input direction of setSelectionRange(0,1,"backward") 
@@ -15,6 +17,8 @@ PASS input direction of setSelectionRange(0,1,"none")
 PASS input direction of setSelectionRange(0,1,"hoge") 
 PASS input direction of setSelectionRange(0,1,"BACKWARD") 
 PASS input direction of setSelectionRange(0,1) 
+FAIL input setSelectionRange(1,-1) assert_equals: element.selectionStart should be 1 expected 1 but got 0
+FAIL input setSelectionRange(-1,1) assert_equals: ECMAScript conversion to unsigned long + if end is less than or equal to start then the start of the selection and the end of the selection must both be placed immediately before the character with offset end expected 1 but got 0
 PASS input setSelectionRange("string",1) 
 PASS input setSelectionRange(true,1) 
 PASS input setSelectionRange([],1) 

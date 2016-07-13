@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rellist.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html
@@ -22,3 +23,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-with-base-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-with-base.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet.css
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet.py

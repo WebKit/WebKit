@@ -1,3 +1,183 @@
+2016-07-13  Youenn Fablet  <youennf@gmail.com>
+
+        Refresh WPT tests up to c875b42
+        https://bugs.webkit.org/show_bug.cgi?id=159712
+
+        Reviewed by Alex Christensen.
+
+        * resources/ImportExpectations:
+        * resources/TestRepositories:
+        * resources/web-platform-tests-modules.json:
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-6-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-6.htm: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-basic-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsexml-basic.htm:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-redirect-post-upload-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm: Added.
+        * web-platform-tests/__init__.py:
+        * web-platform-tests/dom/events/CustomEvent-expected.txt: Added.
+        * web-platform-tests/dom/events/CustomEvent.html: Added.
+        * web-platform-tests/dom/events/Event-dispatch-bubbles-true-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-dispatch-bubbles-true.html: Added.
+        * web-platform-tests/dom/events/Event-dispatch-detached-click-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-dispatch-detached-click.html: Added.
+        * web-platform-tests/dom/events/Event-dispatch-multiple-stopPropagation-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-dispatch-multiple-stopPropagation.html: Added.
+        * web-platform-tests/dom/events/Event-dispatch-order-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-dispatch-order.html: Added.
+        * web-platform-tests/dom/events/Event-dispatch-throwing-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-dispatch-throwing.html: Added.
+        * web-platform-tests/dom/events/Event-init-while-dispatching-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-init-while-dispatching.html: Added.
+        * web-platform-tests/dom/events/Event-subclasses-constructors-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-subclasses-constructors.html: Added.
+        * web-platform-tests/dom/events/EventListener-handleEvent-expected.txt: Added.
+        * web-platform-tests/dom/events/EventListener-handleEvent.html: Added.
+        * web-platform-tests/dom/events/EventListener-incumbent-global-1.sub-expected.txt: Added.
+        * web-platform-tests/dom/events/EventListener-incumbent-global-1.sub.html: Added.
+        * web-platform-tests/dom/events/EventListener-incumbent-global-2.sub-expected.txt: Added.
+        * web-platform-tests/dom/events/EventListener-incumbent-global-2.sub.html: Added.
+        * web-platform-tests/dom/events/EventListener-incumbent-global-subframe-1.sub.html: Added.
+        * web-platform-tests/dom/events/EventListener-incumbent-global-subframe-2.sub.html: Added.
+        * web-platform-tests/dom/events/EventListener-incumbent-global-subsubframe.sub.html: Added.
+        * web-platform-tests/dom/lists/DOMTokenList-coverage-for-attributes-expected.txt: Added.
+        * web-platform-tests/dom/lists/DOMTokenList-coverage-for-attributes.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xml: Added.
+        * web-platform-tests/dom/nodes/ProcessingInstruction-escapes-1-expected.txt: Added.
+        * web-platform-tests/dom/nodes/ProcessingInstruction-escapes-1.xhtml: Added.
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html-expected.txt:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html.html:
+        * web-platform-tests/domparsing/createContextualFragment-expected.txt: Added.
+        * web-platform-tests/domparsing/createContextualFragment.html: Added.
+        * web-platform-tests/domparsing/innerhtml-01-expected.txt: Added.
+        * web-platform-tests/domparsing/innerhtml-01.xhtml: Added.
+        * web-platform-tests/domparsing/innerhtml-03-expected.txt: Added.
+        * web-platform-tests/domparsing/innerhtml-03.xhtml: Added.
+        * web-platform-tests/domparsing/innerhtml-04-expected.txt: Added.
+        * web-platform-tests/domparsing/innerhtml-04.html: Added.
+        * web-platform-tests/domparsing/innerhtml-05-expected.txt: Added.
+        * web-platform-tests/domparsing/innerhtml-05.xhtml: Added.
+        * web-platform-tests/domparsing/innerhtml-06-expected.txt: Added.
+        * web-platform-tests/domparsing/innerhtml-06.html: Added.
+        * web-platform-tests/domparsing/innerhtml-07-expected.txt: Added.
+        * web-platform-tests/domparsing/innerhtml-07.html: Added.
+        * web-platform-tests/domparsing/insert_adjacent_html-expected.txt: Added.
+        * web-platform-tests/domparsing/insert_adjacent_html.html: Added.
+        * web-platform-tests/domparsing/insert_adjacent_html.js: Added.
+        (testThrowingNoParent):
+        * web-platform-tests/domparsing/outerhtml-01-expected.txt: Added.
+        * web-platform-tests/domparsing/outerhtml-01.html: Added.
+        * web-platform-tests/domparsing/outerhtml-02-expected.txt: Added.
+        * web-platform-tests/domparsing/outerhtml-02.html: Added.
+        * web-platform-tests/domparsing/xml-serialization-expected.txt: Added.
+        * web-platform-tests/domparsing/xml-serialization.xhtml: Added.
+        * web-platform-tests/fetch/api/basic/request-head-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-head-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-head-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-head.html: Added.
+        * web-platform-tests/fetch/api/basic/request-head.js: Added.
+        (promise_test):
+        * web-platform-tests/fetch/api/basic/request-headers-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers.js:
+        * web-platform-tests/fetch/api/basic/response-url-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/response-url-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/response-url-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/response-url.html: Added.
+        * web-platform-tests/fetch/api/basic/response-url.js: Added.
+        (checkResponseURL):
+        * web-platform-tests/fetch/api/basic/w3c-import.log:
+        * web-platform-tests/fetch/api/cors/cors-basic-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight.js:
+        (corsPreflight):
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker-expected.txt:
+        * web-platform-tests/fetch/api/credentials/authentication-basic-worker-expected.txt:
+        * web-platform-tests/fetch/api/credentials/cookies-worker-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-mode-worker-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-002.html:
+        * web-platform-tests/fetch/api/request/request-init-003.sub-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-003.sub.html:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_about_blank-expected.txt: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_about_blank.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_invalid-expected.txt: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_invalid.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_srcdoc-expected.txt: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_srcdoc.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context-expected.txt: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/video_008-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/video_008.htm: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/historical-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/historical.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-subdocument.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/change_child.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/change_grandchild.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/change_parentage-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/change_parentage.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_child.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_grandchild.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allowfullscreen-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allowfullscreen.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-load-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-load-event.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_harness.js: Added.
+        (get_test_results.):
+        (get_test_results):
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_child.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_grandchild.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_parentage-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_parentage.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/stash.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/invalid-src-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/invalid-src.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body.html: Added.
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-indexed-element-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-form-element/form-indexed-element.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown-child.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/scripting-enabled-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/scripting-enabled.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/streams/readable-streams/bad-strategies.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-strategies.js:
+        (get string_appeared_here):
+        (promise_test): Deleted.
+
 2016-07-13  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Response should not become disturbed on the ReadableStream creation

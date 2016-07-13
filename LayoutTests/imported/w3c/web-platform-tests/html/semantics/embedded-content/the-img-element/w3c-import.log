@@ -23,5 +23,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-base-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-1.jpg
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img.complete.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/invalid-src.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-media.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set.html

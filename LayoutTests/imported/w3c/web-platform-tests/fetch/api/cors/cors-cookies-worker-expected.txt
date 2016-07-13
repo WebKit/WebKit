@@ -1,8 +1,8 @@
 
+FAIL Omit mode: no cookie sent assert_false: Request should have no cookie expected false got true
 FAIL Include mode: 1 cookie promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Include mode: local cookies are not sent with remote request promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Include mode: remote cookies are not sent with local request promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Include mode: remote cookies are not sent with other remote request promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Same-origin mode: cookies are discarded in cors request promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Omit mode: no cookie sent assert_false: Request should have no cookie expected false got true
 
