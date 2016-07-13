@@ -3009,3 +3009,5 @@ webkit.org/b/157592 fast/images/composited-animated-gif-outside-viewport.html [ 
 webkit.org/b/156561 perf/rel-list-remove.html [ Pass Timeout Failure ]
 
 webkit.org/b/159683 imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Pass Failure ]
+
+webkit.org/b/158640 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Pass Failure ]
