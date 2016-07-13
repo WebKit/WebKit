@@ -24,6 +24,7 @@
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
+#include "WebKitDOMHTMLTitleElement.h"
 #include "WebKitDOMNodeListPrivate.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -130,6 +131,16 @@ WebKitDOMNodeList* webkit_dom_element_get_elements_by_class_name(WebKitDOMElemen
 WebKitDOMNode* webkit_dom_node_clone_node(WebKitDOMNode* self, gboolean deep)
 {
     return webkit_dom_node_clone_node_with_error(self, deep, nullptr);
+}
+
+void webkit_dom_document_set_title(WebKitDOMDocument* self, const gchar* title)
+{
+    webkit_dom_document_set_title_with_error(self, title, nullptr);
+}
+
+void webkit_dom_html_title_element_set_text(WebKitDOMHTMLTitleElement* self, const gchar* text)
+{
+    webkit_dom_html_title_element_set_text_with_error(self, text, nullptr);
 }
 
 G_DEFINE_TYPE(WebKitDOMEntityReference, webkit_dom_entity_reference, WEBKIT_DOM_TYPE_NODE)
