@@ -132,6 +132,7 @@ bool MediaPlayerPrivateGStreamer::isAvailable()
 
 MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     : MediaPlayerPrivateGStreamerBase(player)
+    , m_weakPtrFactory(this)
     , m_source(0)
     , m_seekTime(0)
     , m_changingRate(false)
@@ -1928,10 +1929,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
             GRefPtr<GstMessage> protectedMessage(message);
             auto weakThis = player.createWeakPtr();
             RunLoop::main().dispatch([weakThis, protectedMessage] {
-                if (weakThis) {
-                    auto* player = reinterpret_cast<MediaPlayerPrivateGStreamer*>(weakThis.get());
-                    player->handleMessage(protectedMessage.get());
-                }
+                if (weakThis)
+                    weakThis->handleMessage(protectedMessage.get());
             });
         }
         gst_message_unref(message);

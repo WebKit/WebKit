@@ -146,8 +146,7 @@ private:
 #endif // USE(COORDINATED_GRAPHICS_THREADED) && USE(GSTREAMER_GL)
 
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
-    : m_weakPtrFactory(this)
-    , m_player(player)
+    : m_player(player)
     , m_fpsSink(0)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
@@ -551,15 +550,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 
     if (triggerResize) {
         GST_DEBUG("First sample reached the sink, triggering video dimensions update");
-        if (isMainThread())
-            m_player->sizeChanged();
-        else {
-            auto weakThis = createWeakPtr();
-            m_notifier.notify(MainThreadNotification::SizeChanged, [weakThis] {
-                if (weakThis)
-                    weakThis->m_player->sizeChanged();
-            });
-        }
+        m_notifier.notify(MainThreadNotification::SizeChanged, [this] { m_player->sizeChanged(); });
     }
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
