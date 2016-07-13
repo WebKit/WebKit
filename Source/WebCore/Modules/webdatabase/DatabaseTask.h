@@ -33,7 +33,6 @@
 #include "SQLTransactionBackend.h"
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -123,7 +122,7 @@ private:
 
 class DatabaseTransactionTask : public DatabaseTask {
 public:
-    explicit DatabaseTransactionTask(PassRefPtr<SQLTransactionBackend>);
+    explicit DatabaseTransactionTask(RefPtr<SQLTransactionBackend>&&);
     virtual ~DatabaseTransactionTask();
 
     SQLTransactionBackend* transaction() const { return m_transaction.get(); }

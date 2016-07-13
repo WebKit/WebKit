@@ -41,8 +41,8 @@ namespace WebCore {
 // - by unwrapping and then dereferencing normally - on context thread only
 template<typename T> class SQLCallbackWrapper {
 public:
-    SQLCallbackWrapper(PassRefPtr<T> callback, ScriptExecutionContext* scriptExecutionContext)
-        : m_callback(callback)
+    SQLCallbackWrapper(RefPtr<T>&& callback, ScriptExecutionContext* scriptExecutionContext)
+        : m_callback(WTFMove(callback))
         , m_scriptExecutionContext(m_callback ? scriptExecutionContext : 0)
     {
         ASSERT(!m_callback || (m_scriptExecutionContext.get() && m_scriptExecutionContext->isContextThread()));

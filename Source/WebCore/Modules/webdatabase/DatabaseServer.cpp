@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -117,7 +117,7 @@ RefPtr<Database> DatabaseServer::openDatabase(RefPtr<DatabaseContext>& backendCo
 {
     RefPtr<Database> database;
     bool success = false; // Make some older compilers happy.
-    
+
     switch (attempt) {
     case FirstTryToOpenDatabase:
         success = DatabaseTracker::tracker().canEstablishDatabase(backendContext.get(), name, estimatedSize, error);
@@ -133,7 +133,7 @@ RefPtr<Database> DatabaseServer::openDatabase(RefPtr<DatabaseContext>& backendCo
 
 RefPtr<Database> DatabaseServer::createDatabase(RefPtr<DatabaseContext>& backendContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
-    RefPtr<Database> database = adoptRef(new Database(backendContext, name, expectedVersion, displayName, estimatedSize));
+    RefPtr<Database> database = adoptRef(new Database(backendContext.copyRef(), name, expectedVersion, displayName, estimatedSize));
 
     if (!database->openAndVerifyVersion(setVersionInNewDatabase, error, errorMessage))
         return nullptr;

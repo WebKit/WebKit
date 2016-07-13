@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef DatabaseManager_h
@@ -33,7 +33,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -81,7 +80,7 @@ public:
 
     static ExceptionCode exceptionCodeForDatabaseError(DatabaseError);
 
-    RefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, DatabaseError&);
+    RefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, RefPtr<DatabaseCallback>&&, DatabaseError&);
 
     WEBCORE_EXPORT bool hasOpenDatabases(ScriptExecutionContext*);
 

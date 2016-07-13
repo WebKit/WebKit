@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -272,7 +272,7 @@ void DatabaseManager::removeProposedDatabase(ProposedDatabase* proposedDb)
 
 RefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* context,
     const String& name, const String& expectedVersion, const String& displayName,
-    unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
+    unsigned long estimatedSize, RefPtr<DatabaseCallback>&& creationCallback,
     DatabaseError& error)
 {
     ScriptController::initializeThreading();
@@ -327,7 +327,7 @@ String DatabaseManager::fullPathForDatabase(SecurityOrigin* origin, const String
                 return String();
         }
     }
-    
+
     return m_server->fullPathForDatabase(origin, name, createIfDoesNotExist);
 }
 
@@ -350,16 +350,16 @@ DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, Sec
 {
     {
         std::lock_guard<Lock> lock(m_mutex);
-        
+
         for (auto* proposedDatabase : m_proposedDatabases) {
             if (proposedDatabase->details().name() == name && proposedDatabase->origin()->equal(origin)) {
                 ASSERT(proposedDatabase->details().threadID() == std::this_thread::get_id() || isMainThread());
-                
+
                 return proposedDatabase->details();
             }
         }
     }
-    
+
     return m_server->detailsForNameAndOrigin(name, origin);
 }
 

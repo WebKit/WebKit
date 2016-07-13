@@ -343,15 +343,15 @@
 
 namespace WebCore {
 
-Ref<SQLTransactionBackend> SQLTransactionBackend::create(Database* db, PassRefPtr<SQLTransaction> frontend, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
+Ref<SQLTransactionBackend> SQLTransactionBackend::create(Database* db, RefPtr<SQLTransaction>&& frontend, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
 {
-    return adoptRef(*new SQLTransactionBackend(db, frontend, wrapper, readOnly));
+    return adoptRef(*new SQLTransactionBackend(db, WTFMove(frontend), WTFMove(wrapper), readOnly));
 }
 
-SQLTransactionBackend::SQLTransactionBackend(Database* db, PassRefPtr<SQLTransaction> frontend, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
-    : m_frontend(frontend)
+SQLTransactionBackend::SQLTransactionBackend(Database* db, RefPtr<SQLTransaction>&& frontend, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
+    : m_frontend(WTFMove(frontend))
     , m_database(db)
-    , m_wrapper(wrapper)
+    , m_wrapper(WTFMove(wrapper))
     , m_hasCallback(m_frontend->hasCallback())
     , m_hasSuccessCallback(m_frontend->hasSuccessCallback())
     , m_hasErrorCallback(m_frontend->hasErrorCallback())
@@ -428,9 +428,9 @@ SQLStatement* SQLTransactionBackend::currentStatement()
     return m_currentStatementBackend.get();
 }
 
-PassRefPtr<SQLError> SQLTransactionBackend::transactionError()
+SQLError* SQLTransactionBackend::transactionError()
 {
-    return m_transactionError;
+    return m_transactionError.get();
 }
 
 void SQLTransactionBackend::setShouldRetryCurrentStatement(bool shouldRetry)

@@ -32,7 +32,6 @@
 #include "EventTarget.h"
 #include "SQLCallbackWrapper.h"
 #include "SQLTransactionStateMachine.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
