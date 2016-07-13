@@ -1,3 +1,25 @@
+2016-07-13  Chris Dumez  <cdumez@apple.com>
+
+        WebKit2 shouldn't signal custom protocol clients from the NSURLConnection loader thread.
+        https://bugs.webkit.org/show_bug.cgi?id=159725
+        <rdar://problem/27323131>
+
+        Reviewed by Andy Estes.
+
+        WebKit2 shouldn't signal custom protocol clients from the NSURLConnection
+        loader thread. Instead, use the RunLoop the WKCustomProtocol was initialized
+        on.
+
+        * NetworkProcess/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm:
+        (-[WKCustomProtocol initWithRequest:cachedResponse:client:]):
+        (WebKit::dispatchOnInitializationRunLoop):
+        (WebKit::CustomProtocolManager::didFailWithError):
+        (WebKit::CustomProtocolManager::didLoadData):
+        (WebKit::CustomProtocolManager::didReceiveResponse):
+        (WebKit::CustomProtocolManager::didFinishLoading):
+        (WebKit::CustomProtocolManager::wasRedirectedToRequest):
+        (WebKit::dispatchOnResourceLoaderRunLoop): Deleted.
+
 2016-07-13  Enrica Casucci  <enrica@apple.com>
 
         Update supported platforms in xcconfig files to match the sdk names.

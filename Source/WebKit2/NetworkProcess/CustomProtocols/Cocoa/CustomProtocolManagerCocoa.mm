@@ -57,8 +57,10 @@ static uint64_t generateCustomProtocolID()
 @interface WKCustomProtocol : NSURLProtocol {
 @private
     uint64_t _customProtocolID;
+    RetainPtr<CFRunLoopRef> _initializationRunLoop;
 }
 @property (nonatomic, readonly) uint64_t customProtocolID;
+@property (nonatomic, readonly) CFRunLoopRef initializationRunLoop;
 @end
 
 @implementation WKCustomProtocol
@@ -89,9 +91,15 @@ static uint64_t generateCustomProtocolID()
         return nil;
     
     _customProtocolID = generateCustomProtocolID();
+    _initializationRunLoop = CFRunLoopGetCurrent();
     if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>())
         customProtocolManager->addCustomProtocol(self);
     return self;
+}
+
+- (CFRunLoopRef)initializationRunLoop
+{
+    return _initializationRunLoop.get();
 }
 
 - (void)startLoading
@@ -183,10 +191,11 @@ bool CustomProtocolManager::supportsScheme(const String& scheme)
     return m_registeredSchemes.contains(scheme);
 }
 
-static inline void dispatchOnResourceLoaderRunLoop(void (^block)())
+static inline void dispatchOnInitializationRunLoop(WKCustomProtocol* protocol, void (^block)())
 {
-    CFRunLoopPerformBlock([NSURLConnection resourceLoaderRunLoop], kCFRunLoopDefaultMode, block);
-    CFRunLoopWakeUp([NSURLConnection resourceLoaderRunLoop]);
+    CFRunLoopRef runloop = protocol.initializationRunLoop;
+    CFRunLoopPerformBlock(runloop, kCFRunLoopDefaultMode, block);
+    CFRunLoopWakeUp(runloop);
 }
 
 void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)
@@ -197,7 +206,7 @@ void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const We
 
     RetainPtr<NSError> nsError = error.nsError();
 
-    dispatchOnResourceLoaderRunLoop(^ {
+    dispatchOnInitializationRunLoop(protocol.get(), ^ {
         [[protocol client] URLProtocol:protocol.get() didFailWithError:nsError.get()];
     });
 
@@ -212,7 +221,7 @@ void CustomProtocolManager::didLoadData(uint64_t customProtocolID, const IPC::Da
 
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
 
-    dispatchOnResourceLoaderRunLoop(^ {
+    dispatchOnInitializationRunLoop(protocol.get(), ^ {
         [[protocol client] URLProtocol:protocol.get() didLoadData:nsData.get()];
     });
 }
@@ -225,7 +234,7 @@ void CustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, const 
 
     RetainPtr<NSURLResponse> nsResponse = response.nsURLResponse();
 
-    dispatchOnResourceLoaderRunLoop(^ {
+    dispatchOnInitializationRunLoop(protocol.get(), ^ {
         [[protocol client] URLProtocol:protocol.get() didReceiveResponse:nsResponse.get() cacheStoragePolicy:static_cast<NSURLCacheStoragePolicy>(cacheStoragePolicy)];
     });
 }
@@ -236,7 +245,7 @@ void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
     if (!protocol)
         return;
 
-    dispatchOnResourceLoaderRunLoop(^ {
+    dispatchOnInitializationRunLoop(protocol.get(), ^ {
         [[protocol client] URLProtocolDidFinishLoading:protocol.get()];
     });
 
@@ -252,7 +261,7 @@ void CustomProtocolManager::wasRedirectedToRequest(uint64_t customProtocolID, co
     RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::DoNotUpdateHTTPBody);
     RetainPtr<NSURLResponse> nsRedirectResponse = redirectResponse.nsURLResponse();
 
-    dispatchOnResourceLoaderRunLoop([protocol, nsRequest, nsRedirectResponse]() {
+    dispatchOnInitializationRunLoop(protocol.get(), [protocol, nsRequest, nsRedirectResponse]() {
         [[protocol client] URLProtocol:protocol.get() wasRedirectedToRequest:nsRequest.get() redirectResponse:nsRedirectResponse.get()];
     });
 }
