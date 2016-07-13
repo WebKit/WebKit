@@ -317,6 +317,9 @@ webkit.org/b/29359 fast/forms/month [ Skip ]
 webkit.org/b/29359 fast/forms/time [ Skip ]
 webkit.org/b/29359 fast/forms/week [ Skip ]
 
+# DumpRenderTree doesn't support logging calls to runOpenPanel.
+fast/forms/file/open-file-panel.html [ Skip ]
+
 # ENABLE_GAMEPAD not enabled.
 gamepad/ [ Skip ]
 

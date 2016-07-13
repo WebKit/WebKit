@@ -2984,6 +2984,9 @@ fast/dom/Window/child-window-focus.html
 # iOS does not allow you to scroll by dragging the scrollbar thumb.
 webkit.org/b/157201 fast/scrolling/rtl-drag-vertical-scroller.html [ Failure ]
 
+# DumpRenderTree doesn't support logging calls to runOpenPanel and iOS's WebKitTestRunner doesn't support eventSender.mouseDown.
+fast/forms/file/open-file-panel.html [ Skip ]
+
 # Tests that are failing after bug 157170 (WPT test sync). These tests may just need rebasing.
 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly.html [ Failure ]
 [ Release ] imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure ]

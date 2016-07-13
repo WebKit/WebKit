@@ -1,3 +1,30 @@
+2016-07-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r202953): Clicking on input[type=file] doesn't open a file picker
+        https://bugs.webkit.org/show_bug.cgi?id=159686
+        <rdar://problem/27263589>
+
+        Reviewed by Chris Dumez.
+
+        Added a regression test for opening a file picker on a type=file input element.
+
+        The test currently only works on WebKit2 since the support for logging "OPEN FILE PANEL"
+        was only added to WebKitTestRunner.
+
+        Also added WebKit2 specific expected results for some tests that tries to open file panel.
+
+        * fast/forms/file/open-file-panel-expected.txt: Added.
+        * fast/forms/file/open-file-panel.html: Added.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wk2/accessibility: Added.
+        * platform/wk2/accessibility/axpress-on-aria-button-expected.txt: Copied from LayoutTests/accessibility/axpress-on-aria-button-expected.txt.
+        * platform/wk2/accessibility/file-upload-button-with-axpress-expected.txt: Copied from LayoutTests/accessibility/file-upload-button-with-axpress-expected.txt.
+        * platform/wk2/fast: Added.
+        * platform/wk2/fast/events: Added.
+        * platform/wk2/fast/events/domactivate-sets-underlying-click-event-as-handled-expected.txt: Copied from LayoutTests/fast/events/domactivate-sets-underlying-click-event-as-handled-expected.txt.
+
 2016-07-13  Frederic Wang  <fwang@igalia.com>
 
         Remove padding and margin around the <math> element

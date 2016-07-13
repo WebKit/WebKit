@@ -1,3 +1,17 @@
+2016-07-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r202953): Clicking on input[type=file] doesn't open a file picker
+        https://bugs.webkit.org/show_bug.cgi?id=159686
+
+        Reviewed by Chris Dumez.
+
+        Added a code to print "OPEN FILE PANEL" in the text when runOpenPanel is called in the UI delegate.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::runOpenPanel):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+
 2016-07-13  Beth Dakin  <bdakin@apple.com>
 
         Add more candidate tests

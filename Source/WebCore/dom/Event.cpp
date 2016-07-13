@@ -97,6 +97,7 @@ bool Event::composed() const
 
     return m_type == eventNames().inputEvent
         || m_type == eventNames().textInputEvent
+        || m_type == eventNames().DOMActivateEvent
         || isCompositionEvent()
         || isClipboardEvent()
         || isFocusEvent()
