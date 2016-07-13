@@ -599,7 +599,7 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr
 
 IPC::Connection* NetworkResourceLoader::messageSenderConnection()
 {
-    return connectionToWebProcess().connection();
+    return &connectionToWebProcess().connection();
 }
 
 void NetworkResourceLoader::consumeSandboxExtensions()

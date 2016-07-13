@@ -39,8 +39,8 @@ using namespace WebCore;
 namespace WebKit {
 
 WebToDatabaseProcessConnection::WebToDatabaseProcessConnection(IPC::Connection::Identifier connectionIdentifier)
+    : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
 {
-    m_connection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
     m_connection->open();
 }
 

@@ -62,7 +62,7 @@ WebResourceLoader::~WebResourceLoader()
 
 IPC::Connection* WebResourceLoader::messageSenderConnection()
 {
-    return WebProcess::singleton().networkConnection()->connection();
+    return &WebProcess::singleton().networkConnection().connection();
 }
 
 uint64_t WebResourceLoader::messageSenderDestinationID()

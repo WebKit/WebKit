@@ -154,7 +154,7 @@ public:
 
     EventDispatcher& eventDispatcher() { return *m_eventDispatcher; }
 
-    NetworkProcessConnection* networkConnection();
+    NetworkProcessConnection& networkConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     WebLoaderStrategy& webLoaderStrategy();
 

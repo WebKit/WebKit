@@ -60,8 +60,8 @@ Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(IPC::Co
 }
 
 NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Identifier connectionIdentifier)
+    : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
 {
-    m_connection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
     m_connection->open();
 }
 
@@ -320,7 +320,7 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
             file->revokeFileAccess();
 
         NetworkProcess::singleton().grantSandboxExtensionsToDatabaseProcessForBlobs(fileNames, [this, protectedThis = WTFMove(protectedThis), requestIdentifier, fileNames]() {
-            if (!m_connection || !m_connection->isValid())
+            if (!m_connection->isValid())
                 return;
 
             m_connection->send(Messages::NetworkProcessConnection::DidWriteBlobsToTemporaryFiles(requestIdentifier, fileNames), 0);

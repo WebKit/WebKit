@@ -42,8 +42,8 @@ using namespace WebCore;
 namespace WebKit {
 
 NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier)
+    : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
 {
-    m_connection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
     m_connection->open();
 }
 
@@ -92,7 +92,7 @@ void NetworkProcessConnection::writeBlobsToTemporaryFiles(const Vector<String>& 
 
     m_writeBlobToFileCompletionHandlers.set(requestIdentifier, WTFMove(completionHandler));
 
-    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs, requestIdentifier), 0);
+    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs, requestIdentifier), 0);
 }
 
 void NetworkProcessConnection::didWriteBlobsToTemporaryFiles(uint64_t requestIdentifier, const Vector<String>& filenames)

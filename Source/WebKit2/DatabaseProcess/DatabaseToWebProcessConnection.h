@@ -42,7 +42,7 @@ public:
     static Ref<DatabaseToWebProcessConnection> create(IPC::Connection::Identifier);
     ~DatabaseToWebProcessConnection();
 
-    IPC::Connection* connection() const { return m_connection.get(); }
+    IPC::Connection& connection() { return m_connection.get(); }
 
 private:
     DatabaseToWebProcessConnection(IPC::Connection::Identifier);
@@ -58,7 +58,7 @@ private:
     void didReceiveSyncDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() override { return m_connection.get(); }
+    IPC::Connection* messageSenderConnection() override { return m_connection.ptr(); }
     uint64_t messageSenderDestinationID() override { return 0; }
 
 #if ENABLE(INDEXED_DATABASE)
@@ -69,7 +69,7 @@ private:
     HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;
 #endif // ENABLE(INDEXED_DATABASE)
 
-    RefPtr<IPC::Connection> m_connection;
+    Ref<IPC::Connection> m_connection;
 };
 
 } // namespace WebKit

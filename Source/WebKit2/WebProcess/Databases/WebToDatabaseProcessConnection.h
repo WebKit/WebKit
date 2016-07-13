@@ -49,7 +49,7 @@ public:
     }
     ~WebToDatabaseProcessConnection();
     
-    IPC::Connection* connection() const { return m_connection.get(); }
+    IPC::Connection& connection() { return m_connection.get(); }
 
 #if ENABLE(INDEXED_DATABASE)
     WebIDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&);
@@ -66,10 +66,10 @@ private:
     IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Database; }
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() override { return m_connection.get(); }
+    IPC::Connection* messageSenderConnection() override { return m_connection.ptr(); }
     uint64_t messageSenderDestinationID() override { return 0; }
 
-    RefPtr<IPC::Connection> m_connection;
+    Ref<IPC::Connection> m_connection;
 
 #if ENABLE(INDEXED_DATABASE)
     HashMap<WebCore::SessionID, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsBySession;

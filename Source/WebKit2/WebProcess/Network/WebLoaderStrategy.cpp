@@ -202,7 +202,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
 
-    if (!WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
+    if (!WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         WEBLOADERSTRATEGY_LOG_ALWAYS_ERROR("WebLoaderStrategy::scheduleLoad: Unable to schedule resource with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu", static_cast<int>(resourceLoader.request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID));
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
@@ -257,7 +257,7 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
     if (!loader)
         return;
 
-    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
+    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
 
     // It's possible that this WebResourceLoader might be just about to message back to the NetworkProcess (e.g. ContinueWillSendRequest)
     // but there's no point in doing so anymore.
@@ -267,7 +267,7 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
 void WebLoaderStrategy::setDefersLoading(ResourceLoader* resourceLoader, bool defers)
 {
     ResourceLoadIdentifier identifier = resourceLoader->identifier();
-    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::SetDefersLoading(identifier, defers), 0);
+    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetDefersLoading(identifier, defers), 0);
 }
 
 void WebLoaderStrategy::crossOriginRedirectReceived(ResourceLoader*, const URL&)
@@ -325,7 +325,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
 
     HangDetectionDisabler hangDetectionDisabler;
 
-    if (!WebProcess::singleton().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
+    if (!WebProcess::singleton().networkConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
         response = ResourceResponse();
         error = internalError(request.url());
     }
@@ -349,7 +349,7 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     loadParameters.allowStoredCredentials = shouldUseCredentialStorage ? AllowStoredCredentials : DoNotAllowStoredCredentials;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect();
 
-    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::LoadPing(loadParameters), 0);
+    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(loadParameters), 0);
 }
 
 

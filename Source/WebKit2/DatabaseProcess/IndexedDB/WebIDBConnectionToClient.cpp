@@ -68,7 +68,7 @@ void WebIDBConnectionToClient::disconnectedFromWebProcess()
 
 IPC::Connection* WebIDBConnectionToClient::messageSenderConnection()
 {
-    return m_connection->connection();
+    return &m_connection->connection();
 }
 
 WebCore::IDBServer::IDBConnectionToClient& WebIDBConnectionToClient::connectionToClient()

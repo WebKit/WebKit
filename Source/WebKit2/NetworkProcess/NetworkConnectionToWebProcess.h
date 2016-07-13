@@ -50,7 +50,7 @@ public:
     static Ref<NetworkConnectionToWebProcess> create(IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
 
-    IPC::Connection* connection() const { return m_connection.get(); }
+    IPC::Connection& connection() { return m_connection.get(); }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
 
@@ -102,7 +102,7 @@ private:
 
     void ensureLegacyPrivateBrowsingSession();
 
-    RefPtr<IPC::Connection> m_connection;
+    Ref<IPC::Connection> m_connection;
 
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>> m_networkResourceLoaders;
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;

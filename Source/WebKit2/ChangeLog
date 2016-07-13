@@ -1,3 +1,73 @@
+2016-07-13  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Use more references for connections
+        https://bugs.webkit.org/show_bug.cgi?id=159739
+
+        Reviewed by Alex Christensen.
+
+        Use more references for connections to make it more obvious they cannot
+        be null.
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::DatabaseToWebProcessConnection):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        (WebKit::DatabaseToWebProcessConnection::connection):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::messageSenderConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::connection):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::messageSenderConnection):
+        * Shared/mac/CookieStorageShim.mm:
+        (WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::messageSenderConnection):
+        (WebKit::preregisterSandboxExtensionsIfNecessary):
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::WebToDatabaseProcessConnection):
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        (WebKit::WebToDatabaseProcessConnection::connection):
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURLOptionallyFileBacked):
+        (WebKit::BlobRegistryProxy::unregisterBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURLForSlice):
+        (WebKit::BlobRegistryProxy::blobSize):
+        (WebKit::BlobRegistryProxy::writeBlobsToTemporaryFiles):
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+        (WebKit::NetworkProcessConnection::writeBlobsToTemporaryFiles):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit::NetworkProcessConnection::connection):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::remove):
+        (WebKit::WebLoaderStrategy::setDefersLoading):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::createPingHandle):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::messageSenderConnection):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::cookiesForDOM):
+        (WebKit::WebPlatformStrategies::setCookiesFromDOM):
+        (WebKit::WebPlatformStrategies::cookiesEnabled):
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebKit::WebPlatformStrategies::getRawCookies):
+        (WebKit::WebPlatformStrategies::deleteCookie):
+        (WebKit::WebPlatformStrategies::addCookie):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureLegacyPrivateBrowsingSessionInNetworkProcess):
+        (WebKit::WebProcess::networkConnection):
+        (WebKit::WebProcess::prefetchDNS):
+        * WebProcess/WebProcess.h:
+
 2016-07-13  Anders Carlsson  <andersca@apple.com>
 
         Move WKPreferencesRef functions to the correct file
