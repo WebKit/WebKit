@@ -1,6 +1,8 @@
 <?php
 ini_set('memory_limit', '1024M');
 
+ini_set('memory_limit', '1024M');
+
 require_once('db.php');
 
 function float_to_time($time_in_float) {

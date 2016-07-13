@@ -62,6 +62,7 @@ function main() {
     if (!array_key_exists('file', $_FILES) or !array_key_exists('tmp_name', $_FILES['file']) or count($_FILES['file']['tmp_name']) <= 0)
         exit_with_error('ResultsJSONNotIncluded');
     $json_path = $_FILES['file']['tmp_name'];
+    var_dump($_FILES);
 
     $db = connect();
     store_results($db, $master, $builder_name, $build_number, $start_time, $end_time, $revisions, $json_path);

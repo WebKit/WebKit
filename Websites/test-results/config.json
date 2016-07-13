@@ -7,7 +7,7 @@
         "host": "localhost",
         "port": "5432",
         "username": "test-results-user",
-        "password": "password",
+        "password": "intr1gue",
         "name": "test-results-db"
     },
     "masters": [
