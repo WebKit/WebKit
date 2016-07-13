@@ -25,7 +25,6 @@ if ($db) {
     ));
 
     $page->render_table('name');
-    $page->render_form_to_add();
 }
 
 require('../include/admin-footer.php');

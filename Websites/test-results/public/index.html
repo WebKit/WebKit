@@ -129,16 +129,7 @@ TestResultsView._createResultCell = function (master, builder, result, previousR
             webkitRepositoryId = repositoryId;
     }
     var webkitRevision = result.build.revision(webkitRepositoryId);
-
-    // FIXME: This code definitely doesn't belong here.
-    var safariRepositoryId;
-    for (var repositoryId in TestResultsView._repositories) {
-        if (TestResultsView._repositories[repositoryId].name == 'Safari')
-            safariRepositoryId = repositoryId;
-    }
-    var safariRevision = result.build.revision(safariRepositoryId);
-
-    var resultsPage = webkitRevision ? "http://" + master + "/results/" + builder + "/r" + webkitRevision + '_' + safariRevision + "%20(" + buildNumber + ")/results.html"
+    var resultsPage = webkitRevision ? "http://" + master + "/results/" + builder + "/r" + webkitRevision + "%20(" + buildNumber + ")/results.html"
         : 'javascript:alert("Could no resolve WebKit revision")';
 
     var anchor = element('a', {'href': resultsPage }, [timeIfSlow]);
