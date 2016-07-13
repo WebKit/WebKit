@@ -1,3 +1,15 @@
+2016-07-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK1][iOS] Crash when WebSocket attempts to dispatch a mixed content blocker event
+        https://bugs.webkit.org/show_bug.cgi?id=159680
+        <rdar://problem/22102028>
+
+        Reviewed by Zalan Bujtas.
+
+        * http/tests/ssl/mixedContent: Added.
+        * http/tests/ssl/mixedContent/insecure-websocket-expected.txt: Added.
+        * http/tests/ssl/mixedContent/insecure-websocket.html: Added.
+
 2016-07-13  Youenn Fablet  <youennf@gmail.com>
 
         Refresh WPT tests up to c875b42

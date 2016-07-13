@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 32: [blocked] The page at https://127.0.0.1:8443/ssl/mixedContent/insecure-websocket.html was not allowed to run insecure content from ws://127.0.0.1:8880/websocket/tests/hybi/echo.
+
+Test that we do not crash when handling mixed content events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Running Test
+PASSED. Socket was not created.
+This test connects to an insecure ws:// WebSocket. We should block the connection and trigger a mixed content callback because the main frame is HTTPS, but the data sent over the socket could be recorded or controlled by an attacker.
+
+

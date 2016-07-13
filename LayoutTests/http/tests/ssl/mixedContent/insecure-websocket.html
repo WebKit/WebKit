@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function addConsoleMessage(message) {
+        var console = document.getElementById('console');
+        console.innerHTML += "<br/>" + message;        
+    }
+
+    function onSocketOpened() {
+        addConsoleMessage("FAILED: WebSocket connection opened.");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    function onSocketError(event) {
+        addConsoleMessage("PASSED. Socket was not created.");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    function runTest() {
+        addConsoleMessage("Running Test");
+        window.onerror = onSocketError;
+        try {
+            ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+            ws.onopen = onSocketOpened;
+            ws.onerror = onSocketError;
+        } catch (e) {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <script>
+    description('Test that we do not crash when handling mixed content events.');
+    </script>
+
+    <p>This test connects to an insecure ws:// WebSocket.  We should block the
+connection and trigger a mixed content callback because the main frame is
+HTTPS, but the data sent over the socket could be recorded or
+controlled by an attacker.</p>
+
+    <div id='console'></div>
+
+    <script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

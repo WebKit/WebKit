@@ -63,6 +63,10 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(WEB_THREAD)
+#include "WebCoreThreadRun.h"
+#endif
+
 namespace WebCore {
 
 const size_t maxReasonSizeInBytes = 123;
@@ -292,10 +296,21 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
             // using the error event. But since this code executes as part of the WebSocket's
             // constructor, we have to wait until the constructor has completed before firing the
             // event; otherwise, users can't connect to the event.
+#if USE(WEB_THREAD)
+            ref();
+            dispatch_async(dispatch_get_main_queue(), ^{
+                WebThreadRun(^{
+                    dispatchOrQueueErrorEvent();
+                    stop();
+                    deref();
+                });
+            });
+#else
             RunLoop::main().dispatch([this, protectedThis = Ref<WebSocket>(*this)]() {
                 dispatchOrQueueErrorEvent();
                 stop();
             });
+#endif
             return;
         }
     }
