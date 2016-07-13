@@ -73,6 +73,7 @@ public:
 #if ENABLE(STREAMS_API)
     ReadableStreamSource* createReadableStreamSource();
     void consumeBodyAsStream();
+    void cancel();
 #endif
 
 private:

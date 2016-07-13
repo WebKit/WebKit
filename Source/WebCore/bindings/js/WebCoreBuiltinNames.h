@@ -40,6 +40,7 @@ namespace WebCore {
     macro(controller) \
     macro(disturbed) \
     macro(fillFromJS) \
+    macro(firstReadCallback) \
     macro(getUserMediaFromJS) \
     macro(getRemoteStreams) \
     macro(getSenders) \

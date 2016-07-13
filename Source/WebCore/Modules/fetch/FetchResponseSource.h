@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FetchResponseSource_h
-#define FetchResponseSource_h
+#pragma once
 
 #if ENABLE(FETCH_API) && ENABLE(STREAMS_API)
 
@@ -49,6 +48,7 @@ public:
     bool isReadableStreamLocked() const;
 
 private:
+    void firstReadCallback() final;
     void doStart() final;
     void doCancel() final;
     void setActive() final;
@@ -61,5 +61,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API) && ENABLE(STREAMS_API)
-
-#endif // FetchResponseSource_h

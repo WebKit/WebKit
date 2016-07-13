@@ -26,9 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef ReadableStreamSource_h
-#define ReadableStreamSource_h
+#pragma once
 
 #if ENABLE(STREAMS_API)
 
@@ -46,6 +44,7 @@ public:
 
     typedef DOMPromise<std::nullptr_t> Promise;
 
+    virtual void firstReadCallback() { }
     void start(ReadableStreamController&&, Promise&&);
     void cancel(JSC::JSValue);
 
@@ -103,5 +102,3 @@ inline void ReadableStreamSource::clean()
 } // namespace WebCore
 
 #endif // ENABLE(STREAMS_API)
-
-#endif // ReadableStreamSource_h

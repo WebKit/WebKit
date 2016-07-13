@@ -55,17 +55,21 @@ void FetchResponseSource::setInactive()
     m_response.unsetPendingActivity(&m_response);
 }
 
-void FetchResponseSource::doStart()
+void FetchResponseSource::firstReadCallback()
 {
-    // FIXME: We should consume body only if stream reader requested data, i.e. is disturbed.
-    // We might need a callback to be notified of the stream being disturbed.
     m_response.consumeBodyAsStream();
 }
+
+void FetchResponseSource::doStart()
+{
+    // startFinished should not be called as this is a push source, hence overriding default implementation.
+}
+
 
 void FetchResponseSource::doCancel()
 {
     m_isCancelling = true;
-    static_cast<ActiveDOMObject&>(m_response).stop();
+    m_response.cancel();
 }
 
 void FetchResponseSource::close()

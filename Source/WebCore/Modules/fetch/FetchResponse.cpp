@@ -287,6 +287,13 @@ RefPtr<SharedBuffer> FetchResponse::BodyLoader::startStreaming()
     ASSERT(m_loader);
     return m_loader->startStreaming();
 }
+
+void FetchResponse::cancel()
+{
+    m_isDisturbed = true;
+    stop();
+}
+
 #endif
 
 void FetchResponse::stop()

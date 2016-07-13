@@ -35,6 +35,8 @@
     [Custom] Promise start(ReadableStreamController controller);
     void cancel(any reason);
 
+    [PrivateIdentifier] void firstReadCallback();
+
     // Place holder to keep the controller linked to the source.
     [CachedAttribute, CustomGetter] readonly attribute any controller;
 };
