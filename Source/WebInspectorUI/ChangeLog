@@ -1,3 +1,16 @@
+2016-07-13  Matt Baker  <mattbaker@apple.com>
+
+        Uncaught Exception: TypeError: null is not an object (evaluating 'this._contentViewContainer.currentContentView.showsFilterBar')
+        https://bugs.webkit.org/show_bug.cgi?id=159696
+        <rdar://problem/27312356>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        Early return if content view not visible, since the event is sent during
+        tab teardown and the current TimelineView may be invalid.
+
 2016-07-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r192789): Web Inspector: Log Value context menu appears twice

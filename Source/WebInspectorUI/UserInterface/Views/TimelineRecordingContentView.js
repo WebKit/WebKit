@@ -319,6 +319,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _contentViewSelectionPathComponentDidChange(event)
     {
+        if (!this.visible)
+            return;
+
         if (event.target !== this._timelineContentBrowser.currentContentView)
             return;
 
