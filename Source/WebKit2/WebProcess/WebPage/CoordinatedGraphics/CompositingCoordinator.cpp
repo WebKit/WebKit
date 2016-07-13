@@ -106,8 +106,9 @@ bool CompositingCoordinator::flushPendingLayerChanges()
 
     bool didSync = m_page->mainFrame().view()->flushCompositingStateIncludingSubframes();
 
-    toCoordinatedGraphicsLayer(m_rootLayer.get())->updateContentBuffersIncludingSubLayers();
-    toCoordinatedGraphicsLayer(m_rootLayer.get())->syncPendingStateChangesIncludingSubLayers();
+    auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
+    coordinatedLayer.updateContentBuffersIncludingSubLayers();
+    coordinatedLayer.syncPendingStateChangesIncludingSubLayers();
 
     flushPendingImageBackingChanges();
 
@@ -177,7 +178,7 @@ void CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
     if (m_didInitializeRootCompositingLayer)
         return;
 
-    m_state.rootCompositingLayer = toCoordinatedGraphicsLayer(m_rootLayer.get())->id();
+    m_state.rootCompositingLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer).id();
     m_didInitializeRootCompositingLayer = true;
     m_shouldSyncFrame = true;
 }
@@ -302,10 +303,10 @@ FloatRect CompositingCoordinator::visibleContentsRect() const
 
 CoordinatedGraphicsLayer* CompositingCoordinator::mainContentsLayer()
 {
-    if (!m_rootCompositingLayer)
-        return 0;
+    if (!is<CoordinatedGraphicsLayer>(m_rootCompositingLayer))
+        return nullptr;
 
-    return toCoordinatedGraphicsLayer(m_rootCompositingLayer)->findFirstDescendantWithContentsRecursively();
+    return downcast<CoordinatedGraphicsLayer>(*m_rootCompositingLayer).findFirstDescendantWithContentsRecursively();
 }
 
 void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector)

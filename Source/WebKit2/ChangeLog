@@ -1,5 +1,17 @@
 2016-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Coordinated Graphics] Remove toCoordinatedGraphicsLayer and use downcast instead
+        https://bugs.webkit.org/show_bug.cgi?id=159469
+
+        Reviewed by Michael Catanzaro.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        (WebKit::CompositingCoordinator::initializeRootCompositingLayerIfNeeded):
+        (WebKit::CompositingCoordinator::mainContentsLayer):
+
+2016-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebKitGtk+ uses too many file descriptors
         https://bugs.webkit.org/show_bug.cgi?id=152316
 

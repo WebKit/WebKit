@@ -66,7 +66,7 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage& webPage)
 {
     m_coordinator.createRootLayer(m_webPage.size());
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    m_layerTreeContext.contextID = toCoordinatedGraphicsLayer(m_coordinator.rootLayer())->id();
+    m_layerTreeContext.contextID = downcast<CoordinatedGraphicsLayer>(*m_coordinator.rootLayer()).id();
 #endif
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
