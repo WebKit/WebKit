@@ -1,6 +1,8 @@
 #!/usr/bin/perl -w
 
 use strict;
+use Cwd 'abs_path';
+use File::Basename;
 use File::Spec;
 use POSIX;
 
@@ -29,9 +31,11 @@ use POSIX;
 
 sub exitStatus($);
 
-my $WEBKIT_LIBRARIES = $ENV{'WEBKIT_LIBRARIES'};
+my $rawPath = $0;
 
-my $VERSION_STAMPER = File::Spec->catfile($WEBKIT_LIBRARIES, 'tools', 'VersionStamper', 'VersionStamper.exe');
+my $thisDirectory = dirname(abs_path($rawPath));
+
+my $VERSION_STAMPER = File::Spec->catfile($thisDirectory, '..', 'VersionStamper', 'VersionStamper.exe');
 
 unless (-e $VERSION_STAMPER) {
     print "No $VERSION_STAMPER executable. Exiting.\n";
