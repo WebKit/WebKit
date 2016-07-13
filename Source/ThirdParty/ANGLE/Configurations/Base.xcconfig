@@ -43,7 +43,7 @@ GCC_WARN_UNUSED_VARIABLE = YES;
 PREBINDING = NO;
 STRIP_INSTALLED_PRODUCT = NO;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier));
 TARGET_MAC_OS_X_VERSION_MAJOR_10 = 101000;
