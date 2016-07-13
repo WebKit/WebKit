@@ -1939,10 +1939,21 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [
 ################################################################################
 ##################          MathML Issues                   ####################
 ################################################################################
-mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
-mathml/presentation/style-changed.html [ Crash Pass ]
+# This test crashes.
+webkit.org/b/159702 mathml/presentation/style-changed.html [ Crash Pass ]
+
+# These tests fail.
+imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-1.html [ Failure ]
+imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-1.html [ Failure ]
+imported/mathml-in-html5/mathml/relations/css-styling/displaystyle-1.html [ Failure ]
+imported/mathml-in-html5/mathml/relations/css-styling/mathvariant-transforms-1.html [ Failure ]
+imported/mathml-in-html5/mathml/relations/css-styling/mathvariant-transforms-2.html [ Failure ]
 mathml/opentype/large-operators-munderover.html [ Failure ]
 mathml/presentation/attributes-mathvariant.html [ ImageOnlyFailure ]
+mathml/presentation/href-enter.html [ ImageOnlyFailure ]
+mathml/presentation/href-style.html [ ImageOnlyFailure ]
+mathml/presentation/mathvariant-inheritance.html  [ ImageOnlyFailure ]
+mathml/presentation/mathvariant-tokens.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
 
 # These tests require the Latin Modern Math font.

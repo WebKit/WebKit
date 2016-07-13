@@ -1,3 +1,15 @@
+2016-07-13  Frederic Wang  <fwang@igalia.com>
+
+        Update MathML expectations on EFL and Windows ports.
+
+        Unreviewed test gardening.
+
+        * platform/efl/mathml/opentype/horizontal-expected.txt:
+        * platform/efl/mathml/opentype/horizontal-munderover-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/win/mathml/opentype/horizontal-expected.txt:
+        * platform/win/mathml/opentype/horizontal-munderover-expected.txt:
+
 2016-07-12  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r202509): media controls controls enabled AirPlay placeholder is shown
