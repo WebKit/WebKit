@@ -1,3 +1,20 @@
+2016-07-12  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (r202509): media controls controls enabled AirPlay placeholder is shown
+        https://bugs.webkit.org/show_bug.cgi?id=159685
+        <rdar://problem/27198899>
+
+        Reviewed by Dean Jackson.
+
+        * media/controls/airplay-controls-expected.txt: Added.
+        * media/controls/airplay-controls.html: Added.
+
+        * media/controls/controls-test-helpers.js:
+        (ControlsTest.prototype.get currentState): Put a try block around the call to get the current
+        status in case it fails.
+
+        * platform/mac/TestExpectations: Skip the new test on Yosemite where AirPlay doesn't work.
+
 2016-07-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Array.prototype.join() fails some conformance tests

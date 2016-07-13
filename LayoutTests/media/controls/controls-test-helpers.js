@@ -40,7 +40,11 @@ ControlsTest = class ControlsTest {
             return null;
 
         if (window.internals) {
-            this.cachedCurrentState = JSON.parse(internals.getCurrentMediaControlsStatusForElement(this.media));
+            let state = { idiom: "apple", status: "fail" };
+            try {
+                state = JSON.parse(internals.getCurrentMediaControlsStatusForElement(this.media));
+            } catch(e) { }
+            this.cachedCurrentState = state;
             return this.cachedCurrentState;
         }
 
