@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLPaddedElement.h"
 #include "RenderMathMLRow.h"
 
 namespace WebCore {
@@ -47,6 +48,10 @@ private:
 
     void updateFromElement() final;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+
+    MathMLPaddedElement& element() const { return static_cast<MathMLPaddedElement&>(nodeForNonAnonymous()); }
+    void resolveWidth(LayoutUnit& width);
+    void resolveAttributes(LayoutUnit& width, LayoutUnit& height, LayoutUnit& depth, LayoutUnit& lspace, LayoutUnit& voffset);
 
     LayoutUnit m_ascent;
 };

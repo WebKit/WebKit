@@ -35,7 +35,6 @@
 #include "RenderMathMLFenced.h"
 #include "RenderMathMLFraction.h"
 #include "RenderMathMLMenclose.h"
-#include "RenderMathMLPadded.h"
 #include "RenderMathMLRoot.h"
 #include "RenderMathMLRow.h"
 #include "RenderMathMLScripts.h"
@@ -80,8 +79,6 @@ RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(Ren
         return createRenderer<RenderMathMLFenced>(*this, WTFMove(style));
     if (hasTagName(mtableTag))
         return createRenderer<RenderMathMLTable>(*this, WTFMove(style));
-    if (hasTagName(mpaddedTag))
-        return createRenderer<RenderMathMLPadded>(*this, WTFMove(style));
 
     return createRenderer<RenderMathMLBlock>(*this, WTFMove(style));
 }

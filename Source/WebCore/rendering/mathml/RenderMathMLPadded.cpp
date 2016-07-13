@@ -40,6 +40,31 @@ RenderMathMLPadded::RenderMathMLPadded(Element& element, RenderStyle&& style)
 {
 }
 
+void RenderMathMLPadded::resolveWidth(LayoutUnit& width)
+{
+    auto& paddedElement = element();
+    width = toUserUnits(paddedElement.width(), style(), width);
+    if (width < 0)
+        width = 0;
+}
+
+void RenderMathMLPadded::resolveAttributes(LayoutUnit& width, LayoutUnit& height, LayoutUnit& depth, LayoutUnit& lspace, LayoutUnit& voffset)
+{
+    resolveWidth(width);
+    auto& paddedElement = element();
+    height = toUserUnits(paddedElement.height(), style(), height);
+    depth = toUserUnits(paddedElement.depth(), style(), depth);
+    lspace = toUserUnits(paddedElement.lspace(), style(), lspace);
+    voffset = toUserUnits(paddedElement.voffset(), style(), voffset);
+    if (height < 0)
+        height = 0;
+    if (depth < 0)
+        depth = 0;
+    // FIXME: Negative lspace values are not supported yet (https://bugs.webkit.org/show_bug.cgi?id=85730).
+    if (lspace < 0)
+        lspace = 0;
+}
+
 void RenderMathMLPadded::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
@@ -50,8 +75,7 @@ void RenderMathMLPadded::computePreferredLogicalWidths()
     // Only the width attribute should modify the width.
     // We parse it using the preferred width of the content as its default value.
     LayoutUnit width = m_maxPreferredLogicalWidth;
-    parseMathMLLength(element()->fastGetAttribute(MathMLNames::widthAttr), width, &style(), false);
-
+    resolveWidth(width);
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = width;
 
     setPreferredLogicalWidthsDirty(false);
@@ -72,26 +96,12 @@ void RenderMathMLPadded::layoutBlock(bool relayoutChildren, LayoutUnit)
     contentWidth = logicalWidth();
 
     // We parse the mpadded attributes using the content metrics as the default value.
-    // FIXME: We should also accept pseudo-units and (some) negative values.
-    // See https://bugs.webkit.org/show_bug.cgi?id=85730
     LayoutUnit width = contentWidth;
     LayoutUnit ascent = contentAscent;
     LayoutUnit descent = contentDescent;
     LayoutUnit lspace = 0;
     LayoutUnit voffset = 0;
-    parseMathMLLength(element()->fastGetAttribute(MathMLNames::widthAttr), width, &style());
-    parseMathMLLength(element()->fastGetAttribute(MathMLNames::heightAttr), ascent, &style());
-    parseMathMLLength(element()->fastGetAttribute(MathMLNames::depthAttr), descent, &style());
-    parseMathMLLength(element()->fastGetAttribute(MathMLNames::lspaceAttr), lspace, &style());
-    parseMathMLLength(element()->fastGetAttribute(MathMLNames::voffsetAttr), voffset, &style());
-    if (width < 0)
-        width = 0;
-    if (ascent < 0)
-        ascent = 0;
-    if (descent < 0)
-        descent = 0;
-    if (lspace < 0)
-        lspace = 0;
+    resolveAttributes(width, ascent, descent, lspace, voffset);
 
     // Align children on the new baseline and shift them by (lspace, -voffset)
     LayoutPoint contentLocation(lspace, ascent - contentAscent - voffset);
