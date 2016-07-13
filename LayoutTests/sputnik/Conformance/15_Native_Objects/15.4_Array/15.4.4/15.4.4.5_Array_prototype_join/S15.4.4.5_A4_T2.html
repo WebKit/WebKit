@@ -60,33 +60,33 @@ var successfullyParsed = false;
 
 </head>
 <body>
-<p>S15.4.4.5_A4_T3</p>
+<p>S15.4.4.5_A4_T2</p>
 <div id='console'></div>
 <script>
 try {
 
 /**
- * @name: S15.4.4.5_A4_T3;
+ * @name: S15.4.4.5_A4_T2;
  * @section: 15.4.4.5;
  * @assertion: Check ToUint32(length) for non Array objects;
- * @description: length = -4294967294; 
+ * @description: length = 4294967297; 
 */
 
 var obj = {};
 obj.join = Array.prototype.join;
 obj[0] = "x";
 obj[1] = "y";
-obj[2] = "z";
-obj.length = -4294967294;
+obj[4294967296] = "z";
+obj.length = 4294967297;
 
 //CHECK#1
-if (obj.join("") !== "xy") {
-  testFailed('#1: var obj = {}; obj.join = Array.prototype.join; obj[0] = "x"; obj[1] = "y"; obj[2] = "z"; obj.length = -4294967294; obj.join("") === "xy". Actual: ' + (obj.join("")));
+if (obj.join("") !== "x") {
+  testFailed('#1: var obj = {}; obj.join = Array.prototype.join; obj[0] = "x"; obj[1] = "y"; obj[4294967296] = "z"; obj.length = 4294967297; obj.join("") === "x". Actual: ' + (obj.join("")));
 }
 
 //CHECK#2
-if (obj.length !== -4294967294) {
-  testFailed('#2: var obj = {}; obj.join = Array.prototype.join; obj[0] = "x"; obj[1] = "y"; obj[2] = "z"; obj.length = -4294967294; obj.join(""); obj.length === -4294967294. Actual: ' + (obj.length));
+if (obj.length !== 4294967297) {
+  testFailed('#2: var obj = {}; obj.join = Array.prototype.join; obj[0] = "x"; obj[1] = "y"; obj[4294967296] = "z"; obj.length = 4294967297; obj.join(""); obj.length === 4294967297. Actual: ' + (obj.length));
 }
 
 } catch (ex) {
