@@ -1,3 +1,11 @@
+2016-07-13  Frederic Wang  <fwang@igalia.com>
+
+        Update Windows expectations for two MathML tests.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2016-07-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EFL] [GTK] Enable back crypto subtle on development builds.
