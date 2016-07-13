@@ -109,45 +109,4 @@ void WebPaymentCoordinatorProxy::hidePaymentUI()
 
 }
 
-extern "C" {
-WK_EXPORT bool WKPreferencesGetApplePayEnabled(WKPreferencesRef preferencesRef);
-WK_EXPORT void WKPreferencesSetApplePayEnabled(WKPreferencesRef preferencesRef, bool enabled);
-
-WK_EXPORT bool WKPreferencesGetApplePayCapabilityDisclosureAllowed(WKPreferencesRef preferencesRef);
-WK_EXPORT void WKPreferencesSetApplePayCapabilityDisclosureAllowed(WKPreferencesRef preferencesRef, bool allowed);
-
-// FIXME: Get rid of these in favor of the ones that mention Apple Pay.
-WK_EXPORT bool WKPreferencesGetPaymentsEnabled(WKPreferencesRef preferencesRef);
-WK_EXPORT void WKPreferencesSetPaymentsEnabled(WKPreferencesRef preferencesRef, bool enabled);
-}
-
-WK_EXPORT bool WKPreferencesGetApplePayEnabled(WKPreferencesRef preferencesRef)
-{
-    return WebKit::toImpl(preferencesRef)->applePayEnabled();
-}
-
-void WKPreferencesSetApplePayEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    WebKit::toImpl(preferencesRef)->setApplePayEnabled(enabled);
-}
-
-bool WKPreferencesGetApplePayCapabilityDisclosureAllowed(WKPreferencesRef preferencesRef)
-{
-    return WebKit::toImpl(preferencesRef)->applePayCapabilityDisclosureAllowed();
-}
-
-void WKPreferencesSetApplePayCapabilityDisclosureAllowed(WKPreferencesRef preferencesRef, bool allowed)
-{
-    WebKit::toImpl(preferencesRef)->setApplePayCapabilityDisclosureAllowed(allowed);
-}
-
-bool WKPreferencesGetPaymentsEnabled(WKPreferencesRef preferencesRef)
-{
-    return WKPreferencesGetApplePayEnabled(preferencesRef);
-}
-
-void WKPreferencesSetPaymentsEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    WKPreferencesSetApplePayEnabled(preferencesRef, enabled);
-}
 #endif

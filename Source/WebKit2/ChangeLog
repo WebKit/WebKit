@@ -1,5 +1,28 @@
 2016-07-13  Anders Carlsson  <andersca@apple.com>
 
+        Move WKPreferencesRef functions to the correct file
+        https://bugs.webkit.org/show_bug.cgi?id=159741
+
+        Reviewed by Sam Weinig.
+
+        Also, get rid of WKPreferencesGetPaymentsEnabled and WKPreferencesSetPaymentsEnabled.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetApplePayEnabled):
+        (WKPreferencesSetApplePayEnabled):
+        (WKPreferencesGetApplePayCapabilityDisclosureAllowed):
+        (WKPreferencesSetApplePayCapabilityDisclosureAllowed):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WKPreferencesGetApplePayEnabled): Deleted.
+        (WKPreferencesSetApplePayEnabled): Deleted.
+        (WKPreferencesGetApplePayCapabilityDisclosureAllowed): Deleted.
+        (WKPreferencesSetApplePayCapabilityDisclosureAllowed): Deleted.
+        (WKPreferencesGetPaymentsEnabled): Deleted.
+        (WKPreferencesSetPaymentsEnabled): Deleted.
+
+2016-07-13  Anders Carlsson  <andersca@apple.com>
+
         Add _applePayCapabilityDisclosureAllowed SPI declaration
         https://bugs.webkit.org/show_bug.cgi?id=159740
 
