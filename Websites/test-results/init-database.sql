@@ -3,6 +3,8 @@
 -- Drop existing schema. WARNING: this will delete all data in the database
 DROP SCHEMA IF EXISTS public CASCADE;
 CREATE SCHEMA public;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "test-results-user";
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "test-results-user";
 
 SET search_path TO public;
 SET constraint_exclusion = partition;
@@ -100,8 +102,8 @@ EXECUTE 'CREATE TABLE public.' || quote_ident(_tablename) || ' (
 
 -- Table permissions are not inherited from the parent.
 -- If permissions change on the master be sure to change them on the child also.
-EXECUTE 'ALTER TABLE public.' || quote_ident(_tablename) || ' OWNER TO test-results-user';
-EXECUTE 'GRANT ALL ON TABLE public.' || quote_ident(_tablename) || ' TO test-results-user';
+EXECUTE 'ALTER TABLE public.' || quote_ident(_tablename) || ' OWNER TO "test-results-user"';
+EXECUTE 'GRANT ALL ON TABLE public.' || quote_ident(_tablename) || ' TO "test-results-user"';
 
 -- Indexes are defined per child, so we assign a default index that uses the partition columns
 EXECUTE 'CREATE INDEX ' || quote_ident(_tablename||'_indx1') || ' ON public.' || quote_ident(_tablename) || ' (time, id)';
@@ -172,10 +174,10 @@ END;
 $BODY$
 LANGUAGE plpgsql VOLATILE COST 100;
 
-ALTER FUNCTION public.partition_maintenance(text, text, date) OWNER TO test-results-user;
+ALTER FUNCTION public.partition_maintenance(text, text, date) OWNER TO "test-results-user";
 
-GRANT EXECUTE ON FUNCTION public.partition_maintenance(text, text, date) TO test-results-user;
-GRANT EXECUTE ON FUNCTION public.partition_maintenance(text, text, date) TO test-results-user;
+GRANT EXECUTE ON FUNCTION public.partition_maintenance(text, text, date) TO "test-results-user";
+GRANT EXECUTE ON FUNCTION public.partition_maintenance(text, text, date) TO "test-results-user";
 
 -- The function below is again generic and allows you to pass in the table name of the file you would like to export to the operating system and the name of the compressed file that will contain the exported table.
 -- Helper Function for partition maintenance
@@ -185,11 +187,11 @@ $BASH$
 tablename=${1}
 filename=${2}
 # NOTE: pg_dump must be available in the path.
-/usr/local/bin/pg_dump -U test-results-user -t public."${tablename}" test-results-user | gzip -c > ${filename} ;
+/usr/local/bin/pg_dump -U test-results-user -t public."${tablename}" test-results-db | gzip -c > ${filename} ;
 $BASH$
 LANGUAGE plsh;
 
-ALTER FUNCTION public.export_partition(text, text) OWNER TO test-results-user;
+ALTER FUNCTION public.export_partition(text, text) OWNER TO "test-results-user";
 
-GRANT EXECUTE ON FUNCTION public.export_partition(text, text) TO test-results-user;
-GRANT EXECUTE ON FUNCTION public.export_partition(text, text) TO test-results-user;
+GRANT EXECUTE ON FUNCTION public.export_partition(text, text) TO "test-results-user";
+GRANT EXECUTE ON FUNCTION public.export_partition(text, text) TO "test-results-user";
