@@ -34,6 +34,7 @@
 static bool webViewWasDeallocated = false;
 static bool didFinishLoad = false;
 static bool didCallShowCandidates = false;
+static bool candidatesWereRequested = false;
 
 @interface DoNotLeakWebView : WebView
 @end
@@ -68,9 +69,22 @@ static bool didCallShowCandidates = false;
 
 @end
 
+@interface CandidateRequestFrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
+}
+@end
+
+@implementation CandidateRequestFrameLoadDelegate
+
+- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
+{
+    didFinishLoad = true;
+}
+
+@end
+
 namespace TestWebKitAPI {
 
-TEST(DoNotLeakWebView, ViewThatLoadsEditableArea)
+TEST(CandidateTests, DoNotLeakViewThatLoadsEditableArea)
 {
     DoNotLeakWebView *webView = [[DoNotLeakWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     DoNotLeakFrameLoadDelegate *delegate = [[DoNotLeakFrameLoadDelegate alloc] init];
@@ -84,6 +98,49 @@ TEST(DoNotLeakWebView, ViewThatLoadsEditableArea)
 
     [webView release];
     EXPECT_TRUE(webViewWasDeallocated);
+}
+
+TEST(CandidateTests, RequestCandidatesForTextInput)
+{
+    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    [webView forceRequestCandidatesForTesting];
+    CandidateRequestFrameLoadDelegate *delegate = [[CandidateRequestFrameLoadDelegate alloc] init];
+    [webView setFrameLoadDelegate:delegate];
+    
+    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"focus-inputs" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:contentURL]];
+    
+    TestWebKitAPI::Util::run(&didFinishLoad);
+    
+    [webView forceRequestCandidatesForTesting];
+
+    if ([webView shouldRequestCandidates])
+        candidatesWereRequested = true;
+
+    [webView release];
+    EXPECT_TRUE(candidatesWereRequested);
+}
+
+TEST(CandidateTests, DoNotRequestCandidatesForPasswordInput)
+{
+    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    [webView forceRequestCandidatesForTesting];
+    CandidateRequestFrameLoadDelegate *delegate = [[CandidateRequestFrameLoadDelegate alloc] init];
+    [webView setFrameLoadDelegate:delegate];
+    
+    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"focus-inputs" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:contentURL]];
+    
+    TestWebKitAPI::Util::run(&didFinishLoad);
+    
+    [webView forceRequestCandidatesForTesting];
+    [webView stringByEvaluatingJavaScriptFromString:@"focusPasswordField()"];
+
+    if ([webView shouldRequestCandidates])
+        candidatesWereRequested = true;
+
+    [webView release];
+    EXPECT_FALSE(candidatesWereRequested);
 }
 
 }

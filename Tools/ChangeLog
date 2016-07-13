@@ -1,3 +1,19 @@
+2016-07-13  Beth Dakin  <bdakin@apple.com>
+
+        Add more candidate tests
+        https://bugs.webkit.org/show_bug.cgi?id=159730
+
+        Reviewed by Tim Horton.
+
+        This patch re-names ViewWithEditableAreaLeak.mm to CandidateTests.mm and adds 
+        two new tests to that file.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/focus-inputs.html: Added.
+        * TestWebKitAPI/Tests/mac/CandidateTests.mm: Copied from TestWebKitAPI/Tests/mac/ViewWithEditableAreaLeak.mm.
+        (-[CandidateRequestFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/ViewWithEditableAreaLeak.mm: Removed.
+
 2016-07-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] spinbutton-crash.html fails
