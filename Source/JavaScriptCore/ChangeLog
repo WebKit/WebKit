@@ -1,3 +1,12 @@
+2016-07-12  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: C Loop build fix after r203142.
+
+        Not reviewed.
+
+        * interpreter/CLoopStackInlines.h:
+        (JSC::CLoopStack::isSafeToRecurse):
+
 2016-07-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r203131.
