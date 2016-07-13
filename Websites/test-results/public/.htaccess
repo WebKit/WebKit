@@ -1,9 +1,0 @@
-php_value post_max_size 20M
-
-<IfModule mod_php5.c>
-php_value upload_max_filesize 100000000
-php_value post_max_size 110000000
-php_value memory_limit 120000000
-php_value max_input_time 60
-php_value max_execution_time 240
-</IfModule>
