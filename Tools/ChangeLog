@@ -1,3 +1,15 @@
+2016-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        platformUserPreferredLanguages on Mac should not try to put the region into the language
+        https://bugs.webkit.org/show_bug.cgi?id=159693
+
+        Rubber stamped by Alexey Proskuryakov.
+        
+        Revert the test change in r200105.
+
+        * TestWebKitAPI/Tests/mac/NavigatorLanguage.mm:
+        (TestWebKitAPI::languageForSystemLanguage):
+
 2016-07-12  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Protect against bad database data in LocalStorageDatabase::importItems()

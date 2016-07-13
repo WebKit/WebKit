@@ -1,3 +1,33 @@
+2016-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        platformUserPreferredLanguages on Mac should not try to put the region into the language
+        https://bugs.webkit.org/show_bug.cgi?id=159693
+
+        Rubber stamped by Alexey Proskuryakov.
+        
+        Currently, navigator.language is the thing that we use as the BCP-47 tag in our Intl code
+        when certain APIs are called without a locale argument.  That mostly makes sense, and is
+        deeply wired into our engine.
+
+        In r200105, we made Intl aware of the region as a separate thing from the language by having
+        platformUserPreferredLanguages() return something like a BCP-47 tag that was
+        <language>-<region>.  For example, if I told System Preferences that I want to speak English
+        but live in Poland then we'd get "en-pl".  This had the effect of making Intl APIs format
+        dates using Polish formatting, for example.
+
+        But this is an odd change, since that same function also feeds into navigator.language.
+        "en-pl" isn't what we want there, since my System Preferences settings aren't supposed to
+        mean that I want to speak Polish-style English.  There's no such thing.
+
+        It may be worthwhile to wire the region settings more elegantly into Intl, but if we do that,
+        it should be via a mechanism that is separate from navigator.language. So, this change simply
+        reverts r200105.
+
+        * wtf/PlatformUserPreferredLanguagesMac.mm:
+        (WTF::httpStyleLanguageCode):
+        (WTF::platformUserPreferredLanguages):
+        (WTF::isValidICUCountryCode): Deleted.
+
 2016-07-12  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix for build error when trying to version stamp dll.
