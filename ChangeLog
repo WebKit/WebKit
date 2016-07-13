@@ -1,3 +1,16 @@
+2016-07-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DLLs are missing version information.
+        https://bugs.webkit.org/show_bug.cgi?id=159349
+
+        Reviewed by Alex Christensen.
+
+        Avoid using environment variable WEBKIT_LIBRARIES when finding version stamper utility,
+        in case it is not defined. Instead, use the location of the perl script to find the
+        utility.
+
+        * Source/cmake/tools/scripts/version-stamp.pl:
+
 2016-07-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove ENABLE_CSS3_TEXT_LINE_BREAK flag
