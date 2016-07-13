@@ -147,6 +147,12 @@ void CLoopStack::setSoftReservedZoneSize(size_t reservedZoneSize)
         grow(m_end + 1);
 }
 
+bool CLoopStack::isSafeToRecurse() const
+{
+    void* reservationLimit = reinterpret_cast<int8_t*>(reservationTop() + m_softReservedZoneSizeInRegisters);
+    return !m_topCallFrame || (m_topCallFrame->topOfFrame() > reservationLimit);
+}
+
 size_t CLoopStack::committedByteCount()
 {
     LockHolder locker(stackStatisticsMutex);
