@@ -518,3 +518,5 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 webkit.org/b/159447 [ Debug ] inspector/debugger/tail-deleted-frames-from-vm-entry.html [ Pass Failure ]
 
 webkit.org/b/159430 [ Debug Sierra+ ] media/restore-from-page-cache.html [ Pass Crash ]
+
+webkit.org/b/159724 [ Release ] imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure ]
