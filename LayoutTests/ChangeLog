@@ -1,3 +1,76 @@
+2016-07-13  Frederic Wang  <fwang@igalia.com>
+
+        Remove padding and margin around the <math> element
+        https://bugs.webkit.org/show_bug.cgi?id=157989
+
+        Reviewed by Brent Fulgham.
+
+        * imported/mathml-in-html5/mathml/relations/html5-tree/href-click-1.html: Remove spacing hack.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/href-click-2.html: Ditto.
+        * mathml/presentation/fractions-box-expected.html: Ditto.
+        * mathml/presentation/fractions-box.html: Ditto.
+        * mathml/presentation/href-enter.html: Ditto.
+        * mathml/presentation/maction-toggle-href.html: Ditto.
+        * mathml/presentation/mpadded-1-2.html: Ditto.
+        * mathml/presentation/mpadded-1.html: Ditto.
+        * mathml/presentation/mpadded-2.html: Ditto.
+        * mathml/presentation/mpadded-3.html: Ditto.
+        * mathml/presentation/mpadded-4-expected.html: Ditto.
+        * mathml/presentation/mpadded-4.html: Ditto.
+        * mathml/presentation/mspace-prefered-width.html: Ditto.
+        * mathml/presentation/mspace-units-expected.html: Ditto.
+        * mathml/presentation/mspace-units.html: Ditto.
+        * mathml/presentation/mspace.html: Ditto.
+        * mathml/presentation/scripts-height-expected.html: Ditto.
+        * mathml/presentation/scripts-subsup-expected.html: Ditto.
+        * mathml/presentation/scripts-subsup.html: Ditto.
+        * mathml/presentation/scripts-underover-expected.html: Ditto.
+        * mathml/presentation/scripts-underover.html: Ditto.
+        * mathml/presentation/semantics-2.html: Ditto.
+        * mathml/presentation/semantics-3.html: Ditto.
+        * mathml/presentation/semantics-4.html: Ditto.
+        * mathml/presentation/semantics-href.html: Ditto.
+        * mathml/presentation/style-border-padding-background.html: Ditto.
+        * platform/gtk/mathml/opentype/horizontal-expected.png: Rebaseline due to spacing change around the math tag.
+        * platform/gtk/mathml/opentype/horizontal-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/horizontal-munderover-expected.png: Ditto.
+        * platform/gtk/mathml/opentype/horizontal-munderover-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/large-operators-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.png: Ditto.
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.png: Ditto.
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/vertical-expected.png: Ditto.
+        * platform/gtk/mathml/opentype/vertical-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.png: Ditto.
+        * platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/menclose-notation-values-expected.png: Ditto.
+        * platform/gtk/mathml/presentation/menclose-notation-values-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png: Ditto.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/mspace-children-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/roots-expected.png: Ditto.
+        * platform/gtk/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/gtk/mathml/radical-fallback-expected.png: Ditto.
+        * platform/gtk/mathml/radical-fallback-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/menclose-notation-values-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/mo-stretch-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/mspace-children-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/radical-fallback-expected.txt: Ditto.
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/menclose-notation-values-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/mspace-children-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/mac/mathml/radical-fallback-expected.txt: Ditto.
+        * mathml/mathml-in-dashboard-expected.txt: Ditto
+
 2016-07-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] spinbutton-crash.html fails

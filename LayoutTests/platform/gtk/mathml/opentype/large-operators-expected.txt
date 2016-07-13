@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x60
-  RenderBlock {HTML} at (0,0) size 800x60
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
     RenderBody {BODY} at (8,8) size 784x36
-      RenderMathMLMath {math} at (0,0) size 784x36 [padding: 0 1 0 1]
+      RenderMathMLMath {math} at (0,0) size 784x36
         RenderMathMLOperator {mo} at (199,6) size 27x24
           RenderBlock (anonymous) at (0,0) size 17x16
             RenderText {#text} at (0,-45) size 17x106

@@ -6,18 +6,18 @@ layer at (0,0) size 800x220
       RenderBlock {P} at (0,0) size 784x86
         RenderText {#text} at (0,68) size 132x18
           text run at (0,68) width 132: "Large LTR radicals: "
-        RenderMathMLMath {math} at (131,0) size 27x82 [padding: 0 1 0 1]
-          RenderMathMLRoot {msqrt} at (1,0) size 15x82
+        RenderMathMLMath {math} at (131,0) size 25x82
+          RenderMathMLRoot {msqrt} at (0,0) size 15x82
             RenderMathMLSpace {mspace} at (14,1) size 0x81
-          RenderMathMLRoot {msqrt} at (15,0) size 10x82
+          RenderMathMLRoot {msqrt} at (14,0) size 10x82
             RenderMathMLSpace {mspace} at (8,1) size 0x81
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,102) size 784x86
         RenderText {#text} at (0,68) size 132x18
           text run at (0,68) width 132: "Large RTL radicals: "
-        RenderMathMLMath {math} at (131,0) size 27x82 [padding: 0 1 0 1]
-          RenderMathMLRoot {msqrt} at (9,0) size 16x82
+        RenderMathMLMath {math} at (131,0) size 25x82
+          RenderMathMLRoot {msqrt} at (8,0) size 16x82
             RenderMathMLSpace {mspace} at (0,1) size 0x81
-          RenderMathMLRoot {msqrt} at (1,0) size 9x82
+          RenderMathMLRoot {msqrt} at (0,0) size 9x82
             RenderMathMLSpace {mspace} at (0,1) size 0x81
         RenderText {#text} at (0,0) size 0x0
