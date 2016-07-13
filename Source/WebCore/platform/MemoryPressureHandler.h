@@ -143,6 +143,7 @@ private:
     LowMemoryHandler m_lowMemoryHandler;
 
     std::atomic<bool> m_underMemoryPressure;
+    bool m_isSimulatedMemoryPressure { false };
 
 #if PLATFORM(IOS)
     uint32_t m_memoryPressureReason;
