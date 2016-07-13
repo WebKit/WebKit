@@ -114,14 +114,6 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncCopyWithin(ExecState*
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncCopyWithin);
 }
 
-static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncFill(ExecState* exec)
-{
-    JSValue thisValue = exec->thisValue();
-    if (!thisValue.isObject())
-        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
-    CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncFill);
-}
-
 static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncIncludes(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -267,8 +259,12 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("filter", typedArrayPrototypeFilterCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("sort", typedArrayPrototypeSortCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().entriesPublicName(), typedArrayPrototypeEntriesCodeGenerator, DontEnum);
+<<<<<<< 89717806169cc89a6e2a731666fb44bd8845272e
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fill", typedArrayViewProtoFuncFill, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("includes", typedArrayViewProtoFuncIncludes, DontEnum, 1);
+=======
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("fill", typedArrayPrototypeFillCodeGenerator, DontEnum);
+>>>>>>> Crashes with detached ArrayBuffers
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("find", typedArrayPrototypeFindCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("findIndex", typedArrayPrototypeFindIndexCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->forEach, typedArrayPrototypeForEachCodeGenerator, DontEnum);
