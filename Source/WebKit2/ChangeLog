@@ -1,3 +1,18 @@
+2016-07-13  Zalan Bujtas  <zalan@apple.com>
+
+        Blank news article on kottke.org
+        https://bugs.webkit.org/show_bug.cgi?id=159733
+        <rdar://problem/26743065>
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that we update the visible content rect, when Auto Layout moves the WKWebView around.
+        We normally expect setFrameRect to be called to position WKWebView. However Auto Layout relies on layoutSubviews,
+        and in order to always have up-to-date visible content rect, we need to override layoutSubviews in WKWebView. 
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView layoutSubviews]):
+
 2016-07-13  Chris Dumez  <cdumez@apple.com>
 
         WebKit2 shouldn't signal custom protocol clients from the NSURLConnection loader thread.

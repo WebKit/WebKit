@@ -948,6 +948,12 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         [self _frameOrBoundsChanged];
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    [self _frameOrBoundsChanged];
+}
+
 - (UIScrollView *)scrollView
 {
     return _scrollView.get();
