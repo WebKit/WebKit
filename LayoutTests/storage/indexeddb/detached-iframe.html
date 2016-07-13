@@ -1,0 +1,16 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+<script>
+function detachIframe() {
+    var testIframe = document.getElementById('testIframe');
+    testIframe.parentNode.remove(testIframe);
+}
+</script>
+</head>
+<body>
+<script src="resources/detached-iframe.js"></script>
+<iframe src="resources/detached-iframe.html" id="testIframe"></iframe>
+</body>
+</html>
