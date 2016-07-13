@@ -73,6 +73,7 @@ ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() co
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
     data.resourceLoadTiming = m_resourceLoadTiming.isolatedCopy();
     data.type = m_type;
+    data.isRedirected = m_isRedirected;
 
     return data;
 }
@@ -93,6 +94,7 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
     response.m_resourceLoadTiming = data.resourceLoadTiming;
     response.m_type = data.type;
+    response.m_isRedirected = data.isRedirected;
 
     return response;
 }

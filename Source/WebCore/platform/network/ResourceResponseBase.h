@@ -59,6 +59,7 @@ public:
         HTTPHeaderMap httpHeaderFields;
         ResourceLoadTiming resourceLoadTiming;
         Type type;
+        bool isRedirected;
     };
 
     CrossThreadData crossThreadData() const;
