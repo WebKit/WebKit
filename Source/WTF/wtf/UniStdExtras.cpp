@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniStdExtras_h
-#define UniStdExtras_h
+#include "config.h"
+#include "UniStdExtras.h"
 
-#include <errno.h>
-#include <unistd.h>
+#include <fcntl.h>
 
 namespace WTF {
 
-bool setCloseOnExec(int fileDescriptor);
-int dupCloseOnExec(int fileDescriptor);
-
-inline int closeWithRetry(int fileDescriptor)
+bool setCloseOnExec(int fileDescriptor)
 {
-    int ret;
-#if OS(LINUX)
-    // Workaround for the Linux behavior of closing the descriptor
-    // unconditionally, even if the close() call is interrupted.
-    // See https://bugs.webkit.org/show_bug.cgi?id=117266 for more
-    // details.
-    if ((ret = close(fileDescriptor)) == -1 && errno == EINTR)
-        return 0;
-#else
-    while ((ret = close(fileDescriptor)) == -1 && errno == EINTR) { }
+    int returnValue = -1;
+    do {
+        int flags = fcntl(fileDescriptor, F_GETFD);
+        if (flags != -1)
+            returnValue = fcntl(fileDescriptor, F_SETFD, flags | FD_CLOEXEC);
+    } while (returnValue == -1 && errno == EINTR);
+
+    return returnValue != -1;
+}
+
+int dupCloseOnExec(int fileDescriptor)
+{
+    int duplicatedFileDescriptor = -1;
+#ifdef F_DUPFD_CLOEXEC
+    while ((duplicatedFileDescriptor = fcntl(fileDescriptor, F_DUPFD_CLOEXEC, 0)) == -1 && errno == EINTR) { }
+    if (duplicatedFileDescriptor != -1)
+        return duplicatedFileDescriptor;
+
 #endif
-    return ret;
+
+    while ((duplicatedFileDescriptor = dup(fileDescriptor)) == -1 && errno == EINTR) { }
+    if (duplicatedFileDescriptor == -1)
+        return -1;
+
+    if (!setCloseOnExec(duplicatedFileDescriptor)) {
+        closeWithRetry(duplicatedFileDescriptor);
+        return -1;
+    }
+
+    return duplicatedFileDescriptor;
 }
 
 } // namespace WTF
-
-using WTF::closeWithRetry;
-using WTF::setCloseOnExec;
-using WTF::dupCloseOnExec;
-
-#endif // UniStdExtras_h

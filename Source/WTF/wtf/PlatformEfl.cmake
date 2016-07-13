@@ -1,5 +1,6 @@
 list(APPEND WTF_SOURCES
     PlatformUserPreferredLanguagesUnix.cpp
+    UniStdExtras.cpp
 
     text/efl/TextBreakIteratorInternalICUEfl.cpp
 

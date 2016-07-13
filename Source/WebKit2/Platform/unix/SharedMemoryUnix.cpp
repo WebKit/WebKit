@@ -152,11 +152,14 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
 {
     ASSERT(!handle.isNull());
 
-    void* data = mmap(0, handle.m_attachment.size(), accessModeMMap(protection), MAP_SHARED, handle.m_attachment.fileDescriptor(), 0);
+    int fd = handle.m_attachment.releaseFileDescriptor();
+    void* data = mmap(0, handle.m_attachment.size(), accessModeMMap(protection), MAP_SHARED, fd, 0);
+    closeWithRetry(fd);
     if (data == MAP_FAILED)
         return nullptr;
 
-    RefPtr<SharedMemory> instance = wrapMap(data, handle.m_attachment.size(), handle.m_attachment.releaseFileDescriptor());
+    RefPtr<SharedMemory> instance = wrapMap(data, handle.m_attachment.size(), -1);
+    instance->m_fileDescriptor = Nullopt;
     instance->m_isWrappingMap = false;
     return instance;
 }
@@ -173,33 +176,26 @@ RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, int fileDesc
 
 SharedMemory::~SharedMemory()
 {
-    if (!m_isWrappingMap) {
-        munmap(m_data, m_size);
-        closeWithRetry(m_fileDescriptor);
-    }
+    if (m_isWrappingMap)
+        return;
+
+    munmap(m_data, m_size);
+    if (m_fileDescriptor)
+        closeWithRetry(m_fileDescriptor.value());
 }
 
 bool SharedMemory::createHandle(Handle& handle, Protection)
 {
     ASSERT_ARG(handle, handle.isNull());
+    ASSERT(m_fileDescriptor);
 
     // FIXME: Handle the case where the passed Protection is ReadOnly.
     // See https://bugs.webkit.org/show_bug.cgi?id=131542.
 
-    int duplicatedHandle;
-    while ((duplicatedHandle = dup(m_fileDescriptor)) == -1) {
-        if (errno != EINTR) {
-            ASSERT_NOT_REACHED();
-            return false;
-        }
-    }
-
-    while (fcntl(duplicatedHandle, F_SETFD, FD_CLOEXEC) == -1) {
-        if (errno != EINTR) {
-            ASSERT_NOT_REACHED();
-            closeWithRetry(duplicatedHandle);
-            return false;
-        }
+    int duplicatedHandle = dupCloseOnExec(m_fileDescriptor.value());
+    if (duplicatedHandle == -1) {
+        ASSERT_NOT_REACHED();
+        return false;
     }
     handle.m_attachment = IPC::Attachment(duplicatedHandle, m_size);
     return true;

@@ -1,3 +1,18 @@
+2016-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitGtk+ uses too many file descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=152316
+
+        Reviewed by Michael Catanzaro.
+
+        Add helper functions to duplicate a file descriptor setting close on exec flag, and also to set close on exec
+        flag to an existing file descriptor.
+
+        * wtf/UniStdExtras.h:
+        * wtf/UniStdExtras.cpp
+        (WTF::setCloseOnExec):
+        (WTF::dupCloseOnExec):
+
 2016-07-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Array.prototype.join() fails some conformance tests

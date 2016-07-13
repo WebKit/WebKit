@@ -1,3 +1,33 @@
+2016-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitGtk+ uses too many file descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=152316
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that we are keeping file descriptors open in SharedMemory objects. Those objects can be kept
+        alive for a long time, for example in case of cached resources sent from the network process as shareable
+        resources. The thing is that we keep the file descriptor in the SharedMemory object only to be able to create a
+        Handle, duplicating the file descriptor. However, we are also assuming that we create handles for SharedMemory
+        objects created by another handle which is wrong. SharedMemory objects are created to map a file or data and
+        then a handle is created to send it to another process, or to map an existing file or data for a given handle
+        received from another process. They can also be created to wrap another map, but in that case we don't own the
+        file descritor nor the mapped data. So, after mapping from a handle, we no longer need the file descriptor, and
+        it can be closed to release it, while the mapped memory data will still be alive until munmap() is called. This
+        drastically reduces the amount of file descriptors used by WebKitGTK+.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::readBytesFromSocket): Use setCloseOnExec().
+        (IPC::Connection::createPlatformConnection): Ditto.
+        * Platform/SharedMemory.h:
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::map): Close the file descriptor right after mmap.
+        (WebKit::SharedMemory::~SharedMemory): Close the file descriptor only if it hasn't been closed yet.
+        (WebKit::SharedMemory::createHandle): Add an ASSERT to ensure we only try to create a handle for SharedMemory
+        objects having a valid file descriptor. Use dupCloseOnExec() to duplicate the handle and set the close on exec flag.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Use setCloseOnExec().
+
 2016-07-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] After zooming and when under memory pressure, page tiles sometimes don't redraw while panning
