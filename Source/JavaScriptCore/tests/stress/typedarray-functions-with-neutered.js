@@ -77,7 +77,7 @@ for (var i = 0; i < 1000; i++)
 prototypeFunctions = [
     { func:proto.copyWithin, args:["prim", "prim", "prim"] },
     { func:proto.every, args:["func"] },
-    { func:proto.fill, args:["prim", "prim", "prim"] },
+    { func:proto.fill, args:["ins", "prim", "prim"] },
     { func:proto.filter, args:["func"] },
     { func:proto.find, args:["func"] },
     { func:proto.findIndex, args:["func"] },
@@ -95,14 +95,12 @@ prototypeFunctions = [
     { func:proto.subarray, args:["prim", "prim"] },
 ];
 
-function defaultForArg(arg, argNum)
+function defaultForArg(arg)
 {
     if (arg === "func")
-        return () => { return argNum; }
-    if (arg === "array")
-        return [1,2];
+        return () => { return 1; }
 
-    return argNum;
+    return 1;
 }
 
 function callWithArgs(func, array, args) {
@@ -129,40 +127,34 @@ function checkArgumentsForType(func, args, constructor) {
         if (arg === "na")
             continue;
 
-        let array = new constructor(10);
+        let len = 10;
         if (arg === "func") {
+            let array = new constructor(len);
             callArgs[argNum] = () => {
                 transferArrayBuffer(array.buffer);
                 return func === array.every ? 1 : 0;
             };
             callWithArgs(func, array, callArgs);
-        } else if (arg === "prim") {
+        }
+
+        if (arg === "prim") {
+            let array = new constructor(len)
             callArgs[argNum] = { [Symbol.toPrimitive]() {
-                transferArrayBuffer(array.buffer);
-                return argNum;
-            } };
-            callWithArgs(func, array, callArgs);
-        } else if (arg === "array") {
-            callArgs[argNum] = new Array(4);
-            callArgs[argNum].fill(2);
-            let desc = { get: () => {
                 transferArrayBuffer(array.buffer);
                 return 1;
             } };
-            Object.defineProperty(callArgs[argNum], 1, desc);
             callWithArgs(func, array, callArgs);
-        } else
-            throw new Error(arg);
+        }
     }
 }
 
 function checkArguments({func, args}) {
     for (constructor of typedArrays)
-        checkArgumentsForType(func, args, constructor);
+        checkArgumentsForType(func, args, constructor)
 }
 
-function test2() {
+function test() {
     prototypeFunctions.forEach(checkArguments);
 }
 
-test2();
+test();
