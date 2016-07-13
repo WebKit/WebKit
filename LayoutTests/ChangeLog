@@ -1,3 +1,13 @@
+2016-07-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EFL] [GTK] Enable back crypto subtle on development builds.
+        https://bugs.webkit.org/show_bug.cgi?id=159260
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: Enable back the tests that were
+        passing on GTK.
+
 2016-07-13  Frederic Wang  <fwang@igalia.com>
 
         Update MathML expectations on EFL and Windows ports.

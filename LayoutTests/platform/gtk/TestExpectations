@@ -404,8 +404,19 @@ Bug(GTK) [ Debug ] perf [ Skip ]
 Bug(GTK) editing/secure-input [ Failure ]
 
 # crypto.subtle is not yet enabled, but digest algorithms are already implemented
-# This feature was disabled from development builds recently, see also bug #159260
+# and their tests are whitelisted
 webkit.org/b/133122 crypto/subtle [ Skip ]
+webkit.org/b/133319 crypto/subtle/sha-1.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-224.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-256.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-384.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-512.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-check-algorithm.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-export-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-generate-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-import-jwk.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-sign-verify-empty-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-sign-verify.html [ Pass ]
 
 # QuickTime plug-in not relevant to this port
 Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]

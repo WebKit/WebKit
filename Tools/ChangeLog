@@ -1,3 +1,12 @@
+2016-07-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EFL] [GTK] Enable back crypto subtle on development builds.
+        https://bugs.webkit.org/show_bug.cgi?id=159260
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2016-07-12  Mark Lam  <mark.lam@apple.com>
 
         We should use different stack limits for stack checks from JS and host code.
