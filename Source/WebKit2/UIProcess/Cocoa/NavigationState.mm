@@ -685,7 +685,8 @@ void NavigationState::NavigationClient::processDidCrash(WebKit::WebPageProxy& pa
         return;
     }
 
-    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidCrash:m_navigationState.m_webView];
+    if (m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
+        [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidCrash:m_navigationState.m_webView];
 }
 
 void NavigationState::NavigationClient::processDidBecomeResponsive(WebKit::WebPageProxy& page)

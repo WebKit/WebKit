@@ -1,3 +1,22 @@
+2016-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Possible crash under NavigationState::NavigationClient::processDidCrash()
+        https://bugs.webkit.org/show_bug.cgi?id=159773
+        <rdar://problem/19814215>
+
+        Reviewed by Anders Carlsson.
+
+        Add a m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash before
+        trying to call it to avoid crashing if the client does not implement it.
+
+        At the beginning of the method, we abort early only if both webViewWebContentProcessDidTerminate
+        and webViewWebProcessDidCrash are implemented. However, if webViewWebContentProcessDidTerminate
+        implemented but not webViewWebProcessDidCrash we can end up crashing as we fail to check later
+        on before trying to call it.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::processDidCrash):
+
 2016-07-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the DatabaseProcess build with disabled IDB
