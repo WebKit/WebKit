@@ -1879,10 +1879,12 @@ RefPtr<CSSValue> CSSParser::parseVariableDependentValue(CSSPropertyID propID, co
     return nullptr;
 }
 
+#if ENABLE(CSS_IMAGE_SET)
 static bool isImageSetFunctionValue(const CSSParserValue& value)
 {
     return value.unit == CSSParserValue::Function && (equalLettersIgnoringASCIICase(value.function->name, "image-set(") || equalLettersIgnoringASCIICase(value.function->name, "-webkit-image-set("));
 }
+#endif
 
 bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 {
