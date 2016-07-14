@@ -249,14 +249,14 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
     m_shouldExitOnSyncMessageSendFailure = shouldExitOnSyncMessageSendFailure;
 }
 
-void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue& workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
+void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue* workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
 {
     ASSERT(RunLoop::isMain());
 
-    m_connectionQueue->dispatch([protectedThis = Ref<Connection>(*this), messageReceiverName = WTFMove(messageReceiverName), workQueue = Ref<WorkQueue>(workQueue), workQueueMessageReceiver]() mutable {
+    m_connectionQueue->dispatch([protectedThis = Ref<Connection>(*this), messageReceiverName = WTFMove(messageReceiverName), workQueue, workQueueMessageReceiver]() mutable {
         ASSERT(!protectedThis->m_workQueueMessageReceivers.contains(messageReceiverName));
 
-        protectedThis->m_workQueueMessageReceivers.add(messageReceiverName, std::make_pair(WTFMove(workQueue), workQueueMessageReceiver));
+        protectedThis->m_workQueueMessageReceivers.add(messageReceiverName, std::make_pair(workQueue, workQueueMessageReceiver));
     });
 }
 

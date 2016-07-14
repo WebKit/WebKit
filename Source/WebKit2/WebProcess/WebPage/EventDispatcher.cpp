@@ -85,7 +85,7 @@ void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
 
 void EventDispatcher::initializeConnection(IPC::Connection* connection)
 {
-    connection->addWorkQueueMessageReceiver(Messages::EventDispatcher::messageReceiverName(), m_queue.get(), this);
+    connection->addWorkQueueMessageReceiver(Messages::EventDispatcher::messageReceiverName(), &m_queue.get(), this);
 }
 
 void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)

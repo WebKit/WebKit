@@ -38,13 +38,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(Ref<WorkQueue>&& queue, const String& localStorageDirectory)
+PassRefPtr<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(PassRefPtr<WorkQueue> queue, const String& localStorageDirectory)
 {
-    return adoptRef(*new LocalStorageDatabaseTracker(WTFMove(queue), localStorageDirectory));
+    return adoptRef(new LocalStorageDatabaseTracker(queue, localStorageDirectory));
 }
 
-LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(Ref<WorkQueue>&& queue, const String& localStorageDirectory)
-    : m_queue(WTFMove(queue))
+LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(PassRefPtr<WorkQueue> queue, const String& localStorageDirectory)
+    : m_queue(queue)
     , m_localStorageDirectory(localStorageDirectory.isolatedCopy())
 {
     ASSERT(!m_localStorageDirectory.isEmpty());
