@@ -1,5 +1,16 @@
 2016-07-14  Brent Fulgham  <bfulgham@apple.com>
 
+        Merge Blink test case
+        https://bugs.webkit.org/show_bug.cgi?id=116507
+
+        Patch is from a Blink change (patch by <ojan@chromium.org>):
+        <https://chromium.googlesource.com/chromium/blink/+/6598fc75a7260643ecfc42856ef24bcf96380443>
+
+        * compositing/iframes/crash-mouse-event-expected.txt: Added.
+        * compositing/iframes/crash-mouse-event.html: Added.
+
+2016-07-14  Brent Fulgham  <bfulgham@apple.com>
+
         editing/spelling/spellcheck-async.html sometimes crashes with GuardMalloc 
         https://bugs.webkit.org/show_bug.cgi?id=142969
         <rdar://problem/27331095>
