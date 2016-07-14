@@ -1,3 +1,10 @@
+2016-07-13  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, rebaseline tests for ES6 TypedArray behavior.
+
+        * js/typed-array-mutated-during-set-expected.txt:
+        * js/typed-array-mutated-during-set.html:
+
 2016-07-13  Michael Saboff  <msaboff@apple.com>
 
         Some bad unicode regex escapes aren't flagged as errors
