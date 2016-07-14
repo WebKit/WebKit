@@ -1,3 +1,17 @@
+2016-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+        ASSERTION FAILED: : this != replacement()
+        https://bugs.webkit.org/show_bug.cgi?id=159779
+
+        Reviewed by Michael Saboff.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison): If we jettison during GC, and our owner
+        is dead, we choose not to replace ourselves. (See
+        https://bugs.webkit.org/show_bug.cgi?id=159588.) So, it's possible to
+        invalidate and still be our owner's CodeBlock. Relax our ASSERT to allow
+        for this.
+
 2016-07-14  Mark Lam  <mark.lam@apple.com>
 
         JSONObject Walker::walk must save array length before processing array elements.
