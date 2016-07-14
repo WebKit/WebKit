@@ -29,37 +29,33 @@
  */
 
 #include "config.h"
-#include "WebSocketProvider.h"
 
 #if ENABLE(WEB_SOCKETS)
+#include "ThreadableWebSocketChannel.h"
 
-#include <WebCore/Document.h>
-#include <WebCore/ScriptExecutionContext.h>
-#include <WebCore/ThreadableWebSocketChannelClientWrapper.h>
-#include <WebCore/WebSocketChannel.h>
-#include <WebCore/WebSocketChannelClient.h>
-#include <WebCore/WorkerGlobalScope.h>
-#include <WebCore/WorkerRunLoop.h>
-#include <WebCore/WorkerThread.h>
-#include <WebCore/WorkerThreadableWebSocketChannel.h>
-#include <wtf/text/StringBuilder.h>
+#include "Document.h"
+#include "ScriptExecutionContext.h"
+#include "ThreadableWebSocketChannelClientWrapper.h"
+#include "WebSocketChannel.h"
+#include "WebSocketChannelClient.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerRunLoop.h"
+#include "WorkerThread.h"
+#include "WorkerThreadableWebSocketChannel.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-static const char webSocketChannelMode[] = "webSocketChannelMode";
-
-RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(ScriptExecutionContext& context, WebSocketChannelClient& client)
+Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
 {
     if (is<WorkerGlobalScope>(context)) {
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
         WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
-        StringBuilder mode;
-        mode.appendLiteral(webSocketChannelMode);
-        mode.appendNumber(runLoop.createUniqueId());
-        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, mode.toString());
+        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, makeString("webSocketChannelMode", String::number(runLoop.createUniqueId())), provider);
     }
 
-    return WebSocketChannel::create(downcast<Document>(context), client);
+    return WebSocketChannel::create(downcast<Document>(context), client, provider);
 }
+
+} // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)

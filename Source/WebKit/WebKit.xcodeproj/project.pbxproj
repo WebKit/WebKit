@@ -147,9 +147,7 @@
 		598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */; };
 		598AD92A1201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */; };
 		598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5C7706701D111B020012700F /* WebSocketProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C77066F1D111B020012700F /* WebSocketProvider.mm */; };
 		5C7706721D111B220012700F /* QuickDrawCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7706711D111B220012700F /* QuickDrawCompatibility.h */; };
-		5C7C88DA1D0F3BF2009D2F6D /* WebSocketProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7C88D91D0F3BF2009D2F6D /* WebSocketProvider.h */; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D7BF8130C2A1D90008CE06D /* WebInspector.mm */; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib */; };
@@ -651,9 +649,7 @@
 		598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationProviderMock.mm; sourceTree = "<group>"; };
 		598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProviderMockInternal.h; sourceTree = "<group>"; };
 		598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProvider.h; sourceTree = "<group>"; };
-		5C77066F1D111B020012700F /* WebSocketProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocketProvider.mm; sourceTree = "<group>"; };
 		5C7706711D111B220012700F /* QuickDrawCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickDrawCompatibility.h; sourceTree = "<group>"; };
-		5C7C88D91D0F3BF2009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketProvider.h; sourceTree = "<group>"; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
 		5DE83A750D0F7F9400CAD12A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebJavaScriptTextInputPanel.nib; sourceTree = SOURCE_ROOT; };
@@ -1098,8 +1094,6 @@
 			isa = PBXGroup;
 			children = (
 				5C7706711D111B220012700F /* QuickDrawCompatibility.h */,
-				5C77066F1D111B020012700F /* WebSocketProvider.mm */,
-				5C7C88D91D0F3BF2009D2F6D /* WebSocketProvider.h */,
 				A10C1D2018202FAF0036883A /* ios */,
 				1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */,
 				29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */,
@@ -1806,7 +1800,6 @@
 				939810530824BF01008DF038 /* WebFrame.h in Headers */,
 				9398109C0824BF01008DF038 /* WebFrameInternal.h in Headers */,
 				A10C1D6B1820300E0036883A /* WebFrameIOS.h in Headers */,
-				5C7C88DA1D0F3BF2009D2F6D /* WebSocketProvider.h in Headers */,
 				A10C1D6D1820300E0036883A /* WebFrameIPhone.h in Headers */,
 				9398105B0824BF01008DF038 /* WebFrameLoadDelegate.h in Headers */,
 				C0B88E8B10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h in Headers */,
@@ -2278,7 +2271,6 @@
 				1C0D40880AC1C8F40009C113 /* WebKitVersionChecks.m in Sources */,
 				ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */,
 				BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */,
-				5C7706701D111B020012700F /* WebSocketProvider.mm in Sources */,
 				072E5F461ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm in Sources */,
 				A10C1D731820300E0036883A /* WebMIMETypeRegistry.mm in Sources */,
 				5185F62810712B97007AA393 /* WebNavigationData.mm in Sources */,

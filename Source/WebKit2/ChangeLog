@@ -1,3 +1,15 @@
+2016-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        Use SocketProvider to create SocketStreamHandles
+        https://bugs.webkit.org/show_bug.cgi?id=159774
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/Network/WebSocketProvider.cpp:
+        (WebKit::WebSocketProvider::createSocketStreamHandle):
+        (WebKit::WebSocketProvider::createWebSocketChannel): Deleted.
+        * WebProcess/Network/WebSocketProvider.h:
+
 2016-07-14  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Potential null dereference under ViewGestureController::beginSwipeGesture()

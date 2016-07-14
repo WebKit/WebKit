@@ -1,3 +1,14 @@
+2016-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        Use SocketProvider to create SocketStreamHandles
+        https://bugs.webkit.org/show_bug.cgi?id=159774
+
+        Reviewed by Alex Christensen.
+
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2016-07-12  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix for build error when trying to version stamp dll.

@@ -37,6 +37,7 @@
 #include "Blob.h"
 #include "Document.h"
 #include "ScriptExecutionContext.h"
+#include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
 #include "WebSocketChannel.h"
 #include "WebSocketChannelClient.h"
@@ -50,10 +51,11 @@
 
 namespace WebCore {
 
-WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerGlobalScope& context, WebSocketChannelClient& client, const String& taskMode)
+WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerGlobalScope& context, WebSocketChannelClient& client, const String& taskMode, SocketProvider& provider)
     : m_workerGlobalScope(context)
     , m_workerClientWrapper(ThreadableWebSocketChannelClientWrapper::create(context, client))
-    , m_bridge(Bridge::create(m_workerClientWrapper.copyRef(), m_workerGlobalScope.copyRef(), taskMode))
+    , m_bridge(Bridge::create(m_workerClientWrapper.copyRef(), m_workerGlobalScope.copyRef(), taskMode, provider))
+    , m_socketProvider(provider)
 {
     m_bridge->initialize();
 }
@@ -140,10 +142,10 @@ void WorkerThreadableWebSocketChannel::resume()
         m_bridge->resume();
 }
 
-WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext& context, const String& taskMode)
+WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext& context, const String& taskMode, SocketProvider& provider)
     : m_workerClientWrapper(WTFMove(clientWrapper))
     , m_loaderProxy(loaderProxy)
-    , m_mainWebSocketChannel(WebSocketChannel::create(downcast<Document>(context), *this))
+    , m_mainWebSocketChannel(WebSocketChannel::create(downcast<Document>(context), *this, provider))
     , m_taskMode(taskMode)
 {
     ASSERT(isMainThread());
@@ -329,12 +331,12 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError()
     }, m_taskMode);
 }
 
-WorkerThreadableWebSocketChannel::Bridge::Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, Ref<WorkerGlobalScope>&& workerGlobalScope, const String& taskMode)
+WorkerThreadableWebSocketChannel::Bridge::Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, Ref<WorkerGlobalScope>&& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& socketProvider)
     : m_workerClientWrapper(WTFMove(workerClientWrapper))
     , m_workerGlobalScope(WTFMove(workerGlobalScope))
     , m_loaderProxy(m_workerGlobalScope->thread().workerLoaderProxy())
     , m_taskMode(taskMode)
-    , m_peer(nullptr)
+    , m_socketProvider(WTFMove(socketProvider))
 {
 }
 
@@ -343,14 +345,14 @@ WorkerThreadableWebSocketChannel::Bridge::~Bridge()
     disconnect();
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext& context, WorkerLoaderProxy& loaderProxy, Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, const String& taskMode)
+void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext& context, WorkerLoaderProxy& loaderProxy, Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, const String& taskMode, Ref<SocketProvider>&& provider)
 {
     ASSERT(isMainThread());
     ASSERT(context.isDocument());
 
     bool sent = loaderProxy.postTaskForModeToWorkerGlobalScope({
         ScriptExecutionContext::Task::CleanupTask,
-        [clientWrapper = clientWrapper.copyRef(), &loaderProxy, peer = std::make_unique<Peer>(clientWrapper.copyRef(), loaderProxy, context, taskMode)](ScriptExecutionContext& context) mutable {
+        [clientWrapper = clientWrapper.copyRef(), &loaderProxy, peer = std::make_unique<Peer>(clientWrapper.copyRef(), loaderProxy, context, taskMode, WTFMove(provider))](ScriptExecutionContext& context) mutable {
             ASSERT_UNUSED(context, context.isWorkerGlobalScope());
             if (clientWrapper->failedWebSocketChannelCreation()) {
                 // If Bridge::initialize() quitted earlier, we need to kick mainThreadDestroy() to delete the peer.
@@ -373,8 +375,8 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize()
     setMethodNotCompleted();
     Ref<Bridge> protectedThis(*this);
 
-    m_loaderProxy.postTaskToLoader([&loaderProxy = m_loaderProxy, workerClientWrapper = m_workerClientWrapper.copyRef(), taskMode = m_taskMode.isolatedCopy()](ScriptExecutionContext& context) mutable {
-        mainThreadInitialize(context, loaderProxy, WTFMove(workerClientWrapper), taskMode);
+    m_loaderProxy.postTaskToLoader([&loaderProxy = m_loaderProxy, workerClientWrapper = m_workerClientWrapper.copyRef(), taskMode = m_taskMode.isolatedCopy(), provider = m_socketProvider.copyRef()](ScriptExecutionContext& context) mutable {
+        mainThreadInitialize(context, loaderProxy, WTFMove(workerClientWrapper), taskMode, WTFMove(provider));
     });
     waitForMethodCompletion();
 

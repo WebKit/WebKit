@@ -34,6 +34,7 @@
 #include "MarshallingHelpers.h"
 #include "PluginDatabase.h"
 #include "PluginView.h"
+#include "SocketProvider.h"
 #include "SoftLinking.h"
 #include "SubframeLoader.h"
 #include "TextIterator.h"
@@ -69,7 +70,6 @@
 #include "WebPreferences.h"
 #include "WebResourceLoadScheduler.h"
 #include "WebScriptWorld.h"
-#include "WebSocketProvider.h"
 #include "WebStorageNamespaceProvider.h"
 #include "WebViewGroup.h"
 #include "WebVisitedLinkStore.h"
@@ -2923,7 +2923,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
 
     m_inspectorClient = new WebInspectorClient(this);
 
-    PageConfiguration configuration(makeUniqueRef<WebEditorClient>(this), WebSocketProvider::create());
+    PageConfiguration configuration(makeUniqueRef<WebEditorClient>(this), SocketProvider::create());
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
     configuration.dragClient = new WebDragClient(this);

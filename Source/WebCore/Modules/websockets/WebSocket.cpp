@@ -255,10 +255,10 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
         return;
     }
 
-    if (auto socketProvider = scriptExecutionContext()->socketProvider())
-        m_channel = socketProvider->createWebSocketChannel(*scriptExecutionContext(), *this);
+    if (auto* provider = scriptExecutionContext()->socketProvider())
+        m_channel = ThreadableWebSocketChannel::create(*scriptExecutionContext(), *this, *provider);
 
-    // Only an EmptySocketProvider can return nullptr, and every ScriptExecutionContext should have a SocketProvider.
+    // Every ScriptExecutionContext should have a SocketProvider.
     RELEASE_ASSERT(m_channel);
 
     // FIXME: There is a disagreement about restriction of subprotocols between WebSocket API and hybi-10 protocol

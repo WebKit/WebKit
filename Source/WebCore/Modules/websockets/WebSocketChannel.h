@@ -49,6 +49,7 @@ namespace WebCore {
 class Blob;
 class Document;
 class FileReaderLoader;
+class SocketProvider;
 class SocketStreamHandle;
 class SocketStreamError;
 class WebSocketChannelClient;
@@ -58,7 +59,7 @@ class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStrea
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<WebSocketChannel> create(Document& document, WebSocketChannelClient& client) { return adoptRef(*new WebSocketChannel(document, client)); }
+    static Ref<WebSocketChannel> create(Document& document, WebSocketChannelClient& client, SocketProvider& provider) { return adoptRef(*new WebSocketChannel(document, client, provider)); }
     virtual ~WebSocketChannel();
 
     bool send(const char* data, int length);
@@ -119,7 +120,7 @@ protected:
     void derefThreadableWebSocketChannel() override { deref(); }
 
 private:
-    WEBCORE_EXPORT WebSocketChannel(Document&, WebSocketChannelClient&);
+    WEBCORE_EXPORT WebSocketChannel(Document&, WebSocketChannelClient&, SocketProvider&);
 
     bool appendToBuffer(const char* data, size_t len);
     void skipBuffer(size_t len);
@@ -213,6 +214,7 @@ private:
     BlobLoaderStatus m_blobLoaderStatus { BlobLoaderNotStarted };
 
     WebSocketDeflateFramer m_deflateFramer;
+    Ref<SocketProvider> m_socketProvider;
 };
 
 } // namespace WebCore

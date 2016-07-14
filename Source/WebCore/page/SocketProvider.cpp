@@ -23,15 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SocketProvider.h"
 
-#include <WebCore/SocketProvider.h>
-
-class WebSocketProvider final : public WebCore::SocketProvider {
-public:
-    static Ref<WebSocketProvider> create() { return adoptRef(*new WebSocketProvider); }
 #if ENABLE(WEB_SOCKETS)
-    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::ScriptExecutionContext&, WebCore::WebSocketChannelClient&) override;
-#endif
-    virtual ~WebSocketProvider() { }
-};
+
+#include "SocketStreamHandle.h"
+
+namespace WebCore {
+    
+Ref<SocketStreamHandle> SocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, NetworkingContext& context, SessionID sessionID)
+{
+    return SocketStreamHandle::create(url, client, context, sessionID);
+}
+    
+}
+
+#endif // ENABLE(WEB_SOCKETS)

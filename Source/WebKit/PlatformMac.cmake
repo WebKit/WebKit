@@ -114,7 +114,6 @@ list(APPEND WebKit_SOURCES
     mac/Misc/WebNSViewExtras.m
     mac/Misc/WebNSWindowExtras.m
     mac/Misc/WebSharingServicePickerController.mm
-    mac/Misc/WebSocketProvider.mm
     mac/Misc/WebStringTruncator.mm
     mac/Misc/WebUserContentURLPattern.mm
 

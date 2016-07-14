@@ -56,7 +56,7 @@ private:
     virtual int platformSend(const char* data, int length);
     virtual void platformClose();
 
-    SocketStreamHandle(const URL&, SocketStreamHandleClient&, NetworkingContext&, SessionID);
+    WEBCORE_EXPORT SocketStreamHandle(const URL&, SocketStreamHandleClient&, NetworkingContext&, SessionID);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();

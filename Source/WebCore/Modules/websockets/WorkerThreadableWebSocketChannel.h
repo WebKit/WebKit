@@ -53,9 +53,9 @@ class WorkerRunLoop;
 class WorkerThreadableWebSocketChannel : public RefCounted<WorkerThreadableWebSocketChannel>, public ThreadableWebSocketChannel {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ThreadableWebSocketChannel> create(WorkerGlobalScope& workerGlobalScope, WebSocketChannelClient& client, const String& taskMode)
+    static Ref<ThreadableWebSocketChannel> create(WorkerGlobalScope& workerGlobalScope, WebSocketChannelClient& client, const String& taskMode, SocketProvider& provider)
     {
-        return adoptRef(*new WorkerThreadableWebSocketChannel(workerGlobalScope, client, taskMode));
+        return adoptRef(*new WorkerThreadableWebSocketChannel(workerGlobalScope, client, taskMode, provider));
     }
     virtual ~WorkerThreadableWebSocketChannel();
 
@@ -78,7 +78,7 @@ public:
     class Peer : public WebSocketChannelClient {
         WTF_MAKE_NONCOPYABLE(Peer); WTF_MAKE_FAST_ALLOCATED;
     public:
-        Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, WorkerLoaderProxy&, ScriptExecutionContext&, const String& taskMode);
+        Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, WorkerLoaderProxy&, ScriptExecutionContext&, const String& taskMode, SocketProvider&);
         ~Peer();
 
         void connect(const URL&, const String& protocol);
@@ -119,9 +119,9 @@ private:
     // Bridge for Peer.  Running on the worker thread.
     class Bridge : public RefCounted<Bridge> {
     public:
-        static Ref<Bridge> create(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, Ref<WorkerGlobalScope>&& workerGlobalScope, const String& taskMode)
+        static Ref<Bridge> create(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, Ref<WorkerGlobalScope>&& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& provider)
         {
-            return adoptRef(*new Bridge(WTFMove(workerClientWrapper), WTFMove(workerGlobalScope), taskMode));
+            return adoptRef(*new Bridge(WTFMove(workerClientWrapper), WTFMove(workerGlobalScope), taskMode, WTFMove(provider)));
         }
         ~Bridge();
         void initialize();
@@ -140,12 +140,12 @@ private:
         using RefCounted<Bridge>::deref;
 
     private:
-        Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&&, Ref<WorkerGlobalScope>&&, const String& taskMode);
+        Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&&, Ref<WorkerGlobalScope>&&, const String& taskMode, Ref<SocketProvider>&&);
 
         static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, Ref<ThreadableWebSocketChannelClientWrapper>&&);
 
         // Executed on the main thread to create a Peer for this bridge.
-        static void mainThreadInitialize(ScriptExecutionContext&, WorkerLoaderProxy&, Ref<ThreadableWebSocketChannelClientWrapper>&&, const String& taskMode);
+        static void mainThreadInitialize(ScriptExecutionContext&, WorkerLoaderProxy&, Ref<ThreadableWebSocketChannelClientWrapper>&&, const String& taskMode, Ref<SocketProvider>&&);
 
         // Executed on the worker context's thread.
         void clearClientWrapper();
@@ -157,16 +157,18 @@ private:
         RefPtr<WorkerGlobalScope> m_workerGlobalScope;
         WorkerLoaderProxy& m_loaderProxy;
         String m_taskMode;
-        Peer* m_peer;
+        Peer* m_peer { nullptr };
+        Ref<SocketProvider> m_socketProvider;
     };
 
-    WEBCORE_EXPORT WorkerThreadableWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, const String& taskMode);
+    WEBCORE_EXPORT WorkerThreadableWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, const String& taskMode, SocketProvider&);
 
     class WorkerGlobalScopeDidInitializeTask;
 
     Ref<WorkerGlobalScope> m_workerGlobalScope;
     Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
     RefPtr<Bridge> m_bridge;
+    Ref<SocketProvider> m_socketProvider;
 };
 
 } // namespace WebCore

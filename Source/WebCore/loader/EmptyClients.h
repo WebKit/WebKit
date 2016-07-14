@@ -646,15 +646,6 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     void logDiagnosticMessageWithValue(const String&, const String&, const String&, ShouldSample) override { }
 };
 
-class EmptySocketProvider final : public SocketProvider {
-public:
-    virtual ~EmptySocketProvider() { }
-    static Ref<EmptySocketProvider> create() { return adoptRef(*new EmptySocketProvider); }
-#if ENABLE(WEB_SOCKETS)
-    RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(ScriptExecutionContext&, WebSocketChannelClient&) override;
-#endif
-};
-
 void fillWithEmptyClients(PageConfiguration&);
 
 }

@@ -35,6 +35,7 @@
 
 #include <WebCore/Document.h>
 #include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/SocketStreamHandle.h>
 #include <WebCore/ThreadableWebSocketChannelClientWrapper.h>
 #include <WebCore/WebSocketChannel.h>
 #include <WebCore/WebSocketChannelClient.h>
@@ -48,21 +49,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const char webSocketChannelMode[] = "webSocketChannelMode";
-
-RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(ScriptExecutionContext& context, WebSocketChannelClient& client)
+Ref<SocketStreamHandle> WebSocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, NetworkingContext& context, SessionID sessionID)
 {
     // FIXME: This should return a proxy so we can do the actual network interactions in the NetworkProcess.
-    if (is<WorkerGlobalScope>(context)) {
-        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
-        WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
-        StringBuilder mode;
-        mode.appendLiteral(webSocketChannelMode);
-        mode.appendNumber(runLoop.createUniqueId());
-        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, mode.toString());
-    }
-
-    return WebSocketChannel::create(downcast<Document>(context), client);
+    return SocketStreamHandle::create(url, client, context, sessionID);
 }
 
 } // namespace WebKit

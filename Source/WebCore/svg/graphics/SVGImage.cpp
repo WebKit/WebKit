@@ -380,7 +380,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         return true;
 
     if (allDataReceived) {
-        PageConfiguration pageConfiguration(makeUniqueRef<EmptyEditorClient>(), EmptySocketProvider::create());
+        PageConfiguration pageConfiguration(makeUniqueRef<EmptyEditorClient>(), SocketProvider::create());
         fillWithEmptyClients(pageConfiguration);
         m_chromeClient = std::make_unique<SVGImageChromeClient>(this);
         pageConfiguration.chromeClient = m_chromeClient.get();

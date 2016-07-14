@@ -100,7 +100,6 @@
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptWorldInternal.h"
 #import "WebSelectionServiceController.h"
-#import "WebSocketProvider.h"
 #import "WebStorageManagerInternal.h"
 #import "WebStorageNamespaceProvider.h"
 #import "WebSystemInterface.h"
@@ -179,6 +178,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
+#import <WebCore/SocketProvider.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
@@ -996,7 +996,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->group = WebViewGroup::getOrCreate(groupName, _private->preferences._localStorageDatabasePath);
     _private->group->addWebView(self);
 
-    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(self), WebSocketProvider::create());
+    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(self), SocketProvider::create());
 #if !PLATFORM(IOS)
     pageConfiguration.chromeClient = new WebChromeClient(self);
     pageConfiguration.contextMenuClient = new WebContextMenuClient(self);
@@ -1246,7 +1246,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->group = WebViewGroup::getOrCreate(groupName, _private->preferences._localStorageDatabasePath);
     _private->group->addWebView(self);
 
-    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(self), WebSocketProvider::create());
+    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(self), SocketProvider::create());
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = new WebDragClient(self);
