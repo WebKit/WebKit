@@ -32,7 +32,9 @@ namespace WebKit {
 class WebSocketProvider final : public WebCore::SocketProvider {
 public:
     static Ref<WebSocketProvider> create() { return adoptRef(*new WebSocketProvider); }
+#if ENABLE(WEB_SOCKETS)
     RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::ScriptExecutionContext&, WebCore::WebSocketChannelClient&) override;
+#endif
     virtual ~WebSocketProvider() { }
 };
 

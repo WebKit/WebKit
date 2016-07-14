@@ -83,6 +83,10 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, Wo
 #if !ENABLE(INDEXED_DATABASE)
     UNUSED_PARAM(connectionProxy);
 #endif
+#if !ENABLE(WEB_SOCKETS)
+    UNUSED_PARAM(socketProvider);
+#endif
+
     auto origin = SecurityOrigin::create(url);
     if (m_topOrigin->hasUniversalAccess())
         origin->grantUniversalAccess();

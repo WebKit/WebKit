@@ -112,6 +112,10 @@ WorkerThread::WorkerThread(const URL& scriptURL, const String& userAgent, const 
 #if !ENABLE(INDEXED_DATABASE)
     UNUSED_PARAM(connectionProxy);
 #endif
+#if !ENABLE(WEB_SOCKETS)
+    UNUSED_PARAM(socketProvider);
+#endif
+
     std::lock_guard<StaticLock> lock(threadSetMutex);
 
     workerThreads().add(this);

@@ -36,7 +36,9 @@ class WebSocketChannelClient;
 
 class SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:
+#if ENABLE(WEB_SOCKETS)
     virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(ScriptExecutionContext&, WebSocketChannelClient&) = 0;
+#endif
     virtual ~SocketProvider() { };
 };
 
