@@ -1,3 +1,17 @@
+2016-07-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Add test to confirm we do not crash in media destruction
+        https://bugs.webkit.org/show_bug.cgi?id=122816
+
+        Test based on a Blink change (patch by <igor.o@sisa.samsung.com>):
+        <https://chromium.googlesource.com/chromium/blink/+/7a2b2dcefbc013003487d5055eeda7a57daafa93%5E%21/#F0>
+
+        We do not seem to have the bug that prompted the Chromium source change. Adding
+        test case to ensure we do not introduce this problem in the future.
+
+        * editing/undo/audio-in-undo-stack-crash-expected.txt: Added.
+        * editing/undo/audio-in-undo-stack-crash.html: Added.
+
 2016-07-14  Youenn Fablet  <youenn@apple.com>
 
         Remove support for value iterators from JSDOMIterator
