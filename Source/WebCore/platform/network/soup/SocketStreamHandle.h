@@ -37,6 +37,7 @@
 
 #if USE(SOUP)
 
+#include "SessionID.h"
 #include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -48,7 +49,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandle final : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
 public:
-    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, NetworkingContext&, bool) { return adoptRef(*new SocketStreamHandle(url, client)); }
+    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, NetworkingContext&, SessionID) { return adoptRef(*new SocketStreamHandle(url, client)); }
     static Ref<SocketStreamHandle> create(GSocketConnection* socketConnection, SocketStreamHandleClient& client) { return adoptRef(*new SocketStreamHandle(socketConnection, client)); }
 
     virtual ~SocketStreamHandle();

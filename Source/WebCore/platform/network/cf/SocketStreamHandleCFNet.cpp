@@ -67,7 +67,7 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 
 namespace WebCore {
 
-SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client, NetworkingContext& networkingContext, bool usesEphemeralSession)
+SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client, NetworkingContext& networkingContext, SessionID sessionID)
     : SocketStreamHandleBase(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
@@ -85,7 +85,7 @@ SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient&
     // Don't check for HSTS violation for ephemeral sessions since
     // HSTS state should not transfer between regular and private browsing.
     if (url.protocolIs("ws")
-        && !usesEphemeralSession
+        && !sessionID.isEphemeral()
         && _CFNetworkIsKnownHSTSHostWithSession(m_httpsURL.get(), nullptr)) {
         m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."));
         return;
