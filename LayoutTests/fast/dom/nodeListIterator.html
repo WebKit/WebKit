@@ -7,6 +7,28 @@
         <script>
             description('Testing of NodeList iterable capacities.');
 
+            // Modifying Array prototype to ensure this does not impact NodeList iterable methods.
+            var entriesFunction = Array.prototype.entries;
+            Array.prototype.entries = function() {
+                console.log("Array.prototype.entries called");
+              return entriesFunction.apply(this, arguments);
+            }
+            var forEachFunction = Array.prototype.forEach;
+            Array.prototype.forEach = function() {
+                console.log("Array.prototype.forEach called");
+              return forEachFunction.apply(this, arguments);
+            }
+            var keysFunction = Array.prototype.keys;
+            Array.prototype.keys = function() {
+                console.log("Array.prototype.keys called");
+              return keysFunction.apply(this, arguments);
+            }
+            var valuesFunction = Array.prototype.values;
+            Array.prototype.values = function() {
+                console.log("Array.prototype.values called");
+              return valuesFunction.apply(this, arguments);
+            }
+
             if (window.testRunner)
                 testRunner.dumpAsText();
 
@@ -24,6 +46,11 @@
             document.body.appendChild(testingGround);
 
             var nodeList = testingGround.childNodes;
+
+            shouldBeTrue('nodeList.entries === entriesFunction');
+            shouldBeTrue('nodeList.forEach === forEachFunction');
+            shouldBeTrue('nodeList.keys === keysFunction');
+            shouldBeTrue('nodeList.values === valuesFunction');
 
             shouldBe("nodeList.length", "2");
 
@@ -63,8 +90,8 @@
             }, givenThisValue);
 
             var iterator = nodeList.keys();
-            shouldBe('iterator.next().value', 'children[0]');
-            shouldBe('iterator.next().value', 'children[1]');
+            shouldBe('iterator.next().value', '0');
+            shouldBe('iterator.next().value', '1');
             checkEndIterator(iterator.next());
 
             var iterator = nodeList.values();
@@ -92,7 +119,7 @@
             shouldBeTrue('descriptor.writable');
             shouldBeFalse('descriptor.enumerable');
 
-            shouldNotThrow('NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];');
+            shouldNotThrow('NodeList.prototype[Symbol.iterator] = valuesFunction;');
             var counter = 0;
             for (var a of nodeList) {
                 shouldBeTrue('a instanceof Node');

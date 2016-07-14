@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+void addValueIterableMethods(JSC::JSGlobalObject&, JSC::JSObject&);
+
 template<typename JSWrapper>
 class JSDOMIteratorPrototype : public JSC::JSNonFinalObject {
 public:

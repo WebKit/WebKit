@@ -1,3 +1,15 @@
+2016-07-14  Youenn Fablet  <youenn@apple.com>
+
+        DOM value iterable interfaces should use Array prototype methods
+        https://bugs.webkit.org/show_bug.cgi?id=159296
+
+        Reviewed by Chris Dumez and Mark Lam.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Marking some header files as private so that they can be included in
+        WebCore.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation): copying iterable methods (entries, forEach, keys and values) to private slots.
+
 2016-07-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the magic numbers for ARM traditional in InlineAccess.h

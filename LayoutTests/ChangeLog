@@ -1,5 +1,17 @@
 2016-07-14  Youenn Fablet  <youenn@apple.com>
 
+        DOM value iterable interfaces should use Array prototype methods
+        https://bugs.webkit.org/show_bug.cgi?id=159296
+
+        Reviewed by Chris Dumez and Mark Lam.
+
+        * fast/dom/nodeListIterator-expected.txt:
+        * fast/dom/nodeListIterator.html:
+        * fast/dom/NodeList/nodelist-iterable-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-iterable.html: Added.
+
+2016-07-14  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Request and Response url getter should use URL serialization
         https://bugs.webkit.org/show_bug.cgi?id=159705
 

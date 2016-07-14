@@ -1616,7 +1616,7 @@ sub GeneratePropertiesHashTable
     }
 
     my @functions = @{$interface->functions};
-    push(@functions, @{$interface->iterable->functions}) if $interface->iterable;
+    push(@functions, @{$interface->iterable->functions}) if IsKeyValueIterableInterface($interface);
     foreach my $function (@functions) {
         next if ($function->signature->extendedAttributes->{"PrivateIdentifier"} and not $function->signature->extendedAttributes->{"PublicIdentifier"});
         next if ($function->isStatic);
@@ -2043,7 +2043,7 @@ sub GenerateImplementation
     push(@implContent, GenerateDictionaryImplementationContent($interface, $dictionaries));
 
     my @functions = @{$interface->functions};
-    push(@functions, @{$interface->iterable->functions}) if $interface->iterable;
+    push(@functions, @{$interface->iterable->functions}) if IsKeyValueIterableInterface($interface);
 
     my $numConstants = @{$interface->constants};
     my $numFunctions = @functions;
@@ -4205,6 +4205,24 @@ sub GenerateImplementationFunctionCall()
     }
 }
 
+sub IsValueIterableInterface
+{
+    my $interface = shift;
+    return 0 unless $interface->iterable;
+    return 0 if length $interface->iterable->keyType;
+    # FIXME: See https://webkit.org/b/159140, we should die if the next check is false.
+    return 0 unless GetIndexedGetterFunction($interface);
+    return 1;
+}
+
+sub IsKeyValueIterableInterface
+{
+    my $interface = shift;
+    return 0 unless $interface->iterable;
+    return 0 if IsValueIterableInterface($interface);
+    return 1;
+}
+
 sub GenerateImplementationIterableFunctions
 {
     my $interface = shift;
@@ -4214,6 +4232,8 @@ sub GenerateImplementationIterableFunctions
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
 
     AddToImplIncludes("JSDOMIterator.h");
+
+    return unless IsKeyValueIterableInterface($interface);
 
     push(@implContent,  <<END);
 using ${interfaceName}Iterator = JSDOMIterator<${className}>;
@@ -4266,8 +4286,12 @@ sub addIterableProperties()
         push(@implContent, "    if (${enable_function}()) {\n    ");
     }
 
-    my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
-    push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
+    if (IsKeyValueIterableInterface($interface)) {
+        my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
+        push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
+    } else {
+        push(@implContent, "    addValueIterableMethods(*globalObject(), *this);\n");
+    }
 
     if ($interface->iterable->extendedAttributes->{"EnabledAtRuntime"}) {
         push(@implContent, "    }\n");
