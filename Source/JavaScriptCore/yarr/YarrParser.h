@@ -458,8 +458,10 @@ private:
                     if (codePoint > UCHAR_MAX_VALUE)
                         m_err = InvalidUnicodeEscape;
                 } while (!atEndOfPattern() && peek() != '}');
-                if (!atEndOfPattern())
+                if (!atEndOfPattern() && peek() == '}')
                     consume();
+                else if (!m_err)
+                    m_err = InvalidUnicodeEscape;
                 if (m_err)
                     return false;
 

@@ -1,0 +1,20 @@
+Regresion test for 158080. This test should pass and not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS let r = /\u{|abc/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{1/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{12/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{123/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{1234/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{abcde/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{abcdef/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{1111111}/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{fedbca98}/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS let r = /\u{1{123}}/u threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

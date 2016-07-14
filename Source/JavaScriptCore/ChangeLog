@@ -1,3 +1,22 @@
+2016-07-13  Michael Saboff  <msaboff@apple.com>
+
+        Some bad unicode regex escapes aren't flagged as errors
+        https://bugs.webkit.org/show_bug.cgi?id=158080
+
+        Reviewed by Saam Barati.
+
+        If we have a partial unicode escape, eg /\u{1/u or /\u12|abc/u, we
+        didn't check for the closing '}' and processed the unicode escape with
+        the hex value provided.  
+
+        Added a check that we properly terminated a \u{} unicode escape.
+        If we fail that check and there isn't a prior error, we record that we
+        have an invalid unicode escape.  The next existing line in the code will
+        terminate parsing and bubble up the error.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseEscape):
+
 2016-07-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r203199.
