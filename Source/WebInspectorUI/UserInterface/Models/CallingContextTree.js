@@ -170,7 +170,7 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
 
 WebInspector.CCTNode = class CCTNode extends WebInspector.Object
 {
-    constructor(sourceID, line, column, name, url)
+    constructor(sourceID, line, column, name, url, hash)
     {
         super();
 
@@ -187,6 +187,8 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         this._leafTimestamps = [];
         this._leafDurations = [];
         this._expressionLocations = {}; // Keys are "line:column" strings. Values are arrays of timestamps in sorted order.
+
+        this._hash = hash || WebInspector.CCTNode._hash(this);
     }
 
     // Static and Private
@@ -204,6 +206,7 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
     get name() { return this._name; }
     get uid() { return this._uid; }
     get url() { return this._url; }
+    get hash() { return this._hash; }
 
     hasChildrenInTimeRange(startTime, endTime)
     {
@@ -276,7 +279,7 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         let node = this._children[hash];
         if (node)
             return node;
-        node = new WebInspector.CCTNode(stackFrame.sourceID, stackFrame.line, stackFrame.column, stackFrame.name, stackFrame.url);
+        node = new WebInspector.CCTNode(stackFrame.sourceID, stackFrame.line, stackFrame.column, stackFrame.name, stackFrame.url, hash);
         this._children[hash] = node;
         return node;
     }
@@ -322,7 +325,7 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
 
     equals(other)
     {
-        return WebInspector.CCTNode._hash(this) === WebInspector.CCTNode._hash(other);
+        return this._hash === other.hash;
     }
 
     toCPUProfileNode(numSamples, startTime, endTime)

@@ -1,3 +1,30 @@
+2016-07-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Maintain selected function when switching between different profile representations
+        https://bugs.webkit.org/show_bug.cgi?id=159778
+        <rdar://problem/27355913>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CallingContextTree.js:
+        (WebInspector.CCTNode):
+        (WebInspector.CCTNode.prototype.get hash):
+        (WebInspector.CCTNode.prototype.findOrMakeChild):
+        (WebInspector.CCTNode.prototype.equals):
+        Expose the hash so two nodes can be compared cheaply.
+
+        * UserInterface/Views/ProfileView.js:
+        (WebInspector.ProfileView.prototype._repopulateDataGridFromTree):
+        (WebInspector.ProfileView.prototype._restoreSharedState):
+        (WebInspector.ProfileView.prototype._dataGridNodeSelected):
+        Share data between multiple ProfileViews. Currently just remembering
+        and restoring the selected function.
+
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        (WebInspector.ScriptProfileTimelineView):
+        (WebInspector.ScriptProfileTimelineView.prototype._showProfileViewForOrientation):
+        Include the shared data when constructing new ProfileViews.
+
 2016-07-13  Matt Baker  <mattbaker@apple.com>
 
         Uncaught Exception: TypeError: null is not an object (evaluating 'this._contentViewContainer.currentContentView.showsFilterBar')
