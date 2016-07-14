@@ -654,8 +654,7 @@ public:
 
 private:
     const StringView& m_stringView;
-    unsigned m_index;
-    unsigned m_indexEnd;
+    Optional<unsigned> m_nextCodePointOffset;
     UChar32 m_codePoint;
 };
 
@@ -711,37 +710,36 @@ inline StringView::CodePoints::CodePoints(const StringView& stringView)
 
 inline StringView::CodePoints::Iterator::Iterator(const StringView& stringView, unsigned index)
     : m_stringView(stringView)
-    , m_index(index)
-    , m_indexEnd(index)
+    , m_nextCodePointOffset(index)
 {
     operator++();
 }
 
 inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
 {
-    ASSERT(m_indexEnd <= m_stringView.length());
-    m_index = m_indexEnd;
-    if (m_indexEnd == m_stringView.length()) {
-        m_codePoint = 0;
+    ASSERT(m_nextCodePointOffset);
+    if (m_nextCodePointOffset.value() == m_stringView.length()) {
+        m_nextCodePointOffset = Nullopt;
         return *this;
     }
     if (m_stringView.is8Bit())
-        m_codePoint = m_stringView.characters8()[m_indexEnd++];
+        m_codePoint = m_stringView.characters8()[m_nextCodePointOffset.value()++];
     else
-        U16_NEXT(m_stringView.characters16(), m_indexEnd, m_stringView.length(), m_codePoint);
+        U16_NEXT(m_stringView.characters16(), m_nextCodePointOffset.value(), m_stringView.length(), m_codePoint);
+    ASSERT(m_nextCodePointOffset.value() <= m_stringView.length());
     return *this;
 }
 
 inline UChar32 StringView::CodePoints::Iterator::operator*() const
 {
-    ASSERT(m_indexEnd <= m_stringView.length());
+    ASSERT(m_nextCodePointOffset);
     return m_codePoint;
 }
 
 inline bool StringView::CodePoints::Iterator::operator==(const Iterator& other) const
 {
     ASSERT(&m_stringView == &other.m_stringView);
-    return m_index == other.m_index;
+    return m_nextCodePointOffset == other.m_nextCodePointOffset;
 }
 
 inline bool StringView::CodePoints::Iterator::operator!=(const Iterator& other) const
