@@ -37,7 +37,10 @@
 #include <wtf/Lock.h>
 #include <wtf/ThreadingPrimitives.h>
 #elif OS(LINUX)
-#include "Timer.h"
+#include <wtf/RunLoop.h>
+#if USE(GLIB)
+#include <wtf/glib/GRefPtr.h>
+#endif
 #endif
 
 namespace WebCore {
@@ -81,8 +84,6 @@ public:
     WEBCORE_EXPORT void clearMemoryPressure();
     WEBCORE_EXPORT bool shouldWaitForMemoryClearMessage();
     void respondToMemoryPressureIfNeeded();
-#elif OS(LINUX)
-    static void waitForMemoryPressureEvent(void*);
 #endif
 
     class ReliefLogger {
@@ -138,6 +139,26 @@ private:
     void respondToMemoryPressure(Critical, Synchronous = Synchronous::No);
     void platformReleaseMemory(Critical);
 
+#if OS(LINUX)
+    class EventFDPoller {
+        WTF_MAKE_NONCOPYABLE(EventFDPoller); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        EventFDPoller(int fd, std::function<void ()>&& notifyHandler);
+        ~EventFDPoller();
+
+    private:
+        void readAndNotify() const;
+
+        Optional<int> m_fd;
+        std::function<void ()> m_notifyHandler;
+#if USE(GLIB)
+        GRefPtr<GSource> m_source;
+#else
+        ThreadIdentifier m_threadID;
+#endif
+    };
+#endif
+
     bool m_installed;
     time_t m_lastRespondTime;
     LowMemoryHandler m_lowMemoryHandler;
@@ -152,10 +173,10 @@ private:
     CFRunLoopObserverRef m_observer;
     Lock m_observerMutex;
 #elif OS(LINUX)
-    int m_eventFD;
-    int m_pressureLevelFD;
-    WTF::ThreadIdentifier m_threadID;
-    Timer m_holdOffTimer;
+    Optional<int> m_eventFD;
+    Optional<int> m_pressureLevelFD;
+    std::unique_ptr<EventFDPoller> m_eventFDPoller;
+    RunLoop::Timer<MemoryPressureHandler> m_holdOffTimer;
     void holdOffTimerFired();
     void logErrorAndCloseFDs(const char* error);
 #endif
