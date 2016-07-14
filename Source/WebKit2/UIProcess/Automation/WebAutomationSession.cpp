@@ -39,6 +39,7 @@
 #include <WebCore/UUID.h>
 #include <algorithm>
 #include <wtf/HashMap.h>
+#include <wtf/Optional.h>
 #include <wtf/text/StringConcatenate.h>
 
 using namespace Inspector;
@@ -165,19 +166,16 @@ String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPagePr
     return handle;
 }
 
-WebFrameProxy* WebAutomationSession::webFrameProxyForHandle(const String& handle, WebPageProxy& page)
+Optional<uint64_t> WebAutomationSession::webFrameIDForHandle(const String& handle)
 {
     if (handle.isEmpty())
-        return page.mainFrame();
+        return 0;
 
     auto iter = m_handleWebFrameMap.find(handle);
     if (iter == m_handleWebFrameMap.end())
-        return nullptr;
+        return Nullopt;
 
-    if (WebFrameProxy* frame = page.process().webFrame(iter->value))
-        return frame;
-
-    return nullptr;
+    return iter->value;
 }
 
 String WebAutomationSession::handleForWebFrameID(uint64_t frameID)
@@ -294,15 +292,15 @@ void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& error
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebFrameProxy* frame = webFrameProxyForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), *page);
-    if (!frame)
+    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
+    if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     // FIXME: We don't need to track this in WK2. Remove in a follow up.
     m_activeBrowsingContextHandle = browsingContextHandle;
 
     page->setFocus(true);
-    page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(frame->frameID()), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID.value()), 0);
 }
 
 void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& sizeObject)
@@ -472,8 +470,8 @@ void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& er
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebFrameProxy* frame = webFrameProxyForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), *page);
-    if (!frame)
+    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
+    if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     Vector<String> argumentsVector;
@@ -491,7 +489,7 @@ void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& er
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(frame->frameID(), function, argumentsVector, expectsImplicitCallbackArgument, callbackTimeout, callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->pageID(), frameID.value(), function, argumentsVector, expectsImplicitCallbackArgument, callbackTimeout, callbackID), 0);
 }
 
 void WebAutomationSession::didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType)
@@ -515,25 +513,25 @@ void WebAutomationSession::resolveChildFrameHandle(Inspector::ErrorString& error
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebFrameProxy* frame = webFrameProxyForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), *page);
-    if (!frame)
+    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
+    if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     uint64_t callbackID = m_nextResolveFrameCallbackID++;
     m_resolveChildFrameHandleCallbacks.set(callbackID, WTFMove(callback));
 
     if (optionalNodeHandle) {
-        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(frame->frameID(), *optionalNodeHandle, callbackID), 0);
+        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(page->pageID(), frameID.value(), *optionalNodeHandle, callbackID), 0);
         return;
     }
 
     if (optionalName) {
-        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(frame->frameID(), *optionalName, callbackID), 0);
+        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(page->pageID(), frameID.value(), *optionalName, callbackID), 0);
         return;
     }
 
     if (optionalOrdinal) {
-        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(frame->frameID(), *optionalOrdinal, callbackID), 0);
+        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(page->pageID(), frameID.value(), *optionalOrdinal, callbackID), 0);
         return;
     }
 
@@ -558,14 +556,14 @@ void WebAutomationSession::resolveParentFrameHandle(Inspector::ErrorString& erro
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebFrameProxy* frame = webFrameProxyForHandle(frameHandle, *page);
-    if (!frame)
+    Optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
+    if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     uint64_t callbackID = m_nextResolveParentFrameCallbackID++;
     m_resolveParentFrameHandleCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::ResolveParentFrame(frame->frameID(), callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::ResolveParentFrame(page->pageID(), frameID.value(), callbackID), 0);
 }
 
 void WebAutomationSession::didResolveParentFrame(uint64_t callbackID, uint64_t frameID, const String& errorType)
@@ -586,8 +584,8 @@ void WebAutomationSession::computeElementLayout(Inspector::ErrorString& errorStr
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebFrameProxy* frame = webFrameProxyForHandle(frameHandle, *page);
-    if (!frame)
+    Optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
+    if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     uint64_t callbackID = m_nextComputeElementLayoutCallbackID++;
@@ -596,7 +594,7 @@ void WebAutomationSession::computeElementLayout(Inspector::ErrorString& errorStr
     bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded ? *optionalScrollIntoViewIfNeeded : false;
     bool useViewportCoordinates = optionalUseViewportCoordinates ? *optionalUseViewportCoordinates : false;
 
-    page->process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(frame->frameID(), nodeHandle, scrollIntoViewIfNeeded, useViewportCoordinates, callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, useViewportCoordinates, callbackID), 0);
 }
 
 void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, const String& errorType)
@@ -711,15 +709,13 @@ void WebAutomationSession::getAllCookies(ErrorString& errorString, const String&
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebFrameProxy* mainFrame = page->mainFrame();
-    ASSERT(mainFrame);
-    if (!mainFrame)
-        FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+    // Always send the main frame ID as 0 so it is resolved on the WebProcess side. This avoids a race when page->mainFrame() is null still.
+    const uint64_t mainFrameID = 0;
 
     uint64_t callbackID = m_nextGetCookiesCallbackID++;
     m_getCookieCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::GetCookiesForFrame(mainFrame->frameID(), callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->pageID(), mainFrameID, callbackID), 0);
 }
 
 static Ref<Inspector::Protocol::Automation::Cookie> buildObjectForCookie(const WebCore::Cookie& cookie)
@@ -767,15 +763,13 @@ void WebAutomationSession::deleteSingleCookie(ErrorString& errorString, const St
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebFrameProxy* mainFrame = page->mainFrame();
-    ASSERT(mainFrame);
-    if (!mainFrame)
-        FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+    // Always send the main frame ID as 0 so it is resolved on the WebProcess side. This avoids a race when page->mainFrame() is null still.
+    const uint64_t mainFrameID = 0;
 
     uint64_t callbackID = m_nextDeleteCookieCallbackID++;
     m_deleteCookieCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::DeleteCookie(mainFrame->frameID(), cookieName, callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::DeleteCookie(page->pageID(), mainFrameID, cookieName, callbackID), 0);
 }
 
 void WebAutomationSession::didDeleteCookie(uint64_t callbackID, const String& errorType)
