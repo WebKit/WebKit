@@ -1,3 +1,160 @@
+2016-07-13  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Import W3C WebCryptoAPI tests
+        https://bugs.webkit.org/show_bug.cgi?id=159636
+
+        Reviewed by Alex Christensen.
+
+        * WebCryptoAPI/OWNERS: Added.
+        * WebCryptoAPI/README.md: Added.
+        * WebCryptoAPI/WebCryptoAPI.idl: Added.
+        * WebCryptoAPI/digest/digest.js: Added.
+        (run_test.):
+        (run_test.copyBuffer):
+        (run_test.equalBuffers):
+        (run_test):
+        * WebCryptoAPI/digest/digest.worker.js: Added.
+        * WebCryptoAPI/digest/test_digest-expected.txt: Added.
+        * WebCryptoAPI/digest/test_digest.html: Added.
+        * WebCryptoAPI/digest/w3c-import.log: Added.
+        * WebCryptoAPI/encrypt_decrypt/aes.js: Added.
+        (run_test.):
+        (run_test.importVectorKey):
+        (run_test):
+        (run_test.equalBuffers):
+        * WebCryptoAPI/encrypt_decrypt/aes_cbc.worker.js: Added.
+        * WebCryptoAPI/encrypt_decrypt/aes_cbc_vectors.js: Added.
+        (getTestVectors):
+        * WebCryptoAPI/encrypt_decrypt/aes_ctr.worker.js: Added.
+        * WebCryptoAPI/encrypt_decrypt/aes_ctr_vectors.js: Added.
+        (getTestVectors):
+        * WebCryptoAPI/encrypt_decrypt/aes_gcm.worker.js: Added.
+        * WebCryptoAPI/encrypt_decrypt/aes_gcm_vectors.js: Added.
+        (getTestVectors):
+        * WebCryptoAPI/encrypt_decrypt/rsa.js: Added.
+        (run_test.):
+        (run_test.else):
+        (run_test.importVectorKeys):
+        (run_test.copyBuffer):
+        (run_test.equalBuffers):
+        (run_test):
+        * WebCryptoAPI/encrypt_decrypt/rsa.worker.js: Added.
+        * WebCryptoAPI/encrypt_decrypt/rsa_vectors.js: Added.
+        (getTestVectors):
+        * WebCryptoAPI/encrypt_decrypt/test_aes_cbc-expected.txt: Added.
+        * WebCryptoAPI/encrypt_decrypt/test_aes_cbc.html: Added.
+        * WebCryptoAPI/encrypt_decrypt/test_aes_ctr-expected.txt: Added.
+        * WebCryptoAPI/encrypt_decrypt/test_aes_ctr.html: Added.
+        * WebCryptoAPI/encrypt_decrypt/test_aes_gcm-expected.txt: Added.
+        * WebCryptoAPI/encrypt_decrypt/test_aes_gcm.html: Added.
+        * WebCryptoAPI/encrypt_decrypt/test_rsa_oaep-expected.txt: Added.
+        * WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.html: Added.
+        * WebCryptoAPI/encrypt_decrypt/w3c-import.log: Added.
+        * WebCryptoAPI/generateKey/failures.js: Added.
+        (run_test.parameterString):
+        (run_test.testError):
+        (run_test):
+        (run_test.invalidUsages):
+        (run_test.):
+        * WebCryptoAPI/generateKey/failures.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_AES-CBC.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_AES-CTR.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_AES-GCM.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_AES-KW.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_ECDH.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_ECDSA.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_HMAC.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_RSA-OAEP.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_RSA-PSS.worker.js: Added.
+        * WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes.js: Added.
+        (run_test.parameterString):
+        (run_test.):
+        (run_test.testSuccess):
+        (run_test):
+        * WebCryptoAPI/generateKey/successes.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_AES-CBC.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_AES-CTR.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_AES-GCM.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_AES-KW.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_ECDH.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_ECDSA.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_HMAC.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_RSA-PSS.worker.js: Added.
+        * WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker.js: Added.
+        * WebCryptoAPI/generateKey/test_aes-cbc-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_aes-cbc.html: Added.
+        * WebCryptoAPI/generateKey/test_aes-ctr-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_aes-ctr.html: Added.
+        * WebCryptoAPI/generateKey/test_failures-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_AES-CBC-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_AES-CBC.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_AES-CTR-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_AES-CTR.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_AES-GCM-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_AES-GCM.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_AES-KW-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_AES-KW.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_ECDH-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_ECDH.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_ECDSA-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_ECDSA.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_HMAC-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_HMAC.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_RSA-OAEP-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_RSA-OAEP.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_RSA-PSS-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_RSA-PSS.html: Added.
+        * WebCryptoAPI/generateKey/test_failures_RSASSA-PKCS1-v1_5-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_failures_RSASSA-PKCS1-v1_5.html: Added.
+        * WebCryptoAPI/generateKey/test_successes-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_AES-CBC-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_AES-CBC.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_AES-CTR-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_AES-CTR.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_AES-GCM-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_AES-GCM.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_AES-KW-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_AES-KW.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_ECDH-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_ECDH.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_ECDSA-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_ECDSA.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_HMAC-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_HMAC.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_RSA-OAEP-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_RSA-OAEP.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_RSA-PSS-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_RSA-PSS.html: Added.
+        * WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5-expected.txt: Added.
+        * WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.html: Added.
+        * WebCryptoAPI/generateKey/w3c-import.log: Added.
+        * WebCryptoAPI/getRandomValues.js: Added.
+        (run_test.):
+        (run_test):
+        * WebCryptoAPI/getRandomValues.worker.js: Added.
+        * WebCryptoAPI/idlharness-expected.txt: Added.
+        * WebCryptoAPI/idlharness.html: Added.
+        * WebCryptoAPI/idlharness.worker.js: Added.
+        (request.onload):
+        * WebCryptoAPI/test_getRandomValues-expected.txt: Added.
+        * WebCryptoAPI/test_getRandomValues.html: Added.
+        * WebCryptoAPI/tools/generate.py: Added.
+        * WebCryptoAPI/tools/w3c-import.log: Added.
+        * WebCryptoAPI/util/helpers.js: Added.
+        (allNonemptySubsetsOf):
+        (objectToString.):
+        (objectToString):
+        (assert_goodCryptoKey):
+        (allAlgorithmSpecifiersFor):
+        (allValidUsages):
+        (allNameVariants):
+        * WebCryptoAPI/util/w3c-import.log: Added.
+        * WebCryptoAPI/w3c-import.log: Added.
+
 2016-07-13  Youenn Fablet  <youennf@gmail.com>
 
         Refresh WPT tests up to c875b42
