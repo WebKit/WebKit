@@ -1,3 +1,12 @@
+2016-07-14  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r202918): LayoutTest media/video-main-content-allow-then-deny.html is flaky, failing almost every time on El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=159533
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+
 2016-07-14  Alex Christensen  <achristensen@webkit.org>
 
         Rebaseline test after r203204 and r203207.
