@@ -38,7 +38,7 @@ namespace WebCore {
 
 const unsigned int bufferSize = 100 * 1024 * 1024;
 
-SocketStreamHandleBase::SocketStreamHandleBase(const URL& url, SocketStreamHandleClient* client)
+SocketStreamHandleBase::SocketStreamHandleBase(const URL& url, SocketStreamHandleClient& client)
     : m_url(url)
     , m_client(client)
     , m_state(Connecting)
@@ -60,8 +60,7 @@ bool SocketStreamHandleBase::send(const char* data, int length)
             return false;
         }
         m_buffer.append(data, length);
-        if (m_client)
-            m_client->didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
+        m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
         return true;
     }
     int bytesWritten = 0;
@@ -75,8 +74,7 @@ bool SocketStreamHandleBase::send(const char* data, int length)
     }
     if (bytesWritten < length) {
         m_buffer.append(data + bytesWritten, length - bytesWritten);
-        if (m_client)
-            m_client->didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
+        m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
     }
     return true;
 }
@@ -97,12 +95,6 @@ void SocketStreamHandleBase::disconnect()
 
     platformClose();
     m_state = Closed;
-}
-
-void SocketStreamHandleBase::setClient(SocketStreamHandleClient* client)
-{
-    ASSERT(!client || (!m_client && m_state == Connecting));
-    m_client = client;
 }
 
 bool SocketStreamHandleBase::sendPendingData()
@@ -126,8 +118,7 @@ bool SocketStreamHandleBase::sendPendingData()
         ASSERT(m_buffer.size() - bytesWritten <= bufferSize);
         m_buffer.consume(bytesWritten);
     } while (!pending && !m_buffer.isEmpty());
-    if (m_client)
-        m_client->didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
+    m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
     return true;
 }
 

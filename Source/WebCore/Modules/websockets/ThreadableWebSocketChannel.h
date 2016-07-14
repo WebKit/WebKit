@@ -54,8 +54,7 @@ public:
 
     enum SendResult {
         SendSuccess,
-        SendFail,
-        InvalidMessage
+        SendFail
     };
 
     virtual void connect(const URL&, const String& protocol) = 0;

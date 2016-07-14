@@ -48,11 +48,11 @@
 
 namespace WebCore {
 
-SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient* client)
+SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client)
     : SocketStreamHandleBase(url, client)
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {
-    LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
+    LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
     unsigned port = url.hasPort() ? url.port() : (url.protocolIs("wss") ? 443 : 80);
 
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
@@ -64,11 +64,11 @@ SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient*
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), protectedThis.leakRef());
 }
 
-SocketStreamHandle::SocketStreamHandle(GSocketConnection* socketConnection, SocketStreamHandleClient* client)
+SocketStreamHandle::SocketStreamHandle(GSocketConnection* socketConnection, SocketStreamHandleClient& client)
     : SocketStreamHandleBase(URL(), client)
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {
-    LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
+    LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
     GRefPtr<GSocketConnection> connection = socketConnection;
     connected(WTFMove(connection));
 }
@@ -76,7 +76,6 @@ SocketStreamHandle::SocketStreamHandle(GSocketConnection* socketConnection, Sock
 SocketStreamHandle::~SocketStreamHandle()
 {
     LOG(Network, "SocketStreamHandle %p delete", this);
-    setClient(nullptr);
 }
 
 void SocketStreamHandle::connected(GRefPtr<GSocketConnection>&& socketConnection)
@@ -91,7 +90,7 @@ void SocketStreamHandle::connected(GRefPtr<GSocketConnection>&& socketConnection
         reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), protectedThis.leakRef());
 
     m_state = Open;
-    m_client->didOpenSocketStream(*this);
+    m_client.didOpenSocketStream(*this);
 }
 
 void SocketStreamHandle::connectedCallback(GSocketClient* client, GAsyncResult* result, SocketStreamHandle* handle)
@@ -124,7 +123,7 @@ void SocketStreamHandle::readBytes(gssize bytesRead)
 
     // The client can close the handle, potentially removing the last reference.
     RefPtr<SocketStreamHandle> protectedThis(this);
-    m_client->didReceiveSocketStreamData(*this, m_readBuffer.get(), bytesRead);
+    m_client.didReceiveSocketStreamData(*this, m_readBuffer.get(), bytesRead);
     if (m_inputStream) {
         g_input_stream_read_async(m_inputStream.get(), m_readBuffer.get(), READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, m_cancellable.get(),
             reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), protectedThis.leakRef());
@@ -150,7 +149,7 @@ void SocketStreamHandle::readReadyCallback(GInputStream* stream, GAsyncResult* r
 
 void SocketStreamHandle::didFail(SocketStreamError&& error)
 {
-    m_client->didFailSocketStream(*this, WTFMove(error));
+    m_client.didFailSocketStream(*this, WTFMove(error));
 }
 
 void SocketStreamHandle::writeReady()
@@ -207,7 +206,7 @@ void SocketStreamHandle::platformClose()
     m_inputStream = nullptr;
     m_readBuffer = nullptr;
 
-    m_client->didCloseSocketStream(*this);
+    m_client.didCloseSocketStream(*this);
 }
 
 void SocketStreamHandle::beginWaitingForSocketWritability()

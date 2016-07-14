@@ -97,7 +97,7 @@ void WebSocketChannel::connect(const URL& url, const String& protocol)
         if (NetworkingContext* networkingContext = frame->loader().networkingContext()) {
             ref();
             Page* page = frame->page();
-            m_handle = SocketStreamHandle::create(m_handshake->url(), this, *networkingContext, (page ? page->usesEphemeralSession() : false));
+            m_handle = SocketStreamHandle::create(m_handshake->url(), *this, *networkingContext, (page ? page->usesEphemeralSession() : false));
         }
     }
 }

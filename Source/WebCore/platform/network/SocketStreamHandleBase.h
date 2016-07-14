@@ -36,34 +36,33 @@
 
 namespace WebCore {
 
-    class SocketStreamHandle;
-    class SocketStreamHandleClient;
+class SocketStreamHandle;
+class SocketStreamHandleClient;
 
-    class SocketStreamHandleBase {
-    public:
-        enum SocketStreamState { Connecting, Open, Closing, Closed };
-        virtual ~SocketStreamHandleBase() { }
-        SocketStreamState state() const;
+class SocketStreamHandleBase {
+public:
+    enum SocketStreamState { Connecting, Open, Closing, Closed };
+    virtual ~SocketStreamHandleBase() { }
+    SocketStreamState state() const;
 
-        bool send(const char* data, int length);
-        void close(); // Disconnect after all data in buffer are sent.
-        void disconnect();
-        size_t bufferedAmount() const { return m_buffer.size(); }
+    bool send(const char* data, int length);
+    void close(); // Disconnect after all data in buffer are sent.
+    void disconnect();
+    size_t bufferedAmount() const { return m_buffer.size(); }
 
-        SocketStreamHandleClient* client() const { return m_client; }
-        void setClient(SocketStreamHandleClient*);
+    SocketStreamHandleClient& client() const { return m_client; }
 
-    protected:
-        SocketStreamHandleBase(const URL&, SocketStreamHandleClient*);
+protected:
+    SocketStreamHandleBase(const URL&, SocketStreamHandleClient&);
 
-        bool sendPendingData();
-        virtual int platformSend(const char* data, int length) = 0;
-        virtual void platformClose() = 0;
+    bool sendPendingData();
+    virtual int platformSend(const char* data, int length) = 0;
+    virtual void platformClose() = 0;
 
-        URL m_url;
-        SocketStreamHandleClient* m_client;
-        StreamBuffer<char, 1024 * 1024> m_buffer;
-        SocketStreamState m_state;
-    };
+    URL m_url;
+    SocketStreamHandleClient& m_client;
+    StreamBuffer<char, 1024 * 1024> m_buffer;
+    SocketStreamState m_state;
+};
 
 }  // namespace WebCore

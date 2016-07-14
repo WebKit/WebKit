@@ -338,12 +338,7 @@ void WebSocket::send(const String& message, ExceptionCode& ec)
         return;
     }
     ASSERT(m_channel);
-    ThreadableWebSocketChannel::SendResult result = m_channel->send(message);
-    if (result == ThreadableWebSocketChannel::InvalidMessage) {
-        scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Websocket message contains invalid character(s)."));
-        ec = SYNTAX_ERR;
-        return;
-    }
+    m_channel->send(message);
 }
 
 void WebSocket::send(ArrayBuffer& binaryData, ExceptionCode& ec)

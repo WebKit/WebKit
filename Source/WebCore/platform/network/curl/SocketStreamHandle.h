@@ -51,12 +51,12 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
 public:
-    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext&, bool) { return adoptRef(*new SocketStreamHandle(url, client)); }
+    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, NetworkingContext&, bool) { return adoptRef(*new SocketStreamHandle(url, client)); }
 
     virtual ~SocketStreamHandle();
 
 private:
-    SocketStreamHandle(const URL&, SocketStreamHandleClient*);
+    SocketStreamHandle(const URL&, SocketStreamHandleClient&);
 
     int platformSend(const char* data, int length) override;
     void platformClose() override;

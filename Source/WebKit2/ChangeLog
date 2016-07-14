@@ -1,3 +1,13 @@
+2016-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize WebSocket handle
+        https://bugs.webkit.org/show_bug.cgi?id=159750
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp:
+        (WebKit::connectionCallback):
+
 2016-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r202273): [GTK] Redirected X window is resized to the previous size on size allocate
