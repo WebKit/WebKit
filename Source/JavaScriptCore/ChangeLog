@@ -1,3 +1,20 @@
+2016-07-14  Julien Brianceau  <jbriance@cisco.com>
+
+        [mips] Handle properly unaligned halfword load
+        https://bugs.webkit.org/show_bug.cgi?id=153226
+
+        Reviewed by Michael Catanzaro.
+
+        Waiting for the kernel to silently fix-up unaligned accesses is
+        not efficient, so let's provide an implementation of load16Unaligned
+        in mips macro assembler.
+
+        Performance improvement seen with SunSpider's regexp-dna test.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load16Unaligned):
+        (JSC::MacroAssemblerMIPS::load32WithUnalignedHalfWords):
+
 2016-07-14  Youenn Fablet  <youenn@apple.com>
 
         DOM value iterable interfaces should use Array prototype methods

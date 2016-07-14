@@ -822,7 +822,53 @@ public:
 
     void load16Unaligned(BaseIndex address, RegisterID dest)
     {
-        load16(address, dest);
+        if (address.offset >= -32768 && address.offset <= 32767 && !m_fixedWidth) {
+            /*
+                sll     addrtemp, address.index, address.scale
+                addu    addrtemp, addrtemp, address.base
+                lbu     immTemp, address.offset+x(addrtemp) (x=0 for LE, x=1 for BE)
+                lbu     dest, address.offset+x(addrtemp)    (x=1 for LE, x=0 for BE)
+                sll     dest, dest, 8
+                or      dest, dest, immTemp
+            */
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+#if CPU(BIG_ENDIAN)
+            m_assembler.lbu(immTempRegister, addrTempRegister, address.offset + 1);
+            m_assembler.lbu(dest, addrTempRegister, address.offset);
+#else
+            m_assembler.lbu(immTempRegister, addrTempRegister, address.offset);
+            m_assembler.lbu(dest, addrTempRegister, address.offset + 1);
+#endif
+            m_assembler.sll(dest, dest, 8);
+            m_assembler.orInsn(dest, dest, immTempRegister);
+        } else {
+            /*
+                sll     addrTemp, address.index, address.scale
+                addu    addrTemp, addrTemp, address.base
+                lui     immTemp, address.offset >> 16
+                ori     immTemp, immTemp, address.offset & 0xffff
+                addu    addrTemp, addrTemp, immTemp
+                lbu     immTemp, x(addrtemp) (x=0 for LE, x=1 for BE)
+                lbu     dest, x(addrtemp)    (x=1 for LE, x=0 for BE)
+                sll     dest, dest, 8
+                or      dest, dest, immTemp
+            */
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.lui(immTempRegister, address.offset >> 16);
+            m_assembler.ori(immTempRegister, immTempRegister, address.offset);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
+#if CPU(BIG_ENDIAN)
+            m_assembler.lbu(immTempRegister, addrTempRegister, 1);
+            m_assembler.lbu(dest, addrTempRegister, 0);
+#else
+            m_assembler.lbu(immTempRegister, addrTempRegister, 0);
+            m_assembler.lbu(dest, addrTempRegister, 1);
+#endif
+            m_assembler.sll(dest, dest, 8);
+            m_assembler.orInsn(dest, dest, immTempRegister);
+        }
     }
 
     void load32WithUnalignedHalfWords(BaseIndex address, RegisterID dest)
