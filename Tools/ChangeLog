@@ -1,3 +1,9 @@
+2016-07-13  Beth Dakin  <bdakin@apple.com>
+
+        Attempted build fix.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2016-07-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r202953): Clicking on input[type=file] doesn't open a file picker
