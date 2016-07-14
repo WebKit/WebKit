@@ -64,11 +64,13 @@ void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection& connecti
 
 void WebToDatabaseProcessConnection::didClose(IPC::Connection& connection)
 {
+#if ENABLE(INDEXED_DATABASE)
     for (auto& connection : m_webIDBConnectionsByIdentifier.values())
         connection->connectionToServerLost();
 
     m_webIDBConnectionsByIdentifier.clear();
     m_webIDBConnectionsBySession.clear();
+#endif
 
     WebProcess::singleton().webToDatabaseProcessConnectionClosed(this);
 }

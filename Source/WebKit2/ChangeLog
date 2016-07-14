@@ -1,3 +1,13 @@
+2016-07-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the DatabaseProcess build with disabled IDB
+        https://bugs.webkit.org/show_bug.cgi?id=159769
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::didClose):
+
 2016-07-14  Hyunjun Ko  <zzoon@igalia.com>
 
         [ThreadedCompositor] Build fails in debug mode after r202040
