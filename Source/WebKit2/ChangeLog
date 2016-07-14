@@ -1,3 +1,18 @@
+2016-07-14  Hyunjun Ko  <zzoon@igalia.com>
+
+        [ThreadedCompositor] Build fails in debug mode after r202040
+        https://bugs.webkit.org/show_bug.cgi?id=159757
+
+        Reviewed by Michael Catanzaro.
+
+        Debug mode build failed due to call getter method, which is
+        removed, in ASSERT().
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::glContext): Deleted.
+        (WebKit::ThreadedCompositor::didChangeVisibleRect): Deleted.
+        (WebKit::ThreadedCompositor::renderLayerTree): Deleted.
+
 2016-07-13  Alex Christensen  <achristensen@webkit.org>
 
         Modernize WebSocket handle
