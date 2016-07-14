@@ -1,3 +1,15 @@
+2016-07-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the magic numbers for ARM traditional in InlineAccess.h
+        https://bugs.webkit.org/show_bug.cgi?id=159708
+
+        Reviewed by Saam Barati.
+
+        * bytecode/InlineAccess.h:
+        (JSC::InlineAccess::sizeForPropertyAccess):
+        (JSC::InlineAccess::sizeForPropertyReplace):
+        (JSC::InlineAccess::sizeForLengthAccess):
+
 2016-07-13  Michael Saboff  <msaboff@apple.com>
 
         YARR uses mixture of int and unsigned values to index into subject string

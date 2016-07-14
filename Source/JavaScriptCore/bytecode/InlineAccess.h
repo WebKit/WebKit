@@ -54,7 +54,7 @@ public:
 #if CPU(ARM_THUMB2)
         return 48;
 #else
-        return 50;
+        return 52;
 #endif
 #else
 #error "unsupported platform"
@@ -74,7 +74,7 @@ public:
 #if CPU(ARM_THUMB2)
         return 48;
 #else
-        return 50;
+        return 48;
 #endif
 #else
 #error "unsupported platform"
@@ -97,7 +97,7 @@ public:
 #if CPU(ARM_THUMB2)
         size_t size = 30;
 #else
-        size_t size = 50;
+        size_t size = 32;
 #endif
 #else
 #error "unsupported platform"
