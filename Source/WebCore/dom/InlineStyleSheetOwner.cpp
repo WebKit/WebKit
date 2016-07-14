@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Rob Buis
- * Copyright (C) 2008, 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2008-2016 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,6 +46,8 @@ InlineStyleSheetOwner::InlineStyleSheetOwner(Document& document, bool createdByP
 
 InlineStyleSheetOwner::~InlineStyleSheetOwner()
 {
+    if (m_sheet)
+        clearSheet();
 }
 
 static AuthorStyleSheets& authorStyleSheetsForElement(Element& element)
