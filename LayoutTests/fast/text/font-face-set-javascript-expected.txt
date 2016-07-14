@@ -4,7 +4,7 @@ PASS new FontFaceSet([fontFace1]).size is 1
 PASS fontFaceSet.status is "loaded"
 PASS item.done is false
 PASS item.value.length is 2
-PASS item.value[0] is 0
+PASS item.value[0] is fontFace1
 PASS item.value[1] is fontFace1
 PASS item.done is true
 PASS item.value is undefined
@@ -14,6 +14,8 @@ PASS item.done is true
 PASS item.done is false
 PASS item.value is fontFace1
 PASS item.done is true
+PASS fontFaceSet is set
+PASS value1 is value2
 PASS fontFaceSet.add(fontFace2) is fontFaceSet
 PASS fontFaceSet.size is 2
 PASS fontFaceSet.add(null) threw exception TypeError: Argument 1 ('font') to FontFaceSet.add must be an instance of FontFace.

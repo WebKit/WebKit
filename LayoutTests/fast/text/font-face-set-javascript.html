@@ -24,7 +24,7 @@ var iterator = fontFaceSet.entries();
 var item = iterator.next();
 shouldBeFalse("item.done");
 shouldBe("item.value.length", "2");
-shouldBe("item.value[0]", "0");
+shouldBe("item.value[0]", "fontFace1");
 shouldBe("item.value[1]", "fontFace1");
 item = iterator.next();
 shouldBeTrue("item.done");
@@ -43,6 +43,15 @@ shouldBeFalse("item.done");
 shouldBe("item.value", "fontFace1");
 item = iterator.next();
 shouldBeTrue("item.done");
+
+var value1, value2, set;
+fontFaceSet.forEach(function(v1, v2, s){
+    value1 = v1;
+    value2 = v2;
+    set = s;
+    shouldBe("fontFaceSet", "set");
+    shouldBe("value1", "value2");
+});
 
 shouldBe("fontFaceSet.add(fontFace2)", "fontFaceSet");
 shouldBe("fontFaceSet.size", "2");

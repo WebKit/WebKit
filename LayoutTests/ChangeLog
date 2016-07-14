@@ -1,3 +1,13 @@
+2016-07-14  Youenn Fablet  <youenn@apple.com>
+
+        Remove support for value iterators from JSDOMIterator
+        https://bugs.webkit.org/show_bug.cgi?id=159293
+
+        Reviewed by Chris Dumez.
+
+        * fast/text/font-face-set-javascript-expected.txt:
+        * fast/text/font-face-set-javascript.html:
+
 2016-07-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land test expectations for rdar://problem/27353750.
