@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMathMLBlock_h
-#define RenderMathMLBlock_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -104,13 +103,13 @@ public:
     {
     }
 
-    Optional<int> firstLineBaseline() const override;
 
     MathMLStyle* mathMLStyle() const { return const_cast<MathMLStyle*>(&m_mathMLStyle.get()); }
 
 private:
-    bool isRenderMathMLTable() const override { return true; }
-    const char* renderName() const override { return "RenderMathMLTable"; }
+    bool isRenderMathMLTable() const final { return true; }
+    const char* renderName() const final { return "RenderMathMLTable"; }
+    Optional<int> firstLineBaseline() const final;
 
     Ref<MathMLStyle> m_mathMLStyle;
 };
@@ -125,4 +124,3 @@ SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLBlock, isRenderMathMLBlock())
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLTable, isRenderMathMLTable())
 
 #endif // ENABLE(MATHML)
-#endif // RenderMathMLBlock_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathOperator_h
-#define MathOperator_h
+#pragma once
 
 #if ENABLE(MATHML)
 #include "GlyphPage.h"
@@ -104,4 +103,3 @@ private:
 }
 
 #endif // ENABLE(MATHML)
-#endif // MathOperator_h

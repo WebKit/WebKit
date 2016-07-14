@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMathMLRoot_h
-#define RenderMathMLRoot_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -35,24 +34,13 @@
 
 namespace WebCore {
 
-class RenderMathMLMenclose;
-
 // Render base^(1/index), or sqrt(base) using radical notation.
-class RenderMathMLRoot : public RenderMathMLRow {
-
-friend class RenderMathMLRootWrapper;
+class RenderMathMLRoot final : public RenderMathMLRow {
 
 public:
     RenderMathMLRoot(Element&, RenderStyle&&);
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void updateFromElement() final;
-
-    void computePreferredLogicalWidths() final;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
     void updateStyle();
-
-protected:
-    void paint(PaintInfo&, const LayoutPoint&) final;
 
 private:
     bool isValid() const;
@@ -60,6 +48,12 @@ private:
     RenderBox& getIndex() const;
     bool isRenderMathMLRoot() const final { return true; }
     const char* renderName() const final { return "RenderMathMLRoot"; }
+
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+
+    void computePreferredLogicalWidths() final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    void paint(PaintInfo&, const LayoutPoint&) final;
 
     MathOperator m_radicalOperator;
     LayoutUnit m_verticalGap;
@@ -81,5 +75,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLRoot, isRenderMathMLRoot())
 
 #endif // ENABLE(MATHML)
-
-#endif // RenderMathMLRoot_h

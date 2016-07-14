@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMathMLFraction_h
-#define RenderMathMLFraction_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -42,16 +41,14 @@ public:
     MathMLInlineContainerElement& element() { return static_cast<MathMLInlineContainerElement&>(nodeForNonAnonymous()); }
     float relativeLineThickness() const { return m_defaultLineThickness ? m_lineThickness / m_defaultLineThickness : LayoutUnit(0); }
 
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
     void updateFromElement() final;
-
-protected:
-    void computePreferredLogicalWidths() final;
 
 private:
     bool isRenderMathMLFraction() const final { return true; }
     const char* renderName() const final { return "RenderMathMLFraction"; }
 
+    void computePreferredLogicalWidths() final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
     Optional<int> firstLineBaseline() const final;
     void paint(PaintInfo&, const LayoutPoint&) final;
     RenderMathMLOperator* unembellishedOperator() final;
@@ -94,5 +91,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLFraction, isRenderMathMLFraction())
 
 #endif // ENABLE(MATHML)
-
-#endif // RenderMathMLFraction_h

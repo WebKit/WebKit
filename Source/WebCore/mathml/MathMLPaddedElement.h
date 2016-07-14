@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLPaddedElement_h
-#define MathMLPaddedElement_h
+#pragma once
 
 #if ENABLE(MATHML)
 #include "MathMLInlineContainerElement.h"
@@ -55,4 +54,3 @@ private:
 }
 
 #endif // ENABLE(MATHML)
-#endif // MathMLPaddedElement_h

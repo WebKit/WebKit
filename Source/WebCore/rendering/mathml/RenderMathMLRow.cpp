@@ -44,11 +44,6 @@ RenderMathMLRow::RenderMathMLRow(Element& element, RenderStyle&& style)
 {
 }
 
-RenderMathMLRow::RenderMathMLRow(Document& document, RenderStyle&& style)
-    : RenderMathMLBlock(document, WTFMove(style))
-{
-}
-
 void RenderMathMLRow::updateOperatorProperties()
 {
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {

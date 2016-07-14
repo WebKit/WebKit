@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMathMLSpace_h
-#define RenderMathMLSpace_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -55,4 +54,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLSpace, isRenderMathMLSpace())
 
 #endif // ENABLE(MATHML)
-#endif // RenderMathMLSpace_h

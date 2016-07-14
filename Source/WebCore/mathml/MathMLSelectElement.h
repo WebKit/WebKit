@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLSelectElement_h
-#define MathMLSelectElement_h
+#pragma once
 
 #if ENABLE(MATHML)
 #include "MathMLInlineContainerElement.h"
@@ -40,26 +39,25 @@ public:
 
 private:
     MathMLSelectElement(const QualifiedName& tagName, Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    bool childShouldCreateRenderer(const Node&) const override;
+    bool childShouldCreateRenderer(const Node&) const final;
 
-    void finishParsingChildren() override;
-    void childrenChanged(const ChildChange&) override;
-    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
-    void defaultEventHandler(Event*) override;
-    bool willRespondToMouseClickEvents() override;
+    void finishParsingChildren() final;
+    void childrenChanged(const ChildChange&) final;
+    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) final;
+    void defaultEventHandler(Event*) final;
+    bool willRespondToMouseClickEvents() final;
 
     void toggle();
     int getSelectedActionChildAndIndex(Element*& selectedChild);
     Element* getSelectedActionChild();
     Element* getSelectedSemanticsChild();
 
-    void updateSelectedChild() override;
+    void updateSelectedChild() final;
     RefPtr<Element> m_selectedChild;
 };
 
 }
 
 #endif // ENABLE(MATHML)
-#endif // MathMLSelectElement_h

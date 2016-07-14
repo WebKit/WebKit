@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLElement_h
-#define MathMLElement_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -113,5 +112,3 @@ SPECIALIZE_TYPE_TRAITS_END()
 #include "MathMLElementTypeHelpers.h"
 
 #endif // ENABLE(MATHML)
-
-#endif // MathMLElement_h

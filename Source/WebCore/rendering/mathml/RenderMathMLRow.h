@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMathMLRow_h
-#define RenderMathMLRow_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -33,19 +32,16 @@
 
 namespace WebCore {
 
-class RenderMathMLRoot;
-
 class RenderMathMLRow : public RenderMathMLBlock {
 public:
     RenderMathMLRow(Element&, RenderStyle&&);
-    RenderMathMLRow(Document&, RenderStyle&&);
 
     void updateOperatorProperties();
 
+protected:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
     Optional<int> firstLineBaseline() const override;
 
-protected:
     void layoutRowItems(LayoutUnit& ascent, LayoutUnit& descent);
     void computeLineVerticalStretch(LayoutUnit& ascent, LayoutUnit& descent);
     void computePreferredLogicalWidths() override;
@@ -60,4 +56,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLRow, isRenderMathMLRow())
 
 #endif // ENABLE(MATHML)
-#endif // RenderMathMLRow_h

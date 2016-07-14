@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLStyle_h
-#define MathMLStyle_h
 #pragma once
 
 #if ENABLE(MATHML)
@@ -86,4 +84,3 @@ private:
 }
 
 #endif // ENABLE(MATHML)
-#endif // MathMLStyle_h

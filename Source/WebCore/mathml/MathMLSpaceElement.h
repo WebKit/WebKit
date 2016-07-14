@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLSpaceElement_h
-#define MathMLSpaceElement_h
+#pragma once
 
 #if ENABLE(MATHML)
 #include "MathMLElement.h"
@@ -51,4 +50,3 @@ private:
 }
 
 #endif // ENABLE(MATHML)
-#endif // MathMLSpaceElement_h

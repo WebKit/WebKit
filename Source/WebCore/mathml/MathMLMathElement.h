@@ -24,29 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLMathElement_h
-#define MathMLMathElement_h
+#pragma once
 
 #if ENABLE(MATHML)
 #include "MathMLInlineContainerElement.h"
 
 namespace WebCore {
 
-class MathMLMathElement : public MathMLInlineContainerElement {
+class MathMLMathElement final : public MathMLInlineContainerElement {
 public:
     static Ref<MathMLMathElement> create(const QualifiedName& tagName, Document&);
-
-protected:
-    void didAttachRenderers() final;
 
 private:
     MathMLMathElement(const QualifiedName& tagName, Document&);
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void didAttachRenderers() final;
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 };
 
 }
 
 #endif // ENABLE(MATHML)
-#endif // MathMLMathElement_h

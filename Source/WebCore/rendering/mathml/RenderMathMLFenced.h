@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMathMLFenced_h
-#define RenderMathMLFenced_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -40,10 +39,10 @@ public:
     MathMLInlineContainerElement& element() { return static_cast<MathMLInlineContainerElement&>(nodeForNonAnonymous()); }
 
 private:
-    bool isRenderMathMLFenced() const override { return true; }
-    const char* renderName() const override { return "RenderMathMLFenced"; }
-    void addChild(RenderObject* child, RenderObject* beforeChild) override;
-    void updateFromElement() override;
+    bool isRenderMathMLFenced() const final { return true; }
+    const char* renderName() const final { return "RenderMathMLFenced"; }
+    void addChild(RenderObject* child, RenderObject* beforeChild) final;
+    void updateFromElement() final;
 
     RenderPtr<RenderMathMLOperator> createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
     void makeFences();
@@ -58,5 +57,3 @@ private:
 }
 
 #endif // ENABLE(MATHML)
-
-#endif // RenderMathMLFenced_h

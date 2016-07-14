@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMathMLMenclose_h
-#define RenderMathMLMenclose_h
+#pragma once
 
 #if ENABLE(MATHML)
 #include "MathMLMencloseElement.h"
@@ -58,4 +57,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLMenclose, isRenderMathMLMenclose())
 
 #endif // ENABLE(MATHML)
-#endif // RenderMathMLMenclose_h

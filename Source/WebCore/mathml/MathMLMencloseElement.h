@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLMencloseElement_h
-#define MathMLMencloseElement_h
+#pragma once
 
 #if ENABLE(MATHML)
 #include "Element.h"
@@ -36,7 +35,6 @@ namespace WebCore {
 class MathMLMencloseElement final: public MathMLInlineContainerElement {
 public:
     static Ref<MathMLMencloseElement> create(const QualifiedName& tagName, Document&);
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     enum MencloseNotationFlag {
         LongDiv = 1 << 1,
@@ -59,6 +57,7 @@ public:
 private:
     MathMLMencloseElement(const QualifiedName&, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void clearNotations() { m_notationFlags = 0; }
     void addNotation(MencloseNotationFlag notationFlag) { m_notationFlags |= notationFlag; }
     unsigned short m_notationFlags;
@@ -67,4 +66,3 @@ private:
 }
 
 #endif // ENABLE(MATHML)
-#endif // MathMLMencloseElement_h

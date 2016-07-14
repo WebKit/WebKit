@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMathMLUnderOver_h
-#define RenderMathMLUnderOver_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -36,13 +35,14 @@ namespace WebCore {
 class RenderMathMLUnderOver final : public RenderMathMLScripts {
 public:
     RenderMathMLUnderOver(Element&, RenderStyle&&);
-    void computePreferredLogicalWidths() final;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
 
 private:
     bool isRenderMathMLScripts() const final { return false; }
-    bool isRenderMathMLUnderOver() const override { return true; }
-    const char* renderName() const override { return "RenderMathMLUnderOver"; }
+    bool isRenderMathMLUnderOver() const final { return true; }
+    const char* renderName() const final { return "RenderMathMLUnderOver"; }
+
+    void computePreferredLogicalWidths() final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
 
     void computeOperatorsHorizontalStretch();
     bool isValid() const;
@@ -61,5 +61,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLUnderOver, isRenderMathMLUnderOver())
 
 #endif // ENABLE(MATHML)
-
-#endif // RenderMathMLUnderOver_h

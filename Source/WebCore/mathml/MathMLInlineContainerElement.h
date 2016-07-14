@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLInlineContainerElement_h
-#define MathMLInlineContainerElement_h
+#pragma once
 
 #if ENABLE(MATHML)
 #include "MathMLElement.h"
@@ -36,8 +35,6 @@ class MathMLInlineContainerElement : public MathMLElement {
 public:
     static Ref<MathMLInlineContainerElement> create(const QualifiedName& tagName, Document&);
 
-    bool isPresentationMathML() const override { return true; }
-
 protected:
     MathMLInlineContainerElement(const QualifiedName& tagName, Document&);
     void childrenChanged(const ChildChange&) override;
@@ -45,9 +42,9 @@ protected:
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    bool isPresentationMathML() const final { return true; }
 };
 
 }
 
 #endif // ENABLE(MATHML)
-#endif // MathMLInlineContainerElement_h

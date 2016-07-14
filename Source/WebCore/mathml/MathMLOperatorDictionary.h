@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLOperatorDictionary_h
-#define MathMLOperatorDictionary_h
+#pragma once
 
 #if ENABLE(MATHML)
 
@@ -57,4 +56,3 @@ bool isVertical(UChar);
 
 }
 #endif // ENABLE(MATHML)
-#endif // MathMLOperatorDictionary_h
