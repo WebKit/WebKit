@@ -1,3 +1,18 @@
+2016-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Test WTF.StringViewIterators is crashing since r203119
+        https://bugs.webkit.org/show_bug.cgi?id=159710
+
+        Reviewed by Darin Adler.
+
+        There are two problems in the test case added in r203119. First is that it's testing
+        StringView::CodeUnits::Iterator instead of StringView::CodePoints::Iterator, and second is that
+        StringView::codePoints() returns a temporary, so the iterator created from the temporary ends up pointing to a
+        const reference to the string view member of the deleted CodePoints object.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-07-13  Daniel Bates  <dabates@apple.com>
 
         [iOS] Copy WebKitTestRunnerInjectedBundle.bundle into PlugIns subdirectory and code sign it

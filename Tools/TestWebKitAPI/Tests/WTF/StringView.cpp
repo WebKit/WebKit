@@ -122,7 +122,8 @@ TEST(WTF, StringViewIterators)
     String helo("helo");
     StringView heloView(helo);
 
-    auto codePointsIterator = heloView.codeUnits().begin();
+    auto codePoints = heloView.codePoints();
+    auto codePointsIterator = codePoints.begin();
     EXPECT_EQ(*codePointsIterator, 'h');
     EXPECT_EQ(*codePointsIterator, 'h');
     ++codePointsIterator;
