@@ -106,7 +106,7 @@ struct ByteTerm {
     bool m_invert : 1;
     unsigned inputPosition;
 
-    ByteTerm(UChar32 ch, int inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    ByteTerm(UChar32 ch, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
@@ -129,7 +129,7 @@ struct ByteTerm {
         inputPosition = inputPos;
     }
 
-    ByteTerm(UChar32 lo, UChar32 hi, int inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    ByteTerm(UChar32 lo, UChar32 hi, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
@@ -153,7 +153,7 @@ struct ByteTerm {
         inputPosition = inputPos;
     }
 
-    ByteTerm(CharacterClass* characterClass, bool invert, int inputPos)
+    ByteTerm(CharacterClass* characterClass, bool invert, unsigned inputPos)
         : type(ByteTerm::TypeCharacterClass)
         , m_capture(false)
         , m_invert(invert)
@@ -164,7 +164,7 @@ struct ByteTerm {
         inputPosition = inputPos;
     }
 
-    ByteTerm(Type type, unsigned subpatternId, ByteDisjunction* parenthesesInfo, bool capture, int inputPos)
+    ByteTerm(Type type, unsigned subpatternId, ByteDisjunction* parenthesesInfo, bool capture, unsigned inputPos)
         : type(type)
         , m_capture(capture)
         , m_invert(false)
@@ -185,7 +185,7 @@ struct ByteTerm {
         atom.quantityCount = 1;
     }
 
-    ByteTerm(Type type, unsigned subpatternId, bool capture, bool invert, int inputPos)
+    ByteTerm(Type type, unsigned subpatternId, bool capture, bool invert, unsigned inputPos)
         : type(type)
         , m_capture(capture)
         , m_invert(invert)
@@ -196,7 +196,7 @@ struct ByteTerm {
         inputPosition = inputPos;
     }
 
-    static ByteTerm BOL(int inputPos)
+    static ByteTerm BOL(unsigned inputPos)
     {
         ByteTerm term(TypeAssertionBOL);
         term.inputPosition = inputPos;
@@ -217,21 +217,21 @@ struct ByteTerm {
         return term;
     }
     
-    static ByteTerm EOL(int inputPos)
+    static ByteTerm EOL(unsigned inputPos)
     {
         ByteTerm term(TypeAssertionEOL);
         term.inputPosition = inputPos;
         return term;
     }
 
-    static ByteTerm WordBoundary(bool invert, int inputPos)
+    static ByteTerm WordBoundary(bool invert, unsigned inputPos)
     {
         ByteTerm term(TypeAssertionWordBoundary, invert);
         term.inputPosition = inputPos;
         return term;
     }
     
-    static ByteTerm BackReference(unsigned subpatternId, int inputPos)
+    static ByteTerm BackReference(unsigned subpatternId, unsigned inputPos)
     {
         return ByteTerm(TypeBackReference, subpatternId, false, false, inputPos);
     }

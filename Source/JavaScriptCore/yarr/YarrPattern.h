@@ -111,7 +111,7 @@ struct PatternTerm {
     };
     QuantifierType quantityType;
     Checked<unsigned> quantityCount;
-    int inputPosition;
+    unsigned inputPosition;
     unsigned frameLocation;
 
     PatternTerm(UChar32 ch)

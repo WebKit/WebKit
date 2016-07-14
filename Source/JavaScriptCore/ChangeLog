@@ -1,3 +1,83 @@
+2016-07-13  Michael Saboff  <msaboff@apple.com>
+
+        YARR uses mixture of int and unsigned values to index into subject string
+        https://bugs.webkit.org/show_bug.cgi?id=159744
+
+        Reviewed by Benjamin Poulain.
+
+        In most cases, we refer to characters in subject strings using a negative index from the number of
+        "checked" characters in a subject string.  The required length is compared against the actual length
+        and then we use that required length as the checked amount.  For example, when matching the string of
+        4 digits in the RegExp /abc \d{4}/, we know that need 8 characters in the subject string.  We refer
+        to the digits part of the expression from an already checked index of 8 and use negative offsets of
+        -4 through -1.  In many cases we used a signed int for the negative offsets.  There are other cases
+        where we used unsigned values as the amount of negative offset to use when accessing subject characters.
+
+        Changed all occurrances of character offsets to unsigned or Checked Arithmetic unsigned values.  Note
+        that the pre-existing Checked class is used in other places to check for under/overflow with arithmetic
+        operations.  Those unsigned offsets are always the number of characters before (negative) from the
+        current checked character offset.  Also added some asserts for cases where arithmetic is not protected
+        by other checks or with Checked<> wrapped values.
+
+        In the case of the JIT, subject characters are accessed using base with scaled index and offset
+        addressing.  The MacroAssembler provides this addressing using the BaseIndex struct.  The offset for
+        this struct is a 32 bit signed quantity.  Since we only care about negative offsets, we really only
+        have 31 bits.  Changed the generation of a BaseOffset address to handle the case when the offset and
+        scaled combination will exceed the 31 bits of negative offset.  This is done by moving the base value
+        into a temp register and biasing the temp base and offset to smaller values so that we can emit
+        instructions that can reference characters without exceeding the 31 bits of negative offset.
+
+        To abstract the character address generation, put the base with scaled index and offset into
+        one function and used that function everywhere the YARR JIT wants to access subject characters.
+        Also consilidated a few cases where we were generating inline what readCharacter() does.  Usually
+        this was due to using a different index register.
+
+        Added a new regression test.
+
+        * tests/stress/regress-159744.js: Added regression test.
+        (testRegExp):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::recordParenthesesMatch):
+        (JSC::Yarr::Interpreter::resetMatches):
+        (JSC::Yarr::Interpreter::matchParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceEnd):
+        (JSC::Yarr::ByteCompiler::closeBodyAlternative):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalEnd):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        (JSC::Yarr::ByteTerm::BOL):
+        (JSC::Yarr::ByteTerm::UncheckInput):
+        (JSC::Yarr::ByteTerm::EOL):
+        (JSC::Yarr::ByteTerm::WordBoundary):
+        (JSC::Yarr::ByteTerm::BackReference):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::notAtEndOfInput):
+        (JSC::Yarr::YarrGenerator::negativeOffsetIndexedAddress):
+        (JSC::Yarr::YarrGenerator::readCharacter):
+        (JSC::Yarr::YarrGenerator::jumpIfCharNotEquals):
+        (JSC::Yarr::YarrGenerator::storeToFrame):
+        (JSC::Yarr::YarrGenerator::generateAssertionBOL):
+        (JSC::Yarr::YarrGenerator::backtrackAssertionBOL):
+        (JSC::Yarr::YarrGenerator::generateAssertionEOL):
+        (JSC::Yarr::YarrGenerator::matchAssertionWordchar):
+        (JSC::Yarr::YarrGenerator::generateAssertionWordBoundary):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::PatternTerm::PatternTerm):
+
 2016-07-13  Keith Miller  <keith_miller@apple.com>
 
         Crashes with detached ArrayBuffers
