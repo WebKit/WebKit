@@ -103,6 +103,8 @@ private:
     LayoutUnit computeTrackBasedLogicalHeight(const GridSizingData&) const;
     void computeTrackSizesForDirection(GridTrackSizingDirection, GridSizingData&, LayoutUnit freeSpace);
 
+    void repeatTracksSizingIfNeeded(GridSizingData&, LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows);
+
     void layoutGridItems(GridSizingData&);
     void populateGridPositionsForDirection(GridSizingData&, GridTrackSizingDirection);
     void clearGrid();
@@ -138,8 +140,8 @@ private:
     const GridTrackSize& rawGridTrackSize(GridTrackSizingDirection, unsigned) const;
     GridTrackSize gridTrackSize(GridTrackSizingDirection, unsigned, SizingOperation) const;
 
-    bool updateOverrideContainingBlockContentLogicalWidthForChild(RenderBox&, GridSizingData&) const;
-    LayoutUnit logicalHeightForChild(RenderBox&, GridSizingData&) const;
+    bool updateOverrideContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, GridSizingData&) const;
+    LayoutUnit logicalHeightForChild(RenderBox&) const;
     LayoutUnit minSizeForChild(RenderBox&, GridTrackSizingDirection, GridSizingData&) const;
     LayoutUnit minContentForChild(RenderBox&, GridTrackSizingDirection, GridSizingData&) const;
     LayoutUnit maxContentForChild(RenderBox&, GridTrackSizingDirection, GridSizingData&) const;
@@ -153,8 +155,9 @@ private:
     GridSpan cachedGridSpan(const RenderBox&, GridTrackSizingDirection) const;
 
 
-    LayoutUnit gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection, const Vector<GridTrack>&) const;
+    LayoutUnit gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection, const GridSizingData&) const;
     LayoutUnit gridAreaBreadthForChildIncludingAlignmentOffsets(const RenderBox&, GridTrackSizingDirection, const GridSizingData&) const;
+    LayoutUnit assumedRowsSizeForOrthogonalChild(const RenderBox&, SizingOperation) const;
 
     void applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection, GridSizingData&);
 
@@ -181,6 +184,9 @@ private:
 
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
+    bool isOrthogonalChild(const RenderBox&) const;
+    GridTrackSizingDirection flowAwareDirectionForChild(const RenderBox&, GridTrackSizingDirection) const;
+
     Vector<Vector<Vector<RenderBox*, 1>>> m_grid;
     Vector<LayoutUnit> m_columnPositions;
     Vector<LayoutUnit> m_rowPositions;
@@ -197,6 +203,8 @@ private:
 
     unsigned m_autoRepeatColumns { 0 };
     unsigned m_autoRepeatRows { 0 };
+
+    bool m_hasAnyOrthogonalChild;
 
     bool m_gridIsDirty { true };
 };

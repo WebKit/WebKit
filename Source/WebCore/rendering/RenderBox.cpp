@@ -2408,19 +2408,20 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
         return;
     }
 
+    LayoutUnit containerWidthInInlineDirection = containerLogicalWidth;
+    if (hasPerpendicularContainingBlock)
+        containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
+
     // Width calculations
     if (treatAsReplaced) {
         computedValues.m_extent = logicalWidthLength.value() + borderAndPaddingLogicalWidth();
 #if ENABLE(CSS_GRID_LAYOUT)
-    } else if (parent()->isRenderGrid() && style().logicalWidth().isAuto() && style().logicalMinWidth().isAuto() && style().overflowX() == OVISIBLE && containerLogicalWidth < minPreferredLogicalWidth()) {
+    } else if (parent()->isRenderGrid() && style().logicalWidth().isAuto() && style().logicalMinWidth().isAuto() && style().overflowX() == OVISIBLE && containerWidthInInlineDirection < minPreferredLogicalWidth()) {
         // TODO (lajava) Move this logic to the LayoutGrid class.
         // Implied minimum size of Grid items.
-        computedValues.m_extent = constrainLogicalWidthInRegionByMinMax(minPreferredLogicalWidth(), containerLogicalWidth, cb);
+        computedValues.m_extent = constrainLogicalWidthInRegionByMinMax(minPreferredLogicalWidth(), containerWidthInInlineDirection, cb);
 #endif
     } else {
-        LayoutUnit containerWidthInInlineDirection = containerLogicalWidth;
-        if (hasPerpendicularContainingBlock)
-            containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
         LayoutUnit preferredWidth = computeLogicalWidthInRegionUsing(MainOrPreferredSize, styleToUse.logicalWidth(), containerWidthInInlineDirection, cb, region);
         computedValues.m_extent = constrainLogicalWidthInRegionByMinMax(preferredWidth, containerWidthInInlineDirection, cb, region);
     }
