@@ -169,8 +169,10 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     // Copy the snapshot from this view to the one that owns the back forward list, so that
     // swiping forward will have the correct snapshot.
-    if (m_webPageProxyForBackForwardListForCurrentSwipe != &m_webPageProxy)
-        backForwardList.currentItem()->setSnapshot(m_webPageProxy.backForwardList().currentItem()->snapshot());
+    if (m_webPageProxyForBackForwardListForCurrentSwipe != &m_webPageProxy) {
+        if (auto* currentViewHistoryItem = m_webPageProxy.backForwardList().currentItem())
+            backForwardList.currentItem()->setSnapshot(currentViewHistoryItem->snapshot());
+    }
 
     RefPtr<WebBackForwardListItem> targetItem = direction == SwipeDirection::Back ? backForwardList.backItem() : backForwardList.forwardItem();
 

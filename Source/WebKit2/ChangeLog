@@ -1,3 +1,22 @@
+2016-07-14  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Potential null dereference under ViewGestureController::beginSwipeGesture()
+        https://bugs.webkit.org/show_bug.cgi?id=159776
+        <rdar://problem/22467100>
+
+        Reviewed by Tim Horton.
+
+        Potential null dereference under ViewGestureController::beginSwipeGesture() of:
+        m_webPageProxy.backForwardList().currentItem()
+
+        The client side is expected to call ViewGestureController::canSwipeInDirection() but
+        this only guarantees that the m_alternateBackForwardListSourceView's currentItem is
+        non-null when m_alternateBackForwardListSourceView is non-null. It does not guarantee
+        that m_webPageProxy's currentItem is non-null.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+
 2016-07-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(WEB_SOCKETS) build after r202930
