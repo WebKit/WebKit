@@ -37,8 +37,6 @@
 
 namespace JSC {
 
-static const char* typedArrayBufferHasBeenDetachedErrorMessage = "Underlying ArrayBuffer has been detached from the view";
-
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>::JSGenericTypedArrayView(
     VM& vm, ConstructionContext& context)
@@ -325,9 +323,6 @@ bool JSGenericTypedArrayView<Adaptor>::put(
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
-    if (thisObject->isNeutered())
-        return reject(exec, true, typedArrayBufferHasBeenDetachedErrorMessage);
-
     // https://tc39.github.io/ecma262/#sec-integer-indexed-exotic-objects-set-p-v-receiver
     // Ignore the receiver even if the receiver is altered to non base value.
     // 9.4.5.5-2-b-i Return ? IntegerIndexedElementSet(O, numericIndex, V).
@@ -407,9 +402,6 @@ bool JSGenericTypedArrayView<Adaptor>::putByIndex(
     JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
-
-    if (thisObject->isNeutered())
-        return reject(exec, true, typedArrayBufferHasBeenDetachedErrorMessage);
 
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(JSValue(thisObject), shouldThrow);

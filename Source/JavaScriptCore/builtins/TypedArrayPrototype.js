@@ -52,6 +52,22 @@ function typedArraySpeciesConstructor(value)
     return constructor;
 }
 
+@globalPrivate
+function typedArrayClampArgumentToStartOrEnd(value, length, undefinedValue)
+{
+    "use strict";
+
+    if (value === @undefined)
+        return undefinedValue;
+
+    let int = @toInteger(value);
+    if (int < 0) {
+        int += length;
+        return int < 0 ? 0 : int;
+    }
+    return int > length ? length : int;
+}
+
 function values()
 {
     "use strict";
@@ -88,6 +104,29 @@ function every(callback /*, thisArg */)
     }
 
     return true;
+}
+
+function fill(value /* [, start [, end]] */)
+{
+    "use strict";
+
+    let length = @typedArrayLength(this);
+    let start;
+    let end;
+
+    if (arguments.length > 1) {
+        start = arguments[1];
+        if (arguments.length > 2) {
+            end = arguments[2];
+        }
+    }
+
+    start = @typedArrayClampArgumentToStartOrEnd(start, length, 0);
+    end = @typedArrayClampArgumentToStartOrEnd(end, length, length);
+
+    for (let i = start; i < end; i++)
+        this[i] = value;
+    return this;
 }
 
 function find(callback /* [, thisArg] */)

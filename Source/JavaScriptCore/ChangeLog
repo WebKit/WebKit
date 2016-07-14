@@ -1,3 +1,44 @@
+2016-07-13  Keith Miller  <keith_miller@apple.com>
+
+        Crashes with detached ArrayBuffers
+        https://bugs.webkit.org/show_bug.cgi?id=157088
+        <rdar://problem/27327362>
+
+        Reviewed by Filip Pizlo.
+
+        TypedArray.prototype.fill was incorrect because it should perform
+        ToNumber coercion each time it tries to store the
+        object. Currently, we only perform the coercion once at the
+        beginning of the loop. If we find that we need to improve the
+        performance of this function, we can add a faster C++ path back
+        that only handles the primitive case.
+
+        This patch also moves the isNeutered() checks from put and
+        putByIndex into setIndex. This fixes an issue where setIndex might
+        store to a no longer valid offset.
+
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArrayClampArgumentToStartOrEnd):
+        (fill):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::setIndexQuickly):
+        (JSC::JSGenericTypedArrayView::setIndex):
+        (JSC::JSGenericTypedArrayView::setRangeToValue): Deleted.
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::put): Deleted.
+        (JSC::JSGenericTypedArrayView<Adaptor>::putByIndex): Deleted.
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncFill): Deleted.
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        (JSC::typedArrayViewProtoFuncFill): Deleted.
+        * tests/stress/typedarray-fill.js:
+        * tests/stress/typedarray-functions-with-neutered.js:
+        (defaultForArg):
+        (test2):
+        (checkArgumentsForType): Deleted.
+        (checkArguments): Deleted.
+
 2016-07-13  Michael Saboff  <msaboff@apple.com>
 
         Some bad unicode regex escapes aren't flagged as errors

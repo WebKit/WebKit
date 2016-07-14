@@ -169,39 +169,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncCopyWithin(ExecState*
 }
 
 template<typename ViewClass>
-EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncFill(ExecState* exec)
-{
-    // 22.2.3.8
-    VM& vm = exec->vm();
-    ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
-    if (thisObject->isNeutered())
-        return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
-
-    JSValue valueToInsert = exec->argument(0);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    unsigned length = thisObject->length();
-    unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 1, length);
-    if (vm.exception())
-        return encodedJSValue();
-    unsigned end = argumentClampedIndexFromStartOrEnd(exec, 2, length, length);
-    if (vm.exception())
-        return encodedJSValue();
-
-    if (thisObject->isNeutered())
-        return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
-
-    if (end < begin)
-        return JSValue::encode(exec->thisValue());
-
-    if (!thisObject->setRangeToValue(exec, begin, end, valueToInsert))
-        return JSValue::encode(jsUndefined());
-
-    return JSValue::encode(exec->thisValue());
-}
-
-template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIncludes(ExecState* exec)
 {
     ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());

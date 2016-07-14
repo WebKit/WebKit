@@ -32,4 +32,18 @@ shouldBeTrue("testPrototypeFunction('fill', '(4, NaN, NaN)', [14, 15, 10, 13, 44
 shouldBeTrue("testPrototypeFunction('fill', '(4, NaN, 5)', [14, 15, 10, 13, 44], [4, 4, 4, 4, 4])");
 shouldBeTrue("testPrototypeFunction('fill', '(4, -3, -2)', [14, 15, 10, 13, 44], [14, 15, 4, 13, 44])");
 shouldBeTrue("testPrototypeFunction('fill', '(4, 5, 5)', [14, 15, 10, 13, 44], [14, 15, 10, 13, 44])");
+
+debug("4.0 Coercion Testing");
+for (constructor of typedArrays) {
+    count = 0;
+    let p = new Proxy({}, { get(target, name) {
+        count++;
+        return target[name];
+    }});
+    new constructor(10).fill(p);
+    shouldBeTrue("count === 40");
+}
+
+
+
 finishJSTest();
