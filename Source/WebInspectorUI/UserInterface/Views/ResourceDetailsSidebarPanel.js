@@ -174,10 +174,12 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._resource.addEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
         }
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
-    refresh()
+    // Protected
+
+    layout()
     {
         if (!this._resource)
             return;

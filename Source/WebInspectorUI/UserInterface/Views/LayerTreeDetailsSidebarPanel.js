@@ -50,8 +50,6 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 
         console.assert(this.parentSidebar);
 
-        this.needsRefresh();
-
         super.shown();
     }
 
@@ -62,7 +60,16 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
         super.hidden();
     }
 
-    refresh()
+    // DOMDetailsSidebarPanel Overrides
+
+    supportsDOMNode(nodeToInspect)
+    {
+        return WebInspector.layerTreeManager.supported && nodeToInspect.nodeType() === Node.ELEMENT_NODE;
+    }
+
+    // Protected
+
+    layout()
     {
         if (!this.domNode)
             return;
@@ -73,18 +80,11 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
         });
     }
 
-    // DOMDetailsSidebarPanel Overrides
-
-    supportsDOMNode(nodeToInspect)
-    {
-        return WebInspector.layerTreeManager.supported && nodeToInspect.nodeType() === Node.ELEMENT_NODE;
-    }
-
     // Private
 
     _layerTreeDidChange(event)
     {
-        this.needsRefresh();
+        this.needsLayout();
     }
 
     _showShadowDOMSettingChanged(event)

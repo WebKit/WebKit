@@ -1,3 +1,62 @@
+2016-07-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: SidebarPanel classes should use View.layout instead of "refresh"
+        https://bugs.webkit.org/show_bug.cgi?id=159745
+        <rdar://problem/27335252>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ApplicationCacheDetailsSidebarPanel.js:
+        (WebInspector.ApplicationCacheDetailsSidebarPanel.prototype.set applicationCacheFrame):
+        Use needsLayout.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.layout):
+        Move refresh logic to layout.
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.initialLayout):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._styleSheetAddedOrRemoved):
+        Defer layout to coalesce updates.
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.refresh): Deleted.
+
+        * UserInterface/Views/DOMDetailsSidebarPanel.js:
+        (WebInspector.DOMDetailsSidebarPanel.prototype.set domNode):
+        Use needsLayout.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        Move refresh logic to layout.
+
+        * UserInterface/Views/DetailsSidebarPanel.js:
+        (WebInspector.DetailsSidebarPanel.prototype.shown): Deleted.
+        Base class already forces a layout when shown.
+        (WebInspector.DetailsSidebarPanel.prototype.needsRefresh): Deleted.
+        No longer needed.
+        (WebInspector.DetailsSidebarPanel.prototype.refresh): Deleted.
+        Renamed layout.
+        (WebInspector.DetailsSidebarPanel): Deleted.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype.supportsDOMNode):
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._layerTreeDidChange):
+        Use needsLayout.
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype.shown):
+        Base class already forces a layout when shown.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype.set resource):
+        Use needsLayout.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype.set callFrame):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._addWatchExpression):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._removeWatchExpression):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._clearAllWatchExpressions):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._refreshAllWatchExpressionsButtonClicked):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._didEvaluateExpression):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._mainResourceDidChange):
+        Use needsLayout.
+
 2016-07-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Maintain selected function when switching between different profile representations

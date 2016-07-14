@@ -78,7 +78,7 @@ WebInspector.DOMDetailsSidebarPanel = class DOMDetailsSidebarPanel extends WebIn
         if (this._domNode)
             this.addEventListeners();
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
     supportsDOMNode(nodeToInspect)

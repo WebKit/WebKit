@@ -94,9 +94,9 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         }
     }
 
-    // Public
+    // Protected
 
-    refresh()
+    layout()
     {
         var domNode = this.domNode;
         if (!domNode)

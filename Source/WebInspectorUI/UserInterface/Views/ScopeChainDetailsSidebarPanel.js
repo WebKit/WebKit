@@ -58,7 +58,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
         this._updateWatchExpressionsNavigationBar();
 
-        this.needsRefresh();
+        this.needsLayout();
 
         // Update on console prompt eval as objects in the scope chain may have changed.
         WebInspector.runtimeManager.addEventListener(WebInspector.RuntimeManager.Event.DidEvaluate, this._didEvaluateExpression, this);
@@ -102,10 +102,12 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
         this._callFrame = callFrame;
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
-    refresh()
+    // Protected
+
+    layout()
     {
         let callFrame = this._callFrame;
 
@@ -303,7 +305,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         watchExpressions.push(expression);
         this._watchExpressionsSetting.value = watchExpressions;
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
     _removeWatchExpression(expression)
@@ -312,14 +314,14 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         watchExpressions.remove(expression, true);
         this._watchExpressionsSetting.value = watchExpressions;
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
     _clearAllWatchExpressions()
     {
         this._watchExpressionsSetting.value = [];
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
     _addWatchExpressionButtonClicked(event)
@@ -396,7 +398,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
     _refreshAllWatchExpressionsButtonClicked(event)
     {
-        this.needsRefresh();
+        this.needsLayout();
     }
 
     _clearAllWatchExpressionsButtonClicked(event)
@@ -409,7 +411,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         if (event.data.objectGroup === WebInspector.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName)
             return;
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
     _mainResourceDidChange(event)
@@ -417,7 +419,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         if (!event.target.isMainFrame())
             return;
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
     _objectTreeElementAddContextMenuItems(objectTreeElement, contextMenu)

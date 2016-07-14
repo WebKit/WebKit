@@ -89,10 +89,12 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
 
         this._applicationCacheFrame = applicationCacheFrame;
 
-        this.needsRefresh();
+        this.needsLayout();
     }
 
-    refresh()
+    // Protected
+
+    layout()
     {
         if (!this.applicationCacheFrame)
             return;

@@ -54,25 +54,6 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 
-    refresh()
-    {
-        let domNode = this.domNode;
-        if (!domNode)
-            return;
-
-        this.contentView.element.scrollTop = this._initialScrollOffset;
-
-        for (let panel of this._panels) {
-            panel.element._savedScrollTop = undefined;
-            panel.markAsNeedsRefresh(domNode);
-        }
-
-        this._updatePseudoClassCheckboxes();
-
-        if (!this._classListContainer.hidden)
-            this._populateClassToggles();
-    }
-
     visibilityDidChange()
     {
         super.visibilityDidChange();
@@ -100,6 +81,25 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
     }
 
     // Protected
+
+    layout()
+    {
+        let domNode = this.domNode;
+        if (!domNode)
+            return;
+
+        this.contentView.element.scrollTop = this._initialScrollOffset;
+
+        for (let panel of this._panels) {
+            panel.element._savedScrollTop = undefined;
+            panel.markAsNeedsRefresh(domNode);
+        }
+
+        this._updatePseudoClassCheckboxes();
+
+        if (!this._classListContainer.hidden)
+            this._populateClassToggles();
+    }
 
     addEventListeners()
     {
@@ -199,8 +199,8 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         this._addClassInput.addEventListener("keypress", this._addClassInputKeyPressed.bind(this));
         this._addClassInput.addEventListener("blur", this._addClassInputBlur.bind(this));
 
-        WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this.refresh, this);
-        WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetRemoved, this.refresh, this);
+        WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAddedOrRemoved, this);
+        WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetRemoved, this._styleSheetAddedOrRemoved, this);
     }
 
     sizeDidChange()
@@ -458,6 +458,11 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         this.contentView.element.classList.toggle(WebInspector.CSSStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
 
         this._selectedPanel.filterDidChange(this._filterBar);
+    }
+
+    _styleSheetAddedOrRemoved()
+    {
+        this.needsLayout();
     }
 };
 

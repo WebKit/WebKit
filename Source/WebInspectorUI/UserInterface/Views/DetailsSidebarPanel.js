@@ -47,29 +47,4 @@ WebInspector.DetailsSidebarPanel = class DetailsSidebarPanel extends WebInspecto
         // Implemented by subclasses.
         return false;
     }
-
-    shown()
-    {
-        super.shown();
-
-        if (this._needsRefresh) {
-            this._needsRefresh = false;
-            this.refresh();
-        }
-    }
-
-    needsRefresh()
-    {
-        if (!this.selected) {
-            this._needsRefresh = true;
-            return;
-        }
-
-        this.refresh();
-    }
-
-    refresh()
-    {
-        // Implemented by subclasses.
-    }
 };
