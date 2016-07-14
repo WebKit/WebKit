@@ -1,3 +1,19 @@
+2016-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r202273): [GTK] Redirected X window is resized to the previous size on size allocate
+        https://bugs.webkit.org/show_bug.cgi?id=159551
+
+        Reviewed by Michael Catanzaro.
+
+        In r202273 I added webkitWebViewBaseResizeRedirectedWindow() helper to remove duplicated code in all places
+        where we were resizing the redirected window to the current drawing area size. But on size allocate, we were
+        updating the redirected window first, and then the drawing area, to ensure that when the drawing area notifies
+        the web process the redirected window is already at the new size. This regression doesn't have any visual
+        effect, because we are ensure the right size always before rendering, but there's a small extra resize in this case.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSizeAllocate): Resize the redirected window before updating the drawing area size.
+
 2016-07-13  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Use more references for connections

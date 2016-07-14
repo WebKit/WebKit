@@ -702,8 +702,13 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
 
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (priv->redirectedWindow && drawingArea->isInAcceleratedCompositingMode())
-        webkitWebViewBaseResizeRedirectedWindow(webViewBase);
+    if (priv->redirectedWindow && drawingArea->isInAcceleratedCompositingMode()) {
+        // We don't use webkitWebViewBaseResizeRedirectedWindow here, because we want to update the
+        // redirected window size before the drawing area, because on resize the drawing area sends
+        // the UpdateBackingStoreState message to the web process and waits for its reply. We want
+        // the web process to use the new xwindow size when UpdateBackingStoreState message arrives.
+        priv->redirectedWindow->resize(viewRect.size());
+    }
 #endif
 
     drawingArea->setSize(viewRect.size(), IntSize(), IntSize());
