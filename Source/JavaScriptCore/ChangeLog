@@ -1,3 +1,22 @@
+2016-07-14  Mark Lam  <mark.lam@apple.com>
+
+        JSONObject Walker::walk must save array length before processing array elements.
+        https://bugs.webkit.org/show_bug.cgi?id=153485
+
+        Reviewed by Darin Adler and Michael Saboff.
+
+        According to https://tc39.github.io/ecma262/#sec-internalizejsonproperty,
+        JSON.parse() should cache the length of an array and use the cached length when
+        iterating array elements (see section 24.3.1.1 2.b.iii).
+
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * tests/stress/JSON-parse-should-cache-array-lengths.js: Added.
+        (toString):
+        (shouldBe):
+        (test):
+        (test2):
+
 2016-07-14  Julien Brianceau  <jbriance@cisco.com>
 
         [mips] Handle properly unaligned halfword load

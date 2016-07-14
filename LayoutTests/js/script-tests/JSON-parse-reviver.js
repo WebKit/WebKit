@@ -2,6 +2,7 @@ description("Test behaviour of JSON reviver function.")
 if (!Array.isArray)
     Array.isArray = function(o) { return o.constructor === Array; }
 
+let casesVisited = [];
 function arrayReviver(i,v) {
     if (i != "") {
         currentHolder = this;
@@ -14,6 +15,7 @@ function arrayReviver(i,v) {
             debug("Ensure that we always get the same holder");
             shouldBe("currentHolder", "lastHolder");
         }
+        casesVisited.push(Number(i));
         switch (Number(i)) {
         case 0:
             v = undefined;
@@ -53,17 +55,19 @@ function arrayReviver(i,v) {
             debug("Ensure that when visiting a deleted property value is undefined");
             shouldBeUndefined("value");
             v = "undelete the property";
-            expectedLength = this.length = 3;
+            this.length = 3;
+            expectedLength = 4; // undeleting the value at index 3 should bump the length back to 4.
             break;
 
         case 4:
-            if (this.length != 3) {
+            if (this.length != 4) {
                 testFailed("Did not call reviver for deleted property");
-                expectedLength = this.length = 3;
+                expectedLength = this.length = 4;
                 break;
             }
 
         case 5:
+            casesVisited.push(5);
             testPassed("Ensured that property was visited despite Array length being reduced.");
             value = v;
             shouldBeUndefined("value");
@@ -86,7 +90,9 @@ shouldBe("result", "lastHolder['']");
 debug("");
 debug("Ensure that a deleted value is revived if the reviver function returns a value");
 shouldBeTrue("result.hasOwnProperty(3)");
+shouldBe("casesVisited", "[0,1,2,3,4,5]");
 
+casesVisited = [];
 function objectReviver(i,v) {
     if (i != "") {
         currentHolder = this;
@@ -97,6 +103,7 @@ function objectReviver(i,v) {
             shouldBe("currentHolder", "lastHolder");
         }
         seen = true;
+        casesVisited.push(i);
         switch (i) {
         case "a property":
             v = undefined;
@@ -155,6 +162,7 @@ shouldBeTrue("lastHolder.hasOwnProperty('')");
 shouldBeFalse("result.hasOwnProperty('a property')");
 shouldBeTrue("result.hasOwnProperty('to delete')");
 shouldBe("result", "lastHolder['']");
+shouldBe("casesVisited", "['a property', 'another property', 'and another property', 'to delete']");
 
 debug("");
 debug("Test behaviour of revivor that introduces a cycle");

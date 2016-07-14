@@ -1,3 +1,18 @@
+2016-07-14  Mark Lam  <mark.lam@apple.com>
+
+        JSONObject Walker::walk must save array length before processing array elements.
+        https://bugs.webkit.org/show_bug.cgi?id=153485
+
+        Reviewed by Darin Adler and Michael Saboff.
+
+        * js/JSON-parse-reviver-expected.txt:
+        * js/script-tests/JSON-parse-reviver.js:
+        - Fixed a bug in arrayReviver() where it was setting the array length to 3,
+          but was immediately returning a value from the reviver for index 3.  This
+          effectively forces array.length to 4.  As a result, case 4 always failed
+          silently, and case 5 never executed.
+        - Added tracking of cases visited by the revivers so that they can be verified.
+
 2016-07-14  Youenn Fablet  <youenn@apple.com>
 
         DOM value iterable interfaces should use Array prototype methods

@@ -51,12 +51,22 @@ PASS currentHolder.hasOwnProperty(3) is false
 Ensure that when visiting a deleted property value is undefined
 PASS value is undefined.
 
+Ensure the holder for our array is indeed an array
+PASS Array.isArray(currentHolder) is true
+PASS currentHolder.length is 4
+
+Ensure that we always get the same holder
+PASS currentHolder is lastHolder
+PASS Ensured that property was visited despite Array length being reduced.
+PASS value is undefined.
+
 Ensure that we created the root holder as specified in ES5
 PASS '' in lastHolder is true
 PASS result is lastHolder['']
 
 Ensure that a deleted value is revived if the reviver function returns a value
 PASS result.hasOwnProperty(3) is true
+PASS casesVisited is [0,1,2,3,4,5]
 
 Test behaviour of revivor used in conjunction with an object
 PASS currentHolder != globalObject is true
@@ -98,6 +108,7 @@ PASS lastHolder.hasOwnProperty('') is true
 PASS result.hasOwnProperty('a property') is false
 PASS result.hasOwnProperty('to delete') is true
 PASS result is lastHolder['']
+PASS casesVisited is ['a property', 'another property', 'and another property', 'to delete']
 
 Test behaviour of revivor that introduces a cycle
 PASS JSON.parse("[0,1]", reviveAddsCycle) threw exception RangeError: Maximum call stack size exceeded..

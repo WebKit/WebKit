@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -593,6 +593,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     Vector<uint32_t, 16, UnsafeVectorOverflow> indexStack;
     LocalStack<JSObject, 16> objectStack(m_exec->vm());
     LocalStack<JSArray, 16> arrayStack(m_exec->vm());
+    Vector<unsigned, 16, UnsafeVectorOverflow> arrayLengthStack;
     
     Vector<WalkerState, 16, UnsafeVectorOverflow> stateStack;
     WalkerState state = StateUnknown;
@@ -610,6 +611,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 
                 JSArray* array = asArray(inValue);
                 arrayStack.push(array);
+                arrayLengthStack.append(array->length());
                 indexStack.append(0);
             }
             arrayStartVisitMember:
@@ -617,9 +619,11 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             case ArrayStartVisitMember: {
                 JSArray* array = arrayStack.peek();
                 uint32_t index = indexStack.last();
-                if (index == array->length()) {
+                unsigned arrayLength = arrayLengthStack.last();
+                if (index == arrayLength) {
                     outValue = array;
                     arrayStack.pop();
+                    arrayLengthStack.removeLast();
                     indexStack.removeLast();
                     break;
                 }
