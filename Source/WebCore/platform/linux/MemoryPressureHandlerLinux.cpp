@@ -183,11 +183,11 @@ inline void MemoryPressureHandler::logErrorAndCloseFDs(const char* log)
     if (log)
         LOG(MemoryPressure, "%s, error : %m", log);
 
-    if (!m_eventFD) {
+    if (m_eventFD) {
         close(m_eventFD.value());
         m_eventFD = Nullopt;
     }
-    if (!m_pressureLevelFD) {
+    if (m_pressureLevelFD) {
         close(m_pressureLevelFD.value());
         m_pressureLevelFD = Nullopt;
     }
