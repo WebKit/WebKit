@@ -524,13 +524,6 @@ bool ContainerNode::removeChild(Node& oldChild, ExceptionCode& ec)
 
     Ref<Node> child(oldChild);
 
-    // Events fired when blurring currently focused node might have moved this
-    // child into a different parent.
-    if (child->parentNode() != this) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
-
     willRemoveChild(*this, child);
 
     // Mutation events might have moved this child into a different parent.
