@@ -188,7 +188,7 @@ Parser::Token Parser::lexString()
         if (m_data[m_nextPos] == delimiter) {
             String value = m_data.substring(startPos, m_nextPos - startPos);
             if (value.isNull())
-                value = "";
+                value = emptyString();
             ++m_nextPos; // Consume the char.
             return Token(LITERAL, value);
         }

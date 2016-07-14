@@ -1,3 +1,15 @@
+2016-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Use emptyString() instead of "" when possible
+        https://bugs.webkit.org/show_bug.cgi?id=159789
+
+        Reviewed by Alex Christensen.
+
+        Use emptyString() instead of "" when possible to reduce String allocations.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::parseRFC822HeaderFields):
+
 2016-07-14  Alex Christensen  <achristensen@webkit.org>
 
         Use SocketProvider to create SocketStreamHandles

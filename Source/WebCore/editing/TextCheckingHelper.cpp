@@ -313,7 +313,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
     outGrammarDetail.location = -1;
     outGrammarDetail.length = 0;
     outGrammarDetail.guesses.clear();
-    outGrammarDetail.userDescription = "";
+    outGrammarDetail.userDescription = emptyString();
     
     // Expand the search range to encompass entire paragraphs, since text checking needs that much context.
     // Determine the character offset from the start of the paragraph to the start of the original search range,
@@ -471,7 +471,7 @@ String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, 
     outGrammarDetail.location = -1;
     outGrammarDetail.length = 0;
     outGrammarDetail.guesses.clear();
-    outGrammarDetail.userDescription = "";
+    outGrammarDetail.userDescription = emptyString();
     outGrammarPhraseOffset = 0;
     
     String firstBadGrammarPhrase;

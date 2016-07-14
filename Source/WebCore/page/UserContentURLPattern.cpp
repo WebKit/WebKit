@@ -89,7 +89,7 @@ bool UserContentURLPattern::parse(const String& pattern)
 
         if (m_host == "*") {
             // The pattern can be just '*', which means match all domains.
-            m_host = "";
+            m_host = emptyString();
             m_matchSubdomains = true;
         } else if (m_host.startsWith("*.")) {
             // The first component can be '*', which means to match all subdomains.

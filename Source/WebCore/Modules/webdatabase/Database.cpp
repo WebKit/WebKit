@@ -440,7 +440,7 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
 
     if (currentVersion.isNull()) {
         LOG(StorageAPI, "Database %s does not have its version set", databaseDebugName().ascii().data());
-        currentVersion = "";
+        currentVersion = emptyString();
     }
 
     // If the expected version isn't the empty string, ensure that the current database version we have matches that version. Otherwise, set an exception.
@@ -463,7 +463,7 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
     onExitCaller.setOpenSucceeded();
 
     if (m_new && !shouldSetVersionInNewDatabase)
-        m_expectedVersion = ""; // The caller provided a creationCallback which will set the expected version.
+        m_expectedVersion = emptyString(); // The caller provided a creationCallback which will set the expected version.
 
     if (databaseContext()->databaseThread())
         databaseContext()->databaseThread()->recordDatabaseOpen(this);

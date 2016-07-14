@@ -1343,7 +1343,7 @@ const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
 
     if (!noneListInitialized) {
         StyleDashboardRegion region;
-        region.label = "";
+        region.label = emptyString();
         region.offset.top()  = Length();
         region.offset.right() = Length();
         region.offset.bottom() = Length();

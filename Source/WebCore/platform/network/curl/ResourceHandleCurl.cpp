@@ -249,7 +249,7 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
     if (challenge != d->m_currentWebChallenge)
         return;
 
-    String userpass = "";
+    String userpass = emptyString();
     curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
 
     clearAuthentication();

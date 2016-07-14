@@ -67,11 +67,7 @@ public:
     void setupPOST(ResourceHandle*, struct curl_slist**);
     void setupPUT(ResourceHandle*, struct curl_slist**);
 
-    void setProxyInfo(const String& host = "",
-                      unsigned long port = 0,
-                      ProxyType type = HTTP,
-                      const String& username = "",
-                      const String& password = "");
+    void setProxyInfo(const String& host = emptyString(), unsigned long port = 0, ProxyType = HTTP, const String& username = emptyString(), const String& password = emptyString());
 
 private:
     ResourceHandleManager();

@@ -47,7 +47,7 @@ public:
     bool hasURL() const { return !m_url.isEmpty() && m_url.isValid(); }
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
     bool hasImage() const { return m_image; }
-    void clearURIList() { m_uriList = ""; }
+    void clearURIList() { m_uriList = emptyString(); }
     void clearURL() { m_url = URL(); }
     void clearImage() { m_image = nullptr; }
 

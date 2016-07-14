@@ -1418,7 +1418,7 @@ void RenderListMarker::updateContent()
     if (!preferredLogicalWidthsDirty())
         return;
 
-    m_text = "";
+    m_text = emptyString();
 
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful

@@ -3004,8 +3004,8 @@ void WebViewImpl::setPromisedDataForAttachment(NSString *filename, NSString *ext
 void WebViewImpl::pasteboardChangedOwner(NSPasteboard *pasteboard)
 {
     m_promisedImage = nullptr;
-    m_promisedFilename = "";
-    m_promisedURL = "";
+    m_promisedFilename = emptyString();
+    m_promisedURL = emptyString();
 }
 
 void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *type)

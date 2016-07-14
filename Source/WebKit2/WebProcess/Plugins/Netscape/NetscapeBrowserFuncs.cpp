@@ -205,7 +205,7 @@ static HTTPHeaderMap parseRFC822HeaderFields(const char* bytes, unsigned length)
                     break;
             }
             if (colon == endOfLine)
-                value = "";
+                value = emptyString();
             else
                 value = String(colon, endOfLine - colon);
             
@@ -340,7 +340,7 @@ static void NPN_Status(NPP npp, const char* message)
 {
     String statusbarText;
     if (!message)
-        statusbarText = "";
+        statusbarText = emptyString();
     else
         statusbarText = String::fromUTF8WithLatin1Fallback(message, strlen(message));
 

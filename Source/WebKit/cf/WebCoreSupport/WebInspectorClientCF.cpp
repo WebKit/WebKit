@@ -82,7 +82,7 @@ static void populateSetting(const String& key, String* setting)
     else if (type == CFBooleanGetTypeID())
         *setting = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()))) ? "true" : "false";
     else
-        *setting = "";
+        *setting = emptyString();
 }
 
 static void storeSetting(const String& key, const String& setting)

@@ -50,7 +50,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun&
     // Calculate width/height using the scaled font, divide this result by the scalingFactor afterwards.
     m_width = scaledFont.width(run) / scalingFactor;
     length = run.length();
-    m_glyph.name = "";
+    m_glyph.name = emptyString();
     m_height = scaledFont.fontMetrics().floatHeight() / scalingFactor;
 
     m_glyph.unicodeString = run.is8Bit() ? String(run.characters8(), length) : String(run.characters16(), length);

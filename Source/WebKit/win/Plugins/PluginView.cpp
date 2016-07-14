@@ -1020,7 +1020,7 @@ static inline HTTPHeaderMap parseRFC822HeaderFields(const Vector<char>& buffer, 
                         break;
                 }
                 if (colon == eol)
-                    value = "";
+                    value = emptyString();
                 else
                     value = String(colon, eol - colon);
 
