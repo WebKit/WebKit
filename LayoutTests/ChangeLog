@@ -1,3 +1,11 @@
+2016-07-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove duplicate TestExpectations entry.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-07-14  Brent Fulgham  <bfulgham@apple.com>
 
         Add test to confirm we do not crash in media destruction

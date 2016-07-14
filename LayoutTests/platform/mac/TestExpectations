@@ -1023,8 +1023,8 @@ webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
 
 # --- End media tests ---
-
-webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
+# See also rdar://problem/27353750
+webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Timeout Failure ]
 
 webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass Timeout ]
 
@@ -1449,6 +1449,3 @@ webkit.org/b/158500 storage/indexeddb/database-close-private.html [ Pass Failure
 webkit.org/b/159173 fast/css/ancestor-of-hovered-element-detached.html [ Pass Failure ]
 
 webkit.org/b/158640 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Pass Failure ]
-
-# rdar://problem/27353750
-[ Sierra+ ] http/tests/media/hls/video-cookie.html [ Timeout ]
