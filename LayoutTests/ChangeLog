@@ -1,3 +1,9 @@
+2016-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        Rebaseline test after r203204 and r203207.
+
+        * js/typed-array-mutated-during-set-expected.txt:
+
 2016-07-13  Frederic Wang  <fwang@igalia.com>
 
         Rebaseline EFL and Windows MathML tests after r203171
