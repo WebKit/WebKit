@@ -151,11 +151,11 @@ void UniqueIDBDatabaseConnection::didAbortTransaction(UniqueIDBDatabaseTransacti
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didAbortTransaction - %s - %" PRIu64, m_openRequestIdentifier.loggingString().utf8().data(), m_identifier);
 
     auto transactionIdentifier = transaction.info().identifier();
+    auto takenTransaction = m_transactionMap.take(transactionIdentifier);
 
-    ASSERT(m_transactionMap.contains(transactionIdentifier));
-    m_transactionMap.remove(transactionIdentifier);
-
-    m_connectionToClient.didAbortTransaction(transactionIdentifier, error);
+    ASSERT(takenTransaction || m_database.hardClosedForUserDelete());
+    if (takenTransaction)
+        m_connectionToClient.didAbortTransaction(transactionIdentifier, error);
 }
 
 void UniqueIDBDatabaseConnection::didCommitTransaction(UniqueIDBDatabaseTransaction& transaction, const IDBError& error)

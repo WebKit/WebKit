@@ -115,6 +115,8 @@ public:
     static JSC::VM& databaseThreadVM();
     static JSC::ExecState& databaseThreadExecState();
 
+    bool hardClosedForUserDelete() const { return m_hardClosedForUserDelete; }
+
 private:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);
     
@@ -173,6 +175,7 @@ private:
     void didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError&, const IDBResourceIdentifier& transactionIdentifier);
     void didPerformAbortTransaction(uint64_t callbackIdentifier, const IDBError&, const IDBResourceIdentifier& transactionIdentifier);
     void didPerformActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBError&);
+    void didPerformUnconditionalDeleteBackingStore();
 
     uint64_t storeCallbackOrFireError(ErrorCallback);
     uint64_t storeCallbackOrFireError(KeyDataCallback);
@@ -201,7 +204,8 @@ private:
     void executeNextDatabaseTask();
     void executeNextDatabaseTaskReply();
 
-    bool doneWithHardClose();
+    void maybeFinishHardClose();
+    bool isDoneWithHardClose();
 
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;

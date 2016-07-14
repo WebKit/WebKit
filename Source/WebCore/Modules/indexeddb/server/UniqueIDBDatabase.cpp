@@ -59,6 +59,7 @@ UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentif
 UniqueIDBDatabase::~UniqueIDBDatabase()
 {
     LOG(IndexedDB, "UniqueIDBDatabase::~UniqueIDBDatabase() (%p) %s", this, m_identifier.debugString().utf8().data());
+    ASSERT(isMainThread());
     ASSERT(!hasAnyPendingCallbacks());
     ASSERT(!hasUnfinishedTransactions());
     ASSERT(m_pendingTransactions.isEmpty());
@@ -296,6 +297,12 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
     }
 
     invokeOperationAndTransactionTimer();
+}
+
+void UniqueIDBDatabase::didPerformUnconditionalDeleteBackingStore()
+{
+    // This function is a placeholder so the database thread can message back to the main thread.
+    ASSERT(m_hardClosedForUserDelete);
 }
 
 void UniqueIDBDatabase::handleDatabaseOperations()
@@ -1169,6 +1176,11 @@ void UniqueIDBDatabase::didFinishHandlingVersionChange(UniqueIDBDatabaseConnecti
     m_versionChangeTransaction = nullptr;
     m_versionChangeDatabaseConnection = nullptr;
 
+    if (m_hardClosedForUserDelete) {
+        maybeFinishHardClose();
+        return;
+    }
+
     invokeOperationAndTransactionTimer();
 }
 
@@ -1255,6 +1267,11 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
 
     if (connection.hasNonFinishedTransactions()) {
         m_clientClosePendingDatabaseConnections.add(WTFMove(protectedConnection));
+        return;
+    }
+
+    if (m_hardClosedForUserDelete) {
+        maybeFinishHardClose();
         return;
     }
 
@@ -1503,6 +1520,8 @@ void UniqueIDBDatabase::transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction
     // Previously blocked operations might be runnable.
     if (!m_hardClosedForUserDelete)
         invokeOperationAndTransactionTimer();
+    else
+        maybeFinishHardClose();
 }
 
 void UniqueIDBDatabase::postDatabaseTask(CrossThreadTask&& task)
@@ -1554,11 +1573,20 @@ void UniqueIDBDatabase::executeNextDatabaseTaskReply()
 
     // If this database was force closed (e.g. for a user delete) and there are no more
     // cleanup tasks left, delete this.
-    if (m_hardCloseProtector && doneWithHardClose())
-        m_hardCloseProtector = nullptr;
+    maybeFinishHardClose();
 }
 
-bool UniqueIDBDatabase::doneWithHardClose()
+void UniqueIDBDatabase::maybeFinishHardClose()
+{
+    if (m_hardCloseProtector && isDoneWithHardClose()) {
+        callOnMainThread([this] {
+            ASSERT(isDoneWithHardClose());
+            m_hardCloseProtector = nullptr;
+        });
+    }
+}
+
+bool UniqueIDBDatabase::isDoneWithHardClose()
 {
     return !m_queuedTaskCount && m_clientClosePendingDatabaseConnections.isEmpty() && m_serverClosePendingDatabaseConnections.isEmpty();
 }
