@@ -99,6 +99,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
     : m_logicalSize(size)
     , m_resolutionScale(resolutionScale)
 {
+    success = false; // Make early return mean failure.
     float scaledWidth = ceilf(resolutionScale * size.width());
     float scaledHeight = ceilf(resolutionScale * size.height());
 
@@ -109,7 +110,6 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
     m_size = IntSize(scaledWidth, scaledHeight);
     m_data.backingStoreSize = m_size;
 
-    success = false;  // Make early return mean failure.
     bool accelerateRendering = renderingMode == Accelerated;
     if (m_size.width() <= 0 || m_size.height() <= 0)
         return;
