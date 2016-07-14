@@ -131,6 +131,7 @@ editing/pasteboard/drag-drop-paragraph-crasher.html
 # [WK2] [Mac] Spellcheck tests don't seem to work
 webkit.org/b/105616 editing/spelling/context-menu-suggestions-multiword-selection.html
 webkit.org/b/105616 editing/spelling/context-menu-suggestions-subword-selection.html
+webkit.org/b/105616 editing/spelling/copy-paste-crash.html
 webkit.org/b/105616 editing/spelling/delete-into-misspelled-word.html
 webkit.org/b/105616 editing/spelling/editing-multiple-words-with-markers.html
 webkit.org/b/105616 editing/spelling/editing-word-with-marker-2.html

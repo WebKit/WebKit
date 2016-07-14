@@ -1,3 +1,19 @@
+2016-07-14  Brent Fulgham  <bfulgham@apple.com>
+
+        editing/spelling/spellcheck-async.html sometimes crashes with GuardMalloc 
+        https://bugs.webkit.org/show_bug.cgi?id=142969
+        <rdar://problem/27331095>
+
+        Reviewed by Alex Christensen.
+
+        Fix based on a Blink change (patch by <rouslan@chromium.org>):
+        <https://chromium.googlesource.com/chromium/blink/+/c713736b122c2224804b2db72f1f711cb47ee260%5E%21/#F1>
+
+        * editing/spelling/copy-paste-crash-expected.txt: Added.
+        * editing/spelling/copy-paste-crash.html: Added.
+        * platform/platform/mac-wk2/TestExpectations: Skip test on mac-wk2 since all Spelling tests are
+        currently broken (see <https://webkit.org/b/105616>).
+
 2016-07-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove duplicate TestExpectations entry.
