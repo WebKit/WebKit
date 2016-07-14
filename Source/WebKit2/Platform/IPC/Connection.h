@@ -160,7 +160,7 @@ public:
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
     void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback);
 
-    void addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue*, WorkQueueMessageReceiver*);
+    void addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue&, WorkQueueMessageReceiver*);
     void removeWorkQueueMessageReceiver(StringReference messageReceiverName);
 
     bool open();
@@ -251,7 +251,7 @@ private:
     bool m_isConnected;
     Ref<WorkQueue> m_connectionQueue;
 
-    HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>> m_workQueueMessageReceivers;
+    HashMap<StringReference, std::pair<Ref<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>> m_workQueueMessageReceivers;
 
     unsigned m_inSendSyncCount;
     unsigned m_inDispatchMessageCount;

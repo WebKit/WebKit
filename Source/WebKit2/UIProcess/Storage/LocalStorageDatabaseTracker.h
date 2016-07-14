@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocalStorageDatabaseTracker_h
-#define LocalStorageDatabaseTracker_h
+#pragma once
 
 #include <WebCore/SQLiteDatabase.h>
 #include <wtf/HashSet.h>
@@ -46,7 +45,7 @@ struct LocalStorageDetails;
 
 class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker> {
 public:
-    static PassRefPtr<LocalStorageDatabaseTracker> create(PassRefPtr<WorkQueue>, const String& localStorageDirectory);
+    static Ref<LocalStorageDatabaseTracker> create(Ref<WorkQueue>&&, const String& localStorageDirectory);
     ~LocalStorageDatabaseTracker();
 
     String databasePath(WebCore::SecurityOrigin*) const;
@@ -68,7 +67,7 @@ public:
     Vector<OriginDetails> originDetails();
 
 private:
-    LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>, const String& localStorageDirectory);
+    LocalStorageDatabaseTracker(Ref<WorkQueue>&&, const String& localStorageDirectory);
 
     String databasePath(const String& filename) const;
     String trackerDatabasePath() const;
@@ -86,7 +85,7 @@ private:
     void removeDatabaseWithOriginIdentifier(const String& originIdentifier);
     String pathForDatabaseWithOriginIdentifier(const String& originIdentifier);
 
-    RefPtr<WorkQueue> m_queue;
+    Ref<WorkQueue> m_queue;
     String m_localStorageDirectory;
 
     WebCore::SQLiteDatabase m_database;
@@ -94,5 +93,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // LocalStorageDatabaseTracker_h

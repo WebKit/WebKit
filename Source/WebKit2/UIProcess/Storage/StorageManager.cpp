@@ -292,7 +292,7 @@ void StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded()
 
     // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
     if (!m_localStorageDatabase)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue, m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin.copyRef());
+        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue.copyRef(), m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin.copyRef());
 
     if (m_didImportItemsFromDatabase)
         return;
@@ -461,7 +461,7 @@ Ref<StorageManager> StorageManager::create(const String& localStorageDirectory)
 
 StorageManager::StorageManager(const String& localStorageDirectory)
     : m_queue(WorkQueue::create("com.apple.WebKit.StorageManager"))
-    , m_localStorageDatabaseTracker(LocalStorageDatabaseTracker::create(m_queue, localStorageDirectory))
+    , m_localStorageDatabaseTracker(LocalStorageDatabaseTracker::create(m_queue.copyRef(), localStorageDirectory))
 {
     // Make sure the encoding is initialized before we start dispatching things to the queue.
     UTF8Encoding();

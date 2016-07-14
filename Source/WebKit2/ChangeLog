@@ -1,3 +1,41 @@
+2016-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        Use more Refs with WorkQueues
+        https://bugs.webkit.org/show_bug.cgi?id=159792
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/CustomProtocols/CustomProtocolManager.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::setShouldExitOnSyncMessageSendFailure):
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        * Platform/IPC/Connection.h:
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::initializeConnection):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::create):
+        (WebKit::LocalStorageDatabaseTracker::LocalStorageDatabaseTracker):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded):
+        (WebKit::StorageManager::StorageManager):
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::processWillOpenConnection):
+        (WebKit::WebResourceLoadStatisticsStore::processDidCloseConnection):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::initializeConnection):
+        (WebKit::SecItemShimProxy::secItemRequest):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::initializeConnection):
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::initializeConnection):
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::initializeConnection):
+        (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+
 2016-07-14  Timothy Hatcher  <timothy@apple.com>
 
         Web Automation: FrameNotFound errors happen a lot for the main frame
