@@ -1,3 +1,25 @@
+2016-07-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Rename CCTNode to CallingContextTreeNode
+        https://bugs.webkit.org/show_bug.cgi?id=159782
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CallingContextTree.js:
+        * UserInterface/Models/CallingContextTreeNode.js:
+        Extra to its own file and rename.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/TestStub.html:
+        Include the new file.
+
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WebInspector.ProfileDataGridNode):
+        * UserInterface/Views/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridTree.prototype._updateCurrentFocusDetails):
+        Rename shorthand "cctnode".
+
 2016-07-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: SidebarPanel classes should use View.layout instead of "refresh"

@@ -239,8 +239,7 @@ WebInspector.ProfileDataGridTree = class ProfileDataGridTree extends WebInspecto
 
     _updateCurrentFocusDetails(focusDataGridNode)
     {
-        let cctNode = focusDataGridNode.callingContextTreeNode;
-        let {timestamps, duration} = cctNode.filteredTimestampsAndDuration(this._startTime, this._endTime);
+        let {timestamps, duration} = focusDataGridNode.callingContextTreeNode.filteredTimestampsAndDuration(this._startTime, this._endTime);
 
         this._currentFocusStartTime = timestamps[0];
         this._currentFocusEndTime = timestamps.lastValue;

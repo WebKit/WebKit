@@ -25,11 +25,11 @@
 
 WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspector.DataGridNode
 {
-    constructor(cctNode, tree)
+    constructor(callingContextTreeNode, tree)
     {
-        super(cctNode, false);
+        super(callingContextTreeNode, false);
 
-        this._node = cctNode;
+        this._node = callingContextTreeNode;
         this._tree = tree;
 
         this._childrenToChargeToSelf = new Set;
