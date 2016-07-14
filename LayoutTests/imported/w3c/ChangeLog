@@ -1,3 +1,19 @@
+2016-07-14  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Request and Response url getter should use URL serialization
+        https://bugs.webkit.org/show_bug.cgi?id=159705
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/basic/response-url-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/response-url-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/response-url-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/response-url.html: Added.
+        * web-platform-tests/fetch/api/basic/response-url.js: Added.
+        (checkResponseURL):
+        * web-platform-tests/fetch/api/request/request-init-003.sub-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-003.sub.html:
+
 2016-07-13  Jiewen Tan  <jiewen_tan@apple.com>
 
         Import W3C WebCryptoAPI tests

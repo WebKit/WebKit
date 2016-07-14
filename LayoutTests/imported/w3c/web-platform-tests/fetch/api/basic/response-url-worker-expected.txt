@@ -1,6 +1,6 @@
 
 PASS Testing response url getter with http://localhost:8800/ada 
-FAIL Testing response url getter with http://localhost:8800/# assert_equals: expected "http://localhost:8800/" but got "http://localhost:8800/#"
-FAIL Testing response url getter with http://localhost:8800/#ada assert_equals: expected "http://localhost:8800/" but got "http://localhost:8800/#ada"
-FAIL Testing response url getter with http://localhost:8800#ada assert_equals: expected "http://localhost:8800/" but got "http://localhost:8800/#ada"
+PASS Testing response url getter with http://localhost:8800/# 
+PASS Testing response url getter with http://localhost:8800/#ada 
+PASS Testing response url getter with http://localhost:8800#ada 
 

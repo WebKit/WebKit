@@ -114,6 +114,11 @@ public:
     WEBCORE_EXPORT String fragmentIdentifier() const;
     WEBCORE_EXPORT bool hasFragmentIdentifier() const;
 
+    bool hasUsername() const;
+    bool hasPassword() const;
+    bool hasQuery() const;
+    bool hasFragment() const;
+
     // Unlike user() and pass(), these functions don't decode escape sequences.
     // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
     String encodedUser() const;
@@ -197,6 +202,8 @@ public:
 
     template <class Encoder> void encode(Encoder&) const;
     template <class Decoder> static bool decode(Decoder&, URL&);
+
+    String serialize(bool omitFragment = false) const;
 
 private:
     WEBCORE_EXPORT void invalidate();
@@ -388,6 +395,26 @@ inline bool URL::hasPath() const
 inline bool URL::hasPort() const
 {
     return m_hostEnd < m_portEnd;
+}
+
+inline bool URL::hasUsername() const
+{
+    return m_userEnd > m_userStart;
+}
+
+inline bool URL::hasPassword() const
+{
+    return m_passwordEnd > (m_userEnd + 1);
+}
+
+inline bool URL::hasQuery() const
+{
+    return m_queryEnd > m_pathEnd;
+}
+
+inline bool URL::hasFragment() const
+{
+    return m_fragmentEnd > m_queryEnd;
 }
 
 inline bool URL::protocolIsInHTTPFamily() const

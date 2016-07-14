@@ -1193,6 +1193,65 @@ void URL::parse(const String& string)
     parse(buffer.data(), &string);
 }
 
+static inline bool cannotBeABaseURL(const URL& url)
+{
+    // FIXME: Support https://url.spec.whatwg.org/#url-cannot-be-a-base-url-flag properly
+    // According spec, this should be computed at parsing time.
+    // For the moment, we just check whether the scheme is special or not.
+    if (url.protocolIs("ftp") || url.protocolIs("file") || url.protocolIs("gopher") || url.protocolIs("http") || url.protocolIs("https") || url.protocolIs("ws") || url.protocolIs("wss"))
+        return false;
+    return true;
+}
+
+// Implementation of https://url.spec.whatwg.org/#url-serializing
+String URL::serialize(bool omitFragment) const
+{
+    if (isNull())
+        return String();
+
+    StringBuilder urlBuilder;
+    urlBuilder.append(m_string, 0, m_schemeEnd);
+    urlBuilder.append(":");
+    int start = hostStart();
+    if (start < m_hostEnd) {
+        urlBuilder.append("//");
+        if (hasUsername()) {
+            urlBuilder.append(m_string, m_userStart, m_userEnd - m_userStart);
+            int passwordStart = m_userEnd + 1;
+            if (hasPassword()) {
+                urlBuilder.append(":");
+                urlBuilder.append(m_string, passwordStart, m_passwordEnd - passwordStart);
+            }
+            urlBuilder.append("@");
+        }
+        // FIXME: Serialize host according https://url.spec.whatwg.org/#concept-host-serializer for IPv4 and IPv6 addresses.
+        urlBuilder.append(m_string, start, m_hostEnd - start);
+        if (hasPort()) {
+            urlBuilder.append(":");
+            urlBuilder.appendNumber(port());
+        }
+    } else if (protocolIs("file"))
+        urlBuilder.append("//");
+    if (cannotBeABaseURL(*this))
+        urlBuilder.append(m_string, m_portEnd, m_pathEnd - m_portEnd);
+    else {
+        urlBuilder.append("/");
+        if (m_pathEnd > m_portEnd) {
+            int pathStart = m_portEnd + 1;
+            urlBuilder.append(m_string, pathStart, m_pathEnd - pathStart);
+        }
+    }
+    if (hasQuery()) {
+        urlBuilder.append("?");
+        urlBuilder.append(m_string, m_pathEnd + 1, m_queryEnd - (m_pathEnd + 1));
+    }
+    if (!omitFragment && hasFragment()) {
+        urlBuilder.append("#");
+        urlBuilder.append(m_string, m_queryEnd + 1, m_fragmentEnd - (m_queryEnd + 1));
+    }
+    return urlBuilder.toString();
+}
+
 #if PLATFORM(IOS)
 static bool shouldCanonicalizeScheme = true;
 

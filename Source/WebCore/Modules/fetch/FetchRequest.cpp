@@ -310,6 +310,13 @@ String FetchRequest::referrer() const
     return m_internalRequest.referrer;
 }
 
+const String& FetchRequest::url() const
+{
+    if (m_requestURL.isNull())
+        m_requestURL = m_internalRequest.request.url().serialize();
+    return m_requestURL;
+}
+
 ResourceRequest FetchRequest::internalRequest() const
 {
     ResourceRequest request = m_internalRequest.request;

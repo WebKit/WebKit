@@ -61,7 +61,7 @@ public:
     void initializeWith(const Dictionary&, ExceptionCode&);
 
     Type type() const { return m_response.type(); }
-    const String& url() const { return m_response.url().string(); }
+    const String& url() const;
     bool redirected() const { return m_response.isRedirected(); }
     int status() const { return m_response.httpStatusCode(); }
     bool ok() const { return m_response.isSuccessful(); }
@@ -113,6 +113,7 @@ private:
     ResourceResponse m_response;
     Ref<FetchHeaders> m_headers;
     Optional<BodyLoader> m_bodyLoader;
+    mutable String m_responseURL;
 };
 
 } // namespace WebCore

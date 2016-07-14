@@ -49,7 +49,7 @@ public:
     static RefPtr<FetchRequest> create(ScriptExecutionContext&, const String&, const Dictionary&, ExceptionCode&);
 
     const String& method() const { return m_internalRequest.request.httpMethod(); }
-    const String& url() const { return m_internalRequest.request.url().string(); }
+    const String& url() const;
     FetchHeaders& headers() { return m_headers.get(); }
 
     using Type = FetchOptions::Type;
@@ -98,6 +98,7 @@ private:
 
     Ref<FetchHeaders> m_headers;
     InternalRequest m_internalRequest;
+    mutable String m_requestURL;
 };
 
 inline FetchRequest::FetchRequest(ScriptExecutionContext& context, FetchBody&& body, Ref<FetchHeaders>&& headers, InternalRequest&& internalRequest)

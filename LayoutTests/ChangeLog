@@ -1,3 +1,14 @@
+2016-07-14  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Request and Response url getter should use URL serialization
+        https://bugs.webkit.org/show_bug.cgi?id=159705
+
+        Reviewed by Alex Christensen.
+
+        * fetch/fetch-url-serialization-expected.txt: Added.
+        * fetch/fetch-url-serialization.html: Added.
+        * fetch/fetch-urls.json: Added.
+
 2016-07-14  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r202918): LayoutTest media/video-main-content-allow-then-deny.html is flaky, failing almost every time on El Capitan
