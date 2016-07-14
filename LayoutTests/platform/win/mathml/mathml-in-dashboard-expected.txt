@@ -9,5 +9,5 @@ layer at (0,0) size 800x600
           text run at (210,0) width 441: "dashboard compatibility mode. The render tree dump should include a"
           text run at (0,18) width 140: "RenderMathMLMath."
       RenderBlock (anonymous) at (0,52) size 784x0
-        RenderMathMLMath {math} at (0,0) size 2x0 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
