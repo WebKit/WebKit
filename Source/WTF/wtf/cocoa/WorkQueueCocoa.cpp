@@ -31,10 +31,10 @@ namespace WTF {
 void WorkQueue::dispatch(Function<void ()>&& function)
 {
     ref();
-    auto* functionPtr = new Function<void ()>(WTFMove(function));
+    auto* callable = function.leakCallable();
     dispatch_async(m_dispatchQueue, ^{
-        (*functionPtr)();
-        delete functionPtr;
+        auto function = Function<void ()>::adoptCallable(callable);
+        function();
         deref();
     });
 }
@@ -42,10 +42,10 @@ void WorkQueue::dispatch(Function<void ()>&& function)
 void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, Function<void ()>&& function)
 {
     ref();
-    auto* functionPtr = new Function<void ()>(WTFMove(function));
+    auto* callable = function.leakCallable();
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration.count()), m_dispatchQueue, ^{
-        (*functionPtr)();
-        delete functionPtr;
+        auto function = Function<void ()>::adoptCallable(callable);
+        function();
         deref();
     });
 }

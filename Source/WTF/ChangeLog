@@ -1,3 +1,18 @@
+2016-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Avoid an extra heap allocation when dispatching Functions to WorkQueue
+        https://bugs.webkit.org/show_bug.cgi?id=158367
+
+        Reviewed by Anders Carlsson.
+
+        Avoid an extra heap allocation when dispatching Functions to WorkQueue
+        by adding leakCallable() / adoptCallable() functions to Function.
+
+        * wtf/Function.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+
 2016-07-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing post-review comments after r203119
