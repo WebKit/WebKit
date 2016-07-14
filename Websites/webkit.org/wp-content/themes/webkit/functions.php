@@ -176,6 +176,11 @@ add_filter( 'get_the_excerpt', function( $excerpt ) {
 
 });
 
+function show_404_page() {
+    status_header(404);
+    return include( get_query_template( '404' ) );
+}
+
 include('widgets/post.php');
 include('widgets/icon.php');
 include('widgets/twitter.php');

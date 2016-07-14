@@ -1,3 +1,17 @@
+2016-07-14  Jon Davis  <jond@apple.com>
+
+        Improved WebKit Nightly start page design.
+        https://bugs.webkit.org/show_bug.cgi?id=159780
+
+        Reviewed by Timothy Hatcher.
+
+        Added better 404 handling, improved presentation of the 
+        start page and new Apache rewrites for the P1 bug list.
+
+        * .htaccess:
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/nightly-start.php:
+
 2016-07-01  Jon Davis  <jond@apple.com>
 
         Added a colorful new image and fixed the Open Graph attribute.
