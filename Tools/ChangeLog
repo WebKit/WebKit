@@ -1,3 +1,21 @@
+2016-07-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Copy WebKitTestRunnerInjectedBundle.bundle into PlugIns subdirectory and code sign it
+        https://bugs.webkit.org/show_bug.cgi?id=159738
+        <rdar://problem/27304649>
+
+        Reviewed by Dan Bernstein.
+
+        The bundle WebKitTestRunnerInjectedBundle.bundle contains executable code and should be
+        code signed if applicable. We should also copy this bundle into the PlugIns subdirectory
+        of the WebKitTestRunnerApp.app bundle instead of the top-level bundle directory as the
+        PlugIns subdirectory is the directory where loadable bundles of an app are expected to live.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::initializeInjectedBundlePath): Modified code to look for the
+        bundle WebKitTestRunnerInjectedBundle.bundle in the plugin directory of the main bundle.
+
 2016-07-13  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix.
