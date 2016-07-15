@@ -205,7 +205,8 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
     terminatorString.append("}");
     terminatorString.append(delimiter);
 
-    const char* terminator = terminatorString.ascii().data();
+    CString terminatorCString = terminatorString.ascii();
+    const char* terminator = terminatorCString.data();
     line = delimiterEnd; // Start from the {.
 
     StringBuilder builder;

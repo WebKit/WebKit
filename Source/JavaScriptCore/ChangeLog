@@ -1,3 +1,16 @@
+2016-07-15  Mark Lam  <mark.lam@apple.com>
+
+        FunctionOverride's parseClause() needs to keep the CString instance in scope while its data is being used.
+        https://bugs.webkit.org/show_bug.cgi?id=159828
+
+        Reviewed by Saam Barati.
+
+        Otherwise, we'll have a use after free.  This issue was caught when running an
+        ASan debug build of testapi.
+
+        * tools/FunctionOverrides.cpp:
+        (JSC::parseClause):
+
 2016-07-15  Keith Miller  <keith_miller@apple.com>
 
         %TypedArray%.prototype.indexOf is coercing non-integers or non-floats to numbers wrongly
