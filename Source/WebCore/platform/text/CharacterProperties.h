@@ -29,29 +29,16 @@ namespace WebCore {
 
 static inline bool isEmojiGroupCandidate(UChar32 character)
 {
-    return character == 0x2640
-        || character == 0x2642
-        || character == 0x26F9
-        || character == 0x2764
-        || (character >= 0x1F3C3 && character <= 0x1F3C4)
-        || (character >= 0x1F3CA && character <= 0x1F3CC)
-        || character == 0x1F3F3
-        || character == 0x1F441
-        || (character >= 0x1F466 && character <= 0x1F469)
-        || character >= 0x1F46E
-        || character == 0x1F471
-        || character == 0x1F473
-        || character == 0x1F477
-        || (character >= 0x1F481 && character <= 0x1F482)
-        || (character >= 0x1F486 && character <= 0x1F487)
-        || character == 0x1F48B
-        || character == 0x1F575
-        || character == 0x1F5E8
-        || (character >= 0x1F645 && character <= 0x1F647)
-        || character == 0x1F64B
-        || (character >= 0x1F64D && character <= 0x1F64E)
-        || character == 0x1F6A3
-        || (character >= 0x1F6B4 && character <= 0x1F6B6);
+    // U+1F466 - BOY
+    // U+1F467 - GIRL
+    // U+1F468 - MAN
+    // U+1F469 - WOMAN
+    // U+2764  - HEAVY BLACK HEART
+    // U+1F48B - KISS MARK
+    // U+1F441 - EYE
+    // U+1F5E8 - LEFT SPEECH BUBBLE
+
+    return (character >= 0x1F466 && character <= 0x1F469) || character == 0x2764 || character == 0x1F48B || character == 0x1F441 || character == 0x1F5E8;
 }
 
 static inline bool isEmojiFitzpatrickModifier(UChar32 character)

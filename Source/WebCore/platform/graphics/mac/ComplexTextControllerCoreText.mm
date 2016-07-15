@@ -150,9 +150,12 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     unsigned r = 0;
     while (r < m_stringLength) {
         m_coreTextIndicesVector.uncheckedAppend(r);
-        if (U_IS_LEAD(m_characters[r]) && r + 1 < m_stringLength && U_IS_TRAIL(m_characters[r + 1]))
+        if (U_IS_SURROGATE(m_characters[r])) {
+            ASSERT(r + 1 < m_stringLength);
+            ASSERT(U_IS_SURROGATE_LEAD(m_characters[r]));
+            ASSERT(U_IS_TRAIL(m_characters[r + 1]));
             r += 2;
-        else
+        } else
             r++;
     }
     m_glyphCount = m_coreTextIndicesVector.size();

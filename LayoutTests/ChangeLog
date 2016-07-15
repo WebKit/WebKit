@@ -1,3 +1,16 @@
+2016-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r203266.
+
+        This change caused editing/deleting/delete-emoji.html to time
+        out on El Capitan, crash under GuardMalloc
+
+        Reverted changeset:
+
+        "Support new emoji group candidates"
+        https://bugs.webkit.org/show_bug.cgi?id=159755
+        http://trac.webkit.org/changeset/203266
+
 2016-07-15  Frederic Wang  <fwang@igalia.com>
 
         Move parsing of mfrac attributes into a MathMLFractionElementClass
