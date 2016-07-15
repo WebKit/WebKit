@@ -431,6 +431,8 @@ private:
 
     void completeUpdatesAfterScrollTo(const IntSize& scrollDelta);
 
+    bool setHasScrollbarInternal(RefPtr<Scrollbar>&, ScrollbarOrientation, bool hasBar, bool* contentSizeAffected);
+
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;
     ScrollbarMode m_horizontalScrollbarMode;
