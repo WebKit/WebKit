@@ -1,3 +1,16 @@
+2016-07-15  Frederic Wang  <fwang@igalia.com>
+
+        Move parsing of mfrac attributes into a MathMLFractionElementClass
+        https://bugs.webkit.org/show_bug.cgi?id=159624
+
+        Reviewed by Brent Fulgham.
+
+        We update the expectation for negative linethickness. As indicated in the MathML
+        recommendation, it should be rounded up to the nearest valid value, which is 0.
+
+        * mathml/presentation/mfrac-linethickness2.html: Update the comment to reflect the new behavior.
+        * mathml/presentation/mfrac-linethickness2-expected.html: Use 0px as the reference for negative values.
+
 2016-07-15  Brent Fulgham  <bfulgham@apple.com>
 
         Merge InlineBidiResolver end-of-line Blink test case

@@ -1985,6 +1985,7 @@ set(WebCore_SOURCES
     loader/icon/PageURLRecord.cpp
 
     mathml/MathMLElement.cpp
+    mathml/MathMLFractionElement.cpp
     mathml/MathMLInlineContainerElement.cpp
     mathml/MathMLMathElement.cpp
     mathml/MathMLMencloseElement.cpp

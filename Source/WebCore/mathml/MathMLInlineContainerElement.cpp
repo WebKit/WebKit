@@ -33,7 +33,6 @@
 #include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
 #include "RenderMathMLFenced.h"
-#include "RenderMathMLFraction.h"
 #include "RenderMathMLMenclose.h"
 #include "RenderMathMLRoot.h"
 #include "RenderMathMLRow.h"
@@ -71,8 +70,6 @@ RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(Ren
         return createRenderer<RenderMathMLScripts>(*this, WTFMove(style));
     if (hasTagName(moverTag) || hasTagName(munderTag) || hasTagName(munderoverTag))
         return createRenderer<RenderMathMLUnderOver>(*this, WTFMove(style));
-    if (hasTagName(mfracTag))
-        return createRenderer<RenderMathMLFraction>(*this, WTFMove(style));
     if (hasTagName(msqrtTag) || hasTagName(mrootTag))
         return createRenderer<RenderMathMLRoot>(*this, WTFMove(style));
     if (hasTagName(mfencedTag))

@@ -44,15 +44,6 @@ RenderMathMLFraction::RenderMathMLFraction(MathMLInlineContainerElement& element
 {
 }
 
-RenderMathMLFraction::FractionAlignment RenderMathMLFraction::parseAlignmentAttribute(const String& value)
-{
-    if (equalLettersIgnoringASCIICase(value, "left"))
-        return FractionAlignmentLeft;
-    if (equalLettersIgnoringASCIICase(value, "right"))
-        return FractionAlignmentRight;
-    return FractionAlignmentCenter;
-}
-
 bool RenderMathMLFraction::isValid() const
 {
     // Verify whether the list of children is valid:
@@ -76,11 +67,8 @@ RenderBox& RenderMathMLFraction::denominator() const
     return *firstChildBox()->nextSiblingBox();
 }
 
-void RenderMathMLFraction::updateFromElement()
+void RenderMathMLFraction::updateLayoutParameters()
 {
-    if (isEmpty())
-        return;
-
     // We try and read constants to draw the fraction from the OpenType MATH and use fallback values otherwise.
     // We also parse presentation attributes of the <mfrac> element.
 
@@ -92,22 +80,10 @@ void RenderMathMLFraction::updateFromElement()
     else
         m_defaultLineThickness = ruleThicknessFallback();
 
-    // Next, we parse the linethickness attribute.
-    // The MathML3 recommendation states that "medium" is the default thickness.
-    // However, it only states that "thin" and "thick" are respectively thiner and thicker.
-    // The MathML in HTML5 implementation note suggests 50% and 200% and these values are also used in Gecko.
-    String thickness = element().getAttribute(MathMLNames::linethicknessAttr);
-    if (equalLettersIgnoringASCIICase(thickness, "thin"))
-        m_lineThickness = m_defaultLineThickness / 2;
-    else if (equalLettersIgnoringASCIICase(thickness, "medium"))
-        m_lineThickness = m_defaultLineThickness;
-    else if (equalLettersIgnoringASCIICase(thickness, "thick"))
-        m_lineThickness = m_defaultLineThickness * 2;
-    else {
-        // Parse the thickness using m_defaultLineThickness as the default value.
-        m_lineThickness = m_defaultLineThickness;
-        parseMathMLLength(thickness, m_lineThickness, &style(), false);
-    }
+    // Resolve the thickness using m_defaultLineThickness as the default value.
+    m_lineThickness = toUserUnits(element().lineThickness(), style(), m_defaultLineThickness);
+    if (m_lineThickness < 0)
+        m_lineThickness = 0;
 
     // We now know whether we should layout as a normal fraction or as a stack (fraction without bar) and so determine the relevant constants.
     bool display = mathMLStyle()->displayStyle();
@@ -137,17 +113,6 @@ void RenderMathMLFraction::updateFromElement()
             m_numeratorMinShiftUp = m_denominatorMinShiftDown = 0;
         }
     }
-
-    // Parse alignment attributes.
-    m_numeratorAlign = parseAlignmentAttribute(element().getAttribute(MathMLNames::numalignAttr));
-    m_denominatorAlign = parseAlignmentAttribute(element().getAttribute(MathMLNames::denomalignAttr));
-}
-
-void RenderMathMLFraction::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderMathMLBlock::styleDidChange(diff, oldStyle);
-
-    updateFromElement();
 }
 
 RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator()
@@ -173,14 +138,14 @@ void RenderMathMLFraction::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, FractionAlignment align)
+LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, MathMLFractionElement::FractionAlignment align)
 {
     switch (align) {
-    case FractionAlignmentRight:
+    case MathMLFractionElement::FractionAlignmentRight:
         return LayoutUnit(logicalWidth() - child.logicalWidth());
-    case FractionAlignmentCenter:
+    case MathMLFractionElement::FractionAlignmentCenter:
         return LayoutUnit((logicalWidth() - child.logicalWidth()) / 2);
-    case FractionAlignmentLeft:
+    case MathMLFractionElement::FractionAlignmentLeft:
         return LayoutUnit(0);
     }
 
@@ -191,9 +156,6 @@ LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, FractionAlig
 void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
-
-    // FIXME: We should be able to remove this.
-    updateFromElement();
 
     if (!relayoutChildren && simplifiedLayout())
         return;
@@ -210,8 +172,9 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     setLogicalWidth(std::max(numerator().logicalWidth(), denominator().logicalWidth()));
 
+    updateLayoutParameters();
     LayoutUnit verticalOffset = 0; // This is the top of the renderer.
-    LayoutPoint numeratorLocation(horizontalOffset(numerator(), m_numeratorAlign), verticalOffset);
+    LayoutPoint numeratorLocation(horizontalOffset(numerator(), element().numeratorAlignment()), verticalOffset);
     numerator().setLocation(numeratorLocation);
 
     LayoutUnit numeratorAscent = ascentForChild(numerator());
@@ -237,7 +200,7 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
         verticalOffset += std::max(m_lineThickness / 2 + m_denominatorGapMin, m_denominatorMinShiftDown - denominatorAscent);
     }
 
-    LayoutPoint denominatorLocation(horizontalOffset(denominator(), m_denominatorAlign), verticalOffset);
+    LayoutPoint denominatorLocation(horizontalOffset(denominator(), element().denominatorAlignment()), verticalOffset);
     denominator().setLocation(denominatorLocation);
 
     verticalOffset = std::max(verticalOffset + denominator().logicalHeight(), m_ascent + denominatorDescent); // This is the bottom of our renderer.

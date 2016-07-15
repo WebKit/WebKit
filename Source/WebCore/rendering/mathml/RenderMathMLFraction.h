@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLFractionElement.h"
 #include "MathMLInlineContainerElement.h"
 #include "RenderMathMLBlock.h"
 
@@ -38,10 +39,7 @@ class RenderMathMLFraction final : public RenderMathMLBlock {
 public:
     RenderMathMLFraction(MathMLInlineContainerElement&, RenderStyle&&);
 
-    MathMLInlineContainerElement& element() { return static_cast<MathMLInlineContainerElement&>(nodeForNonAnonymous()); }
     float relativeLineThickness() const { return m_defaultLineThickness ? m_lineThickness / m_defaultLineThickness : LayoutUnit(0); }
-
-    void updateFromElement() final;
 
 private:
     bool isRenderMathMLFraction() const final { return true; }
@@ -52,19 +50,15 @@ private:
     Optional<int> firstLineBaseline() const final;
     void paint(PaintInfo&, const LayoutPoint&) final;
     RenderMathMLOperator* unembellishedOperator() final;
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+
+    MathMLFractionElement& element() const { return static_cast<MathMLFractionElement&>(nodeForNonAnonymous()); }
 
     bool isStack() const { return !m_lineThickness; }
     bool isValid() const;
     RenderBox& numerator() const;
     RenderBox& denominator() const;
-    enum FractionAlignment {
-        FractionAlignmentCenter,
-        FractionAlignmentLeft,
-        FractionAlignmentRight
-    };
-    FractionAlignment parseAlignmentAttribute(const String& value);
-    LayoutUnit horizontalOffset(RenderBox&, FractionAlignment);
+    LayoutUnit horizontalOffset(RenderBox&, MathMLFractionElement::FractionAlignment);
+    void updateLayoutParameters();
 
     LayoutUnit m_ascent;
     LayoutUnit m_defaultLineThickness { 1 };
@@ -82,8 +76,6 @@ private:
         LayoutUnit m_denominatorMinShiftDown;
         LayoutUnit m_bottomShiftDown;
     };
-    FractionAlignment m_numeratorAlign { FractionAlignmentCenter };
-    FractionAlignment m_denominatorAlign { FractionAlignmentCenter };
 };
 
 } // namespace WebCore

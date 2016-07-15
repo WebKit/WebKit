@@ -7,7 +7,7 @@ annotation interfaceName=MathMLTextElement
 annotation-xml interfaceName=MathMLInlineContainerElement
 maction interfaceName=MathMLSelectElement
 math
-mfrac interfaceName=MathMLInlineContainerElement
+mfrac interfaceName=MathMLFractionElement
 mfenced interfaceName=MathMLInlineContainerElement
 msubsup interfaceName=MathMLInlineContainerElement
 merror interfaceName=MathMLInlineContainerElement
