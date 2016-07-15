@@ -1,3 +1,12 @@
+2016-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping test from r203288 on ios-simulator due to reliance upon mouse events.
+        https://bugs.webkit.org/show_bug.cgi?id=159818
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-07-15  Frederic Wang  <fwang@igalia.com>
 
         MathOperator: Improve alignment for vertical size variant
