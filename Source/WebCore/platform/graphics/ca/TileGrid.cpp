@@ -112,15 +112,15 @@ void TileGrid::setNeedsDisplayInRect(const IntRect& rect)
     if (repaintRectInTileCoords.height() < 2 * tileSize.height() && repaintRectInTileCoords.width() < 2 * tileSize.width()) {
         TileIndex topLeft;
         TileIndex bottomRight;
-        getTileIndexRangeForRect(repaintRectInTileCoords, topLeft, bottomRight);
-
-        for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
-            for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-                TileIndex tileIndex(x, y);
-                
-                TileMap::iterator it = m_tiles.find(tileIndex);
-                if (it != m_tiles.end())
-                    setTileNeedsDisplayInRect(tileIndex, it->value, repaintRectInTileCoords, m_primaryTileCoverageRect);
+        if (getTileIndexRangeForRect(repaintRectInTileCoords, topLeft, bottomRight)) {
+            for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
+                for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
+                    TileIndex tileIndex(x, y);
+                    
+                    TileMap::iterator it = m_tiles.find(tileIndex);
+                    if (it != m_tiles.end())
+                        setTileNeedsDisplayInRect(tileIndex, it->value, repaintRectInTileCoords, m_primaryTileCoverageRect);
+                }
             }
         }
         return;
@@ -199,12 +199,14 @@ bool TileGrid::tilesWouldChangeForCoverageRect(const FloatRect& coverageRect) co
     scaledRect.scale(m_scale);
     IntRect currentCoverageRectInTileCoords(enclosingIntRect(scaledRect));
 
+    IntRect tileCoverageRect;
     TileIndex topLeft;
     TileIndex bottomRight;
-    getTileIndexRangeForRect(currentCoverageRectInTileCoords, topLeft, bottomRight);
+    if (getTileIndexRangeForRect(currentCoverageRectInTileCoords, topLeft, bottomRight)) {
+        tileCoverageRect = rectForTileIndex(topLeft);
+        tileCoverageRect.unite(rectForTileIndex(bottomRight));
+    }
 
-    IntRect tileCoverageRect = rectForTileIndex(topLeft);
-    tileCoverageRect.unite(rectForTileIndex(bottomRight));
     return tileCoverageRect != m_primaryTileCoverageRect;
 }
 
@@ -231,11 +233,14 @@ IntRect TileGrid::rectForTileIndex(const TileIndex& tileIndex) const
     return rect;
 }
 
-void TileGrid::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight) const
+bool TileGrid::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight) const
 {
     IntRect clampedRect = m_controller.bounds();
     clampedRect.scale(m_scale);
     clampedRect.intersect(rect);
+    
+    if (clampedRect.isEmpty())
+        return false;
 
     auto tileSize = m_tileSize;
     if (clampedRect.x() >= 0)
@@ -253,6 +258,8 @@ void TileGrid::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft,
 
     int bottomYRatio = ceil((float)clampedRect.maxY() / tileSize.height());
     bottomRight.setY(std::max(bottomYRatio - 1, 0));
+    
+    return true;
 }
 
 unsigned TileGrid::blankPixelCount() const
@@ -348,6 +355,7 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
 
         PlatformCALayer* tileLayer = tileInfo.layer.get();
         IntRect tileRect = rectForTileIndex(tileIndex);
+
         if (tileRect.intersects(coverageRectInTileCoords)) {
             tileInfo.cohort = VisibleTileCohort;
             if (tileInfo.hasStaleContent) {
@@ -444,14 +452,14 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
 
         TileIndex topLeftForBounds;
         TileIndex bottomRightForBounds;
-        getTileIndexRangeForRect(boundsInTileCoords, topLeftForBounds, bottomRightForBounds);
-
-        Vector<TileIndex> tilesToRemove;
-        for (auto& index : m_tiles.keys()) {
-            if (index.y() < topLeftForBounds.y() || index.y() > bottomRightForBounds.y() || index.x() < topLeftForBounds.x() || index.x() > bottomRightForBounds.x())
-                tilesToRemove.append(index);
+        if (getTileIndexRangeForRect(boundsInTileCoords, topLeftForBounds, bottomRightForBounds)) {
+            Vector<TileIndex> tilesToRemove;
+            for (auto& index : m_tiles.keys()) {
+                if (index.y() < topLeftForBounds.y() || index.y() > bottomRightForBounds.y() || index.x() < topLeftForBounds.x() || index.x() > bottomRightForBounds.x())
+                    tilesToRemove.append(index);
+            }
+            removeTiles(tilesToRemove);
         }
-        removeTiles(tilesToRemove);
     }
 
     m_controller.didRevalidateTiles();
@@ -526,7 +534,8 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
 
     TileIndex topLeft;
     TileIndex bottomRight;
-    getTileIndexRangeForRect(rectInTileCoords, topLeft, bottomRight);
+    if (!getTileIndexRangeForRect(rectInTileCoords, topLeft, bottomRight))
+        return IntRect();
 
     TileCohort currCohort = nextTileCohort();
     unsigned tilesInCohort = 0;
@@ -581,10 +590,12 @@ IntRect TileGrid::extent() const
 {
     TileIndex topLeft;
     TileIndex bottomRight;
-    getTileIndexRangeForRect(m_primaryTileCoverageRect, topLeft, bottomRight);
+    if (getTileIndexRangeForRect(m_primaryTileCoverageRect, topLeft, bottomRight)) {
+        // Return index of top, left tile and the number of tiles across and down.
+        return IntRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x() + 1, bottomRight.y() - topLeft.y() + 1);
+    }
 
-    // Return index of top, left tile and the number of tiles across and down.
-    return IntRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x() + 1, bottomRight.y() - topLeft.y() + 1);
+    return IntRect();
 }
 
 double TileGrid::retainedTileBackingStoreMemory() const

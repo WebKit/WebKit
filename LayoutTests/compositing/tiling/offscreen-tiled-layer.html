@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            margin-top: 1800px;
+            height: 1000px;
+            width: 2200px;
+            background-color: blue;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            if (window.internals) {
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            }
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<pre id="layers"></pre>
+    <div class="composited box">
+        Some text here.
+    </div>
+</body>
+</html>

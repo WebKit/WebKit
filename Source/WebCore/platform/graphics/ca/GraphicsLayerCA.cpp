@@ -3496,7 +3496,7 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
 
     if (behavior & LayerTreeAsTextDebug) {
         writeIndent(textStream, indent + 1);
-        textStream << "(acceleratetes drawing " << m_acceleratesDrawing << ")\n";
+        textStream << "(accelerates drawing " << m_acceleratesDrawing << ")\n";
         writeIndent(textStream, indent + 1);
         textStream << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
     }
