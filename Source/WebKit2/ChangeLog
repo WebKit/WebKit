@@ -1,3 +1,15 @@
+2016-07-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable custom elements in Safari Tech Preview
+        https://bugs.webkit.org/show_bug.cgi?id=159829
+
+        Reviewed by Chris Dumez.
+ 
+        Disable custom elements API in Safari Technology Preview. Our implementation is so out of sync
+        with the latest spec that it's actively harmful to have this feature enabled.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-07-15  Jer Noble  <jer.noble@apple.com>
 
         Full screen ePub embedded video is playing on 1/4 screen, cut off
