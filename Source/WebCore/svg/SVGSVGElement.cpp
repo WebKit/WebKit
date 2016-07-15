@@ -316,7 +316,7 @@ Ref<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(const FloatRect&
         if (checkFunction(&element, rect))
             elements.append(element);
     }
-    return RefPtr<NodeList>(StaticElementList::adopt(elements)).releaseNonNull();
+    return StaticElementList::create(WTFMove(elements));
 }
 
 Ref<NodeList> SVGSVGElement::getIntersectionList(const FloatRect& rect, SVGElement* referenceElement)

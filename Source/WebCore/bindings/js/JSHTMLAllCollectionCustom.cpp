@@ -47,7 +47,7 @@ static JSValue namedItems(ExecState& state, JSHTMLAllCollection* collection, Pro
 
     // FIXME: HTML5 specification says this should be a HTMLCollection.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#htmlallcollection
-    return toJS(&state, collection->globalObject(), StaticElementList::adopt(namedItems));
+    return toJS(&state, collection->globalObject(), StaticElementList::create(WTFMove(namedItems)));
 }
 
 // HTMLAllCollections are strange objects, they support both get and call.

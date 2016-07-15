@@ -83,7 +83,7 @@ private:
     static NodeList* lazilyInitializeEmptyNodeList(RefPtr<NodeList>& nodeList)
     {
         if (!nodeList)
-            nodeList = StaticNodeList::createEmpty();
+            nodeList = StaticNodeList::create();
         return nodeList.get();
     }
 

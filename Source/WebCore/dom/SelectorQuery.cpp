@@ -165,7 +165,7 @@ RefPtr<NodeList> SelectorDataList::queryAll(ContainerNode& rootNode) const
 {
     Vector<Ref<Element>> result;
     execute<AllElementExtractorSelectorQueryTrait>(rootNode, result);
-    return StaticElementList::adopt(result);
+    return StaticElementList::create(WTFMove(result));
 }
 
 struct SingleElementExtractorSelectorQueryTrait {

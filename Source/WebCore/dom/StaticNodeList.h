@@ -39,48 +39,36 @@ namespace WebCore {
 
 class WEBCORE_EXPORT StaticNodeList final : public NodeList {
 public:
-    static Ref<StaticNodeList> adopt(Vector<Ref<Node>>& nodes)
+    static Ref<StaticNodeList> create(Vector<Ref<Node>>&& nodes = { })
     {
-        Ref<StaticNodeList> nodeList = adoptRef(*new StaticNodeList);
-        nodeList->m_nodes.swap(nodes);
-        return nodeList;
-    }
-
-    static Ref<StaticNodeList> createEmpty()
-    {
-        return adoptRef(*new StaticNodeList);
+        return adoptRef(*new StaticNodeList(WTFMove(nodes)));
     }
 
     unsigned length() const override;
     Node* item(unsigned index) const override;
 
 private:
-    StaticNodeList() { }
+    StaticNodeList(Vector<Ref<Node>>&& nodes)
+        : m_nodes(WTFMove(nodes))
+    { }
 
     Vector<Ref<Node>> m_nodes;
 };
 
 class StaticElementList final : public NodeList {
 public:
-    static Ref<StaticElementList> adopt(Vector<Ref<Element>>& elements)
+    static Ref<StaticElementList> create(Vector<Ref<Element>>&& elements = { })
     {
-        Ref<StaticElementList> nodeList = adoptRef(*new StaticElementList);
-        nodeList->m_elements.swap(elements);
-        return nodeList;
-    }
-
-    static Ref<StaticElementList> createEmpty()
-    {
-        return adoptRef(*new StaticElementList);
+        return adoptRef(*new StaticElementList(WTFMove(elements)));
     }
 
     unsigned length() const override;
     Element* item(unsigned index) const override;
 
 private:
-    StaticElementList()
-    {
-    }
+    StaticElementList(Vector<Ref<Element>>&& elements)
+        : m_elements(WTFMove(elements))
+    { }
 
     Vector<Ref<Element>> m_elements;
 };

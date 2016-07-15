@@ -1455,7 +1455,7 @@ RefPtr<NodeList> Internals::nodesFromRect(Document& document, int centerX, int c
             matches.uncheckedAppend(*node);
     }
 
-    return StaticNodeList::adopt(matches);
+    return StaticNodeList::create(WTFMove(matches));
 }
 
 class GetCallerCodeBlockFunctor {

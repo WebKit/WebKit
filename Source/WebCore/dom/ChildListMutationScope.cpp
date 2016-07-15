@@ -127,7 +127,7 @@ void ChildListMutationAccumulator::enqueueMutationRecord()
     ASSERT(hasObservers());
     ASSERT(!isEmpty());
 
-    auto record = MutationRecord::createChildList(m_target, StaticNodeList::adopt(m_addedNodes), StaticNodeList::adopt(m_removedNodes), WTFMove(m_previousSibling), WTFMove(m_nextSibling));
+    auto record = MutationRecord::createChildList(m_target, StaticNodeList::create(WTFMove(m_addedNodes)), StaticNodeList::create(WTFMove(m_removedNodes)), WTFMove(m_previousSibling), WTFMove(m_nextSibling));
     m_observers->enqueueMutationRecord(WTFMove(record));
     m_lastAdded = nullptr;
     ASSERT(isEmpty());
