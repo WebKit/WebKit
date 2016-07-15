@@ -150,7 +150,7 @@ const AtomicString& HTMLDocument::bgColor() const
 void HTMLDocument::setBgColor(const String& value)
 {
     if (auto* bodyElement = body())
-        bodyElement->setAttribute(bgcolorAttr, value);
+        bodyElement->setAttributeWithoutSynchronization(bgcolorAttr, value);
 }
 
 const AtomicString& HTMLDocument::fgColor() const
@@ -164,7 +164,7 @@ const AtomicString& HTMLDocument::fgColor() const
 void HTMLDocument::setFgColor(const String& value)
 {
     if (auto* bodyElement = body())
-        bodyElement->setAttribute(textAttr, value);
+        bodyElement->setAttributeWithoutSynchronization(textAttr, value);
 }
 
 const AtomicString& HTMLDocument::alinkColor() const
@@ -178,7 +178,7 @@ const AtomicString& HTMLDocument::alinkColor() const
 void HTMLDocument::setAlinkColor(const String& value)
 {
     if (auto* bodyElement = body())
-        bodyElement->setAttribute(alinkAttr, value);
+        bodyElement->setAttributeWithoutSynchronization(alinkAttr, value);
 }
 
 const AtomicString& HTMLDocument::linkColor() const
@@ -192,7 +192,7 @@ const AtomicString& HTMLDocument::linkColor() const
 void HTMLDocument::setLinkColor(const String& value)
 {
     if (auto* bodyElement = body())
-        bodyElement->setAttribute(linkAttr, value);
+        bodyElement->setAttributeWithoutSynchronization(linkAttr, value);
 }
 
 const AtomicString& HTMLDocument::vlinkColor() const
@@ -206,7 +206,7 @@ const AtomicString& HTMLDocument::vlinkColor() const
 void HTMLDocument::setVlinkColor(const String& value)
 {
     if (auto* bodyElement = body())
-        bodyElement->setAttribute(vlinkAttr, value);
+        bodyElement->setAttributeWithoutSynchronization(vlinkAttr, value);
 }
 
 void HTMLDocument::captureEvents()

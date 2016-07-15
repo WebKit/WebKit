@@ -166,7 +166,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
             || downcast<HTMLInputElement>(*focusedElement).isSearchField())))) {
         if (direction == NaturalWritingDirection)
             return;
-        downcast<HTMLElement>(*focusedElement).setAttribute(alignAttr, newValue);
+        downcast<HTMLElement>(*focusedElement).setAttributeWithoutSynchronization(alignAttr, newValue);
         m_frame.document()->updateStyleIfNeeded();
         return;
     }
@@ -490,7 +490,7 @@ bool Editor::WebContentReader::readURL(const URL& url, const String&)
         }
     } else {
         auto anchor = frame.document()->createElement(HTMLNames::aTag, false);
-        anchor->setAttribute(HTMLNames::hrefAttr, url.string());
+        anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
         anchor->appendChild(frame.document()->createTextNode([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]));
 
         auto newFragment = frame.document()->createDocumentFragment();

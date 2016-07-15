@@ -144,7 +144,7 @@ bool RenderDetailsMarker::isOpen() const
         if (!renderer->node())
             continue;
         if (is<HTMLDetailsElement>(*renderer->node()))
-            return !downcast<HTMLDetailsElement>(*renderer->node()).getAttribute(openAttr).isNull();
+            return !downcast<HTMLDetailsElement>(*renderer->node()).fastGetAttribute(openAttr).isNull();
         if (is<HTMLInputElement>(*renderer->node()))
             return true;
     }

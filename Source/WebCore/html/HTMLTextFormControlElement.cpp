@@ -506,7 +506,7 @@ void HTMLTextFormControlElement::readOnlyAttributeChanged()
 void HTMLTextFormControlElement::updateInnerTextElementEditability()
 {
     if (TextControlInnerTextElement* innerText = innerTextElement())
-        innerText->setAttribute(contenteditableAttr, isDisabledOrReadOnly() ? "false" : "plaintext-only");
+        innerText->setAttributeWithoutSynchronization(contenteditableAttr, isDisabledOrReadOnly() ? "false" : "plaintext-only");
 }
 
 bool HTMLTextFormControlElement::lastChangeWasUserEdit() const

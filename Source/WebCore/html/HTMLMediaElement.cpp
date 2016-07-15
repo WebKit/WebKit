@@ -996,7 +996,7 @@ MediaError* HTMLMediaElement::error() const
 
 void HTMLMediaElement::setSrc(const String& url)
 {
-    setAttribute(srcAttr, url);
+    setAttributeWithoutSynchronization(srcAttr, url);
 }
 
 #if ENABLE(MEDIA_STREAM)
@@ -3047,7 +3047,7 @@ void HTMLMediaElement::setPreload(const String& preload)
         return;
 #endif
 
-    setAttribute(preloadAttr, preload);
+    setAttributeWithoutSynchronization(preloadAttr, preload);
 }
 
 void HTMLMediaElement::play(PlayPromise&& promise)

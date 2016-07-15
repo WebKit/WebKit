@@ -81,7 +81,7 @@ const AtomicString& SVGStyleElement::media() const
 
 void SVGStyleElement::setMedia(const AtomicString& media, ExceptionCode&)
 {
-    setAttribute(SVGNames::mediaAttr, media);
+    setAttributeWithoutSynchronization(SVGNames::mediaAttr, media);
 }
 
 String SVGStyleElement::title() const
@@ -91,7 +91,7 @@ String SVGStyleElement::title() const
 
 void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode&)
 {
-    setAttribute(SVGNames::titleAttr, title);
+    setAttributeWithoutSynchronization(SVGNames::titleAttr, title);
 }
 
 void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

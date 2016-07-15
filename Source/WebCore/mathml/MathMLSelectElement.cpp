@@ -238,7 +238,7 @@ void MathMLSelectElement::toggle()
 
     // We update the attribute value of the selection attribute.
     // This will also call MathMLSelectElement::attributeChanged to update the selected child.
-    setAttribute(MathMLNames::selectionAttr, AtomicString::number(newSelectedChildIndex));
+    setAttributeWithoutSynchronization(MathMLNames::selectionAttr, AtomicString::number(newSelectedChildIndex));
 }
 
 }

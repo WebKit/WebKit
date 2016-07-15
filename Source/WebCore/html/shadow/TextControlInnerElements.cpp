@@ -212,9 +212,9 @@ inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document& 
 {
     setPseudo(AtomicString("-webkit-search-cancel-button", AtomicString::ConstructFromLiteral));
 #if !PLATFORM(IOS)
-    setAttribute(aria_labelAttr, AXSearchFieldCancelButtonText());
+    setAttributeWithoutSynchronization(aria_labelAttr, AXSearchFieldCancelButtonText());
 #endif
-    setAttribute(roleAttr, AtomicString("button", AtomicString::ConstructFromLiteral));
+    setAttributeWithoutSynchronization(roleAttr, AtomicString("button", AtomicString::ConstructFromLiteral));
 }
 
 Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Document& document)

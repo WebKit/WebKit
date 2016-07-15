@@ -81,7 +81,7 @@ RefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document& do
     if (!value.isNull())
         element->setValue(value);
     if (defaultSelected)
-        element->setAttribute(selectedAttr, emptyAtom);
+        element->setAttributeWithoutSynchronization(selectedAttr, emptyAtom);
     element->setSelected(selected);
 
     return WTFMove(element);
@@ -202,7 +202,7 @@ String HTMLOptionElement::value() const
 
 void HTMLOptionElement::setValue(const String& value)
 {
-    setAttribute(valueAttr, value);
+    setAttributeWithoutSynchronization(valueAttr, value);
 }
 
 bool HTMLOptionElement::selected()
@@ -280,7 +280,7 @@ String HTMLOptionElement::label() const
 
 void HTMLOptionElement::setLabel(const String& label)
 {
-    setAttribute(labelAttr, label);
+    setAttributeWithoutSynchronization(labelAttr, label);
 }
 
 void HTMLOptionElement::willResetComputedStyle()

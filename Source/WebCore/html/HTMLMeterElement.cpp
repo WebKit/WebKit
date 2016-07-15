@@ -80,7 +80,7 @@ void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 double HTMLMeterElement::min() const
 {
-    return parseToDoubleForNumberType(getAttribute(minAttr), 0);
+    return parseToDoubleForNumberType(fastGetAttribute(minAttr), 0);
 }
 
 void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
@@ -89,12 +89,12 @@ void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(minAttr, AtomicString::number(min));
+    setAttributeWithoutSynchronization(minAttr, AtomicString::number(min));
 }
 
 double HTMLMeterElement::max() const
 {
-    return std::max(parseToDoubleForNumberType(getAttribute(maxAttr), std::max(1.0, min())), min());
+    return std::max(parseToDoubleForNumberType(fastGetAttribute(maxAttr), std::max(1.0, min())), min());
 }
 
 void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
@@ -103,12 +103,12 @@ void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(maxAttr, AtomicString::number(max));
+    setAttributeWithoutSynchronization(maxAttr, AtomicString::number(max));
 }
 
 double HTMLMeterElement::value() const
 {
-    double value = parseToDoubleForNumberType(getAttribute(valueAttr), 0);
+    double value = parseToDoubleForNumberType(fastGetAttribute(valueAttr), 0);
     return std::min(std::max(value, min()), max());
 }
 
@@ -118,12 +118,12 @@ void HTMLMeterElement::setValue(double value, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(valueAttr, AtomicString::number(value));
+    setAttributeWithoutSynchronization(valueAttr, AtomicString::number(value));
 }
 
 double HTMLMeterElement::low() const
 {
-    double low = parseToDoubleForNumberType(getAttribute(lowAttr), min());
+    double low = parseToDoubleForNumberType(fastGetAttribute(lowAttr), min());
     return std::min(std::max(low, min()), max());
 }
 
@@ -133,12 +133,12 @@ void HTMLMeterElement::setLow(double low, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(lowAttr, AtomicString::number(low));
+    setAttributeWithoutSynchronization(lowAttr, AtomicString::number(low));
 }
 
 double HTMLMeterElement::high() const
 {
-    double high = parseToDoubleForNumberType(getAttribute(highAttr), max());
+    double high = parseToDoubleForNumberType(fastGetAttribute(highAttr), max());
     return std::min(std::max(high, low()), max());
 }
 
@@ -148,12 +148,12 @@ void HTMLMeterElement::setHigh(double high, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(highAttr, AtomicString::number(high));
+    setAttributeWithoutSynchronization(highAttr, AtomicString::number(high));
 }
 
 double HTMLMeterElement::optimum() const
 {
-    double optimum = parseToDoubleForNumberType(getAttribute(optimumAttr), (max() + min()) / 2);
+    double optimum = parseToDoubleForNumberType(fastGetAttribute(optimumAttr), (max() + min()) / 2);
     return std::min(std::max(optimum, min()), max());
 }
 
@@ -163,7 +163,7 @@ void HTMLMeterElement::setOptimum(double optimum, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(optimumAttr, AtomicString::number(optimum));
+    setAttributeWithoutSynchronization(optimumAttr, AtomicString::number(optimum));
 }
 
 HTMLMeterElement::GaugeRegion HTMLMeterElement::gaugeRegion() const

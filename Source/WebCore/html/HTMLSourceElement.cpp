@@ -91,27 +91,27 @@ void HTMLSourceElement::removedFrom(ContainerNode& removalRoot)
 
 void HTMLSourceElement::setSrc(const String& url)
 {
-    setAttribute(srcAttr, url);
+    setAttributeWithoutSynchronization(srcAttr, url);
 }
 
 String HTMLSourceElement::media() const
 {
-    return getAttribute(mediaAttr);
+    return fastGetAttribute(mediaAttr);
 }
 
 void HTMLSourceElement::setMedia(const String& media)
 {
-    setAttribute(mediaAttr, media);
+    setAttributeWithoutSynchronization(mediaAttr, media);
 }
 
 String HTMLSourceElement::type() const
 {
-    return getAttribute(typeAttr);
+    return fastGetAttribute(typeAttr);
 }
 
 void HTMLSourceElement::setType(const String& type)
 {
-    setAttribute(typeAttr, type);
+    setAttributeWithoutSynchronization(typeAttr, type);
 }
 
 void HTMLSourceElement::scheduleErrorEvent()

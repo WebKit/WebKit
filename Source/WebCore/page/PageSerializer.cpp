@@ -239,7 +239,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         } else if (is<HTMLLinkElement>(element)) {
             HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(element);
             if (CSSStyleSheet* sheet = linkElement.sheet()) {
-                URL url = document->completeURL(linkElement.getAttribute(HTMLNames::hrefAttr));
+                URL url = document->completeURL(linkElement.fastGetAttribute(HTMLNames::hrefAttr));
                 serializeCSSStyleSheet(sheet, url);
                 ASSERT(m_resourceURLs.contains(url));
             }

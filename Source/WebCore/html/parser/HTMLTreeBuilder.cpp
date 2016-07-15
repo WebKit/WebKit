@@ -470,7 +470,7 @@ void HTMLTreeBuilder::processIsindexStartTagForInBody(AtomicHTMLToken& token)
     notImplemented(); // Acknowledge self-closing flag
     processFakeStartTag(formTag);
     if (Attribute* actionAttribute = findAttribute(token.attributes(), actionAttr))
-        m_tree.form()->setAttribute(actionAttr, actionAttribute->value());
+        m_tree.form()->setAttributeWithoutSynchronization(actionAttr, actionAttribute->value());
     processFakeStartTag(hrTag);
     processFakeStartTag(labelTag);
     if (Attribute* promptAttribute = findAttribute(token.attributes(), promptAttr))

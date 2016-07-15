@@ -85,7 +85,7 @@ String HTMLFormControlElement::formEnctype() const
 
 void HTMLFormControlElement::setFormEnctype(const String& value)
 {
-    setAttribute(formenctypeAttr, value);
+    setAttributeWithoutSynchronization(formenctypeAttr, value);
 }
 
 String HTMLFormControlElement::formMethod() const
@@ -98,7 +98,7 @@ String HTMLFormControlElement::formMethod() const
 
 void HTMLFormControlElement::setFormMethod(const String& value)
 {
-    setAttribute(formmethodAttr, value);
+    setAttributeWithoutSynchronization(formmethodAttr, value);
 }
 
 bool HTMLFormControlElement::formNoValidate() const
@@ -580,7 +580,7 @@ bool HTMLFormControlElement::autocorrect() const
 
 void HTMLFormControlElement::setAutocorrect(bool autocorrect)
 {
-    setAttribute(autocorrectAttr, autocorrect ? AtomicString("on", AtomicString::ConstructFromLiteral) : AtomicString("off", AtomicString::ConstructFromLiteral));
+    setAttributeWithoutSynchronization(autocorrectAttr, autocorrect ? AtomicString("on", AtomicString::ConstructFromLiteral) : AtomicString("off", AtomicString::ConstructFromLiteral));
 }
 
 WebAutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
@@ -600,7 +600,7 @@ const AtomicString& HTMLFormControlElement::autocapitalize() const
 
 void HTMLFormControlElement::setAutocapitalize(const AtomicString& value)
 {
-    setAttribute(autocapitalizeAttr, value);
+    setAttributeWithoutSynchronization(autocapitalizeAttr, value);
 }
 
 #endif
@@ -621,7 +621,7 @@ String HTMLFormControlElement::autocomplete() const
 
 void HTMLFormControlElement::setAutocomplete(const String& value)
 {
-    setAttribute(autocompleteAttr, value);
+    setAttributeWithoutSynchronization(autocompleteAttr, value);
 }
 
 AutofillMantle HTMLFormControlElement::autofillMantle() const

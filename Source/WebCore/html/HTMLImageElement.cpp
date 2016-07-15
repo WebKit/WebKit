@@ -375,7 +375,7 @@ int HTMLImageElement::width(bool ignorePendingStylesheets)
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
         bool ok;
-        int width = getAttribute(widthAttr).toInt(&ok);
+        int width = fastGetAttribute(widthAttr).toInt(&ok);
         if (ok)
             return width;
 
@@ -401,7 +401,7 @@ int HTMLImageElement::height(bool ignorePendingStylesheets)
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
         bool ok;
-        int height = getAttribute(heightAttr).toInt(&ok);
+        int height = fastGetAttribute(heightAttr).toInt(&ok);
         if (ok)
             return height;
 
@@ -507,7 +507,7 @@ URL HTMLImageElement::src() const
 
 void HTMLImageElement::setSrc(const String& value)
 {
-    setAttribute(srcAttr, value);
+    setAttributeWithoutSynchronization(srcAttr, value);
 }
 
 void HTMLImageElement::setWidth(int value)

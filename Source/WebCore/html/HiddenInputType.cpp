@@ -59,7 +59,7 @@ FormControlState HiddenInputType::saveFormControlState() const
 
 void HiddenInputType::restoreFormControlState(const FormControlState& state)
 {
-    element().setAttribute(valueAttr, state[0]);
+    element().setAttributeWithoutSynchronization(valueAttr, state[0]);
 }
 
 bool HiddenInputType::supportsValidation() const
@@ -89,7 +89,7 @@ bool HiddenInputType::storesValueSeparateFromAttribute()
 
 void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
 {
-    element().setAttribute(valueAttr, sanitizedValue);
+    element().setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
 }
 
 bool HiddenInputType::isHiddenType() const

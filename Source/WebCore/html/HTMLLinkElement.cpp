@@ -478,7 +478,7 @@ void HTMLLinkElement::handleClick(Event& event)
 
 URL HTMLLinkElement::href() const
 {
-    return document().completeURL(getAttribute(hrefAttr));
+    return document().completeURL(fastGetAttribute(hrefAttr));
 }
 
 const AtomicString& HTMLLinkElement::rel() const
@@ -488,12 +488,12 @@ const AtomicString& HTMLLinkElement::rel() const
 
 String HTMLLinkElement::target() const
 {
-    return getAttribute(targetAttr);
+    return fastGetAttribute(targetAttr);
 }
 
 const AtomicString& HTMLLinkElement::type() const
 {
-    return getAttribute(typeAttr);
+    return fastGetAttribute(typeAttr);
 }
 
 Optional<LinkIconType> HTMLLinkElement::iconType() const

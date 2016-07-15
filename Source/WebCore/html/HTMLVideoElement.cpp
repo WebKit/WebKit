@@ -213,7 +213,7 @@ bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
 
 const AtomicString& HTMLVideoElement::imageSourceURL() const
 {
-    const AtomicString& url = getAttribute(posterAttr);
+    const AtomicString& url = fastGetAttribute(posterAttr);
     if (!stripLeadingAndTrailingHTMLSpaces(url).isEmpty())
         return url;
     return m_defaultPosterURL;

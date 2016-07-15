@@ -551,13 +551,13 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 
         auto child = WebVTTElement::create(nodeType, document);
         if (!m_token.classes().isEmpty())
-            child->setAttribute(classAttr, m_token.classes());
+            child->setAttributeWithoutSynchronization(classAttr, m_token.classes());
 
         if (nodeType == WebVTTNodeTypeVoice)
-            child->setAttribute(WebVTTElement::voiceAttributeName(), m_token.annotation());
+            child->setAttributeWithoutSynchronization(WebVTTElement::voiceAttributeName(), m_token.annotation());
         else if (nodeType == WebVTTNodeTypeLanguage) {
             m_languageStack.append(m_token.annotation());
-            child->setAttribute(WebVTTElement::langAttributeName(), m_languageStack.last());
+            child->setAttributeWithoutSynchronization(WebVTTElement::langAttributeName(), m_languageStack.last());
         }
         if (!m_languageStack.isEmpty())
             child->setLanguage(m_languageStack.last());

@@ -139,7 +139,7 @@ String HTMLScriptElement::charsetAttributeValue() const
 
 String HTMLScriptElement::typeAttributeValue() const
 {
-    return getAttribute(typeAttr).string();
+    return fastGetAttribute(typeAttr).string();
 }
 
 String HTMLScriptElement::languageAttributeValue() const

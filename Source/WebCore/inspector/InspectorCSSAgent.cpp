@@ -779,7 +779,7 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
         return nullptr;
 
     Ref<Element> styleElement = document.createElement(HTMLNames::styleTag, false);
-    styleElement->setAttribute(HTMLNames::typeAttr, "text/css");
+    styleElement->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomicString("text/css", AtomicString::ConstructFromLiteral));
 
     ContainerNode* targetNode;
     // HEAD is absent in ImageDocuments, for example.

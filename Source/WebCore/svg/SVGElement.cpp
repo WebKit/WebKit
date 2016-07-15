@@ -374,7 +374,7 @@ String SVGElement::xmlbase() const
 
 void SVGElement::setXmlbase(const String& value, ExceptionCode&)
 {
-    setAttribute(XMLNames::baseAttr, value);
+    setAttributeWithoutSynchronization(XMLNames::baseAttr, value);
 }
 
 void SVGElement::removedFrom(ContainerNode& rootParent)

@@ -107,7 +107,7 @@ const AtomicString& SVGSVGElement::contentScriptType() const
 
 void SVGSVGElement::setContentScriptType(const AtomicString& type)
 {
-    setAttribute(SVGNames::contentScriptTypeAttr, type);
+    setAttributeWithoutSynchronization(SVGNames::contentScriptTypeAttr, type);
 }
 
 const AtomicString& SVGSVGElement::contentStyleType() const
@@ -119,7 +119,7 @@ const AtomicString& SVGSVGElement::contentStyleType() const
 
 void SVGSVGElement::setContentStyleType(const AtomicString& type)
 {
-    setAttribute(SVGNames::contentStyleTypeAttr, type);
+    setAttributeWithoutSynchronization(SVGNames::contentStyleTypeAttr, type);
 }
 
 FloatRect SVGSVGElement::viewport() const

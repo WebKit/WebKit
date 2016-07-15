@@ -98,7 +98,7 @@ URL HTMLBaseElement::href() const
 
 void HTMLBaseElement::setHref(const AtomicString& value)
 {
-    setAttribute(hrefAttr, value);
+    setAttributeWithoutSynchronization(hrefAttr, value);
 }
 
 }

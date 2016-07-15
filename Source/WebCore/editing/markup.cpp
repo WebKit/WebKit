@@ -796,7 +796,7 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
         fragment->appendChild(document.createTextNode(string), ASSERT_NO_EXCEPTION);
         if (string.endsWith('\n')) {
             auto element = HTMLBRElement::create(document);
-            element->setAttribute(classAttr, AppleInterchangeNewline);            
+            element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline);
             fragment->appendChild(element, ASSERT_NO_EXCEPTION);
         }
         return fragment;
@@ -828,7 +828,7 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
         if (s.isEmpty() && i + 1 == numLines) {
             // For last line, use the "magic BR" rather than a P.
             element = HTMLBRElement::create(document);
-            element->setAttribute(classAttr, AppleInterchangeNewline);
+            element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline);
         } else if (useLineBreak) {
             element = HTMLBRElement::create(document);
             fillContainerFromString(fragment, s);

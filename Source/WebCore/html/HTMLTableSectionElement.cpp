@@ -117,7 +117,7 @@ const AtomicString& HTMLTableSectionElement::align() const
 
 void HTMLTableSectionElement::setAlign(const AtomicString& value)
 {
-    setAttribute(alignAttr, value);
+    setAttributeWithoutSynchronization(alignAttr, value);
 }
 
 const AtomicString& HTMLTableSectionElement::ch() const
@@ -127,17 +127,17 @@ const AtomicString& HTMLTableSectionElement::ch() const
 
 void HTMLTableSectionElement::setCh(const AtomicString& value)
 {
-    setAttribute(charAttr, value);
+    setAttributeWithoutSynchronization(charAttr, value);
 }
 
 const AtomicString& HTMLTableSectionElement::chOff() const
 {
-    return getAttribute(charoffAttr);
+    return fastGetAttribute(charoffAttr);
 }
 
 void HTMLTableSectionElement::setChOff(const AtomicString& value)
 {
-    setAttribute(charoffAttr, value);
+    setAttributeWithoutSynchronization(charoffAttr, value);
 }
 
 const AtomicString& HTMLTableSectionElement::vAlign() const
@@ -147,7 +147,7 @@ const AtomicString& HTMLTableSectionElement::vAlign() const
 
 void HTMLTableSectionElement::setVAlign(const AtomicString& value)
 {
-    setAttribute(valignAttr, value);
+    setAttributeWithoutSynchronization(valignAttr, value);
 }
 
 Ref<HTMLCollection> HTMLTableSectionElement::rows()

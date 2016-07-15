@@ -598,7 +598,7 @@ bool Editor::WebContentReader::readURL(const URL& url, const String& title)
         return false;
 
     auto anchor = frame.document()->createElement(HTMLNames::aTag, false);
-    anchor->setAttribute(HTMLNames::hrefAttr, url.string());
+    anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
     anchor->appendChild(frame.document()->createTextNode([title precomposedStringWithCanonicalMapping]));
 
     fragment = frame.document()->createDocumentFragment();

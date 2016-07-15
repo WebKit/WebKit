@@ -95,7 +95,7 @@ RenderPtr<RenderElement> HTMLDetailsElement::createElementRenderer(RenderStyle&&
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     auto summarySlot = HTMLSlotElement::create(slotTag, document());
-    summarySlot->setAttribute(nameAttr, summarySlotName());
+    summarySlot->setAttributeWithoutSynchronization(nameAttr, summarySlotName());
     m_summarySlot = summarySlot.ptr();
 
     auto defaultSummary = HTMLSummaryElement::create(summaryTag, document());
@@ -143,7 +143,7 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 void HTMLDetailsElement::toggleOpen()
 {
-    setAttribute(openAttr, m_isOpen ? nullAtom : emptyAtom);
+    setAttributeWithoutSynchronization(openAttr, m_isOpen ? nullAtom : emptyAtom);
 
     // We need to post to the document because toggling this element will delete it.
     if (AXObjectCache* cache = document().existingAXObjectCache())

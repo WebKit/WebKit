@@ -82,7 +82,7 @@ static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement* element, Sho
         return true;
 
     unsigned matchedAttributes = 0;
-    if (element->getAttribute(classAttr) == styleSpanClassString())
+    if (element->fastGetAttribute(classAttr) == styleSpanClassString())
         matchedAttributes++;
     if (element->hasAttribute(styleAttr) && (shouldStyleAttributeBeEmpty == AllowNonEmptyStyleAttribute
         || !element->inlineStyle() || element->inlineStyle()->isEmpty()))
@@ -114,7 +114,7 @@ bool isEmptyFontTag(const Element* element, ShouldStyleAttributeBeEmpty shouldSt
     return hasNoAttributeOrOnlyStyleAttribute(downcast<HTMLFontElement>(element), shouldStyleAttributeBeEmpty);
 }
 
-static RefPtr<Element> createFontElement(Document& document)
+static RefPtr<HTMLElement> createFontElement(Document& document)
 {
     return createHTMLElement(document, fontTag);
 }
@@ -1461,13 +1461,13 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
             if (styleChange.applyFontSize())
                 setNodeAttribute(fontContainer, sizeAttr, styleChange.fontSize());
         } else {
-            RefPtr<Element> fontElement = createFontElement(document());
+            auto fontElement = createFontElement(document());
             if (styleChange.applyFontColor())
-                fontElement->setAttribute(colorAttr, styleChange.fontColor());
+                fontElement->setAttributeWithoutSynchronization(colorAttr, styleChange.fontColor());
             if (styleChange.applyFontFace())
-                fontElement->setAttribute(faceAttr, styleChange.fontFace());
+                fontElement->setAttributeWithoutSynchronization(faceAttr, styleChange.fontFace());
             if (styleChange.applyFontSize())
-                fontElement->setAttribute(sizeAttr, styleChange.fontSize());
+                fontElement->setAttributeWithoutSynchronization(sizeAttr, styleChange.fontSize());
             surroundNodeRangeWithElement(startNode, endNode, fontElement.get());
         }
     }
