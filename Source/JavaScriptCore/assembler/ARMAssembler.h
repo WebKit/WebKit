@@ -706,6 +706,18 @@ namespace JSC {
             m_buffer.putInt(NOP);
         }
 
+        static void fillNops(void* base, size_t size, bool isCopyingToExecutableMemory)
+        {
+            UNUSED_PARAM(isCopyingToExecutableMemory);
+            RELEASE_ASSERT(!(size % sizeof(int32_t)));
+
+            int32_t* ptr = static_cast<int32_t*>(base);
+            const size_t num32s = size / sizeof(int32_t);
+            const int32_t insn = NOP;
+            for (size_t i = 0; i < num32s; i++)
+                *ptr++ = insn;
+        }
+
         void dmbSY()
         {
             m_buffer.putInt(DMB_SY);

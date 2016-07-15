@@ -910,6 +910,14 @@ public:
         return PatchableJump(jump);
     }
 
+    PatchableJump patchableBranch32(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        internalCompare32(address, imm);
+        Jump jump(m_assembler.loadBranchTarget(ARMRegisters::S1, ARMCondition(cond), false));
+        m_assembler.bx(ARMRegisters::S1, ARMCondition(cond));
+        return PatchableJump(jump);
+    }
+
     void breakpoint()
     {
         m_assembler.bkpt(0);
@@ -1530,6 +1538,16 @@ private:
             m_assembler.cmn(left, tmp);
         else
             m_assembler.cmp(left, m_assembler.getImm(right.m_value, ARMRegisters::S0));
+    }
+
+    void internalCompare32(Address left, TrustedImm32 right)
+    {
+        ARMWord tmp = (static_cast<unsigned>(right.m_value) == 0x80000000) ? ARMAssembler::InvalidImmediate : m_assembler.getOp2(-right.m_value);
+        load32(left, ARMRegisters::S1);
+        if (tmp != ARMAssembler::InvalidImmediate)
+            m_assembler.cmn(ARMRegisters::S1, tmp);
+        else
+            m_assembler.cmp(ARMRegisters::S1, m_assembler.getImm(right.m_value, ARMRegisters::S0));
     }
 
     static void linkCall(void* code, Call call, FunctionPtr function)

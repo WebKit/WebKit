@@ -1,3 +1,16 @@
+2016-07-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add new functions to ARMAssembler after r202214
+        https://bugs.webkit.org/show_bug.cgi?id=159713
+
+        Reviewed by Saam Barati.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::fillNops):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::patchableBranch32):
+        (JSC::MacroAssemblerARM::internalCompare32):
+
 2016-07-15  Mark Lam  <mark.lam@apple.com>
 
         Stack overflow error for deeply nested classes.
