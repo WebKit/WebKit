@@ -1,3 +1,16 @@
+2016-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        Allow RefPtrs of const RefCounted types
+        https://bugs.webkit.org/show_bug.cgi?id=158269
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::ConstRefCounted::create):
+        (TestWebKitAPI::returnConstRefCountedRef):
+        (TestWebKitAPI::returnRefCountedRef):
+
 2016-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Test WTF.StringViewIterators is crashing since r203119

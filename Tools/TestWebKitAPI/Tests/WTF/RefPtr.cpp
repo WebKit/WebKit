@@ -26,6 +26,8 @@
 #include "config.h"
 
 #include "RefLogger.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace TestWebKitAPI {
@@ -401,6 +403,36 @@ TEST(WTF_RefPtr, ReturnValue)
         auto ptr = f1(a);
     }
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
+
+    
+struct ConstRefCounted : RefCounted<ConstRefCounted> {
+    static Ref<ConstRefCounted> create() { return adoptRef(*new ConstRefCounted); }
+};
+
+const ConstRefCounted& returnConstRefCountedRef()
+{
+    static NeverDestroyed<ConstRefCounted> instance;
+    return instance.get();
+}
+ConstRefCounted& returnRefCountedRef()
+{
+    static NeverDestroyed<ConstRefCounted> instance;
+    return instance.get();
+}
+
+TEST(WTF_RefPtr, Const)
+{
+    // This test passes if it compiles without an error.
+    auto a = ConstRefCounted::create();
+    Ref<const ConstRefCounted> b = WTFMove(a);
+    RefPtr<const ConstRefCounted> c = b.ptr();
+    Ref<const ConstRefCounted> d = returnConstRefCountedRef();
+    RefPtr<const ConstRefCounted> e = &returnConstRefCountedRef();
+    RefPtr<ConstRefCounted> f = ConstRefCounted::create();
+    RefPtr<const ConstRefCounted> g = f;
+    RefPtr<const ConstRefCounted> h(f);
+    Ref<const ConstRefCounted> i(returnRefCountedRef());
 }
 
 } // namespace TestWebKitAPI

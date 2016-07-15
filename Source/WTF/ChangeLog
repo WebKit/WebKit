@@ -1,3 +1,18 @@
+2016-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        Allow RefPtrs of const RefCounted types
+        https://bugs.webkit.org/show_bug.cgi?id=158269
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::ref):
+        (WTF::RefCountedBase::~RefCountedBase):
+        (WTF::RefCountedBase::derefBase):
+        (WTF::RefCounted::deref):
+        Creating references to a const object does not really modify the object,
+        so everything in RefCounted is now mutable, and ref and deref are const.
+
 2016-07-14  Chris Dumez  <cdumez@apple.com>
 
         Avoid an extra heap allocation when dispatching Functions to WorkQueue
