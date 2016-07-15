@@ -1,5 +1,17 @@
 2016-07-15  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r203304.
+
+        This is wrong because of Node* entries in the internal HashMap
+
+        Reverted changeset:
+
+        "Add move constructor / assignment operator to ListHashSet"
+        https://bugs.webkit.org/show_bug.cgi?id=159837
+        http://trac.webkit.org/changeset/203304
+
+2016-07-15  Chris Dumez  <cdumez@apple.com>
+
         Add move constructor / assignment operator to ListHashSet
         https://bugs.webkit.org/show_bug.cgi?id=159837
 
