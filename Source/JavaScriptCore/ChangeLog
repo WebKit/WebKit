@@ -1,5 +1,14 @@
 2016-07-15  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix expectations in test262.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=159810
+
+        Reviewed by Keith Miller.
+
+        * tests/test262.yaml:
+
+2016-07-15  Csaba Osztrogonác  <ossy@webkit.org>
+
         [ARM] Disable Inline Caching on ARMv7 traditional until proper fix
         https://bugs.webkit.org/show_bug.cgi?id=159759
 
