@@ -1,5 +1,8 @@
 ↨
+ 
+↨
 
 
-FAIL AxisHeight assert_approx_equals: mo: axis height expected 50 +/- 1 but got 70
+PASS AxisHeight (size variant) 
+PASS AxisHeight (glyph assembly) 
 

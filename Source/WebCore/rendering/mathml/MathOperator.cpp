@@ -394,22 +394,17 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculat
     setGlyphAssembly(assemblyData);
 }
 
-void MathOperator::stretchTo(const RenderStyle& style, LayoutUnit ascent, LayoutUnit descent)
+void MathOperator::stretchTo(const RenderStyle& style, LayoutUnit targetSize)
 {
-    ASSERT(m_operatorType == Type::VerticalOperator);
-    calculateStretchyData(style, false, ascent + descent);
+    ASSERT(m_operatorType == Type::VerticalOperator || m_operatorType == Type::HorizontalOperator);
+    calculateStretchyData(style, false, targetSize);
     if (m_stretchType == StretchType::GlyphAssembly) {
-        m_ascent = ascent;
-        m_descent = descent;
+        if (m_operatorType == Type::VerticalOperator) {
+            m_ascent = targetSize;
+            m_descent = 0;
+        } else
+            m_width = targetSize;
     }
-}
-
-void MathOperator::stretchTo(const RenderStyle& style, LayoutUnit width)
-{
-    ASSERT(m_operatorType == Type::HorizontalOperator);
-    calculateStretchyData(style, false, width);
-    if (m_stretchType == StretchType::GlyphAssembly)
-        m_width = width;
 }
 
 LayoutRect MathOperator::paintGlyph(const RenderStyle& style, PaintInfo& info, const GlyphData& data, const LayoutPoint& origin, GlyphPaintTrimming trim)

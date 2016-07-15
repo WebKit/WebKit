@@ -83,6 +83,8 @@ private:
     void setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
     void setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry*);
 
+    LayoutUnit verticalStretchedOperatorShift() const;
+
     LayoutUnit m_stretchHeightAboveBaseline;
     LayoutUnit m_stretchDepthBelowBaseline;
     LayoutUnit m_stretchWidth;

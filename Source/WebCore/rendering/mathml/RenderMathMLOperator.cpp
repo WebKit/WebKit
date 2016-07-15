@@ -203,7 +203,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
     m_stretchHeightAboveBaseline *= aspect;
     m_stretchDepthBelowBaseline *= aspect;
 
-    m_mathOperator.stretchTo(style(), m_stretchHeightAboveBaseline, m_stretchDepthBelowBaseline);
+    m_mathOperator.stretchTo(style(), m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline);
 
     setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent());
 }
@@ -361,10 +361,18 @@ void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyl
     updateOperatorProperties();
 }
 
+LayoutUnit RenderMathMLOperator::verticalStretchedOperatorShift() const
+{
+    if (!m_isVertical || !stretchSize())
+        return 0;
+
+    return (m_stretchDepthBelowBaseline - m_stretchHeightAboveBaseline - m_mathOperator.descent() + m_mathOperator.ascent()) / 2;
+}
+
 Optional<int> RenderMathMLOperator::firstLineBaseline() const
 {
     if (useMathOperator())
-        return Optional<int>(std::lround(static_cast<float>(m_mathOperator.ascent())));
+        return Optional<int>(std::lround(static_cast<float>(m_mathOperator.ascent() - verticalStretchedOperatorShift())));
     return RenderMathMLToken::firstLineBaseline();
 }
 

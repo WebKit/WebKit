@@ -1,3 +1,25 @@
+2016-07-15  Frederic Wang  <fwang@igalia.com>
+
+        MathOperator: Improve alignment for vertical size variant
+        https://bugs.webkit.org/show_bug.cgi?id=158866
+
+        Reviewed by Brent Fulgham.
+
+        We import the latest version of mo-axis-height-1.html and update the expectation now that we
+        pass the two cases (size variant and glyph assembly). We also rebaseline some pixel tests.
+
+        * imported/mathml-in-html5/fonts/math/axisheight5000-verticalarrow14000.woff: Updated.
+        * imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-1-expected.txt: Updated to expect PASS.
+        * imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-1.html: Updated to include the two tests.
+        * platform/gtk/mathml/opentype/vertical-expected.png: Rebaseline to take into account better alignment of size variant.
+        * platform/gtk/mathml/opentype/vertical-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png: Ditto.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/mo-stretch-expected.txt: Ditto.
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt: Ditto.
+
 2016-07-15  Brady Eidson  <beidson@apple.com>
 
         WebKit should prevent push/replace state with username in URL.
