@@ -38,9 +38,8 @@ namespace WebCore {
 const float cGlyphSizeUnknown = -1;
 
 template<class T> class GlyphMetricsMap {
-    WTF_MAKE_NONCOPYABLE(GlyphMetricsMap); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    GlyphMetricsMap() : m_filledPrimaryPage(false) { }
     T metricsForGlyph(Glyph glyph)
     {
         return locatePage(glyph / GlyphMetricsPage::size).metricsForGlyph(glyph);
@@ -56,10 +55,9 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         static const size_t size = 256; // Usually covers Latin-1 in a single page.
-        std::array<T, size> m_metrics;
 
         GlyphMetricsPage() = default;
-        GlyphMetricsPage(const T& initialValue)
+        explicit GlyphMetricsPage(const T& initialValue)
         {
             fill(initialValue);
         }
@@ -74,10 +72,14 @@ private:
         {
             setMetricsForIndex(glyph % size, metrics);
         }
+
+    private:
         void setMetricsForIndex(unsigned index, const T& metrics)
         {
             m_metrics[index] = metrics;
         }
+
+        std::array<T, size> m_metrics;
     };
     
     GlyphMetricsPage& locatePage(unsigned pageNumber)
@@ -91,7 +93,7 @@ private:
     
     static T unknownMetrics();
 
-    bool m_filledPrimaryPage;
+    bool m_filledPrimaryPage { false };
     GlyphMetricsPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
     std::unique_ptr<HashMap<int, std::unique_ptr<GlyphMetricsPage>>> m_pages;
 };
@@ -117,10 +119,11 @@ template<class T> typename GlyphMetricsMap<T>::GlyphMetricsPage& GlyphMetricsMap
 
     if (!m_pages)
         m_pages = std::make_unique<HashMap<int, std::unique_ptr<GlyphMetricsPage>>>();
-    auto& pageInMap = m_pages->add(pageNumber, nullptr).iterator->value;
-    if (!pageInMap)
-        pageInMap = std::make_unique<GlyphMetricsPage>(unknownMetrics());
-    return *pageInMap;
+
+    auto& page = m_pages->ensure(pageNumber, [] {
+        return std::make_unique<GlyphMetricsPage>(unknownMetrics());
+    }).iterator->value;
+    return *page;
 }
     
 } // namespace WebCore
