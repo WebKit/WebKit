@@ -559,6 +559,7 @@ private:
     RetainPtr<WKViewLayoutStrategy> m_layoutStrategy;
     WKLayoutMode m_lastRequestedLayoutMode { kWKLayoutModeViewSize };
     CGFloat m_lastRequestedViewScale { 1 };
+    CGSize m_lastRequestedFixedLayoutSize { 0, 0 };
 
     bool m_inSecureInputState { false };
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

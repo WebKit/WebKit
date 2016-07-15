@@ -1,3 +1,20 @@
+2016-07-15  Jer Noble  <jer.noble@apple.com>
+
+        Full screen ePub embedded video is playing on 1/4 screen, cut off
+        https://bugs.webkit.org/show_bug.cgi?id=159737
+        <rdar://problem/26259404>
+
+        Reviewed by Tim Horton.
+
+        Set the fixedLayoutSize to CGSizeZero when disabling fixed layout due to the 
+        WebView not supporting arbitrary layout modes, and reset to the saved value
+        when the view does begin supporting arbitrary layout modes.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setFixedLayoutSize):
+        (WebKit::WebViewImpl::updateSupportsArbitraryLayoutModes):
+
 2016-07-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r203248.
