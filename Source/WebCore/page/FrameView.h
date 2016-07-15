@@ -504,6 +504,8 @@ public:
     WEBCORE_EXPORT float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const override;
     void topContentInsetDidChange(float newTopContentInset);
 
+    void topContentDirectionDidChange();
+
     WEBCORE_EXPORT void willStartLiveResize() override;
     WEBCORE_EXPORT void willEndLiveResize() override;
 
@@ -657,6 +659,8 @@ private:
     IntSize sizeForResizeEvent() const;
     void sendResizeEventIfNeeded();
 
+    void handleDeferredScrollbarsUpdateAfterDirectionChange();
+
     void updateScrollableAreaSet();
 
     void notifyPageThatContentAreaWillPaint() const override;
@@ -771,6 +775,8 @@ private:
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
 
     bool m_viewportIsStable { true };
+
+    bool m_needsDeferredScrollbarsUpdate { false };
 
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
 

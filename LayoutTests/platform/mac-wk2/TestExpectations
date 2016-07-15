@@ -506,6 +506,9 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-listbox-simple.html [ Pass ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-listbox.html [ Pass ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 
 # <rdar://problem/25063128>
 [ Sierra+ ] media/media-controls-drag-timeline-set-controls-property.html [ Pass Timeout ]

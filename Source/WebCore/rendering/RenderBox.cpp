@@ -401,6 +401,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
                 rootStyleChanged = true;
             }
             setNeedsLayoutAndPrefWidthsRecalc();
+
+            view().frameView().topContentDirectionDidChange();
         }
 
         if (viewStyle.writingMode() != newStyle.writingMode() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetWritingMode())) {

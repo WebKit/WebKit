@@ -319,6 +319,7 @@ void FrameView::reset()
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
     m_viewportIsStable = true;
+    m_needsDeferredScrollbarsUpdate = false;
     m_maintainScrollPositionAnchor = nullptr;
 }
 
@@ -1126,6 +1127,23 @@ void FrameView::topContentInsetDidChange(float newTopContentInset)
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->setTopContentInset(newTopContentInset);
 }
+
+void FrameView::topContentDirectionDidChange()
+{
+    m_needsDeferredScrollbarsUpdate = true;
+}
+
+void FrameView::handleDeferredScrollbarsUpdateAfterDirectionChange()
+{
+    if (!m_needsDeferredScrollbarsUpdate)
+        return;
+
+    m_needsDeferredScrollbarsUpdate = false;
+
+    ASSERT(m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout);
+    updateScrollbars(scrollPosition());
+    positionScrollbarLayers();
+}
     
 bool FrameView::hasCompositedContent() const
 {
@@ -1478,6 +1496,8 @@ void FrameView::layout(bool allowSubtree)
     updateCanBlitOnScrollRecursively();
 
     handleDeferredScrollUpdateAfterContentSizeChange();
+
+    handleDeferredScrollbarsUpdateAfterDirectionChange();
 
     if (document.hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());

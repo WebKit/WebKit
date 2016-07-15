@@ -1,3 +1,17 @@
+2016-07-14  Antonio Gomes  <tonikitoo@igalia.com>
+
+        [RTL Scrollbars] Frame scrollbars don't move to the right when text direction changes to RTL
+        https://bugs.webkit.org/show_bug.cgi?id=158252
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html: Added.
+        * fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-expected.txt: Added.
+        * fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html: Added.
+        * fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html: Added.
+        * fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement-expected.txt: Added.
+
 2016-07-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Support new emoji group candidates
