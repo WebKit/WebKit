@@ -1,3 +1,52 @@
+2016-07-15  Frederic Wang  <fwang@igalia.com>
+
+        Import more tests from the MathML in HTML5 test suite
+        https://bugs.webkit.org/show_bug.cgi?id=159715
+
+        Reviewed by Brent Fulgham.
+
+        * imported/mathml-in-html5/fonts/math/lineheight5000-typolineheight2300.woff: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-5-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-5.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/spaces/space-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/spaces/space-1.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/spaces/space-2-expected.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/spaces/space-2.html: Added.
+        * imported/mathml-in-html5/mathml/relations/css-styling/color-1-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/css-styling/color-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/css-styling/visibility-1-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/css-styling/visibility-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/class-1-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/class-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/class-2-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/class-2.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/color-attributes-1-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/color-attributes-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/display-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/display-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/dynamic-1-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/dynamic-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-1-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-2-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-2.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-3-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-3.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/namespace-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/namespace-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/required-extensions-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/required-extensions-1.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/required-extensions-2-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/required-extensions-2.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/unique-identifier-2-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/unique-identifier-2.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/unique-identifier-3-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/unique-identifier-3.html: Added.
+        * imported/mathml-in-html5/mathml/relations/text-and-math/use-typo-metrics-1-expected.html: Added.
+        * imported/mathml-in-html5/mathml/relations/text-and-math/use-typo-metrics-1.html: Added.
+        * platform/ios-simulator/TestExpectations: Mark use-typo-metrics-1.html as failing.
+        * platform/mac/TestExpectations: Ditto.
+
 2016-07-15  Eric Carlson  <eric.carlson@apple.com>
 
         [MSE] Increase the SourceBuffer "fudge factor"

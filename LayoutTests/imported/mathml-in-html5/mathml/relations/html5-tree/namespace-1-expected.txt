@@ -1,0 +1,8 @@
+  
+ 
+ 
+
+PASS Test elements in XHTML namespace 
+PASS Test elements in SVG namespace 
+PASS Test elements in MathML namespace 
+
