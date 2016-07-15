@@ -1,3 +1,13 @@
+2016-07-15  Brady Eidson  <beidson@apple.com>
+
+        WebKit should prevent push/replace state with username in URL.
+        <rdar://problem/27361737> and https://bugs.webkit.org/show_bug.cgi?id=159818
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/history-username-password-expected.txt: Added.
+        * http/tests/security/history-username-password.html: Added.
+
 2016-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r203266.

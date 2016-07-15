@@ -152,6 +152,15 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
         return;
     }
 
+    if (fullURL.hasUsername() || fullURL.hasPassword()) {
+        ec.code = SECURITY_ERR;
+        if (stateObjectType == StateObjectType::Replace)
+            ec.message = makeString("Attempt to use history.replaceState() to change session history URL to ", fullURL.string(), " is insecure; Username/passwords aren't allowed in state object URLs");
+        else
+            ec.message = makeString("Attempt to use history.pushState() to add URL ", fullURL.string(), " to session history is insecure; Username/passwords aren't allowed in state object URLs");
+        return;
+    }
+
     Document* mainDocument = m_frame->page()->mainFrame().document();
     History* mainHistory = nullptr;
     if (mainDocument) {
