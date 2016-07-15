@@ -186,10 +186,11 @@ public:
 
     static ElementType toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue) { return toNativeFromValue<Adaptor>(exec, jsValue); }
 
-    static bool toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue, ElementType& result) { return toNativeFromValue<Adaptor>(exec, jsValue, result); }
+    static Optional<ElementType> toAdaptorNativeFromValueWithoutCoercion(JSValue jsValue) { return toNativeFromValueWithoutCoercion<Adaptor>(jsValue); }
 
     void sort()
     {
+        RELEASE_ASSERT(!isNeutered());
         switch (Adaptor::typeValue) {
         case TypeFloat32:
             sortFloat<int32_t>();

@@ -79,36 +79,31 @@ struct IntegralTypedArrayAdaptor {
         return OtherAdaptor::toNativeFromInt32(value);
     }
 
-    static bool toNativeFromInt32(int32_t value, Type& result)
+    static Optional<Type> toNativeFromInt32WithoutCoercion(int32_t value)
     {
         if ((value >= 0 && static_cast<uint32_t>(value) > static_cast<uint32_t>(maxValue)) || value < static_cast<int32_t>(minValue))
-            return false;
-
-        result = static_cast<Type>(value);
-
-        return true;
+            return Nullopt;
+        return static_cast<Type>(value);
     }
 
-    static bool toNativeFromUint32(uint32_t value, Type& result)
+    static Optional<Type> toNativeFromUint32WithoutCoercion(uint32_t value)
     {
         if (value > static_cast<uint32_t>(maxValue))
-            return false;
+            return Nullopt;
 
-        result = static_cast<Type>(value);
-
-        return true;
+        return static_cast<Type>(value);
     }
 
-    static bool toNativeFromDouble(double value, Type& result)
+    static Optional<Type> toNativeFromDoubleWithoutCoercion(double value)
     {
         Type integer = static_cast<Type>(value);
         if (static_cast<double>(integer) != value)
-            return false;
+            return Nullopt;
 
         if (value < 0)
-            return toNativeFromInt32(static_cast<int32_t>(value), result);
+            return toNativeFromInt32WithoutCoercion(static_cast<int32_t>(value));
         
-        return toNativeFromUint32(static_cast<uint32_t>(value), result);
+        return toNativeFromUint32WithoutCoercion(static_cast<uint32_t>(value));
     }
 };
 
@@ -154,29 +149,25 @@ struct FloatTypedArrayAdaptor {
         return OtherAdaptor::toNativeFromDouble(value);
     }
 
-    static bool toNativeFromInt32(int32_t value, Type& result)
+    static Optional<Type> toNativeFromInt32WithoutCoercion(int32_t value)
     {
-        result = static_cast<Type>(value);
-        return true;
+        return static_cast<Type>(value);
     }
 
-    static Type toNativeFromDouble(double value, Type& result)
+    static Optional<Type> toNativeFromDoubleWithoutCoercion(double value)
     {
-        if (std::isnan(value) || std::isinf(value)) {
-            result = static_cast<Type>(value);
-            return true;
-        }
+        if (std::isnan(value) || std::isinf(value))
+            return static_cast<Type>(value);
 
         Type valueResult = static_cast<Type>(value);
 
         if (static_cast<double>(valueResult) != value)
-            return false;
+            return Nullopt;
 
         if (value < minValue || value > maxValue)
-            return false;
+            return Nullopt;
 
-        result = valueResult;
-        return true;
+        return valueResult;
     }
 };
 
@@ -264,24 +255,21 @@ struct Uint8ClampedAdaptor {
         return OtherAdaptor::toNativeFromInt32(value);
     }
     
-    static bool toNativeFromInt32(int32_t value, Type& result)
+    static Optional<Type> toNativeFromInt32WithoutCoercion(int32_t value)
     {
         if (value > maxValue || value < minValue)
-            return false;
+            return Nullopt;
 
-        result = static_cast<Type>(value);
-
-        return true;
+        return static_cast<Type>(value);
     }
 
-    static bool toNativeFromDouble(double value, uint8_t& result)
+    static Optional<Type> toNativeFromDoubleWithoutCoercion(double value)
     {
         uint8_t integer = static_cast<uint8_t>(value);
         if (static_cast<double>(integer) != value)
-            return false;
+            return Nullopt;
 
-        result = integer;
-        return true;
+        return integer;
     }
 
 private:

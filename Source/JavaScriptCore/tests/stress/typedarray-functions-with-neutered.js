@@ -83,6 +83,7 @@ prototypeFunctions = [
     { func:proto.findIndex, args:["func"] },
     { func:proto.forEach, args:["func"] },
     { func:proto.indexOf, args:["na", "prim"] },
+    { func:proto.includes, args:["na", "prim"] },
     { func:proto.join, args:["prim"] },
     { func:proto.lastIndexOf, args:["na", "prim"] },
     { func:proto.map, args:["func"] },
@@ -105,7 +106,7 @@ function defaultForArg(arg, argNum)
     return argNum;
 }
 
-function callWithArgs(func, array, args) {
+function callWithArgs(func, array, args, argNum) {
     let failed = true;
     try {
         func.call(array, ...args);
@@ -115,7 +116,7 @@ function callWithArgs(func, array, args) {
         failed = false;
     }
     if (failed)
-        throw new Error([func, args]);
+        throw new Error([func, argNum]);
 }
 
 
@@ -135,13 +136,13 @@ function checkArgumentsForType(func, args, constructor) {
                 transferArrayBuffer(array.buffer);
                 return func === array.every ? 1 : 0;
             };
-            callWithArgs(func, array, callArgs);
+            callWithArgs(func, array, callArgs, argNum);
         } else if (arg === "prim") {
             callArgs[argNum] = { [Symbol.toPrimitive]() {
                 transferArrayBuffer(array.buffer);
                 return argNum;
             } };
-            callWithArgs(func, array, callArgs);
+            callWithArgs(func, array, callArgs, argNum);
         } else if (arg === "array") {
             callArgs[argNum] = new Array(4);
             callArgs[argNum].fill(2);
@@ -150,7 +151,7 @@ function checkArgumentsForType(func, args, constructor) {
                 return 1;
             } };
             Object.defineProperty(callArgs[argNum], 1, desc);
-            callWithArgs(func, array, callArgs);
+            callWithArgs(func, array, callArgs, argNum);
         } else
             throw new Error(arg);
     }

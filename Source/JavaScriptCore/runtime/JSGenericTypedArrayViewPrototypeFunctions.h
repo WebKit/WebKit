@@ -154,13 +154,13 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncCopyWithin(ExecState*
     if (vm.exception())
         return encodedJSValue();
 
-    if (thisObject->isNeutered())
-        return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
-
     if (final < from)
         return JSValue::encode(exec->thisValue());
 
     long count = std::min(length - std::max(to, from), final - from);
+
+    if (thisObject->isNeutered())
+        return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
     typename ViewClass::ElementType* array = thisObject->typedVector();
     memmove(array + to, array + from, count * thisObject->elementSize);
@@ -171,6 +171,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncCopyWithin(ExecState*
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIncludes(ExecState* exec)
 {
+    VM& vm = exec->vm();
     ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
     if (thisObject->isNeutered())
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
@@ -183,26 +184,28 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIncludes(ExecState* e
     JSValue valueToFind = exec->argument(0);
 
     unsigned index = argumentClampedIndexFromStartOrEnd(exec, 1, length);
-
-    if (!valueToFind.isNumber())
-        return JSValue::encode(jsBoolean(false));
-
-    typename ViewClass::ElementType* array = thisObject->typedVector();
-    typename ViewClass::ElementType target;
-    if (!ViewClass::toAdaptorNativeFromValue(exec, valueToFind, target))
-        return JSValue::encode(jsBoolean(false));
-
-    if (exec->hadException())
+    if (vm.exception())
         return JSValue::encode(jsUndefined());
 
-    if (std::isnan(static_cast<double>(target))) {
+    if (thisObject->isNeutered())
+        return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
+
+    typename ViewClass::ElementType* array = thisObject->typedVector();
+    auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
+    if (!targetOption)
+        return JSValue::encode(jsBoolean(false));
+
+    ASSERT(!vm.exception());
+    RELEASE_ASSERT(!thisObject->isNeutered());
+
+    if (std::isnan(static_cast<double>(*targetOption))) {
         for (; index < length; ++index) {
             if (std::isnan(static_cast<double>(array[index])))
                 return JSValue::encode(jsBoolean(true));
         }
     } else {
         for (; index < length; ++index) {
-            if (array[index] == target)
+            if (array[index] == targetOption)
                 return JSValue::encode(jsBoolean(true));
         }
     }
@@ -233,12 +236,14 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIndexOf(ExecState* ex
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
     typename ViewClass::ElementType* array = thisObject->typedVector();
-    typename ViewClass::ElementType target = ViewClass::toAdaptorNativeFromValue(exec, valueToFind);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+    auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
+    if (!targetOption)
+        return JSValue::encode(jsNumber(-1));
+    ASSERT(!vm.exception());
+    RELEASE_ASSERT(!thisObject->isNeutered());
 
     for (; index < length; ++index) {
-        if (array[index] == target)
+        if (array[index] == targetOption)
             return JSValue::encode(jsNumber(index));
     }
 
@@ -287,6 +292,7 @@ template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(ExecState* exec)
 {
     // 22.2.3.16
+    VM& vm = exec->vm();
     ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
     if (thisObject->isNeutered())
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
@@ -311,16 +317,22 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(ExecState
             index = static_cast<unsigned>(fromDouble);
     }
 
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+
     if (thisObject->isNeutered())
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
+    auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
+    if (!targetOption)
+        return JSValue::encode(jsNumber(-1));
+
     typename ViewClass::ElementType* array = thisObject->typedVector();
-    typename ViewClass::ElementType target = ViewClass::toAdaptorNativeFromValue(exec, valueToFind);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+    ASSERT(!vm.exception());
+    RELEASE_ASSERT(!thisObject->isNeutered());
 
     for (; index >= 0; --index) {
-        if (array[index] == target)
+        if (array[index] == targetOption)
             return JSValue::encode(jsNumber(index));
     }
 

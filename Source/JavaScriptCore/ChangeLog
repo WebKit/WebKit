@@ -1,3 +1,58 @@
+2016-07-15  Keith Miller  <keith_miller@apple.com>
+
+        %TypedArray%.prototype.indexOf is coercing non-integers or non-floats to numbers wrongly
+        https://bugs.webkit.org/show_bug.cgi?id=159400
+
+        Reviewed by Geoffrey Garen.
+
+        This patch fixes coercion of non-numbers in indexOf/lastIndexOf.
+        Additionally, this patch fixes an issue with includes where it
+        would not check that the buffer remained non-neutered after
+        calling the toInteger() function. Lastly, some extra release
+        asserts have been added in some places to inform us of any issues
+        in the future.
+
+        Additionally, this patch changes bool toNativeFromDouble to
+        Optional<Type> toNativeFromDoubleWithoutCoercion. This makes it a
+        little clearer what the function does and also removes the return
+        argument. The only behavior change is that the function no longer
+        coerces non-numbers into numbers. That behavior was unused (maybe
+        unintended), however.
+
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::toAdaptorNativeFromValueWithoutCoercion):
+        (JSC::JSGenericTypedArrayView::sort):
+        (JSC::JSGenericTypedArrayView::toAdaptorNativeFromValue): Deleted.
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        * runtime/ToNativeFromValue.h:
+        (JSC::toNativeFromValueWithoutCoercion):
+        (JSC::toNativeFromValue): Deleted.
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromInt32WithoutCoercion):
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromUint32WithoutCoercion):
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromDoubleWithoutCoercion):
+        (JSC::FloatTypedArrayAdaptor::toNativeFromInt32WithoutCoercion):
+        (JSC::FloatTypedArrayAdaptor::toNativeFromDoubleWithoutCoercion):
+        (JSC::Uint8ClampedAdaptor::toNativeFromInt32WithoutCoercion):
+        (JSC::Uint8ClampedAdaptor::toNativeFromDoubleWithoutCoercion):
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromInt32): Deleted.
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromUint32): Deleted.
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromDouble): Deleted.
+        (JSC::FloatTypedArrayAdaptor::toNativeFromInt32): Deleted.
+        (JSC::FloatTypedArrayAdaptor::toNativeFromDouble): Deleted.
+        (JSC::Uint8ClampedAdaptor::toNativeFromInt32): Deleted.
+        (JSC::Uint8ClampedAdaptor::toNativeFromDouble): Deleted.
+        * tests/stress/resources/typedarray-test-helper-functions.js:
+        * tests/stress/typedarray-functions-with-neutered.js:
+        (callWithArgs):
+        * tests/stress/typedarray-includes.js: Added.
+        * tests/stress/typedarray-indexOf.js:
+        * tests/stress/typedarray-lastIndexOf.js:
+
 2016-07-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add new functions to ARMAssembler after r202214

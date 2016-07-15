@@ -49,13 +49,13 @@ typename Adaptor::Type toNativeFromValue(ExecState* exec, JSValue value)
 }
 
 template<typename Adaptor>
-bool toNativeFromValue(ExecState* exec, JSValue value, typename Adaptor::Type& result)
+Optional<typename Adaptor::Type> toNativeFromValueWithoutCoercion(JSValue value)
 {
+    if (!value.isNumber())
+        return Nullopt;
     if (value.isInt32())
-        return Adaptor::toNativeFromInt32(value.asInt32(), result);
-    if (value.isNumber())
-        return Adaptor::toNativeFromDouble(value.asDouble(), result);
-    return Adaptor::toNativeFromDouble(value.toNumber(exec), result);
+        return Adaptor::toNativeFromInt32WithoutCoercion(value.asInt32());
+    return Adaptor::toNativeFromDoubleWithoutCoercion(value.asDouble());
 }
 
 } // namespace JSC

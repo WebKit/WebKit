@@ -25,4 +25,40 @@ shouldBeTrue("testPrototypeFunction('lastIndexOf', '(2, 0)', array, 0)");
 shouldBeTrue("testPrototypeFunction('lastIndexOf', '(2, -1)', array, 3)");
 shouldBeTrue("testPrototypeFunction('lastIndexOf', '(2, -2)', array, 0)");
 debug("");
+
+debug("Check object coersion");
+for (constructor of typedArrays) {
+    a = new constructor([0,2,3]);
+    passed = true;
+
+    shouldBe("a.lastIndexOf({ valueOf() { passed = false; return 1; }})", "-1");
+    shouldBeTrue("passed");
+    shouldBe("a.lastIndexOf(3, {valueOf: () => 3})", "2");
+
+    // test we don't coerce non-native values
+    shouldBe("a.lastIndexOf(\"abc\")", "-1");
+    shouldBe("a.lastIndexOf(null)", "-1");
+    shouldBe("a.lastIndexOf(undefined)", "-1");
+    shouldBe("a.lastIndexOf({1: ''})", "-1");
+    shouldBe("a.lastIndexOf(\"\")", "-1");
+}
+
+
+for (constructor of intArrays) {
+    a = new constructor([0,2,3]);
+
+    shouldBe("a.lastIndexOf(2.0)", "1");
+    shouldBe("a.lastIndexOf(2.5)", "-1");
+}
+
+for (constructor of floatArrays) {
+    a = new constructor([0,2.0,3.6, NaN, Infinity]);
+
+    shouldBe("a.lastIndexOf(2.0)", "1");
+    shouldBe("a.lastIndexOf(2.5)", "-1");
+    shouldBe("a.lastIndexOf(3.600001)", "-1");
+    shouldBe("a.lastIndexOf(NaN)", "-1");
+    shouldBe("a.lastIndexOf(Infinity)", "4");
+}
+
 finishJSTest();
