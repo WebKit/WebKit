@@ -28,16 +28,19 @@
     }
 
     function loadSamples() {
+        const maximumGap = Math.floor(2002 / 24000 * 1000) / 1000;
+
         samples = concatenateSamples([
-            makeASample(0, 0, 0.99, 1, SAMPLE_FLAG.SYNC),
-            makeASample(1, 1, 0.99, 1, SAMPLE_FLAG.NONE),
-            makeASample(2, 2, 0.99, 1, SAMPLE_FLAG.NONE),
-            makeASample(3, 3, 0.99, 1, SAMPLE_FLAG.NONE),
-            makeASample(4, 4, 0.99, 1, SAMPLE_FLAG.SYNC),
-            makeASample(5, 5, 0.99, 1, SAMPLE_FLAG.NONE),
-            makeASample(6, 6, 0.99, 1, SAMPLE_FLAG.NONE),
-            makeASample(7, 7, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(0, 0, 1 - maximumGap,      1, SAMPLE_FLAG.SYNC),
+            makeASample(1, 1, 1 - maximumGap / 2,  1, SAMPLE_FLAG.NONE),
+            makeASample(2, 2, 1 - maximumGap / 3,  1, SAMPLE_FLAG.NONE),
+            makeASample(3, 3, 1,                   1, SAMPLE_FLAG.NONE),
+            makeASample(4, 4, 1 - maximumGap,      1, SAMPLE_FLAG.SYNC),
+            makeASample(5, 5, 1 - maximumGap / 10, 1, SAMPLE_FLAG.NONE),
+            makeASample(6, 6, 0.99,                1, SAMPLE_FLAG.NONE),
+            makeASample(7, 7, 1,                   1, SAMPLE_FLAG.NONE),
         ]);
+
         waitForEventOn(sourceBuffer, 'updateend', checkBuffered, false, true);
         run('sourceBuffer.appendBuffer(samples)');
     }
@@ -59,7 +62,7 @@
     </script>
 </head>
 <body onload="runTest()">
-    <div>This tests the SourceBuffer.buffered() API. This test will add 8 samples with a small gap (0.01s) between each sample. The SourceBuffer should coalesce such small gaps to make a single contiguous range. The video element should also play continuously from the beginning to the end.</div>
+    <div>This tests the SourceBuffer.buffered() API. This test will add 8 samples with a small gap (0.01s .. 0.083s) between each sample. The SourceBuffer should coalesce such small gaps to make a single contiguous range. The video element should also play continuously from the beginning to the end.</div>
     <video></video>
 </body>
 </html>

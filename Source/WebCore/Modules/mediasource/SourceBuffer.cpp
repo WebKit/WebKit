@@ -65,10 +65,10 @@ namespace WebCore {
 
 static const double ExponentialMovingAverageCoefficient = 0.1;
 
-// Allow hasCurrentTime() to be off by as much as the length of a 24fps video frame
+// Allow hasCurrentTime() to be off by as much as the length of two 24fps video frames
 static const MediaTime& currentTimeFudgeFactor()
 {
-    static NeverDestroyed<MediaTime> fudgeFactor(1, 24);
+    static NeverDestroyed<MediaTime> fudgeFactor(2002, 24000);
     return fudgeFactor;
 }
 

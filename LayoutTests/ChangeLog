@@ -1,3 +1,14 @@
+2016-07-15  Eric Carlson  <eric.carlson@apple.com>
+
+        [MSE] Increase the SourceBuffer "fudge factor"
+        https://bugs.webkit.org/show_bug.cgi?id=159813
+        <rdar://problem/27372033>
+
+        Reviewed by Jon Lee.
+
+        * media/media-source/media-source-small-gap-expected.txt:
+        * media/media-source/media-source-small-gap.html:
+
 2016-07-14  Yoav Weiss  <yoav@yoav.ws>
 
         Change CSSParser::sourceSize returning Optional<CSSParser::SourceSize>
