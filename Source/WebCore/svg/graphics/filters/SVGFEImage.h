@@ -32,7 +32,7 @@ class Document;
 class Image;
 class RenderElement;
 
-class FEImage : public FilterEffect {
+class FEImage final : public FilterEffect {
 public:
     static Ref<FEImage> createWithImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatio&);
     static Ref<FEImage> createWithIRIReference(Filter&, Document&, const String&, const SVGPreserveAspectRatio&);

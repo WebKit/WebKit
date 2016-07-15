@@ -26,7 +26,7 @@
 namespace WebCore {
 
 // SVGTransformList contains two additional methods, that can be exposed to the bindings.
-class SVGTransformListPropertyTearOff : public SVGListPropertyTearOff<SVGTransformList> {
+class SVGTransformListPropertyTearOff final : public SVGListPropertyTearOff<SVGTransformList> {
 public:
     typedef SVGAnimatedListPropertyTearOff<SVGTransformList> AnimatedListPropertyTearOff;
     typedef SVGAnimatedListPropertyTearOff<SVGTransformList>::ListWrapperCache ListWrapperCache;

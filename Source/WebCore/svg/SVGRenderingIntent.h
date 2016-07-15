@@ -24,7 +24,7 @@
 
 namespace WebCore {
 
-class SVGRenderingIntent : public RefCounted<SVGRenderingIntent> {
+class SVGRenderingIntent final : public RefCounted<SVGRenderingIntent> {
 public:
     enum SVGRenderingIntentType {
         RENDERING_INTENT_UNKNOWN                  = 0,

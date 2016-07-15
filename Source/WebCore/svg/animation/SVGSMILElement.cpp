@@ -63,7 +63,7 @@ static SMILEventSender& smilEndEventSender()
 // This is used for duration type time values that can't be negative.
 static const double invalidCachedTime = -1.;
     
-class ConditionEventListener : public EventListener {
+class ConditionEventListener final : public EventListener {
 public:
     static Ref<ConditionEventListener> create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
     {

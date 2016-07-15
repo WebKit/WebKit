@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class SVGPathByteStreamBuilder : public SVGPathConsumer {
+class SVGPathByteStreamBuilder final : public SVGPathConsumer {
 public:
     SVGPathByteStreamBuilder(SVGPathByteStream&);
 

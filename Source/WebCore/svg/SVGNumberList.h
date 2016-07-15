@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGNumberList : public Vector<float> {
+class SVGNumberList final : public Vector<float> {
 public:
     SVGNumberList() { }
 

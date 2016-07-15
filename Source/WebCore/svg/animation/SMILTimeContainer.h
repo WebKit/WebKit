@@ -41,7 +41,7 @@ class SVGElement;
 class SVGSMILElement;
 class SVGSVGElement;
 
-class SMILTimeContainer : public RefCounted<SMILTimeContainer>  {
+class SMILTimeContainer final : public RefCounted<SMILTimeContainer>  {
 public:
     static Ref<SMILTimeContainer> create(SVGSVGElement* owner) { return adoptRef(*new SMILTimeContainer(owner)); }
     ~SMILTimeContainer();

@@ -29,7 +29,7 @@ namespace WebCore {
 
 class SVGElement;
 
-class SVGStringList : public Vector<String> {
+class SVGStringList final : public Vector<String> {
 public:
     SVGStringList(const QualifiedName& attributeName)
         : m_attributeName(attributeName)

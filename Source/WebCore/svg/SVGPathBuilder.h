@@ -31,7 +31,7 @@ namespace WebCore {
 
 class Path;
 
-class SVGPathBuilder : public SVGPathConsumer {
+class SVGPathBuilder final : public SVGPathConsumer {
 public:
     SVGPathBuilder(Path&);
 

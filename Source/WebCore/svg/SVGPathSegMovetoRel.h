@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathSegMovetoRel : public SVGPathSegSingleCoordinate {
+class SVGPathSegMovetoRel final : public SVGPathSegSingleCoordinate {
 public:
     static Ref<SVGPathSegMovetoRel> create(const SVGPathElement& element, SVGPathSegRole role, float x, float y)
     {

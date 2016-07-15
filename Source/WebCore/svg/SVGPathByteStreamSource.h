@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathByteStreamSource : public SVGPathSource {
+class SVGPathByteStreamSource final : public SVGPathSource {
 public:
     explicit SVGPathByteStreamSource(const SVGPathByteStream&);
 

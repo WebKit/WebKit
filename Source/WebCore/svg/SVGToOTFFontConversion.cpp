@@ -1143,7 +1143,7 @@ static const char rrCurveTo = 0x08;
 static const char endChar = 0x0e;
 static const char rMoveTo = 0x15;
 
-class CFFBuilder : public SVGPathConsumer {
+class CFFBuilder final : public SVGPathConsumer {
 public:
     CFFBuilder(Vector<char>& cffData, float width, FloatPoint origin, float unitsPerEmScalar)
         : m_cffData(cffData)

@@ -31,7 +31,7 @@ namespace WebCore {
 class SVGElement;
 class SVGTransformListPropertyTearOff;
 
-class SVGViewSpec : public RefCounted<SVGViewSpec>
+class SVGViewSpec final : public RefCounted<SVGViewSpec>
                   , public SVGZoomAndPan
                   , public SVGFitToViewBox {
 public:

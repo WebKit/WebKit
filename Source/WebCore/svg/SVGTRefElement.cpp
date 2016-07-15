@@ -53,7 +53,7 @@ Ref<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Documen
     return element;
 }
 
-class SVGTRefTargetEventListener : public EventListener {
+class SVGTRefTargetEventListener final : public EventListener {
 public:
     static Ref<SVGTRefTargetEventListener> create(SVGTRefElement& trefElement)
     {

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class SVGPointList : public Vector<SVGPoint> {
+class SVGPointList final : public Vector<SVGPoint> {
 public:
     SVGPointList() { }
 

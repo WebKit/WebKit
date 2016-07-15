@@ -27,7 +27,7 @@
 namespace WebCore {
 
 template<typename PropertyType>
-class SVGAnimatedPropertyTearOff : public SVGAnimatedProperty {
+class SVGAnimatedPropertyTearOff final : public SVGAnimatedProperty {
 public:
     typedef SVGPropertyTearOff<PropertyType> PropertyTearOff;
     typedef PropertyType ContentType;

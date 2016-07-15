@@ -28,7 +28,7 @@ namespace WebCore {
 typedef int ExceptionCode;
 
 // Only used in the bindings.
-class SVGMatrix : public AffineTransform {
+class SVGMatrix final : public AffineTransform {
 public:
     SVGMatrix() { }
     SVGMatrix(const AffineTransform& other)

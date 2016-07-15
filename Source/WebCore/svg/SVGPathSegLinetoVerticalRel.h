@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathSegLinetoVerticalRel : public SVGPathSegLinetoVertical {
+class SVGPathSegLinetoVerticalRel final : public SVGPathSegLinetoVertical {
 public:
     static Ref<SVGPathSegLinetoVerticalRel> create(const SVGPathElement& element, SVGPathSegRole role, float y)
     {

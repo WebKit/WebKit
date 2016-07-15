@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathSegLinetoRel : public SVGPathSegSingleCoordinate {
+class SVGPathSegLinetoRel final : public SVGPathSegSingleCoordinate {
 public:
     static Ref<SVGPathSegLinetoRel> create(const SVGPathElement& element, SVGPathSegRole role, float x, float y)
     {

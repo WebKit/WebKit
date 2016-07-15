@@ -32,7 +32,7 @@ namespace WebCore {
 
 class SVGPathElement;
 
-class SVGPathSegListBuilder : public SVGPathConsumer {
+class SVGPathSegListBuilder final : public SVGPathConsumer {
 public:
     SVGPathSegListBuilder(SVGPathElement&, SVGPathSegList&, SVGPathSegRole);
 

@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathSegArcAbs : public SVGPathSegArc {
+class SVGPathSegArcAbs final : public SVGPathSegArc {
 public:
     static Ref<SVGPathSegArcAbs> create(const SVGPathElement& element, SVGPathSegRole role, float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
     {

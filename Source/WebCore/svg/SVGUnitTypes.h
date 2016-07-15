@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class SVGUnitTypes : public RefCounted<SVGUnitTypes> {
+class SVGUnitTypes final : public RefCounted<SVGUnitTypes> {
 public:
     enum SVGUnitType {
         SVG_UNIT_TYPE_UNKNOWN               = 0,

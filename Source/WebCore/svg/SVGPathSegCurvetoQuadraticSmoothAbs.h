@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathSegCurvetoQuadraticSmoothAbs : public SVGPathSegSingleCoordinate {
+class SVGPathSegCurvetoQuadraticSmoothAbs final : public SVGPathSegSingleCoordinate {
 public:
     static Ref<SVGPathSegCurvetoQuadraticSmoothAbs> create(const SVGPathElement& element, SVGPathSegRole role, float x, float y)
     {

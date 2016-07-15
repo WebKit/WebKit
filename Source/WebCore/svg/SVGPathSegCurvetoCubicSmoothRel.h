@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathSegCurvetoCubicSmoothRel : public SVGPathSegCurvetoCubicSmooth {
+class SVGPathSegCurvetoCubicSmoothRel final : public SVGPathSegCurvetoCubicSmooth {
 public:
     static Ref<SVGPathSegCurvetoCubicSmoothRel> create(const SVGPathElement& element, SVGPathSegRole role, float x, float y, float x2, float y2)
     {

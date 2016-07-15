@@ -30,7 +30,7 @@ namespace WebCore {
 #pragma pack(push, 16)
 #endif
 template<typename ContextElement, typename PropertyType>
-class SVGStaticPropertyTearOff : public SVGPropertyTearOff<PropertyType> {
+class SVGStaticPropertyTearOff final : public SVGPropertyTearOff<PropertyType> {
 public:
     typedef SVGStaticPropertyTearOff<ContextElement, PropertyType> Self;
     typedef void (ContextElement::*UpdateMethod)();

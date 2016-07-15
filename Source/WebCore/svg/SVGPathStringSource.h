@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathStringSource : public SVGPathSource {
+class SVGPathStringSource final : public SVGPathSource {
 public:
     explicit SVGPathStringSource(const String&);
 

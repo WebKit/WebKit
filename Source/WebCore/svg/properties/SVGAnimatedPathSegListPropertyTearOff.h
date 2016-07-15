@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class SVGAnimatedPathSegListPropertyTearOff : public SVGAnimatedListPropertyTearOff<SVGPathSegList> {
+class SVGAnimatedPathSegListPropertyTearOff final : public SVGAnimatedListPropertyTearOff<SVGPathSegList> {
 public:
     RefPtr<ListProperty> baseVal() override
     {

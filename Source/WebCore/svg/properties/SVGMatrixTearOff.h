@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class SVGMatrixTearOff : public SVGPropertyTearOff<SVGMatrix> {
+class SVGMatrixTearOff final : public SVGPropertyTearOff<SVGMatrix> {
 public:
     // Used for non-animated POD types that are not associated with a SVGAnimatedProperty object, nor with a XML DOM attribute
     // and that contain a parent type that's exposed to the bindings via a SVGStaticPropertyTearOff object

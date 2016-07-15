@@ -25,7 +25,7 @@
 namespace WebCore {
 
 template<typename PropertyType>
-class SVGStaticListPropertyTearOff : public SVGListProperty<PropertyType> {
+class SVGStaticListPropertyTearOff final : public SVGListProperty<PropertyType> {
 public:
     typedef SVGListProperty<PropertyType> Base;
 

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class SVGFilter : public Filter {
+class SVGFilter final : public Filter {
 public:
     static Ref<SVGFilter> create(const AffineTransform&, const FloatRect&, const FloatRect&, const FloatRect&, bool);
 

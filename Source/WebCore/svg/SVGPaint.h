@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class SVGPaint : public SVGColor {
+class SVGPaint final : public SVGColor {
 public:
     enum SVGPaintType {
         SVG_PAINTTYPE_UNKNOWN = 0,

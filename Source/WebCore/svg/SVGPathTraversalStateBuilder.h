@@ -29,7 +29,7 @@ namespace WebCore {
 
 class PathTraversalState;
 
-class SVGPathTraversalStateBuilder : public SVGPathConsumer {
+class SVGPathTraversalStateBuilder final : public SVGPathConsumer {
 public:
     SVGPathTraversalStateBuilder(PathTraversalState&, float desiredLength = 0);
 

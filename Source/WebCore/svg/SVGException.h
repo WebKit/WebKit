@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class SVGException : public ExceptionBase {
+class SVGException final : public ExceptionBase {
 public:
     static Ref<SVGException> create(const ExceptionCodeDescription& description)
     {

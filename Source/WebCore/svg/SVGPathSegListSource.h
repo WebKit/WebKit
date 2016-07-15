@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class SVGPathSegListSource : public SVGPathSource {
+class SVGPathSegListSource final : public SVGPathSource {
 public:
     explicit SVGPathSegListSource(const SVGPathSegList&);
 

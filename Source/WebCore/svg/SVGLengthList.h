@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGLengthList : public Vector<SVGLength> {
+class SVGLengthList final : public Vector<SVGLength> {
 public:
     SVGLengthList() { }
 

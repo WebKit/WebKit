@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SVGPathElement;
 
-class SVGPathSegListPropertyTearOff : public SVGListProperty<SVGPathSegList> {
+class SVGPathSegListPropertyTearOff final : public SVGListProperty<SVGPathSegList> {
 public:
     typedef SVGListProperty<SVGPathSegList> Base;
     typedef SVGAnimatedListPropertyTearOff<SVGPathSegList> AnimatedListPropertyTearOff;
