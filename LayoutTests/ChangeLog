@@ -1,5 +1,17 @@
 2016-07-15  Brent Fulgham  <bfulgham@apple.com>
 
+        Merge InlineBidiResolver end-of-line Blink test case
+        https://bugs.webkit.org/show_bug.cgi?id=126201
+        <rdar://problem/27331789>
+
+        Test case is from the Blink change (patch by <igor.o@chromium.org>):
+        <https://chromium.googlesource.com/chromium/blink/+/d34ca9bbbdf71905d61aa45def30063311508a64>
+
+        * fast/text/international/bidi-crash-reached-end-of-line-expected.txt: Added.
+        * fast/text/international/bidi-crash-reached-end-of-line.html: Added.
+
+2016-07-15  Brent Fulgham  <bfulgham@apple.com>
+
         Merge Blink test case
         https://bugs.webkit.org/show_bug.cgi?id=123870
 
