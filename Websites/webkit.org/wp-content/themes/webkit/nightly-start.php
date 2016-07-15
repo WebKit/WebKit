@@ -9,16 +9,17 @@ $latest = intval($latest_nightly_build[0]);
 $branch = get_query_var('nightly_branch');
 $build = intval(get_query_var('nightly_build'));
 
-if ($build < 11976 || $build > $latest || empty($branch))
-    return show_404_page();
-
 get_header();
 
 add_filter('the_content', function ($content) {
     $branch = get_query_var('nightly_branch');
     $build = intval(get_query_var('nightly_build'));
-
-    $content = sprintf($content, "r$build", $branch);
+    
+    if (empty($Build) || empty($branch) || $build < 11976) {
+        $content = preg_replace('/<p>(.*?)%1\$s<\/p>/', '<p></p>', $content);
+    } else {
+        $content = sprintf($content, "r$build", $branch);
+    }
 
     return $content;
 });
@@ -151,13 +152,12 @@ hr {
 .update-nag {
     background-color: #FF9D00;
     color: #000000;
-    width: 100vw;
-    left: 50%;
-    position: absolute;
-    transform: translate(-50vw);
-    padding: 1.5rem;
-    padding-top: 11.5rem;
+    width: 100%;
     top: 0;
+    left: 0;
+    position: absolute;
+    padding-bottom: 1.5rem;
+    padding-top: 11.5rem;
 }
 
 .admin-bar .update-nag {
@@ -186,8 +186,6 @@ hr {
 }
 
 </style>
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="icons-sprite">
     <style>
         svg,symbol { color: white; }
@@ -252,8 +250,9 @@ hr {
     </defs>
 </svg>
 <?php if ( (int)$build < (int)$latest ):
-    $prompt_text = "A new nightly build is available. Please update before continuing.";
-    $prompt_meta = get_post_meta(get_the_ID(), 'prompt', true);
+    $prompt_text = "Please be sure you are running the latest WebKit Nightly build before continuing to test.";
+    if (!empty($build))
+        $prompt_meta = get_post_meta(get_the_ID(), 'prompt', true);
     if (!empty($prompt_meta)) $prompt_text = $prompt_meta;
 ?>
 <div class="update-nag">
