@@ -39,7 +39,7 @@ public:
     // DOM Functions
 
     void start();
-    void stop() override;
+    void stop() final;
     
     unsigned scrollAmount() const;
     void setScrollAmount(unsigned);
@@ -53,14 +53,14 @@ public:
 private:
     HTMLMarqueeElement(const QualifiedName&, Document&);
 
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    bool isPresentationAttribute(const QualifiedName&) const final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
     // ActiveDOMObject
-    bool canSuspendForDocumentSuspension() const override;
-    void suspend(ReasonForSuspension) override;
-    void resume() override;
-    const char* activeDOMObjectName() const override { return "HTMLMarqueeElement"; }
+    bool canSuspendForDocumentSuspension() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+    const char* activeDOMObjectName() const final { return "HTMLMarqueeElement"; }
 
     RenderMarquee* renderMarquee() const;
 };

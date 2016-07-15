@@ -39,16 +39,16 @@ public:
     bool containsJavaApplet() const;
 
     bool hasFallbackContent() const;
-    bool useFallbackContent() const override { return m_useFallbackContent; }
+    bool useFallbackContent() const final { return m_useFallbackContent; }
     void renderFallbackContent();
 
-    bool willValidate() const override { return false; }
+    bool willValidate() const final { return false; }
 
     // Implementation of constraint validation API.
     // Note that the object elements are always barred from constraint validation.
     static bool checkValidity() { return true; }
-    void setCustomValidity(const String&) override { }
-    String validationMessage() const override { return String(); }
+    void setCustomValidity(const String&) final { }
+    String validationMessage() const final { return String(); }
 
     using HTMLPlugInImageElement::ref;
     using HTMLPlugInImageElement::deref;
@@ -58,26 +58,26 @@ public:
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    bool isPresentationAttribute(const QualifiedName&) const final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) final;
     void finishedInsertingSubtree() final;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(ContainerNode&) final;
 
-    void didMoveToNewDocument(Document* oldDocument) override;
+    void didMoveToNewDocument(Document* oldDocument) final;
 
-    void childrenChanged(const ChildChange&) override;
+    void childrenChanged(const ChildChange&) final;
 
-    bool isURLAttribute(const Attribute&) const override;
-    const AtomicString& imageSourceURL() const override;
+    bool isURLAttribute(const Attribute&) const final;
+    const AtomicString& imageSourceURL() const final;
 
-    RenderWidget* renderWidgetLoadingPlugin() const override;
+    RenderWidget* renderWidgetLoadingPlugin() const final;
 
-    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
-    void updateWidget(PluginCreationOption) override;
+    void updateWidget(PluginCreationOption) final;
     void updateDocNamedItem();
 
     // FIXME: This function should not deal with url or serviceType
@@ -88,20 +88,20 @@ private:
     bool hasValidClassId();
     void clearUseFallbackContent() { m_useFallbackContent = false; }
 
-    void refFormAssociatedElement() override { ref(); }
-    void derefFormAssociatedElement() override { deref(); }
-    HTMLFormElement* virtualForm() const override;
+    void refFormAssociatedElement() final { ref(); }
+    void derefFormAssociatedElement() final { deref(); }
+    HTMLFormElement* virtualForm() const final;
 
-    FormNamedItem* asFormNamedItem() override { return this; }
-    HTMLObjectElement& asHTMLElement() override { return *this; }
-    const HTMLObjectElement& asHTMLElement() const override { return *this; }
+    FormNamedItem* asFormNamedItem() final { return this; }
+    HTMLObjectElement& asHTMLElement() final { return *this; }
+    const HTMLObjectElement& asHTMLElement() const final { return *this; }
 
-    bool isFormControlElement() const override { return false; }
+    bool isFormControlElement() const final { return false; }
 
-    bool isEnumeratable() const override { return true; }
-    bool appendFormData(FormDataList&, bool) override;
+    bool isEnumeratable() const final { return true; }
+    bool appendFormData(FormDataList&, bool) final;
 
-    bool canContainRangeEndPoint() const override;
+    bool canContainRangeEndPoint() const final;
 
     bool m_docNamedItem : 1;
     bool m_useFallbackContent : 1;

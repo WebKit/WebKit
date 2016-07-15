@@ -60,7 +60,7 @@ public:
 
     bool ownElementDisabled() const { return m_disabled; }
 
-    bool isDisabledFormControl() const override;
+    bool isDisabledFormControl() const final;
 
     String textIndentedToRespectGroupLabel() const;
 
@@ -69,18 +69,18 @@ public:
 private:
     HTMLOptionElement(const QualifiedName&, Document&);
 
-    bool isFocusable() const override;
-    bool rendererIsNeeded(const RenderStyle&) override { return false; }
-    bool matchesDefaultPseudoClass() const override;
+    bool isFocusable() const final;
+    bool rendererIsNeeded(const RenderStyle&) final { return false; }
+    bool matchesDefaultPseudoClass() const final;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void accessKeyAction(bool) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    void accessKeyAction(bool) final;
 
-    void childrenChanged(const ChildChange&) override;
+    void childrenChanged(const ChildChange&) final;
 
-    void willResetComputedStyle() override;
+    void willResetComputedStyle() final;
 
     String collectOptionInnerText() const;
 

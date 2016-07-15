@@ -50,17 +50,17 @@ private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
     virtual ~HTMLAttachmentElement();
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    bool shouldSelectOnMouseDown() override {
+    bool shouldSelectOnMouseDown() final {
 #if PLATFORM(IOS)
         return false;
 #else
         return true;
 #endif
     }
-    bool canContainRangeEndPoint() const override { return false; }
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool canContainRangeEndPoint() const final { return false; }
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
     
     RefPtr<File> m_file;
 };

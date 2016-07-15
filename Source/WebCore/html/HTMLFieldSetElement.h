@@ -53,18 +53,18 @@ private:
     HTMLFieldSetElement(const QualifiedName&, Document&, HTMLFormElement*);
     ~HTMLFieldSetElement();
 
-    bool isEnumeratable() const override { return true; }
-    bool supportsFocus() const override;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    const AtomicString& formControlType() const override;
-    bool computeWillValidate() const override { return false; }
-    void disabledAttributeChanged() override;
-    void disabledStateChanged() override;
-    void childrenChanged(const ChildChange&) override;
-    void didMoveToNewDocument(Document* oldDocument) override;
+    bool isEnumeratable() const final { return true; }
+    bool supportsFocus() const final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    const AtomicString& formControlType() const final;
+    bool computeWillValidate() const final { return false; }
+    void disabledAttributeChanged() final;
+    void disabledStateChanged() final;
+    void childrenChanged(const ChildChange&) final;
+    void didMoveToNewDocument(Document* oldDocument) final;
 
-    bool matchesValidPseudoClass() const override;
-    bool matchesInvalidPseudoClass() const override;
+    bool matchesValidPseudoClass() const final;
+    bool matchesInvalidPseudoClass() const final;
 
     void updateAssociatedElements() const;
 

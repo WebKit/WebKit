@@ -42,10 +42,10 @@ public:
 private:
     HTMLTableColElement(const QualifiedName& tagName, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-    const StyleProperties* additionalPresentationAttributeStyle() const override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    bool isPresentationAttribute(const QualifiedName&) const final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    const StyleProperties* additionalPresentationAttributeStyle() const final;
 
     unsigned m_span;
 };

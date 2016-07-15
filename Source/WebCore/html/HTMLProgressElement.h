@@ -43,25 +43,25 @@ public:
 
     double position() const;
 
-    bool canContainRangeEndPoint() const override { return false; }
+    bool canContainRangeEndPoint() const final { return false; }
 
 private:
     HTMLProgressElement(const QualifiedName&, Document&);
     virtual ~HTMLProgressElement();
 
-    bool shouldAppearIndeterminate() const override;
-    bool supportLabels() const override { return true; }
+    bool shouldAppearIndeterminate() const final;
+    bool supportLabels() const final { return true; }
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool childShouldCreateRenderer(const Node&) const override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool childShouldCreateRenderer(const Node&) const final;
     RenderProgress* renderProgress() const;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    void didAttachRenderers() override;
+    void didAttachRenderers() final;
 
     void didElementStateChange();
-    void didAddUserAgentShadowRoot(ShadowRoot*) override;
+    void didAddUserAgentShadowRoot(ShadowRoot*) final;
     bool isDeterminate() const;
 
     ProgressValueElement* m_value;

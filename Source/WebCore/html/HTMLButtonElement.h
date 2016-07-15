@@ -37,7 +37,7 @@ public:
     
     const AtomicString& value() const;
 
-    bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() final;
 
     RenderButton* renderer() const;
 
@@ -46,34 +46,34 @@ private:
 
     enum Type { SUBMIT, RESET, BUTTON };
 
-    const AtomicString& formControlType() const override;
+    const AtomicString& formControlType() const final;
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     // HTMLFormControlElement always creates one, but buttons don't need it.
-    bool alwaysCreateUserAgentShadowRoot() const override { return false; }
+    bool alwaysCreateUserAgentShadowRoot() const final { return false; }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void defaultEventHandler(Event*) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    bool isPresentationAttribute(const QualifiedName&) const final;
+    void defaultEventHandler(Event*) final;
 
-    bool appendFormData(FormDataList&, bool) override;
+    bool appendFormData(FormDataList&, bool) final;
 
-    bool isEnumeratable() const override { return true; }
-    bool supportLabels() const override { return true; }
+    bool isEnumeratable() const final { return true; }
+    bool supportLabels() const final { return true; }
 
-    bool isSuccessfulSubmitButton() const override;
-    bool matchesDefaultPseudoClass() const override;
-    bool isActivatedSubmit() const override;
-    void setActivatedSubmit(bool flag) override;
+    bool isSuccessfulSubmitButton() const final;
+    bool matchesDefaultPseudoClass() const final;
+    bool isActivatedSubmit() const final;
+    void setActivatedSubmit(bool flag) final;
 
-    void accessKeyAction(bool sendMouseEvents) override;
-    bool isURLAttribute(const Attribute&) const override;
+    void accessKeyAction(bool sendMouseEvents) final;
+    bool isURLAttribute(const Attribute&) const final;
 
-    bool canStartSelection() const override { return false; }
+    bool canStartSelection() const final { return false; }
 
-    bool isOptionalFormControl() const override { return true; }
-    bool computeWillValidate() const override;
+    bool isOptionalFormControl() const final { return true; }
+    bool computeWillValidate() const final;
 
     Type m_type;
     bool m_isActivatedSubmit;

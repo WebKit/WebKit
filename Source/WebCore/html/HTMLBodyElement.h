@@ -41,26 +41,26 @@ private:
 
     bool isFirstBodyElementOfDocument() const;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    bool isPresentationAttribute(const QualifiedName&) const final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) final;
 
-    bool isURLAttribute(const Attribute&) const override;
+    bool isURLAttribute(const Attribute&) const final;
     
-    bool supportsFocus() const override;
+    bool supportsFocus() const final;
 
-    int scrollLeft() override;
-    void setScrollLeft(int) override;
+    int scrollLeft() final;
+    void setScrollLeft(int) final;
     
-    int scrollTop() override;
-    void setScrollTop(int) override;
+    int scrollTop() final;
+    void setScrollTop(int) final;
     
-    int scrollHeight() override;
-    int scrollWidth() override;
+    int scrollHeight() final;
+    int scrollWidth() final;
     
-    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     static EventHandlerNameMap createWindowEventHandlerNameMap();
 };

@@ -35,7 +35,7 @@ public:
 private:
     HTMLModElement(const QualifiedName&, Document&);
 
-    bool isURLAttribute(const Attribute&) const override;
+    bool isURLAttribute(const Attribute&) const final;
 };
 
 } //namespace

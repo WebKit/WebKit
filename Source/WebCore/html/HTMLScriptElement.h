@@ -47,28 +47,28 @@ public:
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void finishedInsertingSubtree() override;
-    void childrenChanged(const ChildChange&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    void finishedInsertingSubtree() final;
+    void childrenChanged(const ChildChange&) final;
 
-    bool isURLAttribute(const Attribute&) const override;
+    bool isURLAttribute(const Attribute&) const final;
 
-    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
-    String sourceAttributeValue() const override;
-    String charsetAttributeValue() const override;
-    String typeAttributeValue() const override;
-    String languageAttributeValue() const override;
-    String forAttributeValue() const override;
-    String eventAttributeValue() const override;
-    bool asyncAttributeValue() const override;
-    bool deferAttributeValue() const override;
-    bool hasSourceAttribute() const override;
+    String sourceAttributeValue() const final;
+    String charsetAttributeValue() const final;
+    String typeAttributeValue() const final;
+    String languageAttributeValue() const final;
+    String forAttributeValue() const final;
+    String eventAttributeValue() const final;
+    bool asyncAttributeValue() const final;
+    bool deferAttributeValue() const final;
+    bool hasSourceAttribute() const final;
 
-    void dispatchLoadEvent() override;
+    void dispatchLoadEvent() final;
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
 };
 
 } //namespace

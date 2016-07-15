@@ -40,7 +40,7 @@ public:
 private:
     HTMLWBRElement(const QualifiedName&, Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 };
 
 } // namespace WebCore

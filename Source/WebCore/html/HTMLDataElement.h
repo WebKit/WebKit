@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class HTMLDataElement : public HTMLElement {
+class HTMLDataElement final : public HTMLElement {
 public:
     static Ref<HTMLDataElement> create(const QualifiedName&, Document&);
 
