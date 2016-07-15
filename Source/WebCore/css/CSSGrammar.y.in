@@ -576,12 +576,14 @@ webkit_source_size_list:
 source_size_list:
     maybe_source_media_query_expression source_size_length {
         $$ = new Vector<CSSParser::SourceSize>;
-        $$->append(parser->sourceSize(WTFMove(*$1), $2));
+        if (auto result = parser->sourceSize(WTFMove(*$1), $2))
+            $$->append(WTFMove(result.value()));
         delete $1;
     }
     | source_size_list maybe_space ',' maybe_space maybe_source_media_query_expression source_size_length {
         $$ = $1;
-        $$->append(parser->sourceSize(WTFMove(*$5), $6));
+        if (auto result = parser->sourceSize(WTFMove(*$5), $6))
+            $$->append(WTFMove(result.value()));
         delete $5;
     }
     ;

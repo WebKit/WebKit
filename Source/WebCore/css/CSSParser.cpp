@@ -1544,7 +1544,7 @@ CSSParser::SourceSize::SourceSize(MediaQueryExpression&& expression, Ref<CSSValu
 {
 }
 
-CSSParser::SourceSize CSSParser::sourceSize(MediaQueryExpression&& expression, CSSParserValue& parserValue)
+Optional<CSSParser::SourceSize> CSSParser::sourceSize(MediaQueryExpression&& expression, CSSParserValue& parserValue)
 {
     RefPtr<CSSValue> value;
     if (isCalculation(parserValue)) {
@@ -1552,12 +1552,11 @@ CSSParser::SourceSize CSSParser::sourceSize(MediaQueryExpression&& expression, C
         if (args && args->size())
             value = CSSCalcValue::create(parserValue.function->name, *args, CalculationRangeNonNegative);
     }
-    if (!value) {
+    if (!value)
         value = parserValue.createCSSValue();
-        if (!value)
-            value = CSSPrimitiveValue::create(0, CSSPrimitiveValue::CSS_UNKNOWN);
-    }
     destroy(parserValue);
+    if (!value)
+        return Nullopt;
     // FIXME: Calling the constructor explicitly here to work around an MSVC bug.
     // For other compilers, we did not need to define the constructors and we could use aggregate initialization syntax.
     return SourceSize(WTFMove(expression), value.releaseNonNull());

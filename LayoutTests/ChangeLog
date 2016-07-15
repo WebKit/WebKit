@@ -1,3 +1,15 @@
+2016-07-14  Yoav Weiss  <yoav@yoav.ws>
+
+        Change CSSParser::sourceSize returning Optional<CSSParser::SourceSize>
+        https://bugs.webkit.org/show_bug.cgi?id=159666
+
+        Reviewed by Michael Catanzaro.
+
+        Added a test to make sure that an invalid source-size value is skipped, but the next one is properly picked.
+
+        * fast/dom/HTMLImageElement/sizes/image-sizes-invalids-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-invalids.html:
+
 2016-07-14  Antonio Gomes  <tonikitoo@igalia.com>
 
         [RTL Scrollbars] Frame scrollbars don't move to the right when text direction changes to RTL

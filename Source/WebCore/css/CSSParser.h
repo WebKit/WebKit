@@ -176,7 +176,7 @@ public:
         SourceSize(MediaQueryExpression&&, Ref<CSSValue>&&);
     };
     Vector<SourceSize> parseSizesAttribute(StringView);
-    SourceSize sourceSize(MediaQueryExpression&&, CSSParserValue&);
+    Optional<SourceSize> sourceSize(MediaQueryExpression&&, CSSParserValue&);
 
     bool parseFillImage(CSSParserValueList&, RefPtr<CSSValue>&);
 

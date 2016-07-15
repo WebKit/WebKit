@@ -12,6 +12,9 @@
             shouldBe('document.getElementById(elementId).clientWidth', '800');
             shouldBe('currentSrcFileName(elementId)', '"image-set-2x.png"');
         }
+        elementId = "crash10";
+        shouldBe('document.getElementById(elementId).clientWidth', '1600');
+        shouldBe('currentSrcFileName(elementId)', '"image-set-4x.png"');
     }, false);
 </script>
 <!-- crash tests -->
@@ -24,3 +27,4 @@
 <img id="crash7" sizes="calc(2px+dfmjbsf,,,skidkk)" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
 <img id="crash8" sizes="calc(2px+dfmjbsf,,,skidkk) + 2px, 56px" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
 <img id="crash9" sizes="1dpi" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="crash10" sizes="(max-width: 10px) 1hz, 1600px" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 1600w">
