@@ -302,7 +302,6 @@
 /* Only one of these will be defined. */
 #if !defined(WTF_CPU_ARM_TRADITIONAL) && !defined(WTF_CPU_ARM_THUMB2)
 #  if defined(thumb2) || defined(__thumb2__) \
-    || (defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH_ISA_THUMB == 2) \
     || ((defined(__thumb) || defined(__thumb__)) && WTF_THUMB_ARCH_VERSION == 4)
 #    define WTF_CPU_ARM_TRADITIONAL 0
 #    define WTF_CPU_ARM_THUMB2 1
