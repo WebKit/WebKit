@@ -496,7 +496,7 @@ void RenderMathMLToken::computePreferredLogicalWidths()
     if (m_mathVariantGlyphDirty)
         updateMathVariantGlyph();
 
-    if (m_mathVariantGlyph.isValid()) {
+    if (m_mathVariantGlyph.font) {
         m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_mathVariantGlyph.font->widthForGlyph(m_mathVariantGlyph.glyph);
         setPreferredLogicalWidthsDirty(false);
         return;
@@ -546,7 +546,7 @@ void RenderMathMLToken::updateFromElement()
 
 Optional<int> RenderMathMLToken::firstLineBaseline() const
 {
-    if (m_mathVariantGlyph.isValid())
+    if (m_mathVariantGlyph.font)
         return Optional<int>(static_cast<int>(lroundf(-m_mathVariantGlyph.font->boundsForGlyph(m_mathVariantGlyph.glyph).y())));
     return RenderMathMLBlock::firstLineBaseline();
 }
@@ -558,7 +558,7 @@ void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogica
     if (!relayoutChildren && simplifiedLayout())
         return;
 
-    if (!m_mathVariantGlyph.isValid()) {
+    if (!m_mathVariantGlyph.font) {
         RenderMathMLBlock::layoutBlock(relayoutChildren, pageLogicalHeight);
         return;
     }
@@ -577,7 +577,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     RenderMathMLBlock::paint(info, paintOffset);
 
     // FIXME: Instead of using DrawGlyph, we may consider using the more general TextPainter so that we can apply mathvariant to strings with an arbitrary number of characters and preserve advanced CSS effects (text-shadow, etc).
-    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || !m_mathVariantGlyph.isValid())
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || !m_mathVariantGlyph.font)
         return;
 
     GraphicsContextStateSaver stateSaver(info.context());
@@ -591,7 +591,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
 void RenderMathMLToken::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
 {
-    if (m_mathVariantGlyph.isValid())
+    if (m_mathVariantGlyph.font)
         return;
     RenderMathMLBlock::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
 }

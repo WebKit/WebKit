@@ -246,7 +246,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         if (isInvisibleOperator()) {
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
             GlyphData data = style().fontCascade().glyphDataForCharacter(m_textContent, false);
-            float glyphWidth = data.isValid() ? data.font->widthForGlyph(data.glyph) : 0;
+            float glyphWidth = data.font ? data.font->widthForGlyph(data.glyph) : 0;
             ASSERT(glyphWidth <= preferredWidth);
             preferredWidth -= glyphWidth;
         }
