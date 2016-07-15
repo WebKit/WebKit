@@ -1,3 +1,17 @@
+2016-07-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge Blink test case
+        https://bugs.webkit.org/show_bug.cgi?id=117422
+
+        Patch is from a set of Blink changes (patches by <leviw@chromium.org>):
+        <https://chromium.googlesource.com/chromium/blink/+/507e1576555bd2ce6688206f28339c25761893b1>
+        <https://chromium.googlesource.com/chromium/blink/+/4c95872f52340cf0cf9a2a7078bb63a94f38d302>
+
+        * fast/list/list-style-position-inside-expected.txt: Added.
+        * fast/list/list-style-position-inside.html: Added.
+        * fast/sub-pixel/float-list-inside-expected.txt: Added.
+        * fast/sub-pixel/float-list-inside.html: Added.
+
 2016-07-14  John Wilander  <wilander@apple.com>
 
         Remove credentials in URL when accessed through location.href
