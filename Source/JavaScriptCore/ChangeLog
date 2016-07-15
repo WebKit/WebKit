@@ -1,3 +1,18 @@
+2016-07-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Return the correct value from Heap::externalMemorySize
+        https://bugs.webkit.org/show_bug.cgi?id=159797
+        <rdar://problem/27362446>
+
+        Reviewed by Timothy Hatcher.
+
+        * heap/Heap.h:
+        (JSC::Heap::externalMemorySize):
+        We should have been returning m_externalMemorySize which is a subset
+        of m_extraMemorySize. In practice the difference can be small. A major
+        difference in "extra memory size" may be from deprecated memory size
+        and array buffer sizes.
+
 2016-07-14  Saam Barati  <sbarati@apple.com>
 
         It should be a syntax error to have a 'use strict' directive inside a function that has a non-simple parameter list

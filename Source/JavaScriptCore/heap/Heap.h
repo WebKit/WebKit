@@ -182,7 +182,7 @@ public:
 #if ENABLE(RESOURCE_USAGE)
     // Use this API to report the subset of extra memory that lives outside this process.
     void reportExternalMemoryVisited(CellState cellStateBeforeVisiting, size_t);
-    size_t externalMemorySize() { return m_extraMemorySize; }
+    size_t externalMemorySize() { return m_externalMemorySize; }
 #endif
 
     // Use this API to report non-GC memory if you can't use the better API above.
