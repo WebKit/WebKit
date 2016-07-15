@@ -1,3 +1,12 @@
+2016-07-15  Jon Davis  <jond@apple.com>
+
+        Changed the start page URL for WebKit Nightly builds.
+        https://bugs.webkit.org/show_bug.cgi?id=159816
+
+        Reviewed by Timothy Hatcher.
+
+        * WebKitLauncher/start.html:
+
 2016-07-15  Per Arne Vollan  <pvollan@apple.com>
 
         Uninitialized variable in DIBPixelData can cause a dangerous memory write
