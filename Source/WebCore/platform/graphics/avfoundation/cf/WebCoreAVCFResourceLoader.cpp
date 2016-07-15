@@ -104,7 +104,7 @@ void WebCoreAVCFResourceLoader::invalidate()
 
     m_parent = nullptr;
 
-    callOnMainThread([protectedThis = Ref<WebCoreAVCFResourceLoader>(*this)] () mutable {
+    callOnMainThread([protectedThis = makeRef(*this)] () mutable {
         protectedThis->stopLoading();
     });
 }

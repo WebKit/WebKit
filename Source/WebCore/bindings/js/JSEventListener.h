@@ -111,7 +111,7 @@ inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* script
 {
     // initializeJSFunction can trigger code that deletes this event listener
     // before we're done. It should always return 0 in this case.
-    Ref<JSEventListener> protect(const_cast<JSEventListener&>(*this));
+    auto protect = makeRef(const_cast<JSEventListener&>(*this));
     JSC::Strong<JSC::JSObject> wrapper(m_isolatedWorld->vm(), m_wrapper.get());
 
     if (!m_jsFunction) {

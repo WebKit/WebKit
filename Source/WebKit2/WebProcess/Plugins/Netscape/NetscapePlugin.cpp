@@ -302,7 +302,7 @@ void NetscapePlugin::popPopupsEnabledState()
 
 void NetscapePlugin::pluginThreadAsyncCall(void (*function)(void*), void* userData)
 {
-    RunLoop::main().dispatch([protectedThis = Ref<NetscapePlugin>(*this), function, userData] {
+    RunLoop::main().dispatch([protectedThis = makeRef(*this), function, userData] {
         if (!protectedThis->m_isStarted)
             return;
 

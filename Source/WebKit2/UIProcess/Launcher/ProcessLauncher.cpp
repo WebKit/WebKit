@@ -45,7 +45,7 @@ ProcessLauncher::ProcessLauncher(Client* client, const LaunchOptions& launchOpti
 {
     m_isLaunching = true;
 
-    processLauncherWorkQueue().dispatch([processLauncher = Ref<ProcessLauncher>(*this)]() mutable {
+    processLauncherWorkQueue().dispatch([processLauncher = makeRef(*this)]() mutable {
         processLauncher->launchProcess();
     });
 }

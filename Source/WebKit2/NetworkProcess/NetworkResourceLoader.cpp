@@ -529,7 +529,7 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     if (!m_bufferedDataForCache)
         return;
 
-    NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = Ref<NetworkResourceLoader>(*this)](auto& mappedBody) mutable {
+    NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = makeRef(*this)](auto& mappedBody) mutable {
 #if ENABLE(SHAREABLE_RESOURCE)
         if (mappedBody.shareableResourceHandle.isNull())
             return;

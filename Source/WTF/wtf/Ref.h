@@ -217,6 +217,12 @@ inline Ref<T> adoptRef(T& reference)
     return Ref<T>(reference, Ref<T>::Adopt);
 }
 
+template<typename T>
+inline Ref<T> makeRef(T& reference)
+{
+    return Ref<T>(reference);
+}
+
 template<typename ExpectedType, typename ArgType> inline bool is(Ref<ArgType>& source)
 {
     return is<ExpectedType>(source.get());
@@ -231,6 +237,7 @@ template<typename ExpectedType, typename ArgType> inline bool is(const Ref<ArgTy
 
 using WTF::Ref;
 using WTF::adoptRef;
+using WTF::makeRef;
 using WTF::static_reference_cast;
 
 #endif // WTF_Ref_h

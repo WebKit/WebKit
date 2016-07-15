@@ -231,7 +231,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
             if (pendingCallbacks)
                 return;
 
-            RunLoop::main().dispatch([callbackAggregator = Ref<CallbackAggregator>(*this)]() mutable {
+            RunLoop::main().dispatch([callbackAggregator = makeRef(*this)]() mutable {
 
                 WTF::Vector<WebsiteDataRecord> records;
                 records.reserveInitialCapacity(callbackAggregator->m_websiteDataRecords.size());

@@ -160,7 +160,7 @@ void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInf
         devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
     }
 
-    callOnMainThread([protectedThis = Ref<MediaDevicesRequest>(*this), devices = WTFMove(devices)]() mutable {
+    callOnMainThread([protectedThis = makeRef(*this), devices = WTFMove(devices)]() mutable {
         protectedThis->m_promise.resolve(devices);
     });
     m_protector = nullptr;

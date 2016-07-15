@@ -523,7 +523,7 @@ void Connection::receiveSourceEventHandler()
             StringReference messageNameReference = decoder->messageName();
             String messageName(String(messageNameReference.data(), messageNameReference.size()));
 
-            RunLoop::main().dispatch([protectedThis = Ref<Connection>(*this), messageReceiverName = WTFMove(messageReceiverName), messageName = WTFMove(messageName)]() mutable {
+            RunLoop::main().dispatch([protectedThis = makeRef(*this), messageReceiverName = WTFMove(messageReceiverName), messageName = WTFMove(messageName)]() mutable {
                 protectedThis->dispatchDidReceiveInvalidMessage(messageReceiverName.utf8(), messageName.utf8());
             });
             return;

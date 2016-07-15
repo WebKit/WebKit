@@ -306,7 +306,7 @@ static RefPtr<API::UserContentExtension> createExtension(const String& identifie
 
 void UserContentExtensionStore::lookupContentExtension(const WTF::String& identifier, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
 {
-    m_readQueue->dispatch([protectedThis = Ref<Object>(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_readQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto path = constructedPath(storePath, identifier);
         
         ContentExtensionMetaData metaData;
@@ -334,7 +334,7 @@ void UserContentExtensionStore::lookupContentExtension(const WTF::String& identi
 
 void UserContentExtensionStore::compileContentExtension(const WTF::String& identifier, WTF::String&& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
 {
-    m_compileQueue->dispatch([protectedThis = Ref<Object>(*this), identifier = identifier.isolatedCopy(), json = json.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+    m_compileQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), json = json.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         auto path = constructedPath(storePath, identifier);
 
         ContentExtensionMetaData metaData;
@@ -356,7 +356,7 @@ void UserContentExtensionStore::compileContentExtension(const WTF::String& ident
 
 void UserContentExtensionStore::removeContentExtension(const WTF::String& identifier, std::function<void(std::error_code)> completionHandler)
 {
-    m_removeQueue->dispatch([protectedThis = Ref<Object>(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_removeQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto path = constructedPath(storePath, identifier);
 
         if (!WebCore::deleteFile(path)) {

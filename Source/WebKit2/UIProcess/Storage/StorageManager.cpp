@@ -473,7 +473,7 @@ StorageManager::~StorageManager()
 
 void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), storageNamespaceID, quotaInBytes]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), storageNamespaceID, quotaInBytes]() mutable {
         ASSERT(!m_sessionStorageNamespaces.contains(storageNamespaceID));
 
         m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(quotaInBytes));
@@ -482,7 +482,7 @@ void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, 
 
 void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), storageNamespaceID] {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), storageNamespaceID] {
         ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
         m_sessionStorageNamespaces.remove(storageNamespaceID);
     });
@@ -490,7 +490,7 @@ void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
 
 void StorageManager::setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection* allowedConnection)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), connection = RefPtr<IPC::Connection>(allowedConnection), storageNamespaceID]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connection = RefPtr<IPC::Connection>(allowedConnection), storageNamespaceID]() mutable {
         ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
 
         m_sessionStorageNamespaces.get(storageNamespaceID)->setAllowedConnection(connection.get());
@@ -499,7 +499,7 @@ void StorageManager::setAllowedSessionStorageNamespaceConnection(uint64_t storag
 
 void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), storageNamespaceID, newStorageNamespaceID] {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), storageNamespaceID, newStorageNamespaceID] {
         SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
         if (!sessionStorageNamespace) {
             // FIXME: We can get into this situation if someone closes the originating page from within a
@@ -524,7 +524,7 @@ void StorageManager::processDidCloseConnection(WebProcessProxy&, IPC::Connection
 {
     connection.removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), connection = Ref<IPC::Connection>(connection)]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connection = Ref<IPC::Connection>(connection)]() mutable {
         Vector<std::pair<RefPtr<IPC::Connection>, uint64_t>> connectionAndStorageMapIDPairsToRemove;
         for (auto& storageArea : m_storageAreasByConnection) {
             if (storageArea.key.first != connection.ptr())
@@ -543,7 +543,7 @@ void StorageManager::getSessionStorageOrigins(std::function<void (HashSet<RefPtr
 {
     RefPtr<StorageManager> storageManager(this);
 
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         HashSet<RefPtr<SecurityOrigin>> origins;
 
         for (const auto& sessionStorageNamespace : m_sessionStorageNamespaces.values()) {
@@ -559,7 +559,7 @@ void StorageManager::getSessionStorageOrigins(std::function<void (HashSet<RefPtr
 
 void StorageManager::deleteSessionStorageOrigins(std::function<void ()>&& completionHandler)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& sessionStorageNamespace : m_sessionStorageNamespaces.values())
             sessionStorageNamespace->clearAllStorageAreas();
 
@@ -575,7 +575,7 @@ void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<RefPtr<W
     for (auto& origin : origins)
         copiedOrigins.uncheckedAppend(origin->isolatedCopy());
 
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), copiedOrigins = WTFMove(copiedOrigins), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigins = WTFMove(copiedOrigins), completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& origin : copiedOrigins) {
             for (auto& sessionStorageNamespace : m_sessionStorageNamespaces.values())
                 sessionStorageNamespace->clearStorageAreasMatchingOrigin(*origin);
@@ -587,7 +587,7 @@ void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<RefPtr<W
 
 void StorageManager::getLocalStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)>&& completionHandler)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         HashSet<RefPtr<SecurityOrigin>> origins;
 
         for (auto& origin : m_localStorageDatabaseTracker->origins())
@@ -606,7 +606,7 @@ void StorageManager::getLocalStorageOrigins(std::function<void (HashSet<RefPtr<W
 
 void StorageManager::getLocalStorageOriginDetails(std::function<void (Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         auto originDetails = m_localStorageDatabaseTracker->originDetails();
 
         RunLoop::main().dispatch([originDetails = WTFMove(originDetails), completionHandler = WTFMove(completionHandler)]() mutable {
@@ -617,7 +617,7 @@ void StorageManager::getLocalStorageOriginDetails(std::function<void (Vector<Loc
 
 void StorageManager::deleteLocalStorageEntriesForOrigin(const SecurityOrigin& securityOrigin)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), copiedOrigin = securityOrigin.isolatedCopy()]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigin = securityOrigin.isolatedCopy()]() mutable {
         for (auto& localStorageNamespace : m_localStorageNamespaces.values())
             localStorageNamespace->clearStorageAreasMatchingOrigin(copiedOrigin);
 
@@ -630,7 +630,7 @@ void StorageManager::deleteLocalStorageEntriesForOrigin(const SecurityOrigin& se
 
 void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point time, std::function<void ()>&& completionHandler)
 {
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), time, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), time, completionHandler = WTFMove(completionHandler)]() mutable {
         auto deletedOrigins = m_localStorageDatabaseTracker->deleteDatabasesModifiedSince(time);
 
         for (const auto& origin : deletedOrigins) {
@@ -653,7 +653,7 @@ void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<RefPtr<Web
     for (auto& origin : origins)
         copiedOrigins.uncheckedAppend(origin->isolatedCopy());
 
-    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), copiedOrigins = WTFMove(copiedOrigins), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigins = WTFMove(copiedOrigins), completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& origin : copiedOrigins) {
             for (auto& localStorageNamespace : m_localStorageNamespaces.values())
                 localStorageNamespace->clearStorageAreasMatchingOrigin(*origin);

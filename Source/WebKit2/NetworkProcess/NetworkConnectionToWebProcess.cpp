@@ -315,7 +315,7 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
     for (auto& file : fileReferences)
         file->prepareForFileAccess();
 
-    NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [this, protectedThis = Ref<NetworkConnectionToWebProcess>(*this), requestIdentifier, fileReferences = WTFMove(fileReferences)](auto& fileNames) mutable {
+    NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [this, protectedThis = makeRef(*this), requestIdentifier, fileReferences = WTFMove(fileReferences)](auto& fileNames) mutable {
         for (auto& file : fileReferences)
             file->revokeFileAccess();
 

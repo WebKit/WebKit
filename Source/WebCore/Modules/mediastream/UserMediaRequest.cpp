@@ -135,7 +135,7 @@ void UserMediaRequest::constraintsValidated(const Vector<RefPtr<RealtimeMediaSou
     for (auto& videoTrack : videoTracks)
         m_videoDeviceUIDs.append(videoTrack->persistentID());
 
-    callOnMainThread([protectedThis = Ref<UserMediaRequest>(*this)]() mutable {
+    callOnMainThread([protectedThis = makeRef(*this)]() mutable {
         // 2 - The constraints are valid, ask the user for access to media.
         if (UserMediaController* controller = protectedThis->m_controller)
             controller->requestUserMediaAccess(protectedThis.get());
@@ -147,7 +147,7 @@ void UserMediaRequest::userMediaAccessGranted(const String& audioDeviceUID, cons
     m_allowedVideoDeviceUID = videoDeviceUID;
     m_audioDeviceUIDAllowed = audioDeviceUID;
 
-    callOnMainThread([protectedThis = Ref<UserMediaRequest>(*this), audioDeviceUID, videoDeviceUID]() mutable {
+    callOnMainThread([protectedThis = makeRef(*this), audioDeviceUID, videoDeviceUID]() mutable {
         // 3 - the user granted access, ask platform to create the media stream descriptors.
         RealtimeMediaSourceCenter::singleton().createMediaStream(protectedThis.ptr(), audioDeviceUID, videoDeviceUID);
     });

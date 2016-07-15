@@ -52,7 +52,7 @@ LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(PassRefPtr<WorkQueue> q
     // Make sure the encoding is initialized before we start dispatching things to the queue.
     UTF8Encoding();
 
-    m_queue->dispatch([protectedThis = Ref<LocalStorageDatabaseTracker>(*this)]() mutable {
+    m_queue->dispatch([protectedThis = makeRef(*this)]() mutable {
         protectedThis->importOriginIdentifiers();
     });
 }

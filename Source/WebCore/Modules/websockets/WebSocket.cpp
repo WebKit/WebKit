@@ -306,7 +306,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
                 });
             });
 #else
-            RunLoop::main().dispatch([this, protectedThis = Ref<WebSocket>(*this)]() {
+            RunLoop::main().dispatch([this, protectedThis = makeRef(*this)]() {
                 dispatchOrQueueErrorEvent();
                 stop();
             });

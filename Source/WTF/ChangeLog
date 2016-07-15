@@ -1,3 +1,15 @@
+2016-07-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Added a makeRef<T> helper
+        https://bugs.webkit.org/show_bug.cgi?id=159835
+
+        Reviewed by Andreas Kling.
+
+        Anders told me to!
+
+        * wtf/Ref.h:
+        (WTF::makeRef): Helper function to do type inference for you.
+
 2016-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r203266.

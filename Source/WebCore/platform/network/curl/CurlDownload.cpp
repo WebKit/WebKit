@@ -403,7 +403,7 @@ void CurlDownload::didReceiveHeader(const String& header)
 
         if (httpCode >= 200 && httpCode < 300) {
             URL url = getCurlEffectiveURL(m_curlHandle);
-            callOnMainThread([this, url = url.isolatedCopy(), protectedThis = Ref<CurlDownload>(*this)] {
+            callOnMainThread([this, url = url.isolatedCopy(), protectedThis = makeRef(*this)] {
                 m_response.setURL(url);
                 m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
                 m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
@@ -412,7 +412,7 @@ void CurlDownload::didReceiveHeader(const String& header)
             });
         }
     } else {
-        callOnMainThread([this, header = header.isolatedCopy(), protectedThis = Ref<CurlDownload>(*this)] {
+        callOnMainThread([this, header = header.isolatedCopy(), protectedThis = makeRef(*this)] {
             int splitPos = header.find(":");
             if (splitPos != -1)
                 m_response.setHTTPHeaderField(header.left(splitPos), header.substring(splitPos + 1).stripWhiteSpace());

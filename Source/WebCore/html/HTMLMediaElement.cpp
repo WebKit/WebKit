@@ -4016,7 +4016,7 @@ void HTMLMediaElement::updateCaptionContainer()
 void HTMLMediaElement::layoutSizeChanged()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    auto task = [this, protectedThis = Ref<Element>(*this)] {
+    auto task = [this, protectedThis = makeRef(*this)] {
         if (ShadowRoot* root = userAgentShadowRoot())
             root->dispatchEvent(Event::create("resize", false, false));
     };

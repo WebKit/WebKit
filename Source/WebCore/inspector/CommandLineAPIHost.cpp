@@ -144,7 +144,7 @@ JSValue CommandLineAPIHost::wrapper(ExecState* exec, JSDOMGlobalObject* globalOb
 
     JSObject* prototype = JSCommandLineAPIHost::createPrototype(exec->vm(), globalObject);
     Structure* structure = JSCommandLineAPIHost::createStructure(exec->vm(), globalObject, prototype);
-    JSCommandLineAPIHost* commandLineAPIHost = JSCommandLineAPIHost::create(structure, globalObject, Ref<CommandLineAPIHost>(*this));
+    JSCommandLineAPIHost* commandLineAPIHost = JSCommandLineAPIHost::create(structure, globalObject, makeRef(*this));
     m_wrappers.addWrapper(globalObject, commandLineAPIHost);
 
     return commandLineAPIHost;

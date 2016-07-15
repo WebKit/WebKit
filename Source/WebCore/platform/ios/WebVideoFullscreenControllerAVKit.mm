@@ -435,7 +435,7 @@ void WebVideoFullscreenControllerContext::setLegibleMediaSelectionOptions(const 
 void WebVideoFullscreenControllerContext::setExternalPlayback(bool enabled, ExternalPlaybackTargetType type, String localizedDeviceName)
 {
     ASSERT(WebThreadIsCurrent());
-    callOnMainThread([protectedThis = Ref<WebVideoFullscreenControllerContext>(*this), this, enabled, type, localizedDeviceName = localizedDeviceName.isolatedCopy()] {
+    callOnMainThread([protectedThis = makeRef(*this), this, enabled, type, localizedDeviceName = localizedDeviceName.isolatedCopy()] {
         if (m_interface)
             m_interface->setExternalPlayback(enabled, type, localizedDeviceName);
     });
