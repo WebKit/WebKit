@@ -1,3 +1,13 @@
+2016-07-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Disable Inline Caching on ARMv7 traditional until proper fix
+        https://bugs.webkit.org/show_bug.cgi?id=159759
+
+        Reviewed by Saam Barati.
+
+        * jit/Repatch.cpp:
+        (JSC::forceICFailure):
+
 2016-07-14  Keith Miller  <keith_miller@apple.com>
 
         Add Test262 test files and yaml
