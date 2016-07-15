@@ -343,9 +343,13 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::CSSStyleSheet:
         // These resource can inject script into the current document (Script,
         // XSL) or exfiltrate the content of the current document (CSS).
-        if (Frame* f = frame())
+        if (Frame* f = frame()) {
             if (!f->loader().mixedContentChecker().canRunInsecureContent(m_document->securityOrigin(), url))
                 return false;
+            Frame& top = f->tree().top();
+            if (&top != f && !top.loader().mixedContentChecker().canRunInsecureContent(top.document()->securityOrigin(), url))
+                return false;
+        }
         break;
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
