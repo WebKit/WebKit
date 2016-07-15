@@ -1,3 +1,17 @@
+2016-07-14  Keith Miller  <keith_miller@apple.com>
+
+        Add Test262 test files and yaml
+
+        Rubber Stamped by Benjamin Poulain.
+
+        This patch adds all the test262 test files and the yaml that drives
+        run-jsc-stress-tests.
+
+        * tests/test262.yaml: Added. Yaml file to drive the test262 test suite with our driver.
+        * tests/test262/LICENSE: Added. License for the test262 test suite.
+        * tests/test262/harness/: Added. Harness directory for the test262 tests.
+        * tests/test262/test/: Added. Directory with all the actual test files.
+
 2016-07-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Return the correct value from Heap::externalMemorySize
