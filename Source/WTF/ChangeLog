@@ -1,3 +1,19 @@
+2016-07-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support new emoji group candidates
+        https://bugs.webkit.org/show_bug.cgi?id=159755
+        <rdar://problem/27325521>
+
+        Reviewed by Dean Jackson.
+
+        This patch doesn't update the rules for our cursor movement iterator, because
+        I don't know the language used for implementing these rules. These rules will
+        be updated in the near future. When they do,
+        editing/deleting/delete-emoji-expected.txt will need to be updated.
+
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::cursorMovementIterator):
+
 2016-07-14  Alex Christensen  <achristensen@webkit.org>
 
         Allow RefPtrs of const RefCounted types

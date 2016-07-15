@@ -673,6 +673,11 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
         if (c <= 0x20FF)
             return Complex;
 
+        if (c < 0x26F9)
+            continue;
+        if (c < 0x26FA)
+            return Complex;
+
         if (c < 0x2CEF) // U+2CEF through U+2CF1 Combining marks for Coptic
             continue;
         if (c <= 0x2CF1)
@@ -722,7 +727,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
             if (supplementaryCharacter <= 0x1F1FF)
                 return Complex;
 
-            if (supplementaryCharacter == 0x1F441 || supplementaryCharacter == 0x1F5E8 || (supplementaryCharacter >= 0x1F466 && supplementaryCharacter <= 0x1F469)) {
+            if (isEmojiGroupCandidate(supplementaryCharacter)) {
                 previousCharacterIsEmojiGroupCandidate = true;
                 continue;
             }
