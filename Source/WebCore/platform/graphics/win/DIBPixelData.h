@@ -60,7 +60,7 @@ public:
     const IntSize& size() const { return m_size; }
     unsigned bytesPerRow() const { return m_bytesPerRow; }
     unsigned short bitsPerPixel() const { return m_bitsPerPixel; }
-    static void setRGBABitmapAlpha(HDC, const IntRect&, unsigned char);
+    WEBCORE_EXPORT static void setRGBABitmapAlpha(HDC, const IntRect&, unsigned char);
 
 private:
     UInt8* m_bitmapBuffer;
