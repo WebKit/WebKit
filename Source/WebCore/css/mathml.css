@@ -77,6 +77,11 @@ math {
        "TeX Gyre Schola",
 
        /*
+       DejaVu is pre-installed on many Linux distributions and is included in LibreOffice.
+       */
+       "DejaVu Math TeX Gyre",
+
+       /*
        The following fonts have Palatino style and are provided with most TeX & Linux distributions.
        Asana Math has some rendering issues (e.g. missing italic correction) so we put it after.
        */
