@@ -682,6 +682,8 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
         return false;
 
     Document& document = *m_frame->document();
+    if (!document.documentElement())
+        return false;
     return function(expression.value(), { m_style, document.documentElement()->renderStyle(), document.renderView(), 1, false }, *m_frame, NoPrefix);
 }
 
