@@ -1,3 +1,22 @@
+2016-07-15  Mark Lam  <mark.lam@apple.com>
+
+        Stack overflow error for deeply nested classes.
+        https://bugs.webkit.org/show_bug.cgi?id=157086
+
+        Reviewed by Geoffrey Garen.
+
+        Changed the StructureStubClearingWatchpoint destructor to iteratively destruct
+        its chain of next StructureStubClearingWatchpoints instead of recursively doing
+        so.
+
+        The added deep-StructureStubClearingWatchpoint-destructor-recursion.js test
+        produces a crash before the fix is applied, but takes about 14 minutes to run.
+        Hence, it is skipped.
+
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::~StructureStubClearingWatchpoint):
+        * tests/stress/deep-StructureStubClearingWatchpoint-destructor-recursion.js: Added.
+
 2016-07-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix expectations in test262.yaml
