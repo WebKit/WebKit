@@ -1,3 +1,26 @@
+2016-07-15  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Make Open Quickly and Goto Line dialogs match Xcode 8
+        https://bugs.webkit.org/show_bug.cgi?id=159823
+        rdar://problem/27376501
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/GoToLineDialog.css:
+        (.go-to-line-dialog):
+        (.go-to-line-dialog > div > input):
+        (.go-to-line-dialog > div > input::placeholder):
+        (.go-to-line-dialog > div > img):
+        (.go-to-line-dialog > div): Deleted.
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog):
+        (.open-resource-dialog > .field):
+        (.open-resource-dialog > .field > input):
+        (.open-resource-dialog > .field > input::placeholder):
+        (.open-resource-dialog > .field > img):
+        (.open-resource-dialog > .tree-outline .item): Deleted.
+        (.open-resource-dialog > .tree-outline .item:first-child): Deleted.
+
 2016-07-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename CCTNode to CallingContextTreeNode

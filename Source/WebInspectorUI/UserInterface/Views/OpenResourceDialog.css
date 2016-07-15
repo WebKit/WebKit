@@ -26,6 +26,7 @@
 .open-resource-dialog {
     display: flex;
     flex-direction: column;
+
     position: absolute;
     left: 50%;
     top: 50px;
@@ -35,19 +36,19 @@
     overflow: hidden;
 
     transform: translate(-50%, 0);
+
     border-radius: 5px;
-    background-color: hsl(0, 0%, 90%);
-    border: 1px hsl(0, 0%, 70%) solid;
+    background-color: hsla(0, 0%, 95%, 0.8);
+    border: 1px hsla(0, 0%, 0%, 0.25) solid;
     box-shadow: 1px 5px 20px 3px hsla(0, 0%, 0%, 0.33);
+
+    -webkit-backdrop-filter: blur(10px);
 
     z-index: var(--z-index-popover);
 }
 
 .open-resource-dialog > .field {
-    margin: 3px;
-    border-radius: 4px;
-    background-color: white;
-    border: 1px hsl(0, 0%, 80%) solid;
+    margin: 8px 3px;
 }
 
 .open-resource-dialog > .field > input {
@@ -57,18 +58,19 @@
     background-color: transparent;
     font-size: 20px;
     color: hsl(0, 0%, 4%);
-    padding: 0 34px 1px 7px;
+    padding: 0 30px 1px 7px;
     outline: none;
+    -webkit-appearance: none;
 }
 
 .open-resource-dialog > .field > input::placeholder {
-    color: hsl(0, 0%, 52%);
+    color: hsl(0, 0%, 0%, 0.25);
 }
 
 .open-resource-dialog > .field > img {
     position: absolute;
-    top: 10px;
-    right: 12px;
+    top: 15px;
+    right: 10px;
     padding: 2px;
     border-radius: 9px;
     width: 15px;
@@ -96,10 +98,6 @@
 }
 
 .open-resource-dialog > .tree-outline .item {
-    border-top-color: hsl(0, 0%, 94%);
-}
-
-.open-resource-dialog > .tree-outline .item:first-child {
     border: none;
 }
 

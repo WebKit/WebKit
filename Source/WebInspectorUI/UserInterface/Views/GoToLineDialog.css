@@ -26,51 +26,53 @@
 .go-to-line-dialog {
     position: relative;
     left: 50%;
-    top: 50px;
+    top: 21px;
     width: calc(100% - 40px);
     max-width: 452px;
-    height: 38px;
-    transform: translate(-50%, -50%);
-    padding: 3px;
+    height: 46px;
+
+    transform: translate(-50%, 0);
+
+    padding: 8px 3px;
+
     border-radius: 5px;
-    background-color: hsla(0, 0%, 90%, 0.95);
-    border: 1px hsl(0, 0%, 85%) solid;
+    background-color: hsla(0, 0%, 95%, 0.8);
+    border: 1px hsla(0, 0%, 0%, 0.25) solid;
     box-shadow: 1px 5px 20px 3px hsla(0, 0%, 0%, 0.33);
+
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .go-to-line-dialog > div {
     width: 100%;
     height: 100%;
-    border-radius: 4px;
-    background-color: white;
-    border: 1px hsl(0, 0%, 80%) solid;
 }
 
 .go-to-line-dialog > div > input {
-    position: absolute;
-    left: 2px;
-    right: 36px;
+    display: block;
+    width: 100%;
     border: none;
     background-color: transparent;
     font-size: 20px;
     color: hsl(0, 0%, 4%);
-    padding: 0 0 1px 5px;
+    padding: 0 30px 1px 7px;
     outline: none;
+    -webkit-appearance: none;
 }
 
 .go-to-line-dialog > div > input::placeholder {
-    color: hsl(0, 0%, 52%);
+    color: hsl(0, 0%, 0%, 0.25);
 }
 
 .go-to-line-dialog > div > img {
     position: absolute;
-    top: 9px;
-    right: 12px;
+    top: 15px;
+    right: 10px;
     padding: 2px;
     border-radius: 9px;
-    width: 18px;
-    height: 18px;
-    background-color: hsl(0, 0%, 73%);
+    width: 15px;
+    height: 15px;
+    background-color: hsl(0, 0%, 60%);
     display: none;
     content: url(../Images/CloseWhite.svg);
 }
