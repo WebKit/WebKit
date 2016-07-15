@@ -77,9 +77,6 @@ public:
     QualifiedName() { }
 #endif
 
-    QualifiedName(const QualifiedName& other) : m_impl(other.m_impl) { }
-    const QualifiedName& operator=(const QualifiedName& other) { m_impl = other.m_impl; return *this; }
-
     bool operator==(const QualifiedName& other) const { return m_impl == other.m_impl; }
     bool operator!=(const QualifiedName& other) const { return !(*this == other); }
 
