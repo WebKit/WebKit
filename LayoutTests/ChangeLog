@@ -1,5 +1,19 @@
 2016-07-15  Brent Fulgham  <bfulgham@apple.com>
 
+        Merge background parser Blink test case
+        https://bugs.webkit.org/show_bug.cgi?id=116503
+
+        Test case is from the Blink change (patch by <apavlov@chromium.org>):
+        <https://chromium.googlesource.com/chromium/blink/+/3044d8c22b6ab5653fe572aad656ae1325725dc9>
+
+        * fast/css/background-parser-crash-expected.txt: Added.
+        * fast/css/background-parser-crash.html: Added.
+        * inspector/styles: Added.
+        * inspector/styles/background-parsing-crash-expected.txt: Added.
+        * inspector/styles/background-parsing-crash.html: Added.
+
+2016-07-15  Brent Fulgham  <bfulgham@apple.com>
+
         Merge First-letter Blink test case
         https://bugs.webkit.org/show_bug.cgi?id=123961
 
