@@ -1,3 +1,14 @@
+2016-07-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge Blink test case
+        https://bugs.webkit.org/show_bug.cgi?id=123870
+
+        Patch is from the Blink change (patch by <morritaw@chromium.org>):
+        <https://chromium.googlesource.com/chromium/blink/+/2abd63ccea97b1fcf25b337c76f12e6ad1bfc025>
+
+        * fast/dom/mutation-details-focus-expected.txt: Added.
+        * fast/dom/mutation-details-focus.html: Added.
+
 2016-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Updating TestExpectations after r203267
