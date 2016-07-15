@@ -36,7 +36,6 @@
 #define MINI_BROWSER_ERROR (miniBrowserErrorQuark())
 
 static const gchar **uriArguments = NULL;
-static const char *miniBrowserAboutScheme = "minibrowser-about";
 static GdkRGBA *backgroundColor;
 static gboolean editorMode;
 static const char *sessionFile;
@@ -60,32 +59,16 @@ static gchar *argumentToURL(const char *filename)
     return fileURL;
 }
 
-static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings, gboolean shouldLoadSession)
+static WebKitWebView *createBrowserTab(BrowserWindow *window, WebKitSettings *webkitSettings)
 {
-    GtkWidget *webView = webkit_web_view_new();
-    if (editorMode)
-        webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webView), TRUE);
-    GtkWidget *mainWindow = browser_window_new(WEBKIT_WEB_VIEW(webView), NULL);
-    if (backgroundColor)
-        browser_window_set_background_color(BROWSER_WINDOW(mainWindow), backgroundColor);
-    if (geometry)
-        gtk_window_parse_geometry(GTK_WINDOW(mainWindow), geometry);
-
+    WebKitWebView *webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
     if (webkitSettings)
-        webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);
+        webkit_web_view_set_settings(webView, webkitSettings);
+    if (editorMode)
+        webkit_web_view_set_editable(webView, TRUE);
 
-    if (!editorMode) {
-        if (shouldLoadSession && sessionFile)
-            browser_window_load_session(BROWSER_WINDOW(mainWindow), sessionFile);
-        else {
-            gchar *url = argumentToURL(uri);
-            browser_window_load_uri(BROWSER_WINDOW(mainWindow), url);
-            g_free(url);
-        }
-    }
-
-    gtk_widget_grab_focus(webView);
-    gtk_widget_show(mainWindow);
+    browser_window_append_view(window, webView);
+    return webView;
 }
 
 static gboolean parseBackgroundColor(const char *optionName, const char *value, gpointer data, GError **error)
@@ -242,8 +225,7 @@ static gboolean addSettingsGroupToContext(GOptionContext *context, WebKitSetting
     return TRUE;
 }
 
-static void
-aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, gpointer userData)
+static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, gpointer userData)
 {
     GInputStream *stream;
     gsize streamLength;
@@ -303,15 +285,41 @@ int main(int argc, char *argv[])
     // Enable the favicon database, by specifying the default directory.
     webkit_web_context_set_favicon_database_directory(webkit_web_context_get_default(), NULL);
 
-    webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), miniBrowserAboutScheme, aboutURISchemeRequestCallback, NULL, NULL);
+    webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), BROWSER_ABOUT_SCHEME, aboutURISchemeRequestCallback, NULL, NULL);
 
+    BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL));
+    if (geometry)
+        gtk_window_parse_geometry(GTK_WINDOW(mainWindow), geometry);
+
+    GtkWidget *firstTab = NULL;
     if (uriArguments) {
         int i;
 
-        for (i = 0; uriArguments[i]; i++)
-            createBrowserWindow(uriArguments[i], webkitSettings, FALSE);
-    } else
-        createBrowserWindow(BROWSER_DEFAULT_URL, webkitSettings, TRUE);
+        for (i = 0; uriArguments[i]; i++) {
+            WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings);
+            if (!i)
+                firstTab = GTK_WIDGET(webView);
+            gchar *url = argumentToURL(uriArguments[i]);
+            webkit_web_view_load_uri(webView, url);
+            g_free(url);
+        }
+    } else {
+        WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings);
+        firstTab = GTK_WIDGET(webView);
+
+        if (backgroundColor)
+            browser_window_set_background_color(mainWindow, backgroundColor);
+
+        if (!editorMode) {
+            if (sessionFile)
+                browser_window_load_session(mainWindow, sessionFile);
+            else
+                webkit_web_view_load_uri(webView, BROWSER_DEFAULT_URL);
+        }
+    }
+
+    gtk_widget_grab_focus(firstTab);
+    gtk_widget_show(GTK_WIDGET(mainWindow));
 
     g_clear_object(&webkitSettings);
 

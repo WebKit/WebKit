@@ -13,6 +13,8 @@ set(MiniBrowser_SOURCES
     ${MINIBROWSER_DIR}/BrowserSearchBar.h
     ${MINIBROWSER_DIR}/BrowserSettingsDialog.c
     ${MINIBROWSER_DIR}/BrowserSettingsDialog.h
+    ${MINIBROWSER_DIR}/BrowserTab.c
+    ${MINIBROWSER_DIR}/BrowserTab.h
     ${MINIBROWSER_DIR}/BrowserWindow.c
     ${MINIBROWSER_DIR}/BrowserWindow.h
     ${MINIBROWSER_DIR}/main.c

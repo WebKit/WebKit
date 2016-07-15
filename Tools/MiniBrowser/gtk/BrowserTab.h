@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BrowserWindow_h
-#define BrowserWindow_h
+#ifndef BrowserTab_h
+#define BrowserTab_h
 
-#include <webkit2/webkit2.h>
 #include <gtk/gtk.h>
+#include <webkit2/webkit2.h>
 
 G_BEGIN_DECLS
 
-#define BROWSER_TYPE_WINDOW            (browser_window_get_type())
-#define BROWSER_WINDOW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), BROWSER_TYPE_WINDOW, BrowserWindow))
-#define BROWSER_WINDOW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  BROWSER_TYPE_WINDOW, BrowserWindowClass))
-#define BROWSER_IS_WINDOW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), BROWSER_TYPE_WINDOW))
-#define BROWSER_IS_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  BROWSER_TYPE_WINDOW))
-#define BROWSER_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  BROWSER_TYPE_WINDOW, BrowserWindowClass))
-#define BROWSER_DEFAULT_URL            "http://www.webkitgtk.org/"
-#define BROWSER_ABOUT_SCHEME           "minibrowser-about"
+#define BROWSER_TYPE_TAB            (browser_tab_get_type())
+#define BROWSER_TAB(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), BROWSER_TYPE_TAB, BrowserTab))
+#define BROWSER_TAB_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  BROWSER_TYPE_TAB, BrowserTabClass))
+#define BROWSER_IS_TAB(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), BROWSER_TYPE_TAB))
+#define BROWSER_IS_TAB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  BROWSER_TYPE_TAB))
+#define BROWSER_TAB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  BROWSER_TYPE_TAB, BrowserTabClass))
 
-typedef struct _BrowserWindow        BrowserWindow;
-typedef struct _BrowserWindowClass   BrowserWindowClass;
+typedef struct _BrowserTab        BrowserTab;
+typedef struct _BrowserTabClass   BrowserTabClass;
 
-GType browser_window_get_type(void);
+GType browser_tab_get_type(void);
 
-GtkWidget* browser_window_new(GtkWindow*);
-void browser_window_append_view(BrowserWindow*, WebKitWebView*);
-void browser_window_load_uri(BrowserWindow*, const char *uri);
-void browser_window_load_session(BrowserWindow *, const char *sessionFile);
-void browser_window_set_background_color(BrowserWindow*, GdkRGBA*);
+GtkWidget* browser_tab_new(WebKitWebView*);
+WebKitWebView* browser_tab_get_web_view(BrowserTab*);
+void browser_tab_load_uri(BrowserTab*, const char* uri);
+GtkWidget *browser_tab_get_title_widget(BrowserTab*);
+void browser_tab_set_status_text(BrowserTab*, const char* text);
+void browser_tab_toggle_inspector(BrowserTab*);
+void browser_tab_start_search(BrowserTab*);
+void browser_tab_stop_search(BrowserTab*);
+void browser_tab_add_accelerators(BrowserTab*, GtkAccelGroup*);
+void browser_tab_enter_fullscreen(BrowserTab*);
+void browser_tab_leave_fullscreen(BrowserTab*);
 
 G_END_DECLS
 

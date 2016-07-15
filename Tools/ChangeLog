@@ -1,3 +1,118 @@
+2016-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add basic tabs support to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=159803
+
+        Reviewed by Sergio Villar Senin.
+
+        It's quite common to have issues with web views loaded in secondary tabs, and we need to use an external browser
+        like epiphany to debug those issues. It would be a lot easier to work on those bugs if we could use the MiniBrowser.
+
+        * MiniBrowser/gtk/BrowserTab.c: Added.
+        (titleChanged):
+        (isLoadingChanged):
+        (decidePolicy):
+        (removeChildIfInfoBar):
+        (loadChanged):
+        (createInfoBarQuestionMessage):
+        (tlsErrorsDialogResponse):
+        (loadFailedWithTLSerrors):
+        (permissionRequestDialogResponse):
+        (decidePermissionRequest):
+        (colorChooserRGBAChanged):
+        (popoverColorClosed):
+        (colorChooserRequestFinished):
+        (runColorChooserCallback):
+        (inspectorOpenedInWindow):
+        (inspectorClosed):
+        (browserTabSetProperty):
+        (browserTabFinalize):
+        (browser_tab_init):
+        (browserTabConstructed):
+        (browser_tab_class_init):
+        (getInternalURI):
+        (browser_tab_new):
+        (browser_tab_get_web_view):
+        (browser_tab_load_uri):
+        (browser_tab_get_title_widget):
+        (browser_tab_set_status_text):
+        (browser_tab_toggle_inspector):
+        (browser_tab_start_search):
+        (browser_tab_stop_search):
+        (browser_tab_add_accelerators):
+        (fullScreenMessageTimeoutCallback):
+        (browser_tab_enter_fullscreen):
+        (browser_tab_leave_fullscreen):
+        * MiniBrowser/gtk/BrowserTab.h: Added.
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (getExternalURI):
+        (browserWindowSetStatusText):
+        (reloadOrStopCallback):
+        (goBackCallback):
+        (goForwardCallback):
+        (settingsCallback):
+        (webViewURIChanged):
+        (browserWindowHistoryItemActivated):
+        (browserWindowUpdateNavigationActions):
+        (webViewCreate):
+        (webViewEnterFullScreen):
+        (webViewLeaveFullScreen):
+        (webViewDecidePolicy):
+        (browserWindowCanZoomIn):
+        (browserWindowCanZoomOut):
+        (browserWindowZoomIn):
+        (browserWindowZoomOut):
+        (scrollEventCallback):
+        (faviconChanged):
+        (webViewIsLoadingChanged):
+        (defaultZoomCallback):
+        (searchCallback):
+        (newTabCallback):
+        (toggleWebInspector):
+        (reloadPage):
+        (reloadPageIgnoringCache):
+        (stopPageLoad):
+        (loadHomePage):
+        (editingCommandCallback):
+        (insertImageCommandCallback):
+        (insertLinkCommandCallback):
+        (browserWindowSetupEditorToolbar):
+        (browserWindowSwitchTab):
+        (browserWindowTabAddedOrRemoved):
+        (browser_window_init):
+        (browserWindowConstructed):
+        (browserWindowSaveSession):
+        (browserWindowDeleteEvent):
+        (browser_window_new):
+        (browser_window_append_view):
+        (browser_window_load_uri):
+        (browser_window_load_session):
+        (browser_window_set_background_color):
+        (resetStatusText): Deleted.
+        (activateUriEntryCallback): Deleted.
+        (webViewTitleChanged): Deleted.
+        (resetEntryProgress): Deleted.
+        (browserWindowCreateBackForwardMenu): Deleted.
+        (webViewReadyToShow): Deleted.
+        (webViewLoadFailed): Deleted.
+        (webViewMouseTargetChanged): Deleted.
+        (browserWindowUpdateZoomActions): Deleted.
+        (webViewZoomLevelChanged): Deleted.
+        (updateUriEntryIcon): Deleted.
+        (zoomInCallback): Deleted.
+        (zoomOutCallback): Deleted.
+        (toggleFullScreen): Deleted.
+        (browserWindowEditingCommandToggleButtonSetActive): Deleted.
+        (browserWindowFinalize): Deleted.
+        (browser_window_class_init): Deleted.
+        * MiniBrowser/gtk/BrowserWindow.h:
+        * MiniBrowser/gtk/CMakeLists.txt:
+        * MiniBrowser/gtk/main.c:
+        (createBrowserTab):
+        (aboutURISchemeRequestCallback):
+        (main):
+        (parseBackgroundColor): Deleted.
+
 2016-07-14  Alex Christensen  <achristensen@webkit.org>
 
         Allow RefPtrs of const RefCounted types
