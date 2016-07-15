@@ -173,6 +173,7 @@ public:
         , m_isValidStrictMode(true)
         , m_hasArguments(false)
         , m_isEvalContext(false)
+        , m_hasNonSimpleParameterList(false)
         , m_evalContextType(EvalContextType::None)
         , m_constructorKind(static_cast<unsigned>(ConstructorKind::None))
         , m_expectedSuperBinding(static_cast<unsigned>(SuperBinding::NotNeeded))
@@ -203,6 +204,7 @@ public:
         , m_isValidStrictMode(other.m_isValidStrictMode)
         , m_hasArguments(other.m_hasArguments)
         , m_isEvalContext(other.m_isEvalContext)
+        , m_hasNonSimpleParameterList(other.m_hasNonSimpleParameterList)
         , m_constructorKind(other.m_constructorKind)
         , m_expectedSuperBinding(other.m_expectedSuperBinding)
         , m_loopDepth(other.m_loopDepth)
@@ -644,6 +646,12 @@ public:
     bool strictMode() const { return m_strictMode; }
     bool isValidStrictMode() const { return m_isValidStrictMode; }
     bool shadowsArguments() const { return m_shadowsArguments; }
+    void setHasNonSimpleParameterList()
+    {
+        m_isValidStrictMode = false;
+        m_hasNonSimpleParameterList = true;
+    }
+    bool hasNonSimpleParameterList() const { return m_hasNonSimpleParameterList; }
 
     void copyCapturedVariablesToVector(const UniquedStringImplPtrSet& usedVariables, Vector<UniquedStringImpl*, 8>& vector)
     {
@@ -747,6 +755,7 @@ private:
     bool m_isValidStrictMode;
     bool m_hasArguments;
     bool m_isEvalContext;
+    bool m_hasNonSimpleParameterList;
     EvalContextType m_evalContextType;
     unsigned m_constructorKind;
     unsigned m_expectedSuperBinding;

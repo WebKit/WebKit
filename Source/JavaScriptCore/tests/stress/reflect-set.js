@@ -571,126 +571,128 @@ var symbol = Symbol();
     [ Int32Array, 4 ],
     [ Float32Array, 4 ],
     [ Float64Array, 8 ],
-].forEach(function typedArrayCase([ TypedArray, bytesPerElement ]) {
+].forEach((function() {
     'use strict';
-    var object = new TypedArray(64);
-    shouldBe(Reflect.get(object, 'hello'), undefined);
-    shouldBe(Reflect.set(object, 'hello', 42), true);
-    shouldBe(Reflect.get(object, 'hello'), 42);
-    shouldBe(Reflect.get(object, 0), 0);
-    shouldBe(Reflect.set(object, 0, 42), true);
-    shouldBe(Reflect.get(object, 0), 42);
-    shouldBe(Reflect.get(object, symbol), undefined);
-    shouldBe(Reflect.set(object, symbol, 42), true);
-    shouldBe(Reflect.get(object, symbol), 42);
-    object[1000000] = 'Hello';
-    shouldBe(Reflect.set(object, 0, 50), true);
-    shouldBe(Reflect.get(object, 0), 50);
+    return function typedArrayCase([ TypedArray, bytesPerElement ]) {
+        var object = new TypedArray(64);
+        shouldBe(Reflect.get(object, 'hello'), undefined);
+        shouldBe(Reflect.set(object, 'hello', 42), true);
+        shouldBe(Reflect.get(object, 'hello'), 42);
+        shouldBe(Reflect.get(object, 0), 0);
+        shouldBe(Reflect.set(object, 0, 42), true);
+        shouldBe(Reflect.get(object, 0), 42);
+        shouldBe(Reflect.get(object, symbol), undefined);
+        shouldBe(Reflect.set(object, symbol, 42), true);
+        shouldBe(Reflect.get(object, symbol), 42);
+        object[1000000] = 'Hello';
+        shouldBe(Reflect.set(object, 0, 50), true);
+        shouldBe(Reflect.get(object, 0), 50);
 
-    var object = new TypedArray(64);
-    shouldBe(Reflect.defineProperty(object, 'hello', {
-        value: 'Cocoa',
-        writable: false
-    }), true);
-    shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
-    shouldBe(Reflect.set(object, 'hello', 42), false);
-    shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
-    shouldBe(Reflect.defineProperty(object, 0, {
-        value: 'Cocoa',
-        writable: false
-    }), false);
-    shouldBe(Reflect.get(object, 0), 0);
-    shouldBe(Reflect.set(object, 0, 42), true);
-    shouldBe(Reflect.get(object, 0), 42);
-    shouldBe(object.length, 64);
-    shouldBe(Reflect.defineProperty(object, symbol, {
-        value: 'Cocoa',
-        writable: false
-    }), true);
-    shouldBe(Reflect.get(object, symbol), 'Cocoa');
-    shouldBe(Reflect.set(object, symbol, 42), false);
-    shouldBe(Reflect.get(object, symbol), 'Cocoa');
+        var object = new TypedArray(64);
+        shouldBe(Reflect.defineProperty(object, 'hello', {
+            value: 'Cocoa',
+            writable: false
+        }), true);
+        shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
+        shouldBe(Reflect.set(object, 'hello', 42), false);
+        shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
+        shouldBe(Reflect.defineProperty(object, 0, {
+            value: 'Cocoa',
+            writable: false
+        }), false);
+        shouldBe(Reflect.get(object, 0), 0);
+        shouldBe(Reflect.set(object, 0, 42), true);
+        shouldBe(Reflect.get(object, 0), 42);
+        shouldBe(object.length, 64);
+        shouldBe(Reflect.defineProperty(object, symbol, {
+            value: 'Cocoa',
+            writable: false
+        }), true);
+        shouldBe(Reflect.get(object, symbol), 'Cocoa');
+        shouldBe(Reflect.set(object, symbol, 42), false);
+        shouldBe(Reflect.get(object, symbol), 'Cocoa');
 
-    var object = new TypedArray(64);
-    shouldBe(Reflect.get(object, 'byteLength'), bytesPerElement * 64);
-    shouldBe(Reflect.set(object, 'byteLength', 'Cappuccino'), false);
-    shouldBe(Reflect.get(object, 'byteLength'), bytesPerElement * 64);
+        var object = new TypedArray(64);
+        shouldBe(Reflect.get(object, 'byteLength'), bytesPerElement * 64);
+        shouldBe(Reflect.set(object, 'byteLength', 'Cappuccino'), false);
+        shouldBe(Reflect.get(object, 'byteLength'), bytesPerElement * 64);
 
-    var object = new TypedArray(64);
-    shouldBe(Reflect.get(object, 'byteLength'), bytesPerElement * 64);
-    shouldBe(Reflect.set(object, 'byteLength', 2000), false);
-    shouldBe(Reflect.get(object, 'byteLength'), bytesPerElement * 64);
+        var object = new TypedArray(64);
+        shouldBe(Reflect.get(object, 'byteLength'), bytesPerElement * 64);
+        shouldBe(Reflect.set(object, 'byteLength', 2000), false);
+        shouldBe(Reflect.get(object, 'byteLength'), bytesPerElement * 64);
 
-    var object = new TypedArray(64);
-    shouldBe(Reflect.defineProperty(object, 'hello', {
-        get() {
-            return 'Cocoa';
-        },
-        set() {
-        }
-    }), true);
-    shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
-    shouldBe(Reflect.set(object, 'hello', 42), true);  // Return true since the setter exists.
-    shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
-    shouldBe(Reflect.defineProperty(object, 0, {
-        get() {
-            return 'Cocoa';
-        },
-        set() {
-        }
-    }), false);
-    shouldBe(Reflect.get(object, 0), 0);
-    shouldBe(Reflect.set(object, 0, 42), true);  // Return true since the setter exists.
-    shouldBe(Reflect.get(object, 0), 42);
-    shouldBe(Reflect.defineProperty(object, symbol, {
-        get() {
-            return 'Cocoa';
-        },
-        set() {
-        }
-    }), true);
-    shouldBe(Reflect.get(object, symbol), 'Cocoa');
-    shouldBe(Reflect.set(object, symbol, 42), true);  // Return true since the setter exists.
-    shouldBe(Reflect.get(object, symbol), 'Cocoa');
+        var object = new TypedArray(64);
+        shouldBe(Reflect.defineProperty(object, 'hello', {
+            get() {
+                return 'Cocoa';
+            },
+            set() {
+            }
+        }), true);
+        shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
+        shouldBe(Reflect.set(object, 'hello', 42), true);  // Return true since the setter exists.
+        shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
+        shouldBe(Reflect.defineProperty(object, 0, {
+            get() {
+                return 'Cocoa';
+            },
+            set() {
+            }
+        }), false);
+        shouldBe(Reflect.get(object, 0), 0);
+        shouldBe(Reflect.set(object, 0, 42), true);  // Return true since the setter exists.
+        shouldBe(Reflect.get(object, 0), 42);
+        shouldBe(Reflect.defineProperty(object, symbol, {
+            get() {
+                return 'Cocoa';
+            },
+            set() {
+            }
+        }), true);
+        shouldBe(Reflect.get(object, symbol), 'Cocoa');
+        shouldBe(Reflect.set(object, symbol, 42), true);  // Return true since the setter exists.
+        shouldBe(Reflect.get(object, symbol), 'Cocoa');
 
-    var object = new TypedArray(64);
-    shouldBe(Reflect.defineProperty(object, 'hello', {
-        get() {
-            return 'Cocoa';
-        }
-    }), true);
-    shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
-    shouldBe(Reflect.set(object, 'hello', 42), false);
-    shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
-    shouldBe(Reflect.defineProperty(object, 0, {
-        get() {
-            return 'Cocoa';
-        }
-    }), false);
-    shouldBe(Reflect.get(object, 0), 0);
-    shouldBe(Reflect.set(object, 0, 42), true);
-    shouldBe(Reflect.get(object, 0), 42);
-    shouldBe(Reflect.defineProperty(object, symbol, {
-        get() {
-            return 'Cocoa';
-        }
-    }), true);
-    shouldBe(Reflect.get(object, symbol), 'Cocoa');
-    shouldBe(Reflect.set(object, symbol, 42), false);
-    shouldBe(Reflect.get(object, symbol), 'Cocoa');
+        var object = new TypedArray(64);
+        shouldBe(Reflect.defineProperty(object, 'hello', {
+            get() {
+                return 'Cocoa';
+            }
+        }), true);
+        shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
+        shouldBe(Reflect.set(object, 'hello', 42), false);
+        shouldBe(Reflect.get(object, 'hello'), 'Cocoa');
+        shouldBe(Reflect.defineProperty(object, 0, {
+            get() {
+                return 'Cocoa';
+            }
+        }), false);
+        shouldBe(Reflect.get(object, 0), 0);
+        shouldBe(Reflect.set(object, 0, 42), true);
+        shouldBe(Reflect.get(object, 0), 42);
+        shouldBe(Reflect.defineProperty(object, symbol, {
+            get() {
+                return 'Cocoa';
+            }
+        }), true);
+        shouldBe(Reflect.get(object, symbol), 'Cocoa');
+        shouldBe(Reflect.set(object, symbol, 42), false);
+        shouldBe(Reflect.get(object, symbol), 'Cocoa');
 
-    receiverTest(new TypedArray(64), new TypedArray(64));
-    receiverTest(new TypedArray(64), {});
-    receiverTest({}, new TypedArray(64));
+        receiverTest(new TypedArray(64), new TypedArray(64));
+        receiverTest(new TypedArray(64), {});
+        receiverTest({}, new TypedArray(64));
 
-    var object = new TypedArray(64);
-    var receiver = {};
-    // The receiver is ignored when the property name is an indexed one.
-    // shouldBe(Reflect.set(object, 0, 42, receiver), true);
-    shouldBe(Reflect.set(object, 0, 42, receiver), true);
-    shouldBe(Reflect.get(object, 0), 42);
-    shouldBe(receiver.hasOwnProperty(0), false);
-});
+        var object = new TypedArray(64);
+        var receiver = {};
+        // The receiver is ignored when the property name is an indexed one.
+        // shouldBe(Reflect.set(object, 0, 42, receiver), true);
+        shouldBe(Reflect.set(object, 0, 42, receiver), true);
+        shouldBe(Reflect.get(object, 0), 42);
+        shouldBe(receiver.hasOwnProperty(0), false);
+    };
+})());
 
 
 (function argumentCase() {

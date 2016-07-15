@@ -1,3 +1,29 @@
+2016-07-14  Saam Barati  <sbarati@apple.com>
+
+        It should be a syntax error to have a 'use strict' directive inside a function that has a non-simple parameter list
+        https://bugs.webkit.org/show_bug.cgi?id=159790
+        <rdar://problem/27171636>
+
+        Reviewed by Geoffrey Garen.
+
+        Is is a syntax error for a function's parameter list to be non-simple
+        and for the function to also contain a 'use strict' directive.
+
+        See section 14.2.1 of the spec:
+        https://tc39.github.io/ecma262/#sec-arrow-function-definitions-static-semantics-early-errors
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::strictMode):
+        (JSC::Scope::isValidStrictMode):
+        (JSC::Scope::shadowsArguments):
+        (JSC::Scope::setHasNonSimpleParameterList):
+        (JSC::Scope::hasNonSimpleParameterList):
+        (JSC::Scope::copyCapturedVariablesToVector):
+
 2016-07-14  Geoffrey Garen  <ggaren@apple.com>
 
         ASSERTION FAILED: : this != replacement()

@@ -420,6 +420,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
                             semanticFail("Cannot declare a variable named 'arguments' in strict mode");
                         if (hasDeclaredVariable(m_vm->propertyNames->eval))
                             semanticFail("Cannot declare a variable named 'eval' in strict mode");
+                        semanticFailIfTrue(currentScope()->hasNonSimpleParameterList(), "'use strict' directive not allowed inside a function with a non-simple parameter list");
                         semanticFailIfFalse(isValidStrictMode(), "Invalid parameters or function name in strict mode");
                     }
                     // Since strict mode is changed, restoring lexer state by calling next() may cause errors.
@@ -1775,6 +1776,8 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
             defaultValue = parseDefaultValueForDestructuringPattern(context);
         propagateError();
         failIfDuplicateIfViolation();
+        if (isRestParameter || defaultValue || hasDestructuringPattern)
+            currentScope()->setHasNonSimpleParameterList();
         context.appendParameter(list, parameter, defaultValue);
         if (!isRestParameter)
             parameterCount++;

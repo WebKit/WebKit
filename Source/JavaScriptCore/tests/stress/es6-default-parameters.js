@@ -79,7 +79,6 @@ function tricky(globalX = (globalX = "x"), y = (globalX = 20)) {
 shouldThrow(tricky);
 
 function strict(x, y = x) {
-    'use strict';
     assert(x === y);
 }
 strict(20);
@@ -146,24 +145,30 @@ function augmentsArguments3(x = 10) {
 }
 augmentsArguments3();
 
-function augmentsArguments4(x = 10) {
+function augmentsArguments4(x) {
     "use strict";
-    assert(x === 10);
+    function inner(x = 10) {
+        assert(x === 10);
 
-    assert(arguments[0] === undefined);
-    x = 20;
-    assert(arguments[0] === undefined);
+        assert(arguments[0] === undefined);
+        x = 20;
+        assert(arguments[0] === undefined);
+    }
+    inner(x);
 }
 augmentsArguments4();
 augmentsArguments4(undefined);
 
-function augmentsArguments5(x = 10) {
+function augmentsArguments5(x) {
     "use strict";
-    assert(x === 20);
+    function inner(x = 10) {
+        assert(x === 20);
 
-    assert(arguments[0] === 20);
-    x = 20;
-    assert(arguments[0] === 20);
+        assert(arguments[0] === 20);
+        x = 20;
+        assert(arguments[0] === 20);
+    }
+    inner(x);
 }
 augmentsArguments5(20);
 
