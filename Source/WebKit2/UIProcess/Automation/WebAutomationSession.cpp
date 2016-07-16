@@ -918,7 +918,7 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
 
     updatedPositionObject = Inspector::Protocol::Automation::Point::create()
         .setX(x)
-        .setY(y)
+        .setY(y - page->topContentInset())
         .release();
 #endif // USE(APPKIT)
 }

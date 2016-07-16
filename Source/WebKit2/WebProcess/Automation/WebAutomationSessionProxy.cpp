@@ -487,21 +487,22 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t f
 
     WebCore::IntRect rect = coreElement->clientRect();
 
-    if (!useViewportCoordinates) {
-        WebCore::Frame* coreFrame = frame->coreFrame();
-        if (!coreFrame) {
-            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, WebCore::IntRect(), frameNotFoundErrorType), 0);
-            return;
-        }
-
-        WebCore::FrameView *coreFrameView = coreFrame->view();
-        if (!coreFrameView) {
-            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, WebCore::IntRect(), frameNotFoundErrorType), 0);
-            return;
-        }
-
-        rect = coreFrameView->rootViewToContents(rect);
+    WebCore::Frame* coreFrame = frame->coreFrame();
+    if (!coreFrame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, WebCore::IntRect(), frameNotFoundErrorType), 0);
+        return;
     }
+
+    WebCore::FrameView *coreFrameView = coreFrame->view();
+    if (!coreFrameView) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, WebCore::IntRect(), frameNotFoundErrorType), 0);
+        return;
+    }
+
+    if (useViewportCoordinates)
+        rect.moveBy(WebCore::IntPoint(0, -coreFrameView->topContentInset()));
+    else
+        rect = coreFrameView->rootViewToContents(rect);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, rect, String()), 0);
 }

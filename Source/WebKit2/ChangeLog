@@ -1,3 +1,18 @@
+2016-07-15  Timothy Hatcher  <timothy@apple.com>
+
+        Web Automation: Fix element and event coord space issues
+        https://bugs.webkit.org/show_bug.cgi?id=159851
+        rdar://problem/27375780
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performMouseInteraction): Subtract topContentInset() before
+        it goes back out to WebDriver.
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout): When using useViewportCoordinates,
+        subtract topContentInset() so it matches expectations.
+
 2016-07-15  Beth Dakin  <bdakin@apple.com>
 
         Mac UI process needs to know about element focus and blur, much like iOS
