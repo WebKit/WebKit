@@ -1,3 +1,14 @@
+2016-07-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Change some parameters based on a random search
+        https://bugs.webkit.org/show_bug.cgi?id=158514
+
+        Reviewed by Saam Barati.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::optimizationThresholdScalingFactor):
+        * runtime/Options.h:
+
 2016-07-15  Mark Lam  <mark.lam@apple.com>
 
         Assertion failures and crashes with missing TDZ checks for catch-node bindings.
