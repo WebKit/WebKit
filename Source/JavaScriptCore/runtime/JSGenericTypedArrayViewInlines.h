@@ -50,8 +50,8 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
 {
     ConstructionContext context(exec->vm(), structure, length, sizeof(typename Adaptor::Type));
     if (!context) {
-        exec->vm().throwException(exec, createOutOfMemoryError(exec));
-        return 0;
+        throwOutOfMemoryError(exec);
+        return nullptr;
     }
     JSGenericTypedArrayView* result =
         new (NotNull, allocateCell<JSGenericTypedArrayView>(exec->vm().heap))
@@ -68,8 +68,8 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninit
         exec->vm(), structure, length, sizeof(typename Adaptor::Type),
         ConstructionContext::DontInitialize);
     if (!context) {
-        exec->vm().throwException(exec, createOutOfMemoryError(exec));
-        return 0;
+        throwOutOfMemoryError(exec);
+        return nullptr;
     }
     JSGenericTypedArrayView* result =
         new (NotNull, allocateCell<JSGenericTypedArrayView>(exec->vm().heap))

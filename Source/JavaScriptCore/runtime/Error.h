@@ -48,7 +48,6 @@ JSObject* createSyntaxError(ExecState*, const String&, ErrorInstance::SourceAppe
 JSObject* createTypeError(ExecState*, const String&, ErrorInstance::SourceAppender, RuntimeType);
 JSObject* createNotEnoughArgumentsError(ExecState*, ErrorInstance::SourceAppender);
 JSObject* createURIError(ExecState*, const String&, ErrorInstance::SourceAppender);
-JSObject* createOutOfMemoryError(ExecState*, ErrorInstance::SourceAppender);
 
 
 JS_EXPORT_PRIVATE JSObject* createError(ExecState*, const String&);

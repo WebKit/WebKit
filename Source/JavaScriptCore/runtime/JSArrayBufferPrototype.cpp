@@ -60,7 +60,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     
     RefPtr<ArrayBuffer> newBuffer = thisObject->impl()->slice(begin, end);
     if (!newBuffer)
-        return throwVMError(exec, createOutOfMemoryError(exec));
+        return JSValue::encode(throwOutOfMemoryError(exec));
     
     Structure* structure = callee->globalObject()->arrayBufferStructure();
     

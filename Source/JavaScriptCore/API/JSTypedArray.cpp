@@ -103,7 +103,7 @@ static JSObject* createTypedArray(ExecState* exec, JSTypedArrayType type, RefPtr
 {
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (!buffer) {
-        exec->vm().throwException(exec, createOutOfMemoryError(exec));
+        throwOutOfMemoryError(exec);
         return nullptr;
     }
     switch (type) {

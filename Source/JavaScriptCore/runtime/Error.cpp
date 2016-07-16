@@ -98,12 +98,6 @@ JSObject* createURIError(ExecState* exec, const String& message, ErrorInstance::
     return ErrorInstance::create(exec, globalObject->vm(), globalObject->URIErrorConstructor()->errorStructure(), message, appender, TypeNothing, true);
 }
 
-JSObject* createOutOfMemoryError(ExecState* exec, ErrorInstance::SourceAppender appender) 
-{
-    return createError(exec, ASCIILiteral("Out of memory"), appender);
-}
-
-
 class FindFirstCallerFrameWithCodeblockFunctor {
 public:
     FindFirstCallerFrameWithCodeblockFunctor(CallFrame* startCallFrame)
@@ -283,7 +277,7 @@ JSObject* createURIError(ExecState* exec, const String& message)
 
 JSObject* createOutOfMemoryError(ExecState* exec)
 {
-    return createOutOfMemoryError(exec, nullptr);
+    return createError(exec, ASCIILiteral("Out of memory"), nullptr);
 }
 
 
