@@ -99,7 +99,7 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
     else if (name == idAttr) {
         HTMLFrameOwnerElement::parseAttribute(name, value);
         // Falling back to using the 'id' attribute is not standard but some content relies on this behavior.
-        if (!hasAttribute(nameAttr))
+        if (!fastHasAttribute(nameAttr))
             m_frameName = value;
     } else if (name == nameAttr) {
         m_frameName = value;

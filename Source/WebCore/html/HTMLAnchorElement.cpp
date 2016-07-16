@@ -281,7 +281,7 @@ bool HTMLAnchorElement::draggable() const
         return true;
     if (equalLettersIgnoringASCIICase(value, "false"))
         return false;
-    return hasAttribute(hrefAttr);
+    return fastHasAttribute(hrefAttr);
 }
 
 URL HTMLAnchorElement::href() const
