@@ -30,13 +30,13 @@ PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
 PASS feBlendElement.getAttribute('mode') is "lighten"
 
 Try setting invalid values
-PASS feBlendElement.mode.baseVal = 6 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feBlendElement.mode.baseVal = 6 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
 PASS feBlendElement.getAttribute('mode') is "lighten"
-PASS feBlendElement.mode.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feBlendElement.mode.baseVal = -1 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
 PASS feBlendElement.getAttribute('mode') is "lighten"
-PASS feBlendElement.mode.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feBlendElement.mode.baseVal = 0 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
 PASS feBlendElement.getAttribute('mode') is "lighten"
 

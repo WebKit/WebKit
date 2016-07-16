@@ -192,7 +192,7 @@ PASS parseFloat(m.e) is 10
 PASS parseFloat(m.f) is 20
 
 Test throwing exception from inverse
-PASS m.inverse() threw exception Error: SVG_MATRIX_NOT_INVERTABLE: DOM SVG Exception 2.
+PASS m.inverse() threw exception SVG_MATRIX_NOT_INVERTABLE (DOM SVG Exception 2): An attempt was made to invert a matrix that is not invertible..
 
 PASS successfullyParsed is true
 

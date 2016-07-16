@@ -1,3 +1,41 @@
+2016-07-16  Brady Eidson  <beidson@apple.com>
+
+        Update SVGException to use the description in toString().
+        https://bugs.webkit.org/show_bug.cgi?id=159847
+
+        Reviewed by Darin Adler.
+
+        * svg/animations/animate-marker-orient-from-angle-to-autostartreverse-expected.txt:
+        * svg/custom/SVGException-expected.txt:
+        * svg/custom/polyline-points-crash-expected.txt:
+        * svg/custom/script-tests/SVGException.js:
+        * svg/dom/SVGAnimatedEnumeration-SVGClipPathElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEBlendElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEColorMatrixElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFECompositeElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEDisplacementMapElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEMorphologyElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFETurbulenceElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFilterElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGGradientElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGMaskElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGPatternElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGTextContentElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGTextPathElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-expected.txt:
+        * svg/dom/SVGLengthList-basics-expected.txt:
+        * svg/dom/SVGMatrix-interface-expected.txt:
+        * svg/dom/SVGNumberList-basics-expected.txt:
+        * svg/dom/SVGPointList-basics-expected.txt:
+        * svg/dom/SVGTransformList-basics-expected.txt:
+        * svg/dom/svglist-exception-on-out-bounds-error-expected.txt:
+        * svg/filters/feBlend-invalid-mode-expected.txt:
+        * svg/filters/feComponentTransfer-style-crash-expected.txt:
+        * svg/filters/feDisplacementMap-crash-test-expected.txt:
+
 2016-07-15  Benjamin Poulain  <benjamin@webkit.org>
 
         [mac] LayoutTest fast/css/ancestor-of-hovered-element-detached.html is flaky

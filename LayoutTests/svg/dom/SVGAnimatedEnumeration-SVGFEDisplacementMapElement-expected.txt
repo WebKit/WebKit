@@ -25,13 +25,13 @@ PASS feDisplacementMapElement.xChannelSelector.baseVal is SVGFEDisplacementMapEl
 PASS feDisplacementMapElement.getAttribute('xChannelSelector') is "A"
 
 Try setting invalid values
-PASS feDisplacementMapElement.xChannelSelector.baseVal = 5 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feDisplacementMapElement.xChannelSelector.baseVal = 5 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feDisplacementMapElement.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_A
 PASS feDisplacementMapElement.getAttribute('xChannelSelector') is "A"
-PASS feDisplacementMapElement.xChannelSelector.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feDisplacementMapElement.xChannelSelector.baseVal = -1 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feDisplacementMapElement.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_A
 PASS feDisplacementMapElement.getAttribute('xChannelSelector') is "A"
-PASS feDisplacementMapElement.xChannelSelector.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feDisplacementMapElement.xChannelSelector.baseVal = 0 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feDisplacementMapElement.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_A
 PASS feDisplacementMapElement.getAttribute('xChannelSelector') is "A"
 
@@ -61,13 +61,13 @@ PASS feDisplacementMapElement.yChannelSelector.baseVal is SVGFEDisplacementMapEl
 PASS feDisplacementMapElement.getAttribute('yChannelSelector') is "A"
 
 Try setting invalid values
-PASS feDisplacementMapElement.yChannelSelector.baseVal = 5 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feDisplacementMapElement.yChannelSelector.baseVal = 5 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feDisplacementMapElement.yChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_A
 PASS feDisplacementMapElement.getAttribute('yChannelSelector') is "A"
-PASS feDisplacementMapElement.yChannelSelector.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feDisplacementMapElement.yChannelSelector.baseVal = -1 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feDisplacementMapElement.yChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_A
 PASS feDisplacementMapElement.getAttribute('yChannelSelector') is "A"
-PASS feDisplacementMapElement.yChannelSelector.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feDisplacementMapElement.yChannelSelector.baseVal = 0 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feDisplacementMapElement.yChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_A
 PASS feDisplacementMapElement.getAttribute('yChannelSelector') is "A"
 

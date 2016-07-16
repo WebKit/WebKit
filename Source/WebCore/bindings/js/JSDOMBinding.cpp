@@ -200,7 +200,7 @@ void reportException(ExecState* exec, Exception* exception, CachedScript* cached
     String errorMessage;
     JSValue exceptionValue = exception->value();
     if (ExceptionBase* exceptionBase = toExceptionBase(exceptionValue))
-        errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();
+        errorMessage = exceptionBase->consoleErrorMessage();
     else {
         // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
         // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.

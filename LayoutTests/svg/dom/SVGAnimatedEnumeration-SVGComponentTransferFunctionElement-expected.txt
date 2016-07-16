@@ -30,13 +30,13 @@ PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECO
 PASS feFuncRElement.getAttribute('type') is "gamma"
 
 Try setting invalid values
-PASS feFuncRElement.type.baseVal = 6 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feFuncRElement.type.baseVal = 6 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
 PASS feFuncRElement.getAttribute('type') is "gamma"
-PASS feFuncRElement.type.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feFuncRElement.type.baseVal = -1 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
 PASS feFuncRElement.getAttribute('type') is "gamma"
-PASS feFuncRElement.type.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feFuncRElement.type.baseVal = 0 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
 PASS feFuncRElement.getAttribute('type') is "gamma"
 

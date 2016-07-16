@@ -15,13 +15,13 @@ PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJU
 PASS textContentElement.getAttribute('lengthAdjust') is "spacingAndGlyphs"
 
 Try setting invalid values
-PASS textContentElement.lengthAdjust.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textContentElement.lengthAdjust.baseVal = 3 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
 PASS textContentElement.getAttribute('lengthAdjust') is "spacingAndGlyphs"
-PASS textContentElement.lengthAdjust.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textContentElement.lengthAdjust.baseVal = -1 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
 PASS textContentElement.getAttribute('lengthAdjust') is "spacingAndGlyphs"
-PASS textContentElement.lengthAdjust.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textContentElement.lengthAdjust.baseVal = 0 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
 PASS textContentElement.getAttribute('lengthAdjust') is "spacingAndGlyphs"
 

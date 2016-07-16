@@ -20,13 +20,13 @@ PASS feConvolveMatrixElement.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_
 PASS feConvolveMatrixElement.getAttribute('edgeMode') is "none"
 
 Try setting invalid values
-PASS feConvolveMatrixElement.edgeMode.baseVal = 4 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feConvolveMatrixElement.edgeMode.baseVal = 4 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feConvolveMatrixElement.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_EDGEMODE_NONE
 PASS feConvolveMatrixElement.getAttribute('edgeMode') is "none"
-PASS feConvolveMatrixElement.edgeMode.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feConvolveMatrixElement.edgeMode.baseVal = -1 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feConvolveMatrixElement.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_EDGEMODE_NONE
 PASS feConvolveMatrixElement.getAttribute('edgeMode') is "none"
-PASS feConvolveMatrixElement.edgeMode.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feConvolveMatrixElement.edgeMode.baseVal = 0 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feConvolveMatrixElement.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_EDGEMODE_NONE
 PASS feConvolveMatrixElement.getAttribute('edgeMode') is "none"
 

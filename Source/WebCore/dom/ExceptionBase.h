@@ -46,6 +46,10 @@ public:
 
     String toString() const;
 
+    // FIXME: consoleErrorMessage is needed temporarily while bug 159822 is in progress.
+    // Once 159822 is complete, consoleErrorMessage can be dropped and its callers will use toString instead.
+    String consoleErrorMessage() const;
+
 protected:
     enum class MessageSource {
         ConstructMessage,

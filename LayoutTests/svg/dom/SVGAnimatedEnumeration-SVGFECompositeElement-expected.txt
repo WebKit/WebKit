@@ -40,13 +40,13 @@ PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSIT
 PASS feCompositeElement.getAttribute('operator') is "arithmetic"
 
 Try setting invalid values
-PASS feCompositeElement.operator.baseVal = 7 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feCompositeElement.operator.baseVal = 7 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC
 PASS feCompositeElement.getAttribute('operator') is "arithmetic"
-PASS feCompositeElement.operator.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feCompositeElement.operator.baseVal = -1 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC
 PASS feCompositeElement.getAttribute('operator') is "arithmetic"
-PASS feCompositeElement.operator.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feCompositeElement.operator.baseVal = 0 threw exception SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute..
 PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC
 PASS feCompositeElement.getAttribute('operator') is "arithmetic"
 

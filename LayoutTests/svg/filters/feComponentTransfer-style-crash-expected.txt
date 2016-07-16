@@ -1,2 +1,2 @@
-ALERT: Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1
+ALERT: SVG_INVALID_VALUE_ERR (DOM SVG Exception 1): An invalid value was passed to an operation or assigned to an attribute.
 PASS

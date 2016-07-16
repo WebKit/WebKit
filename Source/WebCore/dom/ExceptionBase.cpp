@@ -51,6 +51,14 @@ ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description, Messag
         m_message = makeString(description.typeName, " Exception ", String::number(description.code));
 }
 
+String ExceptionBase::consoleErrorMessage() const
+{
+    if (m_messageSource == MessageSource::UseDescription)
+        return toString();
+
+    return makeString(m_message, ": ", m_description);
+}
+
 String ExceptionBase::toString() const
 {
     if (m_messageSource != MessageSource::UseDescription)
