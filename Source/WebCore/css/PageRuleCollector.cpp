@@ -58,7 +58,7 @@ bool PageRuleCollector::isFirstPage(int pageIndex) const
 String PageRuleCollector::pageName(int /* pageIndex */) const
 {
     // FIXME: Implement page index to page name mapping.
-    return "";
+    return emptyString();
 }
 
 void PageRuleCollector::matchAllPageRules(int pageIndex)

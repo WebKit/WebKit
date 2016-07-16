@@ -411,7 +411,7 @@ static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFill
     default:
     case AutoFillButtonType::None:
         ASSERT_NOT_REACHED();
-        return AtomicString();
+        return String();
     }
 }
     

@@ -419,7 +419,7 @@ void InspectorPageAgent::removeScriptToEvaluateOnLoad(ErrorString& error, const 
 
 void InspectorPageAgent::reload(ErrorString&, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad)
 {
-    m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : "";
+    m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : emptyString();
     m_page.mainFrame().loader().reload(optionalIgnoreCache ? *optionalIgnoreCache : false);
 }
 
@@ -766,7 +766,7 @@ Frame* InspectorPageAgent::frameForId(const String& frameId)
 String InspectorPageAgent::frameId(Frame* frame)
 {
     if (!frame)
-        return "";
+        return emptyString();
     String identifier = m_frameToIdentifier.get(frame);
     if (identifier.isNull()) {
         identifier = IdentifiersFactory::createIdentifier();
@@ -784,7 +784,7 @@ bool InspectorPageAgent::hasIdForFrame(Frame* frame) const
 String InspectorPageAgent::loaderId(DocumentLoader* loader)
 {
     if (!loader)
-        return "";
+        return emptyString();
     String identifier = m_loaderToIdentifier.get(loader);
     if (identifier.isNull()) {
         identifier = IdentifiersFactory::createIdentifier();

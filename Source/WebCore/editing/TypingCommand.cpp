@@ -106,7 +106,7 @@ void TypingCommand::deleteSelection(Document& document, Options options)
         return;
     }
 
-    TypingCommand::create(document, DeleteSelection, "", options)->apply();
+    TypingCommand::create(document, DeleteSelection, emptyString(), options)->apply();
 }
 
 void TypingCommand::deleteKeyPressed(Document& document, Options options, TextGranularity granularity)
@@ -120,7 +120,7 @@ void TypingCommand::deleteKeyPressed(Document& document, Options options, TextGr
         }
     }
 
-    TypingCommand::create(document, DeleteKey, "", options, granularity)->apply();
+    TypingCommand::create(document, DeleteKey, emptyString(), options, granularity)->apply();
 }
 
 void TypingCommand::forwardDeleteKeyPressed(Document& document, Options options, TextGranularity granularity)
@@ -136,7 +136,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document& document, Options options,
         }
     }
 
-    TypingCommand::create(document, ForwardDeleteKey, "", options, granularity)->apply();
+    TypingCommand::create(document, ForwardDeleteKey, emptyString(), options, granularity)->apply();
 }
 
 void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand* typingCommand, Frame* frame)
@@ -199,7 +199,7 @@ void TypingCommand::insertLineBreak(Document& document, Options options)
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertLineBreak, "", options));
+    applyCommand(TypingCommand::create(document, InsertLineBreak, emptyString(), options));
 }
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
@@ -220,7 +220,7 @@ void TypingCommand::insertParagraphSeparator(Document& document, Options options
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertParagraphSeparator, "", options));
+    applyCommand(TypingCommand::create(document, InsertParagraphSeparator, emptyString(), options));
 }
 
 RefPtr<TypingCommand> TypingCommand::lastTypingCommandIfStillOpenForTyping(Frame& frame)

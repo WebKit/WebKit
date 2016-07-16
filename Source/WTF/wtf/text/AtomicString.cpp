@@ -37,7 +37,7 @@ ALWAYS_INLINE AtomicString AtomicString::convertASCIICase() const
 {
     StringImpl* impl = this->impl();
     if (UNLIKELY(!impl))
-        return AtomicString();
+        return nullAtom;
 
     // Convert short strings without allocating a new StringImpl, since
     // there's a good chance these strings are already in the atomic

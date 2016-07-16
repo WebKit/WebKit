@@ -104,7 +104,7 @@ String Location::port() const
         return String();
 
     const URL& url = this->url();
-    return url.hasPort() ? String::number(url.port()) : "";
+    return url.hasPort() ? String::number(url.port()) : emptyString();
 }
 
 String Location::pathname() const

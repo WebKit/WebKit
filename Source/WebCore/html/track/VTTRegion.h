@@ -79,7 +79,7 @@ public:
     double viewportAnchorY() const { return m_viewportAnchor.y(); }
     void setViewportAnchorY(double, ExceptionCode&);
 
-    const AtomicString scroll() const;
+    const AtomicString& scroll() const;
     void setScroll(const AtomicString&, ExceptionCode&);
 
     void updateParametersFromRegion(VTTRegion*);

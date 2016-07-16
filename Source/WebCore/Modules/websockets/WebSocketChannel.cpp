@@ -109,10 +109,10 @@ String WebSocketChannel::subprotocol()
 {
     LOG(Network, "WebSocketChannel %p subprotocol()", this);
     if (!m_handshake || m_handshake->mode() != WebSocketHandshake::Connected)
-        return "";
+        return emptyString();
     String serverProtocol = m_handshake->serverWebSocketProtocol();
     if (serverProtocol.isNull())
-        return "";
+        return emptyString();
     return serverProtocol;
 }
 
@@ -120,10 +120,10 @@ String WebSocketChannel::extensions()
 {
     LOG(Network, "WebSocketChannel %p extensions()", this);
     if (!m_handshake || m_handshake->mode() != WebSocketHandshake::Connected)
-        return "";
+        return emptyString();
     String extensions = m_handshake->acceptedExtensions();
     if (extensions.isNull())
-        return "";
+        return emptyString();
     return extensions;
 }
 

@@ -118,7 +118,7 @@ void DocumentMarkerController::addDictationPhraseWithAlternativesMarker(Range* r
     size_t numberOfAlternatives = interpretations.size() - 1;
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
-        DocumentMarker marker(DocumentMarker::DictationPhraseWithAlternatives, textPiece->startOffset(), textPiece->endOffset(), "", Vector<String>(numberOfAlternatives), RetainPtr<id>());
+        DocumentMarker marker(DocumentMarker::DictationPhraseWithAlternatives, textPiece->startOffset(), textPiece->endOffset(), emptyString(), Vector<String>(numberOfAlternatives), RetainPtr<id>());
         for (size_t i = 0; i < numberOfAlternatives; ++i)
             marker.setAlternative(interpretations[i + 1], i);
         addMarker(&textPiece->startContainer(), marker);

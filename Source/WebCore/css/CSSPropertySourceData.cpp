@@ -74,8 +74,8 @@ CSSPropertySourceData::CSSPropertySourceData(const CSSPropertySourceData& other)
 }
 
 CSSPropertySourceData::CSSPropertySourceData()
-    : name("")
-    , value("")
+    : name(emptyString())
+    , value(emptyString())
     , important(false)
     , parsedOk(false)
     , range(SourceRange(0, 0))

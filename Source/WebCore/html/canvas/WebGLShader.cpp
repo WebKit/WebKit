@@ -42,7 +42,7 @@ Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase* ctx, GC3Denum ty
 WebGLShader::WebGLShader(WebGLRenderingContextBase* ctx, GC3Denum type)
     : WebGLSharedObject(ctx)
     , m_type(type)
-    , m_source("")
+    , m_source(emptyString())
     , m_isValid(false)
 {
     setObject(ctx->graphicsContext3D()->createShader(type));

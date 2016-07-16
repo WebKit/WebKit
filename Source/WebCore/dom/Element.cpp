@@ -1503,7 +1503,7 @@ void Element::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
     if (ec)
         return;
 
-    m_tagName.setPrefix(prefix.isEmpty() ? AtomicString() : prefix);
+    m_tagName.setPrefix(prefix.isEmpty() ? nullAtom : prefix);
 }
 
 const AtomicString& Element::imageSourceURL() const

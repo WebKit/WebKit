@@ -781,7 +781,7 @@ void CompositeEditCommand::removeCSSProperty(PassRefPtr<StyledElement> element, 
 
 void CompositeEditCommand::removeNodeAttribute(PassRefPtr<Element> element, const QualifiedName& attribute)
 {
-    setNodeAttribute(element, attribute, AtomicString());
+    setNodeAttribute(element, attribute, nullAtom);
 }
 
 void CompositeEditCommand::setNodeAttribute(PassRefPtr<Element> element, const QualifiedName& attribute, const AtomicString& value)
@@ -1390,7 +1390,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     RefPtr<DocumentFragment> fragment;
     // This used to use a ternary for initialization, but that confused some versions of GCC, see bug 37912
     if (startOfParagraphToMove != endOfParagraphToMove)
-        fragment = createFragmentFromMarkup(document(), createMarkup(*range, 0, DoNotAnnotateForInterchange, true), "");
+        fragment = createFragmentFromMarkup(document(), createMarkup(*range, 0, DoNotAnnotateForInterchange, true), emptyString());
 
     // A non-empty paragraph's style is moved when we copy and move it.  We don't move 
     // anything if we're given an empty paragraph, but an empty paragraph can have style

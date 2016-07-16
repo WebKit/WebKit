@@ -636,7 +636,7 @@ String InspectorStyleSheet::ruleSelector(const InspectorCSSId& id, ExceptionCode
     CSSStyleRule* rule = ruleForId(id);
     if (!rule) {
         ec = NOT_FOUND_ERR;
-        return "";
+        return emptyString();
     }
     return rule->selectorText();
 }

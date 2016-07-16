@@ -137,7 +137,7 @@ void SearchInputType::handleKeydownEvent(KeyboardEvent* event)
     const String& key = event->keyIdentifier();
     if (key == "U+001B") {
         Ref<HTMLInputElement> input(this->element());
-        input->setValueForUser("");
+        input->setValueForUser(emptyString());
         input->onSearch();
         event->setDefaultHandled();
         return;

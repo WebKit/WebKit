@@ -2217,7 +2217,7 @@ bool AccessibilityObject::supportsPressAction() const
             // Search within for immediate descendants that are static text. If we find more than one
             // then this is an event delegator actionElement and we should expose the press action.
             Vector<AccessibilitySearchKey> keys({ StaticTextSearchKey, ControlSearchKey, GraphicSearchKey, HeadingSearchKey, LinkSearchKey });
-            AccessibilitySearchCriteria criteria(axObj, SearchDirectionNext, "", 2, false, false);
+            AccessibilitySearchCriteria criteria(axObj, SearchDirectionNext, emptyString(), 2, false, false);
             criteria.searchKeys = keys;
             axObj->findMatchingObjects(&criteria, results);
             if (results.size() > 1)

@@ -61,7 +61,7 @@ const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRem
     String styleText = typingStyle->style()->asText() + " display: inline";
     styleElement->setAttribute(HTMLNames::styleAttr, styleText);
 
-    styleElement->appendChild(frame->document()->createEditingTextNode(""), ASSERT_NO_EXCEPTION);
+    styleElement->appendChild(frame->document()->createEditingTextNode(emptyString()), ASSERT_NO_EXCEPTION);
 
     ContainerNode* parentNode = position.deprecatedNode()->parentNode();
 

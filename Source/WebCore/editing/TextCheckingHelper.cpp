@@ -301,7 +301,7 @@ String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, boo
 String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, bool& outIsSpelling, int& outFirstFoundOffset, GrammarDetail& outGrammarDetail)
 {
     if (!unifiedTextCheckerEnabled())
-        return "";
+        return emptyString();
 
     String firstFoundItem;
     String misspelledWord;

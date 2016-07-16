@@ -58,7 +58,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
 {
     Position pos = p;
     if (isTabSpanTextNode(pos.anchorNode())) {
-        RefPtr<Node> textNode = document().createEditingTextNode("");
+        RefPtr<Node> textNode = document().createEditingTextNode(emptyString());
         insertNodeAtTabSpanPosition(textNode.get(), pos);
         return firstPositionInNode(textNode.get());
     }
@@ -66,7 +66,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
     if (!pos.containerNode()->isTextNode()) {
-        RefPtr<Node> textNode = document().createEditingTextNode("");
+        RefPtr<Node> textNode = document().createEditingTextNode(emptyString());
         insertNodeAt(textNode.get(), pos);
         return firstPositionInNode(textNode.get());
     }

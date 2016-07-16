@@ -761,7 +761,7 @@ static inline void handleElementAttributes(Vector<Attribute>& prefixedAttributes
         int valueLength = static_cast<int>(attributes[i].end - attributes[i].value);
         AtomicString attrValue = toAtomicString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
-        AtomicString attrURI = attrPrefix.isEmpty() ? AtomicString() : toAtomicString(attributes[i].uri);
+        AtomicString attrURI = attrPrefix.isEmpty() ? nullAtom : toAtomicString(attributes[i].uri);
         AtomicString attrQName = attrPrefix.isEmpty() ? toAtomicString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
 
         QualifiedName parsedName = anyName;

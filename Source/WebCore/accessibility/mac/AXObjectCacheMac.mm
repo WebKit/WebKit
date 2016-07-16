@@ -429,7 +429,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     if (!text.length())
         return;
 
-    postTextReplacementPlatformNotification(object, AXTextEditTypeUnknown, "", type, text, position);
+    postTextReplacementPlatformNotification(object, AXTextEditTypeUnknown, emptyString(), type, text, position);
 }
 
 void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition& position)

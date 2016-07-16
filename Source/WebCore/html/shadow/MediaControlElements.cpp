@@ -388,7 +388,7 @@ void MediaControlStatusDisplayElement::update()
 
     switch (m_stateBeingDisplayed) {
     case Nothing:
-        setInnerText("", IGNORE_EXCEPTION);
+        setInnerText(emptyString(), IGNORE_EXCEPTION);
         break;
     case Loading:
         setInnerText(mediaElementLoadingStateText(), IGNORE_EXCEPTION);

@@ -3466,7 +3466,7 @@ RetainPtr<CFDictionaryRef> FrameLoader::connectionProperties(ResourceLoader* loa
 
 String FrameLoader::referrer() const
 {
-    return m_documentLoader ? m_documentLoader->request().httpReferrer() : "";
+    return m_documentLoader ? m_documentLoader->request().httpReferrer() : emptyString();
 }
 
 void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()

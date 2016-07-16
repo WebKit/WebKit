@@ -220,14 +220,14 @@ String AudioNode::channelCountMode()
 {
     switch (m_channelCountMode) {
     case Max:
-        return "max";
+        return ASCIILiteral("max");
     case ClampedMax:
-        return "clamped-max";
+        return ASCIILiteral("clamped-max");
     case Explicit:
-        return "explicit";
+        return ASCIILiteral("explicit");
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return emptyString();
 }
 
 void AudioNode::setChannelCountMode(const String& mode, ExceptionCode& ec)
@@ -254,12 +254,12 @@ String AudioNode::channelInterpretation()
 {
     switch (m_channelInterpretation) {
     case AudioBus::Speakers:
-        return "speakers";
+        return ASCIILiteral("speakers");
     case AudioBus::Discrete:
-        return "discrete";
+        return ASCIILiteral("discrete");
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return emptyString();
 }
 
 void AudioNode::setChannelInterpretation(const String& interpretation, ExceptionCode& ec)

@@ -150,8 +150,8 @@ WebSocket::WebSocket(ScriptExecutionContext& context)
     , m_bufferedAmount(0)
     , m_bufferedAmountAfterClose(0)
     , m_binaryType(BinaryTypeBlob)
-    , m_subprotocol("")
-    , m_extensions("")
+    , m_subprotocol(emptyString())
+    , m_extensions(emptyString())
     , m_resumeTimer(*this, &WebSocket::resumeTimerFired)
 {
 }
@@ -560,7 +560,7 @@ void WebSocket::didConnect()
 {
     LOG(Network, "WebSocket %p didConnect()", this);
     if (m_state != CONNECTING) {
-        didClose(0, ClosingHandshakeIncomplete, WebSocketChannel::CloseEventCodeAbnormalClosure, "");
+        didClose(0, ClosingHandshakeIncomplete, WebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
         return;
     }
     ASSERT(scriptExecutionContext());

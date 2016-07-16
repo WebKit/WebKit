@@ -350,7 +350,7 @@ public:
     bool canShowMIMEType(const String&) const override { return false; }
     bool canShowMIMETypeAsHTML(const String&) const override { return false; }
     bool representationExistsForURLScheme(const String&) const override { return false; }
-    String generatedMIMETypeForURLScheme(const String&) const override { return ""; }
+    String generatedMIMETypeForURLScheme(const String&) const override { return emptyString(); }
 
     void frameLoadCompleted() override { }
     void restoreViewState() override { }
@@ -362,7 +362,7 @@ public:
     void updateCachedDocumentLoader(DocumentLoader&) override { }
     void setTitle(const StringWithDirection&, const URL&) override { }
 
-    String userAgent(const URL&) override { return ""; }
+    String userAgent(const URL&) override { return emptyString(); }
 
     void savePlatformDataToCachedFrame(CachedFrame*) override { }
     void transitionToCommittedFromCachedFrame(CachedFrame*) override { }

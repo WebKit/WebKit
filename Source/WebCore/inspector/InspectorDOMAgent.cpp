@@ -206,7 +206,7 @@ String InspectorDOMAgent::toErrorString(const ExceptionCode& ec)
         ExceptionCodeDescription description(ec);
         return description.name;
     }
-    return "";
+    return emptyString();
 }
 
 InspectorDOMAgent::InspectorDOMAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
@@ -1221,7 +1221,7 @@ void InspectorDOMAgent::focus(ErrorString& errorString, int nodeId)
 
 void InspectorDOMAgent::resolveNode(ErrorString& errorString, int nodeId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
 {
-    String objectGroupName = objectGroup ? *objectGroup : "";
+    String objectGroupName = objectGroup ? *objectGroup : emptyString();
     Node* node = nodeForId(nodeId);
     if (!node) {
         errorString = ASCIILiteral("No node with given id found");
@@ -1257,13 +1257,13 @@ void InspectorDOMAgent::requestNode(ErrorString&, const String& objectId, int* n
 String InspectorDOMAgent::documentURLString(Document* document)
 {
     if (!document || document->url().isNull())
-        return "";
+        return emptyString();
     return document->url().string();
 }
 
 static String documentBaseURLString(Document* document)
 {
-    return document->completeURL("").string();
+    return document->completeURL(emptyString()).string();
 }
 
 static bool pseudoElementType(PseudoId pseudoId, Inspector::Protocol::DOM::PseudoType* type)

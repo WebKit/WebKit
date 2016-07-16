@@ -189,12 +189,12 @@ String PropertySetCSSStyleDeclaration::getPropertyValue(const String& propertyNa
 String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return m_propertySet->customPropertyIsImportant(propertyName) ? "important" : "";
+        return m_propertySet->customPropertyIsImportant(propertyName) ? ASCIILiteral("important") : emptyString();
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
-    return m_propertySet->propertyIsImportant(propertyID) ? "important" : "";
+    return m_propertySet->propertyIsImportant(propertyID) ? ASCIILiteral("important") : emptyString();
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyShorthand(const String& propertyName)

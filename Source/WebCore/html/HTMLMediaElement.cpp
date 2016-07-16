@@ -6715,11 +6715,11 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
     JSC::JSObject* controllerObject = controllerValue.toObject(exec);
 
     if (exec->hadException())
-        return "";
+        return emptyString();
 
     JSC::JSValue functionValue = controllerObject->get(exec, JSC::Identifier::fromString(exec, "getCurrentControlsStatus"));
     if (exec->hadException() || functionValue.isUndefinedOrNull())
-        return "";
+        return emptyString();
 
     JSC::JSObject* function = functionValue.toObject(exec);
     ASSERT(!exec->hadException());
@@ -6727,12 +6727,12 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     JSC::MarkedArgumentBuffer argList;
     if (callType == JSC::CallType::None)
-        return "";
+        return emptyString();
 
     JSC::JSValue outputValue = JSC::call(exec, function, callType, callData, controllerObject, argList);
 
     if (exec->hadException())
-        return "";
+        return emptyString();
 
     return outputValue.getString(exec);
 }

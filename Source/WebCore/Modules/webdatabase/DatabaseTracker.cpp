@@ -76,7 +76,7 @@ void DatabaseTracker::initializeTracker(const String& databasePath)
 DatabaseTracker& DatabaseTracker::tracker()
 {
     if (!staticTracker)
-        staticTracker = new DatabaseTracker("");
+        staticTracker = new DatabaseTracker(emptyString());
 
     return *staticTracker;
 }

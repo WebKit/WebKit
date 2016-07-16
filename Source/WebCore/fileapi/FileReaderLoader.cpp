@@ -56,7 +56,7 @@ FileReaderLoader::FileReaderLoader(ReadType readType, FileReaderLoaderClient* cl
     : m_readType(readType)
     , m_client(client)
     , m_isRawDataConverted(false)
-    , m_stringResult("")
+    , m_stringResult(emptyString())
     , m_variableLength(false)
     , m_bytesLoaded(0)
     , m_totalBytes(0)

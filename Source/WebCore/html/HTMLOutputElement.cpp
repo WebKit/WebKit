@@ -44,7 +44,7 @@ inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Docume
     : HTMLFormControlElement(tagName, document, form)
     , m_isDefaultValueMode(true)
     , m_isSetTextContentInProgress(false)
-    , m_defaultValue("")
+    , m_defaultValue(emptyString())
 {
 }
 

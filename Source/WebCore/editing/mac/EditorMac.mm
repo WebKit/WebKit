@@ -288,7 +288,7 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
 String Editor::stringSelectionForPasteboard()
 {
     if (!canCopy())
-        return "";
+        return emptyString();
     String text = selectedText();
     text.replace(noBreakSpace, ' ');
     return text;
@@ -297,7 +297,7 @@ String Editor::stringSelectionForPasteboard()
 String Editor::stringSelectionForPasteboardWithImageAltText()
 {
     if (!canCopy())
-        return "";
+        return emptyString();
     String text = selectedTextForDataTransfer();
     text.replace(noBreakSpace, ' ');
     return text;

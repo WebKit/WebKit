@@ -48,14 +48,14 @@ void FrameTree::setName(const AtomicString& name)
         m_uniqueName = name;
         return;
     }
-    m_uniqueName = AtomicString(); // Remove our old frame name so it's not considered in uniqueChildName.
+    m_uniqueName = nullAtom; // Remove our old frame name so it's not considered in uniqueChildName.
     m_uniqueName = parent()->tree().uniqueChildName(name);
 }
 
 void FrameTree::clearName()
 {
-    m_name = AtomicString();
-    m_uniqueName = AtomicString();
+    m_name = nullAtom;
+    m_uniqueName = nullAtom;
 }
 
 Frame* FrameTree::parent() const 

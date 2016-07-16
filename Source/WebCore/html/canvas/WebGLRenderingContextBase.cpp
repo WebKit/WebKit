@@ -4740,7 +4740,7 @@ void WebGLRenderingContextBase::restoreStatesAfterVertexAttrib0Simulation()
 
 void WebGLRenderingContextBase::dispatchContextLostEvent()
 {
-    Ref<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, "");
+    Ref<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, emptyString());
     canvas()->dispatchEvent(event);
     m_restoreAllowed = event->defaultPrevented();
     if (m_contextLostMode == RealLostContext && m_restoreAllowed)
@@ -4821,7 +4821,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     setupFlags();
     initializeNewContext();
     initializeVertexArrayObjects();
-    canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, ""));
+    canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, emptyString()));
 }
 
 String WebGLRenderingContextBase::ensureNotNull(const String& text) const

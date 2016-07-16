@@ -186,14 +186,14 @@ void VTTRegion::setViewportAnchorY(double value, ExceptionCode& ec)
     m_viewportAnchor.setY(value);
 }
 
-const AtomicString VTTRegion::scroll() const
+const AtomicString& VTTRegion::scroll() const
 {
     static NeverDestroyed<const AtomicString> upScrollValueKeyword("up", AtomicString::ConstructFromLiteral);
 
     if (m_scroll)
         return upScrollValueKeyword;
 
-    return "";
+    return emptyAtom;
 }
 
 void VTTRegion::setScroll(const AtomicString& value, ExceptionCode& ec)

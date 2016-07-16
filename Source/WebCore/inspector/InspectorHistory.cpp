@@ -73,7 +73,7 @@ bool InspectorHistory::Action::isUndoableStateMark()
 
 String InspectorHistory::Action::mergeId()
 {
-    return "";
+    return emptyString();
 }
 
 void InspectorHistory::Action::merge(std::unique_ptr<Action>)
