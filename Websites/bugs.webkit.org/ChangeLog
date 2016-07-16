@@ -1,3 +1,13 @@
+2016-07-16  David Kilzer  <ddkilzer@apple.com>
+
+        Use secure (https) links on enter_bug.cgi
+        <https://webkit.org/b/159853>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * template/en/default/global/choose-product.html.tmpl:
+        Use https instead of http for links to webkit.org.
+
 2016-05-18  David Kilzer  <ddkilzer@apple.com>
 
         CVE-2016-2803: [SECURITY] XSS vulnerability in dependency graphs via bug summary
