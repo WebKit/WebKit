@@ -867,6 +867,7 @@ Page* InspectorOverlay::overlayPage()
     PageConfiguration pageConfiguration(makeUniqueRef<EmptyEditorClient>(), SocketProvider::create());
     fillWithEmptyClients(pageConfiguration);
     m_overlayPage = std::make_unique<Page>(WTFMove(pageConfiguration));
+    m_overlayPage->setDeviceScaleFactor(m_page.deviceScaleFactor());
 
     Settings& settings = m_page.settings();
     Settings& overlaySettings = m_overlayPage->settings();
