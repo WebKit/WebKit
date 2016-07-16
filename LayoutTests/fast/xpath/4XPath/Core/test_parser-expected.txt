@@ -38,7 +38,7 @@ PASS DOM.evaluate("/.. * 0", ROOT, null, XPathResult.NUMBER_TYPE, null).numberVa
 PASS CHILD2/@CODE
 PASS DOM.evaluate("CHILD2/@CODE * 0", ROOT, null, XPathResult.NUMBER_TYPE, null).numberValue is 0
 PASS föø
-PASS DOM.evaluate("\\", ROOT, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS DOM.evaluate("\\", ROOT, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null) threw exception INVALID_EXPRESSION_ERR (DOM XPath Exception 51): The expression had a syntax error or otherwise is not a legal expression according to the rules of the specific XPathEvaluator..
 PASS successfullyParsed is true
 
 TEST COMPLETE

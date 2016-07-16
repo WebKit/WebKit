@@ -273,7 +273,21 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
 
     JSValue errorObject;
     switch (description.type) {
-        DOM_EXCEPTION_INTERFACES_FOR_EACH(TRY_TO_CREATE_EXCEPTION)
+    case DOMCoreExceptionType:
+        errorObject = toJS(exec, globalObject, DOMCoreException::create(description));
+        break;
+    case FileExceptionType:
+        errorObject = toJS(exec, globalObject, FileException::create(description));
+        break;
+    case SQLExceptionType:
+        errorObject = toJS(exec, globalObject, SQLException::create(description));
+        break;
+    case SVGExceptionType:
+        errorObject = toJS(exec, globalObject, SVGException::create(description));
+        break;
+    case XPathExceptionType:
+        errorObject = toJS(exec, globalObject, XPathException::create(description));
+        break;
 #if ENABLE(INDEXED_DATABASE)
     case IDBDatabaseExceptionType:
         errorObject = toJS(exec, globalObject, DOMCoreException::createWithDescriptionAsMessage(description));

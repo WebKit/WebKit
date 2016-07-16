@@ -1,5 +1,18 @@
 2016-07-15  Brady Eidson  <beidson@apple.com>
 
+        Update XPathException to use the description in toString().
+        https://bugs.webkit.org/show_bug.cgi?id=159848
+
+        Reviewed by Alex Christensen.
+
+        * fast/dom/DOMException/XPathException-expected.txt:
+        * fast/dom/DOMException/resources/XPathException.js:
+        * fast/xpath/4XPath/Core/test_parser-expected.txt:
+        * fast/xpath/invalid-functions-expected.txt:
+        * fast/xpath/py-dom-xpath/expressions-expected.txt:
+
+2016-07-15  Brady Eidson  <beidson@apple.com>
+
         Change toString() behavior for exceptions constructed with "createWithDescriptionAsMessage".
         https://bugs.webkit.org/show_bug.cgi?id=159839
 

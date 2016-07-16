@@ -52,7 +52,7 @@ public:
 
 private:
     explicit XPathException(const ExceptionCodeDescription& description)
-        : ExceptionBase(description)
+        : ExceptionBase(description, ExceptionBase::MessageSource::UseDescription)
     {
     }
 };
