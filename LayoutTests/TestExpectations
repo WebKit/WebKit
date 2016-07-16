@@ -1033,3 +1033,5 @@ imported/w3c/WebCryptoAPI/generateKey/test_successes_RSA-PSS.html [ Skip ]
 imported/w3c/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.html [ Skip ]
 imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
 imported/w3c/WebCryptoAPI/idlharness.html [ Skip ]
+
+editing/deleting/delete-emoji.html [ Slow ]
