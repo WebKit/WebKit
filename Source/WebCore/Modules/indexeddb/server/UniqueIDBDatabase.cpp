@@ -1555,6 +1555,10 @@ void UniqueIDBDatabase::executeNextDatabaseTask()
 
     task->performTask();
     --m_queuedTaskCount;
+
+    // Release the ref in the main thread to ensure it's deleted there as expected in case of being the last reference.
+    callOnMainThread([protectedThis = WTFMove(protectedThis)] {
+    });
 }
 
 void UniqueIDBDatabase::executeNextDatabaseTaskReply()
