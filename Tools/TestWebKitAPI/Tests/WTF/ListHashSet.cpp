@@ -266,4 +266,86 @@ TEST(WTF_ListHashSet, MoveOnly)
     ASSERT_TRUE(list.isEmpty());
 }
 
+TEST(WTF_ListHashSet, MoveConstructor)
+{
+    ListHashSet<int> list;
+    list.add(1);
+    list.add(2);
+    list.add(3);
+
+    ASSERT_EQ(3U, list.size());
+    auto iterator = list.begin();
+    ASSERT_EQ(1, *iterator);
+    ++iterator;
+    ASSERT_EQ(2, *iterator);
+    ++iterator;
+    ASSERT_EQ(3, *iterator);
+    ++iterator;
+
+    ListHashSet<int> list2(WTFMove(list));
+    ASSERT_EQ(3U, list2.size());
+    auto iterator2 = list2.begin();
+    ASSERT_EQ(1, *iterator2);
+    ++iterator2;
+    ASSERT_EQ(2, *iterator2);
+    ++iterator2;
+    ASSERT_EQ(3, *iterator2);
+    ++iterator2;
+
+    ASSERT_EQ(0U, list.size());
+    ASSERT_TRUE(list.begin() == list.end());
+    list.add(4);
+    list.add(5);
+    list.add(6);
+    iterator = list.begin();
+    ASSERT_EQ(4, *iterator);
+    ++iterator;
+    ASSERT_EQ(5, *iterator);
+    ++iterator;
+    ASSERT_EQ(6, *iterator);
+    ++iterator;
+}
+
+TEST(WTF_ListHashSet, MoveAssignment)
+{
+    ListHashSet<int> list;
+    list.add(1);
+    list.add(2);
+    list.add(3);
+
+    ASSERT_EQ(3U, list.size());
+    auto iterator = list.begin();
+    ASSERT_EQ(1, *iterator);
+    ++iterator;
+    ASSERT_EQ(2, *iterator);
+    ++iterator;
+    ASSERT_EQ(3, *iterator);
+    ++iterator;
+
+    ListHashSet<int> list2;
+    list2.add(10);
+    list2 = (WTFMove(list));
+    ASSERT_EQ(3U, list2.size());
+    auto iterator2 = list2.begin();
+    ASSERT_EQ(1, *iterator2);
+    ++iterator2;
+    ASSERT_EQ(2, *iterator2);
+    ++iterator2;
+    ASSERT_EQ(3, *iterator2);
+    ++iterator2;
+
+    ASSERT_EQ(0U, list.size());
+    ASSERT_TRUE(list.begin() == list.end());
+    list.add(4);
+    list.add(5);
+    list.add(6);
+    iterator = list.begin();
+    ASSERT_EQ(4, *iterator);
+    ++iterator;
+    ASSERT_EQ(5, *iterator);
+    ++iterator;
+    ASSERT_EQ(6, *iterator);
+    ++iterator;
+}
+
 } // namespace TestWebKitAPI

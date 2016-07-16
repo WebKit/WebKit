@@ -1,3 +1,15 @@
+2016-07-16  Chris Dumez  <cdumez@apple.com>
+
+        Add move constructor / assignment operator to ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=159837
+
+        Reviewed by Darin Adler.
+
+        Add API tests.
+
+        * TestWebKitAPI/Tests/WTF/ListHashSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-07-15  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Change some parameters based on a random search

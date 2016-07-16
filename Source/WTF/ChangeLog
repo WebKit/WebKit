@@ -1,3 +1,22 @@
+2016-07-16  Chris Dumez  <cdumez@apple.com>
+
+        Add move constructor / assignment operator to ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=159837
+
+        Reviewed by Darin Adler.
+
+        Add move constructor / assignment operator to ListHashSet.
+
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetConstIterator::operator++):
+        (WTF::U>::ListHashSet):
+        (WTF::=):
+        (WTF::U>::clear):
+        (WTF::U>::appendNode):
+        (WTF::U>::prependNode):
+        (WTF::U>::deleteAllNodes):
+        (WTF::ListHashSetNode::ListHashSetNode): Deleted.
+
 2016-07-15  Chris Dumez  <cdumez@apple.com>
 
         Use emptyString() / nullAtom when possible
