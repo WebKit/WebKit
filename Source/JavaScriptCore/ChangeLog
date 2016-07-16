@@ -1,3 +1,19 @@
+2016-07-15  Mark Lam  <mark.lam@apple.com>
+
+        Assertion failures and crashes with missing TDZ checks for catch-node bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=158797
+
+        Reviewed by Saam Barati.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        (JSC::BytecodeGenerator::emitPopCatchScope):
+        * tests/stress/catch-clause-should-be-under-tdz1.js: Added.
+        * tests/stress/catch-clause-should-be-under-tdz2.js: Added.
+        * tests/stress/catch-clause-should-be-under-tdz3.js: Added.
+        * tests/stress/catch-clause-should-be-under-tdz4.js: Added.
+        * tests/stress/catch-clause-should-be-under-tdz5.js: Added.
+
 2016-07-15  Geoffrey Garen  <ggaren@apple.com>
 
         Added a makeRef<T> helper
