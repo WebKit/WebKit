@@ -342,6 +342,8 @@ messages -> WebPageProxy {
     DismissCorrectionPanel(int32_t reason)
     DismissCorrectionPanelSoon(int32_t reason) -> (String result)
     RecordAutocorrectionResponse(int32_t responseType, String replacedString, String replacementString);
+
+    SetEditableElementIsFocused(bool editableElementIsFocused)
 #endif
 
 #if USE(DICTATION_ALTERNATIVES)

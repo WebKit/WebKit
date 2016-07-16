@@ -236,8 +236,6 @@ private:
 #endif
 
 #if PLATFORM(IOS)
-    void elementDidFocus(const WebCore::Node*) override;
-    void elementDidBlur(const WebCore::Node*) override;
     void elementDidRefocus(const WebCore::Node*) override;
 #endif
 
@@ -259,6 +257,9 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
+    void elementDidFocus(const WebCore::Node*) override;
+    void elementDidBlur(const WebCore::Node*) override;
+
     void makeFirstResponder() override;
 #endif
 

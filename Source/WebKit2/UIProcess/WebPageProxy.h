@@ -1419,6 +1419,8 @@ private:
     void removeDictationAlternatives(uint64_t dictationContext);
     void dictationAlternatives(uint64_t dictationContext, Vector<String>& result);
 #endif
+
+    void setEditableElementIsFocused(bool);
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)

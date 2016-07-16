@@ -44,16 +44,6 @@ void WebChromeClient::didPreventDefaultForEvent()
 }
 #endif
 
-void WebChromeClient::elementDidFocus(const WebCore::Node* node)
-{
-    m_page->elementDidFocus(const_cast<WebCore::Node*>(node));
-}
-
-void WebChromeClient::elementDidBlur(const WebCore::Node* node)
-{
-    m_page->elementDidBlur(const_cast<WebCore::Node*>(node));
-}
-
 void WebChromeClient::elementDidRefocus(const WebCore::Node* node)
 {
     elementDidFocus(node);

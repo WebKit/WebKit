@@ -5955,6 +5955,11 @@ void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<Strin
 }
 #endif
 
+void WebPageProxy::setEditableElementIsFocused(bool editableElementIsFocused)
+{
+    m_pageClient.setEditableElementIsFocused(editableElementIsFocused);
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(COCOA)

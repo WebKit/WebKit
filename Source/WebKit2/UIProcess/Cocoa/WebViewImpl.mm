@@ -453,6 +453,11 @@ void WebViewImpl::webViewImplAdditionsWillDestroyView()
 {
 }
 
+void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
+{
+    m_editableElementIsFocused = editableElementIsFocused;
+}
+
 } // namespace WebKit
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
 

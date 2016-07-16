@@ -621,6 +621,11 @@ Vector<String> PageClientImpl::dictationAlternatives(uint64_t dictationContext)
 }
 #endif
 
+void PageClientImpl::setEditableElementIsFocused(bool editableElementIsFocused)
+{
+    m_impl->setEditableElementIsFocused(editableElementIsFocused);
+}
+
 #if ENABLE(FULLSCREEN_API)
 
 WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()

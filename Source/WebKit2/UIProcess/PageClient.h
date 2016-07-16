@@ -275,6 +275,7 @@ public:
     virtual void registerInsertionUndoGrouping() = 0;
 #endif // USE(INSERTION_UNDO_GROUPING)
 #endif // USE(APPKIT)
+    virtual void setEditableElementIsFocused(bool) = 0;
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)

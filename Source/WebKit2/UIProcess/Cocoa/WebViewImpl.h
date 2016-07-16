@@ -272,6 +272,7 @@ public:
     void updateFontPanelIfNeeded();
     void changeFontFromFontPanel();
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
+    void setEditableElementIsFocused(bool);
 
     void startSpeaking();
     void stopSpeaking(id);
@@ -647,6 +648,7 @@ private:
     NSRange m_softSpaceRange { NSNotFound, 0 };
     bool m_isHandlingAcceptedCandidate { false };
     bool m_requiresUserActionForEditingControlsManager { false };
+    bool m_editableElementIsFocused { false };
 };
     
 } // namespace WebKit

@@ -1,3 +1,80 @@
+2016-07-15  Beth Dakin  <bdakin@apple.com>
+
+        Mac UI process needs to know about element focus and blur, much like iOS
+        https://bugs.webkit.org/show_bug.cgi?id=159843
+        -and corresponding-
+        rdar://problem/27229504
+
+        Reviewed by Tim Horton.
+
+        This patch makes the existing iOS machinery to handle focus and blurring of 
+        elements cross-platform. Instead of using the existing iOS messages for 
+        startAssistingNode/stopAssistingNode, this patch adds a new message that 
+        require only a boolean parameter: setEditableElementIsFocused.
+
+        Now that more of this code is shared, this patch teases 
+        m_hasFocusedDueToUserInteraction out into two variables. I realized that it 
+        was being used to mean two slightly different things on Mac and iOS, which 
+        was very confusing. Now we have m_isAssistingNodeDueToUserInteraction to 
+        represent the way iOS was using the variable, and we have 
+        m_hasEverFocusedElementDueToUserInteractionSincePageTransition to represent 
+        how Mac was using the variable. There should not be any behavior changes with 
+        this re-name, just added clarity.
+
+        WebViewImpl has a new member variable m_editableElementIsFocused.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setEditableElementIsFocused):
+
+        Pipe the new setEditableElementIsFocused message to WebViewImpl.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setEditableElementIsFocused):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setEditableElementIsFocused):
+
+        elementDidFocus() and elementDidBlur() are now PLATFORM(COCOA) instead of 
+        PLATFORM(IOS)
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::elementDidFocus):
+        (WebKit::WebChromeClient::elementDidBlur):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::elementDidFocus): Deleted.
+        (WebKit::WebChromeClient::elementDidBlur): Deleted.
+
+        m_hasPendingBlurNotification is no longer iOS-only.
+        * WebProcess/WebPage/WebPage.cpp:
+
+        Use our two new bools m_isAssistingNodeDueToUserInteraction and 
+        m_hasEverFocusedElementDueToUserInteractionSincePageTransition 
+        (WebKit::WebPage::didStartPageTransition):
+        (WebKit::WebPage::didChangeSelection):
+
+        These functions are all newly cross-platform. The Messages they send are 
+        still platform-specific, but otherwise the logic is the same. We 
+        dispatch_async the blur messages so that the UI process features won’t be 
+        flashy when the user is tapping, tabbing, or clicking through form fields.
+        (WebKit::WebPage::resetAssistedNodeForFrame):
+        (WebKit::WebPage::elementDidFocus):
+        (WebKit::WebPage::elementDidBlur):
+
+        resetAssistedNodeForFrame() is no longer iOS-only. 
+        (WebKit::WebPage::didCommitLoad):
+
+        Move variables and functions around so that they are defined for the right 
+        platform, and declare the two new bools in place of the old one.
+        * WebProcess/WebPage/WebPage.h:
+
+        These functions are now defined in WebPage.cpp
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetAssistedNodeForFrame): Deleted.
+        (WebKit::WebPage::elementDidFocus): Deleted.
+        (WebKit::WebPage::elementDidBlur): Deleted.
+
 2016-07-15  Geoffrey Garen  <ggaren@apple.com>
 
         Added a makeRef<T> helper
