@@ -58,6 +58,8 @@ private:
     String m_name;
     String m_message;
     String m_description;
+    String m_typeName;
+    MessageSource m_messageSource;
 };
 
 } // namespace WebCore

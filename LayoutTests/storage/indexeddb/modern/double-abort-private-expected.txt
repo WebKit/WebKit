@@ -8,7 +8,7 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 Initial upgrade needed: Old version - 0 New version - 1
-Second abort failed: Error: Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.
+Second abort failed: InvalidStateError (DOM IDBDatabase Exception 11): Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.
 Initial upgrade versionchange transaction aborted
 PASS successfullyParsed is true
 

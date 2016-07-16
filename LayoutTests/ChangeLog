@@ -1,3 +1,19 @@
+2016-07-15  Brady Eidson  <beidson@apple.com>
+
+        Change toString() behavior for exceptions constructed with "createWithDescriptionAsMessage".
+        https://bugs.webkit.org/show_bug.cgi?id=159839
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/createobjectstore-failures-expected.txt:
+        * storage/indexeddb/modern/createobjectstore-failures-private-expected.txt:
+        * storage/indexeddb/modern/double-abort-expected.txt:
+        * storage/indexeddb/modern/double-abort-private-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-deleteobjectstore-failures-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-deleteobjectstore-failures-private-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-private-expected.txt:
+
 2016-07-15  Brent Fulgham  <bfulgham@apple.com>
 
         Merge background parser Blink test case

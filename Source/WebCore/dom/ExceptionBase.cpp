@@ -37,6 +37,8 @@ ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description, Messag
     : m_code(description.code)
     , m_name(description.name)
     , m_description(description.description)
+    , m_typeName(description.typeName)
+    , m_messageSource(messageSource)
 {
     if (messageSource == MessageSource::UseDescription) {
         m_message = m_description;
@@ -51,7 +53,17 @@ ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description, Messag
 
 String ExceptionBase::toString() const
 {
-    return "Error: " + m_message;
+    if (m_messageSource != MessageSource::UseDescription)
+        return makeString("Error: ", m_message);
+
+    String lastComponent;
+    if (!m_description.isEmpty())
+        lastComponent = makeString(": ", m_description);
+
+    if (m_name.isEmpty())
+        return makeString(m_typeName, " Exception", m_code ? makeString(" ", String::number(m_code)) : "", lastComponent);
+
+    return makeString(m_name, " (", m_typeName, " Exception", m_code ? makeString(" ", String::number(m_code)) : "", ")", lastComponent);
 }
 
 } // namespace WebCore
