@@ -202,7 +202,7 @@ void HTMLLinkElement::setCrossOrigin(const AtomicString& value)
 
 String HTMLLinkElement::crossOrigin() const
 {
-    return parseCORSSettingsAttribute(fastGetAttribute(crossoriginAttr));
+    return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
 }
 
 void HTMLLinkElement::process()
@@ -214,14 +214,14 @@ void HTMLLinkElement::process()
 
     URL url = getNonEmptyURLAttribute(hrefAttr);
 
-    if (!m_linkLoader.loadLink(m_relAttribute, url, fastGetAttribute(asAttr), fastGetAttribute(crossoriginAttr), document()))
+    if (!m_linkLoader.loadLink(m_relAttribute, url, attributeWithoutSynchronization(asAttr), attributeWithoutSynchronization(crossoriginAttr), document()))
         return;
 
     bool treatAsStyleSheet = m_relAttribute.isStyleSheet
         || (document().settings() && document().settings()->treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css"));
 
     if (m_disabledState != Disabled && treatAsStyleSheet && document().frame() && url.isValid()) {
-        AtomicString charset = fastGetAttribute(charsetAttr);
+        AtomicString charset = attributeWithoutSynchronization(charsetAttr);
         if (charset.isEmpty() && document().frame())
             charset = document().charset();
         
@@ -257,7 +257,7 @@ void HTMLLinkElement::process()
         CachedResourceRequest request(url, charset, priority);
         request.setInitiator(this);
 
-        if (document().contentSecurityPolicy()->allowStyleWithNonce(fastGetAttribute(HTMLNames::nonceAttr))) {
+        if (document().contentSecurityPolicy()->allowStyleWithNonce(attributeWithoutSynchronization(HTMLNames::nonceAttr))) {
             ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
             options.setContentSecurityPolicyImposition(ContentSecurityPolicyImposition::SkipPolicyCheck);
             request.setOptions(options);
@@ -478,22 +478,22 @@ void HTMLLinkElement::handleClick(Event& event)
 
 URL HTMLLinkElement::href() const
 {
-    return document().completeURL(fastGetAttribute(hrefAttr));
+    return document().completeURL(attributeWithoutSynchronization(hrefAttr));
 }
 
 const AtomicString& HTMLLinkElement::rel() const
 {
-    return fastGetAttribute(relAttr);
+    return attributeWithoutSynchronization(relAttr);
 }
 
 String HTMLLinkElement::target() const
 {
-    return fastGetAttribute(targetAttr);
+    return attributeWithoutSynchronization(targetAttr);
 }
 
 const AtomicString& HTMLLinkElement::type() const
 {
-    return fastGetAttribute(typeAttr);
+    return attributeWithoutSynchronization(typeAttr);
 }
 
 Optional<LinkIconType> HTMLLinkElement::iconType() const

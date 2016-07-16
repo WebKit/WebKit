@@ -174,13 +174,13 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attribut
     copiedAttributes.copyFrom(attributes);
     if (submitButton) {
         AtomicString attributeValue;
-        if (!(attributeValue = submitButton->fastGetAttribute(formactionAttr)).isNull())
+        if (!(attributeValue = submitButton->attributeWithoutSynchronization(formactionAttr)).isNull())
             copiedAttributes.parseAction(attributeValue);
-        if (!(attributeValue = submitButton->fastGetAttribute(formenctypeAttr)).isNull())
+        if (!(attributeValue = submitButton->attributeWithoutSynchronization(formenctypeAttr)).isNull())
             copiedAttributes.updateEncodingType(attributeValue);
-        if (!(attributeValue = submitButton->fastGetAttribute(formmethodAttr)).isNull())
+        if (!(attributeValue = submitButton->attributeWithoutSynchronization(formmethodAttr)).isNull())
             copiedAttributes.updateMethodType(attributeValue);
-        if (!(attributeValue = submitButton->fastGetAttribute(formtargetAttr)).isNull())
+        if (!(attributeValue = submitButton->attributeWithoutSynchronization(formtargetAttr)).isNull())
             copiedAttributes.setTarget(attributeValue);
     }
     

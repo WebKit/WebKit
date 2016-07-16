@@ -497,9 +497,9 @@ void SVGToOTFFontConverter::appendOS2Table()
 {
     int16_t averageAdvance = s_outputUnitsPerEm;
     bool ok;
-    int value = m_fontElement.fastGetAttribute(SVGNames::horiz_adv_xAttr).toInt(&ok);
+    int value = m_fontElement.attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr).toInt(&ok);
     if (!ok && m_missingGlyphElement)
-        value = m_missingGlyphElement->fastGetAttribute(SVGNames::horiz_adv_xAttr).toInt(&ok);
+        value = m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr).toInt(&ok);
     value = scaleUnitsPerEm(value);
     if (ok)
         averageAdvance = clampTo<int16_t>(value);
@@ -527,7 +527,7 @@ void SVGToOTFFontConverter::appendOS2Table()
     char panoseBytes[panoseSize];
     if (m_fontFaceElement) {
         Vector<String> segments;
-        m_fontFaceElement->fastGetAttribute(SVGNames::panose_1Attr).string().split(' ', segments);
+        m_fontFaceElement->attributeWithoutSynchronization(SVGNames::panose_1Attr).string().split(' ', segments);
         if (segments.size() == panoseSize) {
             for (auto& segment : segments) {
                 bool ok;
@@ -618,7 +618,7 @@ void SVGToOTFFontConverter::appendCFFTable()
 
     String weight;
     if (m_fontFaceElement) {
-        auto& potentialWeight = m_fontFaceElement->fastGetAttribute(SVGNames::font_weightAttr);
+        auto& potentialWeight = m_fontFaceElement->attributeWithoutSynchronization(SVGNames::font_weightAttr);
         if (isValidStringForCFF(potentialWeight))
             weight = potentialWeight;
     }
@@ -821,7 +821,7 @@ void SVGToOTFFontConverter::appendArabicReplacementSubtable(size_t subtableRecor
     for (auto& pair : m_codepointsToIndicesMap) {
         for (auto glyphIndex : pair.value) {
             auto& glyph = m_glyphs[glyphIndex];
-            if (glyph.glyphElement && equalIgnoringASCIICase(glyph.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), arabicForm))
+            if (glyph.glyphElement && equalIgnoringASCIICase(glyph.glyphElement->attributeWithoutSynchronization(SVGNames::arabic_formAttr), arabicForm))
                 arabicFinalReplacements.append(std::make_pair(pair.value[0], glyphIndex));
         }
     }
@@ -956,9 +956,9 @@ void SVGToOTFFontConverter::appendVORGTable()
     append16(0); // Minor version
 
     bool ok;
-    int defaultVerticalOriginY = m_fontElement.fastGetAttribute(SVGNames::vert_origin_yAttr).toInt(&ok);
+    int defaultVerticalOriginY = m_fontElement.attributeWithoutSynchronization(SVGNames::vert_origin_yAttr).toInt(&ok);
     if (!ok && m_missingGlyphElement)
-        defaultVerticalOriginY = m_missingGlyphElement->fastGetAttribute(SVGNames::vert_origin_yAttr).toInt();
+        defaultVerticalOriginY = m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr).toInt();
     defaultVerticalOriginY = scaleUnitsPerEm(defaultVerticalOriginY);
     append16(clampTo<int16_t>(defaultVerticalOriginY));
 
@@ -966,7 +966,7 @@ void SVGToOTFFontConverter::appendVORGTable()
     append16(0); // Place to write table size.
     for (Glyph i = 0; i < m_glyphs.size(); ++i) {
         if (auto* glyph = m_glyphs[i].glyphElement) {
-            if (int verticalOriginY = glyph->fastGetAttribute(SVGNames::vert_origin_yAttr).toInt()) {
+            if (int verticalOriginY = glyph->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr).toInt()) {
                 append16(i);
                 append16(clampTo<int16_t>(scaleUnitsPerEm(verticalOriginY)));
             }
@@ -1254,7 +1254,7 @@ Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const SVGEl
 {
     Vector<char> result;
 
-    auto& dAttribute = glyphOrMissingGlyphElement.fastGetAttribute(SVGNames::dAttr);
+    auto& dAttribute = glyphOrMissingGlyphElement.attributeWithoutSynchronization(SVGNames::dAttr);
     if (dAttribute.isEmpty()) {
         writeCFFEncodedNumber(result, width);
         writeCFFEncodedNumber(result, 0);
@@ -1266,10 +1266,10 @@ Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const SVGEl
 
     // FIXME: If we are vertical, use vert_origin_x and vert_origin_y
     bool ok;
-    float horizontalOriginX = scaleUnitsPerEm(glyphOrMissingGlyphElement.fastGetAttribute(SVGNames::horiz_origin_xAttr).toFloat(&ok));
+    float horizontalOriginX = scaleUnitsPerEm(glyphOrMissingGlyphElement.attributeWithoutSynchronization(SVGNames::horiz_origin_xAttr).toFloat(&ok));
     if (!ok && m_fontFaceElement)
         horizontalOriginX = scaleUnitsPerEm(m_fontFaceElement->horizontalOriginX());
-    float horizontalOriginY = scaleUnitsPerEm(glyphOrMissingGlyphElement.fastGetAttribute(SVGNames::horiz_origin_yAttr).toFloat(&ok));
+    float horizontalOriginY = scaleUnitsPerEm(glyphOrMissingGlyphElement.attributeWithoutSynchronization(SVGNames::horiz_origin_yAttr).toFloat(&ok));
     if (!ok && m_fontFaceElement)
         horizontalOriginY = scaleUnitsPerEm(m_fontFaceElement->horizontalOriginY());
 
@@ -1289,11 +1289,11 @@ Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const SVGEl
 void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissingGlyphElement, const SVGGlyphElement* glyphElement, float defaultHorizontalAdvance, float defaultVerticalAdvance, const String& codepoints, Optional<FloatRect>& boundingBox)
 {
     bool ok;
-    float horizontalAdvance = scaleUnitsPerEm(glyphOrMissingGlyphElement.fastGetAttribute(SVGNames::horiz_adv_xAttr).toFloat(&ok));
+    float horizontalAdvance = scaleUnitsPerEm(glyphOrMissingGlyphElement.attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr).toFloat(&ok));
     if (!ok)
         horizontalAdvance = defaultHorizontalAdvance;
     m_advanceWidthMax = std::max(m_advanceWidthMax, horizontalAdvance);
-    float verticalAdvance = scaleUnitsPerEm(glyphOrMissingGlyphElement.fastGetAttribute(SVGNames::vert_adv_yAttr).toFloat(&ok));
+    float verticalAdvance = scaleUnitsPerEm(glyphOrMissingGlyphElement.attributeWithoutSynchronization(SVGNames::vert_adv_yAttr).toFloat(&ok));
     if (!ok)
         verticalAdvance = defaultVerticalAdvance;
     m_advanceHeightMax = std::max(m_advanceHeightMax, verticalAdvance);
@@ -1364,8 +1364,8 @@ bool SVGToOTFFontConverter::compareCodepointsLexicographically(const GlyphData& 
     }
 
     if (iterator1 == codePoints1.end() && iterator2 == codePoints2.end()) {
-        bool firstIsIsolated = data1.glyphElement && equalLettersIgnoringASCIICase(data1.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated");
-        bool secondIsIsolated = data2.glyphElement && equalLettersIgnoringASCIICase(data2.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated");
+        bool firstIsIsolated = data1.glyphElement && equalLettersIgnoringASCIICase(data1.glyphElement->attributeWithoutSynchronization(SVGNames::arabic_formAttr), "isolated");
+        bool secondIsIsolated = data2.glyphElement && equalLettersIgnoringASCIICase(data2.glyphElement->attributeWithoutSynchronization(SVGNames::arabic_formAttr), "isolated");
         return firstIsIsolated && !secondIsIsolated;
     }
     return iterator1 == codePoints1.end();
@@ -1430,7 +1430,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     }
 
     for (auto& glyphElement : childrenOfType<SVGGlyphElement>(m_fontElement)) {
-        auto& unicodeAttribute = glyphElement.fastGetAttribute(SVGNames::unicodeAttr);
+        auto& unicodeAttribute = glyphElement.attributeWithoutSynchronization(SVGNames::unicodeAttr);
         if (!unicodeAttribute.isEmpty()) // If we can never actually trigger this glyph, ignore it completely
             processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);
     }
@@ -1455,14 +1455,14 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     for (Glyph i = 0; i < m_glyphs.size(); ++i) {
         GlyphData& glyph = m_glyphs[i];
         if (glyph.glyphElement) {
-            auto& glyphName = glyph.glyphElement->fastGetAttribute(SVGNames::glyph_nameAttr);
+            auto& glyphName = glyph.glyphElement->attributeWithoutSynchronization(SVGNames::glyph_nameAttr);
             if (!glyphName.isNull())
                 m_glyphNameToIndexMap.add(glyphName, i);
         }
         if (m_codepointsToIndicesMap.isValidKey(glyph.codepoints)) {
             auto& glyphVector = m_codepointsToIndicesMap.add(glyph.codepoints, Vector<Glyph>()).iterator->value;
             // Prefer isolated arabic forms
-            if (glyph.glyphElement && equalLettersIgnoringASCIICase(glyph.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated"))
+            if (glyph.glyphElement && equalLettersIgnoringASCIICase(glyph.glyphElement->attributeWithoutSynchronization(SVGNames::arabic_formAttr), "isolated"))
                 glyphVector.insert(0, i);
             else
                 glyphVector.append(i);
@@ -1472,7 +1472,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     // FIXME: Handle commas.
     if (m_fontFaceElement) {
         Vector<String> segments;
-        m_fontFaceElement->fastGetAttribute(SVGNames::font_weightAttr).string().split(' ', segments);
+        m_fontFaceElement->attributeWithoutSynchronization(SVGNames::font_weightAttr).string().split(' ', segments);
         for (auto& segment : segments) {
             if (equalLettersIgnoringASCIICase(segment, "bold")) {
                 m_weight = 7;
@@ -1485,7 +1485,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
                 break;
             }
         }
-        m_fontFaceElement->fastGetAttribute(SVGNames::font_styleAttr).string().split(' ', segments);
+        m_fontFaceElement->attributeWithoutSynchronization(SVGNames::font_styleAttr).string().split(' ', segments);
         for (auto& segment : segments) {
             if (equalLettersIgnoringASCIICase(segment, "italic") || equalLettersIgnoringASCIICase(segment, "oblique")) {
                 m_italic = true;

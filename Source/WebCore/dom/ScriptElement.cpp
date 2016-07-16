@@ -259,7 +259,7 @@ bool ScriptElement::requestScript(const String& sourceUrl)
 
     ASSERT(!m_cachedScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceUrl).isEmpty()) {
-        bool hasKnownNonce = m_element.document().contentSecurityPolicy()->allowScriptWithNonce(m_element.fastGetAttribute(HTMLNames::nonceAttr), m_element.isInUserAgentShadowTree());
+        bool hasKnownNonce = m_element.document().contentSecurityPolicy()->allowScriptWithNonce(m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), m_element.isInUserAgentShadowTree());
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.setContentSecurityPolicyImposition(hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
 
@@ -267,7 +267,7 @@ bool ScriptElement::requestScript(const String& sourceUrl)
 
         m_element.document().contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request.mutableResourceRequest(), ContentSecurityPolicy::InsecureRequestType::Load);
 
-        String crossOriginMode = m_element.fastGetAttribute(HTMLNames::crossoriginAttr);
+        String crossOriginMode = m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
             m_requestUsesAccessControl = true;
             StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
@@ -300,7 +300,7 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
     if (!m_isExternalScript) {
         ASSERT(m_element.document().contentSecurityPolicy());
         const ContentSecurityPolicy& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
-        bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(m_element.fastGetAttribute(HTMLNames::nonceAttr), m_element.isInUserAgentShadowTree());
+        bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), m_element.isInUserAgentShadowTree());
         if (!contentSecurityPolicy.allowInlineScript(m_element.document().url(), m_startLineNumber, sourceCode.source().toStringWithoutCopying(), hasKnownNonce))
             return;
     }

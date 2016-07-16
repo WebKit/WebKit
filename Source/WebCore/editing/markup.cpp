@@ -690,7 +690,7 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
         attachments.append(attachment);
 
     for (auto& attachment : attachments) {
-        attachment->setFile(File::create(attachment->fastGetAttribute(webkitattachmentpathAttr)).ptr());
+        attachment->setFile(File::create(attachment->attributeWithoutSynchronization(webkitattachmentpathAttr)).ptr());
         attachment->removeAttribute(webkitattachmentpathAttr);
     }
 #endif

@@ -71,7 +71,7 @@ Ref<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& doc
 String SVGAElement::title() const
 {
     // If the xlink:title is set (non-empty string), use it.
-    const AtomicString& title = fastGetAttribute(XLinkNames::titleAttr);
+    const AtomicString& title = attributeWithoutSynchronization(XLinkNames::titleAttr);
     if (!title.isEmpty())
         return title;
 
@@ -138,7 +138,7 @@ void SVGAElement::defaultEventHandler(Event* event)
             }
 
             String target = this->target();
-            if (target.isEmpty() && fastGetAttribute(XLinkNames::showAttr) == "new")
+            if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new")
                 target = "_blank";
             event->setDefaultHandled();
 

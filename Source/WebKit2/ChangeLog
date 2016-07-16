@@ -1,3 +1,15 @@
+2016-07-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename fastGetAttribute to attributeWithoutSynchronization
+        https://bugs.webkit.org/show_bug.cgi?id=159852
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::WebPage::performActionOnElement):
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2016-07-15  Timothy Hatcher  <timothy@apple.com>
 
         Web Automation: Fix element and event coord space issues

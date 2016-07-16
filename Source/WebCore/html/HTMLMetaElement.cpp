@@ -69,7 +69,7 @@ void HTMLMetaElement::process()
     if (!inDocument())
         return;
 
-    const AtomicString& contentValue = fastGetAttribute(contentAttr);
+    const AtomicString& contentValue = attributeWithoutSynchronization(contentAttr);
     if (contentValue.isNull())
         return;
 
@@ -84,19 +84,19 @@ void HTMLMetaElement::process()
     else if (equalLettersIgnoringASCIICase(name(), "referrer"))
         document().processReferrerPolicy(contentValue);
 
-    const AtomicString& httpEquivValue = fastGetAttribute(http_equivAttr);
+    const AtomicString& httpEquivValue = attributeWithoutSynchronization(http_equivAttr);
     if (!httpEquivValue.isNull())
         document().processHttpEquiv(httpEquivValue, contentValue, isDescendantOf(document().head()));
 }
 
 const AtomicString& HTMLMetaElement::content() const
 {
-    return fastGetAttribute(contentAttr);
+    return attributeWithoutSynchronization(contentAttr);
 }
 
 const AtomicString& HTMLMetaElement::httpEquiv() const
 {
-    return fastGetAttribute(http_equivAttr);
+    return attributeWithoutSynchronization(http_equivAttr);
 }
 
 const AtomicString& HTMLMetaElement::name() const

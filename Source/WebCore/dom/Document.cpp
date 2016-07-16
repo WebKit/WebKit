@@ -748,7 +748,7 @@ void Document::buildAccessKeyMap(TreeScope* scope)
 {
     ASSERT(scope);
     for (auto& element : descendantsOfType<Element>(scope->rootNode())) {
-        const AtomicString& accessKey = element.fastGetAttribute(accesskeyAttr);
+        const AtomicString& accessKey = element.attributeWithoutSynchronization(accesskeyAttr);
         if (!accessKey.isEmpty())
             m_elementsByAccessKey.set(accessKey.impl(), &element);
 
@@ -3031,7 +3031,7 @@ void Document::processBaseElement()
     auto baseDescendants = descendantsOfType<HTMLBaseElement>(*this);
     for (auto& base : baseDescendants) {
         if (!href) {
-            const AtomicString& value = base.fastGetAttribute(hrefAttr);
+            const AtomicString& value = base.attributeWithoutSynchronization(hrefAttr);
             if (!value.isNull()) {
                 href = &value;
                 if (target)
@@ -3039,7 +3039,7 @@ void Document::processBaseElement()
             }
         }
         if (!target) {
-            const AtomicString& value = base.fastGetAttribute(targetAttr);
+            const AtomicString& value = base.attributeWithoutSynchronization(targetAttr);
             if (!value.isNull()) {
                 target = &value;
                 if (href)

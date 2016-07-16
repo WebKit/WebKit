@@ -45,7 +45,7 @@ static const AtomicString& slotNameFromSlotAttribute(const Node& child)
     if (is<Text>(child))
         return SlotAssignment::defaultSlotName();
 
-    return slotNameFromAttributeValue(downcast<Element>(child).fastGetAttribute(slotAttr));
+    return slotNameFromAttributeValue(downcast<Element>(child).attributeWithoutSynchronization(slotAttr));
 }
 
 SlotAssignment::SlotAssignment()
@@ -139,7 +139,7 @@ static void recursivelyFireSlotChangeEvent(HTMLSlotElement& slotElement)
     if (!shadowRootOfSlotParent)
         return;
 
-    shadowRootOfSlotParent->innerSlotDidChange(slotElement.fastGetAttribute(slotAttr));
+    shadowRootOfSlotParent->innerSlotDidChange(slotElement.attributeWithoutSynchronization(slotAttr));
 }
 
 void SlotAssignment::didChangeSlot(const AtomicString& slotAttrValue, ChangeType changeType, ShadowRoot& shadowRoot)
@@ -166,13 +166,13 @@ void SlotAssignment::didChangeSlot(const AtomicString& slotAttrValue, ChangeType
 
 void SlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
 {
-    didChangeSlot(childElement.fastGetAttribute(slotAttr), ChangeType::DirectChild, shadowRoot);
+    didChangeSlot(childElement.attributeWithoutSynchronization(slotAttr), ChangeType::DirectChild, shadowRoot);
 }
 
 const Vector<Node*>* SlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
 {
     ASSERT(slotElement.containingShadowRoot() == &shadowRoot);
-    const AtomicString& slotName = slotNameFromAttributeValue(slotElement.fastGetAttribute(nameAttr));
+    const AtomicString& slotName = slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr));
     auto it = m_slots.find(slotName);
     RELEASE_ASSERT(it != m_slots.end());
 
@@ -221,7 +221,7 @@ void SlotAssignment::resolveAllSlotElements(ShadowRoot& shadowRoot)
 
     unsigned slotCount = m_slots.size();
     for (auto& slotElement : descendantsOfType<HTMLSlotElement>(shadowRoot)) {
-        auto& slotName = slotNameFromAttributeValue(slotElement.fastGetAttribute(nameAttr));
+        auto& slotName = slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr));
 
         auto it = m_slots.find(slotName);
         RELEASE_ASSERT(it != m_slots.end());

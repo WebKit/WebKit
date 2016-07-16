@@ -313,7 +313,7 @@ String HitTestResult::altDisplayString() const
     
     if (is<HTMLImageElement>(*m_innerNonSharedNode)) {
         HTMLImageElement& image = downcast<HTMLImageElement>(*m_innerNonSharedNode);
-        return displayString(image.fastGetAttribute(altAttr), m_innerNonSharedNode.get());
+        return displayString(image.attributeWithoutSynchronization(altAttr), m_innerNonSharedNode.get());
     }
     
     if (is<HTMLInputElement>(*m_innerNonSharedNode)) {

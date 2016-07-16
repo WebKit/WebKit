@@ -258,7 +258,7 @@ bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
     if (!document().page()
         || !document().page()->settings().needsSiteSpecificQuirks()
         || hasFallbackContent()
-        || !equalLettersIgnoringASCIICase(fastGetAttribute(classidAttr), "clsid:02bf25d5-8c17-4b23-bc80-d3488abddc6b"))
+        || !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(classidAttr), "clsid:02bf25d5-8c17-4b23-bc80-d3488abddc6b"))
         return false;
 
     for (auto& metaElement : descendantsOfType<HTMLMetaElement>(document())) {
@@ -271,7 +271,7 @@ bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
     
 bool HTMLObjectElement::hasValidClassId()
 {
-    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && fastGetAttribute(classidAttr).startsWith("java:", false))
+    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && attributeWithoutSynchronization(classidAttr).startsWith("java:", false))
         return true;
     
     if (shouldAllowQuickTimeClassIdQuirk())
@@ -279,7 +279,7 @@ bool HTMLObjectElement::hasValidClassId()
 
     // HTML5 says that fallback content should be rendered if a non-empty
     // classid is specified for which the UA can't find a suitable plug-in.
-    return fastGetAttribute(classidAttr).isEmpty();
+    return attributeWithoutSynchronization(classidAttr).isEmpty();
 }
 
 // FIXME: This should be unified with HTMLEmbedElement::updateWidget and
@@ -367,7 +367,7 @@ bool HTMLObjectElement::isURLAttribute(const Attribute& attribute) const
 
 const AtomicString& HTMLObjectElement::imageSourceURL() const
 {
-    return fastGetAttribute(dataAttr);
+    return attributeWithoutSynchronization(dataAttr);
 }
 
 void HTMLObjectElement::renderFallbackContent()
@@ -470,12 +470,12 @@ void HTMLObjectElement::updateDocNamedItem()
 
 bool HTMLObjectElement::containsJavaApplet() const
 {
-    if (MIMETypeRegistry::isJavaAppletMIMEType(fastGetAttribute(typeAttr)))
+    if (MIMETypeRegistry::isJavaAppletMIMEType(attributeWithoutSynchronization(typeAttr)))
         return true;
 
     for (auto& child : childrenOfType<Element>(*this)) {
         if (child.hasTagName(paramTag) && equalLettersIgnoringASCIICase(child.getNameAttribute(), "type")
-            && MIMETypeRegistry::isJavaAppletMIMEType(child.fastGetAttribute(valueAttr).string()))
+            && MIMETypeRegistry::isJavaAppletMIMEType(child.attributeWithoutSynchronization(valueAttr).string()))
             return true;
         if (child.hasTagName(objectTag) && downcast<HTMLObjectElement>(child).containsJavaApplet())
             return true;
@@ -490,11 +490,11 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 {
     HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document().completeURL(fastGetAttribute(dataAttr)));
+    addSubresourceURL(urls, document().completeURL(attributeWithoutSynchronization(dataAttr)));
 
     // FIXME: Passing a string that starts with "#" to the completeURL function does
     // not seem like it would work. The image element has similar but not identical code.
-    const AtomicString& useMap = fastGetAttribute(usemapAttr);
+    const AtomicString& useMap = attributeWithoutSynchronization(usemapAttr);
     if (useMap.startsWith('#'))
         addSubresourceURL(urls, document().completeURL(useMap));
 }

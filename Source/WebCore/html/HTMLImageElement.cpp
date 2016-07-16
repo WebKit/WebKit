@@ -129,7 +129,7 @@ void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName&
 
 const AtomicString& HTMLImageElement::imageSourceURL() const
 {
-    return m_bestFitImageURL.isEmpty() ? fastGetAttribute(srcAttr) : m_bestFitImageURL;
+    return m_bestFitImageURL.isEmpty() ? attributeWithoutSynchronization(srcAttr) : m_bestFitImageURL;
 }
 
 void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidate& candidate)
@@ -154,11 +154,11 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
             continue;
         auto& source = downcast<HTMLSourceElement>(*child);
 
-        auto& srcset = source.fastGetAttribute(srcsetAttr);
+        auto& srcset = source.attributeWithoutSynchronization(srcsetAttr);
         if (srcset.isEmpty())
             continue;
 
-        auto& typeAttribute = source.fastGetAttribute(typeAttr);
+        auto& typeAttribute = source.attributeWithoutSynchronization(typeAttr);
         if (!typeAttribute.isNull()) {
             String type = typeAttribute.string();
             type.truncate(type.find(';'));
@@ -176,7 +176,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         if (!evaluation)
             continue;
 
-        auto sourceSize = parseSizesAttribute(document(), source.fastGetAttribute(sizesAttr).string());
+        auto sourceSize = parseSizesAttribute(document(), source.attributeWithoutSynchronization(sizesAttr).string());
         auto candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom, srcset, sourceSize);
         if (!candidate.isEmpty())
             return candidate;
@@ -190,8 +190,8 @@ void HTMLImageElement::selectImageSource()
     ImageCandidate candidate = bestFitSourceFromPictureElement();
     if (candidate.isEmpty()) {
         // If we don't have a <picture> or didn't find a source, then we use our own attributes.
-        float sourceSize = parseSizesAttribute(document(), fastGetAttribute(sizesAttr).string());
-        candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr), sourceSize);
+        float sourceSize = parseSizesAttribute(document(), attributeWithoutSynchronization(sizesAttr).string());
+        candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), attributeWithoutSynchronization(srcAttr), attributeWithoutSynchronization(srcsetAttr), sourceSize);
     }
     setBestFitURLAndDPRFromImageCandidate(candidate);
     m_imageLoader.updateFromElementIgnoringPreviousError();
@@ -253,11 +253,11 @@ const AtomicString& HTMLImageElement::altText() const
     // lets figure out the alt text.. magic stuff
     // http://www.w3.org/TR/1998/REC-html40-19980424/appendix/notes.html#altgen
     // also heavily discussed by Hixie on bugzilla
-    const AtomicString& alt = fastGetAttribute(altAttr);
+    const AtomicString& alt = attributeWithoutSynchronization(altAttr);
     if (!alt.isNull())
         return alt;
     // fall back to title attribute
-    return fastGetAttribute(titleAttr);
+    return attributeWithoutSynchronization(titleAttr);
 }
 
 RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -375,7 +375,7 @@ int HTMLImageElement::width(bool ignorePendingStylesheets)
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
         bool ok;
-        int width = fastGetAttribute(widthAttr).toInt(&ok);
+        int width = attributeWithoutSynchronization(widthAttr).toInt(&ok);
         if (ok)
             return width;
 
@@ -401,7 +401,7 @@ int HTMLImageElement::height(bool ignorePendingStylesheets)
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
         bool ok;
-        int height = fastGetAttribute(heightAttr).toInt(&ok);
+        int height = attributeWithoutSynchronization(heightAttr).toInt(&ok);
         if (ok)
             return height;
 
@@ -486,13 +486,13 @@ bool HTMLImageElement::matchesCaseFoldedUsemap(const AtomicStringImpl& name) con
 
 const AtomicString& HTMLImageElement::alt() const
 {
-    return fastGetAttribute(altAttr);
+    return attributeWithoutSynchronization(altAttr);
 }
 
 bool HTMLImageElement::draggable() const
 {
     // Image elements are draggable by default.
-    return !equalLettersIgnoringASCIICase(fastGetAttribute(draggableAttr), "false");
+    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(draggableAttr), "false");
 }
 
 void HTMLImageElement::setHeight(int value)
@@ -502,7 +502,7 @@ void HTMLImageElement::setHeight(int value)
 
 URL HTMLImageElement::src() const
 {
-    return document().completeURL(fastGetAttribute(srcAttr));
+    return document().completeURL(attributeWithoutSynchronization(srcAttr));
 }
 
 void HTMLImageElement::setSrc(const String& value)
@@ -548,7 +548,7 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
     addSubresourceURL(urls, document().completeURL(imageSourceURL()));
     // FIXME: What about when the usemap attribute begins with "#"?
-    addSubresourceURL(urls, document().completeURL(fastGetAttribute(usemapAttr)));
+    addSubresourceURL(urls, document().completeURL(attributeWithoutSynchronization(usemapAttr)));
 }
 
 void HTMLImageElement::didMoveToNewDocument(Document* oldDocument)
@@ -562,7 +562,7 @@ bool HTMLImageElement::isServerMap() const
     if (!fastHasAttribute(ismapAttr))
         return false;
 
-    const AtomicString& usemap = fastGetAttribute(usemapAttr);
+    const AtomicString& usemap = attributeWithoutSynchronization(usemapAttr);
 
     // If the usemap attribute starts with '#', it refers to a map element in the document.
     if (usemap.string()[0] == '#')
@@ -578,7 +578,7 @@ void HTMLImageElement::setCrossOrigin(const AtomicString& value)
 
 String HTMLImageElement::crossOrigin() const
 {
-    return parseCORSSettingsAttribute(fastGetAttribute(crossoriginAttr));
+    return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
 }
 
 #if ENABLE(SERVICE_CONTROLS)

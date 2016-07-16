@@ -106,7 +106,7 @@ void FormAssociatedElement::removedFrom(ContainerNode& insertionPoint)
 
 HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
 {
-    const AtomicString& formId(element->fastGetAttribute(formAttr));
+    const AtomicString& formId(element->attributeWithoutSynchronization(formAttr));
     if (!formId.isNull() && element->inDocument()) {
         // The HTML5 spec says that the element should be associated with
         // the first element in the document to have an ID that equal to
@@ -258,7 +258,7 @@ void FormAssociatedElement::setCustomValidity(const String& error)
 
 void FormAssociatedElement::resetFormAttributeTargetObserver()
 {
-    m_formAttributeTargetObserver = std::make_unique<FormAttributeTargetObserver>(asHTMLElement().fastGetAttribute(formAttr), *this);
+    m_formAttributeTargetObserver = std::make_unique<FormAttributeTargetObserver>(asHTMLElement().attributeWithoutSynchronization(formAttr), *this);
 }
 
 void FormAssociatedElement::formAttributeTargetChanged()

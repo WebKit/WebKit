@@ -519,7 +519,7 @@ void TextFieldInputType::updatePlaceholderText()
 bool TextFieldInputType::appendFormData(FormDataList& list, bool multipart) const
 {
     InputType::appendFormData(list, multipart);
-    const AtomicString& dirnameAttrValue = element().fastGetAttribute(dirnameAttr);
+    const AtomicString& dirnameAttrValue = element().attributeWithoutSynchronization(dirnameAttr);
     if (!dirnameAttrValue.isNull())
         list.appendData(dirnameAttrValue, element().directionForFormData());
     return true;
@@ -678,7 +678,7 @@ void TextFieldInputType::updateAutoFillButton()
         if (!m_autoFillButton)
             createAutoFillButton(element().autoFillButtonType());
 
-        const AtomicString& attribute = m_autoFillButton->fastGetAttribute(pseudoAttr);
+        const AtomicString& attribute = m_autoFillButton->attributeWithoutSynchronization(pseudoAttr);
         bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(attribute, element().autoFillButtonType());
         if (shouldUpdateAutoFillButtonType) {
             m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(element().autoFillButtonType()));

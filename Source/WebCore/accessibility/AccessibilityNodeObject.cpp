@@ -1183,7 +1183,7 @@ static Element* siblingWithAriaRole(Node* node, const char* role)
 
     for (auto& sibling : childrenOfType<Element>(*parent)) {
         // FIXME: Should skip sibling that is the same as the node.
-        if (equalIgnoringASCIICase(sibling.fastGetAttribute(roleAttr), role))
+        if (equalIgnoringASCIICase(sibling.attributeWithoutSynchronization(roleAttr), role))
             return &sibling;
     }
 
@@ -1247,7 +1247,7 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
             AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label);
             String innerText = label->innerText();
             
-            const AtomicString& ariaLabel = label->fastGetAttribute(aria_labelAttr);
+            const AtomicString& ariaLabel = label->attributeWithoutSynchronization(aria_labelAttr);
             if (!ariaLabel.isEmpty())
                 innerText = ariaLabel;
             
@@ -1454,14 +1454,14 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     
     // Check if the HTML element has an aria-label for the webpage.
     if (Element* documentElement = document->documentElement()) {
-        const AtomicString& ariaLabel = documentElement->fastGetAttribute(aria_labelAttr);
+        const AtomicString& ariaLabel = documentElement->attributeWithoutSynchronization(aria_labelAttr);
         if (!ariaLabel.isEmpty())
             return ariaLabel;
     }
     
     if (auto* owner = document->ownerElement()) {
         if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
-            const AtomicString& title = owner->fastGetAttribute(titleAttr);
+            const AtomicString& title = owner->attributeWithoutSynchronization(titleAttr);
             if (!title.isEmpty())
                 return title;
         }
@@ -1558,7 +1558,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     if (!is<Element>(node))
         return 0;
     Element& element = downcast<Element>(*node);
-    const AtomicString& ariaLevel = element.fastGetAttribute(aria_levelAttr);
+    const AtomicString& ariaLevel = element.attributeWithoutSynchronization(aria_levelAttr);
     if (!ariaLevel.isEmpty())
         return ariaLevel.toInt();
     
@@ -1806,7 +1806,7 @@ String AccessibilityNodeObject::stringValue() const
         int selectedIndex = selectElement.selectedIndex();
         const Vector<HTMLElement*>& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
-            const AtomicString& overriddenDescription = listItems[selectedIndex]->fastGetAttribute(aria_labelAttr);
+            const AtomicString& overriddenDescription = listItems[selectedIndex]->attributeWithoutSynchronization(aria_labelAttr);
             if (!overriddenDescription.isNull())
                 return overriddenDescription;
         }
@@ -1859,11 +1859,11 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         return String();
     
     Element& element = downcast<Element>(*node);
-    const AtomicString& ariaLabel = element.fastGetAttribute(aria_labelAttr);
+    const AtomicString& ariaLabel = element.attributeWithoutSynchronization(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
     
-    const AtomicString& alt = element.fastGetAttribute(altAttr);
+    const AtomicString& alt = element.attributeWithoutSynchronization(altAttr);
     if (!alt.isEmpty())
         return alt;
 
@@ -1889,7 +1889,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
     if (!text.isEmpty())
         return text;
     
-    const AtomicString& title = element.fastGetAttribute(titleAttr);
+    const AtomicString& title = element.attributeWithoutSynchronization(titleAttr);
     if (!title.isEmpty())
         return title;
     

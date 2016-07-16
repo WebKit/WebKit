@@ -217,14 +217,14 @@ bool HTMLEmbedElement::isURLAttribute(const Attribute& attribute) const
 
 const AtomicString& HTMLEmbedElement::imageSourceURL() const
 {
-    return fastGetAttribute(srcAttr);
+    return attributeWithoutSynchronization(srcAttr);
 }
 
 void HTMLEmbedElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document().completeURL(fastGetAttribute(srcAttr)));
+    addSubresourceURL(urls, document().completeURL(attributeWithoutSynchronization(srcAttr)));
 }
 
 }

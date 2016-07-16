@@ -206,7 +206,7 @@ unsigned MathMLElement::colSpan() const
 {
     if (!hasTagName(mtdTag))
         return 1u;
-    const AtomicString& colSpanValue = fastGetAttribute(columnspanAttr);
+    const AtomicString& colSpanValue = attributeWithoutSynchronization(columnspanAttr);
     return std::max(1u, limitToOnlyHTMLNonNegative(colSpanValue, 1u));
 }
 
@@ -214,7 +214,7 @@ unsigned MathMLElement::rowSpan() const
 {
     if (!hasTagName(mtdTag))
         return 1u;
-    const AtomicString& rowSpanValue = fastGetAttribute(rowspanAttr);
+    const AtomicString& rowSpanValue = attributeWithoutSynchronization(rowspanAttr);
     static const unsigned maxRowspan = 8190; // This constant comes from HTMLTableCellElement.
     return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), maxRowspan));
 }
@@ -279,7 +279,7 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
 bool MathMLElement::childShouldCreateRenderer(const Node& child) const
 {
     if (hasTagName(annotation_xmlTag)) {
-        const AtomicString& value = fastGetAttribute(MathMLNames::encodingAttr);
+        const AtomicString& value = attributeWithoutSynchronization(MathMLNames::encodingAttr);
 
         // See annotation-xml.model.mathml, annotation-xml.model.svg and annotation-xml.model.xhtml in the HTML5 RelaxNG schema.
 
@@ -329,7 +329,7 @@ void MathMLElement::defaultEventHandler(Event* event)
             return;
         }
         if (MouseEvent::canTriggerActivationBehavior(*event)) {
-            const AtomicString& href = fastGetAttribute(hrefAttr);
+            const AtomicString& href = attributeWithoutSynchronization(hrefAttr);
             String url = stripLeadingAndTrailingHTMLSpaces(href);
             event->setDefaultHandled();
             if (Frame* frame = document().frame())
@@ -519,7 +519,7 @@ MathMLElement::Length MathMLElement::parseMathMLLength(const String& string)
 const MathMLElement::Length& MathMLElement::cachedMathMLLength(const QualifiedName& name, Length& length)
 {
     if (length.dirty) {
-        length = parseMathMLLength(fastGetAttribute(name));
+        length = parseMathMLLength(attributeWithoutSynchronization(name));
         length.dirty = false;
     }
     return length;

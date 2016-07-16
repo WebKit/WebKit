@@ -276,7 +276,7 @@ bool HTMLAnchorElement::canStartSelection() const
 
 bool HTMLAnchorElement::draggable() const
 {
-    const AtomicString& value = fastGetAttribute(draggableAttr);
+    const AtomicString& value = attributeWithoutSynchronization(draggableAttr);
     if (equalLettersIgnoringASCIICase(value, "true"))
         return true;
     if (equalLettersIgnoringASCIICase(value, "false"))
@@ -286,7 +286,7 @@ bool HTMLAnchorElement::draggable() const
 
 URL HTMLAnchorElement::href() const
 {
-    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(fastGetAttribute(hrefAttr)));
+    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(hrefAttr)));
 }
 
 void HTMLAnchorElement::setHref(const AtomicString& value)
@@ -319,7 +319,7 @@ int HTMLAnchorElement::tabIndex() const
 
 String HTMLAnchorElement::target() const
 {
-    return fastGetAttribute(targetAttr);
+    return attributeWithoutSynchronization(targetAttr);
 }
 
 String HTMLAnchorElement::origin() const
@@ -352,7 +352,7 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
     if (!fastHasAttribute(pingAttr) || !document().settings() || !document().settings()->hyperlinkAuditingEnabled())
         return;
 
-    SpaceSplitString pingURLs(fastGetAttribute(pingAttr), false);
+    SpaceSplitString pingURLs(attributeWithoutSynchronization(pingAttr), false);
     for (unsigned i = 0; i < pingURLs.size(); i++)
         PingLoader::sendPing(*document().frame(), document().completeURL(pingURLs[i]), destinationURL);
 }
@@ -366,14 +366,14 @@ void HTMLAnchorElement::handleClick(Event* event)
         return;
 
     StringBuilder url;
-    url.append(stripLeadingAndTrailingHTMLSpaces(fastGetAttribute(hrefAttr)));
+    url.append(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(hrefAttr)));
     appendServerMapMousePosition(url, *event);
     URL kurl = document().completeURL(url.toString());
 
     auto downloadAttribute = nullAtom;
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     if (RuntimeEnabledFeatures::sharedFeatures().downloadAttributeEnabled())
-        downloadAttribute = fastGetAttribute(downloadAttr);
+        downloadAttribute = attributeWithoutSynchronization(downloadAttr);
 #endif
 
     frame->loader().urlSelected(kurl, target(), event, LockHistory::No, LockBackForwardList::No, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), downloadAttribute);

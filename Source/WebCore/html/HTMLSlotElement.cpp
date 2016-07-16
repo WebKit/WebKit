@@ -58,7 +58,7 @@ HTMLSlotElement::InsertionNotificationRequest HTMLSlotElement::insertedInto(Cont
     // or its ancestor is inserted belongs to the same tree scope as this element's.
     if (insertionPoint.isInShadowTree() && isInShadowTree() && &insertionPoint.treeScope() == &treeScope()) {
         if (auto shadowRoot = containingShadowRoot())
-            shadowRoot->addSlotElementByName(fastGetAttribute(nameAttr), *this);
+            shadowRoot->addSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
     return InsertionDone;
@@ -71,7 +71,7 @@ void HTMLSlotElement::removedFrom(ContainerNode& insertionPoint)
     if (insertionPoint.isInShadowTree() && isInShadowTree() && &treeScope() == &document()) {
         auto* oldShadowRoot = insertionPoint.containingShadowRoot();
         ASSERT(oldShadowRoot);
-        oldShadowRoot->removeSlotElementByName(fastGetAttribute(nameAttr), *this);
+        oldShadowRoot->removeSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
     HTMLElement::removedFrom(insertionPoint);

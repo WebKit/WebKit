@@ -176,7 +176,7 @@ unsigned ImageInputType::height() const
 
     if (!element->renderer()) {
         // Check the attribute first for an explicit pixel value.
-        if (Optional<int> height = parseHTMLNonNegativeInteger(element->fastGetAttribute(heightAttr)))
+        if (Optional<int> height = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(heightAttr)))
             return height.value();
 
         // If the image is available, use its height.
@@ -197,7 +197,7 @@ unsigned ImageInputType::width() const
 
     if (!element->renderer()) {
         // Check the attribute first for an explicit pixel value.
-        if (Optional<int> width = parseHTMLNonNegativeInteger(element->fastGetAttribute(widthAttr)))
+        if (Optional<int> width = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(widthAttr)))
             return width.value();
 
         // If the image is available, use its width.

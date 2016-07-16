@@ -236,7 +236,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
         m_labelsByForAttribute = std::make_unique<DocumentOrderedMap>();
 
         for (auto& label : descendantsOfType<HTMLLabelElement>(m_rootNode)) {
-            const AtomicString& forValue = label.fastGetAttribute(forAttr);
+            const AtomicString& forValue = label.attributeWithoutSynchronization(forAttr);
             if (!forValue.isEmpty())
                 addLabel(*forValue.impl(), label);
         }

@@ -54,7 +54,7 @@ unsigned HTMLTableCellElement::colSpan() const
 
 unsigned HTMLTableCellElement::colSpanForBindings() const
 {
-    return limitToOnlyHTMLNonNegative(fastGetAttribute(colspanAttr), 1u);
+    return limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(colspanAttr), 1u);
 }
 
 unsigned HTMLTableCellElement::rowSpan() const
@@ -66,7 +66,7 @@ unsigned HTMLTableCellElement::rowSpan() const
 
 unsigned HTMLTableCellElement::rowSpanForBindings() const
 {
-    return limitToOnlyHTMLNonNegative(fastGetAttribute(rowspanAttr), 1u);
+    return limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(rowspanAttr), 1u);
 }
 
 int HTMLTableCellElement::cellIndex() const
@@ -136,12 +136,12 @@ bool HTMLTableCellElement::isURLAttribute(const Attribute& attribute) const
 
 String HTMLTableCellElement::abbr() const
 {
-    return fastGetAttribute(abbrAttr);
+    return attributeWithoutSynchronization(abbrAttr);
 }
 
 String HTMLTableCellElement::axis() const
 {
-    return fastGetAttribute(axisAttr);
+    return attributeWithoutSynchronization(axisAttr);
 }
 
 void HTMLTableCellElement::setColSpanForBindings(unsigned n)
@@ -151,7 +151,7 @@ void HTMLTableCellElement::setColSpanForBindings(unsigned n)
 
 String HTMLTableCellElement::headers() const
 {
-    return fastGetAttribute(headersAttr);
+    return attributeWithoutSynchronization(headersAttr);
 }
 
 void HTMLTableCellElement::setRowSpanForBindings(unsigned n)
@@ -167,7 +167,7 @@ const AtomicString& HTMLTableCellElement::scope() const
     static NeverDestroyed<const AtomicString> rowgroup("rowgroup", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<const AtomicString> colgroup("colgroup", AtomicString::ConstructFromLiteral);
 
-    const AtomicString& value = fastGetAttribute(HTMLNames::scopeAttr);
+    const AtomicString& value = attributeWithoutSynchronization(HTMLNames::scopeAttr);
 
     // Only conforming for th elements.
     if (!hasTagName(thTag))
@@ -193,7 +193,7 @@ void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) c
 {
     HTMLTablePartElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document().completeURL(fastGetAttribute(backgroundAttr)));
+    addSubresourceURL(urls, document().completeURL(attributeWithoutSynchronization(backgroundAttr)));
 }
 
 HTMLTableCellElement* HTMLTableCellElement::cellAbove() const

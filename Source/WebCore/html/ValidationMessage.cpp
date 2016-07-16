@@ -82,7 +82,7 @@ void ValidationMessage::updateValidationMessage(const String& message)
         // with the validationMessage. However, this behavior is same as Opera
         // and the specification describes such behavior as an example.
         if (!updatedMessage.isEmpty()) {
-            const AtomicString& title = m_element->fastGetAttribute(titleAttr);
+            const AtomicString& title = m_element->attributeWithoutSynchronization(titleAttr);
             if (!title.isEmpty())
                 updatedMessage = updatedMessage + '\n' + title;
         }

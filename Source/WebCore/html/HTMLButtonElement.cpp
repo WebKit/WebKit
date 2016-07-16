@@ -206,7 +206,7 @@ bool HTMLButtonElement::isURLAttribute(const Attribute& attribute) const
 
 const AtomicString& HTMLButtonElement::value() const
 {
-    return fastGetAttribute(valueAttr);
+    return attributeWithoutSynchronization(valueAttr);
 }
 
 bool HTMLButtonElement::computeWillValidate() const

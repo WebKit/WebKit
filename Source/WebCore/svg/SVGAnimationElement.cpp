@@ -318,30 +318,30 @@ void SVGAnimationElement::setAttributeType(const AtomicString& attributeType)
 
 String SVGAnimationElement::toValue() const
 {    
-    return fastGetAttribute(SVGNames::toAttr);
+    return attributeWithoutSynchronization(SVGNames::toAttr);
 }
 
 String SVGAnimationElement::byValue() const
 {    
-    return fastGetAttribute(SVGNames::byAttr);
+    return attributeWithoutSynchronization(SVGNames::byAttr);
 }
 
 String SVGAnimationElement::fromValue() const
 {    
-    return fastGetAttribute(SVGNames::fromAttr);
+    return attributeWithoutSynchronization(SVGNames::fromAttr);
 }
 
 bool SVGAnimationElement::isAdditive() const
 {
     static NeverDestroyed<const AtomicString> sum("sum", AtomicString::ConstructFromLiteral);
-    const AtomicString& value = fastGetAttribute(SVGNames::additiveAttr);
+    const AtomicString& value = attributeWithoutSynchronization(SVGNames::additiveAttr);
     return value == sum || animationMode() == ByAnimation;
 }
 
 bool SVGAnimationElement::isAccumulated() const
 {
     static NeverDestroyed<const AtomicString> sum("sum", AtomicString::ConstructFromLiteral);
-    const AtomicString& value = fastGetAttribute(SVGNames::accumulateAttr);
+    const AtomicString& value = attributeWithoutSynchronization(SVGNames::accumulateAttr);
     return value == sum && animationMode() != ToAnimation;
 }
 

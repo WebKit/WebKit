@@ -108,7 +108,7 @@ void HTMLLIElement::didAttachRenderers()
     if (!isInList)
         listItemRenderer.setNotInList(true);
 
-    parseValue(fastGetAttribute(valueAttr));
+    parseValue(attributeWithoutSynchronization(valueAttr));
 }
 
 inline void HTMLLIElement::parseValue(const AtomicString& value)

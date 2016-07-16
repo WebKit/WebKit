@@ -1752,7 +1752,7 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thi
         return throwGetterTypeError(*state, "TestObj", "reflectedStringAttr");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
+    JSValue result = jsStringWithCache(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr));
     return JSValue::encode(result);
 }
 
@@ -1827,7 +1827,7 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thi
         return throwGetterTypeError(*state, "TestObj", "reflectedStringAttr");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
+    JSValue result = jsStringWithCache(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr));
     return JSValue::encode(result);
 }
 

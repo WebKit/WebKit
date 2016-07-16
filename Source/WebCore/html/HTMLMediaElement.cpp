@@ -773,9 +773,9 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode&
         m_inActiveDocument = true;
 
 #if PLATFORM(IOS)
-        if (m_networkState == NETWORK_EMPTY && !fastGetAttribute(srcAttr).isEmpty() && m_mediaSession->dataLoadingPermitted(*this))
+        if (m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty() && m_mediaSession->dataLoadingPermitted(*this))
 #else
-        if (m_networkState == NETWORK_EMPTY && !fastGetAttribute(srcAttr).isEmpty())
+        if (m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty())
 #endif
             scheduleDelayedAction(LoadMediaResource);
     }
@@ -1021,7 +1021,7 @@ void HTMLMediaElement::setCrossOrigin(const AtomicString& value)
 
 String HTMLMediaElement::crossOrigin() const
 {
-    return parseCORSSettingsAttribute(fastGetAttribute(crossoriginAttr));
+    return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
 }
 
 HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
@@ -6822,7 +6822,7 @@ void HTMLMediaElement::mayResumePlayback(bool shouldResume)
 String HTMLMediaElement::mediaSessionTitle() const
 {
     if (fastHasAttribute(titleAttr))
-        return fastGetAttribute(titleAttr);
+        return attributeWithoutSynchronization(titleAttr);
     
     return m_currentSrc;
 }
@@ -6954,7 +6954,7 @@ bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicSt
 {
     QualifiedName attributeName(nullAtom, attribute, nullAtom);
 
-    AtomicString elementValue = fastGetAttribute(attributeName);
+    AtomicString elementValue = attributeWithoutSynchronization(attributeName);
     if (elementValue.isNull())
         return false;
     

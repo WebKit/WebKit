@@ -520,11 +520,11 @@ static NSString* matchLabelsAgainstElement(NSArray* labels, Element* element)
 {
     // Match against the name element, then against the id element if no match is found for the name element.
     // See 7538330 for one popular site that benefits from the id element check.
-    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->fastGetAttribute(nameAttr));
+    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->attributeWithoutSynchronization(nameAttr));
     if (!resultFromNameAttribute.isEmpty())
         return resultFromNameAttribute;
     
-    return matchLabelsAgainstString(labels, element->fastGetAttribute(idAttr));
+    return matchLabelsAgainstString(labels, element->attributeWithoutSynchronization(idAttr));
 }
 
 

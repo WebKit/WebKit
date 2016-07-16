@@ -179,7 +179,7 @@ void ImageLoader::updateFromElement()
         CachedResourceRequest request(ResourceRequest(document.completeURL(sourceURI(attr))), options);
         request.setInitiator(&element());
 
-        String crossOriginMode = element().fastGetAttribute(HTMLNames::crossoriginAttr);
+        String crossOriginMode = element().attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
             StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
             ASSERT(document.securityOrigin());

@@ -2409,7 +2409,7 @@ gchar* webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
     WebCore::TestObj* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
+    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr));
     return result;
 }
 
@@ -2498,7 +2498,7 @@ gchar* webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
     WebCore::TestObj* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
+    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr));
     return result;
 }
 

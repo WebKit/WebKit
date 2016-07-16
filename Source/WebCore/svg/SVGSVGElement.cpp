@@ -101,7 +101,7 @@ void SVGSVGElement::didMoveToNewDocument(Document* oldDocument)
 const AtomicString& SVGSVGElement::contentScriptType() const
 {
     static NeverDestroyed<AtomicString> defaultScriptType { "text/ecmascript" };
-    const AtomicString& type = fastGetAttribute(SVGNames::contentScriptTypeAttr);
+    const AtomicString& type = attributeWithoutSynchronization(SVGNames::contentScriptTypeAttr);
     return type.isNull() ? defaultScriptType.get() : type;
 }
 
@@ -113,7 +113,7 @@ void SVGSVGElement::setContentScriptType(const AtomicString& type)
 const AtomicString& SVGSVGElement::contentStyleType() const
 {
     static NeverDestroyed<AtomicString> defaultStyleType { "text/css" };
-    const AtomicString& type = fastGetAttribute(SVGNames::contentStyleTypeAttr);
+    const AtomicString& type = attributeWithoutSynchronization(SVGNames::contentStyleTypeAttr);
     return type.isNull() ? defaultStyleType.get() : type;
 }
 

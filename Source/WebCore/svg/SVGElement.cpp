@@ -369,7 +369,7 @@ bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
 
 String SVGElement::xmlbase() const
 {
-    return fastGetAttribute(XMLNames::baseAttr);
+    return attributeWithoutSynchronization(XMLNames::baseAttr);
 }
 
 void SVGElement::setXmlbase(const String& value, ExceptionCode&)

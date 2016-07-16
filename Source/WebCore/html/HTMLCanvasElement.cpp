@@ -328,8 +328,8 @@ void HTMLCanvasElement::reset()
 
     bool hadImageBuffer = hasCreatedImageBuffer();
 
-    int w = limitToOnlyHTMLNonNegative(fastGetAttribute(widthAttr), defaultWidth);
-    int h = limitToOnlyHTMLNonNegative(fastGetAttribute(heightAttr), defaultHeight);
+    int w = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(widthAttr), defaultWidth);
+    int h = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(heightAttr), defaultHeight);
 
     if (m_contextStateSaver) {
         // Reset to the initial graphics context state.

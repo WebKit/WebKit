@@ -163,7 +163,7 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
     }
 
     if (is<RenderMathMLMath>(renderer))
-        m_displayStyle = downcast<RenderElement>(renderer)->element()->fastGetAttribute(displayAttr) == "block"; // The default displaystyle of the <math> element depends on its display attribute.
+        m_displayStyle = downcast<RenderElement>(renderer)->element()->attributeWithoutSynchronization(displayAttr) == "block"; // The default displaystyle of the <math> element depends on its display attribute.
     else if (is<RenderMathMLTable>(renderer))
         m_displayStyle = false; // The default displaystyle of <mtable> is false.
     else if (parentRenderer) {
@@ -182,7 +182,7 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
     const QualifiedName& tagName = element->tagQName();
     if (tagName == mathTag || tagName == mtableTag || tagName == mstyleTag) {
         // We only modify the value of displaystyle if there is an explicit and valid attribute.
-        const AtomicString& attributeValue = element->fastGetAttribute(displaystyleAttr);
+        const AtomicString& attributeValue = element->attributeWithoutSynchronization(displaystyleAttr);
         if (attributeValue == "true")
             m_displayStyle = true;
         else if (attributeValue == "false")
@@ -191,7 +191,7 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
 
     // The mathvariant attribute on the <math>, <mstyle> or token elements overrides the default behavior.
     if (is<RenderMathMLMath>(renderer) || is<RenderMathMLToken>(renderer) || tagName == mstyleTag) {
-        MathVariant mathvariant = parseMathVariant(element->fastGetAttribute(mathvariantAttr));
+        MathVariant mathvariant = parseMathVariant(element->attributeWithoutSynchronization(mathvariantAttr));
         if (mathvariant != None)
             m_mathVariant = mathvariant;
     }

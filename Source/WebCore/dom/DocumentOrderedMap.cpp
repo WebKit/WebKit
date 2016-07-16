@@ -167,7 +167,7 @@ HTMLImageElement* DocumentOrderedMap::getElementByCaseFoldedUsemap(const AtomicS
 HTMLLabelElement* DocumentOrderedMap::getElementByLabelForAttribute(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return downcast<HTMLLabelElement>(get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
-        return is<HTMLLabelElement>(element) && element.fastGetAttribute(forAttr).impl() == &key;
+        return is<HTMLLabelElement>(element) && element.attributeWithoutSynchronization(forAttr).impl() == &key;
     }));
 }
 

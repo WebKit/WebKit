@@ -914,7 +914,7 @@ Ref<HTMLElement> createHTMLElement(Document& document, const AtomicString& tagNa
 
 bool isTabSpanNode(const Node* node)
 {
-    return is<HTMLSpanElement>(node) && downcast<HTMLSpanElement>(*node).fastGetAttribute(classAttr) == AppleTabSpanClass;
+    return is<HTMLSpanElement>(node) && downcast<HTMLSpanElement>(*node).attributeWithoutSynchronization(classAttr) == AppleTabSpanClass;
 }
 
 bool isTabSpanTextNode(const Node* node)
@@ -1000,7 +1000,7 @@ bool isMailBlockquote(const Node* node)
     ASSERT(node);
     if (!node->hasTagName(blockquoteTag))
         return false;
-    return downcast<HTMLElement>(*node).fastGetAttribute(typeAttr) == "cite";
+    return downcast<HTMLElement>(*node).attributeWithoutSynchronization(typeAttr) == "cite";
 }
 
 int caretMinOffset(const Node& node)

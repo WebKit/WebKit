@@ -605,7 +605,7 @@ LayoutUnit RenderImage::minimumReplacedHeight() const
 HTMLMapElement* RenderImage::imageMap() const
 {
     HTMLImageElement* image = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
-    return image ? image->treeScope().getImageMap(image->fastGetAttribute(usemapAttr)) : nullptr;
+    return image ? image->treeScope().getImageMap(image->attributeWithoutSynchronization(usemapAttr)) : nullptr;
 }
 
 bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

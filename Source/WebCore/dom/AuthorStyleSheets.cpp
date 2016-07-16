@@ -156,7 +156,7 @@ void AuthorStyleSheets::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& she
 #endif
         } else if (is<HTMLLinkElement>(*node) || is<HTMLStyleElement>(*node) || is<SVGStyleElement>(*node)) {
             Element& element = downcast<Element>(*node);
-            AtomicString title = element.fastGetAttribute(titleAttr);
+            AtomicString title = element.attributeWithoutSynchronization(titleAttr);
             bool enabledViaScript = false;
             if (is<HTMLLinkElement>(element)) {
                 // <LINK> element
@@ -167,7 +167,7 @@ void AuthorStyleSheets::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& she
                 if (linkElement.styleSheetIsLoading()) {
                     // it is loading but we should still decide which style sheet set to use
                     if (!enabledViaScript && !title.isEmpty() && m_preferredStylesheetSetName.isEmpty()) {
-                        if (!linkElement.fastGetAttribute(relAttr).contains("alternate")) {
+                        if (!linkElement.attributeWithoutSynchronization(relAttr).contains("alternate")) {
                             m_preferredStylesheetSetName = title;
                             m_selectedStylesheetSetName = title;
                         }
@@ -188,7 +188,7 @@ void AuthorStyleSheets::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& she
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).
-            auto& rel = element.fastGetAttribute(relAttr);
+            auto& rel = element.attributeWithoutSynchronization(relAttr);
             if (!enabledViaScript && !title.isEmpty()) {
                 // Yes, we have a title.
                 if (m_preferredStylesheetSetName.isEmpty()) {

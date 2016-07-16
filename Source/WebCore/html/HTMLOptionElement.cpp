@@ -194,7 +194,7 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 String HTMLOptionElement::value() const
 {
-    const AtomicString& value = fastGetAttribute(valueAttr);
+    const AtomicString& value = attributeWithoutSynchronization(valueAttr);
     if (!value.isNull())
         return value;
     return collectOptionInnerText().stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
@@ -272,7 +272,7 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 
 String HTMLOptionElement::label() const
 {
-    String label = fastGetAttribute(labelAttr);
+    String label = attributeWithoutSynchronization(labelAttr);
     if (!label.isNull())
         return label.stripWhiteSpace(isHTMLSpace);
     return collectOptionInnerText().stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);

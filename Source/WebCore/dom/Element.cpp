@@ -1508,7 +1508,7 @@ void Element::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
 
 const AtomicString& Element::imageSourceURL() const
 {
-    return fastGetAttribute(srcAttr);
+    return attributeWithoutSynchronization(srcAttr);
 }
 
 bool Element::rendererIsNeeded(const RenderStyle& style)
@@ -1568,7 +1568,7 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
 
     if (newScope && hasTagName(labelTag)) {
         if (newScope->shouldCacheLabelsByForAttribute())
-            updateLabel(*newScope, nullAtom, fastGetAttribute(forAttr));
+            updateLabel(*newScope, nullAtom, attributeWithoutSynchronization(forAttr));
     }
 
     return InsertionDone;
@@ -1614,7 +1614,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
 
         if (oldScope && hasTagName(labelTag)) {
             if (oldScope->shouldCacheLabelsByForAttribute())
-                updateLabel(*oldScope, fastGetAttribute(forAttr), nullAtom);
+                updateLabel(*oldScope, attributeWithoutSynchronization(forAttr), nullAtom);
         }
     }
 
@@ -2474,7 +2474,7 @@ String Element::title() const
 
 const AtomicString& Element::pseudo() const
 {
-    return fastGetAttribute(pseudoAttr);
+    return attributeWithoutSynchronization(pseudoAttr);
 }
 
 void Element::setPseudo(const AtomicString& value)
@@ -2970,7 +2970,7 @@ void Element::requestPointerLock()
 
 SpellcheckAttributeState Element::spellcheckAttributeState() const
 {
-    const AtomicString& value = fastGetAttribute(HTMLNames::spellcheckAttr);
+    const AtomicString& value = attributeWithoutSynchronization(HTMLNames::spellcheckAttr);
     if (value.isNull())
         return SpellcheckAttributeDefault;
     if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"))
@@ -3460,7 +3460,7 @@ void Element::clearHasPendingResources()
 
 bool Element::canContainRangeEndPoint() const
 {
-    return !equalLettersIgnoringASCIICase(fastGetAttribute(roleAttr), "img");
+    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(roleAttr), "img");
 }
 
 String Element::completeURLsInAttributeValue(const URL& base, const Attribute& attribute) const

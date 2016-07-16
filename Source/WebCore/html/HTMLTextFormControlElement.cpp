@@ -124,7 +124,7 @@ String HTMLTextFormControlElement::strippedPlaceholder() const
 {
     // According to the HTML5 specification, we need to remove CR and LF from
     // the attribute value.
-    const AtomicString& attributeValue = fastGetAttribute(placeholderAttr);
+    const AtomicString& attributeValue = attributeWithoutSynchronization(placeholderAttr);
     if (!attributeValue.contains(newlineCharacter) && !attributeValue.contains(carriageReturn))
         return attributeValue;
 
@@ -144,7 +144,7 @@ static bool isNotLineBreak(UChar ch) { return ch != newlineCharacter && ch != ca
 
 bool HTMLTextFormControlElement::isPlaceholderEmpty() const
 {
-    const AtomicString& attributeValue = fastGetAttribute(placeholderAttr);
+    const AtomicString& attributeValue = attributeWithoutSynchronization(placeholderAttr);
     return attributeValue.string().find(isNotLineBreak) == notFound;
 }
 
@@ -740,7 +740,7 @@ static const Element* parentHTMLElement(const Element* element)
 String HTMLTextFormControlElement::directionForFormData() const
 {
     for (const Element* element = this; element; element = parentHTMLElement(element)) {
-        const AtomicString& dirAttributeValue = element->fastGetAttribute(dirAttr);
+        const AtomicString& dirAttributeValue = element->attributeWithoutSynchronization(dirAttr);
         if (dirAttributeValue.isNull())
             continue;
 

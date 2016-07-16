@@ -141,7 +141,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     ASSERT(document.contentSecurityPolicy());
     const ContentSecurityPolicy& contentSecurityPolicy = *document.contentSecurityPolicy();
-    bool hasKnownNonce = contentSecurityPolicy.allowStyleWithNonce(element.fastGetAttribute(HTMLNames::nonceAttr), element.isInUserAgentShadowTree());
+    bool hasKnownNonce = contentSecurityPolicy.allowStyleWithNonce(element.attributeWithoutSynchronization(HTMLNames::nonceAttr), element.isInUserAgentShadowTree());
     if (!contentSecurityPolicy.allowInlineStyle(document.url(), m_startTextPosition.m_line, text, hasKnownNonce))
         return;
 

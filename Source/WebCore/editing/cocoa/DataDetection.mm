@@ -158,7 +158,7 @@ bool DataDetection::isDataDetectorLink(Element& element)
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     return [softLink_DataDetectorsCore_DDURLTapAndHoldSchemes() containsObject:(NSString *)downcast<HTMLAnchorElement>(element).href().protocol().convertToASCIILowercase()];
 #else
-    if (equalIgnoringASCIICase(element.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
+    if (equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
         return true;
     URL url = downcast<HTMLAnchorElement>(element).href();
     return url.protocolIs("mailto") || url.protocolIs("tel");
@@ -167,12 +167,12 @@ bool DataDetection::isDataDetectorLink(Element& element)
 
 bool DataDetection::requiresExtendedContext(Element& element)
 {
-    return equalIgnoringASCIICase(element.fastGetAttribute(x_apple_data_detectors_typeAttr), "calendar-event");
+    return equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr), "calendar-event");
 }
 
 String DataDetection::dataDetectorIdentifier(Element& element)
 {
-    return element.fastGetAttribute(x_apple_data_detectors_resultAttr);
+    return element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
 }
 
 bool DataDetection::shouldCancelDefaultAction(Element& element)
@@ -184,7 +184,7 @@ bool DataDetection::shouldCancelDefaultAction(Element& element)
     if (softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForURL(downcast<HTMLAnchorElement>(element).href()))
         return true;
     
-    const AtomicString& resultAttribute = element.fastGetAttribute(x_apple_data_detectors_resultAttr);
+    const AtomicString& resultAttribute = element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
     if (resultAttribute.isEmpty())
         return false;
     NSArray *results = element.document().frame()->dataDetectionResults();
@@ -202,7 +202,7 @@ bool DataDetection::shouldCancelDefaultAction(Element& element)
 #else
     if (!is<HTMLAnchorElement>(element))
         return false;
-    if (!equalIgnoringASCIICase(element.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
+    if (!equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
         return false;
     String type = element.getAttribute(x_apple_data_detectors_typeAttr).convertToASCIILowercase();
     if (type == "misc" || type == "calendar-event" || type == "telephone")
@@ -260,7 +260,7 @@ static void removeResultLinksFromAnchor(Element& element)
     if (!elementParent)
         return;
     
-    bool elementIsDDAnchor = is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.fastGetAttribute(x_apple_data_detectorsAttr), "true");
+    bool elementIsDDAnchor = is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
     if (!elementIsDDAnchor)
         return;
 
@@ -277,7 +277,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode,
     for (Node* node = &startNode; node; node = NodeTraversal::next(*node, &startNode)) {
         if (is<HTMLAnchorElement>(*node)) {
             auto& anchor = downcast<HTMLAnchorElement>(*node);
-            if (!equalIgnoringASCIICase(anchor.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
+            if (!equalIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
                 return true;
             removeResultLinksFromAnchor(anchor);
             didModifyDOM = true;
@@ -287,7 +287,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode,
             // If we found the end node and no link, return false unless an ancestor node is a link.
             // The only ancestors not tested at this point are in the direct line from self's parent to the top.
             for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
-                if (!equalIgnoringASCIICase(anchor.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
+                if (!equalIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
                     return true;
                 removeResultLinksFromAnchor(anchor);
                 didModifyDOM = true;

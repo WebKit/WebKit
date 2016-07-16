@@ -153,14 +153,14 @@ bool NumberInputType::typeMismatch() const
 StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     static NeverDestroyed<const StepRange::StepDescription> stepDescription(numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor);
-    const Decimal stepBase = parseToDecimalForNumberType(element().fastGetAttribute(minAttr), numberDefaultStepBase);
+    const Decimal stepBase = parseToDecimalForNumberType(element().attributeWithoutSynchronization(minAttr), numberDefaultStepBase);
     // FIXME: We should use numeric_limits<double>::max for number input type.
     const Decimal floatMax = Decimal::fromDouble(std::numeric_limits<float>::max());
     const Element& element = this->element();
 
     RangeLimitations rangeLimitations = RangeLimitations::Invalid;
     auto extractBound = [&] (const QualifiedName& attributeName, const Decimal& defaultValue) -> Decimal {
-        const AtomicString& attributeValue = element.fastGetAttribute(attributeName);
+        const AtomicString& attributeValue = element.attributeWithoutSynchronization(attributeName);
         Decimal valueFromAttribute = parseToNumberOrNaN(attributeValue);
         if (valueFromAttribute.isFinite()) {
             rangeLimitations = RangeLimitations::Valid;
@@ -171,7 +171,7 @@ StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) cons
     Decimal minimum = extractBound(minAttr, -floatMax);
     Decimal maximum = extractBound(maxAttr, floatMax);
 
-    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element.fastGetAttribute(stepAttr));
+    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element.attributeWithoutSynchronization(stepAttr));
     return StepRange(stepBase, rangeLimitations, minimum, maximum, step, stepDescription);
 }
 
@@ -179,15 +179,15 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
 {
     preferredSize = defaultSize;
 
-    auto& stepString = element().fastGetAttribute(stepAttr);
+    auto& stepString = element().attributeWithoutSynchronization(stepAttr);
     if (equalLettersIgnoringASCIICase(stepString, "any"))
         return false;
 
-    const Decimal minimum = parseToDecimalForNumberType(element().fastGetAttribute(minAttr));
+    const Decimal minimum = parseToDecimalForNumberType(element().attributeWithoutSynchronization(minAttr));
     if (!minimum.isFinite())
         return false;
 
-    const Decimal maximum = parseToDecimalForNumberType(element().fastGetAttribute(maxAttr));
+    const Decimal maximum = parseToDecimalForNumberType(element().attributeWithoutSynchronization(maxAttr));
     if (!maximum.isFinite())
         return false;
 

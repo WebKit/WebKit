@@ -669,7 +669,7 @@ sub GetterExpression
         } elsif ($generator->IsSVGAnimatedType($attributeType)) {
             $functionName = "getAttribute";
         } else {
-            $functionName = "fastGetAttribute";
+            $functionName = "attributeWithoutSynchronization";
         }
     }
 

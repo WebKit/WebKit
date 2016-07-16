@@ -75,7 +75,7 @@ void SVGStyleElement::setType(const AtomicString& type, ExceptionCode&)
 const AtomicString& SVGStyleElement::media() const
 {
     static NeverDestroyed<const AtomicString> defaultValue("all", AtomicString::ConstructFromLiteral);
-    const AtomicString& n = fastGetAttribute(SVGNames::mediaAttr);
+    const AtomicString& n = attributeWithoutSynchronization(SVGNames::mediaAttr);
     return n.isNull() ? defaultValue.get() : n;
 }
 
@@ -86,7 +86,7 @@ void SVGStyleElement::setMedia(const AtomicString& media, ExceptionCode&)
 
 String SVGStyleElement::title() const
 {
-    return fastGetAttribute(SVGNames::titleAttr);
+    return attributeWithoutSynchronization(SVGNames::titleAttr);
 }
 
 void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode&)

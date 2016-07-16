@@ -191,7 +191,7 @@ static inline ContentEditableType contentEditableType(const AtomicString& value)
 
 static ContentEditableType contentEditableType(const HTMLElement& element)
 {
-    return contentEditableType(element.fastGetAttribute(contenteditableAttr));
+    return contentEditableType(element.attributeWithoutSynchronization(contenteditableAttr));
 }
 
 void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
@@ -536,7 +536,7 @@ static inline const AtomicString& toValidDirValue(const AtomicString& value)
 
 const AtomicString& HTMLElement::dir() const
 {
-    return toValidDirValue(fastGetAttribute(dirAttr));
+    return toValidDirValue(attributeWithoutSynchronization(dirAttr));
 }
 
 void HTMLElement::setDir(const AtomicString& value)
@@ -777,7 +777,7 @@ void HTMLElement::setContentEditable(const String& enabled, ExceptionCode& ec)
 
 bool HTMLElement::draggable() const
 {
-    return equalLettersIgnoringASCIICase(fastGetAttribute(draggableAttr), "true");
+    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(draggableAttr), "true");
 }
 
 void HTMLElement::setDraggable(bool value)
@@ -811,7 +811,7 @@ void HTMLElement::accessKeyAction(bool sendMouseEvents)
 
 String HTMLElement::title() const
 {
-    return fastGetAttribute(titleAttr);
+    return attributeWithoutSynchronization(titleAttr);
 }
 
 int HTMLElement::tabIndex() const
@@ -823,7 +823,7 @@ int HTMLElement::tabIndex() const
 
 TranslateAttributeMode HTMLElement::translateAttributeMode() const
 {
-    const AtomicString& value = fastGetAttribute(translateAttr);
+    const AtomicString& value = attributeWithoutSynchronization(translateAttr);
 
     if (value.isNull())
         return TranslateAttributeInherit;
@@ -917,7 +917,7 @@ void HTMLElement::childrenChanged(const ChildChange& change)
 
 bool HTMLElement::hasDirectionAuto() const
 {
-    const AtomicString& direction = fastGetAttribute(dirAttr);
+    const AtomicString& direction = attributeWithoutSynchronization(dirAttr);
     return (hasTagName(bdiTag) && direction.isNull()) || equalLettersIgnoringASCIICase(direction, "auto");
 }
 
@@ -954,7 +954,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
 
         // Skip elements with valid dir attribute
         if (is<Element>(*node)) {
-            AtomicString dirAttributeValue = downcast<Element>(*node).fastGetAttribute(dirAttr);
+            AtomicString dirAttributeValue = downcast<Element>(*node).attributeWithoutSynchronization(dirAttr);
             if (isLTROrRTLIgnoringCase(dirAttributeValue) || equalLettersIgnoringASCIICase(dirAttributeValue, "auto")) {
                 node = NodeTraversal::nextSkippingChildren(*node, this);
                 continue;

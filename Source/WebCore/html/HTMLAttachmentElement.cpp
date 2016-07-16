@@ -81,7 +81,7 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
 
 String HTMLAttachmentElement::attachmentTitle() const
 {
-    auto& title = fastGetAttribute(titleAttr);
+    auto& title = attributeWithoutSynchronization(titleAttr);
     if (!title.isEmpty())
         return title;
     return m_file ? m_file->name() : String();
@@ -89,7 +89,7 @@ String HTMLAttachmentElement::attachmentTitle() const
 
 String HTMLAttachmentElement::attachmentType() const
 {
-    return fastGetAttribute(typeAttr);
+    return attributeWithoutSynchronization(typeAttr);
 }
 
 } // namespace WebCore

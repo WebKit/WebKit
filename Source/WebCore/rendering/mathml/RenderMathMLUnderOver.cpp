@@ -165,7 +165,7 @@ bool RenderMathMLUnderOver::hasAccent(bool accentUnder) const
 {
     ASSERT(m_scriptType == UnderOver || (accentUnder && m_scriptType == Under) || (!accentUnder && m_scriptType == Over));
 
-    const AtomicString& attributeValue = element()->fastGetAttribute(accentUnder ? accentunderAttr : accentAttr);
+    const AtomicString& attributeValue = element()->attributeWithoutSynchronization(accentUnder ? accentunderAttr : accentAttr);
     if (attributeValue == "true")
         return true;
     if (attributeValue == "false")

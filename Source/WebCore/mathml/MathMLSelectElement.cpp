@@ -115,7 +115,7 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
     if (!selectedChild)
         return 1;
 
-    int selection = fastGetAttribute(MathMLNames::selectionAttr).toInt();
+    int selection = attributeWithoutSynchronization(MathMLNames::selectionAttr).toInt();
     int i;
     for (i = 1; i < selection; i++) {
         auto* nextChild = selectedChild->nextElementSibling();
@@ -136,7 +136,7 @@ Element* MathMLSelectElement::getSelectedActionChild()
         return child;
 
     // The value of the actiontype attribute is case-sensitive.
-    const AtomicString& actiontype = fastGetAttribute(MathMLNames::actiontypeAttr);
+    const AtomicString& actiontype = attributeWithoutSynchronization(MathMLNames::actiontypeAttr);
     if (actiontype == "statusline")
         // FIXME: implement user interaction for the "statusline" action type (http://wkbug/124922).
         { }
@@ -185,7 +185,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
             if (child->hasAttribute(MathMLNames::srcAttr))
                 continue;
             // If the <annotation-xml> element has an encoding attribute describing presentation MathML, SVG or HTML we assume the content can be displayed and we stop here.
-            const AtomicString& value = child->fastGetAttribute(MathMLNames::encodingAttr);
+            const AtomicString& value = child->attributeWithoutSynchronization(MathMLNames::encodingAttr);
             if (isMathMLEncoding(value) || isSVGEncoding(value) || isHTMLEncoding(value))
                 return child;
         }
@@ -212,7 +212,7 @@ void MathMLSelectElement::updateSelectedChild()
 void MathMLSelectElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
-        if (fastGetAttribute(MathMLNames::actiontypeAttr) == "toggle") {
+        if (attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle") {
             toggle();
             event->setDefaultHandled();
             return;
@@ -224,7 +224,7 @@ void MathMLSelectElement::defaultEventHandler(Event* event)
 
 bool MathMLSelectElement::willRespondToMouseClickEvents()
 {
-    return fastGetAttribute(MathMLNames::actiontypeAttr) == "toggle" || MathMLInlineContainerElement::willRespondToMouseClickEvents();
+    return attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle" || MathMLInlineContainerElement::willRespondToMouseClickEvents();
 }
 
 void MathMLSelectElement::toggle()

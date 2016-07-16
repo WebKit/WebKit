@@ -73,7 +73,7 @@ bool isLegacyAppleStyleSpan(const Node* node)
     if (!is<HTMLSpanElement>(node))
         return false;
 
-    return downcast<HTMLSpanElement>(*node).fastGetAttribute(classAttr) == styleSpanClassString();
+    return downcast<HTMLSpanElement>(*node).attributeWithoutSynchronization(classAttr) == styleSpanClassString();
 }
 
 static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
@@ -82,7 +82,7 @@ static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement* element, Sho
         return true;
 
     unsigned matchedAttributes = 0;
-    if (element->fastGetAttribute(classAttr) == styleSpanClassString())
+    if (element->attributeWithoutSynchronization(classAttr) == styleSpanClassString())
         matchedAttributes++;
     if (element->hasAttribute(styleAttr) && (shouldStyleAttributeBeEmpty == AllowNonEmptyStyleAttribute
         || !element->inlineStyle() || element->inlineStyle()->isEmpty()))

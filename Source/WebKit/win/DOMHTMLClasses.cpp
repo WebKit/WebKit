@@ -429,7 +429,7 @@ HRESULT DOMHTMLElement::idName(__deref_opt_out BSTR* result)
         return E_POINTER;
 
     ASSERT(is<HTMLElement>(m_element));
-    String idString = downcast<HTMLElement>(m_element)->fastGetAttribute(idAttr);
+    String idString = downcast<HTMLElement>(m_element)->attributeWithoutSynchronization(idAttr);
     *result = BString(idString).release();
     return S_OK;
 }

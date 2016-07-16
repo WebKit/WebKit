@@ -1597,7 +1597,7 @@ bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
     if (!element)
         return false;
     
-    const AtomicString& contentEditableValue = element->fastGetAttribute(contenteditableAttr);
+    const AtomicString& contentEditableValue = element->attributeWithoutSynchronization(contenteditableAttr);
     if (contentEditableValue.isNull())
         return false;
     
@@ -1999,7 +1999,7 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
     if (Element* element = this->element())
-        return element->fastGetAttribute(attribute);
+        return element->attributeWithoutSynchronization(attribute);
     return nullAtom;
 }
     

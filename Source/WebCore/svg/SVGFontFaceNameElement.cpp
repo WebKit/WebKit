@@ -40,7 +40,7 @@ Ref<SVGFontFaceNameElement> SVGFontFaceNameElement::create(const QualifiedName& 
 
 Ref<CSSFontFaceSrcValue> SVGFontFaceNameElement::srcValue() const
 {
-    return CSSFontFaceSrcValue::createLocal(fastGetAttribute(SVGNames::nameAttr));
+    return CSSFontFaceSrcValue::createLocal(attributeWithoutSynchronization(SVGNames::nameAttr));
 }
 
 }

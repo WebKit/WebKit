@@ -2330,7 +2330,7 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
 
 void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
 {
-    String subtitleText = attachment.attachmentElement().fastGetAttribute(subtitleAttr);
+    String subtitleText = attachment.attachmentElement().attributeWithoutSynchronization(subtitleAttr);
 
     if (subtitleText.isEmpty())
         return;
@@ -2579,7 +2579,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
     AttachmentLayout layout(attachment);
 
-    String progressString = attachment.attachmentElement().fastGetAttribute(progressAttr);
+    String progressString = attachment.attachmentElement().attributeWithoutSynchronization(progressAttr);
     bool validProgress = false;
     float progress = 0;
     if (!progressString.isEmpty())

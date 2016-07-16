@@ -50,7 +50,7 @@ String HTMLParamElement::name() const
 
 String HTMLParamElement::value() const
 {
-    return fastGetAttribute(valueAttr);
+    return attributeWithoutSynchronization(valueAttr);
 }
 
 bool HTMLParamElement::isURLParameter(const String& name)

@@ -794,7 +794,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     HTMLLinkElement& link = *static_cast<HTMLLinkElement*>(core(self));
 
-    auto& media = link.fastGetAttribute(HTMLNames::mediaAttr);
+    auto& media = link.attributeWithoutSynchronization(HTMLNames::mediaAttr);
     if (media.isEmpty())
         return true;
 

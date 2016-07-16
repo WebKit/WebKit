@@ -144,7 +144,7 @@ const AtomicString& HTMLDocument::bgColor() const
     auto* bodyElement = body();
     if (!bodyElement)
         return emptyAtom;
-    return bodyElement->fastGetAttribute(bgcolorAttr);
+    return bodyElement->attributeWithoutSynchronization(bgcolorAttr);
 }
 
 void HTMLDocument::setBgColor(const String& value)
@@ -158,7 +158,7 @@ const AtomicString& HTMLDocument::fgColor() const
     auto* bodyElement = body();
     if (!bodyElement)
         return emptyAtom;
-    return bodyElement->fastGetAttribute(textAttr);
+    return bodyElement->attributeWithoutSynchronization(textAttr);
 }
 
 void HTMLDocument::setFgColor(const String& value)
@@ -172,7 +172,7 @@ const AtomicString& HTMLDocument::alinkColor() const
     auto* bodyElement = body();
     if (!bodyElement)
         return emptyAtom;
-    return bodyElement->fastGetAttribute(alinkAttr);
+    return bodyElement->attributeWithoutSynchronization(alinkAttr);
 }
 
 void HTMLDocument::setAlinkColor(const String& value)
@@ -186,7 +186,7 @@ const AtomicString& HTMLDocument::linkColor() const
     auto* bodyElement = body();
     if (!bodyElement)
         return emptyAtom;
-    return bodyElement->fastGetAttribute(linkAttr);
+    return bodyElement->attributeWithoutSynchronization(linkAttr);
 }
 
 void HTMLDocument::setLinkColor(const String& value)
@@ -200,7 +200,7 @@ const AtomicString& HTMLDocument::vlinkColor() const
     auto* bodyElement = body();
     if (!bodyElement)
         return emptyAtom;
-    return bodyElement->fastGetAttribute(vlinkAttr);
+    return bodyElement->attributeWithoutSynchronization(vlinkAttr);
 }
 
 void HTMLDocument::setVlinkColor(const String& value)

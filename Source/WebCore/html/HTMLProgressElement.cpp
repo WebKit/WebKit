@@ -94,7 +94,7 @@ void HTMLProgressElement::didAttachRenderers()
 
 double HTMLProgressElement::value() const
 {
-    double value = parseToDoubleForNumberType(fastGetAttribute(valueAttr));
+    double value = parseToDoubleForNumberType(attributeWithoutSynchronization(valueAttr));
     return !std::isfinite(value) || value < 0 ? 0 : std::min(value, max());
 }
 
@@ -109,7 +109,7 @@ void HTMLProgressElement::setValue(double value, ExceptionCode& ec)
 
 double HTMLProgressElement::max() const
 {
-    double max = parseToDoubleForNumberType(fastGetAttribute(maxAttr));
+    double max = parseToDoubleForNumberType(attributeWithoutSynchronization(maxAttr));
     return !std::isfinite(max) || max <= 0 ? 1 : max;
 }
 

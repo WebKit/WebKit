@@ -80,7 +80,7 @@ void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 double HTMLMeterElement::min() const
 {
-    return parseToDoubleForNumberType(fastGetAttribute(minAttr), 0);
+    return parseToDoubleForNumberType(attributeWithoutSynchronization(minAttr), 0);
 }
 
 void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
@@ -94,7 +94,7 @@ void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
 
 double HTMLMeterElement::max() const
 {
-    return std::max(parseToDoubleForNumberType(fastGetAttribute(maxAttr), std::max(1.0, min())), min());
+    return std::max(parseToDoubleForNumberType(attributeWithoutSynchronization(maxAttr), std::max(1.0, min())), min());
 }
 
 void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
@@ -108,7 +108,7 @@ void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
 
 double HTMLMeterElement::value() const
 {
-    double value = parseToDoubleForNumberType(fastGetAttribute(valueAttr), 0);
+    double value = parseToDoubleForNumberType(attributeWithoutSynchronization(valueAttr), 0);
     return std::min(std::max(value, min()), max());
 }
 
@@ -123,7 +123,7 @@ void HTMLMeterElement::setValue(double value, ExceptionCode& ec)
 
 double HTMLMeterElement::low() const
 {
-    double low = parseToDoubleForNumberType(fastGetAttribute(lowAttr), min());
+    double low = parseToDoubleForNumberType(attributeWithoutSynchronization(lowAttr), min());
     return std::min(std::max(low, min()), max());
 }
 
@@ -138,7 +138,7 @@ void HTMLMeterElement::setLow(double low, ExceptionCode& ec)
 
 double HTMLMeterElement::high() const
 {
-    double high = parseToDoubleForNumberType(fastGetAttribute(highAttr), max());
+    double high = parseToDoubleForNumberType(attributeWithoutSynchronization(highAttr), max());
     return std::min(std::max(high, low()), max());
 }
 
@@ -153,7 +153,7 @@ void HTMLMeterElement::setHigh(double high, ExceptionCode& ec)
 
 double HTMLMeterElement::optimum() const
 {
-    double optimum = parseToDoubleForNumberType(fastGetAttribute(optimumAttr), (max() + min()) / 2);
+    double optimum = parseToDoubleForNumberType(attributeWithoutSynchronization(optimumAttr), (max() + min()) / 2);
     return std::min(std::max(optimum, min()), max());
 }
 

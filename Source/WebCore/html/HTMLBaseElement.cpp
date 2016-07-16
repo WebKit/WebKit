@@ -73,7 +73,7 @@ bool HTMLBaseElement::isURLAttribute(const Attribute& attribute) const
 
 String HTMLBaseElement::target() const
 {
-    return fastGetAttribute(targetAttr);
+    return attributeWithoutSynchronization(targetAttr);
 }
 
 URL HTMLBaseElement::href() const
@@ -82,7 +82,7 @@ URL HTMLBaseElement::href() const
     // base elements like this one can be used to set that base URL. Thus we need to resolve relative to the document's
     // URL and ignore the base URL.
 
-    const AtomicString& attributeValue = fastGetAttribute(hrefAttr);
+    const AtomicString& attributeValue = attributeWithoutSynchronization(hrefAttr);
     if (attributeValue.isNull())
         return document().url();
 

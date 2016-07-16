@@ -53,7 +53,7 @@ const MathMLElement::Length& MathMLFractionElement::lineThickness()
     // The MathML3 recommendation states that "medium" is the default thickness.
     // However, it only states that "thin" and "thick" are respectively thiner and thicker.
     // The MathML in HTML5 implementation note suggests 50% and 200% and these values are also used in Gecko.
-    String thickness = fastGetAttribute(linethicknessAttr);
+    String thickness = attributeWithoutSynchronization(linethicknessAttr);
     if (equalLettersIgnoringASCIICase(thickness, "thin")) {
         m_lineThickness.type = LengthType::UnitLess;
         m_lineThickness.value = .5;
@@ -74,7 +74,7 @@ MathMLFractionElement::FractionAlignment MathMLFractionElement::cachedFractionAl
     if (!alignment.dirty)
         return alignment.value;
 
-    String value = fastGetAttribute(name);
+    String value = attributeWithoutSynchronization(name);
     if (equalLettersIgnoringASCIICase(value, "left"))
         alignment.value = FractionAlignmentLeft;
     else if (equalLettersIgnoringASCIICase(value, "right"))

@@ -108,13 +108,13 @@ private:
 static bool isInterchangeNewlineNode(const Node* node)
 {
     static NeverDestroyed<String> interchangeNewlineClassString(AppleInterchangeNewline);
-    return is<HTMLBRElement>(node) && downcast<HTMLBRElement>(*node).fastGetAttribute(classAttr) == interchangeNewlineClassString;
+    return is<HTMLBRElement>(node) && downcast<HTMLBRElement>(*node).attributeWithoutSynchronization(classAttr) == interchangeNewlineClassString;
 }
 
 static bool isInterchangeConvertedSpaceSpan(const Node* node)
 {
     static NeverDestroyed<String> convertedSpaceSpanClassString(AppleConvertedSpace);
-    return is<HTMLElement>(node) && downcast<HTMLElement>(*node).fastGetAttribute(classAttr) == convertedSpaceSpanClassString;
+    return is<HTMLElement>(node) && downcast<HTMLElement>(*node).attributeWithoutSynchronization(classAttr) == convertedSpaceSpanClassString;
 }
 
 static Position positionAvoidingPrecedingNodes(Position position)
@@ -436,7 +436,7 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
 
 static bool isMailPasteAsQuotationNode(const Node* node)
 {
-    return node && node->hasTagName(blockquoteTag) && downcast<Element>(node)->fastGetAttribute(classAttr) == ApplePasteAsQuotation;
+    return node && node->hasTagName(blockquoteTag) && downcast<Element>(node)->attributeWithoutSynchronization(classAttr) == ApplePasteAsQuotation;
 }
 
 static bool isHeaderElement(const Node* a)
@@ -894,7 +894,7 @@ static bool isInlineNodeWithStyle(const Node* node)
     // We can skip over elements whose class attribute is
     // one of our internal classes.
     const HTMLElement* element = static_cast<const HTMLElement*>(node);
-    const AtomicString& classAttributeValue = element->fastGetAttribute(classAttr);
+    const AtomicString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
     if (classAttributeValue == AppleTabSpanClass
         || classAttributeValue == AppleConvertedSpace
         || classAttributeValue == ApplePasteAsQuotation)

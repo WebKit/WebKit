@@ -112,7 +112,7 @@ int HTMLTableSectionElement::numRows() const
 
 const AtomicString& HTMLTableSectionElement::align() const
 {
-    return fastGetAttribute(alignAttr);
+    return attributeWithoutSynchronization(alignAttr);
 }
 
 void HTMLTableSectionElement::setAlign(const AtomicString& value)
@@ -122,7 +122,7 @@ void HTMLTableSectionElement::setAlign(const AtomicString& value)
 
 const AtomicString& HTMLTableSectionElement::ch() const
 {
-    return fastGetAttribute(charAttr);
+    return attributeWithoutSynchronization(charAttr);
 }
 
 void HTMLTableSectionElement::setCh(const AtomicString& value)
@@ -132,7 +132,7 @@ void HTMLTableSectionElement::setCh(const AtomicString& value)
 
 const AtomicString& HTMLTableSectionElement::chOff() const
 {
-    return fastGetAttribute(charoffAttr);
+    return attributeWithoutSynchronization(charoffAttr);
 }
 
 void HTMLTableSectionElement::setChOff(const AtomicString& value)
@@ -142,7 +142,7 @@ void HTMLTableSectionElement::setChOff(const AtomicString& value)
 
 const AtomicString& HTMLTableSectionElement::vAlign() const
 {
-    return fastGetAttribute(valignAttr);
+    return attributeWithoutSynchronization(valignAttr);
 }
 
 void HTMLTableSectionElement::setVAlign(const AtomicString& value)

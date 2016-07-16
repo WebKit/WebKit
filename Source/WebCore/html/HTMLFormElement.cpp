@@ -396,7 +396,7 @@ void HTMLFormElement::reset()
 
 bool HTMLFormElement::autocorrect() const
 {
-    const AtomicString& autocorrectValue = fastGetAttribute(autocorrectAttr);
+    const AtomicString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
     if (HTMLFormElement* form = this->form())
@@ -411,7 +411,7 @@ void HTMLFormElement::setAutocorrect(bool autocorrect)
 
 WebAutocapitalizeType HTMLFormElement::autocapitalizeType() const
 {
-    return autocapitalizeTypeForAttributeValue(fastGetAttribute(autocapitalizeAttr));
+    return autocapitalizeTypeForAttributeValue(attributeWithoutSynchronization(autocapitalizeAttr));
 }
 
 const AtomicString& HTMLFormElement::autocapitalize() const
@@ -682,7 +682,7 @@ bool HTMLFormElement::noValidate() const
 // (Darin Adler) removed this, someone added it back, so I am leaving it in for now.
 String HTMLFormElement::action() const
 {
-    return fastGetAttribute(actionAttr);
+    return attributeWithoutSynchronization(actionAttr);
 }
 
 void HTMLFormElement::setAction(const String &value)
@@ -707,7 +707,7 @@ void HTMLFormElement::setMethod(const String &value)
 
 String HTMLFormElement::target() const
 {
-    return fastGetAttribute(targetAttr);
+    return attributeWithoutSynchronization(targetAttr);
 }
 
 bool HTMLFormElement::wasUserSubmitted() const
@@ -879,7 +879,7 @@ void HTMLFormElement::didMoveToNewDocument(Document* oldDocument)
 
 bool HTMLFormElement::shouldAutocomplete() const
 {
-    return !equalLettersIgnoringASCIICase(fastGetAttribute(autocompleteAttr), "off");
+    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off");
 }
 
 void HTMLFormElement::finishParsingChildren()
@@ -909,7 +909,7 @@ const AtomicString& HTMLFormElement::autocomplete() const
     static NeverDestroyed<AtomicString> on("on", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> off("off", AtomicString::ConstructFromLiteral);
 
-    return equalIgnoringASCIICase(fastGetAttribute(autocompleteAttr), "off") ? off : on;
+    return equalIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? off : on;
 }
 
 } // namespace

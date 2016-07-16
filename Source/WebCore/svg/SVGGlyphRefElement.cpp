@@ -85,7 +85,7 @@ void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 const AtomicString& SVGGlyphRefElement::glyphRef() const
 {
-    return fastGetAttribute(SVGNames::glyphRefAttr);
+    return attributeWithoutSynchronization(SVGNames::glyphRefAttr);
 }
 
 void SVGGlyphRefElement::setGlyphRef(const AtomicString&, ExceptionCode&)

@@ -580,19 +580,19 @@ Ref<HTMLCollection> HTMLTableElement::tBodies()
 
 const AtomicString& HTMLTableElement::rules() const
 {
-    return fastGetAttribute(rulesAttr);
+    return attributeWithoutSynchronization(rulesAttr);
 }
 
 const AtomicString& HTMLTableElement::summary() const
 {
-    return fastGetAttribute(summaryAttr);
+    return attributeWithoutSynchronization(summaryAttr);
 }
 
 void HTMLTableElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document().completeURL(fastGetAttribute(backgroundAttr)));
+    addSubresourceURL(urls, document().completeURL(attributeWithoutSynchronization(backgroundAttr)));
 }
 
 }

@@ -252,7 +252,7 @@ void RenderMathMLScripts::getScriptMetricsAndLayoutIfNeeded(RenderBox* base, Ren
         minSubScriptShift = std::max(subscriptShiftDown, baseDescent + subscriptBaselineDropMin);
         if (!isRenderMathMLUnderOver()) {
             LayoutUnit specifiedMinSubShift = 0;
-            parseMathMLLength(element()->fastGetAttribute(MathMLNames::subscriptshiftAttr), specifiedMinSubShift, &style(), false);
+            parseMathMLLength(element()->attributeWithoutSynchronization(MathMLNames::subscriptshiftAttr), specifiedMinSubShift, &style(), false);
             minSubScriptShift = std::max(minSubScriptShift, specifiedMinSubShift);
         }
     }
@@ -260,7 +260,7 @@ void RenderMathMLScripts::getScriptMetricsAndLayoutIfNeeded(RenderBox* base, Ren
         minSupScriptShift = std::max(superscriptShiftUp, baseAscent - superScriptBaselineDropMax);
         if (!isRenderMathMLUnderOver()) {
             LayoutUnit specifiedMinSupShift = 0;
-            parseMathMLLength(element()->fastGetAttribute(MathMLNames::superscriptshiftAttr), specifiedMinSupShift, &style(), false);
+            parseMathMLLength(element()->attributeWithoutSynchronization(MathMLNames::superscriptshiftAttr), specifiedMinSupShift, &style(), false);
             minSupScriptShift = std::max(minSupScriptShift, specifiedMinSupShift);
         }
     }

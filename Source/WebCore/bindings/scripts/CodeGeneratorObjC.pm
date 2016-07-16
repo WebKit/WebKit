@@ -1269,8 +1269,8 @@ sub GenerateImplementation
 
             my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
 
-            # To avoid bloating Obj-C bindings, we use getAttribute() instead of fastGetAttribute().
-            if ($functionName eq "fastGetAttribute") {
+            # To avoid bloating Obj-C bindings, we use getAttribute() instead of attributeWithoutSynchronization().
+            if ($functionName eq "attributeWithoutSynchronization") {
                 $functionName = "getAttribute";
             }
 

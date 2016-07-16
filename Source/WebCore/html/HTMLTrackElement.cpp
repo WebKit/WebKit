@@ -125,12 +125,12 @@ void HTMLTrackElement::setKind(const AtomicString& kind)
 
 const AtomicString& HTMLTrackElement::srclang() const
 {
-    return fastGetAttribute(srclangAttr);
+    return attributeWithoutSynchronization(srclangAttr);
 }
 
 const AtomicString& HTMLTrackElement::label() const
 {
-    return fastGetAttribute(labelAttr);
+    return attributeWithoutSynchronization(labelAttr);
 }
 
 bool HTMLTrackElement::isDefault() const
@@ -142,7 +142,7 @@ LoadableTextTrack& HTMLTrackElement::ensureTrack()
 {
     if (!m_track) {
         // The kind attribute is an enumerated attribute, limited only to known values. It defaults to 'subtitles' if missing or invalid.
-        String kind = fastGetAttribute(kindAttr).convertToASCIILowercase();
+        String kind = attributeWithoutSynchronization(kindAttr).convertToASCIILowercase();
         if (!TextTrack::isValidKindKeyword(kind))
             kind = TextTrack::subtitlesKeyword();
         m_track = LoadableTextTrack::create(this, kind, label(), srclang());
@@ -273,7 +273,7 @@ HTMLTrackElement::ReadyState HTMLTrackElement::readyState()
 const AtomicString& HTMLTrackElement::mediaElementCrossOriginAttribute() const
 {
     if (HTMLMediaElement* parent = mediaElement())
-        return parent->fastGetAttribute(HTMLNames::crossoriginAttr);
+        return parent->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
     
     return nullAtom;
 }

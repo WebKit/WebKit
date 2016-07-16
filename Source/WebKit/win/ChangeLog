@@ -1,3 +1,13 @@
+2016-07-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename fastGetAttribute to attributeWithoutSynchronization
+        https://bugs.webkit.org/show_bug.cgi?id=159852
+
+        Reviewed by Darin Adler.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::idName):
+
 2016-07-15  Chris Dumez  <cdumez@apple.com>
 
         Use fastGetAttribute() / setAttributeWithoutSynchronization() when possible

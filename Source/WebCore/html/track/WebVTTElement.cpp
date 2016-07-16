@@ -96,8 +96,8 @@ Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
     case WebVTTNodeTypeLanguage:
     case WebVTTNodeTypeVoice:
         htmlElement = HTMLElementFactory::createElement(HTMLNames::spanTag, document);
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::titleAttr, fastGetAttribute(voiceAttributeName()));
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::langAttr, fastGetAttribute(langAttributeName()));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::titleAttr, attributeWithoutSynchronization(voiceAttributeName()));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::langAttr, attributeWithoutSynchronization(langAttributeName()));
         break;
     case WebVTTNodeTypeItalic:
         htmlElement = HTMLElementFactory::createElement(HTMLNames::iTag, document);
@@ -118,7 +118,7 @@ Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
 
     ASSERT(htmlElement);
     if (htmlElement)
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, fastGetAttribute(HTMLNames::classAttr));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, attributeWithoutSynchronization(HTMLNames::classAttr));
     return htmlElement.releaseNonNull();
 }
 

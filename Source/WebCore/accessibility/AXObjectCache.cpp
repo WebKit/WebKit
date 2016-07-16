@@ -207,7 +207,7 @@ void AXObjectCache::findAriaModalNodes()
         // Must have dialog or alertdialog role
         if (!nodeHasRole(element, "dialog") && !nodeHasRole(element, "alertdialog"))
             continue;
-        if (!equalLettersIgnoringASCIICase(element->fastGetAttribute(aria_modalAttr), "true"))
+        if (!equalLettersIgnoringASCIICase(element->attributeWithoutSynchronization(aria_modalAttr), "true"))
             continue;
         
         m_ariaModalNodesSet.add(element);
@@ -398,7 +398,7 @@ bool nodeHasRole(Node* node, const String& role)
     if (!node || !is<Element>(node))
         return false;
 
-    auto& roleValue = downcast<Element>(*node).fastGetAttribute(roleAttr);
+    auto& roleValue = downcast<Element>(*node).attributeWithoutSynchronization(roleAttr);
     if (role.isNull())
         return roleValue.isEmpty();
     if (roleValue.isEmpty())
@@ -831,9 +831,9 @@ void AXObjectCache::handleLiveRegionCreated(Node* node)
         return;
     
     Element* element = downcast<Element>(node);
-    String liveRegionStatus = element->fastGetAttribute(aria_liveAttr);
+    String liveRegionStatus = element->attributeWithoutSynchronization(aria_liveAttr);
     if (liveRegionStatus.isEmpty()) {
-        const AtomicString& ariaRole = element->fastGetAttribute(roleAttr);
+        const AtomicString& ariaRole = element->attributeWithoutSynchronization(roleAttr);
         if (!ariaRole.isEmpty())
             liveRegionStatus = AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityObject::ariaRoleToWebCoreRole(ariaRole));
     }
@@ -1006,7 +1006,7 @@ void AXObjectCache::handleMenuItemSelected(Node* node)
     if (!nodeHasRole(node, "menuitem") && !nodeHasRole(node, "menuitemradio") && !nodeHasRole(node, "menuitemcheckbox"))
         return;
     
-    if (!downcast<Element>(*node).focused() && !equalLettersIgnoringASCIICase(downcast<Element>(*node).fastGetAttribute(aria_selectedAttr), "true"))
+    if (!downcast<Element>(*node).focused() && !equalLettersIgnoringASCIICase(downcast<Element>(*node).attributeWithoutSynchronization(aria_selectedAttr), "true"))
         return;
     
     postNotification(getOrCreate(node), &document(), AXMenuListItemSelected);
@@ -1422,7 +1422,7 @@ void AXObjectCache::handleAriaModalChange(Node* node)
         return;
     
     stopCachingComputedObjectAttributes();
-    if (equalLettersIgnoringASCIICase(downcast<Element>(*node).fastGetAttribute(aria_modalAttr), "true")) {
+    if (equalLettersIgnoringASCIICase(downcast<Element>(*node).attributeWithoutSynchronization(aria_modalAttr), "true")) {
         // Add the newly modified node to the modal nodes set, and set it to be the current valid aria modal node.
         // We will recompute the current valid aria modal node in ariaModalNode() when this node is not visible.
         m_ariaModalNodesSet.add(node);
@@ -2632,7 +2632,7 @@ bool isNodeAriaVisible(Node* node)
     bool ariaHiddenFalsePresent = false;
     for (Node* testNode = node; testNode; testNode = testNode->parentNode()) {
         if (is<Element>(*testNode)) {
-            const AtomicString& ariaHiddenValue = downcast<Element>(*testNode).fastGetAttribute(aria_hiddenAttr);
+            const AtomicString& ariaHiddenValue = downcast<Element>(*testNode).attributeWithoutSynchronization(aria_hiddenAttr);
             if (equalLettersIgnoringASCIICase(ariaHiddenValue, "true"))
                 return false;
             

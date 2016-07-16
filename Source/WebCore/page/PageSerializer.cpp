@@ -233,13 +233,13 @@ void PageSerializer::serializeFrame(Frame* frame)
 
         if (is<HTMLImageElement>(element)) {
             HTMLImageElement& imageElement = downcast<HTMLImageElement>(element);
-            URL url = document->completeURL(imageElement.fastGetAttribute(HTMLNames::srcAttr));
+            URL url = document->completeURL(imageElement.attributeWithoutSynchronization(HTMLNames::srcAttr));
             CachedImage* cachedImage = imageElement.cachedImage();
             addImageToResources(cachedImage, imageElement.renderer(), url);
         } else if (is<HTMLLinkElement>(element)) {
             HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(element);
             if (CSSStyleSheet* sheet = linkElement.sheet()) {
-                URL url = document->completeURL(linkElement.fastGetAttribute(HTMLNames::hrefAttr));
+                URL url = document->completeURL(linkElement.attributeWithoutSynchronization(HTMLNames::hrefAttr));
                 serializeCSSStyleSheet(sheet, url);
                 ASSERT(m_resourceURLs.contains(url));
             }

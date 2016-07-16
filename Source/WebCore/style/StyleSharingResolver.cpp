@@ -263,13 +263,13 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 
     if (candidateElement.elementData() != element.elementData()) {
-        if (candidateElement.fastGetAttribute(HTMLNames::readonlyAttr) != element.fastGetAttribute(HTMLNames::readonlyAttr))
+        if (candidateElement.attributeWithoutSynchronization(HTMLNames::readonlyAttr) != element.attributeWithoutSynchronization(HTMLNames::readonlyAttr))
             return false;
         if (candidateElement.isSVGElement()) {
             if (candidateElement.getAttribute(HTMLNames::typeAttr) != element.getAttribute(HTMLNames::typeAttr))
                 return false;
         } else {
-            if (candidateElement.fastGetAttribute(HTMLNames::typeAttr) != element.fastGetAttribute(HTMLNames::typeAttr))
+            if (candidateElement.attributeWithoutSynchronization(HTMLNames::typeAttr) != element.attributeWithoutSynchronization(HTMLNames::typeAttr))
                 return false;
         }
     }
@@ -310,9 +310,9 @@ bool SharingResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(const
     auto& element = context.element;
     if (element.elementData() == sharingCandidate.elementData())
         return true;
-    if (element.fastGetAttribute(XMLNames::langAttr) != sharingCandidate.fastGetAttribute(XMLNames::langAttr))
+    if (element.attributeWithoutSynchronization(XMLNames::langAttr) != sharingCandidate.attributeWithoutSynchronization(XMLNames::langAttr))
         return false;
-    if (element.fastGetAttribute(HTMLNames::langAttr) != sharingCandidate.fastGetAttribute(HTMLNames::langAttr))
+    if (element.attributeWithoutSynchronization(HTMLNames::langAttr) != sharingCandidate.attributeWithoutSynchronization(HTMLNames::langAttr))
         return false;
 
     if (context.elementAffectedByClassRules) {

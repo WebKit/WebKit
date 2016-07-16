@@ -1012,7 +1012,7 @@ void Pasteboard::writeImageToDataObject(Element& element, const URL& url)
     if (!imageBuffer || !imageBuffer->size())
         return;
 
-    HGLOBAL imageFileDescriptor = createGlobalImageFileDescriptor(url.string(), element.fastGetAttribute(HTMLNames::altAttr), cachedImage);
+    HGLOBAL imageFileDescriptor = createGlobalImageFileDescriptor(url.string(), element.attributeWithoutSynchronization(HTMLNames::altAttr), cachedImage);
     if (!imageFileDescriptor)
         return;
 

@@ -117,7 +117,7 @@ bool SubframeLoader::isPluginContentAllowedByContentSecurityPolicy(HTMLPlugInIma
     const ContentSecurityPolicy& contentSecurityPolicy = *document()->contentSecurityPolicy();
 
     String declaredMimeType = document()->isPluginDocument() && document()->ownerElement() ?
-        document()->ownerElement()->fastGetAttribute(HTMLNames::typeAttr) : pluginElement.fastGetAttribute(HTMLNames::typeAttr);
+        document()->ownerElement()->attributeWithoutSynchronization(HTMLNames::typeAttr) : pluginElement.attributeWithoutSynchronization(HTMLNames::typeAttr);
     bool isInUserAgentShadowTree = pluginElement.isInUserAgentShadowTree();
     return contentSecurityPolicy.allowObjectFromSource(url, isInUserAgentShadowTree) && contentSecurityPolicy.allowPluginType(mimeType, declaredMimeType, url, isInUserAgentShadowTree);
 }

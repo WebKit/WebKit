@@ -476,7 +476,7 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
     if (!resultFromNameAttribute.isEmpty())
         return resultFromNameAttribute;
     
-    return matchLabelsAgainstString(labels, element->fastGetAttribute(idAttr));
+    return matchLabelsAgainstString(labels, element->attributeWithoutSynchronization(idAttr));
 }
 
 #if PLATFORM(IOS)

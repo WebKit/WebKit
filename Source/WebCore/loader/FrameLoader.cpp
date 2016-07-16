@@ -1270,7 +1270,7 @@ SubstituteData FrameLoader::defaultSubstituteDataForURL(const URL& url)
 {
     if (!shouldTreatURLAsSrcdocDocument(url))
         return SubstituteData();
-    String srcdoc = m_frame.ownerElement()->fastGetAttribute(srcdocAttr);
+    String srcdoc = m_frame.ownerElement()->attributeWithoutSynchronization(srcdocAttr);
     ASSERT(!srcdoc.isNull());
     CString encodedSrcdoc = srcdoc.utf8();
 
