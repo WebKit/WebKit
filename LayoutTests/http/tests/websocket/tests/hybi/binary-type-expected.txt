@@ -8,11 +8,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS ws.binaryType is "blob"
 PASS ws.binaryType is "arraybuffer"
 PASS ws.binaryType is "blob"
-PASS ws.binaryType = 'Blob' threw exception Error: SyntaxError: DOM Exception 12.
+PASS ws.binaryType = 'Blob' threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS ws.binaryType is "blob"
-PASS ws.binaryType = 'ArrayBuffer' threw exception Error: SyntaxError: DOM Exception 12.
+PASS ws.binaryType = 'ArrayBuffer' threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS ws.binaryType is "blob"
-PASS ws.binaryType = '' threw exception Error: SyntaxError: DOM Exception 12.
+PASS ws.binaryType = '' threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS ws.binaryType is "blob"
 PASS successfullyParsed is true
 

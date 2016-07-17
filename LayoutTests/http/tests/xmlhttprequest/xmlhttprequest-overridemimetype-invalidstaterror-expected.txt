@@ -11,7 +11,7 @@ PASS req.overrideMimeType("text/plain") did not throw exception.
 Testing overrideMimeType when readyState = 2
 PASS req.overrideMimeType("text/plain") did not throw exception.
 Testing overrideMimeType when readyState = 3
-PASS req.overrideMimeType("text/plain") threw exception Error: InvalidStateError: DOM Exception 11.
+PASS req.overrideMimeType("text/plain") threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Testing overrideMimeType when readyState = 4
-PASS req.overrideMimeType("text/plain") threw exception Error: InvalidStateError: DOM Exception 11.
+PASS req.overrideMimeType("text/plain") threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 24: IndexSizeError: DOM Exception 1: The index is not in the allowed range.
+CONSOLE MESSAGE: line 24: IndexSizeError (DOM Exception 1): The index is not in the allowed range.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x150

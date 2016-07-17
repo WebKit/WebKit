@@ -39,7 +39,7 @@ PASS event.dataTransfer contains a File object on drop.
 PASS subfile.size is 5
 PASS subfile.type is ""
 PASS Expected response data received: OK
-PASS Expected exception thrown: Error: NetworkError: DOM Exception 19
+PASS Expected exception thrown: NetworkError (DOM Exception 19):  A network error occurred.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -4,8 +4,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS node.innerHTML is '<bar>AB<moo>C</moo>DE</bar>'
-PASS r.surroundContents(document.createElement('a')) threw exception Error: InvalidStateError: DOM Exception 11.
-PASS r.surroundContents(document.createElement('a')) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS r.surroundContents(document.createElement('a')) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
+PASS r.surroundContents(document.createElement('a')) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
 PASS successfullyParsed is true
 
 TEST COMPLETE

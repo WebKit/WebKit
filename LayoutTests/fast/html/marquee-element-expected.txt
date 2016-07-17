@@ -114,9 +114,9 @@ PASS marquee.loop is 5
 "loop" can contain trailing non-numeric values:
 PASS marquee.loop is 5
 Setting "loop" to 0 raises an exception:
-PASS document.getElementById("marquee").loop = 0; threw exception Error: IndexSizeError: DOM Exception 1.
+PASS document.getElementById("marquee").loop = 0; threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 Setting "loop" to a negative value raises an exception:
-PASS document.getElementById("marquee").loop = -5; threw exception Error: IndexSizeError: DOM Exception 1.
+PASS document.getElementById("marquee").loop = -5; threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 "loop" can be set to -1 by script:
 PASS marquee.loop is -1
 PASS successfullyParsed is true

@@ -9,7 +9,7 @@ SHA1 of [0x0]
 PASS bytesToHexString(new Uint8Array(digest)) is '5ba93c9db0cff93f52b521d7420e43f6eda2784f'
 SHA1 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 PASS bytesToHexString(new Uint8Array(digest)) is '2c7e7c384f7829694282b1e3a6216def8082d055'
-PASS crypto.subtle.generateKey('sha-1') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS crypto.subtle.generateKey('sha-1') threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS successfullyParsed is true
 
 TEST COMPLETE

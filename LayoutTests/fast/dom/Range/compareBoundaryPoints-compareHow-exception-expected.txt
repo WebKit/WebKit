@@ -8,10 +8,10 @@ PASS range.compareBoundaryPoints(Range.START_TO_END, sourceRange) is -1
 PASS range.compareBoundaryPoints(Range.END_TO_END, sourceRange) is -1
 PASS range.compareBoundaryPoints(Range.END_TO_START, sourceRange) is -1
 PASS range.compareBoundaryPoints(65536, sourceRange) is -1
-PASS range.compareBoundaryPoints(-1, sourceRange) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS range.compareBoundaryPoints(4, sourceRange) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS range.compareBoundaryPoints(100, sourceRange) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS range.compareBoundaryPoints(65535, sourceRange) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS range.compareBoundaryPoints(-1, sourceRange) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS range.compareBoundaryPoints(4, sourceRange) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS range.compareBoundaryPoints(100, sourceRange) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS range.compareBoundaryPoints(65535, sourceRange) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS successfullyParsed is true
 
 TEST COMPLETE

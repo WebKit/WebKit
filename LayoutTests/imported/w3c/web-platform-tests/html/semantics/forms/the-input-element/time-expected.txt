@@ -11,26 +11,26 @@ PASS min attribute support on input element
 PASS step attribute support on input element 
 PASS stepUp function support on input Element 
 PASS stepDown function support on input Element 
-FAIL stepUp step value empty on default step value  InvalidStateError: DOM Exception 11
-FAIL stepDown step value empty default step value InvalidStateError: DOM Exception 11
-FAIL stepUp on step value minus InvalidStateError: DOM Exception 11
-FAIL stepDown on step value minus InvalidStateError: DOM Exception 11
-FAIL stepUp on step value zero  InvalidStateError: DOM Exception 11
-FAIL stepDown on step value zero  InvalidStateError: DOM Exception 11
-FAIL stepUp on step value 24 hour InvalidStateError: DOM Exception 11
-FAIL stepDown on step value 24 hour  InvalidStateError: DOM Exception 11
-FAIL stepUp on step value hour   InvalidStateError: DOM Exception 11
-FAIL stepDown on step value hour  InvalidStateError: DOM Exception 11
-FAIL stepUp on step value second  InvalidStateError: DOM Exception 11
-FAIL stepDown on step value second  InvalidStateError: DOM Exception 11
-FAIL stepUp on step value miri second  InvalidStateError: DOM Exception 11
-FAIL stepDown on step value miri second  InvalidStateError: DOM Exception 11
-FAIL stepUp argment 2 times InvalidStateError: DOM Exception 11
-FAIL stepDown argment 2 times InvalidStateError: DOM Exception 11
-FAIL stepUp stop because it exceeds the maximum value InvalidStateError: DOM Exception 11
-FAIL stepDown Stop so lower than the minimum value InvalidStateError: DOM Exception 11
-FAIL stop at border on stepUp InvalidStateError: DOM Exception 11
-FAIL stop at border on stepDown InvalidStateError: DOM Exception 11
-FAIL  empty value of stepUp InvalidStateError: DOM Exception 11
+FAIL stepUp step value empty on default step value  The object is in an invalid state.
+FAIL stepDown step value empty default step value The object is in an invalid state.
+FAIL stepUp on step value minus The object is in an invalid state.
+FAIL stepDown on step value minus The object is in an invalid state.
+FAIL stepUp on step value zero  The object is in an invalid state.
+FAIL stepDown on step value zero  The object is in an invalid state.
+FAIL stepUp on step value 24 hour The object is in an invalid state.
+FAIL stepDown on step value 24 hour  The object is in an invalid state.
+FAIL stepUp on step value hour   The object is in an invalid state.
+FAIL stepDown on step value hour  The object is in an invalid state.
+FAIL stepUp on step value second  The object is in an invalid state.
+FAIL stepDown on step value second  The object is in an invalid state.
+FAIL stepUp on step value miri second  The object is in an invalid state.
+FAIL stepDown on step value miri second  The object is in an invalid state.
+FAIL stepUp argment 2 times The object is in an invalid state.
+FAIL stepDown argment 2 times The object is in an invalid state.
+FAIL stepUp stop because it exceeds the maximum value The object is in an invalid state.
+FAIL stepDown Stop so lower than the minimum value The object is in an invalid state.
+FAIL stop at border on stepUp The object is in an invalid state.
+FAIL stop at border on stepDown The object is in an invalid state.
+FAIL  empty value of stepUp The object is in an invalid state.
 FAIL set value on not time format value assert_equals: expected "" but got "hh:mi:ss.sss"
 

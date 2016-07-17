@@ -3,11 +3,11 @@ Tests that dispatchEvent raises INVALID_STATE_ERR if the event being dispatched 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS window.dispatchEvent(event) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS window.dispatchEvent(event) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS redispatchCustom.wasInvoked is true
-PASS window.dispatchEvent(event) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS window.dispatchEvent(event) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS checkCustom.wasInvoked is true
-PASS document.dispatchEvent(event) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS document.dispatchEvent(event) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,4 +1,4 @@
-Caught expected exception: Error: NotSupportedError: DOM Exception 9
+Caught expected exception: NotSupportedError (DOM Exception 9): The operation is not supported.
 1 (black) 2 (green) 3 (green) 4 (black) 
 
 PASS

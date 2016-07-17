@@ -27,10 +27,10 @@ PASS stepUp on step value miri second
 PASS stepDown on step value miri second  
 PASS stepUp argment 2 times 
 PASS stepDown argment 2 times 
-FAIL stepUp stop because it exceeds the maximum value InvalidStateError: DOM Exception 11
-FAIL stepDown Stop so lower than the minimum value InvalidStateError: DOM Exception 11
-FAIL stop at border on stepUp InvalidStateError: DOM Exception 11
-FAIL stop at border on stepDown InvalidStateError: DOM Exception 11
-FAIL  empty value of stepUp InvalidStateError: DOM Exception 11
+FAIL stepUp stop because it exceeds the maximum value The object is in an invalid state.
+FAIL stepDown Stop so lower than the minimum value The object is in an invalid state.
+FAIL stop at border on stepUp The object is in an invalid state.
+FAIL stop at border on stepDown The object is in an invalid state.
+FAIL  empty value of stepUp The object is in an invalid state.
 PASS set value on not time format value 
 

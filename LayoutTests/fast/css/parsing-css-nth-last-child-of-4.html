@@ -11,7 +11,7 @@
 description('Test the parsing of :nth-last-child(of) for querySelector and style on deeply nested pseudo elements.');
 
 function testInvalidSelector(selectorString) {
-    shouldThrow('document.querySelector(":nth-last-child(' + selectorString + ')")', '"Error: SyntaxError: DOM Exception 12"');
+    shouldThrow('document.querySelector(":nth-last-child(' + selectorString + ')")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
 
     var styleContainer = document.getElementById('style-container');
     styleContainer.innerHTML = ':nth-last-child(' + selectorString + ') { }';

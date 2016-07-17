@@ -11,8 +11,8 @@ PASS transform.createSVGTransformFromMatrix(svgElement) threw exception TypeErro
 PASS transform.createSVGTransformFromMatrix('aString') threw exception TypeError: Argument 1 ('matrix') to SVGTransformList.createSVGTransformFromMatrix must be an instance of SVGMatrix.
 PASS transform.createSVGTransformFromMatrix(1) threw exception TypeError: Argument 1 ('matrix') to SVGTransformList.createSVGTransformFromMatrix must be an instance of SVGMatrix.
 PASS transform.createSVGTransformFromMatrix(true) threw exception TypeError: Argument 1 ('matrix') to SVGTransformList.createSVGTransformFromMatrix must be an instance of SVGMatrix.
-PASS transform.createSVGTransformFromMatrix(undefined) threw exception Error: TypeMismatchError: DOM Exception 17.
-PASS transform.createSVGTransformFromMatrix(null) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS transform.createSVGTransformFromMatrix(undefined) threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
+PASS transform.createSVGTransformFromMatrix(null) threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
 PASS successfullyParsed is true
 
 TEST COMPLETE

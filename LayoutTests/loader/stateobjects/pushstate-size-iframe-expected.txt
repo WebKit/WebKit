@@ -26,5 +26,5 @@ iFrame successfully added item: 7 times
 iFrame successfully added item: 8 times
 iFrame successfully added item: 9 times
 iFrame successfully added item: 10 times
-Expected exception: Error: QuotaExceededError: DOM Exception 22
+Expected exception: QuotaExceededError (DOM Exception 22): Attempt to store more data than allowed using history.pushState()
 

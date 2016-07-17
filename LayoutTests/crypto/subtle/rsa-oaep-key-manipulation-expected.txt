@@ -17,8 +17,8 @@ PASS bytesToHexString(keyPair.privateKey.algorithm.publicExponent) is '010001'
 PASS keyPair.privateKey.algorithm.hash is undefined.
 
 Testing that the keys can't be used with different algorithms...
-PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, keyPair.privateKey, hexStringToUint8Array("00")) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, keyPair.publicKey, hexStringToUint8Array("00")) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, keyPair.privateKey, hexStringToUint8Array("00")) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, keyPair.publicKey, hexStringToUint8Array("00")) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 
 Trying to export keys to raw...
 PASS Promise rejected for exporting public key

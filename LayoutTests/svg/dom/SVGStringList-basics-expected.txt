@@ -25,7 +25,7 @@ PASS text1.requiredFeatures.getItem(0) is "aString"
 PASS text1.getAttribute('requiredFeatures') is "aString"
 
 Test uncommon arguments for getItem()
-PASS text1.requiredFeatures.getItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.requiredFeatures.getItem(30) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS text1.requiredFeatures.getItem('aString') is text1.requiredFeatures.getItem(0)
 PASS text1.requiredFeatures.getItem(text1) is text1.requiredFeatures.getItem(0)
 PASS text1.requiredFeatures.getItem(null) is text1.requiredFeatures.getItem(0)
@@ -35,10 +35,10 @@ PASS text1.requiredFeatures.insertItemBefore(30) threw exception TypeError: Not 
 PASS text1.requiredFeatures.insertItemBefore('aString') threw exception TypeError: Not enough arguments.
 PASS text1.requiredFeatures.insertItemBefore(text1) threw exception TypeError: Not enough arguments.
 PASS text1.requiredFeatures.insertItemBefore(null) threw exception TypeError: Not enough arguments.
-PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), 'aString') threw exception Error: IndexSizeError: DOM Exception 1.
-PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), text1) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), null) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), 'aString') threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), text1) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), null) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), 0) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS text1.requiredFeatures.insertItemBefore(30, 0) is "30"
 PASS text1.requiredFeatures.numberOfItems is 2
 PASS text1.requiredFeatures.getItem(0) is "30"
@@ -148,7 +148,7 @@ PASS text1.requiredFeatures.getItem(3) is "4"
 PASS text1.getAttribute('requiredFeatures') is "1 2 3 4"
 
 Test uncommon arguments for removeItem()
-PASS text1.requiredFeatures.removeItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.requiredFeatures.removeItem(30) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS text1.requiredFeatures.removeItem('aString') is "1"
 PASS text1.requiredFeatures.numberOfItems is 3
 PASS text1.getAttribute('requiredFeatures') is "2 3 4"

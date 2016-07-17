@@ -24,14 +24,14 @@ PASS [Worker] self.btoa(undefined) is "dW5kZWZpbmVk"
 PASS [Worker] self.btoa(self) is "W29iamVjdCBEZWRpY2F0ZWRXb3JrZXJHbG9iYWxTY29wZV0="
 PASS [Worker] self.btoa("éé") is "6ek="
 PASS [Worker] self.btoa("\u0080\u0081") is "gIE="
-PASS [Worker] self.btoa("тест") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.btoa("тест") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS [Worker] self.btoa is 0
 PASS [Worker] typeof self.btoa is "number"
 PASS [Worker] typeof self.atob is "function"
 PASS [Worker] self.atob() threw exception TypeError: Not enough arguments.
 PASS [Worker] self.atob("") is ""
 PASS [Worker] self.atob(null) is "ée"
-PASS [Worker] self.atob(undefined) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob(undefined) threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS [Worker] self.atob(" YQ==") is "a"
 PASS [Worker] self.atob("YQ==\u000a") is "a"
 PASS [Worker] self.atob("ab\tcd") is "i·"
@@ -42,29 +42,29 @@ PASS [Worker] self.atob("ab\t\n\f\r cd") is "i·"
 PASS [Worker] self.atob(" \t\n\f\r ab\t\n\f\r cd\t\n\f\r ") is "i·"
 PASS [Worker] self.atob("ab\t\n\f\r =\t\n\f\r =\t\n\f\r ") is "i"
 PASS [Worker] self.atob("            ") is ""
-PASS [Worker] self.atob(" abcd===") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("abcd=== ") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("abcd ===") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob(" abcd===") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("abcd=== ") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("abcd ===") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS [Worker] self.atob("6ek=") is "éé"
 PASS [Worker] self.atob("6ek") is "éé"
 PASS [Worker] self.atob("gIE=") is ""
-PASS [Worker] self.atob("тест") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("z") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("тест") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("z") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS [Worker] self.atob("zz") is "Ï"
 PASS [Worker] self.atob("zzz") is "Ï<"
 PASS [Worker] self.atob("zzz=") is "Ï<"
-PASS [Worker] self.atob("zzz==") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("zzz===") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("zzz====") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("zzz=====") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("zzz==") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("zzz===") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("zzz====") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("zzz=====") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS [Worker] self.atob("zzzz") is "Ï<ó"
-PASS [Worker] self.atob("zzzzz") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("z=zz") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("=") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("==") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("===") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("====") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS [Worker] self.atob("=====") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("zzzzz") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("z=zz") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("=") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("==") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("===") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("====") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS [Worker] self.atob("=====") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS [Worker] self.atob is 0
 PASS [Worker] typeof self.atob is "number"
 PASS successfullyParsed is true

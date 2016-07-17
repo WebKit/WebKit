@@ -9,13 +9,13 @@ Test WebSocket bad sub-protocol names by non-ASCII chars.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS new WebSocket("ws://127.0.0.1:8880/simple", "") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1:8880/simple", "") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1:8880/simple", "あ") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1:8880/simple", "￿") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1:8880/simple", "﻿") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1:8880/simple", "￾") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1:8880/simple", "𠀋") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket("ws://127.0.0.1:8880/simple", "") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://127.0.0.1:8880/simple", "") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://127.0.0.1:8880/simple", "あ") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://127.0.0.1:8880/simple", "￿") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://127.0.0.1:8880/simple", "﻿") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://127.0.0.1:8880/simple", "￾") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://127.0.0.1:8880/simple", "𠀋") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -16,10 +16,10 @@ PASS document.defaultView.getComputedStyle(el, null).getPropertyValue('color') i
 PASS document.defaultView.getComputedStyle(el, null).getPropertyValue('color') is 'rgb(0, 128, 0)'
 PASS document.defaultView.getComputedStyle(el, null).getPropertyValue('color') is 'rgb(255, 0, 0)'
 PASS document.defaultView.getComputedStyle(el, null).getPropertyValue('color') is 'rgb(0, 128, 0)'
-PASS document.querySelector("span.c3:nth-of-type(n3)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.querySelector("span.c3:nth-of-type(foo)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.querySelector("span.c3:nth-of-type(2n3)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.querySelector("span.c3:nth-of-type(foon + bar)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("span.c3:nth-of-type(n3)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS document.querySelector("span.c3:nth-of-type(foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS document.querySelector("span.c3:nth-of-type(2n3)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS document.querySelector("span.c3:nth-of-type(foon + bar)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

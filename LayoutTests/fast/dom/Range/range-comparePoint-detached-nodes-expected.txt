@@ -9,8 +9,8 @@ PASS var range = new Range; range.setStart(detachedDiv, 2); range.comparePoint(d
 PASS var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedDiv2, 0); is 1
 PASS var range = new Range; range.setStart(spanInDetachedDiv2, 0); range.comparePoint(spanInDetachedDiv1, 0); is -1
 PASS var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedDiv1, 0); is 0
-PASS var range = new Range; range.setStart(detachedDiv, 0); range.comparePoint(detachedP, 0); threw exception Error: WrongDocumentError: DOM Exception 4.
-PASS var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedP, 0); threw exception Error: WrongDocumentError: DOM Exception 4.
+PASS var range = new Range; range.setStart(detachedDiv, 0); range.comparePoint(detachedP, 0); threw exception WrongDocumentError (DOM Exception 4): The object is in the wrong document..
+PASS var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedP, 0); threw exception WrongDocumentError (DOM Exception 4): The object is in the wrong document..
 PASS successfullyParsed is true
 
 TEST COMPLETE

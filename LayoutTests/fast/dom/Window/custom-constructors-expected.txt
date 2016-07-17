@@ -9,7 +9,7 @@ PASS WebKitPoint.prototype.toString.call(new WebKitPoint) is '[object WebKitPoin
 PASS WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix) is 'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'
 PASS WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix()) is 'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'
 PASS WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix(undefined)) is 'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'
-PASS new WebKitCSSMatrix(null) threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix(null) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS XMLHttpRequest.prototype.toString.call(new XMLHttpRequest) is '[object XMLHttpRequest]'
 PASS XSLTProcessor.prototype.toString.call(new XSLTProcessor) is '[object XSLTProcessor]'
 PASS successfullyParsed is true

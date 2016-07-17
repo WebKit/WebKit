@@ -1,5 +1,5 @@
 Tests that we clone object hierarchies
-PASS: 'postMessage((function(){}))' threw Error: DataCloneError: DOM Exception 25
+PASS: 'postMessage((function(){}))' threw DataCloneError (DOM Exception 25): The object can not be cloned.
 PASS: eventData is null of type object
 PASS: eventData is null of type object
 PASS: eventData is null of type object

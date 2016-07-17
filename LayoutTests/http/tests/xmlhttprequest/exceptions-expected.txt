@@ -1,15 +1,15 @@
 Test that XMLHttpRequest raises exceptions when it should.
 
 new XMLHttpRequest()
-PASS: req.setRequestHeader("Foo", "bar") threw exception Error: InvalidStateError: DOM Exception 11.
-PASS: req.send(null) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS: req.setRequestHeader("Foo", "bar") threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
+PASS: req.send(null) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 open()
 PASS: req.setRequestHeader() threw exception TypeError: Not enough arguments.
 PASS: req.setRequestHeader("Foo") threw exception TypeError: Not enough arguments.
 send()
-PASS: req.send(null) threw exception Error: InvalidStateError: DOM Exception 11.
-PASS: req.overrideMimeType("text/plain") threw exception Error: InvalidStateError: DOM Exception 11.
-PASS: req.setRequestHeader("Foo", "bar") threw exception Error: InvalidStateError: DOM Exception 11.
+PASS: req.send(null) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
+PASS: req.overrideMimeType("text/plain") threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
+PASS: req.setRequestHeader("Foo", "bar") threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS: req.getResponseHeader() threw exception TypeError: Not enough arguments.
 PASS: req.open() threw exception TypeError: Not enough arguments.
 PASS: req.open(null) threw exception TypeError: Not enough arguments.

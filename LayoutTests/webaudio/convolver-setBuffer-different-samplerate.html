@@ -12,7 +12,7 @@ description("Tests that ConvolverNode buffer rate must match context rate.");
 var context = new webkitOfflineAudioContext(1, 256, 44100);
 var convolver = context.createConvolver();
 
-shouldThrow("convolver.buffer = context.createBuffer(1, 256, 22050)", "'Error: NotSupportedError: DOM Exception 9'");
+shouldThrow("convolver.buffer = context.createBuffer(1, 256, 22050)", "'NotSupportedError (DOM Exception 9): The operation is not supported.'");
 shouldNotThrow("convolver.buffer = context.createBuffer(1, 256, 44100)");
 
 </script>

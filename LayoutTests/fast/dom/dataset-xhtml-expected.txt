@@ -22,9 +22,9 @@ PASS testSet('-Foo', 'data---foo') is true
 PASS testSet('', 'data-') is true
 PASS testSet('à', 'data-à') is true
 
-PASS testSet('-foo', 'dummy') threw exception Error: SyntaxError: DOM Exception 12.
-PASS testSet('foo ', 'dummy') threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS testSet('foo豈', 'dummy') threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS testSet('-foo', 'dummy') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS testSet('foo ', 'dummy') threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS testSet('foo豈', 'dummy') threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 
 PASS testDelete('data-foo', 'foo') is true
 PASS testDelete('data-foo-bar', 'fooBar') is true

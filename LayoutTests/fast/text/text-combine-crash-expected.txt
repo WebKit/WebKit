@@ -16,6 +16,6 @@ Errlog webtest_fn_16: TypeError: undefined is not an object (evaluating 'elem.pa
 ￼￼Errlog webtest_fn_18: TypeError: undefined is not an object (evaluating 'document.applets[0].contentEditable="true"')
 Errlog webtest_fn_21: TypeError: undefined is not an object (evaluating 'document.anchors[4].appendChild')
 
-Errlog webtest_fn_24: HierarchyRequestError: HierarchyRequestError: DOM Exception 3
+Errlog webtest_fn_24: HierarchyRequestError: The operation would yield an incorrect node tree.
 Errlog webtest_fn_25: ReferenceError: Can't find variable: node_16
 

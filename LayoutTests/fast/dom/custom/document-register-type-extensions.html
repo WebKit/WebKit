@@ -32,7 +32,7 @@ bazConstructor = document.register('x-baz', { prototype: Object.create(fooConstr
 quxConstructor = document.register('x-qux', { prototype: Object.create(barConstructor.prototype) });
 
 // Same name, different local name
-shouldThrow("document.register('x-foo', { prototype: Object.create(HTMLDivElement.prototype) })", "'Error: InvalidStateError: DOM Exception 11'");
+shouldThrow("document.register('x-foo', { prototype: Object.create(HTMLDivElement.prototype) })", "'InvalidStateError (DOM Exception 11): The object is in an invalid state.'");
 
 //
 // Generated constructors
@@ -121,7 +121,7 @@ fooCreatedEmpty = document.createElement("x-foo", "");
 shouldBe("fooCreatedEmpty.outerHTML", fooOuterHTML);
 shouldBeTrue("fooCreatedEmpty instanceof fooConstructor");
 
-shouldThrow("document.createElement('@invalid', 'x-bar')", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("document.createElement('@invalid', 'x-bar')", "'InvalidCharacterError (DOM Exception 5): The string contains invalid characters.'");
 
 //
 // createElementNS() with type extensions
@@ -136,7 +136,7 @@ shouldBe("barCreatedNS.outerHTML", barOuterHTML);
 shouldBeTrue("barCreatedNS instanceof barConstructor");
 shouldBeTrue("isFormControl(barCreatedNS)");
 
-shouldThrow("document.createElementNS('http://example.com/2013/no-such-namespace', 'xml:lang', 'x-bar')", "'Error: NamespaceError: DOM Exception 14'");
+shouldThrow("document.createElementNS('http://example.com/2013/no-such-namespace', 'xml:lang', 'x-bar')", "'NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.'");
 
 // parser
 function createElementFromHTML(html) {

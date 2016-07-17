@@ -15,7 +15,7 @@ PASS text1.rotate.baseVal.initialize(text1) threw exception TypeError: Argument 
 PASS text1.rotate.baseVal.initialize(null) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 
 Test uncommon arguments for getItem()
-PASS text1.rotate.baseVal.getItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.rotate.baseVal.getItem(30) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS text1.rotate.baseVal.getItem('aString') is text1.rotate.baseVal.getItem(0)
 PASS text1.rotate.baseVal.getItem(text1) is text1.rotate.baseVal.getItem(0)
 PASS text1.rotate.baseVal.getItem(null) is text1.rotate.baseVal.getItem(0)
@@ -97,7 +97,7 @@ Set rotate='1 2 3 4' for text1
 PASS text1.setAttribute('rotate', '1 2 3 4') is undefined.
 
 Test uncommon arguents for removeItem()
-PASS text1.rotate.baseVal.removeItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.rotate.baseVal.removeItem(30) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS text1.rotate.baseVal.removeItem('aString').value is 1
 PASS text1.rotate.baseVal.numberOfItems is 3
 PASS text1.rotate.baseVal.getItem(0).value is 2
@@ -121,7 +121,7 @@ PASS text1.rotate.baseVal.appendItem(text1) threw exception TypeError: Argument 
 PASS text1.rotate.baseVal.appendItem(null) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 
 Testing animVal clear throws
-PASS text1.rotate.animVal.clear() threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS text1.rotate.animVal.clear() threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
 PASS text1.rotate.baseVal.clear() is undefined.
 PASS successfullyParsed is true
 

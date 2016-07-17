@@ -41,7 +41,7 @@ PASS comment.namespaceURI is null
 PASS comment.prefix is null
 PASS comment.nodeValue is 'foo'
 PASS comment.data is 'foo'
-PASS document.createCDATASection('foo') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS document.createCDATASection('foo') threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS cdata.nodeName is '#cdata-section'
 PASS cdata.localName is null
 PASS cdata.namespaceURI is null

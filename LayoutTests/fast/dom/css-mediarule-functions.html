@@ -39,7 +39,7 @@
                     if (e.code == 1)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been 'Error: IndexSizeError: DOM Exception 1'.");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been 'IndexSizeError (DOM Exception 1): The index is not in the allowed range.'.");
                 }
 
                 // Test that insertRule raises an exception for indexes less than 0.
@@ -50,7 +50,7 @@
                     if (e.code == 1)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been 'Error: IndexSizeError: DOM Exception 1'.");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been 'IndexSizeError (DOM Exception 1): The index is not in the allowed range.'.");
                 }
 
                 // Test that insertRule raises an exception for malformed rules.
@@ -61,7 +61,7 @@
                     if (e.code == 12)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SyntaxError: DOM Exception 12!");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been SyntaxError (DOM Exception 12): The string did not match the expected pattern.!");
                 }
 
                 // Test that insertRule raises an exception for illegally placed rules.
@@ -73,7 +73,7 @@
                     if (e.code == 3)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e.code + " was thrown, should of been Error: HierarchyRequestError: DOM Exception 3!");
+                        log("FAIL: wrong exception type thrown. " + e.code + " was thrown, should of been HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.!");
                 }
                 try {
                     // CharsetRule illegal inside a MediaRule.
@@ -84,7 +84,7 @@
                     if (e.code == 12)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SyntaxError: DOM Exception 12!");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been SyntaxError (DOM Exception 12): The string did not match the expected pattern.!");
                 }
                 try {
                     // Nested MediaRule illegal inside a MediaRule.
@@ -95,7 +95,7 @@
                     if (e.code == 12)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SyntaxError: DOM Exception 12!");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been SyntaxError (DOM Exception 12): The string did not match the expected pattern.!");
                 }
 
 
@@ -118,7 +118,7 @@
                     if (e.code == 1)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been 'Error: IndexSizeError: DOM Exception 1'.");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been 'IndexSizeError (DOM Exception 1): The index is not in the allowed range.'.");
                 }
                 try {
                     mediaRule.deleteRule(-1);
@@ -127,7 +127,7 @@
                     if (e.code == 1)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been 'Error: IndexSizeError: DOM Exception 1'.");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been 'IndexSizeError (DOM Exception 1): The index is not in the allowed range.'.");
                 }
             }
         </script>

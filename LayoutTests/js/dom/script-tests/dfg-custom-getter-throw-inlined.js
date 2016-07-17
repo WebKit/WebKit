@@ -26,7 +26,7 @@ noInline(baz);
 silentTestPass = true;
 
 for (var i = 0; i < 200; i = dfgIncrement({f:baz, i:i + 1, n:50})) {
-    shouldBe("bar(i >= 100)", i >= 100 ? "\"Threw exception: Error: InvalidStateError: DOM Exception 11\"" : "\"Returned result: \"");
+    shouldBe("bar(i >= 100)", i >= 100 ? "\"Threw exception: InvalidStateError (DOM Exception 11): The object is in an invalid state.\"" : "\"Returned result: \"");
 }
 
 

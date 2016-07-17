@@ -292,5 +292,5 @@ PASS Interfaces for wbr
 PASS Interfaces for WBR 
 PASS Interfaces for xmp 
 PASS Interfaces for XMP 
-FAIL Interfaces for Ã¥-bar InvalidCharacterError: DOM Exception 5
+FAIL Interfaces for Ã¥-bar The string contains invalid characters.
 

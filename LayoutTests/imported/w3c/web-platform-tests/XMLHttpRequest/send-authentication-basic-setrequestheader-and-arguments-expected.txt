@@ -1,3 +1,3 @@
 
-FAIL XMLHttpRequest: send() - "Basic" authenticated request using setRequestHeader() and open() arguments (asserts header wins) TimeoutError: DOM Exception 23
+FAIL XMLHttpRequest: send() - "Basic" authenticated request using setRequestHeader() and open() arguments (asserts header wins) The operation timed out.
 

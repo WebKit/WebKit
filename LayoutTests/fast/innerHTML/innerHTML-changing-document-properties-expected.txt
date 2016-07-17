@@ -2,7 +2,7 @@ document.xmlEncoding : UTF-8
 document.xmlVersion : 1.0
 document.xmlStandalone : true
 document.readyState : loading
-div.innerHTML = threw exception: Error: SyntaxError: DOM Exception 12
+div.innerHTML = threw exception: SyntaxError (DOM Exception 12): The string did not match the expected pattern.
 document.xmlEncoding : UTF-8
 document.xmlVersion : 1.0
 document.xmlStandalone : true

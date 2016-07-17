@@ -13,5 +13,5 @@ It fit.
 The total payload is currently 61+mb. Replacing the last 1mb with 2mb brings that to 62+mb.
 It fit.
 The total payload is currently 62+mb. Replacing the last 2mb with 4mb brings that to 64+mb, and should not fit.
-Expected exception replacing 2mb with 4mb:Error: QuotaExceededError: DOM Exception 22
+Expected exception replacing 2mb with 4mb:QuotaExceededError (DOM Exception 22): Attempt to store more data than allowed using history.replaceState()
 

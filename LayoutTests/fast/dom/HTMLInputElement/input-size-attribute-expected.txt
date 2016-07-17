@@ -13,7 +13,7 @@ PASS input.setAttribute('size', 'a'); input.size is 20
 PASS input.removeAttribute('size'); input.size is 20
 PASS input.setAttribute('size', '0'); input.size is 20
 PASS input.setAttribute('size', '10'); input.size is 10
-PASS input.size = 0 threw exception Error: IndexSizeError: DOM Exception 1.
+PASS input.size = 0 threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS successfullyParsed is true
 
 TEST COMPLETE

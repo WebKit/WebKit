@@ -3,7 +3,7 @@ Checks that Range.cloneContents() throws a HierarchyRequestError when encounteri
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS range.cloneContents() threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS range.cloneContents() threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
 PASS successfullyParsed is true
 
 TEST COMPLETE

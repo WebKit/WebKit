@@ -9,7 +9,7 @@ var range = document.createRange();
 range.setStart(document, 0);
 range.setEnd(document, 2);
 
-shouldThrow("range.extractContents()", "'Error: HierarchyRequestError: DOM Exception 3'");
+shouldThrow("range.extractContents()", "'HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.'");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

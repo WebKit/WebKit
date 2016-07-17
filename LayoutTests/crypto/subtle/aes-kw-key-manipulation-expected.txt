@@ -10,7 +10,7 @@ PASS key.algorithm.name is 'AES-KW'
 PASS key.algorithm.length is 256
 
 Testing that the key can't be used with AES-CBC...
-PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, hexStringToUint8Array("00")) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, hexStringToUint8Array("00")) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 
 Exporting the key to raw...
 PASS exportedKey.toString() is '[object ArrayBuffer]'

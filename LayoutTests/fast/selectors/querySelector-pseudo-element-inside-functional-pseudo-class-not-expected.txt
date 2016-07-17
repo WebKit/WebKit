@@ -3,7 +3,7 @@ This test makes sure that querySelector with pseudo-element inside functional ps
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.querySelectorAll("#test div :not(:first-line)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll("#test div :not(:first-line)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

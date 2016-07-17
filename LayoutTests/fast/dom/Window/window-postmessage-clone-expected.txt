@@ -1,8 +1,8 @@
 Tests that we clone object hierarchies
 
-PASS: 'postMessage((function(){}))' threw Error: DataCloneError: DOM Exception 25
-PASS: 'postMessage(var x = 0; try { eval("badref"); } catch(e) { x = e; } x)' threw Error: DataCloneError: DOM Exception 25
-PASS: 'postMessage(window)' threw Error: DataCloneError: DOM Exception 25
+PASS: 'postMessage((function(){}))' threw DataCloneError (DOM Exception 25): The object can not be cloned.
+PASS: 'postMessage(var x = 0; try { eval("badref"); } catch(e) { x = e; } x)' threw DataCloneError (DOM Exception 25): The object can not be cloned.
+PASS: 'postMessage(window)' threw DataCloneError (DOM Exception 25): The object can not be cloned.
 PASS: 'postMessage(({get a() { throw "x" }}))' threw x
 PASS: 'postMessage((function() {return {get a() { throw "accessor-exn"; }};})())' threw accessor-exn
 PASS: 'postMessage((function() {var obja = {get p() { throw "accessor-exn"; }}; return {get a() { return obja; }};})())' threw accessor-exn

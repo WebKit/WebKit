@@ -13,7 +13,7 @@ PASS 6 channels buffer can be set.
 PASS 7 channels buffer can be set.
 PASS 8 channels buffer can be set.
 PASS 9 channels buffer can be set.
-PASS context.createBuffer(64, 1024, context.sampleRate) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS context.createBuffer(64, 1024, context.sampleRate) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS source.buffer is not null
 PASS source.buffer = null did not throw exception.
 PASS source.buffer is null

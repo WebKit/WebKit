@@ -180,7 +180,7 @@ FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on ifram
 PASS Document interface: iframe.contentDocument must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
 PASS Document interface: iframe.contentDocument must inherit property "createRange" with the proper type (25) 
 PASS Document interface: iframe.contentDocument must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on iframe.contentDocument with too few arguments must throw TypeError 
@@ -410,7 +410,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on iframe.contentDocu
 PASS Node interface: iframe.contentDocument must inherit property "insertBefore" with the proper type (40) 
 FAIL Node interface: calling insertBefore(Node,Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: iframe.contentDocument must inherit property "appendChild" with the proper type (41) 
 PASS Node interface: calling appendChild(Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "replaceChild" with the proper type (42) 
@@ -486,7 +486,7 @@ FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on new D
 PASS Document interface: new Document() must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
 PASS Document interface: new Document() must inherit property "createRange" with the proper type (25) 
 PASS Document interface: new Document() must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
@@ -716,7 +716,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on new Document() wit
 PASS Node interface: new Document() must inherit property "insertBefore" with the proper type (40) 
 FAIL Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: new Document() must inherit property "appendChild" with the proper type (41) 
 PASS Node interface: calling appendChild(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "replaceChild" with the proper type (42) 
@@ -795,7 +795,7 @@ FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on docum
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createRange" with the proper type (25) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
@@ -1025,7 +1025,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.implement
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "insertBefore" with the proper type (40) 
 FAIL Node interface: calling insertBefore(Node,Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "appendChild" with the proper type (41) 
 PASS Node interface: calling appendChild(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "replaceChild" with the proper type (42) 
@@ -2700,7 +2700,7 @@ PASS HTMLTableElement interface: calling insertRow(long) on document.createEleme
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "deleteRow" with the proper type (13) 
 FAIL HTMLTableElement interface: calling deleteRow(long) on document.createElement("table") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
 FAIL HTMLTableElement interface: document.createElement("table") must inherit property "sortable" with the proper type (14) assert_inherits: property "sortable" not found in prototype chain
 FAIL HTMLTableElement interface: document.createElement("table") must inherit property "stopSorting" with the proper type (15) assert_inherits: property "stopSorting" not found in prototype chain
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "align" with the proper type (16) 
@@ -2768,7 +2768,7 @@ PASS HTMLTableSectionElement interface: calling insertRow(long) on document.crea
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "deleteRow" with the proper type (2) 
 FAIL HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("tbody") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "align" with the proper type (3) 
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "ch" with the proper type (4) 
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "chOff" with the proper type (5) 
@@ -2781,7 +2781,7 @@ PASS HTMLTableSectionElement interface: calling insertRow(long) on document.crea
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "deleteRow" with the proper type (2) 
 FAIL HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("thead") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "align" with the proper type (3) 
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "ch" with the proper type (4) 
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "chOff" with the proper type (5) 
@@ -2794,7 +2794,7 @@ PASS HTMLTableSectionElement interface: calling insertRow(long) on document.crea
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "deleteRow" with the proper type (2) 
 FAIL HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("tfoot") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "align" with the proper type (3) 
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "ch" with the proper type (4) 
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "chOff" with the proper type (5) 
@@ -2824,7 +2824,7 @@ PASS HTMLTableRowElement interface: calling insertCell(long) on document.createE
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "deleteCell" with the proper type (4) 
 FAIL HTMLTableRowElement interface: calling deleteCell(long) on document.createElement("tr") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "align" with the proper type (5) 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "ch" with the proper type (6) 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "chOff" with the proper type (7) 
@@ -5586,7 +5586,7 @@ PASS Window interface: calling showModalDialog(DOMString,any) on window with too
 PASS Window interface: window must inherit property "postMessage" with the proper type (35) 
 FAIL Window interface: calling postMessage(any,DOMString,[object Object]) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: SyntaxError: DOM Exception 12" ("SyntaxError") expected object "TypeError" ("TypeError")
+        }" threw object "SyntaxError (DOM Exception 12): The string did not match ..." ("SyntaxError") expected object "TypeError" ("TypeError")
 PASS Window interface: window must inherit property "captureEvents" with the proper type (36) 
 PASS Window interface: window must inherit property "releaseEvents" with the proper type (37) 
 PASS Window interface: window must inherit property "onabort" with the proper type (38) 

@@ -1,6 +1,6 @@
 This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.
 Populating DataTransferItems...
-Caught exception "Error: NotSupportedError: DOM Exception 9" as expected.
+Caught exception "NotSupportedError (DOM Exception 9): The operation is not supported." as expected.
 Verifying contents of DataTransferItems...
 items.length: 2
 items[0].kind: string

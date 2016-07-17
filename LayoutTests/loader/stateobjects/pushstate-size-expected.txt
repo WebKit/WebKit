@@ -20,5 +20,5 @@ Successfully added item: 17 times
 Successfully added item: 18 times
 Successfully added item: 19 times
 Successfully added item: 20 times
-User gesture: Error: QuotaExceededError: DOM Exception 22
+User gesture: QuotaExceededError (DOM Exception 22): Attempt to store more data than allowed using history.pushState()
 

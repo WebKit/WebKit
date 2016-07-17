@@ -4,7 +4,7 @@ PASS result.invalidIteratorState is false
 PASS result.iterateNext().tagName is 'span'
 Modifying the document...
 PASS result.invalidIteratorState is true
-PASS result.iterateNext() threw exception Error: InvalidStateError: DOM Exception 11.
+PASS result.iterateNext() threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS successfullyParsed is true
 
 TEST COMPLETE

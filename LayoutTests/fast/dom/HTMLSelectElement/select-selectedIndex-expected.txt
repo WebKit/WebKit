@@ -1,6 +1,6 @@
 
 1) setting length to a negative length
-PASS mySelect.options.length = -1; threw exception Error: IndexSizeError: DOM Exception 1.
+PASS mySelect.options.length = -1; threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS mySelect.options.length is 2
 PASS mySelect.selectedIndex is 1
 2) setting length to a larger length
@@ -57,7 +57,7 @@ PASS mySelect.selectedIndex is -1
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
 19) trying to set an element that's not an option: select element
-PASS mySelect.options[10] = mySelect; threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS mySelect.options[10] = mySelect; threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
 20) trying to set a option element using an invalid index: negative infinity

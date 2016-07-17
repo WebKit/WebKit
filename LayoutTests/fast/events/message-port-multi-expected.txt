@@ -3,22 +3,22 @@ This test checks the various use cases around sending multiple ports through Mes
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS channel.port1.postMessage("same port", [channel.port1]) threw exception Error: DataCloneError: DOM Exception 25.
-PASS channel.port1.postMessage("entangled port", [channel.port2]) threw exception Error: DataCloneError: DOM Exception 25.
-PASS channel.port1.postMessage("null port", [channel3.port1, null, channel3.port2]) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS channel.port1.postMessage("same port", [channel.port1]) threw exception DataCloneError (DOM Exception 25): The object can not be cloned..
+PASS channel.port1.postMessage("entangled port", [channel.port2]) threw exception DataCloneError (DOM Exception 25): The object can not be cloned..
+PASS channel.port1.postMessage("null port", [channel3.port1, null, channel3.port2]) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS channel.port1.postMessage("notAPort", [channel3.port1, {}, channel3.port2]) threw exception TypeError: Type error.
-PASS channel.port1.postMessage("duplicate port", [channel3.port1, channel3.port1]) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS channel.port1.postMessage("duplicate port", [channel3.port1, channel3.port1]) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS channel.port1.postMessage("notAnArray", channel3.port1) threw exception TypeError: Value is not a sequence.
 PASS channel.port1.postMessage("notASequence", [{length: 3}]) threw exception TypeError: Type error.
-PASS channel.port1.postMessage("largeSequence", largePortArray) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS channel.port1.postMessage("largeSequence", largePortArray) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS event.ports is non-null and zero length when no port sent
 PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent
 PASS event.ports contains two ports when two ports re-sent after error
-PASS Sending host object has thrown Error: DataCloneError: DOM Exception 25
-PASS Sending host object has thrown Error: DataCloneError: DOM Exception 25
-PASS Sending Function object has thrown Error: DataCloneError: DOM Exception 25
-PASS Sending Error object has thrown Error: DataCloneError: DOM Exception 25
+PASS Sending host object has thrown DataCloneError (DOM Exception 25): The object can not be cloned.
+PASS Sending host object has thrown DataCloneError (DOM Exception 25): The object can not be cloned.
+PASS Sending Function object has thrown DataCloneError (DOM Exception 25): The object can not be cloned.
+PASS Sending Error object has thrown DataCloneError (DOM Exception 25): The object can not be cloned.
 PASS send-port: transferred one port
 PASS send-port-twice: transferred one port twice
 PASS send-two-ports: transferred two ports

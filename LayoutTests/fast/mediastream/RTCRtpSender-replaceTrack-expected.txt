@@ -20,11 +20,11 @@ PASS offer created
 PASS offer.sdp.indexOf(audioTrack.id) is not -1
 PASS offer.sdp.indexOf(audioTrack2.id) is -1
 Stop sender, and try replacing the track
-PASS promise sender.replaceTrack(audioTrack2) rejected with Error: InvalidStateError: DOM Exception 11
+PASS promise sender.replaceTrack(audioTrack2) rejected with InvalidStateError (DOM Exception 11): The object is in an invalid state.
 Create a new sender
 PASS sender = pc.addTrack(audioTrack2, stream) did not throw exception.
 Close pc and try replacing the track
-PASS promise sender.replaceTrack(audioTrack3) rejected with Error: InvalidStateError: DOM Exception 11
+PASS promise sender.replaceTrack(audioTrack3) rejected with InvalidStateError (DOM Exception 11): The object is in an invalid state.
 End of promise chain
 PASS successfullyParsed is true
 

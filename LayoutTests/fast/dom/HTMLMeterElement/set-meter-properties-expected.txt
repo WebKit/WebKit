@@ -44,17 +44,17 @@ PASS m.low is 0.0
 PASS m.high is 200.0
 PASS m.optimum is 12.5
 Set value to invalid value
-PASS m.value = "value"; threw exception Error: NotSupportedError: DOM Exception 9.
+PASS m.value = "value"; threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 Set min to NaN
-PASS m.min = NaN; threw exception Error: NotSupportedError: DOM Exception 9.
+PASS m.min = NaN; threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 Set max to Infinity
-PASS m.max = Infinity; threw exception Error: NotSupportedError: DOM Exception 9.
+PASS m.max = Infinity; threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 Set low to invalid value
-PASS m.low = "low"; threw exception Error: NotSupportedError: DOM Exception 9.
+PASS m.low = "low"; threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 Set high to NaN
-PASS m.high = NaN; threw exception Error: NotSupportedError: DOM Exception 9.
+PASS m.high = NaN; threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 Set optimum to Infinity
-PASS m.optimum = Infinity; threw exception Error: NotSupportedError: DOM Exception 9.
+PASS m.optimum = Infinity; threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 Set attributes to valid numbers
 PASS m.value is 5
 PASS m.max is 10

@@ -18,14 +18,14 @@ PASS window.btoa(undefined) is "dW5kZWZpbmVk"
 PASS window.btoa(window) is "W29iamVjdCBXaW5kb3dd"
 PASS window.btoa("éé") is "6ek="
 PASS window.btoa("\u0080\u0081") is "gIE="
-PASS window.btoa("тест") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.btoa("тест") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS window.btoa is 0
 PASS typeof window.btoa is "number"
 PASS typeof window.atob is "function"
 PASS window.atob() threw exception TypeError: Not enough arguments.
 PASS window.atob("") is ""
 PASS window.atob(null) is "ée"
-PASS window.atob(undefined) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob(undefined) threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS window.atob(" YQ==") is "a"
 PASS window.atob("YQ==\u000a") is "a"
 PASS window.atob("ab\tcd") is "i·"
@@ -36,29 +36,29 @@ PASS window.atob("ab\t\n\f\r cd") is "i·"
 PASS window.atob(" \t\n\f\r ab\t\n\f\r cd\t\n\f\r ") is "i·"
 PASS window.atob("ab\t\n\f\r =\t\n\f\r =\t\n\f\r ") is "i"
 PASS window.atob("            ") is ""
-PASS window.atob(" abcd===") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("abcd=== ") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("abcd ===") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob(" abcd===") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("abcd=== ") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("abcd ===") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS window.atob("6ek=") is "éé"
 PASS window.atob("6ek") is "éé"
 PASS window.atob("gIE=") is ""
-PASS window.atob("тест") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("z") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob("тест") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("z") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS window.atob("zz") is "Ï"
 PASS window.atob("zzz") is "Ï<"
 PASS window.atob("zzz=") is "Ï<"
-PASS window.atob("zzz==") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("zzz===") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("zzz====") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("zzz=====") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob("zzz==") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("zzz===") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("zzz====") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("zzz=====") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS window.atob("zzzz") is "Ï<ó"
-PASS window.atob("zzzzz") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("z=zz") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("=") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("==") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("===") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("====") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("=====") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob("zzzzz") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("z=zz") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("=") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("==") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("===") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("====") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS window.atob("=====") threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS window.atob is 0
 PASS typeof window.atob is "number"
 PASS successfullyParsed is true

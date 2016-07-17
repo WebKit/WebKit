@@ -21,17 +21,17 @@ PASS crypto.subtle.digest({name: 'sha-1'}, [10]) threw exception TypeError: Only
 PASS crypto.subtle.digest({name: 'sha-1'}, [new Uint8Array([0])]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
 
 Passing invalid algorithmIdentifiers to digest()
-PASS crypto.subtle.digest({ toString:function() { return 'sha-1' } }, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest({name: ''}, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest({name: null}, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest({name: undefined}, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest({name: 'sha'}, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest({name: 1}, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest('', data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest(null, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest(undefined, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest(1, data) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.digest({}, data) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS crypto.subtle.digest({ toString:function() { return 'sha-1' } }, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest({name: ''}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest({name: null}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest({name: undefined}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest({name: 'sha'}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest({name: 1}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest('', data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest(null, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest(undefined, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest(1, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.digest({}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS successfullyParsed is true
 
 TEST COMPLETE

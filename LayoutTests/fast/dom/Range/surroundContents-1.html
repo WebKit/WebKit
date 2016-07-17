@@ -22,7 +22,7 @@ range.setEnd(text, text.length);
 try {
     range.surroundContents(select);    
 } catch (e) {
-    var error = "Error: HierarchyRequestError: DOM Exception 3";
+    var error = "HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.";
     if (e != error)
         log ("Failure, expected: " + error);
 }

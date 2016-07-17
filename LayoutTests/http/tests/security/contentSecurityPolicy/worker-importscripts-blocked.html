@@ -15,7 +15,7 @@
                                  encodeURIComponent("script-src 'unsafe-eval' 'unsafe-inline' 127.0.0.1:8000"));
         worker.onmessage = function (event) {
             result = event.data;
-            shouldBeEqualToString('result', 'importScripts blocked: Error: NetworkError: DOM Exception 19');
+            shouldBeEqualToString('result', 'importScripts blocked: NetworkError (DOM Exception 19):  A network error occurred.');
             finishJSTest();
         };
     } catch (e) {

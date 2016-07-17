@@ -8,10 +8,10 @@ PASS getPixel(1,1) is [0,128,0,255]
 PASS getPixel(98,1) is [0,128,0,255]
 PASS getPixel(1,48) is [0,128,0,255]
 PASS getPixel(98,48) is [0,128,0,255]
-PASS context.createPattern(green1x1, 'null') threw exception Error: SyntaxError: DOM Exception 12.
-PASS context.createPattern(green1x1, undefined) threw exception Error: SyntaxError: DOM Exception 12.
-PASS context.createPattern(green1x1, 'undefined') threw exception Error: SyntaxError: DOM Exception 12.
-PASS context.createPattern(green1x1, {toString:function(){ return null;}}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS context.createPattern(green1x1, 'null') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS context.createPattern(green1x1, undefined) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS context.createPattern(green1x1, 'undefined') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS context.createPattern(green1x1, {toString:function(){ return null;}}) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS context.createPattern(green1x1, '') did not throw an exception
 PASS getPixel(1,1) is [0,128,0,255]
 PASS getPixel(98,1) is [0,128,0,255]

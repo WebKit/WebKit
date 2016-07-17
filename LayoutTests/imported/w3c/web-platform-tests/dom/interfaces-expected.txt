@@ -340,7 +340,7 @@ FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on new D
 PASS Document interface: new Document() must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
 PASS Document interface: new Document() must inherit property "createRange" with the proper type (25) 
 PASS Document interface: new Document() must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
@@ -429,7 +429,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on new Document() wit
 PASS Node interface: new Document() must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: new Document() must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "replaceChild" with the proper type (44) 
@@ -510,7 +510,7 @@ FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on xmlDo
 PASS Document interface: xmlDoc must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
 PASS Document interface: xmlDoc must inherit property "createRange" with the proper type (25) 
 PASS Document interface: xmlDoc must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
@@ -599,7 +599,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on xmlDoc with too fe
 PASS Node interface: xmlDoc must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: xmlDoc must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "replaceChild" with the proper type (44) 
@@ -630,7 +630,7 @@ PASS Stringification of document.implementation
 PASS DOMImplementation interface: document.implementation must inherit property "createDocumentType" with the proper type (0) 
 FAIL DOMImplementation interface: calling createDocumentType(DOMString,DOMString,DOMString) on document.implementation with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: InvalidCharacterError: DOM Exception 5" ("InvalidCharacterError") expected object "TypeError" ("TypeError")
+        }" threw object "InvalidCharacterError (DOM Exception 5): The string conta..." ("InvalidCharacterError") expected object "TypeError" ("TypeError")
 PASS DOMImplementation interface: document.implementation must inherit property "createDocument" with the proper type (1) 
 FAIL DOMImplementation interface: calling createDocument(DOMString,DOMString,DocumentType) on document.implementation with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -729,7 +729,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.doctype w
 PASS Node interface: document.doctype must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: document.doctype must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "replaceChild" with the proper type (44) 
@@ -1273,7 +1273,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createTex
 PASS Node interface: document.createTextNode("abc") must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: document.createTextNode("abc") must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "replaceChild" with the proper type (44) 
@@ -1387,7 +1387,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on xmlDoc.createProce
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceChild" with the proper type (44) 
@@ -1499,7 +1499,7 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createCom
 PASS Node interface: document.createComment("abc") must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: document.createComment("abc") must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "replaceChild" with the proper type (44) 
@@ -1608,7 +1608,7 @@ FAIL Range interface: calling isPointInRange(Node,unsigned long) on document.cre
 PASS Range interface: document.createRange() must inherit property "comparePoint" with the proper type (28) 
 FAIL Range interface: calling comparePoint(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: WrongDocumentError: DOM Exception 4" ("WrongDocumentError") expected object "TypeError" ("TypeError")
+        }" threw object "WrongDocumentError (DOM Exception 4): The object is in th..." ("WrongDocumentError") expected object "TypeError" ("TypeError")
 PASS Range interface: document.createRange() must inherit property "intersectsNode" with the proper type (29) 
 PASS Range interface: calling intersectsNode(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range must be primary interface of detachedRange 
@@ -1663,7 +1663,7 @@ FAIL Range interface: calling isPointInRange(Node,unsigned long) on detachedRang
 PASS Range interface: detachedRange must inherit property "comparePoint" with the proper type (28) 
 FAIL Range interface: calling comparePoint(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "Error: WrongDocumentError: DOM Exception 4" ("WrongDocumentError") expected object "TypeError" ("TypeError")
+        }" threw object "WrongDocumentError (DOM Exception 4): The object is in th..." ("WrongDocumentError") expected object "TypeError" ("TypeError")
 PASS Range interface: detachedRange must inherit property "intersectsNode" with the proper type (29) 
 PASS Range interface: calling intersectsNode(Node) on detachedRange with too few arguments must throw TypeError 
 PASS NodeIterator interface: existence and properties of interface object 

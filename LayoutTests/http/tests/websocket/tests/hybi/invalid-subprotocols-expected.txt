@@ -8,12 +8,12 @@ WebSocket should fail if invalid subprotocols are specified
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS new WebSocket(url, 'a b') threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, 'a,b') threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, 'a\0b') threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, '\u3042') threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, ['a', 'b', 'c d']) threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, ['a', 'b', 'c', 'a']) threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, 'a b') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, 'a,b') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, 'a\0b') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, '\u3042') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, ['a', 'b', 'c d']) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, ['a', 'b', 'c', 'a']) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

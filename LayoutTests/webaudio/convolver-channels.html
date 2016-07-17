@@ -28,7 +28,7 @@ function runTest() {
         } else {
             shouldThrow(function() {
                 convolver.buffer = buffer;
-            }, "'Error: NotSupportedError: DOM Exception 9'", message);
+            }, "'NotSupportedError (DOM Exception 9): The operation is not supported.'", message);
         }
     }
 

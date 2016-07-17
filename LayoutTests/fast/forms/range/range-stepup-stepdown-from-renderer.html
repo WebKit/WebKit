@@ -10,7 +10,7 @@
 description('Check stepping-up and -down for range input from renderer.');
 
 var input = document.createElement('input');
-var invalidStateErr = '"Error: InvalidStateError: DOM Exception 11"';
+var invalidStateErr = '"InvalidStateError (DOM Exception 11): The object is in an invalid state."';
 
 function sendKey(keyName) {
     var event = document.createEvent('KeyboardEvent');

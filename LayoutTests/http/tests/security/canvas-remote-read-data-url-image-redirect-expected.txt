@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 17: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 CONSOLE MESSAGE: line 17: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-PASS: Calling getImageData() from a canvas tainted by a redirected data URL image was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling toDataURL() on a canvas tainted by a redirected data URL image was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling getImageData() from a canvas tainted by a redirected data URL image pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling toDataURL() on a canvas tainted by a redirected data URL image pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling getImageData() from a canvas tainted by a redirected data URL image was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling toDataURL() on a canvas tainted by a redirected data URL image was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling getImageData() from a canvas tainted by a redirected data URL image pattern was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling toDataURL() on a canvas tainted by a redirected data URL image pattern was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
 

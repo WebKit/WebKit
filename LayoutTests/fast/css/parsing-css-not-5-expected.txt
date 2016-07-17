@@ -4,55 +4,55 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 1 invalid selectors
-PASS document.querySelector(":not(::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(::first-line)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(::first-line)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:first-line)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:first-line)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not()") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not()") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(,)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(,)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(.123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(.123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(#123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(#123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not([])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not([])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not({})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not({})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:not())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:not())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:matches())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:matches())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:nth-child())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:nth-child())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:nth-child(2n of))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:nth-child(2n of))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:not()") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:not()") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:matches()") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:matches()") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":not(:nth-child(2n+1 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":not(:nth-child(2n+1 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS successfullyParsed is true
 

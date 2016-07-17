@@ -13,7 +13,7 @@ readystatechange 4
 progress
 error
 loadend
-Error: NetworkError: DOM Exception 19
+NetworkError (DOM Exception 19):  A network error occurred.
 
 Step 3: Cross origin request, allowed
 readystatechange 4

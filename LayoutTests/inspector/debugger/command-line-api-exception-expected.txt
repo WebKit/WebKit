@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 4: TypeError: undefined is not an object (evaluating '[].x.x')
 CONSOLE MESSAGE: line 10: ReferenceError: Can't find variable: variableThatDoesNotExist
 CONSOLE MESSAGE: line 16: SyntaxError: Unexpected token ')'
-CONSOLE MESSAGE: line 22: IndexSizeError: DOM Exception 1: The index is not in the allowed range.
+CONSOLE MESSAGE: line 22: IndexSizeError (DOM Exception 1): The index is not in the allowed range.
 CONSOLE MESSAGE: line 27: thrown string
 CONSOLE MESSAGE: line 32: 123.456
 CONSOLE MESSAGE: line 37: null
@@ -27,7 +27,7 @@ $exception => ReferenceError: Can't find variable: variableThatDoesNotExist
 $exception => SyntaxError: Unexpected token ')'
 
 -- Running test case: UncaughtDOMException
-$exception => Error: IndexSizeError: DOM Exception 1
+$exception => IndexSizeError (DOM Exception 1): The index is not in the allowed range.
 
 -- Running test case: UncaughtString
 $exception => thrown string

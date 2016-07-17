@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 9: HierarchyRequestError: DOM Exception 3: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: line 9: HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.
 This tests that we are getting the correct message for DOM Exception 3: HIERARCHY_REQUEST_ERR.

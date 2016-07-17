@@ -33,13 +33,13 @@ PASS setValueAsNumberAndGetValue(275760, 8, 8) is "275760-W37"
 PASS setValueAsNumberAndGetValue(275760, 8, 13) is "275760-W37"
 Tests to set invalid values to valueAsNumber:
 PASS input.value = ""; input.valueAsNumber = null; input.value is "1970-W01"
-PASS input.valueAsNumber = "foo" threw exception Error: NotSupportedError: DOM Exception 9.
-PASS input.valueAsNumber = NaN threw exception Error: NotSupportedError: DOM Exception 9.
-PASS input.valueAsNumber = Number.NaN threw exception Error: NotSupportedError: DOM Exception 9.
-PASS input.valueAsNumber = Infinity threw exception Error: NotSupportedError: DOM Exception 9.
-PASS input.valueAsNumber = Number.POSITIVE_INFINITY threw exception Error: NotSupportedError: DOM Exception 9.
-PASS input.valueAsNumber = Number.NEGATIVE_INFINITY threw exception Error: NotSupportedError: DOM Exception 9.
-PASS input.valueAsNumber = Date.UTC(275760, 8, 14) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS input.valueAsNumber = "foo" threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS input.valueAsNumber = NaN threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS input.valueAsNumber = Number.NaN threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS input.valueAsNumber = Infinity threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS input.valueAsNumber = Number.POSITIVE_INFINITY threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS input.valueAsNumber = Number.NEGATIVE_INFINITY threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS input.valueAsNumber = Date.UTC(275760, 8, 14) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS successfullyParsed is true
 
 TEST COMPLETE

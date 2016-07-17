@@ -24,7 +24,7 @@ function handler(){
     newChild.appendChild(target);
 }   
 document.addEventListener("DOMNodeRemoved", handler, false);
-shouldThrow("target.replaceChild(newChild, oldChild);",  "'Error: NotFoundError: DOM Exception 8'");
+shouldThrow("target.replaceChild(newChild, oldChild);",  "'NotFoundError (DOM Exception 8): The object can not be found here.'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

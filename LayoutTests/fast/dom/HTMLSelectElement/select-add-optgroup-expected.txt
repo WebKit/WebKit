@@ -16,7 +16,7 @@ list elements are = 0,1,2
 PASS testAdd2(createGroup("Y12", "Y13"), mySelect.options[1]) is "0,Y12,Y13,1,2"
 PASS testAdd2(createGroup("Y14", "Y15"), mySelect.options[3]) is "0,Y12,Y13,Y14,Y15,1,2"
 list elements are = 0,1,2
-PASS testAdd2(createOption("Y16"), createOption("Y17")) threw exception Error: NotFoundError: DOM Exception 8.
+PASS testAdd2(createOption("Y16"), createOption("Y17")) threw exception NotFoundError (DOM Exception 8): The object can not be found here..
 PASS successfullyParsed is true
 
 TEST COMPLETE

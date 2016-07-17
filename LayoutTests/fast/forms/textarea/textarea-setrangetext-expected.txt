@@ -120,7 +120,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 
 Check that setRangeText() on textareas doesn't affect scroll position.
 element.value = longString
@@ -248,7 +248,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS successfullyParsed is true
 
 TEST COMPLETE

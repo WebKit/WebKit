@@ -7,7 +7,7 @@ description('Test that calling createElementNS() throws an error when <a href="h
 // Spec: http://www.w3.org/TR/dom/#dom-document-createelementns
 
 // Step 5.
-shouldThrow("document.createElementNS(null, 'foo:bar')", '"Error: NamespaceError: DOM Exception 14"');
+shouldThrow("document.createElementNS(null, 'foo:bar')", '"NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML."');
 
 // Step 6.
 shouldNotThrow("document.createElementNS('http://www.w3.org/XML/1998/namespace', 'xml:abc')");
@@ -15,7 +15,7 @@ shouldBe("document.createElementNS('http://www.w3.org/XML/1998/namespace', 'xml:
 shouldBe("document.createElementNS('http://www.w3.org/XML/1998/namespace', 'xml:abc').nodeName", '"xml:abc"');
 shouldBe("document.createElementNS('http://www.w3.org/XML/1998/namespace', 'xml:abc').prefix", '"xml"');
 shouldBe("document.createElementNS('http://www.w3.org/XML/1998/namespace', 'xml:abc').localName", '"abc"');
-shouldThrow("document.createElementNS('http://www.w3.org/not-XML/1998/namespace', 'xml:abc')", '"Error: NamespaceError: DOM Exception 14"');
+shouldThrow("document.createElementNS('http://www.w3.org/not-XML/1998/namespace', 'xml:abc')", '"NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML."');
 
 // Step 7.
 shouldNotThrow("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns')");
@@ -23,19 +23,19 @@ shouldBe("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns').nam
 shouldBe("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns').nodeName", '"xmlns"');
 shouldBe("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns').prefix", 'null');
 shouldBe("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns').localName", '"xmlns"');
-shouldThrow("document.createElementNS('http://www.w3.org/2000/not-xmlns/', 'xmlns')", '"Error: NamespaceError: DOM Exception 14"');
+shouldThrow("document.createElementNS('http://www.w3.org/2000/not-xmlns/', 'xmlns')", '"NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML."');
 
 shouldNotThrow("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns:abc')");
 shouldBe("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns:abc').namespaceURI", '"http://www.w3.org/2000/xmlns/"');
 shouldBe("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns:abc').nodeName", '"xmlns:abc"');
 shouldBe("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns:abc').prefix", '"xmlns"');
 shouldBe("document.createElementNS('http://www.w3.org/2000/xmlns/', 'xmlns:abc').localName", '"abc"');
-shouldThrow("document.createElementNS('http://www.w3.org/2000/not-xmlns/', 'xmlns:abc')", '"Error: NamespaceError: DOM Exception 14"');
+shouldThrow("document.createElementNS('http://www.w3.org/2000/not-xmlns/', 'xmlns:abc')", '"NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML."');
 
 // Step 8.
-shouldThrow("document.createElementNS('http://www.w3.org/2000/xmlns/', 'badprefix:xmlns')", '"Error: NamespaceError: DOM Exception 14"');
+shouldThrow("document.createElementNS('http://www.w3.org/2000/xmlns/', 'badprefix:xmlns')", '"NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML."');
 
-shouldThrow("document.createElementNS('http://www.w3.org/2000/xmlns/', 'notxmlns')", '"Error: NamespaceError: DOM Exception 14"');
+shouldThrow("document.createElementNS('http://www.w3.org/2000/xmlns/', 'notxmlns')", '"NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML."');
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

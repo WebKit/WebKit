@@ -11,7 +11,7 @@ jsTestIsAsync = true;
 // try redispatching an event in the process of being dispatched with dispatchEvent
 
 function redispatchCustom(event) {
-    shouldThrow("window.dispatchEvent(event)", "'Error: InvalidStateError: DOM Exception 11'");
+    shouldThrow("window.dispatchEvent(event)", "'InvalidStateError (DOM Exception 11): The object is in an invalid state.'");
 
     redispatchCustom.wasInvoked = true;
 }
@@ -44,7 +44,7 @@ function redispatchLoad(event) {
     }
 
     redispatchLoad.dispatching = true;
-    shouldThrow("document.dispatchEvent(event)", "'Error: InvalidStateError: DOM Exception 11'");
+    shouldThrow("document.dispatchEvent(event)", "'InvalidStateError (DOM Exception 11): The object is in an invalid state.'");
     delete redispatchLoad.dispatching;
 
     finishJSTest();

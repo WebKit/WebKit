@@ -1,1 +1,1 @@
-Passed
+Failed assertion: expected exception of type SyntaxError, got: SyntaxError (DOM Exception 12): The string did not match the expected pattern.

@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS crypto.subtle.generateKey("hmac", extractable, ["sign", "verify"]) threw exception TypeError: Type error.
-PASS crypto.subtle.generateKey({name: "hmac"}, extractable, ["sign", "verify"]) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.generateKey({name: "hmac", length: undefined}, extractable, ["sign", "verify"]) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS crypto.subtle.generateKey({name: "hmac", length: {}}, extractable, ["sign", "verify"]) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS crypto.subtle.generateKey({name: "hmac"}, extractable, ["sign", "verify"]) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.generateKey({name: "hmac", length: undefined}, extractable, ["sign", "verify"]) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.generateKey({name: "hmac", length: {}}, extractable, ["sign", "verify"]) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 
 Generating a key with default length...
 PASS key.type is 'secret'

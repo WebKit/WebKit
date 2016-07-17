@@ -99,6 +99,6 @@ Successfully added item: 96
 Successfully added item: 97
 Successfully added item: 98
 Successfully added item: 99
-Error: SecurityError: DOM Exception 18
+SecurityError (DOM Exception 18): Attempt to use history.replaceState() more than 100 times per 30.000000 seconds
 Test complete
 

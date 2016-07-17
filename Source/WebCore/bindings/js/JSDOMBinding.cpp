@@ -274,6 +274,9 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     JSValue errorObject;
     switch (description.type) {
     case DOMCoreExceptionType:
+#if ENABLE(INDEXED_DATABASE)
+    case IDBDatabaseExceptionType:
+#endif
         errorObject = toJS(exec, globalObject, DOMCoreException::create(description));
         break;
     case FileExceptionType:
@@ -288,10 +291,6 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     case XPathExceptionType:
         errorObject = toJS(exec, globalObject, XPathException::create(description));
         break;
-#if ENABLE(INDEXED_DATABASE)
-    case IDBDatabaseExceptionType:
-        errorObject = toJS(exec, globalObject, DOMCoreException::createWithDescriptionAsMessage(description));
-#endif
     }
     
     ASSERT(errorObject);

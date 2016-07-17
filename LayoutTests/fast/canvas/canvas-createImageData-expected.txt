@@ -3,7 +3,7 @@ Test canvas createImageData()
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS ctx.createImageData(null) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS ctx.createImageData(null) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS imageData.width is 100
 PASS imageData.height is 50
 PASS imageData.data[32] is 255

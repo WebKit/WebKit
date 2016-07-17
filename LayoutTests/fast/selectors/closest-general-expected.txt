@@ -45,16 +45,16 @@ PASS sour.closest("a") is a
 PASS document.closest is undefined
 PASS document.closest() threw exception TypeError: document.closest is not a function. (In 'document.closest()', 'document.closest' is undefined).
 PASS theTarget.closest() threw exception TypeError: Not enough arguments.
-PASS theTarget.closest("") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest(".123") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest("    ") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest(")") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest("(") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest("()") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest("^_^") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest("{") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest("}") threw exception Error: SyntaxError: DOM Exception 12.
-PASS theTarget.closest("{}") threw exception Error: SyntaxError: DOM Exception 12.
+PASS theTarget.closest("") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest(".123") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest("    ") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest(")") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest("(") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest("()") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest("^_^") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest("{") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest("}") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS theTarget.closest("{}") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -11,7 +11,7 @@ TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.dir]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLElement.className]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.innerHTML]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.innerText]
-TEST SUCCEEDED: Exception (Error: SyntaxError: DOM Exception 12) was thrown as expected. [tested HTMLElement.contentEditable]
+TEST SUCCEEDED: Exception (SyntaxError (DOM Exception 12): The string did not match the expected pattern.) was thrown as expected. [tested HTMLElement.contentEditable]
 
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.accessKey]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.charset]

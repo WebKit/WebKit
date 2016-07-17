@@ -16,7 +16,7 @@ PASS number.size = 10; number.offsetWidth is text.offsetWidth
 PASS number.size is 10
 PASS number.size = 100; number.offsetWidth is text.offsetWidth
 PASS number.size is 100
-PASS number.size = null threw exception Error: IndexSizeError: DOM Exception 1.
+PASS number.size = null threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 
 If min or max is absent, the number input has the same width as input[type=text]
 PASS numberWidth(0, null, null) is text.offsetWidth

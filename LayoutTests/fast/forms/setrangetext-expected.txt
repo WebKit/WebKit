@@ -120,7 +120,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 
 Running tests on input with attributes: {"type":"tel"}
 
@@ -238,7 +238,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 
 Running tests on input with attributes: {"type":"text"}
 
@@ -356,7 +356,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 
 Running tests on input with attributes: {"type":"text","dir":"rtl"}
 
@@ -474,7 +474,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 
 Running tests on input with attributes: {"type":"url"}
 
@@ -592,7 +592,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 
 Check that setRangeText() on disconnected elements doesn't crash and has proper values.
 element.value = '0123456789'
@@ -602,37 +602,37 @@ FAIL element.value should be ABC0123456789. Was 0123456789.
 Running tests on input with attributes: {"type":"button"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"checkbox"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"email"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"radio"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"reset"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"submit"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS element.value is "0123456789XYZ"
 PASS successfullyParsed is true
 

@@ -13,9 +13,9 @@ CONSOLE MESSAGE: Unable to post message to http://www.example.com. Recipient has
 window.location.href = http://127.0.0.1:8000/security/postMessage/target-origin.html
 
 waiting...
-Error sending message to null. Error: SyntaxError: DOM Exception 12
-Error sending message to undefined. Error: SyntaxError: DOM Exception 12
-Error sending message to //. Error: SyntaxError: DOM Exception 12
+Error sending message to null. SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+Error sending message to undefined. SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+Error sending message to //. SyntaxError (DOM Exception 12): The string did not match the expected pattern.
 Received message: data="Received message: data="Trying origin=http://localhost:8000" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=http://localhost:8000/" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=http://localhost:8000/foo" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"

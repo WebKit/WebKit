@@ -1,9 +1,9 @@
 This tests that we throw a NAMESPACE_ERR when parsing a selector string for querySelector and querySelectorAll that contains a namespace.
 
-PASS: document.querySelector('bbb|pre') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.querySelectorAll('bbb|pre') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.body.matches('bbb|pre') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.body.webkitMatchesSelector('bbb|pre') throws: Error: NamespaceError: DOM Exception 14
+PASS: document.querySelector('bbb|pre') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.querySelectorAll('bbb|pre') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.body.matches('bbb|pre') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.body.webkitMatchesSelector('bbb|pre') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
 PASS: document.querySelector('*|pre') did not throw
 PASS: document.querySelectorAll('*|pre') did not throw
 PASS: document.body.matches('*|pre') did not throw
@@ -12,10 +12,10 @@ PASS: document.querySelector('|pre') did not throw
 PASS: document.querySelectorAll('|pre') did not throw
 PASS: document.body.matches('|pre') did not throw
 PASS: document.body.webkitMatchesSelector('|pre') did not throw
-PASS: document.querySelector('div bbb|pre') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.querySelectorAll('div bbb|pre') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.body.matches('div bbb|pre') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.body.webkitMatchesSelector('div bbb|pre') throws: Error: NamespaceError: DOM Exception 14
+PASS: document.querySelector('div bbb|pre') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.querySelectorAll('div bbb|pre') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.body.matches('div bbb|pre') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.body.webkitMatchesSelector('div bbb|pre') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
 PASS: document.querySelector('div *|pre') did not throw
 PASS: document.querySelectorAll('div *|pre') did not throw
 PASS: document.body.matches('div *|pre') did not throw
@@ -24,10 +24,10 @@ PASS: document.querySelector('div |pre') did not throw
 PASS: document.querySelectorAll('div |pre') did not throw
 PASS: document.body.matches('div |pre') did not throw
 PASS: document.body.webkitMatchesSelector('div |pre') did not throw
-PASS: document.querySelector('[bbb|name=value]') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.querySelectorAll('[bbb|name=value]') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.body.matches('[bbb|name=value]') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.body.webkitMatchesSelector('[bbb|name=value]') throws: Error: NamespaceError: DOM Exception 14
+PASS: document.querySelector('[bbb|name=value]') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.querySelectorAll('[bbb|name=value]') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.body.matches('[bbb|name=value]') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.body.webkitMatchesSelector('[bbb|name=value]') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
 PASS: document.querySelector('[*|name=value]') did not throw
 PASS: document.querySelectorAll('[*|name=value]') did not throw
 PASS: document.body.matches('[*|name=value]') did not throw
@@ -36,11 +36,11 @@ PASS: document.querySelector('[|name=value]') did not throw
 PASS: document.querySelectorAll('[|name=value]') did not throw
 PASS: document.body.matches('[|name=value]') did not throw
 PASS: document.body.webkitMatchesSelector('[|name=value]') did not throw
-PASS: document.querySelector(':-webkit-any(bbb|pre)') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.querySelector('div [bbb|name=value]') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.querySelectorAll('div [bbb|name=value]') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.body.matches('div [bbb|name=value]') throws: Error: NamespaceError: DOM Exception 14
-PASS: document.body.webkitMatchesSelector('div [bbb|name=value]') throws: Error: NamespaceError: DOM Exception 14
+PASS: document.querySelector(':-webkit-any(bbb|pre)') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.querySelector('div [bbb|name=value]') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.querySelectorAll('div [bbb|name=value]') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.body.matches('div [bbb|name=value]') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
+PASS: document.body.webkitMatchesSelector('div [bbb|name=value]') throws: NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML.
 PASS: document.querySelector('div [*|name=value]') did not throw
 PASS: document.querySelectorAll('div [*|name=value]') did not throw
 PASS: document.body.matches('div [*|name=value]') did not throw

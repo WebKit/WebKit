@@ -4,10 +4,10 @@ PASS: Calling toDataURL() on an untainted canvas was allowed.
 
 
 Tainted canvas:
-PASS: Calling texImage2D() with a tainted image was not allowed: Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling texImage2D() with a tainted image was not allowed: Threw error: SecurityError (DOM Exception 18): The operation is insecure..
 PASS: Calling readPixels() on a canvas where tainting was attempted by a remote image was allowed.
 PASS: Calling toDataURL() on a canvas where tainting was attempted by a remote image was allowed.
-PASS: Calling texImage2D() with a tainted canvas was not allowed: Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling texImage2D() with a tainted canvas was not allowed: Threw error: SecurityError (DOM Exception 18): The operation is insecure..
 PASS: Calling readPixels() on a canvas where tainting was attempted by a tainted canvas was allowed.
 PASS: Calling toDataURL() on a canvas where tainting was attempted by a tainted canvas was allowed.
 

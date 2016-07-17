@@ -20,7 +20,7 @@ PASS length.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
 Reset to 2px
 
 Try converting from px to percentage, should fail as the SVGLength is not associated with a SVGSVGElement, and thus no viewport information is available
-PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS length.valueAsString is "2px"
 PASS length.value is 2
 PASS length.valueInSpecifiedUnits is 2
@@ -29,7 +29,7 @@ PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
 Reset to 2px
 
 Try converting from px to ems, should fail as the SVGLength is not associated with a SVGSVGElement, and thus no font-size information is available
-PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_EMS) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_EMS) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS length.valueAsString is "2px"
 PASS length.value is 2
 PASS length.valueInSpecifiedUnits is 2
@@ -38,7 +38,7 @@ PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
 Reset to 2px
 
 Try converting from px to exs, should fail as the SVGLength is not associated with a SVGSVGElement, and thus no font-size information is available
-PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_EXS) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_EXS) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS length.valueAsString is "2px"
 PASS length.value is 2
 PASS length.valueInSpecifiedUnits is 2

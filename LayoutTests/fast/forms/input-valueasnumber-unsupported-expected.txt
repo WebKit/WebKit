@@ -5,52 +5,52 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Check for type=button
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=checkbox
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=color
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=email
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=file
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=hidden
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=image
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=khtml_isindex
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=password
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=radio
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=reset
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=search
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=submit
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=tel
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=text
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=url
 PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS successfullyParsed is true
 
 TEST COMPLETE

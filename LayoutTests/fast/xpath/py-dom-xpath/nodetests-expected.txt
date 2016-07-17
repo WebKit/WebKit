@@ -1,7 +1,7 @@
 PASS /descendant::item
 PASS /descendant::a:item
 PASS /descendant::b:*
-PASS docns.evaluate("//x:*", docns, nsResolver, XPathResult.ANY_TYPE, null) threw exception Error: NamespaceError: DOM Exception 14.
+PASS docns.evaluate("//x:*", docns, nsResolver, XPathResult.ANY_TYPE, null) threw exception NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML..
 PASS doc/child::*
 PASS a:doc/child::*
 PASS //attribute::color

@@ -27,7 +27,7 @@ table.tHead = thead
 PASS table.tHead is thead
 PASS table.tHead = document.body threw exception TypeError: The HTMLTableElement.tHead attribute must be an instance of HTMLTableSectionElement.
 PASS table.tHead is thead
-PASS table.tHead = tfoot threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS table.tHead = tfoot threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
 PASS table.tHead is thead
 table.tHead = null
 PASS table.tHead is null
@@ -42,7 +42,7 @@ table.tFoot = tfoot
 PASS table.tFoot is tfoot
 PASS table.tFoot = document.body threw exception TypeError: The HTMLTableElement.tFoot attribute must be an instance of HTMLTableSectionElement.
 PASS table.tFoot is tfoot
-PASS table.tFoot = thead threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS table.tFoot = thead threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
 PASS table.tFoot is tfoot
 table.tFoot = null
 PASS table.tFoot is null

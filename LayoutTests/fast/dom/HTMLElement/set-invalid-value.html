@@ -11,13 +11,13 @@
 <script>
 description('When contentEditable is set to invalid string, SYNTAX_ERR exception (code: 12) must be raised.')
 
-shouldThrow("document.getElementById('div').contentEditable = 'abc'", '"Error: SyntaxError: DOM Exception 12"');
+shouldThrow("document.getElementById('div').contentEditable = 'abc'", '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
 shouldBe('document.getElementById("div").getAttribute("contentEditable")','"true"');
 shouldBe('document.getElementById("div").contentEditable', '"true"');
 shouldBe('document.getElementById("div").isContentEditable', 'true');
 shouldBe('window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify")', '"read-write"');
 
-shouldThrow("document.getElementById('div').contentEditable = ''", '"Error: SyntaxError: DOM Exception 12"');
+shouldThrow("document.getElementById('div').contentEditable = ''", '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
 shouldBe('document.getElementById("div").getAttribute("contentEditable")','"true"');
 shouldBe('document.getElementById("div").contentEditable', '"true"');
 shouldBe('document.getElementById("div").isContentEditable', 'true');

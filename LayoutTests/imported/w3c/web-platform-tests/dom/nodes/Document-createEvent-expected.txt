@@ -1,23 +1,23 @@
 
-FAIL AnimationEvent should be an alias for AnimationEvent. NotSupportedError: DOM Exception 9
+FAIL AnimationEvent should be an alias for AnimationEvent. The operation is not supported.
 FAIL createEvent('AnimationEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL animationevent should be an alias for AnimationEvent. NotSupportedError: DOM Exception 9
+FAIL animationevent should be an alias for AnimationEvent. The operation is not supported.
 FAIL createEvent('animationevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL ANIMATIONEVENT should be an alias for AnimationEvent. NotSupportedError: DOM Exception 9
+FAIL ANIMATIONEVENT should be an alias for AnimationEvent. The operation is not supported.
 FAIL createEvent('ANIMATIONEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "AnimationEvents" 
-FAIL BeforeUnloadEvent should be an alias for BeforeUnloadEvent. NotSupportedError: DOM Exception 9
+FAIL BeforeUnloadEvent should be an alias for BeforeUnloadEvent. The operation is not supported.
 FAIL createEvent('BeforeUnloadEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL beforeunloadevent should be an alias for BeforeUnloadEvent. NotSupportedError: DOM Exception 9
+FAIL beforeunloadevent should be an alias for BeforeUnloadEvent. The operation is not supported.
 FAIL createEvent('beforeunloadevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL BEFOREUNLOADEVENT should be an alias for BeforeUnloadEvent. NotSupportedError: DOM Exception 9
+FAIL BEFOREUNLOADEVENT should be an alias for BeforeUnloadEvent. The operation is not supported.
 FAIL createEvent('BEFOREUNLOADEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "BeforeUnloadEvents" 
-FAIL CloseEvent should be an alias for CloseEvent. NotSupportedError: DOM Exception 9
+FAIL CloseEvent should be an alias for CloseEvent. The operation is not supported.
 FAIL createEvent('CloseEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL closeevent should be an alias for CloseEvent. NotSupportedError: DOM Exception 9
+FAIL closeevent should be an alias for CloseEvent. The operation is not supported.
 FAIL createEvent('closeevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL CLOSEEVENT should be an alias for CloseEvent. NotSupportedError: DOM Exception 9
+FAIL CLOSEEVENT should be an alias for CloseEvent. The operation is not supported.
 FAIL createEvent('CLOSEEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "CloseEvents" 
 PASS CompositionEvent should be an alias for CompositionEvent. 
@@ -34,32 +34,32 @@ PASS createEvent('customevent') should be initialized correctly.
 PASS CUSTOMEVENT should be an alias for CustomEvent. 
 PASS createEvent('CUSTOMEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "CustomEvents" 
-FAIL DeviceMotionEvent should be an alias for DeviceMotionEvent. NotSupportedError: DOM Exception 9
+FAIL DeviceMotionEvent should be an alias for DeviceMotionEvent. The operation is not supported.
 FAIL createEvent('DeviceMotionEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL devicemotionevent should be an alias for DeviceMotionEvent. NotSupportedError: DOM Exception 9
+FAIL devicemotionevent should be an alias for DeviceMotionEvent. The operation is not supported.
 FAIL createEvent('devicemotionevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL DEVICEMOTIONEVENT should be an alias for DeviceMotionEvent. NotSupportedError: DOM Exception 9
+FAIL DEVICEMOTIONEVENT should be an alias for DeviceMotionEvent. The operation is not supported.
 FAIL createEvent('DEVICEMOTIONEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "DeviceMotionEvents" 
-FAIL DeviceOrientationEvent should be an alias for DeviceOrientationEvent. NotSupportedError: DOM Exception 9
+FAIL DeviceOrientationEvent should be an alias for DeviceOrientationEvent. The operation is not supported.
 FAIL createEvent('DeviceOrientationEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL deviceorientationevent should be an alias for DeviceOrientationEvent. NotSupportedError: DOM Exception 9
+FAIL deviceorientationevent should be an alias for DeviceOrientationEvent. The operation is not supported.
 FAIL createEvent('deviceorientationevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL DEVICEORIENTATIONEVENT should be an alias for DeviceOrientationEvent. NotSupportedError: DOM Exception 9
+FAIL DEVICEORIENTATIONEVENT should be an alias for DeviceOrientationEvent. The operation is not supported.
 FAIL createEvent('DEVICEORIENTATIONEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "DeviceOrientationEvents" 
-FAIL DragEvent should be an alias for DragEvent. NotSupportedError: DOM Exception 9
+FAIL DragEvent should be an alias for DragEvent. The operation is not supported.
 FAIL createEvent('DragEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL dragevent should be an alias for DragEvent. NotSupportedError: DOM Exception 9
+FAIL dragevent should be an alias for DragEvent. The operation is not supported.
 FAIL createEvent('dragevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL DRAGEVENT should be an alias for DragEvent. NotSupportedError: DOM Exception 9
+FAIL DRAGEVENT should be an alias for DragEvent. The operation is not supported.
 FAIL createEvent('DRAGEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "DragEvents" 
-FAIL ErrorEvent should be an alias for ErrorEvent. NotSupportedError: DOM Exception 9
+FAIL ErrorEvent should be an alias for ErrorEvent. The operation is not supported.
 FAIL createEvent('ErrorEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL errorevent should be an alias for ErrorEvent. NotSupportedError: DOM Exception 9
+FAIL errorevent should be an alias for ErrorEvent. The operation is not supported.
 FAIL createEvent('errorevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL ERROREVENT should be an alias for ErrorEvent. NotSupportedError: DOM Exception 9
+FAIL ERROREVENT should be an alias for ErrorEvent. The operation is not supported.
 FAIL createEvent('ERROREVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "ErrorEvents" 
 PASS Event should be an alias for Event. 
@@ -74,11 +74,11 @@ PASS events should be an alias for Event.
 PASS createEvent('events') should be initialized correctly. 
 PASS EVENTS should be an alias for Event. 
 PASS createEvent('EVENTS') should be initialized correctly. 
-FAIL FocusEvent should be an alias for FocusEvent. NotSupportedError: DOM Exception 9
+FAIL FocusEvent should be an alias for FocusEvent. The operation is not supported.
 FAIL createEvent('FocusEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL focusevent should be an alias for FocusEvent. NotSupportedError: DOM Exception 9
+FAIL focusevent should be an alias for FocusEvent. The operation is not supported.
 FAIL createEvent('focusevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL FOCUSEVENT should be an alias for FocusEvent. NotSupportedError: DOM Exception 9
+FAIL FOCUSEVENT should be an alias for FocusEvent. The operation is not supported.
 FAIL createEvent('FOCUSEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "FocusEvents" 
 PASS HashChangeEvent should be an alias for HashChangeEvent. 
@@ -94,11 +94,11 @@ PASS htmlevents should be an alias for Event.
 PASS createEvent('htmlevents') should be initialized correctly. 
 PASS HTMLEVENTS should be an alias for Event. 
 PASS createEvent('HTMLEVENTS') should be initialized correctly. 
-FAIL IDBVersionChangeEvent should be an alias for IDBVersionChangeEvent. NotSupportedError: DOM Exception 9
+FAIL IDBVersionChangeEvent should be an alias for IDBVersionChangeEvent. The operation is not supported.
 FAIL createEvent('IDBVersionChangeEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL idbversionchangeevent should be an alias for IDBVersionChangeEvent. NotSupportedError: DOM Exception 9
+FAIL idbversionchangeevent should be an alias for IDBVersionChangeEvent. The operation is not supported.
 FAIL createEvent('idbversionchangeevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL IDBVERSIONCHANGEEVENT should be an alias for IDBVersionChangeEvent. NotSupportedError: DOM Exception 9
+FAIL IDBVERSIONCHANGEEVENT should be an alias for IDBVersionChangeEvent. The operation is not supported.
 FAIL createEvent('IDBVERSIONCHANGEEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "IDBVersionChangeEvents" 
 PASS KeyboardEvent should be an alias for KeyboardEvent. 
@@ -128,25 +128,25 @@ PASS mouseevents should be an alias for MouseEvent.
 PASS createEvent('mouseevents') should be initialized correctly. 
 PASS MOUSEEVENTS should be an alias for MouseEvent. 
 PASS createEvent('MOUSEEVENTS') should be initialized correctly. 
-FAIL PageTransitionEvent should be an alias for PageTransitionEvent. NotSupportedError: DOM Exception 9
+FAIL PageTransitionEvent should be an alias for PageTransitionEvent. The operation is not supported.
 FAIL createEvent('PageTransitionEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL pagetransitionevent should be an alias for PageTransitionEvent. NotSupportedError: DOM Exception 9
+FAIL pagetransitionevent should be an alias for PageTransitionEvent. The operation is not supported.
 FAIL createEvent('pagetransitionevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL PAGETRANSITIONEVENT should be an alias for PageTransitionEvent. NotSupportedError: DOM Exception 9
+FAIL PAGETRANSITIONEVENT should be an alias for PageTransitionEvent. The operation is not supported.
 FAIL createEvent('PAGETRANSITIONEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "PageTransitionEvents" 
-FAIL PopStateEvent should be an alias for PopStateEvent. NotSupportedError: DOM Exception 9
+FAIL PopStateEvent should be an alias for PopStateEvent. The operation is not supported.
 FAIL createEvent('PopStateEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL popstateevent should be an alias for PopStateEvent. NotSupportedError: DOM Exception 9
+FAIL popstateevent should be an alias for PopStateEvent. The operation is not supported.
 FAIL createEvent('popstateevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL POPSTATEEVENT should be an alias for PopStateEvent. NotSupportedError: DOM Exception 9
+FAIL POPSTATEEVENT should be an alias for PopStateEvent. The operation is not supported.
 FAIL createEvent('POPSTATEEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "PopStateEvents" 
-FAIL ProgressEvent should be an alias for ProgressEvent. NotSupportedError: DOM Exception 9
+FAIL ProgressEvent should be an alias for ProgressEvent. The operation is not supported.
 FAIL createEvent('ProgressEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL progressevent should be an alias for ProgressEvent. NotSupportedError: DOM Exception 9
+FAIL progressevent should be an alias for ProgressEvent. The operation is not supported.
 FAIL createEvent('progressevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL PROGRESSEVENT should be an alias for ProgressEvent. NotSupportedError: DOM Exception 9
+FAIL PROGRESSEVENT should be an alias for ProgressEvent. The operation is not supported.
 FAIL createEvent('PROGRESSEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "ProgressEvents" 
 PASS StorageEvent should be an alias for StorageEvent. 
@@ -156,17 +156,17 @@ PASS createEvent('storageevent') should be initialized correctly.
 PASS STORAGEEVENT should be an alias for StorageEvent. 
 PASS createEvent('STORAGEEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "StorageEvents" 
-FAIL SVGEvents should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL SVGEvents should be an alias for Event. The operation is not supported.
 FAIL createEvent('SVGEvents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL svgevents should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL svgevents should be an alias for Event. The operation is not supported.
 FAIL createEvent('svgevents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL SVGEVENTS should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL SVGEVENTS should be an alias for Event. The operation is not supported.
 FAIL createEvent('SVGEVENTS') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL SVGZoomEvent should be an alias for SVGZoomEvent. NotSupportedError: DOM Exception 9
+FAIL SVGZoomEvent should be an alias for SVGZoomEvent. The operation is not supported.
 FAIL createEvent('SVGZoomEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL svgzoomevent should be an alias for SVGZoomEvent. NotSupportedError: DOM Exception 9
+FAIL svgzoomevent should be an alias for SVGZoomEvent. The operation is not supported.
 FAIL createEvent('svgzoomevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL SVGZOOMEVENT should be an alias for SVGZoomEvent. NotSupportedError: DOM Exception 9
+FAIL SVGZOOMEVENT should be an alias for SVGZoomEvent. The operation is not supported.
 FAIL createEvent('SVGZOOMEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS SVGZoomEvents should be an alias for SVGZoomEvent. 
 PASS createEvent('SVGZoomEvents') should be initialized correctly. 
@@ -181,25 +181,25 @@ PASS createEvent('textevent') should be initialized correctly.
 FAIL TEXTEVENT should be an alias for CompositionEvent. assert_true: expected true got false
 PASS createEvent('TEXTEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TextEvents" 
-FAIL TouchEvent should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
+FAIL TouchEvent should be an alias for TouchEvent. The operation is not supported.
 FAIL createEvent('TouchEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL touchevent should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
+FAIL touchevent should be an alias for TouchEvent. The operation is not supported.
 FAIL createEvent('touchevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL TOUCHEVENT should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
+FAIL TOUCHEVENT should be an alias for TouchEvent. The operation is not supported.
 FAIL createEvent('TOUCHEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TouchEvents" 
-FAIL TrackEvent should be an alias for TrackEvent. NotSupportedError: DOM Exception 9
+FAIL TrackEvent should be an alias for TrackEvent. The operation is not supported.
 FAIL createEvent('TrackEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL trackevent should be an alias for TrackEvent. NotSupportedError: DOM Exception 9
+FAIL trackevent should be an alias for TrackEvent. The operation is not supported.
 FAIL createEvent('trackevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL TRACKEVENT should be an alias for TrackEvent. NotSupportedError: DOM Exception 9
+FAIL TRACKEVENT should be an alias for TrackEvent. The operation is not supported.
 FAIL createEvent('TRACKEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TrackEvents" 
-FAIL TransitionEvent should be an alias for TransitionEvent. NotSupportedError: DOM Exception 9
+FAIL TransitionEvent should be an alias for TransitionEvent. The operation is not supported.
 FAIL createEvent('TransitionEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL transitionevent should be an alias for TransitionEvent. NotSupportedError: DOM Exception 9
+FAIL transitionevent should be an alias for TransitionEvent. The operation is not supported.
 FAIL createEvent('transitionevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL TRANSITIONEVENT should be an alias for TransitionEvent. NotSupportedError: DOM Exception 9
+FAIL TRANSITIONEVENT should be an alias for TransitionEvent. The operation is not supported.
 FAIL createEvent('TRANSITIONEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TransitionEvents" 
 PASS UIEvent should be an alias for UIEvent. 
@@ -214,11 +214,11 @@ PASS uievents should be an alias for UIEvent.
 PASS createEvent('uievents') should be initialized correctly. 
 PASS UIEVENTS should be an alias for UIEvent. 
 PASS createEvent('UIEVENTS') should be initialized correctly. 
-FAIL WebGLContextEvent should be an alias for WebGLContextEvent. NotSupportedError: DOM Exception 9
+FAIL WebGLContextEvent should be an alias for WebGLContextEvent. The operation is not supported.
 FAIL createEvent('WebGLContextEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL webglcontextevent should be an alias for WebGLContextEvent. NotSupportedError: DOM Exception 9
+FAIL webglcontextevent should be an alias for WebGLContextEvent. The operation is not supported.
 FAIL createEvent('webglcontextevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL WEBGLCONTEXTEVENT should be an alias for WebGLContextEvent. NotSupportedError: DOM Exception 9
+FAIL WEBGLCONTEXTEVENT should be an alias for WebGLContextEvent. The operation is not supported.
 FAIL createEvent('WEBGLCONTEXTEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "WebGLContextEvents" 
 PASS WheelEvent should be an alias for WheelEvent. 

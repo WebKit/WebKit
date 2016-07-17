@@ -4,629 +4,629 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Test invalid selectors:
-PASS document.querySelector(":nth-last-child(even of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(evenof .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(evenof .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(oddof .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(oddof .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(nof .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(nof .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-nof .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-nof .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3of .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3of .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3of .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3of .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0of .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0of .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0of .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0of .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0nof .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0nof .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5of .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5of .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5of .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5of .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5of .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5of .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of    )") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of.class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of.class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5of .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5of .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 empty .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 empty .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 from .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 from .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 to .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 to .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 webkit .class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 webkit .class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of ::first-letter)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of ::first-letter)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of ::after)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of ::after)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of ::-webkit-custom)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of ::-webkit-custom)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of .foo, ::before)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of .foo, ::before)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of ::before, .foo)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of ::before, .foo)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of -webkit-any(::before, .foo))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of -webkit-any(::before, .foo))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of :nth-last-child(2n+1 of ::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of :nth-last-child(2n+1 of ::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of :not(::before))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of :not(::before))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(even of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(odd of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-n of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3 of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3 of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n+0 of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(n-0 of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(0n of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n+5 of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n+5 of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(3n-5 of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of .123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of .123class)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of #123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of #123id)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of [])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of [])") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of ())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of ())") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of ))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of ))") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of {})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of {})") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of })") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector(":nth-last-child(-3n-5 of })") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS successfullyParsed is true
 

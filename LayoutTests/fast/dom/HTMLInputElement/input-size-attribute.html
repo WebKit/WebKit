@@ -23,7 +23,7 @@ shouldBe("input.removeAttribute('size'); input.size", "20");
 shouldBe("input.setAttribute('size', '0'); input.size", "20");
 shouldBe("input.setAttribute('size', '10'); input.size", "10");
 
-shouldThrow("input.size = 0", "'Error: IndexSizeError: DOM Exception 1'");
+shouldThrow("input.size = 0", "'IndexSizeError (DOM Exception 1): The index is not in the allowed range.'");
 
 </script>
 </body>

@@ -3,7 +3,7 @@ This tests the XMLHttpRequest responseXML loading an XML document with responseT
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS xhr.responseXML threw exception Error: InvalidStateError: DOM Exception 11.
+PASS xhr.responseXML threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS successfullyParsed is true
 
 TEST COMPLETE

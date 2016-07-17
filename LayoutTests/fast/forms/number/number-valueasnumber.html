@@ -62,18 +62,18 @@ shouldBe('setValueAsNumberAndGetValue(1.2e10)', '"12000000000"');
 shouldBe('setValueAsNumberAndGetValue(1.2e-10)', '"1.2e-10"');
 shouldBe('setValueAsNumberAndGetValue(1.2345678901234567e+38)', '"1.2345678901234567e+38"');
 shouldBe('setValueAsNumberAndGetValue("-3.40282346e+38")', '"-3.40282346e+38"');
-shouldThrow('setValueAsNumberAndGetValue("-3.40282348e+38")', '"Error: InvalidStateError: DOM Exception 11"');
+shouldThrow('setValueAsNumberAndGetValue("-3.40282348e+38")', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
 shouldBe('setValueAsNumberAndGetValue("3.40282346e+38")', '"3.40282346e+38"');
-shouldThrow('setValueAsNumberAndGetValue("3.40282348e+38")', '"Error: InvalidStateError: DOM Exception 11"');
+shouldThrow('setValueAsNumberAndGetValue("3.40282348e+38")', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('setValueAsNumberAndGetValue(null)', '"0"');
-shouldThrow('setValueAsNumberAndGetValue("foo")', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(NaN)', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(Number.NaN)', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(Infinity)', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY)', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY)', '"Error: NotSupportedError: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue("foo")', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('setValueAsNumberAndGetValue(NaN)', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('setValueAsNumberAndGetValue(Number.NaN)', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('setValueAsNumberAndGetValue(Infinity)', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY)', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY)', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

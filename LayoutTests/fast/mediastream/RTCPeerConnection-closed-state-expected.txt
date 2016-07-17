@@ -17,13 +17,13 @@ PASS addIceCandidate rejected on closed state
 PASS getStats rejected on closed state
 
 Test non-promise functions
-PASS pc.addTrack(stream.getTracks()[0], stream) threw exception Error: InvalidStateError: DOM Exception 11.
-PASS pc.removeTrack(sender) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.addTrack(stream.getTracks()[0], stream) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
+PASS pc.removeTrack(sender) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.getSenders() did not throw exception.
 PASS pc.getReceivers() did not throw exception.
 PASS pc.getConfiguration() did not throw exception.
-PASS pc.setConfiguration({}) threw exception Error: InvalidStateError: DOM Exception 11.
-PASS pc.createDataChannel("foo") threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.setConfiguration({}) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
+PASS pc.createDataChannel("foo") threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.close() did not throw exception.
 
 Test attributes

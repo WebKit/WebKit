@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS div.insertAdjacentHTML('beforeBegin', 'text') is undefined.
 PASS div.insertAdjacentHTML('afterEnd', 'text') is undefined.
-PASS div.insertAdjacentHTML('FOO', 'text') threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.documentElement.insertAdjacentHTML('afterEnd', 'text') threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS div.insertAdjacentHTML('FOO', 'text') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS document.documentElement.insertAdjacentHTML('afterEnd', 'text') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 9: NotFoundError: DOM Exception 8: The object can not be found here.
+CONSOLE MESSAGE: line 9: NotFoundError (DOM Exception 8): The object can not be found here.
 This tests that we are getting the correct message for DOM Exception 8: NOT_FOUND_ERR.

@@ -42,12 +42,12 @@ PASS setValueAsNumberAndGetValue(1.2e-10) is "0"
 PASS setValueAsNumberAndGetValue(1.2345678901234567e+38) is "100"
 Tests to set invalid values to valueAsNumber:
 PASS setValueAsNumberAndGetValue(null) is "0"
-PASS setValueAsNumberAndGetValue("foo") threw exception Error: NotSupportedError: DOM Exception 9.
-PASS setValueAsNumberAndGetValue(NaN) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS setValueAsNumberAndGetValue(Number.NaN) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS setValueAsNumberAndGetValue(Infinity) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS setValueAsNumberAndGetValue("foo") threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS setValueAsNumberAndGetValue(NaN) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS setValueAsNumberAndGetValue(Number.NaN) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS setValueAsNumberAndGetValue(Infinity) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS successfullyParsed is true
 
 TEST COMPLETE

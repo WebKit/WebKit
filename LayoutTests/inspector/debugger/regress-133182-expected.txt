@@ -15,7 +15,7 @@ CONSOLE MESSAGE: line 57: [3] Paused and about to step
 CONSOLE MESSAGE: line 69: [3] Resumed
 CONSOLE MESSAGE: line 61: [3] Paused after stepping
 CONSOLE MESSAGE: line 69: [3] Resumed
-CONSOLE MESSAGE: line 8: NotFoundError: DOM Exception 8: The object can not be found here.
+CONSOLE MESSAGE: line 8: NotFoundError (DOM Exception 8): The object can not be found here.
 CONSOLE MESSAGE: line 56: [4] Testing statement 'exceptionInHostFunction();'
 CONSOLE MESSAGE: line 57: [4] Paused and about to step
 CONSOLE MESSAGE: line 69: [4] Resumed

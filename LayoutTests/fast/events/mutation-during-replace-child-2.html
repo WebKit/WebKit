@@ -28,7 +28,7 @@ function handler(){
     newChild.appendChild(target);
 }   
 document.addEventListener("DOMNodeRemoved", handler, false);
-shouldThrow("target.replaceChild(newChild, oldChild);",  "'Error: HierarchyRequestError: DOM Exception 3'");
+shouldThrow("target.replaceChild(newChild, oldChild);",  "'HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

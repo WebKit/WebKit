@@ -8,12 +8,12 @@ PASS: Calling toDataURL() on an untainted canvas was allowed.
 
 
 Tainted canvas:
-PASS: Calling getImageData() from a canvas tainted by a remote image was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling toDataURL() on a canvas tainted by a remote image was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling getImageData() from a canvas tainted by a tainted canvas was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling toDataURL() on a canvas tainted by a tainted canvas was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling getImageData() from a canvas tainted by a remote image tainted pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling toDataURL() on a canvas tainted by a remote image tainted pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling getImageData() from a canvas tainted by a tainted canvas pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
-PASS: Calling toDataURL() on a canvas tainted by a tainted canvas pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling getImageData() from a canvas tainted by a remote image was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling toDataURL() on a canvas tainted by a remote image was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling getImageData() from a canvas tainted by a tainted canvas was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling toDataURL() on a canvas tainted by a tainted canvas was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling getImageData() from a canvas tainted by a remote image tainted pattern was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling toDataURL() on a canvas tainted by a remote image tainted pattern was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling getImageData() from a canvas tainted by a tainted canvas pattern was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
+PASS: Calling toDataURL() on a canvas tainted by a tainted canvas pattern was not allowed - Threw error: SecurityError (DOM Exception 18): The operation is insecure..
 

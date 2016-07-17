@@ -10,7 +10,7 @@ PASS Month value can be empty string.
 FAIL When value attribute has two digits year value, the value,which is invalid, must return empty string. assert_equals: expected "" but got "13-06"
 FAIL When value is set with invalid value, the value must return empty string. assert_equals: expected "" but got "invalid value"
 FAIL When value is given invalid value to non-empty valid string, the value must be same as before. assert_equals: expected "2013-05" but got "invalid value"
-FAIL When step attribute is given invalid value, it must ignore the invalid value and use defaul value instead. InvalidStateError: DOM Exception 11
+FAIL When step attribute is given invalid value, it must ignore the invalid value and use defaul value instead. The object is in an invalid state.
 FAIL Month should be <= 13: If the value of the element is not a valid month string, then set it to the empty string instead. assert_equals: expected "" but got "2013-13"
 FAIL Month should be > 0: If the value of the element is not a valid month string, then set it to the empty string instead.> assert_equals: expected "" but got "2013-00"
 

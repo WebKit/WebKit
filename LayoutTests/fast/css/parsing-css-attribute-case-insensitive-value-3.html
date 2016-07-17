@@ -18,10 +18,10 @@ function testInvalidSelectorCSSOMSerialization(selectorString) {
 }
 
 function testInvalidSelector(selectorString) {
-    shouldThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"') + '")', '"Error: SyntaxError: DOM Exception 12"');
-    shouldThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[|') + '")', '"Error: SyntaxError: DOM Exception 12"');
-    shouldThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[*|') + '")', '"Error: SyntaxError: DOM Exception 12"');
-    shouldThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[WebKit|') + '")', '"Error: SyntaxError: DOM Exception 12"');
+    shouldThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"') + '")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
+    shouldThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[|') + '")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
+    shouldThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[*|') + '")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
+    shouldThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[WebKit|') + '")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
 
     testInvalidSelectorCSSOMSerialization(selectorString);
     testInvalidSelectorCSSOMSerialization(selectorString.replace('[', '[|'));

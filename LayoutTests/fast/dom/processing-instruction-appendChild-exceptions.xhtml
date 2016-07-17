@@ -7,9 +7,9 @@ description("Test that appropriate exceptions are thrown when adding children to
 var pi = document.createProcessingInstruction('target', 'data');
 shouldThrow("pi.appendChild(null)");
 var div = document.createElement('div');
-shouldThrow("pi.appendChild(div)", "'Error: HierarchyRequestError: DOM Exception 3'");
+shouldThrow("pi.appendChild(div)", "'HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.'");
 var textNode = document.createTextNode('sometext');
-shouldThrow("pi.appendChild(textNode)", "'Error: HierarchyRequestError: DOM Exception 3'");
+shouldThrow("pi.appendChild(textNode)", "'HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.'");
 ]]>
 </script>
 <script src="../../resources/js-test-post.js"></script>

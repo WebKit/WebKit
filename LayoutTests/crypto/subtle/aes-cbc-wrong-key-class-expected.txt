@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Importing a raw HMAC key from string literal...
 Using the key to encrypt plaintext...
-PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, plaintext) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, plaintext) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -10,16 +10,16 @@ Test WebSocket URL parsing.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS new WebSocket() threw exception TypeError: Not enough arguments.
-PASS new WebSocket(null) threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://javascript:a") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("/applet") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("javascript:a") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1:25/") threw exception Error: SecurityError: DOM Exception 18.
+PASS new WebSocket(null) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://javascript:a") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("/applet") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("javascript:a") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://127.0.0.1:25/") threw exception SecurityError (DOM Exception 18): The operation is insecure..
 PASS (new WebSocket("ws://127.0.0.1:8880/a/../websocket/tests/hybi/simple")).URL is "ws://127.0.0.1:8880/websocket/tests/hybi/simple"
 PASS (new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?")).URL is "ws://127.0.0.1:8880/websocket/tests/hybi/simple?"
 PASS (new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v")).URL is "ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v"
-PASS new WebSocket("ws://127.0.0.1/path#") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1/path#fragment") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket("ws://127.0.0.1/path#") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket("ws://127.0.0.1/path#fragment") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

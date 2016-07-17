@@ -10,14 +10,14 @@
 description('Check stepUp() and stepDown() bahevior for unsupported types.');
 
 var input = document.createElement('input');
-var invalidStateErr = '"Error: InvalidStateError: DOM Exception 11"';
+var invalidStateErr = '"InvalidStateError (DOM Exception 11): The object is in an invalid state."';
 
 debug('Unsupported type');
 input.type = 'text';
-shouldThrow('input.step = "3"; input.min = ""; input.max = ""; input.value = "2"; input.stepDown()', '"Error: InvalidStateError: DOM Exception 11"');
-shouldThrow('input.stepDown(0)', '"Error: InvalidStateError: DOM Exception 11"');
-shouldThrow('input.stepUp()', '"Error: InvalidStateError: DOM Exception 11"');
-shouldThrow('input.stepUp(0)', '"Error: InvalidStateError: DOM Exception 11"');
+shouldThrow('input.step = "3"; input.min = ""; input.max = ""; input.value = "2"; input.stepDown()', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
+shouldThrow('input.stepDown(0)', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
+shouldThrow('input.stepUp()', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
+shouldThrow('input.stepUp(0)', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

@@ -1,3 +1,3 @@
 Test that open throws a SYNTAX_ERR exception when called with an empty method.
 
-SUCCESS: got exception Error: SyntaxError: DOM Exception 12
+SUCCESS: got exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.

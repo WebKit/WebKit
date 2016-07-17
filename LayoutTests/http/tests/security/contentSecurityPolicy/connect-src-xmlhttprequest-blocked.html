@@ -27,7 +27,7 @@ xhrAsyncAbort.addEventListener("error", function () {
 });
 
 shouldNotThrow('xhrSync.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", false)'); // Synchronous request
-shouldThrow("xhrSync.send()", "'Error: NetworkError: DOM Exception 19'");
+shouldThrow("xhrSync.send()", "'NetworkError (DOM Exception 19):  A network error occurred.'");
 
 shouldNotThrow('xhrAsync.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", true)'); // Asynchronous request
 shouldNotThrow("xhrAsync.send()");

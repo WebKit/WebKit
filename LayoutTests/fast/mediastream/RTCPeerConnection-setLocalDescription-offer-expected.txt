@@ -31,8 +31,8 @@ PASS firstOffer set as local description (again)
 PASS pc.signalingState is 'have-local-offer'
 
 *** Try setting local descriptions with bad types for the current state
-PASS promise pc.setLocalDescription(new RTCSessionDescription({type:'answer', sdp:firstOffer.sdp})); rejected with Error: InvalidStateError: DOM Exception 11
-PASS promise pc.setLocalDescription(new RTCSessionDescription({type:'pranswer', sdp:firstOffer.sdp})); rejected with Error: InvalidStateError: DOM Exception 11
+PASS promise pc.setLocalDescription(new RTCSessionDescription({type:'answer', sdp:firstOffer.sdp})); rejected with InvalidStateError (DOM Exception 11): The object is in an invalid state.
+PASS promise pc.setLocalDescription(new RTCSessionDescription({type:'pranswer', sdp:firstOffer.sdp})); rejected with InvalidStateError (DOM Exception 11): The object is in an invalid state.
 
 *** Add videoTrack
 PASS pc.getTransceivers().length is 2

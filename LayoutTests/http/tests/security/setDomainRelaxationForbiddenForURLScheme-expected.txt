@@ -3,7 +3,7 @@ Test for Bug 33806: Would like API to disallow setting of document.domain for pa
 PASS: document.domain should be 127.0.0.1 and is
 PASS: document.domain should be 0.0.1 and is
 Forbidding domain relaxation for the http: scheme
-PASS: Setting document.domain from a forbidden URL scheme threw exception "Error: SecurityError: DOM Exception 18"
+PASS: Setting document.domain from a forbidden URL scheme threw exception "SecurityError (DOM Exception 18): The operation is insecure."
 PASS: document.domain should be 0.0.1 and is
 Allowing domain relaxation for the http: scheme
 PASS: document.domain should be 0.1 and is

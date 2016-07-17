@@ -43,7 +43,7 @@
         e = err;
     }
 
-    shouldBeEqualToString("e.toString()", "Error: NetworkError: DOM Exception 19");
+    shouldBeEqualToString("e.toString()", "NetworkError (DOM Exception 19):  A network error occurred.");
     shouldBeEqualToString("Object.prototype.toString.call(e)", "[object DOMException]");
     shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object DOMException]");
     shouldBeEqualToString("e.constructor.toString()", "function DOMException() {\n    [native code]\n}");

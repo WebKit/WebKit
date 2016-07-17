@@ -6,20 +6,20 @@ PASS new FontFace('family_name', 'url(\'asdf\')', {}).unicodeRange is "U+0-10fff
 PASS new FontFace('family_name', 'url(\'asdf\')', {}).variant is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {}).featureSettings is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'normal'}).style is "normal"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'inherit'}).style threw exception Error: SyntaxError: DOM Exception 12.
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'inherit'}).style threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic'}).style is "italic"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'oblique'}).style is "italic"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'asdf'}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'asdf'}) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'normal'}).weight is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': '200'}).weight is "200"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'bold'}).weight is "bold"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'bolder'}).weight is "bold"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'lighter'}).weight is "200"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'inherit'}).weight threw exception Error: SyntaxError: DOM Exception 12.
+PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'inherit'}).weight threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS new FontFace('family_name', 'url(\'asdf\')', {'stretch': 'stretch_name'}).stretch is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+26'}).unicodeRange is "U+26-26"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+0-7F'}).unicodeRange is "U+0-7f"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'variant_name'}).variant threw exception Error: SyntaxError: DOM Exception 12.
+PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'variant_name'}).variant threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'small-caps'}).variant is "small-caps"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'small-caps common-ligatures'}).variant is "common-ligatures small-caps"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'featureSettings': '\'titl\''}).featureSettings is "'titl' 1"

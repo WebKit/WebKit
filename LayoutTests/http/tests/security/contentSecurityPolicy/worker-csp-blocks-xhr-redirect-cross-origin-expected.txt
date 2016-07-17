@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi. Cross-origin redirection denied by Content Security Policy.
 This tests an XHR request made from a worker is blocked if it redirects to a cross-origin resource that is not listed as a connect-src in the CSP of the worker.
 
-PASS threw exception Error: NetworkError: DOM Exception 19.
+PASS threw exception NetworkError (DOM Exception 19):  A network error occurred..

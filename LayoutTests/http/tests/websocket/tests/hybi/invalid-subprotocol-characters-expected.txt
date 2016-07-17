@@ -53,54 +53,54 @@ WebSocket should fail if subprotocol contains a forbidden character.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS new WebSocket(url, "\u0000") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0001") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0002") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0003") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0004") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0005") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0006") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0007") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0008") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0009") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u000a") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u000b") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u000c") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u000d") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u000e") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u000f") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0010") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0011") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0012") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0013") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0014") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0015") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0016") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0017") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0018") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0019") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u001a") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u001b") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u001c") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u001d") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u001e") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u001f") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0020") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u0000") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0001") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0002") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0003") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0004") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0005") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0006") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0007") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0008") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0009") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u000a") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u000b") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u000c") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u000d") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u000e") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u000f") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0010") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0011") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0012") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0013") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0014") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0015") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0016") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0017") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0018") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0019") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u001a") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u001b") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u001c") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u001d") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u001e") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u001f") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0020") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u0021"
-PASS new WebSocket(url, "\u0022") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u0022") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u0023"
 PASS WebSocket correctly accepted subprotocol "\u0024"
 PASS WebSocket correctly accepted subprotocol "\u0025"
 PASS WebSocket correctly accepted subprotocol "\u0026"
 PASS WebSocket correctly accepted subprotocol "\u0027"
-PASS new WebSocket(url, "\u0028") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0029") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u0028") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0029") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u002a"
 PASS WebSocket correctly accepted subprotocol "\u002b"
-PASS new WebSocket(url, "\u002c") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u002c") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u002d"
 PASS WebSocket correctly accepted subprotocol "\u002e"
-PASS new WebSocket(url, "\u002f") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u002f") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u0030"
 PASS WebSocket correctly accepted subprotocol "\u0031"
 PASS WebSocket correctly accepted subprotocol "\u0032"
@@ -111,13 +111,13 @@ PASS WebSocket correctly accepted subprotocol "\u0036"
 PASS WebSocket correctly accepted subprotocol "\u0037"
 PASS WebSocket correctly accepted subprotocol "\u0038"
 PASS WebSocket correctly accepted subprotocol "\u0039"
-PASS new WebSocket(url, "\u003a") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u003b") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u003c") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u003d") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u003e") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u003f") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u0040") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u003a") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u003b") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u003c") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u003d") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u003e") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u003f") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u0040") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u0041"
 PASS WebSocket correctly accepted subprotocol "\u0042"
 PASS WebSocket correctly accepted subprotocol "\u0043"
@@ -144,9 +144,9 @@ PASS WebSocket correctly accepted subprotocol "\u0057"
 PASS WebSocket correctly accepted subprotocol "\u0058"
 PASS WebSocket correctly accepted subprotocol "\u0059"
 PASS WebSocket correctly accepted subprotocol "\u005a"
-PASS new WebSocket(url, "\u005b") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u005c") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket(url, "\u005d") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u005b") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u005c") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new WebSocket(url, "\u005d") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u005e"
 PASS WebSocket correctly accepted subprotocol "\u005f"
 PASS WebSocket correctly accepted subprotocol "\u0060"
@@ -176,11 +176,11 @@ PASS WebSocket correctly accepted subprotocol "\u0077"
 PASS WebSocket correctly accepted subprotocol "\u0078"
 PASS WebSocket correctly accepted subprotocol "\u0079"
 PASS WebSocket correctly accepted subprotocol "\u007a"
-PASS new WebSocket(url, "\u007b") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u007b") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u007c"
-PASS new WebSocket(url, "\u007d") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u007d") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS WebSocket correctly accepted subprotocol "\u007e"
-PASS new WebSocket(url, "\u007f") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebSocket(url, "\u007f") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

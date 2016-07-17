@@ -3,7 +3,7 @@ CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest
 Specifying that an IP address should match subdomains doesn't make sense. This test verifies that it doesn't do anything.
 
 Testing: http://127.0.0.1:8000/xmlhttprequest/resources/get.txt (sync)
-FAIL: Error: NetworkError: DOM Exception 19
+FAIL: NetworkError (DOM Exception 19):  A network error occurred.
 Testing: http://127.0.0.1:8000/xmlhttprequest/resources/get.txt (async)
 FAIL: 0
 

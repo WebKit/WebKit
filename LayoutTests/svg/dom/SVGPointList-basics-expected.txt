@@ -34,7 +34,7 @@ PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
 PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
 
 Test uncommon arguments for getItem()
-PASS poly1.points.getItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS poly1.points.getItem(30) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS poly1.points.getItem('aString') is poly1.points.getItem(0)
 PASS poly1.points.getItem(poly1) is poly1.points.getItem(0)
 PASS poly1.points.getItem(null) is poly1.points.getItem(0)
@@ -121,7 +121,7 @@ Reset points attribute to 0 0 100 0 100 100 0 100
 PASS poly1.setAttribute('points', '0 0 100 0 100 100 0 100') is undefined.
 
 Test uncommon arguments for removeItem()
-PASS poly1.points.removeItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS poly1.points.removeItem(30) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS dumpPoint(poly1.points.removeItem('aString')) is "x=0 y=0"
 PASS poly1.points.numberOfItems is 3
 PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=0"

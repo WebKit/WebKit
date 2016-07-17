@@ -107,5 +107,5 @@ Successfully added item: 21
 Successfully added item: 22
 Successfully added item: 23
 Successfully added item: 24
-Expected exception: Error: SecurityError: DOM Exception 18
+Expected exception: SecurityError (DOM Exception 18): Attempt to use history.pushState() more than 100 times per 30.000000 seconds
 

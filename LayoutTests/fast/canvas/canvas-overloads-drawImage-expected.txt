@@ -23,9 +23,9 @@ PASS ctx.drawImage(canvasElement, 0, 0, 0, 0) is undefined
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -5,5 +5,5 @@ This test validates that the XHR2 timeout property behaves as expected in in a w
 
 PASS Timeout test: no time out scheduled, load fires normally, timeout scheduled at 0 
 PASS Timeout test: load fires normally, timeout scheduled at 5000 
-PASS Timeout test: Unexpected error: Error: TimeoutError: DOM Exception 23 
+PASS Timeout test: Unexpected error: TimeoutError (DOM Exception 23): The operation timed out. 
 

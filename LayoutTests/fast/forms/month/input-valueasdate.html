@@ -10,7 +10,7 @@
 description('Test HTMLInputElement::valueAsDate binding.');
 
 var input = document.createElement('input');
-var invalidStateError = 'Error: InvalidStateError: DOM Exception 11';
+var invalidStateError = 'InvalidStateError (DOM Exception 11): The object is in an invalid state.';
 
 debug('Unsuppported type:');
 input.type = 'text';

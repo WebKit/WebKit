@@ -2,8 +2,8 @@ Tests various use cases when cloning MessagePorts.
 
 Should be a series of SUCCESS messages, followed with DONE.
 
-SUCCESS: Posting port to itself: Error: DataCloneError: DOM Exception 25
-SUCCESS: Posting entangled port: Error: DataCloneError: DOM Exception 25
+SUCCESS: Posting port to itself: DataCloneError (DOM Exception 25): The object can not be cloned.
+SUCCESS: Posting entangled port: DataCloneError (DOM Exception 25): The object can not be cloned.
 SUCCESS: Posting cloned port.
 SUCCESS: Posted messages to cloned port.
 SUCCESS: Cloned both endpoints of a channel.

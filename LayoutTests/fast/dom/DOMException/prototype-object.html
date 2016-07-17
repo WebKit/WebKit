@@ -12,7 +12,7 @@ try {
   e = err;
 }
 
-shouldBeEqualToString("e.toString()", "Error: HierarchyRequestError: DOM Exception 3");
+shouldBeEqualToString("e.toString()", "HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.");
 shouldBeEqualToString("Object.prototype.toString.call(e)", "[object DOMException]");
 shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object DOMExceptionPrototype]");
 shouldBeEqualToString("Object.prototype.toString.call(e.__proto__.__proto__)", "[object Object]");
@@ -24,7 +24,7 @@ shouldBe("e.HIERARCHY_REQUEST_ERR", "e.constructor.HIERARCHY_REQUEST_ERR");
 shouldBe("e.HIERARCHY_REQUEST_ERR", "3");
 shouldBe("e.code", "3");
 shouldBeEqualToString("e.name", "HierarchyRequestError");
-shouldBeEqualToString("e.message", "HierarchyRequestError: DOM Exception 3");
+shouldBeEqualToString("e.message", "The operation would yield an incorrect node tree.");
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

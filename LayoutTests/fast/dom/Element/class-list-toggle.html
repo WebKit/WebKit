@@ -15,20 +15,20 @@ shouldThrow("div.classList.toggle()", "'TypeError: Not enough arguments'");
 
 debug("");
 debug("* Token is an empty string");
-shouldThrow("div.classList.toggle('')", "'Error: SyntaxError: DOM Exception 12'");
+shouldThrow("div.classList.toggle('')", "'SyntaxError (DOM Exception 12): The string did not match the expected pattern.'");
 
 debug("");
 debug("Token contains an ASCII white space");
 var stringWithSpace = "a b";
-shouldThrow("div.classList.toggle(stringWithSpace)", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("div.classList.toggle(stringWithSpace)", "'InvalidCharacterError (DOM Exception 5): The string contains invalid characters.'");
 stringWithSpace = "a\nb";
-shouldThrow("div.classList.toggle(stringWithSpace)", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("div.classList.toggle(stringWithSpace)", "'InvalidCharacterError (DOM Exception 5): The string contains invalid characters.'");
 stringWithSpace = "a\tb";
-shouldThrow("div.classList.toggle(stringWithSpace)", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("div.classList.toggle(stringWithSpace)", "'InvalidCharacterError (DOM Exception 5): The string contains invalid characters.'");
 stringWithSpace = "a\rb";
-shouldThrow("div.classList.toggle(stringWithSpace)", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("div.classList.toggle(stringWithSpace)", "'InvalidCharacterError (DOM Exception 5): The string contains invalid characters.'");
 stringWithSpace = "a\fb";
-shouldThrow("div.classList.toggle(stringWithSpace)", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("div.classList.toggle(stringWithSpace)", "'InvalidCharacterError (DOM Exception 5): The string contains invalid characters.'");
 
 debug("");
 debug("* 'force' parameter omitted, token does not exist");

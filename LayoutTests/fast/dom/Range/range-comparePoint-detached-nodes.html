@@ -22,8 +22,8 @@ shouldBe("var range = new Range; range.setStart(detachedDiv, 2); range.comparePo
 shouldBe("var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedDiv2, 0);", "1");
 shouldBe("var range = new Range; range.setStart(spanInDetachedDiv2, 0); range.comparePoint(spanInDetachedDiv1, 0);", "-1");
 shouldBe("var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedDiv1, 0);", "0");
-shouldThrow("var range = new Range; range.setStart(detachedDiv, 0); range.comparePoint(detachedP, 0);", "'Error: WrongDocumentError: DOM Exception 4'");
-shouldThrow("var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedP, 0);", "'Error: WrongDocumentError: DOM Exception 4'");
+shouldThrow("var range = new Range; range.setStart(detachedDiv, 0); range.comparePoint(detachedP, 0);", "'WrongDocumentError (DOM Exception 4): The object is in the wrong document.'");
+shouldThrow("var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedP, 0);", "'WrongDocumentError (DOM Exception 4): The object is in the wrong document.'");
 
 var successfullyParsed = true;
 

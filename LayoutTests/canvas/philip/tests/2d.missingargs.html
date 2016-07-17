@@ -316,7 +316,7 @@ try { var _thrown = false;
 } catch (e) { if (!(e instanceof TypeError)) _fail("Failed assertion: expected exception of type TypeError, got: "+e); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TypeError: g.addColorStop()"); }
 try { var _thrown = false;
   g.addColorStop(0);
-} catch (e) { if ((e.message != "SyntaxError: DOM Exception 12")) _fail("Failed assertion: expected exception of type SyntaxError, got: "+e); _thrown = true; } finally { _assert(_thrown, "should throw exception of type SyntaxError: g.addColorStop(0)"); }
+} catch (e) { if ((e.message != "SyntaxError (DOM Exception 12): The string did not match the expected pattern.")) _fail("Failed assertion: expected exception of type SyntaxError, got: "+e); _thrown = true; } finally { _assert(_thrown, "should throw exception of type SyntaxError: g.addColorStop(0)"); }
 
 
 });

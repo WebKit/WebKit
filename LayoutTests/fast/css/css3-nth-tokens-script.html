@@ -55,13 +55,13 @@ shouldBe("document.defaultView.getComputedStyle(el, null).getPropertyValue('colo
 el = document.querySelector("span.c2:nth-of-type(even)");
 shouldBe("document.defaultView.getComputedStyle(el, null).getPropertyValue('color')", "'rgb(0, 128, 0)'");
 
-shouldThrow('document.querySelector("span.c3:nth-of-type(n3)")', '"Error: SyntaxError: DOM Exception 12"');
+shouldThrow('document.querySelector("span.c3:nth-of-type(n3)")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
 
-shouldThrow('document.querySelector("span.c3:nth-of-type(foo)")', '"Error: SyntaxError: DOM Exception 12"');
+shouldThrow('document.querySelector("span.c3:nth-of-type(foo)")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
 
-shouldThrow('document.querySelector("span.c3:nth-of-type(2n3)")', '"Error: SyntaxError: DOM Exception 12"');
+shouldThrow('document.querySelector("span.c3:nth-of-type(2n3)")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
 
-shouldThrow('document.querySelector("span.c3:nth-of-type(foon + bar)")', '"Error: SyntaxError: DOM Exception 12"');
+shouldThrow('document.querySelector("span.c3:nth-of-type(foon + bar)")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

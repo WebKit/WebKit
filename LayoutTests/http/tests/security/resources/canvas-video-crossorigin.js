@@ -20,8 +20,8 @@ function testDataRetrievalAllowed() {
     context.fillStyle = context.createPattern(video, "repeat");
     context.fillRect(0, 0, 100, 100);
 
-    shouldThrow("context.getImageData(0, 0, 100, 100)", "'Error: SecurityError: DOM Exception 18'");
-    shouldThrow("canvas.toDataURL()", "'Error: SecurityError: DOM Exception 18'");
+    shouldThrow("context.getImageData(0, 0, 100, 100)", "'SecurityError (DOM Exception 18): The operation is insecure.'");
+    shouldThrow("canvas.toDataURL()", "'SecurityError (DOM Exception 18): The operation is insecure.'");
 }
 
 function testDataRetrievalForbidden(description) {
@@ -43,6 +43,6 @@ function testDataRetrievalForbidden(description) {
     context.fillStyle = context.createPattern(video, "repeat");
     context.fillRect(0, 0, 100, 100);
 
-    shouldThrow("context.getImageData(0, 0, 100, 100)", "'Error: SecurityError: DOM Exception 18'");
-    shouldThrow("canvas.toDataURL()", "'Error: SecurityError: DOM Exception 18'");
+    shouldThrow("context.getImageData(0, 0, 100, 100)", "'SecurityError (DOM Exception 18): The operation is insecure.'");
+    shouldThrow("canvas.toDataURL()", "'SecurityError (DOM Exception 18): The operation is insecure.'");
 }

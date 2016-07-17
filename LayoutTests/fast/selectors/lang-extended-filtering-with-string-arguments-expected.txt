@@ -10,7 +10,7 @@ PASS document.querySelectorAll(":lang('')").length is 0
 PASS document.querySelectorAll(':lang("")').length is 0
 PASS document.querySelectorAll(':lang("en", "*-1997")').length is 2
 PASS document.querySelectorAll(':lang("", "*-1997")').length is 1
-PASS document.querySelectorAll(':lang("""")') threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(':lang("""")') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

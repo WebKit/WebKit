@@ -16,9 +16,9 @@ node.appendChild(c2);
 var r = document.createRange();
 r.setStart(c1, 2);
 r.setEnd(c2, 3);
-shouldThrow("r.surroundContents(document.createElement('a'))", '"Error: InvalidStateError: DOM Exception 11"');
+shouldThrow("r.surroundContents(document.createElement('a'))", '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
 
 // But not when we don't try to split the comment.
 r.setStart(c1, 0);
 r.setEnd(c1, 5);
-shouldThrow("r.surroundContents(document.createElement('a'))", '"Error: HierarchyRequestError: DOM Exception 3"');
+shouldThrow("r.surroundContents(document.createElement('a'))", '"HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree."');

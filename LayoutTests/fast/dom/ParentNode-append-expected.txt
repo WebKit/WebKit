@@ -50,7 +50,7 @@ PASS container.append() did not throw exception.
 PASS container.childNodes.length is 0
 
 Test error condition of self-appending.
-PASS container.append(container) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS container.append(container) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
 
 Test DocumentFragment.append((Node or DOMString)...).
 PASS d1.parentNode is fragment
@@ -65,10 +65,10 @@ PASS d1.parentNode is doc
 PASS c1.parentNode is doc
 
 Test error condition appending a second root element.
-PASS doc.append(d2) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS doc.append(d2) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
 
 Test error condition appending Text node as the root element.
-PASS doc.append('hello') threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS doc.append('hello') threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
 PASS successfullyParsed is true
 
 TEST COMPLETE

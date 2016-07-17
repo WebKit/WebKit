@@ -5,8 +5,8 @@ This tests that the XMLHttpRequest responseType attribute is not modifiable for 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS xhr.responseType = 'document'; threw exception Error: InvalidAccessError: DOM Exception 15.
-PASS xhr.responseType = 'document'; threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS xhr.responseType = 'document'; threw exception InvalidAccessError (DOM Exception 15): The object does not support the operation or argument..
+PASS xhr.responseType = 'document'; threw exception InvalidAccessError (DOM Exception 15): The object does not support the operation or argument..
 PASS window.location.protocol is "file:"
 xhr.responseType = 'document';
 PASS xhr.responseType is "document"

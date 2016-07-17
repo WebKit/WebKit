@@ -43,7 +43,7 @@ PASS item0.y += 50 is 150
 
 Check intermediate list state of path1
 PASS path1.pathSegList.numberOfItems is 0
-PASS path1.pathSegList.getItem(0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS path1.pathSegList.getItem(0) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 
 Check intermediate list state of path2
 PASS path2.pathSegList.numberOfItems is 3

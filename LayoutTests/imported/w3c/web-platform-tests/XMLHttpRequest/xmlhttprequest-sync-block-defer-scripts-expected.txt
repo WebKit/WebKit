@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load data:text/plain,aaa. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: line 1: NetworkError: DOM Exception 19:  A network error occurred.
+CONSOLE MESSAGE: line 1: NetworkError (DOM Exception 19):  A network error occurred.
 
 
 FAIL Check that a sync XHR in a defer script blocks later defer scripts from running assert_equals: expected 1 but got 0

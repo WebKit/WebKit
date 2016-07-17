@@ -39,12 +39,12 @@ shouldBe('setValueAsNumberAndGetValue(-23, -59, -59, 0)', '"00:00:01"');
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('input.value = ""; input.valueAsNumber = null; input.value', '"00:00"');
-shouldThrow('input.valueAsNumber = "foo"', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = NaN', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Number.NaN', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Infinity', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Number.POSITIVE_INFINITY', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"Error: NotSupportedError: DOM Exception 9"');
+shouldThrow('input.valueAsNumber = "foo"', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = NaN', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Number.NaN', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Infinity', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Number.POSITIVE_INFINITY', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
 
 debug('Step attribute value and string representation:');
 // If the step attribute value is 1 second and the second part is 0, we should show the second part.

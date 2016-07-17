@@ -141,17 +141,17 @@ PASS document.querySelector("ul    >>    li") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
 Invalid selectors.
-PASS document.querySelector("ul > > li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("ul > > li") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("ul >	> li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("ul >	> li") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("ul >+> li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("ul >+> li") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("ul >~> li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("ul >~> li") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("ul >>> li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("ul >>> li") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("ul >>() li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("ul >>() li") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS successfullyParsed is true
 

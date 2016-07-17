@@ -6,7 +6,7 @@ svg.x.baseVal.value = 10
 svg.x.animVal.value = 10
 SUCCESS (1 of 2)
 setting svg.x.animVal.value = 5
-caught exception: NoModificationAllowedError: DOM Exception 7
+caught exception: The object can not be modified.
 svg.x.baseVal.value = 10
 svg.x.animVal.value = 10
 SUCCESS (2 of 2)

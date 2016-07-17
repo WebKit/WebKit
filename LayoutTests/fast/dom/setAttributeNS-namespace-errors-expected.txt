@@ -3,15 +3,15 @@ Test that calling setAttributeNS() throws an error when http://www.w3.org/TR/dom
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS elem.setAttributeNS(null, 'foo:bar', 'baz') threw exception Error: NamespaceError: DOM Exception 14.
+PASS elem.setAttributeNS(null, 'foo:bar', 'baz') threw exception NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML..
 PASS elem.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:abc', 'foo') did not throw exception.
-PASS elem.setAttributeNS('http://www.w3.org/not-XML/1998/namespace', 'xml:abc', 'foo') threw exception Error: NamespaceError: DOM Exception 14.
+PASS elem.setAttributeNS('http://www.w3.org/not-XML/1998/namespace', 'xml:abc', 'foo') threw exception NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML..
 PASS elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns', 'http://wwww.example.org') did not throw exception.
-PASS elem.setAttributeNS('http://www.w3.org/2000/not-xmlns/', 'xmlns', 'http://wwww.example.org') threw exception Error: NamespaceError: DOM Exception 14.
+PASS elem.setAttributeNS('http://www.w3.org/2000/not-xmlns/', 'xmlns', 'http://wwww.example.org') threw exception NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML..
 PASS elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:abc', 'http://wwww.example.org') did not throw exception.
-PASS elem.setAttributeNS('http://www.w3.org/2000/not-xmlns/', 'xmlns:abc', 'http://wwww.example.org') threw exception Error: NamespaceError: DOM Exception 14.
-PASS elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'badprefix:xmlns', 'http://wwww.example.org') threw exception Error: NamespaceError: DOM Exception 14.
-PASS elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'notxmlns', 'http://wwww.example.org') threw exception Error: NamespaceError: DOM Exception 14.
+PASS elem.setAttributeNS('http://www.w3.org/2000/not-xmlns/', 'xmlns:abc', 'http://wwww.example.org') threw exception NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML..
+PASS elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'badprefix:xmlns', 'http://wwww.example.org') threw exception NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML..
+PASS elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'notxmlns', 'http://wwww.example.org') threw exception NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML..
 PASS successfullyParsed is true
 
 TEST COMPLETE

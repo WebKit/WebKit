@@ -3,7 +3,7 @@ Meter Element
 
 PASS Default values 
 PASS Setting values to min, max, low, high and optimum 
-FAIL Invalid floating-point number values NotSupportedError: DOM Exception 9
+FAIL Invalid floating-point number values The operation is not supported.
 PASS max < min 
 PASS value < min 
 PASS value > max 

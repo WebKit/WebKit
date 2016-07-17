@@ -17,7 +17,7 @@ PASS response property exists.
 PASS xhr.responseType has been correctly set to 'text'.
 PASS DONE LOADING
 PASS received response object of type : string.
-PASS exception correctly thrown when xhr.responseType is set to valid value too late in the loading process : Error: InvalidStateError: DOM Exception 11.
+PASS exception correctly thrown when xhr.responseType is set to valid value too late in the loading process : InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS xhr.response == xhr.responseText.
 PASS successfullyParsed is true
 

@@ -6,34 +6,34 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS pc.signalingState is "stable"
 PASS pc.setRemoteDescription(sessionDescription, requestSucceeded1, finishIfFailed); did not throw exception.
 PASS setRemoteDescription succeeded.
-PASS pc.localDescription threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.localDescription threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.remoteDescription.type is "offer"
 PASS pc.remoteDescription.sdp is "remote"
 PASS pc.signalingState is "have-remote-offer"
 PASS pc.setLocalDescription(sessionDescription, finishIfSucceeded, requestFailed1); did not throw exception.
 PASS setLocalDescription failed.
 PASS errorReason.name is "InvalidSessionDescriptionError"
-PASS pc.localDescription threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.localDescription threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.remoteDescription.type is "offer"
 PASS pc.remoteDescription.sdp is "remote"
 PASS pc.signalingState is "have-remote-offer"
 PASS pc.setRemoteDescription(sessionDescription, finishIfSucceeded, requestFailed2); did not throw exception.
 PASS setRemoteDescription failed.
 PASS errorReason.name is "InvalidSessionDescriptionError"
-PASS pc.localDescription threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.localDescription threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.remoteDescription.type is "offer"
 PASS pc.remoteDescription.sdp is "remote"
 PASS pc.signalingState is "have-remote-offer"
 PASS pc.setRemoteDescription(sessionDescription, finishIfSucceeded, requestFailed3); did not throw exception.
 PASS setRemoteDescription failed.
 PASS errorReason.name is "InvalidSessionDescriptionError"
-PASS pc.localDescription threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.localDescription threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.remoteDescription.type is "offer"
 PASS pc.remoteDescription.sdp is "remote"
 PASS pc.signalingState is "have-remote-offer"
 PASS pc.setRemoteDescription(sessionDescription, requestSucceeded2, finishIfFailed); did not throw exception.
 PASS setRemoteDescription succeeded.
-PASS pc.localDescription threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.localDescription threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.remoteDescription.type is "offer"
 PASS pc.remoteDescription.sdp is "remote"
 PASS pc.signalingState is "have-remote-offer"
@@ -44,12 +44,12 @@ PASS pc.localDescription.sdp is "local"
 PASS pc.remoteDescription.type is "offer"
 PASS pc.remoteDescription.sdp is "remote"
 PASS pc.signalingState is "stable"
-PASS pc.localDescription threw exception Error: InvalidStateError: DOM Exception 11.
-PASS pc.remoteDescription threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.localDescription threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
+PASS pc.remoteDescription threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.signalingState is "stable"
 PASS pc.setRemoteDescription(sessionDescription, requestSucceeded4, finishIfFailed); did not throw exception.
 PASS setRemoteDescription succeeded.
-PASS pc.localDescription threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.localDescription threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS pc.remoteDescription.type is "offer"
 PASS pc.remoteDescription.sdp is "remote"
 PASS pc.signalingState is "have-remote-offer"

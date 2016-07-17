@@ -32,7 +32,7 @@ try {
     var compare = r1.compareBoundaryPoints(Range.START_TO_START, r2);
     log("Error.  compareBoundaryPoints should have thrown an exception.");
 } catch (e) {
-    var expected = "Error: WrongDocumentError: DOM Exception 4";
+    var expected = "WrongDocumentError (DOM Exception 4): The object is in the wrong document.";
     if (e != expected)
         log("Error.  Exception thrown should have been: " + expected);
 }

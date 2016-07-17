@@ -15,8 +15,8 @@ PASS ctx.getImageData(undefined, 10, 10, 10) threw exception TypeError: The prov
 PASS ctx.getImageData(10, undefined, 10, 10) threw exception TypeError: The provided value is non-finite.
 PASS ctx.getImageData(10, 10, undefined, 10) threw exception TypeError: The provided value is non-finite.
 PASS ctx.getImageData(10, 10, 10, undefined) threw exception TypeError: The provided value is non-finite.
-PASS ctx.getImageData(10, 10, 0, 10) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS ctx.getImageData(10, 10, 10, 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS ctx.getImageData(10, 10, 0, 10) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS ctx.getImageData(10, 10, 10, 0) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS successfullyParsed is true
 
 TEST COMPLETE

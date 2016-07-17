@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS ctx.ellipse(10, 10, 10, 5, 0, 0, 1, false) did not throw exception.
 PASS ctx.ellipse(10, 10, 10, 0, 0, 0, 1, false) did not throw exception.
 PASS ctx.ellipse(10, 10, -0, 5, 0, 0, 1, false) did not throw exception.
-PASS ctx.ellipse(10, 10, -2, 5, 0, 0, 1, false) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS ctx.ellipse(10, 10, 0, -1.5, 0, 0, 1, false) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS ctx.ellipse(10, 10, -2, -5, 0, 0, 1, false) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS ctx.ellipse(10, 10, -2, 5, 0, 0, 1, false) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS ctx.ellipse(10, 10, 0, -1.5, 0, 0, 1, false) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS ctx.ellipse(10, 10, -2, -5, 0, 0, 1, false) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS successfullyParsed is true
 
 TEST COMPLETE

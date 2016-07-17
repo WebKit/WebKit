@@ -16,7 +16,7 @@ PASS circle1.transform.baseVal.initialize(circle1) threw exception TypeError: Ar
 PASS circle1.transform.baseVal.initialize(null) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 
 Test uncommon arguments for getItem()
-PASS circle1.transform.baseVal.getItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS circle1.transform.baseVal.getItem(30) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS circle1.transform.baseVal.getItem('aString') is circle1.transform.baseVal.getItem(0)
 PASS circle1.transform.baseVal.getItem(circle1) is circle1.transform.baseVal.getItem(0)
 PASS circle1.transform.baseVal.getItem(null) is circle1.transform.baseVal.getItem(0)
@@ -105,7 +105,7 @@ Set transform='rotate(90) scale(2 2) translate(10 10) skewX(45)' for circle1
 PASS circle1.setAttribute('transform', 'rotate(90) scale(2 2) translate(10 10) skewX(45)') is undefined.
 
 Test uncommon arguments for removeItem()
-PASS circle1.transform.baseVal.removeItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS circle1.transform.baseVal.removeItem(30) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS dumpTransform(circle1.transform.baseVal.removeItem(0)) is "type=SVG_TRANSFORM_ROTATE matrix=[0.0 1.0 -1.0 0.0 0.0 0.0]"
 PASS circle1.transform.baseVal.numberOfItems is 3
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
@@ -129,7 +129,7 @@ PASS circle1.transform.baseVal.appendItem(circle1) threw exception TypeError: Ar
 PASS circle1.transform.baseVal.appendItem(null) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 
 Testing animVal clear throws
-PASS circle1.transform.animVal.clear() threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS circle1.transform.animVal.clear() threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
 PASS circle1.transform.baseVal.clear() is undefined.
 
 Creating new SVGTransform, with 45 deg rotation about x=50, y=100 and append it to the transform list

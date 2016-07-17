@@ -7,14 +7,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS div.classList.toggle() threw exception TypeError: Not enough arguments.
 
 * Token is an empty string
-PASS div.classList.toggle('') threw exception Error: SyntaxError: DOM Exception 12.
+PASS div.classList.toggle('') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 
 Token contains an ASCII white space
-PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS div.classList.toggle(stringWithSpace) threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS div.classList.toggle(stringWithSpace) threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS div.classList.toggle(stringWithSpace) threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS div.classList.toggle(stringWithSpace) threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
+PASS div.classList.toggle(stringWithSpace) threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 
 * 'force' parameter omitted, token does not exist
 div.classList.toggle('a')

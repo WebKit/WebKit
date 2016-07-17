@@ -23,7 +23,7 @@ PASS parseFloat(a3[0]) is 0
 PASS a3[1] is ""
 
 Test bad input to string constructor
-PASS new WebKitCSSMatrix("banana") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("banana") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 
 Test attributes on default matrix
 PASS m.a is 1
@@ -58,9 +58,9 @@ PASS m.e is 10
 PASS m.f is 20
 
 Test throwing exception from setMatrixValue
-PASS m.setMatrixValue("banana") threw exception Error: SyntaxError: DOM Exception 12.
-PASS m.setMatrixValue("translate(10em, 20%)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS m.setMatrixValue("translate(10px, 20px) scale()") threw exception Error: SyntaxError: DOM Exception 12.
+PASS m.setMatrixValue("banana") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS m.setMatrixValue("translate(10em, 20%)") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS m.setMatrixValue("translate(10px, 20px) scale()") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 
 Test attributes on translate() and accumulation
 PASS m2.a is 1
@@ -208,7 +208,7 @@ PASS parseFloat(m.e) is 10
 PASS parseFloat(m.f) is 20
 
 Test throwing exception from inverse
-PASS m.inverse() threw exception Error: NotSupportedError: DOM Exception 9.
+PASS m.inverse() threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 
 PASS successfullyParsed is true
 

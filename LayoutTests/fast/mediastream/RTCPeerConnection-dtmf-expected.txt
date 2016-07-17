@@ -8,7 +8,7 @@ PASS Stream generated.
 PASS stream.getAudioTracks().length is 1
 PASS stream.getVideoTracks().length is 0
 PASS pc is connected
-PASS dtmfsender = pc.createDTMFSender(track); threw exception Error: SyntaxError: DOM Exception 12.
+PASS dtmfsender = pc.createDTMFSender(track); threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS dtmfsender = pc.createDTMFSender(track); did not throw exception.
 PASS dtmfsender.canInsertDTMF is true
 PASS dtmfsender.duration is 100
@@ -17,9 +17,9 @@ PASS dtmfsender.duration is 40
 PASS dtmfsender.interToneGap is 30
 PASS dtmfsender.duration is 6000
 PASS dtmfsender.interToneGap is 70
-PASS dtmfsender.insertDTMF("1", "20"); threw exception Error: SyntaxError: DOM Exception 12.
-PASS dtmfsender.insertDTMF("1", "7000"); threw exception Error: SyntaxError: DOM Exception 12.
-PASS dtmfsender.insertDTMF("1", "70", "10"); threw exception Error: SyntaxError: DOM Exception 12.
+PASS dtmfsender.insertDTMF("1", "20"); threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS dtmfsender.insertDTMF("1", "7000"); threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS dtmfsender.insertDTMF("1", "70", "10"); threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS ontonechange was called 1
 PASS ontonechange was called 
 PASS ontonechange was called 4

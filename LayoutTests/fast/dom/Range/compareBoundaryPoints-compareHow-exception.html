@@ -20,10 +20,10 @@ shouldBe("range.compareBoundaryPoints(Range.END_TO_START, sourceRange)", "-1");
 shouldBe("range.compareBoundaryPoints(65536, sourceRange)", "-1"); // 65536 should wrap around to 0.
 
 // Invalid values.
-shouldThrow("range.compareBoundaryPoints(-1, sourceRange)", "'Error: NotSupportedError: DOM Exception 9'");
-shouldThrow("range.compareBoundaryPoints(4, sourceRange)", "'Error: NotSupportedError: DOM Exception 9'");
-shouldThrow("range.compareBoundaryPoints(100, sourceRange)", "'Error: NotSupportedError: DOM Exception 9'");
-shouldThrow("range.compareBoundaryPoints(65535, sourceRange)", "'Error: NotSupportedError: DOM Exception 9'");
+shouldThrow("range.compareBoundaryPoints(-1, sourceRange)", "'NotSupportedError (DOM Exception 9): The operation is not supported.'");
+shouldThrow("range.compareBoundaryPoints(4, sourceRange)", "'NotSupportedError (DOM Exception 9): The operation is not supported.'");
+shouldThrow("range.compareBoundaryPoints(100, sourceRange)", "'NotSupportedError (DOM Exception 9): The operation is not supported.'");
+shouldThrow("range.compareBoundaryPoints(65535, sourceRange)", "'NotSupportedError (DOM Exception 9): The operation is not supported.'");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

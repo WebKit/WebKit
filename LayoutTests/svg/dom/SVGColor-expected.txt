@@ -15,10 +15,10 @@ PASS stopElement.style.stopColor is "rgb(255, 0, 0)"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Try invalid arguments for setColor()
-PASS stopColor.setColor(null, null, null) threw exception Error: NoModificationAllowedError: DOM Exception 7.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, svgElement, ''); threw exception Error: NoModificationAllowedError: DOM Exception 7.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, '', '') threw exception Error: NoModificationAllowedError: DOM Exception 7.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR + 1, '', ''); threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS stopColor.setColor(null, null, null) threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, svgElement, ''); threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, '', '') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR + 1, '', ''); threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
 PASS stopColor.setColor() threw exception TypeError: Not enough arguments.
 PASS stopColor.setColor(stopColor) threw exception TypeError: Not enough arguments.
 
@@ -29,13 +29,13 @@ PASS stopElement.style.stopColor is "rgb(255, 0, 0)"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_UNKNOWN
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, '', '') threw exception Error: NoModificationAllowedError: DOM Exception 7.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,128,128)', '') threw exception Error: NoModificationAllowedError: DOM Exception 7.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, '', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NoModificationAllowedError: DOM Exception 7.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, '', '') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,128,128)', '') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, '', 'icc-color(myRGB, 0, 1, 2)') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
 
 Test using setColor() and SVG_COLORTYPE_RGBCOLOR_ICCCOLOR
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
@@ -46,7 +46,7 @@ PASS stopElement.style.stopColor is "rgb(255, 0, 0)"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_CURRENTCOLOR
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
@@ -57,7 +57,7 @@ PASS stopElement.style.stopColor is "rgb(255, 0, 0)"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_RGBCOLOR
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception NoModificationAllowedError (DOM Exception 7): The object can not be modified..
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"

@@ -32,13 +32,13 @@ function runTest() {
     analyser.connect(context.destination);
 
     // 'minDecibels' shouldn't be greater than 'maxDecibels' which defaults to -30dB.
-    shouldThrow("analyser.minDecibels = -20", "'Error: IndexSizeError: DOM Exception 1'");
+    shouldThrow("analyser.minDecibels = -20", "'IndexSizeError (DOM Exception 1): The index is not in the allowed range.'");
 
     // 'maxDecibels' shouldn't be less than 'minDecibels' which defaults to -100dB.
-    shouldThrow("analyser.maxDecibels = -120", "'Error: IndexSizeError: DOM Exception 1'");
+    shouldThrow("analyser.maxDecibels = -120", "'IndexSizeError (DOM Exception 1): The index is not in the allowed range.'");
 
     // 'smoothingTimeConstant' range is between 0 and 1.
-    shouldThrow("analyser.smoothingTimeConstant = 2", "'Error: IndexSizeError: DOM Exception 1'");
+    shouldThrow("analyser.smoothingTimeConstant = 2", "'IndexSizeError (DOM Exception 1): The index is not in the allowed range.'");
 
     context.oncomplete = finishJSTest;
     context.startRendering();

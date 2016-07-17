@@ -53,7 +53,7 @@ PASS intersects is false
 PASS range.intersectsNode(document) is true
 
 2.4 Range has no parent
-PASS range.selectNode(document) threw exception Error: InvalidNodeTypeError: DOM Exception 24.
+PASS range.selectNode(document) threw exception InvalidNodeTypeError (DOM Exception 24): The supplied node is incorrect or has an incorrect ancestor for this operation..
 
 2.5 Wrong documents
 PASS intersects is false

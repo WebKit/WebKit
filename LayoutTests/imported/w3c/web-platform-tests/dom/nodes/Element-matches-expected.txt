@@ -44,10 +44,10 @@ PASS Detached Element.matches: Unknown pseudo-element: ::example
 PASS Detached Element.matches: Invalid pseudo-element: :::before 
 FAIL Detached Element.matches: Undeclared namespace: ns|div assert_throws: function "function () {
           root.matches(q)
-        }" threw object "Error: NamespaceError: DOM Exception 14" that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+        }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
 FAIL Detached Element.matches: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
           root.matches(q)
-        }" threw object "Error: NamespaceError: DOM Exception 14" that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+        }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
 PASS Detached Element.matches: Invalid namespace: ^|div 
 PASS Detached Element.matches: Invalid namespace: $|div 
 PASS In-document Element.matches: Empty String:  
@@ -82,10 +82,10 @@ PASS In-document Element.matches: Unknown pseudo-element: ::example
 PASS In-document Element.matches: Invalid pseudo-element: :::before 
 FAIL In-document Element.matches: Undeclared namespace: ns|div assert_throws: function "function () {
           root.matches(q)
-        }" threw object "Error: NamespaceError: DOM Exception 14" that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+        }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
 FAIL In-document Element.matches: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
           root.matches(q)
-        }" threw object "Error: NamespaceError: DOM Exception 14" that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+        }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
 PASS In-document Element.matches: Invalid namespace: ^|div 
 PASS In-document Element.matches: Invalid namespace: $|div 
 PASS In-document Element.matches: Type selector, matching html element (with no refNodes): html 
@@ -572,8 +572,8 @@ PASS Fragment Element.matches: Syntax, group of selectors separator, whitespace 
 PASS Fragment Element.matches: Syntax, group of selectors separator, whitespace before (with no refNodes): #group em	
 ,#group strong 
 PASS Fragment Element.matches: Syntax, group of selectors separator, no whitespace (with no refNodes): #group em,#group strong 
-FAIL In-document Element.matches: Universal selector, matching all children of the specified reference element (with refNode Element): >* SyntaxError: DOM Exception 12
-FAIL In-document Element.matches: Universal selector, matching all grandchildren of the specified reference element (with refNode Element): >*>* SyntaxError: DOM Exception 12
+FAIL In-document Element.matches: Universal selector, matching all children of the specified reference element (with refNode Element): >* The string did not match the expected pattern.
+FAIL In-document Element.matches: Universal selector, matching all grandchildren of the specified reference element (with refNode Element): >*>* The string did not match the expected pattern.
 FAIL In-document Element.matches: Universal selector, matching all descendants of the specified reference element (with refNode Element): * assert_false: The element #universal should not match the selector. expected false got true
 PASS In-document Element.matches: Attribute presence selector, matching align attribute with value (with refNode Element): .attr-presence-div1[align] 
 PASS In-document Element.matches: Attribute presence selector, matching align attribute with empty value (with refNode Element): .attr-presence-div2[align] 

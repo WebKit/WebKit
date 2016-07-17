@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 8: Unable to get image data from canvas. Requested size was 381000000 x 2
-CONSOLE MESSAGE: line 8: InvalidStateError: DOM Exception 11: The object is in an invalid state.
+CONSOLE MESSAGE: line 8: InvalidStateError (DOM Exception 11): The object is in an invalid state.
 PASSED (If this page did not crash.)
 PASS successfullyParsed is true
 

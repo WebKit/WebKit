@@ -62,9 +62,9 @@ PASS document.querySelectorAll(":lang(id---, id---)").length is 0
 PASS document.querySelectorAll(":lang(tic-tac-toe, tic-tac)").length is 1
 PASS document.querySelectorAll(":lang(tic-toe-tac, tic-toe-tac-tac)").length is 0
 
-PASS document.querySelectorAll(":lang(--en--, --en--)").length threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.querySelectorAll(":lang(---en---, ---en---)").length threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.querySelectorAll(":lang(en us- de- fr-, en us- de- fr-).length") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang(--en--, --en--)").length threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS document.querySelectorAll(":lang(---en---, ---en---)").length threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS document.querySelectorAll(":lang(en us- de- fr-, en us- de- fr-).length") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS successfullyParsed is true
 
 TEST COMPLETE

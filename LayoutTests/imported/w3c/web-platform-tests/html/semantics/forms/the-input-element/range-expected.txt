@@ -21,6 +21,6 @@ FAIL The default scale factor is 1 even if step attribute is explicitly set to n
 PASS Solving the step mismatch 
 PASS Performing stepUp() 
 PASS Performing stepDown() 
-FAIL Performing stepUp() beyond the value of the max attribute InvalidStateError: DOM Exception 11
-FAIL Performing stepDown() beyond the value of the min attribute InvalidStateError: DOM Exception 11
+FAIL Performing stepUp() beyond the value of the max attribute The object is in an invalid state.
+FAIL Performing stepDown() beyond the value of the min attribute The object is in an invalid state.
 

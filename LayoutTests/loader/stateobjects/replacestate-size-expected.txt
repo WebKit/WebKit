@@ -4,5 +4,5 @@ Pushing 63+mb of state objects (but less than 64mb)
 Replacing the last state object with one that should fit
 It fit
 Replacing the last state object with one that should not fit
-Expected exception replacing the last state object: Error: QuotaExceededError: DOM Exception 22
+Expected exception replacing the last state object: QuotaExceededError (DOM Exception 22): Attempt to store more data than allowed using history.replaceState()
 

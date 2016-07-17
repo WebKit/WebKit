@@ -3,7 +3,7 @@ Tests that ConvolverNode buffer rate must match context rate.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS convolver.buffer = context.createBuffer(1, 256, 22050) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS convolver.buffer = context.createBuffer(1, 256, 22050) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS convolver.buffer = context.createBuffer(1, 256, 44100) did not throw exception.
 PASS successfullyParsed is true
 

@@ -22,7 +22,7 @@ PASS testAddWithoutResettingListOptions(createOption("Y10"), mySelect.options[2]
 PASS testAdd(createOption("Y11"), mySelect.options[1]) is "0,Y11,1,Y10,2"
 PASS testAddWithoutResettingListOptions(createGroup("Y12", "Y13"), mySelect.options[1]) is "0,Y12,Y13,1,2"
 PASS testAdd(createGroup("Y14", "Y15"), mySelect.options[3]) is "0,Y12,Y13,Y14,Y15,1,2"
-PASS testAdd(createOption("Y16"), createOption("Y17")) threw exception Error: NotFoundError: DOM Exception 8.
+PASS testAdd(createOption("Y16"), createOption("Y17")) threw exception NotFoundError (DOM Exception 8): The object can not be found here..
 PASS testAdd(createOption("Y1")) is "0,1,2,Y1"
 PASS testAdd(createOption("Y2"), null) is "0,1,2,Y2"
 PASS testAdd(createOption("Y3"), 0) is "Y3,0,1,2"

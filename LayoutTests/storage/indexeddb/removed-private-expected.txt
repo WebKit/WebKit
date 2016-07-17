@@ -9,7 +9,7 @@ PASS self.webkitIDBDatabaseError is undefined.
 PASS 'IDBDatabaseException' in self is false
 PASS 'errorCode' in indexedDB.open(dbname) is false
 PASS 'setVersion' in IDBDatabase.prototype is false
-PASS document.createEvent('IDBUpgradeNeededEvent') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS document.createEvent('IDBUpgradeNeededEvent') threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS 'version' in document.createEvent('IDBVersionChangeEvent') is false
 PASS successfullyParsed is true
 

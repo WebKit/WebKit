@@ -9,7 +9,7 @@
 description("Tests setting document.body to null");
 
 var testDocument = document.getElementById("testFrame").contentDocument;
-shouldThrow("testDocument.body = null", "'Error: HierarchyRequestError: DOM Exception 3'");
+shouldThrow("testDocument.body = null", "'HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.'");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

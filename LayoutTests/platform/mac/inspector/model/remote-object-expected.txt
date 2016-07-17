@@ -2385,12 +2385,12 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
   "_type": "object",
   "_subtype": "error",
   "_objectId": "<filtered>",
-  "_description": "Error: IndexSizeError: DOM Exception 1",
+  "_description": "IndexSizeError (DOM Exception 1): The index is not in the allowed range.",
   "_preview": {
     "_listeners": null,
     "_type": "object",
     "_subtype": "error",
-    "_description": "Error: IndexSizeError: DOM Exception 1",
+    "_description": "IndexSizeError (DOM Exception 1): The index is not in the allowed range.",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -2410,7 +2410,7 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
         "_listeners": null,
         "_name": "message",
         "_type": "string",
-        "_value": "IndexSizeError: DOM Exception 1"
+        "_value": "The index is not in the allowed range."
       },
       {
         "_listeners": null,

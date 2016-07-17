@@ -1,7 +1,7 @@
 foobarbaz
 Success: window.getSelection() is ar.
-Success: s.extend(span2.firstChild, 4) raised Error: IndexSizeError: DOM Exception 1.
-Success: s.extend(span2.firstChild, -1) raised Error: IndexSizeError: DOM Exception 1.
+Success: s.extend(span2.firstChild, 4) raised IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+Success: s.extend(span2.firstChild, -1) raised IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 Success: window.getSelection() is b.
 Success: window.getSelection() is arbaz.
 Success: s.extend() raised TypeError: Not enough arguments.

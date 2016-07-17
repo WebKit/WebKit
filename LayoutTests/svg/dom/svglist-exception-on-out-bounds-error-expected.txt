@@ -3,42 +3,42 @@ Tests that out of bounds accesses of SVGList correctly throw exceptions
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.getItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.insertItemBefore(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 PASS svgList.insertItemBefore(seg, index) is seg
-PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(seg, index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.replaceItem(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
-PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.removeItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS svgList.getItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.insertItemBefore(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 PASS svgList.insertItemBefore(seg, index) is seg
-PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(seg, index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.replaceItem(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
-PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.removeItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS svgList.getItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.insertItemBefore(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 PASS svgList.insertItemBefore(seg, index) is seg
-PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(seg, index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.replaceItem(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
-PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.removeItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS svgList.getItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.insertItemBefore(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 PASS svgList.insertItemBefore(seg, index) is seg
-PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(seg, index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.replaceItem(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
-PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.removeItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS svgList.getItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.insertItemBefore(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 PASS svgList.insertItemBefore(seg, index) is seg
-PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(seg, index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.replaceItem(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
-PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.removeItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS svgList.getItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.insertItemBefore(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
 PASS svgList.insertItemBefore(seg, index) is seg
-PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(seg, index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS svgList.replaceItem(null, index) threw exception SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation..
-PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.removeItem(index) threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -67,13 +67,13 @@ shouldBe('setValueAsNumberAndGetValue(275760, 8, 13)', '"275760-W37"');
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('input.value = ""; input.valueAsNumber = null; input.value', '"1970-W01"');
-shouldThrow('input.valueAsNumber = "foo"', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = NaN', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Number.NaN', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Infinity', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Number.POSITIVE_INFINITY', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"Error: NotSupportedError: DOM Exception 9"');
-shouldThrow('input.valueAsNumber = Date.UTC(275760, 8, 14)', '"Error: NotSupportedError: DOM Exception 9"');
+shouldThrow('input.valueAsNumber = "foo"', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = NaN', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Number.NaN', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Infinity', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Number.POSITIVE_INFINITY', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
+shouldThrow('input.valueAsNumber = Date.UTC(275760, 8, 14)', '"NotSupportedError (DOM Exception 9): The operation is not supported."');
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

@@ -14,5 +14,5 @@ shouldThrow("ctx.getImageData(undefined, 10, 10, 10)", '"TypeError: The provided
 shouldThrow("ctx.getImageData(10, undefined, 10, 10)", '"TypeError: The provided value is non-finite"');
 shouldThrow("ctx.getImageData(10, 10, undefined, 10)", '"TypeError: The provided value is non-finite"');
 shouldThrow("ctx.getImageData(10, 10, 10, undefined)", '"TypeError: The provided value is non-finite"');
-shouldThrow("ctx.getImageData(10, 10, 0, 10)", '"Error: IndexSizeError: DOM Exception 1"');
-shouldThrow("ctx.getImageData(10, 10, 10, 0)", '"Error: IndexSizeError: DOM Exception 1"');
+shouldThrow("ctx.getImageData(10, 10, 0, 10)", '"IndexSizeError (DOM Exception 1): The index is not in the allowed range."');
+shouldThrow("ctx.getImageData(10, 10, 10, 0)", '"IndexSizeError (DOM Exception 1): The index is not in the allowed range."');

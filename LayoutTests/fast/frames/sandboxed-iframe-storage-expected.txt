@@ -14,9 +14,9 @@ TEST COMPLETE
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-PASS window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) threw exception Error: SecurityError: DOM Exception 18.
-PASS window.localStorage threw exception Error: SecurityError: DOM Exception 18.
-PASS window.sessionStorage threw exception Error: SecurityError: DOM Exception 18.
+PASS window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) threw exception SecurityError (DOM Exception 18): The operation is insecure..
+PASS window.localStorage threw exception SecurityError (DOM Exception 18): The operation is insecure..
+PASS window.sessionStorage threw exception SecurityError (DOM Exception 18): The operation is insecure..
 
 
 --------

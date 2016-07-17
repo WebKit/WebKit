@@ -3,7 +3,7 @@ Testing document.register() type extension behaviours through createElement().
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.register('x-foo', { prototype: Object.create(HTMLDivElement.prototype) }) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS document.register('x-foo', { prototype: Object.create(HTMLDivElement.prototype) }) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS fooNewed.outerHTML is '<x-foo></x-foo>'
 PASS fooNewed instanceof fooConstructor && fooNewed instanceof HTMLElement is true
 PASS fooNewed instanceof HTMLUnknownElement is false
@@ -45,13 +45,13 @@ PASS fooCreatedNull.outerHTML is '<x-foo></x-foo>'
 PASS fooCreatedNull instanceof fooConstructor is true
 PASS fooCreatedEmpty.outerHTML is '<x-foo></x-foo>'
 PASS fooCreatedEmpty instanceof fooConstructor is true
-PASS document.createElement('@invalid', 'x-bar') threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS document.createElement('@invalid', 'x-bar') threw exception InvalidCharacterError (DOM Exception 5): The string contains invalid characters..
 PASS fooCreatedNS.outerHTML is '<x-foo></x-foo>'
 PASS fooCreatedNS instanceof fooConstructor is true
 PASS barCreatedNS.outerHTML is '<input is="x-bar">'
 PASS barCreatedNS instanceof barConstructor is true
 PASS isFormControl(barCreatedNS) is true
-PASS document.createElementNS('http://example.com/2013/no-such-namespace', 'xml:lang', 'x-bar') threw exception Error: NamespaceError: DOM Exception 14.
+PASS document.createElementNS('http://example.com/2013/no-such-namespace', 'xml:lang', 'x-bar') threw exception NamespaceError (DOM Exception 14): The operation is not allowed by Namespaces in XML..
 PASS fooParsed instanceof fooConstructor is true
 PASS barParsed instanceof barConstructor is true
 PASS isFormControl(barParsed) is true

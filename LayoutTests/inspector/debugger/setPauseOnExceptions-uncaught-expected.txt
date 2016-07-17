@@ -1,19 +1,19 @@
 CONSOLE MESSAGE: line 1: caught inline: {"line":1,"column":36}
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":3,"column":11,"sourceURL":"exception.js"}
-CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"name":"NotFoundError","message":"NotFoundError: DOM Exception 8","line":8,"column":30,"sourceURL":"exception.js"}
+CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"name":"NotFoundError","message":"The object can not be found here.","line":8,"column":30,"sourceURL":"exception.js"}
 CONSOLE MESSAGE: line 38: catchNested caught exception: "exception in host function"
 CONSOLE MESSAGE: line 38: catchNested caught exception: "exception string"
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":1,"column":61}
 CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating '({}).a.b')
 CONSOLE MESSAGE: line 3: TypeError: undefined is not an object (evaluating '({}).a.b')
-CONSOLE MESSAGE: line 8: NotFoundError: DOM Exception 8: The object can not be found here.
+CONSOLE MESSAGE: line 8: NotFoundError (DOM Exception 8): The object can not be found here.
 CONSOLE MESSAGE: line 24: exception in host function
 CONSOLE MESSAGE: line 13: exception string
 CONSOLE MESSAGE: line 18: [object Object]
 CONSOLE MESSAGE: line 18: Error: error message
 CONSOLE MESSAGE: line 1: caught inline: {"line":1,"column":36}
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":3,"column":11,"sourceURL":"exception.js"}
-CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"name":"NotFoundError","message":"NotFoundError: DOM Exception 8","line":8,"column":30,"sourceURL":"exception.js"}
+CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"name":"NotFoundError","message":"The object can not be found here.","line":8,"column":30,"sourceURL":"exception.js"}
 CONSOLE MESSAGE: line 38: catchNested caught exception: "exception in host function"
 CONSOLE MESSAGE: line 38: catchNested caught exception: "exception string"
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":1,"column":61}

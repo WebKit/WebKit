@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Unsuppported type:
 PASS input.valueAsDate is null
-PASS input.valueAsDate = date threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.valueAsDate = date threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 
 Supported type:
 PASS valueAsDate != null is true
