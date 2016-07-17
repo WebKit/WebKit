@@ -1,3 +1,31 @@
+2016-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CSE is broken for MultiGetByOffset
+        https://bugs.webkit.org/show_bug.cgi?id=159858
+
+        Reviewed by Saam Barati.
+        
+        This disabled CSE for MultiGetByOffset. I opened bug 159859 for the long-term fix, which
+        would teach CSE (and other passes also) how to decay a removed MultiGetByOffset to a
+        CheckStructure. Since we currently just decay MultiGetByOffset to Check, we forget the
+        structure checks. So, if we CSE a MultiGetByOffset that checks for one set of structures with
+        a heap access on the same property and base that checks for different structures, then we
+        will forget some structure checks that we had previously. It's unsound to forget checks in
+        DFG IR.
+        
+        This bug mostly manifested as a high-volume crash at Unreachable in FTL, because we'd prove
+        that the code after the MultiGetByOffset was unreachable due to the structure checks and then
+        CSE would remove everything but the Unreachable.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): Remove the def() for MultiGetByOffset to disable CSE for this node for now.
+        * tests/stress/cse-multi-get-by-offset-remove-checks.js: Added. This used to fail with FTL enabled.
+        (Cons1):
+        (Cons2):
+        (Cons3):
+        (foo):
+        (bar):
+
 2016-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Enable test262 module tests

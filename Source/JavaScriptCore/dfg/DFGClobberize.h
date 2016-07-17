@@ -883,7 +883,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSObject_butterfly);
         AbstractHeap heap(NamedProperties, node->multiGetByOffsetData().identifierNumber);
         read(heap);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(node));
+        // FIXME: We cannot def() for MultiGetByOffset because CSE is not smart enough to decay it
+        // to a CheckStructure.
+        // https://bugs.webkit.org/show_bug.cgi?id=159859
         return;
     }
         
