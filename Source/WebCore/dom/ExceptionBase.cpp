@@ -33,45 +33,29 @@
 
 namespace WebCore {
 
-ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description, MessageSource messageSource)
+ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description)
     : m_code(description.code)
     , m_name(description.name)
-    , m_description(description.description)
+    , m_message(description.description)
     , m_typeName(description.typeName)
-    , m_messageSource(messageSource)
 {
-    if (messageSource == MessageSource::UseDescription) {
-        m_message = m_description;
-        return;
-    }
-
-    if (description.name)
-        m_message = m_name + ": " + description.typeName + " Exception " + String::number(description.code);
-    else
-        m_message = makeString(description.typeName, " Exception ", String::number(description.code));
-}
-
-String ExceptionBase::consoleErrorMessage() const
-{
-    if (m_messageSource == MessageSource::UseDescription)
-        return toString();
-
-    return makeString(m_message, ": ", m_description);
 }
 
 String ExceptionBase::toString() const
 {
-    if (m_messageSource != MessageSource::UseDescription)
-        return makeString("Error: ", m_message);
+    if (!m_toString.isEmpty())
+        return m_toString;
 
     String lastComponent;
-    if (!m_description.isEmpty())
-        lastComponent = makeString(": ", m_description);
+    if (!m_message.isEmpty())
+        lastComponent = makeString(": ", m_message);
 
     if (m_name.isEmpty())
-        return makeString(m_typeName, " Exception", m_code ? makeString(" ", String::number(m_code)) : "", lastComponent);
+        m_toString = makeString(m_typeName, " Exception", m_code ? makeString(" ", String::number(m_code)) : "", lastComponent);
+    else
+        m_toString = makeString(m_name, " (", m_typeName, " Exception", m_code ? makeString(" ", String::number(m_code)) : "", ")", lastComponent);
 
-    return makeString(m_name, " (", m_typeName, " Exception", m_code ? makeString(" ", String::number(m_code)) : "", ")", lastComponent);
+    return m_toString;
 }
 
 } // namespace WebCore

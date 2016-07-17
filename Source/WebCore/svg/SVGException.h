@@ -45,7 +45,7 @@ public:
 
 private:
     SVGException(const ExceptionCodeDescription& description)
-        : ExceptionBase(description, ExceptionBase::MessageSource::UseDescription)
+        : ExceptionBase(description)
     {
     }
 };
