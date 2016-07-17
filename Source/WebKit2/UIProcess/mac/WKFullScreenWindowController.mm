@@ -43,6 +43,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
+#import <wtf/BlockObjCExceptions.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -152,6 +153,16 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     return _webViewPlaceholder.get();
 }
 
+- (void)setSavedConstraints:(NSArray *)savedConstraints
+{
+    _savedConstraints = savedConstraints;
+}
+
+- (NSArray *)savedConstraints
+{
+    return _savedConstraints.get();
+}
+
 #pragma mark -
 #pragma mark NSWindowController overrides
 
@@ -237,6 +248,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     }
     [_webViewPlaceholder setTarget:nil];
     [_webViewPlaceholder setContents:(id)webViewContents.get()];
+    self.savedConstraints = _webView.superview.constraints;
     [self _replaceView:_webView with:_webViewPlaceholder.get()];
     
     // Then insert the WebView into the full screen window
@@ -299,6 +311,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 
         NSResponder *firstResponder = [[self window] firstResponder];
         [self _replaceView:_webViewPlaceholder.get() with:_webView];
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [NSLayoutConstraint activateConstraints:self.savedConstraints];
+        END_BLOCK_OBJC_EXCEPTIONS
+        self.savedConstraints = nil;
         makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
         [[_webView window] makeKeyAndOrderFront:self];
 
@@ -388,6 +404,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 
     NSResponder *firstResponder = [[self window] firstResponder];
     [self _replaceView:_webViewPlaceholder.get() with:_webView];
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [NSLayoutConstraint activateConstraints:self.savedConstraints];
+    END_BLOCK_OBJC_EXCEPTIONS
+    self.savedConstraints = nil;
     makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
 
     [[_webView window] makeKeyAndOrderFront:self];

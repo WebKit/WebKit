@@ -1,3 +1,26 @@
+2016-07-17  Jeremy Jones  <jeremyj@apple.com>
+
+        REGRESSION (r191907): Maxthon Browser -After exit full screen video playback the browser window is blank with audio running
+        https://bugs.webkit.org/show_bug.cgi?id=159731
+        <rdar://problem/26674003>
+
+        Reviewed by Tim Horton.
+
+        Primarily written by Jer Noble  <jer.noble@apple.com>.
+
+        When a view is removed from it's superview, and that superview's constraints property references
+        the removed superview, those constraints are removed as well. Make sure to save off a copy of
+        the superview's constraints before swapping in the placeholder view, and reapply those constraints
+        when swapping the web view back into its original superview.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController setSavedConstraints:]):
+        (-[WKFullScreenWindowController savedConstraints]):
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+
 2016-07-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename fastGetAttribute to attributeWithoutSynchronization
