@@ -1,3 +1,14 @@
+2016-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Enable test262 module tests
+        https://bugs.webkit.org/show_bug.cgi?id=159854
+
+        Reviewed by Saam Barati.
+
+        Use --module-file instead.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-07-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r203318.

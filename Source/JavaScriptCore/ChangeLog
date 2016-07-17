@@ -1,5 +1,39 @@
 2016-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Enable test262 module tests
+        https://bugs.webkit.org/show_bug.cgi?id=159854
+
+        Reviewed by Saam Barati.
+
+        This patch enables test262 module tests. Before this patch, the modules tests in test262 do not work fine.
+        This patch fixes the following 2 things.
+
+        1. Test harness
+
+            Before this patch, there is only one global switch "-m" in jsc shell. So we cannot load the test262 test harness before evaluating the module tests.
+            This patch adds a new option, "--module-file=". It is similar to "--strict-file=". When we specify the file with "--module-file=", it is evaluated as
+            a module, while the other files are evaluated by following the JSC's default manner. This option allows us to load the test harness files into the
+            global context before loading the module tests.
+
+        2. Module's asynchronous errors
+
+            Before this patch, the errors caused in the module evaluation are not handled as the same to the usual sync files. In synchronous execution, we have
+            "--exception=" option to pass the expected exception to the JSC shell. But this option does not work in the module evaluation.
+            This patch correctly handles this expected exception in the module evaluation promise's fulfill and reject handlers.
+
+        And we fix the YAML file. Now the recorded :fail and :normal are the correct test results for the module tests.
+
+        * jsc.cpp:
+        (Script::Script):
+        (checkUncaughtException):
+        (runWithScripts):
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (dumpException): Deleted.
+        * tests/test262.yaml:
+
+2016-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Mask TrustedImm32 to 8bit in MacroAssembler for 8bit operations
         https://bugs.webkit.org/show_bug.cgi?id=159334
 

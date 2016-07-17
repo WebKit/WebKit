@@ -1068,7 +1068,6 @@ def runTest262(mode, exception, includeFiles, flags)
     prepareExtraRelativeFiles(includeFiles.map { |f| "../" + f }, $collection)
 
     args = [pathToVM.to_s] + BASE_OPTIONS
-    args << "-m" if isModule
     args << "--exception=" + exception if failsWithException
     args << "--test262-async" if isAsync
     args += includeFiles
@@ -1089,7 +1088,11 @@ def runTest262(mode, exception, includeFiles, flags)
         args << "--strict-file=#{$benchmark}"
     else
         kind = "default"
-        args << $benchmark.to_s
+        if isModule
+            args << "--module-file=#{$benchmark}"
+        else
+            args << $benchmark.to_s
+        end
     end
 
     addRunCommand(kind, args, outputHandler, errorHandler)
