@@ -921,11 +921,11 @@ public:
 
     void store8(TrustedImm32 imm, void* address)
     {
-        ASSERT((imm.m_value >= -128) && (imm.m_value <= 127));
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         RegisterID dstptr = claimScratch();
         move(TrustedImmPtr(address), dstptr);
         RegisterID srcval = claimScratch();
-        move(imm, srcval);
+        move(imm8, srcval);
         m_assembler.movbRegMem(srcval, dstptr);
         releaseScratch(dstptr);
         releaseScratch(srcval);
@@ -933,12 +933,12 @@ public:
 
     void store8(TrustedImm32 imm, Address address)
     {
-        ASSERT((imm.m_value >= -128) && (imm.m_value <= 127));
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         RegisterID dstptr = claimScratch();
         move(address.base, dstptr);
         add32(TrustedImm32(address.offset), dstptr);
         RegisterID srcval = claimScratch();
-        move(imm, srcval);
+        move(imm8, srcval);
         m_assembler.movbRegMem(srcval, dstptr);
         releaseScratch(dstptr);
         releaseScratch(srcval);
@@ -1595,28 +1595,31 @@ public:
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         RegisterID addressTempRegister = claimScratch();
         load8(address, addressTempRegister);
-        Jump jmp = branchTest32(cond, addressTempRegister, mask);
+        Jump jmp = branchTest32(cond, addressTempRegister, mask8);
         releaseScratch(addressTempRegister);
         return jmp;
     }
 
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         RegisterID addressTempRegister = claimScratch();
         load8(address, addressTempRegister);
-        Jump jmp = branchTest32(cond, addressTempRegister, mask);
+        Jump jmp = branchTest32(cond, addressTempRegister, mask8);
         releaseScratch(addressTempRegister);
         return jmp;
     }
 
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         RegisterID addressTempRegister = claimScratch();
         move(TrustedImmPtr(address.m_ptr), addressTempRegister);
         load8(Address(addressTempRegister), addressTempRegister);
-        Jump jmp = branchTest32(cond, addressTempRegister, mask);
+        Jump jmp = branchTest32(cond, addressTempRegister, mask8);
         releaseScratch(addressTempRegister);
         return jmp;
     }
@@ -1633,27 +1636,30 @@ public:
 
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         RegisterID addressTempRegister = claimScratch();
         load8(left, addressTempRegister);
-        Jump jmp = branch32(cond, addressTempRegister, right);
+        Jump jmp = branch32(cond, addressTempRegister, right8);
         releaseScratch(addressTempRegister);
         return jmp;
     }
 
     Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         RegisterID addressTempRegister = claimScratch();
         load8(left, addressTempRegister);
-        Jump jmp = branch32(cond, addressTempRegister, right);
+        Jump jmp = branch32(cond, addressTempRegister, right8);
         releaseScratch(addressTempRegister);
         return jmp;
     }
 
     void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
     {
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         RegisterID addressTempRegister = claimScratch();
         load8(left, addressTempRegister);
-        compare32(cond, addressTempRegister, right, dest);
+        compare32(cond, addressTempRegister, right8, dest);
         releaseScratch(addressTempRegister);
     }
 
@@ -1825,11 +1831,13 @@ public:
     {
         ASSERT((cond == Zero) || (cond == NonZero));
 
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+
         load8(address, dest);
-        if (mask.m_value == -1)
+        if (mask8.m_value == -1)
             compare32(0, dest, static_cast<RelationalCondition>(cond));
         else
-            testlImm(mask.m_value, dest);
+            testlImm(mask8.m_value, dest);
         if (cond != NonZero) {
             m_assembler.movt(dest);
             return;
@@ -1947,14 +1955,14 @@ public:
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        ASSERT(!(right.m_value & 0xFFFFFF00));
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         RegisterID lefttmp = claimScratch();
 
         loadEffectiveAddress(left, lefttmp);
 
         load8(lefttmp, lefttmp);
         RegisterID righttmp = claimScratch();
-        m_assembler.loadConstant(right.m_value, righttmp);
+        m_assembler.loadConstant(right8.m_value, righttmp);
 
         Jump result = branch32(cond, lefttmp, righttmp);
         releaseScratch(lefttmp);

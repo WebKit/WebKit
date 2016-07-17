@@ -1,3 +1,67 @@
+2016-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Mask TrustedImm32 to 8bit in MacroAssembler for 8bit operations
+        https://bugs.webkit.org/show_bug.cgi?id=159334
+
+        Reviewed by Filip Pizlo.
+
+        Previously, in 8bit operations (like add8, compare8, test8, branch8, branchTest8 etc.),
+        we require that the given TrustedImm32 is in range of 8bit. While achieving this in
+        the manual MacroAssembler calling is easy, in Air, we don't guarantee that the higher bit
+        of the 8bit argument is cleared. So the current assertions are invalid.
+
+        This patch relaxes the above restriction. By removing this assertion,
+        8bit operations can take arbitrary 32bit imms. And only lower 8bit are effective when
+        emitting the code in these methods.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branchTest8):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::store8):
+        (JSC::MacroAssemblerARM::branch8):
+        (JSC::MacroAssemblerARM::branchTest8):
+        (JSC::MacroAssemblerARM::compare8):
+        (JSC::MacroAssemblerARM::test8):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::branch8):
+        (JSC::MacroAssemblerARM64::branchTest8):
+        (JSC::MacroAssemblerARM64::compare8):
+        (JSC::MacroAssemblerARM64::test8):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::store8):
+        (JSC::MacroAssemblerARMv7::branch8):
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        (JSC::MacroAssemblerARMv7::compare8):
+        (JSC::MacroAssemblerARMv7::test8):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::store8):
+        (JSC::MacroAssemblerMIPS::branch8):
+        (JSC::MacroAssemblerMIPS::compare8):
+        (JSC::MacroAssemblerMIPS::branchTest8):
+        (JSC::MacroAssemblerMIPS::test8):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::store8):
+        (JSC::MacroAssemblerSH4::branchTest8):
+        (JSC::MacroAssemblerSH4::branch8):
+        (JSC::MacroAssemblerSH4::compare8):
+        (JSC::MacroAssemblerSH4::test8):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::store8):
+        (JSC::MacroAssemblerX86::branch8):
+        (JSC::MacroAssemblerX86::branchTest8):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add8):
+        (JSC::MacroAssemblerX86Common::store8):
+        (JSC::MacroAssemblerX86Common::branch8):
+        (JSC::MacroAssemblerX86Common::branchTest8):
+        (JSC::MacroAssemblerX86Common::compare8):
+        (JSC::MacroAssemblerX86Common::test8):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::store8):
+        (JSC::MacroAssemblerX86_64::branch8):
+        (JSC::MacroAssemblerX86_64::branchTest8):
+
 2016-07-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r203318.

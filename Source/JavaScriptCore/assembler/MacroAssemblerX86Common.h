@@ -135,12 +135,14 @@ public:
 
     void add8(TrustedImm32 imm, Address address)
     {
-        m_assembler.addb_im(imm.m_value, address.offset, address.base);
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
+        m_assembler.addb_im(imm8.m_value, address.offset, address.base);
     }
 
     void add8(TrustedImm32 imm, BaseIndex address)
     {
-        m_assembler.addb_im(imm.m_value, address.offset, address.base, address.index, address.scale);
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
+        m_assembler.addb_im(imm8.m_value, address.offset, address.base, address.index, address.scale);
     }
 
     void add16(TrustedImm32 imm, Address address)
@@ -908,12 +910,14 @@ public:
 
     void store8(TrustedImm32 imm, Address address)
     {
-        m_assembler.movb_i8m(static_cast<int8_t>(imm.m_value), address.offset, address.base);
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
+        m_assembler.movb_i8m(imm8.m_value, address.offset, address.base);
     }
 
     void store8(TrustedImm32 imm, BaseIndex address)
     {
-        m_assembler.movb_i8m(static_cast<int8_t>(imm.m_value), address.offset, address.base, address.index, address.scale);
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
+        m_assembler.movb_i8m(imm8.m_value, address.offset, address.base, address.index, address.scale);
     }
 
     static ALWAYS_INLINE RegisterID getUnusedRegister(BaseIndex address)
@@ -2121,7 +2125,8 @@ public:
 public:
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
-        m_assembler.cmpb_im(right.m_value, left.offset, left.base);
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
+        m_assembler.cmpb_im(right8.m_value, left.offset, left.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
@@ -2218,32 +2223,28 @@ public:
     
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // Byte in TrustedImm32 is not well defined, so be a little permissive here, but don't accept nonsense values.
-        ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
-        if (mask.m_value == -1)
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+        if (mask8.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base);
         else
-            m_assembler.testb_im(mask.m_value, address.offset, address.base);
+            m_assembler.testb_im(mask8.m_value, address.offset, address.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // Byte in TrustedImm32 is not well defined, so be a little permissive here, but don't accept nonsense values.
-        ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
-        if (mask.m_value == -1)
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+        if (mask8.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base, address.index, address.scale);
         else
-            m_assembler.testb_im(mask.m_value, address.offset, address.base, address.index, address.scale);
+            m_assembler.testb_im(mask8.m_value, address.offset, address.base, address.index, address.scale);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        // Byte in TrustedImm32 is not well defined, so be a little permissive here, but don't accept nonsense values.
-        ASSERT(right.m_value >= -128 && right.m_value <= 255);
-
-        m_assembler.cmpb_im(right.m_value, left.offset, left.base, left.index, left.scale);
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
+        m_assembler.cmpb_im(right8.m_value, left.offset, left.base, left.index, left.scale);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
@@ -2459,7 +2460,8 @@ public:
 
     void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
     {
-        m_assembler.cmpb_im(right.m_value, left.offset, left.base);
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
+        m_assembler.cmpb_im(right8.m_value, left.offset, left.base);
         set32(x86Condition(cond), dest);
     }
     
@@ -2489,10 +2491,11 @@ public:
 
     void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
-        if (mask.m_value == -1)
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+        if (mask8.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base);
         else
-            m_assembler.testb_im(mask.m_value, address.offset, address.base);
+            m_assembler.testb_im(mask8.m_value, address.offset, address.base);
         set32(x86Condition(cond), dest);
     }
 

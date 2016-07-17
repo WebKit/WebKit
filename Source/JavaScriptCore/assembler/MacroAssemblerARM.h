@@ -501,14 +501,16 @@ public:
 
     void store8(TrustedImm32 imm, ImplicitAddress address)
     {
-        move(imm, ARMRegisters::S1);
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
+        move(imm8, ARMRegisters::S1);
         store8(ARMRegisters::S1, address);
     }
 
     void store8(TrustedImm32 imm, const void* address)
     {
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         move(TrustedImm32(reinterpret_cast<ARMWord>(address)), ARMRegisters::S0);
-        move(imm, ARMRegisters::S1);
+        move(imm8, ARMRegisters::S1);
         m_assembler.dtrUp(ARMAssembler::StoreUint8, ARMRegisters::S1, ARMRegisters::S0, 0);
     }
 
@@ -623,22 +625,24 @@ public:
 
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         load8(left, ARMRegisters::S1);
-        return branch32(cond, ARMRegisters::S1, right);
+        return branch32(cond, ARMRegisters::S1, right8);
     }
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        ASSERT(!(right.m_value & 0xFFFFFF00));
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         load8(left, ARMRegisters::S1);
-        return branch32(cond, ARMRegisters::S1, right);
+        return branch32(cond, ARMRegisters::S1, right8);
     }
 
     Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         move(TrustedImmPtr(left.m_ptr), ARMRegisters::S1);
         load8(Address(ARMRegisters::S1), ARMRegisters::S1);
-        return branch32(cond, ARMRegisters::S1, right);
+        return branch32(cond, ARMRegisters::S1, right8);
     }
 
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right, int useConstantPool = 0)
@@ -685,21 +689,24 @@ public:
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         load8(address, ARMRegisters::S1);
-        return branchTest32(cond, ARMRegisters::S1, mask);
+        return branchTest32(cond, ARMRegisters::S1, mask8);
     }
 
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         load8(address, ARMRegisters::S1);
-        return branchTest32(cond, ARMRegisters::S1, mask);
+        return branchTest32(cond, ARMRegisters::S1, mask8);
     }
 
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         move(TrustedImmPtr(address.m_ptr), ARMRegisters::S1);
         load8(Address(ARMRegisters::S1), ARMRegisters::S1);
-        return branchTest32(cond, ARMRegisters::S1, mask);
+        return branchTest32(cond, ARMRegisters::S1, mask8);
     }
 
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
@@ -965,8 +972,9 @@ public:
 
     void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
     {
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         load8(left, ARMRegisters::S1);
-        compare32(cond, ARMRegisters::S1, right, dest);
+        compare32(cond, ARMRegisters::S1, right8, dest);
     }
 
     void test32(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
@@ -987,8 +995,9 @@ public:
 
     void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         load8(address, ARMRegisters::S1);
-        test32(cond, ARMRegisters::S1, mask, dest);
+        test32(cond, ARMRegisters::S1, mask8, dest);
     }
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)

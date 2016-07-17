@@ -137,8 +137,9 @@ public:
     
     void store8(TrustedImm32 imm, void* address)
     {
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         move(TrustedImmPtr(address), scratchRegister());
-        store8(imm, Address(scratchRegister()));
+        store8(imm8, Address(scratchRegister()));
     }
 
     void store8(RegisterID reg, void* address)
@@ -1210,22 +1211,25 @@ public:
     using MacroAssemblerX86Common::branch8;
     Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
+        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         MacroAssemblerX86Common::move(TrustedImmPtr(left.m_ptr), scratchRegister());
-        return MacroAssemblerX86Common::branch8(cond, Address(scratchRegister()), right);
+        return MacroAssemblerX86Common::branch8(cond, Address(scratchRegister()), right8);
     }
     
     using MacroAssemblerX86Common::branchTest8;
     Jump branchTest8(ResultCondition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         TrustedImmPtr addr(reinterpret_cast<void*>(address.offset));
         MacroAssemblerX86Common::move(addr, scratchRegister());
-        return MacroAssemblerX86Common::branchTest8(cond, BaseIndex(scratchRegister(), address.base, TimesOne), mask);
+        return MacroAssemblerX86Common::branchTest8(cond, BaseIndex(scratchRegister(), address.base, TimesOne), mask8);
     }
     
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
+        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         MacroAssemblerX86Common::move(TrustedImmPtr(address.m_ptr), scratchRegister());
-        return MacroAssemblerX86Common::branchTest8(cond, Address(scratchRegister()), mask);
+        return MacroAssemblerX86Common::branchTest8(cond, Address(scratchRegister()), mask8);
     }
 
     void convertInt64ToDouble(RegisterID src, FPRegisterID dest)
