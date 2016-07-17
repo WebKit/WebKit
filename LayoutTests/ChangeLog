@@ -1,3 +1,75 @@
+2016-07-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support new emoji group candidates
+        https://bugs.webkit.org/show_bug.cgi?id=159755
+        <rdar://problem/27325521>
+
+        Reviewed by Dean Jackson.
+
+        Because this patch doesn't update the rules for our cursor movement
+        iterator, the new expected result for editing/deleting/delete-emoji.html
+        expects incorrect results. In the patch where we update these rules,
+        the expected result should also be updated.
+
+        Because these new emoji require system support, TestExpectations has
+        been updated to mark the tests as failing until the system support has
+        been added.
+
+        * TestExpectations:
+        * editing/deleting/delete-emoji-expected.txt:
+        * fast/text/emoji-gender-2-3-expected.html: Added.
+        * fast/text/emoji-gender-2-3.html: Added.
+        * fast/text/emoji-gender-2-4-expected.html: Added.
+        * fast/text/emoji-gender-2-4.html: Added.
+        * fast/text/emoji-gender-2-5-expected.html: Added.
+        * fast/text/emoji-gender-2-5.html: Added.
+        * fast/text/emoji-gender-2-6-expected.html: Added.
+        * fast/text/emoji-gender-2-6.html: Added.
+        * fast/text/emoji-gender-2-7-expected.html: Added.
+        * fast/text/emoji-gender-2-7.html: Added.
+        * fast/text/emoji-gender-2-8-expected.html: Added.
+        * fast/text/emoji-gender-2-8.html: Added.
+        * fast/text/emoji-gender-2-9-expected.html: Added.
+        * fast/text/emoji-gender-2-9.html: Added.
+        * fast/text/emoji-gender-2-expected-mismatch.html: Added.
+        * fast/text/emoji-gender-2.html: Added.
+        * fast/text/emoji-gender-3-expected.html: Added.
+        * fast/text/emoji-gender-3.html: Added.
+        * fast/text/emoji-gender-4-expected.html: Added.
+        * fast/text/emoji-gender-4.html: Added.
+        * fast/text/emoji-gender-5-expected.html: Added.
+        * fast/text/emoji-gender-5.html: Added.
+        * fast/text/emoji-gender-6-expected.html: Added.
+        * fast/text/emoji-gender-6.html: Added.
+        * fast/text/emoji-gender-7-expected.html: Added.
+        * fast/text/emoji-gender-7.html: Added.
+        * fast/text/emoji-gender-8-expected.html: Added.
+        * fast/text/emoji-gender-8.html: Added.
+        * fast/text/emoji-gender-9-expected.html: Added.
+        * fast/text/emoji-gender-9.html: Added.
+        * fast/text/emoji-gender-expected-mismatch.html: Added.
+        * fast/text/emoji-gender-fe0f-3-expected.html: Added.
+        * fast/text/emoji-gender-fe0f-3.html: Added.
+        * fast/text/emoji-gender-fe0f-4-expected.html: Added.
+        * fast/text/emoji-gender-fe0f-4.html: Added.
+        * fast/text/emoji-gender-fe0f-5-expected.html: Added.
+        * fast/text/emoji-gender-fe0f-5.html: Added.
+        * fast/text/emoji-gender-fe0f-6-expected.html: Added.
+        * fast/text/emoji-gender-fe0f-6.html: Added.
+        * fast/text/emoji-gender-fe0f-7-expected.html: Added.
+        * fast/text/emoji-gender-fe0f-7.html: Added.
+        * fast/text/emoji-gender-fe0f-8-expected.html: Added.
+        * fast/text/emoji-gender-fe0f-8.html: Added.
+        * fast/text/emoji-gender-fe0f-9-expected.html: Added.
+        * fast/text/emoji-gender-fe0f-9.html: Added.
+        * fast/text/emoji-gender.html: Added.
+        * fast/text/emoji-num-glyphs-expected.txt: Added.
+        * fast/text/emoji-num-glyphs.html: Added.
+        * fast/text/emoji-single-parent-family-2-expected-mismatch.html: Added.
+        * fast/text/emoji-single-parent-family-2.html: Added.
+        * fast/text/emoji-single-parent-family-expected-mismatch.html: Added.
+        * fast/text/emoji-single-parent-family.html: Added.
+
 2016-07-16  Brady Eidson  <beidson@apple.com>
 
         Update SVGException to use the description in toString().

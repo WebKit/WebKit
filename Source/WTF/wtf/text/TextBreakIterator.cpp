@@ -164,6 +164,7 @@ TextBreakIterator* sentenceBreakIterator(StringView string)
 
 TextBreakIterator* cursorMovementIterator(StringView string)
 {
+    // FIXME: These rules need to be updated for additional gender-based emoji support.
 #if !PLATFORM(IOS)
     // This rule set is based on character-break iterator rules of ICU 4.0
     // <http://source.icu-project.org/repos/icu/icu/tags/release-4-0/source/data/brkitr/char.txt>.
