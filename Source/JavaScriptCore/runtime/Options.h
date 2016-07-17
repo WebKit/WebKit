@@ -98,44 +98,6 @@ private:
     unsigned m_highLimit;
 };
 
-#if CPU(X86_64)
-constexpr int32_t archThresholdForJITAfterWarmUp = 610;
-constexpr int32_t archThresholdForJITSoon = 89;
-constexpr int32_t archThresholdForOptimizeAfterWarmUp = 864;
-constexpr int32_t archThresholdForOptimizeAfterLongWarmUp = 1489;
-constexpr int32_t archThresholdForOptimizeSoon = 864;
-constexpr int32_t archExecutionCounterIncrementForLoop = 2;
-constexpr int32_t archExecutionCounterIncrementForEntry = 16;
-constexpr int32_t archThresholdForFTLOptimizeAfterWarmUp = 109160;
-constexpr int32_t archThresholdForFTLOptimizeSoon = 825;
-constexpr int32_t archFtlTierUpCounterIncrementForLoop = 8;
-constexpr int32_t archFtlTierUpCounterIncrementForReturn = 27;
-constexpr unsigned archFtlOSREntryRetryThreshold = 109;
-constexpr double archOptimizationThresholdScalingFactorA = 0.0258587392234135;
-constexpr double archOptimizationThresholdScalingFactorB = 1.2428014544978696;
-constexpr double archOptimizationThresholdScalingFactorC = 0.0013276440240339;
-constexpr double archOptimizationThresholdScalingFactorD = 1.3130654609331458;
-constexpr int32_t archEvalThresholdMultiplier = 12;
-#else
-constexpr int32_t archThresholdForJITAfterWarmUp = 500;
-constexpr int32_t archThresholdForJITSoon = 100;
-constexpr int32_t archThresholdForOptimizeAfterWarmUp = 1000;
-constexpr int32_t archThresholdForOptimizeAfterLongWarmUp = 1000;
-constexpr int32_t archThresholdForOptimizeSoon = 1000;
-constexpr int32_t archExecutionCounterIncrementForLoop = 1;
-constexpr int32_t archExecutionCounterIncrementForEntry = 15;
-constexpr int32_t archThresholdForFTLOptimizeAfterWarmUp = 100000;
-constexpr int32_t archThresholdForFTLOptimizeSoon = 1000;
-constexpr int32_t archFtlTierUpCounterIncrementForLoop = 1;
-constexpr int32_t archFtlTierUpCounterIncrementForReturn = 15;
-constexpr unsigned archFtlOSREntryRetryThreshold = 100;
-constexpr double archOptimizationThresholdScalingFactorA = 0.061504;
-constexpr double archOptimizationThresholdScalingFactorB = 1.02406;
-constexpr double archOptimizationThresholdScalingFactorC = 0.0;
-constexpr double archOptimizationThresholdScalingFactorD = 0.825914;
-constexpr int32_t archEvalThresholdMultiplier = 10;
-#endif
-
 typedef OptionRange optionRange;
 typedef const char* optionString;
 
@@ -291,28 +253,23 @@ typedef const char* optionString;
     \
     v(double, jitPolicyScale, 1.0, Normal, "scale JIT thresholds to this specified ratio between 0.0 (compile ASAP) and 1.0 (compile like normal).") \
     v(bool, forceEagerCompilation, false, Normal, nullptr) \
-    v(int32, thresholdForJITAfterWarmUp, archThresholdForJITAfterWarmUp, Normal, nullptr) \
-    v(int32, thresholdForJITSoon, archThresholdForJITSoon, Normal, nullptr) \
+    v(int32, thresholdForJITAfterWarmUp, 500, Normal, nullptr) \
+    v(int32, thresholdForJITSoon, 100, Normal, nullptr) \
     \
-    v(int32, thresholdForOptimizeAfterWarmUp, archThresholdForOptimizeAfterWarmUp, Normal, nullptr) \
-    v(int32, thresholdForOptimizeAfterLongWarmUp, archThresholdForOptimizeAfterLongWarmUp, Normal, nullptr) \
-    v(int32, thresholdForOptimizeSoon, archThresholdForOptimizeSoon, Normal, nullptr) \
-    v(int32, executionCounterIncrementForLoop, archExecutionCounterIncrementForLoop, Normal, nullptr) \
-    v(int32, executionCounterIncrementForEntry, archExecutionCounterIncrementForEntry, Normal, nullptr) \
+    v(int32, thresholdForOptimizeAfterWarmUp, 1000, Normal, nullptr) \
+    v(int32, thresholdForOptimizeAfterLongWarmUp, 1000, Normal, nullptr) \
+    v(int32, thresholdForOptimizeSoon, 1000, Normal, nullptr) \
+    v(int32, executionCounterIncrementForLoop, 1, Normal, nullptr) \
+    v(int32, executionCounterIncrementForEntry, 15, Normal, nullptr) \
     \
-    v(int32, thresholdForFTLOptimizeAfterWarmUp, archThresholdForFTLOptimizeAfterWarmUp, Normal, nullptr) \
-    v(int32, thresholdForFTLOptimizeSoon, archThresholdForFTLOptimizeSoon, Normal, nullptr) \
-    v(int32, ftlTierUpCounterIncrementForLoop, archFtlTierUpCounterIncrementForLoop, Normal, nullptr) \
-    v(int32, ftlTierUpCounterIncrementForReturn, archFtlTierUpCounterIncrementForReturn, Normal, nullptr) \
+    v(int32, thresholdForFTLOptimizeAfterWarmUp, 100000, Normal, nullptr) \
+    v(int32, thresholdForFTLOptimizeSoon, 1000, Normal, nullptr) \
+    v(int32, ftlTierUpCounterIncrementForLoop, 1, Normal, nullptr) \
+    v(int32, ftlTierUpCounterIncrementForReturn, 15, Normal, nullptr) \
     v(unsigned, ftlOSREntryFailureCountForReoptimization, 15, Normal, nullptr) \
-    v(unsigned, ftlOSREntryRetryThreshold, archFtlOSREntryRetryThreshold, Normal, nullptr) \
+    v(unsigned, ftlOSREntryRetryThreshold, 100, Normal, nullptr) \
     \
-    v(double, optimizationThresholdScalingFactorA, archOptimizationThresholdScalingFactorA, Normal, nullptr) \
-    v(double, optimizationThresholdScalingFactorB, archOptimizationThresholdScalingFactorB, Normal, nullptr) \
-    v(double, optimizationThresholdScalingFactorC, archOptimizationThresholdScalingFactorC, Normal, nullptr) \
-    v(double, optimizationThresholdScalingFactorD, archOptimizationThresholdScalingFactorD, Normal, nullptr) \
-    \
-    v(int32, evalThresholdMultiplier, archEvalThresholdMultiplier, Normal, nullptr) \
+    v(int32, evalThresholdMultiplier, 10, Normal, nullptr) \
     v(unsigned, maximumEvalCacheableSourceLength, 256, Normal, nullptr) \
     \
     v(bool, randomizeExecutionCountsBetweenCheckpoints, false, Normal, nullptr) \

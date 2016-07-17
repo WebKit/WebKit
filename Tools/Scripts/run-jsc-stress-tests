@@ -429,7 +429,7 @@ $numPasses = 0
 # We force all tests to use a smaller (1.5M) stack so that stack overflow tests can run faster.
 BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--maxPerThreadStackUsage=1572864"]
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000"]
-NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--thresholdForJITSoon=100", "--thresholdForOptimizeAfterWarmUp=1000", "--thresholdForOptimizeAfterLongWarmUp=1000", "--thresholdForOptimizeSoon=1000", "--executionCounterIncrementForLoop=1", "--executionCounterIncrementForEntry=15", "--thresholdForFTLOptimizeAfterWarmUp=100000", "--thresholdForFTLOptimizeSoon=1000", "--ftlTierUpCounterIncrementForLoop=1", "--ftlTierUpCounterIncrementForReturn=15", "--evalThresholdMultiplier=10", "--optimizationThresholdScalingFactorA=0.061504", "--optimizationThresholdScalingFactorB=1.02406", "--optimizationThresholdScalingFactorC=0.0", "--optimizationThresholdScalingFactorD=0.825914"]
+NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
 
 $runlist = []
