@@ -29,13 +29,9 @@ PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inh
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "ontimeout" with the proper type (5) 
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onloadend" with the proper type (6) 
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError 
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError 
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError 
 PASS XMLHttpRequest interface: existence and properties of interface object 
@@ -114,13 +110,9 @@ PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit prop
 PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit property "ontimeout" with the proper type (5) 
 PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit property "onloadend" with the proper type (6) 
 PASS EventTarget interface: new XMLHttpRequest() must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new XMLHttpRequest() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new XMLHttpRequest() with too few arguments must throw TypeError 
 PASS EventTarget interface: new XMLHttpRequest() must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new XMLHttpRequest() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new XMLHttpRequest() with too few arguments must throw TypeError 
 PASS EventTarget interface: new XMLHttpRequest() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new XMLHttpRequest() with too few arguments must throw TypeError 
 PASS FormData interface: existence and properties of interface object 

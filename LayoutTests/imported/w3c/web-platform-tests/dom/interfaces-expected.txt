@@ -437,13 +437,9 @@ PASS Node interface: calling replaceChild(Node,Node) on new Document() with too 
 PASS Node interface: new Document() must inherit property "removeChild" with the proper type (45) 
 PASS Node interface: calling removeChild(Node) on new Document() with too few arguments must throw TypeError 
 PASS EventTarget interface: new Document() must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
 PASS EventTarget interface: new Document() must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
 PASS EventTarget interface: new Document() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new Document() with too few arguments must throw TypeError 
 PASS XMLDocument interface: existence and properties of interface object 
@@ -607,13 +603,9 @@ PASS Node interface: calling replaceChild(Node,Node) on xmlDoc with too few argu
 PASS Node interface: xmlDoc must inherit property "removeChild" with the proper type (45) 
 PASS Node interface: calling removeChild(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on xmlDoc with too few arguments must throw TypeError 
 PASS DOMImplementation interface: existence and properties of interface object 
@@ -737,13 +729,9 @@ PASS Node interface: calling replaceChild(Node,Node) on document.doctype with to
 PASS Node interface: document.doctype must inherit property "removeChild" with the proper type (45) 
 PASS Node interface: calling removeChild(Node) on document.doctype with too few arguments must throw TypeError 
 PASS EventTarget interface: document.doctype must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.doctype with too few arguments must throw TypeError 
 PASS EventTarget interface: document.doctype must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.doctype with too few arguments must throw TypeError 
 PASS EventTarget interface: document.doctype must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.doctype with too few arguments must throw TypeError 
 PASS DocumentFragment interface: existence and properties of interface object 
@@ -853,13 +841,9 @@ PASS Node interface: calling replaceChild(Node,Node) on document.createDocumentF
 PASS Node interface: document.createDocumentFragment() must inherit property "removeChild" with the proper type (45) 
 PASS Node interface: calling removeChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createDocumentFragment() must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createDocumentFragment() must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createDocumentFragment() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS ShadowRoot interface: existence and properties of interface object 
@@ -1100,13 +1084,9 @@ PASS Node interface: calling replaceChild(Node,Node) on element with too few arg
 PASS Node interface: element must inherit property "removeChild" with the proper type (45) 
 PASS Node interface: calling removeChild(Node) on element with too few arguments must throw TypeError 
 PASS EventTarget interface: element must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on element with too few arguments must throw TypeError 
 PASS EventTarget interface: element must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on element with too few arguments must throw TypeError 
 PASS EventTarget interface: element must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on element with too few arguments must throw TypeError 
 PASS NamedNodeMap interface: existence and properties of interface object 
@@ -1281,13 +1261,9 @@ PASS Node interface: calling replaceChild(Node,Node) on document.createTextNode(
 PASS Node interface: document.createTextNode("abc") must inherit property "removeChild" with the proper type (45) 
 PASS Node interface: calling removeChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createTextNode("abc") must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createTextNode("abc") must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createTextNode("abc") must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS ProcessingInstruction interface: existence and properties of interface object 
@@ -1395,13 +1371,9 @@ PASS Node interface: calling replaceChild(Node,Node) on xmlDoc.createProcessingI
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeChild" with the proper type (45) 
 PASS Node interface: calling removeChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Comment interface: existence and properties of interface object 
@@ -1507,13 +1479,9 @@ PASS Node interface: calling replaceChild(Node,Node) on document.createComment("
 PASS Node interface: document.createComment("abc") must inherit property "removeChild" with the proper type (45) 
 PASS Node interface: calling removeChild(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createComment("abc") must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createComment("abc") must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createComment("abc") must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Range interface: existence and properties of interface object 

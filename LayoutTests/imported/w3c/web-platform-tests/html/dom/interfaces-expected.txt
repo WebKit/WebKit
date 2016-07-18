@@ -418,13 +418,9 @@ PASS Node interface: calling replaceChild(Node,Node) on iframe.contentDocument w
 PASS Node interface: iframe.contentDocument must inherit property "removeChild" with the proper type (43) 
 PASS Node interface: calling removeChild(Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS EventTarget interface: iframe.contentDocument must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS EventTarget interface: iframe.contentDocument must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS EventTarget interface: iframe.contentDocument must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document must be primary interface of new Document() 
@@ -724,13 +720,9 @@ PASS Node interface: calling replaceChild(Node,Node) on new Document() with too 
 PASS Node interface: new Document() must inherit property "removeChild" with the proper type (43) 
 PASS Node interface: calling removeChild(Node) on new Document() with too few arguments must throw TypeError 
 PASS EventTarget interface: new Document() must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new Document() with too few arguments must throw TypeError 
 PASS EventTarget interface: new Document() must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new Document() with too few arguments must throw TypeError 
 PASS EventTarget interface: new Document() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new Document() with too few arguments must throw TypeError 
 FAIL XMLDocument interface: operation load(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "load" missing
@@ -1033,13 +1025,9 @@ PASS Node interface: calling replaceChild(Node,Node) on document.implementation.
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "removeChild" with the proper type (43) 
 PASS Node interface: calling removeChild(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS EventTarget interface: document.implementation.createDocument(null, "", null) must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS EventTarget interface: document.implementation.createDocument(null, "", null) must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS EventTarget interface: document.implementation.createDocument(null, "", null) must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 FAIL MouseEvent interface: attribute region assert_true: The prototype object must have a property "region" expected true got false
@@ -1465,13 +1453,9 @@ PASS Node interface: calling replaceChild(Node,Node) on document.createElement("
 PASS Node interface: document.createElement("noscript") must inherit property "removeChild" with the proper type (43) 
 PASS Node interface: calling removeChild(Node) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createElement("noscript") must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createElement("noscript") must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createElement("noscript") must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS HTMLUnknownElement interface: existence and properties of interface object 
@@ -2441,13 +2425,9 @@ FAIL MediaController interface: new MediaController() must inherit property "onp
 FAIL MediaController interface: new MediaController() must inherit property "onratechange" with the proper type (27) assert_inherits: property "onratechange" not found in prototype chain
 FAIL MediaController interface: new MediaController() must inherit property "onvolumechange" with the proper type (28) assert_inherits: property "onvolumechange" not found in prototype chain
 PASS EventTarget interface: new MediaController() must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new MediaController() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new MediaController() with too few arguments must throw TypeError 
 PASS EventTarget interface: new MediaController() must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new MediaController() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new MediaController() with too few arguments must throw TypeError 
 PASS EventTarget interface: new MediaController() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new MediaController() with too few arguments must throw TypeError 
 PASS TextTrackList interface: existence and properties of interface object 
@@ -2469,13 +2449,9 @@ PASS TextTrackList interface: document.createElement("video").textTracks must in
 PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "onaddtrack" with the proper type (4) 
 PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "onremovetrack" with the proper type (5) 
 PASS EventTarget interface: document.createElement("video").textTracks must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createElement("video").textTracks with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createElement("video").textTracks with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createElement("video").textTracks must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createElement("video").textTracks with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createElement("video").textTracks with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createElement("video").textTracks must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createElement("video").textTracks with too few arguments must throw TypeError 
 PASS TextTrack interface: existence and properties of interface object 
@@ -2514,13 +2490,9 @@ PASS TextTrack interface: document.createElement("track").track must inherit pro
 PASS TextTrack interface: calling removeCue(TextTrackCue) on document.createElement("track").track with too few arguments must throw TypeError 
 PASS TextTrack interface: document.createElement("track").track must inherit property "oncuechange" with the proper type (10) 
 PASS EventTarget interface: document.createElement("track").track must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createElement("track").track with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createElement("track").track with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createElement("track").track must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createElement("track").track with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createElement("track").track with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createElement("track").track must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createElement("track").track with too few arguments must throw TypeError 
 PASS TextTrackCueList interface: existence and properties of interface object 
@@ -5694,13 +5666,9 @@ FAIL Window interface: calling createImageBitmap(ImageBitmapSource,long,long,lon
 PASS Window interface: window must inherit property "sessionStorage" with the proper type (123) 
 PASS Window interface: window must inherit property "localStorage" with the proper type (124) 
 PASS EventTarget interface: window must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError 
 PASS EventTarget interface: window must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError 
 PASS EventTarget interface: window must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on window with too few arguments must throw TypeError 
 PASS BarProp interface: existence and properties of interface object 
@@ -5859,13 +5827,9 @@ PASS ApplicationCache interface: window.applicationCache must inherit property "
 PASS ApplicationCache interface: window.applicationCache must inherit property "oncached" with the proper type (16) 
 PASS ApplicationCache interface: window.applicationCache must inherit property "onobsolete" with the proper type (17) 
 PASS EventTarget interface: window.applicationCache must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window.applicationCache with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window.applicationCache with too few arguments must throw TypeError 
 PASS EventTarget interface: window.applicationCache must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window.applicationCache with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window.applicationCache with too few arguments must throw TypeError 
 PASS EventTarget interface: window.applicationCache must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on window.applicationCache with too few arguments must throw TypeError 
 PASS ErrorEvent interface: existence and properties of interface object 
@@ -6076,13 +6040,9 @@ PASS WebSocket interface: calling send(ArrayBuffer) on new WebSocket("ws://foo")
 PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send" with the proper type (18) 
 PASS WebSocket interface: calling send(ArrayBufferView) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
 PASS EventTarget interface: new WebSocket("ws://foo") must inherit property "addEventListener" with the proper type (0) 
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new WebSocket("ws://foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
 PASS EventTarget interface: new WebSocket("ws://foo") must inherit property "removeEventListener" with the proper type (1) 
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new WebSocket("ws://foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
 PASS EventTarget interface: new WebSocket("ws://foo") must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
 PASS CloseEvent interface: existence and properties of interface object 

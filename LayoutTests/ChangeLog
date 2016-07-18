@@ -1,3 +1,28 @@
+2016-07-18  Chris Dumez  <cdumez@apple.com>
+
+        The 2 first parameters to addEventListener() / removeEventListener() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=158008
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Window/window-legacy-event-listener-expected.txt: Removed.
+        * fast/dom/Window/window-legacy-event-listener.html: Removed.
+        * fast/dom/XMLHttpRequest-legacy-event-listener-expected.txt: Removed.
+        * fast/dom/XMLHttpRequest-legacy-event-listener.html: Removed.
+        * fast/dom/node-legacy-event-listener-expected.txt: Removed.
+        * fast/dom/node-legacy-event-listener.html: Removed.
+        Drop legacy tests that expect the addEventListener() / removeEventListener()
+        parameters to be optional.
+
+        * fast/dom/eventtarget-api-parameters-expected.txt: Added.
+        * fast/dom/eventtarget-api-parameters.html: Added.
+        Add layout test to check that the 2 first parameters of addEventListener()
+        and removeEventListener() are now mandatory. It also checks that the
+        second parameter is nullable.
+
+        * media/video-remote-control-playpause.html:
+        Drop useless call to addEventListener() without a listener as it now throws.
+
 2016-07-18  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed, rolling out r203373.

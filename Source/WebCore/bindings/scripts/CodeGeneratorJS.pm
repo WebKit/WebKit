@@ -1722,9 +1722,6 @@ sub GetFunctionLength
 {
     my $function = shift;
 
-    # FIXME: EventTarget.addEventListener() / removeEventListener() currently specifies all the parameters as optional.
-    return 2 if $function->signature->name eq "addEventListener" || $function->signature->name eq "removeEventListener";
-
     my $length = 0;
     foreach my $parameter (@{$function->parameters}) {
         # Abort as soon as we find the first optional parameter as no mandatory
