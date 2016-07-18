@@ -1,3 +1,19 @@
+2016-07-18  Michael Saboff  <msaboff@apple.com>
+
+        ASSERTION FAILED: : (year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0) -- WTF/wtf/DateMath.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=159883
+
+        Reviewed by Filip Pizlo.
+
+        The function daysFrom1970ToYear() takes an integer year and returns a double result.
+        The calculation uses 1970 as a baseline year and subtracts 1970 from the argument year.
+        It does that subtraction using integer arithmetic, which given negative years close to
+        INT_MIN can underflow as a result of subtracting 1970.  Since we want a double result,
+        the fix is to cast year as a double before the subtraction, which eliminates the underflow.
+
+        * wtf/DateMath.cpp:
+        (WTF::daysFrom1970ToYear):
+
 2016-07-17  Filip Pizlo  <fpizlo@apple.com>
 
         RegisterSet should use a Bitmap instead of a BitVector so that it never allocates memory and is trivial to copy
