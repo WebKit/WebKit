@@ -28,7 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import <PassKit/PassKit.h>
+#import "PassKitSPI.h"
 #import <runtime/JSONObject.h>
 
 namespace WebCore {

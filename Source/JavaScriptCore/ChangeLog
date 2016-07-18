@@ -1,3 +1,14 @@
+2016-07-18  Anders Carlsson  <andersca@apple.com>
+
+        WebKit nightly fails to build on macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=159902
+        rdar://problem/27365672
+
+        Reviewed by Tim Horton.
+
+        * icu/unicode/ucurr.h: Added.
+        Add ucurr.h from ICU.
+
 2016-07-18  Michael Saboff  <msaboff@apple.com>
 
         ASSERTION FAILED: : (year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0) -- WTF/wtf/DateMath.cpp

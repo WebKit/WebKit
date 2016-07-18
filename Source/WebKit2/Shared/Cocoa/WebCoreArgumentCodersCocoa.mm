@@ -29,7 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #import "DataReference.h"
-#import <PassKit/PassKit.h>
+#import <WebCore/PassKitSPI.h>
 #import <WebCore/SoftLinking.h>
 
 #if PLATFORM(MAC)

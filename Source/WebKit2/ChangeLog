@@ -1,3 +1,17 @@
+2016-07-18  Anders Carlsson  <andersca@apple.com>
+
+        WebKit nightly fails to build on macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=159902
+        rdar://problem/27365672
+
+        Reviewed by Tim Horton.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        Use new PassKitSPI header.
+
 2016-07-18  Tim Horton  <timothy_horton@apple.com>
 
         Mail contents are temporarily obscured by black rectangles when returning from suspend and in app switcher

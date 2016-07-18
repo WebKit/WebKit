@@ -29,9 +29,9 @@
 #if ENABLE(APPLE_PAY)
 
 #import "JSMainThreadExecState.h"
+#import "PassKitSPI.h"
 #import "SoftLinking.h"
 #import <Contacts/Contacts.h>
-#import <PassKit/PassKit.h>
 #import <runtime/JSONObject.h>
 
 SOFT_LINK_FRAMEWORK(Contacts)
