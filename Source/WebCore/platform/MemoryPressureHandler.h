@@ -74,7 +74,7 @@ public:
 
     void jettisonExpensiveObjectsOnTopLevelNavigation();
 
-    bool isUnderMemoryPressure() const { return m_underMemoryPressure; }
+    bool isUnderMemoryPressure() const { return m_underMemoryPressure || m_isSimulatingMemoryPressure; }
     void setUnderMemoryPressure(bool b) { m_underMemoryPressure = b; }
 
 #if PLATFORM(IOS)
@@ -126,6 +126,9 @@ public:
 
     WEBCORE_EXPORT void releaseMemory(Critical, Synchronous = Synchronous::No);
 
+    WEBCORE_EXPORT void beginSimulatedMemoryPressure();
+    WEBCORE_EXPORT void endSimulatedMemoryPressure();
+
 private:
     void platformInitialize();
     void releaseNoncriticalMemory();
@@ -166,7 +169,7 @@ private:
     LowMemoryHandler m_lowMemoryHandler;
 
     std::atomic<bool> m_underMemoryPressure;
-    bool m_isSimulatedMemoryPressure { false };
+    bool m_isSimulatingMemoryPressure { false };
 
 #if PLATFORM(IOS)
     uint32_t m_memoryPressureReason;

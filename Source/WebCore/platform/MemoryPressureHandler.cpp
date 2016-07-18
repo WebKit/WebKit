@@ -177,6 +177,17 @@ void MemoryPressureHandler::jettisonExpensiveObjectsOnTopLevelNavigation()
 #endif
 }
 
+void MemoryPressureHandler::beginSimulatedMemoryPressure()
+{
+    m_isSimulatingMemoryPressure = true;
+    MemoryPressureHandler::singleton().respondToMemoryPressure(Critical::Yes, Synchronous::Yes);
+}
+
+void MemoryPressureHandler::endSimulatedMemoryPressure()
+{
+    m_isSimulatingMemoryPressure = false;
+}
+
 void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchronous)
 {
     if (critical == Critical::Yes)

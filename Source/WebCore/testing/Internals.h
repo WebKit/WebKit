@@ -266,6 +266,10 @@ public:
 
     void garbageCollectDocumentResources(ExceptionCode&) const;
 
+    void beginSimulatedMemoryPressure();
+    void endSimulatedMemoryPressure();
+    bool isUnderMemoryPressure();
+
     void insertAuthorCSS(const String&, ExceptionCode&) const;
     void insertUserCSS(const String&, ExceptionCode&) const;
 

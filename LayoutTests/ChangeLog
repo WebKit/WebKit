@@ -1,3 +1,15 @@
+2016-07-18  Andreas Kling  <akling@apple.com>
+
+        There should be a way to simulate memory pressure in layout tests
+        <https://webkit.org/b/159743>
+
+        Reviewed by Simon Fraser.
+
+        Add a basic test for the new APIs.
+
+        * memory/memory-pressure-simulation-expected.txt: Added.
+        * memory/memory-pressure-simulation.html: Added.
+
 2016-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] PDFDocumentImage should cache only a sub image of the PDF when caching the whole image is expensive

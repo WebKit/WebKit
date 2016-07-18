@@ -258,6 +258,10 @@ enum UserInterfaceLayoutDirection {
     [RaisesException] void insertAuthorCSS(DOMString css);
     [RaisesException] void insertUserCSS(DOMString css);
 
+    readonly attribute boolean isUnderMemoryPressure;
+    void beginSimulatedMemoryPressure();
+    void endSimulatedMemoryPressure();
+
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
     [RaisesException] void setBatteryStatus(DOMString eventType, boolean charging, unrestricted double chargingTime, unrestricted double dischargingTime, unrestricted double level);
 #endif
