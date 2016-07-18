@@ -1,3 +1,53 @@
+2016-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Repeatedly creating and destroying workers that enqueue DFG plans can outpace the DFG worklist, which then causes VM shutdown to stall, which then causes a memory growth
+        https://bugs.webkit.org/show_bug.cgi?id=159754
+
+        Reviewed by Geoffrey Garen.
+        
+        Adds two tests that create a lot of workers that do sophisticated things. These are
+        long-running tests so we may want to skip them. It's OK if we end up only running them
+        manually occasionally.
+
+        * workers: Added.
+        * workers/bomb.html: Added.
+        * workers/bomb-expected.txt: Added.
+        * workers/bomb-with-v8.html: Added.
+        * workers/tests: Added.
+        * workers/tests/3d-cube.js: Added.
+        * workers/tests/3d-morph.js: Added.
+        * workers/tests/3d-raytrace.js: Added.
+        * workers/tests/access-binary-trees.js: Added.
+        * workers/tests/access-fannkuch.js: Added.
+        * workers/tests/access-nbody.js: Added.
+        * workers/tests/access-nsieve.js: Added.
+        * workers/tests/bitops-3bit-bits-in-byte.js: Added.
+        * workers/tests/bitops-bits-in-byte.js: Added.
+        * workers/tests/bitops-bitwise-and.js: Added.
+        * workers/tests/bitops-nsieve-bits.js: Added.
+        * workers/tests/controlflow-recursive.js: Added.
+        * workers/tests/crypto-aes.js: Added.
+        * workers/tests/crypto-md5.js: Added.
+        * workers/tests/crypto-sha1.js: Added.
+        * workers/tests/date-format-tofte.js: Added.
+        * workers/tests/date-format-xparb.js: Added.
+        * workers/tests/math-cordic.js: Added.
+        * workers/tests/math-partial-sums.js: Added.
+        * workers/tests/math-spectral-norm.js: Added.
+        * workers/tests/regexp-dna.js: Added.
+        * workers/tests/string-base64.js: Added.
+        * workers/tests/string-fasta.js: Added.
+        * workers/tests/string-tagcloud.js: Added.
+        * workers/tests/string-unpack-code.js: Added.
+        * workers/tests/string-validate-input.js: Added.
+        * workers/tests/v8-crypto.js: Added.
+        * workers/tests/v8-deltablue.js: Added.
+        * workers/tests/v8-earley-boyer.js: Added.
+        * workers/tests/v8-raytrace.js: Added.
+        * workers/tests/v8-regexp.js: Added.
+        * workers/tests/v8-richards.js: Added.
+        * workers/tests/v8-splay.js: Added.
+
 2016-07-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/indexeddb/modern/abort-requests-cancelled.html as flaky on mac-wk1

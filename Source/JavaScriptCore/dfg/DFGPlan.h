@@ -66,7 +66,6 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     void finalizeAndNotifyCallback();
     
     void notifyCompiling();
-    void notifyCompiled();
     void notifyReady();
     
     CompilationKey key();
@@ -112,7 +111,7 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     HashMap<unsigned, Vector<unsigned>> tierUpInLoopHierarchy;
     Vector<unsigned> tierUpAndOSREnterBytecodes;
 
-    enum Stage { Preparing, Compiling, Compiled, Ready, Cancelled };
+    enum Stage { Preparing, Compiling, Ready, Cancelled };
     Stage stage;
 
     RefPtr<DeferredCompilationCallback> callback;

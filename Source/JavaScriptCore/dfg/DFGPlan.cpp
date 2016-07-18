@@ -549,11 +549,6 @@ void Plan::notifyCompiling()
     stage = Compiling;
 }
 
-void Plan::notifyCompiled()
-{
-    stage = Compiled;
-}
-
 void Plan::notifyReady()
 {
     callback->compilationDidBecomeReadyAsynchronously(codeBlock, profiledDFGCodeBlock);

@@ -284,7 +284,7 @@ void Worklist::removeDeadPlans(VM& vm)
             for (unsigned i = 0; i < m_readyPlans.size(); ++i) {
                 if (m_readyPlans[i]->stage != Plan::Cancelled)
                     continue;
-                m_readyPlans[i] = m_readyPlans.last();
+                m_readyPlans[i--] = m_readyPlans.last();
                 m_readyPlans.removeLast();
             }
         }
@@ -302,6 +302,37 @@ void Worklist::removeDeadPlans(VM& vm)
             continue;
         safepoint->cancel();
     }
+}
+
+void Worklist::removeNonCompilingPlansForVM(VM& vm)
+{
+    LockHolder locker(m_lock);
+    HashSet<CompilationKey> deadPlanKeys;
+    Vector<RefPtr<Plan>> deadPlans;
+    for (auto& entry : m_plans) {
+        Plan* plan = entry.value.get();
+        if (plan->vm != &vm)
+            continue;
+        if (plan->stage == Plan::Compiling)
+            continue;
+        deadPlanKeys.add(plan->key());
+        deadPlans.append(plan);
+    }
+    for (CompilationKey key : deadPlanKeys)
+        m_plans.remove(key);
+    Deque<RefPtr<Plan>> newQueue;
+    while (!m_queue.isEmpty()) {
+        RefPtr<Plan> plan = m_queue.takeFirst();
+        if (!deadPlanKeys.contains(plan->key()))
+            newQueue.append(WTFMove(plan));
+    }
+    m_queue = WTFMove(newQueue);
+    m_readyPlans.removeAllMatching(
+        [&] (RefPtr<Plan>& plan) -> bool {
+            return deadPlanKeys.contains(plan->key());
+        });
+    for (auto& plan : deadPlans)
+        plan->cancel();
 }
 
 size_t Worklist::queueLength()
@@ -341,8 +372,10 @@ void Worklist::runThread(ThreadData* data)
                 m_planEnqueued.wait(m_lock);
             
             plan = m_queue.takeFirst();
-            if (plan)
+            if (plan) {
+                RELEASE_ASSERT(plan->stage == Plan::Preparing);
                 m_numberOfActiveThreads++;
+            }
         }
         
         if (!plan) {
@@ -375,32 +408,20 @@ void Worklist::runThread(ThreadData* data)
                     m_numberOfActiveThreads--;
                     continue;
                 }
-                plan->notifyCompiled();
+                
+                plan->notifyReady();
+                
+                if (Options::verboseCompilationQueue()) {
+                    dump(locker, WTF::dataFile());
+                    dataLog(": Compiled ", plan->key(), " asynchronously\n");
+                }
+                
+                m_readyPlans.append(plan);
+                
+                m_planCompiled.notifyAll();
+                m_numberOfActiveThreads--;
             }
             RELEASE_ASSERT(!plan->vm->heap.isCollecting());
-        }
-
-        {
-            LockHolder locker(m_lock);
-            
-            // We could have been cancelled between releasing rightToRun and acquiring m_lock.
-            // This would mean that we might be in the middle of GC right now.
-            if (plan->stage == Plan::Cancelled) {
-                m_numberOfActiveThreads--;
-                continue;
-            }
-            
-            plan->notifyReady();
-            
-            if (Options::verboseCompilationQueue()) {
-                dump(locker, WTF::dataFile());
-                dataLog(": Compiled ", plan->key(), " asynchronously\n");
-            }
-            
-            m_readyPlans.append(plan);
-            
-            m_planCompiled.notifyAll();
-            m_numberOfActiveThreads--;
         }
     }
 }

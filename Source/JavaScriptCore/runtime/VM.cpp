@@ -349,6 +349,7 @@ VM::~VM()
     // no point to doing so.
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
         if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i)) {
+            worklist->removeNonCompilingPlansForVM(*this);
             worklist->waitUntilAllPlansForVMAreReady(*this);
             worklist->removeAllReadyPlansForVM(*this);
         }

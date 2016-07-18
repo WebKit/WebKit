@@ -1003,6 +1003,11 @@ webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Sk
 
 webkit.org/b/159678 http/tests/preload/single_download_preload_runner.html [ Timeout ]
 
+# This test is way too slow for debug.
+[ Debug ] workers/bomb.html [ Skip ]
+# This test is just way too slow.
+workers/bomb-with-v8.html [ Skip ]
+
 # WebCryptoAPI tests, skip for unimplemented features. webkit.org/b/159638
 imported/w3c/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.html [ Skip ]
 imported/w3c/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.html [ Skip ]

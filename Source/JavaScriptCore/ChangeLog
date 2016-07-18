@@ -1,3 +1,32 @@
+2016-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Repeatedly creating and destroying workers that enqueue DFG plans can outpace the DFG worklist, which then causes VM shutdown to stall, which then causes memory growth
+        https://bugs.webkit.org/show_bug.cgi?id=159754
+
+        Reviewed by Geoffrey Garen.
+        
+        If you create and destroy workers at a high rate and those workers enqueue some DFG plans
+        that are still not compiled at the time that the worker is closed, then the closed workers
+        end up stalling in VM::~VM waiting for the DFG worklist thread to finish those plans. Since
+        we don't actually cancel the plans, it's easy to create a situation where the workers
+        outpace the DFG worklist, especially if you create many workers at a time and each one
+        finishes just after enqueueing those plans.
+        
+        The solution is to allow VM::~VM to remove plans from the DFG worklist that are related to
+        that VM but aren't currently being worked on. That turns out to be an easy change.
+        
+        I have a test that repros this, but it's quite long-running. I call it workers/bomb.html. We
+        may want to exclude it from test runs because of how long it takes.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::removeNonCompilingPlansForVM):
+        (JSC::DFG::Worklist::queueLength):
+        (JSC::DFG::Worklist::runThread):
+        * dfg/DFGWorklist.h:
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+
 2016-07-17  Filip Pizlo  <fpizlo@apple.com>
 
         Object.preventExtensions/seal/freeze makes code much slower
