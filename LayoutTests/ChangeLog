@@ -1,3 +1,16 @@
+2016-07-17  Frederic Wang  <fwang@igalia.com>
+
+        Rebaseline Windows and EFL MathML pixel tests after r203289.
+        https://bugs.webkit.org/show_bug.cgi?id=158866
+
+        Unreviewed test gardening.
+
+        * platform/efl/mathml/opentype/vertical-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/win/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/win/mathml/opentype/vertical-expected.txt:
+        * platform/win/mathml/presentation/mo-stretch-expected.txt:
+
 2016-07-17  Brady Eidson  <beidson@apple.com>
 
         Update DOMCoreException to use the description in toString().

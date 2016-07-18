@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x376
-  RenderBlock {HTML} at (0,0) size 800x376
-    RenderBody {BODY} at (8,16) size 784x344
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x379
+  RenderBlock {HTML} at (0,0) size 800x379
+    RenderBody {BODY} at (8,16) size 784x347
+      RenderBlock {P} at (0,0) size 784x22
         RenderMathMLMath {math} at (0,0) size 99x20
           RenderMathMLOperator {mo} at (0,0) size 6x20
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -65,9 +65,9 @@ layer at (0,0) size 800x376
             RenderBlock (anonymous) at (0,0) size 6x16
               RenderText {#text} at (0,0) size 6x16
                 text run at (0,0) width 6: "\x{27E9}"
-          RenderMathMLSpace {mspace} at (98,6) size 0x8
+          RenderMathMLSpace {mspace} at (98,10) size 0x8
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,35) size 784x30
+      RenderBlock {P} at (0,38) size 784x30
         RenderMathMLMath {math} at (0,0) size 103x31
           RenderMathMLOperator {mo} at (0,2) size 6x27
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -132,58 +132,58 @@ layer at (0,0) size 800x376
           RenderMathMLSpace {mspace} at (102,4) size 0x16
         RenderText {#text} at (102,6) size 5x18
           text run at (102,6) width 5: " "
-        RenderMathMLMath {math} at (106,4) size 198x18
-          RenderMathMLOperator {mo} at (0,4) size 16x12
+        RenderMathMLMath {math} at (106,4) size 198x16
+          RenderMathMLOperator {mo} at (0,2) size 16x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{2191}"
-          RenderMathMLOperator {mo} at (15,4) size 17x12
+          RenderMathMLOperator {mo} at (15,2) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{2193}"
-          RenderMathMLOperator {mo} at (31,4) size 17x14
+          RenderMathMLOperator {mo} at (31,1) size 17x14
             RenderBlock (anonymous) at (0,0) size 7x14
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{2195}"
-          RenderMathMLOperator {mo} at (47,4) size 17x12
+          RenderMathMLOperator {mo} at (47,2) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21A5}"
-          RenderMathMLOperator {mo} at (63,5) size 17x12
+          RenderMathMLOperator {mo} at (63,2) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21A7}"
-          RenderMathMLOperator {mo} at (79,4) size 17x12
+          RenderMathMLOperator {mo} at (79,2) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21BE}"
-          RenderMathMLOperator {mo} at (95,4) size 17x12
+          RenderMathMLOperator {mo} at (95,2) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21C2}"
-          RenderMathMLOperator {mo} at (111,4) size 16x12
+          RenderMathMLOperator {mo} at (111,2) size 16x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21BF}"
-          RenderMathMLOperator {mo} at (127,4) size 16x12
+          RenderMathMLOperator {mo} at (127,2) size 16x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21C3}"
-          RenderMathMLOperator {mo} at (142,4) size 19x12
+          RenderMathMLOperator {mo} at (142,2) size 19x12
             RenderBlock (anonymous) at (0,0) size 9x13
               RenderText {#text} at (0,0) size 9x16
                 text run at (0,0) width 9: "\x{21D1}"
-          RenderMathMLOperator {mo} at (160,5) size 19x12
+          RenderMathMLOperator {mo} at (160,2) size 19x12
             RenderBlock (anonymous) at (0,0) size 9x13
               RenderText {#text} at (0,0) size 9x16
                 text run at (0,0) width 9: "\x{21D3}"
-          RenderMathMLOperator {mo} at (178,4) size 19x14
+          RenderMathMLOperator {mo} at (178,1) size 19x14
             RenderBlock (anonymous) at (0,0) size 9x14
               RenderText {#text} at (0,0) size 9x16
                 text run at (0,0) width 9: "\x{21D5}"
           RenderMathMLSpace {mspace} at (196,0) size 0x16
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,81) size 784x46
+      RenderBlock {P} at (0,84) size 784x46
         RenderMathMLMath {math} at (0,0) size 107x47
           RenderMathMLOperator {mo} at (0,3) size 6x41
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -247,7 +247,7 @@ layer at (0,0) size 800x376
                 text run at (0,0) width 6: "\x{27E9}"
           RenderMathMLSpace {mspace} at (106,4) size 0x24
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,143) size 784x67
+      RenderBlock {P} at (0,146) size 784x67
         RenderMathMLMath {math} at (0,0) size 123x68
           RenderMathMLOperator {mo} at (0,4) size 7x59
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -312,7 +312,7 @@ layer at (0,0) size 800x376
           RenderMathMLSpace {mspace} at (122,6) size 0x32
         RenderText {#text} at (122,24) size 5x18
           text run at (122,24) width 5: " "
-        RenderMathMLMath {math} at (126,6) size 198x34
+        RenderMathMLMath {math} at (126,6) size 198x32
           RenderMathMLOperator {mo} at (0,0) size 16x32
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
@@ -321,31 +321,31 @@ layer at (0,0) size 800x376
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{2193}"
-          RenderMathMLOperator {mo} at (31,20) size 17x14
+          RenderMathMLOperator {mo} at (31,9) size 17x14
             RenderBlock (anonymous) at (0,0) size 7x14
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{2195}"
-          RenderMathMLOperator {mo} at (47,20) size 17x12
+          RenderMathMLOperator {mo} at (47,10) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21A5}"
-          RenderMathMLOperator {mo} at (63,21) size 17x12
+          RenderMathMLOperator {mo} at (63,10) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21A7}"
-          RenderMathMLOperator {mo} at (79,20) size 17x12
+          RenderMathMLOperator {mo} at (79,10) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21BE}"
-          RenderMathMLOperator {mo} at (95,20) size 17x12
+          RenderMathMLOperator {mo} at (95,10) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21C2}"
-          RenderMathMLOperator {mo} at (111,20) size 16x12
+          RenderMathMLOperator {mo} at (111,10) size 16x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21BF}"
-          RenderMathMLOperator {mo} at (127,20) size 16x12
+          RenderMathMLOperator {mo} at (127,10) size 16x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21C3}"
@@ -357,13 +357,13 @@ layer at (0,0) size 800x376
             RenderBlock (anonymous) at (0,0) size 9x13
               RenderText {#text} at (0,0) size 9x16
                 text run at (0,0) width 9: "\x{21D3}"
-          RenderMathMLOperator {mo} at (178,20) size 19x14
+          RenderMathMLOperator {mo} at (178,9) size 19x14
             RenderBlock (anonymous) at (0,0) size 9x14
               RenderText {#text} at (0,0) size 9x16
                 text run at (0,0) width 9: "\x{21D5}"
           RenderMathMLSpace {mspace} at (196,0) size 0x32
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,226) size 784x118
+      RenderBlock {P} at (0,229) size 784x118
         RenderMathMLMath {math} at (0,0) size 122x119
           RenderMathMLOperator {mo} at (0,0) size 6x119
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -428,7 +428,7 @@ layer at (0,0) size 800x376
           RenderMathMLSpace {mspace} at (121,0) size 0x64
         RenderText {#text} at (121,50) size 5x18
           text run at (121,50) width 5: " "
-        RenderMathMLMath {math} at (125,0) size 198x66
+        RenderMathMLMath {math} at (125,0) size 198x64
           RenderMathMLOperator {mo} at (0,0) size 16x64
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
@@ -437,31 +437,31 @@ layer at (0,0) size 800x376
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{2193}"
-          RenderMathMLOperator {mo} at (31,52) size 17x14
+          RenderMathMLOperator {mo} at (31,25) size 17x14
             RenderBlock (anonymous) at (0,0) size 7x14
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{2195}"
-          RenderMathMLOperator {mo} at (47,52) size 17x12
+          RenderMathMLOperator {mo} at (47,26) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21A5}"
-          RenderMathMLOperator {mo} at (63,53) size 17x12
+          RenderMathMLOperator {mo} at (63,26) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21A7}"
-          RenderMathMLOperator {mo} at (79,52) size 17x12
+          RenderMathMLOperator {mo} at (79,26) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21BE}"
-          RenderMathMLOperator {mo} at (95,52) size 17x12
+          RenderMathMLOperator {mo} at (95,26) size 17x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21C2}"
-          RenderMathMLOperator {mo} at (111,52) size 16x12
+          RenderMathMLOperator {mo} at (111,26) size 16x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21BF}"
-          RenderMathMLOperator {mo} at (127,52) size 16x12
+          RenderMathMLOperator {mo} at (127,26) size 16x12
             RenderBlock (anonymous) at (0,0) size 7x13
               RenderText {#text} at (0,0) size 7x16
                 text run at (0,0) width 7: "\x{21C3}"
@@ -473,7 +473,7 @@ layer at (0,0) size 800x376
             RenderBlock (anonymous) at (0,0) size 9x13
               RenderText {#text} at (0,0) size 9x16
                 text run at (0,0) width 9: "\x{21D3}"
-          RenderMathMLOperator {mo} at (178,52) size 19x14
+          RenderMathMLOperator {mo} at (178,25) size 19x14
             RenderBlock (anonymous) at (0,0) size 9x14
               RenderText {#text} at (0,0) size 9x16
                 text run at (0,0) width 9: "\x{21D5}"

@@ -3,8 +3,8 @@ layer at (0,0) size 785x33554431
 layer at (0,0) size 785x33554431
   RenderBlock {HTML} at (0,0) size 785x33554431
     RenderBody {BODY} at (8,16) size 769x33554415
-      RenderBlock {P} at (0,0) size 769x35
-        RenderMathMLMath {math} at (0,25) size 8x10
+      RenderBlock {P} at (0,0) size 769x34
+        RenderMathMLMath {math} at (0,20) size 8x10
           RenderMathMLRow {mrow} at (0,0) size 8x10
             RenderMathMLOperator {mo} at (0,0) size 8x10
               RenderBlock (anonymous) at (0,0) size 2x10
@@ -12,8 +12,8 @@ layer at (0,0) size 785x33554431
                   text run at (0,0) width 2: "\x{219F}"
         RenderText {#text} at (7,16) size 5x18
           text run at (7,16) width 5: " "
-        RenderMathMLMath {math} at (11,25) size 27x10
-          RenderMathMLRow {mrow} at (0,0) size 26x10
+        RenderMathMLMath {math} at (11,15) size 27x15
+          RenderMathMLRow {mrow} at (0,0) size 26x15
             RenderMathMLOperator {mo} at (0,0) size 26x10
               RenderBlock (anonymous) at (0,0) size 2x10
                 RenderText {#text} at (0,0) size 2x0
@@ -27,7 +27,7 @@ layer at (0,0) size 785x33554431
                 RenderText {#text} at (0,0) size 2x0
                   text run at (0,0) width 2: "\x{219F}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,51) size 769x154
+      RenderBlock {P} at (0,50) size 769x154
         RenderMathMLMath {math} at (0,0) size 47x150
           RenderMathMLRow {mrow} at (0,0) size 47x150
             RenderMathMLOperator {mo} at (0,0) size 47x150
@@ -35,7 +35,7 @@ layer at (0,0) size 785x33554431
                 RenderText {#text} at (0,0) size 2x0
                   text run at (0,0) width 2: "\x{219F}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,221) size 769x33554210
+      RenderBlock {P} at (0,220) size 769x33554211
         RenderMathMLMath {math} at (0,14) size 94x33554417
           RenderMathMLRow {mrow} at (0,0) size 94x33554431
             RenderMathMLOperator {mo} at (0,33554431) size 94x0
