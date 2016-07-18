@@ -1,3 +1,25 @@
+2016-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        RegisterSet should use a Bitmap instead of a BitVector so that it never allocates memory and is trivial to copy
+        https://bugs.webkit.org/show_bug.cgi?id=159863
+
+        Reviewed by Saam Barati.
+        
+        Give Bitmap all of the power of BitVector (except for automatic resizing). This means a
+        variant of set() that takes a bool, and a bunch of helper methods (merge, filter, exclude,
+        forEachSetBit, ==, !=, and hash).
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::set):
+        (WTF::WordType>::testAndSet):
+        (WTF::WordType>::isFull):
+        (WTF::WordType>::merge):
+        (WTF::WordType>::filter):
+        (WTF::WordType>::exclude):
+        (WTF::WordType>::forEachSetBit):
+        (WTF::=):
+        (WTF::WordType>::hash):
+
 2016-07-02  Filip Pizlo  <fpizlo@apple.com>
 
         WTF::Lock should be fair eventually

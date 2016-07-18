@@ -42,6 +42,9 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler, MacroA
     inline ARMRegisters::FPSingleRegisterID fpTempRegisterAsSingle() { return ARMRegisters::asSingle(fpTempRegister); }
 
 public:
+    static const unsigned numGPRs = 16;
+    static const unsigned numFPRs = 16;
+    
     MacroAssemblerARMv7()
         : m_makeJumpPatchable(false)
     {

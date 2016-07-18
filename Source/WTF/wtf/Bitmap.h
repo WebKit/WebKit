@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010 Apple Inc. All rights reserved.
+ *  Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,8 @@ enum BitmapAtomicMode {
 template<size_t bitmapSize, BitmapAtomicMode atomicMode = BitmapNotAtomic, typename WordType = uint32_t>
 class Bitmap {
     WTF_MAKE_FAST_ALLOCATED;
+    
+    static_assert(sizeof(WordType) <= sizeof(unsigned), "WordType must not be bigger than unsigned");
 public:
     Bitmap();
 
@@ -49,6 +51,7 @@ public:
 
     bool get(size_t) const;
     void set(size_t);
+    void set(size_t, bool);
     bool testAndSet(size_t);
     bool testAndClear(size_t);
     bool concurrentTestAndSet(size_t);
@@ -60,6 +63,18 @@ public:
     size_t count(size_t = 0) const;
     size_t isEmpty() const;
     size_t isFull() const;
+    
+    void merge(const Bitmap&);
+    void filter(const Bitmap&);
+    void exclude(const Bitmap&);
+    
+    template<typename Func>
+    void forEachSetBit(const Func&) const;
+    
+    bool operator==(const Bitmap&) const;
+    bool operator!=(const Bitmap&) const;
+    
+    unsigned hash() const;
 
 private:
     static const unsigned wordSize = sizeof(WordType) * 8;
@@ -91,6 +106,15 @@ template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
 inline void Bitmap<bitmapSize, atomicMode, WordType>::set(size_t n)
 {
     bits[n / wordSize] |= (one << (n % wordSize));
+}
+
+template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+inline void Bitmap<bitmapSize, atomicMode, WordType>::set(size_t n, bool value)
+{
+    if (value)
+        set(n);
+    else
+        clear(n);
 }
 
 template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
@@ -224,5 +248,71 @@ inline size_t Bitmap<bitmapSize, atomicMode, WordType>::isFull() const
     return true;
 }
 
+template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+inline void Bitmap<bitmapSize, atomicMode, WordType>::merge(const Bitmap& other)
+{
+    for (size_t i = 0; i < words; ++i)
+        bits[i] |= other.bits[i];
 }
+
+template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+inline void Bitmap<bitmapSize, atomicMode, WordType>::filter(const Bitmap& other)
+{
+    for (size_t i = 0; i < words; ++i)
+        bits[i] &= other.bits[i];
+}
+
+template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+inline void Bitmap<bitmapSize, atomicMode, WordType>::exclude(const Bitmap& other)
+{
+    for (size_t i = 0; i < words; ++i)
+        bits[i] &= ~other.bits[i];
+}
+
+template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+template<typename Func>
+inline void Bitmap<bitmapSize, atomicMode, WordType>::forEachSetBit(const Func& func) const
+{
+    for (size_t i = 0; i < words; ++i) {
+        WordType word = bits[i];
+        if (!word)
+            continue;
+        size_t base = i * wordSize;
+        for (size_t j = 0; j < wordSize; ++j) {
+            if (word & 1)
+                func(base + j);
+            word >>= 1;
+        }
+    }
+}
+
+template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+inline bool Bitmap<bitmapSize, atomicMode, WordType>::operator==(const Bitmap& other) const
+{
+    for (size_t i = 0; i < words; ++i) {
+        if (bits[i] != other.bits[i])
+            return false;
+    }
+    return true;
+}
+
+template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+inline bool Bitmap<bitmapSize, atomicMode, WordType>::operator!=(const Bitmap& other) const
+{
+    return !(*this == other);
+}
+
+template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+inline unsigned Bitmap<bitmapSize, atomicMode, WordType>::hash() const
+{
+    unsigned result = 0;
+    for (size_t i = 0; i < words; ++i)
+        result ^= IntHash<WordType>::hash(bits[i]);
+    return result;
+}
+
+} // namespace WTF
+
+using WTF::Bitmap;
+
 #endif

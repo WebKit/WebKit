@@ -48,7 +48,7 @@ public:
         return s_scratchRegister;
     }
 #endif
-
+    
 protected:
     static const int DoubleConditionBitInvert = 0x10;
     static const int DoubleConditionBitSpecial = 0x20;

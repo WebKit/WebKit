@@ -33,7 +33,7 @@
 #include "MacroAssembler.h"
 #include "Reg.h"
 #include "TempRegisterSet.h"
-#include <wtf/BitVector.h>
+#include <wtf/Bitmap.h>
 
 namespace JSC {
 
@@ -71,7 +71,7 @@ public:
     void set(Reg reg, bool value = true)
     {
         ASSERT(!!reg);
-        m_vector.set(reg.index(), value);
+        m_bits.set(reg.index(), value);
     }
     
     void set(JSValueRegs regs, bool value = true)
@@ -90,9 +90,9 @@ public:
     bool get(Reg reg) const
     {
         ASSERT(!!reg);
-        return m_vector.get(reg.index());
+        return m_bits.get(reg.index());
     }
-
+    
     template<typename Iterable>
     void setAll(const Iterable& iterable)
     {
@@ -100,13 +100,13 @@ public:
             set(reg);
     }
     
-    void merge(const RegisterSet& other) { m_vector.merge(other.m_vector); }
-    void filter(const RegisterSet& other) { m_vector.filter(other.m_vector); }
-    void exclude(const RegisterSet& other) { m_vector.exclude(other.m_vector); }
+    void merge(const RegisterSet& other) { m_bits.merge(other.m_bits); }
+    void filter(const RegisterSet& other) { m_bits.filter(other.m_bits); }
+    void exclude(const RegisterSet& other) { m_bits.exclude(other.m_bits); }
     
     size_t numberOfSetGPRs() const;
     size_t numberOfSetFPRs() const;
-    size_t numberOfSetRegisters() const { return m_vector.bitCount(); }
+    size_t numberOfSetRegisters() const { return m_bits.count(); }
     
     void dump(PrintStream&) const;
     
@@ -114,26 +114,38 @@ public:
     enum DeletedValueTag { DeletedValue };
     
     RegisterSet(EmptyValueTag)
-        : m_vector(BitVector::EmptyValue)
     {
+        m_bits.set(hashSpecialBitIndex);
     }
     
     RegisterSet(DeletedValueTag)
-        : m_vector(BitVector::DeletedValue)
     {
+        m_bits.set(hashSpecialBitIndex);
+        m_bits.set(deletedBitIndex);
     }
     
-    bool isEmptyValue() const { return m_vector.isEmptyValue(); }
-    bool isDeletedValue() const { return m_vector.isDeletedValue(); }
-    
-    bool operator==(const RegisterSet& other) const { return m_vector == other.m_vector; }
-    unsigned hash() const { return m_vector.hash(); }
-
-    template<typename Functor>
-    void forEach(const Functor& functor) const
+    bool isEmptyValue() const
     {
-        for (size_t index : m_vector)
-            functor(Reg::fromIndex(index));
+        return m_bits.get(hashSpecialBitIndex) && !m_bits.get(deletedBitIndex);
+    }
+    
+    bool isDeletedValue() const
+    {
+        return m_bits.get(hashSpecialBitIndex) && m_bits.get(deletedBitIndex);
+    }
+    
+    bool operator==(const RegisterSet& other) const { return m_bits == other.m_bits; }
+    bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits; }
+    
+    unsigned hash() const { return m_bits.hash(); }
+    
+    template<typename Func>
+    void forEach(const Func& func) const
+    {
+        m_bits.forEachSetBit(
+            [&] (size_t index) {
+                func(Reg::fromIndex(index));
+            });
     }
     
 private:
@@ -147,7 +159,13 @@ private:
         setMany(regs...);
     }
 
-    BitVector m_vector;
+    // These offsets mirror the logic in Reg.h.
+    static const unsigned gprOffset = 0;
+    static const unsigned fprOffset = gprOffset + MacroAssembler::numGPRs;
+    static const unsigned hashSpecialBitIndex = fprOffset + MacroAssembler::numFPRs;
+    static const unsigned deletedBitIndex = 0;
+    
+    Bitmap<MacroAssembler::numGPRs + MacroAssembler::numFPRs + 1> m_bits;
 };
 
 struct RegisterSetHash {

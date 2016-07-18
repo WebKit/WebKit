@@ -34,6 +34,9 @@ namespace JSC {
 
 class MacroAssemblerX86 : public MacroAssemblerX86Common {
 public:
+    static const unsigned numGPRs = 8;
+    static const unsigned numFPRs = 8;
+    
     static const Scale ScalePtr = TimesFour;
 
     using MacroAssemblerX86Common::add32;

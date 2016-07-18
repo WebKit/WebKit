@@ -1,3 +1,51 @@
+2016-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        RegisterSet should use a Bitmap instead of a BitVector so that it never allocates memory and is trivial to copy
+        https://bugs.webkit.org/show_bug.cgi?id=159863
+
+        Reviewed by Saam Barati.
+        
+        Switch RegisterSet set to Bitmap because Bitmap doesn't ever allocate memory and can be
+        assigned by memcpy. This should be a performance improvement for compiler code that does a
+        lot of things with RegisterSet. For example, it's one of the fundamental data structures in
+        Air. The previous use of BitVector meant that almost every operation on RegisterSet would
+        have a slow path call. On ARM64, it would mean memory allocation for any RegisterSet that
+        used all available registers.
+        
+        This meant adding even more GPR/FPR reflection to the MacroAssembler API: we now have consts
+        called numGPRs and numFPRs. This is necessary to statically size the Bitmap in RegisterSet.
+        
+        Here's the breakdown of sizes of RegisterSet on different CPUs:
+        
+        x86-32: 8 bits (GPRs) + 8 bits (FPRs) + 1 bit (is deleted) = 1x uint32_t.
+        x86-64: 16 bits + 16 bits + 1 bit = 2x uint32_t.
+        ARMv7: 16 bits + 16 bits + 1 bit = 2x uint32_t.
+        ARM64: 32 bits + 32 bits + 1 bit = 3x uint32_t.
+
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARM64.h:
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::scratchRegister):
+        * assembler/MacroAssemblerX86_64.h:
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::set):
+        (JSC::RegisterSet::get):
+        (JSC::RegisterSet::setAll):
+        (JSC::RegisterSet::merge):
+        (JSC::RegisterSet::filter):
+        (JSC::RegisterSet::exclude):
+        (JSC::RegisterSet::numberOfSetRegisters):
+        (JSC::RegisterSet::RegisterSet):
+        (JSC::RegisterSet::isEmptyValue):
+        (JSC::RegisterSet::isDeletedValue):
+        (JSC::RegisterSet::operator==):
+        (JSC::RegisterSet::operator!=):
+        (JSC::RegisterSet::hash):
+        (JSC::RegisterSet::forEach):
+        (JSC::RegisterSet::setMany):
+
 2016-07-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should support op_call_eval
