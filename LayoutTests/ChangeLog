@@ -1,5 +1,14 @@
 2016-07-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm as flaky on mac-debug WK1
+        https://bugs.webkit.org/show_bug.cgi?id=159893
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-07-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking media/video-load-preload-metadata.html as flaky on Mac.
         https://bugs.webkit.org/show_bug.cgi?id=128312
 
