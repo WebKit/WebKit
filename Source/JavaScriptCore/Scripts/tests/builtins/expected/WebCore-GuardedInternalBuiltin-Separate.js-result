@@ -231,6 +231,7 @@ WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 ### Begin File: WebCoreJSBuiltins.h
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -295,6 +296,7 @@ private:
 ### Begin File: WebCoreJSBuiltins.cpp
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -328,6 +330,7 @@ private:
 ### Begin File: WebCoreJSBuiltinInternals.h
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -388,6 +391,7 @@ private:
 ### Begin File: WebCoreJSBuiltinInternals.cpp
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -441,11 +445,15 @@ void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
 #endif // ENABLE(STREAMS_API)
     UNUSED_PARAM(visitor);
 }
+
 void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject)
 {
+    UNUSED_PARAM(globalObject);
 #if ENABLE(STREAMS_API)
     m_guardedInternalBuiltin.init(globalObject);
 #endif // ENABLE(STREAMS_API)
+
+#if ENABLE(STREAMS_API)
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(m_vm.clientData);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
 #if ENABLE(STREAMS_API)
@@ -458,6 +466,7 @@ void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject)
     };
     globalObject.addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
     UNUSED_PARAM(clientData);
+#endif // ENABLE(STREAMS_API)
 }
 
 } // namespace WebCore

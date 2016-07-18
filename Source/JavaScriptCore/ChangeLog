@@ -1,3 +1,33 @@
+2016-07-18  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(r202975): --minimal build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=159765
+
+        Reviewed by Chris Dumez.
+
+        Covered partially by builtin generated test code.
+
+        Updating generator to add a global compilation guard around the code that generates all global internal properties.
+        Split the generate_methods function in two, one dedicated to the visit method and the second one dedicated to
+        the initialize method.
+
+        * Scripts/builtins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_section_for_object): Use splitted generation functions.
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_visit_method): Response to generate the visit method.
+        (BuiltinsInternalsWrapperImplementationGenerator._generate_initialize_static_globals): Responsible to generate
+        the code to initialize the internal globals. This code is put in a global compilation guard in case all
+        internals are compiled out by specific builds.
+        (BuiltinsInternalsWrapperImplementationGenerator):
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_initialize_method): Responsible to generate the
+        initialize method.
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_methods): Deleted.
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result: Copyright change.
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result: Reflects partially the built-in
+        generator change.
+
 2016-07-18  Keith Miller  <keith_miller@apple.com>
 
         Fix bad assertions in genericTypedArrayViewPrivateFuncSubarrayCreate
