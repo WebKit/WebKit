@@ -85,10 +85,8 @@ function validateAndNormalizeQueuingStrategy(size, highWaterMark)
     normalizedStrategy.size = size;
     normalizedStrategy.highWaterMark = @Number(highWaterMark);
 
-    if (@isNaN(normalizedStrategy.highWaterMark))
-        throw new @TypeError("highWaterMark parameter is not a number");
-    if (normalizedStrategy.highWaterMark < 0)
-        throw new @RangeError("highWaterMark is negative");
+    if (@isNaN(normalizedStrategy.highWaterMark) || normalizedStrategy.highWaterMark < 0)
+        throw new @RangeError("highWaterMark value is negative or not a number");
 
     return normalizedStrategy;
 }

@@ -4,10 +4,7 @@ PASS Readable stream: strategy.size errors the stream and then throws
 PASS Readable stream: strategy.size errors the stream and then returns Infinity 
 PASS Readable stream: throwing strategy.size method 
 PASS Readable stream: throwing strategy.highWaterMark getter 
-FAIL Readable stream: invalid strategy.highWaterMark assert_throws: construction should throw a RangeError for NaN function "() => {
-      new ReadableStream({}, {
-        size() {
- ..." threw object "TypeError: highWaterMark parameter is not a number" ("TypeError") expected object "RangeError" ("RangeError")
+PASS Readable stream: invalid strategy.highWaterMark 
 PASS Readable stream: invalid strategy.size return value 
 FAIL Load bad-strategies.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
@@ -16,9 +13,6 @@ PASS Readable stream: strategy.size errors the stream and then throws
 PASS Readable stream: strategy.size errors the stream and then returns Infinity 
 PASS Readable stream: throwing strategy.size method 
 PASS Readable stream: throwing strategy.highWaterMark getter 
-FAIL Readable stream: invalid strategy.highWaterMark assert_throws: construction should throw a RangeError for NaN function "() => {
-      new ReadableStream({}, {
-        size() {
- ..." threw object "TypeError: highWaterMark parameter is not a number" ("TypeError") expected object "RangeError" ("RangeError")
+PASS Readable stream: invalid strategy.highWaterMark 
 PASS Readable stream: invalid strategy.size return value 
 

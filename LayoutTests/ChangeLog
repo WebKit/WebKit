@@ -1,3 +1,12 @@
+2016-07-18  Youenn Fablet  <youenn@apple.com>
+
+        [Streams API] ReadableStream should throw a RangeError in case of NaN highWaterMark
+        https://bugs.webkit.org/show_bug.cgi?id=159870
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * streams/reference-implementation/bad-strategies.html: Reflecting isNaN change in WritableStream test.
+
 2016-07-17  Frederic Wang  <fwang@igalia.com>
 
         Rebaseline Windows and EFL MathML pixel tests after r203289.

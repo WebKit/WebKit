@@ -111,7 +111,7 @@ test(function() {
     }
 
     for (var highWaterMark of [NaN, 'foo', {}]) {
-        assert_throws(new TypeError(), function() {
+        assert_throws(new RangeError(), function() {
             new WritableStream({}, {
                 size: function() {
                     return 1;
