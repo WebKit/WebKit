@@ -455,7 +455,7 @@ private:
             ArgumentPosition* argumentPosition = findArgumentPositionForLocal(operand);
             if (argumentPosition)
                 flushDirect(operand, argumentPosition);
-            else if (m_hasDebuggerEnabled && operand == m_codeBlock->scopeRegister())
+            else if (m_graph.needsScopeRegister() && operand == m_codeBlock->scopeRegister())
                 flush(operand);
         }
 
@@ -511,10 +511,12 @@ private:
 
         // Always flush arguments, except for 'this'. If 'this' is created by us,
         // then make sure that it's never unboxed.
-        if (argument) {
+        if (argument || m_graph.needsFlushedThis()) {
             if (setMode != ImmediateNakedSet)
                 flushDirect(operand);
-        } else if (m_codeBlock->specializationKind() == CodeForConstruct)
+        }
+        
+        if (!argument && m_codeBlock->specializationKind() == CodeForConstruct)
             variableAccessData->mergeShouldNeverUnbox(true);
         
         variableAccessData->mergeStructureCheckHoistingFailed(
@@ -604,7 +606,9 @@ private:
             numArguments = inlineStackEntry->m_codeBlock->numParameters();
         for (unsigned argument = numArguments; argument-- > 1;)
             flushDirect(inlineStackEntry->remapOperand(virtualRegisterForArgument(argument)));
-        if (m_hasDebuggerEnabled)
+        if (!inlineStackEntry->m_inlineCallFrame && m_graph.needsFlushedThis())
+            flushDirect(virtualRegisterForArgument(0));
+        if (m_graph.needsScopeRegister())
             flush(m_codeBlock->scopeRegister());
     }
 
@@ -4564,6 +4568,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_construct_varargs);
         }
             
+        case op_call_eval: {
+            int result = currentInstruction[1].u.operand;
+            int callee = currentInstruction[2].u.operand;
+            int argumentCountIncludingThis = currentInstruction[3].u.operand;
+            int registerOffset = -currentInstruction[4].u.operand;
+            addCall(result, CallEval, OpInfo(), get(VirtualRegister(callee)), argumentCountIncludingThis, registerOffset, getPrediction());
+            NEXT_OPCODE(op_call_eval);
+        }
+            
         case op_jneq_ptr: {
             Special::Pointer specialPointer = currentInstruction[2].u.specialPointer;
             ASSERT(pointerIsCell(specialPointer));
@@ -4596,7 +4609,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
             if (needsVarInjectionChecks(resolveType))
-                addToGraph(VarInjectionWatchpoint);
+                m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpoint());
 
             switch (resolveType) {
             case GlobalProperty:

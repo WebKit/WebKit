@@ -30,6 +30,7 @@
 
 #include "JITOperations.h"
 #include "JSCInlines.h"
+#include "LinkBuffer.h"
 
 namespace JSC {
 
@@ -611,6 +612,18 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer()
     ASSERT(scratch == entry.reg().gpr());
     loadPtr(Address(scratch, entry.offset()), scratch);
 #endif
+}
+
+void AssemblyHelpers::emitDumbVirtualCall(CallLinkInfo* info)
+{
+    move(TrustedImmPtr(info), GPRInfo::regT2);
+    Call call = nearCall();
+    addLinkTask(
+        [=] (LinkBuffer& linkBuffer) {
+            MacroAssemblerCodeRef virtualThunk = virtualThunkFor(&linkBuffer.vm(), *info);
+            info->setSlowStub(createJITStubRoutine(virtualThunk, linkBuffer.vm(), nullptr, true));
+            linkBuffer.link(call, CodeLocationLabel(virtualThunk.code()));
+        });
 }
 
 } // namespace JSC

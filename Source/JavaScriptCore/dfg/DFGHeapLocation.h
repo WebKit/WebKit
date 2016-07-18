@@ -57,7 +57,6 @@ enum LocationKind {
     SetterLoc,
     StructureLoc,
     TypedArrayByteOffsetLoc,
-    VarInjectionWatchpointLoc,
     StackLoc,
     StackPayloadLoc
 };

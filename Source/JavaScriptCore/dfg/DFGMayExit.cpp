@@ -96,6 +96,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case Call:
     case Construct:
     case CallVarargs:
+    case CallEval:
     case ConstructVarargs:
     case CallForwardVarargs:
     case ConstructForwardVarargs:

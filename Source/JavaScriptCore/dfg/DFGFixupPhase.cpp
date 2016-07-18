@@ -1535,12 +1535,12 @@ private:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case NotifyWrite:
-        case VarInjectionWatchpoint:
         case Call:
         case CheckTypeInfoFlags:
         case TailCallInlinedCaller:
         case Construct:
         case CallVarargs:
+        case CallEval:
         case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
         case CallForwardVarargs:

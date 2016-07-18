@@ -529,7 +529,8 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
     int argCount = (++it)->u.operand;
     int registerOffset = (++it)->u.operand;
     printLocationAndOp(out, exec, location, it, op);
-    out.printf("%s, %s, %d, %d", registerName(dst).data(), registerName(func).data(), argCount, registerOffset);
+    out.print(registerName(dst), ", ", registerName(func), ", ", argCount, ", ", registerOffset);
+    out.print(" (this at ", virtualRegisterForArgument(0, -registerOffset), ")");
     if (cacheDumpMode == DumpCaches) {
         LLIntCallLinkInfo* callLinkInfo = it[1].u.callLinkInfo;
         if (callLinkInfo->lastSeenCallee) {
@@ -609,6 +610,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         static_cast<unsigned long>(instructions().size()),
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
         m_numParameters, m_numCalleeLocals, m_numVars);
+    out.print("; scope at ", scopeRegister());
     out.printf("\n");
     
     StubInfoMap stubInfos;

@@ -813,6 +813,9 @@ public:
     // because it queries the m_hasExceptionHandlers boolean whose value
     // is only fully determined after bytcode parsing.
     bool willCatchExceptionInMachineFrame(CodeOrigin, CodeOrigin& opCatchOriginOut, HandlerInfo*& catchHandlerOut);
+    
+    bool needsScopeRegister() const { return m_hasDebuggerEnabled || m_codeBlock->usesEval(); }
+    bool needsFlushedThis() const { return m_codeBlock->usesEval(); }
 
     VM& m_vm;
     Plan& m_plan;

@@ -97,10 +97,6 @@ private:
             }
             break;
             
-        case VarInjectionWatchpoint:
-            addLazily(globalObject()->varInjectionWatchpoint());
-            break;
-            
         default:
             break;
         }

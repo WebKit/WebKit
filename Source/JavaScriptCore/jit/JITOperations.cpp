@@ -772,7 +772,7 @@ EncodedJSValue JIT_OPERATION operationCallEval(ExecState* exec, ExecState* execC
     UNUSED_PARAM(exec);
 
     execCallee->setCodeBlock(0);
-
+    
     if (!isHostFunction(execCallee->calleeAsValue(), globalFuncEval))
         return JSValue::encode(JSValue());
 

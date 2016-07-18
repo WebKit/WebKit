@@ -127,7 +127,6 @@ bool doesGC(Graph& graph, Node* node)
     case GetGlobalVar:
     case GetGlobalLexicalVariable:
     case PutGlobalVariable:
-    case VarInjectionWatchpoint:
     case CheckCell:
     case CheckNotEmpty:
     case CheckIdent:
@@ -144,6 +143,7 @@ bool doesGC(Graph& graph, Node* node)
     case TailCallInlinedCaller:
     case Construct:
     case CallVarargs:
+    case CallEval:
     case TailCallVarargsInlinedCaller:
     case ConstructVarargs:
     case LoadVarargs:

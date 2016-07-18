@@ -165,9 +165,20 @@ public:
     void moveValueRegs(JSValueRegs srcRegs, JSValueRegs destRegs)
     {
 #if USE(JSVALUE32_64)
+        if (destRegs.tagGPR() == srcRegs.payloadGPR()) {
+            if (destRegs.payloadGPR() == srcRegs.tagGPR()) {
+                swap(srcRegs.payloadGPR(), srcRegs.tagGPR());
+                return;
+            }
+            move(srcRegs.payloadGPR(), destRegs.payloadGPR());
+            move(srcRegs.tagGPR(), destRegs.tagGPR());
+            return;
+        }
         move(srcRegs.tagGPR(), destRegs.tagGPR());
-#endif
         move(srcRegs.payloadGPR(), destRegs.payloadGPR());
+#else
+        move(srcRegs.gpr(), destRegs.gpr());
+#endif
     }
 
     void moveValue(JSValue value, JSValueRegs regs)
@@ -1380,7 +1391,9 @@ public:
         
         functor(TypeofType::Undefined, true);
     }
-
+    
+    void emitDumbVirtualCall(CallLinkInfo*);
+    
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
 
     void makeSpaceOnStackForCCall();

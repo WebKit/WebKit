@@ -136,10 +136,6 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("TypedArrayByteOffsetLoc");
         return;
         
-    case VarInjectionWatchpointLoc:
-        out.print("VarInjectionWatchpointLoc");
-        return;
-        
     case StructureLoc:
         out.print("StructureLoc");
         return;

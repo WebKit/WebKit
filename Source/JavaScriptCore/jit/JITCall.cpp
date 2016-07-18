@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,14 +124,7 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
     load64(Address(stackPointerRegister, sizeof(Register) * CallFrameSlot::callee - sizeof(CallerFrameAndPC)), regT0);
-    move(TrustedImmPtr(info), regT2);
-    Call call = emitNakedCall();
-    addLinkTask(
-        [=] (LinkBuffer& linkBuffer) {
-            MacroAssemblerCodeRef virtualThunk = virtualThunkFor(m_vm, *info);
-            info->setSlowStub(createJITStubRoutine(virtualThunk, *m_vm, nullptr, true));
-            linkBuffer.link(call, CodeLocationLabel(virtualThunk.code()));
-        });
+    emitDumbVirtualCall(info);
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 

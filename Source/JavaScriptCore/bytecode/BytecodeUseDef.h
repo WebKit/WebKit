@@ -282,6 +282,8 @@ void computeUsesForBytecodeOffset(
         int lastArg = registerOffset + CallFrame::thisArgumentOffset();
         for (int i = 0; i < argCount; i++)
             functor(codeBlock, instruction, opcodeID, lastArg + i);
+        if (opcodeID == op_call_eval)
+            functor(codeBlock, instruction, opcodeID, codeBlock->scopeRegister().offset());
         return;
     }
     case op_save: {

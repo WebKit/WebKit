@@ -1,3 +1,101 @@
+2016-07-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should support op_call_eval
+        https://bugs.webkit.org/show_bug.cgi?id=159786
+
+        Reviewed by Saam Barati.
+        
+        This adds support for op_call_eval in DFG and FTL by brute force:
+        
+        - There is now a CallEval() node type, which compiles exactly the same way that we do in
+          baseline.
+        
+        - We teach the DFG and bytecode liveness that the scope register and 'this' are read by
+          CallEval()/op_call_eval.
+        
+        We can compile eval quite well, except that right now we cannot inline functions that use
+        eval. It would be nice to do that, but the payoff is probably smaller. "Don't inline users
+        of eval" may even be an OK inlining heuristic. Not inlining users of eval allows me to
+        reuse the baseline implementation, which is really great. Otherwise, I'd have to get rid
+        of things like the rogue reads of scope register and 'this'.
+        
+        The goal here is to produce speed-ups for code that has functions that do both eval and
+        some computational stuff. Obviously, we're not producing any benefit for the eval itself.
+        But now the other stuff in a function that uses eval will get to participate in
+        optimization.
+        
+        This is a huge speed-up on microbenchmarks.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::dumpBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::needsScopeRegister):
+        (JSC::DFG::Graph::needsFlushedThis):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoadVarargs):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::emitDumbVirtualCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitTypeOf):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITOperations.cpp:
+        * tests/stress/exit-then-eval.js: Added.
+        (foo):
+        * tests/stress/force-exit-then-eval-dfg.js: Added.
+        (foo):
+        * tests/stress/force-exit-then-eval.js: Added.
+        (foo):
+
 2016-07-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should really support jneq_ptr
