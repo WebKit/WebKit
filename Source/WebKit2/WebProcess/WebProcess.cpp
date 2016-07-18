@@ -97,6 +97,7 @@
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+#include <WebCore/UserGestureIndicator.h>
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashCountedSet.h>
@@ -717,6 +718,33 @@ WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupDat
     }
 
     return result.iterator->value.get();
+}
+
+static uint64_t nextUserGestureTokenIdentifier()
+{
+    static uint64_t identifier = 1;
+    return identifier++;
+}
+
+uint64_t WebProcess::userGestureTokenIdentifier(RefPtr<UserGestureToken> token)
+{
+    if (!token || !token->processingUserGesture())
+        return 0;
+
+    auto result = m_userGestureTokens.ensure(token.get(), [] { return nextUserGestureTokenIdentifier(); });
+    if (result.isNewEntry) {
+        result.iterator->key->addDestructionObserver([] (UserGestureToken& tokenBeingDestroyed) {
+            WebProcess::singleton().userGestureTokenDestroyed(tokenBeingDestroyed);
+        });
+    }
+    
+    return result.iterator->value;
+}
+
+void WebProcess::userGestureTokenDestroyed(UserGestureToken& token)
+{
+    auto identifier = m_userGestureTokens.take(&token);
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyUserGestureToken(identifier), 0);
 }
 
 void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear)

@@ -30,6 +30,7 @@
 #import "AppDelegate.h"
 #import "SettingsController.h"
 #import <WebKit/WKFrameInfo.h>
+#import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
@@ -37,6 +38,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/_WKUserInitiatedAction.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 
@@ -402,6 +404,15 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
         [self updateTextFieldFromURL:_webView.URL];
 }
 
+- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
+    [controller awakeFromNib];
+    [controller.window makeKeyAndOrderFront:self];
+
+    return controller->_webView;
+}
+
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
     NSAlert* alert = [[NSAlert alloc] init];
@@ -534,6 +545,23 @@ static NSSet *dataTypes()
 }
 
 #pragma mark WKNavigationDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    LOG(@"decidePolicyForNavigationAction");
+
+    if (navigationAction._canHandleRequest) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+        return;
+    }
+
+    if (navigationAction._userInitiatedAction && !navigationAction._userInitiatedAction.isConsumed) {
+        [navigationAction._userInitiatedAction consume];
+        [[NSWorkspace sharedWorkspace] openURL:navigationAction.request.URL];
+    }
+
+    decisionHandler(WKNavigationActionPolicyCancel);
+}
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {

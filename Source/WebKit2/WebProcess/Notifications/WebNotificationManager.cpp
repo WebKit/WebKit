@@ -249,7 +249,7 @@ void WebNotificationManager::didClickNotification(uint64_t notificationID)
         return;
 
     // Indicate that this event is being dispatched in reaction to a user's interaction with a platform notification.
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator indicator(ProcessingUserGesture);
     notification->dispatchClickEvent();
 #else
     UNUSED_PARAM(notificationID);

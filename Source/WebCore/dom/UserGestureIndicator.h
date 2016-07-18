@@ -23,37 +23,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserGestureIndicator_h
-#define UserGestureIndicator_h
+#pragma once
 
+#include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Document;
 
 enum ProcessingUserGestureState {
-    DefinitelyProcessingUserGesture,
-    DefinitelyProcessingPotentialUserGesture,
-    PossiblyProcessingUserGesture,
-    DefinitelyNotProcessingUserGesture
+    ProcessingUserGesture,
+    ProcessingPotentialUserGesture,
+    NotProcessingUserGesture
+};
+
+class UserGestureToken : public RefCounted<UserGestureToken> {
+public:
+    static RefPtr<UserGestureToken> create(ProcessingUserGestureState state)
+    {
+        return adoptRef(new UserGestureToken(state));
+    }
+
+    WEBCORE_EXPORT ~UserGestureToken();
+
+    ProcessingUserGestureState state() const { return m_state; }
+    bool processingUserGesture() const { return m_state == ProcessingUserGesture; }
+    bool processingUserGestureForMedia() const { return m_state == ProcessingUserGesture || m_state == ProcessingPotentialUserGesture; }
+
+    void addDestructionObserver(Function<void (UserGestureToken&)>&& observer)
+    {
+        m_destructionObservers.append(WTFMove(observer));
+    }
+
+private:
+    UserGestureToken(ProcessingUserGestureState state)
+        : m_state(state)
+    {
+    }
+
+    ProcessingUserGestureState m_state = NotProcessingUserGesture;
+    Vector<Function<void (UserGestureToken&)>> m_destructionObservers;
 };
 
 class UserGestureIndicator {
     WTF_MAKE_NONCOPYABLE(UserGestureIndicator);
 public:
+    WEBCORE_EXPORT static RefPtr<UserGestureToken> currentUserGesture();
+
     WEBCORE_EXPORT static bool processingUserGesture();
-    static bool processingUserGestureForMedia();
+    WEBCORE_EXPORT static bool processingUserGestureForMedia();
 
     // If a document is provided, its last known user gesture timestamp is updated.
-    WEBCORE_EXPORT explicit UserGestureIndicator(ProcessingUserGestureState, Document* = nullptr);
+    WEBCORE_EXPORT explicit UserGestureIndicator(Optional<ProcessingUserGestureState>, Document* = nullptr);
+    WEBCORE_EXPORT explicit UserGestureIndicator(RefPtr<UserGestureToken>);
     WEBCORE_EXPORT ~UserGestureIndicator();
 
 private:
-    WEBCORE_EXPORT static ProcessingUserGestureState s_state;
-    ProcessingUserGestureState m_previousState;
+    RefPtr<UserGestureToken> m_previousToken;
 };
 
 }
-
-#endif

@@ -27,6 +27,8 @@
 
 #if WK_API_ENABLED
 
+@class _WKUserInitiatedAction;
+
 #if TARGET_OS_IPHONE
 typedef NS_ENUM(NSInteger, WKSyntheticClickType) {
     WKSyntheticClickTypeNoTap,
@@ -44,6 +46,8 @@ typedef NS_ENUM(NSInteger, WKSyntheticClickType) {
 @property (nonatomic, readonly) BOOL _shouldOpenAppLinks WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 @property (nonatomic, readonly) BOOL _shouldOpenExternalURLs WK_API_DEPRECATED("use _shouldOpenExternalSchemes and _shouldOpenAppLinks", macosx(10.11, 10.11), ios(9.0, 9.0));
+
+@property (nonatomic, readonly) _WKUserInitiatedAction *_userInitiatedAction WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly) WKSyntheticClickType _syntheticClickType WK_API_AVAILABLE(ios(10.0));

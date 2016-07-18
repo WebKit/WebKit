@@ -209,6 +209,8 @@ void WebProcessProxy::shutDown()
         webUserContentControllerProxy->removeProcess(*this);
     m_webUserContentControllerProxies.clear();
 
+    m_userInitiatedActionMap.clear();
+
     m_processPool->disconnectProcess(this);
 }
 
@@ -663,6 +665,21 @@ size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
             ++result;
     }
     return result;
+}
+
+RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t identifier)
+{
+    if (!UserInitiatedActionMap::isValidKey(identifier) || !identifier)
+        return nullptr;
+
+    auto result = m_userInitiatedActionMap.ensure(identifier, [] { return API::UserInitiatedAction::create(); });
+    return result.iterator->value;
+}
+
+void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
+{
+    ASSERT(UserInitiatedActionMap::isValidKey(identifier));
+    m_userInitiatedActionMap.remove(identifier);
 }
 
 bool WebProcessProxy::canTerminateChildProcess()

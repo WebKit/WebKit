@@ -28,27 +28,27 @@
 
 #include "APIFrameInfo.h"
 #include "APIObject.h"
+#include "APIUserInitiatedAction.h"
 #include "NavigationActionData.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/URL.h>
 
 namespace API {
 
-class FrameInfo;
-
 class NavigationAction final : public ObjectImpl<Object::Type::NavigationAction> {
 public:
-    static Ref<NavigationAction> create(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks)
+    static Ref<NavigationAction> create(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction> userInitiatedAction)
     {
-        return adoptRef(*new NavigationAction(navigationActionData, sourceFrame, targetFrame, request, originalURL, shouldOpenAppLinks));
+        return adoptRef(*new NavigationAction(navigationActionData, sourceFrame, targetFrame, request, originalURL, shouldOpenAppLinks, WTFMove(userInitiatedAction)));
     }
 
-    NavigationAction(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks)
+    NavigationAction(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction> userInitiatedAction)
         : m_sourceFrame(sourceFrame)
         , m_targetFrame(targetFrame)
         , m_request(request)
         , m_originalURL(originalURL)
         , m_shouldOpenAppLinks(shouldOpenAppLinks)
+        , m_userInitiatedAction(WTFMove(userInitiatedAction))
         , m_navigationActionData(navigationActionData)
     {
     }
@@ -63,11 +63,13 @@ public:
     WebKit::WebEvent::Modifiers modifiers() const { return m_navigationActionData.modifiers; }
     WebKit::WebMouseEvent::Button mouseButton() const { return m_navigationActionData.mouseButton; }
     WebKit::WebMouseEvent::SyntheticClickType syntheticClickType() const { return m_navigationActionData.syntheticClickType; }
-    bool isProcessingUserGesture() const { return m_navigationActionData.isProcessingUserGesture; }
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
     bool shouldOpenExternalSchemes() const { return m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow || m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes; }
     bool shouldOpenAppLinks() const { return m_shouldOpenAppLinks && m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow; }
     bool shouldPerformDownload() const { return !m_navigationActionData.downloadAttribute.isNull(); }
+
+    bool isProcessingUserGesture() const { return m_userInitiatedAction; }
+    UserInitiatedAction* userInitiatedAction() const { return m_userInitiatedAction.get(); }
 
 private:
     RefPtr<FrameInfo> m_sourceFrame;
@@ -77,6 +79,8 @@ private:
     WebCore::URL m_originalURL;
 
     bool m_shouldOpenAppLinks;
+
+    RefPtr<UserInitiatedAction> m_userInitiatedAction;
 
     WebKit::NavigationActionData m_navigationActionData;
 };

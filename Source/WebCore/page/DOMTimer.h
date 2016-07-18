@@ -28,6 +28,7 @@
 #define DOMTimer_h
 
 #include "SuspendableTimer.h"
+#include "UserGestureIndicator.h"
 #include <memory>
 #include <wtf/RefCounted.h>
 
@@ -90,7 +91,7 @@ private:
     std::chrono::milliseconds m_originalInterval;
     TimerThrottleState m_throttleState;
     std::chrono::milliseconds m_currentTimerInterval;
-    bool m_shouldForwardUserGesture;
+    RefPtr<UserGestureToken> m_userGestureTokenToForward;
 };
 
 } // namespace WebCore

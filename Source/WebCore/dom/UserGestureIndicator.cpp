@@ -28,42 +28,68 @@
 
 #include "Document.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-static bool isDefinite(ProcessingUserGestureState state)
+static RefPtr<UserGestureToken>& currentToken()
 {
-    return state == DefinitelyProcessingUserGesture || state == DefinitelyNotProcessingUserGesture || state == DefinitelyProcessingPotentialUserGesture;
+    static NeverDestroyed<RefPtr<UserGestureToken>> token;
+    return token;
 }
 
-ProcessingUserGestureState UserGestureIndicator::s_state = DefinitelyNotProcessingUserGesture;
+UserGestureToken::~UserGestureToken()
+{
+    for (auto& observer : m_destructionObservers)
+        observer(*this);
+}
 
-UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state, Document* document)
-    : m_previousState(s_state)
+UserGestureIndicator::UserGestureIndicator(Optional<ProcessingUserGestureState> state, Document* document)
+    : m_previousToken(currentToken())
 {
     // Silently ignore UserGestureIndicators on non main threads.
     if (!isMainThread())
         return;
-    // We overwrite s_state only if the caller is definite about the gesture state.
-    if (isDefinite(state))
-        s_state = state;
-    ASSERT(isDefinite(s_state));
 
-    if (document && s_state == DefinitelyProcessingUserGesture)
+    if (state)
+        currentToken() = UserGestureToken::create(state.value());
+
+    if (document && currentToken()->processingUserGesture())
         document->topDocument().updateLastHandledUserGestureTimestamp();
+}
+
+UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token)
+    : m_previousToken(currentToken())
+{
+    if (!isMainThread())
+        return;
+
+    if (token)
+        currentToken() = token;
 }
 
 UserGestureIndicator::~UserGestureIndicator()
 {
     if (!isMainThread())
         return;
-    s_state = m_previousState;
-    ASSERT(isDefinite(s_state));
+    
+    currentToken() = m_previousToken;
+}
+
+RefPtr<UserGestureToken> UserGestureIndicator::currentUserGesture()
+{
+    if (!isMainThread())
+        return nullptr;
+
+    return currentToken();
 }
 
 bool UserGestureIndicator::processingUserGesture()
 {
-    return isMainThread() ? s_state == DefinitelyProcessingUserGesture : false;
+    if (!isMainThread())
+        return false;
+
+    return currentToken() ? currentToken()->processingUserGesture() : false;
 }
 
 bool UserGestureIndicator::processingUserGestureForMedia()
@@ -71,7 +97,7 @@ bool UserGestureIndicator::processingUserGestureForMedia()
     if (!isMainThread())
         return false;
 
-    return s_state == DefinitelyProcessingUserGesture || s_state == DefinitelyProcessingPotentialUserGesture;
+    return currentToken() ? currentToken()->processingUserGestureForMedia() : false;
 }
 
 }

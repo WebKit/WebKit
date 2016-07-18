@@ -30,6 +30,7 @@
 
 #import "NavigationActionData.h"
 #import "WKFrameInfoInternal.h"
+#import "_WKUserInitiatedActionInternal.h"
 #import <wtf/RetainPtr.h>
 
 @implementation WKNavigationAction
@@ -216,6 +217,14 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 - (BOOL)_shouldOpenExternalURLs
 {
     return [self _shouldOpenExternalSchemes];
+}
+
+- (_WKUserInitiatedAction *)_userInitiatedAction
+{
+    auto userInitiatedAction = _navigationAction->userInitiatedAction();
+    if (userInitiatedAction)
+        return wrapper(*userInitiatedAction);
+    return nil;
 }
 
 @end

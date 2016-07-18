@@ -35,7 +35,6 @@
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
-#include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
@@ -168,6 +167,14 @@ static inline bool shouldForwardUserGesture(std::chrono::milliseconds interval, 
         && !nestingLevel; // Gestures should not be forwarded to nested timers.
 }
 
+static inline RefPtr<UserGestureToken> userGestureTokenToForward(std::chrono::milliseconds interval, int nestingLevel)
+{
+    if (!shouldForwardUserGesture(interval, nestingLevel))
+        return nullptr;
+
+    return UserGestureIndicator::currentUserGesture();
+}
+
 DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, std::chrono::milliseconds interval, bool singleShot)
     : SuspendableTimer(context)
     , m_nestingLevel(context.timerNestingLevel())
@@ -175,7 +182,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAct
     , m_originalInterval(interval)
     , m_throttleState(Undetermined)
     , m_currentTimerInterval(intervalClampedToMinimum())
-    , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
+    , m_userGestureTokenToForward(userGestureTokenToForward(interval, m_nestingLevel))
 {
     RefPtr<DOMTimer> reference = adoptRef(this);
 
@@ -300,9 +307,9 @@ void DOMTimer::fired()
 
     ASSERT(!isSuspended());
     ASSERT(!context.activeDOMObjectsAreSuspended());
-    UserGestureIndicator gestureIndicator(m_shouldForwardUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(m_userGestureTokenToForward);
     // Only the first execution of a multi-shot timer should get an affirmative user gesture indicator.
-    m_shouldForwardUserGesture = false;
+    m_userGestureTokenToForward = nullptr;
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireTimer(&context, m_timeoutId);
 

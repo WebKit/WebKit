@@ -425,7 +425,7 @@ void InspectorPageAgent::reload(ErrorString&, const bool* const optionalIgnoreCa
 
 void InspectorPageAgent::navigate(ErrorString&, const String& url)
 {
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator indicator(ProcessingUserGesture);
     Frame& frame = m_page.mainFrame();
 
     ResourceRequest resourceRequest(frame.document()->completeURL(url));

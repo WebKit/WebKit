@@ -1,3 +1,101 @@
+2016-07-16  Sam Weinig  <sam@webkit.org>
+
+        [WebKit API] Add SPI to track multiple navigations caused by a single user gesture
+        <rdar://problem/26554137>
+        https://bugs.webkit.org/show_bug.cgi?id=159856
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/APIUserInitiatedAction.h: Added.
+        Add new APIObject type, UserInitiatedAction.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        Expose a _WKUserInitiatedAction on the WKNavigationAction.
+
+        * UIProcess/API/Cocoa/_WKUserInitiatedAction.h: Added.
+        * UIProcess/API/Cocoa/_WKUserInitiatedAction.mm: Added.
+        (-[_WKUserInitiatedAction consume]):
+        (-[_WKUserInitiatedAction isConsumed]):
+        (-[_WKUserInitiatedAction _apiObject]):
+        * UIProcess/API/Cocoa/_WKUserInitiatedActionInternal.h: Added.
+        Add new _WKUserInitiatedAction type wrapping API::UserInitiatedAction.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        Store the userGestureTokenIdentifier (as determined from the WebProcess's map) rather
+        than just a single bit. This allows us to track if a user gesture is used for multiple navigations.
+
+        * UIProcess/API/APINavigationAction.h:
+        Add UserInitiatedAction member and re-implement isProcessingUserGesture in terms of it.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        Get the API::UserInitiatedAction from the WebProcessProxy (if it exists), and pass
+        it along to the API::NavigationAction.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::userInitiatedActivity):
+        (WebKit::WebProcessProxy::didDestroyUserGestureToken):
+        * UIProcess/WebProcessProxy.h:
+        Keep a map of active userInitiatedActivity objects.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        Add DidDestroyUserGestureToken message to manager API::UserInitiatedActivity lifetimes.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::didClickNotification):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performFrameLoadURLRequest):
+        (WebKit::PluginView::evaluate):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::play):
+        (WebKit::WebPlaybackSessionManager::pause):
+        (WebKit::WebPlaybackSessionManager::togglePlayState):
+        (WebKit::WebPlaybackSessionManager::beginScrubbing):
+        (WebKit::WebPlaybackSessionManager::endScrubbing):
+        (WebKit::WebPlaybackSessionManager::seekToTime):
+        (WebKit::WebPlaybackSessionManager::fastSeek):
+        (WebKit::WebPlaybackSessionManager::beginScanningForward):
+        (WebKit::WebPlaybackSessionManager::beginScanningBackward):
+        (WebKit::WebPlaybackSessionManager::endScanning):
+        (WebKit::WebPlaybackSessionManager::selectAudioMediaOption):
+        (WebKit::WebPlaybackSessionManager::selectLegibleMediaOption):
+        Update for new UserGestureIndicator interface.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        Get an identifier for the UserGestureToken from the WebProcess singleton
+        to pass to the WebProcess.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::nextUserGestureTokenIdentifier):
+        (WebKit::WebProcess::userGestureTokenIdentifier):
+        (WebKit::WebProcess::userGestureTokenDestroyed):
+        * WebProcess/WebProcess.h:
+        Track UserGestureToken lifetimes utilizing the destructionObserver mechanism
+        off the tokens to indicate destruction. When destroyed, notify the UIProcess
+        to avoid leaks.
+
 2016-07-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename fastHasAttribute to hasAttributeWithoutSynchronization

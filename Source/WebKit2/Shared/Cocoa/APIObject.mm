@@ -71,6 +71,7 @@
 #import "_WKUserContentExtensionStoreInternal.h"
 #import "_WKUserContentFilterInternal.h"
 #import "_WKUserContentWorldInternal.h"
+#import "_WKUserInitiatedActionInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 
@@ -229,6 +230,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::UserContentWorld:
         wrapper = [_WKUserContentWorld alloc];
+        break;
+
+    case Type::UserInitiatedAction:
+        wrapper = [_WKUserInitiatedAction alloc];
         break;
 
     case Type::UserScript:

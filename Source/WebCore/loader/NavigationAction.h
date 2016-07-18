@@ -33,6 +33,7 @@
 #include "FrameLoaderTypes.h"
 #include "URL.h"
 #include "ResourceRequest.h"
+#include "UserGestureIndicator.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -63,7 +64,8 @@ public:
     NavigationType type() const { return m_type; }
     const Event* event() const { return m_event.get(); }
 
-    bool processingUserGesture() const { return m_processingUserGesture; }
+    bool processingUserGesture() const { return m_userGestureToken ? m_userGestureToken->processingUserGesture() : false; }
+    RefPtr<UserGestureToken> userGestureToken() const { return m_userGestureToken; }
 
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
 
@@ -73,7 +75,7 @@ private:
     ResourceRequest m_resourceRequest;
     NavigationType m_type { NavigationType::Other };
     RefPtr<Event> m_event;
-    bool m_processingUserGesture;
+    RefPtr<UserGestureToken> m_userGestureToken;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     AtomicString m_downloadAttribute;
 };

@@ -52,7 +52,7 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, Navig
     : m_resourceRequest(resourceRequest)
     , m_type(type)
     , m_event(event)
-    , m_processingUserGesture(ScriptController::processingUserGesture())
+    , m_userGestureToken(UserGestureIndicator::currentUserGesture())
     , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
     , m_downloadAttribute(downloadAttribute)
 {

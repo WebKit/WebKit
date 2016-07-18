@@ -1,3 +1,24 @@
+2016-07-17  Sam Weinig  <sam@webkit.org>
+
+        [WebKit API] Add SPI to track multiple navigations caused by a single user gesture
+        <rdar://problem/26554137>
+        https://bugs.webkit.org/show_bug.cgi?id=159856
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        Add basic window.open implementation.
+
+        (-[WK2BrowserWindowController webView:decidePolicyForNavigationAction:decisionHandler:]):
+        Add basic navigation policy implementation which implements a rule where a user gesture is only allowed
+        to open a single non-web URL, all others are dropped.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserInitiatedActionInNavigationAction.mm: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/open-multiple-external-url.html: Added.
+        Add API for the new SPI.
+
 2016-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Enable test262 module tests

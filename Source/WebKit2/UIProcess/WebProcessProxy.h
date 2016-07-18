@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APISession.h"
+#include "APIUserInitiatedAction.h"
 #include "ChildProcessProxy.h"
 #include "CustomProtocolManagerProxy.h"
 #include "MessageReceiverMap.h"
@@ -67,6 +68,7 @@ public:
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem>> WebBackForwardListItemMap;
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
+    typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
     static Ref<WebProcessProxy> create(WebProcessPool&);
     ~WebProcessProxy();
@@ -94,6 +96,7 @@ public:
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 
     WebBackForwardListItem* webBackForwardItem(uint64_t itemID) const;
+    RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
 
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
 
@@ -167,7 +170,8 @@ private:
     // IPC message handlers.
     void addBackForwardItem(uint64_t itemID, uint64_t pageID, const PageState&);
     void didDestroyFrame(uint64_t);
-    
+    void didDestroyUserGestureToken(uint64_t);
+
     void shouldTerminate(bool& shouldTerminate);
 
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
@@ -234,6 +238,7 @@ private:
     WebPageProxyMap m_pageMap;
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
+    UserInitiatedActionMap m_userInitiatedActionMap;
 
     HashSet<VisitedLinkStore*> m_visitedLinkStores;
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;

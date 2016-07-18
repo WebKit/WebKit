@@ -29,7 +29,7 @@ struct _WebKitNavigationAction {
         : type(toWebKitNavigationType(navigationActionData.navigationType))
         , mouseButton(toWebKitMouseButton(navigationActionData.mouseButton))
         , modifiers(toGdkModifiers(navigationActionData.modifiers))
-        , isUserGesture(navigationActionData.isProcessingUserGesture)
+        , isUserGesture(navigationActionData.userGestureTokenIdentifier)
         , request(uriRequest)
     {
     }

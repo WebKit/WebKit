@@ -150,7 +150,7 @@ public:
         , m_channels(WTFMove(channels))
         , m_targetOrigin(WTFMove(targetOrigin))
         , m_stackTrace(stackTrace)
-        , m_wasProcessingUserGesture(UserGestureIndicator::processingUserGesture())
+        , m_userGestureToForward(UserGestureIndicator::currentUserGesture())
     {
     }
 
@@ -168,7 +168,7 @@ private:
         // This object gets deleted when std::unique_ptr falls out of scope..
         std::unique_ptr<PostMessageTimer> timer(this);
         
-        UserGestureIndicator userGestureIndicator(m_wasProcessingUserGesture ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
+        UserGestureIndicator userGestureIndicator(m_userGestureToForward);
         m_window->postMessageTimerFired(*timer);
     }
 
@@ -179,7 +179,7 @@ private:
     std::unique_ptr<MessagePortChannelArray> m_channels;
     RefPtr<SecurityOrigin> m_targetOrigin;
     RefPtr<ScriptCallStack> m_stackTrace;
-    bool m_wasProcessingUserGesture;
+    RefPtr<UserGestureToken> m_userGestureToForward;
 };
 
 typedef HashCountedSet<DOMWindow*> DOMWindowSet;
