@@ -58,6 +58,7 @@ private:
     MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
     MediaTime duration() const override { return m_box.duration(); }
     AtomicString trackID() const override { return m_id; }
+    void setTrackID(const String& id) override { m_id = id; }
     size_t sizeInBytes() const override { return sizeof(m_box); }
     SampleFlags flags() const override;
     PlatformSample platformSample() override;

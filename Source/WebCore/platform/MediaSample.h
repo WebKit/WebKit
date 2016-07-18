@@ -31,10 +31,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
+typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+
 namespace WebCore {
 
 class MockSampleBox;
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 struct PlatformSample {
     enum {
@@ -56,6 +57,7 @@ public:
     virtual MediaTime decodeTime() const = 0;
     virtual MediaTime duration() const = 0;
     virtual AtomicString trackID() const = 0;
+    virtual void setTrackID(const String&) = 0;
     virtual size_t sizeInBytes() const = 0;
     virtual FloatSize presentationSize() const = 0;
     virtual void offsetTimestampsBy(const MediaTime&) = 0;

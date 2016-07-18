@@ -36,6 +36,7 @@
 #import "MediaDescription.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "MediaSample.h"
+#import "MediaSampleAVFObjC.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaTimeAVFoundation.h"
 #import "NotImplemented.h"
@@ -416,128 +417,6 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 @end
 
 namespace WebCore {
-
-#pragma mark -
-#pragma mark MediaSampleAVFObjC
-
-class MediaSampleAVFObjC final : public MediaSample {
-public:
-    static RefPtr<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(new MediaSampleAVFObjC(sample, trackID)); }
-    virtual ~MediaSampleAVFObjC() { }
-
-private:
-    MediaSampleAVFObjC(CMSampleBufferRef sample, int trackID)
-        : m_sample(sample)
-        , m_id(String::format("%d", trackID))
-    {
-    }
-
-    MediaTime presentationTime() const override { return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get())); }
-    MediaTime decodeTime() const override { return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get())); }
-    MediaTime duration() const override { return toMediaTime(CMSampleBufferGetDuration(m_sample.get())); }
-    AtomicString trackID() const override { return m_id; }
-    size_t sizeInBytes() const override { return CMSampleBufferGetTotalSampleSize(m_sample.get()); }
-    FloatSize presentationSize() const override;
-
-    SampleFlags flags() const override;
-    PlatformSample platformSample() override;
-    void dump(PrintStream&) const override;
-    void offsetTimestampsBy(const MediaTime&) override;
-    void setTimestamps(const MediaTime&, const MediaTime&) override;
-
-    RetainPtr<CMSampleBufferRef> m_sample;
-    AtomicString m_id;
-};
-
-PlatformSample MediaSampleAVFObjC::platformSample()
-{
-    PlatformSample sample = { PlatformSample::CMSampleBufferType, { .cmSampleBuffer = m_sample.get() } };
-    return sample;
-}
-
-static bool CMSampleBufferIsRandomAccess(CMSampleBufferRef sample)
-{
-    CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sample, false);
-    if (!attachments)
-        return true;
-
-    for (CFIndex i = 0, count = CFArrayGetCount(attachments); i < count; ++i) {
-        CFDictionaryRef attachmentDict = (CFDictionaryRef)CFArrayGetValueAtIndex(attachments, i);
-        if (CFDictionaryContainsKey(attachmentDict, kCMSampleAttachmentKey_NotSync))
-            return false;
-    }
-    return true;
-}
-
-MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
-{
-    int returnValue = MediaSample::None;
-
-    if (CMSampleBufferIsRandomAccess(m_sample.get()))
-        returnValue |= MediaSample::IsSync;
-
-    return SampleFlags(returnValue);
-}
-
-FloatSize MediaSampleAVFObjC::presentationSize() const
-{
-    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(m_sample.get());
-    if (CMFormatDescriptionGetMediaType(formatDescription) != kCMMediaType_Video)
-        return FloatSize();
-
-    return FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true)); 
-}
-
-void MediaSampleAVFObjC::dump(PrintStream& out) const
-{
-    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
-}
-
-void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
-{
-    CMItemCount itemCount = 0;
-    if (noErr != CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), 0, nullptr, &itemCount))
-        return;
-
-    Vector<CMSampleTimingInfo> timingInfoArray;
-    timingInfoArray.grow(itemCount);
-    if (noErr != CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), itemCount, timingInfoArray.data(), nullptr))
-        return;
-
-    for (auto& timing : timingInfoArray) {
-        timing.presentationTimeStamp = toCMTime(toMediaTime(timing.presentationTimeStamp) + offset);
-        timing.decodeTimeStamp = toCMTime(toMediaTime(timing.decodeTimeStamp) + offset);
-    }
-
-    CMSampleBufferRef newSample;
-    if (noErr != CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.data(), &newSample))
-        return;
-
-    m_sample = adoptCF(newSample);
-}
-
-void MediaSampleAVFObjC::setTimestamps(const WTF::MediaTime &presentationTimestamp, const WTF::MediaTime &decodeTimestamp)
-{
-    CMItemCount itemCount = 0;
-    if (noErr != CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), 0, nullptr, &itemCount))
-        return;
-
-    Vector<CMSampleTimingInfo> timingInfoArray;
-    timingInfoArray.grow(itemCount);
-    if (noErr != CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), itemCount, timingInfoArray.data(), nullptr))
-        return;
-
-    for (auto& timing : timingInfoArray) {
-        timing.presentationTimeStamp = toCMTime(presentationTimestamp);
-        timing.decodeTimeStamp = toCMTime(decodeTimestamp);
-    }
-
-    CMSampleBufferRef newSample;
-    if (noErr != CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.data(), &newSample))
-        return;
-
-    m_sample = adoptCF(newSample);
-}
 
 #pragma mark -
 #pragma mark MediaDescriptionAVFObjC

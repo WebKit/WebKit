@@ -980,6 +980,8 @@
 		1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF8E1C1125673E000230FF7 /* ProxyServerCFNet.cpp */; };
 		1AFE11990CBFFCC4003017FA /* JSSQLResultSetRowList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */; };
 		1AFE119A0CBFFCC4003017FA /* JSSQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */; };
+		1B124D8D1D380B7000ECDFB0 /* MediaSampleAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */; };
+		1B124D8F1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1B124D8E1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm */; };
 		1C010700192594DF008A4201 /* InlineTextBoxStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */; };
 		1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */; };
 		1C0939EA1A13E12900B788E5 /* CachedSVGFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */; };
@@ -8531,6 +8533,8 @@
 		1AF8E1C1125673E000230FF7 /* ProxyServerCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyServerCFNet.cpp; sourceTree = "<group>"; };
 		1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSetRowList.cpp; sourceTree = "<group>"; };
 		1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSetRowList.h; sourceTree = "<group>"; };
+		1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaSampleAVFObjC.h; path = ../MediaSampleAVFObjC.h; sourceTree = "<group>"; };
+		1B124D8E1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSampleAVFObjC.mm; sourceTree = "<group>"; };
 		1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextBoxStyle.cpp; sourceTree = "<group>"; };
 		1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineTextBoxStyle.h; sourceTree = "<group>"; };
 		1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSVGFont.cpp; sourceTree = "<group>"; };
@@ -23518,6 +23522,8 @@
 		DF9AFD6F13FC31B00015FEB7 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */,
+				1B124D8E1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm */,
 				CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */,
 				CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */,
 				CD54A760180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp */,
@@ -27938,6 +27944,7 @@
 				1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */,
 				BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */,
 				BC3BE9950E9C1C7C00835588 /* RenderScrollbarPart.h in Headers */,
+				1B124D8D1D380B7000ECDFB0 /* MediaSampleAVFObjC.h in Headers */,
 				BC3BE9990E9C1E5D00835588 /* RenderScrollbarTheme.h in Headers */,
 				458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */,
 				57EF5E601D20C83900171E60 /* TextCodecReplacement.h in Headers */,
@@ -29990,6 +29997,7 @@
 				A79546430B5C4CB4007B438F /* DragData.cpp in Sources */,
 				A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */,
 				A7CFB3D10B7ED10A0070C32D /* DragImage.cpp in Sources */,
+				1B124D8F1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm in Sources */,
 				0FDA7C23188330A900C954B5 /* DragImageIOS.mm in Sources */,
 				A7CFB3D50B7ED1180070C32D /* DragImageMac.mm in Sources */,
 				FD6ED2C7136B8E66003CF072 /* DynamicsCompressor.cpp in Sources */,
