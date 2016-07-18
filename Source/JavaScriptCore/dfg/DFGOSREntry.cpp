@@ -228,7 +228,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         if (!entry->m_expectedValues.local(local).validate(exec->registers()[localOffset].asanUnsafeJSValue())) {
             if (Options::verboseOSR()) {
                 dataLog(
-                    "    OSR failed because variable ", localOffset, " is ",
+                    "    OSR failed because variable ", VirtualRegister(localOffset), " is ",
                     exec->registers()[localOffset].asanUnsafeJSValue(), ", expected ",
                     entry->m_expectedValues.local(local), ".\n");
             }

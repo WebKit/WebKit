@@ -1,3 +1,65 @@
+2016-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        OSR entry into DFG has problems with lexical scoping
+        https://bugs.webkit.org/show_bug.cgi?id=159687
+
+        Reviewed by Saam Barati.
+        
+        What a fun bug! It turns out that uses of lexical scoping, like "let", may sometimes cause us
+        to not be able to OSR enter into a loop from baseline to DFG. The bug is in a mitigation for
+        a different bug, which in turn had a mitigation for yet another bug, so the story here is a
+        long one.
+        
+        DFG OSR entry has long had a mitigation for the following bug: the DFG bytecode parser may
+        choose to make us always OSR exit at some instruction if it thinks that it doesn't have
+        enough profiling for that instruction. We will do this if some kinds of put_by_id only
+        execute once, for example. This causes problems for loopy benchmarks like this:
+        
+            put_by_id(something crazy);
+            for (var i = 0; i < bigNumber; ++i) simpleMath;
+        
+        In this case, the put_by_id will have only executed once, and since it did something crazy
+        that one time, the bytecode parser will replace it with ForceOSRExit.
+        
+        This creates an OSR entry bug: DFG CFA will then prove that the loop is unreachable, and will
+        tell OSR entry that it's impossible to enter into that loop.
+        
+        We mitigated this bug a long time ago by recording mustHandleValues for loops at which we
+        want to enter. We inject these values into DFG CFA and we force CFA to recognize that the
+        loop is reachable even if CFA wanted to prove that it wasn't.
+        
+        But this leads to another bug: we need to scrape the values from the stack inside
+        operationOptimize() and then we need to reason about them in the compiler. Some of those
+        values may be garbage, which would cause pandemonium inside the compiler. We also mitigated
+        this bug, by only recording the "vars", since those are guaranteed to be reset by op_enter.
+        
+        And that's where the lexical scoping bug happens: "let" bound variables aren't part of the
+        "vars". DFG will see that they are live, but mustHandleValues will not have anything for
+        those variables, so CFA will prove that the values are Bottom. Then OSR entry will always
+        fail because no value is ever a subset of Bottom.
+        
+        The first part of the fix is to ensure that mustHandleValues record all of the values on the
+        stack (i.e. within m_numCalleeLocals, rather than just m_numVars). But this creates a second
+        problem: we may record garbage. This patch includes a better fix for the garbage: before
+        touching mustHandleValues we run the bytecode liveness analysis and clear any values that are
+        not live. This ensures that we clear the garbage.
+        
+        This is an enormous speed-up on microbenchmarks that use lexical scoping and have some crazy
+        put_by_id in the lead-up to the hot loop.
+
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::cancel):
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::canTierUpAndOSREnter):
+        * jit/JITOperations.cpp:
+
 2016-07-18  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(r202975): --minimal build is broken

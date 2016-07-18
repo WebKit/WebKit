@@ -80,6 +80,9 @@ public:
         } while (m_changed);
         
         if (m_graph.m_form != SSA) {
+            if (m_verbose)
+                dataLog("   Widening state at OSR entry block.\n");
+            
             ASSERT(!m_changed);
             
             // Widen the abstract values at the block that serves as the must-handle OSR entry.
@@ -93,14 +96,23 @@ public:
                 if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
                     continue;
                 
+                if (m_verbose)
+                    dataLog("   Found must-handle block: ", *block, "\n");
+                
                 bool changed = false;
                 for (size_t i = m_graph.m_plan.mustHandleValues.size(); i--;) {
                     int operand = m_graph.m_plan.mustHandleValues.operandForIndex(i);
                     JSValue value = m_graph.m_plan.mustHandleValues[i];
                     Node* node = block->variablesAtHead.operand(operand);
-                    if (!node)
+                    if (!node) {
+                        if (m_verbose)
+                            dataLog("   Not live: ", VirtualRegister(operand), "\n");
                         continue;
+                    }
                     
+                    if (m_verbose)
+                        dataLog("   Widening ", VirtualRegister(operand), " with ", value, "\n");
+
                     AbstractValue& target = block->valuesAtHead.operand(operand);
                     changed |= target.mergeOSREntryValue(m_graph, value);
                     target.fixTypeForRepresentation(

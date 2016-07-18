@@ -78,6 +78,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
 
     bool canTierUpAndOSREnter() const { return !tierUpAndOSREnterBytecodes.isEmpty(); }
     
+    void cleanMustHandleValuesIfNecessary();
+    
     // Warning: pretty much all of the pointer fields in this object get nulled by cancel(). So, if
     // you're writing code that is callable on the cancel path, be sure to null check everything!
     
@@ -90,6 +92,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     CompilationMode mode;
     const unsigned osrEntryBytecodeIndex;
     Operands<JSValue> mustHandleValues;
+    bool mustHandleValuesMayIncludeGarbage { true };
+    Lock mustHandleValueCleaningLock;
     
     ThreadData* threadData;
 
