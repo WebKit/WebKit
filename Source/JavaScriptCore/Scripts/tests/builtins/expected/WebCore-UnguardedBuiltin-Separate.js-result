@@ -190,6 +190,7 @@ WEBCORE_FOREACH_UNGUARDEDBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 ### Begin File: WebCoreJSBuiltins.h
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -245,6 +246,7 @@ private:
 ### Begin File: WebCoreJSBuiltins.cpp
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -278,6 +280,7 @@ private:
 ### Begin File: WebCoreJSBuiltinInternals.h
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -331,6 +334,7 @@ private:
 ### Begin File: WebCoreJSBuiltinInternals.cpp
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
+ * Copyright (c) 2016 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -378,8 +382,11 @@ void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
 {
     UNUSED_PARAM(visitor);
 }
+
 void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject)
 {
+    UNUSED_PARAM(globalObject);
+
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(m_vm.clientData);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
     };
