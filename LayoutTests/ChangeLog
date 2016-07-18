@@ -1,3 +1,12 @@
+2016-07-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/video-load-preload-metadata.html as flaky on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=128312
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-07-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should support op_call_eval
