@@ -782,7 +782,7 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode&
 
     if (!m_explicitlyMuted) {
         m_explicitlyMuted = true;
-        m_muted = fastHasAttribute(mutedAttr);
+        m_muted = hasAttributeWithoutSynchronization(mutedAttr);
     }
 
     configureMediaControls();
@@ -1263,7 +1263,7 @@ void HTMLMediaElement::selectMediaResource()
 
     // 3 - If the media element has a src attribute, then let mode be attribute.
     Mode mode = attribute;
-    if (!fastHasAttribute(srcAttr)) {
+    if (!hasAttributeWithoutSynchronization(srcAttr)) {
         // Otherwise, if the media element does not have a src attribute but has a source 
         // element child, then let mode be children and let candidate be the first such 
         // source element child in tree order.
@@ -1421,7 +1421,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     if (!m_explicitlyMuted) {
         m_explicitlyMuted = true;
-        m_muted = fastHasAttribute(mutedAttr);
+        m_muted = hasAttributeWithoutSynchronization(mutedAttr);
     }
 
     updateVolume();
@@ -3012,7 +3012,7 @@ bool HTMLMediaElement::ended() const
 
 bool HTMLMediaElement::autoplay() const
 {
-    return fastHasAttribute(autoplayAttr);
+    return hasAttributeWithoutSynchronization(autoplayAttr);
 }
 
 String HTMLMediaElement::preload() const
@@ -3291,7 +3291,7 @@ void HTMLMediaElement::webkitCancelKeyRequest(const String& keySystem, const Str
 
 bool HTMLMediaElement::loop() const
 {
-    return fastHasAttribute(loopAttr);
+    return hasAttributeWithoutSynchronization(loopAttr);
 }
 
 void HTMLMediaElement::setLoop(bool b)
@@ -3308,7 +3308,7 @@ bool HTMLMediaElement::controls() const
     if (frame && !frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return true;
 
-    return fastHasAttribute(controlsAttr);
+    return hasAttributeWithoutSynchronization(controlsAttr);
 }
 
 void HTMLMediaElement::setControls(bool b)
@@ -3343,7 +3343,7 @@ void HTMLMediaElement::setVolume(double vol, ExceptionCode& ec)
 
 bool HTMLMediaElement::muted() const
 {
-    return m_explicitlyMuted ? m_muted : fastHasAttribute(mutedAttr);
+    return m_explicitlyMuted ? m_muted : hasAttributeWithoutSynchronization(mutedAttr);
 }
 
 void HTMLMediaElement::setMuted(bool muted)
@@ -4205,7 +4205,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         if (mediaURL.isEmpty())
             goto CheckAgain;
         
-        if (source->fastHasAttribute(mediaAttr)) {
+        if (source->hasAttributeWithoutSynchronization(mediaAttr)) {
             auto media = source->mediaQuerySet();
 #if !LOG_DISABLED
             if (shouldLog)
@@ -4297,7 +4297,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
 #endif
     
     // We should only consider a <source> element when there is not src attribute at all.
-    if (fastHasAttribute(srcAttr))
+    if (hasAttributeWithoutSynchronization(srcAttr))
         return;
 
     // 4.8.8 - If a source element is inserted as a child of a media element that has no src 
@@ -6821,7 +6821,7 @@ void HTMLMediaElement::mayResumePlayback(bool shouldResume)
     
 String HTMLMediaElement::mediaSessionTitle() const
 {
-    if (fastHasAttribute(titleAttr))
+    if (hasAttributeWithoutSynchronization(titleAttr))
         return attributeWithoutSynchronization(titleAttr);
     
     return m_currentSrc;

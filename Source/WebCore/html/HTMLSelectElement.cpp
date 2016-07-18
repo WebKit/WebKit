@@ -1062,7 +1062,7 @@ void HTMLSelectElement::reset()
             continue;
 
         HTMLOptionElement& option = downcast<HTMLOptionElement>(*element);
-        if (option.fastHasAttribute(selectedAttr)) {
+        if (option.hasAttributeWithoutSynchronization(selectedAttr)) {
             if (selectedOption && !m_multiple)
                 selectedOption->setSelectedState(false);
             option.setSelectedState(true);

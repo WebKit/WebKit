@@ -98,7 +98,7 @@ bool HTMLOptionElement::isFocusable() const
 
 bool HTMLOptionElement::matchesDefaultPseudoClass() const
 {
-    return fastHasAttribute(selectedAttr);
+    return hasAttributeWithoutSynchronization(selectedAttr);
 }
 
 String HTMLOptionElement::text() const

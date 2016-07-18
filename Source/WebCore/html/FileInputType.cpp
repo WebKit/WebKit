@@ -180,7 +180,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
     if (Chrome* chrome = this->chrome()) {
         FileChooserSettings settings;
         HTMLInputElement& input = element();
-        settings.allowsMultipleFiles = input.fastHasAttribute(multipleAttr);
+        settings.allowsMultipleFiles = input.hasAttributeWithoutSynchronization(multipleAttr);
         settings.acceptMIMETypes = input.acceptMIMETypes();
         settings.acceptFileExtensions = input.acceptFileExtensions();
         settings.selectedFiles = m_fileList->paths();
@@ -404,7 +404,7 @@ bool FileInputType::receiveDroppedFiles(const DragData& dragData)
     for (auto& path : paths)
         files.append(FileChooserFileInfo(path));
 
-    if (input->fastHasAttribute(multipleAttr))
+    if (input->hasAttributeWithoutSynchronization(multipleAttr))
         filesChosen(files);
     else {
         Vector<FileChooserFileInfo> firstFileOnly;

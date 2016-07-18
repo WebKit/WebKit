@@ -70,7 +70,7 @@ void HTMLAppletElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 bool HTMLAppletElement::rendererIsNeeded(const RenderStyle& style)
 {
-    if (!fastHasAttribute(codeAttr))
+    if (!hasAttributeWithoutSynchronization(codeAttr))
         return false;
     return HTMLPlugInImageElement::rendererIsNeeded(style);
 }

@@ -553,7 +553,7 @@ void SVGAnimationElement::startedActiveInterval()
         return;
 
     // These validations are appropriate for all animation modes.
-    if (fastHasAttribute(SVGNames::keyPointsAttr) && m_keyPoints.size() != m_keyTimes.size())
+    if (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && m_keyPoints.size() != m_keyTimes.size())
         return;
 
     AnimationMode animationMode = this->animationMode();
@@ -561,9 +561,9 @@ void SVGAnimationElement::startedActiveInterval()
     if (calcMode == CalcModeSpline) {
         unsigned splinesCount = m_keySplines.size();
         if (!splinesCount
-            || (fastHasAttribute(SVGNames::keyPointsAttr) && m_keyPoints.size() - 1 != splinesCount)
+            || (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && m_keyPoints.size() - 1 != splinesCount)
             || (animationMode == ValuesAnimation && m_values.size() - 1 != splinesCount)
-            || (fastHasAttribute(SVGNames::keyTimesAttr) && m_keyTimes.size() - 1 != splinesCount))
+            || (hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) && m_keyTimes.size() - 1 != splinesCount))
             return;
     }
 
@@ -573,7 +573,7 @@ void SVGAnimationElement::startedActiveInterval()
     if (animationMode == NoAnimation)
         return;
     if ((animationMode == FromToAnimation || animationMode == FromByAnimation || animationMode == ToAnimation || animationMode == ByAnimation)
-        && (fastHasAttribute(SVGNames::keyPointsAttr) && fastHasAttribute(SVGNames::keyTimesAttr) && (m_keyTimes.size() < 2 || m_keyTimes.size() != m_keyPoints.size())))
+        && (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) && (m_keyTimes.size() < 2 || m_keyTimes.size() != m_keyPoints.size())))
         return;
     if (animationMode == FromToAnimation)
         m_animationValid = calculateFromAndToValues(from, to);
@@ -587,16 +587,16 @@ void SVGAnimationElement::startedActiveInterval()
         m_animationValid = calculateFromAndByValues(emptyString(), by);
     else if (animationMode == ValuesAnimation) {
         m_animationValid = m_values.size() >= 1
-            && (calcMode == CalcModePaced || !fastHasAttribute(SVGNames::keyTimesAttr) || fastHasAttribute(SVGNames::keyPointsAttr) || (m_values.size() == m_keyTimes.size()))
+            && (calcMode == CalcModePaced || !hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) || hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (m_values.size() == m_keyTimes.size()))
             && (calcMode == CalcModeDiscrete || !m_keyTimes.size() || m_keyTimes.last() == 1)
             && (calcMode != CalcModeSpline || ((m_keySplines.size() && (m_keySplines.size() == m_values.size() - 1)) || m_keySplines.size() == m_keyPoints.size() - 1))
-            && (!fastHasAttribute(SVGNames::keyPointsAttr) || (m_keyTimes.size() > 1 && m_keyTimes.size() == m_keyPoints.size()));
+            && (!hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (m_keyTimes.size() > 1 && m_keyTimes.size() == m_keyPoints.size()));
         if (m_animationValid)
             m_animationValid = calculateToAtEndOfDurationValue(m_values.last());
         if (calcMode == CalcModePaced && m_animationValid)
             calculateKeyTimesForCalcModePaced();
     } else if (animationMode == PathAnimation)
-        m_animationValid = calcMode == CalcModePaced || !fastHasAttribute(SVGNames::keyPointsAttr) || (m_keyTimes.size() > 1 && m_keyTimes.size() == m_keyPoints.size());
+        m_animationValid = calcMode == CalcModePaced || !hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (m_keyTimes.size() > 1 && m_keyTimes.size() == m_keyPoints.size());
 }
 
 void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, SVGSMILElement* resultElement)

@@ -174,7 +174,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
 
         if (child->hasTagName(MathMLNames::annotationTag)) {
             // If the <annotation> element has an src attribute then it is a reference to arbitrary binary data and it is not clear whether we can display it. Hence we just ignore the annotation.
-            if (child->fastHasAttribute(MathMLNames::srcAttr))
+            if (child->hasAttributeWithoutSynchronization(MathMLNames::srcAttr))
                 continue;
             // Otherwise, we assume it is a text annotation that can always be displayed and we stop here.
             return child;
@@ -182,7 +182,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
 
         if (child->hasTagName(MathMLNames::annotation_xmlTag)) {
             // If the <annotation-xml> element has an src attribute then it is a reference to arbitrary binary data and it is not clear whether we can display it. Hence we just ignore the annotation.
-            if (child->fastHasAttribute(MathMLNames::srcAttr))
+            if (child->hasAttributeWithoutSynchronization(MathMLNames::srcAttr))
                 continue;
             // If the <annotation-xml> element has an encoding attribute describing presentation MathML, SVG or HTML we assume the content can be displayed and we stop here.
             const AtomicString& value = child->attributeWithoutSynchronization(MathMLNames::encodingAttr);

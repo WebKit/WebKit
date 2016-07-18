@@ -50,7 +50,7 @@ Ref<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagNam
 
 bool HTMLOptGroupElement::isDisabledFormControl() const
 {
-    return fastHasAttribute(disabledAttr);
+    return hasAttributeWithoutSynchronization(disabledAttr);
 }
 
 bool HTMLOptGroupElement::isFocusable() const

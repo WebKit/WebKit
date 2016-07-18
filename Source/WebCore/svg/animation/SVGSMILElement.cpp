@@ -267,7 +267,7 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode& r
     m_timeContainer->setDocumentOrderIndexesDirty();
 
     // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."
-    if (!fastHasAttribute(SVGNames::beginAttr))
+    if (!hasAttributeWithoutSynchronization(SVGNames::beginAttr))
         m_beginTimes.append(SMILTimeWithOrigin());
 
     if (m_isWaitingForFirstInterval)

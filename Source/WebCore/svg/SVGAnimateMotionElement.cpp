@@ -132,7 +132,7 @@ void SVGAnimateMotionElement::updateAnimationPath()
         }
     }
 
-    if (!foundMPath && fastHasAttribute(SVGNames::pathAttr))
+    if (!foundMPath && hasAttributeWithoutSynchronization(SVGNames::pathAttr))
         m_animationPath = m_path;
 
     updateAnimationMode();

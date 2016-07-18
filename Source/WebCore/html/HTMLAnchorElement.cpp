@@ -281,7 +281,7 @@ bool HTMLAnchorElement::draggable() const
         return true;
     if (equalLettersIgnoringASCIICase(value, "false"))
         return false;
-    return fastHasAttribute(hrefAttr);
+    return hasAttributeWithoutSynchronization(hrefAttr);
 }
 
 URL HTMLAnchorElement::href() const
@@ -349,7 +349,7 @@ bool HTMLAnchorElement::isLiveLink() const
 
 void HTMLAnchorElement::sendPings(const URL& destinationURL)
 {
-    if (!fastHasAttribute(pingAttr) || !document().settings() || !document().settings()->hyperlinkAuditingEnabled())
+    if (!hasAttributeWithoutSynchronization(pingAttr) || !document().settings() || !document().settings()->hyperlinkAuditingEnabled())
         return;
 
     SpaceSplitString pingURLs(attributeWithoutSynchronization(pingAttr), false);

@@ -847,7 +847,7 @@ DOMImplementation& Document::implementation()
 
 bool Document::hasManifest() const
 {
-    return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->fastHasAttribute(manifestAttr);
+    return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->hasAttributeWithoutSynchronization(manifestAttr);
 }
 
 DocumentType* Document::doctype() const

@@ -625,7 +625,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& styl
     // Enforce some default styles in the case that this is a non-multiple <select> element,
     // or a date input. We don't force these if this is just an element with
     // "-webkit-appearance: menulist-button".
-    if (is<HTMLSelectElement>(*element) && !element->fastHasAttribute(HTMLNames::multipleAttr))
+    if (is<HTMLSelectElement>(*element) && !element->hasAttributeWithoutSynchronization(HTMLNames::multipleAttr))
         adjustSelectListButtonStyle(style, *element);
     else if (is<HTMLInputElement>(*element))
         adjustInputElementButtonStyle(style, downcast<HTMLInputElement>(*element));

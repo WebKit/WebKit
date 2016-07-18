@@ -559,7 +559,7 @@ void HTMLImageElement::didMoveToNewDocument(Document* oldDocument)
 
 bool HTMLImageElement::isServerMap() const
 {
-    if (!fastHasAttribute(ismapAttr))
+    if (!hasAttributeWithoutSynchronization(ismapAttr))
         return false;
 
     const AtomicString& usemap = attributeWithoutSynchronization(usemapAttr);

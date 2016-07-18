@@ -654,7 +654,7 @@ sub GetterExpression
     if ($attribute->signature->extendedAttributes->{"URL"}) {
         $functionName = "getURLAttribute";
     } elsif ($attributeType eq "boolean") {
-        $functionName = "fastHasAttribute";
+        $functionName = "hasAttributeWithoutSynchronization";
     } elsif ($attributeType eq "long") {
         $functionName = "getIntegralAttribute";
     } elsif ($attributeType eq "unsigned long") {

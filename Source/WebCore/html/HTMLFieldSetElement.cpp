@@ -65,7 +65,7 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
     while (control) {
         control->setAncestorDisabled(isDisabled);
         // Don't call setAncestorDisabled(false) on form controls inside disabled fieldsets.
-        if (is<HTMLFieldSetElement>(*control) && control->fastHasAttribute(disabledAttr))
+        if (is<HTMLFieldSetElement>(*control) && control->hasAttributeWithoutSynchronization(disabledAttr))
             control = Traversal<HTMLFormControlElement>::nextSkippingChildren(*control, &startNode);
         else
             control = Traversal<HTMLFormControlElement>::next(*control, &startNode);
@@ -74,7 +74,7 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
 
 void HTMLFieldSetElement::disabledAttributeChanged()
 {
-    bool hasDisabledAttribute = fastHasAttribute(disabledAttr);
+    bool hasDisabledAttribute = hasAttributeWithoutSynchronization(disabledAttr);
     if (m_hasDisabledAttribute != hasDisabledAttribute) {
         m_hasDisabledAttribute = hasDisabledAttribute;
         if (hasDisabledAttribute)
@@ -94,7 +94,7 @@ void HTMLFieldSetElement::disabledStateChanged()
     if (disabledByAncestorFieldset())
         return;
 
-    bool thisFieldsetIsDisabled = fastHasAttribute(disabledAttr);
+    bool thisFieldsetIsDisabled = hasAttributeWithoutSynchronization(disabledAttr);
     bool hasSeenFirstLegendElement = false;
     for (HTMLElement* control = Traversal<HTMLElement>::firstChild(*this); control; control = Traversal<HTMLElement>::nextSibling(*control)) {
         if (!hasSeenFirstLegendElement && is<HTMLLegendElement>(*control)) {
@@ -109,7 +109,7 @@ void HTMLFieldSetElement::disabledStateChanged()
 void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
 {
     HTMLFormControlElement::childrenChanged(change);
-    if (!fastHasAttribute(disabledAttr))
+    if (!hasAttributeWithoutSynchronization(disabledAttr))
         return;
 
     HTMLLegendElement* legend = Traversal<HTMLLegendElement>::firstChild(*this);

@@ -69,9 +69,9 @@ bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element
     case DocEmbeds:
         return element.hasTagName(embedTag);
     case DocLinks:
-        return (element.hasTagName(aTag) || element.hasTagName(areaTag)) && element.fastHasAttribute(hrefAttr);
+        return (element.hasTagName(aTag) || element.hasTagName(areaTag)) && element.hasAttributeWithoutSynchronization(hrefAttr);
     case DocAnchors:
-        return element.hasTagName(aTag) && element.fastHasAttribute(nameAttr);
+        return element.hasTagName(aTag) && element.hasAttributeWithoutSynchronization(nameAttr);
     case ByClass:
     case ByTag:
     case ByHTMLTag:

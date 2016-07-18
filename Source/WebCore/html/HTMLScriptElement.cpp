@@ -102,7 +102,7 @@ void HTMLScriptElement::setAsync(bool async)
 
 bool HTMLScriptElement::async() const
 {
-    return fastHasAttribute(asyncAttr) || forceAsync();
+    return hasAttributeWithoutSynchronization(asyncAttr) || forceAsync();
 }
 
 void HTMLScriptElement::setCrossOrigin(const AtomicString& value)
@@ -159,17 +159,17 @@ String HTMLScriptElement::eventAttributeValue() const
 
 bool HTMLScriptElement::asyncAttributeValue() const
 {
-    return fastHasAttribute(asyncAttr);
+    return hasAttributeWithoutSynchronization(asyncAttr);
 }
 
 bool HTMLScriptElement::deferAttributeValue() const
 {
-    return fastHasAttribute(deferAttr);
+    return hasAttributeWithoutSynchronization(deferAttr);
 }
 
 bool HTMLScriptElement::hasSourceAttribute() const
 {
-    return fastHasAttribute(srcAttr);
+    return hasAttributeWithoutSynchronization(srcAttr);
 }
 
 void HTMLScriptElement::dispatchLoadEvent()

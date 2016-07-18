@@ -1797,7 +1797,7 @@ EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* state, EncodedJSValue th
         return throwGetterTypeError(*state, "TestObj", "reflectedBooleanAttr");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsBoolean(impl.fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
+    JSValue result = jsBoolean(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr));
     return JSValue::encode(result);
 }
 
@@ -1857,7 +1857,7 @@ EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* state, EncodedJSVa
         return throwGetterTypeError(*state, "TestObj", "reflectedCustomBooleanAttr");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsBoolean(impl.fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
+    JSValue result = jsBoolean(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr));
     return JSValue::encode(result);
 }
 

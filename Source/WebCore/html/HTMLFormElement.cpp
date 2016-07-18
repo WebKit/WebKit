@@ -551,7 +551,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
 
     // Treats separately the case where this element has the form attribute
     // for performance consideration.
-    if (associatedHTMLElement.fastHasAttribute(formAttr)) {
+    if (associatedHTMLElement.hasAttributeWithoutSynchronization(formAttr)) {
         unsigned short position = compareDocumentPosition(&associatedHTMLElement);
         if (position & DOCUMENT_POSITION_PRECEDING) {
             ++m_associatedElementsBeforeIndex;
@@ -674,7 +674,7 @@ String HTMLFormElement::name() const
 
 bool HTMLFormElement::noValidate() const
 {
-    return fastHasAttribute(novalidateAttr);
+    return hasAttributeWithoutSynchronization(novalidateAttr);
 }
 
 // FIXME: This function should be removed because it does not do the same thing as the

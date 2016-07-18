@@ -113,7 +113,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         formAttributeChanged();
     else if (name == typeAttr) {
         m_serviceType = value.string().left(value.find(';')).convertToASCIILowercase();
-        invalidateRenderer = !fastHasAttribute(classidAttr);
+        invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         setNeedsWidgetUpdate(true);
     } else if (name == dataAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
@@ -123,7 +123,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
                 m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
             m_imageLoader->updateFromElementIgnoringPreviousError();
         }
-        invalidateRenderer = !fastHasAttribute(classidAttr);
+        invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         setNeedsWidgetUpdate(true);
     } else if (name == classidAttr) {
         invalidateRenderer = true;

@@ -103,7 +103,7 @@ void HTMLFormControlElement::setFormMethod(const String& value)
 
 bool HTMLFormControlElement::formNoValidate() const
 {
-    return fastHasAttribute(formnovalidateAttr);
+    return hasAttributeWithoutSynchronization(formnovalidateAttr);
 }
 
 String HTMLFormControlElement::formAction() const
@@ -123,7 +123,7 @@ bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
 {
     Element* previousAncestor = nullptr;
     for (Element* ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-        if (is<HTMLFieldSetElement>(*ancestor) && ancestor->fastHasAttribute(disabledAttr)) {
+        if (is<HTMLFieldSetElement>(*ancestor) && ancestor->hasAttributeWithoutSynchronization(disabledAttr)) {
             HTMLFieldSetElement& fieldSetAncestor = downcast<HTMLFieldSetElement>(*ancestor);
             bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
             return !isInFirstLegend;
@@ -196,7 +196,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
 {
     if (!element->renderer())
         return false;
-    if (!element->fastHasAttribute(autofocusAttr))
+    if (!element->hasAttributeWithoutSynchronization(autofocusAttr))
         return false;
     if (!element->inDocument() || !element->document().renderView())
         return false;

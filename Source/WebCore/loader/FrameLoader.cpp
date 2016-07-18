@@ -3262,7 +3262,7 @@ bool FrameLoader::shouldTreatURLAsSrcdocDocument(const URL& url) const
         return false;
     if (!ownerElement->hasTagName(iframeTag))
         return false;
-    return ownerElement->fastHasAttribute(srcdocAttr);
+    return ownerElement->hasAttributeWithoutSynchronization(srcdocAttr);
 }
 
 Frame* FrameLoader::findFrameForNavigation(const AtomicString& name, Document* activeDocument)

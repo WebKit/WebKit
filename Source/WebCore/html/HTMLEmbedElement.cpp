@@ -183,7 +183,7 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
 
 bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
 {
-    if (!fastHasAttribute(typeAttr) && !fastHasAttribute(srcAttr))
+    if (!hasAttributeWithoutSynchronization(typeAttr) && !hasAttributeWithoutSynchronization(srcAttr))
         return false;
 
     if (isImageType())

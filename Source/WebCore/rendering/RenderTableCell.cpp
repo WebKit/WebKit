@@ -183,7 +183,7 @@ void RenderTableCell::computePreferredLogicalWidths()
     table()->recalcSectionsIfNeeded();
 
     RenderBlockFlow::computePreferredLogicalWidths();
-    if (!element() || !style().autoWrap() || !element()->fastHasAttribute(nowrapAttr))
+    if (!element() || !style().autoWrap() || !element()->hasAttributeWithoutSynchronization(nowrapAttr))
         return;
 
     Length w = styleOrColLogicalWidth();

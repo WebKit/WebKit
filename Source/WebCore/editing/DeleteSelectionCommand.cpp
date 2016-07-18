@@ -434,7 +434,7 @@ void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPr
     RefPtr<Node> node = range->firstNode();
     while (node && node != range->pastLastNode()) {
         RefPtr<Node> nextNode = NodeTraversal::next(*node);
-        if ((is<HTMLStyleElement>(*node) && !downcast<HTMLStyleElement>(*node).fastHasAttribute(scopedAttr)) || is<HTMLLinkElement>(*node)) {
+        if ((is<HTMLStyleElement>(*node) && !downcast<HTMLStyleElement>(*node).hasAttributeWithoutSynchronization(scopedAttr)) || is<HTMLLinkElement>(*node)) {
             nextNode = NodeTraversal::nextSkippingChildren(*node);
             RefPtr<ContainerNode> rootEditableElement = node->rootEditableElement();
             if (rootEditableElement) {

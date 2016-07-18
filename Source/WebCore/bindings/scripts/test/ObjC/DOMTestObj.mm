@@ -368,7 +368,7 @@
 - (BOOL)reflectedBooleanAttr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr);
+    return IMPL->hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr);
 }
 
 - (void)setReflectedBooleanAttr:(BOOL)newReflectedBooleanAttr
@@ -416,7 +416,7 @@
 - (BOOL)reflectedCustomBooleanAttr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr);
+    return IMPL->hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr);
 }
 
 - (void)setReflectedCustomBooleanAttr:(BOOL)newReflectedCustomBooleanAttr

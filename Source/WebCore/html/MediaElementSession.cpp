@@ -314,7 +314,7 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& 
         return true;
     }
 
-    if (element.fastHasAttribute(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)) {
+    if (element.hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)) {
         LOG(Media, "MediaElementSession::wirelessVideoPlaybackDisabled - returning TRUE because of attribute");
         return true;
     }
@@ -455,7 +455,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElem
     if (!settings || !settings->allowsInlineMediaPlayback())
         return true;
 
-    return settings->inlineMediaPlaybackRequiresPlaysInlineAttribute() && !(element.fastHasAttribute(HTMLNames::webkit_playsinlineAttr) || element.fastHasAttribute(HTMLNames::playsinlineAttr));
+    return settings->inlineMediaPlaybackRequiresPlaysInlineAttribute() && !(element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) || element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr));
 }
 
 bool MediaElementSession::allowsAutomaticMediaDataLoading(const HTMLMediaElement& element) const

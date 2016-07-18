@@ -1,3 +1,13 @@
+2016-07-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename fastHasAttribute to hasAttributeWithoutSynchronization
+        https://bugs.webkit.org/show_bug.cgi?id=159864
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2016-07-17  Jeremy Jones  <jeremyj@apple.com>
 
         REGRESSION (r191907): Maxthon Browser -After exit full screen video playback the browser window is blank with audio running

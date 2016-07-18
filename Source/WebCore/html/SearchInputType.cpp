@@ -180,7 +180,7 @@ void SearchInputType::searchEventTimerFired()
 
 bool SearchInputType::searchEventsShouldBeDispatched() const
 {
-    return element().fastHasAttribute(incrementalAttr);
+    return element().hasAttributeWithoutSynchronization(incrementalAttr);
 }
 
 void SearchInputType::didSetValueByUserEdit()

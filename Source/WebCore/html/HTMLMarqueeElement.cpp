@@ -52,7 +52,7 @@ Ref<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName,
 
 int HTMLMarqueeElement::minimumDelay() const
 {
-    if (!fastHasAttribute(truespeedAttr)) {
+    if (!hasAttributeWithoutSynchronization(truespeedAttr)) {
         // WinIE uses 60ms as the minimum delay by default.
         return 60;
     }

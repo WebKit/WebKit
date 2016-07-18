@@ -298,7 +298,7 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Inc
     if (is<RenderTextControl>(*flow.parent()) && downcast<RenderTextControl>(*flow.parent()).textFormControlElement().placeholderElement())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsPlaceholderElement, reasons, includeReasons);
     // FIXME: Implementation of wrap=hard looks into lineboxes.
-    if (flow.parent()->isTextArea() && flow.parent()->element()->fastHasAttribute(HTMLNames::wrapAttr))
+    if (flow.parent()->isTextArea() && flow.parent()->element()->hasAttributeWithoutSynchronization(HTMLNames::wrapAttr))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsTextAreaWithWrapping, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.

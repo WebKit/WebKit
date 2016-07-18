@@ -243,7 +243,7 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
         mapLanguageAttributeToLocale(value, style);
     else if (name == langAttr) {
         // xml:lang has a higher priority than lang.
-        if (!fastHasAttribute(XMLNames::langAttr))
+        if (!hasAttributeWithoutSynchronization(XMLNames::langAttr))
             mapLanguageAttributeToLocale(value, style);
     } else
         StyledElement::collectStyleForPresentationAttribute(name, value, style);
@@ -883,7 +883,7 @@ static inline bool elementAffectsDirectionality(const Node& node)
     if (!is<HTMLElement>(node))
         return false;
     const HTMLElement& element = downcast<HTMLElement>(node);
-    return is<HTMLBDIElement>(element) || element.fastHasAttribute(dirAttr);
+    return is<HTMLBDIElement>(element) || element.hasAttributeWithoutSynchronization(dirAttr);
 }
 
 static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastNode = nullptr)

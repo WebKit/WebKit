@@ -135,7 +135,7 @@ const AtomicString& HTMLTrackElement::label() const
 
 bool HTMLTrackElement::isDefault() const
 {
-    return fastHasAttribute(defaultAttr);
+    return hasAttributeWithoutSynchronization(defaultAttr);
 }
 
 LoadableTextTrack& HTMLTrackElement::ensureTrack()
@@ -183,7 +183,7 @@ void HTMLTrackElement::scheduleLoad()
 
 void HTMLTrackElement::loadTimerFired()
 {
-    if (!fastHasAttribute(srcAttr))
+    if (!hasAttributeWithoutSynchronization(srcAttr))
         return;
 
     // 6. Set the text track readiness state to loading.

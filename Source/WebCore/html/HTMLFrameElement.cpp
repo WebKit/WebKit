@@ -58,7 +58,7 @@ RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(RenderStyle&& s
 
 bool HTMLFrameElement::noResize() const
 {
-    return fastHasAttribute(noresizeAttr);
+    return hasAttributeWithoutSynchronization(noresizeAttr);
 }
 
 void HTMLFrameElement::didAttachRenderers()

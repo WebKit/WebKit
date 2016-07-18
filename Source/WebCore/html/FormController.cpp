@@ -35,7 +35,7 @@ static inline HTMLFormElement* ownerFormForState(const HTMLFormControlElementWit
     // Assume controls with form attribute have no owners because we restore
     // state during parsing and form owners of such controls might be
     // indeterminate.
-    return control.fastHasAttribute(formAttr) ? 0 : control.form();
+    return control.hasAttributeWithoutSynchronization(formAttr) ? 0 : control.form();
 }
 
 // ----------------------------------------------------------------------------

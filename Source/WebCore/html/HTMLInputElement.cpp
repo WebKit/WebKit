@@ -761,7 +761,7 @@ void HTMLInputElement::finishParsingChildren()
     ASSERT(m_inputType);
     HTMLTextFormControlElement::finishParsingChildren();
     if (!m_stateRestored) {
-        bool checked = fastHasAttribute(checkedAttr);
+        bool checked = hasAttributeWithoutSynchronization(checkedAttr);
         if (checked)
             setChecked(checked);
         m_reflectsCheckedAttribute = true;
@@ -828,7 +828,7 @@ bool HTMLInputElement::matchesDefaultPseudoClass() const
     ASSERT(m_inputType);
     if (m_inputType->canBeSuccessfulSubmitButton())
         return !isDisabledFormControl() && form() && form()->defaultButton() == this;
-    return m_inputType->isCheckable() && fastHasAttribute(checkedAttr);
+    return m_inputType->isCheckable() && hasAttributeWithoutSynchronization(checkedAttr);
 }
 
 bool HTMLInputElement::isActivatedSubmit() const
@@ -852,7 +852,7 @@ void HTMLInputElement::reset()
         setValue(String());
 
     setAutoFilled(false);
-    setChecked(fastHasAttribute(checkedAttr));
+    setChecked(hasAttributeWithoutSynchronization(checkedAttr));
     m_reflectsCheckedAttribute = true;
 }
 
@@ -1282,7 +1282,7 @@ unsigned HTMLInputElement::effectiveMaxLength() const
 
 bool HTMLInputElement::multiple() const
 {
-    return fastHasAttribute(multipleAttr);
+    return hasAttributeWithoutSynchronization(multipleAttr);
 }
 
 void HTMLInputElement::setSize(unsigned size)
@@ -1798,7 +1798,7 @@ bool HTMLInputElement::shouldAppearIndeterminate() const
 #if ENABLE(MEDIA_CAPTURE)
 bool HTMLInputElement::shouldUseMediaCapture() const
 {
-    return isFileUpload() && fastHasAttribute(captureAttr);
+    return isFileUpload() && hasAttributeWithoutSynchronization(captureAttr);
 }
 #endif
 

@@ -2462,7 +2462,7 @@ gboolean webkit_dom_test_obj_get_reflected_boolean_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), FALSE);
     WebCore::TestObj* item = WebKit::core(self);
-    gboolean result = item->fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr);
+    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr);
     return result;
 }
 
@@ -2534,7 +2534,7 @@ gboolean webkit_dom_test_obj_get_reflected_custom_boolean_attr(WebKitDOMTestObj*
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), FALSE);
     WebCore::TestObj* item = WebKit::core(self);
-    gboolean result = item->fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr);
+    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr);
     return result;
 }
 

@@ -222,7 +222,7 @@ Color ColorInputType::currentColor()
 bool ColorInputType::shouldShowSuggestions() const
 {
 #if ENABLE(DATALIST_ELEMENT)
-    return element().fastHasAttribute(listAttr);
+    return element().hasAttributeWithoutSynchronization(listAttr);
 #else
     return false;
 #endif

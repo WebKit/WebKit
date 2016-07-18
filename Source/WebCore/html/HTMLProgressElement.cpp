@@ -131,7 +131,7 @@ double HTMLProgressElement::position() const
 
 bool HTMLProgressElement::isDeterminate() const
 {
-    return fastHasAttribute(valueAttr);
+    return hasAttributeWithoutSynchronization(valueAttr);
 }
     
 void HTMLProgressElement::didElementStateChange()
