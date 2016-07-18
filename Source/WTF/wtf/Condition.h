@@ -80,7 +80,7 @@ struct ConditionBase {
                     return true;
                 },
                 [&lock] () { lock.unlock(); },
-                timeout);
+                timeout).wasUnparked;
         }
         lock.lock();
         return result;
@@ -180,9 +180,10 @@ struct ConditionBase {
         
         ParkingLot::unparkOne(
             &m_hasWaiters,
-            [this] (ParkingLot::UnparkResult result) {
+            [this] (ParkingLot::UnparkResult result) -> intptr_t {
                 if (!result.mayHaveMoreThreads)
                     m_hasWaiters.store(false);
+                return 0;
             });
     }
     

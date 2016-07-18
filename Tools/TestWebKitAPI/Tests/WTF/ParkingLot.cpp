@@ -148,7 +148,7 @@ struct SingleLatchTest {
             }
             
             // We need to wait.
-            if (ParkingLot::compareAndPark(&semaphore, newSemaphoreValue)) {
+            if (ParkingLot::compareAndPark(&semaphore, newSemaphoreValue).wasUnparked) {
                 // We did wait, and then got woken up. This means that someone who up'd the semaphore
                 // passed ownership onto us.
                 return;

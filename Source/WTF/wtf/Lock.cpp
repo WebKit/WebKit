@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,14 +67,39 @@ NEVER_INLINE void LockBase::lockSlow()
             continue;
 
         // We now expect the value to be isHeld|hasParked. So long as that's the case, we can park.
-        ParkingLot::compareAndPark(&m_byte, isHeldBit | hasParkedBit);
+        ParkingLot::ParkResult parkResult =
+            ParkingLot::compareAndPark(&m_byte, isHeldBit | hasParkedBit);
+        if (parkResult.wasUnparked) {
+            switch (static_cast<Token>(parkResult.token)) {
+            case DirectHandoff:
+                // The lock was never released. It was handed to us directly by the thread that did
+                // unlock(). This means we're done!
+                RELEASE_ASSERT(isHeld());
+                return;
+            case BargingOpportunity:
+                // This is the common case. The thread that called unlock() has released the lock,
+                // and we have been woken up so that we may get an opportunity to grab the lock. But
+                // other threads may barge, so the best that we can do is loop around and try again.
+                break;
+            }
+        }
 
         // We have awoken, or we never parked because the byte value changed. Either way, we loop
         // around and try again.
     }
 }
 
-NEVER_INLINE void LockBase::unlockSlow()
+void LockBase::unlockSlow()
+{
+    unlockSlowImpl(Unfair);
+}
+
+void LockBase::unlockFairlySlow()
+{
+    unlockSlowImpl(Fair);
+}
+
+NEVER_INLINE void LockBase::unlockSlowImpl(Fairness fairness)
 {
     // We could get here because the weak CAS in unlock() failed spuriously, or because there is
     // someone parked. So, we need a CAS loop: even if right now the lock is just held, it could
@@ -89,20 +114,29 @@ NEVER_INLINE void LockBase::unlockSlow()
             continue;
         }
 
-        // Someone is parked. Unpark exactly one thread, possibly leaving the parked bit set if
-        // there is a chance that there are still other threads parked.
+        // Someone is parked. Unpark exactly one thread. We may hand the lock to that thread
+        // directly, or we will unlock the lock at the same time as we unpark to allow for barging.
+        // When we unlock, we may leave the parked bit set if there is a chance that there are still
+        // other threads parked.
         ASSERT(oldByteValue == (isHeldBit | hasParkedBit));
         ParkingLot::unparkOne(
             &m_byte,
-            [this] (ParkingLot::UnparkResult result) {
+            [&] (ParkingLot::UnparkResult result) -> intptr_t {
                 // We are the only ones that can clear either the isHeldBit or the hasParkedBit,
                 // so we should still see both bits set right now.
                 ASSERT(m_byte.load() == (isHeldBit | hasParkedBit));
+                
+                if (result.didUnparkThread && (fairness == Fair || result.timeToBeFair)) {
+                    // We don't unlock anything. Instead, we hand the lock to the thread that was
+                    // waiting.
+                    return DirectHandoff;
+                }
 
                 if (result.mayHaveMoreThreads)
                     m_byte.store(hasParkedBit);
                 else
                     m_byte.store(0);
+                return BargingOpportunity;
             });
         return;
     }

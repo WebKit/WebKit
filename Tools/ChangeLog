@@ -1,3 +1,12 @@
+2016-07-02  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF::Lock should be fair eventually
+        https://bugs.webkit.org/show_bug.cgi?id=159384
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+
 2016-07-17  Sam Weinig  <sam@webkit.org>
 
         [WebKit API] Add SPI to track multiple navigations caused by a single user gesture

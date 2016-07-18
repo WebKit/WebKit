@@ -26,12 +26,14 @@
 #include "config.h"
 #include "ParkingLot.h"
 
+#include "CurrentTime.h"
 #include "DataLog.h"
 #include "HashFunctions.h"
 #include "StringPrintStream.h"
 #include "ThreadSpecific.h"
 #include "ThreadingPrimitives.h"
 #include "Vector.h"
+#include "WeakRandom.h"
 #include "WordLock.h"
 #include <condition_variable>
 #include <mutex>
@@ -58,6 +60,8 @@ public:
     const void* address { nullptr };
     
     ThreadData* nextInQueue { nullptr };
+    
+    intptr_t token { 0 };
 };
 
 enum class DequeueResult {
@@ -69,6 +73,11 @@ enum class DequeueResult {
 struct Bucket {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    Bucket()
+        : random(static_cast<unsigned>(bitwise_cast<intptr_t>(this))) // Cannot use default seed since that recurses into Lock.
+    {
+    }
+    
     void enqueue(ThreadData* data)
     {
         if (verbose)
@@ -123,13 +132,21 @@ public:
         bool shouldContinue = true;
         ThreadData** currentPtr = &queueHead;
         ThreadData* previous = nullptr;
+
+        double time = monotonicallyIncreasingTimeMS();
+        bool timeToBeFair = false;
+        if (time > nextFairTime)
+            timeToBeFair = true;
+        
+        bool didDequeue = false;
+        
         while (shouldContinue) {
             ThreadData* current = *currentPtr;
             if (verbose)
                 dataLog(toString(currentThread(), ": got thread ", RawPointer(current), "\n"));
             if (!current)
                 break;
-            DequeueResult result = functor(current);
+            DequeueResult result = functor(current, timeToBeFair);
             switch (result) {
             case DequeueResult::Ignore:
                 if (verbose)
@@ -143,6 +160,7 @@ public:
                     dataLog(toString(currentThread(), ": dequeueing ", RawPointer(current), " from ", RawPointer(this), "\n"));
                 if (current == queueTail)
                     queueTail = previous;
+                didDequeue = true;
                 *currentPtr = current->nextInQueue;
                 current->nextInQueue = nullptr;
                 if (result == DequeueResult::RemoveAndStop)
@@ -150,6 +168,9 @@ public:
                 break;
             }
         }
+        
+        if (timeToBeFair && didDequeue)
+            nextFairTime = time + random.get();
 
         ASSERT(!!queueHead == !!queueTail);
     }
@@ -158,7 +179,7 @@ public:
     {
         ThreadData* result = nullptr;
         genericDequeue(
-            [&] (ThreadData* element) -> DequeueResult {
+            [&] (ThreadData* element, bool) -> DequeueResult {
                 result = element;
                 return DequeueResult::RemoveAndStop;
             });
@@ -171,6 +192,10 @@ public:
     // This lock protects the entire bucket. Thou shall not make changes to Bucket without holding
     // this lock.
     WordLock lock;
+    
+    double nextFairTime { 0 };
+    
+    WeakRandom random;
 
     // Put some distane between buckets in memory. This is one of several mitigations against false
     // sharing.
@@ -530,7 +555,7 @@ bool dequeue(
 
 } // anonymous namespace
 
-NEVER_INLINE bool ParkingLot::parkConditionallyImpl(
+NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
     const void* address,
     const ScopedLambda<bool()>& validation,
     const ScopedLambda<void()>& beforeSleep,
@@ -540,11 +565,12 @@ NEVER_INLINE bool ParkingLot::parkConditionallyImpl(
         dataLog(toString(currentThread(), ": parking.\n"));
     
     ThreadData* me = myThreadData();
+    me->token = 0;
 
     // Guard against someone calling parkConditionally() recursively from beforeSleep().
     RELEASE_ASSERT(!me->address);
 
-    bool result = enqueue(
+    bool enqueueResult = enqueue(
         address,
         [&] () -> ThreadData* {
             if (!validation())
@@ -554,8 +580,8 @@ NEVER_INLINE bool ParkingLot::parkConditionallyImpl(
             return me;
         });
 
-    if (!result)
-        return false;
+    if (!enqueueResult)
+        return ParkResult();
 
     beforeSleep();
     
@@ -582,34 +608,48 @@ NEVER_INLINE bool ParkingLot::parkConditionallyImpl(
     
     if (didGetDequeued) {
         // Great! We actually got dequeued rather than the timeout expiring.
-        return true;
+        ParkResult result;
+        result.wasUnparked = true;
+        result.token = me->token;
+        return result;
     }
 
     // Have to remove ourselves from the queue since we timed out and nobody has dequeued us yet.
 
-    // It's possible that we get unparked right here, just before dequeue() grabs a lock. It's
-    // probably worthwhile to detect when this happens, and return true in that case, to ensure
-    // that when we return false it really means that no unpark could have been responsible for us
-    // waking up, and that if an unpark call did happen, it woke someone else up.
+    bool didDequeue = false;
     dequeue(
         address, BucketMode::IgnoreEmpty,
-        [&] (ThreadData* element) {
-            if (element == me)
+        [&] (ThreadData* element, bool) {
+            if (element == me) {
+                didDequeue = true;
                 return DequeueResult::RemoveAndStop;
+            }
             return DequeueResult::Ignore;
         },
         [] (bool) { });
-
-    ASSERT(!me->nextInQueue);
+    
+    // If didDequeue is true, then we dequeued ourselves. This means that we were not unparked.
+    // If didDequeue is false, then someone unparked us.
+    
+    RELEASE_ASSERT(!me->nextInQueue);
 
     // Make sure that no matter what, me->address is null after this point.
     {
         std::lock_guard<std::mutex> locker(me->parkingLock);
+        if (!didDequeue) {
+            // If we were unparked then our address would have been reset by the unparker.
+            RELEASE_ASSERT(!me->address);
+        }
         me->address = nullptr;
     }
 
-    // If we were not found in the search above, then we know that someone unparked us.
-    return false;
+    ParkResult result;
+    result.wasUnparked = !didDequeue;
+    if (!didDequeue) {
+        // If we were unparked then there should be a token.
+        result.token = me->token;
+    }
+    return result;
 }
 
 NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
@@ -623,7 +663,7 @@ NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
     result.mayHaveMoreThreads = dequeue(
         address,
         BucketMode::EnsureNonEmpty,
-        [&] (ThreadData* element) {
+        [&] (ThreadData* element, bool) {
             if (element->address != address)
                 return DequeueResult::Ignore;
             threadData = element;
@@ -643,6 +683,7 @@ NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
     {
         std::unique_lock<std::mutex> locker(threadData->parkingLock);
         threadData->address = nullptr;
+        threadData->token = 0;
     }
     threadData->parkingCondition.notify_one();
 
@@ -651,26 +692,33 @@ NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
 
 NEVER_INLINE void ParkingLot::unparkOneImpl(
     const void* address,
-    const ScopedLambda<void(ParkingLot::UnparkResult)>& callback)
+    const ScopedLambda<intptr_t(ParkingLot::UnparkResult)>& callback)
 {
     if (verbose)
         dataLog(toString(currentThread(), ": unparking one the hard way.\n"));
-
+    
     ThreadData* threadData = nullptr;
+    bool timeToBeFair = false;
     dequeue(
         address,
         BucketMode::EnsureNonEmpty,
-        [&] (ThreadData* element) {
+        [&] (ThreadData* element, bool passedTimeToBeFair) {
             if (element->address != address)
                 return DequeueResult::Ignore;
             threadData = element;
+            timeToBeFair = passedTimeToBeFair;
             return DequeueResult::RemoveAndStop;
         },
         [&] (bool mayHaveMoreThreads) {
             UnparkResult result;
             result.didUnparkThread = !!threadData;
             result.mayHaveMoreThreads = result.didUnparkThread && mayHaveMoreThreads;
-            callback(result);
+            if (timeToBeFair)
+                RELEASE_ASSERT(threadData);
+            result.timeToBeFair = timeToBeFair;
+            intptr_t token = callback(result);
+            if (threadData)
+                threadData->token = token;
         });
 
     if (!threadData)
@@ -694,7 +742,7 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
     dequeue(
         address,
         BucketMode::IgnoreEmpty,
-        [&] (ThreadData* element) {
+        [&] (ThreadData* element, bool) {
             if (verbose)
                 dataLog(toString(currentThread(), ": Observing element with address = ", RawPointer(element->address), "\n"));
             if (element->address != address)

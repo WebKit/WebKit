@@ -235,11 +235,12 @@ private:
     {
         ParkingLot::unparkOne(
             &m_state,
-            [this] (ParkingLot::UnparkResult result) {
+            [this] (ParkingLot::UnparkResult result) -> intptr_t {
                 if (result.mayHaveMoreThreads)
                     m_state.store(hasParkedBit);
                 else
                     m_state.store(0);
+                return 0;
             });
     }
     
@@ -430,7 +431,7 @@ private:
             }
             
             if (m_state.compareExchangeWeak(state, state + parkedCountUnit)) {
-                bool result = ParkingLot::compareAndPark(&m_state, state + parkedCountUnit);
+                bool result = ParkingLot::compareAndPark(&m_state, state + parkedCountUnit).wasUnparked;
                 m_state.exchangeAndAdd(-parkedCountUnit);
                 if (result)
                     return;

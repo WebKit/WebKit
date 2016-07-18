@@ -43,17 +43,28 @@ public:
     
     // Parks the thread in a queue associated with the given address, which cannot be null. The
     // parking only succeeds if the validation function returns true while the queue lock is held.
+    //
     // If validation returns false, it will unlock the internal parking queue and then it will
-    // return without doing anything else. If validation returns true, it will enqueue the thread,
-    // unlock the parking queue lock, call the beforeSleep function, and then it will sleep so long
-    // as the thread continues to be on the queue and the timeout hasn't fired. Finally, this
-    // returns true if we actually got unparked or false if the timeout was hit. Note that
-    // beforeSleep is called with no locks held, so it's OK to do pretty much anything so long as
-    // you don't recursively call parkConditionally(). You can call unparkOne()/unparkAll() though.
-    // It's useful to use beforeSleep() to unlock some mutex in the implementation of
+    // return a null ParkResult (wasUnparked = false, token = 0) without doing anything else.
+    //
+    // If validation returns true, it will enqueue the thread, unlock the parking queue lock, call
+    // the beforeSleep function, and then it will sleep so long as the thread continues to be on the
+    // queue and the timeout hasn't fired. Finally, this returns wasUnparked = true if we actually
+    // got unparked or wasUnparked = false if the timeout was hit. When wasUnparked = true, the
+    // token will contain whatever token was returned from the callback to unparkOne(), or 0 if the
+    // thread was unparked using unparkAll() or the form of unparkOne() that doesn't take a
+    // callback.
+    //
+    // Note that beforeSleep is called with no locks held, so it's OK to do pretty much anything so
+    // long as you don't recursively call parkConditionally(). You can call unparkOne()/unparkAll()
+    // though. It's useful to use beforeSleep() to unlock some mutex in the implementation of
     // Condition::wait().
+    struct ParkResult {
+        bool wasUnparked { false };
+        intptr_t token { 0 };
+    };
     template<typename ValidationFunctor, typename BeforeSleepFunctor>
-    static bool parkConditionally(
+    static ParkResult parkConditionally(
         const void* address,
         ValidationFunctor&& validation,
         BeforeSleepFunctor&& beforeSleep,
@@ -69,7 +80,7 @@ public:
     // Simple version of parkConditionally() that covers the most common case: you want to park
     // indefinitely so long as the value at the given address hasn't changed.
     template<typename T, typename U>
-    static bool compareAndPark(const Atomic<T>* address, U expected)
+    static ParkResult compareAndPark(const Atomic<T>* address, U expected)
     {
         return parkConditionally(
             address,
@@ -81,30 +92,41 @@ public:
             Clock::time_point::max());
     }
 
+    // Unparking status given to you anytime you unparkOne().
+    struct UnparkResult {
+        // True if some thread was unparked.
+        bool didUnparkThread { false };
+        // True if there may be more threads on this address. This may be conservatively true.
+        bool mayHaveMoreThreads { false };
+        // This bit is randomly set to true indicating that it may be profitable to unlock the lock
+        // using a fair unlocking protocol. This is most useful when used in conjunction with
+        // unparkOne(address, callback).
+        bool timeToBeFair { false };
+    };
+
     // Unparks one thread from the queue associated with the given address, which cannot be null.
     // Returns true if there may still be other threads on that queue, or false if there definitely
     // are no more threads on the queue.
-    struct UnparkResult {
-        bool didUnparkThread { false };
-        bool mayHaveMoreThreads { false };
-    };
     WTF_EXPORT_PRIVATE static UnparkResult unparkOne(const void* address);
 
+    // This is an expert-mode version of unparkOne() that allows for really good thundering herd
+    // avoidance and eventual stochastic fairness in adaptive mutexes.
+    //
     // Unparks one thread from the queue associated with the given address, and calls the given
-    // functor while the address is locked. Reports to the callback whether any thread got unparked
-    // and whether there may be any other threads still on the queue. This is an expert-mode version
-    // of unparkOne() that allows for really good thundering herd avoidance in adaptive mutexes.
-    // Without this, a lock implementation that uses unparkOne() has to have some trick for knowing
-    // if there are still threads parked on the queue, so that it can set some bit in its lock word
-    // to indicate that the next unlock() also needs to unparkOne(). But there is a race between
-    // manipulating that bit and some other thread acquiring the lock. It's possible to work around
-    // that race - see Rusty Russel's well-known usersem library - but it's not pretty. This form
-    // allows that race to be completely avoided, since there is no way that a thread can be parked
-    // while the callback is running.
+    // callback while the address is locked. Reports to the callback whether any thread got
+    // unparked, whether there may be any other threads still on the queue, and whether this may be
+    // a good time to do fair unlocking. The callback returns an intptr_t token, which is returned
+    // to the unparked thread via ParkResult::token.
+    //
+    // WTF::Lock and WTF::Condition both use this form of unparkOne() because it allows them to use
+    // the ParkingLot's internal queue lock to serialize some decision-making. For example, if
+    // UnparkResult::mayHaveMoreThreads is false inside the callback, then we know that at that
+    // moment nobody can add any threads to the queue because the queue lock is still held. Also,
+    // WTF::Lock uses the timeToBeFair and token mechanism to implement eventual fairness.
     template<typename Callback>
     static void unparkOne(const void* address, Callback&& callback)
     {
-        unparkOneImpl(address, scopedLambda<void(UnparkResult)>(std::forward<Callback>(callback)));
+        unparkOneImpl(address, scopedLambda<intptr_t(UnparkResult)>(std::forward<Callback>(callback)));
     }
 
     // Unparks every thread from the queue associated with the given address, which cannot be null.
@@ -126,14 +148,14 @@ public:
     WTF_EXPORT_PRIVATE static void forEach(std::function<void(ThreadIdentifier, const void*)>);
 
 private:
-    WTF_EXPORT_PRIVATE static bool parkConditionallyImpl(
+    WTF_EXPORT_PRIVATE static ParkResult parkConditionallyImpl(
         const void* address,
         const ScopedLambda<bool()>& validation,
         const ScopedLambda<void()>& beforeSleep,
         Clock::time_point timeout);
     
     WTF_EXPORT_PRIVATE static void unparkOneImpl(
-        const void* address, const ScopedLambda<void(UnparkResult)>& callback);
+        const void* address, const ScopedLambda<intptr_t(UnparkResult)>& callback);
 
     WTF_EXPORT_PRIVATE static void forEachImpl(const std::function<void(ThreadIdentifier, const void*)>&);
 };

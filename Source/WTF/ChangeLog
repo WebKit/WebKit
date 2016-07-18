@@ -1,3 +1,140 @@
+2016-07-02  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF::Lock should be fair eventually
+        https://bugs.webkit.org/show_bug.cgi?id=159384
+
+        Reviewed by Geoffrey Garen.
+        
+        In https://webkit.org/blog/6161/locking-in-webkit/ we showed how relaxing the fairness of
+        locks makes them fast. That post presented lock fairness as a trade-off between two
+        extremes:
+        
+        - Barging. A barging lock, like WTF::Lock, releases the lock in unlock() even if there was a
+          thread on the queue. If there was a thread on the queue, the lock is released and that
+          thread is made runnable. That thread may then grab the lock, or some other thread may grab
+          the lock first (it may barge). Usually, the barging thread is the thread that released the
+          lock in the first place. This maximizes throughput but hurts fairness. There is no good
+          theoretical bound on how unfair the lock may become, but empirical data suggests that it's
+          fair enough for the cases we previously measured.
+        
+        - FIFO. A FIFO lock, like HandoffLock in ToyLocks.h, does not release the lock in unlock()
+          if there is a thread waiting. If there is a thread waiting, unlock() will make that thread
+          runnable and inform it that it now holds the lock. This ensures perfect round-robin
+          fairness and allows us to reason theoretically about how long it may take for a thread to
+          grab the lock. For example, if we know that only N threads are running and each one may
+          contend on a critical section, and each one may hold the lock for at most S seconds, then
+          the time it takes to grab the lock is N * S. Unfortunately, FIFO locks perform very badly
+          in most cases. This is because for the common case of short critical sections, they force
+          a context switch after each critical section if the lock is contended.
+        
+        This change makes WTF::Lock almost as fair as FIFO while still being as fast as barging.
+        Thanks to this new algorithm, you can now have both of these things at the same time.
+        
+        This change makes WTF::Lock eventually fair. We can almost (more on the caveats below)
+        guarantee that the time it takes to grab a lock is N * max(1ms, S). In other words, critical
+        sections that are longer than 1ms are always fair. For shorter critical sections, the amount
+        of time that any thread waits is 1ms times the number of threads. There are some caveats
+        that arise from our use of randomness, but even then, in the limit as the critical section
+        length goes to infinity, the lock becomes fair. The corner cases are unlikely to happen; our
+        experiments show that the lock becomes exactly as fair as a FIFO lock for any critical
+        section that is 1ms or longer.
+        
+        The fairness mechanism is broken into two parts. WTF::Lock can now choose to unlock a lock
+        fairly or unfairly thanks to the new ParkingLot token mechanism. WTF::Lock knows when to use
+        fair unlocking based on a timeout mechanism in ParkingLot called timeToBeFair.
+        
+        ParkingLot::unparkOne() and ParkingLot::parkConditionally() can now communicate with each
+        other via a token. unparkOne() can pass a token, which parkConditionally() will return. This
+        change also makes parkConditionally() a lot more precise about when it was unparked due to a
+        call to unparkOne(). If unparkOne() is told that a thread was unparked then this thread is
+        guaranteed to report that it was unparked rather than timing out, and that thread is
+        guaranteed to get the token that unparkOne() passed. The token is an intptr_t. We use it as
+        a boolean variable in WTF::Lock, but you could use it to pass arbitrary data structures. By
+        default, the token is zero. WTF::Lock's unlock() will pass 1 as the token if it is doing
+        fair unlocking. In that case, unlock() will not release the lock, and lock() will know that
+        it holds the lock as soon as parkConditionally() returns. Note that this algorithm relies
+        on unparkOne() invoking WTF::Lock's callback while the queue lock is held, so that WTF::Lock
+        can make a decision about unlock strategy and inject a token while it has complete knowledge
+        over the state of the queue. As such, it's not immediately obvious how to implement this
+        algorithm on top of futexes. You really need ParkingLot!
+        
+        WTF::Lock does not use fair unlocking every time. We expose a new API, Lock::unlockFairly(),
+        which forces the fair unlocking behavior. Additionally, ParkingLot now maintains a
+        per-bucket stochastic fairness timeout. When the timeout fires, the unparkOne() callback
+        sees UnparkResult::timeToBeFair = true. This timeout is set to be anywhere from 0ms to 1ms
+        at random. When a dequeue happens and there are threads that actually get dequeued, we check
+        if the time since the last unfair unlock (the last time timeToBeFair was set to true) is
+        more than the timeout amount. If so, then we set timeToBeFair to true and reset the timeout.
+        This means that in the absence of ParkingLot collisions, unfair unlocking is guaranteed to
+        happen at least once per millisecond. It will happen at 2 KHz on average. If there are
+        collisions, then each collision adds one millisecond to the worst case (and 0.5 ms to the
+        average case). The reason why we don't just use a fixed 1ms timeout is that we want to avoid
+        resonance. Imagine a program in which some thread acquires a lock at 1 KHz in-phase with the
+        timeToBeFair timeout. Then this thread would be the benefactor of fairness to the detriment
+        of everyone else. Randomness ensures that we aren't too fair to any one thread.
+        
+        Empirically, this is neutral on our major benchmarks like JetStream but it's an enormous
+        improvement in LockFairnessTest. It's common for an unfair lock (either our BargingLock, the
+        old WTF::Lock, any of the other futex-based locks that barge, or new os_unfair_lock) to
+        allow only one thread to hold the lock during a whole second in which each thread is holding
+        the lock for 1ms at a time. This is because in a barging lock, releasing a lock after
+        holding it for 1ms and then reacquiring it immediately virtually ensures that none of the
+        other threads can wake up in time to grab it before it's relocked. But the new WTF::Lock
+        handles this case like a champ: each thread gets equal turns.
+        
+        Here's some data. If we launch 10 threads and have each of them run for 1 second while
+        repeatedly holding a critical section for 1ms, then here's how many times each thread gets
+        to hold the lock using the old WTF::Lock algorithm:
+        
+        799, 6, 1, 1, 1, 1, 1, 1, 1, 1
+        
+        One thread hogged the lock for almost the whole time! With the new WTF::Lock, the lock
+        becomes totally fair:
+        
+        80, 79, 79, 79, 79, 79, 79, 80, 80, 79
+        
+        I don't know of anyone creating such an automatically-fair adaptive lock before, so I think
+        that this is a pretty awesome advancement to the state of the art!
+        
+        This change is good for three reasons:
+        
+        - We do have long critical sections in WebKit and we don't want to have to worry about
+          starvation. This reduces the likelihood that we will see starvation due to our lock
+          strategy.
+        
+        - I was talking to ggaren about bmalloc's locking needs, and he wanted unlockFairly() or
+          lockFairly() or some moral equivalent for the scavenger thread.
+        
+        - If we use a WTF::Lock to manage heap access in a multithreaded GC, we'll need the ability
+          to unlock and relock without barging.
+
+        * benchmarks/LockFairnessTest.cpp:
+        (main):
+        * benchmarks/ToyLocks.h:
+        * wtf/Condition.h:
+        (WTF::ConditionBase::waitUntil):
+        (WTF::ConditionBase::notifyOne):
+        * wtf/Lock.cpp:
+        (WTF::LockBase::lockSlow):
+        (WTF::LockBase::unlockSlow):
+        (WTF::LockBase::unlockFairlySlow):
+        (WTF::LockBase::unlockSlowImpl):
+        * wtf/Lock.h:
+        (WTF::LockBase::try_lock):
+        (WTF::LockBase::unlock):
+        (WTF::LockBase::unlockFairly):
+        (WTF::LockBase::isHeld):
+        (WTF::LockBase::isFullyReset):
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionallyImpl):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkOneImpl):
+        (WTF::ParkingLot::unparkAll):
+        * wtf/ParkingLot.h:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::compareAndPark):
+        (WTF::ParkingLot::unparkOne):
+
 2016-07-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Support new emoji group candidates
