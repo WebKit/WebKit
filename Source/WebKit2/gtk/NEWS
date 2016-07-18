@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 2.13.3
+=================
+
+What's new in WebKitGTK+ 2.13.3?
+
+  - Fix Web Process deadlocks when loading HLS videos.
+  - Make videos work when painted into a canvas when accelerated compositing is enabled.
+  - Fix flickering with animated GIFs.
+  - Fix a Web Process crash when video repaint is requested with GStreamer GL enabled.
+  - Reduce the amount of file descriptors that the Web Process keeps open.
+  - Make memory pressure handler work when cgroups are not available.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.13.2
 =================
 

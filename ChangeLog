@@ -1,3 +1,9 @@
+2016-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.3 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-07-13  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] DLLs are missing version information.
