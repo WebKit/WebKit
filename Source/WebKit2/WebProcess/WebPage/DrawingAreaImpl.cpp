@@ -212,10 +212,10 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 
 void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
-    bool shouldUpdateDirtyRegion = stateID != m_backingStoreStateID && !m_layerTreeHost;
+    if (stateID != m_backingStoreStateID && !m_layerTreeHost)
+        m_dirtyRegion = IntRect(IntPoint(), size);
+
     AcceleratedDrawingArea::updateBackingStoreState(stateID, respondImmediately, deviceScaleFactor, size, scrollOffset);
-    if (shouldUpdateDirtyRegion)
-        m_dirtyRegion = m_webPage.bounds();
 
     if (m_forceRepaintAfterBackingStoreStateUpdate)
         forceRepaint();

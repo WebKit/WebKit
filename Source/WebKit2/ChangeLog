@@ -1,3 +1,22 @@
+2016-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r202855): [GTK] ASSERTION FAILED: m_webPage.bounds().contains(bounds)
+        https://bugs.webkit.org/show_bug.cgi?id=159806
+
+        Reviewed by Žan Doberšek.
+
+        The problem is that since r202855, in case of non accelerated mode, the dirty region is updated too late when
+        updating backing store state.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updateBackingStoreState): Update the dirty region to the new size when not in
+        accelerated compositing mode.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSize): Update the WebPage size before resizing the frame and calling setNeedsDisplay() to
+        ensure that any call to setNeedsDisplay() uses the new web page bounds. This is actually a regression introduced
+        in r143472, where setNeedsDisplay was changed to use the web page bounds as directy rectangle. Before r143472
+        the dirty rectangle was passed to setNeedsDisplay and it passed the right one.
+
 2016-07-16  Sam Weinig  <sam@webkit.org>
 
         [WebKit API] Add SPI to track multiple navigations caused by a single user gesture
