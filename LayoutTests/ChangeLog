@@ -1,3 +1,19 @@
+2016-07-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Don't associate form-associated elements with forms in other trees.
+        https://bugs.webkit.org/show_bug.cgi?id=119451
+        <rdar://problem/27382946>
+
+        Change is based on the Blink change (patch by <adamk@chromium.org>):
+        <https://chromium.googlesource.com/chromium/blink/+/0b33128be67e7845d495d5219614c02ccfe7a414>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/forms/image-disconnected-during-parse-expected.txt: Added.
+        * fast/forms/image-disconnected-during-parse.html: Added.
+        * fast/forms/input-disconnected-during-parse-expected.txt: Added.
+        * fast/forms/input-disconnected-during-parse.html: Added.
+
 2016-07-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/indexeddb/modern/handle-user-delete.html as flaky on mac-wk2
