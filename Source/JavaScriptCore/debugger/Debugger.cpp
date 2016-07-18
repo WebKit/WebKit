@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008, 2013, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2013, 2014, 2016 Apple Inc. All rights reserved.
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
@@ -40,14 +40,21 @@ namespace {
 using namespace JSC;
 
 struct GatherSourceProviders : public MarkedBlock::VoidFunctor {
-    HashSet<SourceProvider*> sourceProviders;
+    // FIXME: This is a mutable field becaue this isn't a C++ lambda.
+    // https://bugs.webkit.org/show_bug.cgi?id=159644
+    mutable HashSet<SourceProvider*> sourceProviders;
     JSGlobalObject* m_globalObject;
 
     GatherSourceProviders(JSGlobalObject* globalObject)
         : m_globalObject(globalObject) { }
 
-    IterationStatus operator()(JSCell* cell)
+    IterationStatus operator()(HeapCell* heapCell, HeapCell::Kind kind) const
     {
+        if (kind != HeapCell::JSCell)
+            return IterationStatus::Continue;
+        
+        JSCell* cell = static_cast<JSCell*>(heapCell);
+        
         JSFunction* function = jsDynamicCast<JSFunction*>(cell);
         if (!function)
             return IterationStatus::Continue;
@@ -191,7 +198,7 @@ public:
     {
     }
 
-    bool operator()(CodeBlock* codeBlock)
+    bool operator()(CodeBlock* codeBlock) const
     {
         if (m_debugger == codeBlock->globalObject()->debugger()) {
             if (m_mode == SteppingModeEnabled)
@@ -298,7 +305,7 @@ public:
     {
     }
 
-    bool operator()(CodeBlock* codeBlock)
+    bool operator()(CodeBlock* codeBlock) const
     {
         if (m_debugger == codeBlock->globalObject()->debugger())
             m_debugger->toggleBreakpoint(codeBlock, m_breakpoint, m_enabledOrNot);
@@ -474,7 +481,7 @@ public:
     {
     }
 
-    bool operator()(CodeBlock* codeBlock)
+    bool operator()(CodeBlock* codeBlock) const
     {
         if (codeBlock->hasDebuggerRequests() && m_debugger == codeBlock->globalObject()->debugger())
             codeBlock->clearDebuggerRequests();
@@ -504,7 +511,7 @@ public:
     {
     }
 
-    bool operator()(CodeBlock* codeBlock)
+    bool operator()(CodeBlock* codeBlock) const
     {
         if (codeBlock->hasDebuggerRequests() && m_globalObject == codeBlock->globalObject())
             codeBlock->clearDebuggerRequests();

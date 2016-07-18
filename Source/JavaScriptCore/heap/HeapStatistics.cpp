@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,7 +146,7 @@ class StorageStatistics : public MarkedBlock::VoidFunctor {
 public:
     StorageStatistics();
 
-    IterationStatus operator()(JSCell*);
+    IterationStatus operator()(HeapCell*, HeapCell::Kind) const;
 
     size_t objectWithOutOfLineStorageCount();
     size_t objectCount();
@@ -190,9 +190,13 @@ inline void StorageStatistics::visit(JSCell* cell)
     m_storageCapacity += object->structure()->totalStorageCapacity() * sizeof(WriteBarrierBase<Unknown>); 
 }
 
-inline IterationStatus StorageStatistics::operator()(JSCell* cell)
+inline IterationStatus StorageStatistics::operator()(HeapCell* cell, HeapCell::Kind kind) const
 {
-    visit(cell);
+    if (kind == HeapCell::JSCell) {
+        // FIXME: This const_cast exists because this isn't a C++ lambda.
+        // https://bugs.webkit.org/show_bug.cgi?id=159644
+        const_cast<StorageStatistics*>(this)->visit(static_cast<JSCell*>(cell));
+    }
     return IterationStatus::Continue;
 }
 

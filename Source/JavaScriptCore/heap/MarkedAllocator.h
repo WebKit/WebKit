@@ -57,7 +57,7 @@ public:
         return block;
     }
     
-    template<typename Functor> void forEachBlock(Functor&);
+    template<typename Functor> void forEachBlock(const Functor&);
     
     void addBlock(MarkedBlock*);
     void removeBlock(MarkedBlock*);
@@ -151,7 +151,7 @@ inline void MarkedAllocator::resumeAllocating()
     m_lastActiveBlock = 0;
 }
 
-template <typename Functor> inline void MarkedAllocator::forEachBlock(Functor& functor)
+template <typename Functor> inline void MarkedAllocator::forEachBlock(const Functor& functor)
 {
     MarkedBlock* next;
     for (MarkedBlock* block = m_blockList.head(); block; block = next) {

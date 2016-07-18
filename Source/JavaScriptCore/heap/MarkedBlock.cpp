@@ -35,14 +35,14 @@ namespace JSC {
 static const bool computeBalance = false;
 static size_t balance;
 
-MarkedBlock* MarkedBlock::create(Heap& heap, MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction)
+MarkedBlock* MarkedBlock::create(Heap& heap, MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction, HeapCell::Kind cellKind)
 {
     if (computeBalance) {
         balance++;
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
-    MarkedBlock* block = new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, needsDestruction);
+    MarkedBlock* block = new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, needsDestruction, cellKind);
     heap.didAllocateBlock(capacity);
     return block;
 }
@@ -60,12 +60,13 @@ void MarkedBlock::destroy(Heap& heap, MarkedBlock* block)
     heap.didFreeBlock(capacity);
 }
 
-MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction)
+MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction, HeapCell::Kind cellKind)
     : DoublyLinkedListNode<MarkedBlock>()
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
     , m_endAtom((allocator->cellSize() ? atomsPerBlock - m_atomsPerCell : firstAtom()) + 1)
     , m_capacity(capacity)
     , m_needsDestruction(needsDestruction)
+    , m_cellKind(cellKind)
     , m_allocator(allocator)
     , m_state(New) // All cells start out unmarked.
     , m_weakSet(allocator->heap()->vm(), *this)
@@ -74,17 +75,19 @@ MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t capacity, size_t cel
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 }
 
-inline void MarkedBlock::callDestructor(JSCell* cell)
+inline void MarkedBlock::callDestructor(HeapCell* cell)
 {
     // A previous eager sweep may already have run cell's destructor.
     if (cell->isZapped())
         return;
+    
+    JSCell* jsCell = static_cast<JSCell*>(cell);
 
-    ASSERT(cell->structureID());
-    if (cell->inlineTypeFlags() & StructureIsImmortal)
-        cell->structure(*vm())->classInfo()->methodTable.destroy(cell);
+    ASSERT(jsCell->structureID());
+    if (jsCell->inlineTypeFlags() & StructureIsImmortal)
+        jsCell->structure(*vm())->classInfo()->methodTable.destroy(jsCell);
     else
-        jsCast<JSDestructibleObject*>(cell)->classInfo()->methodTable.destroy(cell);
+        jsCast<JSDestructibleObject*>(jsCell)->classInfo()->methodTable.destroy(jsCell);
     cell->zap();
 }
 
@@ -103,7 +106,7 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
         if (blockState == Marked && (m_marks.get(i) || (m_newlyAllocated && m_newlyAllocated->get(i))))
             continue;
 
-        JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);
+        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&atoms()[i]);
 
         if (callDestructors && blockState != New)
             callDestructor(cell);
@@ -171,7 +174,7 @@ public:
     {
     }
 
-    IterationStatus operator()(JSCell* cell)
+    IterationStatus operator()(HeapCell* cell, HeapCell::Kind) const
     {
         ASSERT(MarkedBlock::blockFor(cell) == m_block);
         m_block->setNewlyAllocated(cell);
@@ -213,7 +216,8 @@ void MarkedBlock::stopAllocating(const FreeList& freeList)
     FreeCell* next;
     for (FreeCell* current = head; current; current = next) {
         next = current->next;
-        reinterpret_cast<JSCell*>(current)->zap();
+        if (m_needsDestruction)
+            reinterpret_cast<HeapCell*>(current)->zap();
         clearNewlyAllocated(current);
     }
     
@@ -290,7 +294,8 @@ void MarkedBlock::didRetireBlock(const FreeList& freeList)
     FreeCell* next;
     for (FreeCell* current = head; current; current = next) {
         next = current->next;
-        reinterpret_cast<JSCell*>(current)->zap();
+        if (m_needsDestruction)
+            reinterpret_cast<HeapCell*>(current)->zap();
     }
 
     ASSERT(m_state == FreeListed);

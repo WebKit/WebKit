@@ -120,9 +120,13 @@ struct GatherLiveObjFunctor : MarkedBlock::CountFunctor {
         m_list.liveObjects.append(data);
     }
 
-    IterationStatus operator()(JSCell* cell)
+    IterationStatus operator()(HeapCell* cell, HeapCell::Kind kind) const
     {
-        visit(cell);
+        if (kind == HeapCell::JSCell) {
+            // FIXME: This const_cast exists because this isn't a C++ lambda.
+            // https://bugs.webkit.org/show_bug.cgi?id=159644
+            const_cast<GatherLiveObjFunctor*>(this)->visit(static_cast<JSCell*>(cell));
+        }
         return IterationStatus::Continue;
     }
 

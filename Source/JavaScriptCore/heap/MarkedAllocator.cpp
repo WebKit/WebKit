@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -186,7 +186,10 @@ MarkedBlock* MarkedAllocator::allocateBlock(size_t bytes)
 
     size_t cellSize = m_cellSize ? m_cellSize : WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
 
-    return MarkedBlock::create(*m_heap, this, blockSize, cellSize, m_needsDestruction);
+    // FIXME: Support allocating storage in marked blocks. This would mean that allocateBlock()
+    // takes a HeapCell::Kind, or something like that.
+    // https://bugs.webkit.org/show_bug.cgi?id=159658
+    return MarkedBlock::create(*m_heap, this, blockSize, cellSize, m_needsDestruction, HeapCell::JSCell);
 }
 
 void MarkedAllocator::addBlock(MarkedBlock* block)
@@ -233,15 +236,13 @@ void MarkedAllocator::reset()
     }
 }
 
-struct LastChanceToFinalize : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block) { block->lastChanceToFinalize(); }
-};
-
 void MarkedAllocator::lastChanceToFinalize()
 {
     m_blockList.append(m_retiredBlocks);
-    LastChanceToFinalize functor;
-    forEachBlock(functor);
+    forEachBlock(
+        [&] (MarkedBlock* block) {
+            block->lastChanceToFinalize();
+        });
 }
 
 } // namespace JSC

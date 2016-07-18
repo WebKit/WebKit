@@ -252,61 +252,13 @@ static inline bool isValidThreadState(VM* vm)
     return true;
 }
 
-struct Count : public MarkedBlock::CountFunctor {
-    void operator()(JSCell*) { count(1); }
-};
-
-struct CountIfGlobalObject : MarkedBlock::CountFunctor {
-    inline void visit(JSCell* cell)
-    {
-        if (!cell->isObject())
-            return;
-        if (!asObject(cell)->isGlobalObject())
-            return;
-        count(1);
-    }
-    IterationStatus operator()(JSCell* cell)
-    {
-        visit(cell);
-        return IterationStatus::Continue;
-    }
-};
-
-class RecordType {
-public:
-    typedef std::unique_ptr<TypeCountSet> ReturnType;
-
-    RecordType();
-    IterationStatus operator()(JSCell*);
-    ReturnType returnValue();
-
-private:
-    const char* typeName(JSCell*);
-    std::unique_ptr<TypeCountSet> m_typeCountSet;
-};
-
-inline RecordType::RecordType()
-    : m_typeCountSet(std::make_unique<TypeCountSet>())
+static inline void recordType(TypeCountSet& set, JSCell* cell)
 {
-}
-
-inline const char* RecordType::typeName(JSCell* cell)
-{
+    const char* typeName = "[unknown]";
     const ClassInfo* info = cell->classInfo();
-    if (!info || !info->className)
-        return "[unknown]";
-    return info->className;
-}
-
-inline IterationStatus RecordType::operator()(JSCell* cell)
-{
-    m_typeCountSet->add(typeName(cell));
-    return IterationStatus::Continue;
-}
-
-inline std::unique_ptr<TypeCountSet> RecordType::returnValue()
-{
-    return WTFMove(m_typeCountSet);
+    if (info && info->className)
+        typeName = info->className;
+    set.add(typeName);
 }
 
 } // anonymous namespace
@@ -766,9 +718,12 @@ struct GatherHeapSnapshotData : MarkedBlock::CountFunctor {
     {
     }
 
-    IterationStatus operator()(JSCell* cell)
+    IterationStatus operator()(HeapCell* heapCell, HeapCell::Kind kind) const
     {
-        cell->methodTable()->heapSnapshot(cell, m_builder);
+        if (kind == HeapCell::JSCell) {
+            JSCell* cell = static_cast<JSCell*>(heapCell);
+            cell->methodTable()->heapSnapshot(cell, m_builder);
+        }
         return IterationStatus::Continue;
     }
 
@@ -791,9 +746,10 @@ struct RemoveDeadHeapSnapshotNodes : MarkedBlock::CountFunctor {
     {
     }
 
-    IterationStatus operator()(JSCell* cell)
+    IterationStatus operator()(HeapCell* cell, HeapCell::Kind kind) const
     {
-        m_snapshot.sweepCell(cell);
+        if (kind == HeapCell::JSCell)
+            m_snapshot.sweepCell(static_cast<JSCell*>(cell));
         return IterationStatus::Continue;
     }
 
@@ -993,29 +949,64 @@ size_t Heap::capacity()
 
 size_t Heap::protectedGlobalObjectCount()
 {
-    return forEachProtectedCell<CountIfGlobalObject>();
+    size_t result = 0;
+    forEachProtectedCell(
+        [&] (JSCell* cell) {
+            if (cell->isObject() && asObject(cell)->isGlobalObject())
+                result++;
+        });
+    return result;
 }
 
 size_t Heap::globalObjectCount()
 {
     HeapIterationScope iterationScope(*this);
-    return m_objectSpace.forEachLiveCell<CountIfGlobalObject>(iterationScope);
+    size_t result = 0;
+    m_objectSpace.forEachLiveCell(
+        iterationScope,
+        [&] (HeapCell* heapCell, HeapCell::Kind kind) -> IterationStatus {
+            if (kind != HeapCell::JSCell)
+                return IterationStatus::Continue;
+            JSCell* cell = static_cast<JSCell*>(heapCell);
+            if (cell->isObject() && asObject(cell)->isGlobalObject())
+                result++;
+            return IterationStatus::Continue;
+        });
+    return result;
 }
 
 size_t Heap::protectedObjectCount()
 {
-    return forEachProtectedCell<Count>();
+    size_t result = 0;
+    forEachProtectedCell(
+        [&] (JSCell*) {
+            result++;
+        });
+    return result;
 }
 
 std::unique_ptr<TypeCountSet> Heap::protectedObjectTypeCounts()
 {
-    return forEachProtectedCell<RecordType>();
+    std::unique_ptr<TypeCountSet> result = std::make_unique<TypeCountSet>();
+    forEachProtectedCell(
+        [&] (JSCell* cell) {
+            recordType(*result, cell);
+        });
+    return result;
 }
 
 std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
 {
+    std::unique_ptr<TypeCountSet> result = std::make_unique<TypeCountSet>();
     HeapIterationScope iterationScope(*this);
-    return m_objectSpace.forEachLiveCell<RecordType>(iterationScope);
+    m_objectSpace.forEachLiveCell(
+        iterationScope,
+        [&] (HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+            if (kind == HeapCell::JSCell)
+                recordType(*result, static_cast<JSCell*>(cell));
+            return IterationStatus::Continue;
+        });
+    return result;
 }
 
 void Heap::deleteAllCodeBlocks()
@@ -1300,9 +1291,11 @@ struct MarkedBlockSnapshotFunctor : public MarkedBlock::VoidFunctor {
     {
     }
 
-    void operator()(MarkedBlock* block) { m_blocks[m_index++] = block; }
+    void operator()(MarkedBlock* block) const { m_blocks[m_index++] = block; }
 
-    size_t m_index;
+    // FIXME: This is a mutable field becaue this isn't a C++ lambda.
+    // https://bugs.webkit.org/show_bug.cgi?id=159644
+    mutable size_t m_index;
     Vector<MarkedBlock*>& m_blocks;
 };
 
@@ -1573,7 +1566,7 @@ void Heap::collectAllGarbageIfNotDoneRecently()
 
 class Zombify : public MarkedBlock::VoidFunctor {
 public:
-    inline void visit(JSCell* cell)
+    inline void visit(HeapCell* cell) const
     {
         void** current = reinterpret_cast<void**>(cell);
 
@@ -1586,7 +1579,7 @@ public:
         for (; current < limit; current++)
             *current = zombifiedBits;
     }
-    IterationStatus operator()(JSCell* cell)
+    IterationStatus operator()(HeapCell* cell, HeapCell::Kind) const
     {
         visit(cell);
         return IterationStatus::Continue;
@@ -1598,7 +1591,7 @@ void Heap::zombifyDeadObjects()
     // Sweep now because destructors will crash once we're zombified.
     m_objectSpace.zombifySweep();
     HeapIterationScope iterationScope(*this);
-    m_objectSpace.forEachDeadCell<Zombify>(iterationScope);
+    m_objectSpace.forEachDeadCell(iterationScope, Zombify());
 }
 
 void Heap::flushWriteBarrierBuffer(JSCell* cell)

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -36,33 +36,6 @@ namespace JSC {
 class Heap;
 class HeapIterationScope;
 class LLIntOffsetsExtractor;
-
-struct ClearMarks : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block)
-    {
-        block->clearMarks();
-    }
-};
-
-struct Sweep : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block) { block->sweep(); }
-};
-
-struct ZombifySweep : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block)
-    {
-        if (block->needsSweeping())
-            block->sweep();
-    }
-};
-
-struct MarkCount : MarkedBlock::CountFunctor {
-    void operator()(MarkedBlock* block) { count(block->markCount()); }
-};
-
-struct Size : MarkedBlock::CountFunctor {
-    void operator()(MarkedBlock* block) { count(block->markCount() * block->cellSize()); }
-};
 
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
@@ -112,12 +85,9 @@ public:
 
     typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 
-    template<typename Functor> typename Functor::ReturnType forEachLiveCell(HeapIterationScope&, Functor&);
-    template<typename Functor> typename Functor::ReturnType forEachLiveCell(HeapIterationScope&);
-    template<typename Functor> typename Functor::ReturnType forEachDeadCell(HeapIterationScope&, Functor&);
-    template<typename Functor> typename Functor::ReturnType forEachDeadCell(HeapIterationScope&);
-    template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
-    template<typename Functor> typename Functor::ReturnType forEachBlock();
+    template<typename Functor> void forEachLiveCell(HeapIterationScope&, const Functor&);
+    template<typename Functor> void forEachDeadCell(HeapIterationScope&, const Functor&);
+    template<typename Functor> void forEachBlock(const Functor&);
 
     void shrink();
     void freeBlock(MarkedBlock*);
@@ -143,8 +113,7 @@ private:
     friend class LLIntOffsetsExtractor;
     friend class JIT;
 
-    template<typename Functor> void forEachAllocator(Functor&);
-    template<typename Functor> void forEachAllocator();
+    template<typename Functor> void forEachAllocator(const Functor&);
 
     Subspace m_destructorSpace;
     Subspace m_normalSpace;
@@ -156,7 +125,7 @@ private:
     Vector<MarkedBlock*> m_blocksWithNewObjects;
 };
 
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell(HeapIterationScope&, Functor& functor)
+template<typename Functor> inline void MarkedSpace::forEachLiveCell(HeapIterationScope&, const Functor& functor)
 {
     ASSERT(isIterating());
     BlockIterator end = m_blocks.set().end();
@@ -164,16 +133,9 @@ template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forE
         if ((*it)->forEachLiveCell(functor) == IterationStatus::Done)
             break;
     }
-    return functor.returnValue();
 }
 
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell(HeapIterationScope& scope)
-{
-    Functor functor;
-    return forEachLiveCell(scope, functor);
-}
-
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachDeadCell(HeapIterationScope&, Functor& functor)
+template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIterationScope&, const Functor& functor)
 {
     ASSERT(isIterating());
     BlockIterator end = m_blocks.set().end();
@@ -181,13 +143,6 @@ template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forE
         if ((*it)->forEachDeadCell(functor) == IterationStatus::Done)
             break;
     }
-    return functor.returnValue();
-}
-
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachDeadCell(HeapIterationScope& scope)
-{
-    Functor functor;
-    return forEachDeadCell(scope, functor);
 }
 
 inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)
@@ -220,7 +175,7 @@ inline void* MarkedSpace::allocateWithDestructor(size_t bytes)
     return destructorAllocatorFor(bytes).allocate(bytes);
 }
 
-template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock(Functor& functor)
+template <typename Functor> inline void MarkedSpace::forEachBlock(const Functor& functor)
 {
     for (size_t i = 0; i < preciseCount; ++i)
         m_normalSpace.preciseAllocators[i].forEachBlock(functor);
@@ -233,14 +188,6 @@ template <typename Functor> inline typename Functor::ReturnType MarkedSpace::for
     for (size_t i = 0; i < impreciseCount; ++i)
         m_destructorSpace.impreciseAllocators[i].forEachBlock(functor);
     m_destructorSpace.largeAllocator.forEachBlock(functor);
-
-    return functor.returnValue();
-}
-
-template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock()
-{
-    Functor functor;
-    return forEachBlock(functor);
 }
 
 inline void MarkedSpace::didAddBlock(MarkedBlock* block)
@@ -256,12 +203,22 @@ inline void MarkedSpace::didAllocateInBlock(MarkedBlock* block)
 
 inline size_t MarkedSpace::objectCount()
 {
-    return forEachBlock<MarkCount>();
+    size_t result = 0;
+    forEachBlock(
+        [&] (MarkedBlock* block) {
+            result += block->markCount();
+        });
+    return result;
 }
 
 inline size_t MarkedSpace::size()
 {
-    return forEachBlock<Size>();
+    size_t result = 0;
+    forEachBlock(
+        [&] (MarkedBlock* block) {
+            result += block->markCount() * block->cellSize();
+        });
+    return result;
 }
 
 inline size_t MarkedSpace::capacity()

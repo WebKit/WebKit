@@ -165,7 +165,7 @@ inline void Heap::deprecatedReportExtraMemory(size_t size)
         deprecatedReportExtraMemorySlowCase(size);
 }
 
-template<typename Functor> inline void Heap::forEachCodeBlock(Functor& functor)
+template<typename Functor> inline void Heap::forEachCodeBlock(const Functor& functor)
 {
     // We don't know the full set of CodeBlocks until compilation has terminated.
     completeAllJITPlans();
@@ -173,19 +173,11 @@ template<typename Functor> inline void Heap::forEachCodeBlock(Functor& functor)
     return m_codeBlocks.iterate<Functor>(functor);
 }
 
-template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell(Functor& functor)
+template<typename Functor> inline void Heap::forEachProtectedCell(const Functor& functor)
 {
     for (auto& pair : m_protectedValues)
         functor(pair.key);
     m_handleSet.forEachStrongHandle(functor, m_protectedValues);
-
-    return functor.returnValue();
-}
-
-template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell()
-{
-    Functor functor;
-    return forEachProtectedCell(functor);
 }
 
 inline void* Heap::allocateWithDestructor(size_t bytes)

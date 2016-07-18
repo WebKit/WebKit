@@ -1,3 +1,176 @@
+2016-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        MarkedBlocks should know that they can be used for more than JSCells
+        https://bugs.webkit.org/show_bug.cgi?id=159643
+
+        Reviewed by Geoffrey Garen.
+        
+        This teaches the Heap that a MarkedBlock may hold either JSCells, or Auxiliary, which is
+        not a JSCell. It teaches the heap and all of the things that walk the heap to ignore
+        non-JSCells whenever they are looking for global objects, JSObjects, and things to trace
+        for debugging or profiling. The idea is that we will be able to allocate butterflies and
+        typed array backing stores as Auxiliary in MarkedSpace rather than allocating those things
+        in CopiedSpace. That's what bug 159658 is all about.
+        
+        This gives us a new type, called HeapCell, which is just meant to be a class distinct from
+        JSCell or any type we would use for Auxiliary. For convenience, JSCell is a subclass of
+        HeapCell. HeapCell has an enum called HeapCell::Kind, which is either HeapCell::JSCell or
+        HeapCell::Auxiliary. MarkedSpace no longer speaks of JSCells directly except when dealing
+        with destruction.
+        
+        This change required doing a lot of stuff to all of those functor callbacks, since they
+        now take HeapCell* instead of JSCell* and they take an extra HeapCell::Kind argument to
+        tell them if they are dealing with JSCells or Auxiliary. I figured that this would be as
+        good a time as any to convert those functors to being lambda-compatible. This means that
+        operator() must be const. In some cases, converting the operator() to be const would have
+        taken more work than just turning the whole thing into a lambda. Whenever this was the
+        case, I converted the code to use lambdas. I left a lot of functors alone. In cases where
+        the functor would benefit from being a lambda, for example because it would get rid of
+        const_casts or mutables, I put in a FIXME referencing bug 159644.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::SetSteppingModeFunctor::SetSteppingModeFunctor):
+        (JSC::Debugger::SetSteppingModeFunctor::operator()):
+        (JSC::Debugger::ToggleBreakpointFunctor::ToggleBreakpointFunctor):
+        (JSC::Debugger::ToggleBreakpointFunctor::operator()):
+        (JSC::Debugger::ClearCodeBlockDebuggerRequestsFunctor::ClearCodeBlockDebuggerRequestsFunctor):
+        (JSC::Debugger::ClearCodeBlockDebuggerRequestsFunctor::operator()):
+        (JSC::Debugger::ClearDebuggerRequestsFunctor::ClearDebuggerRequestsFunctor):
+        (JSC::Debugger::ClearDebuggerRequestsFunctor::operator()):
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::iterate):
+        * heap/HandleSet.h:
+        (JSC::HandleNode::next):
+        (JSC::HandleSet::forEachStrongHandle):
+        * heap/Heap.cpp:
+        (JSC::GatherHeapSnapshotData::GatherHeapSnapshotData):
+        (JSC::GatherHeapSnapshotData::operator()):
+        (JSC::RemoveDeadHeapSnapshotNodes::RemoveDeadHeapSnapshotNodes):
+        (JSC::RemoveDeadHeapSnapshotNodes::operator()):
+        (JSC::Heap::protectedGlobalObjectCount):
+        (JSC::Heap::globalObjectCount):
+        (JSC::Heap::protectedObjectCount):
+        (JSC::Heap::protectedObjectTypeCounts):
+        (JSC::Heap::objectTypeCounts):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::MarkedBlockSnapshotFunctor::MarkedBlockSnapshotFunctor):
+        (JSC::MarkedBlockSnapshotFunctor::operator()):
+        (JSC::Zombify::visit):
+        (JSC::Zombify::operator()):
+        (JSC::Heap::zombifyDeadObjects):
+        (JSC::Heap::flushWriteBarrierBuffer):
+        * heap/Heap.h:
+        (JSC::Heap::handleSet):
+        (JSC::Heap::handleStack):
+        * heap/HeapCell.cpp: Added.
+        (WTF::printInternal):
+        * heap/HeapCell.h: Added.
+        (JSC::HeapCell::HeapCell):
+        (JSC::HeapCell::zap):
+        (JSC::HeapCell::isZapped):
+        * heap/HeapInlines.h:
+        (JSC::Heap::deprecatedReportExtraMemory):
+        (JSC::Heap::forEachCodeBlock):
+        (JSC::Heap::forEachProtectedCell):
+        (JSC::Heap::allocateWithDestructor):
+        * heap/HeapStatistics.cpp:
+        (JSC::StorageStatistics::visit):
+        (JSC::StorageStatistics::operator()):
+        * heap/HeapVerifier.cpp:
+        (JSC::GatherLiveObjFunctor::visit):
+        (JSC::GatherLiveObjFunctor::operator()):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateBlock):
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::reset):
+        (JSC::MarkedAllocator::lastChanceToFinalize):
+        (JSC::LastChanceToFinalize::operator()): Deleted.
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::takeLastActiveBlock):
+        (JSC::MarkedAllocator::resumeAllocating):
+        (JSC::MarkedAllocator::forEachBlock):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::callDestructor):
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::SetNewlyAllocatedFunctor::SetNewlyAllocatedFunctor):
+        (JSC::SetNewlyAllocatedFunctor::operator()):
+        (JSC::MarkedBlock::stopAllocating):
+        (JSC::MarkedBlock::didRetireBlock):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::CountFunctor::CountFunctor):
+        (JSC::MarkedBlock::CountFunctor::count):
+        (JSC::MarkedBlock::CountFunctor::returnValue):
+        (JSC::MarkedBlock::needsDestruction):
+        (JSC::MarkedBlock::cellKind):
+        (JSC::MarkedBlock::size):
+        (JSC::MarkedBlock::clearNewlyAllocated):
+        (JSC::MarkedBlock::isMarkedOrNewlyAllocated):
+        (JSC::MarkedBlock::isLive):
+        (JSC::MarkedBlock::isLiveCell):
+        (JSC::MarkedBlock::forEachCell):
+        (JSC::MarkedBlock::forEachLiveCell):
+        (JSC::MarkedBlock::forEachDeadCell):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::~MarkedSpace):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::zombifySweep):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::visitWeakSets):
+        (JSC::MarkedSpace::reapWeakSets):
+        (JSC::MarkedSpace::forEachAllocator):
+        (JSC::MarkedSpace::stopAllocating):
+        (JSC::MarkedSpace::resumeAllocating):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::shrink):
+        (JSC::clearNewlyAllocatedInBlock):
+        (JSC::MarkedSpace::clearNewlyAllocated):
+        (JSC::MarkedSpace::clearMarks):
+        (JSC::Free::Free): Deleted.
+        (JSC::Free::operator()): Deleted.
+        (JSC::FreeOrShrink::FreeOrShrink): Deleted.
+        (JSC::FreeOrShrink::operator()): Deleted.
+        (JSC::VisitWeakSet::VisitWeakSet): Deleted.
+        (JSC::VisitWeakSet::operator()): Deleted.
+        (JSC::ReapWeakSet::operator()): Deleted.
+        (JSC::LastChanceToFinalize::operator()): Deleted.
+        (JSC::StopAllocatingFunctor::operator()): Deleted.
+        (JSC::ResumeAllocatingFunctor::operator()): Deleted.
+        (JSC::ClearNewlyAllocated::operator()): Deleted.
+        (JSC::VerifyNewlyAllocated::operator()): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::forEachLiveCell):
+        (JSC::MarkedSpace::forEachDeadCell):
+        (JSC::MarkedSpace::allocatorFor):
+        (JSC::MarkedSpace::allocateWithDestructor):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::didAddBlock):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::size):
+        (JSC::MarkedSpace::capacity):
+        (JSC::ClearMarks::operator()): Deleted.
+        (JSC::Sweep::operator()): Deleted.
+        (JSC::ZombifySweep::operator()): Deleted.
+        (JSC::MarkCount::operator()): Deleted.
+        (JSC::Size::operator()): Deleted.
+        * runtime/JSCell.h:
+        (JSC::JSCell::zap): Deleted.
+        (JSC::JSCell::isZapped): Deleted.
+        * runtime/JSCellInlines.h:
+        (JSC::allocateCell):
+        (JSC::JSCell::isObject):
+        (JSC::isZapped): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::CellAddressCheckFunctor::CellAddressCheckFunctor):
+        (JSC::CellAddressCheckFunctor::operator()):
+
 2016-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         Repeatedly creating and destroying workers that enqueue DFG plans can outpace the DFG worklist, which then causes VM shutdown to stall, which then causes memory growth

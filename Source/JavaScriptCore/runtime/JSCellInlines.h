@@ -145,11 +145,6 @@ void* allocateCell(Heap& heap)
     return allocateCell<T>(heap, sizeof(T));
 }
     
-inline bool isZapped(const JSCell* cell)
-{
-    return cell->isZapped();
-}
-
 inline bool JSCell::isObject() const
 {
     return TypeInfo::isObject(m_type);

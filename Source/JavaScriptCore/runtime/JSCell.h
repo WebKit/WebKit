@@ -28,6 +28,7 @@
 #include "ConstructData.h"
 #include "EnumerationMode.h"
 #include "Heap.h"
+#include "HeapCell.h"
 #include "IndexingType.h"
 #include "JSLock.h"
 #include "JSTypeInfo.h"
@@ -64,7 +65,7 @@ template<typename T> void* allocateCell(Heap&, size_t);
     public:                                                             \
         static const ::JSC::ClassInfo* info() { return &s_info; }
 
-class JSCell {
+class JSCell : public HeapCell {
     friend class JSValue;
     friend class MarkedBlock;
     template<typename T> friend void* allocateCell(Heap&);
@@ -154,9 +155,6 @@ public:
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
     static JSValue toThis(JSCell*, ExecState*, ECMAMode);
-
-    void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
-    bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 
     static bool canUseFastGetOwnProperty(const Structure&);
     JSValue fastGetOwnProperty(VM&, Structure&, PropertyName);
