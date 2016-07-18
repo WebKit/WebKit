@@ -1,3 +1,36 @@
+2016-07-18  Tim Horton  <timothy_horton@apple.com>
+
+        Mail contents are temporarily obscured by black rectangles when returning from suspend and in app switcher
+        https://bugs.webkit.org/show_bug.cgi?id=159894
+        <rdar://problem/26973202>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::applicationDidCreateWindowContext):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didMoveToWindow]):
+        (-[WKContentView _applicationDidCreateWindowContext]):
+        (-[WKContentView _applicationWillEnterForeground]): Deleted.
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView didMoveToWindow]):
+        (-[WKPDFView _applicationDidCreateWindowContext]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground):
+        Hide content at window context creation time, instead of when the application
+        becomes foregrounded. Otherwise, background snapshots (which create/destroy
+        window contexts, but do not bring the app into the foreground) can have
+        parented layers that have volatile surfaces in them. In the normal case,
+        we will subsequently get foregrounded and re-build the layer tree; in the
+        background snapshot case, we will just have an empty layer tree.
+
+        In the future, we should consider making ApplicationStateTracker use
+        window context creation/destruction to drive web process lifetime, so
+        that we can actually paint correctly for background snapshots.
+
 2016-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.3 release.
