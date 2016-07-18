@@ -22,7 +22,8 @@
  *
  */
 
-#pragma once
+#ifndef NodeTraversal_h
+#define NodeTraversal_h
 
 #include "ContainerNode.h"
 #include "Text.h"
@@ -64,7 +65,6 @@ Node* previousIncludingPseudo(const Node&, const Node* = nullptr);
 Node* nextIncludingPseudo(const Node&, const Node* = nullptr);
 Node* nextIncludingPseudoSkippingChildren(const Node&, const Node* = nullptr);
 
-Node& highestAncestorOrSelf(Node&);
 }
 
 namespace NodeTraversal {
@@ -127,13 +127,7 @@ inline Node* previous(const Node& current, const Node* stayWithin)
     return current.parentNode();
 }
 
-inline Node& highestAncestorOrSelf(Node& current)
-{
-    Node* highest = &current;
-    while (highest->parentNode())
-        highest = highest->parentNode();
-    return *highest;
+}
 }
 
-}
-}
+#endif
