@@ -1,3 +1,14 @@
+2016-07-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/27360961.
+
+    2016-06-23  Dean Jackson  <dino@apple.com>
+
+            Disable some features on safari-602-branch.
+            <rdar://problem/27360961>
+
+            * Configurations/FeatureDefines.xcconfig:
+
 2016-07-17  Sam Weinig  <sam@webkit.org>
 
         [WebKit API] Add SPI to track multiple navigations caused by a single user gesture

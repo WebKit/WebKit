@@ -1,5 +1,16 @@
 2016-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge patch for rdar://problem/27360961.
+
+    2016-06-23  Dean Jackson  <dino@apple.com>
+
+            Disable some features on safari-602-branch.
+            <rdar://problem/27360961>
+
+            * Configurations/FeatureDefines.xcconfig:
+
+2016-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203353.
 
     2016-07-18  Youenn Fablet  <youenn@apple.com>
