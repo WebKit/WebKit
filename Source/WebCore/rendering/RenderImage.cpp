@@ -58,6 +58,11 @@
 #include "SelectionRect.h"
 #endif
 
+#if USE(CG)
+#include "PDFDocumentImage.h"
+#include "Settings.h"
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(IOS)
@@ -544,6 +549,11 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
     // FIXME: Document when image != img.get().
     Image* image = imageResource().image().get();
     InterpolationQuality interpolation = image ? chooseInterpolationQuality(context, *image, image, LayoutSize(rect.size())) : InterpolationDefault;
+
+#if USE(CG)
+    if (is<PDFDocumentImage>(image))
+        downcast<PDFDocumentImage>(*image).setCachedPDFImageEnabled(frame().settings().isCachedPDFImageEnabled());
+#endif
 
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
     context.drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, orientationDescription, interpolation));

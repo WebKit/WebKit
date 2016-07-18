@@ -80,6 +80,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::sharedFeatures().langAttributeAwareFormControlUIEnabled())
     , m_imagesEnabled(settings.areImagesEnabled())
     , m_preferMIMETypeForImages(settings.preferMIMETypeForImages())
+    , m_cachedPDFImageEnabled(settings.isCachedPDFImageEnabled())
     , m_minimumTimerInterval(settings.minimumDOMTimerInterval())
 #if ENABLE(VIDEO_TRACK)
     , m_shouldDisplaySubtitles(settings.shouldDisplaySubtitles())
@@ -159,6 +160,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     RuntimeEnabledFeatures::sharedFeatures().setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
     settings.setImagesEnabled(m_imagesEnabled);
     settings.setPreferMIMETypeForImages(m_preferMIMETypeForImages);
+    settings.setCachedPDFImageEnabled(m_cachedPDFImageEnabled);
     settings.setMinimumDOMTimerInterval(m_minimumTimerInterval);
 #if ENABLE(VIDEO_TRACK)
     settings.setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
@@ -481,6 +483,12 @@ void InternalSettings::setImagesEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
     settings()->setImagesEnabled(enabled);
+}
+
+void InternalSettings::setCachedPDFImageEnabled(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setCachedPDFImageEnabled(enabled);
 }
 
 void InternalSettings::setMinimumTimerInterval(double intervalInSeconds, ExceptionCode& ec)
