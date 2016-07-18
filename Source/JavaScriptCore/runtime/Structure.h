@@ -700,6 +700,7 @@ private:
     bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
         
     void pin();
+    void pinForCaching();
     
     bool isRareData(JSCell* cell) const
     {

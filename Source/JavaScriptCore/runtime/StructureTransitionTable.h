@@ -40,7 +40,7 @@ static const unsigned FirstInternalAttribute = 1 << 6; // Use for transitions th
 
 // Support for attributes used to indicate transitions not related to properties.
 // If any of these are used, the string portion of the key should be 0.
-enum NonPropertyTransition {
+enum class NonPropertyTransition : unsigned {
     AllocateUndecided,
     AllocateInt32,
     AllocateDouble,
@@ -48,43 +48,95 @@ enum NonPropertyTransition {
     AllocateArrayStorage,
     AllocateSlowPutArrayStorage,
     SwitchToSlowPutArrayStorage,
-    AddIndexedAccessors
+    AddIndexedAccessors,
+    PreventExtensions,
+    Seal,
+    Freeze
 };
 
 inline unsigned toAttributes(NonPropertyTransition transition)
 {
-    return transition + FirstInternalAttribute;
+    return static_cast<unsigned>(transition) + FirstInternalAttribute;
+}
+
+inline bool changesIndexingType(NonPropertyTransition transition)
+{
+    switch (transition) {
+    case NonPropertyTransition::AllocateUndecided:
+    case NonPropertyTransition::AllocateInt32:
+    case NonPropertyTransition::AllocateDouble:
+    case NonPropertyTransition::AllocateContiguous:
+    case NonPropertyTransition::AllocateArrayStorage:
+    case NonPropertyTransition::AllocateSlowPutArrayStorage:
+    case NonPropertyTransition::SwitchToSlowPutArrayStorage:
+    case NonPropertyTransition::AddIndexedAccessors:
+        return true;
+    default:
+        return false;
+    }
 }
 
 inline IndexingType newIndexingType(IndexingType oldType, NonPropertyTransition transition)
 {
     switch (transition) {
-    case AllocateUndecided:
+    case NonPropertyTransition::AllocateUndecided:
         ASSERT(!hasIndexedProperties(oldType));
         return oldType | UndecidedShape;
-    case AllocateInt32:
+    case NonPropertyTransition::AllocateInt32:
         ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType));
         return (oldType & ~IndexingShapeMask) | Int32Shape;
-    case AllocateDouble:
+    case NonPropertyTransition::AllocateDouble:
         ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType));
         return (oldType & ~IndexingShapeMask) | DoubleShape;
-    case AllocateContiguous:
+    case NonPropertyTransition::AllocateContiguous:
         ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType));
         return (oldType & ~IndexingShapeMask) | ContiguousShape;
-    case AllocateArrayStorage:
+    case NonPropertyTransition::AllocateArrayStorage:
         ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType) || hasContiguous(oldType));
         return (oldType & ~IndexingShapeMask) | ArrayStorageShape;
-    case AllocateSlowPutArrayStorage:
+    case NonPropertyTransition::AllocateSlowPutArrayStorage:
         ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType) || hasContiguous(oldType) || hasContiguous(oldType));
         return (oldType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
-    case SwitchToSlowPutArrayStorage:
+    case NonPropertyTransition::SwitchToSlowPutArrayStorage:
         ASSERT(hasArrayStorage(oldType));
         return (oldType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
-    case AddIndexedAccessors:
+    case NonPropertyTransition::AddIndexedAccessors:
         return oldType | MayHaveIndexedAccessors;
     default:
-        RELEASE_ASSERT_NOT_REACHED();
         return oldType;
+    }
+}
+
+inline bool preventsExtensions(NonPropertyTransition transition)
+{
+    switch (transition) {
+    case NonPropertyTransition::PreventExtensions:
+    case NonPropertyTransition::Seal:
+    case NonPropertyTransition::Freeze:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool setsDontDeleteOnAllProperties(NonPropertyTransition transition)
+{
+    switch (transition) {
+    case NonPropertyTransition::Seal:
+    case NonPropertyTransition::Freeze:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool setsReadOnlyOnAllProperties(NonPropertyTransition transition)
+{
+    switch (transition) {
+    case NonPropertyTransition::Freeze:
+        return true;
+    default:
+        return false;
     }
 }
 

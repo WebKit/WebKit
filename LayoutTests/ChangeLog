@@ -1,3 +1,25 @@
+2016-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Object.preventExtensions/seal/freeze makes code much slower
+        https://bugs.webkit.org/show_bug.cgi?id=143247
+
+        Reviewed by Michael Saboff.
+        
+        These tests now run ~25x faster.
+
+        * js/regress/freeze-and-do-work-expected.txt: Added.
+        * js/regress/freeze-and-do-work.html: Added.
+        * js/regress/prevent-extensions-and-do-work-expected.txt: Added.
+        * js/regress/prevent-extensions-and-do-work.html: Added.
+        * js/regress/script-tests/freeze-and-do-work.js: Added.
+        (Foo):
+        * js/regress/script-tests/prevent-extensions-and-do-work.js: Added.
+        (Foo):
+        * js/regress/script-tests/seal-and-do-work.js: Added.
+        (Foo):
+        * js/regress/seal-and-do-work-expected.txt: Added.
+        * js/regress/seal-and-do-work.html: Added.
+
 2016-07-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm as flaky on mac-debug WK1

@@ -1,5 +1,76 @@
 2016-07-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Object.preventExtensions/seal/freeze makes code much slower
+        https://bugs.webkit.org/show_bug.cgi?id=143247
+
+        Reviewed by Michael Saboff.
+        
+        This has been a huge pet peeve of mine for a long time, but I was always afraid of fixing
+        it because I thought that it would be hard. Well, it looks like it's not hard at all.
+        
+        The problem is that you cannot mutate a structure that participates in transition caching.
+        You can only clone the structure and mutate that one. But if you do this, you have to make
+        a hard choice:
+        
+        1) Clone the structure without caching the transition. This is what the code did before
+           this change. It's the most obvious choice, but it introduces an uncacheable transition
+           that leads to an explosion of structures, which then breaks all inline caches.
+        
+        2) Perform one of the existing cacheable transitions. Cacheable transitions can either add
+           properties or they can do one of the NonPropertyTransitions, which until now have been
+           restricted to just IndexingType transitions. So, only adding transitions or making
+           certain prescribed changes to the indexing type count as cacheable transitions.
+        
+        This change decouples NonPropertyTransition from IndexingType and adds three new kinds of
+        transitions: PreventExtensions, Seal, and Freeze. We have to give any cacheable transition
+        a name that fully disambiguates this transition from any other, so that the transition can
+        be cached. Since we're already giving them names in an enum, I figured that the most
+        pragmatic way to implement them is to have Structure::nonPropertyTransition() case on the
+        NonPropertyTransition and implement all of the mutations associated with that transition.
+        The alternative would have been to allow callers of nonPropertyTransition() to supply
+        something like a lambda that describes the mutation, but this seemed awkward since each
+        set of mutations has to anyway be tied to one of the NonPropertyTransition members.
+        
+        This is an enormous speed-up on microbenchmarks that use Object.preventExtensions(),
+        Object.seal(), or Object.freeze(). I don't know if "real" benchmarks use these features
+        and I don't really care. This should be fast.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToContiguous):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        * runtime/Structure.cpp:
+        (JSC::Structure::suggestedArrayStorageTransition):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::toUncacheableDictionaryTransition):
+        (JSC::Structure::sealTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::takePropertyTableOrCloneIfPinned):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::pin):
+        (JSC::Structure::pinForCaching):
+        (JSC::Structure::allocateRareData):
+        * runtime/Structure.h:
+        * runtime/StructureTransitionTable.h:
+        (JSC::toAttributes):
+        (JSC::changesIndexingType):
+        (JSC::newIndexingType):
+        (JSC::preventsExtensions):
+        (JSC::setsDontDeleteOnAllProperties):
+        (JSC::setsReadOnlyOnAllProperties):
+
+2016-07-17  Filip Pizlo  <fpizlo@apple.com>
+
         RegisterSet should use a Bitmap instead of a BitVector so that it never allocates memory and is trivial to copy
         https://bugs.webkit.org/show_bug.cgi?id=159863
 
