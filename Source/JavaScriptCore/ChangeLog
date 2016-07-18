@@ -1,3 +1,19 @@
+2016-07-18  Keith Miller  <keith_miller@apple.com>
+
+        Fix bad assertions in genericTypedArrayViewPrivateFuncSubarrayCreate
+        https://bugs.webkit.org/show_bug.cgi?id=159882
+        <rdar://problem/27327111>
+
+        Reviewed by Mark Lam.
+
+        According the spec toInteger can return values we don't consider ints.
+        Such as, -0 and +/-Infinity. This broke some assertions in
+        genericTypedArrayViewPrivateFuncSubarrayCreate.
+
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * tests/stress/typedarray-subarray.js:
+
 2016-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CSE is broken for MultiGetByOffset

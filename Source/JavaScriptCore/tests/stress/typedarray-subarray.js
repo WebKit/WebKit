@@ -58,4 +58,21 @@ function testSpeciesRemoveConstructor(array, constructor) {
 
 shouldBeTrue("forEachTypedArray(subclasses, testSpeciesRemoveConstructor)");
 
+debug("5.0 Coercion First Argument");
+shouldBeTrue("testPrototypeFunction('subarray', '(true)', [1, 2, 3, 4], [2, 3, 4])");
+shouldBeTrue("testPrototypeFunction('subarray', '(\"abc\")', [1, 2, 3, 4], [1, 2, 3, 4])");
+shouldBeTrue("testPrototypeFunction('subarray', '({ valueOf() { return Infinity; } })', [1, 2, 3, 4], [])");
+shouldBeTrue("testPrototypeFunction('subarray', '({ valueOf() { return -0; } })', [1, 2, 3, 4], [1, 2, 3, 4])");
+shouldBeTrue("testPrototypeFunction('subarray', '(null)', [1, 2, 3, 4], [1, 2, 3, 4])");
+shouldBeTrue("testPrototypeFunction('subarray', '(undefined)', [1, 2, 3, 4], [1, 2, 3, 4])");
+
+debug("5.1 Coercion Second Argument");
+shouldBeTrue("testPrototypeFunction('subarray', '(0, true)', [1, 2, 3, 4], [1])");
+shouldBeTrue("testPrototypeFunction('subarray', '(0, \"abc\")', [1, 2, 3, 4], [])");
+shouldBeTrue("testPrototypeFunction('subarray', '(0, \"1\")', [1, 2, 3, 4], [1])");
+shouldBeTrue("testPrototypeFunction('subarray', '(0, undefined)', [1, 2, 3, 4], [1, 2, 3, 4])");
+shouldBeTrue("testPrototypeFunction('subarray', '(0, { valueOf() { return Infinity; } })', [1, 2, 3, 4], [1, 2, 3, 4])");
+shouldBeTrue("testPrototypeFunction('subarray', '(0, { valueOf() { return -0; } })', [1, 2, 3, 4], [])");
+shouldBeTrue("testPrototypeFunction('subarray', '(0, null)', [1, 2, 3, 4], [])");
+
 finishJSTest();
