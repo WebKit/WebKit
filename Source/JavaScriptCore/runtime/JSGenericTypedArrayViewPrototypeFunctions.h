@@ -496,8 +496,11 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(Exec
     // Get the length here; later assert that the length didn't change.
     unsigned thisLength = thisObject->length();
 
-    ASSERT(exec->argument(0).isAnyInt());
-    ASSERT(exec->argument(1).isUndefined() || exec->argument(1).isAnyInt());
+    // I would assert that the arguments are integers here but that's not true since
+    // https://tc39.github.io/ecma262/#sec-tointeger allows the result of the operation
+    // to be +/- Infinity and -0.
+    ASSERT(exec->argument(0).isNumber());
+    ASSERT(exec->argument(1).isUndefined() || exec->argument(1).isNumber());
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, thisLength);
     ASSERT(!vm.exception());
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, thisLength, thisLength);
