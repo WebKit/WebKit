@@ -34,10 +34,9 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "DOMWindow.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-    
+
 DOMWindowSpeechSynthesis::DOMWindowSpeechSynthesis(DOMWindow* window)
     : DOMWindowProperty(window->frame())
 {
@@ -76,7 +75,7 @@ SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis()
         m_speechSynthesis = SpeechSynthesis::create();
     return m_speechSynthesis.get();
 }
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

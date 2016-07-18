@@ -167,7 +167,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     if (!m_utterance)
         return;
 
-    m_synthesizerObject->client()->didStartSpeaking(m_utterance);
+    m_synthesizerObject->client()->didStartSpeaking(*m_utterance);
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance *)utterance
@@ -181,7 +181,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> platformUtterance = m_utterance;
     m_utterance = nullptr;
 
-    m_synthesizerObject->client()->didFinishSpeaking(platformUtterance);
+    m_synthesizerObject->client()->didFinishSpeaking(*platformUtterance);
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didPauseSpeechUtterance:(AVSpeechUtterance *)utterance
@@ -191,7 +191,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     if (!m_utterance)
         return;
 
-    m_synthesizerObject->client()->didPauseSpeaking(m_utterance);
+    m_synthesizerObject->client()->didPauseSpeaking(*m_utterance);
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didContinueSpeechUtterance:(AVSpeechUtterance *)utterance
@@ -201,7 +201,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     if (!m_utterance)
         return;
 
-    m_synthesizerObject->client()->didResumeSpeaking(m_utterance);
+    m_synthesizerObject->client()->didResumeSpeaking(*m_utterance);
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didCancelSpeechUtterance:(AVSpeechUtterance *)utterance
@@ -215,7 +215,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> platformUtterance = m_utterance;
     m_utterance = nullptr;
 
-    m_synthesizerObject->client()->didFinishSpeaking(platformUtterance);
+    m_synthesizerObject->client()->didFinishSpeaking(*platformUtterance);
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer willSpeakRangeOfSpeechString:(NSRange)characterRange utterance:(AVSpeechUtterance *)utterance
@@ -227,7 +227,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
         return;
 
     // iOS only supports word boundaries.
-    m_synthesizerObject->client()->boundaryEventOccurred(m_utterance, WebCore::SpeechWordBoundary, characterRange.location);
+    m_synthesizerObject->client()->boundaryEventOccurred(*m_utterance, WebCore::SpeechWordBoundary, characterRange.location);
 }
 
 @end

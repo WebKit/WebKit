@@ -53,12 +53,12 @@ class PlatformSpeechSynthesisUtterance;
 
 class PlatformSpeechSynthesizerClient {
 public:
-    virtual void didStartSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) = 0;
-    virtual void didFinishSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) = 0;
-    virtual void didPauseSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) = 0;
-    virtual void didResumeSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) = 0;
-    virtual void speakingErrorOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>) = 0;
-    virtual void boundaryEventOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>, SpeechBoundary, unsigned charIndex) = 0;
+    virtual void didStartSpeaking(PlatformSpeechSynthesisUtterance&) = 0;
+    virtual void didFinishSpeaking(PlatformSpeechSynthesisUtterance&) = 0;
+    virtual void didPauseSpeaking(PlatformSpeechSynthesisUtterance&) = 0;
+    virtual void didResumeSpeaking(PlatformSpeechSynthesisUtterance&) = 0;
+    virtual void speakingErrorOccurred(PlatformSpeechSynthesisUtterance&) = 0;
+    virtual void boundaryEventOccurred(PlatformSpeechSynthesisUtterance&, SpeechBoundary, unsigned charIndex) = 0;
     virtual void voicesDidChange() = 0;
 protected:
     virtual ~PlatformSpeechSynthesizerClient() { }

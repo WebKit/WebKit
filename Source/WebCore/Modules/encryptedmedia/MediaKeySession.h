@@ -36,7 +36,6 @@
 #include "Timer.h"
 #include <runtime/Uint8Array.h>
 #include <wtf/Deque.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -71,7 +70,7 @@ public:
     using RefCounted<MediaKeySession>::ref;
     using RefCounted<MediaKeySession>::deref;
 
-    void enqueueEvent(PassRefPtr<Event>);
+    void enqueueEvent(RefPtr<Event>&&);
 
     EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }

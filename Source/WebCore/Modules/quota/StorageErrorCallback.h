@@ -49,7 +49,7 @@ public:
 
     class CallbackTask : public ScriptExecutionContext::Task {
     public:
-        CallbackTask(PassRefPtr<StorageErrorCallback>, ExceptionCode);
+        CallbackTask(StorageErrorCallback*, ExceptionCode);
 
     private:
         RefPtr<StorageErrorCallback> m_callback;

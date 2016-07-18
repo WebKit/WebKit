@@ -29,20 +29,19 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "Event.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-    
+
 class SpeechSynthesisEvent : public Event {
 public:
     static Ref<SpeechSynthesisEvent> create(const AtomicString& type, unsigned charIndex, float elapsedTime, const String& name);
-    
+
     unsigned long charIndex() const { return m_charIndex; }
     float elapsedTime() const { return m_elapsedTime; }
     const String& name() const { return m_name; }
-    
+
     virtual EventInterface eventInterface() const { return SpeechSynthesisEventInterfaceType; }
-    
+
 private:
     SpeechSynthesisEvent(const AtomicString& type, unsigned charIndex, float elapsedTime, const String& name);
 
@@ -50,7 +49,7 @@ private:
     float m_elapsedTime;
     String m_name;
 };
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

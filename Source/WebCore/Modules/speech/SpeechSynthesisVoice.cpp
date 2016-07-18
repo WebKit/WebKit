@@ -29,17 +29,17 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 namespace WebCore {
-    
-Ref<SpeechSynthesisVoice> SpeechSynthesisVoice::create(PassRefPtr<PlatformSpeechSynthesisVoice> voice)
+
+Ref<SpeechSynthesisVoice> SpeechSynthesisVoice::create(PlatformSpeechSynthesisVoice& voice)
 {
     return adoptRef(*new SpeechSynthesisVoice(voice));
 }
 
-SpeechSynthesisVoice::SpeechSynthesisVoice(PassRefPtr<PlatformSpeechSynthesisVoice> voice)
+SpeechSynthesisVoice::SpeechSynthesisVoice(PlatformSpeechSynthesisVoice& voice)
     : m_platformVoice(voice)
 {
 }
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

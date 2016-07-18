@@ -37,7 +37,6 @@
 #include "Document.h"
 #include "Frame.h"
 #include "StorageInfo.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

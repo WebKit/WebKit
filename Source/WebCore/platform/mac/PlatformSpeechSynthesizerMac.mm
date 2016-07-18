@@ -133,7 +133,7 @@
 
     m_utterance = utterance;
     [m_synthesizer startSpeakingString:utterance->text()];
-    m_synthesizerObject->client()->didStartSpeaking(utterance);
+    m_synthesizerObject->client()->didStartSpeaking(*m_utterance);
 }
 
 - (void)pause
@@ -142,7 +142,7 @@
         return;
 
     [m_synthesizer pauseSpeakingAtBoundary:NSSpeechImmediateBoundary];
-    m_synthesizerObject->client()->didPauseSpeaking(m_utterance);
+    m_synthesizerObject->client()->didPauseSpeaking(*m_utterance);
 }
 
 - (void)resume
@@ -151,7 +151,7 @@
         return;
 
     [m_synthesizer continueSpeaking];
-    m_synthesizerObject->client()->didResumeSpeaking(m_utterance);
+    m_synthesizerObject->client()->didResumeSpeaking(*m_utterance);
 }
 
 - (void)cancel
@@ -160,7 +160,7 @@
         return;
 
     [m_synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
-    m_synthesizerObject->client()->speakingErrorOccurred(m_utterance);
+    m_synthesizerObject->client()->speakingErrorOccurred(*m_utterance);
     m_utterance = 0;
 }
 
@@ -183,9 +183,9 @@
     m_utterance = 0;
 
     if (finishedSpeaking)
-        m_synthesizerObject->client()->didFinishSpeaking(utterance);
+        m_synthesizerObject->client()->didFinishSpeaking(*utterance);
     else
-        m_synthesizerObject->client()->speakingErrorOccurred(utterance);
+        m_synthesizerObject->client()->speakingErrorOccurred(*utterance);
 }
 
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender willSpeakWord:(NSRange)characterRange ofString:(NSString *)string
@@ -197,7 +197,7 @@
         return;
 
     // Mac platform only supports word boundaries.
-    m_synthesizerObject->client()->boundaryEventOccurred(m_utterance, WebCore::SpeechWordBoundary, characterRange.location);
+    m_synthesizerObject->client()->boundaryEventOccurred(*m_utterance, WebCore::SpeechWordBoundary, characterRange.location);
 }
 
 @end

@@ -177,20 +177,22 @@ void PlatformSpeechSynthesisProviderEfl::cancel()
 
 void PlatformSpeechSynthesisProviderEfl::fireSpeechEvent(SpeechEvent speechEvent)
 {
+    ASSERT(m_utterance);
+
     switch (speechEvent) {
     case SpeechStart:
-        m_platformSpeechSynthesizer->client()->didStartSpeaking(m_utterance);
+        m_platformSpeechSynthesizer->client()->didStartSpeaking(*m_utterance);
         break;
     case SpeechPause:
-        m_platformSpeechSynthesizer->client()->didPauseSpeaking(m_utterance);
+        m_platformSpeechSynthesizer->client()->didPauseSpeaking(*m_utterance);
         break;
     case SpeechResume:
-        m_platformSpeechSynthesizer->client()->didResumeSpeaking(m_utterance);
+        m_platformSpeechSynthesizer->client()->didResumeSpeaking(*m_utterance);
         break;
     case SpeechError:
         m_isEngineStarted = false;
     case SpeechCancel:
-        m_platformSpeechSynthesizer->client()->speakingErrorOccurred(m_utterance);
+        m_platformSpeechSynthesizer->client()->speakingErrorOccurred(*m_utterance);
         break;
     default:
         ASSERT_NOT_REACHED();

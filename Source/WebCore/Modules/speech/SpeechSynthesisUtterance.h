@@ -32,7 +32,6 @@
 #include "EventTarget.h"
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "SpeechSynthesisVoice.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,7 +39,7 @@ namespace WebCore {
 class SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ContextDestructionObserver, public EventTargetWithInlineData {
 public:
     static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&);
-    
+
     ~SpeechSynthesisUtterance();
 
     const String& text() const { return m_platformUtterance->text(); }
@@ -63,7 +62,7 @@ public:
 
     double startTime() const { return m_platformUtterance->startTime(); }
     void setStartTime(double startTime) { m_platformUtterance->setStartTime(startTime); }
-    
+
     using RefCounted<SpeechSynthesisUtterance>::ref;
     using RefCounted<SpeechSynthesisUtterance>::deref;
 
@@ -80,7 +79,7 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 };
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
