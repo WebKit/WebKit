@@ -27,7 +27,7 @@ function testAnimationRule(description, property, value, expectedTexts)
     shouldBe("cssRule.type", "1");
 
     declaration = cssRule.style;
-    shouldBe("declaration.length", "1");
+    shouldBe("declaration.length", "2"); // We set both the prefixed and unprefixed version.
     shouldBe("declaration.getPropertyValue('" + property + "')", "'" + value + "'");
     shouldBe("declaration.getPropertyValue('-webkit-" + property + "')", "'" + value + "'");
 

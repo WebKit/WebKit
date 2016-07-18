@@ -9,37 +9,37 @@ Valid spring tests
 
 Basic : spring(1 100 10 0)
 PASS cssRule.type is 1
-PASS declaration.length is 1
+PASS declaration.length is 2
 PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 100 10 0)'
 PASS propertyValue.cssText is 'spring(1 100 10 0)'
 
 Negative Velocity : spring(1 100 10 -10)
 PASS cssRule.type is 1
-PASS declaration.length is 1
+PASS declaration.length is 2
 PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 100 10 -10)'
 PASS propertyValue.cssText is 'spring(1 100 10 -10)'
 
 Positive Velocity : spring(1 100 10 10)
 PASS cssRule.type is 1
-PASS declaration.length is 1
+PASS declaration.length is 2
 PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 100 10 10)'
 PASS propertyValue.cssText is 'spring(1 100 10 10)'
 
 Zero Damping : spring(1 100 0 10)
 PASS cssRule.type is 1
-PASS declaration.length is 1
+PASS declaration.length is 2
 PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 100 0 10)'
 PASS propertyValue.cssText is 'spring(1 100 0 10)'
 
 Minimum Values : spring(1 1 0 -999999)
 PASS cssRule.type is 1
-PASS declaration.length is 1
+PASS declaration.length is 2
 PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 1 0 -999999)'
 PASS propertyValue.cssText is 'spring(1 1 0 -999999)'
 
 Floating Point Values : spring(1.5 2.3 3.7 -1.8)
 PASS cssRule.type is 1
-PASS declaration.length is 1
+PASS declaration.length is 2
 PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1.5 2.3 3.7 -1.8)'
 PASS propertyValue.cssText is 'spring(1.5 2.3 3.7 -1.8)'
 

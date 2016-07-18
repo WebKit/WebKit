@@ -207,9 +207,12 @@ public:
     // These do not. FIXME: This is too messy, we can do better.
     bool setProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
     bool setProperty(CSSPropertyID, CSSPropertyID identifier, bool important = false);
+    bool appendPrefixingVariantProperty(const CSSProperty&);
+    void setPrefixingVariantProperty(const CSSProperty&);
     bool setProperty(const CSSProperty&, CSSProperty* slot = nullptr);
 
     bool removeProperty(CSSPropertyID, String* returnText = nullptr);
+    void removePrefixedOrUnprefixedProperty(CSSPropertyID);
     void removeBlockProperties();
     bool removePropertiesInSet(const CSSPropertyID* set, unsigned length);
 

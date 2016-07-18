@@ -1,3 +1,26 @@
+2016-07-18  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r202950): Image zoom animations are broken at medium.com (159861)
+        https://bugs.webkit.org/show_bug.cgi?id=159906
+        <rdar://problem/27391725>
+
+        Reviewed by Simon Fraser.
+
+        The fix for webkit.org/b/157569 in r200769 broke AMP pages.
+        The followup fix for webkit.org/b/159450 in r202950 broke Medium pages.
+
+        Revert them both until we have better testing.
+
+        * animations/fill-mode-forwards-zero-duration.html:
+        * animations/play-state-start-paused.html:
+        * animations/script-tests/spring-parsing.js:
+        (testSpring):
+        * animations/spring-parsing-expected.txt:
+        * animations/unprefixed-properties-expected.txt:
+        * animations/unprefixed-properties.html:
+        * fast/css/prefixed-unprefixed-variant-style-declaration-expected.txt:
+        * fast/css/shorthand-omitted-initial-value-overrides-shorthand-expected.txt:
+
 2016-07-18  Andreas Kling  <akling@apple.com>
 
         There should be a way to simulate memory pressure in layout tests

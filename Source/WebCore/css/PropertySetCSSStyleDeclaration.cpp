@@ -172,7 +172,7 @@ RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValue(const Strin
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return nullptr;
-    return cloneAndCacheForCSSOM(getPropertyCSSValueInternal(propertyID).get());
+    return cloneAndCacheForCSSOM(m_propertySet->getPropertyCSSValue(propertyID).get());
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyValue(const String& propertyName)
@@ -183,7 +183,7 @@ String PropertySetCSSStyleDeclaration::getPropertyValue(const String& propertyNa
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
-    return getPropertyValueInternal(propertyID);
+    return m_propertySet->getPropertyValue(propertyID);
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propertyName)
@@ -265,28 +265,12 @@ String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName
 
 RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
 {
-    RefPtr<CSSValue> value = m_propertySet->getPropertyCSSValue(propertyID);
-    if (value)
-        return value;
-
-    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propertyID);
-    if (prefixingVariant != propertyID)
-        return m_propertySet->getPropertyCSSValue(prefixingVariant);
-
-    return nullptr;
+    return m_propertySet->getPropertyCSSValue(propertyID);
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
-{
-    String value = m_propertySet->getPropertyValue(propertyID);
-    if (!value.isEmpty())
-        return value;
-
-    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propertyID);
-    if (prefixingVariant != propertyID)
-        return m_propertySet->getPropertyValue(prefixingVariant);
-
-    return String();
+{ 
+    return m_propertySet->getPropertyValue(propertyID);
 }
 
 bool PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important, ExceptionCode& ec)
