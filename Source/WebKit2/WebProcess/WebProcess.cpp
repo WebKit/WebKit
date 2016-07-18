@@ -267,7 +267,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     ASSERT(m_pageMap.isEmpty());
 
 #if OS(LINUX)
-    WebCore::MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
+    if (parameters.memoryPressureMonitorHandle.fileDescriptor() != -1)
+        MemoryPressureHandler::singleton().setMemoryPressureMonitorHandle(parameters.memoryPressureMonitorHandle.releaseFileDescriptor());
+    MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 #endif
 
     platformInitializeWebProcess(WTFMove(parameters));

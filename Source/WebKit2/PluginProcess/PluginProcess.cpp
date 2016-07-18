@@ -71,13 +71,6 @@ void PluginProcess::initializeProcess(const ChildProcessInitializationParameters
 {
     m_pluginPath = parameters.extraInitializationData.get("plugin-path");
     platformInitializeProcess(parameters);
-
-    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler.setLowMemoryHandler([this] (Critical, Synchronous) {
-        if (shouldTerminate())
-            terminate();
-    });
-    memoryPressureHandler.install();
 }
 
 void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)
@@ -136,6 +129,17 @@ void PluginProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringRefere
 void PluginProcess::initializePluginProcess(PluginProcessCreationParameters&& parameters)
 {
     ASSERT(!m_pluginModule);
+
+    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+#if OS(LINUX)
+    if (parameters.memoryPressureMonitorHandle.fileDescriptor() != -1)
+        memoryPressureHandler.setMemoryPressureMonitorHandle(parameters.memoryPressureMonitorHandle.releaseFileDescriptor());
+#endif
+    memoryPressureHandler.setLowMemoryHandler([this] (Critical, Synchronous) {
+        if (shouldTerminate())
+            terminate();
+    });
+    memoryPressureHandler.install();
 
     m_supportsAsynchronousPluginInitialization = parameters.supportsAsynchronousPluginInitialization;
     setMinimumLifetime(parameters.minimumLifetime);

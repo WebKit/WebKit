@@ -1,3 +1,68 @@
+2016-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        MemoryPressureHandler doesn't work if cgroups aren't present in Linux
+        https://bugs.webkit.org/show_bug.cgi?id=155255
+
+        Reviewed by Sergio Villar Senin.
+
+        There's no way to get notifications about memory pressure in Linux without using cgroups that doesn't require a
+        manual polling. We can get that information from /proc/meminfo, but that's not pollable so it requires to
+        manually check its contents in a loop sleeping for a while between checks. This means we would be waking up the
+        process on every poll iteration, most of the times for nothing. That's specially problematic on devices running
+        on battery. And taking into account that there's a memory pressure handler in every secondary process (Web,
+        Network and Plugin), we would be waking up all those process all the time. However, not having a memory pressure
+        handler is even more problematic than the manual polling.
+        This patch adds a class MemoryPressureMonitor to the manual polling of /proc/meminfo, but runs in the UI
+        process, to avoid the weakups in all other secondary processes, and uses an eventFD to notify all other
+        processes. It's only used in case cgroups is not available. The eventFD descriptor is sent to all other
+        processes at startup, and passed to the MemoryPressureHandler before install() is called for the first
+        time. To minimize the wakeups even in the UI process, the poll interval is calculated from 1 to 5 seconds
+        depending on the current memory used, so in case of low memory level we sleep for a longer time.
+        It's also important to make the memory calculations as accurate as possible to avoid cleaning resources in the
+        secondary processes unnecessarily.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess): Pass the memory pressure monitor file descriptor to the MemoryPressureHandler.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode): Encode memory pressure monitor handle.
+        (WebKit::NetworkProcessCreationParameters::decode): Decode memory pressure monitor handle.
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * PlatformEfl.cmake: Add new file to compilation, and update include dirs.
+        * PlatformGTK.cmake: Ditto.
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initializePluginProcess): Pass the memory pressure monitor file descriptor to the MemoryPressureHandler.
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode): Encode memory pressure monitor handle.
+        (WebKit::PluginProcessCreationParameters::decode): Decode memory pressure monitor handle.
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode memory pressure monitor handle.
+        (WebKit::WebProcessCreationParameters::decode): Decode memory pressure monitor handle.
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching): Create the memory pressure monitor handle for the plugin
+        process if needed.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess): Create the memory pressure monitor handle for the network
+        process if needed.
+        (WebKit::WebProcessPool::createNewWebProcess): Create the memory pressure monitor handle for the web process if
+        needed.
+        * UIProcess/linux/MemoryPressureMonitor.cpp: Added.
+        (WebKit::lowWatermarkPages):
+        (WebKit::systemPageSize):
+        (WebKit::calculateMemoryAvailable):
+        (WebKit::systemMemoryUsedAsPercentage):
+        (WebKit::pollIntervalForUsedMemoryPercentage):
+        (WebKit::isSystemdMemoryPressureMonitorAvailable):
+        (WebKit::MemoryPressureMonitor::isEnabled):
+        (WebKit::MemoryPressureMonitor::singleton):
+        (WebKit::MemoryPressureMonitor::MemoryPressureMonitor):
+        (WebKit::MemoryPressureMonitor::createHandle):
+        * UIProcess/linux/MemoryPressureMonitor.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Pass the memory pressure monitor file descriptor to the MemoryPressureHandler.
+
 2016-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r202855): [GTK] ASSERTION FAILED: m_webPage.bounds().contains(bounds)

@@ -51,6 +51,9 @@ void PluginProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) cons
     IPC::encode(encoder, networkATSContext.get());
 #endif
 #endif
+#if OS(LINUX)
+    encoder << memoryPressureMonitorHandle;
+#endif
 }
 
 bool PluginProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, PluginProcessCreationParameters& result)
@@ -70,6 +73,10 @@ bool PluginProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Plug
     if (!IPC::decode(decoder, result.networkATSContext))
         return false;
 #endif
+#endif
+#if OS(LINUX)
+    if (!decoder.decode(result.memoryPressureMonitorHandle))
+        return false;
 #endif
 
     return true;

@@ -28,6 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#include "Attachment.h"
 #include "PluginProcessAttributes.h"
 
 #if PLATFORM(COCOA)
@@ -58,6 +59,9 @@ struct PluginProcessCreationParameters {
 #if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     RetainPtr<CFDataRef> networkATSContext;
 #endif
+#endif
+#if OS(LINUX)
+    IPC::Attachment memoryPressureMonitorHandle;
 #endif
 };
 

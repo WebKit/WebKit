@@ -193,7 +193,7 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
     WTF::releaseFastMallocFreeMemory();
 }
 
-void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
+void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)
 {
     platformInitializeNetworkProcess(parameters);
 
@@ -202,6 +202,10 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
     if (!m_suppressMemoryPressureHandler) {
         auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+#if OS(LINUX)
+        if (parameters.memoryPressureMonitorHandle.fileDescriptor() != -1)
+            memoryPressureHandler.setMemoryPressureMonitorHandle(parameters.memoryPressureMonitorHandle.releaseFileDescriptor());
+#endif
         memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous) {
             lowMemoryHandler(critical);
         });

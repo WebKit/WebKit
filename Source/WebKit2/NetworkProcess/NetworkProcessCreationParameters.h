@@ -26,6 +26,7 @@
 #ifndef NetworkProcessCreationParameters_h
 #define NetworkProcessCreationParameters_h
 
+#include "Attachment.h"
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include <wtf/Vector.h>
@@ -94,6 +95,10 @@ struct NetworkProcessCreationParameters {
     HTTPCookieAcceptPolicy cookieAcceptPolicy;
     bool ignoreTLSErrors;
     Vector<String> languages;
+#endif
+
+#if OS(LINUX)
+    IPC::Attachment memoryPressureMonitorHandle;
 #endif
 };
 

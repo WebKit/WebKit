@@ -93,6 +93,10 @@
 #include "WebSoupCustomProtocolRequestManager.h"
 #endif
 
+#if OS(LINUX)
+#include "MemoryPressureMonitor.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -370,6 +374,11 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
 #endif
 
+#if OS(LINUX)
+    if (MemoryPressureMonitor::isEnabled())
+        parameters.memoryPressureMonitorHandle = MemoryPressureMonitor::singleton().createHandle();
+#endif
+
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
     // Add any platform specific parameters
@@ -626,6 +635,8 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
 
 #if OS(LINUX)
     parameters.shouldEnableMemoryPressureReliefLogging = true;
+    if (MemoryPressureMonitor::isEnabled())
+        parameters.memoryPressureMonitorHandle = MemoryPressureMonitor::singleton().createHandle();
 #endif
 
     parameters.resourceLoadStatisticsEnabled = resourceLoadStatisticsEnabled();

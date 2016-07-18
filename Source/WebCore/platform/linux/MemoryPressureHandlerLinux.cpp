@@ -193,29 +193,30 @@ inline void MemoryPressureHandler::logErrorAndCloseFDs(const char* log)
     }
 }
 
-void MemoryPressureHandler::install()
+bool MemoryPressureHandler::tryEnsureEventFD()
 {
-    if (m_installed || m_holdOffTimer.isActive())
-        return;
+    if (m_eventFD)
+        return true;
 
+    // Try to use cgroups instead.
     int fd = eventfd(0, EFD_CLOEXEC);
     if (fd == -1) {
         LOG(MemoryPressure, "eventfd() failed: %m");
-        return;
+        return false;
     }
     m_eventFD = fd;
 
     fd = open(s_cgroupMemoryPressureLevel, O_CLOEXEC | O_RDONLY);
     if (fd == -1) {
         logErrorAndCloseFDs("Failed to open memory.pressure_level");
-        return;
+        return false;
     }
     m_pressureLevelFD = fd;
 
     fd = open(s_cgroupEventControl, O_CLOEXEC | O_WRONLY);
     if (fd == -1) {
         logErrorAndCloseFDs("Failed to open cgroup.event_control");
-        return;
+        return false;
     }
 
     char line[128] = {0, };
@@ -223,9 +224,20 @@ void MemoryPressureHandler::install()
         || write(fd, line, strlen(line) + 1) < 0) {
         logErrorAndCloseFDs("Failed to write cgroup.event_control");
         close(fd);
-        return;
+        return false;
     }
     close(fd);
+
+    return true;
+}
+
+void MemoryPressureHandler::install()
+{
+    if (m_installed || m_holdOffTimer.isActive())
+        return;
+
+    if (!tryEnsureEventFD())
+        return;
 
     m_eventFDPoller = std::make_unique<EventFDPoller>(m_eventFD.value(), [this] {
         // FIXME: Current memcg does not provide any way for users to know how serious the memory pressure is.
@@ -257,7 +269,17 @@ void MemoryPressureHandler::uninstall()
     m_holdOffTimer.stop();
     m_eventFDPoller = nullptr;
 
-    logErrorAndCloseFDs(nullptr);
+    if (m_pressureLevelFD) {
+        close(m_pressureLevelFD.value());
+        m_pressureLevelFD = Nullopt;
+
+        // Only close the eventFD used for cgroups.
+        if (m_eventFD) {
+            close(m_eventFD.value());
+            m_eventFD = Nullopt;
+        }
+    }
+
     m_installed = false;
 }
 
@@ -307,6 +329,12 @@ size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
     fclose(file);
 
     return vmSize;
+}
+
+void MemoryPressureHandler::setMemoryPressureMonitorHandle(int fd)
+{
+    ASSERT(!m_eventFD);
+    m_eventFD = fd;
 }
 
 } // namespace WebCore

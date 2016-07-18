@@ -82,6 +82,9 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << ignoreTLSErrors;
     encoder << languages;
 #endif
+#if OS(LINUX)
+    encoder << memoryPressureMonitorHandle;
+#endif
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, NetworkProcessCreationParameters& result)
@@ -155,6 +158,11 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decode(result.ignoreTLSErrors))
         return false;
     if (!decoder.decode(result.languages))
+        return false;
+#endif
+
+#if OS(LINUX)
+    if (!decoder.decode(result.memoryPressureMonitorHandle))
         return false;
 #endif
 

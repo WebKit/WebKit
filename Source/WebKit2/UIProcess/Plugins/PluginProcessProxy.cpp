@@ -38,6 +38,10 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/RunLoop.h>
 
+#if OS(LINUX)
+#include "MemoryPressureMonitor.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -229,6 +233,12 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
         parameters.minimumLifetime = minimumLifetime;
         parameters.terminationTimeout = shutdownTimeout;
     }
+
+#if OS(LINUX)
+    if (MemoryPressureMonitor::isEnabled())
+        parameters.memoryPressureMonitorHandle = MemoryPressureMonitor::singleton().createHandle();
+#endif
+
     platformInitializePluginProcess(parameters);
 
     // Initialize the plug-in host process.

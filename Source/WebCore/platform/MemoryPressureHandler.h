@@ -84,6 +84,8 @@ public:
     WEBCORE_EXPORT void clearMemoryPressure();
     WEBCORE_EXPORT bool shouldWaitForMemoryClearMessage();
     void respondToMemoryPressureIfNeeded();
+#elif OS(LINUX)
+    void setMemoryPressureMonitorHandle(int fd);
 #endif
 
     class ReliefLogger {
@@ -179,6 +181,7 @@ private:
     RunLoop::Timer<MemoryPressureHandler> m_holdOffTimer;
     void holdOffTimerFired();
     void logErrorAndCloseFDs(const char* error);
+    bool tryEnsureEventFD();
 #endif
 };
 

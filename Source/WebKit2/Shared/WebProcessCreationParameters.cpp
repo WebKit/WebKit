@@ -141,6 +141,10 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     IPC::encode(encoder, networkATSContext.get());
 #endif
+
+#if OS(LINUX)
+    encoder << memoryPressureMonitorHandle;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProcessCreationParameters& parameters)
@@ -293,6 +297,11 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
 
 #if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     if (!IPC::decode(decoder, parameters.networkATSContext))
+        return false;
+#endif
+
+#if OS(LINUX)
+    if (!decoder.decode(parameters.memoryPressureMonitorHandle))
         return false;
 #endif
 
