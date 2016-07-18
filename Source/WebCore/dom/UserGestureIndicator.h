@@ -55,7 +55,7 @@ public:
     bool processingUserGesture() const { return m_state == ProcessingUserGesture; }
     bool processingUserGestureForMedia() const { return m_state == ProcessingUserGesture || m_state == ProcessingPotentialUserGesture; }
 
-    void addDestructionObserver(Function<void (UserGestureToken&)>&& observer)
+    void addDestructionObserver(WTF::Function<void (UserGestureToken&)>&& observer)
     {
         m_destructionObservers.append(WTFMove(observer));
     }
@@ -67,7 +67,7 @@ private:
     }
 
     ProcessingUserGestureState m_state = NotProcessingUserGesture;
-    Vector<Function<void (UserGestureToken&)>> m_destructionObservers;
+    Vector<WTF::Function<void (UserGestureToken&)>> m_destructionObservers;
 };
 
 class UserGestureIndicator {
