@@ -1467,6 +1467,7 @@ struct Node {
         case NewGeneratorFunction:
         case CreateActivation:
         case MaterializeCreateActivation:
+        case CompareEqPtr:
             return true;
         default:
             return false;

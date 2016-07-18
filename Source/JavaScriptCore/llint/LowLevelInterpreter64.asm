@@ -1767,9 +1767,10 @@ _llint_op_jneq_ptr:
     loadp CodeBlock::m_globalObject[t2], t2
     loadp JSGlobalObject::m_specialPointers[t2, t1, 8], t1
     bpneq t1, [cfr, t0, 8], .opJneqPtrTarget
-    dispatch(4)
+    dispatch(5)
 
 .opJneqPtrTarget:
+    storei 1, 32[PB, PC, 8]
     dispatchIntIndirect(3)
 
 

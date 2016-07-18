@@ -781,6 +781,7 @@ private:
         case CompareGreaterEq:
         case CompareEq:
         case CompareStrictEq:
+        case CompareEqPtr:
         case OverridesHasInstance:
         case InstanceOf:
         case InstanceOfCustom:

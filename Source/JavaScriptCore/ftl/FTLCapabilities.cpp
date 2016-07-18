@@ -244,6 +244,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ResolveScope:
     case GetDynamicVar:
     case PutDynamicVar:
+    case CompareEqPtr:
         // These are OK.
         break;
 

@@ -1,5 +1,75 @@
 2016-07-12  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should really support jneq_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=159700
+
+        Reviewed by Keith Miller.
+        
+        Prior to this change, DFG statically speculated that jneq_ptr would always fall through. This
+        meant that programs that called o.apply() or o.call() where apply or call weren't the
+        expected ones (i.e. the function.prototype.apply/call) would rage-recompile forever.
+        
+        This adds profiling to jneq_ptr. We now know if it always falls through or sometimes doesn't.
+        If it sometimes doesn't, we now emit an actual control flow diamond. I decided to add a new
+        NodeType for "equal pointer", since none of the existing ones really captured that. For
+        example, there was no way to express "equal pointer" for strings or symbols. We don't use it
+        for that right now, but we might, and if we did, then it would be hugely surprising that the
+        DFG interpreted this as value equality. So, the DFG now has CompareEqPtr, which means exactly
+        what jneq_ptr means by "equal pointer".
+        
+        This is an enormous speed-up on microbenchmarks. I would assume that it's a speed-up on some
+        real things, too, but I don't know that for a fact.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionCall):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionApply):
+        (JSC::BytecodeGenerator::emitExpectedFunctionSnippet):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCellOperand):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRecordRegExpCachedResult):
+        (JSC::DFG::SpeculativeJIT::compileCompareEqPtr):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareEqPtr):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareLess):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEqConstant): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_eq):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_eq):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
+2016-07-12  Filip Pizlo  <fpizlo@apple.com>
+
         OSR entry into DFG has problems with lexical scoping
         https://bugs.webkit.org/show_bug.cgi?id=159687
 

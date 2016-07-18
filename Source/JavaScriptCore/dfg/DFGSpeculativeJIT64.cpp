@@ -2522,6 +2522,10 @@ void SpeculativeJIT::compile(Node* node)
         if (compileStrictEq(node))
             return;
         break;
+        
+    case CompareEqPtr:
+        compileCompareEqPtr(node);
+        break;
 
     case StringCharCodeAt: {
         compileGetCharCodeAt(node);

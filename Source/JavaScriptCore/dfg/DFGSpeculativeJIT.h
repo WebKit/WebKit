@@ -2559,6 +2559,7 @@ public:
     void compileResolveScope(Node*);
     void compileGetDynamicVar(Node*);
     void compilePutDynamicVar(Node*);
+    void compileCompareEqPtr(Node*);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

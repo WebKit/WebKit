@@ -620,7 +620,7 @@ private:
             }
             break;
         }
-
+            
         case StringFromCharCode:
             if (node->child1()->shouldSpeculateInt32())
                 fixEdge<Int32Use>(node->child1());
@@ -1589,6 +1589,7 @@ private:
         case PutByIdWithThis:
         case PutByValWithThis:
         case GetByValWithThis:
+        case CompareEqPtr:
             break;
             
             break;

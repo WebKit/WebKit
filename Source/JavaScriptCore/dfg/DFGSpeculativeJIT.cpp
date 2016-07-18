@@ -8256,6 +8256,19 @@ void SpeculativeJIT::compileRecordRegExpCachedResult(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::compileCompareEqPtr(Node* node)
+{
+    JSValueOperand operand(this, node->child1());
+    GPRTemporary result(this);
+    JSValueRegs regs = operand.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+    m_jit.boxBooleanPayload(false, resultGPR);
+    JITCompiler::JumpList notEqual = m_jit.branchIfNotEqual(regs, node->cellOperand()->value());
+    m_jit.boxBooleanPayload(true, resultGPR);
+    notEqual.link(&m_jit);
+    blessedBooleanResult(resultGPR, node);
+}
+
 } } // namespace JSC::DFG
 
 #endif

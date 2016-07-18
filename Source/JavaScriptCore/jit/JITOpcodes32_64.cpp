@@ -589,8 +589,12 @@ void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
     unsigned target = currentInstruction[3].u.operand;
 
     emitLoad(src, regT1, regT0);
-    addJump(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)), target);
-    addJump(branchPtr(NotEqual, regT0, TrustedImmPtr(actualPointerFor(m_codeBlock, ptr))), target);
+    CCallHelpers::Jump notCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
+    CCallHelpers::Jump equal = branchPtr(Equal, regT0, TrustedImmPtr(actualPointerFor(m_codeBlock, ptr)));
+    notCell.link(this);
+    store32(TrustedImm32(1), &currentInstruction[4].u.operand);
+    addJump(jump(), target);
+    equal.link(this);
 }
 
 void JIT::emit_op_eq(Instruction* currentInstruction)

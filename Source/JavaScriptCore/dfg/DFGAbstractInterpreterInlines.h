@@ -1522,6 +1522,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case CompareEqPtr: {
+        Node* childNode = node->child1().node();
+        JSValue childValue = forNode(childNode).value();
+        if (childValue) {
+            setConstant(node, jsBoolean(childValue.isCell() && childValue.asCell() == node->cellOperand()->cell()));
+            break;
+        }
+        
+        forNode(node).setType(SpecBoolean);
+        break;
+    }
+        
     case StringCharCodeAt:
         forNode(node).setType(SpecInt32Only);
         break;

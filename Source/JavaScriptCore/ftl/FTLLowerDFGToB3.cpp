@@ -819,6 +819,9 @@ private:
         case CompareGreaterEq:
             compileCompareGreaterEq();
             break;
+        case CompareEqPtr:
+            compileCompareEqPtr();
+            break;
         case LogicalNot:
             compileLogicalNot();
             break;
@@ -4984,14 +4987,12 @@ private:
         DFG_CRASH(m_graph, m_node, "Bad use kinds");
     }
     
-    void compileCompareStrictEqConstant()
+    void compileCompareEqPtr()
     {
-        JSValue constant = m_node->child2()->asJSValue();
-
         setBoolean(
             m_out.equal(
                 lowJSValue(m_node->child1()),
-                m_out.constInt64(JSValue::encode(constant))));
+                weakPointer(m_node->cellOperand()->cell())));
     }
     
     void compileCompareLess()

@@ -4564,17 +4564,23 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_construct_varargs);
         }
             
-        case op_jneq_ptr:
-            // Statically speculate for now. It makes sense to let speculate-only jneq_ptr
-            // support simmer for a while before making it more general, since it's
-            // already gnarly enough as it is.
-            ASSERT(pointerIsFunction(currentInstruction[2].u.specialPointer));
-            addToGraph(
-                CheckCell,
-                OpInfo(m_graph.freeze(static_cast<JSCell*>(actualPointerFor(
-                    m_inlineStackTop->m_codeBlock, currentInstruction[2].u.specialPointer)))),
-                get(VirtualRegister(currentInstruction[1].u.operand)));
+        case op_jneq_ptr: {
+            Special::Pointer specialPointer = currentInstruction[2].u.specialPointer;
+            ASSERT(pointerIsCell(specialPointer));
+            JSCell* actualPointer = static_cast<JSCell*>(
+                actualPointerFor(m_inlineStackTop->m_codeBlock, specialPointer));
+            FrozenValue* frozenPointer = m_graph.freeze(actualPointer);
+            int operand = currentInstruction[1].u.operand;
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            Node* child = get(VirtualRegister(operand));
+            if (currentInstruction[4].u.operand) {
+                Node* condition = addToGraph(CompareEqPtr, OpInfo(frozenPointer), child);
+                addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jneq_ptr), m_currentIndex + relativeOffset)), condition);
+                LAST_OPCODE(op_jneq_ptr);
+            }
+            addToGraph(CheckCell, OpInfo(frozenPointer), child);
             NEXT_OPCODE(op_jneq_ptr);
+        }
 
         case op_resolve_scope: {
             int dst = currentInstruction[1].u.operand;

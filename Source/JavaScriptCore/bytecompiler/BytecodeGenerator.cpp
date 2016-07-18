@@ -1448,6 +1448,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond,
     instructions().append(cond->index());
     instructions().append(Special::CallFunction);
     instructions().append(target->bind(begin, instructions().size()));
+    instructions().append(0);
     return target;
 }
 
@@ -1459,6 +1460,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond
     instructions().append(cond->index());
     instructions().append(Special::ApplyFunction);
     instructions().append(target->bind(begin, instructions().size()));
+    instructions().append(0);
     return target;
 }
 
@@ -3059,6 +3061,7 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
         instructions().append(func->index());
         instructions().append(Special::ObjectConstructor);
         instructions().append(realCall->bind(begin, instructions().size()));
+        instructions().append(0);
         
         if (dst != ignoredResult())
             emitNewObject(dst);
@@ -3079,6 +3082,7 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
         instructions().append(func->index());
         instructions().append(Special::ArrayConstructor);
         instructions().append(realCall->bind(begin, instructions().size()));
+        instructions().append(0);
         
         if (dst != ignoredResult()) {
             if (callArguments.argumentCountIncludingThis() == 2)

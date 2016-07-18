@@ -266,6 +266,10 @@ public:
                     VALIDATE((node), !!node->child1());
                     VALIDATE((node), !!node->child2());
                     break;
+                case CompareEqPtr:
+                    VALIDATE((node), !!node->child1());
+                    VALIDATE((node), !!node->cellOperand()->value() && node->cellOperand()->value().isCell());
+                    break;
                 case CheckStructure:
                 case StringFromCharCode:
                     VALIDATE((node), !!node->child1());

@@ -1808,9 +1808,10 @@ _llint_op_jneq_ptr:
     loadp JSGlobalObject::m_specialPointers[t2, t1, 4], t1
     bpeq PayloadOffset[cfr, t0, 8], t1, .opJneqPtrFallThrough
 .opJneqPtrBranch:
+    storei 1, 16[PC]
     dispatchBranch(12[PC])
 .opJneqPtrFallThrough:
-    dispatch(4)
+    dispatch(5)
 
 
 macro compare(integerCompare, doubleCompare, slowPath)

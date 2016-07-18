@@ -1311,6 +1311,7 @@ void CodeBlock::dumpBytecode(
             int offset = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "jneq_ptr");
             out.printf("%s, %d (%p), %d(->%d)", registerName(r0).data(), pointer, m_globalObject->actualPointerFor(pointer), offset, location + offset);
+            ++it;
             break;
         }
         case op_jless: {

@@ -421,7 +421,10 @@ void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
     unsigned target = currentInstruction[3].u.operand;
     
     emitGetVirtualRegister(src, regT0);
-    addJump(branchPtr(NotEqual, regT0, TrustedImmPtr(actualPointerFor(m_codeBlock, ptr))), target);
+    CCallHelpers::Jump equal = branchPtr(Equal, regT0, TrustedImmPtr(actualPointerFor(m_codeBlock, ptr)));
+    store32(TrustedImm32(1), &currentInstruction[4].u.operand);
+    addJump(jump(), target);
+    equal.link(this);
 }
 
 void JIT::emit_op_eq(Instruction* currentInstruction)

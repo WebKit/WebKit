@@ -1,3 +1,23 @@
+2016-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should really support jneq_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=159700
+
+        Reviewed by Keith Miller.
+        
+        These tests now run super fast.
+
+        * js/regress/apply-not-apply-expected.txt: Added.
+        * js/regress/apply-not-apply.html: Added.
+        * js/regress/call-or-not-call-expected.txt: Added.
+        * js/regress/call-or-not-call.html: Added.
+        * js/regress/script-tests/apply-not-apply.js: Added.
+        (let.o.apply):
+        (foo):
+        * js/regress/script-tests/call-or-not-call.js: Added.
+        (let.o.call):
+        (foo):
+
 2016-07-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-002.html as flaky on ios-sim

@@ -139,6 +139,7 @@ bool doesGC(Graph& graph, Node* node)
     case CompareGreaterEq:
     case CompareEq:
     case CompareStrictEq:
+    case CompareEqPtr:
     case Call:
     case TailCallInlinedCaller:
     case Construct:
