@@ -1,3 +1,19 @@
+2016-07-19  Jon Davis  <jond@apple.com>
+
+        Adjust margins for first-line floating elements and add preset floating video sizing
+        https://bugs.webkit.org/show_bug.cgi?id=159898
+
+        Reviewed by Benjamin Poulain.
+
+        * wp-content/themes/webkit/style.css:
+        (article video.alignright):
+        (article .alignright:first-child):
+        (@media only screen and (max-width: 690px)):
+            (article .alignright:first-child):
+        (@media only screen and (max-width: 415px)):
+            (article video.alignright):
+            (article .alignright:first-child):
+
 2016-07-17  Filip Pizlo  <fpizlo@apple.com>
 
         Implement table-based switches in B3/Air

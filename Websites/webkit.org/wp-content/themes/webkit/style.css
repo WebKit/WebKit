@@ -1188,6 +1188,17 @@ figure.widescreen video {
     max-width: 66%;
 }
 
+article video.alignleft,
+article video.alignright {
+    max-width: 50%;
+}
+
+article .alignleft:first-child,
+article .alignright:first-child {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 article figcaption {
     text-align: left;
     margin-top: 1.5rem;
@@ -1988,6 +1999,11 @@ header .menu-item { /* add bottom dimension to main menu items */
         border-right: none;
     }
 
+    article video.alignleft,
+    article video.alignright {
+        min-width: 30rem;
+    }
+
     .scrollable .scrollable-padding {
         display: inline-block;
         padding: 0 3rem;
@@ -2093,6 +2109,19 @@ header .menu-item { /* add bottom dimension to main menu items */
     #post-4132 pre:nth-child(-n+8) {
         width: 100vw;
     }
+
+    article video.alignleft,
+    article video.alignright {
+        max-width: 100%;
+        min-width: none;
+        width: 100%;
+    }
+
+    article .alignleft:first-child,
+    article .alignright:first-child {
+        margin-bottom: 3rem;
+    }
+
 }
 
 @media only screen and (max-width: 415px) {
