@@ -59,9 +59,9 @@ public:
     virtual void enableInput(const String& inputDeviceId) = 0;
 
     virtual void startRendering() = 0;
-    virtual void resume(Function<void ()>&&) { }
-    virtual void suspend(Function<void ()>&&) { }
-    virtual void close(Function<void ()>&&) { }
+    virtual void resume(WTF::Function<void ()>&&) { }
+    virtual void suspend(WTF::Function<void ()>&&) { }
+    virtual void close(WTF::Function<void ()>&&) { }
 
     virtual bool isPlaying() { return false; }
     void isPlayingDidChange() override;
