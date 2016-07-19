@@ -1,3 +1,25 @@
+2016-07-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add regression test for r203392
+        https://bugs.webkit.org/show_bug.cgi?id=159949
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ApplicationCache.db: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ApplicationCache.db-shm: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ApplicationCache.db-wal: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageClear.mm:
+        (TEST):
+        (fileSize):
+        (swizzledBundleIdentifierMobileSafari):
+        (swizzledBundleIdentifierWebBookmarksD):
+        (defaultApplicationCacheDirectory):
+        * TestWebKitAPI/cocoa/InstanceMethodSwizzler.h: Copied from TestWebKitAPI/mac/InstanceMethodSwizzler.h.
+        * TestWebKitAPI/cocoa/InstanceMethodSwizzler.mm: Copied from TestWebKitAPI/mac/InstanceMethodSwizzler.mm.
+        * TestWebKitAPI/mac/InstanceMethodSwizzler.h: Removed.
+        * TestWebKitAPI/mac/InstanceMethodSwizzler.mm: Removed.
+
 2016-07-19  Keith Miller  <keith_miller@apple.com>
 
         Test262 should have a file with the revision and url

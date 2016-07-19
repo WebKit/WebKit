@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -89,4 +90,84 @@ TEST(WKWebView, LocalStorageClear)
     TestWebKitAPI::Util::run(&readyToContinue);
 }
 
+static long long fileSize(NSURL* url)
+{
+    NSError *error = nil;
+    NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:url.path error:&error];
+    if (error)
+        return -1;
+    return [[fileAttributes objectForKey:NSFileSize] longLongValue];
+}
+
+NSString *swizzledBundleIdentifierMobileSafari()
+{
+    return @"com.apple.mobilesafari";
+}
+
+NSString *swizzledBundleIdentifierWebBookmarksD()
+{
+    return @"com.apple.webbookmarksd";
+}
+
+NSString *defaultApplicationCacheDirectory()
+{
+    return @"~/Library/Caches/TestWebKitAPI/WebKit/OfflineWebApplicationCache";
+}
+
+TEST(WKWebView, ClearAppCache)
+{
+    {
+        NSURL *dbResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *shmResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db-shm" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *walResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db-wal" subdirectory:@"TestWebKitAPI.resources"];
+        
+        NSURL *targetURL = [NSURL fileURLWithPath:[defaultApplicationCacheDirectory() stringByExpandingTildeInPath]];
+        [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
+        
+        NSURL *dbTargetURL = [targetURL URLByAppendingPathComponent:@"ApplicationCache.db"];
+        NSURL *walTargetURL = [targetURL URLByAppendingPathComponent:@"ApplicationCache.db-wal"];
+        NSURL *shmTargetURL = [targetURL URLByAppendingPathComponent:@"ApplicationCache.db-shm"];
+
+        // Clean up any files that may have been left from this test failing before.
+        [[NSFileManager defaultManager] removeItemAtURL:dbTargetURL error:nil];
+        [[NSFileManager defaultManager] removeItemAtURL:walTargetURL error:nil];
+        [[NSFileManager defaultManager] removeItemAtURL:shmTargetURL error:nil];
+        EXPECT_EQ(fileSize(dbTargetURL), -1);
+        EXPECT_EQ(fileSize(walTargetURL), -1);
+        EXPECT_EQ(fileSize(shmTargetURL), -1);
+        
+        // Copy the resources from the bundle to ~/Library/...
+        [[NSFileManager defaultManager] copyItemAtURL:dbResourceURL toURL:dbTargetURL error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:shmResourceURL toURL:shmTargetURL error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:walResourceURL toURL:walTargetURL error:nil];
+        EXPECT_GT(fileSize(dbTargetURL), 0);
+        EXPECT_GT(fileSize(shmTargetURL), 0);
+        EXPECT_GT(fileSize(walTargetURL), 0);
+
+        // Make sure there is a record in the WKWebsiteDataStore.
+        readyToContinue = false;
+        [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords)
+        {
+            EXPECT_EQ(websiteDataRecords.count, 1ul);
+            readyToContinue = true;
+        }];
+        TestWebKitAPI::Util::run(&readyToContinue);
+    }
+
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^()
+    {
+        NSURL *targetURL = [NSURL fileURLWithPath:[defaultApplicationCacheDirectory() stringByExpandingTildeInPath]];
+        NSURL *walTargetURL = [targetURL URLByAppendingPathComponent:@"ApplicationCache.db-wal"];
+        
+        // Make sure there is no record in the WKWebsiteDataStore.
+        EXPECT_EQ(fileSize(walTargetURL), 0);
+        [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords)
+        {
+            EXPECT_EQ(websiteDataRecords.count, 0ul);
+            readyToContinue = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+}
 #endif
