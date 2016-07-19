@@ -7,14 +7,14 @@ PASS Underlying source pull: throwing getter (second pull)
 PASS Underlying source pull: throwing method (second pull) 
 PASS Underlying source cancel: throwing getter 
 PASS Underlying source cancel: throwing method 
-FAIL Underlying source: calling enqueue on an empty canceled stream should throw assert_throws: Calling enqueue after canceling should throw function "() => controller.enqueue('a')" did not throw
-FAIL Underlying source: calling enqueue on a non-empty canceled stream should throw assert_throws: Calling enqueue after canceling should throw function "() => controller.enqueue('c')" did not throw
+PASS Underlying source: calling enqueue on an empty canceled stream should throw 
+PASS Underlying source: calling enqueue on a non-empty canceled stream should throw 
 PASS Underlying source: calling enqueue on a closed stream should throw 
-FAIL Underlying source: calling enqueue on an errored stream should throw assert_throws: call to enqueue should throw the error function "() => c.enqueue('a')" threw object "Error: boo" ("Error") expected object "TypeError" ("TypeError")
+PASS Underlying source: calling enqueue on an errored stream should throw 
 PASS Underlying source: calling close twice on an empty stream should throw the second time 
 PASS Underlying source: calling close twice on a non-empty stream should throw the second time 
-FAIL Underlying source: calling close on an empty canceled stream should throw assert_throws: Calling close after canceling should throw function "() => controller.close()" did not throw
-FAIL Underlying source: calling close on a non-empty canceled stream should throw assert_throws: Calling close after canceling should throw function "() => controller.close()" did not throw
+PASS Underlying source: calling close on an empty canceled stream should throw 
+PASS Underlying source: calling close on a non-empty canceled stream should throw 
 PASS Underlying source: calling close after error should throw 
 PASS Underlying source: calling error twice should throw the second time 
 PASS Underlying source: calling error after close should throw 
@@ -30,14 +30,14 @@ PASS Underlying source pull: throwing getter (second pull)
 PASS Underlying source pull: throwing method (second pull) 
 PASS Underlying source cancel: throwing getter 
 PASS Underlying source cancel: throwing method 
-FAIL Underlying source: calling enqueue on an empty canceled stream should throw assert_throws: Calling enqueue after canceling should throw function "() => controller.enqueue('a')" did not throw
-FAIL Underlying source: calling enqueue on a non-empty canceled stream should throw assert_throws: Calling enqueue after canceling should throw function "() => controller.enqueue('c')" did not throw
+PASS Underlying source: calling enqueue on an empty canceled stream should throw 
+PASS Underlying source: calling enqueue on a non-empty canceled stream should throw 
 PASS Underlying source: calling enqueue on a closed stream should throw 
-FAIL Underlying source: calling enqueue on an errored stream should throw assert_throws: call to enqueue should throw the error function "() => c.enqueue('a')" threw object "Error: boo" ("Error") expected object "TypeError" ("TypeError")
+PASS Underlying source: calling enqueue on an errored stream should throw 
 PASS Underlying source: calling close twice on an empty stream should throw the second time 
 PASS Underlying source: calling close twice on a non-empty stream should throw the second time 
-FAIL Underlying source: calling close on an empty canceled stream should throw assert_throws: Calling close after canceling should throw function "() => controller.close()" did not throw
-FAIL Underlying source: calling close on a non-empty canceled stream should throw assert_throws: Calling close after canceling should throw function "() => controller.close()" did not throw
+PASS Underlying source: calling close on an empty canceled stream should throw 
+PASS Underlying source: calling close on a non-empty canceled stream should throw 
 PASS Underlying source: calling close after error should throw 
 PASS Underlying source: calling error twice should throw the second time 
 PASS Underlying source: calling error after close should throw 

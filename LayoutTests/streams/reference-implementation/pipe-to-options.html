@@ -14,7 +14,7 @@ test1.step(function() {
             c.enqueue('a');
             setTimeout(test1.step_func(function() { c.enqueue('b'); }), 200);
             setTimeout(test1.step_func(function() {
-                c.enqueue('c'); // Enqueue after cancel should not throw.
+                assert_throws(new TypeError(), function() { c.enqueue('c'); }); // Enqueue after cancel should throw.
                 assert_true(cancelCalled);
                 test1.done();
             }), 500);
@@ -45,7 +45,7 @@ test2.step(function() {
             c.enqueue('a');
             setTimeout(test2.step_func(function() { c.enqueue('b'); }), 200);
             setTimeout(test2.step_func(function() {
-                c.enqueue('c'); // Enqueue after cancel should not throw.
+                assert_throws(new TypeError(), function() { c.enqueue('c'); }); // Enqueue after cancel should throw.
                 assert_true(cancelCalled);
                 test2.done();
             }), 500);

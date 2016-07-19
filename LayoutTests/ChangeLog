@@ -1,3 +1,13 @@
+2016-07-19  Youenn Fablet  <youenn@apple.com>
+
+        [Streams API] ReadableStreamController methods should throw if its stream is not readable
+        https://bugs.webkit.org/show_bug.cgi?id=159871
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * streams/reference-implementation/pipe-to-options.html: Updated test case according whatwg original test.
+        * streams/reference-implementation/readable-stream-templated.html: Ditto.
+
 2016-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         Bubbles appear split for a brief moment in Messages
