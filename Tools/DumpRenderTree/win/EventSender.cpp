@@ -34,6 +34,8 @@
 #include "DRTDropSource.h"
 #include "DraggingInfo.h"
 #include "DumpRenderTree.h"
+#include "WebCoreTestSupport.h"
+#include "WebFrame.h"
 
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebCore/COMPtr.h>
@@ -849,6 +851,42 @@ static JSValueRef continuousMouseScrollBy(JSContextRef context, JSObjectRef func
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef monitorWheelEvents(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    COMPtr<IWebFrame2> frame2;
+    if (FAILED(frame->QueryInterface(&frame2)))
+        return JSValueMakeUndefined(context);
+
+    WebCore::Frame* coreFrame = core(static_cast<WebFrame*>(frame2.get()));
+    WebCoreTestSupport::monitorWheelEvents(*coreFrame);
+    
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef callAfterScrollingCompletes(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+    
+    JSObjectRef jsCallbackFunction = JSValueToObject(context, arguments[0], exception);
+    if (!jsCallbackFunction)
+        return JSValueMakeUndefined(context);
+    
+    if (!frame)
+        return JSValueMakeUndefined(context);
+    
+    JSGlobalContextRef globalContext = frame->globalContext();
+    
+    COMPtr<IWebFrame2> frame2;
+    if (FAILED(frame->QueryInterface(&frame2)))
+        return JSValueMakeUndefined(context);
+
+    WebCore::Frame* coreFrame = core(static_cast<WebFrame*>(frame2.get()));
+    WebCoreTestSupport::setTestCallbackAndStartNotificationTimer(*coreFrame, globalContext, jsCallbackFunction);
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSStaticFunction staticFunctions[] = {
     { "contextClick", contextClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseDown", mouseDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -866,6 +904,8 @@ static JSStaticFunction staticFunctions[] = {
     { "mouseScrollBy", mouseScrollBy, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseScrollByWithWheelAndMomentumPhases", mouseScrollByWithWheelAndMomentumPhasesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "continuousMouseScrollBy", continuousMouseScrollBy,  kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "monitorWheelEvents", monitorWheelEvents, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "callAfterScrollingCompletes", callAfterScrollingCompletes, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
 

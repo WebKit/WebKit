@@ -1,3 +1,12 @@
+2016-07-19  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The test fast/scrolling/overflow-scroll-past-max.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=159342
+
+        Reviewed by Darin Adler.
+
+        * WebFrame.h: Link fix. 
+
 2016-07-17  Sam Weinig  <sam@webkit.org>
 
         [WebKit API] Add SPI to track multiple navigations caused by a single user gesture

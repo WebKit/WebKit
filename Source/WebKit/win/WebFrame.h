@@ -74,7 +74,7 @@ class WebView;
 interface IWebHistoryItemPrivate;
 
 WebFrame* kit(WebCore::Frame*);
-WebCore::Frame* core(WebFrame*);
+WEBKIT_API WebCore::Frame* core(WebFrame*);
 
 class DECLSPEC_UUID("{A3676398-4485-4a9d-87DC-CB5A40E6351D}") WebFrame : public IWebFrame2, IWebFramePrivate, IWebDocumentText
 {
