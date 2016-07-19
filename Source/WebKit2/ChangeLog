@@ -1,3 +1,23 @@
+2016-07-18  Tim Horton  <timothy_horton@apple.com>
+
+        Tapping on an apple.com tab in tab overview stutters when switching to it
+        https://bugs.webkit.org/show_bug.cgi?id=159904
+        <rdar://problem/27192350>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState):
+        In any case where we get to waitForDidUpdateViewState (usually a tab switch),
+        if we have an outstanding didUpdate message, the Web process will not commit
+        a new layer tree until it receives the didUpdate message. However, since
+        waitForDidUpdateViewState synchronously blocks the UI process, we also
+        won't *send* the didUpdate message, so we block for the full timeout duration.
+
+        Instead, if we get to waitForDidUpdateViewState, just send the didUpdate without
+        waiting for the DisplayLink or anything else, because calling rAF slightly too
+        quickly, once, is certainly better than blocking the UI process for a whole second.
+
 2016-07-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] ENABLE_OPENGL=OFF build broken since r201802
