@@ -1,3 +1,14 @@
+2016-07-19  Zalan Bujtas  <zalan@apple.com>
+
+        theguardian.co.uk crossword puzzles are sometimes not displaying text
+        https://bugs.webkit.org/show_bug.cgi?id=159924
+        <rdar://problem/27409483>
+
+        Reviewed by Simon Fraser.
+
+        * fast/misc/subtree-layouts-expected.html: Added.
+        * fast/misc/subtree-layouts.html: Added.
+
 2016-07-19  Nan Wang  <n_wang@apple.com>
 
         AX: Incorrect behavior for word related text marker functions when there's collapsed whitespace
