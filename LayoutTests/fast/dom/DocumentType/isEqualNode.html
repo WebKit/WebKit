@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that isEqualNode() works as expected for DocumentType nodes");
+
+var htmlDoctype = document.implementation.createDocumentType("html", "", "");
+var htmlDocument = document.implementation.createHTMLDocument();
+
+shouldBeTrue("htmlDocument.doctype.isEqualNode(htmlDoctype)");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
