@@ -1,3 +1,20 @@
+2016-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Don't null out the IPC::Connection's XPC connection
+        https://bugs.webkit.org/show_bug.cgi?id=159911
+        rdar://problem/27018065
+
+        Reviewed by Alex Christensen.
+
+        The function that nulls out the XPC connection, platformInvalidate(), is called from the connection queue,
+        whereas the XPC connection is normally accessed from the main thread leading to inconsistencies when the
+        connection is being invalidated while the main thread is trying to access it.
+        
+        Fix this by simply never nulling out the XPC connection. It will be released when the IPC::Connection is destroyed anyway.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate):
+
 2016-07-18  Tim Horton  <timothy_horton@apple.com>
 
         Tapping on an apple.com tab in tab overview stutters when switching to it
