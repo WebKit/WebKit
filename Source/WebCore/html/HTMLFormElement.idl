@@ -26,10 +26,9 @@
     [Reflect, URL] attribute DOMString action;
     attribute DOMString autocomplete;
 
-    // FIXME: These should not have [TreatNullAs=LegacyNullString].
-    [TreatNullAs=LegacyNullString] attribute DOMString enctype;
-    [TreatNullAs=LegacyNullString] attribute DOMString encoding;
-    [TreatNullAs=LegacyNullString] attribute DOMString method;
+    attribute DOMString enctype;
+    [ImplementedAs=enctype] attribute DOMString encoding;
+    attribute DOMString method;
 
     [Reflect] attribute DOMString name;
     [Reflect] attribute boolean noValidate;

@@ -61,9 +61,6 @@ public:
     String enctype() const { return m_attributes.encodingType(); }
     void setEnctype(const String&);
 
-    String encoding() const { return m_attributes.encodingType(); }
-    void setEncoding(const String& value) { setEnctype(value); }
-
     bool shouldAutocomplete() const;
 
     void setAutocomplete(const AtomicString&);

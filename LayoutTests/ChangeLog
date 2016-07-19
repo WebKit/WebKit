@@ -1,3 +1,15 @@
+2016-07-19  Chris Dumez  <cdumez@apple.com>
+
+        form.enctype / encoding / method should treat null as "null" string
+        https://bugs.webkit.org/show_bug.cgi?id=159916
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLFormElement/null-handling-expected.txt: Added.
+        * fast/dom/HTMLFormElement/null-handling.html: Added.
+
 2016-07-19  Youenn Fablet  <youenn@apple.com>
 
         Add new aliases to http test server
