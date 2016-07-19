@@ -108,7 +108,8 @@ class BuiltinsInternalsWrapperHeaderGenerator(BuiltinsGenerator):
         return '\n'.join(lines)
 
     def generate_members(self):
-        lines = ["    JSC::VM& m_vm;"]
+        guards = set([object.annotations.get('conditional') for object in self.internals if 'conditional' in object.annotations])
+        lines = [BuiltinsGenerator.wrap_with_guard(" || ".join(guards), "    JSC::VM& m_vm;")]
         for object in self.internals:
             member = "    %s %s;" % (self.member_type(object), self.member_name(object))
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), member))

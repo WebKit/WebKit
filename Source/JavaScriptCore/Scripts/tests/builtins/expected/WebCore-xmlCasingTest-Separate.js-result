@@ -430,7 +430,9 @@ public:
 #endif // ENABLE(STREAMS_API)
 
 private:
+#if ENABLE(STREAMS_API)
     JSC::VM& m_vm;
+#endif // ENABLE(STREAMS_API)
 #if ENABLE(STREAMS_API)
     XMLCasingTestBuiltinFunctions m_xmlCasingTest;
 #endif // ENABLE(STREAMS_API)
@@ -482,11 +484,14 @@ private:
 namespace WebCore {
 
 JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& vm)
+#if ENABLE(STREAMS_API)
     : m_vm(vm)
+#endif // ENABLE(STREAMS_API)
 #if ENABLE(STREAMS_API)
     , m_xmlCasingTest(m_vm)
 #endif // ENABLE(STREAMS_API)
 {
+    UNUSED_PARAM(vm);
 }
 
 void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)

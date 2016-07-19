@@ -1,3 +1,26 @@
+2016-07-19  Anders Carlsson  <andersca@apple.com>
+
+        WebCore-7602.1.42 fails to build: error: private field 'm_vm' is not used
+        https://bugs.webkit.org/show_bug.cgi?id=159944
+        rdar://problem/27420308
+
+        Reviewed by Dan Bernstein.
+
+        Wrap the m_vm declaration and initialization in conditional guards.
+
+        * Scripts/builtins/builtins_generate_internals_wrapper_header.py:
+        (generate_members):
+        * Scripts/builtins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_constructor):
+        Add guards.
+
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        Update expected results.
+
 2016-07-19  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r203348-r203368): ASSERTION FAILED: from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info())
