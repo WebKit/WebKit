@@ -66,6 +66,7 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
@@ -75,9 +76,6 @@
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 
-#if ENABLE(CSS_REGIONS) || ENABLE(CSS_COMPOSITING)
-#include <WebCore/RuntimeEnabledFeatures.h>
-#endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotificationManager.h"
