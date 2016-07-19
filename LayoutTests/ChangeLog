@@ -1,3 +1,15 @@
+2016-07-19  Chris Dumez  <cdumez@apple.com>
+
+        autocapitalize attribute should not use [TreatNullAs=LegacyNullString]
+        https://bugs.webkit.org/show_bug.cgi?id=159934
+
+        Reviewed by Benjamin Poulain.
+
+        Add layout test coverage.
+
+        * platform/ios-simulator/ios/fast/forms/autocapitalize-null-expected.txt: Added.
+        * platform/ios-simulator/ios/fast/forms/autocapitalize-null.html: Added.
+
 2016-07-19  George Ruan  <gruan@apple.com>
 
         HTMLVideoElement frames do not update on iOS when src is a MediaStream blob
