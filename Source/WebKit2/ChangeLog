@@ -1,3 +1,15 @@
+2016-07-18  Alex Christensen  <achristensen@webkit.org>
+
+        webbookmarksd needs to use the same AppCache directory as MobileSafari
+        https://bugs.webkit.org/show_bug.cgi?id=159912
+        <rdar://problem/27056844>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        Make webbookmarksd match MobileSafari by adding a matching runtime exception.
+
 2016-07-18  Anders Carlsson  <andersca@apple.com>
 
         Don't null out the IPC::Connection's XPC connection
