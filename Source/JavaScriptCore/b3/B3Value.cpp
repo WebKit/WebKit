@@ -126,7 +126,7 @@ void Value::replaceWithPhi()
     this->m_index = index;
 }
 
-void Value::replaceWithJump(BasicBlock* owner, const FrequentedBlock& target)
+void Value::replaceWithJump(BasicBlock* owner, FrequentedBlock target)
 {
     RELEASE_ASSERT(owner->last() == this);
     
@@ -160,7 +160,7 @@ void Value::replaceWithOops(BasicBlock* owner)
     owner->clearSuccessors();
 }
 
-void Value::replaceWithJump(const FrequentedBlock& target)
+void Value::replaceWithJump(FrequentedBlock target)
 {
     replaceWithJump(owner, target);
 }

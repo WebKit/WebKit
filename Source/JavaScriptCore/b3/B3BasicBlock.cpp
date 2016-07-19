@@ -90,18 +90,18 @@ void BasicBlock::clearSuccessors()
     m_successors.clear();
 }
 
-void BasicBlock::appendSuccessor(const FrequentedBlock& target)
+void BasicBlock::appendSuccessor(FrequentedBlock target)
 {
     m_successors.append(target);
 }
 
-void BasicBlock::setSuccessors(const FrequentedBlock& target)
+void BasicBlock::setSuccessors(FrequentedBlock target)
 {
     m_successors.resize(1);
     m_successors[0] = target;
 }
 
-void BasicBlock::setSuccessors(const FrequentedBlock& taken, const FrequentedBlock& notTaken)
+void BasicBlock::setSuccessors(FrequentedBlock taken, FrequentedBlock notTaken)
 {
     m_successors.resize(2);
     m_successors[0] = taken;

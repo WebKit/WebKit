@@ -1,3 +1,36 @@
+2016-07-19  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 methods that mutate the successors array should take FrequentedBlock by value
+        https://bugs.webkit.org/show_bug.cgi?id=159935
+
+        Reviewed by Michael Saboff.
+        
+        This bug was found by ASan testing. setSuccessors() takes a const FrequentedBlock&, and the
+        caller that caused the ASan crash was doing:
+
+        block->setSuccessors(block->notTaken())
+
+        So, inside setSuccessors(), after we resize() the successors array, the const
+        FrequentedBlock& points to nonsense.
+
+        The fix is to pass FrequentedBlock by value in all of these kinds of methods.
+        
+        No new tests, but ASan testing catches this instantly for anything that triggers CFG
+        simplification in B3. So like half of our tests.
+
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::clearSuccessors):
+        (JSC::B3::BasicBlock::appendSuccessor):
+        (JSC::B3::BasicBlock::setSuccessors):
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::successors):
+        (JSC::B3::BasicBlock::successorBlock):
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::replaceWithPhi):
+        (JSC::B3::Value::replaceWithJump):
+        (JSC::B3::Value::replaceWithOops):
+        * b3/B3Value.h:
+
 2016-07-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make builtin TypeErrors consistent

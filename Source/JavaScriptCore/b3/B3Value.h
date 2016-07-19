@@ -113,11 +113,11 @@ public:
     void replaceWithPhi();
     
     // These transformations are only valid for terminals.
-    void replaceWithJump(BasicBlock* owner, const FrequentedBlock&);
+    void replaceWithJump(BasicBlock* owner, FrequentedBlock);
     void replaceWithOops(BasicBlock* owner);
     
     // You can use this form if owners are valid. They're usually not valid.
-    void replaceWithJump(const FrequentedBlock&);
+    void replaceWithJump(FrequentedBlock);
     void replaceWithOops();
 
     void dump(PrintStream&) const;
