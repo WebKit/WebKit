@@ -523,8 +523,6 @@ webkit.org/b/159447 [ Debug ] inspector/debugger/tail-deleted-frames-from-vm-ent
 
 webkit.org/b/159430 [ Debug Sierra+ ] media/restore-from-page-cache.html [ Pass Crash ]
 
-webkit.org/b/159724 [ Release ] imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure ]
-
 webkit.org/b/159884 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Pass Failure ]
 
 webkit.org/b/159896 storage/indexeddb/modern/handle-user-delete.html [ Pass Timeout ]

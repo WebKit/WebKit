@@ -1,3 +1,14 @@
+2016-07-19  Youenn Fablet  <youenn@apple.com>
+
+        [Release WK2] LayoutTest imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm failing
+        https://bugs.webkit.org/show_bug.cgi?id=159724
+
+        Unreviewed.
+
+        * TestExpectations: Marking test as failure,passs,crash.
+        * platform/ios-simulator-wk2/TestExpectations: Removing specific expectation.
+        * platform/mac-wk2/TestExpectations: Ditto.
+
 2016-07-19  Chris Dumez  <cdumez@apple.com>
 
         form.enctype / encoding / method should treat null as "null" string

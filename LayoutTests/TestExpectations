@@ -364,7 +364,8 @@ webkit.org/b/159712 imported/w3c/web-platform-tests/html/semantics/document-meta
 webkit.org/b/159712 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping.html [ Failure Pass ]
 webkit.org/b/159712 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping.html [ Failure Pass ]
 webkit.org/b/159712 imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window-6.htm [ Pass Timeout ]
-webkit.org/b/159712 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Crash Pass ]
+
+webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Crash Pass ]
 
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
