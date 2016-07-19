@@ -1,3 +1,17 @@
+2016-07-19  Frederic Wang  <fwang@igalia.com>
+
+        [win] Update the list of MathML fonts
+        https://bugs.webkit.org/show_bug.cgi?id=156838
+
+        The set of recommended math fonts is now described at
+        https://trac.webkit.org/wiki/MathML/Fonts
+        We update the Perl script to use the latest list of fonts.
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitdirs.pm:
+        (checkInstalledTools):
+
 2016-07-19  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The test fast/scrolling/overflow-scroll-past-max.html is timing out.
