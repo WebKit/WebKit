@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015  Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -142,7 +142,7 @@ inline Register& Register::operator=(JSScope* scope)
 
 inline JSScope* Register::scope() const
 {
-    return jsCast<JSScope*>(jsValue());
+    return jsCast<JSScope*>(unboxedCell());
 }
 
 inline JSGlobalObject* ExecState::lexicalGlobalObject() const

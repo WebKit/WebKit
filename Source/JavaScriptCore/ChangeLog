@@ -1,5 +1,22 @@
 2016-07-19  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION (r203348-r203368): ASSERTION FAILED: from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info())
+        https://bugs.webkit.org/show_bug.cgi?id=159930
+
+        Reviewed by Geoffrey Garen.
+        
+        The problem is that the 32-bit DFG can flush the scope register as an unboxed cell, but the
+        Register::scope() method was causing us to assert that it's a JSValue with proper cell
+        boxing. We could have forced the DFG to flush it as a boxed JSValue, but I don't think that
+        would have made anything better. This fixes the issue by teaching Register::scope() that it
+        might see unboxed cells.
+
+        * runtime/JSScope.h:
+        (JSC::Register::scope):
+        (JSC::ExecState::lexicalGlobalObject):
+
+2016-07-19  Filip Pizlo  <fpizlo@apple.com>
+
         B3 methods that mutate the successors array should take FrequentedBlock by value
         https://bugs.webkit.org/show_bug.cgi?id=159935
 
