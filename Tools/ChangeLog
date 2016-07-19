@@ -1,3 +1,10 @@
+2016-07-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Temporary workaround for iOS EWS failing after the fix for bug 159539.
+        To be deleted once the root cause is found and addressed.
+
+        * EWSTools/start-queue-mac.sh:
+
 2016-07-19  Frederic Wang  <fwang@igalia.com>
 
         [win] Fixup the register name for STIX Math and Latin Modern Math
