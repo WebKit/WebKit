@@ -196,6 +196,11 @@ void WebPaymentCoordinatorProxy::completePaymentSession(uint32_t opaqueStatus)
 
     platformCompletePaymentSession(status);
 
+    if (!WebCore::isFinalStateStatus(status)) {
+        m_state = State::Active;
+        return;
+    }
+
     didReachFinalState();
 }
 

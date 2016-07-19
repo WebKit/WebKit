@@ -40,6 +40,23 @@ enum class PaymentAuthorizationStatus {
     PINLockout,
 };
 
+static inline bool isFinalStateStatus(PaymentAuthorizationStatus status)
+{
+    switch (status) {
+    case PaymentAuthorizationStatus::Success:
+    case PaymentAuthorizationStatus::Failure:
+        return true;
+
+    case PaymentAuthorizationStatus::InvalidBillingPostalAddress:
+    case PaymentAuthorizationStatus::InvalidShippingPostalAddress:
+    case PaymentAuthorizationStatus::InvalidShippingContact:
+    case PaymentAuthorizationStatus::PINRequired:
+    case PaymentAuthorizationStatus::PINIncorrect:
+    case PaymentAuthorizationStatus::PINLockout:
+        return false;
+    }
+}
+
 }
 
 #endif

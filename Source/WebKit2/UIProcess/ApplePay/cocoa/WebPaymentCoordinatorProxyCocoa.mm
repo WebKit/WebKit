@@ -125,7 +125,7 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMer
     if (!_webPaymentCoordinatorProxy)
         return;
 
-    if (!_authorized)
+    if (!_didReachFinalState)
         _webPaymentCoordinatorProxy->didCancelPayment();
 
     _webPaymentCoordinatorProxy->hidePaymentUI();
@@ -402,7 +402,7 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentSession(WebCore::Payment
     ASSERT(m_paymentAuthorizationViewController);
     ASSERT(m_paymentAuthorizationViewControllerDelegate);
 
-    m_paymentAuthorizationViewControllerDelegate->_authorized = YES;
+    m_paymentAuthorizationViewControllerDelegate->_didReachFinalState = WebCore::isFinalStateStatus(status);
     m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion(toPKPaymentAuthorizationStatus(status));
     m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion = nullptr;
 }

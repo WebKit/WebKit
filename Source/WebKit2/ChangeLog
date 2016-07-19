@@ -1,3 +1,23 @@
+2016-07-19  Anders Carlsson  <andersca@apple.com>
+
+        Some payment authorization status values should keep the sheet active
+        https://bugs.webkit.org/show_bug.cgi?id=159936
+        rdar://problem/26756701
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentSession):
+        If the status isn't a final state status, bounce the current state back to active.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        Rename the _authorized ivar to _didReachFinalState.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewControllerDidFinish:]):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession):
+        Set _didReachFinalState based on the return value of isFinalStateStatus.
+
 2016-07-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the --minimal build fail in InjectedBundle.cpp

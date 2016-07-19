@@ -1019,6 +1019,12 @@ void ApplePaySession::completePayment(unsigned short status, ExceptionCode& ec)
     }
 
     paymentCoordinator().completePaymentSession(*authorizationStatus);
+
+    if (!isFinalStateStatus(*authorizationStatus)) {
+        m_state = State::Active;
+        return;
+    }
+
     m_state = State::Completed;
     unsetPendingActivity(this);
 }

@@ -50,7 +50,7 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(const WebCore::URL& originatingUR
 
     BlockPtr<void (PKPaymentMerchantSession *, NSError *)> _sessionBlock;
 
-    BOOL _authorized;
+    BOOL _didReachFinalState;
     BlockPtr<void (PKPaymentAuthorizationStatus)> _paymentAuthorizedCompletion;
     BlockPtr<void (NSArray *)> _didSelectPaymentMethodCompletion;
     BlockPtr<void (PKPaymentAuthorizationStatus, NSArray *)> _didSelectShippingMethodCompletion;
