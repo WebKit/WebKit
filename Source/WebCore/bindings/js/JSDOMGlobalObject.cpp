@@ -87,6 +87,8 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamReaderPrivateName(), privateReadableStreamReaderConstructor, DontDelete | ReadOnly),
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
+#else
+    UNUSED_PARAM(vm);
 #endif
 }
 
