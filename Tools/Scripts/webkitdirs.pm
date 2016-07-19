@@ -1590,7 +1590,7 @@ sub checkInstalledTools()
 
     # MathML requires fonts that may not ship with Windows.
     # Warn the user if they are missing.
-    my @fonts = ('Cambria & Cambria Math (TrueType)', 'LatinModernMath-Regular', 'STIXMath-Regular');
+    my @fonts = ('Cambria & Cambria Math (TrueType)', 'LatinModernMath-Regular (TrueType)', 'STIXMath-Regular (TrueType)');
     my @missing = ();
     foreach my $font (@fonts) {
         push @missing, $font if not fontExists($font);

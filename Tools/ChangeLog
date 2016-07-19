@@ -1,5 +1,14 @@
 2016-07-19  Frederic Wang  <fwang@igalia.com>
 
+        [win] Fixup the register name for STIX Math and Latin Modern Math
+
+        Unreviewed follow-up of r203406
+
+        * Scripts/webkitdirs.pm:
+        (checkInstalledTools):
+
+2016-07-19  Frederic Wang  <fwang@igalia.com>
+
         [win] Update the list of MathML fonts
         https://bugs.webkit.org/show_bug.cgi?id=156838
 
