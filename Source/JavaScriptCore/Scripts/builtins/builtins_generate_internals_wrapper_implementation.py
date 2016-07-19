@@ -97,12 +97,15 @@ class BuiltinsInternalsWrapperImplementationGenerator(BuiltinsGenerator):
         return WK_ucfirst(object.object_name) + "BuiltinFunctions"
 
     def generate_constructor(self):
+        guards = set([object.annotations.get('conditional') for object in self.internals if 'conditional' in object.annotations])
         lines = ["JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& vm)",
-                 "    : m_vm(vm)"]
+                 BuiltinsGenerator.wrap_with_guard(" || ".join(guards), "    : m_vm(vm)")]
         for object in self.internals:
             initializer = "    , %s(m_vm)" % self.member_name(object)
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), initializer))
-        lines.append("{\n}\n")
+        lines.append("{")
+        lines.append("    UNUSED_PARAM(vm);")
+        lines.append("}\n")
         return '\n'.join(lines)
 
     def property_macro(self, object):

@@ -391,6 +391,7 @@ namespace WebCore {
 JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& vm)
     : m_vm(vm)
 {
+    UNUSED_PARAM(vm);
 }
 
 void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
