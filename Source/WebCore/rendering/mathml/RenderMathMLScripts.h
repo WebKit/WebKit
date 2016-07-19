@@ -32,6 +32,9 @@
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
+
+class MathMLScriptsElement;
+
 // Render a base with scripts.
 class RenderMathMLScripts : public RenderMathMLBlock {
 public:
@@ -48,6 +51,7 @@ protected:
     ScriptsType m_scriptType;
 
 private:
+    MathMLScriptsElement& scriptsElement() const;
     Optional<int> firstLineBaseline() const final;
     bool getBaseAndScripts(RenderBox*& base, RenderBox*& firstPostScript, RenderBox*& firstPreScript);
     LayoutUnit spaceAfterScript();

@@ -32,6 +32,7 @@
 #include "MathMLMencloseElement.cpp"
 #include "MathMLOperatorDictionary.cpp"
 #include "MathMLPaddedElement.cpp"
+#include "MathMLScriptsElement.cpp"
 #include "MathMLSelectElement.cpp"
 #include "MathMLTextElement.cpp"
 

@@ -32,6 +32,7 @@
 #include "RenderMathMLScripts.h"
 
 #include "MathMLElement.h"
+#include "MathMLScriptsElement.h"
 #include "RenderMathMLOperator.h"
 
 namespace WebCore {
@@ -63,6 +64,12 @@ RenderMathMLScripts::RenderMathMLScripts(Element& element, RenderStyle&& style)
         ASSERT(element.hasTagName(MathMLNames::mmultiscriptsTag));
         m_scriptType = Multiscripts;
     }
+}
+
+MathMLScriptsElement& RenderMathMLScripts::scriptsElement() const
+{
+    ASSERT(!isRenderMathMLUnderOver());
+    return static_cast<MathMLScriptsElement&>(nodeForNonAnonymous());
 }
 
 RenderMathMLOperator* RenderMathMLScripts::unembellishedOperator()
@@ -251,16 +258,18 @@ void RenderMathMLScripts::getScriptMetricsAndLayoutIfNeeded(RenderBox* base, Ren
     if (m_scriptType == Sub || m_scriptType == SubSup || m_scriptType == Multiscripts || m_scriptType == Under || m_scriptType == UnderOver) {
         minSubScriptShift = std::max(subscriptShiftDown, baseDescent + subscriptBaselineDropMin);
         if (!isRenderMathMLUnderOver()) {
-            LayoutUnit specifiedMinSubShift = 0;
-            parseMathMLLength(element()->attributeWithoutSynchronization(MathMLNames::subscriptshiftAttr), specifiedMinSubShift, &style(), false);
+            // It is not clear how to interpret the default shift and it is not available yet anyway.
+            // Hence we just pass 0 as the default value used by toUserUnits.
+            LayoutUnit specifiedMinSubShift = toUserUnits(scriptsElement().subscriptShift(), style(), 0);
             minSubScriptShift = std::max(minSubScriptShift, specifiedMinSubShift);
         }
     }
     if (m_scriptType == Super || m_scriptType == SubSup || m_scriptType == Multiscripts  || m_scriptType == Over || m_scriptType == UnderOver) {
         minSupScriptShift = std::max(superscriptShiftUp, baseAscent - superScriptBaselineDropMax);
         if (!isRenderMathMLUnderOver()) {
-            LayoutUnit specifiedMinSupShift = 0;
-            parseMathMLLength(element()->attributeWithoutSynchronization(MathMLNames::superscriptshiftAttr), specifiedMinSupShift, &style(), false);
+            // It is not clear how to interpret the default shift and it is not available yet anyway.
+            // Hence we just pass 0 as the default value used by toUserUnits.
+            LayoutUnit specifiedMinSupShift = toUserUnits(scriptsElement().superscriptShift(), style(), 0);
             minSupScriptShift = std::max(minSupScriptShift, specifiedMinSupShift);
         }
     }

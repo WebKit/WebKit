@@ -1991,6 +1991,7 @@ set(WebCore_SOURCES
     mathml/MathMLMencloseElement.cpp
     mathml/MathMLOperatorDictionary.cpp
     mathml/MathMLPaddedElement.cpp
+    mathml/MathMLScriptsElement.cpp
     mathml/MathMLSelectElement.cpp
     mathml/MathMLSpaceElement.cpp
     mathml/MathMLTextElement.cpp

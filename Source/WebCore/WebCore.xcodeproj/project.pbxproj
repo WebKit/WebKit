@@ -5404,6 +5404,7 @@
 		B57CB52D182A3EED0079A647 /* InlineElementBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B57CB52C182A3EED0079A647 /* InlineElementBox.cpp */; };
 		B57CB52E182A3EFC0079A647 /* InlineElementBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B57CB52B182A37F60079A647 /* InlineElementBox.h */; };
 		B595FF471824CEE300FF51CD /* RenderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = B595FF461824CEE300FF51CD /* RenderIterator.h */; };
+		B59CA390CED66C3255F72B48 /* MathMLScriptsElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59CA59AF170D8FAA5B8C9AD /* MathMLScriptsElement.cpp */; };
 		B59CA390CED66C3255F72C59 /* MathMLPaddedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59CA59AF170D8FAA5B8CABE /* MathMLPaddedElement.cpp */; };
 		B59DD699119029E5007E9684 /* JSDatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B59DD697119029E5007E9684 /* JSDatabaseCallback.h */; };
 		B59DD69A119029E5007E9684 /* JSDatabaseCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59DD698119029E5007E9684 /* JSDatabaseCallback.cpp */; };
@@ -13403,6 +13404,8 @@
 		B57CB52B182A37F60079A647 /* InlineElementBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineElementBox.h; sourceTree = "<group>"; };
 		B57CB52C182A3EED0079A647 /* InlineElementBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineElementBox.cpp; sourceTree = "<group>"; };
 		B595FF461824CEE300FF51CD /* RenderIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderIterator.h; sourceTree = "<group>"; };
+		B59CA59AF170D8FAA5B8C9AD /* MathMLScriptsElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLScriptsElement.cpp; sourceTree = "<group>"; };
+		B59CA849D41E6F65D81197AB /* MathMLScriptsElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLScriptsElement.h; sourceTree = "<group>"; };
 		B59CA59AF170D8FAA5B8CABE /* MathMLPaddedElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLPaddedElement.cpp; sourceTree = "<group>"; };
 		B59CA849D41E6F65D81198BC /* MathMLPaddedElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLPaddedElement.h; sourceTree = "<group>"; };
 		B59DD697119029E5007E9684 /* JSDatabaseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDatabaseCallback.h; sourceTree = "<group>"; };
@@ -24893,6 +24896,8 @@
 				CE6D89294C7AACE0AD89B3DD /* MathMLMencloseElement.h */,
 				D4F72C653A64807A83E76FB8 /* MathMLOperatorDictionary.cpp */,
 				DF7E9A294C7AACE0AD89B3DD /* MathMLOperatorDictionary.h */,
+				B59CA59AF170D8FAA5B8C9AD /* MathMLScriptsElement.cpp */,
+				B59CA849D41E6F65D81197AB /* MathMLScriptsElement.h */,
 				B59CA59AF170D8FAA5B8CABE /* MathMLPaddedElement.cpp */,
 				B59CA849D41E6F65D81198BC /* MathMLPaddedElement.h */,
 				F75A059AF170D8FAA5B8CABE /* MathMLSelectElement.cpp */,
@@ -31266,6 +31271,7 @@
 				16EA24CEEAB2A60534218ACF /* MathMLOperatorDictionary.cpp in Sources */,
 				FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */,
 				439176DF12DA25E17BAF80A2 /* MathMLStyle.cpp in Sources */,
+				B59CA390CED66C3255F72B48 /* MathMLScriptsElement.cpp in Sources */,
 				B59CA390CED66C3255F72C59 /* MathMLPaddedElement.cpp in Sources */,
 				FED48390CED66C3255F72C59 /* MathMLSelectElement.cpp in Sources */,
 				4FA65A6B1108ABED002615E0 /* MathMLSpaceElement.cpp in Sources */,
