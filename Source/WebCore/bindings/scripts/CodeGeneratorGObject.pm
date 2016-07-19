@@ -1707,9 +1707,11 @@ sub GenerateEventTargetIface {
     push(@cBodyProperties, "static gboolean webkit_dom_${decamelize}_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)\n{\n");
     push(@cBodyProperties, "#if ${conditionalString}\n") if $conditionalString;
     push(@cBodyProperties, "    WebCore::Event* coreEvent = WebKit::core(event);\n");
+    push(@cBodyProperties, "    if (!coreEvent)\n");
+    push(@cBodyProperties, "        return false;\n");
     push(@cBodyProperties, "    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);\n\n");
     push(@cBodyProperties, "    WebCore::ExceptionCode ec = 0;\n");
-    push(@cBodyProperties, "    gboolean result = coreTarget->dispatchEventForBindings(coreEvent, ec);\n");
+    push(@cBodyProperties, "    gboolean result = coreTarget->dispatchEventForBindings(*coreEvent, ec);\n");
     push(@cBodyProperties, "    if (ec) {\n        WebCore::ExceptionCodeDescription description(ec);\n");
     push(@cBodyProperties, "        g_set_error_literal(error, g_quark_from_string(\"WEBKIT_DOM\"), description.code, description.name);\n    }\n");
     push(@cBodyProperties, "    return result;\n");

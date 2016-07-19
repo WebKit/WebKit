@@ -158,16 +158,11 @@ bool EventTarget::clearAttributeEventListener(const AtomicString& eventType)
     return removeEventListener(eventType, *listener, false);
 }
 
-bool EventTarget::dispatchEventForBindings(Event* event, ExceptionCode& ec)
+bool EventTarget::dispatchEventForBindings(Event& event, ExceptionCode& ec)
 {
-    if (!event) {
-        ec = TypeError;
-        return false;
-    }
+    event.setUntrusted();
 
-    event->setUntrusted();
-
-    if (!event->isInitialized() || event->isBeingDispatched()) {
+    if (!event.isInitialized() || event.isBeingDispatched()) {
         ec = INVALID_STATE_ERR;
         return false;
     }
@@ -175,7 +170,7 @@ bool EventTarget::dispatchEventForBindings(Event* event, ExceptionCode& ec)
     if (!scriptExecutionContext())
         return false;
 
-    return dispatchEvent(*event);
+    return dispatchEvent(event);
 }
 
 bool EventTarget::dispatchEvent(Event& event)

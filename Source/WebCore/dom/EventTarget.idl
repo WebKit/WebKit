@@ -34,8 +34,7 @@
     [ObjCLegacyUnnamedParameters, ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener, optional boolean useCapture = false);
     [ObjCLegacyUnnamedParameters, ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, optional boolean useCapture = false);
 
-    // FIXME: event should not be nullable.
-    [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event? event);
+    [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event event);
 };
 
 dictionary EventListenerOptions {

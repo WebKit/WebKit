@@ -3,7 +3,7 @@ Test window.dispatchEvent().
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS window.dispatchEvent(event) threw exception TypeError: Type error.
+PASS window.dispatchEvent(event) threw exception TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event.
 PASS window.dispatchEvent(event) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 PASS myEventDispatched is true
 PASS target is window

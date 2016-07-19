@@ -1,3 +1,16 @@
+2016-07-18  Chris Dumez  <cdumez@apple.com>
+
+        EventTarget.dispatchEvent() parameter should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=159897
+
+        Reviewed by Benjamin Poulain.
+
+        Update layout tests as the message of the TypeError exception being
+        thrown when calling dispatchEvent(null) is now more helpful.
+
+        * fast/dom/Window/dispatchEvent-expected.txt:
+        * fast/events/dispatchEvent-crash-expected.txt:
+
 2016-07-17  Filip Pizlo  <fpizlo@apple.com>
 
         Implement table-based switches in B3/Air

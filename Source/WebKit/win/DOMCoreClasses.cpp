@@ -441,8 +441,11 @@ HRESULT DOMNode::dispatchEvent(_In_opt_ IDOMEvent* evt, _Out_ BOOL* result)
     if (FAILED(hr))
         return hr;
 
+    if (!domEvent->coreEvent())
+        return E_FAIL;
+
     WebCore::ExceptionCode ec = 0;
-    *result = m_node->dispatchEventForBindings(domEvent->coreEvent(), ec) ? TRUE : FALSE;
+    *result = m_node->dispatchEventForBindings(*domEvent->coreEvent(), ec) ? TRUE : FALSE;
     return ec ? E_FAIL : S_OK;
 }
 
@@ -938,8 +941,11 @@ HRESULT DOMWindow::dispatchEvent(_In_opt_ IDOMEvent* evt, _Out_ BOOL* result)
     if (FAILED(hr))
         return hr;
 
+    if (!domEvent->coreEvent())
+        return E_FAIL;
+
     WebCore::ExceptionCode ec = 0;
-    *result = m_window->dispatchEventForBindings(domEvent->coreEvent(), ec) ? TRUE : FALSE;
+    *result = m_window->dispatchEventForBindings(*domEvent->coreEvent(), ec) ? TRUE : FALSE;
     return ec ? E_FAIL : S_OK;
 }
 
