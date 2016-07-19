@@ -25,11 +25,11 @@ var string = 'Cocoa, Cappuccino, Rize, Matcha, Kilimanjaro';
 
 shouldThrow(function () {
     String.prototype.search.call(null, /Cocoa/);
-}, "TypeError: String.prototype.search requires that |this| not be null");
+}, "TypeError: String.prototype.search requires that |this| not be null or undefined");
 
 shouldThrow(function () {
     String.prototype.search.call(undefined, /Cocoa/);
-}, "TypeError: String.prototype.search requires that |this| not be undefined");
+}, "TypeError: String.prototype.search requires that |this| not be null or undefined");
 
 shouldThrow(function () {
     string.search(errorKey);

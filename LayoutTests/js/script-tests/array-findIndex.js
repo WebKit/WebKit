@@ -103,8 +103,8 @@ shouldBe("[0,1,2,3,4,5,6,7,8,9].findIndex(findItemAddedDuringSearch)", "-1");
 shouldBe("[0,1,2,3,4,5,6,7,8,9].findIndex(findItemRemovedDuringSearch)", "-1");
 
 debug("Exceptions");
-shouldThrow("Array.prototype.findIndex.call(undefined, function() {})", "'TypeError: Array.prototype.findIndex requires that |this| not be undefined'");
-shouldThrow("Array.prototype.findIndex.call(null, function() {})", "'TypeError: Array.prototype.findIndex requires that |this| not be null'");
+shouldThrow("Array.prototype.findIndex.call(undefined, function() {})", "'TypeError: Array.prototype.findIndex requires that |this| not be null or undefined'");
+shouldThrow("Array.prototype.findIndex.call(null, function() {})", "'TypeError: Array.prototype.findIndex requires that |this| not be null or undefined'");
 shouldThrow("[].findIndex(1)", "'TypeError: Array.prototype.findIndex callback must be a function'");
 shouldThrow("[].findIndex('hello')", "'TypeError: Array.prototype.findIndex callback must be a function'");
 shouldThrow("[].findIndex([])", "'TypeError: Array.prototype.findIndex callback must be a function'");

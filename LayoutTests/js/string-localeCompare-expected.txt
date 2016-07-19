@@ -7,9 +7,9 @@ PASS String.prototype.localeCompare.length is 1
 PASS Object.getOwnPropertyDescriptor(String.prototype, 'localeCompare').enumerable is false
 PASS Object.getOwnPropertyDescriptor(String.prototype, 'localeCompare').configurable is true
 PASS Object.getOwnPropertyDescriptor(String.prototype, 'localeCompare').writable is true
-PASS String.prototype.localeCompare.call() threw exception TypeError: String.prototype.localeCompare requires that |this| not be undefined.
-PASS String.prototype.localeCompare.call(undefined) threw exception TypeError: String.prototype.localeCompare requires that |this| not be undefined.
-PASS String.prototype.localeCompare.call(null) threw exception TypeError: String.prototype.localeCompare requires that |this| not be null.
+PASS String.prototype.localeCompare.call() threw exception TypeError: String.prototype.localeCompare requires that |this| not be null or undefined.
+PASS String.prototype.localeCompare.call(undefined) threw exception TypeError: String.prototype.localeCompare requires that |this| not be null or undefined.
+PASS String.prototype.localeCompare.call(null) threw exception TypeError: String.prototype.localeCompare requires that |this| not be null or undefined.
 PASS String.prototype.localeCompare.call({}, '') did not throw exception.
 PASS String.prototype.localeCompare.call([], '') did not throw exception.
 PASS String.prototype.localeCompare.call(NaN, '') did not throw exception.

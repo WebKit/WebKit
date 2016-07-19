@@ -28,11 +28,8 @@ function next()
 {
     "use strict";
 
-    if (this == null) {
-        if (this === null)
-            throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be null");
-        throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be undefined");
-    }
+    if (this == null)
+        throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
 
     let next = this.@arrayIteratorNext;
     if (next === @undefined)

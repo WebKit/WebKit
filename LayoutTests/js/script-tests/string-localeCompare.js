@@ -7,9 +7,9 @@ shouldBeTrue("Object.getOwnPropertyDescriptor(String.prototype, 'localeCompare')
 shouldBeTrue("Object.getOwnPropertyDescriptor(String.prototype, 'localeCompare').writable");
 
 // Test RequireObjectCoercible.
-shouldThrow("String.prototype.localeCompare.call()", "'TypeError: String.prototype.localeCompare requires that |this| not be undefined'");
-shouldThrow("String.prototype.localeCompare.call(undefined)", "'TypeError: String.prototype.localeCompare requires that |this| not be undefined'");
-shouldThrow("String.prototype.localeCompare.call(null)", "'TypeError: String.prototype.localeCompare requires that |this| not be null'");
+shouldThrow("String.prototype.localeCompare.call()", "'TypeError: String.prototype.localeCompare requires that |this| not be null or undefined'");
+shouldThrow("String.prototype.localeCompare.call(undefined)", "'TypeError: String.prototype.localeCompare requires that |this| not be null or undefined'");
+shouldThrow("String.prototype.localeCompare.call(null)", "'TypeError: String.prototype.localeCompare requires that |this| not be null or undefined'");
 shouldNotThrow("String.prototype.localeCompare.call({}, '')");
 shouldNotThrow("String.prototype.localeCompare.call([], '')");
 shouldNotThrow("String.prototype.localeCompare.call(NaN, '')");

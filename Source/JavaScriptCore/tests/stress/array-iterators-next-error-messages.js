@@ -8,11 +8,11 @@ next = [].values().next;
 try {
     next.call(null);
 } catch(e) {
-    assert(e, "TypeError: %ArrayIteratorPrototype%.next requires that |this| not be null");
+    assert(e, "TypeError: %ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
 }
 
 try {
     next.call(undefined);
 } catch(e) {
-    assert(e, "TypeError: %ArrayIteratorPrototype%.next requires that |this| not be undefined");
+    assert(e, "TypeError: %ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
 }

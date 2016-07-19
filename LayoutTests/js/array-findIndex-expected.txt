@@ -43,8 +43,8 @@ Modification during search
 PASS [0,1,2,3,4,5,6,7,8,9].findIndex(findItemAddedDuringSearch) is -1
 PASS [0,1,2,3,4,5,6,7,8,9].findIndex(findItemRemovedDuringSearch) is -1
 Exceptions
-PASS Array.prototype.findIndex.call(undefined, function() {}) threw exception TypeError: Array.prototype.findIndex requires that |this| not be undefined.
-PASS Array.prototype.findIndex.call(null, function() {}) threw exception TypeError: Array.prototype.findIndex requires that |this| not be null.
+PASS Array.prototype.findIndex.call(undefined, function() {}) threw exception TypeError: Array.prototype.findIndex requires that |this| not be null or undefined.
+PASS Array.prototype.findIndex.call(null, function() {}) threw exception TypeError: Array.prototype.findIndex requires that |this| not be null or undefined.
 PASS [].findIndex(1) threw exception TypeError: Array.prototype.findIndex callback must be a function.
 PASS [].findIndex('hello') threw exception TypeError: Array.prototype.findIndex callback must be a function.
 PASS [].findIndex([]) threw exception TypeError: Array.prototype.findIndex callback must be a function.

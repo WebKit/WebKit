@@ -41,8 +41,8 @@ function shouldThrow(func, errorMessage) {
 
 (function TestRequireObjectCoercible() {
     var padStart = String.prototype.padStart;
-    shouldThrow(() => padStart.call(null, 4, "test"), "TypeError: String.prototype.padStart requires that |this| not be null");
-    shouldThrow(() => padStart.call(undefined, 4, "test"), "TypeError: String.prototype.padStart requires that |this| not be undefined");
+    shouldThrow(() => padStart.call(null, 4, "test"), "TypeError: String.prototype.padStart requires that |this| not be null or undefined");
+    shouldThrow(() => padStart.call(undefined, 4, "test"), "TypeError: String.prototype.padStart requires that |this| not be null or undefined");
     shouldBe("   123", padStart.call({
         __proto__: null,
         valueOf() { return 123; }

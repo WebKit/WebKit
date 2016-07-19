@@ -41,8 +41,8 @@ function shouldThrow(func, errorMessage) {
 
 (function TestRequireObjectCoercible() {
     var padEnd = String.prototype.padEnd;
-    shouldThrow(() => padEnd.call(null, 4, "test"), "TypeError: String.prototype.padEnd requires that |this| not be null");
-    shouldThrow(() => padEnd.call(undefined, 4, "test"), "TypeError: String.prototype.padEnd requires that |this| not be undefined");
+    shouldThrow(() => padEnd.call(null, 4, "test"), "TypeError: String.prototype.padEnd requires that |this| not be null or undefined");
+    shouldThrow(() => padEnd.call(undefined, 4, "test"), "TypeError: String.prototype.padEnd requires that |this| not be null or undefined");
     shouldBe("123   ", padEnd.call({
         __proto__: null,
         valueOf() { return 123; }

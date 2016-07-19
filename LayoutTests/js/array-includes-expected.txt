@@ -28,8 +28,8 @@ PASS a.includes('egg') is true
 PASS a.includes('sausage') is true
 PASS a.includes('hashbrown') is false
 PASS a.includes('toast') is false
-PASS Array.prototype.includes.call(undefined, 1) threw exception TypeError: Array.prototype.includes requires that |this| not be undefined.
-PASS Array.prototype.includes.call(null, 1) threw exception TypeError: Array.prototype.includes requires that |this| not be null.
+PASS Array.prototype.includes.call(undefined, 1) threw exception TypeError: Array.prototype.includes requires that |this| not be null or undefined.
+PASS Array.prototype.includes.call(null, 1) threw exception TypeError: Array.prototype.includes requires that |this| not be null or undefined.
 Array-like object with invalid lengths
 PASS var obj = { 0: 1, 1: 1, 2: 1, length: 0 }; Array.prototype.includes.call(obj, 1) is false
 PASS var obj = { 0: 1, 1: 1, 2: 1, length: -0 }; Array.prototype.includes.call(obj, 1) is false

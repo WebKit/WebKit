@@ -42,8 +42,8 @@ Modification during search
 PASS [0,1,2,3,4,5,6,7,8,9].find(findItemAddedDuringSearch) is undefined
 PASS [0,1,2,3,4,5,6,7,8,9].find(findItemRemovedDuringSearch) is undefined
 Exceptions
-PASS Array.prototype.find.call(undefined, function() {}) threw exception TypeError: Array.prototype.find requires that |this| not be undefined.
-PASS Array.prototype.find.call(null, function() {}) threw exception TypeError: Array.prototype.find requires that |this| not be null.
+PASS Array.prototype.find.call(undefined, function() {}) threw exception TypeError: Array.prototype.find requires that |this| not be null or undefined.
+PASS Array.prototype.find.call(null, function() {}) threw exception TypeError: Array.prototype.find requires that |this| not be null or undefined.
 PASS [].find(1) threw exception TypeError: Array.prototype.find callback must be a function.
 PASS [].find('hello') threw exception TypeError: Array.prototype.find callback must be a function.
 PASS [].find([]) threw exception TypeError: Array.prototype.find callback must be a function.

@@ -101,8 +101,8 @@ shouldBe("[0,1,2,3,4,5,6,7,8,9].find(findItemAddedDuringSearch)", "undefined");
 shouldBe("[0,1,2,3,4,5,6,7,8,9].find(findItemRemovedDuringSearch)", "undefined");
 
 debug("Exceptions");
-shouldThrow("Array.prototype.find.call(undefined, function() {})", "'TypeError: Array.prototype.find requires that |this| not be undefined'");
-shouldThrow("Array.prototype.find.call(null, function() {})", "'TypeError: Array.prototype.find requires that |this| not be null'");
+shouldThrow("Array.prototype.find.call(undefined, function() {})", "'TypeError: Array.prototype.find requires that |this| not be null or undefined'");
+shouldThrow("Array.prototype.find.call(null, function() {})", "'TypeError: Array.prototype.find requires that |this| not be null or undefined'");
 shouldThrow("[].find(1)", "'TypeError: Array.prototype.find callback must be a function'");
 shouldThrow("[].find('hello')", "'TypeError: Array.prototype.find callback must be a function'");
 shouldThrow("[].find([])", "'TypeError: Array.prototype.find callback must be a function'");

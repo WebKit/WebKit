@@ -29,11 +29,8 @@ function match(regexp)
 {
     "use strict";
 
-    if (this == null) {
-        if (this === null)
-            throw new @TypeError("String.prototype.match requires that |this| not be null");
-        throw new @TypeError("String.prototype.match requires that |this| not be undefined");
-    }
+    if (this == null)
+        throw new @TypeError("String.prototype.match requires that |this| not be null or undefined");
 
     if (regexp != null) {
         var matcher = regexp.@matchSymbol;
@@ -104,12 +101,8 @@ function repeat(count)
 {
     "use strict";
 
-    if (this == null) {
-        var message = "String.prototype.repeat requires that |this| not be undefined";
-        if (this === null)
-            message = "String.prototype.repeat requires that |this| not be null";
-        throw new @TypeError(message);
-    }
+    if (this == null)
+        throw new @TypeError("String.prototype.repeat requires that |this| not be null or undefined");
 
     var string = @toString(this);
     count = @toInteger(count);
@@ -130,11 +123,8 @@ function padStart(maxLength/*, fillString*/)
 {
     "use strict";
 
-    if (this === null)
-        throw new @TypeError("String.prototype.padStart requires that |this| not be null");
-    
-    if (this === @undefined)
-        throw new @TypeError("String.prototype.padStart requires that |this| not be undefined");
+    if (this == null)
+        throw new @TypeError("String.prototype.padStart requires that |this| not be null or undefined");
 
     var string = @toString(this);
     maxLength = @toLength(maxLength);
@@ -170,11 +160,8 @@ function padEnd(maxLength/*, fillString*/)
 {
     "use strict";
 
-    if (this === null)
-        throw new @TypeError("String.prototype.padEnd requires that |this| not be null");
-    
-    if (this === @undefined)
-        throw new @TypeError("String.prototype.padEnd requires that |this| not be undefined");
+    if (this == null)
+        throw new @TypeError("String.prototype.padEnd requires that |this| not be null or undefined");
 
     var string = @toString(this);
     maxLength = @toLength(maxLength);
@@ -231,11 +218,8 @@ function replace(search, replace)
 {
     "use strict";
 
-    if (this == null) {
-        if (this === null)
-            throw new @TypeError("String.prototype.replace requires that |this| not be null");
-        throw new @TypeError("String.prototype.replace requires that |this| not be undefined");
-    }
+    if (this == null)
+        throw new @TypeError("String.prototype.replace requires that |this| not be null or undefined");
 
     if (search != null) {
         let replacer = search.@replaceSymbol;
@@ -259,11 +243,8 @@ function localeCompare(that/*, locales, options */)
     // http://ecma-international.org/publications/standards/Ecma-402.htm
 
     // 1. Let O be RequireObjectCoercible(this value).
-    if (this === null)
-        throw new @TypeError("String.prototype.localeCompare requires that |this| not be null");
-    
-    if (this === @undefined)
-        throw new @TypeError("String.prototype.localeCompare requires that |this| not be undefined");
+    if (this == null)
+        throw new @TypeError("String.prototype.localeCompare requires that |this| not be null or undefined");
 
     // 2. Let S be ToString(O).
     // 3. ReturnIfAbrupt(S).
@@ -289,11 +270,8 @@ function search(regexp)
 {
     "use strict";
 
-    if (this == null) {
-        if (this === null)
-            throw new @TypeError("String.prototype.search requires that |this| not be null");
-        throw new @TypeError("String.prototype.search requires that |this| not be undefined");
-    }
+    if (this == null)
+        throw new @TypeError("String.prototype.search requires that |this| not be null or undefined");
 
     if (regexp != null) {
         var searcher = regexp.@searchSymbol;
@@ -310,11 +288,8 @@ function split(separator, limit)
 {
     "use strict";
     
-    if (this == null) {
-        if (this === null)
-            throw new @TypeError("String.prototype.split requires that |this| not be null");
-        throw new @TypeError("String.prototype.split requires that |this| not be undefined");
-    }
+    if (this == null)
+        throw new @TypeError("String.prototype.split requires that |this| not be null or undefined");
     
     if (separator != null) {
         var splitter = separator.@splitSymbol;

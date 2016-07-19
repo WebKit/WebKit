@@ -1,3 +1,52 @@
+2016-07-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Make builtin TypeErrors consistent
+        https://bugs.webkit.org/show_bug.cgi?id=159899
+
+        Reviewed by Keith Miller.
+
+        Converge on the single TypeError for non-coercible this objects in builtins.
+        Also update some other style to be more consistent with-in builtins.
+
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        * builtins/ArrayPrototype.js:
+        (values):
+        (keys):
+        (entries):
+        (reduce):
+        (reduceRight):
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        (fill):
+        (find):
+        (findIndex):
+        (includes):
+        (sort):
+        (concatSlowPath):
+        (copyWithin):
+        * builtins/StringPrototype.js:
+        (match):
+        (repeat):
+        (padStart):
+        (padEnd):
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        (localeCompare):
+        (search):
+        (split):
+        * tests/es6/String.prototype_methods_String.prototype.padEnd.js:
+        * tests/es6/String.prototype_methods_String.prototype.padStart.js:
+        * tests/stress/array-iterators-next-error-messages.js:
+        (catch):
+        * tests/stress/array-iterators-next-with-call.js:
+        * tests/stress/regexp-match.js:
+        (shouldThrow):
+        * tests/stress/regexp-search.js:
+        (shouldThrow):
+
 2016-07-17  Filip Pizlo  <fpizlo@apple.com>
 
         Implement table-based switches in B3/Air
