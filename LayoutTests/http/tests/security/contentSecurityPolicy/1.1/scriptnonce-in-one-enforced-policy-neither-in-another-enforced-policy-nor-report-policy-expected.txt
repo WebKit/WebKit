@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: The Content Security Policy 'object-src 'none'' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS did execute script.

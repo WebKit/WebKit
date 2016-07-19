@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: The Content Security Policy 'script-src 'nonce-dummy' 'nonce-dump-as-text'' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: line 13: [Report Only] Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 13: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The Content Security Policy 'script-src 'nonce-dummy' 'nonce-dump-as-text'' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.
+PASS did not execute script.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+CSP report received:
+CONTENT_TYPE: application/csp-report
+HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php
+REQUEST_METHOD: POST
+=== POST DATA ===
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php","referrer":"","violated-directive":"script-src 'nonce-dump-as-text'","effective-directive":"script-src","original-policy":"script-src 'nonce-dump-as-text'; report-uri ../resources/save-report.php?test=/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php","blocked-uri":"","status-code":200}}

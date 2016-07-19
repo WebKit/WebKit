@@ -1,3 +1,70 @@
+2016-07-19  Daniel Bates  <dabates@apple.com>
+
+        CSP: Improve support for multiple policies to more closely conform to the CSP Level 2 spec.
+        https://bugs.webkit.org/show_bug.cgi?id=159841
+        <rdar://problem/27381684>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scripthash-in-enforced-policy-and-not-in-report-only.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scripthash-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scriptnonce-in-enforced-policy-and-not-in-report-only.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-in-enforced-policy-and-not-in-report-only-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-in-enforced-policy-and-not-in-report-only.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-multiple-policies-expected.txt: Update expected result to reflect additional console
+        messages. We will remove these extraneous console messages as part of the fix for <https://bugs.webkit.org/show_bug.cgi?id=159832>.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-in-enforced-policy-and-not-in-report-only-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-in-enforced-policy-and-not-in-report-only.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-multiple-policies-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-multiple-policies.html: Added.
+
 2016-07-19  Chris Dumez  <cdumez@apple.com>
 
         autocapitalize attribute should not use [TreatNullAs=LegacyNullString]
