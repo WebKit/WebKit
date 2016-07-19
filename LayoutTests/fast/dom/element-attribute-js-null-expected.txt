@@ -173,7 +173,7 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLParamElement.value]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLParamElement.valueType]
 
 
-TEST SUCCEEDED: The value was the empty string. [tested HTMLScriptElement.text]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.text]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.htmlFor]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.event]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.charset]

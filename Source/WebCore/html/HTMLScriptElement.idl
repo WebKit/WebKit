@@ -18,8 +18,7 @@
  */
 
 interface HTMLScriptElement : HTMLElement {
-    // FIXME: This should not have [TreatNullAs=EmptyString].
-    [TreatNullAs=EmptyString] attribute DOMString text;
+    attribute DOMString text;
 
     [Reflect=for] attribute DOMString htmlFor;
     [Reflect] attribute DOMString event;
