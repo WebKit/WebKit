@@ -1,3 +1,26 @@
+2016-07-18  Jeremy Jones  <jeremyj@apple.com>
+
+        If previous media session interruptions were prevented, still allow subsequent interruptions to try.
+        https://bugs.webkit.org/show_bug.cgi?id=157553
+        rdar://problem/25740804
+
+        Reviewed by Eric Carlson.
+
+        When suspending under lock on iOS, there is first a resign active event, then a
+        suspend under lock. PiP prevents resign active from interrupting playback. But it should allow the
+        suspend under lock to interrupt playback.
+
+        Currently if there are nested interruptions only the first one is acted upon.
+
+        This change allows subsequent, nested interruptions to have a chance to interrupt playback if the
+        previous interruptions were ignored.
+
+        This test is for iPad only, so it must be run manually.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/media/video-interruption-suspendunderlock-expcted.txt: Added.
+        * platform/ios-simulator/media/video-interruption-suspendunderlock.html: Added.
+
 2016-07-18  Brent Fulgham  <bfulgham@apple.com>
 
         Don't associate form-associated elements with forms in other trees.

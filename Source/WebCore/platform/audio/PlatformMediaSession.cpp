@@ -100,7 +100,9 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
 {
     LOG(Media, "PlatformMediaSession::beginInterruption(%p), state = %s, interruption type = %s, interruption count = %i", this, stateName(m_state), interruptionName(type), m_interruptionCount);
 
-    if (++m_interruptionCount > 1)
+    // When interruptions are overridden, m_interruptionType doesn't get set.
+    // Give nested interruptions a chance when the previous interruptions were overridden.
+    if (++m_interruptionCount > 1 && m_interruptionType != NoInterruption)
         return;
 
     if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {

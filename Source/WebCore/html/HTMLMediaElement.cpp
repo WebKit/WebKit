@@ -6859,23 +6859,27 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
 
 bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType type) const
 {
-    if (type != PlatformMediaSession::EnteringBackground) {
-        LOG(Media, "HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(%p) - returning false because type != PlatformMediaSession::EnteringBackground", this);
-        return false;
-    }
-
+    if (type == PlatformMediaSession::EnteringBackground) {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (m_isPlayingToWirelessTarget) {
-        LOG(Media, "HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(%p) - returning true because m_isPlayingToWirelessTarget is true", this);
-        return true;
-    }
+        if (m_isPlayingToWirelessTarget) {
+            LOG(Media, "HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(%p) - returning true because m_isPlayingToWirelessTarget is true", this);
+            return true;
+        }
 #endif
-    if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
-        return true;
+        if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
+            return true;
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    if (m_videoFullscreenMode == VideoFullscreenModeStandard && supportsPictureInPicture() && isPlaying())
-        return true;
+        if (m_videoFullscreenMode == VideoFullscreenModeStandard && supportsPictureInPicture() && isPlaying())
+            return true;
 #endif
+    } else if (type == PlatformMediaSession::SuspendedUnderLock) {
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+        if (m_isPlayingToWirelessTarget) {
+            LOG(Media, "HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(%p) - returning true because m_isPlayingToWirelessTarget is true", this);
+            return true;
+        }
+#endif
+    }
     return false;
 }
 

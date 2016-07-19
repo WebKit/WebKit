@@ -3005,6 +3005,7 @@ webkit.org/b/158618 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
 # These tests hardcode platform-specific font aliases.
 webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 
+
 webkit.org/b/159214 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 webkit.org/b/157592 fast/images/composited-animated-gif-outside-viewport.html [ Pass Timeout ]
@@ -3016,3 +3017,6 @@ webkit.org/b/159683 imported/w3c/web-platform-tests/fetch/api/request/request-ca
 webkit.org/b/158640 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Pass Failure ]
 
 webkit.org/b/142969 editing/spelling/copy-paste-crash.html
+
+# This test is iPad only
+platform/ios-simulator/media/video-interruption-suspendunderlock.html [ Skip ]
