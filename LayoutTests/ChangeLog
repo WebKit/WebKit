@@ -1,3 +1,21 @@
+2016-07-18  Chris Dumez  <cdumez@apple.com>
+
+        input.formEnctype / formMethod and button.formEnctype / formMethod / type should treat null as "null"
+        https://bugs.webkit.org/show_bug.cgi?id=159908
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLButtonElement/change-type-expected.txt:
+        * fast/dom/HTMLButtonElement/change-type.html:
+        * fast/dom/HTMLButtonElement/null-handling-expected.txt: Added.
+        * fast/dom/HTMLButtonElement/null-handling.html: Added.
+        * fast/dom/HTMLInputElement/null-handling-expected.txt: Added.
+        * fast/dom/HTMLInputElement/null-handling.html: Added.
+        * fast/forms/submit-form-attributes-expected.txt:
+        * fast/forms/submit-form-attributes.html:
+
 2016-07-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make builtin TypeErrors consistent

@@ -4724,7 +4724,7 @@ PASS input.formEnctype: IDL set to "\0" should not throw
 PASS input.formEnctype: IDL set to "\0" followed by getAttribute() 
 PASS input.formEnctype: IDL set to "\0" followed by IDL get 
 PASS input.formEnctype: IDL set to null should not throw 
-FAIL input.formEnctype: IDL set to null followed by IDL get assert_equals: expected "application/x-www-form-urlencoded" but got ""
+PASS input.formEnctype: IDL set to null followed by IDL get 
 PASS input.formEnctype: IDL set to object "test-toString" should not throw 
 PASS input.formEnctype: IDL set to object "test-toString" followed by getAttribute() 
 PASS input.formEnctype: IDL set to object "test-toString" followed by IDL get 
@@ -4865,7 +4865,7 @@ PASS input.formMethod: IDL set to "\0" should not throw
 PASS input.formMethod: IDL set to "\0" followed by getAttribute() 
 PASS input.formMethod: IDL set to "\0" followed by IDL get 
 PASS input.formMethod: IDL set to null should not throw 
-FAIL input.formMethod: IDL set to null followed by IDL get assert_equals: expected "get" but got ""
+PASS input.formMethod: IDL set to null followed by IDL get 
 PASS input.formMethod: IDL set to object "test-toString" should not throw 
 PASS input.formMethod: IDL set to object "test-toString" followed by getAttribute() 
 PASS input.formMethod: IDL set to object "test-toString" followed by IDL get 
@@ -8169,7 +8169,7 @@ PASS button.formEnctype: IDL set to "\0" should not throw
 PASS button.formEnctype: IDL set to "\0" followed by getAttribute() 
 PASS button.formEnctype: IDL set to "\0" followed by IDL get 
 PASS button.formEnctype: IDL set to null should not throw 
-FAIL button.formEnctype: IDL set to null followed by IDL get assert_equals: expected "application/x-www-form-urlencoded" but got ""
+PASS button.formEnctype: IDL set to null followed by IDL get 
 PASS button.formEnctype: IDL set to object "test-toString" should not throw 
 PASS button.formEnctype: IDL set to object "test-toString" followed by getAttribute() 
 PASS button.formEnctype: IDL set to object "test-toString" followed by IDL get 
@@ -8320,7 +8320,7 @@ PASS button.formMethod: IDL set to "\0" should not throw
 PASS button.formMethod: IDL set to "\0" followed by getAttribute() 
 PASS button.formMethod: IDL set to "\0" followed by IDL get 
 PASS button.formMethod: IDL set to null should not throw 
-FAIL button.formMethod: IDL set to null followed by IDL get assert_equals: expected "get" but got ""
+PASS button.formMethod: IDL set to null followed by IDL get 
 PASS button.formMethod: IDL set to object "test-toString" should not throw 
 PASS button.formMethod: IDL set to object "test-toString" followed by getAttribute() 
 PASS button.formMethod: IDL set to object "test-toString" followed by IDL get 

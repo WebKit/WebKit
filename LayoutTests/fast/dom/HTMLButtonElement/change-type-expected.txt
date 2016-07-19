@@ -30,7 +30,7 @@ PASS btn.getAttribute('type') is 'button '
 PASS btn.type = ' b u t t o n '; btn.type is 'submit'
 PASS btn.getAttribute('type') is ' b u t t o n '
 PASS btn.type = null; btn.type is 'submit'
-PASS btn.getAttribute('type') is null
+PASS btn.getAttribute('type') is "null"
 PASS btn.type = undefined; btn.type is 'submit'
 PASS btn.getAttribute('type') is 'undefined'
 PASS btn.type = 'reset'; txt.value = 'hello'; btn.click(); txt.value is ''

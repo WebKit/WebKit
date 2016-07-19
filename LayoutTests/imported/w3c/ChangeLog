@@ -1,5 +1,16 @@
 2016-07-18  Chris Dumez  <cdumez@apple.com>
 
+        input.formEnctype / formMethod and button.formEnctype / formMethod / type should treat null as "null"
+        https://bugs.webkit.org/show_bug.cgi?id=159908
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+
+2016-07-18  Chris Dumez  <cdumez@apple.com>
+
         DocType's publicId / systemId should not be nullable
         https://bugs.webkit.org/show_bug.cgi?id=159901
 

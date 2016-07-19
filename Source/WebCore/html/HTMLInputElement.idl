@@ -35,9 +35,8 @@
     attribute FileList? files;
     attribute DOMString formAction;
 
-    // FIXME: These should not use [TreatNullAs=LegacyNullString].
-    [TreatNullAs=LegacyNullString] attribute DOMString formEnctype;
-    [TreatNullAs=LegacyNullString] attribute DOMString formMethod;
+    attribute DOMString formEnctype;
+    attribute DOMString formMethod;
 
     [Reflect] attribute boolean formNoValidate;
     [Reflect] attribute DOMString formTarget;

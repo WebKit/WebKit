@@ -24,10 +24,9 @@ interface HTMLButtonElement : HTMLElement {
     readonly attribute HTMLFormElement form;
     attribute DOMString formAction;
 
-    // FIXME: These should not have [TreatNullAs=LegacyNullString].
-    [TreatNullAs=LegacyNullString] attribute DOMString formEnctype;
-    [TreatNullAs=LegacyNullString] attribute DOMString formMethod;
-    [TreatNullAs=LegacyNullString] attribute DOMString type;
+    attribute DOMString formEnctype;
+    attribute DOMString formMethod;
+    attribute DOMString type;
 
     [Reflect] attribute boolean formNoValidate;
     [Reflect] attribute DOMString formTarget;
