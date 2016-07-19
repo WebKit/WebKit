@@ -34,6 +34,7 @@ THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
 SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
 WEBKIT_PATH = SCRIPTS_PATH.dirname.dirname
 TEST262_YAML_PATH = WEBKIT_PATH + "Source/JavaScriptCore/tests/test262.yaml"
+TEST262_REVISION_PATH = WEBKIT_PATH + "Source/JavaScriptCore/tests/test262/test262-Revision.txt"
 
 raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
 raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
@@ -252,5 +253,30 @@ def printYAML(tests)
     }
 end
 
-tests = processFilesRecursively(Pathname.new(ARGV[0]))
+def printRevision(test262Path)
+    url = "unknown"
+    branchname = url
+    revision = url
+    Dir.chdir(test262Path) {
+        branchname = `git rev-parse --abbrev-ref HEAD`.strip
+        # Not sure what we should do if they don't have a branch checked out.
+        # Getting the url from origin seems reasonable.
+        branchname = "origin" if branchname == "HEAD"
+        url = `git remote get-url #{branchname}`
+        revision = `git rev-parse HEAD`.strip
+    }
+
+    File.open(TEST262_REVISION_PATH, "w+") {
+        | outp |
+        puts "test262 remote url: " + url
+        puts "test262 revision: " + revision
+        outp.puts "test262 remote url: " + url
+        outp.puts "test262 revision: " + revision
+        outp.puts
+    }
+end
+
+test262Path = Pathname.new(ARGV[0])
+printRevision(test262Path)
+tests = processFilesRecursively(test262Path)
 printYAML(tests)

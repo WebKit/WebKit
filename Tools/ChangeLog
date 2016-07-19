@@ -1,3 +1,15 @@
+2016-07-19  Keith Miller  <keith_miller@apple.com>
+
+        Test262 should have a file with the revision and url
+        https://bugs.webkit.org/show_bug.cgi?id=159937
+
+        Reviewed by Mark Lam.
+
+        The import script should update the information from
+        the path to the test262 repository it gets.
+
+        * Scripts/import-test262-tests:
+
 2016-07-19  Alexey Proskuryakov  <ap@apple.com>
 
         Temporary workaround for iOS EWS failing after the fix for bug 159539.
