@@ -1,3 +1,65 @@
+2016-07-19  Youenn Fablet  <youennf@gmail.com>
+
+        Refresh WPT tests up to 98ec1ad
+        https://bugs.webkit.org/show_bug.cgi?id=159879
+
+        Reviewed by Alex Christensen.
+
+        This refresh concerns fetch API tests with a number of test fixes.
+        Rebasing both window and worker expectations.
+
+        * resources/TestRepositories:
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker.html:
+        * web-platform-tests/fetch/api/basic/mode-same-origin.html:
+        * web-platform-tests/fetch/api/basic/mode-same-origin.js:
+        * web-platform-tests/fetch/api/cors/cors-basic-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-basic.html:
+        * web-platform-tests/fetch/api/cors/cors-basic.js:
+        (cors):
+        * web-platform-tests/fetch/api/cors/cors-cookies-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-cookies.html:
+        * web-platform-tests/fetch/api/cors/cors-cookies.js:
+        (corsCookies):
+        * web-platform-tests/fetch/api/cors/cors-no-preflight-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.html:
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.js:
+        (corsNoPreflight):
+        * web-platform-tests/fetch/api/cors/cors-origin-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-origin.html:
+        * web-platform-tests/fetch/api/cors/cors-origin.js:
+        (corsOrigin):
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.js:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.js:
+        (corsPreflightReferrer):
+        * web-platform-tests/fetch/api/cors/cors-preflight-status-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.js:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.html:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.js:
+        * web-platform-tests/fetch/api/cors/cors-redirect-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-redirect.html:
+        * web-platform-tests/fetch/api/cors/cors-redirect.js:
+        * web-platform-tests/fetch/api/request/request-cache.html:
+        * web-platform-tests/fetch/api/request/resources/w3c-import.log:
+        * web-platform-tests/fetch/api/resources/get-host-info.sub.js: Added.
+        (get_host_info):
+        * web-platform-tests/fetch/api/resources/utils.js:
+        (validateBufferFromString):
+        * web-platform-tests/fetch/api/resources/w3c-import.log:
+        * web-platform-tests/fetch/api/response/response-clone-expected.txt:
+        * web-platform-tests/fetch/api/response/response-clone.html:
+        * web-platform-tests/fetch/api/response/response-consume-stream-expected.txt:
+
 2016-07-19  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] Make ReadableStream properties not enumerable

@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/authentication.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/clean-stash.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/data.json
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/get-host-info.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/inspect-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/method.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/preflight.py

@@ -3,5 +3,5 @@ PASS Check Response's clone with default values, without body
 PASS Check Response's clone has the expected attribute values 
 PASS Check orginal response's body after cloning 
 PASS Check cloned response's body 
-FAIL Cannot clone a disturbed response assert_true: response is disturbed expected true got false
+PASS Cannot clone a disturbed response 
 

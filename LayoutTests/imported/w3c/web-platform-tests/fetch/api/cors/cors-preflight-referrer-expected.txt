@@ -1,7 +1,9 @@
 
-PASS Referrer policy: no-referrer 
-PASS Referrer policy: "" 
-PASS Referrer policy: origin 
-PASS Referrer policy: origin-when-cross-origin 
-PASS Referrer policy: unsafe-url 
+Harness Error (TIMEOUT), message = null
+
+FAIL Referrer policy: no-referrer assert_equals: Clean stash response's status is 200 expected 200 but got 500
+TIMEOUT Referrer policy: "" Test timed out
+TIMEOUT Referrer policy: origin Test timed out
+TIMEOUT Referrer policy: origin-when-cross-origin Test timed out
+TIMEOUT Referrer policy: unsafe-url Test timed out
 
