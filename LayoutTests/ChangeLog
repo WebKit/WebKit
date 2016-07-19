@@ -1,3 +1,9 @@
+2016-07-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/27356144.
+
+        * platform/mac/TestExpectations:
+
 2016-07-19  Zalan Bujtas  <zalan@apple.com>
 
         theguardian.co.uk crossword puzzles are sometimes not displaying text
