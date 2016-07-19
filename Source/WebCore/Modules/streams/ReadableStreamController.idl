@@ -29,14 +29,14 @@
 
 [
     Conditional=STREAMS_API,
-    CustomConstructor,
+    CustomConstructor(ReadableStream stream, any underlyingSource, unsigned long size, unsigned long highWaterMark),
     Exposed=(Window,Worker),
     JSBuiltin,
     NoInterfaceObject
 ] interface ReadableStreamController {
-    void enqueue(optional any chunk);
-    void close();
-    void error(optional any error);
+    [NotEnumerable] void enqueue(optional any chunk);
+    [NotEnumerable] void close();
+    [NotEnumerable] void error(optional any error);
 
-    readonly attribute double desiredSize;
+    [NotEnumerable] readonly attribute double desiredSize;
 };

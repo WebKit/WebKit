@@ -2,11 +2,11 @@
 PASS ReadableStream can be constructed with no errors 
 PASS ReadableStream can't be constructed with garbage 
 FAIL ReadableStream can't be constructed with an invalid type assert_throws: constructor should throw when the type is null function "() => new ReadableStream({ type: null })" did not throw
-FAIL ReadableStream instances should have the correct list of properties assert_false: method should be non-enumerable expected false got true
+PASS ReadableStream instances should have the correct list of properties 
 PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 
 PASS ReadableStream constructor can get initial garbage as pull argument 
-FAIL ReadableStream start should be called with the proper parameters assert_false: close should be non-enumerable expected false got true
+PASS ReadableStream start should be called with the proper parameters 
 PASS ReadableStream start controller parameter should be extensible 
 PASS ReadableStream should be able to call start method within prototype chain of its source 
 PASS ReadableStream start should be able to return a promise 
@@ -39,11 +39,11 @@ FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.ge
 PASS ReadableStream can be constructed with no errors 
 PASS ReadableStream can't be constructed with garbage 
 FAIL ReadableStream can't be constructed with an invalid type assert_throws: constructor should throw when the type is null function "() => new ReadableStream({ type: null })" did not throw
-FAIL ReadableStream instances should have the correct list of properties assert_false: method should be non-enumerable expected false got true
+PASS ReadableStream instances should have the correct list of properties 
 PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 
 PASS ReadableStream constructor can get initial garbage as pull argument 
-FAIL ReadableStream start should be called with the proper parameters assert_false: close should be non-enumerable expected false got true
+PASS ReadableStream start should be called with the proper parameters 
 PASS ReadableStream start controller parameter should be extensible 
 PASS ReadableStream should be able to call start method within prototype chain of its source 
 PASS ReadableStream start should be able to return a promise 

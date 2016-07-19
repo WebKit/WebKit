@@ -29,17 +29,17 @@
 
 [
     Conditional=STREAMS_API,
-    Constructor,
+    Constructor(optional any underlyingSource, optional any options),
     Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier,
     PublicIdentifier
 ] interface ReadableStream {
-    Promise cancel(optional any reason);
-    Object getReader();
-    Promise pipeTo(any streams, any options);
-    Object pipeThrough(any dest, any options);
-    Object tee();
+    [NotEnumerable] Promise cancel(optional any reason);
+    [NotEnumerable] Object getReader();
+    [NotEnumerable] Promise pipeTo(any streams, optional any options);
+    [NotEnumerable] Object pipeThrough(any dest, any options);
+    [NotEnumerable] Object tee();
 
-    readonly attribute boolean locked;
+    [NotEnumerable] readonly attribute boolean locked;
 };

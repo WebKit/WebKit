@@ -99,9 +99,13 @@ function pipeThrough(streams, options)
     return readable;
 }
 
-function pipeTo(destination, options)
+function pipeTo(destination)
 {
     "use strict";
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159869.
+    // Built-in generator should be able to parse function signature to compute the function length correctly.
+    const options = arguments[1];
 
     // FIXME: rewrite pipeTo so as to require to have 'this' as a ReadableStream and destination be a WritableStream.
     // See https://github.com/whatwg/streams/issues/407.
