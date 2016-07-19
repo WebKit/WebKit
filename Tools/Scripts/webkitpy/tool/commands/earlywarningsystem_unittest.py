@@ -28,6 +28,7 @@
 
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.common.host import Host
+from webkitpy.common.host_mock import MockHost
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.models import test_results
@@ -49,6 +50,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
 
         ews = TestEWS()
         ews.bind_to_tool(MockTool())
+        ews.host = MockHost()
         ews._options = MockOptions(port=None, confirm=False)
         OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_logs=self._default_begin_work_queue_logs(ews.name))
         task = Mock()
@@ -89,6 +91,7 @@ MOCK: release_work_item: %(name)s 10000
 
     def _test_ews(self, ews):
         ews.bind_to_tool(MockTool())
+        ews.host = MockHost()
         options = Mock()
         options.port = None
         options.run_tests = ews.run_tests

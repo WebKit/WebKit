@@ -1,3 +1,44 @@
+2016-07-18  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS console logs doesn't go to log file
+        https://bugs.webkit.org/show_bug.cgi?id=159539
+        <rdar://problem/24464570>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/common/system/logutils.py:
+        (configure_logger_to_log_to_file): Added method to configure the logger to log to file.
+        (FileSystemHandler): Added class which uses logging.FileHandler as base class and supports writing
+        to filesystem. It also supports passing MockFilesystem.
+        (FileSystemHandler.__init__): Initialize the class and calls base class __init__.
+        (FileSystemHandler._open): Overrides the base class _open method to use filesystem object.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (AbstractEarlyWarningSystemTest.test_failing_tests_message): Added MockHost() parameter.
+        (_test_ews): Same.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue.begin_work_queue): Configure the logger to log to file.
+        (AbstractQueue._log_directory): Using filesystem object instead of os.
+        (AbstractQueue.queue_log_path): Same.
+        (AbstractQueue.__init__): Passed host parameter.
+        (PatchProcessingQueue.__init__): Same.
+        (CommitQueue.__init__): Same.
+        (AbstractReviewQueue.__init__): Same.
+        (StyleQueue.__init__): Same.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (TestCommitQueue): Passed MockHost() as host.
+        (TestCommitQueue.__init__): Same.
+        (TestQueue.__init__): Same.
+        (TestReviewQueue.__init__): Same.
+        (TestFeederQueue.__init__): Same.
+        (AbstractPatchQueueTest.test_next_patch): Same.
+        (PatchProcessingQueueTest.test_upload_results_archive_for_patch): Same.
+        (test_commit_queue_failure): Same.
+        (MockCommitQueueTask.results_from_patch_test_run): Same.
+        (test_rollout_lands): Same.
+        (test_non_valid_patch): Same.
+        (test_auto_retry): Same.
+        (test_style_queue_with_watch_list_exception): Same.
+
 2016-07-02  Filip Pizlo  <fpizlo@apple.com>
 
         WTF::Lock should be fair eventually

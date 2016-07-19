@@ -31,6 +31,8 @@ import sys
 
 import webkitpy
 
+from logging import FileHandler
+
 
 _log = logging.getLogger(__name__)
 
@@ -209,3 +211,25 @@ def configure_logging(logging_level=None, logger=None, stream=None,
     _log.debug("Debug logging enabled.")
 
     return handlers
+
+
+def configure_logger_to_log_to_file(logger, log_path, filesystem):
+    log_directory = filesystem.dirname(log_path)
+    if log_directory and not filesystem.exists(log_directory):
+        filesystem.maybe_make_directory(log_directory)
+
+    handler = FileSystemHandler(log_path, filesystem)
+    formatter = logging.Formatter('%(asctime)s - %(message)s')
+    handler.setFormatter(formatter)
+
+    logger.addHandler(handler)
+
+
+class FileSystemHandler(FileHandler):
+    def __init__(self, filename, filesystem):
+        self.filename = filename
+        self.filesystem = filesystem
+        FileHandler.__init__(self, filename)
+
+    def _open(self):
+        return self.filesystem.open_text_file_for_writing(self.filename)

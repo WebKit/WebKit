@@ -41,8 +41,10 @@ from StringIO import StringIO
 
 from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.config.ports import DeprecatedPort
+from webkitpy.common.host import Host
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.net.statusserver import StatusServer
+from webkitpy.common.system import logutils
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
@@ -66,7 +68,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     _fail_status = "Fail"
     _error_status = "Error"
 
-    def __init__(self, options=None):  # Default values should never be collections (like []) as default values are shared between invocations
+    def __init__(self, options=None, host=Host()):  # Default values should never be collections (like []) as default values are shared between invocations
         options_list = (options or []) + [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--exit-after-iteration", action="store", type="int", dest="iterations", default=None, help="Stop running the queue after iterating this number of times."),
@@ -76,6 +78,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         self._iteration_count = 0
         if not hasattr(self, 'architecture'):
             self.architecture = None
+        self.host = host
 
     def _cc_watchers(self, bug_id):
         try:
@@ -109,17 +112,18 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return command_output
 
     def _log_directory(self):
-        return os.path.join("..", "%s-logs" % self.name)
+        return self.host.filesystem.join("..", "%s-logs" % self.name)
 
     # QueueEngineDelegate methods
 
     def queue_log_path(self):
-        return os.path.join(self._log_directory(), "%s.log" % self.name)
+        return self.host.filesystem.join(self._log_directory(), "%s.log" % self.name)
 
     def work_item_log_path(self, work_item):
         raise NotImplementedError, "subclasses must implement"
 
     def begin_work_queue(self):
+        logutils.configure_logger_to_log_to_file(_log, self.queue_log_path(), self.host.filesystem)
         _log.info("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self._tool.scm().checkout_root))
         if self._options.confirm:
             response = self._tool.user.prompt("Are you sure?  Type \"yes\" to continue: ")
@@ -259,9 +263,10 @@ class PatchProcessingQueue(AbstractPatchQueue):
     # Subclasses must override.
     port_name = None
 
-    def __init__(self, options=None):
+    def __init__(self, options=None, host=Host()):
         self._port = None  # We can't instantiate port here because tool isn't avaialble.
-        AbstractPatchQueue.__init__(self, options)
+        self.host = host
+        AbstractPatchQueue.__init__(self, options, host=host)
 
     # FIXME: This is a hack to map between the old port names and the new port names.
     def _new_port_name_from_old(self, port_name, platform):
@@ -313,9 +318,10 @@ class PatchProcessingQueue(AbstractPatchQueue):
 
 
 class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
-    def __init__(self, commit_queue_task_class=CommitQueueTask):
+    def __init__(self, commit_queue_task_class=CommitQueueTask, host=Host()):
+        self.host = host
         self._commit_queue_task_class = commit_queue_task_class
-        PatchProcessingQueue.__init__(self)
+        PatchProcessingQueue.__init__(self, host=host)
 
     name = "commit-queue"
     port_name = "mac"
@@ -430,8 +436,9 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
 
 class AbstractReviewQueue(PatchProcessingQueue, StepSequenceErrorHandler):
     """This is the base-class for the EWS queues and the style-queue."""
-    def __init__(self, options=None):
-        PatchProcessingQueue.__init__(self, options)
+    def __init__(self, options=None, host=Host()):
+        self.host = host
+        PatchProcessingQueue.__init__(self, options, host=host)
 
     def review_patch(self, patch):
         raise NotImplementedError("subclasses must implement")
@@ -463,8 +470,9 @@ class AbstractReviewQueue(PatchProcessingQueue, StepSequenceErrorHandler):
 class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
     name = "style-queue"
 
-    def __init__(self):
-        AbstractReviewQueue.__init__(self)
+    def __init__(self, host=Host()):
+        self.host = host
+        AbstractReviewQueue.__init__(self, host=host)
 
     def review_patch(self, patch):
         task = StyleQueueTask(self, patch)
