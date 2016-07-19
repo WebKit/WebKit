@@ -1503,6 +1503,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
         return CharacterOffset();
     
     bool toNodeEnd = option & TraverseOptionToNodeEnd;
+    bool validateOffset = option & TraverseOptionValidateOffset;
     
     int offsetInCharacter = 0;
     int cumulativeOffset = 0;
@@ -1536,19 +1537,12 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
     // Sometimes text contents in a node are splitted into several iterations, so that iterator.range()->startOffset()
     // might not be the correct character count. Here we use a previousNode object to keep track of that.
     Node* previousNode = nullptr;
-    // When text node has collapsed whitespaces, we need to treat it differently since text iterator
-    // will omit the collapsed spaces and make the offset inaccurate.
-    Node* collapsedWhitespaceNode = nullptr;
     for (; !iterator.atEnd(); iterator.advance()) {
         int currentLength = iterator.text().length();
         bool hasReplacedNodeOrBR = false;
         
         Node& node = iterator.range()->startContainer();
         currentNode = &node;
-        
-        // The offset of node with collapsed whitespaces has been calcualted in the first iteration.
-        if (currentNode == collapsedWhitespaceNode)
-            continue;
         
         // When currentLength == 0, we check if there's any replaced node.
         // If not, we skip the node with no length.
@@ -1579,42 +1573,23 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
                         continue;
                     }
                 }
-            } else if (currentNode->isTextNode() && currentNode->renderer()) {
-                // When there's collapsed whitespace, the text iterator will only count those spaces as one single space.
-                // Here we use the RenderText to get the actual length.
-                RenderText* renderedText = downcast<RenderText>(currentNode->renderer());
-                int currentStartOffset = iterator.range()->startOffset();
-                if (renderedText->style().isCollapsibleWhiteSpace(iterator.text()[currentLength - 1])  && currentLength + currentStartOffset != renderedText->caretMaxOffset()) {
-                    int appendLength = (&range->endContainer() == currentNode ? range->endOffset() : (int)renderedText->text()->length()) - currentStartOffset;
-                    lastStartOffset = currentStartOffset;
-                    cumulativeOffset += appendLength;
-                    lastLength = appendLength;
-                    
-                    // Break early if we have advanced enough characters.
-                    if (!toNodeEnd && cumulativeOffset >= offset) {
-                        offsetInCharacter = offset - (cumulativeOffset - lastLength);
-                        finished = true;
-                        break;
-                    }
-                    
-                    collapsedWhitespaceNode = currentNode;
-                    continue;
-                }
-                
             }
             cumulativeOffset += currentLength;
         }
 
-        if (currentNode == previousNode)
+        if (currentNode == previousNode) {
             lastLength += currentLength;
+            lastStartOffset = iterator.range()->endOffset() - lastLength;
+        }
         else {
             lastLength = currentLength;
             lastStartOffset = hasReplacedNodeOrBR ? 0 : iterator.range()->startOffset();
         }
         
         // Break early if we have advanced enough characters.
-        if (!toNodeEnd && cumulativeOffset >= offset) {
-            offsetInCharacter = offset - (cumulativeOffset - lastLength);
+        bool offsetLimitReached = validateOffset ? cumulativeOffset + lastStartOffset >= offset : cumulativeOffset >= offset;
+        if (!toNodeEnd && offsetLimitReached) {
+            offsetInCharacter = validateOffset ? std::max(offset - lastStartOffset, 0) : offset - (cumulativeOffset - lastLength);
             finished = true;
             break;
         }
@@ -1667,7 +1642,11 @@ RefPtr<Range> AXObjectCache::rangeForNodeContents(Node* node)
         return nullptr;
     RefPtr<Range> range = Range::create(*document);
     ExceptionCode ec = 0;
-    range->selectNodeContents(*node, ec);
+    // For replaced node without children, we should incluce itself in the range.
+    if (AccessibilityObject::replacedNodeNeedsCharacter(node))
+        range->selectNode(*node, ec);
+    else
+        range->selectNodeContents(*node, ec);
     return ec ? nullptr : range;
 }
     
@@ -1811,15 +1790,20 @@ CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(RefPtr<Range> r
     // If it's end text marker, we want to go to the end of the range, and stay within the range.
     bool stayWithinRange = !isStart;
     
+    Node& endNode = range->endContainer();
+    if (endNode.offsetInCharacters() && !isStart)
+        return traverseToOffsetInRange(rangeForNodeContents(&endNode), range->endOffset(), TraverseOptionValidateOffset);
+    
     Ref<Range> copyRange = *range;
     // Change the start of the range, so the character offset starts from node beginning.
     int offset = 0;
     Node& node = copyRange->startContainer();
     if (node.offsetInCharacters()) {
-        copyRange = Range::create(range->ownerDocument(), &range->startContainer(), range->startOffset(), &range->endContainer(), range->endOffset());
-        CharacterOffset nodeStartOffset = traverseToOffsetInRange(rangeForNodeContents(&node), 0);
-        offset = std::max(copyRange->startOffset() - nodeStartOffset.startIndex, 0);
-        copyRange->setStart(node, nodeStartOffset.startIndex);
+        CharacterOffset nodeStartOffset = traverseToOffsetInRange(rangeForNodeContents(&node), range->startOffset(), TraverseOptionValidateOffset);
+        if (isStart)
+            return nodeStartOffset;
+        copyRange = Range::create(range->ownerDocument(), &range->startContainer(), 0, &range->endContainer(), range->endOffset());
+        offset += nodeStartOffset.offset;
     }
     
     return traverseToOffsetInRange(WTFMove(copyRange), offset, isStart ? TraverseOptionDefault : TraverseOptionToNodeEnd, stayWithinRange);
@@ -1984,7 +1968,7 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
     ASSERT(domNode);
     
     if (domNode->offsetInCharacters())
-        return CharacterOffset(domNode, 0, deepPos.deprecatedEditingOffset(), 0);
+        return traverseToOffsetInRange(rangeForNodeContents(domNode), deepPos.deprecatedEditingOffset(), TraverseOptionValidateOffset);
     
     RefPtr<AccessibilityObject> obj = this->getOrCreate(domNode);
     if (!obj)
@@ -2186,7 +2170,7 @@ RefPtr<Range> AXObjectCache::leftWordRange(const CharacterOffset& characterOffse
 
 RefPtr<Range> AXObjectCache::rightWordRange(const CharacterOffset& characterOffset)
 {
-    CharacterOffset start = startCharacterOffsetOfWord(characterOffset);
+    CharacterOffset start = startCharacterOffsetOfWord(characterOffset, RightWordIfOnBoundary);
     CharacterOffset end = endCharacterOffsetOfWord(start);
     return rangeForUnorderedCharacterOffsets(start, end);
 }
@@ -2319,10 +2303,18 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
         return it.atEnd() ? start : characterOffset;
     
     Node& node = it.atEnd() ? searchRange->startContainer() : it.range()->startContainer();
+    
+    // SimplifiedBackwardsTextIterator ignores replaced elements.
+    if (AccessibilityObject::replacedNodeNeedsCharacter(characterOffset.node))
+        return characterOffsetForNodeAndOffset(*characterOffset.node, 0);
+    Node* nextSibling = node.nextSibling();
+    if (&node != characterOffset.node && AccessibilityObject::replacedNodeNeedsCharacter(nextSibling))
+        return startOrEndCharacterOffsetForRange(rangeForNodeContents(nextSibling), false);
+    
     if ((node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
         // The next variable contains a usable index into a text node
-        if (&node == characterOffset.node)
-            next -= characterOffset.startIndex;
+        if (node.isTextNode())
+            return traverseToOffsetInRange(rangeForNodeContents(&node), next, TraverseOptionValidateOffset);
         return characterOffsetForNodeAndOffset(node, next, TraverseOptionIncludeStart);
     }
     

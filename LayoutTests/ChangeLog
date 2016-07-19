@@ -1,3 +1,13 @@
+2016-07-19  Nan Wang  <n_wang@apple.com>
+
+        AX: Incorrect behavior for word related text marker functions when there's collapsed whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=159910
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/text-marker-word-nav-collapsed-whitespace-expected.txt: Added.
+        * accessibility/mac/text-marker-word-nav-collapsed-whitespace.html: Added.
+
 2016-07-19  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] ReadableStreamController methods should throw if its stream is not readable
