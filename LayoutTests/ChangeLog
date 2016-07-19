@@ -1,3 +1,17 @@
+2016-07-19  George Ruan  <gruan@apple.com>
+
+        HTMLVideoElement frames do not update on iOS when src is a MediaStream blob
+        https://bugs.webkit.org/show_bug.cgi?id=159833
+        <rdar://problem/27379487>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-video-element-displays-buffer-expected.txt: Added.
+        * fast/mediastream/MediaStream-video-element-displays-buffer.html: Added. Checks that
+        a video element with a mediastream source displays frames that are neither black or transparent.
+        * fast/mediastream/resources/getUserMedia-helper.js:
+        (setupVideoElementWithStream): Sets up video element with global variable mediastream.
+
 2016-07-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land test expectations for rdar://problem/27356144.

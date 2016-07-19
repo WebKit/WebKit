@@ -985,6 +985,7 @@
 		1AFE119A0CBFFCC4003017FA /* JSSQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */; };
 		1B124D8D1D380B7000ECDFB0 /* MediaSampleAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */; };
 		1B124D8F1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1B124D8E1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm */; };
+		1BF9DB3C1D3973AD0026AEB7 /* MediaSample.h in Headers */ = {isa = PBXBuildFile; fileRef = CD641EC7181ED60100EE4C41 /* MediaSample.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C010700192594DF008A4201 /* InlineTextBoxStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */; };
 		1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */; };
 		1C0939EA1A13E12900B788E5 /* CachedSVGFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */; };
@@ -27034,6 +27035,7 @@
 				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
 				E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */,
 				41F584C7104652CB009CAA64 /* JSMessagePortCustom.h in Headers */,
+				1BF9DB3C1D3973AD0026AEB7 /* MediaSample.h in Headers */,
 				2D6F3E951C1F85550061DBD4 /* JSMockPageOverlay.h in Headers */,
 				E38838991BAD145F00D62EE3 /* JSModuleLoader.h in Headers */,
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
