@@ -1,3 +1,12 @@
+2016-07-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] ENABLE_OPENGL=OFF build broken since r201802
+        https://bugs.webkit.org/show_bug.cgi?id=159909
+
+        Reviewed by Antonio Gomes.
+
+        * WebProcess/WebPage/LayerTreeHost.h: Add missing include.
+
 2016-07-18  Anders Carlsson  <andersca@apple.com>
 
         WebKit nightly fails to build on macOS Sierra

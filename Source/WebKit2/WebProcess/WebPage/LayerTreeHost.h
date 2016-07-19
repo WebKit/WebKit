@@ -31,6 +31,7 @@
 #include "LayerTreeContext.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace IPC {
 class Connection;
