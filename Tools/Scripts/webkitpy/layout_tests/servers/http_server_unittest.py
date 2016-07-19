@@ -47,6 +47,8 @@ class TestHttpServer(unittest.TestCase):
         host.filesystem.write_text_file(
             "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/lighttpd.conf", "Mock Config\n")
         host.filesystem.write_text_file(
+            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/aliases.json", '[["/js-test-resources", "resources"], ["/media-resources", "media"], ["/test/test.file", "resources/testfile"]]')
+        host.filesystem.write_text_file(
             "/usr/lib/lighttpd/liblightcomp.dylib", "Mock dylib")
 
         server = Lighttpd(test_port, "/mock/output_dir",
@@ -58,9 +60,10 @@ class TestHttpServer(unittest.TestCase):
         config_file = host.filesystem.read_text_file("/mock/output_dir/lighttpd.conf")
         self.assertEqual(re.findall(r"alias.url.+", config_file), [
             'alias.url = ( "/js-test-resources" => "/test.checkout/LayoutTests/resources" )',
+            'alias.url += ( "/media-resources" => "/test.checkout/LayoutTests/media" )',
+            'alias.url += ( "/test/test.file" => "/test.checkout/LayoutTests/resources/testfile" )',
             'alias.url += ( "/mock/one-additional-dir" => "/mock-checkout/one-additional-dir" )',
             'alias.url += ( "/mock/another-additional-dir" => "/mock-checkout/one-additional-dir" )',
-            'alias.url += ( "/media-resources" => "/test.checkout/LayoutTests/media" )',
         ])
 
     def test_win32_start_and_stop(self):
@@ -70,6 +73,8 @@ class TestHttpServer(unittest.TestCase):
             "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/lighttpd.conf", "Mock Config\n")
         host.filesystem.write_text_file(
             "/usr/lib/lighttpd/liblightcomp.dylib", "Mock dylib")
+        host.filesystem.write_text_file(
+            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/aliases.json", '[["/js-test-resources", "resources"], ["/media-resources", "media"], ["/test/test.file", "resources/testfile"]]')
 
         host.platform.is_win = lambda: True
         host.platform.is_cygwin = lambda: False

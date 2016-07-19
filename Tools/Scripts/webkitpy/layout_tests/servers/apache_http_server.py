@@ -34,7 +34,6 @@ import logging
 import os
 import re
 import socket
-import sys
 
 from webkitpy.layout_tests.servers import http_server_base
 
@@ -65,25 +64,21 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
         self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
-        test_dir = self._port_obj.layout_tests_dir()
-
         if port_obj.host.platform.is_win():
             # Convert to MSDOS file naming:
             precompiledBuildbot = re.compile('^/home/buildbot')
             precompiledDrive = re.compile('^/cygdrive/[cC]')
             output_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", output_dir)
             output_dir = precompiledDrive.sub("C:", output_dir)
-            test_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", test_dir)
-            test_dir = precompiledDrive.sub("C:", test_dir)
+            self.tests_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", self.tests_dir)
+            self.tests_dir = precompiledDrive.sub("C:", self.tests_dir)
             self._pid_file = self._filesystem.join("C:/xampp/apache/logs", '%s.pid' % self._name)
 
-        js_test_resources_dir = self._filesystem.join(test_dir, "resources")
-        media_resources_dir = self._filesystem.join(test_dir, "media")
-        mime_types_path = self._filesystem.join(test_dir, "http", "conf", "mime.types")
-        cert_file = self._filesystem.join(test_dir, "http", "conf", "webkit-httpd.pem")
+        mime_types_path = self._filesystem.join(self.tests_dir, "http", "conf", "mime.types")
+        cert_file = self._filesystem.join(self.tests_dir, "http", "conf", "webkit-httpd.pem")
         access_log = self._filesystem.join(output_dir, "access_log.txt")
         error_log = self._filesystem.join(output_dir, "error_log.txt")
-        document_root = self._filesystem.join(test_dir, "http", "tests")
+        document_root = self._filesystem.join(self.tests_dir, "http", "tests")
 
         if port_obj.get_option('http_access_log'):
             access_log = port_obj.get_option('http_access_log')
@@ -95,15 +90,16 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         executable = self._port_obj._path_to_apache()
 
         start_cmd = [executable,
-            '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),
+            '-f', "\"%s\"" % self._get_apache_config_file_path(self.tests_dir, output_dir),
             '-C', "\'DocumentRoot \"%s\"\'" % document_root,
-            '-c', "\'Alias /js-test-resources \"%s\"'" % js_test_resources_dir,
-            '-c', "\'Alias /media-resources \"%s\"'" % media_resources_dir,
             '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
             '-c', "\'CustomLog \"%s\" common\'" % access_log,
             '-c', "\'ErrorLog \"%s\"\'" % error_log,
             '-c', "\'PidFile %s'" % self._pid_file,
             '-k', "start"]
+
+        for alias in self.aliases():
+            start_cmd.extend(['-c', "\'Alias %s \"%s\"'" % (alias[0], alias[1])])
 
         if not port_obj.host.platform.is_win():
             start_cmd.extend(['-C', "\'User \"%s\"\'" % os.environ.get("USERNAME", os.environ.get("USER", ""))])
@@ -143,7 +139,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
                         '-c', "\'</Location>\'"]
 
         stop_cmd = [executable,
-            '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),
+            '-f', "\"%s\"" % self._get_apache_config_file_path(self.tests_dir, output_dir),
             '-c', "\'PidFile %s'" % self._pid_file,
             '-k', "stop"]
 

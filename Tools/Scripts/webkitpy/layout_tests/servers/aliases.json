@@ -1,0 +1,7 @@
+[
+    ["/js-test-resources", "resources"],
+    ["/media-resources", "media"],
+    ["/resources/testharness.css", "resources/testharness.css"],
+    ["/resources/testharness.js", "resources/testharness.js"],
+    ["/resources/testharnessreport.js", "resources/testharnessreport.js"]
+]

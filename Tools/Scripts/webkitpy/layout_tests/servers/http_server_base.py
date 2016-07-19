@@ -29,6 +29,7 @@
 """Base class with common routines between the Apache, Lighttpd, and websocket servers."""
 
 import errno
+import json
 import logging
 import socket
 import sys
@@ -54,6 +55,7 @@ class HttpServerBase(object):
         self._pid = None
         self._pid_file = None
         self._port_obj = port_obj
+        self.tests_dir = self._port_obj.layout_tests_dir()
 
         # We need a non-checkout-dependent place to put lock files, etc. We
         # don't use the Python default on the Mac because it defaults to a
@@ -153,6 +155,13 @@ class HttpServerBase(object):
         raise NotImplementedError()
 
     # Utility routines.
+
+    def aliases(self):
+        json_data = self._filesystem.read_text_file(self._port_obj.path_from_webkit_base("Tools", "Scripts", "webkitpy", "layout_tests", "servers", "aliases.json"))
+        results = []
+        for item in json.loads(json_data):
+            results.append([item[0], self._port_obj._filesystem.join(self.tests_dir, item[1])])
+        return results
 
     def _remove_pid_file(self):
         if self._filesystem.exists(self._pid_file):

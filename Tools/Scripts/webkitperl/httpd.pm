@@ -112,8 +112,14 @@ sub getDefaultConfigForTestDirectory
 
     my $httpdConfig = getHTTPDConfigPathForTestDirectory($testDirectory);
     my $documentRoot = File::Spec->catfile($testDirectory, "http", "tests");
+
+    # Aliases should be kept synchronized with Tools/Scripts/webkitpy/layout_tests/servers/aliases.json.
     my $jsTestResourcesDirectory = File::Spec->catfile($testDirectory, "resources");
     my $mediaResourcesDirectory = File::Spec->catfile($testDirectory, "media");
+    my $testharnesscssDirectory = File::Spec->catfile($testDirectory, "resources", "testharness.css");
+    my $testharnessjsDirectory = File::Spec->catfile($testDirectory, "resources", "testharness.js");
+    my $testharnessreportjsDirectory = File::Spec->catfile($testDirectory, "resources", "testharnessreport.js");
+
     my $typesConfig = File::Spec->catfile($testDirectory, "http", "conf", "mime.types");
     my $httpdLockFile = File::Spec->catfile($httpdPidDir, "httpd.lock");
     my $httpdScoreBoardFile = File::Spec->catfile($httpdPidDir, "httpd.scoreboard");
@@ -124,6 +130,9 @@ sub getDefaultConfigForTestDirectory
         # Setup a link to where the js test templates are stored, use -c so that mod_alias will already be loaded.
         "-c", "Alias /js-test-resources \"$jsTestResourcesDirectory\"",
         "-c", "Alias /media-resources \"$mediaResourcesDirectory\"",
+        "-c", "Alias /testharness.css \"$testharnesscssDirectory\"",
+        "-c", "Alias /testharness.js \"$testharnessjsDirectory\"",
+        "-c", "Alias /testharnessreport.js \"$testharnessreportjsDirectory\"",
         "-c", "TypesConfig \"$typesConfig\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
         "-c", "PidFile \"$httpdPidFile\"",
