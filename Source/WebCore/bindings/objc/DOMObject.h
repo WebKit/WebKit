@@ -34,9 +34,8 @@ typedef unsigned long long DOMTimeStamp;
 typedef struct DOMObjectInternal DOMObjectInternal;
 
 WEBKIT_CLASS_AVAILABLE_MAC(10_4)
-@interface DOMObject : WebScriptObject <NSCopying>
-{
-@private
+@interface DOMObject : WebScriptObject <NSCopying> {
+@package
     DOMObjectInternal *_internal;
 }
 

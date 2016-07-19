@@ -25,13 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// This is lets our internals access DOMObject's _internal field while having
-// it be private for clients outside WebKit.
-#define private public
-#import "DOMObject.h"
-#undef private
-
 #import "DOMNodeFilter.h"
+#import "DOMObject.h"
 #import "DOMXPathNSResolver.h"
 #import <wtf/Forward.h>
 
