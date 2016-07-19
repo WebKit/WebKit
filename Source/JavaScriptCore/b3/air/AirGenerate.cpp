@@ -50,8 +50,10 @@
 #include "B3IndexMap.h"
 #include "B3Procedure.h"
 #include "B3TimingScope.h"
+#include "B3ValueInlines.h"
 #include "CCallHelpers.h"
 #include "DisallowMacroScratchRegisterUsage.h"
+#include "LinkBuffer.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -173,12 +175,16 @@ void generate(Code& code, CCallHelpers& jit)
 
     GenerationContext context;
     context.code = &code;
-    IndexMap<BasicBlock, CCallHelpers::Label> blockLabels(code.size());
+    context.blockLabels.resize(code.size());
+    for (BasicBlock* block : code) {
+        if (block)
+            context.blockLabels[block] = Box<CCallHelpers::Label>::create();
+    }
     IndexMap<BasicBlock, CCallHelpers::JumpList> blockJumps(code.size());
 
     auto link = [&] (CCallHelpers::Jump jump, BasicBlock* target) {
-        if (blockLabels[target].isSet()) {
-            jump.linkTo(blockLabels[target], &jit);
+        if (context.blockLabels[target]->isSet()) {
+            jump.linkTo(*context.blockLabels[target], &jit);
             return;
         }
 
@@ -195,16 +201,22 @@ void generate(Code& code, CCallHelpers& jit)
     };
 
     for (BasicBlock* block : code) {
+        context.currentBlock = block;
+        context.indexInBlock = UINT_MAX;
         blockJumps[block].link(&jit);
-        blockLabels[block] = jit.label();
+        CCallHelpers::Label label = jit.label();
+        *context.blockLabels[block] = label;
         ASSERT(block->size() >= 1);
         for (unsigned i = 0; i < block->size() - 1; ++i) {
+            context.indexInBlock = i;
             Inst& inst = block->at(i);
             addItem(inst);
             CCallHelpers::Jump jump = inst.generate(jit, context);
             ASSERT_UNUSED(jump, !jump.isSet());
         }
 
+        context.indexInBlock = block->size() - 1;
+        
         if (block->last().opcode == Jump
             && block->successorBlock(0) == code.findNextBlock(block))
             continue;
@@ -230,24 +242,28 @@ void generate(Code& code, CCallHelpers& jit)
         }
 
         CCallHelpers::Jump jump = block->last().generate(jit, context);
-        switch (block->numSuccessors()) {
-        case 0:
-            ASSERT(!jump.isSet());
-            break;
-        case 1:
-            link(jump, block->successorBlock(0));
-            break;
-        case 2:
-            link(jump, block->successorBlock(0));
-            if (block->successorBlock(1) != code.findNextBlock(block))
-                link(jit.jump(), block->successorBlock(1));
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
+        // The jump won't be set for patchpoints. It won't be set for Oops because then it won't have
+        // any successors.
+        if (jump.isSet()) {
+            switch (block->numSuccessors()) {
+            case 1:
+                link(jump, block->successorBlock(0));
+                break;
+            case 2:
+                link(jump, block->successorBlock(0));
+                if (block->successorBlock(1) != code.findNextBlock(block))
+                    link(jit.jump(), block->successorBlock(1));
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
         }
         addItem(block->last());
     }
+    
+    context.currentBlock = nullptr;
+    context.indexInBlock = UINT_MAX;
 
     pcToOriginMap.appendItem(jit.label(), Origin());
     // FIXME: Make late paths have Origins: https://bugs.webkit.org/show_bug.cgi?id=153689

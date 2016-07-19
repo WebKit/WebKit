@@ -1,3 +1,14 @@
+2016-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Implement table-based switches in B3/Air
+        https://bugs.webkit.org/show_bug.cgi?id=151141
+
+        Reviewed by Benjamin Poulain.
+        
+        Update documentation to reflect Patchpoint's new powers.
+
+        * docs/b3/intermediate-representation.html:
+
 2016-07-15  Jon Davis  <jond@apple.com>
 
         Fixed content overflow and missing build information behavior.

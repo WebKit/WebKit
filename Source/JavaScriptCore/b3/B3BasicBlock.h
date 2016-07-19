@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3FrequentedBlock.h"
+#include "B3Opcode.h"
 #include "B3Origin.h"
 #include "B3SuccessorCollection.h"
 #include "B3Type.h"
@@ -47,7 +48,7 @@ class BasicBlock {
 public:
     typedef Vector<Value*> ValueList;
     typedef Vector<BasicBlock*, 2> PredecessorList;
-    typedef Vector<FrequentedBlock, 2> SuccessorList; // This matches ControlValue::SuccessorList
+    typedef Vector<FrequentedBlock, 2> SuccessorList;
 
     static const char* const dumpPrefix;
 
@@ -87,18 +88,39 @@ public:
     template<typename ValueType, typename... Arguments>
     ValueType* replaceLastWithNew(Procedure&, Arguments...);
 
-    unsigned numSuccessors() const;
-    const FrequentedBlock& successor(unsigned index) const;
-    FrequentedBlock& successor(unsigned index);
-    const SuccessorList& successors() const;
-    SuccessorList& successors();
+    unsigned numSuccessors() const { return m_successors.size(); }
+    const FrequentedBlock& successor(unsigned index) const { return m_successors[index]; }
+    FrequentedBlock& successor(unsigned index) { return m_successors[index]; }
+    const SuccessorList& successors() const { return m_successors; }
+    SuccessorList& successors() { return m_successors; }
+    
+    void clearSuccessors();
+    JS_EXPORT_PRIVATE void appendSuccessor(const FrequentedBlock&);
+    void setSuccessors(const FrequentedBlock&);
+    void setSuccessors(const FrequentedBlock&, const FrequentedBlock&);
 
-    BasicBlock* successorBlock(unsigned index) const;
-    BasicBlock*& successorBlock(unsigned index);
-    SuccessorCollection<BasicBlock, SuccessorList> successorBlocks();
-    SuccessorCollection<const BasicBlock, const SuccessorList> successorBlocks() const;
+    BasicBlock* successorBlock(unsigned index) const { return successor(index).block(); }
+    BasicBlock*& successorBlock(unsigned index) { return successor(index).block(); }
+    SuccessorCollection<BasicBlock, SuccessorList> successorBlocks()
+    {
+        return SuccessorCollection<BasicBlock, SuccessorList>(successors());
+    }
+    SuccessorCollection<const BasicBlock, const SuccessorList> successorBlocks() const
+    {
+        return SuccessorCollection<const BasicBlock, const SuccessorList>(successors());
+    }
 
     bool replaceSuccessor(BasicBlock* from, BasicBlock* to);
+    
+    // This is only valid for Jump and Branch.
+    const FrequentedBlock& taken() const;
+    FrequentedBlock& taken();
+    // This is only valid for Branch.
+    const FrequentedBlock& notTaken() const;
+    FrequentedBlock& notTaken();
+    // This is only valid for Branch and Switch.
+    const FrequentedBlock& fallThrough() const;
+    FrequentedBlock& fallThrough();
 
     unsigned numPredecessors() const { return m_predecessors.size(); }
     BasicBlock* predecessor(unsigned index) const { return m_predecessors[index]; }
@@ -119,6 +141,19 @@ public:
     void dump(PrintStream&) const;
     void deepDump(const Procedure&, PrintStream&) const;
 
+    // These are deprecated method for compatibility with the old ControlValue class. Don't use them
+    // in new code.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159440
+    
+    // Use this for Oops.
+    JS_EXPORT_PRIVATE Value* appendNewControlValue(Procedure&, Opcode, Origin);
+    // Use this for Return.
+    JS_EXPORT_PRIVATE Value* appendNewControlValue(Procedure&, Opcode, Origin, Value*);
+    // Use this for Jump.
+    JS_EXPORT_PRIVATE Value* appendNewControlValue(Procedure&, Opcode, Origin, const FrequentedBlock&);
+    // Use this for Branch.
+    JS_EXPORT_PRIVATE Value* appendNewControlValue(Procedure&, Opcode, Origin, Value*, const FrequentedBlock&, const FrequentedBlock&);
+    
 private:
     friend class BlockInsertionSet;
     friend class InsertionSet;
@@ -130,6 +165,7 @@ private:
     unsigned m_index;
     ValueList m_values;
     PredecessorList m_predecessors;
+    SuccessorList m_successors;
     double m_frequency;
 };
 

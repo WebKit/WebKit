@@ -31,7 +31,6 @@
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
 #include "B3ComputeDivisionMagic.h"
-#include "B3ControlValue.h"
 #include "B3Dominators.h"
 #include "B3IndexSet.h"
 #include "B3InsertionSetInlines.h"
@@ -1717,7 +1716,7 @@ private:
                 // Replace the rest of the block with an Oops.
                 for (unsigned i = m_index + 1; i < m_block->size() - 1; ++i)
                     m_block->at(i)->replaceWithBottom(m_insertionSet, m_index);
-                m_block->last()->as<ControlValue>()->convertToOops();
+                m_block->last()->replaceWithOops(m_block);
                 m_block->last()->setOrigin(checkValue->origin());
 
                 // Replace ourselves last.
@@ -1773,6 +1772,7 @@ private:
                     return value->opcode() == Select
                         && (value->child(1)->isConstant() && value->child(2)->isConstant());
                 });
+            
             if (select) {
                 specializeSelect(select);
                 break;
@@ -1781,50 +1781,48 @@ private:
         }
 
         case Branch: {
-            ControlValue* branch = m_value->as<ControlValue>();
-
             // Turn this: Branch(NotEqual(x, 0))
             // Into this: Branch(x)
-            if (branch->child(0)->opcode() == NotEqual && branch->child(0)->child(1)->isInt(0)) {
-                branch->child(0) = branch->child(0)->child(0);
+            if (m_value->child(0)->opcode() == NotEqual && m_value->child(0)->child(1)->isInt(0)) {
+                m_value->child(0) = m_value->child(0)->child(0);
                 m_changed = true;
             }
 
             // Turn this: Branch(Equal(x, 0), then, else)
             // Into this: Branch(x, else, then)
-            if (branch->child(0)->opcode() == Equal && branch->child(0)->child(1)->isInt(0)) {
-                branch->child(0) = branch->child(0)->child(0);
-                std::swap(branch->taken(), branch->notTaken());
+            if (m_value->child(0)->opcode() == Equal && m_value->child(0)->child(1)->isInt(0)) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                std::swap(m_block->taken(), m_block->notTaken());
                 m_changed = true;
             }
             
             // Turn this: Branch(BitXor(bool, 1), then, else)
             // Into this: Branch(bool, else, then)
-            if (branch->child(0)->opcode() == BitXor
-                && branch->child(0)->child(1)->isInt32(1)
-                && branch->child(0)->child(0)->returnsBool()) {
-                branch->child(0) = branch->child(0)->child(0);
-                std::swap(branch->taken(), branch->notTaken());
+            if (m_value->child(0)->opcode() == BitXor
+                && m_value->child(0)->child(1)->isInt32(1)
+                && m_value->child(0)->child(0)->returnsBool()) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                std::swap(m_block->taken(), m_block->notTaken());
                 m_changed = true;
             }
 
             // Turn this: Branch(BitAnd(bool, xyb1), then, else)
             // Into this: Branch(bool, then, else)
-            if (branch->child(0)->opcode() == BitAnd
-                && branch->child(0)->child(1)->hasInt()
-                && branch->child(0)->child(1)->asInt() & 1
-                && branch->child(0)->child(0)->returnsBool()) {
-                branch->child(0) = branch->child(0)->child(0);
+            if (m_value->child(0)->opcode() == BitAnd
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(0)->child(1)->asInt() & 1
+                && m_value->child(0)->child(0)->returnsBool()) {
+                m_value->child(0) = m_value->child(0)->child(0);
                 m_changed = true;
             }
 
-            TriState triState = branch->child(0)->asTriState();
+            TriState triState = m_value->child(0)->asTriState();
 
             // Turn this: Branch(0, then, else)
             // Into this: Jump(else)
             if (triState == FalseTriState) {
-                branch->taken().block()->removePredecessor(m_block);
-                branch->convertToJump(branch->notTaken().block());
+                m_block->taken().block()->removePredecessor(m_block);
+                m_value->replaceWithJump(m_block, m_block->notTaken());
                 m_changedCFG = true;
                 break;
             }
@@ -1832,8 +1830,8 @@ private:
             // Turn this: Branch(not 0, then, else)
             // Into this: Jump(then)
             if (triState == TrueTriState) {
-                branch->notTaken().block()->removePredecessor(m_block);
-                branch->convertToJump(branch->taken().block());
+                m_block->notTaken().block()->removePredecessor(m_block);
+                m_value->replaceWithJump(m_block, m_block->taken());
                 m_changedCFG = true;
                 break;
             }
@@ -1842,12 +1840,12 @@ private:
             // of makes sense here because it's cheap, but hacks like this show that we're going
             // to need SCCP.
             Value* check = m_pureCSE.findMatch(
-                ValueKey(Check, Void, branch->child(0)), m_block, *m_dominators);
+                ValueKey(Check, Void, m_value->child(0)), m_block, *m_dominators);
             if (check) {
                 // The Check would have side-exited if child(0) was non-zero. So, it must be
                 // zero here.
-                branch->taken().block()->removePredecessor(m_block);
-                branch->convertToJump(branch->notTaken().block());
+                m_block->taken().block()->removePredecessor(m_block);
+                m_value->replaceWithJump(m_block, m_block->notTaken());
                 m_changedCFG = true;
             }
             break;
@@ -1986,13 +1984,12 @@ private:
         // Remove the values from the predecessor.
         predecessor->values().resize(startIndex);
         
-        predecessor->appendNew<ControlValue>(
-            m_proc, Branch, source->origin(), predicate,
-            FrequentedBlock(cases[0]), FrequentedBlock(cases[1]));
+        predecessor->appendNew<Value>(m_proc, Branch, source->origin(), predicate);
+        predecessor->setSuccessors(FrequentedBlock(cases[0]), FrequentedBlock(cases[1]));
 
         for (unsigned i = 0; i < numCases; ++i) {
-            cases[i]->appendNew<ControlValue>(
-                m_proc, Jump, m_value->origin(), FrequentedBlock(m_block));
+            cases[i]->appendNew<Value>(m_proc, Jump, m_value->origin());
+            cases[i]->setSuccessors(FrequentedBlock(m_block));
         }
 
         m_changed = true;
@@ -2221,7 +2218,7 @@ private:
                             dataLog(
                                 "Changing ", pointerDump(block), "'s terminal to a Jump.\n");
                         }
-                        block->last()->as<ControlValue>()->convertToJump(firstSuccessor);
+                        block->last()->replaceWithJump(block, FrequentedBlock(firstSuccessor));
                         m_changedCFG = true;
                     }
                 }
@@ -2239,16 +2236,18 @@ private:
                     // Remove the terminal.
                     Value* value = block->values().takeLast();
                     Origin jumpOrigin = value->origin();
-                    RELEASE_ASSERT(value->as<ControlValue>());
+                    RELEASE_ASSERT(value->effects().terminal);
                     m_proc.deleteValue(value);
                     
                     // Append the full contents of the successor to the predecessor.
                     block->values().appendVector(successor->values());
+                    block->successors() = successor->successors();
                     
                     // Make sure that the successor has nothing left in it. Make sure that the block
                     // has a terminal so that nobody chokes when they look at it.
                     successor->values().resize(0);
-                    successor->appendNew<ControlValue>(m_proc, Oops, jumpOrigin);
+                    successor->appendNew<Value>(m_proc, Oops, jumpOrigin);
+                    successor->clearSuccessors();
                     
                     // Ensure that predecessors of block's new successors know what's up.
                     for (BasicBlock* newSuccessor : block->successorBlocks())

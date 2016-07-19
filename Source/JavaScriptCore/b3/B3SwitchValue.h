@@ -28,12 +28,13 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3ControlValue.h"
+#include "B3CaseCollection.h"
 #include "B3SwitchCase.h"
+#include "B3Value.h"
 
 namespace JSC { namespace B3 {
 
-class SwitchValue : public ControlValue {
+class SwitchValue : public Value {
 public:
     static bool accepts(Opcode opcode) { return opcode == Switch; }
 
@@ -47,71 +48,25 @@ public:
     
     const Vector<int64_t>& caseValues() const { return m_values; }
 
-    FrequentedBlock fallThrough() const { return successors().last(); }
-    FrequentedBlock& fallThrough() { return successors().last(); }
-
-    unsigned size() const { return numCaseValues(); }
-    SwitchCase at(unsigned index) const
-    {
-        return SwitchCase(caseValue(index), successor(index));
-    }
-    SwitchCase operator[](unsigned index) const
-    {
-        return at(index);
-    }
-
-    class iterator {
-    public:
-        iterator()
-            : m_switch(nullptr)
-            , m_index(0)
-        {
-        }
-
-        iterator(const SwitchValue& switchValue, unsigned index)
-            : m_switch(&switchValue)
-            , m_index(index)
-        {
-        }
-
-        SwitchCase operator*()
-        {
-            return m_switch->at(m_index);
-        }
-
-        iterator& operator++()
-        {
-            m_index++;
-            return *this;
-        }
-
-        bool operator==(const iterator& other) const
-        {
-            ASSERT(m_switch == other.m_switch);
-            return m_index == other.m_index;
-        }
-
-        bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
-
-    private:
-        const SwitchValue* m_switch;
-        unsigned m_index;
-    };
-
-    typedef iterator const_iterator;
-
-    iterator begin() const { return iterator(*this, 0); }
-    iterator end() const { return iterator(*this, size()); }
+    CaseCollection cases(const BasicBlock* owner) const { return CaseCollection(this, owner); }
+    CaseCollection cases() const { return cases(owner); }
 
     // This removes the case and reorders things a bit. If you're iterating the cases from 0 to N,
     // then you can keep iterating after this so long as you revisit this same index (which will now
     // contain some other case value). This removes the case that was removed.
-    SwitchCase removeCase(unsigned index);
+    SwitchCase removeCase(BasicBlock*, unsigned index);
 
+    bool hasFallThrough(const BasicBlock*) const;
+    bool hasFallThrough() const;
+
+    // These two functions can be called in any order.
+    void setFallThrough(BasicBlock*, const FrequentedBlock&);
+    void appendCase(BasicBlock*, const SwitchCase&);
+    
+    JS_EXPORT_PRIVATE void setFallThrough(const FrequentedBlock&);
     JS_EXPORT_PRIVATE void appendCase(const SwitchCase&);
+
+    void dumpSuccessors(const BasicBlock*, PrintStream&) const override;
 
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
@@ -121,7 +76,7 @@ protected:
 private:
     friend class Procedure;
 
-    JS_EXPORT_PRIVATE SwitchValue(Origin, Value* child, const FrequentedBlock& fallThrough);
+    JS_EXPORT_PRIVATE SwitchValue(Origin, Value* child);
 
     Vector<int64_t> m_values;
 };

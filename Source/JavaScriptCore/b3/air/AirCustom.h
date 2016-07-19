@@ -84,10 +84,15 @@ struct PatchCustom {
     {
         return inst.args[0].special()->shouldTryAliasingDef(inst);
     }
+    
+    static bool isTerminal(Inst& inst)
+    {
+        return inst.args[0].special()->isTerminal(inst);
+    }
 
     static bool hasNonArgNonControlEffects(Inst& inst)
     {
-        return inst.args[0].special()->hasNonArgNonControlEffects();
+        return inst.args[0].special()->hasNonArgNonControlEffects(inst);
     }
 
     static CCallHelpers::Jump generate(
@@ -137,6 +142,11 @@ struct CCallCustom {
     static bool admitsStack(Inst&, unsigned)
     {
         return true;
+    }
+    
+    static bool isTerminal(Inst&)
+    {
+        return false;
     }
 
     static bool hasNonArgNonControlEffects(Inst&)
@@ -195,6 +205,11 @@ struct ShuffleCustom {
         default:
             return false;
         }
+    }
+
+    static bool isTerminal(Inst&)
+    {
+        return false;
     }
 
     static bool hasNonArgNonControlEffects(Inst&)

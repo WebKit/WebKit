@@ -43,7 +43,7 @@
     <p>The act of compiling the Procedure changes it in-place, making it unsuitable for
       compiling again.  Always create a new Procedure every time you want to compile
       something.</p>
-
+    
     <h2>Types</h2>
 
     <p>B3 has a trivial type system with only five types:</p>
@@ -130,8 +130,15 @@
     <h2>Control flow</h2>
 
     <p>B3 represents control flow using basic blocks.  Each basic block may have zero or more
-      predecessors.  Each basic block may have zero or more successors.  The successors are
-      controlled by the basic block's last Value, which must be a ControlValue instance.</p>
+      predecessors.  Each basic block may have zero or more successors.  The meaning of the
+      successors is determined by the basic block's last Value, which must be a terminal. A
+      value is terminal if:</p>
+    
+    <pre><code>value-&gt;effects().terminal</code></pre>
+    
+    <p>Some opcodes are definitely terminal, like Jump, Branch, Oops, Return, and Switch. But a
+      value with the Patchpoint opcode may or may not be terminal. In general it's necessary to
+      check the <code>terminal</code> bit as shown above.</p>
 
     <p>Each basic block contains a Vector&lt;Value*&gt; as the contents of the block. Control
       flow inside the block is implicit based on the order of Values in the vector.</p>
@@ -458,6 +465,17 @@ patchpoint->setGenerator(
           patchpoint will take some exit state as part of its arguments, and it will manipulate
           the call frame in place to make it look like another execution engine's call frame.
           This is called OSR, and JavaScriptCore does it a lot.</p>
+        
+        <p>A patchpoint can be used as a terminal. Simply set the <code>terminal</code> bit:</p>
+        
+        <pre><code>patchpoint-&gt;effects.terminal = true;</code></pre>
+        
+        <p>The generator can determine where to branch by using the StackmapGenerationParams to
+          get the set of labels for all successors. You're guaranteed that the number of
+          successors of the patchpoint's basic block will be the same as when you created it.
+          However, like any value, a patchpoint may be cloned. This means, for example, that if
+          you use this to implement a table jump then the jump table must be created inside the
+          generator, so that you get one jump table per clone.</p>
  
         <p>Must use the PatchpointValue class with the Patchpoint opcode.</p>
       </dd>

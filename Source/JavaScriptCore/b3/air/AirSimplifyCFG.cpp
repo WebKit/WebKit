@@ -95,33 +95,32 @@ bool simplifyCFG(Code& code)
                 }
             }
 
-            // Now check if the block's terminal can be replaced with a jump.
-            if (block->numSuccessors() > 1) {
-                // The terminal must not have weird effects.
-                if (!block->last().hasArgEffects()
-                    && !block->last().hasNonArgNonControlEffects()) {
-                    // All of the successors must be the same.
-                    bool allSame = true;
-                    BasicBlock* firstSuccessor = block->successorBlock(0);
-                    for (unsigned i = 1; i < block->numSuccessors(); ++i) {
-                        if (block->successorBlock(i) != firstSuccessor) {
-                            allSame = false;
-                            break;
-                        }
+            // Now check if the block's terminal can be replaced with a jump. The terminal must not
+            // have weird effects.
+            if (block->numSuccessors() > 1 
+                && !block->last().hasNonControlEffects()) {
+                // All of the successors must be the same.
+                bool allSame = true;
+                BasicBlock* firstSuccessor = block->successorBlock(0);
+                for (unsigned i = 1; i < block->numSuccessors(); ++i) {
+                    if (block->successorBlock(i) != firstSuccessor) {
+                        allSame = false;
+                        break;
                     }
-                    if (allSame) {
-                        if (verbose)
-                            dataLog("Changing ", pointerDump(block), "'s terminal to a Jump.\n");
-                        block->last() = Inst(Jump, block->last().origin);
-                        block->successors().resize(1);
-                        block->successors()[0].frequency() = FrequencyClass::Normal;
-                        changed = true;
-                    }
+                }
+                if (allSame) {
+                    if (verbose)
+                        dataLog("Changing ", pointerDump(block), "'s terminal to a Jump.\n");
+                    block->last() = Inst(Jump, block->last().origin);
+                    block->successors().resize(1);
+                    block->successors()[0].frequency() = FrequencyClass::Normal;
+                    changed = true;
                 }
             }
 
             // Finally handle jumps to a block with one predecessor.
-            if (block->numSuccessors() == 1) {
+            if (block->numSuccessors() == 1
+                && !block->last().hasNonControlEffects()) {
                 BasicBlock* successor = block->successorBlock(0);
                 if (successor != block && successor->numPredecessors() == 1) {
                     RELEASE_ASSERT(successor->predecessor(0) == block);

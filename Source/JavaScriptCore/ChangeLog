@@ -1,3 +1,278 @@
+2016-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Implement table-based switches in B3/Air
+        https://bugs.webkit.org/show_bug.cgi?id=151141
+
+        Reviewed by Benjamin Poulain.
+
+        If a switch statement gets large, it's better to express it as an indirect jump rather than
+        using a binary switch (divide-and-conquer tree of comparisons leading to O(log n) branches to
+        get to the switch case). When dealing with integer switches, FTL will already use the B3
+        Switch and expect this to get lowered as efficiently as possible; it's a bug that B3 will
+        always use a binary switch rather than indirect jumps. When dealing with switches over some
+        more sophisticated types, we'd want FTL to build an indirect jump table itself and use
+        something like a hashtable to feed it. In that case, there will be no B3 Switch; we'll want
+        some way for the FTL to directly express an indirection jump when emitting B3.
+        
+        This implies that we want B3 to have the ability to lower Switch to indirect jumps and to
+        expose those indirect jumps in IR so that the FTL could do its own indirect jumps for
+        switches over more complicated things like strings. But indirect jumps are tough to express
+        in IR. For example, the LLVM approach ("indirectbr" and "blockaddress", see
+        http://blog.llvm.org/2010/01/address-of-label-and-indirect-branches.html) means that some
+        control flow edges cannot be split. Indirectbr takes an address as input and jumps to it, and
+        blockaddress lets you build jump tables out of basic block addresses. This means that the
+        compiler can never change any successor of an indirectbr, since the client will have already
+        arranged for that indirectbr to jump to exactly those successors. We don't want such
+        restrictions in B3, since B3 relies on being able to break critical edges for SSA conversion.
+        Also, indirectbr is not cloneable, which would break any hope of doing specialization-based
+        transformations like we want to do for multiple entrypoints (bug 159391). The goal of this
+        change is to let clients do indirect jumps without placing any restrictions on IR.
+        
+        The trick is to allow Patchpoints to be used as block terminals. Patchpoints already allow
+        clients of B3 to emit whatever code they like. Patchpoints are friendly to B3's other
+        transformations because the client of the patchpoint has to play along with whatever
+        decisions B3 had made around the patchpoint: what registers got used, what the control flow
+        looks like, etc. Patchpoints can even be cloned by B3, and the client has to accommodate this
+        in their patchpoint generator. It turns out that using Patchpoints as terminals is quite
+        natural. We accomplish this by moving the successor edges out of ControlValue and into
+        BasicBlock, and removing ControlValue entirely. This way, any Value subclass can be a
+        terminal. It was already true that a Value is a terminal if value->effects().terminal, which
+        works great with Patchpoints since they control their effects via PatchpointValue::effects.
+        You can make your Patchpoint into a terminal by placing it at the end of a block and doing:
+        
+        patchpoint->effects.terminal = true;
+        
+        A Patchpoints in terminal position gets access to additional API in StackmapGenerationParams.
+        The generator can get a Box<Label> for each successor to its owning block. For example, to
+        implement a jump-table-based switch, you would make your patchpoint take the table index as
+        its sole input. Inside the generator, you allocate the jump table and emit a BaseIndex jump
+        that uses the jump table pointer (which will be a constant known to the generator since it
+        just allocated it) as the base and the patchpoint input as an index. The jump table can be
+        populated by MacroAssemblerCodePtr's computed by installing a link task to resolve the labels
+        to concrete locations. This change makes LowerMacros do such a lowering for Switches that can
+        benefit from jump tables. This happens recursively: if the original Switch is too sparse, we
+        will divide-and-conquer as before. If at any recursion step we find that the remaining cases
+        are dense and large enough to profit from a jump table, then those cases will be lowered to a
+        Patchpoint that does the table jump. This is a fun way to do stepwise lowering: LowerMacros
+        is essentially pre-lowering the Switch directly to machine code, and wrapping that machine
+        code in a Patchpoint so that the rest of the compiler doesn't have to know anything about
+        what happened. I suspect that in the future we will want to do other pre-lowerings this way,
+        whenever the B3 IR phases have some special knowledge about what machine code should be
+        emitted and it would be annoying to drag that knowledge through the rest of the compiler.
+        
+        One downside of this change is that we used ControlValue in so many places. Most of this
+        patch involves removing references to ControlValue. It would be less than 100kb if it wasn't
+        for that. To make this a bit easier, I added "appendNewControlValue" methods to BasicBlock,
+        which allocate a Value and set the successors as if you had done "appendNew<ControlValue>".
+        This made for an easy search-and-replace in testb3 and FTLOutput. I filed bug 159440 to
+        remove this ugly stopgap method.
+        
+        I think that we will also end up using this facility to extend our use of snippets. We
+        already use shared snippet generators for the generic forms of arithmetic. We will probably
+        also want to do this for generic forms of branches. This wouldn't have been possible prior to
+        this change, since there would have been no way to emit a control snippet in FTL. Now we can
+        emit control snippets using terminal patchpoints.
+
+        This is a ~30% speed-up on microbenchmarks that have big switch statements (~60 cases). It's
+        not a speed-up on mainstream benchmarks.
+        
+        This also adds a new test to testb3 for terminal Patchpoints, Get, and Set. The FTL does not
+        currently use terminal Patchpoints directly, but we want this to be possible. It also doesn't
+        use Get/Set directly even though we want this to be possible. It's important to test these
+        since opcodes that result from lowering don't affect early phases, so we could have
+        regressions in early phases related to these opcodes that wouldn't be caught by any JS test.
+        So, this adds a very basic threaded interpreter to testb3 for a Brainfuck-style language, and
+        tests it by having it run a program that prints the numbers 1..100 in a loop. Unlike a real
+        threaded interpreter, it uses a common dispatch block rather than having dispatch at the
+        terminus of each opcode. That's necessary because PolyJump is not cloneable. The state of the
+        interpreter is represented using Variables that we Get and Set, so it tests Get/Set as well.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::jump):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::jump):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::jmp_m):
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::append):
+        (JSC::B3::BasicBlock::appendNonTerminal):
+        (JSC::B3::BasicBlock::removeLast):
+        (JSC::B3::BasicBlock::appendIntConstant):
+        (JSC::B3::BasicBlock::clearSuccessors):
+        (JSC::B3::BasicBlock::appendSuccessor):
+        (JSC::B3::BasicBlock::setSuccessors):
+        (JSC::B3::BasicBlock::replaceSuccessor):
+        (JSC::B3::BasicBlock::addPredecessor):
+        (JSC::B3::BasicBlock::deepDump):
+        (JSC::B3::BasicBlock::appendNewControlValue):
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::numSuccessors):
+        (JSC::B3::BasicBlock::successor):
+        (JSC::B3::BasicBlock::successors):
+        (JSC::B3::BasicBlock::successorBlock):
+        (JSC::B3::BasicBlock::successorBlocks):
+        (JSC::B3::BasicBlock::numPredecessors):
+        (JSC::B3::BasicBlock::predecessor):
+        (JSC::B3::BasicBlock::frequency):
+        * b3/B3BasicBlockInlines.h:
+        (JSC::B3::BasicBlock::replaceLastWithNew):
+        (JSC::B3::BasicBlock::taken):
+        (JSC::B3::BasicBlock::notTaken):
+        (JSC::B3::BasicBlock::fallThrough):
+        (JSC::B3::BasicBlock::numSuccessors): Deleted.
+        (JSC::B3::BasicBlock::successor): Deleted.
+        (JSC::B3::BasicBlock::successors): Deleted.
+        (JSC::B3::BasicBlock::successorBlock): Deleted.
+        (JSC::B3::BasicBlock::successorBlocks): Deleted.
+        * b3/B3BlockInsertionSet.cpp:
+        (JSC::B3::BlockInsertionSet::splitForward):
+        * b3/B3BreakCriticalEdges.cpp:
+        (JSC::B3::breakCriticalEdges):
+        * b3/B3CaseCollection.cpp: Added.
+        (JSC::B3::CaseCollection::dump):
+        * b3/B3CaseCollection.h: Added.
+        (JSC::B3::CaseCollection::CaseCollection):
+        (JSC::B3::CaseCollection::operator[]):
+        (JSC::B3::CaseCollection::iterator::iterator):
+        (JSC::B3::CaseCollection::iterator::operator*):
+        (JSC::B3::CaseCollection::iterator::operator++):
+        (JSC::B3::CaseCollection::iterator::operator==):
+        (JSC::B3::CaseCollection::iterator::operator!=):
+        (JSC::B3::CaseCollection::begin):
+        (JSC::B3::CaseCollection::end):
+        * b3/B3CaseCollectionInlines.h: Added.
+        (JSC::B3::CaseCollection::fallThrough):
+        (JSC::B3::CaseCollection::size):
+        (JSC::B3::CaseCollection::at):
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::CheckSpecial):
+        (JSC::B3::CheckSpecial::hiddenBranch):
+        * b3/B3Common.h:
+        (JSC::B3::is64Bit):
+        * b3/B3ControlValue.cpp: Removed.
+        * b3/B3ControlValue.h: Removed.
+        * b3/B3DataSection.cpp:
+        (JSC::B3::DataSection::DataSection):
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3FixSSA.cpp:
+        * b3/B3FoldPathConstants.cpp:
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MathExtras.cpp:
+        (JSC::B3::powDoubleInt32):
+        * b3/B3Opcode.h:
+        (JSC::B3::isConstant):
+        (JSC::B3::isDefinitelyTerminal):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::generate):
+        (JSC::B3::PatchpointSpecial::isTerminal):
+        (JSC::B3::PatchpointSpecial::dumpImpl):
+        * b3/B3PatchpointSpecial.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::resetReachability):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::lastPhaseName):
+        (JSC::B3::Procedure::byproducts):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3StackmapGenerationParams.cpp:
+        (JSC::B3::StackmapGenerationParams::unavailableRegisters):
+        (JSC::B3::StackmapGenerationParams::successorLabels):
+        (JSC::B3::StackmapGenerationParams::fallsThroughToSuccessor):
+        (JSC::B3::StackmapGenerationParams::proc):
+        * b3/B3StackmapGenerationParams.h:
+        (JSC::B3::StackmapGenerationParams::gpScratch):
+        (JSC::B3::StackmapGenerationParams::fpScratch):
+        * b3/B3SwitchValue.cpp:
+        (JSC::B3::SwitchValue::~SwitchValue):
+        (JSC::B3::SwitchValue::removeCase):
+        (JSC::B3::SwitchValue::hasFallThrough):
+        (JSC::B3::SwitchValue::setFallThrough):
+        (JSC::B3::SwitchValue::appendCase):
+        (JSC::B3::SwitchValue::dumpSuccessors):
+        (JSC::B3::SwitchValue::dumpMeta):
+        (JSC::B3::SwitchValue::cloneImpl):
+        (JSC::B3::SwitchValue::SwitchValue):
+        * b3/B3SwitchValue.h:
+        (JSC::B3::SwitchValue::accepts):
+        (JSC::B3::SwitchValue::caseValues):
+        (JSC::B3::SwitchValue::cases):
+        (JSC::B3::SwitchValue::fallThrough): Deleted.
+        (JSC::B3::SwitchValue::size): Deleted.
+        (JSC::B3::SwitchValue::at): Deleted.
+        (JSC::B3::SwitchValue::operator[]): Deleted.
+        (JSC::B3::SwitchValue::iterator::iterator): Deleted.
+        (JSC::B3::SwitchValue::iterator::operator*): Deleted.
+        (JSC::B3::SwitchValue::iterator::operator++): Deleted.
+        (JSC::B3::SwitchValue::iterator::operator==): Deleted.
+        (JSC::B3::SwitchValue::iterator::operator!=): Deleted.
+        (JSC::B3::SwitchValue::begin): Deleted.
+        (JSC::B3::SwitchValue::end): Deleted.
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::replaceWithPhi):
+        (JSC::B3::Value::replaceWithJump):
+        (JSC::B3::Value::replaceWithOops):
+        (JSC::B3::Value::dump):
+        (JSC::B3::Value::deepDump):
+        (JSC::B3::Value::dumpSuccessors):
+        (JSC::B3::Value::negConstant):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addFastTmp):
+        (JSC::B3::Air::Code::addDataSection):
+        (JSC::B3::Air::Code::jsHash):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::isFastTmp):
+        (JSC::B3::Air::Code::setLastPhaseName):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::shouldTryAliasingDef):
+        (JSC::B3::Air::PatchCustom::isTerminal):
+        (JSC::B3::Air::PatchCustom::hasNonArgNonControlEffects):
+        (JSC::B3::Air::PatchCustom::generate):
+        (JSC::B3::Air::CCallCustom::admitsStack):
+        (JSC::B3::Air::CCallCustom::isTerminal):
+        (JSC::B3::Air::CCallCustom::hasNonArgNonControlEffects):
+        (JSC::B3::Air::ShuffleCustom::admitsStack):
+        (JSC::B3::Air::ShuffleCustom::isTerminal):
+        (JSC::B3::Air::ShuffleCustom::hasNonArgNonControlEffects):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirGenerationContext.h:
+        * b3/air/AirInst.h:
+        (JSC::B3::Air::Inst::hasNonControlEffects):
+        * b3/air/AirSimplifyCFG.cpp:
+        (JSC::B3::Air::simplifyCFG):
+        * b3/air/AirSpecial.cpp:
+        (JSC::B3::Air::Special::shouldTryAliasingDef):
+        (JSC::B3::Air::Special::isTerminal):
+        (JSC::B3::Air::Special::hasNonArgNonControlEffects):
+        * b3/air/AirSpecial.h:
+        * b3/air/AirValidate.cpp:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::jump):
+        (JSC::FTL::Output::branch):
+        (JSC::FTL::Output::ret):
+        (JSC::FTL::Output::unreachable):
+        (JSC::FTL::Output::speculate):
+        (JSC::FTL::Output::trap):
+        (JSC::FTL::Output::anchor):
+        (JSC::FTL::Output::decrementSuperSamplerCount):
+        (JSC::FTL::Output::addIncomingToPhi):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::constIntPtr):
+        (JSC::FTL::Output::callWithoutSideEffects):
+        (JSC::FTL::Output::switchInstruction):
+        (JSC::FTL::Output::phi):
+        (JSC::FTL::Output::addIncomingToPhi):
+
 2016-07-18  Anders Carlsson  <andersca@apple.com>
 
         WebKit nightly fails to build on macOS Sierra

@@ -108,6 +108,7 @@ set(JavaScriptCore_SOURCES
     b3/B3BlockInsertionSet.cpp
     b3/B3BreakCriticalEdges.cpp
     b3/B3CCallValue.cpp
+    b3/B3CaseCollection.cpp
     b3/B3CheckSpecial.cpp
     b3/B3CheckValue.cpp
     b3/B3Common.cpp
@@ -118,7 +119,6 @@ set(JavaScriptCore_SOURCES
     b3/B3ConstDoubleValue.cpp
     b3/B3ConstFloatValue.cpp
     b3/B3ConstrainedValue.cpp
-    b3/B3ControlValue.cpp
     b3/B3DataSection.cpp
     b3/B3DuplicateTails.cpp
     b3/B3Effects.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,14 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirBasicBlock.h"
+#include "B3IndexMap.h"
+#include "CCallHelpers.h"
+#include <wtf/Box.h>
 #include <wtf/SharedTask.h>
 #include <wtf/Vector.h>
 
-namespace JSC {
-
-class CCallHelpers;
-
-namespace B3 { namespace Air {
+namespace JSC { namespace B3 { namespace Air {
 
 class Code;
 
@@ -44,7 +44,10 @@ struct GenerationContext {
     typedef SharedTask<LatePathFunction> LatePath;
 
     Vector<RefPtr<LatePath>> latePaths;
-    Code* code;
+    IndexMap<BasicBlock, Box<CCallHelpers::Label>> blockLabels;
+    BasicBlock* currentBlock { nullptr };
+    unsigned indexInBlock { UINT_MAX };
+    Code* code { nullptr };
 };
 
 } } } // namespace JSC::B3::Air

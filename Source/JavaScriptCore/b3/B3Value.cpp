@@ -29,9 +29,9 @@
 #if ENABLE(B3_JIT)
 
 #include "B3ArgumentRegValue.h"
+#include "B3BasicBlockInlines.h"
 #include "B3BottomProvider.h"
 #include "B3CCallValue.h"
-#include "B3ControlValue.h"
 #include "B3MemoryValue.h"
 #include "B3OriginDump.h"
 #include "B3ProcedureInlines.h"
@@ -42,6 +42,7 @@
 #include "B3ValueKeyInlines.h"
 #include "B3VariableValue.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace B3 {
@@ -125,6 +126,50 @@ void Value::replaceWithPhi()
     this->m_index = index;
 }
 
+void Value::replaceWithJump(BasicBlock* owner, const FrequentedBlock& target)
+{
+    RELEASE_ASSERT(owner->last() == this);
+    
+    unsigned index = m_index;
+    Origin origin = m_origin;
+    
+    this->~Value();
+    
+    new (this) Value(Jump, Void, origin);
+    
+    this->owner = owner;
+    this->m_index = index;
+    
+    owner->setSuccessors(target);
+}
+
+void Value::replaceWithOops(BasicBlock* owner)
+{
+    RELEASE_ASSERT(owner->last() == this);
+    
+    unsigned index = m_index;
+    Origin origin = m_origin;
+    
+    this->~Value();
+    
+    new (this) Value(Oops, Void, origin);
+    
+    this->owner = owner;
+    this->m_index = index;
+    
+    owner->clearSuccessors();
+}
+
+void Value::replaceWithJump(const FrequentedBlock& target)
+{
+    replaceWithJump(owner, target);
+}
+
+void Value::replaceWithOops()
+{
+    replaceWithOops(owner);
+}
+
 void Value::dump(PrintStream& out) const
 {
     bool isConstant = false;
@@ -187,6 +232,19 @@ void Value::deepDump(const Procedure* proc, PrintStream& out) const
     }
 
     out.print(")");
+}
+
+void Value::dumpSuccessors(const BasicBlock* block, PrintStream& out) const
+{
+    // Note that this must not crash if we have the wrong number of successors, since someone
+    // debugging a number-of-successors bug will probably want to dump IR!
+    
+    if (opcode() == Branch && block->numSuccessors() == 2) {
+        out.print("Then:", block->taken(), ", Else:", block->notTaken());
+        return;
+    }
+    
+    out.print(listDump(block->successors()));
 }
 
 Value* Value::negConstant(Procedure&) const
@@ -713,6 +771,10 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
         }
         return Void;
     case Nop:
+    case Jump:
+    case Branch:
+    case Return:
+    case Oops:
         return Void;
     case Select:
         ASSERT(secondChild);

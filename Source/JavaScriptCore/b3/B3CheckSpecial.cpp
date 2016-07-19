@@ -84,7 +84,7 @@ CheckSpecial::CheckSpecial(Air::Opcode opcode, unsigned numArgs, RoleMode stackm
     , m_stackmapRole(stackmapRole)
     , m_numCheckArgs(numArgs)
 {
-    ASSERT(isTerminal(opcode));
+    ASSERT(isDefinitelyTerminal(opcode));
 }
 
 CheckSpecial::CheckSpecial(const CheckSpecial::Key& key)
@@ -102,6 +102,7 @@ Inst CheckSpecial::hiddenBranch(const Inst& inst) const
     hiddenBranch.args.reserveInitialCapacity(m_numCheckArgs);
     for (unsigned i = 0; i < m_numCheckArgs; ++i)
         hiddenBranch.args.append(inst.args[i + 1]);
+    ASSERT(hiddenBranch.isTerminal());
     return hiddenBranch;
 }
 

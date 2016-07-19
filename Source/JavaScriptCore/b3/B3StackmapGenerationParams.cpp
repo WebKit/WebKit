@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,27 @@ RegisterSet StackmapGenerationParams::unavailableRegisters() const
         result.clear(fpr);
     
     return result;
+}
+
+Vector<Box<CCallHelpers::Label>> StackmapGenerationParams::successorLabels() const
+{
+    RELEASE_ASSERT(m_context.indexInBlock == m_context.currentBlock->size() - 1);
+    RELEASE_ASSERT(m_value->effects().terminal);
+    
+    Vector<Box<CCallHelpers::Label>> result(m_context.currentBlock->numSuccessors());
+    for (unsigned i = m_context.currentBlock->numSuccessors(); i--;)
+        result[i] = m_context.blockLabels[m_context.currentBlock->successorBlock(i)];
+    return result;
+}
+
+bool StackmapGenerationParams::fallsThroughToSuccessor(unsigned successorIndex) const
+{
+    RELEASE_ASSERT(m_context.indexInBlock == m_context.currentBlock->size() - 1);
+    RELEASE_ASSERT(m_value->effects().terminal);
+    
+    Air::BasicBlock* successor = m_context.currentBlock->successorBlock(successorIndex);
+    Air::BasicBlock* nextBlock = m_context.code->findNextBlock(m_context.currentBlock);
+    return successor == nextBlock;
 }
 
 Procedure& StackmapGenerationParams::proc() const

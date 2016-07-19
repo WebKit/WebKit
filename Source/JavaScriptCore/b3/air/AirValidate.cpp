@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,9 +79,9 @@ public:
                 }
                 VALIDATE(inst.isValidForm(), ("At ", inst, " in ", *block));
                 if (instIndex == block->size() - 1)
-                    VALIDATE(isTerminal(inst.opcode), ("At ", inst, " in ", *block));
+                    VALIDATE(inst.isTerminal(), ("At ", inst, " in ", *block));
                 else
-                    VALIDATE(!isTerminal(inst.opcode), ("At ", inst, " in ", *block));
+                    VALIDATE(!inst.isTerminal(), ("At ", inst, " in ", *block));
 
                 // forEachArg must return Arg&'s that point into the args array.
                 inst.forEachArg(

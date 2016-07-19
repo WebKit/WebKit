@@ -29,7 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BasicBlockInlines.h"
-#include "B3ControlValue.h"
+#include "B3CaseCollectionInlines.h"
 #include "B3Dominators.h"
 #include "B3InsertionSetInlines.h"
 #include "B3PhaseScope.h"
@@ -87,24 +87,24 @@ public:
         };
         
         for (BasicBlock* block : m_proc) {
-            ControlValue* branch = block->last()->as<ControlValue>();
+            Value* branch = block->last();
             switch (branch->opcode()) {
             case Branch:
-                if (branch->successorBlock(0) == branch->successorBlock(1))
+                if (block->successorBlock(0) == block->successorBlock(1))
                     continue;
                 addOverride(
                     block, branch->child(0),
-                    Override::nonZero(branch->successorBlock(0)));
+                    Override::nonZero(block->successorBlock(0)));
                 addOverride(
                     block, branch->child(0),
-                    Override::constant(branch->successorBlock(1), 0));
+                    Override::constant(block->successorBlock(1), 0));
                 break;
             case Switch: {
                 HashMap<BasicBlock*, unsigned> targetUses;
-                for (const SwitchCase& switchCase : *branch->as<SwitchValue>())
+                for (const SwitchCase& switchCase : branch->as<SwitchValue>()->cases(block))
                     targetUses.add(switchCase.targetBlock(), 0).iterator->value++;
 
-                for (const SwitchCase& switchCase : *branch->as<SwitchValue>()) {
+                for (const SwitchCase& switchCase : branch->as<SwitchValue>()->cases(block)) {
                     if (targetUses.find(switchCase.targetBlock())->value != 1)
                         continue;
 
@@ -158,9 +158,8 @@ public:
 
                 switch (value->opcode()) {
                 case Branch: {
-                    ControlValue* branch = value->as<ControlValue>();
-                    if (getOverride(block, branch->child(0)).isNonZero) {
-                        branch->convertToJump(branch->taken().block());
+                    if (getOverride(block, value->child(0)).isNonZero) {
+                        value->replaceWithJump(block, block->taken());
                         changed = true;
                     }
                     break;

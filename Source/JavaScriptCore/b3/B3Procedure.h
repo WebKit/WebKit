@@ -218,7 +218,10 @@ public:
 
     const char* lastPhaseName() const { return m_lastPhaseName; }
 
-    void* addDataSection(size_t size);
+    // Allocates a slab of memory that will be kept alive by anyone who keeps the resulting code
+    // alive. Great for compiler-generated data sections, like switch jump tables and constant pools.
+    // This returns memory that has been zero-initialized.
+    JS_EXPORT_PRIVATE void* addDataSection(size_t);
 
     OpaqueByproducts& byproducts() { return *m_byproducts; }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,62 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirSpecial.h"
+#ifndef B3CaseCollectionInlines_h
+#define B3CaseCollectionInlines_h
 
 #if ENABLE(B3_JIT)
 
-#include <limits.h>
-#include <wtf/StringPrintStream.h>
+#include "B3CaseCollection.h"
+#include "B3SwitchValue.h"
+#include "B3BasicBlock.h"
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC { namespace B3 {
 
-const char* const Special::dumpPrefix = "&";
-
-Special::Special()
+inline const FrequentedBlock& CaseCollection::fallThrough() const
 {
+    return m_owner->fallThrough();
 }
 
-Special::~Special()
+inline unsigned CaseCollection::size() const
 {
+    return m_switch->numCaseValues();
 }
 
-CString Special::name() const
+inline SwitchCase CaseCollection::at(unsigned index) const
 {
-    StringPrintStream out;
-    dumpImpl(out);
-    return out.toCString();
+    return SwitchCase(m_switch->caseValue(index), m_owner->successor(index));
 }
 
-Optional<unsigned> Special::shouldTryAliasingDef(Inst&)
-{
-    return Nullopt;
-}
-
-bool Special::isTerminal(Inst&)
-{
-    return false;
-}
-
-bool Special::hasNonArgNonControlEffects(Inst&)
-{
-    return true;
-}
-
-void Special::dump(PrintStream& out) const
-{
-    out.print(dumpPrefix);
-    dumpImpl(out);
-    if (m_index != UINT_MAX)
-        out.print(m_index);
-}
-
-void Special::deepDump(PrintStream& out) const
-{
-    out.print(*this, ": ");
-    deepDumpImpl(out);
-}
-
-} } } // namespace JSC::B3::Air
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3CaseCollectionInlines_h
+

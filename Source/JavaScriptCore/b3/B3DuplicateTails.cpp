@@ -30,7 +30,6 @@
 
 #include "B3BasicBlockInlines.h"
 #include "B3BreakCriticalEdges.h"
-#include "B3ControlValue.h"
 #include "B3Dominators.h"
 #include "B3FixSSA.h"
 #include "B3IndexSet.h"
@@ -97,11 +96,10 @@ public:
         }
 
         for (BasicBlock* block : m_proc) {
-            ControlValue* jump = block->last()->as<ControlValue>();
-            if (jump->opcode() != Jump)
+            if (block->last()->opcode() != Jump)
                 continue;
 
-            BasicBlock* tail = jump->successorBlock(0);
+            BasicBlock* tail = block->successorBlock(0);
             if (!candidates.contains(tail))
                 continue;
 
@@ -130,6 +128,7 @@ public:
                     map.add(value, clone);
                 block->append(clone);
             }
+            block->successors() = tail->successors();
         }
 
         m_proc.resetReachability();

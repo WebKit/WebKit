@@ -30,7 +30,11 @@
 
 #include "AirGenerationContext.h"
 #include "AllowMacroScratchRegisterUsage.h"
+#include "B3CheckValue.h"
+#include "B3PatchpointValue.h"
+#include "B3SlotBaseValue.h"
 #include "B3StackmapGenerationParams.h"
+#include "B3ValueInlines.h"
 #include "CallFrameShuffler.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"

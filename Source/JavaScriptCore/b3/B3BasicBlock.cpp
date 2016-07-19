@@ -30,7 +30,6 @@
 
 #include "B3BasicBlockInlines.h"
 #include "B3BasicBlockUtils.h"
-#include "B3ControlValue.h"
 #include "B3Procedure.h"
 #include "B3ValueInlines.h"
 #include <wtf/ListDump.h>
@@ -52,12 +51,14 @@ BasicBlock::~BasicBlock()
 void BasicBlock::append(Value* value)
 {
     m_values.append(value);
+    value->owner = this;
 }
 
 void BasicBlock::appendNonTerminal(Value* value)
 {
     m_values.append(m_values.last());
     m_values[m_values.size() - 1] = value;
+    value->owner = this;
 }
 
 void BasicBlock::removeLast(Procedure& proc)
@@ -84,9 +85,41 @@ Value* BasicBlock::appendIntConstant(Procedure& proc, Value* likeValue, int64_t 
     return appendIntConstant(proc, likeValue->origin(), likeValue->type(), value);
 }
 
+void BasicBlock::clearSuccessors()
+{
+    m_successors.clear();
+}
+
+void BasicBlock::appendSuccessor(const FrequentedBlock& target)
+{
+    m_successors.append(target);
+}
+
+void BasicBlock::setSuccessors(const FrequentedBlock& target)
+{
+    m_successors.resize(1);
+    m_successors[0] = target;
+}
+
+void BasicBlock::setSuccessors(const FrequentedBlock& taken, const FrequentedBlock& notTaken)
+{
+    m_successors.resize(2);
+    m_successors[0] = taken;
+    m_successors[1] = notTaken;
+}
+
 bool BasicBlock::replaceSuccessor(BasicBlock* from, BasicBlock* to)
 {
-    return last()->as<ControlValue>()->replaceSuccessor(from, to);
+    bool result = false;
+    for (BasicBlock*& successor : successorBlocks()) {
+        if (successor == from) {
+            successor = to;
+            result = true;
+            
+            // Keep looping because a successor may be mentioned multiple times, like in a Switch.
+        }
+    }
+    return result;
 }
 
 bool BasicBlock::addPredecessor(BasicBlock* block)
@@ -121,6 +154,42 @@ void BasicBlock::deepDump(const Procedure& proc, PrintStream& out) const
         out.print("  Predecessors: ", pointerListDump(predecessors()), "\n");
     for (Value* value : *this)
         out.print("    ", B3::deepDump(proc, value), "\n");
+    if (!successors().isEmpty()) {
+        out.print("  Successors: ");
+        if (size())
+            last()->dumpSuccessors(this, out);
+        else
+            out.print(listDump(successors()));
+        out.print("\n");
+    }
+}
+
+Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin)
+{
+    RELEASE_ASSERT(opcode == Oops);
+    clearSuccessors();
+    return appendNew<Value>(proc, opcode, origin);
+}
+
+Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin, Value* value)
+{
+    RELEASE_ASSERT(opcode == Return);
+    clearSuccessors();
+    return appendNew<Value>(proc, opcode, origin, value);
+}
+
+Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin, const FrequentedBlock& target)
+{
+    RELEASE_ASSERT(opcode == Jump);
+    setSuccessors(target);
+    return appendNew<Value>(proc, opcode, origin);
+}
+
+Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin, Value* predicate, const FrequentedBlock& taken, const FrequentedBlock& notTaken)
+{
+    RELEASE_ASSERT(opcode == Branch);
+    setSuccessors(taken, notTaken);
+    return appendNew<Value>(proc, opcode, origin, predicate);
 }
 
 } } // namespace JSC::B3

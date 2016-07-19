@@ -78,8 +78,8 @@ BasicBlock* BlockInsertionSet::splitForward(
         result->m_values[i] = block->m_values[i];
 
     // Make the new block jump to 'block'.
-    result->m_values[valueIndex] =
-        m_proc.add<ControlValue>(Jump, value->origin(), FrequentedBlock(block));
+    result->m_values[valueIndex] = m_proc.add<Value>(Jump, value->origin());
+    result->setSuccessors(FrequentedBlock(block));
 
     // If we had inserted things into 'block' before this, execute those insertions now.
     if (insertionSet)

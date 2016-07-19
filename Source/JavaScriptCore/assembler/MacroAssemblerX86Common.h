@@ -2264,6 +2264,12 @@ public:
         m_assembler.jmp_m(address.offset, address.base);
     }
 
+    // Address is a memory location containing the address to jump to
+    void jump(BaseIndex address)
+    {
+        m_assembler.jmp_m(address.offset, address.base, address.index, address.scale);
+    }
+
 
     // Arithmetic control flow operations:
     //

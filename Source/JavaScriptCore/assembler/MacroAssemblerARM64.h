@@ -2883,6 +2883,12 @@ public:
         load64(address, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.br(dataTempRegister);
     }
+    
+    void jump(BaseIndex address)
+    {
+        load64(address, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.br(dataTempRegister);
+    }
 
     void jump(AbsoluteAddress address)
     {

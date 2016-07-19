@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,11 @@ struct Effects {
     // terminates abruptly.
     bool exitsSideways { false };
 
-    // True if the instruction may change semantics if hoisted above some control flow.
+    // True if the instruction may change semantics if hoisted above some control flow. For example,
+    // loads are usually control-dependent because we must assume that any control construct (either
+    // a terminal like Branch or anything that exits sideways, like Check) validates whether the
+    // pointer is valid. Hoisting the load above control may cause the load to trap even though it
+    // would not have otherwise trapped.
     bool controlDependent { false };
 
     // True if this writes to the local state. Operations that write local state don't write to anything

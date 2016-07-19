@@ -37,30 +37,76 @@ SwitchValue::~SwitchValue()
 {
 }
 
-SwitchCase SwitchValue::removeCase(unsigned index)
+SwitchCase SwitchValue::removeCase(BasicBlock* block, unsigned index)
 {
-    FrequentedBlock resultBlock = m_successors[index];
+    FrequentedBlock resultBlock = block->successor(index);
     int64_t resultValue = m_values[index];
-    m_successors[index] = m_successors.last();
-    m_successors.removeLast();
+    block->successor(index) = block->successors().last();
+    block->successors().removeLast();
     m_values[index] = m_values.last();
     m_values.removeLast();
     return SwitchCase(resultValue, resultBlock);
 }
 
+bool SwitchValue::hasFallThrough(const BasicBlock* block) const
+{
+    unsigned numSuccessors = block->numSuccessors();
+    unsigned numValues = m_values.size();
+    RELEASE_ASSERT(numValues == numSuccessors || numValues + 1 == numSuccessors);
+    
+    return numValues + 1 == numSuccessors;
+}
+
+bool SwitchValue::hasFallThrough() const
+{
+    return hasFallThrough(owner);
+}
+
+void SwitchValue::setFallThrough(BasicBlock* block, const FrequentedBlock& target)
+{
+    if (!hasFallThrough())
+        block->successors().append(target);
+    else
+        block->successors().last() = target;
+    ASSERT(hasFallThrough(block));
+}
+
+void SwitchValue::appendCase(BasicBlock* block, const SwitchCase& switchCase)
+{
+    if (!hasFallThrough())
+        block->successors().append(switchCase.target());
+    else {
+        block->successors().append(block->successors().last());
+        block->successor(block->numSuccessors() - 2) = switchCase.target();
+    }
+    m_values.append(switchCase.caseValue());
+}
+
+void SwitchValue::setFallThrough(const FrequentedBlock& target)
+{
+    setFallThrough(owner, target);
+}
+
 void SwitchValue::appendCase(const SwitchCase& switchCase)
 {
-    m_successors.append(m_successors.last());
-    m_successors[m_successors.size() - 2] = switchCase.target();
-    m_values.append(switchCase.caseValue());
+    appendCase(owner, switchCase);
+}
+
+void SwitchValue::dumpSuccessors(const BasicBlock* block, PrintStream& out) const
+{
+    // We must not crash due to a number-of-successors mismatch! Someone debugging a
+    // number-of-successors bug will want to dump IR!
+    if (numCaseValues() + 1 != block->numSuccessors()) {
+        Value::dumpSuccessors(block, out);
+        return;
+    }
+    
+    out.print(cases(block));
 }
 
 void SwitchValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    // This destructively overrides ControlValue's dumpMeta().
-    for (SwitchCase switchCase : *this)
-        out.print(comma, switchCase);
-    out.print(comma, "fallThrough = ", fallThrough());
+    out.print(comma, "cases = [", listDump(m_values), "]");
 }
 
 Value* SwitchValue::cloneImpl() const
@@ -68,10 +114,9 @@ Value* SwitchValue::cloneImpl() const
     return new SwitchValue(*this);
 }
 
-SwitchValue::SwitchValue(Origin origin, Value* child, const FrequentedBlock& fallThrough)
-    : ControlValue(Switch, Void, origin, child)
+SwitchValue::SwitchValue(Origin origin, Value* child)
+    : Value(CheckedOpcode, Switch, Void, origin, child)
 {
-    m_successors.append(fallThrough);
 }
 
 } } // namespace JSC::B3

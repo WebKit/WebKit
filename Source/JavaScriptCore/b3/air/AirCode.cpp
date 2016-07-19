@@ -30,6 +30,7 @@
 
 #include "AirCCallSpecial.h"
 #include "B3BasicBlockUtils.h"
+#include "B3Procedure.h"
 #include "B3StackSlot.h"
 
 namespace JSC { namespace B3 { namespace Air {
@@ -133,6 +134,11 @@ BasicBlock* Code::findNextBlock(BasicBlock* block) const
 void Code::addFastTmp(Tmp tmp)
 {
     m_fastTmps.add(tmp);
+}
+
+void* Code::addDataSection(size_t size)
+{
+    return m_proc.addDataSection(size);
 }
 
 unsigned Code::jsHash() const

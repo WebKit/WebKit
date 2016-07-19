@@ -207,21 +207,21 @@ enum Opcode : int16_t {
     Upsilon, // This uses the UpsilonValue class.
     Phi,
 
-    // Jump. Uses the ControlValue class.
+    // Jump.
     Jump,
     
-    // Polymorphic branch, usable with any integer type. Branches if not equal to zero. Uses the
-    // ControlValue class, with the 0-index successor being the true successor.
+    // Polymorphic branch, usable with any integer type. Branches if not equal to zero. The 0-index
+    // successor is the true successor.
     Branch,
 
     // Switch. Switches over either Int32 or Int64. Uses the SwitchValue class.
     Switch,
 
     // Return. Note that B3 procedures don't know their return type, so this can just return any
-    // type. Uses the ControlValue class.
+    // type.
     Return,
 
-    // This is a terminal that indicates that we will never get here. Uses the ControlValue class.
+    // This is a terminal that indicates that we will never get here.
     Oops
 };
 
@@ -253,6 +253,20 @@ inline bool isConstant(Opcode opcode)
     case Const64:
     case ConstDouble:
     case ConstFloat:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isDefinitelyTerminal(Opcode opcode)
+{
+    switch (opcode) {
+    case Jump:
+    case Branch:
+    case Switch:
+    case Oops:
+    case Return:
         return true;
     default:
         return false;

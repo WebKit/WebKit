@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,9 +87,12 @@ public:
 
     virtual const RegisterSet& extraEarlyClobberedRegs(Inst&) = 0;
     virtual const RegisterSet& extraClobberedRegs(Inst&) = 0;
+    
+    // By default, this returns false.
+    virtual bool isTerminal(Inst&);
 
     // By default, this returns true.
-    virtual bool hasNonArgNonControlEffects();
+    virtual bool hasNonArgNonControlEffects(Inst&);
 
     void dump(PrintStream&) const;
     void deepDump(PrintStream&) const;

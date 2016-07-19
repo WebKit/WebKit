@@ -148,31 +148,6 @@ void Procedure::resetValueOwners()
 
 void Procedure::resetReachability()
 {
-    if (shouldValidateIR()) {
-        // Validate the basic properties that we need for resetting reachability. We often reset
-        // reachability before IR validation, so without this mini-validation, you would crash inside
-        // B3::resetReachability() without getting any IR dump.
-
-        BasicBlock* badBlock = nullptr;
-        for (BasicBlock* block : *this) {
-            if (!block->size()) {
-                badBlock = block;
-                break;
-            }
-
-            if (!block->last()->as<ControlValue>()) {
-                badBlock = block;
-                break;
-            }
-        }
-
-        if (badBlock) {
-            dataLog("FATAL: Invalid basic block ", *badBlock, " while running Procedure::resetReachability().\n");
-            dataLog(*this);
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    
     recomputePredecessors(m_blocks);
     
     // The common case is that this does not find any dead blocks.

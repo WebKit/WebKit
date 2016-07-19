@@ -30,7 +30,6 @@
 
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
-#include "B3ControlValue.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 
@@ -50,8 +49,8 @@ void breakCriticalEdges(Procedure& proc)
 
             BasicBlock* pad =
                 insertionSet.insertBefore(successor, successor->frequency());
-            pad->appendNew<ControlValue>(
-                proc, Jump, successor->at(0)->origin(), FrequentedBlock(successor));
+            pad->appendNew<Value>(proc, Jump, successor->at(0)->origin());
+            pad->setSuccessors(FrequentedBlock(successor));
             pad->addPredecessor(block);
             successor->replacePredecessor(block, pad);
             successor = pad;

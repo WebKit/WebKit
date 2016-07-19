@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,61 +24,25 @@
  */
 
 #include "config.h"
-#include "AirSpecial.h"
+#include "B3CaseCollection.h"
 
 #if ENABLE(B3_JIT)
 
-#include <limits.h>
-#include <wtf/StringPrintStream.h>
+#include "B3BasicBlockInlines.h"
+#include "B3CaseCollectionInlines.h"
+#include <wtf/CommaPrinter.h>
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC { namespace B3 {
 
-const char* const Special::dumpPrefix = "&";
-
-Special::Special()
+void CaseCollection::dump(PrintStream& out) const
 {
+    CommaPrinter comma;
+    for (SwitchCase switchCase : *this)
+        out.print(comma, switchCase);
+    out.print(comma, "default->", fallThrough());
 }
 
-Special::~Special()
-{
-}
-
-CString Special::name() const
-{
-    StringPrintStream out;
-    dumpImpl(out);
-    return out.toCString();
-}
-
-Optional<unsigned> Special::shouldTryAliasingDef(Inst&)
-{
-    return Nullopt;
-}
-
-bool Special::isTerminal(Inst&)
-{
-    return false;
-}
-
-bool Special::hasNonArgNonControlEffects(Inst&)
-{
-    return true;
-}
-
-void Special::dump(PrintStream& out) const
-{
-    out.print(dumpPrefix);
-    dumpImpl(out);
-    if (m_index != UINT_MAX)
-        out.print(m_index);
-}
-
-void Special::deepDump(PrintStream& out) const
-{
-    out.print(*this, ": ");
-    deepDumpImpl(out);
-}
-
-} } } // namespace JSC::B3::Air
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

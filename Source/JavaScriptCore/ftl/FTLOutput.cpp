@@ -28,8 +28,18 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3ArgumentRegValue.h"
+#include "B3BasicBlockInlines.h"
+#include "B3CCallValue.h"
+#include "B3Const32Value.h"
+#include "B3ConstPtrValue.h"
 #include "B3MathExtras.h"
+#include "B3MemoryValue.h"
+#include "B3SlotBaseValue.h"
 #include "B3StackmapGenerationParams.h"
+#include "B3SwitchValue.h"
+#include "B3UpsilonValue.h"
+#include "B3ValueInlines.h"
 #include "SuperSampler.h"
 
 namespace JSC { namespace FTL {
@@ -578,12 +588,12 @@ LValue Output::select(LValue value, LValue taken, LValue notTaken)
 
 void Output::jump(LBasicBlock destination)
 {
-    m_block->appendNew<B3::ControlValue>(m_proc, B3::Jump, origin(), B3::FrequentedBlock(destination));
+    m_block->appendNewControlValue(m_proc, B3::Jump, origin(), B3::FrequentedBlock(destination));
 }
 
 void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBasicBlock notTaken, Weight notTakenWeight)
 {
-    m_block->appendNew<ControlValue>(
+    m_block->appendNewControlValue(
         m_proc, B3::Branch, origin(), condition,
         FrequentedBlock(taken, takenWeight.frequencyClass()),
         FrequentedBlock(notTaken, notTakenWeight.frequencyClass()));
@@ -603,12 +613,12 @@ void Output::check(LValue condition, WeightedTarget taken)
 
 void Output::ret(LValue value)
 {
-    m_block->appendNew<B3::ControlValue>(m_proc, B3::Return, origin(), value);
+    m_block->appendNewControlValue(m_proc, B3::Return, origin(), value);
 }
 
 void Output::unreachable()
 {
-    m_block->appendNew<B3::ControlValue>(m_proc, B3::Oops, origin());
+    m_block->appendNewControlValue(m_proc, B3::Oops, origin());
 }
 
 CheckValue* Output::speculate(LValue value)
@@ -638,7 +648,7 @@ PatchpointValue* Output::patchpoint(LType type)
 
 void Output::trap()
 {
-    m_block->appendNew<B3::ControlValue>(m_proc, B3::Oops, origin());
+    m_block->appendNewControlValue(m_proc, B3::Oops, origin());
 }
 
 ValueFromBlock Output::anchor(LValue value)
@@ -727,6 +737,11 @@ void Output::decrementSuperSamplerCount()
 {
     TypedPointer counter = absolute(bitwise_cast<void*>(&g_superSamplerCount));
     store32(sub(load32(counter), int32One), counter);
+}
+
+void Output::addIncomingToPhi(LValue phi, ValueFromBlock value)
+{
+    value.value()->as<B3::UpsilonValue>()->setPhi(phi);
 }
 
 } } // namespace JSC::FTL

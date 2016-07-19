@@ -714,7 +714,7 @@ writeH("OpcodeUtils") {
     outp.puts "return false; "
     outp.puts "}"
 
-    outp.puts "inline bool isTerminal(Opcode opcode)"
+    outp.puts "inline bool isDefinitelyTerminal(Opcode opcode)"
     outp.puts "{"
     outp.puts "switch (opcode) {"
     didFindTerminals = false
@@ -976,6 +976,32 @@ writeH("OpcodeGenerated") {
     outp.puts "return false;"
     outp.puts "}"
 
+    outp.puts "bool Inst::isTerminal()"
+    outp.puts "{"
+    outp.puts "switch (opcode) {"
+    foundTrue = false
+    $opcodes.values.each {
+        | opcode |
+        if opcode.attributes[:terminal]
+            outp.puts "case #{opcode.name}:"
+            foundTrue = true
+        end
+    }
+    if foundTrue
+        outp.puts "return true;"
+    end
+    $opcodes.values.each {
+        | opcode |
+        if opcode.custom
+            outp.puts "case #{opcode.name}:"
+            outp.puts "return #{opcode.name}Custom::isTerminal(*this);"
+        end
+    }
+    outp.puts "default:"
+    outp.puts "return false;"
+    outp.puts "}"
+    outp.puts "}"
+    
     outp.puts "bool Inst::hasNonArgNonControlEffects()"
     outp.puts "{"
     outp.puts "switch (opcode) {"

@@ -146,6 +146,11 @@ CCallHelpers::Jump PatchpointSpecial::generate(
     return CCallHelpers::Jump();
 }
 
+bool PatchpointSpecial::isTerminal(Inst& inst)
+{
+    return inst.origin->as<PatchpointValue>()->effects.terminal;
+}
+
 void PatchpointSpecial::dumpImpl(PrintStream& out) const
 {
     out.print("Patchpoint");

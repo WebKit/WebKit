@@ -30,6 +30,7 @@
 
 #include "AirArg.h"
 #include "B3Effects.h"
+#include "B3FrequentedBlock.h"
 #include "B3Opcode.h"
 #include "B3Origin.h"
 #include "B3SparseCollection.h"
@@ -60,7 +61,8 @@ public:
 
     unsigned index() const { return m_index; }
     
-    // Note that the opcode is immutable, except for replacing values with Identity or Nop.
+    // Note that the opcode is immutable, except for replacing values with:
+    // Identity, Nop, Oops, Jump, and Phi. See below for replaceWithXXX() methods.
     Opcode opcode() const { return m_opcode; }
 
     Origin origin() const { return m_origin; }
@@ -109,9 +111,19 @@ public:
     void replaceWithNopIgnoringType();
     
     void replaceWithPhi();
+    
+    // These transformations are only valid for terminals.
+    void replaceWithJump(BasicBlock* owner, const FrequentedBlock&);
+    void replaceWithOops(BasicBlock* owner);
+    
+    // You can use this form if owners are valid. They're usually not valid.
+    void replaceWithJump(const FrequentedBlock&);
+    void replaceWithOops();
 
     void dump(PrintStream&) const;
     void deepDump(const Procedure*, PrintStream&) const;
+    
+    virtual void dumpSuccessors(const BasicBlock*, PrintStream&) const;
 
     // This is how you cast Values. For example, if you want to do something provided that we have a
     // ArgumentRegValue, you can do:
@@ -264,6 +276,8 @@ private:
         case FramePointer:
         case Nop:
         case Phi:
+        case Jump:
+        case Oops:
             if (UNLIKELY(numArgs))
                 badOpcode(opcode, numArgs);
             break;
@@ -284,6 +298,8 @@ private:
         case DoubleToFloat:
         case IToF:
         case BitwiseCast:
+        case Branch:
+        case Return:
             if (UNLIKELY(numArgs != 1))
                 badOpcode(opcode, numArgs);
             break;

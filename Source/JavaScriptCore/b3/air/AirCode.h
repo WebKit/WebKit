@@ -33,6 +33,7 @@
 #include "AirSpecial.h"
 #include "AirStackSlot.h"
 #include "AirTmp.h"
+#include "B3IndexMap.h"
 #include "B3SparseCollection.h"
 #include "RegisterAtOffsetList.h"
 #include "StackAlignment.h"
@@ -202,6 +203,8 @@ public:
 
     void addFastTmp(Tmp);
     bool isFastTmp(Tmp tmp) const { return m_fastTmps.contains(tmp); }
+    
+    void* addDataSection(size_t);
     
     // The name has to be a string literal, since we don't do any memory management for the string.
     void setLastPhaseName(const char* name)
