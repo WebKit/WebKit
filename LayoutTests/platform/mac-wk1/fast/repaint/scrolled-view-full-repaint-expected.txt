@@ -1,0 +1,3 @@
+In WebKit1 there should be a repaint at 0,-500.
+
+(repaint rects (rect 0 -500 785 2024) )
