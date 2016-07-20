@@ -42,28 +42,28 @@ public:
         return adoptRef(*new SVGImageForContainer(image, containerSize, zoom));
     }
 
-    bool isSVGImage() const override { return true; }
+    bool isSVGImage() const final { return true; }
 
-    FloatSize size() const override;
+    FloatSize size() const final;
 
     void setURL(const URL& url) { m_image->setURL(url); }
 
-    bool usesContainerSize() const override { return m_image->usesContainerSize(); }
-    bool hasRelativeWidth() const override { return m_image->hasRelativeWidth(); }
-    bool hasRelativeHeight() const override { return m_image->hasRelativeHeight(); }
-    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override
+    bool usesContainerSize() const final { return m_image->usesContainerSize(); }
+    bool hasRelativeWidth() const final { return m_image->hasRelativeWidth(); }
+    bool hasRelativeHeight() const final { return m_image->hasRelativeHeight(); }
+    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final
     {
         m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
 
-    void draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    void draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientationDescription) final;
 
-    void drawPattern(GraphicsContext&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, const FloatRect&, BlendMode) override;
+    void drawPattern(GraphicsContext&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, const FloatRect&, BlendMode) final;
 
     // FIXME: Implement this to be less conservative.
-    bool currentFrameKnownToBeOpaque() override { return false; }
+    bool currentFrameKnownToBeOpaque() final { return false; }
 
-    NativeImagePtr nativeImageForCurrentFrame() override;
+    NativeImagePtr nativeImageForCurrentFrame() final;
 
 private:
     SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float zoom)
@@ -73,7 +73,7 @@ private:
     {
     }
 
-    void destroyDecodedData(bool /*destroyAll*/ = true) override { }
+    void destroyDecodedData(bool /*destroyAll*/ = true) final { }
 
     SVGImage* m_image;
     const FloatSize m_containerSize;

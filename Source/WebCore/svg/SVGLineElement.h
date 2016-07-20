@@ -36,15 +36,15 @@ public:
 private:
     SVGLineElement(const QualifiedName&, Document&);
     
-    bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const final { return SVGTests::isValid(); }
 
     static bool isSupportedAttribute(const QualifiedName&);
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void svgAttributeChanged(const QualifiedName&) final;
 
-    bool supportsMarkers() const override { return true; }
+    bool supportsMarkers() const final { return true; }
 
-    bool selfHasRelativeLengths() const override;
+    bool selfHasRelativeLengths() const final;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGLineElement)
         DECLARE_ANIMATED_LENGTH(X1, x1)

@@ -37,22 +37,22 @@ public:
     SVGPathSegListBuilder(SVGPathElement&, SVGPathSegList&, SVGPathSegRole);
 
 private:
-    void incrementPathSegmentCount() override { }
-    bool continueConsuming() override { return true; }
+    void incrementPathSegmentCount() final { }
+    bool continueConsuming() final { return true; }
 
     // Used in UnalteredParsing/NormalizedParsing modes.
-    void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) override;
-    void lineTo(const FloatPoint&, PathCoordinateMode) override;
-    void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
-    void closePath() override;
+    void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) final;
+    void lineTo(const FloatPoint&, PathCoordinateMode) final;
+    void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode) final;
+    void closePath() final;
 
     // Only used in UnalteredParsing mode.
-    void lineToHorizontal(float, PathCoordinateMode) override;
-    void lineToVertical(float, PathCoordinateMode) override;
-    void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
-    void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
-    void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) override;
-    void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) override;
+    void lineToHorizontal(float, PathCoordinateMode) final;
+    void lineToVertical(float, PathCoordinateMode) final;
+    void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final;
+    void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final;
+    void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final;
+    void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) final;
 
     SVGPathElement& m_pathElement;
     SVGPathSegList& m_pathSegList;

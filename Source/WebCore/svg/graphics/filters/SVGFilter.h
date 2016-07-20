@@ -38,12 +38,12 @@ public:
     static Ref<SVGFilter> create(const AffineTransform&, const FloatRect&, const FloatRect&, const FloatRect&, bool);
 
     FloatRect filterRegionInUserSpace() const { return m_filterRegion; }
-    FloatRect filterRegion() const override { return m_absoluteFilterRegion; }
+    FloatRect filterRegion() const final { return m_absoluteFilterRegion; }
 
-    float applyHorizontalScale(float value) const override;
-    float applyVerticalScale(float value) const override;
+    float applyHorizontalScale(float value) const final;
+    float applyVerticalScale(float value) const final;
 
-    FloatRect sourceImageRect() const override { return m_absoluteSourceDrawingRegion; }
+    FloatRect sourceImageRect() const final { return m_absoluteSourceDrawingRegion; }
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
     bool isSVGFilter() const final { return true; }

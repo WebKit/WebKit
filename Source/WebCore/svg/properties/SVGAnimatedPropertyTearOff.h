@@ -52,9 +52,9 @@ public:
         return WTFMove(property);
     }
 
-    bool isAnimating() const override { return m_animatedProperty; }
+    bool isAnimating() const final { return m_animatedProperty; }
 
-    void propertyWillBeDeleted(const SVGProperty& property) override
+    void propertyWillBeDeleted(const SVGProperty& property) final
     {
         if (&property == m_baseVal)
             m_baseVal = nullptr;

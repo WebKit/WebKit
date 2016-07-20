@@ -39,8 +39,8 @@ private:
     {
     }
 
-    unsigned short pathSegType() const override { return PATHSEG_CURVETO_QUADRATIC_ABS; }
-    String pathSegTypeAsLetter() const override { return "Q"; }
+    unsigned short pathSegType() const final { return PATHSEG_CURVETO_QUADRATIC_ABS; }
+    String pathSegTypeAsLetter() const final { return "Q"; }
 };
 
 } // namespace WebCore

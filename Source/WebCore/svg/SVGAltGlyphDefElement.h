@@ -35,7 +35,7 @@ public:
 private:
     SVGAltGlyphDefElement(const QualifiedName&, Document&);
 
-    bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) final { return false; }
 };
 
 }

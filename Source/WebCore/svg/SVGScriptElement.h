@@ -40,42 +40,42 @@ public:
 private:
     SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void finishedInsertingSubtree() override;
-    void childrenChanged(const ChildChange&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    void finishedInsertingSubtree() final;
+    void childrenChanged(const ChildChange&) final;
 
-    void svgAttributeChanged(const QualifiedName&) override;
-    bool isURLAttribute(const Attribute&) const override;
-    void finishParsingChildren() override;
+    void svgAttributeChanged(const QualifiedName&) final;
+    bool isURLAttribute(const Attribute&) const final;
+    void finishParsingChildren() final;
 
-    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
-    bool haveLoadedRequiredResources() override { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
+    bool haveLoadedRequiredResources() final { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
 
-    String sourceAttributeValue() const override;
-    String charsetAttributeValue() const override;
-    String typeAttributeValue() const override;
-    String languageAttributeValue() const override;
-    String forAttributeValue() const override;
-    String eventAttributeValue() const override;
-    bool asyncAttributeValue() const override;
-    bool deferAttributeValue() const override;
-    bool hasSourceAttribute() const override;
+    String sourceAttributeValue() const final;
+    String charsetAttributeValue() const final;
+    String typeAttributeValue() const final;
+    String languageAttributeValue() const final;
+    String forAttributeValue() const final;
+    String eventAttributeValue() const final;
+    bool asyncAttributeValue() const final;
+    bool deferAttributeValue() const final;
+    bool hasSourceAttribute() const final;
 
-    void dispatchLoadEvent() override { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
+    void dispatchLoadEvent() final { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
-    bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
+    bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     // SVGExternalResourcesRequired
-    void setHaveFiredLoadEvent(bool haveFiredLoadEvent) override { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }
-    bool isParserInserted() const override { return ScriptElement::isParserInserted(); }
-    bool haveFiredLoadEvent() const override { return ScriptElement::haveFiredLoadEvent(); }
-    Timer* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
+    void setHaveFiredLoadEvent(bool haveFiredLoadEvent) final { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }
+    bool isParserInserted() const final { return ScriptElement::isParserInserted(); }
+    bool haveFiredLoadEvent() const final { return ScriptElement::haveFiredLoadEvent(); }
+    Timer* svgLoadEventTimer() final { return &m_svgLoadEventTimer; }
 
 #ifndef NDEBUG
-    bool filterOutAnimatableAttribute(const QualifiedName&) const override;
+    bool filterOutAnimatableAttribute(const QualifiedName&) const final;
 #endif
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)

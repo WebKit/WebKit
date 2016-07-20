@@ -50,7 +50,7 @@ public:
 private:
     SVGFontElement(const QualifiedName&, Document&);
 
-    bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFontElement)
         DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)

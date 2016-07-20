@@ -37,16 +37,16 @@ public:
 private:
     SVGForeignObjectElement(const QualifiedName&, Document&);
 
-    bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const final { return SVGTests::isValid(); }
     static bool isSupportedAttribute(const QualifiedName&);
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void svgAttributeChanged(const QualifiedName&) final;
 
-    bool rendererIsNeeded(const RenderStyle&) override;
-    bool childShouldCreateRenderer(const Node&) const override;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const RenderStyle&) final;
+    bool childShouldCreateRenderer(const Node&) const final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    bool selfHasRelativeLengths() const override { return true; }
+    bool selfHasRelativeLengths() const final { return true; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGForeignObjectElement)
         DECLARE_ANIMATED_LENGTH(X, x)

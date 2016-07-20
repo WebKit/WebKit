@@ -41,16 +41,16 @@ public:
     {
     }
     
-    bool isSVGImageChromeClient() const override { return true; }
+    bool isSVGImageChromeClient() const final { return true; }
     SVGImage* image() const { return m_image; }
     
 private:
-    void chromeDestroyed() override
+    void chromeDestroyed() final
     {
         m_image = nullptr;
     }
     
-    void invalidateContentsAndRootView(const IntRect& r) override
+    void invalidateContentsAndRootView(const IntRect& r) final
     {
         // If m_image->m_page is null, we're being destructed, don't fire changedInRect() in that case.
         if (m_image && m_image->imageObserver() && m_image->m_page)

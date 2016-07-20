@@ -38,8 +38,8 @@ private:
     {
     }
 
-    unsigned short pathSegType() const override { return PATHSEG_CLOSEPATH; }
-    String pathSegTypeAsLetter() const override { return "Z"; }
+    unsigned short pathSegType() const final { return PATHSEG_CLOSEPATH; }
+    String pathSegTypeAsLetter() const final { return "Z"; }
 };
 
 } // namespace WebCore

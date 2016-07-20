@@ -37,14 +37,14 @@ public:
     static Ref<FEImage> createWithImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatio&);
     static Ref<FEImage> createWithIRIReference(Filter&, Document&, const String&, const SVGPreserveAspectRatio&);
 
-    void platformApplySoftware() override;
-    void dump() override;
+    void platformApplySoftware() final;
+    void dump() final;
 
-    void determineAbsolutePaintRect() override;
+    void determineAbsolutePaintRect() final;
 
-    FilterEffectType filterEffectType() const override { return FilterEffectTypeImage; }
+    FilterEffectType filterEffectType() const final { return FilterEffectTypeImage; }
 
-    TextStream& externalRepresentation(TextStream&, int indention) const override;
+    TextStream& externalRepresentation(TextStream&, int indention) const final;
     
 private:
     virtual ~FEImage() { }

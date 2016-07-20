@@ -31,7 +31,7 @@ namespace WebCore {
 
 class SVGAnimatedPathSegListPropertyTearOff final : public SVGAnimatedListPropertyTearOff<SVGPathSegList> {
 public:
-    RefPtr<ListProperty> baseVal() override
+    RefPtr<ListProperty> baseVal() final
     {
         if (m_baseVal)
             return m_baseVal;
@@ -41,7 +41,7 @@ public:
         return WTFMove(property);
     }
 
-    RefPtr<ListProperty> animVal() override
+    RefPtr<ListProperty> animVal() final
     {
         if (m_animVal)
             return m_animVal;

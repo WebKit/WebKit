@@ -39,8 +39,8 @@ private:
     {
     }
 
-    unsigned short pathSegType() const override { return PATHSEG_LINETO_VERTICAL_REL; }
-    String pathSegTypeAsLetter() const override { return "v"; }
+    unsigned short pathSegType() const final { return PATHSEG_LINETO_VERTICAL_REL; }
+    String pathSegTypeAsLetter() const final { return "v"; }
 };
 
 } // namespace WebCore

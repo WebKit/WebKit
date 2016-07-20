@@ -31,20 +31,20 @@ public:
     explicit SVGPathByteStreamSource(const SVGPathByteStream&);
 
 private:
-    bool hasMoreData() const override;
-    bool moveToNextToken() override { return true; }
-    bool parseSVGSegmentType(SVGPathSegType&) override;
-    SVGPathSegType nextCommand(SVGPathSegType) override;
+    bool hasMoreData() const final;
+    bool moveToNextToken() final { return true; }
+    bool parseSVGSegmentType(SVGPathSegType&) final;
+    SVGPathSegType nextCommand(SVGPathSegType) final;
 
-    bool parseMoveToSegment(FloatPoint&) override;
-    bool parseLineToSegment(FloatPoint&) override;
-    bool parseLineToHorizontalSegment(float&) override;
-    bool parseLineToVerticalSegment(float&) override;
-    bool parseCurveToCubicSegment(FloatPoint&, FloatPoint&, FloatPoint&) override;
-    bool parseCurveToCubicSmoothSegment(FloatPoint&, FloatPoint&) override;
-    bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&) override;
-    bool parseCurveToQuadraticSmoothSegment(FloatPoint&) override;
-    bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) override;
+    bool parseMoveToSegment(FloatPoint&) final;
+    bool parseLineToSegment(FloatPoint&) final;
+    bool parseLineToHorizontalSegment(float&) final;
+    bool parseLineToVerticalSegment(float&) final;
+    bool parseCurveToCubicSegment(FloatPoint&, FloatPoint&, FloatPoint&) final;
+    bool parseCurveToCubicSmoothSegment(FloatPoint&, FloatPoint&) final;
+    bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&) final;
+    bool parseCurveToQuadraticSmoothSegment(FloatPoint&) final;
+    bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) final;
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4701)

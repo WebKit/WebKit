@@ -38,28 +38,28 @@ public:
 private:
     SVGAElement(const QualifiedName&, Document&);
 
-    bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const final { return SVGTests::isValid(); }
     
-    String title() const override;
-    String target() const override { return svgTarget(); }
+    String title() const final;
+    String target() const final { return svgTarget(); }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void svgAttributeChanged(const QualifiedName&) final;
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool childShouldCreateRenderer(const Node&) const override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool childShouldCreateRenderer(const Node&) const final;
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) final;
     
-    bool supportsFocus() const override;
-    bool isMouseFocusable() const override;
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
-    bool isFocusable() const override;
-    bool isURLAttribute(const Attribute&) const override;
-    bool canStartSelection() const override;
-    int tabIndex() const override;
+    bool supportsFocus() const final;
+    bool isMouseFocusable() const final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isFocusable() const final;
+    bool isURLAttribute(const Attribute&) const final;
+    bool canStartSelection() const final;
+    int tabIndex() const final;
 
-    bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() final;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAElement)
         // This declaration used to define a non-virtual "String& target() const" method, that clashes with "virtual String Element::target() const".

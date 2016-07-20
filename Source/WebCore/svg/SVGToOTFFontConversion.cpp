@@ -1181,7 +1181,7 @@ private:
         m_current = destination;
     }
 
-    void moveTo(const FloatPoint& targetPoint, bool closed, PathCoordinateMode mode) override
+    void moveTo(const FloatPoint& targetPoint, bool closed, PathCoordinateMode mode) final
     {
         if (closed && !m_cffData.isEmpty())
             closePath();
@@ -1201,7 +1201,7 @@ private:
         m_cffData.append(rLineTo);
     }
 
-    void lineTo(const FloatPoint& targetPoint, PathCoordinateMode mode) override
+    void lineTo(const FloatPoint& targetPoint, PathCoordinateMode mode) final
     {
         FloatPoint scaledTargetPoint = FloatPoint(targetPoint.x() * m_unitsPerEmScalar, targetPoint.y() * m_unitsPerEmScalar);
         FloatPoint destination = mode == AbsoluteCoordinates ? scaledTargetPoint : m_current + scaledTargetPoint;
@@ -1209,7 +1209,7 @@ private:
         unscaledLineTo(destination);
     }
 
-    void curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& point3, PathCoordinateMode mode) override
+    void curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& point3, PathCoordinateMode mode) final
     {
         FloatPoint scaledPoint1 = FloatPoint(point1.x() * m_unitsPerEmScalar, point1.y() * m_unitsPerEmScalar);
         FloatPoint scaledPoint2 = FloatPoint(point2.x() * m_unitsPerEmScalar, point2.y() * m_unitsPerEmScalar);
@@ -1227,21 +1227,21 @@ private:
         m_cffData.append(rrCurveTo);
     }
 
-    void closePath() override
+    void closePath() final
     {
         if (m_current != m_startingPoint)
             unscaledLineTo(m_startingPoint);
     }
 
-    void incrementPathSegmentCount() override { }
-    bool continueConsuming() override { return true; }
+    void incrementPathSegmentCount() final { }
+    bool continueConsuming() final { return true; }
 
-    void lineToHorizontal(float, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
-    void lineToVertical(float, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
-    void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
-    void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
-    void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
-    void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
+    void lineToHorizontal(float, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void lineToVertical(float, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
 
     Vector<char>& m_cffData;
     FloatPoint m_startingPoint;
