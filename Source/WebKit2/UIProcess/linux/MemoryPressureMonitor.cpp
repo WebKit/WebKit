@@ -63,7 +63,7 @@ static size_t lowWatermarkPages()
     bool foundLow = false;
     char buffer[128];
     while (char* line = fgets(buffer, 128, file)) {
-        if (!strcmp(line, "Node")) {
+        if (!strncmp(line, "Node", 4)) {
             inZone = true;
             foundLow = false;
             continue;
@@ -254,6 +254,11 @@ MemoryPressureMonitor::MemoryPressureMonitor()
             sleep(pollInterval);
 
             int usedPercentage = systemMemoryUsedAsPercentage();
+            if (usedPercentage == -1) {
+                WTFLogAlways("Failed to get the memory usage");
+                break;
+            }
+
             if (usedPercentage >= s_memoryPresurePercentageThreshold) {
                 uint64_t fdEvent = 1;
                 ssize_t bytesWritten = write(m_eventFD, &fdEvent, sizeof(uint64_t));

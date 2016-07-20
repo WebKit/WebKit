@@ -1,5 +1,19 @@
 2016-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Linux] MemoryPressureMonitor fallback code to get memory available in older linux kernels doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=159970
+
+        Reviewed by Antonio Gomes.
+
+        We are failing to detect zones when parsing /proc/zoneinfo.
+
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::lowWatermarkPages): Use strncmp since we want to know whether the line starts with "Node".
+        (WebKit::MemoryPressureMonitor::MemoryPressureMonitor): Stop the polling if we fail to get the memory available,
+        because that means it's not sopported in the system for whatever reason.
+
+2016-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Threaded Compositor] Web Process crash when the layer tree host is destroyed
         https://bugs.webkit.org/show_bug.cgi?id=159922
 
