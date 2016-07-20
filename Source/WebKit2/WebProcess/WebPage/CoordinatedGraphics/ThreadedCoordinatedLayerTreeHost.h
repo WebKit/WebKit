@@ -58,6 +58,8 @@ private:
     void contentsSizeChanged(const WebCore::IntSize&) override;
     void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
 
+    void invalidate() override;
+
 #if PLATFORM(GTK)
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
 #endif

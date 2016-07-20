@@ -75,6 +75,8 @@ public:
     void scrollTo(const WebCore::IntPoint&);
     void scrollBy(const WebCore::IntSize&);
 
+    void invalidate();
+
 private:
     ThreadedCompositor(Client*);
 

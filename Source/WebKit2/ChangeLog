@@ -1,3 +1,25 @@
+2016-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Web Process crash when the layer tree host is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=159922
+
+        Reviewed by Sergio Villar Senin.
+
+        It happens when the layer tree host is destroyed after the didChangeVisibleRect is scheduled to be run in the
+        main thread, but before it's actually dispatched. In that case the threaded compositor client points to a
+        deleted object and crashes when trying to dereference it.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::~ThreadedCompositor): Add an assert to ensure invalidate is always called before
+        the object is deleted.
+        (WebKit::ThreadedCompositor::invalidate): Terminate the compositing thread and nullify the client.
+        (WebKit::ThreadedCompositor::didChangeVisibleRect): Return early if the client is null when the task is
+        dispatched in the main thread.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h: Add invalidate().
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::invalidate): Invalidate the ThreadedCompositor and chain up.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
 2016-07-19  Brian Burg  <bburg@apple.com>
 
         Web Automation: WebAutomationSessionProxy's HashMaps should support '0' as valid keys

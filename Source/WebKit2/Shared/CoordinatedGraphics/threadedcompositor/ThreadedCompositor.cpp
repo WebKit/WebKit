@@ -56,7 +56,13 @@ ThreadedCompositor::ThreadedCompositor(Client* client)
 
 ThreadedCompositor::~ThreadedCompositor()
 {
+    ASSERT(!m_client);
+}
+
+void ThreadedCompositor::invalidate()
+{
     terminateCompositingThread();
+    m_client = nullptr;
 }
 
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
@@ -174,7 +180,8 @@ void ThreadedCompositor::scheduleDisplayImmediately()
 void ThreadedCompositor::didChangeVisibleRect()
 {
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this), visibleRect = m_viewportController->visibleContentsRect(), scale = m_viewportController->pageScaleFactor()] {
-        m_client->setVisibleContentsRect(visibleRect, FloatPoint::zero(), scale);
+        if (m_client)
+            m_client->setVisibleContentsRect(visibleRect, FloatPoint::zero(), scale);
     });
 
     scheduleDisplayImmediately();
