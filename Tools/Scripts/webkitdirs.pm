@@ -1565,7 +1565,7 @@ sub windowsOutputDir()
 sub fontExists($)
 {
     my $font = shift;
-    my $cmd = "reg query \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts\\" . $font ."\" 2>&1";
+    my $cmd = "reg query \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts\" /v \"$font\" 2>&1";
     my $val = `$cmd`;
     return $? == 0;
 }

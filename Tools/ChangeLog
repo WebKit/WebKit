@@ -1,3 +1,16 @@
+2016-07-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] MathML fonts are not found.
+        https://bugs.webkit.org/show_bug.cgi?id=159920
+
+        Reviewed by Alex Christensen.
+
+        When looking up a font in the registry, use the /v option of the Windows 'reg query' command to query
+        for a specific registry key value.
+
+        * Scripts/webkitdirs.pm:
+        (fontExists):
+
 2016-07-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Improve prepare-ChangeLog for @media blocks
