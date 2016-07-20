@@ -76,8 +76,8 @@ TEST SUCCEEDED: The value was the string 'get'. [tested HTMLFormElement.method]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFormElement.target]
 
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.frameBorder]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.marginHeight]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.marginWidth]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLFrameElement.marginHeight]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLFrameElement.marginWidth]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.name]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.scrolling]
 

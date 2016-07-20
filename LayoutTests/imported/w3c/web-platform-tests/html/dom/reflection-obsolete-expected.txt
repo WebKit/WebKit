@@ -5045,8 +5045,8 @@ PASS frame.marginHeight: IDL set to "\0" should not throw
 PASS frame.marginHeight: IDL set to "\0" followed by getAttribute() 
 PASS frame.marginHeight: IDL set to "\0" followed by IDL get 
 PASS frame.marginHeight: IDL set to null should not throw 
-FAIL frame.marginHeight: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL frame.marginHeight: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS frame.marginHeight: IDL set to null followed by getAttribute() 
+PASS frame.marginHeight: IDL set to null followed by IDL get 
 PASS frame.marginHeight: IDL set to object "test-toString" should not throw 
 PASS frame.marginHeight: IDL set to object "test-toString" followed by getAttribute() 
 PASS frame.marginHeight: IDL set to object "test-toString" followed by IDL get 
@@ -5122,8 +5122,8 @@ PASS frame.marginWidth: IDL set to "\0" should not throw
 PASS frame.marginWidth: IDL set to "\0" followed by getAttribute() 
 PASS frame.marginWidth: IDL set to "\0" followed by IDL get 
 PASS frame.marginWidth: IDL set to null should not throw 
-FAIL frame.marginWidth: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL frame.marginWidth: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS frame.marginWidth: IDL set to null followed by getAttribute() 
+PASS frame.marginWidth: IDL set to null followed by IDL get 
 PASS frame.marginWidth: IDL set to object "test-toString" should not throw 
 PASS frame.marginWidth: IDL set to object "test-toString" followed by getAttribute() 
 PASS frame.marginWidth: IDL set to object "test-toString" followed by IDL get 

@@ -1,3 +1,15 @@
+2016-07-20  Chris Dumez  <cdumez@apple.com>
+
+        Fix null handling of HTMLFrameElement.marginWidth / marginHeight
+        https://bugs.webkit.org/show_bug.cgi?id=159987
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing test to reflect the expected behavior change.
+
+        * fast/dom/element-attribute-js-null-expected.txt:
+        * fast/dom/element-attribute-js-null.html:
+
 2016-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPhone] Playing a video on tudou.com plays only sound, no video

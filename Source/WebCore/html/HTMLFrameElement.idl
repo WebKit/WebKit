@@ -23,9 +23,8 @@ interface HTMLFrameElement : HTMLElement {
     [Reflect] attribute DOMString frameBorder;
     [Reflect] attribute DOMString longDesc;
 
-    // FIXME: These should use [TreatNullAs=EmptyString].
-    [Reflect] attribute DOMString marginHeight;
-    [Reflect] attribute DOMString marginWidth;
+    [Reflect, TreatNullAs=EmptyString] attribute DOMString marginHeight;
+    [Reflect, TreatNullAs=EmptyString] attribute DOMString marginWidth;
 
     [Reflect] attribute DOMString name;
     [Reflect] attribute boolean noResize;
