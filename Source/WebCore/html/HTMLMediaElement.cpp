@@ -3156,7 +3156,7 @@ void HTMLMediaElement::pause()
         return;
 
     if (ScriptController::processingUserGestureForMedia())
-        removeBehaviorsRestrictionsAfterFirstUserGesture();
+        removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::RequireUserGestureToControlControlsManager);
 
     pauseInternal();
 }
