@@ -1,3 +1,42 @@
+2016-07-20  Michael Saboff  <msaboff@apple.com>
+
+        CrashOnOverflow in JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets
+        https://bugs.webkit.org/show_bug.cgi?id=159954
+
+        Reviewed by Benjamin Poulain.
+
+        YarrPatternConstructor::setupAlternativeOffsets() is using the checked arithmetic class
+        Checked<>, for offset calculations.  However the default use will just crash on
+        overflow.  Instead we should stop processing and propagate the error up the call stack.
+
+        Consolidated explicit error string with the common RegExp parsing error logic.
+        Moved that logic to YarrPattern as that seems like a better common place to put it.
+
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * tests/stress/regress-159954.js: New test.
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::CharacterClassParserDelegate):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomPatternCharacter):
+        (JSC::Yarr::Parser::Parser):
+        (JSC::Yarr::Parser::isIdentityEscapeAnError):
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parseCharacterClass):
+        (JSC::Yarr::Parser::parseParenthesesBegin):
+        (JSC::Yarr::Parser::parseParenthesesEnd):
+        (JSC::Yarr::Parser::parseQuantifier):
+        (JSC::Yarr::Parser::parseTokens):
+        (JSC::Yarr::Parser::parse):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::disjunction):
+        (JSC::Yarr::YarrPatternConstructor::setupDisjunctionOffsets):
+        (JSC::Yarr::YarrPatternConstructor::setupOffsets):
+        (JSC::Yarr::YarrPattern::errorMessage):
+        (JSC::Yarr::YarrPattern::compile):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::reset):
+
 2016-07-19  Filip Pizlo  <fpizlo@apple.com>
 
         The default testing mode should not involve disabling the FTL JIT

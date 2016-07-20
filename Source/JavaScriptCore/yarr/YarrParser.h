@@ -32,8 +32,6 @@
 
 namespace JSC { namespace Yarr {
 
-#define REGEXP_ERROR_PREFIX "Invalid regular expression: "
-
 enum BuiltInCharacterClassID {
     DigitClassID,
     SpaceClassID,
@@ -48,23 +46,6 @@ private:
     template<class FriendDelegate>
     friend const char* parse(FriendDelegate&, const String& pattern, bool isUnicode, unsigned backReferenceLimit);
 
-    enum ErrorCode {
-        NoError,
-        PatternTooLarge,
-        QuantifierOutOfOrder,
-        QuantifierWithoutAtom,
-        QuantifierTooLarge,
-        MissingParentheses,
-        ParenthesesUnmatched,
-        ParenthesesTypeInvalid,
-        CharacterClassUnmatched,
-        CharacterClassOutOfOrder,
-        EscapeUnterminated,
-        InvalidUnicodeEscape,
-        InvalidIdentityEscape,
-        NumberOfErrorCodes
-    };
-
     /*
      * CharacterClassParserDelegate:
      *
@@ -76,7 +57,7 @@ private:
      */
     class CharacterClassParserDelegate {
     public:
-        CharacterClassParserDelegate(Delegate& delegate, ErrorCode& err)
+        CharacterClassParserDelegate(Delegate& delegate, YarrPattern::ErrorCode& err)
             : m_delegate(delegate)
             , m_err(err)
             , m_state(Empty)
@@ -138,7 +119,7 @@ private:
 
             case CachedCharacterHyphen:
                 if (ch < m_character) {
-                    m_err = CharacterClassOutOfOrder;
+                    m_err = YarrPattern::CharacterClassOutOfOrder;
                     return;
                 }
                 m_delegate.atomCharacterClassRange(m_character, ch);
@@ -219,7 +200,7 @@ private:
 
     private:
         Delegate& m_delegate;
-        ErrorCode& m_err;
+        YarrPattern::ErrorCode& m_err;
         enum CharacterClassConstructionState {
             Empty,
             CachedCharacter,
@@ -233,7 +214,7 @@ private:
     Parser(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit)
         : m_delegate(delegate)
         , m_backReferenceLimit(backReferenceLimit)
-        , m_err(NoError)
+        , m_err(YarrPattern::NoError)
         , m_data(pattern.characters<CharType>())
         , m_size(pattern.length())
         , m_index(0)
@@ -248,7 +229,7 @@ private:
     bool isIdentityEscapeAnError(int ch)
     {
         if (m_isUnicode && !strchr("^$\\.*+?()[]{}|/", ch)) {
-            m_err = InvalidIdentityEscape;
+            m_err = YarrPattern::InvalidIdentityEscape;
             return true;
         }
 
@@ -283,7 +264,7 @@ private:
         consume();
 
         if (atEndOfPattern()) {
-            m_err = EscapeUnterminated;
+            m_err = YarrPattern::EscapeUnterminated;
             return false;
         }
 
@@ -449,19 +430,19 @@ private:
                 UChar32 codePoint = 0;
                 do {
                     if (atEndOfPattern() || !isASCIIHexDigit(peek())) {
-                        m_err = InvalidUnicodeEscape;
+                        m_err = YarrPattern::InvalidUnicodeEscape;
                         break;
                     }
 
                     codePoint = (codePoint << 4) | toASCIIHexValue(consume());
 
                     if (codePoint > UCHAR_MAX_VALUE)
-                        m_err = InvalidUnicodeEscape;
+                        m_err = YarrPattern::InvalidUnicodeEscape;
                 } while (!atEndOfPattern() && peek() != '}');
                 if (!atEndOfPattern() && peek() == '}')
                     consume();
                 else if (!m_err)
-                    m_err = InvalidUnicodeEscape;
+                    m_err = YarrPattern::InvalidUnicodeEscape;
                 if (m_err)
                     return false;
 
@@ -581,7 +562,7 @@ private:
                 return;
         }
 
-        m_err = CharacterClassUnmatched;
+        m_err = YarrPattern::CharacterClassUnmatched;
     }
 
     /*
@@ -597,7 +578,7 @@ private:
 
         if (tryConsume('?')) {
             if (atEndOfPattern()) {
-                m_err = ParenthesesTypeInvalid;
+                m_err = YarrPattern::ParenthesesTypeInvalid;
                 return;
             }
 
@@ -615,7 +596,7 @@ private:
                 break;
             
             default:
-                m_err = ParenthesesTypeInvalid;
+                m_err = YarrPattern::ParenthesesTypeInvalid;
             }
         } else
             m_delegate.atomParenthesesSubpatternBegin();
@@ -637,7 +618,7 @@ private:
         if (m_parenthesesNestingDepth > 0)
             m_delegate.atomParenthesesEnd();
         else
-            m_err = ParenthesesUnmatched;
+            m_err = YarrPattern::ParenthesesUnmatched;
 
         --m_parenthesesNestingDepth;
     }
@@ -653,14 +634,14 @@ private:
         ASSERT(min <= max);
 
         if (min == UINT_MAX) {
-            m_err = QuantifierTooLarge;
+            m_err = YarrPattern::QuantifierTooLarge;
             return;
         }
 
         if (lastTokenWasAnAtom)
             m_delegate.quantifyAtom(min, max, !tryConsume('?'));
         else
-            m_err = QuantifierWithoutAtom;
+            m_err = YarrPattern::QuantifierWithoutAtom;
     }
 
     /*
@@ -754,7 +735,7 @@ private:
                         if (min <= max)
                             parseQuantifier(lastTokenWasAnAtom, min, max);
                         else
-                            m_err = QuantifierOutOfOrder;
+                            m_err = YarrPattern::QuantifierOutOfOrder;
                         lastTokenWasAnAtom = false;
                         break;
                     }
@@ -775,7 +756,7 @@ private:
         }
 
         if (m_parenthesesNestingDepth > 0)
-            m_err = MissingParentheses;
+            m_err = YarrPattern::MissingParentheses;
     }
 
     /*
@@ -787,29 +768,12 @@ private:
     const char* parse()
     {
         if (m_size > MAX_PATTERN_SIZE)
-            m_err = PatternTooLarge;
+            m_err = YarrPattern::PatternTooLarge;
         else
             parseTokens();
         ASSERT(atEndOfPattern() || m_err);
-
-        // The order of this array must match the ErrorCode enum.
-        static const char* errorMessages[NumberOfErrorCodes] = {
-            0, // NoError
-            REGEXP_ERROR_PREFIX "regular expression too large",
-            REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",
-            REGEXP_ERROR_PREFIX "nothing to repeat",
-            REGEXP_ERROR_PREFIX "number too large in {} quantifier",
-            REGEXP_ERROR_PREFIX "missing )",
-            REGEXP_ERROR_PREFIX "unmatched parentheses",
-            REGEXP_ERROR_PREFIX "unrecognized character after (?",
-            REGEXP_ERROR_PREFIX "missing terminating ] for character class",
-            REGEXP_ERROR_PREFIX "range out of order in character class",
-            REGEXP_ERROR_PREFIX "\\ at end of pattern",
-            REGEXP_ERROR_PREFIX "invalid unicode {} escape",
-            REGEXP_ERROR_PREFIX "invalid escaped character for unicode pattern"
-        };
-
-        return errorMessages[m_err];
+        
+        return YarrPattern::errorMessage(m_err);
     }
 
     // Misc helper functions:
@@ -913,7 +877,7 @@ private:
 
     Delegate& m_delegate;
     unsigned m_backReferenceLimit;
-    ErrorCode m_err;
+    YarrPattern::ErrorCode m_err;
     const CharType* m_data;
     unsigned m_size;
     unsigned m_index;

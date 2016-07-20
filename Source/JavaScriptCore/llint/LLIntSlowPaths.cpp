@@ -536,7 +536,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
     LLINT_BEGIN();
     RegExp* regExp = exec->codeBlock()->regexp(pc[2].u.operand);
     if (!regExp->isValid())
-        LLINT_THROW(createSyntaxError(exec, "Invalid flag supplied to RegExp constructor."));
+        LLINT_THROW(createSyntaxError(exec, regExp->errorMessage()));
     LLINT_RETURN(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regExp));
 }
 
