@@ -22,4 +22,4 @@ from webkitpy.tool.commands.sheriffbot import *
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.commands.suggestnominations import *
 
-AbstractEarlyWarningSystem.load_ews_classes()
+classes = AbstractEarlyWarningSystem.load_ews_classes()

@@ -1,3 +1,13 @@
+2016-07-20  Aakash Jain  <aakash_jain@apple.com>
+
+        REGRESSION(r148588): ews classes might get garbage collected
+        https://bugs.webkit.org/show_bug.cgi?id=159990
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/tool/commands/__init__.py: Store the loaded ews classes
+        in a variable so that they do not get garbage collected.
+
 2016-07-20  Jeremy Jones  <jeremyj@apple.com>
 
         Add API test for layout constraints after exit fullscreen
