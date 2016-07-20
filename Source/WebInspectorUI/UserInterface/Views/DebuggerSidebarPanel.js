@@ -179,6 +179,12 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         for (var script of WebInspector.debuggerManager.knownNonResourceScripts)
             this._addScript(script);
+
+        if (WebInspector.debuggerManager.paused)
+            this._debuggerDidPause(null);
+
+        if (WebInspector.timelineManager.isCapturing() && WebInspector.debuggerManager.breakpointsDisabledTemporarily)
+            this._timelineCapturingWillStart(null);
     }
 
     // Public

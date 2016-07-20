@@ -1,3 +1,17 @@
+2016-07-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Pausing when Debugger tab is closed opens tab in wrong state
+        https://bugs.webkit.org/show_bug.cgi?id=159946
+        <rdar://problem/27429886>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        At the end of construction, update the UI to match the current state
+        of the world. Such as updating the UI if we are paused, or if the
+        Timeline is capturing and we are temporarily disabling breakpoints.
+
 2016-07-15  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Make Open Quickly and Goto Line dialogs match Xcode 8
