@@ -1,3 +1,11 @@
+2016-07-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge follow-up patch for rdar://problem/27360961.
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2016-07-17  Sam Weinig  <sam@webkit.org>
 
         [WebKit API] Add SPI to track multiple navigations caused by a single user gesture
