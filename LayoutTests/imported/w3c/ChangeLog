@@ -1,3 +1,96 @@
+2016-07-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Fix timeout of imported/w3c/WebCryptoAPI/idlharness.html
+        https://bugs.webkit.org/show_bug.cgi?id=159979
+
+        Reviewed by Alex Christensen.
+
+        Add missing resources.
+
+        * WebCryptoAPI/idlharness-expected.txt:
+        * WebCryptoAPI/idlharness.html:
+        * resources/WebIDLParser.js: Added.
+        (tokenise):
+        (WebIDLParseError):
+        (WebIDLParseError.prototype.toString):
+        (error):
+        (consume):
+        (ws):
+        (all_ws):
+        (integer_type):
+        (float_type):
+        (primitive_type):
+        (const_value):
+        (type_suffix):
+        (single_type):
+        (union_type):
+        (type):
+        (argument):
+        (argument_list):
+        (type_pair):
+        (simple_extended_attr):
+        (extended_attrs):
+        (default_):
+        (const_):
+        (inheritance):
+        (operation_rest):
+        (callback):
+        (attribute):
+        (return_type):
+        (operation):
+        (identifiers):
+        (serialiser):
+        (iterable_type):
+        (readonly_iterable_type):
+        (iterable):
+        (interface_):
+        (partial):
+        (dictionary):
+        (exception):
+        (enum_):
+        (parse):
+        * resources/idlharness.js: Added.
+        (constValue):
+        (minOverloadLength):
+        (throwOrReject):
+        (awaitNCallbacks):
+        (return.fround):
+        (fround):
+        (self.IdlArray):
+        (IdlArray.prototype.add_idls):
+        (IdlArray.prototype.add_untested_idls):
+        (IdlArray.prototype.internal_add_idls):
+        (IdlArray.prototype.add_objects):
+        (IdlArray.prototype.prevent_multiple_testing):
+        (IdlArray.prototype.recursively_get_implements):
+        (exposed_in):
+        (IdlArray.prototype.test):
+        (IdlArray.prototype.assert_type_is):
+        (IdlObject):
+        (IdlObject.prototype.test):
+        (IdlObject.prototype.has_extended_attribute):
+        (IdlInterface):
+        (IdlInterface.prototype.is_callback):
+        (IdlInterface.prototype.has_constants):
+        (IdlInterface.prototype.is_global):
+        (IdlInterface.prototype.test):
+        (IdlInterface.prototype.test_self):
+        (IdlInterface.prototype.test_member_const):
+        (IdlInterface.prototype.test_member_attribute):
+        (IdlInterface.prototype.test_member_operation):
+        (IdlInterface.prototype.do_member_operation_asserts):
+        (IdlInterface.prototype.test_member_stringifier):
+        (IdlInterface.prototype.test_members):
+        (IdlInterface.prototype.test_object):
+        (IdlInterface.prototype.test_primary_interface_of):
+        (IdlInterface.prototype.test_interface_of):
+        (IdlInterface.prototype.has_stringifier):
+        (IdlInterface.prototype.do_interface_attribute_asserts):
+        (IdlInterfaceMember):
+        (create_suitable_object):
+        (IdlEnum):
+        (IdlTypedef):
+
 2016-07-20  Chris Dumez  <cdumez@apple.com>
 
         Fix null handling of HTMLFrameElement.marginWidth / marginHeight
