@@ -262,14 +262,8 @@ String HTMLSelectElement::value() const
     return emptyString();
 }
 
-void HTMLSelectElement::setValue(const String &value)
+void HTMLSelectElement::setValue(const String& value)
 {
-    // We clear the previously selected option(s) when needed, to guarantee calling setSelectedIndex() only once.
-    if (value.isNull()) {
-        setSelectedIndex(-1);
-        return;
-    }
-
     // Find the option with value() matching the given parameter and make it the current selection.
     unsigned optionIndex = 0;
     for (auto* item : listItems()) {

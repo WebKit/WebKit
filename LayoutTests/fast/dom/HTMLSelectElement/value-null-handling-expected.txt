@@ -1,0 +1,21 @@
+Tests null handling of HTMLSelectElement.value attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+select.value = 'a'
+PASS select.value is "a"
+PASS select.selectedIndex is 0
+select.value = null
+PASS select.value is "null"
+PASS select.selectedIndex is 1
+select.value = 'a'
+PASS select.value is "a"
+PASS select.selectedIndex is 0
+select.value = null
+PASS select.value is ""
+PASS select.selectedIndex is -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  
