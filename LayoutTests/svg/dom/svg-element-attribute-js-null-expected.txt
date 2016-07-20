@@ -6,6 +6,6 @@ TEST SUCCEEDED: The value was the string '0'. [tested SVGAngle.valueAsString]
 
 TEST SUCCEEDED: The value was the string '0'. [tested SVGLength.valueAsString]
 
-TEST SUCCEEDED: The value was the empty string. [tested SVGScriptElement.type]
+TEST SUCCEEDED: The value was the string 'null'. [tested SVGScriptElement.type]
 
 
