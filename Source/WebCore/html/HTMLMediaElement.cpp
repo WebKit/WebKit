@@ -3155,6 +3155,9 @@ void HTMLMediaElement::pause()
     if (!m_mediaSession->playbackPermitted(*this))
         return;
 
+    if (ScriptController::processingUserGestureForMedia())
+        removeBehaviorsRestrictionsAfterFirstUserGesture();
+
     pauseInternal();
 }
 
