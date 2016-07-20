@@ -1,3 +1,21 @@
+2016-07-20  Jeremy Jones  <jeremyj@apple.com>
+
+        Add API test for layout constraints after exit fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=159900
+
+        Reviewed by Jon Lee.
+
+        Added Fullscreen.LaytoutConstraints API test. 
+        Tests fix from https://bugs.webkit.org/show_bug.cgi?id=159731
+
+        This test compares layout constraints on the web view before and after fullscreen to make sure 
+        they are preserved.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenLayoutConstraints.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenLayoutConstraints.mm: Added.
+        (-[FullscreenStateChangeMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+
 2016-07-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable two failing API tests.
