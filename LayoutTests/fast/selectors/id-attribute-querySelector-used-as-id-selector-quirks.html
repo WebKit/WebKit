@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div class="display:none;">
+            <div id="simple_unique" data-case="1"></div>
+            <div id="simple_Duplicated" data-case="2"></div>
+            <div id="simple_Duplicated" data-case="3"></div>
+            <div id="simple_Duplicated" data-case="4"></div>
+
+            <div id="Ancestor_Unique" data-case="5">
+                <div data-case="6">
+                    <div data-case="7">
+                    </div>
+                </div>
+                <div id="ANCESTOR_DUPLICATED" data-case="8">
+                    <div data-case="9">
+                    </div>
+                </div>
+            </div>
+            <div id="ANCESTOR_DUPLICATED" data-case="10">
+                <div data-case="11">
+                    <div data-case="12">
+                    </div>
+                </div>
+                <div id="ANCESTOR_DUPLICATED" data-case="13">
+                    <div data-case="14">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            description("Verify the optimization transforming [id=value] into #value for querySelector.");
+
+            function test(selector, expectedCases)
+            {
+                shouldBe('document.querySelectorAll("' + selector + '").length', '' + expectedCases.length);
+                /*let queryResult = document.querySelectorAll(selector);
+                for (let i = 0; i < queryResult.length; ++i) {
+                    shouldBeEqualToString('document.querySelectorAll("' + selector + '")[' + i + '].dataset.case', '' + expectedCases[i]);
+                }*/
+            }
+
+            debug("Trivial Selector used as rightmost");
+            test("[id=simple_unique]", [1]);
+            test("[id=simple_Duplicated]", [2, 3, 4]);
+            test("[id=simple_duplicated]", []);
+
+            debug("Non-Trivial Selector used as rightmost");
+            test("div[id=simple_unique][data-case]", [1]);
+            test("div[id=simple_Duplicated][data-case]", [2, 3, 4]);
+            test("div[id=simple_duplicated][data-case]", []);
+
+            debug("Trivial Selector used as ancestor filter");
+            test("[id=Ancestor_Unique] >> *", [6, 7, 8, 9]);
+            test("[id=Ancestor_Unique] > * >> *", [7, 9]);
+            test("[id=Ancestor_Unique] >> * > *", [7, 9]);
+            test("[id=ancestor_unique] >> *", []);
+            test("[id=ancestor_unique] > * >> *", []);
+            test("[id=ancestor_unique] >> * > *", []);
+            test("[id=ANCESTOR_DUPLICATED] >> *", [9, 11, 12, 13, 14]);
+            test("[id=ANCESTOR_DUPLICATED] > * >> *", [12, 14]);
+            test("[id=ANCESTOR_DUPLICATED] >> * > *", [12, 14]);
+            test("[id=ancestor_duplicated] >> *", []);
+            test("[id=ancestor_duplicated] > * >> *", []);
+            test("[id=ancestor_duplicated] >> * > *", []);
+
+            debug("Non-Trivial Selector used as ancestor filter");
+            test("div[id=Ancestor_Unique][data-case] >> *", [6, 7, 8, 9]);
+            test("div[id=Ancestor_Unique][data-case] > * >> *", [7, 9]);
+            test("div[id=Ancestor_Unique][data-case] >> * > *", [7, 9]);
+            test("div[id=ancestor_unique][data-case] >> *", []);
+            test("div[id=ancestor_unique][data-case] > * >> *", []);
+            test("div[id=ancestor_unique][data-case] >> * > *", []);
+            test("div[id=ANCESTOR_DUPLICATED][data-case] >> *", [9, 11, 12, 13, 14]);
+            test("div[id=ANCESTOR_DUPLICATED][data-case] > * >> *", [12, 14]);
+            test("div[id=ANCESTOR_DUPLICATED][data-case] >> * > *", [12, 14]);
+            test("div[id=ancestor_duplicated][data-case] >> *", []);
+            test("div[id=ancestor_duplicated][data-case] > * >> *", []);
+            test("div[id=ancestor_duplicated][data-case] >> * > *", []);
+
+            debug("Trivial Selector used as sibling filter");
+            test("[id=simple_unique] + *", [2]);
+            test("[id=simple_unique] ~ *", [2, 3, 4, 5, 10]);
+            test("[id=simple_Duplicated] + *", [3, 4, 5]);
+            test("[id=simple_Duplicated] ~ *", [3, 4, 5, 10]);
+            test("[id=simple_duplicated] + *", []);
+            test("[id=simple_duplicated] ~ *", []);
+
+            debug("Trivial Selector used as sibling of ancestor filter");
+            test("[id=simple_unique] + * > *", []);
+            test("[id=simple_unique] ~ * > *", [6, 8, 11, 13]);
+            test("[id=simple_Duplicated] + * > *", [6, 8]);
+            test("[id=simple_Duplicated] ~ * > *", [6, 8, 11, 13]);
+            test("[id=simple_duplicated] + * > *", []);
+            test("[id=simple_duplicated] ~ * > *", []);
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

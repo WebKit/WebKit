@@ -1,0 +1,57 @@
+Verify the optimization transforming [id=value] into #value for querySelector.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Trivial Selector used as rightmost
+PASS document.querySelectorAll("[id=simple_unique]").length is 1
+PASS document.querySelectorAll("[id=simple_Duplicated]").length is 3
+PASS document.querySelectorAll("[id=simple_duplicated]").length is 0
+Non-Trivial Selector used as rightmost
+PASS document.querySelectorAll("div[id=simple_unique][data-case]").length is 1
+PASS document.querySelectorAll("div[id=simple_Duplicated][data-case]").length is 3
+PASS document.querySelectorAll("div[id=simple_duplicated][data-case]").length is 0
+Trivial Selector used as ancestor filter
+PASS document.querySelectorAll("[id=Ancestor_Unique] >> *").length is 4
+PASS document.querySelectorAll("[id=Ancestor_Unique] > * >> *").length is 2
+PASS document.querySelectorAll("[id=Ancestor_Unique] >> * > *").length is 2
+PASS document.querySelectorAll("[id=ancestor_unique] >> *").length is 0
+PASS document.querySelectorAll("[id=ancestor_unique] > * >> *").length is 0
+PASS document.querySelectorAll("[id=ancestor_unique] >> * > *").length is 0
+PASS document.querySelectorAll("[id=ANCESTOR_DUPLICATED] >> *").length is 5
+PASS document.querySelectorAll("[id=ANCESTOR_DUPLICATED] > * >> *").length is 2
+PASS document.querySelectorAll("[id=ANCESTOR_DUPLICATED] >> * > *").length is 2
+PASS document.querySelectorAll("[id=ancestor_duplicated] >> *").length is 0
+PASS document.querySelectorAll("[id=ancestor_duplicated] > * >> *").length is 0
+PASS document.querySelectorAll("[id=ancestor_duplicated] >> * > *").length is 0
+Non-Trivial Selector used as ancestor filter
+PASS document.querySelectorAll("div[id=Ancestor_Unique][data-case] >> *").length is 4
+PASS document.querySelectorAll("div[id=Ancestor_Unique][data-case] > * >> *").length is 2
+PASS document.querySelectorAll("div[id=Ancestor_Unique][data-case] >> * > *").length is 2
+PASS document.querySelectorAll("div[id=ancestor_unique][data-case] >> *").length is 0
+PASS document.querySelectorAll("div[id=ancestor_unique][data-case] > * >> *").length is 0
+PASS document.querySelectorAll("div[id=ancestor_unique][data-case] >> * > *").length is 0
+PASS document.querySelectorAll("div[id=ANCESTOR_DUPLICATED][data-case] >> *").length is 5
+PASS document.querySelectorAll("div[id=ANCESTOR_DUPLICATED][data-case] > * >> *").length is 2
+PASS document.querySelectorAll("div[id=ANCESTOR_DUPLICATED][data-case] >> * > *").length is 2
+PASS document.querySelectorAll("div[id=ancestor_duplicated][data-case] >> *").length is 0
+PASS document.querySelectorAll("div[id=ancestor_duplicated][data-case] > * >> *").length is 0
+PASS document.querySelectorAll("div[id=ancestor_duplicated][data-case] >> * > *").length is 0
+Trivial Selector used as sibling filter
+PASS document.querySelectorAll("[id=simple_unique] + *").length is 1
+PASS document.querySelectorAll("[id=simple_unique] ~ *").length is 5
+PASS document.querySelectorAll("[id=simple_Duplicated] + *").length is 3
+PASS document.querySelectorAll("[id=simple_Duplicated] ~ *").length is 4
+PASS document.querySelectorAll("[id=simple_duplicated] + *").length is 0
+PASS document.querySelectorAll("[id=simple_duplicated] ~ *").length is 0
+Trivial Selector used as sibling of ancestor filter
+PASS document.querySelectorAll("[id=simple_unique] + * > *").length is 0
+PASS document.querySelectorAll("[id=simple_unique] ~ * > *").length is 4
+PASS document.querySelectorAll("[id=simple_Duplicated] + * > *").length is 2
+PASS document.querySelectorAll("[id=simple_Duplicated] ~ * > *").length is 4
+PASS document.querySelectorAll("[id=simple_duplicated] + * > *").length is 0
+PASS document.querySelectorAll("[id=simple_duplicated] ~ * > *").length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
