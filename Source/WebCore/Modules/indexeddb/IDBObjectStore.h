@@ -62,7 +62,7 @@ public:
     const String& name() const;
     const IDBKeyPath& keyPath() const;
     RefPtr<DOMStringList> indexNames() const;
-    RefPtr<IDBTransaction> transaction();
+    IDBTransaction& transaction();
     bool autoIncrement() const;
 
     struct IndexParameters {
@@ -86,15 +86,11 @@ public:
     RefPtr<IDBRequest> count(JSC::ExecState&, JSC::JSValue key, ExceptionCodeWithMessage&);
 
     RefPtr<IDBRequest> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> modernDelete(JSC::ExecState&, JSC::JSValue key, ExceptionCodeWithMessage&);
 
     void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 
     const IDBObjectStoreInfo& info() const { return m_info; }
-
-    // FIXME: After removing LegacyIDB and folding abstract/implementation classes together, this will no longer be necessary.
-    IDBTransaction& modernTransaction() { return m_transaction.get(); }
 
     void rollbackInfoForVersionChangeAbort();
 

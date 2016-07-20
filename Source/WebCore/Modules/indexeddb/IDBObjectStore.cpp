@@ -112,10 +112,10 @@ RefPtr<DOMStringList> IDBObjectStore::indexNames() const
     return indexNames;
 }
 
-RefPtr<IDBTransaction> IDBObjectStore::transaction()
+IDBTransaction& IDBObjectStore::transaction()
 {
-    ASSERT(currentThread() == m_transaction->database().originThreadID());\
-    return &m_transaction.get();
+    ASSERT(currentThread() == m_transaction->database().originThreadID());
+    return m_transaction.get();
 }
 
 bool IDBObjectStore::autoIncrement() const
@@ -383,11 +383,6 @@ RefPtr<IDBRequest> IDBObjectStore::doDelete(ExecState& execState, IDBKeyRange* k
 }
 
 RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ExecState& execState, JSValue key, ExceptionCodeWithMessage& ec)
-{
-    return modernDelete(execState, key, ec);
-}
-
-RefPtr<IDBRequest> IDBObjectStore::modernDelete(ExecState& execState, JSValue key, ExceptionCodeWithMessage& ec)
 {
     Ref<IDBKey> idbKey = scriptValueToIDBKey(execState, key);
     if (!idbKey->isValid()) {

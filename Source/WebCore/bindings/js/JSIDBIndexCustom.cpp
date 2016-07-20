@@ -36,7 +36,7 @@ namespace WebCore {
 
 void JSIDBIndex::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(&static_cast<IDBIndex&>(wrapped()).modernObjectStore());
+    visitor.addOpaqueRoot(static_cast<IDBIndex&>(wrapped()).objectStoreAsOpaqueRoot());
 }
 
 } // namespace WebCore

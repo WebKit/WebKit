@@ -117,7 +117,7 @@ IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, c
     , m_info(info)
     , m_objectStore(&objectStore)
 {
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     suspendIfNeeded();
 }
@@ -127,25 +127,25 @@ IDBCursor::IDBCursor(IDBTransaction& transaction, IDBIndex& index, const IDBCurs
     , m_info(info)
     , m_index(&index)
 {
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     suspendIfNeeded();
 }
 
 IDBCursor::~IDBCursor()
 {
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 }
 
 bool IDBCursor::sourcesDeleted() const
 {
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     if (m_objectStore)
         return m_objectStore->isDeleted();
 
     ASSERT(m_index);
-    return m_index->isDeleted() || m_index->modernObjectStore().isDeleted();
+    return m_index->isDeleted() || m_index->objectStore().isDeleted();
 }
 
 IDBObjectStore& IDBCursor::effectiveObjectStore() const
@@ -154,25 +154,25 @@ IDBObjectStore& IDBCursor::effectiveObjectStore() const
         return *m_objectStore;
 
     ASSERT(m_index);
-    return m_index->modernObjectStore();
+    return m_index->objectStore();
 }
 
 IDBTransaction& IDBCursor::transaction() const
 {
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
-    return effectiveObjectStore().modernTransaction();
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    return effectiveObjectStore().transaction();
 }
 
 const String& IDBCursor::direction() const
 {
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
     return directionToString(m_info.cursorDirection());
 }
 
 RefPtr<WebCore::IDBRequest> IDBCursor::update(ExecState& exec, JSValue value, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::update");
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -231,7 +231,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(ExecState& exec, JSValue value, Ex
 void IDBCursor::advance(unsigned count, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::advance");
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     if (!m_request) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -279,7 +279,7 @@ void IDBCursor::continueFunction(ExecState& execState, JSValue keyValue, Excepti
 void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::continueFunction (to key %s)", key.loggingString().utf8().data());
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     if (!m_request) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -329,7 +329,7 @@ void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage
 
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 {
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     ++m_outstandingRequestCount;
 
@@ -340,7 +340,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ExecState& execState, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::deleteFunction");
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -372,7 +372,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ExecState& execState, Exce
         return nullptr;
     }
 
-    auto request = effectiveObjectStore().modernDelete(execState, m_currentPrimaryKey.get(), ec);
+    auto request = effectiveObjectStore().deleteFunction(execState, m_currentPrimaryKey.get(), ec);
     if (ec.code)
         return nullptr;
 
@@ -386,7 +386,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ExecState& execState, Exce
 void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 {
     LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData().loggingString().substring(0, 100).utf8().data());
-    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
     auto* context = request.scriptExecutionContext();
     if (!context)

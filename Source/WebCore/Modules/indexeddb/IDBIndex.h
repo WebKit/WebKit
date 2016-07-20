@@ -48,7 +48,7 @@ public:
     virtual ~IDBIndex();
 
     const String& name() const;
-    RefPtr<IDBObjectStore> objectStore();
+    IDBObjectStore& objectStore();
     const IDBKeyPath& keyPath() const;
     bool unique() const;
     bool multiEntry() const;
@@ -69,13 +69,13 @@ public:
 
     const IDBIndexInfo& info() const { return m_info; }
 
-    IDBObjectStore& modernObjectStore() { return m_objectStore; }
-
     void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 
     void ref();
     void deref();
+
+    void* objectStoreAsOpaqueRoot() { return &m_objectStore; }
 
 private:
     RefPtr<IDBRequest> doCount(JSC::ExecState&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);

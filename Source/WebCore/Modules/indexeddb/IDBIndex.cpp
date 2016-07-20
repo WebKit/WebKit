@@ -47,14 +47,14 @@ IDBIndex::IDBIndex(ScriptExecutionContext& context, const IDBIndexInfo& info, ID
     , m_info(info)
     , m_objectStore(objectStore)
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 
     suspendIfNeeded();
 }
 
 IDBIndex::~IDBIndex()
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 }
 
 const char* IDBIndex::activeDOMObjectName() const
@@ -69,43 +69,43 @@ bool IDBIndex::canSuspendForDocumentSuspension() const
 
 bool IDBIndex::hasPendingActivity() const
 {
-    return !m_objectStore.modernTransaction().isFinished();
+    return !m_objectStore.transaction().isFinished();
 }
 
 const String& IDBIndex::name() const
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
     return m_info.name();
 }
 
-RefPtr<IDBObjectStore> IDBIndex::objectStore()
+IDBObjectStore& IDBIndex::objectStore()
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
-    return &m_objectStore;
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
+    return m_objectStore;
 }
 
 const IDBKeyPath& IDBIndex::keyPath() const
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
     return m_info.keyPath();
 }
 
 bool IDBIndex::unique() const
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
     return m_info.unique();
 }
 
 bool IDBIndex::multiEntry() const
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
     return m_info.multiEntry();
 }
 
 RefPtr<IDBRequest> IDBIndex::openCursor(ExecState& execState, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 
     if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -113,7 +113,7 @@ RefPtr<IDBRequest> IDBIndex::openCursor(ExecState& execState, IDBKeyRange* range
         return nullptr;
     }
 
-    if (!m_objectStore.modernTransaction().isActive()) {
+    if (!m_objectStore.transaction().isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'openCursor' on 'IDBIndex': The transaction is inactive or finished.");
         return nullptr;
@@ -131,14 +131,14 @@ RefPtr<IDBRequest> IDBIndex::openCursor(ExecState& execState, IDBKeyRange* range
     if (rangeData.upperKey.isNull())
         rangeData.upperKey = IDBKeyData::maximum();
 
-    auto info = IDBCursorInfo::indexCursor(m_objectStore.modernTransaction(), m_objectStore.info().identifier(), m_info.identifier(), rangeData, direction, IndexedDB::CursorType::KeyAndValue);
-    return m_objectStore.modernTransaction().requestOpenCursor(execState, *this, info);
+    auto info = IDBCursorInfo::indexCursor(m_objectStore.transaction(), m_objectStore.info().identifier(), m_info.identifier(), rangeData, direction, IndexedDB::CursorType::KeyAndValue);
+    return m_objectStore.transaction().requestOpenCursor(execState, *this, info);
 }
 
 RefPtr<IDBRequest> IDBIndex::openCursor(ExecState& execState, JSValue key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(execState, key, ec.code);
     if (ec.code) {
@@ -172,7 +172,7 @@ RefPtr<IDBRequest> IDBIndex::count(ExecState& execState, JSValue key, ExceptionC
 
 RefPtr<IDBRequest> IDBIndex::doCount(ExecState& execState, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 
     if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -185,7 +185,7 @@ RefPtr<IDBRequest> IDBIndex::doCount(ExecState& execState, const IDBKeyRangeData
         return nullptr;
     }
 
-    auto& transaction = m_objectStore.modernTransaction();
+    auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBIndex': The transaction is inactive or finished.");
@@ -198,7 +198,7 @@ RefPtr<IDBRequest> IDBIndex::doCount(ExecState& execState, const IDBKeyRangeData
 RefPtr<IDBRequest> IDBIndex::openKeyCursor(ExecState& execState, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openKeyCursor");
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 
     if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -206,7 +206,7 @@ RefPtr<IDBRequest> IDBIndex::openKeyCursor(ExecState& execState, IDBKeyRange* ra
         return nullptr;
     }
 
-    if (!m_objectStore.modernTransaction().isActive()) {
+    if (!m_objectStore.transaction().isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'openKeyCursor' on 'IDBIndex': The transaction is inactive or finished.");
         return nullptr;
@@ -218,8 +218,8 @@ RefPtr<IDBRequest> IDBIndex::openKeyCursor(ExecState& execState, IDBKeyRange* ra
         return nullptr;
     }
 
-    auto info = IDBCursorInfo::indexCursor(m_objectStore.modernTransaction(), m_objectStore.info().identifier(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
-    return m_objectStore.modernTransaction().requestOpenCursor(execState, *this, info);
+    auto info = IDBCursorInfo::indexCursor(m_objectStore.transaction(), m_objectStore.info().identifier(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
+    return m_objectStore.transaction().requestOpenCursor(execState, *this, info);
 }
 
 RefPtr<IDBRequest> IDBIndex::openKeyCursor(ExecState& execState, JSValue key, const String& direction, ExceptionCodeWithMessage& ec)
@@ -256,7 +256,7 @@ RefPtr<IDBRequest> IDBIndex::get(ExecState& execState, JSValue key, ExceptionCod
 
 RefPtr<IDBRequest> IDBIndex::doGet(ExecState& execState, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 
     if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -269,7 +269,7 @@ RefPtr<IDBRequest> IDBIndex::doGet(ExecState& execState, const IDBKeyRangeData& 
         return nullptr;
     }
 
-    auto& transaction = m_objectStore.modernTransaction();
+    auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBIndex': The transaction is inactive or finished.");
@@ -302,7 +302,7 @@ RefPtr<IDBRequest> IDBIndex::getKey(ExecState& execState, JSValue key, Exception
 
 RefPtr<IDBRequest> IDBIndex::doGetKey(ExecState& execState, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 
     if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -315,7 +315,7 @@ RefPtr<IDBRequest> IDBIndex::doGetKey(ExecState& execState, const IDBKeyRangeDat
         return nullptr;
     }
 
-    auto& transaction = m_objectStore.modernTransaction();
+    auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'getKey' on 'IDBIndex': The transaction is inactive or finished.");
@@ -327,7 +327,7 @@ RefPtr<IDBRequest> IDBIndex::doGetKey(ExecState& execState, const IDBKeyRangeDat
 
 void IDBIndex::markAsDeleted()
 {
-    ASSERT(currentThread() == m_objectStore.modernTransaction().database().originThreadID());
+    ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
 
     ASSERT(!m_deleted);
     m_deleted = true;
