@@ -84,7 +84,7 @@ static bool candidatesWereRequested = false;
 
 namespace TestWebKitAPI {
 
-TEST(CandidateTests, DoNotLeakViewThatLoadsEditableArea)
+TEST(CandidateTests, DISABLED_DoNotLeakViewThatLoadsEditableArea)
 {
     DoNotLeakWebView *webView = [[DoNotLeakWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     DoNotLeakFrameLoadDelegate *delegate = [[DoNotLeakFrameLoadDelegate alloc] init];
@@ -100,7 +100,7 @@ TEST(CandidateTests, DoNotLeakViewThatLoadsEditableArea)
     EXPECT_TRUE(webViewWasDeallocated);
 }
 
-TEST(CandidateTests, RequestCandidatesForTextInput)
+TEST(CandidateTests, DISABLED_RequestCandidatesForTextInput)
 {
     WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     [webView forceRequestCandidatesForTesting];
