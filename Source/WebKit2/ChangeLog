@@ -1,3 +1,14 @@
+2016-07-20  Tim Horton  <timothy_horton@apple.com>
+
+        Explain the default value of WKWebViewConfiguration's ignoresViewportScaleLimits
+        https://bugs.webkit.org/show_bug.cgi?id=159978
+        <rdar://problem/27453189>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        This defaults to NO.
+
 2016-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Linux] MemoryPressureMonitor fallback code to get memory available in older linux kernels doesn't work

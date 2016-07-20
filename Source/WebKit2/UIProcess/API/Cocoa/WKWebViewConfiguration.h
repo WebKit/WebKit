@@ -184,6 +184,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 /*! @abstract A Boolean value indicating whether the WKWebView should always allow scaling of the web page, regardless of author intent.
  @discussion This will override the user-scalable property.
+ The default value is NO.
  */
 @property (nonatomic) BOOL ignoresViewportScaleLimits WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
