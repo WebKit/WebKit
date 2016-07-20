@@ -3,7 +3,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 var oElement = document.createElement("s")
-var oElementNS = document.createElementNS();
+var oElementNS = document.createElementNS(null, "test");
 oElementNS.setAttributeNS();
 var oAttributeNS = oElementNS.getAttributeNodeNS();
 var oAttributeNSClone = oAttributeNS.cloneNode();

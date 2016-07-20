@@ -156,20 +156,20 @@ PASS createElementNS test 152: "foo:","xml:foo","NAMESPACE_ERR"
 PASS createElementNS test 153: "foo:","xmlns:foo","NAMESPACE_ERR" 
 PASS createElementNS test 154: "foo:","xmlfoo:bar",null 
 PASS createElementNS test 155: "","","INVALID_CHARACTER_ERR" 
-FAIL createElementNS test 156: null,null,null The string contains invalid characters.
+PASS createElementNS test 156: null,null,null 
 PASS createElementNS test 157: null,"","INVALID_CHARACTER_ERR" 
-FAIL createElementNS test 158: undefined,null,null The string contains invalid characters.
+PASS createElementNS test 158: undefined,null,null 
 PASS createElementNS test 159: undefined,undefined,null 
 PASS createElementNS test 160: undefined,"","INVALID_CHARACTER_ERR" 
-FAIL createElementNS test 161: "http://example.com/",null,null The string contains invalid characters.
+PASS createElementNS test 161: "http://example.com/",null,null 
 PASS createElementNS test 162: "http://example.com/","","INVALID_CHARACTER_ERR" 
-FAIL createElementNS test 163: "/",null,null The string contains invalid characters.
+PASS createElementNS test 163: "/",null,null 
 PASS createElementNS test 164: "/","","INVALID_CHARACTER_ERR" 
-FAIL createElementNS test 165: "http://www.w3.org/XML/1998/namespace",null,null The string contains invalid characters.
+PASS createElementNS test 165: "http://www.w3.org/XML/1998/namespace",null,null 
 PASS createElementNS test 166: "http://www.w3.org/XML/1998/namespace","","INVALID_CHARACTER_ERR" 
-FAIL createElementNS test 167: "http://www.w3.org/2000/xmlns/",null,"NAMESPACE_ERR" assert_throws: function "function () { document.createElementNS(namespace, qualifi..." threw object "InvalidCharacterError (DOM Exception 5): The string conta..." that is not a DOMException NAMESPACE_ERR: property "code" is equal to 5, expected 14
+PASS createElementNS test 167: "http://www.w3.org/2000/xmlns/",null,"NAMESPACE_ERR" 
 PASS createElementNS test 168: "http://www.w3.org/2000/xmlns/","","INVALID_CHARACTER_ERR" 
-FAIL createElementNS test 169: "foo:",null,null The string contains invalid characters.
+PASS createElementNS test 169: "foo:",null,null 
 PASS createElementNS test 170: "foo:","","INVALID_CHARACTER_ERR" 
 PASS Lower-case HTML element without a prefix 
 PASS Lower-case HTML element with a prefix 

@@ -259,7 +259,7 @@ FAIL Document interface: operation getElementsByTagName(DOMString) assert_equals
 FAIL Document interface: operation getElementsByTagNameNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL Document interface: operation getElementsByClassName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS Document interface: operation createElement(DOMString,ElementCreationOptions) 
-FAIL Document interface: operation createElementNS(DOMString,DOMString,ElementCreationOptions) assert_equals: property has wrong .length expected 2 but got 0
+PASS Document interface: operation createElementNS(DOMString,DOMString,ElementCreationOptions) 
 PASS Document interface: operation createDocumentFragment() 
 FAIL Document interface: operation createTextNode(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: operation createComment(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -267,7 +267,7 @@ FAIL Document interface: operation createProcessingInstruction(DOMString,DOMStri
 PASS Document interface: operation importNode(Node,boolean) 
 PASS Document interface: operation adoptNode(Node) 
 FAIL Document interface: operation createAttribute(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation createAttributeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+PASS Document interface: operation createAttributeNS(DOMString,DOMString) 
 FAIL Document interface: operation createEvent(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS Document interface: operation createRange() 
 PASS Document interface: operation createNodeIterator(Node,unsigned long,NodeFilter) 
@@ -309,9 +309,7 @@ FAIL Document interface: calling getElementsByClassName(DOMString) on new Docume
 PASS Document interface: new Document() must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString,ElementCreationOptions) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createElementNS" with the proper type (15) 
-FAIL Document interface: calling createElementNS(DOMString,DOMString,ElementCreationOptions) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createElementNS(DOMString,DOMString,ElementCreationOptions) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createDocumentFragment" with the proper type (16) 
 PASS Document interface: new Document() must inherit property "createTextNode" with the proper type (17) 
 FAIL Document interface: calling createTextNode(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
@@ -334,9 +332,7 @@ FAIL Document interface: calling createAttribute(DOMString) on new Document() wi
             fn.apply(obj, args);
         }" did not throw
 PASS Document interface: new Document() must inherit property "createAttributeNS" with the proper type (23) 
-FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createAttributeNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -475,9 +471,7 @@ FAIL Document interface: calling getElementsByClassName(DOMString) on xmlDoc wit
 PASS Document interface: xmlDoc must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString,ElementCreationOptions) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createElementNS" with the proper type (15) 
-FAIL Document interface: calling createElementNS(DOMString,DOMString,ElementCreationOptions) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createElementNS(DOMString,DOMString,ElementCreationOptions) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createDocumentFragment" with the proper type (16) 
 PASS Document interface: xmlDoc must inherit property "createTextNode" with the proper type (17) 
 FAIL Document interface: calling createTextNode(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
@@ -500,9 +494,7 @@ FAIL Document interface: calling createAttribute(DOMString) on xmlDoc with too f
             fn.apply(obj, args);
         }" did not throw
 PASS Document interface: xmlDoc must inherit property "createAttributeNS" with the proper type (23) 
-FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createAttributeNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);

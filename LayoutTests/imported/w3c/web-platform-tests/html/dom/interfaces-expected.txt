@@ -149,9 +149,7 @@ FAIL Document interface: calling getElementsByClassName(DOMString) on iframe.con
 PASS Document interface: iframe.contentDocument must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createElementNS" with the proper type (15) 
-FAIL Document interface: calling createElementNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createElementNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createDocumentFragment" with the proper type (16) 
 PASS Document interface: iframe.contentDocument must inherit property "createTextNode" with the proper type (17) 
 FAIL Document interface: calling createTextNode(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
@@ -174,9 +172,7 @@ FAIL Document interface: calling createAttribute(DOMString) on iframe.contentDoc
             fn.apply(obj, args);
         }" did not throw
 PASS Document interface: iframe.contentDocument must inherit property "createAttributeNS" with the proper type (23) 
-FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createAttributeNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -451,9 +447,7 @@ FAIL Document interface: calling getElementsByClassName(DOMString) on new Docume
 PASS Document interface: new Document() must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createElementNS" with the proper type (15) 
-FAIL Document interface: calling createElementNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createElementNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createDocumentFragment" with the proper type (16) 
 PASS Document interface: new Document() must inherit property "createTextNode" with the proper type (17) 
 FAIL Document interface: calling createTextNode(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
@@ -476,9 +470,7 @@ FAIL Document interface: calling createAttribute(DOMString) on new Document() wi
             fn.apply(obj, args);
         }" did not throw
 PASS Document interface: new Document() must inherit property "createAttributeNS" with the proper type (23) 
-FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createAttributeNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -756,9 +748,7 @@ FAIL Document interface: calling getElementsByClassName(DOMString) on document.i
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElementNS" with the proper type (15) 
-FAIL Document interface: calling createElementNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createElementNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createDocumentFragment" with the proper type (16) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createTextNode" with the proper type (17) 
 FAIL Document interface: calling createTextNode(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
@@ -781,9 +771,7 @@ FAIL Document interface: calling createAttribute(DOMString) on document.implemen
             fn.apply(obj, args);
         }" did not throw
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createAttributeNS" with the proper type (23) 
-FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createAttributeNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);

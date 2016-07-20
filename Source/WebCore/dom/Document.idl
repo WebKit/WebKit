@@ -58,15 +58,8 @@
 
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode(Node importedNode, optional boolean deep = false);
 
-    // FIXME: 'qualifiedName' should not have [TreatNullAs=EmptyString].
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS(optional DOMString? namespaceURI = null,
-        [TreatNullAs=EmptyString] optional DOMString qualifiedName = "undefined");
-
-    // FIXME: 'qualifiedName' should not have [TreatNullAs=EmptyString].
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS(optional DOMString? namespaceURI = null,
-        [TreatNullAs=EmptyString] optional DOMString qualifiedName = "undefined");
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(optional DOMString namespaceURI, optional DOMString localName);

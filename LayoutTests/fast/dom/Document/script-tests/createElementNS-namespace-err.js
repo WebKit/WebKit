@@ -37,10 +37,10 @@ function assertEquals(actual, expect, m)
 var allNSTests = [
    { args: [undefined, undefined] },
    { args: [null, undefined] },
-   { args: [undefined, null], code: 5 },
-   { args: [null, null], code: 5 },
+   { args: [undefined, null] },
+   { args: [null, null] },
    { args: [null, ""], code: 5 },
-   { args: ["", null], code: 5 },
+   { args: ["", null] },
    { args: ["", ""], code: 5 },
    { args: [null, "<div>"], code: 5 },
    { args: [null, "0div"], code: 5 },
@@ -157,9 +157,8 @@ function runNSTests(tests, doc, createFunctionName)
     }
 }
 
-// Moz throws a "Not enough arguments" exception in these, we don't:
-shouldBeEqualToString("document.createElementNS().toString()", "[object Element]");
-shouldBeEqualToString("document.createElementNS(\"http://www.example.com\").toString()", "[object Element]");
+shouldThrow("document.createElementNS()", "'TypeError: Not enough arguments'");
+shouldThrow("document.createElementNS(\"http://www.example.com\")", "'TypeError: Not enough arguments'");
 
 debug("HTML tests:")
 runNSTests(allNSTests, document, "createElementNS");

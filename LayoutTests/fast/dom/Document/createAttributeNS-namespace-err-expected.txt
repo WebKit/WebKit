@@ -3,14 +3,14 @@ createAttirbuteNS tests adapted from createElementNS tests attached to webkit bu
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.createAttributeNS().toString() is "[object Attr]"
-PASS document.createAttributeNS("http://www.example.com").toString() is "[object Attr]"
+PASS document.createAttributeNS() threw exception TypeError: Not enough arguments.
+PASS document.createAttributeNS("http://www.example.com") threw exception TypeError: Not enough arguments.
 PASS createAttributeNS(undefined, undefined)
 PASS createAttributeNS(null, undefined)
-PASS createAttributeNS(undefined, null); threw INVALID_CHARACTER_ERR
-PASS createAttributeNS(null, null); threw INVALID_CHARACTER_ERR
+PASS createAttributeNS(undefined, null)
+PASS createAttributeNS(null, null)
 PASS createAttributeNS(null, ""); threw INVALID_CHARACTER_ERR
-PASS createAttributeNS("", null); threw INVALID_CHARACTER_ERR
+PASS createAttributeNS("", null)
 PASS createAttributeNS("", ""); threw INVALID_CHARACTER_ERR
 PASS createAttributeNS(null, "<div>"); threw INVALID_CHARACTER_ERR
 PASS createAttributeNS(null, "0div"); threw INVALID_CHARACTER_ERR
