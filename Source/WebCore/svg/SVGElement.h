@@ -53,9 +53,6 @@ class SVGElement : public StyledElement, public SVGLangSpace {
 public:
     bool isOutermostSVGSVGElement() const;
 
-    String xmlbase() const;
-    void setXmlbase(const String&, ExceptionCode&);
-
     SVGSVGElement* ownerSVGElement() const;
     SVGElement* viewportElement() const;
 

@@ -367,16 +367,6 @@ bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
     return DOMImplementation::hasFeature(feature, version);
 }
 
-String SVGElement::xmlbase() const
-{
-    return attributeWithoutSynchronization(XMLNames::baseAttr);
-}
-
-void SVGElement::setXmlbase(const String& value, ExceptionCode&)
-{
-    setAttributeWithoutSynchronization(XMLNames::baseAttr, value);
-}
-
 void SVGElement::removedFrom(ContainerNode& rootParent)
 {
     bool wasInDocument = rootParent.inDocument();
