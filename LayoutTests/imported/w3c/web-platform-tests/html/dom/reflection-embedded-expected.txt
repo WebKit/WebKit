@@ -8596,8 +8596,8 @@ PASS video.mediaGroup: IDL set to "\0" should not throw
 PASS video.mediaGroup: IDL set to "\0" followed by getAttribute() 
 PASS video.mediaGroup: IDL set to "\0" followed by IDL get 
 PASS video.mediaGroup: IDL set to null should not throw 
-FAIL video.mediaGroup: IDL set to null followed by getAttribute() assert_equals: expected (string) "null" but got (object) null
-FAIL video.mediaGroup: IDL set to null followed by IDL get assert_equals: expected "null" but got ""
+PASS video.mediaGroup: IDL set to null followed by getAttribute() 
+PASS video.mediaGroup: IDL set to null followed by IDL get 
 PASS video.mediaGroup: IDL set to object "test-toString" should not throw 
 PASS video.mediaGroup: IDL set to object "test-toString" followed by getAttribute() 
 PASS video.mediaGroup: IDL set to object "test-toString" followed by IDL get 
@@ -10227,8 +10227,8 @@ PASS audio.mediaGroup: IDL set to "\0" should not throw
 PASS audio.mediaGroup: IDL set to "\0" followed by getAttribute() 
 PASS audio.mediaGroup: IDL set to "\0" followed by IDL get 
 PASS audio.mediaGroup: IDL set to null should not throw 
-FAIL audio.mediaGroup: IDL set to null followed by getAttribute() assert_equals: expected (string) "null" but got (object) null
-FAIL audio.mediaGroup: IDL set to null followed by IDL get assert_equals: expected "null" but got ""
+PASS audio.mediaGroup: IDL set to null followed by getAttribute() 
+PASS audio.mediaGroup: IDL set to null followed by IDL get 
 PASS audio.mediaGroup: IDL set to object "test-toString" should not throw 
 PASS audio.mediaGroup: IDL set to object "test-toString" followed by getAttribute() 
 PASS audio.mediaGroup: IDL set to object "test-toString" followed by IDL get 

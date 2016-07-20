@@ -122,7 +122,7 @@ SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|Acti
 SkipVTableValidation
 StrictTypeChecking
 SuppressToJSObject
-TreatNullAs=EmptyString|LegacyNullString
+TreatNullAs=EmptyString
 TreatReturnedNaNDateAs=Null|NaN
 TypedArray=*
 URL

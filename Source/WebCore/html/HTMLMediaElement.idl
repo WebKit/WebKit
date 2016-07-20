@@ -116,8 +116,7 @@
     [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;
 #endif
 
-    // FIXME: This should not use [TreatNullAs=LegacyNullString].
-    [Reflect, TreatNullAs=LegacyNullString] attribute DOMString mediaGroup;
+    [Reflect] attribute DOMString mediaGroup;
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [CustomSetter] attribute MediaController controller;
