@@ -883,12 +883,7 @@ bool MutableStyleProperties::addParsedProperty(const CSSProperty& property)
             return setProperty(property);
         return false;
     }
-    
-    // Only add properties that have no !important counterpart present
-    if (!propertyIsImportant(property.id()) || property.isImportant())
-        return setProperty(property);
-    
-    return false;
+    return setProperty(property);
 }
 
 String StyleProperties::asText() const
