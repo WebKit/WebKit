@@ -1,3 +1,15 @@
+2016-07-19  Andy Estes  <aestes@apple.com>
+
+        Move WebKitErrorFrameLoadBlockedByContentFilter from WebKitErrors.h to WebKitErrorsPrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=159956
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm: Included WKErrorRef.h.
+        (-[LoadAlternateNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        Used kWKErrorCodeFrameLoadBlockedByContentFilter instead of WebKitErrorFrameLoadBlockedByContentFilter.
+        * TestWebKitAPI/Tests/mac/ContentFiltering.mm: Included WebKitErrorsPrivate.h instead of WebKitErrors.h.
+
 2016-07-19  Alex Christensen  <achristensen@webkit.org>
 
         Add regression test for r203392

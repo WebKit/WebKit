@@ -36,9 +36,11 @@
     @enum
     @abstract Policy errors - Pending Public API Review
     @constant WebKitErrorCannotUseRestrictedPort
+    @constant WebKitErrorFrameLoadBlockedByContentFilter
 */
 enum {
     WebKitErrorCannotUseRestrictedPort =                        103,
+    WebKitErrorFrameLoadBlockedByContentFilter =                105,
 };
 
 /*!

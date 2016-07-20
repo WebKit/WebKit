@@ -38,13 +38,11 @@ extern NSString * const WebKitErrorPlugInPageURLStringKey;
     @constant WebKitErrorCannotShowMIMEType
     @constant WebKitErrorCannotShowURL
     @constant WebKitErrorFrameLoadInterruptedByPolicyChange
-    @constant WebKitErrorFrameLoadBlockedByContentFilter
 */
 enum {
     WebKitErrorCannotShowMIMEType =                             100,
     WebKitErrorCannotShowURL =                                  101,
     WebKitErrorFrameLoadInterruptedByPolicyChange =             102,
-    WebKitErrorFrameLoadBlockedByContentFilter =                105,
 };
 
 /*!

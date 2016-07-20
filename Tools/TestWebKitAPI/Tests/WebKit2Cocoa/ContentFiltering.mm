@@ -32,6 +32,7 @@
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKErrorRef.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
@@ -265,7 +266,7 @@ TEST(ContentFiltering, BlockDownloadNever)
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     EXPECT_WK_STREQ(WebKitErrorDomain, error.domain);
-    EXPECT_EQ(WebKitErrorFrameLoadBlockedByContentFilter, error.code);
+    EXPECT_EQ(kWKErrorCodeFrameLoadBlockedByContentFilter, error.code);
     [webView _loadAlternateHTMLString:@"FAIL" baseURL:nil forUnreachableURL:[error.userInfo objectForKey:NSURLErrorFailingURLErrorKey]];
 }
 
