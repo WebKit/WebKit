@@ -1,5 +1,11 @@
 2016-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed iOS build fix.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm: Only import Carbon.h on Mac.
+
+2016-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Media controls don't appear when pausing a small autoplaying video
         https://bugs.webkit.org/show_bug.cgi?id=159972
         <rdar://problem/27180657>
