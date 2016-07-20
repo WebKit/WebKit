@@ -1,5 +1,19 @@
 2016-07-20  Chris Dumez  <cdumez@apple.com>
 
+        Stop using valueToStringWithNullCheck() in JSCSSStyleDeclaration::putDelegate()
+        https://bugs.webkit.org/show_bug.cgi?id=159982
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage for JSCSSStyleDeclaration::putDelegate(),
+        covering cases like setting to null or the empty String, to make
+        sure we behave according to specification.
+
+        * fast/css/CSSStyleDeclaration-property-setter-expected.txt: Added.
+        * fast/css/CSSStyleDeclaration-property-setter.html: Added.
+
+2016-07-20  Chris Dumez  <cdumez@apple.com>
+
         Fix null handling of HTMLFrameElement.marginWidth / marginHeight
         https://bugs.webkit.org/show_bug.cgi?id=159987
 

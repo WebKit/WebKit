@@ -326,7 +326,7 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyNa
     if (!propertyInfo.propertyID)
         return false;
 
-    String propValue = valueToStringWithNullCheck(exec, value);
+    String propValue = valueToStringTreatingNullAsEmptyString(exec, value);
     if (propertyInfo.hadPixelOrPosPrefix)
         propValue.append("px");
 
