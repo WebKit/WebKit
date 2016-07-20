@@ -1,12 +1,11 @@
 {
-  'stderr' => 'mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css
-mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css
-mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css
-mismatched brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css
-mismatched brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css
-mismatched brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css
-mismatched brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css
-mismatched brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css
+  'stderr' => 'mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:21
+mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:25
+mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:29
+mismatched opening brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:33
+mismatched closing brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:34
+mismatched opening brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:37
+mismatched closing brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:42
 ',
   'stdout' => '',
   'ranges' => [
@@ -31,11 +30,6 @@ mismatched brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/re
       'element4'
     ],
     [
-      0,
-      '34',
-      ''
-    ],
-    [
       '36',
       '38',
       'element5'
@@ -46,14 +40,9 @@ mismatched brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/re
       'element6'
     ],
     [
-      0,
-      '42',
-      ''
-    ],
-    [
-      0,
+      '45',
       '47',
-      ''
+      'element7'
     ]
   ]
 }

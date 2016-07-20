@@ -83,3 +83,16 @@ elementInsideComment {
     property1: 123;
 }
 */
+
+.media-query::before {}
+
+@media only screen and (max-width: 980px) {
+    .media-query a {}
+    @media (-webkit-min-device-pixel-ratio: 2) {
+        .both a {}
+        .both b {}
+    }
+    .media-query b {}
+}
+
+.media-query::after {}

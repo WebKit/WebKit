@@ -91,6 +91,46 @@
       '76',
       '79',
       'element22'
+    ],
+    [
+      '87',
+      '87',
+      '.media-query::before'
+    ],
+    [
+      '89',
+      '96',
+      '@media only screen and (max-width: 980px)'
+    ],
+    [
+      '90',
+      '90',
+      '.media-query a'
+    ],
+    [
+      '91',
+      '94',
+      '@media (-webkit-min-device-pixel-ratio: 2)'
+    ],
+    [
+      '92',
+      '92',
+      '.both a'
+    ],
+    [
+      '93',
+      '93',
+      '.both b'
+    ],
+    [
+      '95',
+      '95',
+      '.media-query b'
+    ],
+    [
+      '98',
+      '98',
+      '.media-query::after'
     ]
   ]
 }

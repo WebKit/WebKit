@@ -1,3 +1,31 @@
+2016-07-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve prepare-ChangeLog for @media blocks
+        https://bugs.webkit.org/show_bug.cgi?id=159907
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/prepare-ChangeLog:
+        (get_selector_line_ranges_for_css):
+        Get a range for @media blocks just like a selector.
+            Start Line = line with '{'
+            End line = line with '}'
+            Name = "@media ..."
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning-expected.txt:
+        Improved error messages for unbalanced portions.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests-expected.txt:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests.css:
+        (.media-query::before):
+        (@media only screen and (max-width: 980px)):
+        (.media-query a):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (.both a):
+        (.both b):
+        (.media-query b):
+        (.media-query::after):
+
 2016-07-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix expectedFailErrorHandler in run-jsc-stress-tests

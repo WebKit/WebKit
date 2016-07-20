@@ -1781,42 +1781,60 @@ sub get_selector_line_ranges_for_css($$)
 
     my @ranges;
 
-    my $currentSelector = "";
-    my $start = 0;
     my $inComment = 0;
     my $inBrace = 0;
+    my @stack;
+    my $context;
+    my @currentParseMode = ("global");
+    my $selectorBraces = 0;
 
     while (<$fileHandle>) {
         foreach my $token (split m-(\{|\}|/\*|\*/)-, $_) {
             if ($token eq "{") {
                 if (!$inComment) {
-                    warn "mismatched brace found in $fileName\n" if $inBrace;
-                    $inBrace = 1;
+                    $inBrace += 1;                    
+                    $selectorBraces += 1 if $currentParseMode[$#currentParseMode] eq "selector";
+                    warn "mismatched opening brace found in $fileName:$.\n" if $selectorBraces > 1;
                 }
             } elsif ($token eq "}") {
                 if (!$inComment) {
-                    warn "mismatched brace found in $fileName\n" if !$inBrace;
-                    $inBrace = 0;
-                    push(@ranges, [$start, $., $currentSelector]);
-                    $currentSelector = "";
-                    $start = 0;
+                    if (!$inBrace or $currentParseMode[$#currentParseMode] eq "global") {
+                        warn "mismatched closing brace found in $fileName:$.\n";
+                        next;
+                    }
+
+                    $inBrace -= 1;
+
+                    pop(@currentParseMode);
+                    my $name = pop(@stack);
+                    my $startLine = pop(@stack);
+                    my $endLine = $.;
+                    push(@ranges, [$startLine, $endLine, $name]);
+                    $selectorBraces = 0;
                 }
             } elsif ($token eq "/*") {
                 $inComment = 1;
             } elsif ($token eq "*/") {
-                warn "mismatched comment found in $fileName\n" if !$inComment;
+                warn "mismatched comment found in $fileName:$.\n" if !$inComment;
                 $inComment = 0;
             } else {
-                if (!$inComment and !$inBrace and $token !~ /^[\s\t]*$/) {
+                if (!$inComment and $currentParseMode[$#currentParseMode] ne "selector" and $token !~ /^[\s\t]*$/) {
                     $token =~ s/^[\s\t]*|[\s\t]*$//g;
-                    $currentSelector = $token;
-                    $start = $.;
+                    my $startLine = $.;
+                    if ($token =~ /^\@media/) {
+                        push(@currentParseMode, "media");
+                        push(@stack, ($startLine, $token));
+                    } else {
+                        push(@currentParseMode, "selector");
+                        push(@stack, ($startLine, $token));
+                    }
                 }
             }
         }
     }
 
-    return @ranges;
+    # Sort by start line.
+    return sort {$a->[0] <=> $b->[0]} @ranges;
 }
 
 # Read a file and get all the line ranges of the things that look like Swift classes, methods,
