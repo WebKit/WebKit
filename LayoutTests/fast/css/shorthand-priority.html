@@ -17,7 +17,7 @@ testContainer.innerHTML = '<div id="test">hello</div>';
 e = document.getElementById('test');
 
 // Sanity check.
-e.style.setProperty("border-bottom-style", "solid", "!important");
+e.style.setProperty("border-bottom-style", "solid", "important");
 shouldBe("e.style.getPropertyValue('border-bottom-style')", "'solid'");
 shouldBe("e.style.getPropertyPriority('border-bottom-style')", "'important'");
 
@@ -27,7 +27,7 @@ shouldBe("e.style.getPropertyValue('border')", "'20px solid green'");
 shouldBe("e.style.getPropertyPriority('border')", "''");
 
 e.style.border = "";
-e.style.setProperty("border", "20px solid green", "!important");
+e.style.setProperty("border", "20px solid green", "important");
 shouldBe("e.style.getPropertyValue('border')", "'20px solid green'");
 shouldBe("e.style.getPropertyPriority('border')", "'important'");
 

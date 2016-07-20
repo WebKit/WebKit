@@ -226,7 +226,9 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
     if (!willMutate())
         return;
 
-    bool important = priority.find("important", 0, false) != notFound;
+    bool important = equalIgnoringASCIICase(priority, "important");
+    if (!important && !priority.isEmpty())
+        return;
 
     ec = 0;
     bool changed = propertyID != CSSPropertyCustom ? m_propertySet->setProperty(propertyID, value, important, contextStyleSheet()) : m_propertySet->setCustomProperty(propertyName, value, important, contextStyleSheet());

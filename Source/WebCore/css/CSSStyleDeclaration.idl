@@ -38,11 +38,7 @@
     [RaisesException] DOMString removeProperty(optional DOMString propertyName = "undefined");
     DOMString? getPropertyPriority(optional DOMString propertyName = "undefined");
 
-    // FIXME: 'priority' should use [TreatNullAs=EmptyString].
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters, RaisesException] void setProperty(optional DOMString propertyName = "undefined",
-                                    [TreatNullAs=EmptyString] optional DOMString value = "undefined",
-                                    optional DOMString priority = "undefined");
+    [ObjCLegacyUnnamedParameters, RaisesException] void setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
 
     readonly attribute unsigned long    length;
     getter DOMString item(optional unsigned long index = 0);
