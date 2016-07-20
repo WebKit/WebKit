@@ -1452,3 +1452,5 @@ webkit.org/b/158640 imported/blink/storage/indexeddb/blob-valid-after-deletion.h
 
 webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
 
+# rdar://problem/27434307
+[ Sierra+ ] http/tests/misc/bad-charset-alias.html [ Failure ]

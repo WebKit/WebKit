@@ -1,3 +1,9 @@
+2016-07-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/27434307.
+
+        * platform/mac/TestExpectations:
+
 2016-07-20  Chris Dumez  <cdumez@apple.com>
 
         Fix null handling of HTMLSelectElement.value attribute
