@@ -108,6 +108,8 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_allowsInlineMediaPlayback(settings.allowsInlineMediaPlayback())
     , m_allowsInlineMediaPlaybackAfterFullscreen(settings.allowsInlineMediaPlaybackAfterFullscreen())
     , m_inlineMediaPlaybackRequiresPlaysInlineAttribute(settings.inlineMediaPlaybackRequiresPlaysInlineAttribute())
+    , m_allowsInlineMediaPlaybackWithPlaysInlineAttribute(settings.allowsInlineMediaPlaybackWithPlaysInlineAttribute())
+    , m_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(settings.allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute())
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
 #endif
@@ -184,6 +186,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setAllowsInlineMediaPlayback(m_allowsInlineMediaPlayback);
     settings.setAllowsInlineMediaPlaybackAfterFullscreen(m_allowsInlineMediaPlaybackAfterFullscreen);
     settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackRequiresPlaysInlineAttribute);
+    settings.setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(m_allowsInlineMediaPlaybackWithPlaysInlineAttribute);
+    settings.setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(m_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute);
     RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
@@ -578,6 +582,18 @@ void InternalSettings::setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool r
 {
     InternalSettingsGuardForSettings();
     settings()->setInlineMediaPlaybackRequiresPlaysInlineAttribute(requires);
+}
+
+void InternalSettings::setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(bool requires, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(requires);
+}
+
+void InternalSettings::setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(bool requires, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(requires);
 }
 
 void InternalSettings::setIndexedDBWorkersEnabled(bool enabled, ExceptionCode&)

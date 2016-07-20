@@ -1,3 +1,15 @@
+2016-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iPhone] Playing a video on tudou.com plays only sound, no video
+        https://bugs.webkit.org/show_bug.cgi?id=159967
+        <rdar://problem/26964090>
+
+        Reviewed by Jon Lee.
+
+        * media/video-playsinline.html: Updated.
+        * media/video-webkit-playsinline-expected.txt: Removed.
+        * media/video-webkit-playsinline.html: Removed.
+
 2016-07-20  Chris Dumez  <cdumez@apple.com>
 
         CSSStyleDeclaration.setProperty() should be able to unset "important" on a property
