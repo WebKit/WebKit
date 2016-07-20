@@ -257,7 +257,7 @@ void MediaStreamPrivate::updateActiveVideoTrack()
 {
     m_activeVideoTrack = nullptr;
     for (auto& track : m_trackSet.values()) {
-        if (!track->ended() && track->type() == RealtimeMediaSource::Type::Video) {
+        if (!track->ended() && track->type() == RealtimeMediaSource::Type::Video && !track->ended()) {
             m_activeVideoTrack = track.get();
             break;
         }

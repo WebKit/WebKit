@@ -24,10 +24,3 @@ function defaultRejectOrCatch(e) {
     testFailed('getUserMedia failed:' + e);
     finishJSTest();
 }
-
-function setupVideoElementWithStream(stream)
-{
-    mediaStream = stream;
-    testPassed('mediaDevices.getUserMedia generated a stream successfully.');
-    evalAndLog('video.src = window.URL.createObjectURL(mediaStream)');
-}

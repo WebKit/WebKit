@@ -96,12 +96,6 @@ void RealtimeMediaSource::settingsDidChanged()
         observer->sourceSettingsChanged();
 }
 
-void RealtimeMediaSource::mediaDataUpdated(MediaSample& mediaSample)
-{
-    for (auto& observer : m_observers)
-        observer->sourceHasMoreMediaData(mediaSample);
-}
-
 bool RealtimeMediaSource::readonly() const
 {
     return m_readonly;

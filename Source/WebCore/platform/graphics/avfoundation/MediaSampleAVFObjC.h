@@ -32,8 +32,8 @@ namespace WebCore {
 
 class MediaSampleAVFObjC final : public MediaSample {
 public:
-    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
-    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample) { return adoptRef(*new MediaSampleAVFObjC(sample)); }
+    static RefPtr<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(new MediaSampleAVFObjC(sample, trackID)); }
+    static RefPtr<MediaSampleAVFObjC> create(CMSampleBufferRef sample) { return adoptRef(new MediaSampleAVFObjC(sample)); }
 
 private:
     MediaSampleAVFObjC(CMSampleBufferRef sample)

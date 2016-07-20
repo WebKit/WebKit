@@ -34,7 +34,6 @@
 #import "IntRect.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
-#import "MediaSampleAVFObjC.h"
 #import "NotImplemented.h"
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceCenter.h"
@@ -299,9 +298,7 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     }
 
     if (settingsChanged)
-        settingsDidChanged();
-
-    mediaDataUpdated(MediaSampleAVFObjC::create(sampleBuffer.get()));
+        this->settingsDidChanged();
 }
 
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)

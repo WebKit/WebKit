@@ -213,13 +213,6 @@ bool MediaStreamTrackPrivate::preventSourceFromStopping()
     return !m_isEnded;
 }
 
-void MediaStreamTrackPrivate::sourceHasMoreMediaData(MediaSample& mediaSample)
-{
-    mediaSample.setTrackID(id());
-    for (auto& observer : m_observers)
-        observer->sampleBufferUpdated(*this, mediaSample);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

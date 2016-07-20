@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivate.h"
-#include "MediaSample.h"
 #include "MediaStreamPrivate.h"
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>
@@ -37,7 +36,6 @@
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVSampleBufferAudioRenderer;
-OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVStreamSession;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
@@ -53,7 +51,7 @@ class VideoTrackPrivateMediaStream;
 class VideoFullscreenLayerManager;
 #endif
 
-class MediaPlayerPrivateMediaStreamAVFObjC : public MediaPlayerPrivateInterface, public MediaStreamPrivate::Observer, public MediaStreamTrackPrivate::Observer {
+class MediaPlayerPrivateMediaStreamAVFObjC : public MediaPlayerPrivateInterface, public MediaStreamPrivate::Observer {
 public:
     explicit MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaStreamAVFObjC();
@@ -71,9 +69,6 @@ public:
     void setReadyState(MediaPlayer::ReadyState);
 
     WeakPtr<MediaPlayerPrivateMediaStreamAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-
-    void ensureLayer();
-    void destroyLayer();
 
 private:
     // MediaPlayerPrivateInterface
@@ -122,14 +117,10 @@ private:
 
     void setSize(const IntSize&) override { /* No-op */ }
 
-    void enqueueAudioSampleBufferFromTrack(MediaStreamTrackPrivate&, PlatformSample);
-    void enqueueVideoSampleBufferFromTrack(MediaStreamTrackPrivate&, PlatformSample);
-
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     bool metaDataAvailable() const { return m_mediaStreamPrivate && m_readyState >= MediaPlayer::HaveMetadata; }
 
-    void acceleratedRenderingStateChanged() override;
     bool supportsAcceleratedRendering() const override { return true; }
 
     bool hasSingleSecurityOrigin() const override { return true; }
@@ -148,6 +139,7 @@ private:
     void updateReadyState();
 
     void updateIntrinsicSize(const FloatSize&);
+    void createPreviewLayers();
     void updateTracks();
     void renderingModeChanged();
 
@@ -168,13 +160,6 @@ private:
     void didAddTrack(MediaStreamTrackPrivate&) override;
     void didRemoveTrack(MediaStreamTrackPrivate&) override;
 
-    // MediaStreamPrivateTrack::Observer
-    void trackEnded(MediaStreamTrackPrivate&) override { };
-    void trackMutedChanged(MediaStreamTrackPrivate&) override { };
-    void trackSettingsChanged(MediaStreamTrackPrivate&) override { };
-    void trackEnabledChanged(MediaStreamTrackPrivate&) override { };
-    void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) override;
-
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
@@ -183,7 +168,8 @@ private:
     MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
-    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    mutable RetainPtr<CALayer> m_previewLayer;
+    mutable RetainPtr<PlatformLayer> m_videoBackgroundLayer;
     RetainPtr<CGImageRef> m_pausedImage;
     std::unique_ptr<Clock> m_clock;
 
@@ -199,7 +185,6 @@ private:
     bool m_muted { false };
     bool m_haveEverPlayed { false };
     bool m_ended { false };
-    bool m_hasEverEnqueuedVideoFrame { false };
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;

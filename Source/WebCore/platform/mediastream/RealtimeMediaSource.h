@@ -39,7 +39,6 @@
 #include "AudioSourceProvider.h"
 #include "Image.h"
 #include "MediaConstraints.h"
-#include "MediaSample.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include <wtf/RefCounted.h>
@@ -67,9 +66,6 @@ public:
 
         // Observer state queries.
         virtual bool preventSourceFromStopping() = 0;
-        
-        // Media data changes.
-        virtual void sourceHasMoreMediaData(MediaSample&) = 0;
     };
 
     virtual ~RealtimeMediaSource() { }
@@ -91,7 +87,6 @@ public:
     virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() = 0;
     virtual const RealtimeMediaSourceSettings& settings() = 0;
     void settingsDidChanged();
-    void mediaDataUpdated(MediaSample&);
     
     bool stopped() const { return m_stopped; }
 
