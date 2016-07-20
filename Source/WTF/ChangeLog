@@ -1,3 +1,18 @@
+2016-07-20  Rajeev Misra  <rajeevmisraforapple@gmail.com>
+
+        Remove unnecessary if check from ParkingLot.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=159961
+
+        Reviewed by Alex Christensen.
+
+        A good practice is to have as less conditional statement
+        or special cases as possible in code. This change
+        simply removes a unnecessary "if" statement for
+        condition which was already evaluated by switch/case
+        and thus there was no need to evaluate again.
+
+        * wtf/ParkingLot.cpp:
+
 2016-07-18  Anders Carlsson  <andersca@apple.com>
 
         WebKit nightly fails to build on macOS Sierra

@@ -154,8 +154,10 @@ public:
                 previous = current;
                 currentPtr = &(*currentPtr)->nextInQueue;
                 break;
-            case DequeueResult::RemoveAndContinue:
             case DequeueResult::RemoveAndStop:
+                shouldContinue = false;
+                FALLTHROUGH;
+            case DequeueResult::RemoveAndContinue:
                 if (verbose)
                     dataLog(toString(currentThread(), ": dequeueing ", RawPointer(current), " from ", RawPointer(this), "\n"));
                 if (current == queueTail)
@@ -163,8 +165,6 @@ public:
                 didDequeue = true;
                 *currentPtr = current->nextInQueue;
                 current->nextInQueue = nullptr;
-                if (result == DequeueResult::RemoveAndStop)
-                    shouldContinue = false;
                 break;
             }
         }
