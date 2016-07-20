@@ -486,6 +486,7 @@ public:
         TransactionActivator activator(idbTransaction.get());
         ExceptionCodeWithMessage ec;
         RefPtr<IDBRequest> idbRequest;
+        JSC::ExecState* exec = context() ? context()->execState() : nullptr;
         if (!m_indexName.isEmpty()) {
             RefPtr<IDBIndex> idbIndex = indexForObjectStore(idbObjectStore.get(), m_indexName);
             if (!idbIndex) {
@@ -493,9 +494,9 @@ public:
                 return;
             }
 
-            idbRequest = idbIndex->openCursor(*context(), m_idbKeyRange.get(), IDBCursor::directionNext(), ec);
+            idbRequest = exec ? idbIndex->openCursor(*exec, m_idbKeyRange.get(), IDBCursor::directionNext(), ec) : nullptr;
         } else
-            idbRequest = idbObjectStore->openCursor(*context(), m_idbKeyRange.get(), IDBCursor::directionNext(), ec);
+            idbRequest = exec ? idbObjectStore->openCursor(*exec, m_idbKeyRange.get(), IDBCursor::directionNext(), ec) : nullptr;
 
         if (!idbRequest) {
             m_requestCallback->sendFailure("Could not open cursor to populate database data");
@@ -718,7 +719,8 @@ public:
         }
 
         ExceptionCodeWithMessage ec;
-        RefPtr<IDBRequest> idbRequest = idbObjectStore->clear(*context(), ec);
+        JSC::ExecState* exec = context() ? context()->execState() : nullptr;
+        RefPtr<IDBRequest> idbRequest = exec ? idbObjectStore->clear(*exec, ec) : nullptr;
         ASSERT(!ec.code);
         if (ec.code) {
             m_requestCallback->sendFailure(String::format("Could not clear object store '%s': %d", m_objectStoreName.utf8().data(), ec.code));

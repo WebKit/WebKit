@@ -142,17 +142,10 @@ RefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext& cont
     return m_connectionProxy->deleteDatabase(context, databaseIdentifier);
 }
 
-short IDBFactory::cmp(ScriptExecutionContext& context, JSValue firstValue, JSValue secondValue, ExceptionCodeWithMessage& ec)
+short IDBFactory::cmp(ExecState& execState, JSValue firstValue, JSValue secondValue, ExceptionCodeWithMessage& ec)
 {
-    auto exec = context.execState();
-    if (!exec) {
-        ec.code = IDBDatabaseException::UnknownError;
-        ec.message = ASCIILiteral("Failed to execute 'cmp' on 'IDBFactory': Script execution context does not have an execution state.");
-        return 0;
-    }
-
-    Ref<IDBKey> first = scriptValueToIDBKey(*exec, firstValue);
-    Ref<IDBKey> second = scriptValueToIDBKey(*exec, secondValue);
+    Ref<IDBKey> first = scriptValueToIDBKey(execState, firstValue);
+    Ref<IDBKey> second = scriptValueToIDBKey(execState, secondValue);
 
     if (!first->isValid() || !second->isValid()) {
         ec.code = IDBDatabaseException::DataError;

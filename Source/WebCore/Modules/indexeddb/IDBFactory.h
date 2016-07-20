@@ -34,6 +34,7 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
+class ExecState;
 class JSValue;
 }
 
@@ -59,7 +60,7 @@ public:
     RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, Optional<uint64_t> version, ExceptionCodeWithMessage&);
     RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const String& name, ExceptionCodeWithMessage&);
 
-    short cmp(ScriptExecutionContext&, JSC::JSValue first, JSC::JSValue second, ExceptionCodeWithMessage&);
+    short cmp(JSC::ExecState&, JSC::JSValue first, JSC::JSValue second, ExceptionCodeWithMessage&);
 
     WEBCORE_EXPORT void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)>);
 

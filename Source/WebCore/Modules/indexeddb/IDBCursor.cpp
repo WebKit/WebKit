@@ -267,18 +267,11 @@ void IDBCursor::advance(unsigned count, ExceptionCodeWithMessage& ec)
     uncheckedIterateCursor(IDBKeyData(), count);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext& context, JSValue keyValue, ExceptionCodeWithMessage& ec)
+void IDBCursor::continueFunction(ExecState& execState, JSValue keyValue, ExceptionCodeWithMessage& ec)
 {
-    auto exec = context.execState();
-    if (!exec) {
-        ec.code = IDBDatabaseException::UnknownError;
-        ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': Script execution context does not have an execution state.");
-        return;
-    }
-
     RefPtr<IDBKey> key;
     if (!keyValue.isUndefined())
-        key = scriptValueToIDBKey(*exec, keyValue);
+        key = scriptValueToIDBKey(execState, keyValue);
 
     continueFunction(key.get(), ec);
 }
@@ -344,7 +337,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
     transaction().iterateCursor(*this, key, count);
 }
 
-RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ExecState& execState, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::deleteFunction");
     ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
@@ -379,7 +372,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext& co
         return nullptr;
     }
 
-    auto request = effectiveObjectStore().modernDelete(context, m_currentPrimaryKey.get(), ec);
+    auto request = effectiveObjectStore().modernDelete(execState, m_currentPrimaryKey.get(), ec);
     if (ec.code)
         return nullptr;
 

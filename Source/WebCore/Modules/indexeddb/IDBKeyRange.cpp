@@ -77,15 +77,6 @@ RefPtr<IDBKeyRange> IDBKeyRange::only(ExecState& state, JSValue keyValue, Except
     return only(scriptValueToIDBKey(state, keyValue), ec);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext& context, JSValue keyValue, ExceptionCode& ec)
-{
-    auto exec = context.execState();
-    if (!exec)
-        return nullptr;
-
-    return only(scriptValueToIDBKey(*exec, keyValue), ec);
-}
-
 RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ExecState& state, JSValue boundValue, bool open, ExceptionCode& ec)
 {
     auto bound = scriptValueToIDBKey(state, boundValue);

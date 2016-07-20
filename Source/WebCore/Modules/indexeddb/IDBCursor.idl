@@ -38,6 +38,6 @@
 
     [CallWith=ScriptState, RaisesExceptionWithMessage] IDBRequest update(any value);
     [RaisesExceptionWithMessage] void advance([EnforceRange] unsigned long count);
-    [CallWith=ScriptExecutionContext, ImplementedAs=continueFunction, RaisesExceptionWithMessage] void continue(optional any key);
-    [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction, RaisesExceptionWithMessage] IDBRequest delete();
+    [CallWith=ScriptState, ImplementedAs=continueFunction, RaisesExceptionWithMessage] void continue(optional any key);
+    [CallWith=ScriptState, ImplementedAs=deleteFunction, RaisesExceptionWithMessage] IDBRequest delete();
 };

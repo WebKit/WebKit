@@ -62,9 +62,6 @@ public:
 
     static RefPtr<IDBKeyRange> bound(JSC::ExecState&, JSC::JSValue lower, JSC::JSValue upper, bool lowerOpen, bool upperOpen, ExceptionCode&);
 
-    // FIXME: Eventually should probably change all callers to call the ExecState version.
-    static RefPtr<IDBKeyRange> only(ScriptExecutionContext&, JSC::JSValue key, ExceptionCode&);
-
     WEBCORE_EXPORT bool isOnlyKey() const;
 
 private:
