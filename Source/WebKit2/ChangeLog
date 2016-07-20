@@ -1,3 +1,16 @@
+2016-07-20  ChangSeok Oh  <changseok@webkit.org>
+
+        Fix a linking failure caused by NetworkCache::Data::~Data()
+        https://bugs.webkit.org/show_bug.cgi?id=159931
+
+        Linking is failed with clang 3.6. It says WebKit::NetworkCache::Data::~Data is undefined.
+        It is fixed by adding a destructor for NetworkCache::Data.
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/NetworkCacheData.h:
+        (WebKit::NetworkCache::Data::~Data):
+
 2016-07-20  Tim Horton  <timothy_horton@apple.com>
 
         Explain the default value of WKWebViewConfiguration's ignoresViewportScaleLimits

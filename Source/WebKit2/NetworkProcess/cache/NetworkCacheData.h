@@ -106,6 +106,8 @@ public:
     Data() { }
     Data(const uint8_t*, size_t);
 
+    ~Data() { }
+
     static Data empty();
     static Data adoptMap(void* map, size_t, int fd);
 
