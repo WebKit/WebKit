@@ -36,6 +36,8 @@
 
 namespace JSC {
 class ArrayBuffer;
+class ExecState;
+class JSValue;
 };
 
 namespace WebCore {
@@ -58,7 +60,9 @@ public:
     static void fetch(ScriptExecutionContext&, FetchRequest&, const Dictionary&, FetchPromise&&);
     static void fetch(ScriptExecutionContext&, const String&, const Dictionary&, FetchPromise&&);
 
-    void initializeWith(const Dictionary&, ExceptionCode&);
+
+    void setStatus(int, const String&, ExceptionCode&);
+    void initializeWith(JSC::ExecState&, JSC::JSValue);
 
     Type type() const { return m_response.type(); }
     const String& url() const;

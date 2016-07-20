@@ -31,7 +31,6 @@
 
 #if ENABLE(FETCH_API)
 
-#include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "FetchRequest.h"
 #include "HTTPParsers.h"
@@ -43,11 +42,6 @@ namespace WebCore {
 static inline bool isRedirectStatus(int status)
 {
     return status == 301 || status == 302 || status == 303 || status == 307 || status == 308;
-}
-
-static inline bool isNullBodyStatus(int status)
-{
-    return status == 101 || status == 204 || status == 205 || status == 304;
 }
 
 Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
@@ -75,40 +69,21 @@ RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext& context, c
     return WTFMove(redirectResponse);
 }
 
-void FetchResponse::initializeWith(const Dictionary& init, ExceptionCode& ec)
+void FetchResponse::setStatus(int status, const String& statusText, ExceptionCode& ec)
 {
-    int status;
-    if (!init.get("status", status)) {
-        ec = TypeError;
-        return;
-    }
-    if (status < 200 || status > 599) {
-        ec = RangeError;
-        return;
-    }
-
-    String statusText;
-    if (!init.get("statusText", statusText) || !isValidReasonPhrase(statusText)) {
+    if (!isValidReasonPhrase(statusText)) {
         ec = TypeError;
         return;
     }
     m_response.setHTTPStatusCode(status);
     m_response.setHTTPStatusText(statusText);
+}
 
-    RefPtr<FetchHeaders> initialHeaders;
-    if (init.get("headers", initialHeaders))
-        m_headers->fill(initialHeaders.get());
-
-    JSC::JSValue body;
-    if (init.get("body", body)) {
-        if (isNullBodyStatus(status)) {
-            ec = TypeError;
-            return;
-        }
-        m_body = FetchBody::extract(*init.execState(), body);
-        if (m_headers->fastGet(HTTPHeaderName::ContentType).isEmpty() && !m_body.mimeType().isEmpty())
-            m_headers->fastSet(HTTPHeaderName::ContentType, m_body.mimeType());
-    }
+void FetchResponse::initializeWith(JSC::ExecState& execState, JSC::JSValue body)
+{
+    m_body = FetchBody::extract(execState, body);
+    if (m_headers->fastGet(HTTPHeaderName::ContentType).isEmpty() && !m_body.mimeType().isEmpty())
+        m_headers->fastSet(HTTPHeaderName::ContentType, m_body.mimeType());
 }
 
 FetchResponse::FetchResponse(ScriptExecutionContext& context, FetchBody&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)

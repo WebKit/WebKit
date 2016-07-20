@@ -3711,6 +3711,7 @@ GENERATE_BINDINGS(WebCoreTestSupport_SOURCES
 
 set(WebCore_BUILTINS_SOURCES
     ${WEBCORE_DIR}/Modules/fetch/FetchHeaders.js
+    ${WEBCORE_DIR}/Modules/fetch/FetchInternals.js
     ${WEBCORE_DIR}/Modules/fetch/FetchResponse.js
     ${WEBCORE_DIR}/Modules/mediastream/MediaDevices.js
     ${WEBCORE_DIR}/Modules/mediastream/NavigatorUserMedia.js

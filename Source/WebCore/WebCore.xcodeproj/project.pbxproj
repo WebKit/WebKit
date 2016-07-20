@@ -1596,6 +1596,7 @@
 		4162A4571011464700DFF3ED /* JSDedicatedWorkerGlobalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4162A4551011464700DFF3ED /* JSDedicatedWorkerGlobalScope.cpp */; };
 		4162A4581011464700DFF3ED /* JSDedicatedWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4162A4561011464700DFF3ED /* JSDedicatedWorkerGlobalScope.h */; };
 		416E29A6102FA962007FC14E /* WorkerReportingProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E29A5102FA962007FC14E /* WorkerReportingProxy.h */; };
+		416E6FE81BBD12DF000A6023 /* FetchInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764B9 /* FetchInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E6FE81BBD12DF000A6033 /* StreamInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764C9 /* StreamInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E6FE81BBD12DF000A6043 /* ReadableStreamInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764D9 /* ReadableStreamInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E6FE81BBD12DF000A6053 /* WritableStreamInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764E9 /* WritableStreamInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11815,6 +11816,7 @@
 		9908B0F91BCAD07D00ED0F75 /* WritableStreamBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WritableStreamBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0FA1BCAD07D00ED0F65 /* ReadableStreamControllerBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStreamControllerBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0FB1BCAD07D00ED0F65 /* ReadableStreamControllerBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamControllerBuiltins.h; sourceTree = "<group>"; };
+		9908B0FD1BCAD07D00ED0F45 /* FetchInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchInternalsBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0FD1BCAD07D00ED0F55 /* StreamInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamInternalsBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0FD1BCAD07D00ED0F65 /* ReadableStreamInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStreamInternalsBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0FD1BCAD07D00ED0F75 /* WritableStreamInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WritableStreamInternalsBuiltins.cpp; sourceTree = "<group>"; };
@@ -11857,6 +11859,7 @@
 		9A528E8217D7F52F00AA9518 /* FloatingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingObjects.h; sourceTree = "<group>"; };
 		9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSToLengthConversionData.h; sourceTree = "<group>"; };
 		9AB1F37F18E2489A00534743 /* CSSToLengthConversionData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSToLengthConversionData.cpp; sourceTree = "<group>"; };
+		9B03D8061BB3110D00B764B9 /* FetchInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchInternalsBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764C9 /* StreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamInternalsBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764D8 /* ReadableStreamBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764D9 /* ReadableStreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamInternalsBuiltins.h; sourceTree = "<group>"; };
@@ -17919,7 +17922,9 @@
 				9B03D8061BB3110D00B764D8 /* ReadableStreamBuiltins.h */,
 				9908B0FA1BCAD07D00ED0F65 /* ReadableStreamControllerBuiltins.cpp */,
 				9908B0FB1BCAD07D00ED0F65 /* ReadableStreamControllerBuiltins.h */,
+				9908B0FD1BCAD07D00ED0F45 /* FetchInternalsBuiltins.cpp */,
 				9908B0FD1BCAD07D00ED0F65 /* ReadableStreamInternalsBuiltins.cpp */,
+				9B03D8061BB3110D00B764B9 /* FetchInternalsBuiltins.h */,
 				9B03D8061BB3110D00B764D9 /* ReadableStreamInternalsBuiltins.h */,
 				9908B0FE1BCAD07D00ED0F65 /* ReadableStreamReaderBuiltins.cpp */,
 				9908B0FF1BCAD07D00ED0F65 /* ReadableStreamReaderBuiltins.h */,
@@ -27853,6 +27858,7 @@
 				6E84E9E117668BF100815B68 /* RasterShape.h in Headers */,
 				A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */,
 				416E6FE91BBD12E5000A6043 /* ReadableStreamBuiltins.h in Headers */,
+				416E6FE81BBD12DF000A6023 /* FetchInternalsBuiltins.h in Headers */,
 				416E6FE81BBD12DF000A6043 /* ReadableStreamInternalsBuiltins.h in Headers */,
 				FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */,
 				4A4F65711AA997F100E38CDD /* RealtimeMediaSource.h in Headers */,

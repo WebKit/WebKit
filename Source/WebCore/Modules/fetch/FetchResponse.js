@@ -29,24 +29,27 @@ function initializeFetchResponse(body, init)
 {
     "use strict";
 
-    let parameters = { };
-    if (init !== @undefined) {
-        if (!@isObject(init))
-            throw new @TypeError("Response init must be an object");
-        parameters.status = init.status;
-        parameters.statusText = init.statusText;
-        if (init.headers)
-            parameters.headers = (init.headers instanceof @Headers) ? init.headers : new @Headers(init.headers);
+    if (init === @undefined)
+        init = { };
+    else if (!@isObject(init))
+        throw new @TypeError("Response init must be an object");
+
+    let status = (init.status !== @undefined) ? @toNumber(init.status) : 200;
+    if (status < 200  || status > 599)
+        throw new @RangeError("Status must be between 200 and 599");
+
+    let statusText = (init.statusText !== @undefined) ? init.statusText : "OK";
+
+    this.@setStatus(status, statusText);
+
+    if (init.headers !== @undefined)
+        @fillFetchHeaders(this.headers, init.headers);
+
+    if (body !== @undefined && body !== null) {
+        if (status == 101 || status == 204 || status == 205 || status == 304)
+            throw new @TypeError("Response cannot have a body with the given status");
+        this.@initializeWith(body);
     }
 
-    if (parameters.status === @undefined)
-        parameters.status = 200;
-    if (parameters.statusText === @undefined)
-        parameters.statusText = "OK";
-
-    if (body !== @undefined && body !== null)
-         parameters.body = body;
-
-    this.@initializeWith(parameters);
     return this;
 }

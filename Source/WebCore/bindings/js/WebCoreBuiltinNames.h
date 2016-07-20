@@ -62,6 +62,7 @@ namespace WebCore {
     macro(readRequests) \
     macro(readyPromiseCapability) \
     macro(removeTrack) \
+    macro(setStatus) \
     macro(state) \
     macro(started) \
     macro(startedPromise) \

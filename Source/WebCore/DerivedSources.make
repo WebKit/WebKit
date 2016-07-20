@@ -1284,6 +1284,7 @@ WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 
 WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/fetch/FetchHeaders.js \
+    $(WebCore)/Modules/fetch/FetchInternals.js \
     $(WebCore)/Modules/fetch/FetchResponse.js \
     $(WebCore)/Modules/mediastream/MediaDevices.js \
     $(WebCore)/Modules/mediastream/NavigatorUserMedia.js \

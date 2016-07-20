@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2016 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY CANON INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL CANON INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -24,18 +24,30 @@
  */
 
 // @conditional=ENABLE(FETCH_API)
+// @internal
 
-function initializeFetchHeaders(headersInit)
+function fillFetchHeaders(headers, headersInit)
 {
     "use strict";
 
-    if (headersInit === @undefined)
+    if (headersInit instanceof @Headers) {
+        @Headers.prototype.@fillFromJS.@call(headers, headersInit);
+        return;
+    }
+
+    if (@isArray(headersInit)) {
+        for (let i = 0; i < headersInit.length; i++) {
+            let header = headersInit[i];
+            if (header.length !== 2)
+                throw new @TypeError("headersInit sequence items should contain two values");
+            @Headers.prototype.@appendFromJS.@call(headers, header[0], header[1]);
+        }
         return this;
+    }
 
-    if (!@isObject(headersInit))
-        throw new @TypeError("headersInit must be an object");
-
-    @fillFetchHeaders(this, headersInit);
-
-    return this;
+    let propertyNames = @Object.@getOwnPropertyNames(headersInit);
+    for (let i = 0; i < propertyNames.length; ++i) {
+        let name = propertyNames[i];
+        @Headers.prototype.@appendFromJS.@call(headers, name, headersInit[name]);
+    }
 }
