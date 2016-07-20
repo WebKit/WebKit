@@ -51,18 +51,16 @@
     readonly attribute long height;
 #endif
 
-    // FIXME: This should not have [TreatNullAs=LegacyNullString].
-    [TreatNullAs=LegacyNullString] attribute DOMString dir;
+    attribute DOMString dir;
 
     attribute DOMString designMode;
     readonly attribute DOMString compatMode;
 
     // Deprecated attributes.
-    // FIXME: These should not have [TreatNullAs=LegacyNullString].
-    [TreatNullAs=LegacyNullString] attribute DOMString bgColor;
-    [TreatNullAs=LegacyNullString] attribute DOMString fgColor;
-    [TreatNullAs=LegacyNullString] attribute DOMString alinkColor;
-    [TreatNullAs=LegacyNullString] attribute DOMString linkColor;
-    [TreatNullAs=LegacyNullString] attribute DOMString vlinkColor;
+    [TreatNullAs=EmptyString] attribute DOMString bgColor;
+    [TreatNullAs=EmptyString] attribute DOMString fgColor;
+    [TreatNullAs=EmptyString] attribute DOMString alinkColor;
+    [TreatNullAs=EmptyString] attribute DOMString linkColor;
+    [TreatNullAs=EmptyString] attribute DOMString vlinkColor;
 };
 

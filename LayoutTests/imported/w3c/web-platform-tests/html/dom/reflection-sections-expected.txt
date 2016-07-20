@@ -10012,7 +10012,7 @@ PASS #document.fgColor (<body text>): IDL set to "\0" should not throw
 PASS #document.fgColor (<body text>): IDL set to "\0" followed by getAttribute() 
 PASS #document.fgColor (<body text>): IDL set to "\0" followed by IDL get 
 PASS #document.fgColor (<body text>): IDL set to null should not throw 
-FAIL #document.fgColor (<body text>): IDL set to null followed by getAttribute() assert_equals: expected (string) "" but got (object) null
+PASS #document.fgColor (<body text>): IDL set to null followed by getAttribute() 
 PASS #document.fgColor (<body text>): IDL set to null followed by IDL get 
 PASS #document.fgColor (<body text>): IDL set to object "test-toString" should not throw 
 PASS #document.fgColor (<body text>): IDL set to object "test-toString" followed by getAttribute() 
@@ -10089,7 +10089,7 @@ PASS #document.linkColor (<body link>): IDL set to "\0" should not throw
 PASS #document.linkColor (<body link>): IDL set to "\0" followed by getAttribute() 
 PASS #document.linkColor (<body link>): IDL set to "\0" followed by IDL get 
 PASS #document.linkColor (<body link>): IDL set to null should not throw 
-FAIL #document.linkColor (<body link>): IDL set to null followed by getAttribute() assert_equals: expected (string) "" but got (object) null
+PASS #document.linkColor (<body link>): IDL set to null followed by getAttribute() 
 PASS #document.linkColor (<body link>): IDL set to null followed by IDL get 
 PASS #document.linkColor (<body link>): IDL set to object "test-toString" should not throw 
 PASS #document.linkColor (<body link>): IDL set to object "test-toString" followed by getAttribute() 
@@ -10166,7 +10166,7 @@ PASS #document.vlinkColor (<body vlink>): IDL set to "\0" should not throw
 PASS #document.vlinkColor (<body vlink>): IDL set to "\0" followed by getAttribute() 
 PASS #document.vlinkColor (<body vlink>): IDL set to "\0" followed by IDL get 
 PASS #document.vlinkColor (<body vlink>): IDL set to null should not throw 
-FAIL #document.vlinkColor (<body vlink>): IDL set to null followed by getAttribute() assert_equals: expected (string) "" but got (object) null
+PASS #document.vlinkColor (<body vlink>): IDL set to null followed by getAttribute() 
 PASS #document.vlinkColor (<body vlink>): IDL set to null followed by IDL get 
 PASS #document.vlinkColor (<body vlink>): IDL set to object "test-toString" should not throw 
 PASS #document.vlinkColor (<body vlink>): IDL set to object "test-toString" followed by getAttribute() 
@@ -10243,7 +10243,7 @@ PASS #document.alinkColor (<body alink>): IDL set to "\0" should not throw
 PASS #document.alinkColor (<body alink>): IDL set to "\0" followed by getAttribute() 
 PASS #document.alinkColor (<body alink>): IDL set to "\0" followed by IDL get 
 PASS #document.alinkColor (<body alink>): IDL set to null should not throw 
-FAIL #document.alinkColor (<body alink>): IDL set to null followed by getAttribute() assert_equals: expected (string) "" but got (object) null
+PASS #document.alinkColor (<body alink>): IDL set to null followed by getAttribute() 
 PASS #document.alinkColor (<body alink>): IDL set to null followed by IDL get 
 PASS #document.alinkColor (<body alink>): IDL set to object "test-toString" should not throw 
 PASS #document.alinkColor (<body alink>): IDL set to object "test-toString" followed by getAttribute() 
@@ -10320,7 +10320,7 @@ PASS #document.bgColor (<body bgcolor>): IDL set to "\0" should not throw
 PASS #document.bgColor (<body bgcolor>): IDL set to "\0" followed by getAttribute() 
 PASS #document.bgColor (<body bgcolor>): IDL set to "\0" followed by IDL get 
 PASS #document.bgColor (<body bgcolor>): IDL set to null should not throw 
-FAIL #document.bgColor (<body bgcolor>): IDL set to null followed by getAttribute() assert_equals: expected (string) "" but got (object) null
+PASS #document.bgColor (<body bgcolor>): IDL set to null followed by getAttribute() 
 PASS #document.bgColor (<body bgcolor>): IDL set to null followed by IDL get 
 PASS #document.bgColor (<body bgcolor>): IDL set to object "test-toString" should not throw 
 PASS #document.bgColor (<body bgcolor>): IDL set to object "test-toString" followed by getAttribute() 
