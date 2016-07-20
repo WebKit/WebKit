@@ -504,7 +504,7 @@ def expectedFailErrorHandler
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "else"
-        outp.puts "    (echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (echo ERROR: Unexpected exit code: 0) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }

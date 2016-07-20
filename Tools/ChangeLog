@@ -1,5 +1,14 @@
 2016-07-20  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix expectedFailErrorHandler in run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=159811
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
+2016-07-20  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed Mac cmake buildfix after r203426. Just for fun.
 
         * TestWebKitAPI/PlatformMac.cmake:
