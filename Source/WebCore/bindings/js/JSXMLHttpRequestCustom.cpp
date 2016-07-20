@@ -71,35 +71,6 @@ void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(responseBlob);
 }
 
-// Custom functions
-JSValue JSXMLHttpRequest::open(ExecState& state)
-{
-    if (state.argumentCount() < 2)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
-
-    const URL& url = wrapped().scriptExecutionContext()->completeURL(state.uncheckedArgument(1).toString(&state)->value(&state));
-    String method = state.uncheckedArgument(0).toString(&state)->value(&state);
-
-    ExceptionCode ec = 0;
-    if (state.argumentCount() >= 3) {
-        bool async = state.uncheckedArgument(2).toBoolean(&state);
-        if (!state.argument(3).isUndefined()) {
-            String user = valueToStringWithNullCheck(&state, state.uncheckedArgument(3));
-
-            if (!state.argument(4).isUndefined()) {
-                String password = valueToStringWithNullCheck(&state, state.uncheckedArgument(4));
-                wrapped().open(method, url, async, user, password, ec);
-            } else
-                wrapped().open(method, url, async, user, ec);
-        } else
-            wrapped().open(method, url, async, ec);
-    } else
-        wrapped().open(method, url, ec);
-
-    setDOMException(&state, ec);
-    return jsUndefined();
-}
-
 class SendFunctor {
 public:
     SendFunctor()

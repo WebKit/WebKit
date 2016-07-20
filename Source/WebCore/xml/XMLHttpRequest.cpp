@@ -421,9 +421,10 @@ bool XMLHttpRequest::isAllowedHTTPHeader(const String& name)
     return true;
 }
 
-void XMLHttpRequest::open(const String& method, const URL& url, ExceptionCode& ec)
+void XMLHttpRequest::open(const String& method, const String& url, ExceptionCode& ec)
 {
-    open(method, url, true, ec);
+    // If the async argument is omitted, set async to true.
+    return open(method, scriptExecutionContext()->completeURL(url), true, ec);
 }
 
 void XMLHttpRequest::open(const String& method, const URL& url, bool async, ExceptionCode& ec)
@@ -495,19 +496,14 @@ void XMLHttpRequest::open(const String& method, const URL& url, bool async, Exce
         m_state = OPENED;
 }
 
-void XMLHttpRequest::open(const String& method, const URL& url, bool async, const String& user, ExceptionCode& ec)
+void XMLHttpRequest::open(const String& method, const String& url, bool async, const String& user, const String& password, ExceptionCode& ec)
 {
-    URL urlWithCredentials(url);
-    urlWithCredentials.setUser(user);
-
-    open(method, urlWithCredentials, async, ec);
-}
-
-void XMLHttpRequest::open(const String& method, const URL& url, bool async, const String& user, const String& password, ExceptionCode& ec)
-{
-    URL urlWithCredentials(url);
-    urlWithCredentials.setUser(user);
-    urlWithCredentials.setPass(password);
+    URL urlWithCredentials = scriptExecutionContext()->completeURL(url);
+    if (!user.isNull()) {
+        urlWithCredentials.setUser(user);
+        if (!password.isNull())
+            urlWithCredentials.setPass(password);
+    }
 
     open(method, urlWithCredentials, async, ec);
 }

@@ -69,10 +69,9 @@ public:
     State readyState() const;
     bool withCredentials() const { return m_includeCredentials; }
     void setWithCredentials(bool, ExceptionCode&);
-    void open(const String& method, const URL&, ExceptionCode&);
+    void open(const String& method, const String& url, ExceptionCode&);
     void open(const String& method, const URL&, bool async, ExceptionCode&);
-    void open(const String& method, const URL&, bool async, const String& user, ExceptionCode&);
-    void open(const String& method, const URL&, bool async, const String& user, const String& password, ExceptionCode&);
+    void open(const String& method, const String&, bool async, const String& user, const String& password, ExceptionCode&);
     void send(ExceptionCode&);
     void send(Document*, ExceptionCode&);
     void send(const String&, ExceptionCode&);

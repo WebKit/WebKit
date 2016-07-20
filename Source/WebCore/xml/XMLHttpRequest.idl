@@ -59,7 +59,9 @@ enum XMLHttpRequestResponseType {
 
     [SetterRaisesException] attribute boolean withCredentials;
 
-    [Custom, RaisesException] void open(DOMString method, DOMString url, optional boolean async, optional DOMString user, optional DOMString password);
+    // Use overloading rather than "boolean async = true" because legacy content prevents treating the 'async' argument being undefined identical from it being omitted.
+    [RaisesException] void open(DOMString method, DOMString url);
+    [RaisesException] void open(DOMString method, DOMString url, boolean async, optional DOMString? user = null, optional DOMString? password = null);
 
     [RaisesException] void setRequestHeader(DOMString header, DOMString value);
 
