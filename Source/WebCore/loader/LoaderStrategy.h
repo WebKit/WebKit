@@ -65,12 +65,6 @@ protected:
     virtual ~LoaderStrategy();
 };
 
-class ResourceLoadSuspender {
-public:
-    ResourceLoadSuspender();
-    ~ResourceLoadSuspender();
-};
-
 } // namespace WebCore
 
 #endif // LoaderStrategy_h

@@ -34,16 +34,6 @@ LoaderStrategy::~LoaderStrategy()
 {
 }
 
-ResourceLoadSuspender::ResourceLoadSuspender()
-{
-    platformStrategies()->loaderStrategy()->suspendPendingRequests();
-}
-
-ResourceLoadSuspender::~ResourceLoadSuspender()
-{
-    platformStrategies()->loaderStrategy()->resumePendingRequests();
-}
-
 } // namespace WebCore
 
 
