@@ -1154,7 +1154,8 @@ fast/forms/focus-selection-textarea.html [ Pass Failure ]
 
 webkit.org/b/141534 [ Yosemite ] media/video-load-networkState.html [ Pass Crash ]
 
-webkit.org/b/142726 [ Yosemite+ ] fast/images/animated-png.html [ ImageOnlyFailure ]
+# See also: rdar://problem/27356144
+webkit.org/b/142726 fast/images/animated-png.html [ Skip ]
 
 # Fails when an actual AppleTV is nearby.
 webkit.org/b/148912 [ ElCapitan+ ] media/controls/airplay-picker.html [ Pass Failure ]
@@ -1451,5 +1452,3 @@ webkit.org/b/158640 imported/blink/storage/indexeddb/blob-valid-after-deletion.h
 
 webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
 
-# rdar://problem/27356144
-[ Sierra+ ] fast/images/animated-png.html [ Crash ]
