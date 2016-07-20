@@ -65,7 +65,6 @@ my $envVars = "";
 my $gmallocPath = undef;
 my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
 
-my $enableFTL = isAppleMacWebKit() || isX86_64() && (isGtk() || isEfl());
 my $createTarball = 0;
 my $remoteHost = 0;
 my $failFast = 1;
@@ -148,7 +147,6 @@ GetOptions(
     'root=s' => \$root,
     'extra-tests=s' => \$extraTests,
     'build!' => \$buildJSC,
-    'ftl-jit!' => \$enableFTL,
     'testapi!' => \$runTestAPI,
     'jsc-stress!' => \$runJSCStress,
     'jit-stress-tests!' => \$runJITStressTests,
@@ -170,11 +168,6 @@ GetOptions(
 
 # Assume any arguments left over from GetOptions are assumed to be build arguments
 my @buildArgs = @ARGV;
-
-# The --ftl-jit argument gets passed as a build argument.
-if ($enableFTL) {
-    push(@buildArgs, '--ftl-jit');
-}
 
 if ($showHelp) {
    print STDERR $usage;
@@ -210,7 +203,7 @@ if (defined($gmallocPath)) {
 
 my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-$ENV{JSCTEST_timeout} = 60 unless $ENV{JSCTEST_timeout}; # Set a 60 second timeout on all jsc tests (if environment variable not defined already).
+$ENV{JSCTEST_timeout} = 120 unless $ENV{JSCTEST_timeout}; # Set a 120 second timeout on all jsc tests (if environment variable not defined already).
 $ENV{TZ}="US/Pacific"; # Some tests fail if the time zone is not set to US/Pacific (<https://webkit.org/b/136363>)
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 
@@ -316,10 +309,6 @@ sub runJSCStressTests
 
     if (!$runJITStressTests) {
         push(@jscStressDriverCmd, "--no-jit");
-    } else {
-        if ($enableFTL) {
-            push(@jscStressDriverCmd, "--ftl-jit");
-        }
     }
     if ($createTarball) {
         push(@jscStressDriverCmd, "--tarball");

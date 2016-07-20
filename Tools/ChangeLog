@@ -1,3 +1,47 @@
+2016-07-19  Filip Pizlo  <fpizlo@apple.com>
+
+        The default testing mode should not involve disabling the FTL JIT
+        https://bugs.webkit.org/show_bug.cgi?id=159929
+
+        Rubber stamped by Mark Lam and Saam Barati.
+        
+        It used to be the case that most actively maintained ports did not have the FTL JIT enabled.
+        Heck, for most of the FTL's initial development, it wasn't enabled anywhere. So, testing the
+        FTL was not the default. You had to enable it with an option.
+        
+        For some reason we have kept this arrangement even though the FTL JIT is now the default on
+        all of the major ports. This has become a serious pain. For example, it's useful to be able
+        to say that a test should only run in the default config that is representative of what a
+        normal user would see if they ran JSC. Clearly, this would be a config that does not
+        explicitly disable the FTL JIT on the command line. However, if you try to specify this then
+        your test won't run at all if the --ftl-jit option is not passed. That's dangerous!
+        
+        So, this change gets rid of all of this logic. I think it's better to get rid of it then to
+        try to fix it, because:
+        
+        - I don't know what the fix would look like. Presumably it would ensure that ports that don't
+          have the FTL enabled never run any tests that explicitly disable the FTL, since that
+          doesn't do anything. The code is not really structured to allow this.
+        
+        - It benefits a minority of clients. Three build bots run tests in a config that has the FTL
+          disabled in testing. On the other hand there are already build bots that do FTL tests
+          despite having the FTL disabled by virtue of being a 32-bit platform. So, maybe rather than
+          preserving this broken feature, we should create something that (a) acknowledges the fact
+          that the FTL is the default on those platforms that support it and (b) avoids running
+          no-ftl tests on precisely those platforms that don't have FTL.
+        
+        - To the extent that some bots benefited from disabling FTL tests, they were doing it by
+          relying on a feature that was never meant to stick around. The FTL JIT is meant to be the
+          default configuration. Disabling the FTL JIT is the non-default. So, we shouldn't be
+          pretending that the FTL JIT is not the default just because some bots used that as an
+          optimization.
+        
+        This change allows me to speed up some debug tests and paint some bots green.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+
 2016-07-19  Alex Christensen  <achristensen@webkit.org>
 
         Fix API test after r203426.

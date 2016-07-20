@@ -97,7 +97,6 @@ end
 
 $jscPath = nil
 $doNotMessWithVMPath = false
-$enableFTL = false
 $jitTests = true
 $memoryLimited = false
 $outputDir = Pathname.new("results")
@@ -124,7 +123,6 @@ def usage
     puts "--jsc                (-j)   Path to JavaScriptCore build product. This option is required."
     puts "--no-copy                   Do not copy the JavaScriptCore build product before testing."
     puts "                            --jsc specifies an already present JavaScriptCore to test."
-    puts "--ftl-jit                   Indicate that we have the FTL JIT."
     puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
     puts "                            Skip tests tagged with //@large-heap"
     puts "--no-jit                    Do not run JIT specific tests."
@@ -158,7 +156,6 @@ ifJSCArgIsntProvidedAreWeReleaseBuild = true
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
                ['--no-copy', GetoptLong::NO_ARGUMENT],
-               ['--ftl-jit', GetoptLong::NO_ARGUMENT],
                ['--memory-limited', GetoptLong::NO_ARGUMENT],
                ['--no-jit', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
@@ -188,8 +185,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $doNotMessWithVMPath = true
     when '--output-dir'
         $outputDir = Pathname.new(arg)
-    when '--ftl-jit'
-        $enableFTL = true
     when '--memory-limited'
         $memoryLimited = true
     when '--no-jit'
@@ -274,11 +269,6 @@ unless jscArg
     end
 
     puts "Using the following jsc path: #{jscArg}"
-end
-
-if $enableFTL and !$jitTests
-    $stderr.puts "Error: can only specify one of --no-jit and --ftl-jit"
-    exit 1
 end
 
 if $doNotMessWithVMPath
@@ -813,27 +803,27 @@ def runNoCJITValidatePhases
 end
 
 def runDefaultFTL
-    run("default-ftl", *FTL_OPTIONS) if $enableFTL
+    run("default-ftl", *FTL_OPTIONS)
 end
 
 def runFTLNoCJIT
-    run("ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runFTLNoCJITValidate
-    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runFTLNoCJITNoPutStackValidate
-    run("ftl-no-cjit-no-put-stack-validate", "--validateGraph=true", "--usePutStackSinking=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit-no-put-stack-validate", "--validateGraph=true", "--usePutStackSinking=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runFTLNoCJITNoInlineValidate
-    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runFTLNoCJITOSRValidation
-    run("ftl-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runDFGEager
@@ -845,15 +835,15 @@ def runDFGEagerNoCJITValidate
 end
 
 def runFTLEager
-    run("ftl-eager", *(FTL_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    run("ftl-eager", *(FTL_OPTIONS + EAGER_OPTIONS))
 end
 
 def runFTLEagerNoCJITValidate
-    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
 def runFTLEagerNoCJITOSRValidation
-    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
 def runAlwaysTriggerCopyPhase
@@ -869,11 +859,11 @@ def runNoCJITNoAccessInlining
 end
 
 def runFTLNoCJITNoAccessInlining
-    run("ftl-no-cjit-no-access-inlining", "--useAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit-no-access-inlining", "--useAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runFTLNoCJITSmallPool
-    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runMiscNoCJITTest(*options)
@@ -938,7 +928,7 @@ def defaultNoNoLLIntRun
 end
 
 def defaultQuickRun
-    if $enableFTL and $jitTests
+    if $jitTests
         runDefaultFTL
         runFTLNoCJITValidate
     else
@@ -1024,13 +1014,8 @@ def runTypeProfiler
         return
     end
 
-    if $enableFTL
-        run("ftl-no-cjit-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
-        run("ftl-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS))
-    else
-        run("no-cjit-type-profiler", "--useTypeProfiler=true", *NO_CJIT_OPTIONS)
-        run("type-profiler", "--useTypeProfiler=true")
-    end
+    run("ftl-no-cjit-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("ftl-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS))
 end
 
 def runControlFlowProfiler
@@ -1038,11 +1023,7 @@ def runControlFlowProfiler
         return
     end
 
-    if $enableFTL
-        run("ftl-no-cjit-type-profiler", "--useControlFlowProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
-    else
-        run("no-cjit-type-profiler", "--useControlFlowProfiler=true", *NO_CJIT_OPTIONS)
-    end
+    run("ftl-no-cjit-type-profiler", "--useControlFlowProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runTest262(mode, exception, includeFiles, flags)
@@ -1128,14 +1109,12 @@ def runModules
     run("no-cjit-validate-phases-modules", "-m", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *NO_CJIT_OPTIONS)
     run("dfg-eager-modules", "-m", *EAGER_OPTIONS)
     run("dfg-eager-no-cjit-validate-modules", "-m", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
-    if $enableFTL
-        run("default-ftl-modules", "-m", *FTL_OPTIONS)
-        run("ftl-no-cjit-validate-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
-        run("ftl-no-cjit-no-inline-validate-modules", "-m", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
-        run("ftl-eager-modules", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
-        run("ftl-eager-no-cjit-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
-        run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
-    end
+    run("default-ftl-modules", "-m", *FTL_OPTIONS)
+    run("ftl-no-cjit-validate-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("ftl-no-cjit-no-inline-validate-modules", "-m", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("ftl-eager-modules", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
+    run("ftl-eager-no-cjit-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+    run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runLayoutTest(kind, *options)
@@ -1174,15 +1153,15 @@ def runLayoutTestDFGEagerNoCJIT
 end
 
 def runLayoutTestDefaultFTL
-    runLayoutTest("ftl", "--testTheFTL=true", *FTL_OPTIONS) if $enableFTL
+    runLayoutTest("ftl", "--testTheFTL=true", *FTL_OPTIONS)
 end
 
 def runLayoutTestFTLNoCJIT
-    runLayoutTest("ftl-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    runLayoutTest("ftl-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runLayoutTestFTLEagerNoCJIT
-    runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
 def noFTLRunLayoutTest
@@ -1293,7 +1272,7 @@ def runMozillaTestDefault(mode, *extraFiles)
 end
 
 def runMozillaTestDefaultFTL(mode, *extraFiles)
-    runMozillaTest("ftl", mode, extraFiles, *FTL_OPTIONS) if $enableFTL
+    runMozillaTest("ftl", mode, extraFiles, *FTL_OPTIONS)
 end
 
 def runMozillaTestLLInt(mode, *extraFiles)
@@ -1309,11 +1288,11 @@ def runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
 end
 
 def runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
-    runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
 def defaultQuickRunMozillaTest(mode, *extraFiles)
-    if $enableFTL and $jitTests
+    if $jitTests
         runMozillaTestDefaultFTL(mode, *extraFiles)
         runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
     else
@@ -1348,15 +1327,15 @@ def runNoisyTestDefault
 end
 
 def runNoisyTestDefaultFTL
-    runNoisyTest("ftl", *FTL_OPTIONS) if $enableFTL
+    runNoisyTest("ftl", *FTL_OPTIONS)
 end
 
 def runNoisyTestNoCJIT
-    runNoisyTest($enableFTL ? "ftl-no-cjit" : "no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(($enableFTL ? FTL_OPTIONS : []) + NO_CJIT_OPTIONS))
+    runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runNoisyTestEagerNoCJIT
-    runNoisyTest($enableFTL ? "ftl-eager-no-cjit" : "eager-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(($enableFTL ? FTL_OPTIONS : []) + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+    runNoisyTest("ftl-eager-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
 def defaultRunNoisyTest
@@ -2038,13 +2017,6 @@ if !$numChildProcesses
     else
         $numChildProcesses = numberOfProcessors
     end
-end
-
-if $enableFTL and ENV["JSCTEST_timeout"] or !ifJSCArgIsntProvidedAreWeReleaseBuild
-    # Currently, using the FTL is a performance regression particularly in real
-    # (i.e. non-loopy) benchmarks. Account for this in the timeout.
-    # Increase the timeout for debug builds too. (--debug command line option)
-    ENV["JSCTEST_timeout"] = (ENV["JSCTEST_timeout"].to_i * 2).to_s
 end
 
 if ENV["JSCTEST_timeout"]

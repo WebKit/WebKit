@@ -1,3 +1,15 @@
+2016-07-19  Filip Pizlo  <fpizlo@apple.com>
+
+        The default testing mode should not involve disabling the FTL JIT
+        https://bugs.webkit.org/show_bug.cgi?id=159929
+
+        Rubber stamped by Mark Lam and Saam Barati.
+        
+        Use the new powers to make some tests run only in the default configuration (i.e. FTL,
+        concurrent JIT).
+
+        * tests/mozilla/mozilla-tests.yaml:
+
 2016-07-19  Keith Miller  <keith_miller@apple.com>
 
         Test262 should have a file with the revision and url
