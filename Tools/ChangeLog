@@ -1,3 +1,13 @@
+2016-07-19  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API test after r203426.
+        https://bugs.webkit.org/show_bug.cgi?id=159949
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageClear.mm:
+        (TEST):
+        If there is website data already on disk, the initial count after putting the AppCache data in place will not be exactly 1.
+        This is no problem.  We want to verify that it is a nonzero number and that it decrements by one when we remove the 1 AppCache data.
+
 2016-07-19  Andy Estes  <aestes@apple.com>
 
         Move WebKitErrorFrameLoadBlockedByContentFilter from WebKitErrors.h to WebKitErrorsPrivate.h
