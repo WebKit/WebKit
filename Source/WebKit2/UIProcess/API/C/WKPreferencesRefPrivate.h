@@ -195,14 +195,6 @@ WK_EXPORT bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef prefer
 WK_EXPORT void WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute(WKPreferencesRef preferencesRef);
 
-// Defaults to true on iOS, false elsewhere.
-WK_EXPORT void WKPreferencesSetAllowsInlineMediaPlaybackWithPlaysInlineAttribute(WKPreferencesRef preferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetAllowsInlineMediaPlaybackWithPlaysInlineAttribute(WKPreferencesRef preferencesRef);
-
-// Defaults to true on iOS, false elsewhere.
-WK_EXPORT void WKPreferencesSetAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(WKPreferencesRef preferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(WKPreferencesRef preferencesRef);
-
 // Defaults to false on iOS, true elsewhere.
 WK_EXPORT void WKPreferencesSetMediaControlsScaleWithPageZoom(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetMediaControlsScaleWithPageZoom(WKPreferencesRef preferencesRef);

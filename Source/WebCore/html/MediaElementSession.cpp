@@ -455,16 +455,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElem
     if (!settings || !settings->allowsInlineMediaPlayback())
         return true;
 
-    bool requiresPlaysInline = settings->allowsInlineMediaPlaybackWithPlaysInlineAttribute();
-    bool requiresWebKitPlaysInline = settings->allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute();
-
-    if (!requiresPlaysInline && !requiresWebKitPlaysInline)
-        return false;
-
-    bool hasPlaysInline = element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
-    bool hasWebKitPlaysInline = element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr);
-
-    return !((requiresPlaysInline && hasPlaysInline) || (requiresWebKitPlaysInline && hasWebKitPlaysInline));
+    return settings->inlineMediaPlaybackRequiresPlaysInlineAttribute() && !(element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) || element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr));
 }
 
 bool MediaElementSession::allowsAutomaticMediaDataLoading(const HTMLMediaElement& element) const
