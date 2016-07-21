@@ -45,12 +45,12 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.target]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBaseElement.target]
 
 
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBodyElement.aLink]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.aLink]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBodyElement.background]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBodyElement.bgColor]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBodyElement.link]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBodyElement.text]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBodyElement.vLink]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.bgColor]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.link]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.text]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.vLink]
 
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBRElement.clear]
 

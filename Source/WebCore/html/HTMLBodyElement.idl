@@ -19,12 +19,12 @@
  */
 
 interface HTMLBodyElement : HTMLElement {
-    [Reflect] attribute DOMString aLink;
+    [Reflect, TreatNullAs=EmptyString] attribute DOMString aLink;
     [Reflect] attribute DOMString background;
-    [Reflect] attribute DOMString bgColor;
-    [Reflect] attribute DOMString link;
-    [Reflect] attribute DOMString text;
-    [Reflect] attribute DOMString vLink;
+    [Reflect, TreatNullAs=EmptyString] attribute DOMString bgColor;
+    [Reflect, TreatNullAs=EmptyString] attribute DOMString link;
+    [Reflect, TreatNullAs=EmptyString] attribute DOMString text;
+    [Reflect, TreatNullAs=EmptyString] attribute DOMString vLink;
 
     [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;
