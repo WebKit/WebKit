@@ -39,8 +39,7 @@ interface SVGLength {
 
     [StrictTypeChecking] attribute unrestricted float valueInSpecifiedUnits;
 
-    // FIXME: This should not use [TreatNullAs=EmptyString].
-    [TreatNullAs=EmptyString, StrictTypeChecking, SetterRaisesException] attribute DOMString valueAsString;
+    [StrictTypeChecking, SetterRaisesException] attribute DOMString valueAsString;
 
     [StrictTypeChecking, RaisesException] void newValueSpecifiedUnits(unsigned short unitType, 
                                                      unrestricted float valueInSpecifiedUnits);

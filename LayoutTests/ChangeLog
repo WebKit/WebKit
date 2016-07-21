@@ -1,5 +1,21 @@
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
+        Fix null handling of SVGAngle/SVGLength.valueAsString attribute
+        https://bugs.webkit.org/show_bug.cgi?id=160025
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test coverage.
+
+        * svg/dom/svg-element-attribute-js-null-expected.txt:
+        * svg/dom/svg-element-attribute-js-null.xhtml:
+        * svg/dom/valueAsString-null-expected.txt: Added.
+        * svg/dom/valueAsString-null.html: Added.
+        There are a couple of failures in this test because WebKit ignores
+        assignments to "" instead of throwing. Firefox passes all the checks.
+
+2016-07-21  Chris Dumez  <cdumez@apple.com>
+
         Fix null handling of HTMLFontElement.color
         https://bugs.webkit.org/show_bug.cgi?id=160036
 
