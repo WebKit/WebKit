@@ -6460,8 +6460,8 @@ PASS font.color: IDL set to "\0" should not throw
 PASS font.color: IDL set to "\0" followed by getAttribute() 
 PASS font.color: IDL set to "\0" followed by IDL get 
 PASS font.color: IDL set to null should not throw 
-FAIL font.color: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL font.color: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS font.color: IDL set to null followed by getAttribute() 
+PASS font.color: IDL set to null followed by IDL get 
 PASS font.color: IDL set to object "test-toString" should not throw 
 PASS font.color: IDL set to object "test-toString" followed by getAttribute() 
 PASS font.color: IDL set to object "test-toString" followed by IDL get 

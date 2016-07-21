@@ -64,7 +64,7 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLEmbedElement.align]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLEmbedElement.name]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLEmbedElement.type]
 
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFontElement.color]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLFontElement.color]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFontElement.face]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFontElement.size]
 
