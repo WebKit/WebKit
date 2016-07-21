@@ -1993,6 +1993,9 @@ static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& gen
         case OpModEq:
             opcodeID = op_mod;
             break;
+        case OpPowEq:
+            opcodeID = op_pow;
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return dst;

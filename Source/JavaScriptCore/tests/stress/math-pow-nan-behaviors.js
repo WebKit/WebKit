@@ -1,4 +1,4 @@
-// If y is NaN, the result is NaN.
+// If an argument is NaN, the result of Math.pow(x, y) is NaN.
 function testIntegerBaseWithNaNExponentStatic() {
     for (var i = 0; i < 10000; ++i) {
         var result = Math.pow(5, NaN);
@@ -72,7 +72,7 @@ noInline(testFloatingPointBaseWithNaNExponentDynamic);
 testFloatingPointBaseWithNaNExponentDynamic();
 
 // If y is +0, the result is 1, even if x is NaN.
-// If y is −0, the result is 1, even if x is NaN.
+// If y is -0, the result is 1, even if x is NaN.
 // If x is NaN and y is nonzero, the result is NaN.
 function testNaNBaseStatic() {
     for (var i = 0; i < 10000; ++i) {
@@ -140,8 +140,8 @@ function testNaNBaseDynamic() {
 noInline(testNaNBaseDynamic);
 testNaNBaseDynamic();
 
-// If abs(x) is 1 and y is +∞, the result is NaN.
-// If abs(x) is 1 and y is −∞, the result is NaN.
+// If abs(x) is 1 and y is +Inf the result is NaN.
+// If abs(x) is 1 and y is −Inf the result is NaN.
 function infiniteExponentsStatic() {
     for (var i = 0; i < 10000; ++i) {
         var result = Math.pow(1, Number.POSITIVE_INFINITY);

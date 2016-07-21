@@ -1032,7 +1032,13 @@ void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>
     }
 }
 
-/* ------------------------------ END: OP_ADD, OP_SUB, OP_MUL ------------------------------ */
+void JIT::emit_op_pow(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_pow);
+    slowPathCall.call();
+}
+
+/* ------------------------------ END: OP_ADD, OP_SUB, OP_MUL, OP_POW ------------------------------ */
 
 } // namespace JSC
 

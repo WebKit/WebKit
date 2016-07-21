@@ -123,6 +123,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_negate:
     case op_mul:
     case op_mod:
+    case op_pow:
     case op_div:
     case op_debug:
     case op_profile_type:

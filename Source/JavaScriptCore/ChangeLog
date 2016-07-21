@@ -1,3 +1,228 @@
+2016-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES7] Introduce exponentiation expression
+        https://bugs.webkit.org/show_bug.cgi?id=159969
+
+        Reviewed by Saam Barati.
+
+        This patch implements the exponentiation expression, e.g. `x ** y`.
+        The exponentiation expression is introduced in ECMA262 2016 and ECMA262 2016
+        is already released. So this is not the draft spec.
+
+        The exponentiation expression has 2 interesting points.
+
+        1. Right associative
+
+            To follow the Math expression, ** operator is right associative.
+            When we execute `x ** y ** z`, this is handled as `x ** (y ** z)`, not `(x ** y) ** z`.
+            This patch introduces the right associativity to the binary operator and handles it
+            in the operator precedence parser in Parser.cpp.
+
+        2. LHS of the exponentiation expression is UpdateExpression
+
+            ExponentiationExpression[Yield]:
+                UnaryExpression[?Yield]
+                UpdateExpression[?Yield] ** ExponentiationExpression[?Yield]
+
+            As we can see, the left hand side of the ExponentiationExpression is UpdateExpression, not UnaryExpression.
+            It means that `+x ** y` becomes a syntax error. This is intentional. Without superscript in JS,
+            `-x**y` is confusing between `-(x ** y)` and `(-x) ** y`. So ECMA262 intentionally avoids UnaryExpression here.
+            If we need to use a negated value, we need to write parentheses explicitly e.g. `(-x) ** y`.
+            In this patch, we ensure that the left hand side is not an unary expression by checking an operator in
+            parseBinaryExpression. This works since `**` has the highest operator precedence in the binary operators.
+
+        We introduce a new bytecode, op_pow. That simply works as similar as the other binary operators.
+        And it is converted to ArithPow in DFG and handled in DFG and FTL.
+        In this patch, we take the approach just introducing a new bytecode instead of calling Math.pow.
+        This is because we would like to execute ToNumber in the caller side, not in the callee (Math.pow) side.
+        And we don't want to compile ** into the following.
+
+            lhsNumber = to_number (lhs)
+            rhsNumber = to_number (rhs)
+            call Math.pow(lhsNumber, rhsNumber)
+
+        We ensure that this patch passes all the test262 tests related to the exponentiation expression.
+
+        The only sensitive part to the performance is the parser changes.
+        So we measured the code-load performance and it is neutral in my x64 Linux box (hanayamata).
+
+            Collected 30 samples per benchmark/VM, with 30 VM invocations per benchmark. Emitted a call to
+            gc() between sample measurements. Used 1 benchmark iteration per VM invocation for warm-up. Used
+            the jsc-specific preciseTime() function to get microsecond-level timing. Reporting benchmark
+            execution times with 95% confidence intervals in milliseconds.
+
+                                     baseline                  patched
+
+            closure              0.60499+-0.00250          0.60180+-0.00244
+            jquery               7.89175+-0.02433    ?     7.91287+-0.04759       ?
+
+            <geometric>          2.18499+-0.00523          2.18207+-0.00689         might be 1.0013x faster
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitReadModifyAssignment):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_pow):
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::operatorStackShouldReduce):
+        (JSC::ASTBuilder::makePowNode):
+        (JSC::ASTBuilder::makeMultNode):
+        (JSC::ASTBuilder::makeDivNode):
+        (JSC::ASTBuilder::makeModNode):
+        (JSC::ASTBuilder::makeSubNode):
+        (JSC::ASTBuilder::makeBinaryNode):
+        (JSC::ASTBuilder::operatorStackHasHigherPrecedence): Deleted.
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lex):
+        * parser/NodeConstructors.h:
+        (JSC::PowNode::PowNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::isUnaryOpExcludingUpdateOp):
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        (JSC::isUnaryOp): Deleted.
+        * parser/ParserTokens.h:
+        (JSC::isUpdateOp):
+        (JSC::isUnaryOp):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * tests/stress/pow-basics.js: Added.
+        (valuesAreClose):
+        (mathPowDoubleDouble1):
+        (mathPowDoubleInt1):
+        (test1):
+        (mathPowDoubleDouble2):
+        (mathPowDoubleInt2):
+        (test2):
+        (mathPowDoubleDouble3):
+        (mathPowDoubleInt3):
+        (test3):
+        (mathPowDoubleDouble4):
+        (mathPowDoubleInt4):
+        (test4):
+        (mathPowDoubleDouble5):
+        (mathPowDoubleInt5):
+        (test5):
+        (mathPowDoubleDouble6):
+        (mathPowDoubleInt6):
+        (test6):
+        (mathPowDoubleDouble7):
+        (mathPowDoubleInt7):
+        (test7):
+        (mathPowDoubleDouble8):
+        (mathPowDoubleInt8):
+        (test8):
+        (mathPowDoubleDouble9):
+        (mathPowDoubleInt9):
+        (test9):
+        (mathPowDoubleDouble10):
+        (mathPowDoubleInt10):
+        (test10):
+        (mathPowDoubleDouble11):
+        (mathPowDoubleInt11):
+        (test11):
+        * tests/stress/pow-coherency.js: Added.
+        (pow42):
+        (build42AsDouble.opaqueAdd):
+        (build42AsDouble):
+        (powDouble42):
+        (clobber):
+        (pow42NoConstantFolding):
+        (powDouble42NoConstantFolding):
+        * tests/stress/pow-evaluation-order.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * tests/stress/pow-expects-update-expression-on-lhs.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (throw.new.Error):
+        (let.token.of.tokens.testSyntax.pow):
+        (testSyntax.pow):
+        * tests/stress/pow-integer-exponent-fastpath.js: Added.
+        (valuesAreClose):
+        (mathPowDoubleDoubleTestExponentFifty):
+        (mathPowDoubleIntTestExponentFifty):
+        (testExponentFifty):
+        (mathPowDoubleDoubleTestExponentTenThousands):
+        (mathPowDoubleIntTestExponentTenThousands):
+        (testExponentTenThousands):
+        * tests/stress/pow-nan-behaviors.js: Added.
+        (testIntegerBaseWithNaNExponentStatic):
+        (mathPowIntegerBaseWithNaNExponentDynamic):
+        (testIntegerBaseWithNaNExponentDynamic):
+        (testFloatingPointBaseWithNaNExponentStatic):
+        (mathPowFloatingPointBaseWithNaNExponentDynamic):
+        (testFloatingPointBaseWithNaNExponentDynamic):
+        (testNaNBaseStatic):
+        (mathPowNaNBaseDynamic1):
+        (mathPowNaNBaseDynamic2):
+        (mathPowNaNBaseDynamic3):
+        (mathPowNaNBaseDynamic4):
+        (testNaNBaseDynamic):
+        (infiniteExponentsStatic):
+        (mathPowInfiniteExponentsDynamic1):
+        (mathPowInfiniteExponentsDynamic2):
+        (mathPowInfiniteExponentsDynamic3):
+        (mathPowInfiniteExponentsDynamic4):
+        (infiniteExponentsDynamic):
+        * tests/stress/pow-simple.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * tests/stress/pow-stable-results.js: Added.
+        (opaquePow):
+        (isIdentical):
+        * tests/stress/pow-to-number-should-be-executed-in-code-side.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * tests/stress/pow-with-constants.js: Added.
+        (exponentIsZero):
+        (testExponentIsZero):
+        (exponentIsOne):
+        (testExponentIsOne):
+        (powUsedAsSqrt):
+        (testPowUsedAsSqrt):
+        (powUsedAsOneOverSqrt):
+        (testPowUsedAsOneOverSqrt):
+        (powUsedAsSquare):
+        (testPowUsedAsSquare):
+        (intIntConstantsSmallNumbers):
+        (intIntConstantsLargeNumbers):
+        (intIntSmallConstants):
+        (intDoubleConstants):
+        (doubleDoubleConstants):
+        (doubleIntConstants):
+        (testBaseAndExponentConstantLiterals):
+        (exponentIsIntegerConstant):
+        (testExponentIsIntegerConstant):
+        (exponentIsDoubleConstant):
+        (testExponentIsDoubleConstant):
+        (exponentIsInfinityConstant):
+        (testExponentIsInfinityConstant):
+        (exponentIsNegativeInfinityConstant):
+        (testExponentIsNegativeInfinityConstant):
+        * tests/stress/pow-with-never-NaN-exponent.js: Added.
+        (exponentIsNonNanDouble1):
+        (exponentIsNonNanDouble2):
+        (testExponentIsDoubleConstant):
+        * tests/test262.yaml:
+
 2016-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         Switching on symbols should be fast

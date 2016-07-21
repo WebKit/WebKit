@@ -208,6 +208,7 @@ void computeUsesForBytecodeOffset(
     case op_div:
     case op_mod:
     case op_sub:
+    case op_pow:
     case op_lshift:
     case op_rshift:
     case op_urshift:
@@ -431,6 +432,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_div:
     case op_mod:
     case op_sub:
+    case op_pow:
     case op_lshift:
     case op_rshift:
     case op_urshift:

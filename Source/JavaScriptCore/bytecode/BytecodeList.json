@@ -39,6 +39,7 @@
             { "name" : "op_div", "length" : 5 },
             { "name" : "op_mod", "length" : 4 },
             { "name" : "op_sub", "length" : 5 },
+            { "name" : "op_pow", "length" : 4 },
             { "name" : "op_lshift", "length" : 4 },
             { "name" : "op_rshift", "length" : 4 },
             { "name" : "op_urshift", "length" : 4 },

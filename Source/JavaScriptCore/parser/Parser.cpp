@@ -3126,6 +3126,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         case XOREQUAL: op = OpXOrEq; break;
         case OREQUAL: op = OpOrEq; break;
         case MODEQUAL: op = OpModEq; break;
+        case POWEQUAL: op = OpPowEq; break;
         default:
             goto end;
         }
@@ -3218,9 +3219,11 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseConditionalE
     return context.createConditionalExpr(location, cond, lhs, rhs);
 }
 
-ALWAYS_INLINE static bool isUnaryOp(JSTokenType token)
+ALWAYS_INLINE static bool isUnaryOpExcludingUpdateOp(JSTokenType token)
 {
-    return token & UnaryOpTokenFlag;
+    if (isUpdateOp(token))
+        return false;
+    return isUnaryOp(token);
 }
 
 template <typename LexerType>
@@ -3241,10 +3244,35 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
     while (true) {
         JSTextPosition exprStart = tokenStartPosition();
         int initialAssignments = m_parserState.assignmentCount;
+        JSTokenType leadingTokenTypeForUnaryExpression = m_token.m_type;
         TreeExpression current = parseUnaryExpression(context);
         failIfFalse(current, "Cannot parse expression");
         
         context.appendBinaryExpressionInfo(operandStackDepth, current, exprStart, lastTokenEndPosition(), lastTokenEndPosition(), initialAssignments != m_parserState.assignmentCount);
+
+        // 12.6 https://tc39.github.io/ecma262/#sec-exp-operator
+        // ExponentiationExpresion is described as follows.
+        //
+        //     ExponentiationExpression[Yield]:
+        //         UnaryExpression[?Yield]
+        //         UpdateExpression[?Yield] ** ExponentiationExpression[?Yield]
+        //
+        // As we can see, the left hand side of the ExponentiationExpression is UpdateExpression, not UnaryExpression.
+        // So placing UnaryExpression not included in UpdateExpression here is a syntax error.
+        // This is intentional. For example, if UnaryExpression is allowed, we can have the code like `-x**y`.
+        // But this is confusing: `-(x**y)` OR `(-x)**y`, which interpretation is correct?
+        // To avoid this problem, ECMA262 makes unparenthesized exponentiation expression as operand of unary operators an early error.
+        // More rationale: https://mail.mozilla.org/pipermail/es-discuss/2015-September/044232.html
+        //
+        // Here, we guarantee that the left hand side of this expression is not unary expression by checking the leading operator of the parseUnaryExpression.
+        // This check just works. Let's consider the example,
+        //     y <> -x ** z
+        //          ^
+        //          Check this.
+        // If the binary operator <> has higher precedence than one of "**", this check does not work.
+        // But it's OK for ** because the operator "**" has the highest operator precedence in the binary operators.
+        failIfTrue(match(POW) && isUnaryOpExcludingUpdateOp(leadingTokenTypeForUnaryExpression), "Unparenthesized unary expression found on the left hand side of an exponentiation expression");
+
         int precedence = isBinaryOperator(m_token.m_type);
         if (!precedence)
             break;
@@ -3253,7 +3281,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
         int operatorToken = m_token.m_type;
         next(TreeBuilder::DontBuildStrings);
         
-        while (operatorStackDepth &&  context.operatorStackHasHigherPrecedence(operatorStackDepth, precedence)) {
+        while (operatorStackDepth && context.operatorStackShouldReduce(precedence)) {
             ASSERT(operandStackDepth > 1);
             
             typename TreeBuilder::BinaryOperand rhs = context.getFromOperandStack(-1);

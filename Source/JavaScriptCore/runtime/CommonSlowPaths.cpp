@@ -470,6 +470,14 @@ SLOW_PATH_DECL(slow_path_mod)
     RETURN(jsNumber(jsMod(a, b)));
 }
 
+SLOW_PATH_DECL(slow_path_pow)
+{
+    BEGIN();
+    double a = OP_C(2).jsValue().toNumber(exec);
+    double b = OP_C(3).jsValue().toNumber(exec);
+    RETURN(jsNumber(operationMathPow(a, b)));
+}
+
 SLOW_PATH_DECL(slow_path_lshift)
 {
     BEGIN();

@@ -1024,6 +1024,10 @@ void CodeBlock::dumpBytecode(
             printBinaryOp(out, exec, location, it, "mod");
             break;
         }
+        case op_pow: {
+            printBinaryOp(out, exec, location, it, "pow");
+            break;
+        }
         case op_sub: {
             printBinaryOp(out, exec, location, it, "sub");
             ++it;

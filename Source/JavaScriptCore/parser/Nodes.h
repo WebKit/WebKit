@@ -67,6 +67,7 @@ namespace JSC {
         OpXOrEq,
         OpOrEq,
         OpModEq,
+        OpPowEq,
         OpLShift,
         OpRShift,
         OpURShift
@@ -1037,6 +1038,11 @@ namespace JSC {
         OpcodeID m_opcodeID;
     protected:
         bool m_rightHasAssignments;
+    };
+
+    class PowNode : public BinaryOpNode {
+    public:
+        PowNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class MultNode : public BinaryOpNode {

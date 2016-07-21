@@ -1320,6 +1320,12 @@ _llint_op_mod:
     dispatch(4)
 
 
+_llint_op_pow:
+    traceExecution()
+    callOpcodeSlowPath(_slow_path_pow)
+    dispatch(4)
+
+
 _llint_op_typeof:
     traceExecution()
     callOpcodeSlowPath(_slow_path_typeof)

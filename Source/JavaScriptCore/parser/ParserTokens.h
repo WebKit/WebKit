@@ -41,7 +41,8 @@ enum {
     BinaryOpTokenAllowsInPrecedenceAdditionalShift = 4,
     BinaryOpTokenPrecedenceMask = 15 << BinaryOpTokenPrecedenceShift,
     ErrorTokenFlag = 1 << (BinaryOpTokenAllowsInPrecedenceAdditionalShift + BinaryOpTokenPrecedenceShift + 7),
-    UnterminatedErrorTokenFlag = ErrorTokenFlag << 1
+    UnterminatedErrorTokenFlag = ErrorTokenFlag << 1,
+    RightAssociativeBinaryOpTokenFlag = UnterminatedErrorTokenFlag << 1
 };
 
 #define BINARY_OP_PRECEDENCE(prec) (((prec) << BinaryOpTokenPrecedenceShift) | ((prec) << (BinaryOpTokenPrecedenceShift + BinaryOpTokenAllowsInPrecedenceAdditionalShift)))
@@ -109,6 +110,7 @@ enum JSTokenType {
     URSHIFTEQUAL,
     ANDEQUAL,
     MODEQUAL,
+    POWEQUAL,
     XOREQUAL,
     OREQUAL,
     DOTDOTDOT,
@@ -118,10 +120,10 @@ enum JSTokenType {
     // Begin tagged tokens
     PLUSPLUS = 0 | UnaryOpTokenFlag,
     MINUSMINUS = 1 | UnaryOpTokenFlag,
-    EXCLAMATION = 2 | UnaryOpTokenFlag,
-    TILDE = 3 | UnaryOpTokenFlag,
-    AUTOPLUSPLUS = 4 | UnaryOpTokenFlag,
-    AUTOMINUSMINUS = 5 | UnaryOpTokenFlag,
+    AUTOPLUSPLUS = 2 | UnaryOpTokenFlag,
+    AUTOMINUSMINUS = 3 | UnaryOpTokenFlag,
+    EXCLAMATION = 4 | UnaryOpTokenFlag,
+    TILDE = 5 | UnaryOpTokenFlag,
     TYPEOF = 6 | UnaryOpTokenFlag | KeywordTokenFlag,
     VOIDTOKEN = 7 | UnaryOpTokenFlag | KeywordTokenFlag,
     DELETETOKEN = 8 | UnaryOpTokenFlag | KeywordTokenFlag,
@@ -148,6 +150,7 @@ enum JSTokenType {
     TIMES = 20 | BINARY_OP_PRECEDENCE(10),
     DIVIDE = 21 | BINARY_OP_PRECEDENCE(10),
     MOD = 22 | BINARY_OP_PRECEDENCE(10),
+    POW = 23 | BINARY_OP_PRECEDENCE(11) | RightAssociativeBinaryOpTokenFlag, // Make sure that POW has the highest operator precedence.
     ERRORTOK = 0 | ErrorTokenFlag,
     UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK = 0 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
     INVALID_IDENTIFIER_ESCAPE_ERRORTOK = 1 | ErrorTokenFlag,
@@ -221,6 +224,16 @@ struct JSToken {
     JSTextPosition m_startPosition;
     JSTextPosition m_endPosition;
 };
+
+ALWAYS_INLINE bool isUpdateOp(JSTokenType token)
+{
+    return token >= PLUSPLUS && token <= AUTOMINUSMINUS;
+}
+
+ALWAYS_INLINE bool isUnaryOp(JSTokenType token)
+{
+    return token & UnaryOpTokenFlag;
+}
 
 } // namespace JSC
 

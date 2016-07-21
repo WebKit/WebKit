@@ -219,6 +219,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_mul);
 SLOW_PATH_HIDDEN_DECL(slow_path_sub);
 SLOW_PATH_HIDDEN_DECL(slow_path_div);
 SLOW_PATH_HIDDEN_DECL(slow_path_mod);
+SLOW_PATH_HIDDEN_DECL(slow_path_pow);
 SLOW_PATH_HIDDEN_DECL(slow_path_lshift);
 SLOW_PATH_HIDDEN_DECL(slow_path_rshift);
 SLOW_PATH_HIDDEN_DECL(slow_path_urshift);

@@ -181,7 +181,7 @@ function test7(x, y, expected1, expected2) {
     }
 }
 noInline(test7);
-test6(-37.676522764377296, -1.0, -0.026541727490454296, -0.026541727490454296);
+test7(-37.676522764377296, -1.0, -0.026541727490454296, -0.026541727490454296);
 
 // Let's square things.
 function mathPowDoubleDouble8(x, y) {
@@ -207,7 +207,7 @@ function test8(x, y, expected1, expected2) {
     }
 }
 noInline(test8);
-test7(-37.676522764377296, 2.0, 1419.5203676146407, 1419.5203676146407);
+test8(-37.676522764377296, 2.0, 1419.5203676146407, 1419.5203676146407);
 
 function mathPowDoubleDouble9(x, y) {
     return Math.pow(x, y)
@@ -232,7 +232,7 @@ function test9(x, y, expected1, expected2) {
     }
 }
 noInline(test9);
-test8(37.676522764377296, 2.0, 1419.5203676146407, 1419.5203676146407);
+test9(37.676522764377296, 2.0, 1419.5203676146407, 1419.5203676146407);
 
 // Let's cube things.
 function mathPowDoubleDouble10(x, y) {
@@ -257,8 +257,8 @@ function test10(x, y, expected1, expected2) {
             throw "Error: bad result, mathPowDoubleInt(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
     }
 }
-noInline(test9);
-test9(-37.676522764377296, 3.0, -53482.591444930236, -53482.591444930236);
+noInline(test10);
+test10(-37.676522764377296, 3.0, -53482.591444930236, -53482.591444930236);
 
 function mathPowDoubleDouble11(x, y) {
     return Math.pow(x, y)
@@ -282,5 +282,5 @@ function test11(x, y, expected1, expected2) {
             throw "Error: bad result, mathPowDoubleInt(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
     }
 }
-noInline(test10);
-test10(37.676522764377296, 3.0, 53482.591444930236, 53482.591444930236);
+noInline(test11);
+test11(37.676522764377296, 3.0, 53482.591444930236, 53482.591444930236);

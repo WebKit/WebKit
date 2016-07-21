@@ -28,6 +28,7 @@
 
 #include "BuiltinNames.h"
 #include "BytecodeIntrinsicRegistry.h"
+#include "MathCommon.h"
 #include "NodeConstructors.h"
 #include "SyntaxChecker.h"
 #include "VariableEnvironment.h"
@@ -143,6 +144,7 @@ public:
     ExpressionNode* makeDeleteNode(const JSTokenLocation&, ExpressionNode*, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end);
     ExpressionNode* makeNegateNode(const JSTokenLocation&, ExpressionNode*);
     ExpressionNode* makeBitwiseNotNode(const JSTokenLocation&, ExpressionNode*);
+    ExpressionNode* makePowNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeMultNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeDivNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeModNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
@@ -784,9 +786,14 @@ public:
         operatorStackDepth--;
         m_binaryOperatorStack.removeLast();
     }
-    bool operatorStackHasHigherPrecedence(int&, int precedence)
+    bool operatorStackShouldReduce(int precedence)
     {
-        return precedence <= m_binaryOperatorStack.last().second;
+        // If the current precedence of the operator stack is the same to the one of the given operator,
+        // it depends on the associative whether we reduce the stack.
+        // If the operator is right associative, we should not reduce the stack right now.
+        if (precedence == m_binaryOperatorStack.last().second)
+            return !(m_binaryOperatorStack.last().first & RightAssociativeBinaryOpTokenFlag);
+        return precedence < m_binaryOperatorStack.last().second;
     }
     const BinaryOperand& getFromOperandStack(int i) { return m_binaryOperandStack[m_binaryOperandStack.size() + i]; }
     void shrinkOperandStackBy(int& operandStackDepth, int amount)
@@ -1044,8 +1051,29 @@ ExpressionNode* ASTBuilder::makeBitwiseNotNode(const JSTokenLocation& location, 
     return new (m_parserArena) BitwiseNotNode(location, expr);
 }
 
+ExpressionNode* ASTBuilder::makePowNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    auto* strippedExpr1 = expr1->stripUnaryPlus();
+    auto* strippedExpr2 = expr2->stripUnaryPlus();
+
+    if (strippedExpr1->isNumber() && strippedExpr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*strippedExpr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*strippedExpr2);
+        return createNumberFromBinaryOperation(location, operationMathPow(numberExpr1.value(), numberExpr2.value()), numberExpr1, numberExpr2);
+    }
+
+    if (strippedExpr1->isNumber())
+        expr1 = strippedExpr1;
+    if (strippedExpr2->isNumber())
+        expr2 = strippedExpr2;
+
+    return new (m_parserArena) PowNode(location, expr1, expr2, rightHasAssignments);
+}
+
 ExpressionNode* ASTBuilder::makeMultNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
+    // FIXME: Unary + change the evaluation order.
+    // https://bugs.webkit.org/show_bug.cgi?id=159968
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
@@ -1066,6 +1094,8 @@ ExpressionNode* ASTBuilder::makeMultNode(const JSTokenLocation& location, Expres
 
 ExpressionNode* ASTBuilder::makeDivNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
+    // FIXME: Unary + change the evaluation order.
+    // https://bugs.webkit.org/show_bug.cgi?id=159968
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
@@ -1082,6 +1112,8 @@ ExpressionNode* ASTBuilder::makeDivNode(const JSTokenLocation& location, Express
 
 ExpressionNode* ASTBuilder::makeModNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
+    // FIXME: Unary + change the evaluation order.
+    // https://bugs.webkit.org/show_bug.cgi?id=159968
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
@@ -1106,6 +1138,8 @@ ExpressionNode* ASTBuilder::makeAddNode(const JSTokenLocation& location, Express
 
 ExpressionNode* ASTBuilder::makeSubNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
+    // FIXME: Unary + change the evaluation order.
+    // https://bugs.webkit.org/show_bug.cgi?id=159968
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
@@ -1295,6 +1329,9 @@ ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int 
 
     case MOD:
         return makeModNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+
+    case POW:
+        return makePowNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
     }
     CRASH();
     return 0;

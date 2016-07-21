@@ -301,7 +301,7 @@ public:
     
     // Logic to handle datastructures used during parsing of binary expressions
     void operatorStackPop(int& operatorStackDepth) { operatorStackDepth--; }
-    bool operatorStackHasHigherPrecedence(int&, int) { return true; }
+    bool operatorStackShouldReduce(int) { return true; }
     BinaryOperand getFromOperandStack(int) { return m_topBinaryExpr; }
     void shrinkOperandStackBy(int& operandStackDepth, int amount) { operandStackDepth -= amount; }
     void appendBinaryOperation(const JSTokenLocation&, int& operandStackDepth, int&, BinaryOperand, BinaryOperand) { operandStackDepth++; }

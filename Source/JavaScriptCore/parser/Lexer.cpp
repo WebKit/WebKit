@@ -1956,6 +1956,16 @@ start:
             token = MULTEQUAL;
             break;
         }
+        if (m_current == '*') {
+            shift();
+            if (m_current == '=') {
+                shift();
+                token = POWEQUAL;
+                break;
+            }
+            token = POW;
+            break;
+        }
         token = TIMES;
         break;
     case CharacterSlash:
