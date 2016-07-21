@@ -659,6 +659,8 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
     }
 
 #if USE(GSTREAMER_GL)
+    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+
     GstVideoInfo videoInfo;
     if (!getSampleVideoInfo(m_sample.get(), videoInfo))
         return;
