@@ -864,7 +864,7 @@ void DeleteSelectionCommand::doApply()
         Node* node = m_endingPosition.deprecatedNode();
         if (is<Text>(node)) {
             Text& textNode = downcast<Text>(*node);
-            if (textNode.length())
+            if (textNode.length() && textNode.renderer())
                 shouldRebalaceWhiteSpace = textNode.renderer()->style().textSecurity() == TSNONE;
         }        
     }
