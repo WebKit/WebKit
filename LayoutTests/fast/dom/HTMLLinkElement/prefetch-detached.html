@@ -11,7 +11,7 @@ if (window.testRunner)
 document.getElementById('frag').innerHTML = '<link href="prefetch.link" rel="prefetch">';
 
 // Fun with detached documents.
-var doc = document.implementation.createDocument('application/html+xml');
+var doc = document.implementation.createDocument('application/html+xml', 'test');
 var lnk = doc.createElement('link');
 lnk.setAttribute('rel', 'prefetch');
 lnk.setAttribute('href', 'prefetch.link');

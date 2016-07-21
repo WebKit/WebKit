@@ -137,8 +137,7 @@ function runNSTests(tests, doc, createFunctionName)
     }
 }
 
-// Moz throws a "Not enough arguments" exception in these, we don't:
-shouldBeEqualToString("document.implementation.createDocument().toString()", "[object XMLDocument]");
-shouldBeEqualToString("document.implementation.createDocument(\"http://www.example.com\").toString()", "[object XMLDocument]");
+shouldThrow("document.implementation.createDocument()");
+shouldThrow("document.implementation.createDocument(\"http://www.example.com\")");
 
 runNSTests(allNSTests, document.implementation, "createDocument");

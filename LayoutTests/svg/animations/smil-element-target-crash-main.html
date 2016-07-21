@@ -8,7 +8,7 @@ if (window.testRunner) {
 
 function crash()
 {
-    var doc = document.implementation.createDocument();
+    var doc = document.implementation.createDocument(null, "test");
     doc.adoptNode(object1.contentDocument.getElementsByTagName("svg")[0]);
     delete doc;
 

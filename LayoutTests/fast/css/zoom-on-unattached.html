@@ -3,7 +3,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 root = document.createElement("body");
-d = document.implementation.createDocument();
+d = document.implementation.createDocument(null, "test");
 d.adoptNode(root);
 node = document.createElement("title");
 root.appendChild(node);

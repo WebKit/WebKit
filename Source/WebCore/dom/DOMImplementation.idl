@@ -39,8 +39,7 @@
 #else
         XMLDocument
 #endif
-        // FIXME: Using "undefined" as default parameter value is wrong.
-        createDocument(optional DOMString? namespaceURI = null, [TreatNullAs=EmptyString] optional DOMString qualifiedName = "undefined", optional DocumentType? doctype = null);
+    createDocument(DOMString? namespaceURI, [TreatNullAs=EmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
 
     // DOMImplementationCSS interface from DOM Level 2 CSS
 

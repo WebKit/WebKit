@@ -606,7 +606,7 @@ PASS DOMImplementation interface object name
 PASS DOMImplementation interface: existence and properties of interface prototype object 
 PASS DOMImplementation interface: existence and properties of interface prototype object's "constructor" property 
 FAIL DOMImplementation interface: operation createDocumentType(DOMString,DOMString,DOMString) assert_equals: property has wrong .length expected 3 but got 0
-FAIL DOMImplementation interface: operation createDocument(DOMString,DOMString,DocumentType) assert_equals: property has wrong .length expected 2 but got 0
+PASS DOMImplementation interface: operation createDocument(DOMString,DOMString,DocumentType) 
 PASS DOMImplementation interface: operation createHTMLDocument(DOMString) 
 PASS DOMImplementation interface: operation hasFeature() 
 PASS DOMImplementation must be primary interface of document.implementation 
@@ -616,9 +616,7 @@ FAIL DOMImplementation interface: calling createDocumentType(DOMString,DOMString
             fn.apply(obj, args);
         }" threw object "InvalidCharacterError (DOM Exception 5): The string conta..." ("InvalidCharacterError") expected object "TypeError" ("TypeError")
 PASS DOMImplementation interface: document.implementation must inherit property "createDocument" with the proper type (1) 
-FAIL DOMImplementation interface: calling createDocument(DOMString,DOMString,DocumentType) on document.implementation with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS DOMImplementation interface: calling createDocument(DOMString,DOMString,DocumentType) on document.implementation with too few arguments must throw TypeError 
 PASS DOMImplementation interface: document.implementation must inherit property "createHTMLDocument" with the proper type (2) 
 PASS DOMImplementation interface: calling createHTMLDocument(DOMString) on document.implementation with too few arguments must throw TypeError 
 PASS DOMImplementation interface: document.implementation must inherit property "hasFeature" with the proper type (3) 

@@ -17,7 +17,7 @@ function crash_test(element_name) {
     element.setAttribute('form', '1');
     var container = document.createElement('div');
     container.appendChild(element);
-    document.implementation.createDocument().adoptNode(container);
+    document.implementation.createDocument(null, "test").adoptNode(container);
     container.removeChild(element);
     delete element;
     gc();

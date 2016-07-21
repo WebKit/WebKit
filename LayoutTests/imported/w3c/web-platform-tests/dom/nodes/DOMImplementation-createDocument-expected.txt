@@ -358,6 +358,5 @@ PASS createDocument test 184: characterSet aliases for null,"math",null
 PASS createDocument test 185: null,"",DocumentType node 
 PASS createDocument test 186: null,"",DocumentType node 
 PASS createDocument test 187: null,"",DocumentType node 
-FAIL createDocument with missing arguments assert_throws: createDocument() should throw function "function () {
-    document.implementation.createDocument(..." did not throw
+PASS createDocument with missing arguments 
 
