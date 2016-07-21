@@ -1915,7 +1915,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (CGRect)_visibleContentRect
 {
-    CGRect visibleRectInContentCoordinates = _frozenVisibleContentRect ? _frozenVisibleContentRect.value() : [self convertRect:self.bounds toView:_contentView.get()];
+    if (_frozenVisibleContentRect)
+        return _frozenVisibleContentRect.value();
+
+    CGRect visibleRectInContentCoordinates = [self convertRect:self.bounds toView:_contentView.get()];
     
     if (UIScrollView *enclosingScroller = [self _scroller]) {
         CGRect viewVisibleRect = [self _visibleRectInEnclosingScrollView:enclosingScroller];

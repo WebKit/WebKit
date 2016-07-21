@@ -1,3 +1,23 @@
+2016-07-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r203189): Webpage snapshots are partially or fully blank when edge swiping back
+        https://bugs.webkit.org/show_bug.cgi?id=160000
+        rdar://problem/27455589
+        
+        Reviewed by Zalan Bujtas.
+
+        r203189 triggered a call to -_updateContentRectsWithState: in the middle of a swipe,
+        during which we'd compute the visible rect of the view as having zero width, causing us
+        to not create tiles.
+
+        -_navigationGestureDidBegin already snapshots the visibleContentRect in _frozenVisibleContentRect,
+        but -_visibleContentRect then clipped that with ancestor views, causing the issue.
+
+        Fix by having -_visibleContentRect just return _frozenVisibleContentRect if we have one.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _visibleContentRect]):
+
 2016-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPhone] Playing a video on tudou.com plays only sound, no video
