@@ -6574,8 +6574,8 @@ PASS object.border: IDL set to "\0" should not throw
 PASS object.border: IDL set to "\0" followed by getAttribute() 
 PASS object.border: IDL set to "\0" followed by IDL get 
 PASS object.border: IDL set to null should not throw 
-FAIL object.border: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL object.border: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS object.border: IDL set to null followed by getAttribute() 
+PASS object.border: IDL set to null followed by IDL get 
 PASS object.border: IDL set to object "test-toString" should not throw 
 PASS object.border: IDL set to object "test-toString" followed by getAttribute() 
 PASS object.border: IDL set to object "test-toString" followed by IDL get 

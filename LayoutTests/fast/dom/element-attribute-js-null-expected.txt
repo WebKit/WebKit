@@ -147,7 +147,7 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLModElement.dateTime
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.code]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.align]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.archive]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.border]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLObjectElement.border]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.codeBase]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.codeType]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.height]
