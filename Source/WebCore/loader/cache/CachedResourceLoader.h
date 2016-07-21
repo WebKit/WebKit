@@ -103,6 +103,7 @@ public:
     bool autoLoadImages() const { return m_autoLoadImages; }
     void setAutoLoadImages(bool);
 
+    bool imagesEnabled() const { return m_imagesEnabled; }
     void setImagesEnabled(bool);
 
     bool shouldDeferImageLoad(const URL&) const;
