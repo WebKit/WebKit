@@ -28,7 +28,7 @@ FAIL Document interface: attribute plugins assert_true: The prototype object mus
 PASS Document interface: attribute links 
 PASS Document interface: attribute forms 
 FAIL Document interface: attribute scripts assert_true: The prototype object must have a property "scripts" expected true got false
-FAIL Document interface: operation getElementsByName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation getElementsByName(DOMString) 
 FAIL Document interface: attribute cssElementMap assert_true: The prototype object must have a property "cssElementMap" expected true got false
 PASS Document interface: attribute currentScript 
 FAIL Document interface: operation open(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "open" missing
@@ -135,17 +135,11 @@ PASS Document interface: iframe.contentDocument must inherit property "contentTy
 PASS Document interface: iframe.contentDocument must inherit property "doctype" with the proper type (9) 
 PASS Document interface: iframe.contentDocument must inherit property "documentElement" with the proper type (10) 
 PASS Document interface: iframe.contentDocument must inherit property "getElementsByTagName" with the proper type (11) 
-FAIL Document interface: calling getElementsByTagName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "getElementsByTagNameNS" with the proper type (12) 
-FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "getElementsByClassName" with the proper type (13) 
-FAIL Document interface: calling getElementsByClassName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByClassName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createElementNS" with the proper type (15) 
@@ -198,9 +192,7 @@ PASS Document interface: iframe.contentDocument must inherit property "links" wi
 PASS Document interface: iframe.contentDocument must inherit property "forms" with the proper type (49) 
 PASS Document interface: iframe.contentDocument must inherit property "scripts" with the proper type (50) 
 PASS Document interface: iframe.contentDocument must inherit property "getElementsByName" with the proper type (51) 
-FAIL Document interface: calling getElementsByName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 FAIL Document interface: iframe.contentDocument must inherit property "cssElementMap" with the proper type (52) assert_inherits: property "cssElementMap" not found in prototype chain
 PASS Document interface: iframe.contentDocument must inherit property "currentScript" with the proper type (53) 
 FAIL Document interface: iframe.contentDocument must inherit property "open" with the proper type (54) assert_inherits: property "open" found on object expected in prototype chain
@@ -425,17 +417,11 @@ PASS Document interface: new Document() must inherit property "contentType" with
 PASS Document interface: new Document() must inherit property "doctype" with the proper type (9) 
 PASS Document interface: new Document() must inherit property "documentElement" with the proper type (10) 
 PASS Document interface: new Document() must inherit property "getElementsByTagName" with the proper type (11) 
-FAIL Document interface: calling getElementsByTagName(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagName(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "getElementsByTagNameNS" with the proper type (12) 
-FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "getElementsByClassName" with the proper type (13) 
-FAIL Document interface: calling getElementsByClassName(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByClassName(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createElementNS" with the proper type (15) 
@@ -488,9 +474,7 @@ PASS Document interface: new Document() must inherit property "links" with the p
 PASS Document interface: new Document() must inherit property "forms" with the proper type (49) 
 FAIL Document interface: new Document() must inherit property "scripts" with the proper type (50) assert_inherits: property "scripts" not found in prototype chain
 PASS Document interface: new Document() must inherit property "getElementsByName" with the proper type (51) 
-FAIL Document interface: calling getElementsByName(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByName(DOMString) on new Document() with too few arguments must throw TypeError 
 FAIL Document interface: new Document() must inherit property "cssElementMap" with the proper type (52) assert_inherits: property "cssElementMap" not found in prototype chain
 PASS Document interface: new Document() must inherit property "currentScript" with the proper type (53) 
 FAIL Document interface: new Document() must inherit property "open" with the proper type (54) assert_inherits: property "open" not found in prototype chain
@@ -718,17 +702,11 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "doctype" with the proper type (9) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "documentElement" with the proper type (10) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByTagName" with the proper type (11) 
-FAIL Document interface: calling getElementsByTagName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByTagNameNS" with the proper type (12) 
-FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByClassName" with the proper type (13) 
-FAIL Document interface: calling getElementsByClassName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByClassName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElementNS" with the proper type (15) 
@@ -781,9 +759,7 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "forms" with the proper type (49) 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "scripts" with the proper type (50) assert_inherits: property "scripts" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByName" with the proper type (51) 
-FAIL Document interface: calling getElementsByName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "cssElementMap" with the proper type (52) assert_inherits: property "cssElementMap" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "currentScript" with the proper type (53) 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "open" with the proper type (54) assert_inherits: property "open" not found in prototype chain

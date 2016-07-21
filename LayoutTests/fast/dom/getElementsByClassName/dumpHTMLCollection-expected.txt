@@ -13,12 +13,10 @@ length: 0
 length: 0
 length: 0
 length: 0
-length: 0
 [object HTMLDivElement], length: 1
 [object HTMLDivElement], [object HTMLParagraphElement], length: 2
 [object HTMLDivElement], length: 1
 [object HTMLDivElement], length: 1
-length: 0
 length: 0
 length: 0
 length: 0

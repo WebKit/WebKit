@@ -1,5 +1,17 @@
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
+        Make parameters to Document.getElementsBy*() operations mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160050
+
+        Reviewed by Daniel Bates.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-07-21  Chris Dumez  <cdumez@apple.com>
+
         Make parameters mandatory for Document.create*() operations
         https://bugs.webkit.org/show_bug.cgi?id=160047
 

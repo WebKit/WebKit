@@ -255,9 +255,9 @@ PASS Document interface: attribute inputEncoding
 PASS Document interface: attribute contentType 
 PASS Document interface: attribute doctype 
 PASS Document interface: attribute documentElement 
-FAIL Document interface: operation getElementsByTagName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation getElementsByTagNameNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Document interface: operation getElementsByClassName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation getElementsByTagName(DOMString) 
+PASS Document interface: operation getElementsByTagNameNS(DOMString,DOMString) 
+PASS Document interface: operation getElementsByClassName(DOMString) 
 PASS Document interface: operation createElement(DOMString,ElementCreationOptions) 
 PASS Document interface: operation createElementNS(DOMString,DOMString,ElementCreationOptions) 
 PASS Document interface: operation createDocumentFragment() 
@@ -295,17 +295,11 @@ PASS Document interface: new Document() must inherit property "contentType" with
 PASS Document interface: new Document() must inherit property "doctype" with the proper type (9) 
 PASS Document interface: new Document() must inherit property "documentElement" with the proper type (10) 
 PASS Document interface: new Document() must inherit property "getElementsByTagName" with the proper type (11) 
-FAIL Document interface: calling getElementsByTagName(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagName(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "getElementsByTagNameNS" with the proper type (12) 
-FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "getElementsByClassName" with the proper type (13) 
-FAIL Document interface: calling getElementsByClassName(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByClassName(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString,ElementCreationOptions) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createElementNS" with the proper type (15) 
@@ -449,17 +443,11 @@ PASS Document interface: xmlDoc must inherit property "contentType" with the pro
 PASS Document interface: xmlDoc must inherit property "doctype" with the proper type (9) 
 PASS Document interface: xmlDoc must inherit property "documentElement" with the proper type (10) 
 PASS Document interface: xmlDoc must inherit property "getElementsByTagName" with the proper type (11) 
-FAIL Document interface: calling getElementsByTagName(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagName(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "getElementsByTagNameNS" with the proper type (12) 
-FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "getElementsByClassName" with the proper type (13) 
-FAIL Document interface: calling getElementsByClassName(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementsByClassName(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString,ElementCreationOptions) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createElementNS" with the proper type (15) 
