@@ -1,3 +1,23 @@
+2016-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Threaded Compositor] Web Process crash when the page is closed before the web view is realized
+        https://bugs.webkit.org/show_bug.cgi?id=159918
+
+        Reviewed by Michael Catanzaro.
+
+        When the web view is unrealized, we send a sync message to the web process to destroy the native surface handle
+        for compositing, and then we actually destroy the redirected window. But if the page is closed explicitly before
+        the web view is unrealized, the drawing area proxy is destroyed so that when the web view is unrealized we can't
+        notify the web process that keeps trying to render to a now deleted window handle. That produces a BadDrawable
+        X error and the web process crashes.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::pageClosed): Call webkitWebViewBasePageClosed().
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBasePageClosed): If the web view is still realized, destroy the native surface handle and the
+        redirected window.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Add webkitWebViewBasePageClosed().
+
 2016-07-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r203471.

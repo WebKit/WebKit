@@ -1630,3 +1630,23 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     UNUSED_PARAM(webkitWebViewBase);
 #endif
 }
+
+void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
+{
+#if PLATFORM(X11) && USE(TEXTURE_MAPPER)
+    if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
+        return;
+
+    if (!gtk_widget_get_realized(GTK_WIDGET(webkitWebViewBase)))
+        return;
+
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+    ASSERT(drawingArea);
+    drawingArea->destroyNativeSurfaceHandleForCompositing();
+
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    priv->redirectedWindow = nullptr;
+#endif
+#endif // PLATFORM(X11) && USE(TEXTURE_MAPPER)
+}

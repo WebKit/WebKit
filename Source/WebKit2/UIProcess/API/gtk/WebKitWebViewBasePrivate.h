@@ -75,6 +75,7 @@ void webkitWebViewBaseWillEnterAcceleratedCompositingMode(WebKitWebViewBase*);
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase*);
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase*);
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase*);
+void webkitWebViewBasePageClosed(WebKitWebViewBase*);
 
 #if ENABLE(DRAG_SUPPORT)
 WebKit::DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase*);

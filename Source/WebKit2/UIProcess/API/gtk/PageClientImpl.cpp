@@ -238,7 +238,7 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
 
 void PageClientImpl::pageClosed()
 {
-    notImplemented();
+    webkitWebViewBasePageClosed(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 void PageClientImpl::preferencesDidChange()
