@@ -1,0 +1,37 @@
+This test checks that grid sizing works as expected with orthogonal flows and items spanning more than 1 columns or rows. These cases require an extra track-sizing algorithm cycle on the rows to determine final dimensions of the grid.
+
+Grid: auto | align: start | fixed-sized: 300 x 200 | font: 10px | Blue(LR) - row: 1 col: 1 | Magenta - row: 1 col: 3 | Orange(LR) - row: 2 col: 2
+
+XX XXX X XXX XX
+XXXX XX X XX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX X XXX XX XX
+XXX X XXX XXX XXX XX X XXXXX XXX XX X XXXXX XX X XX XX X XXX XXX XXX XX X XXXX XXX XXX XXX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX XXX XXX XX X XXX XX X XXX XX XX
+PASS
+Grid: auto | align: start | fixed-sized: 300 x 200 | font: 10px | Blue(LR) - row: 1 / 3 col: 1 | Magenta - row: 1 col: 3 | Orange(LR) - row: 2 col: 2 / 4
+
+XX XXX X XXX XX
+XXXX XX X XX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX X XXX XX XX
+XXX X XXX XXX XXX XX X XXXXX XXX XX X XXXXX XX X XX XX X XXX XXX XXX XX X XXXX XXX XXX XXX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX XXX XXX XX X XXX XX X XXX XX XX
+PASS
+Grid: auto | align: start | fixed-sized: 300 x 200 | font: 10px | Blue(LR) - row: 1 / 3 col: 1 | Magenta - row: 1 / 3 col: 3 | Orange(LR) - row: 3 col: 2 / 3
+
+XX XXX X XXX XX
+XXXX XX X XX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX X XXX XX XX
+XXX X XXX XXX XXX XX X XXXXX XXX XX X XXXXX XX X XX XX X XXX XXX XXX XX X XXXX XXX XXX XXX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX XXX XXX XX X XXX XX X XXX XX XX
+PASS
+Grid: auto | align: start | fixed-sized: 300 x 200 | font: 10px | Blue(LR) - row: 1 / 3 col: 1 | Magenta - row: 1 col: 3 | Orange(LR) - row: 2 col: 2 / 3
+
+XX XXX X XXX XX
+XXXX XX X XX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX X XXX XX XX
+XXX X XXX XXX XXX XX X XXXXX XXX XX X XXXXX XX X XX XX X XXX XXX XXX XX X XXXX XXX XXX XXX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX XXX XXX XX X XXX XX X XXX XX XX
+PASS
+Grid: auto | align: start | fixed-sized: 300 x 200 | font: 10px | Blue(LR) - row: 1 / 3 col: 1 | Magenta - row: 1 col: 3 | Orange(LR) - row: 2 / 4 col: 2 / 3
+
+XX XXX X XXX XX
+XXXX XX X XX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX X XXX XX XX
+XXX X XXX XXX XXX XX X XXXXX XXX XX X XXXXX XX X XX XX X XXX XXX XXX XX X XXXX XXX XXX XXX XX X XXX XX XXXXX XXX XXX XX X XXX XX XXX XXX XXX XX X XXX XX X XXX XX XX
+PASS
+Grid: min-content / min-content min-content | align: stretch | content-sized: fit-content x auto | font: 50px | Blue(LR) - row: 1 / 3 col: 1 - XX X X | Magenta - row: 1 col: 1 - X X
+
+XX X X
+X X
+PASS
