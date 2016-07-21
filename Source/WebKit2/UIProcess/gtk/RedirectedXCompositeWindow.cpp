@@ -189,7 +189,12 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(WebPageProxy& webPage, co
         &windowAttributes);
     XMapWindow(m_display, m_window.get());
 
-    xDamageNotifier().add(m_window.get(), WTFMove(damageNotify));
+    xDamageNotifier().add(m_window.get(), [this, damageNotify = WTFMove(damageNotify)] {
+        // The surface has been modified by the web process, mark it as dirty.
+        if (m_surface)
+            cairo_surface_mark_dirty(m_surface.get());
+        damageNotify();
+    });
 
     while (1) {
         XEvent event;
@@ -269,7 +274,10 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
     cairoSurfaceSetDeviceScale(newSurface.get(), m_webPage.deviceScaleFactor(), m_webPage.deviceScaleFactor());
 
     RefPtr<cairo_t> cr = adoptRef(cairo_create(newSurface.get()));
-    cairo_set_source_rgb(cr.get(), 1, 1, 1);
+    if (!m_webPage.drawsBackground())
+        cairo_set_operator(cr.get(), CAIRO_OPERATOR_CLEAR);
+    else
+        setSourceRGBAFromColor(cr.get(), m_webPage.backgroundColor());
     cairo_paint(cr.get());
 
     // Nvidia drivers seem to prepare their redirected window pixmap asynchronously, so for a few fractions
@@ -277,6 +285,7 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
     // pixmap window-backings), the pixmap memory is uninitialized. To work around this issue, paint the old
     // pixmap to the new one to properly initialize it.
     if (m_surface) {
+        cairo_set_operator(cr.get(), CAIRO_OPERATOR_OVER);
         cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
         cairo_paint(cr.get());
     }

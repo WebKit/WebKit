@@ -592,10 +592,28 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     webkitWebViewBaseResizeRedirectedWindow(webViewBase);
     if (cairo_surface_t* surface = priv->redirectedWindow->surface()) {
         cairo_save(cr);
+
+        if (!priv->pageProxy->drawsBackground()) {
+            const WebCore::Color& color = priv->pageProxy->backgroundColor();
+            if (color.hasAlpha()) {
+                cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
+                cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+                cairo_fill(cr);
+            }
+
+            if (color.alpha() > 0) {
+                setSourceRGBAFromColor(cr, color);
+                cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+                cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
+                cairo_fill(cr);
+            }
+        }
+
         cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
         cairo_set_source_surface(cr, surface, 0, 0);
-        cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+        cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
         cairo_fill(cr);
+
         cairo_restore(cr);
     }
 

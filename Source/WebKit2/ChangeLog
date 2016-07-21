@@ -1,3 +1,31 @@
+2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web view background colors don't work in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=159455
+
+        Reviewed by Michael Catanzaro.
+
+        In non AC mode it's the drawing area backing store the one drawing the background, and the web process just
+        renders into a transparent bitmap. In AC mode we need to make the redirected window pixmap transparent for the
+        web process to render there, and let the web view fill the background color before rendering the redirected
+        window pixmap on top. To be able to make the redirected window surface transparent, we need to ensure the parent
+        window has an RGBA visual, even when setting a fully opaque background, because we still need the web process
+        to render on the transparent xwindow.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp: Update documentation of webkit_web_view_set_background_color() since now
+        it's required to set the RGBA visual even for opaque colors in case AC mode is enabled.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewRenderAcceleratedCompositingResults): When a background color has been set, fill it before
+        rendering the redirected window surface.
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::RedirectedXCompositeWindow::RedirectedXCompositeWindow): Mark the surface as dirty after every damage
+        event, since the web process has modified it.
+        (WebKit::RedirectedXCompositeWindow::surface): Initialize the surface after creating it, to avoid flickering and
+        rendering artifacts when waiting for the first damage event from the web process.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::compositeLayersToContext): Use a fully transparent color to clear the context when the page
+        is resized or when a view background color has been set.
+
 2016-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Avoid the redirected window resize when the view is realized in AC mode

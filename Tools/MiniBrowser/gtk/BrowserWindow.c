@@ -1069,14 +1069,12 @@ void browser_window_set_background_color(BrowserWindow *window, GdkRGBA *rgba)
     if (gdk_rgba_equal(rgba, &viewRGBA))
         return;
 
-    if (rgba->alpha < 1) {
-        GdkVisual *rgbaVisual = gdk_screen_get_rgba_visual(gtk_window_get_screen(GTK_WINDOW(window)));
-        if (!rgbaVisual)
-            return;
+    GdkVisual *rgbaVisual = gdk_screen_get_rgba_visual(gtk_window_get_screen(GTK_WINDOW(window)));
+    if (!rgbaVisual)
+        return;
 
-        gtk_widget_set_visual(GTK_WIDGET(window), rgbaVisual);
-        gtk_widget_set_app_paintable(GTK_WIDGET(window), TRUE);
-    }
+    gtk_widget_set_visual(GTK_WIDGET(window), rgbaVisual);
+    gtk_widget_set_app_paintable(GTK_WIDGET(window), TRUE);
 
     webkit_web_view_set_background_color(webView, rgba);
 }

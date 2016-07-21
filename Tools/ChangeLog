@@ -1,3 +1,15 @@
+2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web view background colors don't work in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=159455
+
+        Reviewed by Michael Catanzaro.
+
+        Set always RGBA visual to the view widget when setting a background color.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_set_background_color):
+
 2016-07-20  Youenn Fablet  <youenn@apple.com>
 
         Bots should run built-ins generator tests

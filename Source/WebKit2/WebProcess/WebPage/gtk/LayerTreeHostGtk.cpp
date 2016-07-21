@@ -313,9 +313,8 @@ void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
     // we set the viewport parameters directly from the window size.
     IntSize contextSize = m_context->defaultFrameBufferSize();
     glViewport(0, 0, contextSize.width(), contextSize.height());
-
-    if (purpose == ForResize) {
-        glClearColor(1, 1, 1, 0);
+    if (purpose == ForResize || !m_webPage.drawsBackground()) {
+        glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
