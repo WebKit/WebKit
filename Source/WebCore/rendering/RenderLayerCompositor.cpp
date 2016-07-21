@@ -3009,8 +3009,10 @@ bool RenderLayerCompositor::shouldCompositeOverflowControls() const
     if (documentUsesTiledBacking())
         return true;
 
+#if !USE(COORDINATED_GRAPHICS_THREADED)
     if (!frameView.hasOverlayScrollbars())
         return false;
+#endif
 
     return true;
 }

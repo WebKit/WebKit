@@ -57,11 +57,7 @@ static void themeChangedCallback()
 ScrollbarThemeGtk::ScrollbarThemeGtk()
 {
 #if GTK_CHECK_VERSION(3, 20, 0)
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    m_usesOverlayScrollbars = true;
-#else
     m_usesOverlayScrollbars = g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0");
-#endif
 #endif
     static bool themeMonitorInitialized = false;
     if (!themeMonitorInitialized) {
