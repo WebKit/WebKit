@@ -166,20 +166,17 @@
 
     // Moved down from HTMLDocument
 
-    // FIXME: Should not have [TreatNullAs=EmptyString].
-    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString title;
+    [SetterRaisesException] attribute DOMString title;
 
     readonly attribute DOMString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    // FIXME: Should not have [TreatNullAs=EmptyString].
-    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString domain;
+    [SetterRaisesException] attribute DOMString domain;
 #else
     readonly attribute DOMString domain;
 #endif
     [ImplementedAs=urlForBindings] readonly attribute DOMString URL;
 
-    // FIXME: Should not have [TreatNullAs=EmptyString].
-    [TreatNullAs=EmptyString, GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
+    [GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
 
     [SetterRaisesException, ImplementedAs=bodyOrFrameset, StrictTypeChecking] attribute HTMLElement? body;
 
