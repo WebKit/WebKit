@@ -3391,8 +3391,8 @@ PASS iframe.marginHeight: IDL set to "\0" should not throw
 PASS iframe.marginHeight: IDL set to "\0" followed by getAttribute() 
 PASS iframe.marginHeight: IDL set to "\0" followed by IDL get 
 PASS iframe.marginHeight: IDL set to null should not throw 
-FAIL iframe.marginHeight: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL iframe.marginHeight: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS iframe.marginHeight: IDL set to null followed by getAttribute() 
+PASS iframe.marginHeight: IDL set to null followed by IDL get 
 PASS iframe.marginHeight: IDL set to object "test-toString" should not throw 
 PASS iframe.marginHeight: IDL set to object "test-toString" followed by getAttribute() 
 PASS iframe.marginHeight: IDL set to object "test-toString" followed by IDL get 
@@ -3468,8 +3468,8 @@ PASS iframe.marginWidth: IDL set to "\0" should not throw
 PASS iframe.marginWidth: IDL set to "\0" followed by getAttribute() 
 PASS iframe.marginWidth: IDL set to "\0" followed by IDL get 
 PASS iframe.marginWidth: IDL set to null should not throw 
-FAIL iframe.marginWidth: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL iframe.marginWidth: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS iframe.marginWidth: IDL set to null followed by getAttribute() 
+PASS iframe.marginWidth: IDL set to null followed by IDL get 
 PASS iframe.marginWidth: IDL set to object "test-toString" should not throw 
 PASS iframe.marginWidth: IDL set to object "test-toString" followed by getAttribute() 
 PASS iframe.marginWidth: IDL set to object "test-toString" followed by IDL get 

@@ -1,5 +1,17 @@
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
+        Fix null handling for HTMLIFrameElement.marginWidth / marginHeight
+        https://bugs.webkit.org/show_bug.cgi?id=160037
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing test to reflect the behavior change.
+
+        * fast/dom/element-attribute-js-null-expected.txt:
+        * fast/dom/element-attribute-js-null.html:
+
+2016-07-21  Chris Dumez  <cdumez@apple.com>
+
         Fix null handling for HTMLImageElement.border
         https://bugs.webkit.org/show_bug.cgi?id=160039
 
