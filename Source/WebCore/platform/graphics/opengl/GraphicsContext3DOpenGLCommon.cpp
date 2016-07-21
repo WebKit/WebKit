@@ -236,10 +236,13 @@ void GraphicsContext3D::prepareTexture()
         resolveMultisamplingIfNecessary();
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    std::swap(m_fbo, m_compositorFBO);
     std::swap(m_texture, m_compositorTexture);
+    std::swap(m_texture, m_intermediateTexture);
+    ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture, 0);
+    glFlush();
 
-    if (m_state.boundFBO != m_compositorFBO)
+    if (m_state.boundFBO != m_fbo)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
     else
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);

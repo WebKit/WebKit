@@ -1422,7 +1422,7 @@ private:
     GC3Duint m_compositorTexture;
     GC3Duint m_fbo;
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    GC3Duint m_compositorFBO;
+    GC3Duint m_intermediateTexture;
 #endif
 
     GC3Duint m_depthBuffer;

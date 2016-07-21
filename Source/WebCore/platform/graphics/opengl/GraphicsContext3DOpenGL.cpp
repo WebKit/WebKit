@@ -177,10 +177,9 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
         ::glBindTexture(GL_TEXTURE_2D, 0);
 #if USE(COORDINATED_GRAPHICS_THREADED)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_compositorFBO);
-        ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_compositorTexture, 0);
-        attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glBindTexture(GL_TEXTURE_2D, m_intermediateTexture);
+        ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
     }
 #endif

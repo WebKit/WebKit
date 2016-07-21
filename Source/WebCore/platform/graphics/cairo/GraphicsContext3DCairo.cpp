@@ -85,7 +85,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     , m_compositorTexture(0)
     , m_fbo(0)
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    , m_compositorFBO(0)
+    , m_intermediateTexture(0)
 #endif
     , m_depthStencilBuffer(0)
     , m_layerComposited(false)
@@ -113,13 +113,20 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-        ::glGenFramebuffers(1, &m_compositorFBO);
         ::glGenTextures(1, &m_compositorTexture);
         ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
         ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        ::glGenTextures(1, &m_intermediateTexture);
+        ::glBindTexture(GL_TEXTURE_2D, m_intermediateTexture);
+        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
         ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 
@@ -189,7 +196,7 @@ GraphicsContext3D::~GraphicsContext3D()
     }
     ::glDeleteFramebuffers(1, &m_fbo);
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    ::glDeleteFramebuffers(1, &m_compositorFBO);
+    ::glDeleteTextures(1, &m_intermediateTexture);
 #endif
 }
 
