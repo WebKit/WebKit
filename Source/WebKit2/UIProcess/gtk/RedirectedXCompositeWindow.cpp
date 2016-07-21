@@ -56,7 +56,7 @@ public:
     {
     }
 
-    void add(Window window, std::function<void()> notifyFunction)
+    void add(Window window, std::function<void()>&& notifyFunction)
     {
         if (m_notifyFunctions.isEmpty())
             gdk_window_add_filter(nullptr, reinterpret_cast<GdkFilterFunc>(&filterXDamageEvent), this);
@@ -189,12 +189,7 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(WebPageProxy& webPage, co
         &windowAttributes);
     XMapWindow(m_display, m_window.get());
 
-    xDamageNotifier().add(m_window.get(), [this, damageNotify = WTFMove(damageNotify)] {
-        // The surface has been modified by the web process, mark it as dirty.
-        if (m_surface)
-            cairo_surface_mark_dirty(m_surface.get());
-        damageNotify();
-    });
+    xDamageNotifier().add(m_window.get(), WTFMove(damageNotify));
 
     while (1) {
         XEvent event;

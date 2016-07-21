@@ -185,6 +185,13 @@ void ThreadedCompositor::scheduleDisplayImmediately()
     m_compositingRunLoop->startUpdateTimer(CompositingRunLoop::Immediate);
 }
 
+void ThreadedCompositor::forceRepaint()
+{
+    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
+        renderLayerTree();
+    });
+}
+
 void ThreadedCompositor::didChangeVisibleRect()
 {
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this), visibleRect = m_viewportController->visibleContentsRect(), scale = m_viewportController->pageScaleFactor()] {

@@ -609,6 +609,9 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
             }
         }
 
+        // The surface can be modified by the web process at any time, so we mark it
+        // as dirty to ensure we always render the updated contents as soon as possible.
+        cairo_surface_mark_dirty(surface);
         cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
         cairo_set_source_surface(cr, surface, 0, 0);
         cairo_set_operator(cr, CAIRO_OPERATOR_OVER);

@@ -78,6 +78,8 @@ public:
 
     void invalidate();
 
+    void forceRepaint();
+
 private:
     ThreadedCompositor(Client*);
 

@@ -1,5 +1,30 @@
 2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][Threaded Compositor] WTR generates fully white images for pixel tests most of the time
+        https://bugs.webkit.org/show_bug.cgi?id=160016
+
+        Reviewed by Žan Doberšek.
+
+        WTR sends a force repaint message to the web process before taking a snapshot of the web view. With the threaded
+        compositor, the UI process is notified about the force repaint callback before the contents have been actually
+        painted. We need to ensure that the contents are rendered before the UI process is notified.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::forceRepaint): Synchronously render the layer tree.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewRenderAcceleratedCompositingResults): Always mark the redirected window surface as dirty before
+        rendering, since it can be modified by the web process at any time.
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::XDamageNotifier::add):
+        (WebKit::RedirectedXCompositeWindow::RedirectedXCompositeWindow): Do not mark the surface as dirty on every
+        damage since the view will do it before rendering.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::forceRepaint): Call ThreadedCompositor::forceRepaint().
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
+2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] White page when loaded tab is visited until it's hovered when AC mode is always on
         https://bugs.webkit.org/show_bug.cgi?id=159512
 

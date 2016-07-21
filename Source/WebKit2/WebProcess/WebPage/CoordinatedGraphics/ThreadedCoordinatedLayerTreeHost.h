@@ -61,6 +61,9 @@ private:
 
     void invalidate() override;
 
+    void forceRepaint() override;
+    bool forceRepaintAsync(uint64_t callbackID) override { return false; }
+
 #if PLATFORM(GTK)
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
 #endif

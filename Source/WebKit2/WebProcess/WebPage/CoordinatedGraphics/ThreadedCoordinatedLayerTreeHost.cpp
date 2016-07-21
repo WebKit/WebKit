@@ -60,6 +60,12 @@ void ThreadedCoordinatedLayerTreeHost::invalidate()
     CoordinatedLayerTreeHost::invalidate();
 }
 
+void ThreadedCoordinatedLayerTreeHost::forceRepaint()
+{
+    CoordinatedLayerTreeHost::forceRepaint();
+    m_compositor->forceRepaint();
+}
+
 void ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect& rect)
 {
     m_compositor->scrollTo(rect.location());
