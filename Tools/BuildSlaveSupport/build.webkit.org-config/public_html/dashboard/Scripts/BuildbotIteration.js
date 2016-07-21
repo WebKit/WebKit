@@ -76,6 +76,7 @@ BuildbotIteration.ProductiveSteps = {
 BuildbotIteration.TestSteps = {
     "API tests": "platform api test",
     "bindings-generation-tests": "bindings tests",
+    "builtins-generator-tests": "builtins generator tests",
     "jscore-test": "javascript test",
     "layout-test": "layout test",
     "perf-test": "performance test",
