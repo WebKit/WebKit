@@ -1,3 +1,23 @@
+2016-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Make parameters mandatory for Document.create*() operations
+        https://bugs.webkit.org/show_bug.cgi?id=160047
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing tests to reflect the behavior change.
+
+        * compositing/geometry/assert-marquee-timer.html:
+        * editing/style/bold-with-dom-changes.html:
+        * fast/dom/MutationObserver/observe-characterdata.html:
+        * fast/dom/normalize-attributes-mutation-event-crash.html:
+        * fast/dom/null-chardata-crash.html:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/dom/wrapper-classes.html:
+        * fast/forms/basic-textareas.html:
+        * fast/inspector-support/uncaught-dom1-exception-expected.txt:
+        * fast/inspector-support/uncaught-dom1-exception.html:
+
 2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.html as flaky on mac

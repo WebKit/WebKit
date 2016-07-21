@@ -6,7 +6,7 @@ if (window.internals)
     internals.settings.setSimpleLineLayoutEnabled(false);
 var docToAppendTo;
 function addTextarea(properties, opt_innerHTML) {
-    var title = docToAppendTo.createTextNode();
+    var title = docToAppendTo.createTextNode('test');
     title.nodeValue = '';
     var wrapper = docToAppendTo.createElement('div');
     wrapper.style.cssText = 'display:inline-block;border:1px solid blue;font-size:12px;';

@@ -14,7 +14,7 @@ function treeModifiedHandler()
     document.removeEventListener("DOMSubtreeModified", treeModifiedHandler, false);
 
     var b = document.getElementById("inlined");
-    b.insertBefore(document.createTextNode(), b.firstChild);
+    b.insertBefore(document.createTextNode("test"), b.firstChild);
 
     var range = document.createRange();
     range.setStart(b,0);

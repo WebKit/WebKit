@@ -12,7 +12,7 @@ description("Tests that mutating an elements attribute map during DOMSubtreeModi
 var el = document.createElement('div')
 el.setAttribute('a', 'a')
 el.setAttribute('b', 'b')
-el.attributes[1].appendChild(document.createTextNode())
+el.attributes[1].appendChild(document.createTextNode("test"))
 el.attributes[1].addEventListener('DOMSubtreeModified', function() { el.removeAttribute('b') },  false)
 el.normalize()
 

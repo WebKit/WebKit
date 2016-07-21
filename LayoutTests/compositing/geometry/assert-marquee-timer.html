@@ -37,7 +37,7 @@
             var times = 0;
             // Trigger "pending layouts", that might run after the marquee timer is fired.
             var counter = document.getElementById("counter");
-            var textNode = document.createTextNode();
+            var textNode = document.createTextNode("test");
             counter.appendChild(textNode);
             var interval = setInterval(function() {
                 textNode.nodeValue = Math.random();

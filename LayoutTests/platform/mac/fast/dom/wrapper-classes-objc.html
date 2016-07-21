@@ -85,15 +85,15 @@ function runTest()
     debug('Basics');
     debug('');
 
-    test("document.createAttribute()", "Attr");
-    test("document.createComment()", "Comment");
+    test("document.createAttribute('test')", "Attr");
+    test("document.createComment('test')", "Comment");
     test("document.createDocumentFragment()", "DocumentFragment");
     test("document.implementation", "DOMImplementation", "DOMImplementation");
     test("root.attributes", "NamedNodeMap");
     test("document.createNodeIterator(root, 0, null, false)", "NodeIterator");
     test("document.getElementsByTagName('div')", "HTMLCollection");
     test("document.createRange()", "Range");
-    test("document.createTextNode()", "Text");
+    test("document.createTextNode('test')", "Text");
     test("document.createTreeWalker(root, 0, null, false)", "TreeWalker");
 
     debug('');
@@ -101,9 +101,9 @@ function runTest()
     debug('');
 
     test("xmlDocument", "Document");
-    test("xmlDocument.createCDATASection()", "CDATASection");
+    test("xmlDocument.createCDATASection('test')", "CDATASection");
     test("xmlDocument.createElementNS('x', 'x', 'x')", "Element");
-    test("xmlDocument.createProcessingInstruction()", "ProcessingInstruction");
+    test("xmlDocument.createProcessingInstruction('target', 'test')", "ProcessingInstruction");
 
     debug('');
     debug('Events');

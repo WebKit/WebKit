@@ -35,13 +35,11 @@
     [NewObject, RaisesException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
     [NewObject] DocumentFragment   createDocumentFragment();
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [NewObject] Text createTextNode(optional DOMString data = "undefined");
-    [NewObject] Comment createComment(optional DOMString data = "undefined");
-    [NewObject, RaisesException] CDATASection createCDATASection(optional DOMString data = "undefined");
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] ProcessingInstruction createProcessingInstruction(optional DOMString target = "undefined",
-                                                                                 optional DOMString data = "undefined");
-    [NewObject, RaisesException] Attr createAttribute(optional DOMString name = "undefined");
+    [NewObject] Text createTextNode(DOMString data);
+    [NewObject] Comment createComment(DOMString data);
+    [NewObject, RaisesException] CDATASection createCDATASection(DOMString data);
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
+    [NewObject, RaisesException] Attr createAttribute(DOMString name);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [RaisesException] EntityReference createEntityReference(optional DOMString name);

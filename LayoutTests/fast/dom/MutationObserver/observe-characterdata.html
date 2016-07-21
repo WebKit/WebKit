@@ -53,7 +53,7 @@ function testBasic() {
         debug('...observer.disconnect() should prevent further delivery of mutations.');
 
         shouldBe('mutations', 'null');
-        charDataNode = document.createComment();
+        charDataNode = document.createComment("test");
         observer.observe(charDataNode, { characterData: true });
         charDataNode.textContent = 'foo';
         charDataNode.textContent = 'bar';

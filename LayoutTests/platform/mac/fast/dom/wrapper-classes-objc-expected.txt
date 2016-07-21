@@ -5,23 +5,23 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Basics
 
-PASS objCWrapperClass(document.createAttribute()) is 'DOMAttr'
-PASS objCWrapperClass(document.createComment()) is 'DOMComment'
+PASS objCWrapperClass(document.createAttribute('test')) is 'DOMAttr'
+PASS objCWrapperClass(document.createComment('test')) is 'DOMComment'
 PASS objCWrapperClass(document.createDocumentFragment()) is 'DOMDocumentFragment'
 PASS objCWrapperClass(document.implementation) is 'DOMImplementation'
 PASS objCWrapperClass(root.attributes) is 'DOMNamedNodeMap'
 PASS objCWrapperClass(document.createNodeIterator(root, 0, null, false)) is 'DOMNodeIterator'
 PASS objCWrapperClass(document.getElementsByTagName('div')) is 'DOMHTMLCollection'
 PASS objCWrapperClass(document.createRange()) is 'DOMRange'
-PASS objCWrapperClass(document.createTextNode()) is 'DOMText'
+PASS objCWrapperClass(document.createTextNode('test')) is 'DOMText'
 PASS objCWrapperClass(document.createTreeWalker(root, 0, null, false)) is 'DOMTreeWalker'
 
 XML
 
 PASS objCWrapperClass(xmlDocument) is 'DOMDocument'
-PASS objCWrapperClass(xmlDocument.createCDATASection()) is 'DOMCDATASection'
+PASS objCWrapperClass(xmlDocument.createCDATASection('test')) is 'DOMCDATASection'
 PASS objCWrapperClass(xmlDocument.createElementNS('x', 'x', 'x')) is 'DOMElement'
-PASS objCWrapperClass(xmlDocument.createProcessingInstruction()) is 'DOMProcessingInstruction'
+PASS objCWrapperClass(xmlDocument.createProcessingInstruction('target', 'test')) is 'DOMProcessingInstruction'
 
 Events
 

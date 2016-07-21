@@ -8,8 +8,7 @@ function onload()
         testRunner.dumpAsText();
 
     // Following code generates an exception.
-    var p = document.createTextNode();
-    p.textContent = "foo";
+    var p = document.createTextNode("foo");
     p.splitText(10000);
 }
 
