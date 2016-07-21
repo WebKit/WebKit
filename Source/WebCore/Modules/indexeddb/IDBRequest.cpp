@@ -72,7 +72,7 @@ Ref<IDBRequest> IDBRequest::createGet(ScriptExecutionContext& context, IDBIndex&
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy)
     : IDBActiveDOMObject(&context)
-    , m_resourceIdentifier(connectionProxy.serverConnectionIdentifier())
+    , m_resourceIdentifier(connectionProxy)
     , m_connectionProxy(connectionProxy)
 {
     suspendIfNeeded();
