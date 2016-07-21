@@ -1,3 +1,15 @@
+2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iPhone] Playing a video on tudou.com plays only sound, no video
+        https://bugs.webkit.org/show_bug.cgi?id=159967
+        <rdar://problem/26964090>
+
+        Reviewed by Jon Lee, Jeremy Jones, and Anders Carlsson.
+
+        * media/video-playsinline.html: Updated.
+        * media/video-webkit-playsinline-expected.txt: Removed.
+        * media/video-webkit-playsinline.html: Removed.
+
 2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking accessibility/mac/value-change/value-change-user-info-contenteditable.html as flaky on El Capitan WK2

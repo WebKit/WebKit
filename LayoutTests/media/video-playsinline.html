@@ -17,14 +17,16 @@ function runNextTest()
         endTest();
 }
 
-function testPlaysInline(requiresPlaysInline, hasPlaysInline, expectedDisplayingFullscreen)
+function testPlaysInline(requiresPlaysInline, requiresWebKitPlaysInline, hasPlaysInline, hasWebKitPlaysInline, expectedDisplayingFullscreen)
 {
-    run('internals.settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(' + requiresPlaysInline + ')');
+    run('internals.settings.setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(' + requiresPlaysInline + ')');
+    run('internals.settings.setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(' + requiresWebKitPlaysInline + ')');
     video = media = document.createElement('video');
     document.body.appendChild(video);
     video.controls = true;
     video.src = findMediaFile('video', 'content/test');
     run('video.playsInline = ' + hasPlaysInline);
+    run('video.' + (hasWebKitPlaysInline ? 'set' : 'remove') + 'Attribute("webkit-playsinline")');
     waitForEventOnce('canplaythrough', () => {
         runWithKeyDown(() => {
             run('video.play()');
@@ -39,29 +41,101 @@ function testPlaysInline(requiresPlaysInline, hasPlaysInline, expectedDisplaying
 
 function testRequiresPlaysInlineAndDoesntHaveIt()
 {
-    testPlaysInline(true, false, true);
+    testPlaysInline(true, true, false, false, true);
+}
+
+function testRequiresPlaysInlineAndDoesntHaveIt2()
+{
+    testPlaysInline(true, true, false, true, false);
+}
+
+function testRequiresPlaysInlineAndDoesntHaveIt3()
+{
+    testPlaysInline(true, false, false, true, true);
+}
+
+function testRequiresPlaysInlineAndDoesntHaveIt4()
+{
+    testPlaysInline(true, false, false, false, true);
 }
 
 function testRequiresPlaysInlineAndDoesHaveIt()
 {
-    testPlaysInline(true, true, false);
+    testPlaysInline(true, true, true, true, false);
+}
+
+function testRequiresPlaysInlineAndDoesHaveIt2()
+{
+    testPlaysInline(true, true, true, false, false);
+}
+
+function testRequiresPlaysInlineAndDoesHaveIt3()
+{
+    testPlaysInline(true, false, true, true, false);
+}
+
+function testRequiresPlaysInlineAndDoesHaveIt4()
+{
+    testPlaysInline(true, false, true, false, false);
 }
 
 function testDoesNotRequirePlaysInlineAndDoesntHaveIt()
 {
-    testPlaysInline(false, false, false);
+    testPlaysInline(false, true, false, true, false);
+}
+
+function testDoesNotRequirePlaysInlineAndDoesntHaveIt2()
+{
+    testPlaysInline(false, true, false, false, true);
+}
+
+function testDoesNotRequirePlaysInlineAndDoesntHaveIt3()
+{
+    testPlaysInline(false, false, false, true, false);
+}
+
+function testDoesNotRequirePlaysInlineAndDoesntHaveIt4()
+{
+    testPlaysInline(false, false, false, false, false);
 }
 
 function testDoesNotRequirePlaysInlineAndDoesHaveIt()
 {
-    testPlaysInline(false, true, false);
+    testPlaysInline(false, true, true, true, false);
+}
+
+function testDoesNotRequirePlaysInlineAndDoesHaveIt2()
+{
+    testPlaysInline(false, true, true, false, true);
+}
+
+function testDoesNotRequirePlaysInlineAndDoesHaveIt3()
+{
+    testPlaysInline(false, false, true, true, false);
+}
+
+function testDoesNotRequirePlaysInlineAndDoesHaveIt4()
+{
+    testPlaysInline(false, false, true, false, false);
 }
 
 var tests = [
     testRequiresPlaysInlineAndDoesntHaveIt,
+    testRequiresPlaysInlineAndDoesntHaveIt2,
+    testRequiresPlaysInlineAndDoesntHaveIt3,
+    testRequiresPlaysInlineAndDoesntHaveIt4,
     testRequiresPlaysInlineAndDoesHaveIt,
+    testRequiresPlaysInlineAndDoesHaveIt2,
+    testRequiresPlaysInlineAndDoesHaveIt3,
+    testRequiresPlaysInlineAndDoesHaveIt4,
     testDoesNotRequirePlaysInlineAndDoesntHaveIt,
+    testDoesNotRequirePlaysInlineAndDoesntHaveIt2,
+    testDoesNotRequirePlaysInlineAndDoesntHaveIt3,
+    testDoesNotRequirePlaysInlineAndDoesntHaveIt4,
     testDoesNotRequirePlaysInlineAndDoesHaveIt,
+    testDoesNotRequirePlaysInlineAndDoesHaveIt2,
+    testDoesNotRequirePlaysInlineAndDoesHaveIt3,
+    testDoesNotRequirePlaysInlineAndDoesHaveIt4
 ];
 
 </script>

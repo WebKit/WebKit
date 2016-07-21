@@ -525,7 +525,9 @@ public:
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:YES],  WebKitAllowsInlineMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackAfterFullscreenPreferenceKey,
-        [NSNumber numberWithBool:NO],  WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
+        [NSNumber numberWithBool:NO],   WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
+        [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackWithPlaysInlineAttributeKey,
+        [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttributeKey,
         [NSNumber numberWithBool:YES],  WebKitMediaControlsScaleWithPageZoomPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
@@ -539,6 +541,8 @@ public:
         [NSNumber numberWithBool:allowsInlineMediaPlayback],   WebKitAllowsInlineMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:allowsInlineMediaPlaybackAfterFullscreen],   WebKitAllowsInlineMediaPlaybackAfterFullscreenPreferenceKey,
         [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
+        [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitAllowsInlineMediaPlaybackWithPlaysInlineAttributeKey,
+        [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttributeKey,
         [NSNumber numberWithBool:NO],   WebKitMediaControlsScaleWithPageZoomPreferenceKey,
         [NSNumber numberWithUnsignedInt:AudioSession::None],  WebKitAudioSessionCategoryOverride,
         [NSNumber numberWithBool:NO],   WebKitMediaDataLoadsAutomaticallyPreferenceKey,
@@ -2291,6 +2295,26 @@ static NSString *classIBCreatorID = nil;
 - (void)setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey];
+}
+
+- (BOOL)allowsInlineMediaPlaybackWithPlaysInlineAttribute
+{
+    return [self _boolValueForKey:WebKitAllowsInlineMediaPlaybackWithPlaysInlineAttributeKey];
+}
+
+- (void)setAllowsInlineMediaPlaybackWithPlaysInlineAttribute:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAllowsInlineMediaPlaybackWithPlaysInlineAttributeKey];
+}
+
+- (BOOL)allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute
+{
+    return [self _boolValueForKey:WebKitAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttributeKey];
+}
+
+- (void)setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttributeKey];
 }
 
 - (BOOL)invisibleAutoplayNotPermitted
