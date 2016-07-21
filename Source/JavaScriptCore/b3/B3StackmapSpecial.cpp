@@ -116,6 +116,9 @@ void StackmapSpecial::forEachArgImpl(
             case ValueRep::LateColdAny:
                 role = Arg::LateColdUse;
                 break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
             }
             break;
         case ForceLateUse:
@@ -230,6 +233,7 @@ bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, con
         // We already verified by isArgValidForValue().
         return true;
     case ValueRep::SomeRegister:
+    case ValueRep::SomeEarlyRegister:
         return arg.isTmp();
     case ValueRep::LateRegister:
     case ValueRep::Register:

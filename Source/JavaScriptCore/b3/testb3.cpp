@@ -12377,6 +12377,49 @@ void testResetReachabilityDanglingReference()
     validate(proc);
 }
 
+void testSomeEarlyRegister()
+{
+    auto run = [&] (bool succeed) {
+        Procedure proc;
+        
+        BasicBlock* root = proc.addBlock();
+        
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+        patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+        bool ranFirstPatchpoint = false;
+        patchpoint->setGenerator(
+            [&] (CCallHelpers&, const StackmapGenerationParams& params) {
+                CHECK(params[0].gpr() == GPRInfo::returnValueGPR);
+                ranFirstPatchpoint = true;
+            });
+        
+        Value* arg = patchpoint;
+        
+        patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+        patchpoint->appendSomeRegister(arg);
+        if (succeed)
+            patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        bool ranSecondPatchpoint = false;
+        patchpoint->setGenerator(
+            [&] (CCallHelpers&, const StackmapGenerationParams& params) {
+                if (succeed)
+                    CHECK(params[0].gpr() != params[1].gpr());
+                else
+                    CHECK(params[0].gpr() == params[1].gpr());
+                ranSecondPatchpoint = true;
+            });
+        
+        root->appendNew<Value>(proc, Return, Origin(), patchpoint);
+        
+        compile(proc);
+        CHECK(ranFirstPatchpoint);
+        CHECK(ranSecondPatchpoint);
+    };
+    
+    run(true);
+    run(false);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -13783,6 +13826,7 @@ void run(const char* filter)
     RUN(testInterpreter());
     RUN(testReduceStrengthCheckBottomUseInAnotherBlock());
     RUN(testResetReachabilityDanglingReference());
+    RUN(testSomeEarlyRegister());
 
     if (tasks.isEmpty())
         usage();

@@ -1,3 +1,50 @@
+2016-07-20  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL snippet generators should be able to request a different register for output and input
+        https://bugs.webkit.org/show_bug.cgi?id=160010
+        rdar://problem/27439330
+
+        Reviewed by Saam Barati.
+        
+        The BitOr and BitXor snippet generators have problems if the register for the right input is
+        the same as the register for the result. We could fix those generators, but I'm not convinced
+        that the other snippet generators don't have this bug. So, the approach that this patch takes
+        is to teach the FTL to request that B3 to use a different register for the result than for
+        any input to the snippet patchpoint.
+        
+        Air already has the ability to let any instruction do an EarlyDef, which means exactly this.
+        But B3 did not expose this via ValueRep. This patch exposes this in ValueRep as
+        SomeEarlyRegister. That's most of the change.
+        
+        This adds a testb3 test for SomeEarlyRegister and a regression test for this particular
+        problem. The regression test failed on trunk JSC before this.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        * b3/B3Validate.cpp:
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::addUsedRegistersTo):
+        (JSC::B3::ValueRep::dump):
+        (WTF::printInternal):
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::ValueRep):
+        (JSC::B3::ValueRep::reg):
+        (JSC::B3::ValueRep::isAny):
+        (JSC::B3::ValueRep::isReg):
+        (JSC::B3::ValueRep::isSomeRegister): Deleted.
+        * b3/testb3.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitRightShiftSnippet):
+        * tests/stress/ftl-bit-xor-right-result-interference.js: Added.
+
 2016-07-20  Michael Saboff  <msaboff@apple.com>
 
         CrashOnOverflow in JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets
