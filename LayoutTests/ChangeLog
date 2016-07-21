@@ -1,3 +1,13 @@
+2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Merge r203506. rdar://problem/27353750
+
+    2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Update test expectations for rdar://problem/27353750.
+
+            * platform/mac/TestExpectations:
+
 2016-07-18  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] ReadableStream should throw a RangeError in case of NaN highWaterMark
