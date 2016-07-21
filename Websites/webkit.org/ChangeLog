@@ -1,3 +1,22 @@
+2016-07-20  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed, new demo files for an up-coming blog post.
+
+        * demos/mathml/demo2016/LICENSE-amiri.txt: Added.
+        * demos/mathml/demo2016/LICENSE-latinmodern-math.txt: Added.
+        * demos/mathml/demo2016/LICENSE-libertinusmath.txt: Added.
+        * demos/mathml/demo2016/README.txt: Added.
+        * demos/mathml/demo2016/amiri-regular.woff: Added.
+        * demos/mathml/demo2016/index.html: Added.
+        * demos/mathml/demo2016/latinmodern-math.woff: Added.
+        * demos/mathml/demo2016/libertinusmath-regular.woff: Added.
+        * demos/mathml/demo2016/webfonts.css: Added.
+        (@namespace url('http://www.w3.org/1999/xhtml');):
+        (@font-face):
+        (m|math, m|mtext):
+        (m|math.libertinus):
+        (m|math.arabic):
+
 2016-07-19  Jon Davis  <jond@apple.com>
 
         Adjust margins for first-line floating elements and add preset floating video sizing
