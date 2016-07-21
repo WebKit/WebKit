@@ -51,6 +51,7 @@
 #include "HandlerInfo.h"
 #include "Instruction.h"
 #include "JITCode.h"
+#include "JITMathICForwards.h"
 #include "JITWriteBarrier.h"
 #include "JSCell.h"
 #include "JSGlobalObject.h"
@@ -79,6 +80,7 @@
 namespace JSC {
 
 class ExecState;
+class JITAddGenerator;
 class JSModuleEnvironment;
 class LLIntOffsetsExtractor;
 class PCToCodeOriginMap;
@@ -87,6 +89,8 @@ class StructureStubInfo;
 class TypeLocation;
 
 enum class AccessType : int8_t;
+
+struct ArithProfile;
 
 typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
@@ -245,6 +249,7 @@ public:
     
 #if ENABLE(JIT)
     StructureStubInfo* addStubInfo(AccessType);
+    JITAddIC* addJITAddIC();
     Bag<StructureStubInfo>::iterator stubInfoBegin() { return m_stubInfos.begin(); }
     Bag<StructureStubInfo>::iterator stubInfoEnd() { return m_stubInfos.end(); }
     
@@ -440,13 +445,8 @@ public:
         return value >= Options::couldTakeSlowCaseMinimumCount();
     }
 
-    ResultProfile* ensureResultProfile(int bytecodeOffset);
-    ResultProfile* ensureResultProfile(const ConcurrentJITLocker&, int bytecodeOffset);
-    unsigned numberOfResultProfiles() { return m_resultProfiles.size(); }
-    ResultProfile* resultProfileForBytecodeOffset(const ConcurrentJITLocker&, int bytecodeOffset);
-
-    unsigned specialFastCaseProfileCountForBytecodeOffset(const ConcurrentJITLocker&, int bytecodeOffset);
-    unsigned specialFastCaseProfileCountForBytecodeOffset(int bytecodeOffset);
+    ArithProfile* arithProfileForBytecodeOffset(int bytecodeOffset);
+    ArithProfile& arithProfileForPC(Instruction*);
 
     bool couldTakeSpecialFastCase(int bytecodeOffset);
 
@@ -957,7 +957,7 @@ private:
     void dumpValueProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpRareCaseProfile(PrintStream&, const char* name, RareCaseProfile*, bool& hasPrintedProfiling);
-    void dumpResultProfile(PrintStream&, ResultProfile*, bool& hasPrintedProfiling);
+    void dumpArithProfile(PrintStream&, ArithProfile*, bool& hasPrintedProfiling);
 
     bool shouldVisitStrongly();
     bool shouldJettisonDueToWeakReference();
@@ -1013,6 +1013,7 @@ private:
 #if ENABLE(JIT)
     std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
     Bag<StructureStubInfo> m_stubInfos;
+    Bag<JITAddIC> m_addICs;
     Bag<ByValInfo> m_byValInfos;
     Bag<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
@@ -1029,9 +1030,6 @@ private:
     RefCountedArray<ValueProfile> m_argumentValueProfiles;
     RefCountedArray<ValueProfile> m_valueProfiles;
     SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
-    SegmentedVector<ResultProfile, 8> m_resultProfiles;
-    typedef HashMap<unsigned, unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BytecodeOffsetToResultProfileIndexMap;
-    std::unique_ptr<BytecodeOffsetToResultProfileIndexMap> m_bytecodeOffsetToResultProfileIndexMap;
     RefCountedArray<ArrayAllocationProfile> m_arrayAllocationProfiles;
     ArrayProfileVector m_arrayProfiles;
     RefCountedArray<ObjectAllocationProfile> m_objectAllocationProfiles;

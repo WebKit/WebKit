@@ -38,7 +38,7 @@ public:
     JITMulGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,
         FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR,
-        ResultProfile* resultProfile = nullptr)
+        ArithProfile* arithProfile = nullptr)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
         , m_result(result)
@@ -48,7 +48,7 @@ public:
         , m_rightFPR(rightFPR)
         , m_scratchGPR(scratchGPR)
         , m_scratchFPR(scratchFPR)
-        , m_resultProfile(resultProfile)
+        , m_arithProfile(arithProfile)
     {
         ASSERT(!m_leftOperand.isPositiveConstInt32() || !m_rightOperand.isPositiveConstInt32());
     }
@@ -69,7 +69,7 @@ private:
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;
     FPRReg m_scratchFPR;
-    ResultProfile* m_resultProfile;
+    ArithProfile* m_arithProfile;
     bool m_didEmitFastPath { false };
 
     CCallHelpers::JumpList m_endJumpList;

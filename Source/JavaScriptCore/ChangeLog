@@ -1,3 +1,289 @@
+2016-07-21  Saam Barati  <sbarati@apple.com>
+
+        op_add/ValueAdd should be an IC in all JIT tiers
+        https://bugs.webkit.org/show_bug.cgi?id=159649
+
+        Reviewed by Benjamin Poulain.
+
+        This patch makes Add an IC inside all JIT tiers. It does so in a
+        simple, but effective, way. We will try to generate an int+int add
+        that will repatch itself if its type checks fail. Sometimes though,
+        we have runtime type data saying that the add won't be int+int.
+        In those cases, we will just generate a full snippet that doesn't patch itself.
+        Other times, we may generate no inline code and defer to making a C call. A lot
+        of this patch is just refactoring ResultProfile into what we're now calling ArithProfile.
+        ArithProfile does everything ResultProfile used to do, and more. It records simple type
+        data about the LHS/RHS operands it sees. This allows us to determine if an op_add
+        has only seen int+int operands, etc. ArithProfile will also contain the ResultType
+        for the LHS/RHS that the parser feeds into op_add. ArithProfile now fits into 32-bits.
+        This means instead of having a side table like we did for ResultProfile, we just
+        inject the ArithProfile into the bytecode instruction stream. This makes asking
+        for ArithProfile faster; we no longer need to lock around this operation.
+
+        The size of an Add has gone down on average, but we can still do better.
+        We still generate a lot of code because we generate calls to the slow path.
+        I think we can make this better by moving the slow path to a shared thunk
+        system. This patch mostly lays the foundation for future improvements to Add,
+        and a framework to move all other arithmetic operations to be typed-based ICs.
+
+        Here is some data I took on the average op_add/ValueAdd size on various benchmarks:
+                   |   JetStream  |  Speedometer |  Unity 3D  |
+             ------| -------------|-----------------------------
+              Old  |  189 bytes   |  169 bytes   |  192 bytes |
+             ------| -------------|-----------------------------
+              New  |  148 bytes   |  124 bytes   |  143 bytes |
+             ---------------------------------------------------
+
+        Making an arithmetic IC is now easy. The JITMathIC class will hold a snippet
+        generator as a member variable. To make a snippet an IC, you need to implement
+        a generateInline(.) method, which generates the inline IC. Then, you need to
+        generate the IC where you used to generate the snippet. When generating the
+        IC, we need to inform JITMathIC of various data like we do with StructureStubInfo.
+        We need to tell it about where the slow path starts, where the slow path call is, etc.
+        When generating a JITMathIC, it may tell you that it didn't generate any code inline.
+        This is a request to the user of JITMathIC to just generate a C call along the
+        fast path. JITMathIC may also have the snippet tell it to just generate the full
+        snippet instead of the int+int path along the fast path.
+
+        In subsequent patches, we can improve upon how we decide to generate int+int or
+        the full snippet. I tried to get clever by having double+double, double+int, int+double,
+        fast paths, but they didn't work out nearly as well as the int+int fast path. I ended up
+        generating a lot of code when I did this and ended up using more memory than just generating
+        the full snippet. There is probably some way we can be clever and generate specialized fast
+        paths that are more successful than what I tried implementing, but I think that's worth deferring
+        this to follow up patches once the JITMathIC foundation has landed.
+
+        This patch also fixes a bug inside the slow path lambdas in the DFG.
+        Before, it was not legal to emit an exception check inside them. Now,
+        it is. So it's now easy to define arbitrary late paths using the DFG
+        slow path lambda API.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ArithProfile.cpp: Added.
+        (JSC::ArithProfile::emitObserveResult):
+        (JSC::ArithProfile::shouldEmitSetDouble):
+        (JSC::ArithProfile::emitSetDouble):
+        (JSC::ArithProfile::shouldEmitSetNonNumber):
+        (JSC::ArithProfile::emitSetNonNumber):
+        (WTF::printInternal):
+        * bytecode/ArithProfile.h: Added.
+        (JSC::ObservedType::ObservedType):
+        (JSC::ObservedType::sawInt32):
+        (JSC::ObservedType::isOnlyInt32):
+        (JSC::ObservedType::sawNumber):
+        (JSC::ObservedType::isOnlyNumber):
+        (JSC::ObservedType::sawNonNumber):
+        (JSC::ObservedType::isOnlyNonNumber):
+        (JSC::ObservedType::isEmpty):
+        (JSC::ObservedType::bits):
+        (JSC::ObservedType::withInt32):
+        (JSC::ObservedType::withNumber):
+        (JSC::ObservedType::withNonNumber):
+        (JSC::ObservedType::withoutNonNumber):
+        (JSC::ObservedType::operator==):
+        (JSC::ArithProfile::ArithProfile):
+        (JSC::ArithProfile::fromInt):
+        (JSC::ArithProfile::lhsResultType):
+        (JSC::ArithProfile::rhsResultType):
+        (JSC::ArithProfile::lhsObservedType):
+        (JSC::ArithProfile::rhsObservedType):
+        (JSC::ArithProfile::setLhsObservedType):
+        (JSC::ArithProfile::setRhsObservedType):
+        (JSC::ArithProfile::tookSpecialFastPath):
+        (JSC::ArithProfile::didObserveNonInt32):
+        (JSC::ArithProfile::didObserveDouble):
+        (JSC::ArithProfile::didObserveNonNegZeroDouble):
+        (JSC::ArithProfile::didObserveNegZeroDouble):
+        (JSC::ArithProfile::didObserveNonNumber):
+        (JSC::ArithProfile::didObserveInt32Overflow):
+        (JSC::ArithProfile::didObserveInt52Overflow):
+        (JSC::ArithProfile::setObservedNonNegZeroDouble):
+        (JSC::ArithProfile::setObservedNegZeroDouble):
+        (JSC::ArithProfile::setObservedNonNumber):
+        (JSC::ArithProfile::setObservedInt32Overflow):
+        (JSC::ArithProfile::setObservedInt52Overflow):
+        (JSC::ArithProfile::addressOfBits):
+        (JSC::ArithProfile::observeResult):
+        (JSC::ArithProfile::lhsSawInt32):
+        (JSC::ArithProfile::lhsSawNumber):
+        (JSC::ArithProfile::lhsSawNonNumber):
+        (JSC::ArithProfile::rhsSawInt32):
+        (JSC::ArithProfile::rhsSawNumber):
+        (JSC::ArithProfile::rhsSawNonNumber):
+        (JSC::ArithProfile::observeLHSAndRHS):
+        (JSC::ArithProfile::bits):
+        (JSC::ArithProfile::hasBits):
+        (JSC::ArithProfile::setBit):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpRareCaseProfile):
+        (JSC::CodeBlock::dumpArithProfile):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::addStubInfo):
+        (JSC::CodeBlock::addJITAddIC):
+        (JSC::CodeBlock::findStubInfo):
+        (JSC::CodeBlock::resetJITData):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::dumpValueProfiles):
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeOffset):
+        (JSC::CodeBlock::arithProfileForBytecodeOffset):
+        (JSC::CodeBlock::arithProfileForPC):
+        (JSC::CodeBlock::couldTakeSpecialFastCase):
+        (JSC::CodeBlock::dumpResultProfile): Deleted.
+        (JSC::CodeBlock::resultProfileForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::specialFastCaseProfileCountForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::ensureResultProfile): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::stubInfoBegin):
+        (JSC::CodeBlock::stubInfoEnd):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::numberOfResultProfiles): Deleted.
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::emitReportValue):
+        * bytecode/MethodOfGettingAValueProfile.h:
+        (JSC::MethodOfGettingAValueProfile::MethodOfGettingAValueProfile):
+        * bytecode/ValueProfile.cpp:
+        (JSC::ResultProfile::emitDetectNumericness): Deleted.
+        (JSC::ResultProfile::emitSetDouble): Deleted.
+        (JSC::ResultProfile::emitSetNonNumber): Deleted.
+        (WTF::printInternal): Deleted.
+        * bytecode/ValueProfile.h:
+        (JSC::getRareCaseProfileBytecodeOffset):
+        (JSC::ResultProfile::ResultProfile): Deleted.
+        (JSC::ResultProfile::bytecodeOffset): Deleted.
+        (JSC::ResultProfile::specialFastPathCount): Deleted.
+        (JSC::ResultProfile::didObserveNonInt32): Deleted.
+        (JSC::ResultProfile::didObserveDouble): Deleted.
+        (JSC::ResultProfile::didObserveNonNegZeroDouble): Deleted.
+        (JSC::ResultProfile::didObserveNegZeroDouble): Deleted.
+        (JSC::ResultProfile::didObserveNonNumber): Deleted.
+        (JSC::ResultProfile::didObserveInt32Overflow): Deleted.
+        (JSC::ResultProfile::didObserveInt52Overflow): Deleted.
+        (JSC::ResultProfile::setObservedNonNegZeroDouble): Deleted.
+        (JSC::ResultProfile::setObservedNegZeroDouble): Deleted.
+        (JSC::ResultProfile::setObservedNonNumber): Deleted.
+        (JSC::ResultProfile::setObservedInt32Overflow): Deleted.
+        (JSC::ResultProfile::setObservedInt52Overflow): Deleted.
+        (JSC::ResultProfile::addressOfFlags): Deleted.
+        (JSC::ResultProfile::addressOfSpecialFastPathCount): Deleted.
+        (JSC::ResultProfile::detectNumericness): Deleted.
+        (JSC::ResultProfile::hasBits): Deleted.
+        (JSC::ResultProfile::setBit): Deleted.
+        (JSC::getResultProfileBytecodeOffset): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitBinaryOp):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::generate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::addSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentSpillAllRegistersImpl):
+        (JSC::DFG::SpeculativeJIT::silentSpillAllRegisters):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStrCat):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        (JSC::CCallHelpers::setupArguments):
+        * jit/JIT.h:
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateInline):
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::JITAddGenerator):
+        (JSC::JITAddGenerator::didEmitFastPath): Deleted.
+        (JSC::JITAddGenerator::endJumpList): Deleted.
+        (JSC::JITAddGenerator::slowPathJumpList): Deleted.
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::getOperandTypes):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        * jit/JITDivGenerator.cpp:
+        (JSC::JITDivGenerator::generateFastPath):
+        * jit/JITDivGenerator.h:
+        (JSC::JITDivGenerator::JITDivGenerator):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITMathIC.h: Added.
+        (JSC::JITMathIC::doneLocation):
+        (JSC::JITMathIC::slowPathStartLocation):
+        (JSC::JITMathIC::slowPathCallLocation):
+        (JSC::JITMathIC::generateInline):
+        (JSC::JITMathIC::generateOutOfLine):
+        (JSC::JITMathIC::finalizeInlineCode):
+        * jit/JITMathICForwards.h: Added.
+        * jit/JITMathICInlineResult.h: Added.
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITMulGenerator.h:
+        (JSC::JITMulGenerator::JITMulGenerator):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITSubGenerator.cpp:
+        (JSC::JITSubGenerator::generateFastPath):
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::JITSubGenerator):
+        * jit/Repatch.cpp:
+        (JSC::readCallTarget):
+        (JSC::ftlThunkAwareRepatchCall):
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::appropriateGenericPutByIdFunction):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryRepatchIn):
+        (JSC::repatchIn):
+        (JSC::linkSlowFor):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        (JSC::repatchCall): Deleted.
+        * jit/Repatch.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ResultType.h:
+        (JSC::ResultType::ResultType):
+        (JSC::ResultType::isInt32):
+        (JSC::ResultType::definitelyIsNumber):
+        (JSC::ResultType::definitelyIsString):
+        (JSC::ResultType::definitelyIsBoolean):
+        (JSC::ResultType::mightBeNumber):
+        (JSC::ResultType::isNotNumber):
+        (JSC::ResultType::forBitOp):
+        (JSC::ResultType::bits):
+        (JSC::OperandTypes::OperandTypes):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        (JSC::updateArithProfileForBinaryArithOp):
+        (JSC::updateResultProfileForBinaryArithOp): Deleted.
+        * tests/stress/op-add-exceptions.js: Added.
+        (assert):
+        (f1):
+        (f2):
+        (f3):
+        (let.oException.valueOf):
+        (foo):
+        (ident):
+        (bar):
+
 2016-07-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Clarify testing mode names in run-jsc-stress-tests

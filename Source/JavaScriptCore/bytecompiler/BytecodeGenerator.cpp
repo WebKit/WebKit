@@ -31,6 +31,7 @@
 #include "config.h"
 #include "BytecodeGenerator.h"
 
+#include "ArithProfile.h"
 #include "BuiltinExecutables.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "Interpreter.h"
@@ -1600,7 +1601,7 @@ RegisterID* BytecodeGenerator::emitBinaryOp(OpcodeID opcodeID, RegisterID* dst, 
 
     if (opcodeID == op_bitor || opcodeID == op_bitand || opcodeID == op_bitxor ||
         opcodeID == op_add || opcodeID == op_mul || opcodeID == op_sub || opcodeID == op_div)
-        instructions().append(types.toInt());
+        instructions().append(ArithProfile(types.first(), types.second()).bits());
 
     return dst;
 }

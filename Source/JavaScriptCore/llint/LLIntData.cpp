@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LLIntData.h"
 
+#include "ArithProfile.h"
 #include "BytecodeConventions.h"
 #include "CodeBlock.h"
 #include "CodeType.h"
@@ -223,6 +224,47 @@ void Data::performAssertions(VM& vm)
 #endif
 
     ASSERT(StringImpl::s_hashFlag8BitBuffer == 8);
+
+    {
+        uint32_t bits = 0x120000;
+        UNUSED_PARAM(bits);
+        ArithProfile arithProfile;
+        arithProfile.lhsSawInt32();
+        arithProfile.rhsSawInt32();
+        ASSERT(arithProfile.bits() == bits);
+        ASSERT(ArithProfile::fromInt(bits).lhsObservedType().isOnlyInt32());
+        ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyInt32());
+    }
+    {
+        uint32_t bits = 0x220000;
+        UNUSED_PARAM(bits);
+        ArithProfile arithProfile;
+        arithProfile.lhsSawNumber();
+        arithProfile.rhsSawInt32();
+        ASSERT(arithProfile.bits() == bits);
+        ASSERT(ArithProfile::fromInt(bits).lhsObservedType().isOnlyNumber());
+        ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyInt32());
+    }
+    {
+        uint32_t bits = 0x240000;
+        UNUSED_PARAM(bits);
+        ArithProfile arithProfile;
+        arithProfile.lhsSawNumber();
+        arithProfile.rhsSawNumber();
+        ASSERT(arithProfile.bits() == bits);
+        ASSERT(ArithProfile::fromInt(bits).lhsObservedType().isOnlyNumber());
+        ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyNumber());
+    }
+    {
+        uint32_t bits = 0x140000;
+        UNUSED_PARAM(bits);
+        ArithProfile arithProfile;
+        arithProfile.lhsSawInt32();
+        arithProfile.rhsSawNumber();
+        ASSERT(arithProfile.bits() == bits);
+        ASSERT(ArithProfile::fromInt(bits).lhsObservedType().isOnlyInt32());
+        ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyNumber());
+    }
 }
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop

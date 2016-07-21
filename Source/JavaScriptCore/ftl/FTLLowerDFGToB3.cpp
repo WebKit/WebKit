@@ -62,6 +62,7 @@
 #include "JITDivGenerator.h"
 #include "JITInlineCacheGenerator.h"
 #include "JITLeftShiftGenerator.h"
+#include "JITMathIC.h"
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
@@ -1538,7 +1539,72 @@ private:
     
     void compileValueAdd()
     {
-        emitBinarySnippet<JITAddGenerator>(operationValueAdd);
+        Node* node = m_node;
+        
+        LValue left = lowJSValue(node->child1());
+        LValue right = lowJSValue(node->child2());
+
+        SnippetOperand leftOperand(m_state.forNode(node->child1()).resultType());
+        SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
+            
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->appendSomeRegister(left);
+        patchpoint->appendSomeRegister(right);
+        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(patchpoint);
+        patchpoint->numGPScratchRegisters = 1;
+        patchpoint->numFPScratchRegisters = 2;
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        State* state = &m_ftlState;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                Box<CCallHelpers::JumpList> exceptions =
+                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+                JITAddIC* addIC = jit.codeBlock()->addJITAddIC();
+                Box<MathICGenerationState> addICGenerationState = Box<MathICGenerationState>::create();
+                ArithProfile* arithProfile = state->graph.baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+                addIC->m_generator = JITAddGenerator(leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
+                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.fpScratch(0),
+                    params.fpScratch(1), params.gpScratch(0), InvalidFPRReg, arithProfile);
+
+                bool generatedInline = addIC->generateInline(jit, *addICGenerationState);
+
+                if (generatedInline) {
+                    ASSERT(!addICGenerationState->slowPathJumps.empty());
+                    auto done = jit.label();
+                    params.addLatePath([=] (CCallHelpers& jit) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                        addICGenerationState->slowPathJumps.link(&jit);
+                        addICGenerationState->slowPathStart = jit.label();
+
+                        if (addICGenerationState->shouldSlowPathRepatch) {
+                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
+                                operationValueAddOptimize, params[0].gpr(), params[1].gpr(), params[2].gpr(), CCallHelpers::TrustedImmPtr(addIC));
+                            addICGenerationState->slowPathCall = call.call();
+                        } else {
+                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                exceptions.get(), operationValueAdd, params[0].gpr(), params[1].gpr(), params[2].gpr());
+                            addICGenerationState->slowPathCall = call.call();
+                        }
+                        jit.jump().linkTo(done, &jit);
+
+                        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                            addIC->finalizeInlineCode(*addICGenerationState, linkBuffer);
+                        });
+                    });
+                } else {
+                    callOperation(
+                        *state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
+                        operationValueAdd, params[0].gpr(), params[1].gpr(), params[2].gpr());
+                }
+            });
+
+        setJSValue(patchpoint);
     }
     
     void compileStrCat()

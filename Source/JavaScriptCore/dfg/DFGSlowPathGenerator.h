@@ -52,7 +52,7 @@ public:
         jit->m_outOfLineStreamIndex = m_streamIndex;
         jit->m_origin = m_origin;
         generateInternal(jit);
-        jit->m_outOfLineStreamIndex = UINT_MAX;
+        jit->m_outOfLineStreamIndex = Nullopt;
         if (!ASSERT_DISABLED)
             jit->m_jit.abortWithReason(DFGSlowPathGeneratorFellThrough);
     }

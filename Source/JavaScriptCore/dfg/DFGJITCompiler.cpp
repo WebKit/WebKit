@@ -604,7 +604,7 @@ void JITCompiler::exceptionCheck()
     HandlerInfo* exceptionHandler;
     bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_speculative->m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler); 
     if (willCatchException) {
-        unsigned streamIndex = m_speculative->m_outOfLineStreamIndex != UINT_MAX ? m_speculative->m_outOfLineStreamIndex : m_speculative->m_stream->size();
+        unsigned streamIndex = m_speculative->m_outOfLineStreamIndex ? *m_speculative->m_outOfLineStreamIndex : m_speculative->m_stream->size();
         MacroAssembler::Jump hadException = emitNonPatchableExceptionCheck();
         // We assume here that this is called after callOpeartion()/appendCall() is called.
         appendExceptionHandlingOSRExit(ExceptionCheck, streamIndex, opCatchOrigin, exceptionHandler, m_jitCode->common.lastCallSite(), hadException);

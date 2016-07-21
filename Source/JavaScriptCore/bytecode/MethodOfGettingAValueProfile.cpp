@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArithProfile.h"
 #include "CCallHelpers.h"
 #include "CodeBlock.h"
 #include "JSCInlines.h"
@@ -65,8 +66,8 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueReg
         return;
     }
         
-    case ResultProfileReady: {
-        u.resultProfile->emitDetectNumericness(jit, regs, DoNotHaveTagRegisters);
+    case ArithProfileReady: {
+        u.arithProfile->emitObserveResult(jit, regs, DoNotHaveTagRegisters);
         return;
     } }
     

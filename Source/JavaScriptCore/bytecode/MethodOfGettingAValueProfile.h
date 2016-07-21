@@ -40,7 +40,7 @@ namespace JSC {
 class CCallHelpers;
 class CodeBlock;
 class LazyOperandValueProfileKey;
-struct ResultProfile;
+struct ArithProfile;
 struct ValueProfile;
 
 class MethodOfGettingAValueProfile {
@@ -59,11 +59,11 @@ public:
             m_kind = None;
     }
     
-    MethodOfGettingAValueProfile(ResultProfile* profile)
+    MethodOfGettingAValueProfile(ArithProfile* profile)
     {
         if (profile) {
-            m_kind = ResultProfileReady;
-            u.resultProfile = profile;
+            m_kind = ArithProfileReady;
+            u.arithProfile = profile;
         } else
             m_kind = None;
     }
@@ -79,14 +79,14 @@ private:
     enum Kind {
         None,
         Ready,
-        ResultProfileReady,
+        ArithProfileReady,
         LazyOperand
     };
     
     Kind m_kind;
     union {
         ValueProfile* profile;
-        ResultProfile* resultProfile;
+        ArithProfile* arithProfile;
         struct {
             CodeBlock* codeBlock;
             unsigned bytecodeOffset;

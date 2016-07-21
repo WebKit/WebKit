@@ -29,16 +29,23 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
+#include "JITMathICInlineResult.h"
+#include "JITOperations.h"
 #include "SnippetOperand.h"
 
 namespace JSC {
 
+struct MathICGenerationState;
+
 class JITAddGenerator {
 public:
+    JITAddGenerator()
+    { }
+
     JITAddGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,
         FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR,
-        ResultProfile* resultProfile = nullptr)
+        ArithProfile* arithProfile = nullptr)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
         , m_result(result)
@@ -48,16 +55,13 @@ public:
         , m_rightFPR(rightFPR)
         , m_scratchGPR(scratchGPR)
         , m_scratchFPR(scratchFPR)
-        , m_resultProfile(resultProfile)
+        , m_arithProfile(arithProfile)
     {
         ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
     }
 
-    void generateFastPath(CCallHelpers&);
-
-    bool didEmitFastPath() const { return m_didEmitFastPath; }
-    CCallHelpers::JumpList& endJumpList() { return m_endJumpList; }
-    CCallHelpers::JumpList& slowPathJumpList() { return m_slowPathJumpList; }
+    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&);
+    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList);
 
 private:
     SnippetOperand m_leftOperand;
@@ -69,11 +73,7 @@ private:
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;
     FPRReg m_scratchFPR;
-    ResultProfile* m_resultProfile;
-    bool m_didEmitFastPath { false };
-
-    CCallHelpers::JumpList m_endJumpList;
-    CCallHelpers::JumpList m_slowPathJumpList;
+    ArithProfile* m_arithProfile;
 };
 
 } // namespace JSC

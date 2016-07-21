@@ -32,46 +32,48 @@ namespace JSC {
     private:
         friend struct OperandTypes;
 
-        typedef char Type;
+        typedef uint8_t Type;
         static const Type TypeInt32 = 1;
-        
-        static const Type TypeMaybeNumber = 0x04;
-        static const Type TypeMaybeString = 0x08;
-        static const Type TypeMaybeNull   = 0x10;
-        static const Type TypeMaybeBool   = 0x20;
-        static const Type TypeMaybeOther  = 0x40;
+        static const Type TypeMaybeNumber = 0x02;
+        static const Type TypeMaybeString = 0x04;
+        static const Type TypeMaybeNull   = 0x08;
+        static const Type TypeMaybeBool   = 0x10;
+        static const Type TypeMaybeOther  = 0x20;
 
         static const Type TypeBits = TypeMaybeNumber | TypeMaybeString | TypeMaybeNull | TypeMaybeBool | TypeMaybeOther;
 
+    public:
+        static const int numBitsNeeded = 6;
+        static_assert((TypeBits & ((1 << numBitsNeeded) - 1)) == TypeBits, "This is necessary for correctness.");
+
         explicit ResultType(Type type)
-            : m_type(type)
+            : m_bits(type)
         {
         }
 
-    public:
         bool isInt32() const
         {
-            return m_type & TypeInt32;
+            return m_bits & TypeInt32;
         }
 
         bool definitelyIsNumber() const
         {
-            return (m_type & TypeBits) == TypeMaybeNumber;
+            return (m_bits & TypeBits) == TypeMaybeNumber;
         }
         
         bool definitelyIsString() const
         {
-            return (m_type & TypeBits) == TypeMaybeString;
+            return (m_bits & TypeBits) == TypeMaybeString;
         }
 
         bool definitelyIsBoolean() const
         {
-            return (m_type & TypeBits) == TypeMaybeBool;
+            return (m_bits & TypeBits) == TypeMaybeBool;
         }
 
         bool mightBeNumber() const
         {
-            return m_type & TypeMaybeNumber;
+            return m_bits & TypeMaybeNumber;
         }
 
         bool isNotNumber() const
@@ -141,8 +143,10 @@ namespace JSC {
             return numberTypeIsInt32();
         }
 
+        Type bits() const { return m_bits; }
+
     private:
-        Type m_type;
+        Type m_bits;
     };
     
     struct OperandTypes
@@ -152,8 +156,8 @@ namespace JSC {
             // We have to initialize one of the int to ensure that
             // the entire struct is initialized.
             m_u.i = 0;
-            m_u.rds.first = first.m_type;
-            m_u.rds.second = second.m_type;
+            m_u.rds.first = first.m_bits;
+            m_u.rds.second = second.m_bits;
         }
         
         union {

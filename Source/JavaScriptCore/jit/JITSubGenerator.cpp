@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JITSubGenerator.h"
 
+#include "ArithProfile.h"
+
 #if ENABLE(JIT)
 
 namespace JSC {
@@ -83,8 +85,8 @@ void JITSubGenerator::generateFastPath(CCallHelpers& jit)
     rightWasInteger.link(&jit);
 
     jit.subDouble(m_rightFPR, m_leftFPR);
-    if (m_resultProfile)
-        m_resultProfile->emitSetDouble(jit);
+    if (m_arithProfile)
+        m_arithProfile->emitSetDouble(jit);
 
     jit.boxDouble(m_leftFPR, m_result);
 }

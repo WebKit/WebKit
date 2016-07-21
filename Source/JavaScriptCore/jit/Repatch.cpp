@@ -72,7 +72,7 @@ static FunctionPtr readCallTarget(CodeBlock* codeBlock, CodeLocationCall call)
     return result;
 }
 
-static void repatchCall(CodeBlock* codeBlock, CodeLocationCall call, FunctionPtr newCalleeFunction)
+void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall call, FunctionPtr newCalleeFunction)
 {
 #if ENABLE(FTL_JIT)
     if (codeBlock->jitType() == JITCode::FTLJIT) {
@@ -167,7 +167,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
                 bool generatedCodeInline = InlineAccess::generateArrayLength(*codeBlock->vm(), stubInfo, jsCast<JSArray*>(baseValue));
                 if (generatedCodeInline) {
-                    repatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
+                    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
                     stubInfo.initArrayLength();
                     return RetryCacheLater;
                 }
@@ -220,7 +220,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             if (generatedCodeInline) {
                 LOG_IC((ICEvent::GetByIdSelfPatch, structure->classInfo(), propertyName));
                 structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
-                repatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
+                ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
                 stubInfo.initGetByIdSelf(codeBlock, structure, slot.cachedOffset());
                 return RetryCacheLater;
             }
@@ -314,7 +314,7 @@ void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& proper
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
     if (tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo, kind) == GiveUpOnCache)
-        repatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), appropriateGenericGetByIdFunction(kind));
+        ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), appropriateGenericGetByIdFunction(kind));
 }
 
 static V_JITOperation_ESsiJJI appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
@@ -372,7 +372,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(vm, stubInfo, structure, slot.cachedOffset());
                 if (generatedCodeInline) {
                     LOG_IC((ICEvent::PutByIdSelfPatch, structure->classInfo(), ident));
-                    repatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingPutByIdFunction(slot, putKind));
+                    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingPutByIdFunction(slot, putKind));
                     stubInfo.initPutByIdReplace(codeBlock, structure, slot.cachedOffset());
                     return RetryCacheLater;
                 }
@@ -468,7 +468,7 @@ void repatchPutByID(ExecState* exec, JSValue baseValue, Structure* structure, co
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
     if (tryCachePutByID(exec, baseValue, structure, propertyName, slot, stubInfo, putKind) == GiveUpOnCache)
-        repatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), appropriateGenericPutByIdFunction(slot, putKind));
+        ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), appropriateGenericPutByIdFunction(slot, putKind));
 }
 
 static InlineCacheAction tryRepatchIn(
@@ -529,7 +529,7 @@ void repatchIn(
 {
     SuperSamplerScope superSamplerScope(false);
     if (tryRepatchIn(exec, base, ident, wasFound, slot, stubInfo) == GiveUpOnCache)
-        repatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn);
+        ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn);
 }
 
 static void linkSlowFor(VM*, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef)
@@ -901,7 +901,7 @@ void linkPolymorphicCall(
 
 void resetGetByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByIDKind kind)
 {
-    repatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
+    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
     InlineAccess::rewireStubAsJump(*codeBlock->vm(), stubInfo, stubInfo.slowPathStartLocation());
 }
 
@@ -920,7 +920,7 @@ void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
         optimizedFunction = operationPutByIdDirectNonStrictOptimize;
     }
 
-    repatchCall(codeBlock, stubInfo.slowPathCallLocation(), optimizedFunction);
+    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), optimizedFunction);
     InlineAccess::rewireStubAsJump(*codeBlock->vm(), stubInfo, stubInfo.slowPathStartLocation());
 }
 

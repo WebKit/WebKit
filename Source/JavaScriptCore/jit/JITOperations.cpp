@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "ArithProfile.h"
 #include "ArrayConstructor.h"
 #include "CommonSlowPaths.h"
 #include "DFGCompilationMode.h"
@@ -2247,7 +2248,7 @@ JSCell* JIT_OPERATION operationToIndexString(ExecState* exec, int32_t index)
     return jsString(exec, Identifier::from(exec, index).string());
 }
 
-EncodedJSValue JIT_OPERATION operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+ALWAYS_INLINE static EncodedJSValue unprofiledAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -2258,7 +2259,71 @@ EncodedJSValue JIT_OPERATION operationValueAdd(ExecState* exec, EncodedJSValue e
     return JSValue::encode(jsAdd(exec, op1, op2));
 }
 
-EncodedJSValue JIT_OPERATION operationValueAddProfiled(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ResultProfile* resultProfile)
+ALWAYS_INLINE static EncodedJSValue profiledAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile* arithProfile)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    ASSERT(arithProfile);
+    arithProfile->observeLHSAndRHS(op1, op2);
+
+    JSValue result = jsAdd(exec, op1, op2);
+    arithProfile->observeResult(result);
+
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JIT_OPERATION operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    return unprofiledAdd(exec, encodedOp1, encodedOp2);
+}
+
+EncodedJSValue JIT_OPERATION operationValueAddProfiled(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile* arithProfile)
+{
+    return profiledAdd(exec, encodedOp1, encodedOp2, arithProfile);
+}
+
+EncodedJSValue JIT_OPERATION operationValueAddProfiledOptimize(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile* arithProfile, JITAddIC* addIC)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    ASSERT(arithProfile);
+    arithProfile->observeLHSAndRHS(op1, op2);
+    auto nonOptimizeVariant = operationValueAddProfiledNoOptimize;
+    addIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
+    
+    JSValue result = jsAdd(exec, op1, op2);
+    arithProfile->observeResult(result);
+
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JIT_OPERATION operationValueAddProfiledNoOptimize(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile* arithProfile, JITAddIC*)
+{
+    return profiledAdd(exec, encodedOp1, encodedOp2, arithProfile);
+}
+
+EncodedJSValue JIT_OPERATION operationValueAddOptimize(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITAddIC* addIC)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    auto nonOptimizeVariant = operationValueAddNoOptimize;
+    addIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+    return JSValue::encode(jsAdd(exec, op1, op2));
+}
+
+EncodedJSValue JIT_OPERATION operationValueAddNoOptimize(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITAddIC*)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -2267,7 +2332,7 @@ EncodedJSValue JIT_OPERATION operationValueAddProfiled(ExecState* exec, EncodedJ
     JSValue op2 = JSValue::decode(encodedOp2);
     
     JSValue result = jsAdd(exec, op1, op2);
-    resultProfile->detectNumericness(result);
+
     return JSValue::encode(result);
 }
 
@@ -2284,7 +2349,7 @@ EncodedJSValue JIT_OPERATION operationValueMul(ExecState* exec, EncodedJSValue e
     return JSValue::encode(jsNumber(a * b));
 }
 
-EncodedJSValue JIT_OPERATION operationValueMulProfiled(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ResultProfile* resultProfile)
+EncodedJSValue JIT_OPERATION operationValueMulProfiled(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile* arithProfile)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -2296,7 +2361,7 @@ EncodedJSValue JIT_OPERATION operationValueMulProfiled(ExecState* exec, EncodedJ
     double b = op2.toNumber(exec);
     
     JSValue result = jsNumber(a * b);
-    resultProfile->detectNumericness(result);
+    arithProfile->observeResult(result);
     return JSValue::encode(result);
 }
 
@@ -2313,7 +2378,7 @@ EncodedJSValue JIT_OPERATION operationValueSub(ExecState* exec, EncodedJSValue e
     return JSValue::encode(jsNumber(a - b));
 }
 
-EncodedJSValue JIT_OPERATION operationValueSubProfiled(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ResultProfile* resultProfile)
+EncodedJSValue JIT_OPERATION operationValueSubProfiled(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile* arithProfile)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -2325,7 +2390,7 @@ EncodedJSValue JIT_OPERATION operationValueSubProfiled(ExecState* exec, EncodedJ
     double b = op2.toNumber(exec);
     
     JSValue result = jsNumber(a - b);
-    resultProfile->detectNumericness(result);
+    arithProfile->observeResult(result);
     return JSValue::encode(result);
 }
 

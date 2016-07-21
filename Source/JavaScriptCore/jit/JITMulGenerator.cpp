@@ -28,6 +28,8 @@
 
 #if ENABLE(JIT)
 
+#include "ArithProfile.h"
+
 namespace JSC {
 
 void JITMulGenerator::generateFastPath(CCallHelpers& jit)
@@ -137,7 +139,7 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
     // Do doubleVar * doubleVar.
     jit.mulDouble(m_rightFPR, m_leftFPR);
 
-    if (!m_resultProfile)
+    if (!m_arithProfile)
         jit.boxDouble(m_leftFPR, m_result);
     else {
         // The Int52 overflow check below intentionally omits 1ll << 51 as a valid negative Int52 value.
@@ -149,18 +151,18 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
         jit.moveDoubleTo64(m_leftFPR, m_result.payloadGPR());
         CCallHelpers::Jump notNegativeZero = jit.branch64(CCallHelpers::NotEqual, m_result.payloadGPR(), CCallHelpers::TrustedImm64(negativeZeroBits));
 
-        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::NegZeroDouble), CCallHelpers::AbsoluteAddress(m_arithProfile->addressOfBits()));
         CCallHelpers::Jump done = jit.jump();
 
         notNegativeZero.link(&jit);
-        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(m_arithProfile->addressOfBits()));
 
         jit.move(m_result.payloadGPR(), m_scratchGPR);
         jit.urshiftPtr(CCallHelpers::Imm32(52), m_scratchGPR);
         jit.and32(CCallHelpers::Imm32(0x7ff), m_scratchGPR);
         CCallHelpers::Jump noInt52Overflow = jit.branch32(CCallHelpers::LessThanOrEqual, m_scratchGPR, CCallHelpers::TrustedImm32(0x431));
 
-        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::Int52Overflow), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::Int52Overflow), CCallHelpers::AbsoluteAddress(m_arithProfile->addressOfBits()));
         noInt52Overflow.link(&jit);
 
         done.link(&jit);
@@ -171,18 +173,18 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
         notNegativeZero.append(jit.branch32(CCallHelpers::NotEqual, m_result.payloadGPR(), CCallHelpers::TrustedImm32(0)));
         notNegativeZero.append(jit.branch32(CCallHelpers::NotEqual, m_result.tagGPR(), CCallHelpers::TrustedImm32(negativeZeroBits >> 32)));
 
-        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::NegZeroDouble), CCallHelpers::AbsoluteAddress(m_arithProfile->addressOfBits()));
         CCallHelpers::Jump done = jit.jump();
 
         notNegativeZero.link(&jit);
-        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(m_arithProfile->addressOfBits()));
 
         jit.move(m_result.tagGPR(), m_scratchGPR);
         jit.urshiftPtr(CCallHelpers::Imm32(52 - 32), m_scratchGPR);
         jit.and32(CCallHelpers::Imm32(0x7ff), m_scratchGPR);
         CCallHelpers::Jump noInt52Overflow = jit.branch32(CCallHelpers::LessThanOrEqual, m_scratchGPR, CCallHelpers::TrustedImm32(0x431));
         
-        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::Int52Overflow), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::Int52Overflow), CCallHelpers::AbsoluteAddress(m_arithProfile->addressOfBits()));
 
         m_endJumpList.append(noInt52Overflow);
         if (m_scratchGPR == m_result.tagGPR() || m_scratchGPR == m_result.payloadGPR())

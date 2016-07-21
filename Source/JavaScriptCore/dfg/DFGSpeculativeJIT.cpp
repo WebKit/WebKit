@@ -44,6 +44,7 @@
 #include "JITBitXorGenerator.h"
 #include "JITDivGenerator.h"
 #include "JITLeftShiftGenerator.h"
+#include "JITMathIC.h"
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
@@ -56,6 +57,7 @@
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "WriteBarrierBuffer.h"
+#include <wtf/Box.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC { namespace DFG {
@@ -362,7 +364,7 @@ void SpeculativeJIT::addSlowPathGenerator(std::unique_ptr<SlowPathGenerator> slo
 
 void SpeculativeJIT::addSlowPathGenerator(std::function<void()> lambda)
 {
-    m_slowPathLambdas.append(std::make_pair(lambda, m_currentNode));
+    m_slowPathLambdas.append(SlowPathLambda{ lambda, m_currentNode, static_cast<unsigned>(m_stream->size()) });
 }
 
 void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder)
@@ -371,11 +373,13 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         pcToCodeOriginMapBuilder.appendItem(m_jit.label(), slowPathGenerator->origin().semantic);
         slowPathGenerator->generate(this);
     }
-    for (auto& generatorPair : m_slowPathLambdas) {
-        Node* currentNode = generatorPair.second;
+    for (auto& slowPathLambda : m_slowPathLambdas) {
+        Node* currentNode = slowPathLambda.currentNode;
         m_currentNode = currentNode;
+        m_outOfLineStreamIndex = slowPathLambda.streamIndex;
         pcToCodeOriginMapBuilder.appendItem(m_jit.label(), currentNode->origin.semantic);
-        generatorPair.first();
+        slowPathLambda.generator();
+        m_outOfLineStreamIndex = Nullopt;
     }
 }
 
@@ -3379,31 +3383,64 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         rightRegs = right->jsValueRegs();
     }
 
-    JITAddGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        leftFPR, rightFPR, scratchGPR, scratchFPR);
-    gen.generateFastPath(m_jit);
+    JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC();
+    Box<MathICGenerationState> addICGenerationState = Box<MathICGenerationState>::create();
+    ArithProfile* arithProfile = m_jit.graph().baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+    addIC->m_generator = JITAddGenerator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, leftFPR, rightFPR, scratchGPR, scratchFPR, arithProfile);
 
-    ASSERT(gen.didEmitFastPath());
-    gen.endJumpList().append(m_jit.jump());
+    bool generatedInline = addIC->generateInline(m_jit, *addICGenerationState);
 
-    gen.slowPathJumpList().link(&m_jit);
+    if (generatedInline) {
+        ASSERT(!addICGenerationState->slowPathJumps.empty());
 
-    silentSpillAllRegisters(resultRegs);
+        Vector<SilentRegisterSavePlan> savePlans;
+        silentSpillAllRegistersImpl(false, savePlans, resultRegs);
 
-    if (leftOperand.isConst()) {
-        leftRegs = resultRegs;
-        m_jit.moveValue(leftChild->asJSValue(), leftRegs);
-    } else if (rightOperand.isConst()) {
-        rightRegs = resultRegs;
-        m_jit.moveValue(rightChild->asJSValue(), rightRegs);
+        auto done = m_jit.label();
+
+        addSlowPathGenerator([=, savePlans = WTFMove(savePlans)] () {
+            addICGenerationState->slowPathJumps.link(&m_jit);
+            addICGenerationState->slowPathStart = m_jit.label();
+
+            silentSpill(savePlans);
+
+            auto innerLeftRegs = leftRegs;
+            auto innerRightRegs = rightRegs;
+            if (leftOperand.isConst()) {
+                innerLeftRegs = resultRegs;
+                m_jit.moveValue(leftChild->asJSValue(), innerLeftRegs);
+            } else if (rightOperand.isConst()) {
+                innerRightRegs = resultRegs;
+                m_jit.moveValue(rightChild->asJSValue(), innerRightRegs);
+            }
+
+            if (addICGenerationState->shouldSlowPathRepatch)
+                addICGenerationState->slowPathCall = callOperation(operationValueAddOptimize, resultRegs, innerLeftRegs, innerRightRegs, addIC);
+            else
+                addICGenerationState->slowPathCall = callOperation(operationValueAdd, resultRegs, innerLeftRegs, innerRightRegs);
+
+            silentFill(savePlans);
+            m_jit.exceptionCheck();
+            m_jit.jump().linkTo(done, &m_jit);
+
+            m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                addIC->finalizeInlineCode(*addICGenerationState, linkBuffer);
+            });
+        });
+    } else {
+        if (leftOperand.isConst()) {
+            left = JSValueOperand(this, leftChild);
+            leftRegs = left->jsValueRegs();
+        } else if (rightOperand.isConst()) {
+            right = JSValueOperand(this, rightChild);
+            rightRegs = right->jsValueRegs();
+        }
+
+        flushRegisters();
+        callOperation(operationValueAdd, resultRegs, leftRegs, rightRegs);
+        m_jit.exceptionCheck();
     }
 
-    callOperation(operationValueAdd, resultRegs, leftRegs, rightRegs);
-
-    silentFillAllRegisters(resultRegs);
-    m_jit.exceptionCheck();
-
-    gen.endJumpList().link(&m_jit);
     jsValueResult(resultRegs, node);
     return;
 }

@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 #include "JIT.h"
 
+#include "ArithProfile.h"
 #include "CodeBlock.h"
 #include "JITAddGenerator.h"
 #include "JITBitAndGenerator.h"
@@ -36,6 +37,7 @@
 #include "JITDivGenerator.h"
 #include "JITInlines.h"
 #include "JITLeftShiftGenerator.h"
+#include "JITMathIC.h"
 #include "JITMulGenerator.h"
 #include "JITNegGenerator.h"
 #include "JITOperations.h"
@@ -45,9 +47,9 @@
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
+#include "LinkBuffer.h"
 #include "ResultType.h"
 #include "SlowPathCall.h"
-
 
 namespace JSC {
 
@@ -675,20 +677,26 @@ void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEn
     slowPathCall.call();
 }
 
+ALWAYS_INLINE static OperandTypes getOperandTypes(Instruction* instruction)
+{
+    return OperandTypes(ArithProfile::fromInt(instruction[4].u.operand).lhsResultType(), ArithProfile::fromInt(instruction[4].u.operand).rhsResultType());
+}
+
 void JIT::emit_op_add(Instruction* currentInstruction)
 {
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
 #if USE(JSVALUE64)
+    OperandTypes types = getOperandTypes(copiedInstruction(currentInstruction));
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT2;
     FPRReg scratchFPR = InvalidFPRReg;
 #else
+    OperandTypes types = getOperandTypes(currentInstruction);
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
@@ -696,9 +704,9 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
-    ResultProfile* resultProfile = nullptr;
+    ArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
-        resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+        arithProfile = &m_codeBlock->arithProfileForPC(currentInstruction);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -715,47 +723,47 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     if (!rightOperand.isConst())
         emitGetVirtualRegister(op2, rightRegs);
 
-    JITAddGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, fpRegT1, scratchGPR, scratchFPR, resultProfile);
+    JITAddIC* addIC = m_codeBlock->addJITAddIC();
 
-    gen.generateFastPath(*this);
+    m_instructionToJITAddIC.add(currentInstruction, addIC);
+    MathICGenerationState& addICGenerationState = m_instructionToJITAddICGenerationState.add(currentInstruction, MathICGenerationState()).iterator->value;
 
-    if (gen.didEmitFastPath()) {
-        gen.endJumpList().link(this);
-        emitPutVirtualRegister(result, resultRegs);
-        
-        addSlowCase(gen.slowPathJumpList());
-    } else {
-        ASSERT(gen.endJumpList().empty());
-        ASSERT(gen.slowPathJumpList().empty());
-        if (resultProfile) {
-            if (leftOperand.isConst())
-                emitGetVirtualRegister(op1, leftRegs);
-            if (rightOperand.isConst())
-                emitGetVirtualRegister(op2, rightRegs);
-            callOperation(operationValueAddProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
-            emitPutVirtualRegister(result, resultRegs);
-        } else {
-            JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
-            slowPathCall.call();
-        }
-    }
+    addIC->m_generator = JITAddGenerator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, fpRegT0, fpRegT1, scratchGPR, scratchFPR, arithProfile);
+
+    bool generatedInlineCode = addIC->generateInline(*this, addICGenerationState);
+    if (!generatedInlineCode) {
+        if (leftOperand.isConst())
+            emitGetVirtualRegister(op1, leftRegs);
+        else if (rightOperand.isConst())
+            emitGetVirtualRegister(op2, rightRegs);
+
+        if (arithProfile)
+            callOperation(operationValueAddProfiled, resultRegs, leftRegs, rightRegs, arithProfile);
+        else
+            callOperation(operationValueAdd, resultRegs, leftRegs, rightRegs);
+    } else
+        addSlowCase(addICGenerationState.slowPathJumps);
+    emitPutVirtualRegister(result, resultRegs);
 }
 
 void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
 
+    MathICGenerationState& addICGenerationState = m_instructionToJITAddICGenerationState.find(currentInstruction)->value;
+    addICGenerationState.slowPathStart = label();
+
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
 #if USE(JSVALUE64)
+    OperandTypes types = getOperandTypes(copiedInstruction(currentInstruction));
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
 #else
+    OperandTypes types = getOperandTypes(currentInstruction);
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
@@ -769,18 +777,26 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
     else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
 
+    if (leftOperand.isConst())
+        emitGetVirtualRegister(op1, leftRegs);
+    if (rightOperand.isConst())
+        emitGetVirtualRegister(op2, rightRegs);
+
+    JITAddIC* addIC = m_instructionToJITAddIC.get(currentInstruction);
     if (shouldEmitProfiling()) {
-        if (leftOperand.isConst())
-            emitGetVirtualRegister(op1, leftRegs);
-        if (rightOperand.isConst())
-            emitGetVirtualRegister(op2, rightRegs);
-        ResultProfile* resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
-        callOperation(operationValueAddProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
-        emitPutVirtualRegister(result, resultRegs);
-    } else {
-        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
-        slowPathCall.call();
-    }
+        ArithProfile& arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
+        if (addICGenerationState.shouldSlowPathRepatch)
+            addICGenerationState.slowPathCall = callOperation(operationValueAddProfiledOptimize, resultRegs, leftRegs, rightRegs, &arithProfile, addIC);
+        else
+            addICGenerationState.slowPathCall = callOperation(operationValueAddProfiled, resultRegs, leftRegs, rightRegs, &arithProfile);
+    } else
+        addICGenerationState.slowPathCall = callOperation(operationValueAddOptimize, resultRegs, leftRegs, rightRegs, addIC);
+    emitPutVirtualRegister(result, resultRegs);
+
+    addLinkTask([=] (LinkBuffer& linkBuffer) {
+        MathICGenerationState& addICGenerationState = m_instructionToJITAddICGenerationState.find(currentInstruction)->value;
+        addIC->finalizeInlineCode(addICGenerationState, linkBuffer);
+    });
 }
 
 void JIT::emit_op_div(Instruction* currentInstruction)
@@ -788,14 +804,15 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
 #if USE(JSVALUE64)
+    OperandTypes types = getOperandTypes(copiedInstruction(currentInstruction));
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT2;
 #else
+    OperandTypes types = getOperandTypes(currentInstruction);
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
@@ -803,9 +820,9 @@ void JIT::emit_op_div(Instruction* currentInstruction)
 #endif
     FPRReg scratchFPR = fpRegT2;
 
-    ResultProfile* resultProfile = nullptr;
+    ArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
-        resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+        arithProfile = &m_codeBlock->arithProfileForPC(currentInstruction);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -831,7 +848,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
         emitGetVirtualRegister(op2, rightRegs);
 
     JITDivGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, fpRegT1, scratchGPR, scratchFPR, resultProfile);
+        fpRegT0, fpRegT1, scratchGPR, scratchFPR, arithProfile);
 
     gen.generateFastPath(*this);
 
@@ -861,15 +878,16 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
 #if USE(JSVALUE64)
+    OperandTypes types = getOperandTypes(copiedInstruction(currentInstruction));
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = JSValueRegs(regT2);
     GPRReg scratchGPR = regT3;
     FPRReg scratchFPR = InvalidFPRReg;
 #else
+    OperandTypes types = getOperandTypes(currentInstruction);
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
@@ -877,9 +895,9 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
-    ResultProfile* resultProfile = nullptr;
+    ArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
-        resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+        arithProfile = &m_codeBlock->arithProfileForPC(currentInstruction);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -897,7 +915,7 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
         emitGetVirtualRegister(op2, rightRegs);
 
     JITMulGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, fpRegT1, scratchGPR, scratchFPR, resultProfile);
+        fpRegT0, fpRegT1, scratchGPR, scratchFPR, arithProfile);
 
     gen.generateFastPath(*this);
 
@@ -909,12 +927,12 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     } else {
         ASSERT(gen.endJumpList().empty());
         ASSERT(gen.slowPathJumpList().empty());
-        if (resultProfile) {
+        if (arithProfile) {
             if (leftOperand.isPositiveConstInt32())
                 emitGetVirtualRegister(op1, leftRegs);
             if (rightOperand.isPositiveConstInt32())
                 emitGetVirtualRegister(op2, rightRegs);
-            callOperation(operationValueMulProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
+            callOperation(operationValueMulProfiled, resultRegs, leftRegs, rightRegs, arithProfile);
             emitPutVirtualRegister(result, resultRegs);
         } else {
             JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mul);
@@ -930,13 +948,14 @@ void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
 #if USE(JSVALUE64)
+    OperandTypes types = getOperandTypes(copiedInstruction(currentInstruction));
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
 #else
+    OperandTypes types = getOperandTypes(currentInstruction);
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
@@ -955,8 +974,8 @@ void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>
             emitGetVirtualRegister(op1, leftRegs);
         if (rightOperand.isPositiveConstInt32())
             emitGetVirtualRegister(op2, rightRegs);
-        ResultProfile* resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
-        callOperation(operationValueMulProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
+        ArithProfile& arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
+        callOperation(operationValueMulProfiled, resultRegs, leftRegs, rightRegs, &arithProfile);
         emitPutVirtualRegister(result, resultRegs);
     } else {
         JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mul);
@@ -969,15 +988,16 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
 #if USE(JSVALUE64)
+    OperandTypes types = getOperandTypes(copiedInstruction(currentInstruction));
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT2;
     FPRReg scratchFPR = InvalidFPRReg;
 #else
+    OperandTypes types = getOperandTypes(currentInstruction);
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
@@ -985,9 +1005,9 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
-    ResultProfile* resultProfile = nullptr;
+    ArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
-        resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+        arithProfile = &m_codeBlock->arithProfileForPC(currentInstruction);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -996,7 +1016,7 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
     emitGetVirtualRegister(op2, rightRegs);
 
     JITSubGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, fpRegT1, scratchGPR, scratchFPR, resultProfile);
+        fpRegT0, fpRegT1, scratchGPR, scratchFPR, arithProfile);
 
     gen.generateFastPath(*this);
 
@@ -1023,8 +1043,8 @@ void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>
 #endif
 
     if (shouldEmitProfiling()) {
-        ResultProfile* resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
-        callOperation(operationValueSubProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
+        ArithProfile& arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
+        callOperation(operationValueSubProfiled, resultRegs, leftRegs, rightRegs, &arithProfile);
         emitPutVirtualRegister(result, resultRegs);
     } else {
         JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_sub);

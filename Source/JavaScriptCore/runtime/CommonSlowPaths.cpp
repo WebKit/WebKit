@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CommonSlowPaths.h"
 
+#include "ArithProfile.h"
 #include "ArrayConstructor.h"
 #include "BuiltinNames.h"
 #include "CallFrame.h"
@@ -359,22 +360,21 @@ SLOW_PATH_DECL(slow_path_negate)
 }
 
 #if ENABLE(DFG_JIT)
-static void updateResultProfileForBinaryArithOp(ExecState* exec, Instruction* pc, JSValue result, JSValue left, JSValue right)
+static void updateArithProfileForBinaryArithOp(ExecState* exec, Instruction* pc, JSValue result, JSValue left, JSValue right)
 {
     CodeBlock* codeBlock = exec->codeBlock();
-    unsigned bytecodeOffset = codeBlock->bytecodeOffset(pc);
-    ResultProfile* profile = codeBlock->ensureResultProfile(bytecodeOffset);
+    ArithProfile& profile = codeBlock->arithProfileForPC(pc);
 
     if (result.isNumber()) {
         if (!result.isInt32()) {
             if (left.isInt32() && right.isInt32())
-                profile->setObservedInt32Overflow();
+                profile.setObservedInt32Overflow();
 
             double doubleVal = result.asNumber();
             if (!doubleVal && std::signbit(doubleVal))
-                profile->setObservedNegZeroDouble();
+                profile.setObservedNegZeroDouble();
             else {
-                profile->setObservedNonNegZeroDouble();
+                profile.setObservedNonNegZeroDouble();
 
                 // The Int52 overflow check here intentionally omits 1ll << 51 as a valid negative Int52 value.
                 // Therefore, we will get a false positive if the result is that value. This is intentionally
@@ -382,14 +382,14 @@ static void updateResultProfileForBinaryArithOp(ExecState* exec, Instruction* pc
                 static const int64_t int52OverflowPoint = (1ll << 51);
                 int64_t int64Val = static_cast<int64_t>(std::abs(doubleVal));
                 if (int64Val >= int52OverflowPoint)
-                    profile->setObservedInt52Overflow();
+                    profile.setObservedInt52Overflow();
             }
         }
     } else
-        profile->setObservedNonNumber();
+        profile.setObservedNonNumber();
 }
 #else
-static void updateResultProfileForBinaryArithOp(ExecState*, Instruction*, JSValue, JSValue, JSValue) { }
+static void updateArithProfileForBinaryArithOp(ExecState*, Instruction*, JSValue, JSValue, JSValue) { }
 #endif
 
 SLOW_PATH_DECL(slow_path_to_number)
@@ -407,6 +407,9 @@ SLOW_PATH_DECL(slow_path_add)
     JSValue v2 = OP_C(3).jsValue();
     JSValue result;
 
+    ArithProfile& arithProfile = exec->codeBlock()->arithProfileForPC(pc);
+    arithProfile.observeLHSAndRHS(v1, v2);
+
     if (v1.isString() && !v2.isObject())
         result = jsString(exec, asString(v1), v2.toString(exec));
     else if (v1.isNumber() && v2.isNumber())
@@ -415,7 +418,7 @@ SLOW_PATH_DECL(slow_path_add)
         result = jsAddSlowCase(exec, v1, v2);
 
     RETURN_WITH_PROFILING(result, {
-        updateResultProfileForBinaryArithOp(exec, pc, result, v1, v2);
+        updateArithProfileForBinaryArithOp(exec, pc, result, v1, v2);
     });
 }
 
@@ -432,7 +435,7 @@ SLOW_PATH_DECL(slow_path_mul)
     double b = right.toNumber(exec);
     JSValue result = jsNumber(a * b);
     RETURN_WITH_PROFILING(result, {
-        updateResultProfileForBinaryArithOp(exec, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(exec, pc, result, left, right);
     });
 }
 
@@ -445,7 +448,7 @@ SLOW_PATH_DECL(slow_path_sub)
     double b = right.toNumber(exec);
     JSValue result = jsNumber(a - b);
     RETURN_WITH_PROFILING(result, {
-        updateResultProfileForBinaryArithOp(exec, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(exec, pc, result, left, right);
     });
 }
 
@@ -458,7 +461,7 @@ SLOW_PATH_DECL(slow_path_div)
     double b = right.toNumber(exec);
     JSValue result = jsNumber(a / b);
     RETURN_WITH_PROFILING(result, {
-        updateResultProfileForBinaryArithOp(exec, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(exec, pc, result, left, right);
     });
 }
 

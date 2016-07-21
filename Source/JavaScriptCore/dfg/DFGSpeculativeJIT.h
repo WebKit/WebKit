@@ -388,13 +388,15 @@ public:
     {
         silentSpillAllRegistersImpl(doSpill, plans, InvalidGPRReg, InvalidGPRReg, exclude);
     }
-#if USE(JSVALUE32_64)
     template<typename CollectionType>
     void silentSpillAllRegistersImpl(bool doSpill, CollectionType& plans, JSValueRegs exclude)
     {
+#if USE(JSVALUE32_64)
         silentSpillAllRegistersImpl(doSpill, plans, exclude.tagGPR(), exclude.payloadGPR());
-    }
+#else
+        silentSpillAllRegistersImpl(doSpill, plans, exclude.gpr());
 #endif
+    }
     
     void silentSpillAllRegisters(GPRReg exclude, GPRReg exclude2 = InvalidGPRReg, FPRReg fprExclude = InvalidFPRReg)
     {
@@ -1285,6 +1287,13 @@ public:
 
 
 #if USE(JSVALUE64)
+
+    JITCompiler::Call callOperation(J_JITOperation_EJJJaic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, JITAddIC* addIC)
+    {
+        m_jit.setupArgumentsWithExecState(arg1.gpr(), arg2.gpr(), TrustedImmPtr(addIC));
+        return appendCallSetResult(operation, result.gpr());
+    }
+
     JITCompiler::Call callOperation(J_JITOperation_EJJI operation, GPRReg result, GPRReg arg1, GPRReg arg2, UniquedStringImpl* uid)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(uid));
@@ -1701,6 +1710,12 @@ public:
         return appendCall(operation);
     }
 #else // USE(JSVALUE32_64)
+
+    JITCompiler::Call callOperation(J_JITOperation_EJJJaic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, JITAddIC* addIC)
+    {
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), arg2.payloadGPR(), arg2.tagGPR(), TrustedImmPtr(addIC));
+        return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
+    }
 
     JITCompiler::Call callOperation(J_JITOperation_EJJI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload, UniquedStringImpl* uid)
     {
@@ -2832,9 +2847,14 @@ public:
     MinifiedGraph* m_minifiedGraph;
     
     Vector<std::unique_ptr<SlowPathGenerator>, 8> m_slowPathGenerators;
-    Vector<std::pair<std::function<void()>, Node*>, 8> m_slowPathLambdas;
+    struct SlowPathLambda {
+        std::function<void()> generator;
+        Node* currentNode;
+        unsigned streamIndex;
+    };
+    Vector<SlowPathLambda> m_slowPathLambdas;
     Vector<SilentRegisterSavePlan> m_plans;
-    unsigned m_outOfLineStreamIndex { UINT_MAX };
+    Optional<unsigned> m_outOfLineStreamIndex;
 };
 
 

@@ -43,10 +43,10 @@
 #include "Interpreter.h"
 #include "JITDisassembler.h"
 #include "JITInlineCacheGenerator.h"
+#include "JITMathIC.h"
 #include "JSInterfaceJIT.h"
 #include "Opcode.h"
 #include "PCToCodeOriginMap.h"
-#include "ResultType.h"
 #include "UnusedPointer.h"
 
 namespace JSC {
@@ -435,7 +435,6 @@ namespace JSC {
         void compileGetByIdHotPath(const Identifier*);
 
         // Arithmetic opcode helpers
-        void emitSub32Constant(int dst, int op, int32_t constant, ResultType opType);
         void emitBinaryDoubleOp(OpcodeID, int dst, int op1, int op2, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
 
 #else // USE(JSVALUE32_64)
@@ -764,7 +763,10 @@ namespace JSC {
 #endif
         MacroAssembler::Call callOperation(J_JITOperation_EJI, int, GPRReg, UniquedStringImpl*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJ, int, GPRReg, GPRReg);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJRp, JSValueRegs, JSValueRegs, JSValueRegs, ResultProfile*);
+        MacroAssembler::Call callOperation(J_JITOperation_EJJArp, JSValueRegs, JSValueRegs, JSValueRegs, ArithProfile*);
+        MacroAssembler::Call callOperation(J_JITOperation_EJJ, JSValueRegs, JSValueRegs, JSValueRegs);
+        MacroAssembler::Call callOperation(J_JITOperation_EJJArpJaic, JSValueRegs, JSValueRegs, JSValueRegs, ArithProfile*, JITAddIC*);
+        MacroAssembler::Call callOperation(J_JITOperation_EJJJaic, JSValueRegs, JSValueRegs, JSValueRegs, JITAddIC*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJAp, int, GPRReg, GPRReg, ArrayProfile*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJBy, int, GPRReg, GPRReg, ByValInfo*);
         MacroAssembler::Call callOperation(Z_JITOperation_EJOJ, GPRReg, GPRReg, GPRReg);
@@ -953,6 +955,9 @@ namespace JSC {
         static CodeRef stringGetByValStubGenerator(VM*);
 
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
+
+        HashMap<Instruction*, JITAddIC*> m_instructionToJITAddIC;
+        HashMap<Instruction*, MathICGenerationState> m_instructionToJITAddICGenerationState;
 
         bool m_canBeOptimized;
         bool m_canBeOptimizedOrInlined;

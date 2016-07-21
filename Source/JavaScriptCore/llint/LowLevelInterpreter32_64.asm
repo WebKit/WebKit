@@ -1014,6 +1014,9 @@ macro binaryOpCustomStore(integerOperationAndStore, doubleOperation, slowPath)
     loadConstantOrVariable2Reg(t0, t2, t0)
     bineq t2, Int32Tag, .op1NotInt
     bineq t3, Int32Tag, .op2NotInt
+    loadisFromInstruction(4, t5)
+    ori ArithProfileIntInt, t5
+    storeisToInstruction(t5, 4)
     loadi 4[PC], t2
     integerOperationAndStore(t3, t1, t0, .slow, t2)
     dispatch(5)
@@ -1023,10 +1026,16 @@ macro binaryOpCustomStore(integerOperationAndStore, doubleOperation, slowPath)
     bia t2, LowestTag, .slow
     bib t3, LowestTag, .op1NotIntOp2Double
     bineq t3, Int32Tag, .slow
+    loadisFromInstruction(4, t5)
+    ori ArithProfileNumberInt, t5
+    storeisToInstruction(t5, 4)
     ci2d t1, ft1
     jmp .op1NotIntReady
 .op1NotIntOp2Double:
     fii2d t1, t3, ft1
+    loadisFromInstruction(4, t5)
+    ori ArithProfileNumberNumber, t5
+    storeisToInstruction(t5, 4)
 .op1NotIntReady:
     loadi 4[PC], t1
     fii2d t0, t2, ft0
@@ -1038,6 +1047,9 @@ macro binaryOpCustomStore(integerOperationAndStore, doubleOperation, slowPath)
     # First operand is definitely an int, the second operand is definitely not.
     loadi 4[PC], t2
     bia t3, LowestTag, .slow
+    loadisFromInstruction(4, t5)
+    ori ArithProfileIntNumber, t5
+    storeisToInstruction(t5, 4)
     ci2d t0, ft0
     fii2d t1, t3, ft1
     doubleOperation(ft1, ft0)

@@ -252,6 +252,12 @@ const IsInvalidated = 2
 # ShadowChicken data
 const ShadowChickenTailMarker = 0x7a11
 
+# ArithProfile data
+const ArithProfileIntInt = 0x120000
+const ArithProfileNumberInt = 0x220000
+const ArithProfileNumberNumber = 0x240000
+const ArithProfileIntNumber = 0x140000
+
 # Some register conventions.
 if JSVALUE64
     # - Use a pair of registers to represent the PC: one register for the
@@ -286,6 +292,10 @@ if JSVALUE64
         loadp offset * 8[PB, PC, 8], dest
     end
     
+    macro storeisToInstruction(value, offset)
+        storei value, offset * 8[PB, PC, 8]
+    end
+
     macro storepToInstruction(value, offset)
         storep value, offset * 8[PB, PC, 8]
     end
@@ -298,6 +308,10 @@ else
     
     macro loadpFromInstruction(offset, dest)
         loadp offset * 4[PC], dest
+    end
+
+    macro storeisToInstruction(value, offset)
+        storei value, offset * 4[PC]
     end
 end
 
