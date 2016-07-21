@@ -41,6 +41,7 @@ interface HTMLFrameElement : HTMLElement {
     [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
 #endif
 
+    // FIXME: No other browser has this attribute.
     [CustomSetter] attribute DOMString location;
 
     readonly attribute long width;

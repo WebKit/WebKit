@@ -103,13 +103,6 @@ JSValue jsStringOrUndefined(ExecState* exec, const URL& url)
     return jsStringWithCache(exec, url.string());
 }
 
-String valueToStringWithNullCheck(ExecState* exec, JSValue value)
-{
-    if (value.isNull())
-        return String();
-    return value.toString(exec)->value(exec);
-}
-
 String valueToStringTreatingNullAsEmptyString(ExecState* exec, JSValue value)
 {
     if (value.isNull())

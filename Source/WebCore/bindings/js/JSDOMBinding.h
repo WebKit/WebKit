@@ -196,9 +196,6 @@ String propertyNameToString(JSC::PropertyName);
 
 AtomicString propertyNameToAtomicString(JSC::PropertyName);
 
-// FIXME: This is only used by legacy code and should go away. Use valueToStringTreatingNullAsEmptyString() instead.
-String valueToStringWithNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null
-
 String valueToStringTreatingNullAsEmptyString(JSC::ExecState*, JSC::JSValue);
 String valueToStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null or undefined
 
