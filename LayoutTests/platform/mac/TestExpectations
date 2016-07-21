@@ -1026,8 +1026,7 @@ webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
 
 # --- End media tests ---
-# See also rdar://problem/27353750
-webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Timeout Failure ]
+webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 
 webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass Timeout ]
 
