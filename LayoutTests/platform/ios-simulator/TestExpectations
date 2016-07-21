@@ -2556,8 +2556,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 # iOS tests that assert:
 platform/ios-simulator/ios/fast/text/combining-enclosing-keycap.html
-platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html
-platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html
 
 # Kerning, Ligatures, and Printer Fonts caused these tests to fail.
 # The following tests are reftests (and also fail on Mac):

@@ -1,3 +1,24 @@
+2016-07-21  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION: Plugin replaced YouTube Flash videos always have the same width
+        https://bugs.webkit.org/show_bug.cgi?id=159998
+        <rdar://problem/27462285>
+
+        Reviewed by Simon Fraser.
+
+        Unskip existing iOS layout tests, update tests and expected results.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-expected.txt: Updated expected result based on the
+        changes to test youtube-flash-plugin-iframe.html.
+        * platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width-expected.txt: Updated expected result
+        based on the changes to test youtube-flash-plugin-iframe-no-height-or-width.html.
+        * platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html: Modified to check the
+        width of each embedded YouTube video to ensure that we respect it (if specified).
+        * platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html: Substitute pseudo id -webkit-plugin-replacement
+        for -apple-youtube-shadow-iframe as the later was renamed to the former in <https://trac.webkit.org/changeset/168442>.
+        Fix misspelling of the word "embed" in a comment.
+
 2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/codemirror/prettyprinting-javascript.html as a flaky timeout on mac debug.
