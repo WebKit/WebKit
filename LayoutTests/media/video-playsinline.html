@@ -24,7 +24,7 @@ function testPlaysInline(requiresPlaysInline, hasPlaysInline, expectedDisplaying
     document.body.appendChild(video);
     video.controls = true;
     video.src = findMediaFile('video', 'content/test');
-    run('video.playsinline = ' + hasPlaysInline);
+    run('video.playsInline = ' + hasPlaysInline);
     waitForEventOnce('canplaythrough', () => {
         runWithKeyDown(() => {
             run('video.play()');
