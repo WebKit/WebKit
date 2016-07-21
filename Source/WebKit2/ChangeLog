@@ -1,3 +1,15 @@
+2016-07-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Automation: Allow JavaScript evaluation to return an InvalidElementState error
+        https://bugs.webkit.org/show_bug.cgi?id=160015
+        <rdar://problem/27434529>
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/Automation.json:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+
 2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Threaded Compositor] WTR generates fully white images for pixel tests most of the time

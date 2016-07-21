@@ -53,6 +53,7 @@
                 "WindowNotFound",
                 "FrameNotFound",
                 "NodeNotFound",
+                "InvalidElementState",
                 "NoJavaScriptDialog",
                 "NotImplemented",
                 "MissingParameter",
