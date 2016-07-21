@@ -2380,8 +2380,7 @@ private:
     {
         UniquedStringImpl* uid = m_node->uidOperand();
         if (uid->isSymbol()) {
-            LValue symbol = lowSymbol(m_node->child1());
-            LValue stringImpl = m_out.loadPtr(symbol, m_heaps.Symbol_privateName);
+            LValue stringImpl = lowSymbolUID(m_node->child1());
             speculate(BadIdent, noValue(), nullptr, m_out.notEqual(stringImpl, m_out.constIntPtr(uid)));
         } else {
             LValue string = lowStringIdent(m_node->child1());
@@ -4939,11 +4938,46 @@ private:
         }
 
         if (m_node->isBinaryUseKind(SymbolUse)) {
-            LValue left = lowSymbol(m_node->child1());
-            LValue right = lowSymbol(m_node->child2());
-            LValue leftStringImpl = m_out.loadPtr(left, m_heaps.Symbol_privateName);
-            LValue rightStringImpl = m_out.loadPtr(right, m_heaps.Symbol_privateName);
+            LValue leftStringImpl = lowSymbolUID(m_node->child1());
+            LValue rightStringImpl = lowSymbolUID(m_node->child2());
             setBoolean(m_out.equal(leftStringImpl, rightStringImpl));
+            return;
+        }
+        
+        if (m_node->isBinaryUseKind(SymbolUse, UntypedUse)
+            || m_node->isBinaryUseKind(UntypedUse, SymbolUse)) {
+            Edge symbolEdge = m_node->child1();
+            Edge untypedEdge = m_node->child2();
+            if (symbolEdge.useKind() != SymbolUse)
+                std::swap(symbolEdge, untypedEdge);
+            
+            LValue leftStringImpl = lowSymbolUID(symbolEdge);
+            LValue untypedValue = lowJSValue(untypedEdge);
+            
+            LBasicBlock isCellCase = m_out.newBlock();
+            LBasicBlock isSymbolCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+            
+            ValueFromBlock notSymbolResult = m_out.anchor(m_out.booleanFalse);
+            m_out.branch(
+                isCell(untypedValue, provenType(untypedEdge)),
+                unsure(isCellCase), unsure(continuation));
+            
+            LBasicBlock lastNext = m_out.appendTo(isCellCase, isSymbolCase);
+            m_out.branch(
+                isSymbol(untypedValue, provenType(untypedEdge)),
+                unsure(isSymbolCase), unsure(continuation));
+            
+            m_out.appendTo(isSymbolCase, continuation);
+            ValueFromBlock symbolResult =
+                m_out.anchor(
+                    m_out.equal(
+                        m_out.loadPtr(untypedValue, m_heaps.Symbol_privateName),
+                        leftStringImpl));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            setBoolean(m_out.phi(Int32, notSymbolResult, symbolResult));
             return;
         }
         
@@ -9736,6 +9770,16 @@ private:
         speculateSymbol(edge, result);
         return result;
     }
+    
+    LValue lowSymbolUID(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        if (Symbol* symbol = edge->dynamicCastConstant<Symbol*>())
+            return m_out.constIntPtr(symbol->privateName().uid());
+        LValue symbol = lowSymbol(edge, mode);
+        // FIXME: We could avoid this load if we had hash-consed Symbols.
+        // https://bugs.webkit.org/show_bug.cgi?id=158908
+        return m_out.loadPtr(symbol, m_heaps.Symbol_privateName);
+    }
 
     LValue lowNonNullObject(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
@@ -10285,6 +10329,15 @@ private:
         if (LValue proven = isProvenValue(type & SpecCell, ~SpecSymbol))
             return proven;
         return m_out.notEqual(
+            m_out.load32(cell, m_heaps.JSCell_structureID),
+            m_out.constInt32(vm().symbolStructure->id()));
+    }
+    
+    LValue isSymbol(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type & SpecCell, SpecSymbol))
+            return proven;
+        return m_out.equal(
             m_out.load32(cell, m_heaps.JSCell_structureID),
             m_out.constInt32(vm().symbolStructure->id()));
     }

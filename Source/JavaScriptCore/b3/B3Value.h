@@ -188,7 +188,7 @@ public:
     virtual TriState aboveEqualConstant(const Value* other) const;
     virtual TriState belowEqualConstant(const Value* other) const;
     virtual TriState equalOrUnorderedConstant(const Value* other) const;
-
+    
     // If the value is a comparison then this returns the inverted form of that comparison, if
     // possible. It can be impossible for double comparisons, where for example LessThan and
     // GreaterEqual behave differently. If this returns a value, it is a new value, which must be
@@ -245,6 +245,11 @@ public:
     // repoint it at the Identity's child. For simplicity, this will follow arbitrarily long chains
     // of Identity's.
     void performSubstitution();
+    
+    // Free values are those whose presence is guaranteed not to hurt code. We consider constants,
+    // Identities, and Nops to be free. Constants are free because we hoist them to an optimal place.
+    // Identities and Nops are free because we remove them.
+    bool isFree() const;
 
     // Walk the ancestors of this value (i.e. the graph of things it transitively uses). This
     // either walks phis or not, depending on whether PhiChildren is null. Your callback gets

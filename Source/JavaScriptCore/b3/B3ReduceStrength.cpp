@@ -417,7 +417,30 @@ public:
                 dataLog("B3 after iteration #", index - 1, " of reduceStrength:\n");
                 dataLog(m_proc);
             }
+            
+            simplifyCFG();
 
+            if (m_changedCFG) {
+                m_proc.resetReachability();
+                m_proc.invalidateCFG();
+                m_changed = true;
+            }
+
+            // We definitely want to do DCE before we do CSE so that we don't hoist things. For
+            // example:
+            //
+            // @dead = Mul(@a, @b)
+            // ... lots of control flow and stuff
+            // @thing = Mul(@a, @b)
+            //
+            // If we do CSE before DCE, we will remove @thing and keep @dead. Effectively, we will
+            // "hoist" @thing. On the other hand, if we run DCE before CSE, we will kill @dead and
+            // keep @thing. That's better, since we usually want things to stay wherever the client
+            // put them. We're not actually smart enough to move things around at random.
+            killDeadCode();
+            
+            simplifySSA();
+            
             m_proc.resetValueOwners();
             m_dominators = &m_proc.dominators(); // Recompute if necessary.
             m_pureCSE.clear();
@@ -440,23 +463,13 @@ public:
                 m_insertionSet.execute(m_block);
             }
 
-            if (m_blockInsertionSet.execute()) {
-                m_proc.resetReachability();
-                m_proc.invalidateCFG();
-                m_dominators = &m_proc.dominators(); // Recompute if necessary.
-                m_changedCFG = true;
-            }
-            
-            simplifyCFG();
-
+            m_changedCFG |= m_blockInsertionSet.execute();
             if (m_changedCFG) {
                 m_proc.resetReachability();
                 m_proc.invalidateCFG();
+                m_dominators = nullptr; // Dominators are not valid anymore, and we don't need them yet.
                 m_changed = true;
             }
-
-            killDeadCode();
-            simplifySSA();
             
             result |= m_changed;
         } while (m_changed);
@@ -2332,11 +2345,6 @@ private:
                     block->at(targetIndex++) = value;
                 } else {
                     m_proc.deleteValue(value);
-                    
-                    // It's not entirely clear if this is needed. I think it makes sense to have
-                    // this force a rerun of the fixpoint for now, since that will make it easier
-                    // to do peephole optimizations: removing dead code will make the peephole
-                    // easier to spot.
                     m_changed = true;
                 }
             }

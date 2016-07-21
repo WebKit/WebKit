@@ -1999,6 +1999,8 @@
 		DC605B5F1CE26EA500593718 /* ProfilerUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */; };
 		DC605B601CE26EA700593718 /* ProfilerUID.h in Headers */ = {isa = PBXBuildFile; fileRef = DC605B5C1CE26E9800593718 /* ProfilerUID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC69AA661CF7A1F200C6272F /* MatchResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC69AA651CF7A1EF00C6272F /* MatchResult.cpp */; };
+		DC69B99C1D15F912002E3C00 /* B3InferSwitches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC69B99A1D15F90F002E3C00 /* B3InferSwitches.cpp */; };
+		DC69B99D1D15F914002E3C00 /* B3InferSwitches.h in Headers */ = {isa = PBXBuildFile; fileRef = DC69B99B1D15F90F002E3C00 /* B3InferSwitches.h */; };
 		DC7997831CDE9FA0004D4A09 /* TagRegistersMode.h in Headers */ = {isa = PBXBuildFile; fileRef = DC7997821CDE9F9E004D4A09 /* TagRegistersMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC7997841CDE9FA2004D4A09 /* TagRegistersMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC7997811CDE9F9E004D4A09 /* TagRegistersMode.cpp */; };
 		DC9A0C1F1D2D9CB10085124E /* B3CaseCollectionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DC9A0C1E1D2D94EF0085124E /* B3CaseCollectionInlines.h */; };
@@ -4234,6 +4236,8 @@
 		DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerUID.cpp; path = profiler/ProfilerUID.cpp; sourceTree = "<group>"; };
 		DC605B5C1CE26E9800593718 /* ProfilerUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerUID.h; path = profiler/ProfilerUID.h; sourceTree = "<group>"; };
 		DC69AA651CF7A1EF00C6272F /* MatchResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MatchResult.cpp; sourceTree = "<group>"; };
+		DC69B99A1D15F90F002E3C00 /* B3InferSwitches.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3InferSwitches.cpp; path = b3/B3InferSwitches.cpp; sourceTree = "<group>"; };
+		DC69B99B1D15F90F002E3C00 /* B3InferSwitches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3InferSwitches.h; path = b3/B3InferSwitches.h; sourceTree = "<group>"; };
 		DC7997811CDE9F9E004D4A09 /* TagRegistersMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagRegistersMode.cpp; sourceTree = "<group>"; };
 		DC7997821CDE9F9E004D4A09 /* TagRegistersMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagRegistersMode.h; sourceTree = "<group>"; };
 		DC9A0C1C1D2D94EF0085124E /* B3CaseCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3CaseCollection.cpp; path = b3/B3CaseCollection.cpp; sourceTree = "<group>"; };
@@ -4755,6 +4759,8 @@
 				0FEC85C01BE167A00080FF74 /* B3HeapRange.h */,
 				0FEC84D11BDACDAC0080FF74 /* B3IndexMap.h */,
 				0FEC84D21BDACDAC0080FF74 /* B3IndexSet.h */,
+				DC69B99A1D15F90F002E3C00 /* B3InferSwitches.cpp */,
+				DC69B99B1D15F90F002E3C00 /* B3InferSwitches.h */,
 				0FEC85B41BE1462F0080FF74 /* B3InsertionSet.cpp */,
 				0FEC85B51BE1462F0080FF74 /* B3InsertionSet.h */,
 				0FEC85B61BE1462F0080FF74 /* B3InsertionSetInlines.h */,
@@ -7566,6 +7572,7 @@
 				A5EA710419F6DE720098F5EC /* generate_objc_backend_dispatcher_implementation.py in Headers */,
 				0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */,
 				A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */,
+				DC69B99D1D15F914002E3C00 /* B3InferSwitches.h in Headers */,
 				A5EA710619F6DE760098F5EC /* generate_objc_configuration_implementation.py in Headers */,
 				0F7C39FF1C90C55B00480151 /* DFGOpInfo.h in Headers */,
 				A5EA710719F6DE780098F5EC /* generate_objc_protocol_type_conversions_header.py in Headers */,
@@ -8733,6 +8740,7 @@
 				0FEC85051BDACDAC0080FF74 /* B3CheckSpecial.cpp in Sources */,
 				0FEC85071BDACDAC0080FF74 /* B3CheckValue.cpp in Sources */,
 				0FEC85091BDACDAC0080FF74 /* B3Common.cpp in Sources */,
+				DC69B99C1D15F912002E3C00 /* B3InferSwitches.cpp in Sources */,
 				0FEC850B1BDACDAC0080FF74 /* B3Commutativity.cpp in Sources */,
 				0FEC850D1BDACDAC0080FF74 /* B3Const32Value.cpp in Sources */,
 				436E54541C468E7700B5AF73 /* B3LegalizeMemoryOffsets.cpp in Sources */,

@@ -5163,6 +5163,16 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
     
+    if (node->isBinaryUseKind(SymbolUse, UntypedUse)) {
+        compileSymbolUntypedEquality(node, node->child1(), node->child2());
+        return false;
+    }
+    
+    if (node->isBinaryUseKind(UntypedUse, SymbolUse)) {
+        compileSymbolUntypedEquality(node, node->child2(), node->child1());
+        return false;
+    }
+    
     if (node->isBinaryUseKind(StringUse)) {
         compileStringEquality(node);
         return false;
@@ -8267,6 +8277,36 @@ void SpeculativeJIT::compileCompareEqPtr(Node* node)
     m_jit.boxBooleanPayload(true, resultGPR);
     notEqual.link(&m_jit);
     blessedBooleanResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileSymbolUntypedEquality(Node* node, Edge symbolEdge, Edge untypedEdge)
+{
+    SpeculateCellOperand symbol(this, symbolEdge);
+    JSValueOperand untyped(this, untypedEdge);
+    GPRTemporary leftTemp(this);
+    GPRTemporary rightTemp(this);
+    
+    GPRReg symbolGPR = symbol.gpr();
+    JSValueRegs untypedRegs = untyped.jsValueRegs();
+    GPRReg leftTempGPR = leftTemp.gpr();
+    GPRReg rightTempGPR = rightTemp.gpr();
+    
+    speculateSymbol(symbolEdge, symbolGPR);
+    
+    JITCompiler::Jump notCell = m_jit.branchIfNotCell(untypedRegs);
+    JITCompiler::Jump isSymbol = m_jit.branchIfSymbol(untypedRegs.payloadGPR());
+    
+    notCell.link(&m_jit);
+    m_jit.move(TrustedImm32(0), leftTempGPR);
+    JITCompiler::Jump done = m_jit.jump();
+    
+    isSymbol.link(&m_jit);
+    m_jit.loadPtr(JITCompiler::Address(symbolGPR, Symbol::offsetOfPrivateName()), leftTempGPR);
+    m_jit.loadPtr(JITCompiler::Address(untypedRegs.payloadGPR(), Symbol::offsetOfPrivateName()), rightTempGPR);
+    m_jit.comparePtr(JITCompiler::Equal, leftTempGPR, rightTempGPR, leftTempGPR);
+    
+    done.link(&m_jit);
+    unblessedBooleanResult(leftTempGPR, node);
 }
 
 } } // namespace JSC::DFG

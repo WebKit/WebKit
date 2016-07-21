@@ -590,6 +590,14 @@ private:
                 fixEdge<ObjectUse>(node->child2());
                 break;
             }
+            if (node->child1()->shouldSpeculateSymbol()) {
+                fixEdge<SymbolUse>(node->child1());
+                break;
+            }
+            if (node->child2()->shouldSpeculateSymbol()) {
+                fixEdge<SymbolUse>(node->child2());
+                break;
+            }
             if (node->child1()->shouldSpeculateMisc()) {
                 fixEdge<MiscUse>(node->child1());
                 break;

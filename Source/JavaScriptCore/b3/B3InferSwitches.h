@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,65 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3IndexMap_h
-#define B3IndexMap_h
+#ifndef B3InferSwitches_h
+#define B3InferSwitches_h
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/Vector.h>
-
 namespace JSC { namespace B3 {
 
-// This is a map for keys that have an index(). It's super efficient for BasicBlocks. It's only
-// efficient for Values if you don't create too many of these maps, since Values can have very
-// sparse indices and there are a lot of Values.
+class Procedure;
 
-template<typename Key, typename Value>
-class IndexMap {
-public:
-    explicit IndexMap(size_t size = 0)
-    {
-        m_vector.fill(Value(), size);
-    }
+// Fixpoints to convert chains of branches into switches.
 
-    void resize(size_t size)
-    {
-        m_vector.fill(Value(), size);
-    }
-
-    void clear()
-    {
-        m_vector.fill(Value(), m_vector.size());
-    }
-
-    size_t size() const { return m_vector.size(); }
-
-    Value& operator[](size_t index)
-    {
-        return m_vector[index];
-    }
-
-    const Value& operator[](size_t index) const
-    {
-        return m_vector[index];
-    }
-    
-    Value& operator[](Key* key)
-    {
-        return m_vector[key->index()];
-    }
-    
-    const Value& operator[](Key* key) const
-    {
-        return m_vector[key->index()];
-    }
-
-private:
-    Vector<Value> m_vector;
-};
+bool inferSwitches(Procedure&);
 
 } } // namespace JSC::B3
 
-#endif // ENABLE(B3_JIT)
+#endif // ENABE(B3_JIT)
 
-#endif // B3IndexMap_h
+#endif // B3InferSwitches_h
+
