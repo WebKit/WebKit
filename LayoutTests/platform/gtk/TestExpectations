@@ -710,6 +710,7 @@ webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_use
 webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure.html [ Failure ]
 webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_method_exist.html [ Failure ]
 
+webkit.org/b/160024 platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1434,6 +1435,8 @@ Bug(GTK) http/tests/misc/large-js-program.php [ Pass Slow ]
 [ Debug ] editing/selection/move-by-word-visually-multi-line.html [ Pass Timeout ]
 [ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Failure Timeout ]
 
+webkit.org/b/159754 workers/bomb.html [ Slow ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1623,6 +1626,8 @@ webkit.org/b/158924 media/media-fullscreen-return-to-inline.html [ Timeout ]
 webkit.org/b/158925 media/media-source/media-source-loadedmetada-with-two-sourcebuffers.html [ Timeout ]
 
 webkit.org/b/158926 media/video-load-preload-none.html [ Timeout ]
+
+webkit.org/b/160019 media/media-source/media-source-small-gap.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out

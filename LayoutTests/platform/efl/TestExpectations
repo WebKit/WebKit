@@ -2608,3 +2608,5 @@ webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 # These tests hardcode platform-specific font aliases.
 webkit.org/b/158649 fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
 webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/159754 workers/bomb.html [ Slow ]

@@ -1,3 +1,18 @@
+2016-07-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Gardening: Layout tests expectations updates and test rebaselines.
+
+        Unreviewed.
+
+        * TestExpectations: js/regress-139548.html is ~10x slower since r203142.
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt: Rebaseline after r203333.
+        * fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt: Rebaseline after r203333.
+        * fast/mediastream/RTCPeerConnection-setLocalDescription-offer-expected.txt: Rebaseline after r203333.
+        * fast/mediastream/RTCPeerConnection-setRemoteDescription-offer-expected.txt: Rebaseline after r203333.
+        * platform/efl/TestExpectations: workers/bomb.html is slow.
+        * platform/gtk/TestExpectations: workers/bomb.html is slow, media/media-source/media-source-small-gap.html timeouts
+          and new failure on platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html.
+
 2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update test expectations for rdar://problem/27353750.
