@@ -77,6 +77,12 @@ void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
     m_compositor->setDeviceScaleFactor(m_webPage.deviceScaleFactor());
 }
 
+void ThreadedCoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()
+{
+    CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged();
+    m_compositor->setDrawsBackground(m_webPage.drawsBackground());
+}
+
 void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const IntSize& size)
 {
     CoordinatedLayerTreeHost::sizeDidChange(size);

@@ -87,6 +87,14 @@ void ThreadedCompositor::setDeviceScaleFactor(float scale)
     });
 }
 
+void ThreadedCompositor::setDrawsBackground(bool drawsBackground)
+{
+    m_compositingRunLoop->performTask([this, protectedThis = Ref<ThreadedCompositor>(*this), drawsBackground] {
+        m_drawsBackground = drawsBackground;
+        scheduleDisplayImmediately();
+    });
+}
+
 void ThreadedCompositor::didChangeViewportSize(const IntSize& size)
 {
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), size] {
@@ -202,7 +210,11 @@ void ThreadedCompositor::renderLayerTree()
     viewportTransform.scale(m_viewportController->pageScaleFactor() * m_deviceScaleFactor);
     viewportTransform.translate(-scrollPostion.x(), -scrollPostion.y());
 
-    m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::white, false, scrollPostion);
+    if (!m_drawsBackground) {
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::transparent, !m_drawsBackground, scrollPostion);
 
     glContext()->swapBuffers();
 }

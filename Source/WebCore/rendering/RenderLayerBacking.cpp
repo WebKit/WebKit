@@ -315,7 +315,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if !PLATFORM(IOS)
     if (m_isMainFrameRenderViewLayer) {
         // Page scale is applied above the RenderView on iOS.
-        m_graphicsLayer->setContentsOpaque(true);
+        m_graphicsLayer->setContentsOpaque(!compositor().viewHasTransparentBackground());
         m_graphicsLayer->setAppliesPageScale();
     }
 #endif

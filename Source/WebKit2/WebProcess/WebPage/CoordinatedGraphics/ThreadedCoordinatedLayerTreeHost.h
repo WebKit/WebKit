@@ -54,6 +54,7 @@ private:
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
     void sizeDidChange(const WebCore::IntSize&) override;
     void deviceOrPageScaleFactorChanged() override;
+    void pageBackgroundTransparencyChanged() override;
 
     void contentsSizeChanged(const WebCore::IntSize&) override;
     void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;

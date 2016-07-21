@@ -1,5 +1,21 @@
 2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][Threaded Compositor] Web view background colors don't work
+        https://bugs.webkit.org/show_bug.cgi?id=159465
+
+        Reviewed by Michael Catanzaro.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::setDrawsBackground): Set m_drawsBackground in compositing thread and schedule a
+        layer flush.
+        (WebKit::ThreadedCompositor::renderLayerTree): Clear the area when not rendering backgrounds.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::pageBackgroundTransparencyChanged): Notify the compositor.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
+2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Web view background colors don't work in accelerated compositing mode
         https://bugs.webkit.org/show_bug.cgi?id=159455
 
