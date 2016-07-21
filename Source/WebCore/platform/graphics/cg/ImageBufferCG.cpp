@@ -158,6 +158,8 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
         cgContext = m_data.surface->ensurePlatformContext();
         if (cgContext)
             CGContextClearRect(cgContext.get(), FloatRect(FloatPoint(), userBounds));
+        else
+            m_data.surface = nullptr;
 #endif
 
         if (!cgContext)
