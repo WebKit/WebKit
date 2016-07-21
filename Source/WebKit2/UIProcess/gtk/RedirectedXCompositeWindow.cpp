@@ -204,6 +204,8 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(WebPageProxy& webPage, co
     }
     XSelectInput(m_display, m_window.get(), NoEventMask);
     XCompositeRedirectWindow(m_display, m_window.get(), CompositeRedirectManual);
+    if (!m_size.isEmpty())
+        createNewPixampAndPixampSurface();
     m_damage = XDamageCreate(m_display, m_window.get(), XDamageReportNonEmpty);
 }
 
@@ -234,9 +236,10 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
     XFlush(m_display);
 
     m_size = scaledSize;
-    m_needsNewPixmapAfterResize = true;
     if (m_size.isEmpty())
         cleanupPixmapAndPixmapSurface();
+    else
+        createNewPixampAndPixampSurface();
 }
 
 void RedirectedXCompositeWindow::cleanupPixmapAndPixmapSurface()
@@ -248,26 +251,20 @@ void RedirectedXCompositeWindow::cleanupPixmapAndPixmapSurface()
     m_pixmap.reset();
 }
 
-cairo_surface_t* RedirectedXCompositeWindow::surface()
+void RedirectedXCompositeWindow::createNewPixampAndPixampSurface()
 {
     // This should never be called with an empty size (not in Accelerated Compositing mode).
     ASSERT(!m_size.isEmpty());
-
-    if (!m_needsNewPixmapAfterResize && m_surface)
-        return m_surface.get();
-
-    m_needsNewPixmapAfterResize = false;
-
     XUniquePixmap newPixmap(XCompositeNameWindowPixmap(m_display, m_window.get()));
     if (!newPixmap) {
         cleanupPixmapAndPixmapSurface();
-        return nullptr;
+        return;
     }
 
     XWindowAttributes windowAttributes;
     if (!XGetWindowAttributes(m_display, m_window.get(), &windowAttributes)) {
         cleanupPixmapAndPixmapSurface();
-        return nullptr;
+        return;
     }
 
     RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_xlib_surface_create(m_display, newPixmap.get(), windowAttributes.visual, m_size.width(), m_size.height()));
@@ -292,8 +289,7 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
 
     cleanupPixmapAndPixmapSurface();
     m_pixmap = WTFMove(newPixmap);
-    m_surface = newSurface;
-    return m_surface.get();
+    m_surface = WTFMove(newSurface);
 }
 
 } // namespace WebCore

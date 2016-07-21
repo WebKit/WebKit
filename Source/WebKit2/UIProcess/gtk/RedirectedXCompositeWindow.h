@@ -50,10 +50,11 @@ public:
 
     Window windowID() const { return m_window.get(); }
     void resize(const WebCore::IntSize&);
-    cairo_surface_t* surface();
+    cairo_surface_t* surface() const { return m_surface.get(); };
 
 private:
     RedirectedXCompositeWindow(WebPageProxy&, const WebCore::IntSize&, std::function<void ()>&& damageNotify);
+    void createNewPixampAndPixampSurface();
     void cleanupPixmapAndPixmapSurface();
 
     WebPageProxy& m_webPage;
@@ -64,7 +65,6 @@ private:
     WebCore::XUniquePixmap m_pixmap;
     WebCore::XUniqueDamage m_damage;
     RefPtr<cairo_surface_t> m_surface;
-    bool m_needsNewPixmapAfterResize { false };
 };
 
 } // namespace WebKit

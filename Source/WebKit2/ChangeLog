@@ -1,5 +1,38 @@
 2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] White page when loaded tab is visited until it's hovered when AC mode is always on
+        https://bugs.webkit.org/show_bug.cgi?id=159512
+
+        Reviewed by Michael Catanzaro.
+
+        The redirected window is always mapped, but offscreen, to ensure that the web process can always render
+        there. When the web process renders something into the offscreen window, we receive a damage event in the UI
+        process and queue a redraw of the web view. However, when the web view is not mapped, even if we still receive
+        the damage events, the web view redraws are ignored until the view is mapped again (gtk_widget_queue_draw()
+        returns early when the widget is not visible). The redirected window updates its pixmap on demand when the
+        surface is requested, which happens when the web view draws its contents. So when the web view becames visible,
+        the redirected window creates a new pixmap and surface (the first time or if the web view was resized), that we
+        initialize to avoid artifacts when the web process hasn't render anything yet. That initialization is actually
+        overwriting anything rendered into the redirected window while the view was unmapped. That's why see white pages
+        the first time, and previous contents after a resize, and we don't see the actual contents until the web process
+        renders again and we reuse the existing pixmap. The white page didn't happen for tabs with accelerated content,
+        because in those cases the web process was rendering a new frame every 16ms, but instead there was a flickering
+        effect due to the current frame being overwritten when the view is mapped until the next frame.
+        So, instead of lazily create and initialize the redirected window pixmap and surface, we should always create
+        the new pixmap as soon as the window is created or resized (and not empty) This fixes the issues but also makes
+        resizing the window a bit smoother when AC mode is enabled.
+
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::RedirectedXCompositeWindow::RedirectedXCompositeWindow): Create the pixmap and surface if the window is
+        not empty.
+        (WebKit::RedirectedXCompositeWindow::resize): Ditto.
+        (WebKit::RedirectedXCompositeWindow::createNewPixampAndPixampSurface): Create the pixmap and surface.
+        (WebKit::RedirectedXCompositeWindow::surface): Deleted.
+        * UIProcess/gtk/RedirectedXCompositeWindow.h:
+        (WebKit::RedirectedXCompositeWindow::surface):
+
+2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][Threaded Compositor] Web view background colors don't work
         https://bugs.webkit.org/show_bug.cgi?id=159465
 
