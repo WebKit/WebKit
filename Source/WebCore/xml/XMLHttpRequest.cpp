@@ -171,9 +171,8 @@ String XMLHttpRequest::responseText(ExceptionCode& ec)
     return responseTextIgnoringResponseType();
 }
 
-void XMLHttpRequest::didCacheResponseJSON()
+void XMLHttpRequest::didCacheResponse()
 {
-    ASSERT(m_responseType == ResponseType::Json);
     ASSERT(doneWithoutErrors());
     m_responseCacheIsValid = true;
     m_responseBuilder.clear();
@@ -218,42 +217,30 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
     return m_responseDocument.get();
 }
 
-Blob* XMLHttpRequest::responseBlob()
+Ref<Blob> XMLHttpRequest::createResponseBlob()
 {
     ASSERT(m_responseType == ResponseType::Blob);
     ASSERT(doneWithoutErrors());
 
-    if (!m_responseBlob) {
-        if (m_binaryResponseBuilder) {
-            // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-            Vector<uint8_t> data;
-            data.append(m_binaryResponseBuilder->data(), m_binaryResponseBuilder->size());
-            String normalizedContentType = Blob::normalizedContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
-            m_responseBlob = Blob::create(WTFMove(data), normalizedContentType);
-            m_binaryResponseBuilder = nullptr;
-        } else {
-            // If we errored out or got no data, we still return a blob, just an empty one.
-            m_responseBlob = Blob::create();
-        }
-    }
+    if (!m_binaryResponseBuilder)
+        return Blob::create();
 
-    return m_responseBlob.get();
+    // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
+    Vector<uint8_t> data;
+    data.append(m_binaryResponseBuilder->data(), m_binaryResponseBuilder->size());
+    m_binaryResponseBuilder = nullptr;
+    String normalizedContentType = Blob::normalizedContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
+    return Blob::create(WTFMove(data), normalizedContentType);
 }
 
-ArrayBuffer* XMLHttpRequest::responseArrayBuffer()
+RefPtr<ArrayBuffer> XMLHttpRequest::createResponseArrayBuffer()
 {
     ASSERT(m_responseType == ResponseType::Arraybuffer);
     ASSERT(doneWithoutErrors());
 
-    if (!m_responseArrayBuffer) {
-        if (m_binaryResponseBuilder)
-            m_responseArrayBuffer = m_binaryResponseBuilder->createArrayBuffer();
-        else
-            m_responseArrayBuffer = ArrayBuffer::create(nullptr, 0);
-        m_binaryResponseBuilder = nullptr;
-    }
-
-    return m_responseArrayBuffer.get();
+    auto result = m_binaryResponseBuilder ? m_binaryResponseBuilder->createArrayBuffer() : ArrayBuffer::create(nullptr, 0);
+    m_binaryResponseBuilder = nullptr;
+    return result;
 }
 
 void XMLHttpRequest::setTimeout(unsigned timeout, ExceptionCode& ec)
@@ -819,9 +806,7 @@ void XMLHttpRequest::clearResponseBuffers()
     m_responseEncoding = String();
     m_createdDocument = false;
     m_responseDocument = nullptr;
-    m_responseBlob = nullptr;
     m_binaryResponseBuilder = nullptr;
-    m_responseArrayBuffer = nullptr;
     m_responseCacheIsValid = false;
 }
 

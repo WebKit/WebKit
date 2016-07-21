@@ -88,15 +88,18 @@ public:
     String responseText(ExceptionCode&);
     String responseTextIgnoringResponseType() const { return m_responseBuilder.toStringPreserveCapacity(); }
     String responseMIMEType() const;
-    Document* responseXML(ExceptionCode&);
+
     Document* optionalResponseXML() const { return m_responseDocument.get(); }
-    Blob* responseBlob();
-    Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
+    Document* responseXML(ExceptionCode&);
+
+    Ref<Blob> createResponseBlob();
+    RefPtr<JSC::ArrayBuffer> createResponseArrayBuffer();
+
     unsigned timeout() const { return m_timeoutMilliseconds; }
     void setTimeout(unsigned timeout, ExceptionCode&);
 
     bool responseCacheIsValid() const { return m_responseCacheIsValid; }
-    void didCacheResponseJSON();
+    void didCacheResponse();
 
     // Expose HTTP validation methods for other untrusted requests.
     static bool isAllowedHTTPMethod(const String&);
@@ -108,10 +111,6 @@ public:
     ResponseType responseType() const;
 
     String responseURL() const;
-
-    // response attribute has custom getter.
-    JSC::ArrayBuffer* responseArrayBuffer();
-    JSC::ArrayBuffer* optionalResponseArrayBuffer() const { return m_responseArrayBuffer.get(); }
 
     void setLastSendLineAndColumnNumber(unsigned lineNumber, unsigned columnNumber);
     void setLastSendURL(const String& url) { m_lastSendURL = url; }
@@ -187,7 +186,6 @@ private:
     String m_mimeTypeOverride;
     bool m_async { true };
     bool m_includeCredentials { false };
-    RefPtr<Blob> m_responseBlob;
 
     RefPtr<ThreadableLoader> m_loader;
     State m_state { UNSENT };
@@ -201,9 +199,8 @@ private:
     StringBuilder m_responseBuilder;
     bool m_createdDocument { false };
     RefPtr<Document> m_responseDocument;
-    
+
     RefPtr<SharedBuffer> m_binaryResponseBuilder;
-    RefPtr<JSC::ArrayBuffer> m_responseArrayBuffer;
 
     bool m_error { false };
 

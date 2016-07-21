@@ -1,3 +1,13 @@
+2016-07-20  Youenn Fablet  <youenn@apple.com>
+
+        [XHR] Cache response JS object in case of arraybuffer and blob response types
+        https://bugs.webkit.org/show_bug.cgi?id=128903
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/xmlhttprequest/onabort-response-getters-expected.txt:
+        * http/tests/xmlhttprequest/onabort-response-getters.html:
+
 2016-07-19  Filip Pizlo  <fpizlo@apple.com>
 
         Switching on symbols should be fast

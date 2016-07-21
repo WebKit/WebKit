@@ -1299,6 +1299,7 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/streams/StreamInternals.js \
     $(WebCore)/Modules/streams/WritableStream.js \
     $(WebCore)/Modules/streams/WritableStreamInternals.js \
+    $(WebCore)/xml/XMLHttpRequest.js \
 #
 
 BUILTINS_GENERATOR_SCRIPTS = \

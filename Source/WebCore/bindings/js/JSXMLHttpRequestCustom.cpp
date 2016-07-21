@@ -63,12 +63,6 @@ void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
 
     if (Document* responseDocument = wrapped().optionalResponseXML())
         visitor.addOpaqueRoot(responseDocument);
-
-    if (ArrayBuffer* responseArrayBuffer = wrapped().optionalResponseArrayBuffer())
-        visitor.addOpaqueRoot(responseArrayBuffer);
-
-    if (Blob* responseBlob = wrapped().optionalResponseBlob())
-        visitor.addOpaqueRoot(responseBlob);
 }
 
 class SendFunctor {
@@ -151,12 +145,8 @@ JSValue JSXMLHttpRequest::responseText(ExecState& state) const
     return jsOwnedStringOrNull(&state, text);
 }
 
-JSValue JSXMLHttpRequest::response(ExecState& state) const
+JSValue JSXMLHttpRequest::retrieveResponse(ExecState& state)
 {
-    // FIXME: Use CachedAttribute for other types than JSON as well.
-    if (m_response && wrapped().responseCacheIsValid())
-        return m_response.get();
-
     auto type = wrapped().responseType();
 
     switch (type) {
@@ -170,42 +160,36 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
     if (!wrapped().doneWithoutErrors())
         return jsNull();
 
+    JSValue value;
     switch (type) {
     case XMLHttpRequest::ResponseType::EmptyString:
     case XMLHttpRequest::ResponseType::Text:
         ASSERT_NOT_REACHED();
-        break;
+        return jsUndefined();
 
     case XMLHttpRequest::ResponseType::Json:
-        {
-            JSValue value = JSONParse(&state, wrapped().responseTextIgnoringResponseType());
-            if (!value)
-                value = jsNull();
-            m_response.set(state.vm(), this, value);
-            wrapped().didCacheResponseJSON();
-            return value;
-        }
+        value = JSONParse(&state, wrapped().responseTextIgnoringResponseType());
+        if (!value)
+            value = jsNull();
+        break;
 
-    case XMLHttpRequest::ResponseType::Document:
-        {
-            ExceptionCode ec = 0;
-            Document* document = wrapped().responseXML(ec);
-            if (ec) {
-                setDOMException(&state, ec);
-                return jsUndefined();
-            }
-            return toJS(&state, globalObject(), document);
-        }
-
+    case XMLHttpRequest::ResponseType::Document: {
+        ExceptionCode ec = 0;
+        auto document = wrapped().responseXML(ec);
+        ASSERT(!ec);
+        value = toJS(&state, globalObject(), document);
+        break;
+    }
     case XMLHttpRequest::ResponseType::Blob:
-        return toJS(&state, globalObject(), wrapped().responseBlob());
+        value = toJSNewlyCreated(&state, globalObject(), wrapped().createResponseBlob());
+        break;
 
     case XMLHttpRequest::ResponseType::Arraybuffer:
-        return toJS(&state, globalObject(), wrapped().responseArrayBuffer());
+        value = toJS(&state, globalObject(), wrapped().createResponseArrayBuffer());
+        break;
     }
-
-    ASSERT_NOT_REACHED();
-    return jsUndefined();
+    wrapped().didCacheResponse();
+    return value;
 }
 
 } // namespace WebCore

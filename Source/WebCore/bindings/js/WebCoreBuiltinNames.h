@@ -62,6 +62,9 @@ namespace WebCore {
     macro(readRequests) \
     macro(readyPromiseCapability) \
     macro(removeTrack) \
+    macro(responseCacheIsValid) \
+    macro(retrieveResponse) \
+    macro(response) \
     macro(setStatus) \
     macro(state) \
     macro(started) \
@@ -85,6 +88,7 @@ namespace WebCore {
     macro(ReadableStreamController) \
     macro(RTCIceCandidate) \
     macro(RTCSessionDescription) \
+    macro(XMLHttpRequest)
 
 class WebCoreBuiltinNames {
 public:
