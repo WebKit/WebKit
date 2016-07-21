@@ -1,3 +1,26 @@
+2016-07-21  Daniel Bates  <dabates@apple.com>
+
+        Test platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=160002
+
+        Reviewed by Alexey Proskuryakov.
+
+        The file platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html tests loading
+        plugin content from the main frame and from a subframe. Depending on timing the plugin
+        content loaded in the subframe may complete before plugin content loaded in the main frame.
+        We should test loading plugin content in a subframe after perform all main frame sub-tests
+        so as to ensure a well-defined sub-test order.
+
+        Add logic to ensure that an embedded YouTube flash video loaded in a subframe actually creates
+        a shadow DOM. Additionally, simplify the test logic by making use window.jsTestIsAsync/finishJSTest()
+        to mark the test as asynchronous and notify test completion instead of calling
+        window.testRunner.{waitUntilDone, notifyDone}(), remove the call to
+        testRunner.dumpAsText() (js-test-pre.js calls this for us), remove all of the DOM elements
+        used in the test to avoid noise in the expected results, and fix some style nits.
+
+        * platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-expected.txt:
+        * platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html:
+
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
         Fix null handling for several HTMLBodyElement attributes
