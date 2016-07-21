@@ -31,6 +31,11 @@ function main() {
             array('platform' => $platform_id, 'metric' => $metric_id));
     }
 
+    if ($fetcher->at_end()) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+        exit(404);
+    }
+
     $cluster_count = 0;
     while (!$fetcher->at_end()) {
         $content = $fetcher->fetch_next_cluster();
@@ -164,9 +169,9 @@ class MeasurementSetFetcher {
 
     function execute_query($config_id) {
         return $this->db->query('
-            SELECT test_runs.*, builds.*,
-            array_agg((commit_id, commit_repository, commit_revision, commit_time)) AS revisions,
-            max(commit_time) AS revision_time, max(commit_order) AS revision_order
+            SELECT test_runs.*, build_id, build_number, build_builder, build_time,
+            array_agg((commit_id, commit_repository, commit_revision, extract(epoch from commit_time) * 1000)) AS revisions,
+            extract(epoch from max(commit_time)) * 1000 AS revision_time, max(commit_order) AS revision_order
                 FROM builds
                     LEFT OUTER JOIN build_commits ON commit_build = build_id
                     LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
@@ -181,7 +186,7 @@ class MeasurementSetFetcher {
     }
 
     private static function format_run(&$run, &$commit_time) {
-        $commit_time = Database::to_js_time($run['revision_time']);
+        $commit_time = intval($run['revision_time']);
         $build_time = Database::to_js_time($run['build_time']);
         if (!$commit_time)
             $commit_time = $build_time;
@@ -211,7 +216,7 @@ class MeasurementSetFetcher {
             $commit_id = intval(trim($name_and_revision[0], '"'));
             $repository_id = intval(trim($name_and_revision[1], '"'));
             $revision = trim($name_and_revision[2], '"');
-            $time = Database::to_js_time(trim($name_and_revision[3], '"'));
+            $time = intval(trim($name_and_revision[3], '"'));
             array_push($revisions, array($commit_id, $repository_id, $revision, $time));
         }
         return $revisions;

@@ -2,6 +2,9 @@
 
 const assert = require('assert');
 
+require('../tools/js/v3-models.js');
+
+const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
 const addBuilderForReport = require('./resources/common-operations.js').addBuilderForReport;
 const connectToDatabaseInEveryTest = require('./resources/common-operations.js').connectToDatabaseInEveryTest;
@@ -10,6 +13,10 @@ describe("/api/measurement-set", function () {
     this.timeout(1000);
     TestServer.inject();
     connectToDatabaseInEveryTest();
+
+    beforeEach(function () {
+        MockData.resetV3Models();
+    });
 
     function queryPlatformAndMetric(platformName, metricName)
     {
@@ -68,7 +75,7 @@ describe("/api/measurement-set", function () {
         "revisions": {
             "WebKit": {
                 "revision": "144000",
-                "timestamp": clusterTime(10.3).toISOString(),
+                "timestamp": clusterTime(10.35645364537).toISOString(),
             },
         },
         "builderName": "someBuilder",
@@ -181,6 +188,38 @@ describe("/api/measurement-set", function () {
         }).then(function (response) {
             assert.equal(response['status'], 'InvalidMetric');
             done();
+        }).catch(done);
+    });
+
+    it("should be able to return an empty report", function (done) {
+        const db = TestServer.database();
+        Promise.all([
+            db.insert('tests', {id: 1, name: 'SomeTest'}),
+            db.insert('tests', {id: 2, name: 'SomeOtherTest'}),
+            db.insert('tests', {id: 3, name: 'ChildTest', parent: 1}),
+            db.insert('tests', {id: 4, name: 'GrandChild', parent: 3}),
+            db.insert('aggregators', {id: 200, name: 'Total'}),
+            db.insert('test_metrics', {id: 5, test: 1, name: 'Time'}),
+            db.insert('test_metrics', {id: 6, test: 2, name: 'Time', aggregator: 200}),
+            db.insert('test_metrics', {id: 7, test: 2, name: 'Malloc', aggregator: 200}),
+            db.insert('test_metrics', {id: 8, test: 3, name: 'Time'}),
+            db.insert('test_metrics', {id: 9, test: 4, name: 'Time'}),
+            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s'}),
+            db.insert('platforms', {id: 46, name: 'Trunk Mavericks'}),
+            db.insert('test_configurations', {id: 101, metric: 5, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 102, metric: 6, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 103, metric: 7, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 104, metric: 8, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 105, metric: 9, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 106, metric: 5, platform: 23, type: 'current'}),
+            db.insert('test_configurations', {id: 107, metric: 5, platform: 23, type: 'baseline'}),
+        ]).then(function () {
+            return TestServer.remoteAPI().getJSONWithStatus(`/api/measurement-set/?platform=46&metric=5`).then(function (response) {
+                assert.equal(response.statusCode, 404);
+            }, function (error) {
+                assert.equal(error, 404);
+                done();
+            });
         }).catch(done);
     });
 
@@ -379,7 +418,7 @@ describe("/api/measurement-set", function () {
     });
 
 
-    it("should create cache results", function (done) {
+    it("should create cached results", function (done) {
         const remote = TestServer.remoteAPI();
         let cachePrefix;
         addBuilderForReport(reportWithBuildTime[0]).then(function () {
@@ -404,6 +443,28 @@ describe("/api/measurement-set", function () {
                 assert(newBuildNumbers.length >= 2, 'The new cluster should contain at least two data points');
                 assert.deepEqual(oldBuildNumbers.slice(oldBuildNumbers.length - 2), newBuildNumbers.slice(0, 2),
                     'Two conseqcutive clusters should share two data points');
+                done();
+            });
+        }).catch(done);
+    });
+
+    it("should use lastModified timestamp identical to that in the manifest file", function (done) {
+        const remote = TestServer.remoteAPI();
+        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+            return remote.postJSON('/api/report/', reportWithRevision);
+        }).then(function () {
+            return queryPlatformAndMetric('Mountain Lion', 'Time');
+        }).then(function (result) {
+            return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
+        }).then(function (primaryCluster) {
+            return remote.getJSONWithStatus('/api/manifest').then(function (content) {
+                const manifest = Manifest._didFetchManifest(content);
+
+                const platform = Platform.findByName('Mountain Lion');
+                assert.equal(Metric.all().length, 1);
+                const metric = Metric.all()[0];
+                assert.equal(platform.lastModified(metric), primaryCluster['lastModified']);
+
                 done();
             });
         }).catch(done);

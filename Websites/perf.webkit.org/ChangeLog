@@ -1,3 +1,29 @@
+2016-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard always re-generate measurement set JSON
+        https://bugs.webkit.org/show_bug.cgi?id=159951
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by manifest.json reporting the last modified date of a measurement set in floating point,
+        and a measurement set JSON reporting it as an integer. Fixed the bug by always using an integer.
+
+        * public/api/measurement-set.php:
+        (main): Return 404 when the results is empty.
+        (MeasurementSetFetcher::execute_query): Use "extract(epoch from commit_time)" like ManifestGenerator to improve
+        the generation speed. This is ~10% runtime improvement.
+        (MeasurementSetFetcher::format_map): Updated to reflect the above change.
+        (MeasurementSetFetcher::parse_revisions_array): Ditto.
+
+        * public/include/manifest.php:
+        (ManifestGenerator::platforms): Fixed the bug by coercing lastModified to integer (instead of float).
+
+        * server-tests/api-measurement-set-tests.js: Added a test case for returning empty results, and a test case for
+        making sure lastModified dates in manifest.json and measurement sets match.
+
+        * tools/js/remote.js:
+        (RemoteAPI.prototype.sendHttpRequest): Reject the promise when HTTP status code is not 200.
+
 2016-07-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard can consume 50-70% of CPU on MacBook even if user is not interacting at all

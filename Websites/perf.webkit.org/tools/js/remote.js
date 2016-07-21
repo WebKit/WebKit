@@ -119,6 +119,11 @@ class RemoteAPI {
                 response.setEncoding('utf8');
                 response.on('data', function (chunk) { responseText += chunk; });
                 response.on('end', function () {
+                    if (response.statusCode != 200) {
+                        reject(response.statusCode);
+                        return;
+                    }
+
                     if ('set-cookie' in response.headers) {
                         for (const cookie of response.headers['set-cookie']) {
                             var nameValue = cookie.split('=')
