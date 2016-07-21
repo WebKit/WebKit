@@ -1,3 +1,15 @@
+2016-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop [TreatNullAs=EmptyString] from CanvasRenderingContext2D.globalCompositeOperation
+        https://bugs.webkit.org/show_bug.cgi?id=160026
+
+        Reviewed by Sam Weinig.
+
+        Add test coverage.
+
+        * fast/canvas/context-globalCompositeOperation-null-expected.txt: Added.
+        * fast/canvas/context-globalCompositeOperation-null.html: Added.
+
 2016-07-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Gardening: Layout tests expectations updates and test rebaselines.

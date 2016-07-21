@@ -43,8 +43,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     attribute unrestricted float globalAlpha;
 
-    // FIXME: This should not have [TreatNullAs=EmptyString].
-    [TreatNullAs=EmptyString] attribute DOMString globalCompositeOperation;
+    attribute DOMString globalCompositeOperation;
 
     [RaisesException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
     [RaisesException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
