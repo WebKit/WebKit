@@ -206,10 +206,10 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableColElement.vAl
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableColElement.width]
 
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.align]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.bgColor]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableElement.bgColor]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.border]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.cellPadding]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.cellSpacing]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableElement.cellPadding]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableElement.cellSpacing]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.frame]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.rules]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.summary]

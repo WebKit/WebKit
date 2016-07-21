@@ -1204,8 +1204,8 @@ PASS table.bgColor: IDL set to "\0" should not throw
 PASS table.bgColor: IDL set to "\0" followed by getAttribute() 
 PASS table.bgColor: IDL set to "\0" followed by IDL get 
 PASS table.bgColor: IDL set to null should not throw 
-FAIL table.bgColor: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL table.bgColor: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS table.bgColor: IDL set to null followed by getAttribute() 
+PASS table.bgColor: IDL set to null followed by IDL get 
 PASS table.bgColor: IDL set to object "test-toString" should not throw 
 PASS table.bgColor: IDL set to object "test-toString" followed by getAttribute() 
 PASS table.bgColor: IDL set to object "test-toString" followed by IDL get 
@@ -1281,8 +1281,8 @@ PASS table.cellPadding: IDL set to "\0" should not throw
 PASS table.cellPadding: IDL set to "\0" followed by getAttribute() 
 PASS table.cellPadding: IDL set to "\0" followed by IDL get 
 PASS table.cellPadding: IDL set to null should not throw 
-FAIL table.cellPadding: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL table.cellPadding: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS table.cellPadding: IDL set to null followed by getAttribute() 
+PASS table.cellPadding: IDL set to null followed by IDL get 
 PASS table.cellPadding: IDL set to object "test-toString" should not throw 
 PASS table.cellPadding: IDL set to object "test-toString" followed by getAttribute() 
 PASS table.cellPadding: IDL set to object "test-toString" followed by IDL get 
@@ -1358,8 +1358,8 @@ PASS table.cellSpacing: IDL set to "\0" should not throw
 PASS table.cellSpacing: IDL set to "\0" followed by getAttribute() 
 PASS table.cellSpacing: IDL set to "\0" followed by IDL get 
 PASS table.cellSpacing: IDL set to null should not throw 
-FAIL table.cellSpacing: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL table.cellSpacing: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS table.cellSpacing: IDL set to null followed by getAttribute() 
+PASS table.cellSpacing: IDL set to null followed by IDL get 
 PASS table.cellSpacing: IDL set to object "test-toString" should not throw 
 PASS table.cellSpacing: IDL set to object "test-toString" followed by getAttribute() 
 PASS table.cellSpacing: IDL set to object "test-toString" followed by IDL get 

@@ -1,5 +1,16 @@
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
+        Fix null handling for several HTMLTableElement attributes
+        https://bugs.webkit.org/show_bug.cgi?id=160041
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt:
+
+2016-07-21  Chris Dumez  <cdumez@apple.com>
+
         Fix null handling for HTMLObjectElement.border
         https://bugs.webkit.org/show_bug.cgi?id=160040
 
