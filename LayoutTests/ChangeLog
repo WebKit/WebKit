@@ -1,3 +1,15 @@
+2016-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Fix null handling for td.bgColor / tr.bgColor
+        https://bugs.webkit.org/show_bug.cgi?id=160043
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing test to reflect the behavior change.
+
+        * fast/dom/element-attribute-js-null-expected.txt:
+        * fast/dom/element-attribute-js-null.html:
+
 2016-07-21  Daniel Bates  <dabates@apple.com>
 
         Test platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html is flaky

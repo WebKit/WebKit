@@ -7891,8 +7891,8 @@ PASS tr.bgColor: IDL set to "\0" should not throw
 PASS tr.bgColor: IDL set to "\0" followed by getAttribute() 
 PASS tr.bgColor: IDL set to "\0" followed by IDL get 
 PASS tr.bgColor: IDL set to null should not throw 
-FAIL tr.bgColor: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL tr.bgColor: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS tr.bgColor: IDL set to null followed by getAttribute() 
+PASS tr.bgColor: IDL set to null followed by IDL get 
 PASS tr.bgColor: IDL set to object "test-toString" should not throw 
 PASS tr.bgColor: IDL set to object "test-toString" followed by getAttribute() 
 PASS tr.bgColor: IDL set to object "test-toString" followed by IDL get 
@@ -9688,8 +9688,8 @@ PASS td.bgColor: IDL set to "\0" should not throw
 PASS td.bgColor: IDL set to "\0" followed by getAttribute() 
 PASS td.bgColor: IDL set to "\0" followed by IDL get 
 PASS td.bgColor: IDL set to null should not throw 
-FAIL td.bgColor: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL td.bgColor: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS td.bgColor: IDL set to null followed by getAttribute() 
+PASS td.bgColor: IDL set to null followed by IDL get 
 PASS td.bgColor: IDL set to object "test-toString" should not throw 
 PASS td.bgColor: IDL set to object "test-toString" followed by getAttribute() 
 PASS td.bgColor: IDL set to object "test-toString" followed by IDL get 
@@ -11485,8 +11485,8 @@ PASS th.bgColor: IDL set to "\0" should not throw
 PASS th.bgColor: IDL set to "\0" followed by getAttribute() 
 PASS th.bgColor: IDL set to "\0" followed by IDL get 
 PASS th.bgColor: IDL set to null should not throw 
-FAIL th.bgColor: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL th.bgColor: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS th.bgColor: IDL set to null followed by getAttribute() 
+PASS th.bgColor: IDL set to null followed by IDL get 
 PASS th.bgColor: IDL set to object "test-toString" should not throw 
 PASS th.bgColor: IDL set to object "test-toString" followed by getAttribute() 
 PASS th.bgColor: IDL set to object "test-toString" followed by IDL get 

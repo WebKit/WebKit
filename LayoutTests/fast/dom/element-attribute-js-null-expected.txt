@@ -190,7 +190,7 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCaptionElement
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.abbr]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.align]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.axis]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.bgColor]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableCellElement.bgColor]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.ch]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.chOff]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.headers]
@@ -216,7 +216,7 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.summar
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.width]
 
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.align]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.bgColor]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableRowElement.bgColor]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.ch]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.chOff]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.vAlign]
