@@ -106,7 +106,7 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLIFrameElement.width
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.name]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.align]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.alt]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.border]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLImageElement.border]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.useMap]
 
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLInputElement.accept]

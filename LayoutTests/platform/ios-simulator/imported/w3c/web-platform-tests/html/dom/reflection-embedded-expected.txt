@@ -1842,8 +1842,8 @@ PASS img.border: IDL set to "\0" should not throw
 PASS img.border: IDL set to "\0" followed by getAttribute() 
 PASS img.border: IDL set to "\0" followed by IDL get 
 PASS img.border: IDL set to null should not throw 
-FAIL img.border: IDL set to null followed by getAttribute() assert_equals: expected "" but got "null"
-FAIL img.border: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS img.border: IDL set to null followed by getAttribute() 
+PASS img.border: IDL set to null followed by IDL get 
 PASS img.border: IDL set to object "test-toString" should not throw 
 PASS img.border: IDL set to object "test-toString" followed by getAttribute() 
 PASS img.border: IDL set to object "test-toString" followed by IDL get 
