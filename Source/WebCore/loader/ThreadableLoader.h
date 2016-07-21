@@ -45,12 +45,6 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SecurityOrigin;
     class ThreadableLoaderClient;
-    
-    enum CrossOriginRequestPolicy {
-        DenyCrossOriginRequests,
-        UseAccessControl,
-        AllowCrossOriginRequests
-    };
 
     enum PreflightPolicy {
         ConsiderPreflight,
@@ -67,11 +61,10 @@ namespace WebCore {
 
     struct ThreadableLoaderOptions : ResourceLoaderOptions {
         ThreadableLoaderOptions();
-        ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, CrossOriginRequestPolicy, ContentSecurityPolicyEnforcement, String&& initiator);
+        ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, ContentSecurityPolicyEnforcement, String&& initiator);
         ~ThreadableLoaderOptions();
 
         PreflightPolicy preflightPolicy { ConsiderPreflight };
-        CrossOriginRequestPolicy crossOriginRequestPolicy { DenyCrossOriginRequests };
         ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
         String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
     };

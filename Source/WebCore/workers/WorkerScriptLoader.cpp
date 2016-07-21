@@ -54,7 +54,7 @@ WorkerScriptLoader::~WorkerScriptLoader()
 {
 }
 
-void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, CrossOriginRequestPolicy crossOriginRequestPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement)
+void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement)
 {
     m_url = url;
 
@@ -66,14 +66,14 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
 
     ThreadableLoaderOptions options;
     options.setAllowCredentials(AllowStoredCredentials);
-    options.crossOriginRequestPolicy = crossOriginRequestPolicy;
+    options.mode = mode;
     options.setSendLoadCallbacks(SendCallbacks);
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 
     WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(scriptExecutionContext), *request, *this, options);
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, CrossOriginRequestPolicy crossOriginRequestPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient* client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient* client)
 {
     ASSERT(client);
     m_client = client;
@@ -85,7 +85,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
 
     ThreadableLoaderOptions options;
     options.setAllowCredentials(AllowStoredCredentials);
-    options.crossOriginRequestPolicy = crossOriginRequestPolicy;
+    options.mode = mode;
     options.setSendLoadCallbacks(SendCallbacks);
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 

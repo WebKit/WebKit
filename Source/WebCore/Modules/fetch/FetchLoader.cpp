@@ -64,7 +64,7 @@ void FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
     options.setDataBufferingPolicy(DoNotBufferData);
     options.preflightPolicy = ConsiderPreflight;
     options.setAllowCredentials(AllowStoredCredentials);
-    options.crossOriginRequestPolicy = DenyCrossOriginRequests;
+    options.mode = FetchOptions::Mode::SameOrigin;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     m_loader = ThreadableLoader::create(&context, this, request, options);
@@ -79,11 +79,11 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.setDataBufferingPolicy(DoNotBufferData);
     options.preflightPolicy = ConsiderPreflight;
     options.setAllowCredentials(AllowStoredCredentials);
-    options.crossOriginRequestPolicy = DenyCrossOriginRequests;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     // FIXME: Pass directly all fetch options to loader options.
     options.redirect = request.fetchOptions().redirect;
+    options.mode = FetchOptions::Mode::SameOrigin;
 
     m_loader = ThreadableLoader::create(&context, this, request.internalRequest(), options);
     m_isStarted = m_loader;

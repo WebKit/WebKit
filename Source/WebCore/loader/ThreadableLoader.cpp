@@ -43,16 +43,16 @@ namespace WebCore {
 
 ThreadableLoaderOptions::ThreadableLoaderOptions()
 {
+    mode = FetchOptions::Mode::SameOrigin;
 }
 
 ThreadableLoaderOptions::~ThreadableLoaderOptions()
 {
 }
 
-ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, PreflightPolicy preflightPolicy, CrossOriginRequestPolicy crossOriginRequestPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator)
+ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, PreflightPolicy preflightPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator)
     : ResourceLoaderOptions(baseOptions)
     , preflightPolicy(preflightPolicy)
-    , crossOriginRequestPolicy(crossOriginRequestPolicy)
     , contentSecurityPolicyEnforcement(contentSecurityPolicyEnforcement)
     , initiator(WTFMove(initiator))
 {
