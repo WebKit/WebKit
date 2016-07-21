@@ -359,8 +359,8 @@ static void webkitWebViewBaseResizeRedirectedWindow(WebKitWebViewBase* webView)
 {
     WebKitWebViewBasePrivate* priv = webView->priv;
     DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
-    ASSERT(drawingArea);
-    priv->redirectedWindow->setDeviceScaleFactor(priv->pageProxy->deviceScaleFactor());
+    if (!drawingArea)
+        return;
     priv->redirectedWindow->resize(drawingArea->size());
 }
 #endif
@@ -373,19 +373,19 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
         ASSERT(!priv->redirectedWindow);
+        DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
         priv->redirectedWindow = RedirectedXCompositeWindow::create(
-            gtk_widget_get_parent_window(widget),
+            *priv->pageProxy,
+            drawingArea && drawingArea->isInAcceleratedCompositingMode() ? drawingArea->size() : IntSize(),
             [webView] {
                 DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(webView->priv->pageProxy->drawingArea());
                 if (drawingArea && drawingArea->isInAcceleratedCompositingMode())
                     gtk_widget_queue_draw(GTK_WIDGET(webView));
             });
-        if (priv->redirectedWindow) {
-            if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea())) {
-                drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
-                if (drawingArea->isInAcceleratedCompositingMode())
-                    webkitWebViewBaseResizeRedirectedWindow(webView);
-            }
+        if (priv->redirectedWindow && drawingArea) {
+            drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
+            if (drawingArea->isInAcceleratedCompositingMode())
+                webkitWebViewBaseResizeRedirectedWindow(webView);
         }
     }
 #endif
@@ -1265,7 +1265,7 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 {
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (webkitWebViewBase->priv->redirectedWindow)
-        webkitWebViewBase->priv->redirectedWindow->setDeviceScaleFactor(webkitWebViewBase->priv->pageProxy->deviceScaleFactor());
+        webkitWebViewBaseResizeRedirectedWindow(webkitWebViewBase);
 #endif
     webkitWebViewBase->priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
 }

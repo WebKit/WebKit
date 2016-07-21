@@ -1,5 +1,33 @@
 2016-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Avoid the redirected window resize when the view is realized in AC mode
+        https://bugs.webkit.org/show_bug.cgi?id=159463
+
+        Reviewed by Michael Catanzaro.
+
+        We are always creating the redirected window at 1x1 and then resizing it if we are in AC mode. When the view is
+        realized and AC mode is already enabled, which happens for example when AC mode is forced, or when the threaded
+        compositor is enabled, we could just pass the initial size to the redirected window constructor to create the
+        XWindow at the right size.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseResizeRedirectedWindow): We no longer need to pass the device scale factor, since the
+        RedirectedXCompositeWindow already knows it.
+        (webkitWebViewBaseRealize): Pass the WebPageProxy and an initial size to the RedirectedXCompositeWindow
+        constructor instead of the parent GdkWindow. If AC mode is disabled, the initial size will be empty. With the
+        WebPageProxy the redirected window has access to the device scale factor and view widget to get the parent
+        GdkWindow.
+        (deviceScaleFactorChanged): Resize the redirected window when device scale factor changes.
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::RedirectedXCompositeWindow::create):
+        (WebKit::RedirectedXCompositeWindow::RedirectedXCompositeWindow):
+        (WebKit::RedirectedXCompositeWindow::resize):
+        (WebKit::RedirectedXCompositeWindow::surface):
+        (WebKit::RedirectedXCompositeWindow::~RedirectedXCompositeWindow):
+        * UIProcess/gtk/RedirectedXCompositeWindow.h:
+
+2016-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][Threaded Compositor] Web Process crash when the page is closed before the web view is realized
         https://bugs.webkit.org/show_bug.cgi?id=159918
 

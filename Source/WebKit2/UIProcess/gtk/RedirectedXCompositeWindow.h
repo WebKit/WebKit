@@ -40,29 +40,31 @@ typedef unsigned long Window;
 
 namespace WebKit {
 
+class WebPageProxy;
+
 class RedirectedXCompositeWindow {
+    WTF_MAKE_NONCOPYABLE(RedirectedXCompositeWindow); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RedirectedXCompositeWindow> create(GdkWindow*, std::function<void()> damageNotify);
+    static std::unique_ptr<RedirectedXCompositeWindow> create(WebPageProxy&, const WebCore::IntSize&, std::function<void ()>&& damageNotify);
     ~RedirectedXCompositeWindow();
 
     Window windowID() const { return m_window.get(); }
     void resize(const WebCore::IntSize&);
-    void setDeviceScaleFactor(float scale) { m_deviceScale = scale; }
     cairo_surface_t* surface();
 
 private:
-    RedirectedXCompositeWindow(GdkWindow*, std::function<void()> damageNotify);
+    RedirectedXCompositeWindow(WebPageProxy&, const WebCore::IntSize&, std::function<void ()>&& damageNotify);
     void cleanupPixmapAndPixmapSurface();
 
-    Display* m_display;
+    WebPageProxy& m_webPage;
+    Display* m_display { nullptr };
     WebCore::IntSize m_size;
     WebCore::XUniqueWindow m_window;
     WebCore::XUniqueWindow m_parentWindow;
     WebCore::XUniquePixmap m_pixmap;
     WebCore::XUniqueDamage m_damage;
     RefPtr<cairo_surface_t> m_surface;
-    bool m_needsNewPixmapAfterResize;
-    float m_deviceScale;
+    bool m_needsNewPixmapAfterResize { false };
 };
 
 } // namespace WebKit
