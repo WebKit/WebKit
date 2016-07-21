@@ -1,3 +1,9 @@
+2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/27475162.
+
+        * platform/mac/TestExpectations:
+
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
         Fix null handling of SVGAngle/SVGLength.valueAsString attribute
