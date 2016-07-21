@@ -1,5 +1,14 @@
 2016-07-20  Aakash Jain  <aakash_jain@apple.com>
 
+        Revert temporary fix r203417
+        https://bugs.webkit.org/show_bug.cgi?id=160001
+
+        Reviewed by Alexey Proskuryakov.
+
+        * EWSTools/start-queue-mac.sh: Revert the temporary fix.
+
+2016-07-20  Aakash Jain  <aakash_jain@apple.com>
+
         REGRESSION(r148588): ews classes might get garbage collected
         https://bugs.webkit.org/show_bug.cgi?id=159990
 

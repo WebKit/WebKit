@@ -80,9 +80,6 @@ while [ $TIME_TO_REBOOT -gt $(date +%s) ] || [ $(date +%H) -lt 1 ] || [ $(date +
     # preventing webkit-patch from launching.
     ./Tools/Scripts/test-webkitpy
 
-    # Temporary workaround for iOS EWS failing after the fix for bug 159539.
-    find ./Tools -name *.pyc -delete
-
     # We use --exit-after-iteration to pick up any changes to webkit-patch, including
     # changes to the contributors.json file.
     ./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration $RESET_AFTER_ITERATION $QUEUE_PARAMS
