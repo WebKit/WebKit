@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<span id="heading1" role="heading" aria-label="test label">visible text</span>
+<span id="heading2" role="heading">visible text</span>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if heading has aria-label, it will override the visible text as necessary.");
+
+    if (window.accessibilityController) {
+
+        var heading1Text = accessibilityController.accessibleElementById("heading1").childAtIndex(0);
+        var heading2Text = accessibilityController.accessibleElementById("heading2").childAtIndex(0);
+        
+        // Get the trait so that the label will be set.
+        shouldBeTrue("heading1Text.traits == heading2Text.traits");
+        
+        shouldBe("heading1Text.description", "'AXLabel: test label'");
+        shouldBe("heading2Text.description", "'AXLabel: visible text'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

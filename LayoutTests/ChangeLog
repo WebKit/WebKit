@@ -1,3 +1,13 @@
+2016-07-21  Nan Wang  <n_wang@apple.com>
+
+        AX: aria-label not being used correctly in accessible name calculation of heading
+        https://bugs.webkit.org/show_bug.cgi?id=160009
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/heading-with-aria-label-expected.txt: Added.
+        * accessibility/ios-simulator/heading-with-aria-label.html: Added.
+
 2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move expected.txt file for editing/deleting/delete-emoji.html from mac-elcapitan to mac-yosemite

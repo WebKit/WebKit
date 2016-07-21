@@ -598,8 +598,15 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
                 // to the heading level. If it was a static text element, we need to store
                 // the value as the label, because the heading level needs to the value.
                 AccessibilityObjectWrapper* wrapper = parent->wrapper();
-                if (role == StaticTextRole) 
-                    [self setAccessibilityLabel:m_object->stringValue()];                
+                if (role == StaticTextRole) {
+                    // We should only set the text value as the label when there's no
+                    // alternate text on the heading parent.
+                    NSString *headingLabel = [wrapper accessibilityLabel];
+                    if (![headingLabel length])
+                        [self setAccessibilityLabel:m_object->stringValue()];
+                    else
+                        [self setAccessibilityLabel:headingLabel];
+                }
                 [self setAccessibilityValue:[wrapper accessibilityValue]];
                 break;
             }
