@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 // Tests the performance of completely polymorphic strict equality.
 

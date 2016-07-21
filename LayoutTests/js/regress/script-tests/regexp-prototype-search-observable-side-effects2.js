@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 function assert(testedValue, msg) {
     if (!testedValue)

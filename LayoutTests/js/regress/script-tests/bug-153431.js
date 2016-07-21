@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 // Regression test for https://bugs.webkit.org/show_bug.cgi?id=153431.
 // Reduced version based on the reproduction case provided by Ryan Sturgell in the bug,

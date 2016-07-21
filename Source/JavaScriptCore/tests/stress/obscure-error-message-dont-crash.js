@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 let success = false;
 try {

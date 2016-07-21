@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 function foo(a, b) {
     var c = a - b;

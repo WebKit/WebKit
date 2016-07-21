@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 var result = 0;
 function func() {
     function C() { 

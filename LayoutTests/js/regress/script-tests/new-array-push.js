@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 function foo() {
     return new Array();

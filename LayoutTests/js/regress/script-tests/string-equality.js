@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 var array = [ "a", "b", "c", "d" ];
 

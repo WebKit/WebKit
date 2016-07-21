@@ -767,8 +767,8 @@ def run(kind, *options)
     addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], silentOutputHandler, simpleErrorHandler)
 end
 
-def runDefault
-    run("default")
+def runNoFTL
+    run("no-ftl")
 end
 
 def runWithRAMSize(size)
@@ -802,8 +802,8 @@ def runNoCJITValidatePhases
     run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *NO_CJIT_OPTIONS)
 end
 
-def runDefaultFTL
-    run("default-ftl", *FTL_OPTIONS)
+def runDefault
+    run("default", *FTL_OPTIONS)
 end
 
 def runFTLNoCJIT
@@ -886,14 +886,14 @@ def defaultRun
     if $quickMode
         defaultQuickRun
     else
-        runDefault
+        runNoFTL
         runAlwaysTriggerCopyPhase
         if $jitTests
             runNoLLInt
             runNoCJITValidatePhases
             runDFGEager
             runDFGEagerNoCJITValidate
-            runDefaultFTL
+            runDefault
             runFTLNoCJITValidate
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
@@ -909,13 +909,13 @@ def defaultNoNoLLIntRun
     if $quickMode
         defaultQuickRun
     else
-        runDefault
+        runNoFTL
         runAlwaysTriggerCopyPhase
         if $jitTests
             runNoCJITValidatePhases
             runDFGEager
             runDFGEagerNoCJITValidate
-            runDefaultFTL
+            runDefault
             runFTLNoCJITValidate
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
@@ -929,10 +929,10 @@ end
 
 def defaultQuickRun
     if $jitTests
-        runDefaultFTL
+        runDefault
         runFTLNoCJITValidate
     else
-        runDefault
+        runNoFTL
         if $jitTests
             runNoCJITValidate
         end
@@ -955,26 +955,26 @@ end
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
 def defaultNoEagerRun
-    runDefault
+    runNoFTL
     runAlwaysTriggerCopyPhase
     if $jitTests
         runNoLLInt
         runNoCJITValidatePhases
-        runDefaultFTL
+        runDefault
         runFTLNoCJITValidate
         runFTLNoCJITNoInlineValidate
     end
 end
 
 def defaultNoSamplingProfilerRun
-    runDefault
+    runNoFTL
     runAlwaysTriggerCopyPhase
     if $jitTests
         runNoLLInt
         runNoCJITValidatePhases
         runDFGEager
         runDFGEagerNoCJITValidate
-        runDefaultFTL
+        runDefault
         runFTLNoCJITNoPutStackValidate
         runFTLNoCJITNoInlineValidate
         runFTLEager
@@ -1136,8 +1136,8 @@ def runLayoutTest(kind, *options)
     addRunCommand(kind, args, noisyOutputHandler, diffErrorHandler(($benchmarkDirectory + "../#{testName}-expected.txt").to_s))
 end
 
-def runLayoutTestDefault
-    runLayoutTest(nil)
+def runLayoutTestNoFTL
+    runLayoutTest("no-ftl")
 end
 
 def runLayoutTestNoLLInt
@@ -1152,8 +1152,8 @@ def runLayoutTestDFGEagerNoCJIT
     runLayoutTest("dfg-eager-no-cjit", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
-def runLayoutTestDefaultFTL
-    runLayoutTest("ftl", "--testTheFTL=true", *FTL_OPTIONS)
+def runLayoutTestDefault
+    runLayoutTest(nil, "--testTheFTL=true", *FTL_OPTIONS)
 end
 
 def runLayoutTestFTLNoCJIT
@@ -1175,7 +1175,7 @@ def noFTLRunLayoutTest
 end
 
 def defaultQuickRunLayoutTest
-    runLayoutTestDefault
+    runLayoutTestNoFTL
     if $jitTests
         runLayoutTestFTLNoCJIT
         runLayoutTestFTLEagerNoCJIT
@@ -1186,10 +1186,10 @@ def defaultRunLayoutTest
     if $quickMode
         defaultQuickRunLayoutTest
     else
-        runLayoutTestDefault
+        runLayoutTestNoFTL
         if $jitTests
             noFTLRunLayoutTest
-            runLayoutTestDefaultFTL
+            runLayoutTestDefault
             runLayoutTestFTLNoCJIT
             runLayoutTestFTLEagerNoCJIT
         end
@@ -1197,20 +1197,20 @@ def defaultRunLayoutTest
 end
 
 def noEagerNoNoLLIntTestsRunLayoutTest
-    runLayoutTestDefault
+    runLayoutTestNoFTL
     if $jitTests
         runLayoutTestNoCJIT
-        runLayoutTestDefaultFTL
+        runLayoutTestDefault
         runLayoutTestFTLNoCJIT
     end
 end
 
 def noNoLLIntRunLayoutTest
-    runLayoutTestDefault
+    runLayoutTestNoFTL
     if $jitTests
         runLayoutTestNoCJIT
         runLayoutTestDFGEagerNoCJIT
-        runLayoutTestDefaultFTL
+        runLayoutTestDefault
         runLayoutTestFTLNoCJIT
         runLayoutTestFTLEagerNoCJIT
     end
@@ -1268,11 +1268,11 @@ def runMozillaTest(kind, mode, extraFiles, *options)
 end
 
 def runMozillaTestDefault(mode, *extraFiles)
-    runMozillaTest(nil, mode, extraFiles)
+    runMozillaTest(nil, mode, extraFiles, *FTL_OPTIONS)
 end
 
-def runMozillaTestDefaultFTL(mode, *extraFiles)
-    runMozillaTest("ftl", mode, extraFiles, *FTL_OPTIONS)
+def runMozillaTestNoFTL(mode, *extraFiles)
+    runMozillaTest("no-ftl", mode, extraFiles)
 end
 
 def runMozillaTestLLInt(mode, *extraFiles)
@@ -1293,10 +1293,10 @@ end
 
 def defaultQuickRunMozillaTest(mode, *extraFiles)
     if $jitTests
-        runMozillaTestDefaultFTL(mode, *extraFiles)
+        runMozillaTestDefault(mode, *extraFiles)
         runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
     else
-        runMozillaTestDefault(mode, *extraFiles)
+        runMozillaTestNoFTL(mode, *extraFiles)
         if $jitTests
             runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
         end
@@ -1307,12 +1307,12 @@ def defaultRunMozillaTest(mode, *extraFiles)
     if $quickMode
         defaultQuickRunMozillaTest(mode, *extraFiles)
     else
-        runMozillaTestDefault(mode, *extraFiles)
+        runMozillaTestNoFTL(mode, *extraFiles)
         if $jitTests
             runMozillaTestLLInt(mode, *extraFiles)
             runMozillaTestBaselineJIT(mode, *extraFiles)
             runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
-            runMozillaTestDefaultFTL(mode, *extraFiles)
+            runMozillaTestDefault(mode, *extraFiles)
             runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
         end
     end
@@ -1323,11 +1323,11 @@ def runNoisyTest(kind, *options)
 end
 
 def runNoisyTestDefault
-    runNoisyTest("default")
+    runNoisyTest("default", *FTL_OPTIONS)
 end
 
-def runNoisyTestDefaultFTL
-    runNoisyTest("ftl", *FTL_OPTIONS)
+def runNoisyTestNoFTL
+    runNoisyTest("no-ftl")
 end
 
 def runNoisyTestNoCJIT
@@ -1339,9 +1339,9 @@ def runNoisyTestEagerNoCJIT
 end
 
 def defaultRunNoisyTest
-    runNoisyTestDefault
+    runNoisyTestNoFTL
     if $jitTests
-        runNoisyTestDefaultFTL
+        runNoisyTestDefault
         runNoisyTestNoCJIT
         runNoisyTestEagerNoCJIT
     end

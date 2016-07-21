@@ -1,4 +1,4 @@
-//@ runDefault; runNoLLInt; runFTLNoCJITValidate
+//@ runNoFTL; runNoLLInt; runFTLNoCJITValidate
 
 "use strict";
 

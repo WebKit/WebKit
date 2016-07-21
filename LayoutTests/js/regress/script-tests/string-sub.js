@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 function foo(a, b) {
     return a - b;

@@ -1,3 +1,25 @@
+2016-07-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Clarify testing mode names in run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=160021
+
+        Reviewed by Mark Lam.
+
+        Default should mean really default, not default with disabled FTL, renamed
+        - runMozillaTestDefault to runMozillaTestNoFTL
+        - runMozillaTestDefaultFTL to runMozillaTestDefault
+        - runDefault to runNoFTL
+        - runDefaultFTL to runDefault
+        - runLayoutTestDefault to runLayoutTestNoFTL
+        - runLayoutTestDefaultFTL to runLayoutTestDefault
+        - runNoisyTestDefault to runNoisyTestNoFTL
+        - runNoisyTestDefaultFTL to runNoisyTestDefault
+
+        * tests/mozilla/mozilla-tests.yaml:
+        * tests/stress/lift-tdz-bypass-catch.js:
+        * tests/stress/obscure-error-message-dont-crash.js:
+        * tests/stress/shadow-chicken-disabled.js:
+
 2016-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES7] Introduce exponentiation expression

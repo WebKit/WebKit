@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 var f = function(a) {
     var sum = 0;

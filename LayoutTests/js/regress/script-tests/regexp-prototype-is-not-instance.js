@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 function stringify(x) {
     if (typeof x == "string")

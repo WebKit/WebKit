@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 function foo() {
     var {0: i, 1: j, length} = arguments;

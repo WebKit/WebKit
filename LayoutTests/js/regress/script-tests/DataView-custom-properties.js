@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runNoFTL
 
 var array = new Array(10000);
 
