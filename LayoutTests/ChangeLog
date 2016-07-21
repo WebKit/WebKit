@@ -1,3 +1,22 @@
+2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] Caret placement occurs in the middle of new emoji group candidates
+        https://bugs.webkit.org/show_bug.cgi?id=160008
+        <rdar://problem/27430111>
+
+        Reviewed by Simon Fraser.
+
+        Update expected results.
+
+        The new emoji support is behind the ADDITIONAL_EMOJI_SUPPORT guard, which
+        means it only occurs on El Capitan and higher. Similarly, these new rules
+        are not used for iOS.
+
+        * editing/deleting/delete-emoji-expected.txt: Deleted.
+        * platform/mac/editing/deleting/delete-emoji-expected.txt: Added.
+        * platform/mac-elcapitan/editing/deleting/delete-emoji-expected.txt: Added.
+        * platform/ios-simulator/editing/deleting/delete-emoji-expected.txt: Added.
+
 2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land test expectations for rdar://problem/27475162.

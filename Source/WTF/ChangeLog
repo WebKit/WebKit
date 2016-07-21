@@ -1,3 +1,17 @@
+2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] Caret placement occurs in the middle of new emoji group candidates
+        https://bugs.webkit.org/show_bug.cgi?id=160008
+        <rdar://problem/27430111>
+
+        Reviewed by Simon Fraser.
+
+        r203330 added support for new emoji group candidates. This patch updates the rules
+        governing caret placement around these new emoji groups.
+
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::cursorMovementIterator):
+
 2016-07-20  Rajeev Misra  <rajeevmisraforapple@gmail.com>
 
         Remove unnecessary if check from ParkingLot.cpp
