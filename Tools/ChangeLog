@@ -1,3 +1,18 @@
+2016-07-21  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        WebBackForwardList's currentIndex could get out of bounds when filtering items.
+        https://bugs.webkit.org/show_bug.cgi?id=159986
+
+        Add a test to verify filtering out 2 items from a 3-item list will set the currentIndex
+        to 0.
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/WKBackForwardList.mm: Added.
+        (-[WKBackForwardListTestNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+
 2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Web view background colors don't work in accelerated compositing mode

@@ -1,3 +1,16 @@
+2016-07-21  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        WebBackForwardList's currentIndex could get out of bounds when filtering items.
+        https://bugs.webkit.org/show_bug.cgi?id=159986
+
+        When generating a new BackForwardListState object, if we filter out multiple items in the list, the currentIndex could get
+        out of bounds.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backForwardListState): Make currentIndex point to the last item if it is out of bounds.
+
 2016-07-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Automation: Allow JavaScript evaluation to return an InvalidElementState error

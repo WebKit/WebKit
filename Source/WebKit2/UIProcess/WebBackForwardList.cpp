@@ -416,6 +416,8 @@ BackForwardListState WebBackForwardList::backForwardListState(const std::functio
 
     if (backForwardListState.items.isEmpty())
         backForwardListState.currentIndex = Nullopt;
+    else if (backForwardListState.items.size() <= backForwardListState.currentIndex.value())
+        backForwardListState.currentIndex = backForwardListState.items.size() - 1;
 
     return backForwardListState;
 }
