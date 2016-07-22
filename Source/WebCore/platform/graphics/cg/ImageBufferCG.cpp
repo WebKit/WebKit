@@ -75,8 +75,6 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     if (size.isEmpty())
         return nullptr;
 
-    IntSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
-    float resolutionScale = context.scaleFactor().width();
     RetainPtr<CGColorSpaceRef> colorSpace;
 #if PLATFORM(COCOA)
     CGContextRef cgContext = context.platformContext();
@@ -99,8 +97,9 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     colorSpace = sRGBColorSpaceRef();
 #endif
     RenderingMode renderingMode = context.renderingMode();
+    IntSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
     bool success = false;
-    std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(scaledSize, resolutionScale, colorSpace.get(), renderingMode, success));
+    std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(scaledSize, 1, colorSpace.get(), renderingMode, success));
 
     if (!success)
         return nullptr;
