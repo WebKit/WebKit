@@ -1,5 +1,20 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203442. rdar://problem/27376446
+
+    2016-07-19  Brian Burg  <bburg@apple.com>
+
+            Web Automation: WebAutomationSessionProxy's HashMaps should support '0' as valid keys
+            https://bugs.webkit.org/show_bug.cgi?id=159957
+            <rdar://problem/27376446>
+
+            Reviewed by Joseph Pecoraro.
+
+            * WebProcess/Automation/WebAutomationSessionProxy.h:
+            Use UnsignedWithZeroKeyHashTraits to avoid problems with zero as a key.
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203414. rdar://problem/26756701
 
     2016-07-19  Anders Carlsson  <andersca@apple.com>

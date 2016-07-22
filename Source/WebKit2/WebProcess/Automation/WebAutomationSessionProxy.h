@@ -71,8 +71,8 @@ private:
 
     String m_sessionIdentifier;
 
-    HashMap<uint64_t, JSObjectRef> m_webFrameScriptObjectMap;
-    HashMap<uint64_t, Vector<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
+    HashMap<uint64_t, JSObjectRef, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_webFrameScriptObjectMap;
+    HashMap<uint64_t, Vector<uint64_t>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
 };
 
 } // namespace WebKit
