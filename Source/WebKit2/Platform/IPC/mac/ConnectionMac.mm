@@ -138,8 +138,6 @@ void Connection::platformInvalidate()
         m_exceptionPort = MACH_PORT_NULL;
     }
 #endif
-
-    m_xpcConnection = nullptr;
 }
     
 void Connection::terminateSoon(double intervalInSeconds)
