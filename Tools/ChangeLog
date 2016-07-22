@@ -1,3 +1,17 @@
+2016-07-22  Michael Saboff  <msaboff@apple.com>
+
+        Don't run FTL related JSC stress tests on non-FTL platforms
+        https://bugs.webkit.org/show_bug.cgi?id=160033
+
+        Reviewed by Mark Lam.
+
+        Added check for running tests on platforms that don't enable FTL to not run FTL tests.
+        Refactored several of the runXXX test methods to always runXXXDefault and made those
+        runXXXDefault to pass FTL_OPTIONS.  For platforms that don't enable the FTL, FTL_OPTIONS
+        doesn't cause a problem.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-07-22  Per Arne Vollan  <pvollan@apple.com>
 
         IWebView::mainFrame crashes if called after IWebView::close

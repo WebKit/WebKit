@@ -404,6 +404,7 @@ end
 
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
+$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $hostOS == "windows" || $hostOS == "linux" && $architecture == "arm64")
 
 if !$testRunnerType
     if $remote and $hostOS == "darwin"
@@ -886,21 +887,23 @@ def defaultRun
     if $quickMode
         defaultQuickRun
     else
-        runNoFTL
+        runDefault
         runAlwaysTriggerCopyPhase
         if $jitTests
             runNoLLInt
             runNoCJITValidatePhases
             runDFGEager
             runDFGEagerNoCJITValidate
-            runDefault
+            runDFGMaximalFlushPhase
+
+            return if !$isFTLPlatform
+
             runFTLNoCJITValidate
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEager
             runFTLEagerNoCJITValidate
             runFTLNoCJITSmallPool
-            runDFGMaximalFlushPhase
         end
     end
 end
@@ -909,40 +912,41 @@ def defaultNoNoLLIntRun
     if $quickMode
         defaultQuickRun
     else
-        runNoFTL
+        runDefault
         runAlwaysTriggerCopyPhase
         if $jitTests
             runNoCJITValidatePhases
             runDFGEager
             runDFGEagerNoCJITValidate
-            runDefault
+            runDFGMaximalFlushPhase
+
+            return if !$isFTLPlatform
+
             runFTLNoCJITValidate
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEager
             runFTLEagerNoCJITValidate
             runFTLNoCJITSmallPool
-            runDFGMaximalFlushPhase
         end
     end
 end
 
 def defaultQuickRun
+    runDefault
     if $jitTests
-        runDefault
-        runFTLNoCJITValidate
-    else
-        runNoFTL
-        if $jitTests
-            runNoCJITValidate
-        end
+        runNoCJITValidate
+        runFTLNoCJITValidate if $isFTLPlatform
     end
 end
 
 def defaultSpotCheckNoMaximalFlush
     defaultQuickRun
-    runFTLNoCJITOSRValidation
     runNoCJITNoAccessInlining
+
+    return if !$isFTLPlatform
+
+    runFTLNoCJITOSRValidation
     runFTLNoCJITNoAccessInlining
 end
 
@@ -955,32 +959,36 @@ end
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
 def defaultNoEagerRun
-    runNoFTL
+    runDefault
     runAlwaysTriggerCopyPhase
     if $jitTests
         runNoLLInt
         runNoCJITValidatePhases
-        runDefault
+
+        return if !$isFTLPlatform
+
         runFTLNoCJITValidate
         runFTLNoCJITNoInlineValidate
     end
 end
 
 def defaultNoSamplingProfilerRun
-    runNoFTL
+    runDefault
     runAlwaysTriggerCopyPhase
     if $jitTests
         runNoLLInt
         runNoCJITValidatePhases
         runDFGEager
         runDFGEagerNoCJITValidate
-        runDefault
+        runDFGMaximalFlushPhase
+
+        return if !$isFTLPlatform
+
         runFTLNoCJITNoPutStackValidate
         runFTLNoCJITNoInlineValidate
         runFTLEager
         runFTLEagerNoCJITValidate
         runFTLNoCJITSmallPool
-        runDFGMaximalFlushPhase
     end
 end
 
@@ -1014,6 +1022,8 @@ def runTypeProfiler
         return
     end
 
+    return if !$isFTLPlatform
+
     run("ftl-no-cjit-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     run("ftl-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS))
 end
@@ -1022,6 +1032,8 @@ def runControlFlowProfiler
     if !$jitTests
         return
     end
+
+    return if !$isFTLPlatform
 
     run("ftl-no-cjit-type-profiler", "--useControlFlowProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
@@ -1109,6 +1121,9 @@ def runModules
     run("no-cjit-validate-phases-modules", "-m", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *NO_CJIT_OPTIONS)
     run("dfg-eager-modules", "-m", *EAGER_OPTIONS)
     run("dfg-eager-no-cjit-validate-modules", "-m", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
+
+    return if !$isFTLPlatform
+
     run("default-ftl-modules", "-m", *FTL_OPTIONS)
     run("ftl-no-cjit-validate-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     run("ftl-no-cjit-no-inline-validate-modules", "-m", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
@@ -1152,7 +1167,7 @@ def runLayoutTestDFGEagerNoCJIT
     runLayoutTest("dfg-eager-no-cjit", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
-def runLayoutTestDefault
+def runLayoutTestFTL
     runLayoutTest(nil, "--testTheFTL=true", *FTL_OPTIONS)
 end
 
@@ -1189,7 +1204,10 @@ def defaultRunLayoutTest
         runLayoutTestNoFTL
         if $jitTests
             noFTLRunLayoutTest
-            runLayoutTestDefault
+
+            return if !$isFTLPlatform
+
+            runLayoutTestFTL
             runLayoutTestFTLNoCJIT
             runLayoutTestFTLEagerNoCJIT
         end
@@ -1200,7 +1218,10 @@ def noEagerNoNoLLIntTestsRunLayoutTest
     runLayoutTestNoFTL
     if $jitTests
         runLayoutTestNoCJIT
-        runLayoutTestDefault
+
+        return if !$isFTLPlatform
+
+        runLayoutTestFTL
         runLayoutTestFTLNoCJIT
     end
 end
@@ -1210,7 +1231,10 @@ def noNoLLIntRunLayoutTest
     if $jitTests
         runLayoutTestNoCJIT
         runLayoutTestDFGEagerNoCJIT
-        runLayoutTestDefault
+
+        return if !$isFTLPlatform
+
+        runLayoutTestFTL
         runLayoutTestFTLNoCJIT
         runLayoutTestFTLEagerNoCJIT
     end
@@ -1313,7 +1337,7 @@ def defaultRunMozillaTest(mode, *extraFiles)
             runMozillaTestBaselineJIT(mode, *extraFiles)
             runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
             runMozillaTestDefault(mode, *extraFiles)
-            runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+            runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles) if $isFTLPlatform
         end
     end
 end
@@ -1326,10 +1350,6 @@ def runNoisyTestDefault
     runNoisyTest("default", *FTL_OPTIONS)
 end
 
-def runNoisyTestNoFTL
-    runNoisyTest("no-ftl")
-end
-
 def runNoisyTestNoCJIT
     runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
@@ -1339,9 +1359,8 @@ def runNoisyTestEagerNoCJIT
 end
 
 def defaultRunNoisyTest
-    runNoisyTestNoFTL
-    if $jitTests
-        runNoisyTestDefault
+    runNoisyTestDefault
+    if $jitTests and $isFTLPlatform
         runNoisyTestNoCJIT
         runNoisyTestEagerNoCJIT
     end
