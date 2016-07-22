@@ -945,6 +945,17 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
             dispatch_semaphore_signal(m_hasSessionSemaphore.get());
             m_hasSessionSemaphore = nullptr;
         }
+
+        if (m_hdcpError) {
+            WeakPtr<SourceBufferPrivateAVFObjC> weakThis = createWeakPtr();
+            callOnMainThread([weakThis] {
+                if (!weakThis || !weakThis->m_session || !weakThis->m_hdcpError)
+                    return;
+
+                bool ignored = false;
+                weakThis->m_session->layerDidReceiveError(nullptr, weakThis->m_hdcpError.get(), ignored);
+            });
+        }
     }
 }
 
@@ -992,6 +1003,9 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
 {
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::rendererDidReceiveError(%p): renderer(%p), error(%@)", this, renderer, [error description]);
+
+    if ([error code] == 'HDCP')
+        m_hdcpError = error;
 
     // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
     bool anyIgnored = false;

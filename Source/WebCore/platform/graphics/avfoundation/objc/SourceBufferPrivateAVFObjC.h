@@ -146,6 +146,7 @@ private:
     HashMap<int, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     RetainPtr<WebAVSampleBufferErrorListener> m_errorListener;
+    RetainPtr<NSError> m_hdcpError;
     OSObjectPtr<dispatch_semaphore_t> m_hasSessionSemaphore;
 
     MediaSourcePrivateAVFObjC* m_mediaSource;
