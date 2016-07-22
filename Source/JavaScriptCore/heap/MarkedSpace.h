@@ -22,6 +22,7 @@
 #ifndef MarkedSpace_h
 #define MarkedSpace_h
 
+#include "IterationStatus.h"
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
@@ -63,11 +64,14 @@ public:
 
     MarkedAllocator& allocatorFor(size_t);
     MarkedAllocator& destructorAllocatorFor(size_t);
+    MarkedAllocator& auxiliaryAllocatorFor(size_t);
     void* allocateWithDestructor(size_t);
     void* allocateWithoutDestructor(size_t);
+    void* allocateAuxiliary(size_t);
 
     Subspace& subspaceForObjectsWithDestructor() { return m_destructorSpace; }
     Subspace& subspaceForObjectsWithoutDestructor() { return m_normalSpace; }
+    Subspace& subspaceForAuxiliaryData() { return m_auxiliarySpace; }
 
     void resetAllocators();
 
@@ -114,9 +118,12 @@ private:
     friend class JIT;
 
     template<typename Functor> void forEachAllocator(const Functor&);
+    template<typename Functor> void forEachSubspace(const Functor&);
+    MarkedAllocator& allocatorFor(Subspace&, size_t);
 
     Subspace m_destructorSpace;
     Subspace m_normalSpace;
+    Subspace m_auxiliarySpace;
 
     Heap* m_heap;
     size_t m_capacity;
@@ -147,22 +154,17 @@ template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIteratio
 
 inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)
 {
-    ASSERT(bytes);
-    if (bytes <= preciseCutoff)
-        return m_normalSpace.preciseAllocators[(bytes - 1) / preciseStep];
-    if (bytes <= impreciseCutoff)
-        return m_normalSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
-    return m_normalSpace.largeAllocator;
+    return allocatorFor(m_normalSpace, bytes);
 }
 
 inline MarkedAllocator& MarkedSpace::destructorAllocatorFor(size_t bytes)
 {
-    ASSERT(bytes);
-    if (bytes <= preciseCutoff)
-        return m_destructorSpace.preciseAllocators[(bytes - 1) / preciseStep];
-    if (bytes <= impreciseCutoff)
-        return m_destructorSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
-    return m_destructorSpace.largeAllocator;
+    return allocatorFor(m_destructorSpace, bytes);
+}
+
+inline MarkedAllocator& MarkedSpace::auxiliaryAllocatorFor(size_t bytes)
+{
+    return allocatorFor(m_auxiliarySpace, bytes);
 }
 
 inline void* MarkedSpace::allocateWithoutDestructor(size_t bytes)
@@ -175,19 +177,22 @@ inline void* MarkedSpace::allocateWithDestructor(size_t bytes)
     return destructorAllocatorFor(bytes).allocate(bytes);
 }
 
+inline void* MarkedSpace::allocateAuxiliary(size_t bytes)
+{
+    return auxiliaryAllocatorFor(bytes).allocate(bytes);
+}
+
 template <typename Functor> inline void MarkedSpace::forEachBlock(const Functor& functor)
 {
-    for (size_t i = 0; i < preciseCount; ++i)
-        m_normalSpace.preciseAllocators[i].forEachBlock(functor);
-    for (size_t i = 0; i < impreciseCount; ++i)
-        m_normalSpace.impreciseAllocators[i].forEachBlock(functor);
-    m_normalSpace.largeAllocator.forEachBlock(functor);
-
-    for (size_t i = 0; i < preciseCount; ++i)
-        m_destructorSpace.preciseAllocators[i].forEachBlock(functor);
-    for (size_t i = 0; i < impreciseCount; ++i)
-        m_destructorSpace.impreciseAllocators[i].forEachBlock(functor);
-    m_destructorSpace.largeAllocator.forEachBlock(functor);
+    forEachSubspace(
+        [&] (Subspace& subspace, AllocatorAttributes) -> IterationStatus {
+            for (size_t i = 0; i < preciseCount; ++i)
+                subspace.preciseAllocators[i].forEachBlock(functor);
+            for (size_t i = 0; i < impreciseCount; ++i)
+                subspace.impreciseAllocators[i].forEachBlock(functor);
+            subspace.largeAllocator.forEachBlock(functor);
+            return IterationStatus::Continue;
+        });
 }
 
 inline void MarkedSpace::didAddBlock(MarkedBlock* block)
@@ -224,6 +229,36 @@ inline size_t MarkedSpace::size()
 inline size_t MarkedSpace::capacity()
 {
     return m_capacity;
+}
+
+template<typename Functor>
+inline void MarkedSpace::forEachSubspace(const Functor& func)
+{
+    AllocatorAttributes attributes;
+    
+    attributes.destruction = NeedsDestruction;
+    attributes.cellKind = HeapCell::JSCell;
+    if (func(m_destructorSpace, attributes) == IterationStatus::Done)
+        return;
+    
+    attributes.destruction = DoesNotNeedDestruction;
+    attributes.cellKind = HeapCell::JSCell;
+    if (func(m_normalSpace, attributes) == IterationStatus::Done)
+        return;
+
+    attributes.destruction = DoesNotNeedDestruction;
+    attributes.cellKind = HeapCell::Auxiliary;
+    func(m_auxiliarySpace, attributes);
+}
+
+inline MarkedAllocator& MarkedSpace::allocatorFor(Subspace& space, size_t bytes)
+{
+    ASSERT(bytes);
+    if (bytes <= preciseCutoff)
+        return space.preciseAllocators[(bytes - 1) / preciseStep];
+    if (bytes <= impreciseCutoff)
+        return space.impreciseAllocators[(bytes - 1) / impreciseStep];
+    return space.largeAllocator;
 }
 
 } // namespace JSC

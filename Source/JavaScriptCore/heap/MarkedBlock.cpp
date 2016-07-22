@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,14 +35,14 @@ namespace JSC {
 static const bool computeBalance = false;
 static size_t balance;
 
-MarkedBlock* MarkedBlock::create(Heap& heap, MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction, HeapCell::Kind cellKind)
+MarkedBlock* MarkedBlock::create(Heap& heap, MarkedAllocator* allocator, size_t capacity, size_t cellSize, const AllocatorAttributes& attributes)
 {
     if (computeBalance) {
         balance++;
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
-    MarkedBlock* block = new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, needsDestruction, cellKind);
+    MarkedBlock* block = new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, attributes);
     heap.didAllocateBlock(capacity);
     return block;
 }
@@ -60,19 +60,20 @@ void MarkedBlock::destroy(Heap& heap, MarkedBlock* block)
     heap.didFreeBlock(capacity);
 }
 
-MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction, HeapCell::Kind cellKind)
+MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t capacity, size_t cellSize, const AllocatorAttributes& attributes)
     : DoublyLinkedListNode<MarkedBlock>()
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
     , m_endAtom((allocator->cellSize() ? atomsPerBlock - m_atomsPerCell : firstAtom()) + 1)
     , m_capacity(capacity)
-    , m_needsDestruction(needsDestruction)
-    , m_cellKind(cellKind)
+    , m_attributes(attributes)
     , m_allocator(allocator)
     , m_state(New) // All cells start out unmarked.
     , m_weakSet(allocator->heap()->vm(), *this)
 {
     ASSERT(allocator);
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
+    if (m_attributes.cellKind != HeapCell::JSCell)
+        RELEASE_ASSERT(m_attributes.destruction == DoesNotNeedDestruction);
 }
 
 inline void MarkedBlock::callDestructor(HeapCell* cell)
@@ -134,10 +135,10 @@ MarkedBlock::FreeList MarkedBlock::sweep(SweepMode sweepMode)
 
     m_weakSet.sweep();
 
-    if (sweepMode == SweepOnly && !m_needsDestruction)
+    if (sweepMode == SweepOnly && m_attributes.destruction == DoesNotNeedDestruction)
         return FreeList();
 
-    if (m_needsDestruction)
+    if (m_attributes.destruction == NeedsDestruction)
         return sweepHelper<true>(sweepMode);
     return sweepHelper<false>(sweepMode);
 }
@@ -216,7 +217,7 @@ void MarkedBlock::stopAllocating(const FreeList& freeList)
     FreeCell* next;
     for (FreeCell* current = head; current; current = next) {
         next = current->next;
-        if (m_needsDestruction)
+        if (m_attributes.destruction == NeedsDestruction)
             reinterpret_cast<HeapCell*>(current)->zap();
         clearNewlyAllocated(current);
     }
@@ -294,7 +295,7 @@ void MarkedBlock::didRetireBlock(const FreeList& freeList)
     FreeCell* next;
     for (FreeCell* current = head; current; current = next) {
         next = current->next;
-        if (m_needsDestruction)
+        if (m_attributes.destruction == NeedsDestruction)
             reinterpret_cast<HeapCell*>(current)->zap();
     }
 

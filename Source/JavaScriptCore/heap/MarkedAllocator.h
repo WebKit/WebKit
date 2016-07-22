@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef MarkedAllocator_h
 #define MarkedAllocator_h
 
+#include "AllocatorAttributes.h"
 #include "MarkedBlock.h"
 #include <wtf/DoublyLinkedList.h>
 
@@ -46,8 +47,11 @@ public:
     void reset();
     void stopAllocating();
     void resumeAllocating();
-    size_t cellSize() { return m_cellSize; }
-    bool needsDestruction() { return m_needsDestruction; }
+    size_t cellSize() const { return m_cellSize; }
+    const AllocatorAttributes& attributes() const { return m_attributes; }
+    bool needsDestruction() const { return m_attributes.destruction == NeedsDestruction; }
+    DestructionMode destruction() const { return m_attributes.destruction; }
+    HeapCell::Kind cellKind() const { return m_attributes.cellKind; }
     void* allocate(size_t);
     Heap* heap() { return m_heap; }
     MarkedBlock* takeLastActiveBlock()
@@ -61,7 +65,7 @@ public:
     
     void addBlock(MarkedBlock*);
     void removeBlock(MarkedBlock*);
-    void init(Heap*, MarkedSpace*, size_t cellSize, bool needsDestruction);
+    void init(Heap*, MarkedSpace*, size_t cellSize, const AllocatorAttributes&);
 
     bool isPagedOut(double deadline);
    
@@ -81,7 +85,7 @@ private:
     DoublyLinkedList<MarkedBlock> m_blockList;
     DoublyLinkedList<MarkedBlock> m_retiredBlocks;
     size_t m_cellSize;
-    bool m_needsDestruction { false };
+    AllocatorAttributes m_attributes;
     Heap* m_heap;
     MarkedSpace* m_markedSpace;
 };
@@ -101,12 +105,12 @@ inline MarkedAllocator::MarkedAllocator()
 {
 }
 
-inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, bool needsDestruction)
+inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, const AllocatorAttributes& attributes)
 {
     m_heap = heap;
     m_markedSpace = markedSpace;
     m_cellSize = cellSize;
-    m_needsDestruction = needsDestruction;
+    m_attributes = attributes;
 }
 
 inline void* MarkedAllocator::allocate(size_t bytes)

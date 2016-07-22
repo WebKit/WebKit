@@ -1,3 +1,104 @@
+2016-07-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Teach MarkedSpace how to allocate auxiliary storage
+        https://bugs.webkit.org/show_bug.cgi?id=160053
+
+        Reviewed by Sam Weinig.
+        
+        Previously, we had two kinds of subspaces in MarkedSpace: destructor and non-destructor. This
+        was described using "bool needsDestruction" that would get passed around. We'd iterate over
+        these spaces using duplicated code - one loop for destructors and one for non-destructors, or
+        a single loop that does one thing for destructors and one for non-destructors.
+        
+        But now we want a third subspace: non-destructor non-JSCell, aka Auxiliary.
+        
+        So, this changes all of the reflection and iteration over subspaces to use functors, so that
+        the looping is written once and reused. Most places don't even have to know that there is a
+        third subspace; they just know that they must do things for each subspace, for each
+        allocator, or for each block - and the functor magic handles it for you.
+        
+        To make this somewhat nice, this change also fixes how we describe subspaces. Instead of a
+        bool, we now have AllocatorAttributes, which is a struct. If we ever add more subspaces, we
+        can add fields to AllocatorAttributes to describe how those subspaces differ. For now it just
+        contains two properties: a DestructionMode and a HeapCell::Kind. The DesctructionMode
+        replaces bool needsDestruction. I deliberately used a non-class enum to avoid tautologies.
+        DestructionMode has two members: NeedsDestruction and DoesNotNeedDestruction. I almost went
+        with DestructionMode::Needed and DestructionMode::NotNeeded, but I felt like that involves
+        more typing and doesn't actually avoid any kind of namespace issues.
+        
+        This is intended to have no behavior change other than the addition of a totally unused
+        space, which should always be empty. So hopefully it doesn't cost anything.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/AllocatorAttributes.cpp: Added.
+        (JSC::AllocatorAttributes::dump):
+        * heap/AllocatorAttributes.h: Added.
+        (JSC::AllocatorAttributes::AllocatorAttributes):
+        * heap/DestructionMode.cpp: Added.
+        (WTF::printInternal):
+        * heap/DestructionMode.h: Added.
+        * heap/Heap.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateBlock):
+        (JSC::MarkedAllocator::addBlock):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::cellSize):
+        (JSC::MarkedAllocator::attributes):
+        (JSC::MarkedAllocator::needsDestruction):
+        (JSC::MarkedAllocator::destruction):
+        (JSC::MarkedAllocator::cellKind):
+        (JSC::MarkedAllocator::heap):
+        (JSC::MarkedAllocator::takeLastActiveBlock):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::init):
+        (JSC::MarkedAllocator::allocate):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::callDestructor):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::stopAllocating):
+        (JSC::MarkedBlock::didRetireBlock):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::cellSize):
+        (JSC::MarkedBlock::attributes):
+        (JSC::MarkedBlock::needsDestruction):
+        (JSC::MarkedBlock::destruction):
+        (JSC::MarkedBlock::cellKind):
+        (JSC::MarkedBlock::size):
+        (JSC::MarkedBlock::forEachCell):
+        (JSC::MarkedBlock::forEachLiveCell):
+        (JSC::MarkedBlock::forEachDeadCell):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::~MarkedSpace):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::forEachAllocator):
+        (JSC::MarkedSpace::stopAllocating):
+        (JSC::MarkedSpace::resumeAllocating):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::freeBlock):
+        (JSC::MarkedSpace::shrink):
+        (JSC::MarkedSpace::clearNewlyAllocated):
+        (JSC::clearNewlyAllocatedInBlock): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::subspaceForObjectsWithDestructor):
+        (JSC::MarkedSpace::subspaceForObjectsWithoutDestructor):
+        (JSC::MarkedSpace::subspaceForAuxiliaryData):
+        (JSC::MarkedSpace::allocatorFor):
+        (JSC::MarkedSpace::destructorAllocatorFor):
+        (JSC::MarkedSpace::auxiliaryAllocatorFor):
+        (JSC::MarkedSpace::allocateWithoutDestructor):
+        (JSC::MarkedSpace::allocateWithDestructor):
+        (JSC::MarkedSpace::allocateAuxiliary):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::didAddBlock):
+        (JSC::MarkedSpace::capacity):
+        (JSC::MarkedSpace::forEachSubspace):
+
 2016-07-22  Saam Barati  <sbarati@apple.com>
 
         REGRESSION(r203537): It made many tests crash on ARMv7 Linux platforms

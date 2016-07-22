@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,8 @@
 #ifndef MarkedBlock_h
 #define MarkedBlock_h
 
+#include "AllocatorAttributes.h"
+#include "DestructionMode.h"
 #include "HeapCell.h"
 #include "HeapOperation.h"
 #include "IterationStatus.h"
@@ -107,7 +109,7 @@ namespace JSC {
             mutable ReturnType m_count;
         };
 
-        static MarkedBlock* create(Heap&, MarkedAllocator*, size_t capacity, size_t cellSize, bool needsDestruction, HeapCell::Kind);
+        static MarkedBlock* create(Heap&, MarkedAllocator*, size_t capacity, size_t cellSize, const AllocatorAttributes&);
         static void destroy(Heap&, MarkedBlock*);
 
         static bool isAtomAligned(const void*);
@@ -147,6 +149,8 @@ namespace JSC {
         bool isEmpty();
 
         size_t cellSize();
+        const AllocatorAttributes& attributes() const;
+        DestructionMode destruction() const;
         bool needsDestruction() const;
         HeapCell::Kind cellKind() const;
 
@@ -184,7 +188,7 @@ namespace JSC {
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(MarkedAllocator*, size_t capacity, size_t cellSize, bool needsDestruction, HeapCell::Kind);
+        MarkedBlock(MarkedAllocator*, size_t capacity, size_t cellSize, const AllocatorAttributes&);
         Atom* atoms();
         size_t atomNumber(const void*);
         void callDestructor(HeapCell*);
@@ -199,8 +203,7 @@ namespace JSC {
         std::unique_ptr<WTF::Bitmap<atomsPerBlock>> m_newlyAllocated;
 
         size_t m_capacity;
-        bool m_needsDestruction;
-        HeapCell::Kind m_cellKind;
+        AllocatorAttributes m_attributes;
         MarkedAllocator* m_allocator;
         BlockState m_state;
         WeakSet m_weakSet;
@@ -301,14 +304,24 @@ namespace JSC {
         return m_atomsPerCell * atomSize;
     }
 
+    inline const AllocatorAttributes& MarkedBlock::attributes() const
+    {
+        return m_attributes;
+    }
+
     inline bool MarkedBlock::needsDestruction() const
     {
-        return m_needsDestruction;
+        return m_attributes.destruction == NeedsDestruction;
+    }
+
+    inline DestructionMode MarkedBlock::destruction() const
+    {
+        return m_attributes.destruction;
     }
 
     inline HeapCell::Kind MarkedBlock::cellKind() const
     {
-        return m_cellKind;
+        return m_attributes.cellKind;
     }
 
     inline size_t MarkedBlock::size()
@@ -420,7 +433,7 @@ namespace JSC {
 
     template <typename Functor> inline IterationStatus MarkedBlock::forEachCell(const Functor& functor)
     {
-        HeapCell::Kind kind = m_cellKind;
+        HeapCell::Kind kind = m_attributes.cellKind;
         for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
             HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&atoms()[i]);
             if (functor(cell, kind) == IterationStatus::Done)
@@ -431,7 +444,7 @@ namespace JSC {
 
     template <typename Functor> inline IterationStatus MarkedBlock::forEachLiveCell(const Functor& functor)
     {
-        HeapCell::Kind kind = m_cellKind;
+        HeapCell::Kind kind = m_attributes.cellKind;
         for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
             HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&atoms()[i]);
             if (!isLive(cell))
@@ -445,7 +458,7 @@ namespace JSC {
 
     template <typename Functor> inline IterationStatus MarkedBlock::forEachDeadCell(const Functor& functor)
     {
-        HeapCell::Kind kind = m_cellKind;
+        HeapCell::Kind kind = m_attributes.cellKind;
         for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
             HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&atoms()[i]);
             if (isLive(cell))

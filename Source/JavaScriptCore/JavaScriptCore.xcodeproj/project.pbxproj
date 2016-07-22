@@ -537,6 +537,10 @@
 		0F9495881C57F47500413A48 /* B3StackSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9495861C57F47500413A48 /* B3StackSlot.h */; };
 		0F952ABC1B487A7700C367C5 /* TrackedReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F952ABA1B487A7700C367C5 /* TrackedReferences.cpp */; };
 		0F952ABD1B487A7700C367C5 /* TrackedReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F952ABB1B487A7700C367C5 /* TrackedReferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F9630391D4192C6005609D9 /* AllocatorAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9630351D4192C3005609D9 /* AllocatorAttributes.cpp */; };
+		0F96303A1D4192C8005609D9 /* AllocatorAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9630361D4192C3005609D9 /* AllocatorAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F96303B1D4192CB005609D9 /* DestructionMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9630371D4192C3005609D9 /* DestructionMode.cpp */; };
+		0F96303C1D4192CD005609D9 /* DestructionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9630381D4192C3005609D9 /* DestructionMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F96EBB316676EF6008BADE3 /* CodeBlockWithJITType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F96EBB116676EF4008BADE3 /* CodeBlockWithJITType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F97496F1687ADE200A4FF6A /* JSCellInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2728,6 +2732,10 @@
 		0F9495861C57F47500413A48 /* B3StackSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StackSlot.h; path = b3/B3StackSlot.h; sourceTree = "<group>"; };
 		0F952ABA1B487A7700C367C5 /* TrackedReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackedReferences.cpp; sourceTree = "<group>"; };
 		0F952ABB1B487A7700C367C5 /* TrackedReferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackedReferences.h; sourceTree = "<group>"; };
+		0F9630351D4192C3005609D9 /* AllocatorAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AllocatorAttributes.cpp; sourceTree = "<group>"; };
+		0F9630361D4192C3005609D9 /* AllocatorAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllocatorAttributes.h; sourceTree = "<group>"; };
+		0F9630371D4192C3005609D9 /* DestructionMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DestructionMode.cpp; sourceTree = "<group>"; };
+		0F9630381D4192C3005609D9 /* DestructionMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestructionMode.h; sourceTree = "<group>"; };
 		0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueProfile.h; sourceTree = "<group>"; };
 		0F96EBB116676EF4008BADE3 /* CodeBlockWithJITType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlockWithJITType.h; sourceTree = "<group>"; };
 		0F97496F1687ADE200A4FF6A /* JSCellInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCellInlines.h; sourceTree = "<group>"; };
@@ -5172,6 +5180,8 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				0F9630351D4192C3005609D9 /* AllocatorAttributes.cpp */,
+				0F9630361D4192C3005609D9 /* AllocatorAttributes.h */,
 				0F1C3DD91BBCE09E00E523E4 /* CellState.h */,
 				0FD8A31117D4326C00CA2C40 /* CodeBlockSet.cpp */,
 				0FD8A31217D4326C00CA2C40 /* CodeBlockSet.h */,
@@ -5192,6 +5202,8 @@
 				C218D13F1655CFD50062BB81 /* CopyWorkList.h */,
 				2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */,
 				0F136D4B174AD69B0075B354 /* DeferGC.h */,
+				0F9630371D4192C3005609D9 /* DestructionMode.cpp */,
+				0F9630381D4192C3005609D9 /* DestructionMode.h */,
 				2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */,
 				2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */,
 				2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */,
@@ -7119,6 +7131,7 @@
 				0FEC851A1BDACDAC0080FF74 /* B3GenericFrequentedBlock.h in Headers */,
 				0FEC85C31BE167A00080FF74 /* B3HeapRange.h in Headers */,
 				26718BA51BE99F780052017B /* AirIteratedRegisterCoalescing.h in Headers */,
+				0F96303C1D4192CD005609D9 /* DestructionMode.h in Headers */,
 				0FEC851B1BDACDAC0080FF74 /* B3IndexMap.h in Headers */,
 				0FEC851C1BDACDAC0080FF74 /* B3IndexSet.h in Headers */,
 				0FEC85BA1BE1462F0080FF74 /* B3InsertionSet.h in Headers */,
@@ -7556,6 +7569,7 @@
 				0F0332C818B546EC005F979A /* FTLWeightedTarget.h in Headers */,
 				0F666EC1183566F900D017F1 /* FullBytecodeLiveness.h in Headers */,
 				2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */,
+				0F96303A1D4192C8005609D9 /* AllocatorAttributes.h in Headers */,
 				BC18C4040E16F5CD00B34460 /* FunctionConstructor.h in Headers */,
 				0FF0F1A016B72A1A005DF95B /* FunctionExecutableDump.h in Headers */,
 				52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */,
@@ -9266,6 +9280,7 @@
 				0F919D0C157EE09F004A4E7D /* JSSymbolTableObject.cpp in Sources */,
 				70ECA6051AFDBEA200449739 /* JSTemplateRegistryKey.cpp in Sources */,
 				0F2B66FA17B6B5AB00A7AE3F /* JSTypedArrayConstructors.cpp in Sources */,
+				0F9630391D4192C6005609D9 /* AllocatorAttributes.cpp in Sources */,
 				0F2B66FC17B6B5AB00A7AE3F /* JSTypedArrayPrototypes.cpp in Sources */,
 				0F2B66FE17B6B5AB00A7AE3F /* JSTypedArrays.cpp in Sources */,
 				534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */,
@@ -9346,6 +9361,7 @@
 				969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */,
 				14280850107EC0D70013E7B2 /* Operations.cpp in Sources */,
 				0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */,
+				0F96303B1D4192CB005609D9 /* DestructionMode.cpp in Sources */,
 				148F21BC107EC54D0042EC2C /* Parser.cpp in Sources */,
 				93052C340FB792190048FDC3 /* ParserArena.cpp in Sources */,
 				0FF9CE731B9CD6D0004EDCA6 /* PolymorphicAccess.cpp in Sources */,

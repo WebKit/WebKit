@@ -186,10 +186,7 @@ MarkedBlock* MarkedAllocator::allocateBlock(size_t bytes)
 
     size_t cellSize = m_cellSize ? m_cellSize : WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
 
-    // FIXME: Support allocating storage in marked blocks. This would mean that allocateBlock()
-    // takes a HeapCell::Kind, or something like that.
-    // https://bugs.webkit.org/show_bug.cgi?id=159658
-    return MarkedBlock::create(*m_heap, this, blockSize, cellSize, m_needsDestruction, HeapCell::JSCell);
+    return MarkedBlock::create(*m_heap, this, blockSize, cellSize, m_attributes);
 }
 
 void MarkedAllocator::addBlock(MarkedBlock* block)
