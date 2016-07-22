@@ -35,7 +35,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/win"
     "${WEBCORE_DIR}/platform/network/win"
     "${WEBCORE_DIR}/platform/win"
-    "${WEBCORE_DIR}/plugins/win"
     "${THIRDPARTY_DIR}/ANGLE/include"
     "${THIRDPARTY_DIR}/ANGLE/include/egl"
 )
