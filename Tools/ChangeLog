@@ -1,3 +1,24 @@
+2016-07-21  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] webkitdirs.pm contains unused code to support outdated OS X and Xcode versions
+        https://bugs.webkit.org/show_bug.cgi?id=160072
+
+        Reviewed by Andy Estes.
+
+        * Scripts/webkitdirs.pm:
+        (readXcodeUserDefault): Changed to take a defaults key rather than a suffix. Removed support
+          for old Xcode versions.
+        (determineBaseProductDir): Removed support for old Xcode versions. Updated for the change
+          to readXcodeUserDefault.
+        (debugger): Deleted. This was only used for Darwin, where LLDB is now the only supported
+          debugger.
+        (determineDebugger): Ditto.
+        (checkRequiredSystemConfig): Updated to require at least OS X Yosemite v10.10.5 and Xcode
+          7.0.
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded): Removed --use-gdb and --use-lldb
+          switches.
+        (execMacWebKitAppForDebugging): Removed support for GDB.
+
 2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove support for deprecated SPI inlineMediaPlaybackRequiresPlaysInlineAttribute
