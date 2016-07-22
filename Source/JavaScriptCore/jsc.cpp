@@ -2426,8 +2426,9 @@ int jscmain(int argc, char** argv)
 #endif
     JSC::initializeThreading();
 
-    Ref<VM> vm = VM::create(LargeHeap);
-    int result = runJSC(vm.ptr(), options);
+    VM* vm = &VM::create(LargeHeap).leakRef();
+    int result;
+    result = runJSC(vm, options);
 
     if (Options::gcAtEnd()) {
         // We need to hold the API lock to do a GC.
