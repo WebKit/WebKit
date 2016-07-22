@@ -2349,6 +2349,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAllowsInlineMediaPlayback([preferences mediaPlaybackAllowsInline]);
     settings.setAllowsInlineMediaPlaybackAfterFullscreen([preferences allowsInlineMediaPlaybackAfterFullscreen]);
     settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute([preferences inlineMediaPlaybackRequiresPlaysInlineAttribute]);
+    settings.setAllowsInlineMediaPlaybackWithPlaysInlineAttribute([preferences allowsInlineMediaPlaybackWithPlaysInlineAttribute]);
+    settings.setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute([preferences allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute]);
     settings.setInvisibleAutoplayNotPermitted([preferences invisibleAutoplayNotPermitted]);
     settings.setAllowsPictureInPictureMediaPlayback([preferences allowsPictureInPictureMediaPlayback] && shouldAllowPictureInPictureMediaPlayback());
     settings.setMediaControlsScaleWithPageZoom([preferences mediaControlsScaleWithPageZoom]);
