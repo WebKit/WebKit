@@ -1,3 +1,15 @@
+2016-07-21  John Wilander  <wilander@apple.com>
+
+        Block mixed content synchronous XHR
+        https://bugs.webkit.org/show_bug.cgi?id=105462
+        <rdar://problem/13666424>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/mixedContent/insecure-xhr-sync-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-xhr-sync-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/resources/insecure-xhr-sync-in-main-frame-window.html: Added.
+
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
         Make parameters to Document.getElementsBy*() operations mandatory
