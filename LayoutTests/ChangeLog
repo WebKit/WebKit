@@ -1,5 +1,22 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203378. rdar://problem/25876032
+
+    2016-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            [iOS] PDFDocumentImage should cache only a sub image of the PDF when caching the whole image is expensive
+            https://bugs.webkit.org/show_bug.cgi?id=158715
+
+            Reviewed by Dean Jackson.
+
+            Make sure the PDF image will be displayed at the correct position if caching
+            the PDF image is disabled.
+
+            * fast/images/displaced-non-cached-pdf-expected.html: Added.
+            * fast/images/displaced-non-cached-pdf.html: Added.
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203511. rdar://problem/27474031
 
     2016-07-21  Chris Dumez  <cdumez@apple.com>

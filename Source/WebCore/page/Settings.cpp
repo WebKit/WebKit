@@ -195,6 +195,7 @@ Settings::Settings(Page* page)
     , m_loadsImagesAutomatically(false)
     , m_areImagesEnabled(true)
     , m_preferMIMETypeForImages(false)
+    , m_isCachedPDFImageEnabled(true)
     , m_arePluginsEnabled(false)
     , m_isScriptEnabled(false)
     , m_needsAdobeFrameReloadingQuirk(false)
@@ -425,6 +426,11 @@ void Settings::setImagesEnabled(bool areImagesEnabled)
 void Settings::setPreferMIMETypeForImages(bool preferMIMETypeForImages)
 {
     m_preferMIMETypeForImages = preferMIMETypeForImages;
+}
+
+void Settings::setCachedPDFImageEnabled(bool isCachedPDFImageEnabled)
+{
+    m_isCachedPDFImageEnabled = isCachedPDFImageEnabled;
 }
 
 void Settings::setForcePendingWebGLPolicy(bool forced)

@@ -52,6 +52,8 @@ public:
         return adoptRef(new PDFDocumentImage(observer));
     }
 
+    void setCachedPDFImageEnabled(bool);
+
 private:
     PDFDocumentImage(ImageObserver*);
     virtual ~PDFDocumentImage();
@@ -81,8 +83,11 @@ private:
     unsigned pageCount() const;
     void drawPDFPage(GraphicsContext&);
 
+    void decodedSizeChanged(size_t newCachedBytes);
     void updateCachedImageIfNeeded(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect);
     bool cacheParametersMatch(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect) const;
+
+    bool m_isCachedPDFImageEnabled { true };
 
 #if USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
     RetainPtr<PDFDocument> m_document;
@@ -91,6 +96,7 @@ private:
 #endif
 
     std::unique_ptr<ImageBuffer> m_cachedImageBuffer;
+    FloatRect m_cachedImageRect;
     AffineTransform m_cachedTransform;
     FloatSize m_cachedDestinationSize;
     FloatRect m_cachedSourceRect;
@@ -102,6 +108,8 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_IMAGE(PDFDocumentImage)
 
 #endif // USE(CG)
 

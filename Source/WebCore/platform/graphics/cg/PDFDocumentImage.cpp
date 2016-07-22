@@ -100,12 +100,24 @@ bool PDFDocumentImage::dataChanged(bool allDataReceived)
     return m_document; // Return true if size is available.
 }
 
+void PDFDocumentImage::setCachedPDFImageEnabled(bool enabled)
+{
+    if (m_isCachedPDFImageEnabled == enabled)
+        return;
+
+    if (!(m_isCachedPDFImageEnabled = enabled))
+        destroyDecodedData();
+}
+
 bool PDFDocumentImage::cacheParametersMatch(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect) const
 {
     if (dstRect.size() != m_cachedDestinationSize)
         return false;
 
     if (srcRect != m_cachedSourceRect)
+        return false;
+
+    if (!m_cachedImageRect.contains(context.clipBounds()))
         return false;
 
     AffineTransform::DecomposedType decomposedTransform;
@@ -137,23 +149,59 @@ static void transformContextForPainting(GraphicsContext& context, const FloatRec
         }
     }
 
-    context.translate(srcRect.x() * hScale, srcRect.y() * vScale);
+    // drawPDFPage() relies on drawing the whole PDF into a context starting at (0, 0). We need
+    // to transform the destination context such that srcRect of the source context will be drawn
+    // in dstRect of destination context.
+    context.translate(dstRect.x() - srcRect.x(), dstRect.y() - srcRect.y());
     context.scale(FloatSize(hScale, -vScale));
     context.translate(0, -srcRect.height());
+}
+
+#if PLATFORM(IOS)
+// To avoid the jetsam on iOS, we are going to limit the size of all the PDF cachedImages to be 64MB.
+static const size_t s_maxCachedImageSide = 4 * 1024;
+static const size_t s_maxCachedImageArea = s_maxCachedImageSide * s_maxCachedImageSide;
+
+static const size_t s_maxDecodedDataSize = s_maxCachedImageArea * 4;
+static size_t s_allDecodedDataSize = 0;
+
+static FloatRect cachedImageRect(GraphicsContext& context, const FloatRect& dstRect)
+{
+    FloatSize maxSize = s_maxCachedImageSide / context.scaleFactor();
+
+    // Expand from the center of the dirty rectangle.
+    FloatRect rect = context.clipBounds();
+    rect.setX(std::max(rect.center().x() - maxSize.width() / 2, dstRect.x()));
+    rect.setY(std::max(rect.center().y() - maxSize.height() / 2, dstRect.y()));
+
+    // Cover as much as we could from the dstRect.
+    rect.setWidth(std::min(maxSize.width(), dstRect.width()));
+    rect.setHeight(std::min(maxSize.height(), dstRect.height()));
+    return rect;
+}
+#endif
+
+void PDFDocumentImage::decodedSizeChanged(size_t newCachedBytes)
+{
+    if (!m_cachedBytes && !newCachedBytes)
+        return;
+
+    if (imageObserver())
+        imageObserver()->decodedSizeChanged(this, -safeCast<int>(m_cachedBytes) + newCachedBytes);
+
+#if PLATFORM(IOS)
+    ASSERT(s_allDecodedDataSize >= m_cachedBytes);
+    // Update with the difference in two steps to avoid unsigned underflow subtraction.
+    s_allDecodedDataSize -= m_cachedBytes;
+    s_allDecodedDataSize += newCachedBytes;
+#endif
+
+    m_cachedBytes = newCachedBytes;
 }
 
 void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect)
 {
 #if PLATFORM(IOS)
-    // On iOS, if the physical memory is less than 1GB, do not allocate more than 16MB for the PDF cachedImage.
-    const size_t memoryThreshold = WTF::GB;
-    const size_t maxArea = 16 * WTF::MB / 4; // 16 MB maximum size, divided by a rough cost of 4 bytes per pixel of area.
-    
-    if (ramSize() <= memoryThreshold && ImageBuffer::compatibleBufferSize(dstRect.size(), context).area() >= maxArea) {
-        m_cachedImageBuffer = nullptr;
-        return;
-    }
-
     // On iOS, some clients use low-quality image interpolation always, which throws off this optimization,
     // as we never get the subsequent high-quality paint. Since live resize is rare on iOS, disable the optimization.
     // FIXME (136593): It's also possible to do the wrong thing here if CSS specifies low-quality interpolation via the "image-rendering"
@@ -167,15 +215,30 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     bool repaintIfNecessary = interpolationQuality != InterpolationNone && interpolationQuality != InterpolationLow;
 #endif
 
-    if (m_cachedImageBuffer && (!repaintIfNecessary || cacheParametersMatch(context, dstRect, srcRect)))
+    if (!m_isCachedPDFImageEnabled || (m_cachedImageBuffer && (!repaintIfNecessary || cacheParametersMatch(context, dstRect, srcRect))))
         return;
-    
-    m_cachedImageBuffer = ImageBuffer::createCompatibleBuffer(FloatRect(enclosingIntRect(dstRect)).size(), context);
-    if (!m_cachedImageBuffer)
-        return;
-    auto& bufferContext = m_cachedImageBuffer->context();
 
-    transformContextForPainting(bufferContext, dstRect, srcRect);
+#if PLATFORM(IOS)
+    m_cachedImageRect = cachedImageRect(context, dstRect);
+
+    // Cache the PDF image only if the size of the new image won't exceed the limit.
+    if (s_allDecodedDataSize + m_cachedImageRect.size().area() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
+        destroyDecodedData();
+        return;
+    }
+#else
+    m_cachedImageRect = dstRect;
+#endif
+
+    m_cachedImageBuffer = ImageBuffer::createCompatibleBuffer(FloatRect(enclosingIntRect(m_cachedImageRect)).size(), context);
+    if (!m_cachedImageBuffer) {
+        destroyDecodedData();
+        return;
+    }
+
+    auto& bufferContext = m_cachedImageBuffer->context();
+    // The PDF cachedImage should be drawn at (0, 0) always.
+    transformContextForPainting(bufferContext, FloatRect({ }, dstRect.size()), srcRect);
     drawPDFPage(bufferContext);
 
     m_cachedTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
@@ -183,11 +246,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     m_cachedSourceRect = srcRect;
 
     IntSize internalSize = m_cachedImageBuffer->internalSize();
-    size_t oldCachedBytes = m_cachedBytes;
-    m_cachedBytes = safeCast<size_t>(internalSize.width()) * internalSize.height() * 4;
-
-    if (imageObserver())
-        imageObserver()->decodedSizeChanged(this, safeCast<int>(m_cachedBytes) - safeCast<int>(oldCachedBytes));
+    decodedSizeChanged(safeCast<size_t>(internalSize.width()) * internalSize.height() * 4);
 }
 
 void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, ImageOrientationDescription)
@@ -216,11 +275,8 @@ void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, 
 void PDFDocumentImage::destroyDecodedData(bool)
 {
     m_cachedImageBuffer = nullptr;
-
-    if (imageObserver())
-        imageObserver()->decodedSizeChanged(this, -safeCast<int>(m_cachedBytes));
-
-    m_cachedBytes = 0;
+    m_cachedImageRect = FloatRect();
+    decodedSizeChanged(0);
 }
 
 #if !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
