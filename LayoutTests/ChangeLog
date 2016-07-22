@@ -1,5 +1,22 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203511. rdar://problem/27474031
+
+    2016-07-21  Chris Dumez  <cdumez@apple.com>
+
+            playsInline IDL attribute has the wrong casing
+            https://bugs.webkit.org/show_bug.cgi?id=160029
+            <rdar://problem/27474031>
+
+            Reviewed by Jon Lee.
+
+            Update test to use the correct case.
+
+            * media/video-playsinline-expected.txt:
+            * media/video-playsinline.html:
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203520. rdar://problem/26964090
 
     2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
