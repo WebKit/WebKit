@@ -86,8 +86,7 @@
 
     // DOM Level 2 Events (DocumentEvents interface)
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException, NewObject] Event createEvent(optional DOMString eventType = "undefined");
+    [RaisesException, NewObject] Event createEvent(DOMString eventType);
 
     // DOM Level 2 Tranversal and Range (DocumentRange interface)
 

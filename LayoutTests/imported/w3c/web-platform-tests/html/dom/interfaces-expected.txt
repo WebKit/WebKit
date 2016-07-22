@@ -160,9 +160,7 @@ PASS Document interface: calling createAttribute(DOMString) on iframe.contentDoc
 PASS Document interface: iframe.contentDocument must inherit property "createAttributeNS" with the proper type (23) 
 PASS Document interface: calling createAttributeNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createEvent" with the proper type (24) 
-FAIL Document interface: calling createEvent(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling createEvent(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createRange" with the proper type (25) 
 PASS Document interface: iframe.contentDocument must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on iframe.contentDocument with too few arguments must throw TypeError 
@@ -442,9 +440,7 @@ PASS Document interface: calling createAttribute(DOMString) on new Document() wi
 PASS Document interface: new Document() must inherit property "createAttributeNS" with the proper type (23) 
 PASS Document interface: calling createAttributeNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createEvent" with the proper type (24) 
-FAIL Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createRange" with the proper type (25) 
 PASS Document interface: new Document() must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
@@ -727,9 +723,7 @@ PASS Document interface: calling createAttribute(DOMString) on document.implemen
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createAttributeNS" with the proper type (23) 
 PASS Document interface: calling createAttributeNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createEvent" with the proper type (24) 
-FAIL Document interface: calling createEvent(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling createEvent(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createRange" with the proper type (25) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 

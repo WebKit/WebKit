@@ -268,7 +268,7 @@ PASS Document interface: operation importNode(Node,boolean)
 PASS Document interface: operation adoptNode(Node) 
 PASS Document interface: operation createAttribute(DOMString) 
 PASS Document interface: operation createAttributeNS(DOMString,DOMString) 
-FAIL Document interface: operation createEvent(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation createEvent(DOMString) 
 PASS Document interface: operation createRange() 
 PASS Document interface: operation createNodeIterator(Node,unsigned long,NodeFilter) 
 PASS Document interface: operation createTreeWalker(Node,unsigned long,NodeFilter) 
@@ -320,9 +320,7 @@ PASS Document interface: calling createAttribute(DOMString) on new Document() wi
 PASS Document interface: new Document() must inherit property "createAttributeNS" with the proper type (23) 
 PASS Document interface: calling createAttributeNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createEvent" with the proper type (24) 
-FAIL Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createRange" with the proper type (25) 
 PASS Document interface: new Document() must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
@@ -468,9 +466,7 @@ PASS Document interface: calling createAttribute(DOMString) on xmlDoc with too f
 PASS Document interface: xmlDoc must inherit property "createAttributeNS" with the proper type (23) 
 PASS Document interface: calling createAttributeNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createEvent" with the proper type (24) 
-FAIL Document interface: calling createEvent(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "NotSupportedError (DOM Exception 9): The operation is not..." ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling createEvent(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createRange" with the proper type (25) 
 PASS Document interface: xmlDoc must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
