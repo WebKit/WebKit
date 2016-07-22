@@ -1,3 +1,12 @@
+2016-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Enable threaded compositor by default
+        https://bugs.webkit.org/show_bug.cgi?id=160079
+
+        Reviewed by Žan Doberšek.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-07-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         JSC JIT Broken on ARMv7 Traditional (without Thumb2)
