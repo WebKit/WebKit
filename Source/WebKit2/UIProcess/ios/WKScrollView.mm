@@ -29,7 +29,10 @@
 #if PLATFORM(IOS)
 
 #import "WKWebViewInternal.h"
+#import "WeakObjCPtr.h"
 #import <WebCore/CoreGraphicsSPI.h>
+
+using namespace WebKit;
 
 @interface UIScrollView (UIScrollViewInternalHack)
 - (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside;
@@ -43,7 +46,7 @@
 
 @implementation WKScrollViewDelegateForwarder {
     WKWebView *_internalDelegate;
-    id <UIScrollViewDelegate> _externalDelegate;
+    WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
 }
 
 - (instancetype)initWithInternalDelegate:(WKWebView <UIScrollViewDelegate> *)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate
@@ -58,24 +61,26 @@
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
+    auto externalDelegate = _externalDelegate.get();
     NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
     if (!signature)
         signature = [(NSObject *)_internalDelegate methodSignatureForSelector:aSelector];
     if (!signature)
-        signature = [(NSObject *)_externalDelegate methodSignatureForSelector:aSelector];
+        signature = [(NSObject *)externalDelegate methodSignatureForSelector:aSelector];
     return signature;
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
-    return [super respondsToSelector:aSelector] || [_internalDelegate respondsToSelector:aSelector] || [_externalDelegate respondsToSelector:aSelector];
+    return [super respondsToSelector:aSelector] || [_internalDelegate respondsToSelector:aSelector] || [_externalDelegate.get() respondsToSelector:aSelector];
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
+    auto externalDelegate = _externalDelegate.get();
     SEL aSelector = [anInvocation selector];
     BOOL internalDelegateWillRespond = [_internalDelegate respondsToSelector:aSelector];
-    BOOL externalDelegateWillRespond = [_externalDelegate respondsToSelector:aSelector];
+    BOOL externalDelegateWillRespond = [externalDelegate respondsToSelector:aSelector];
 
     if (internalDelegateWillRespond && externalDelegateWillRespond)
         [_internalDelegate _willInvokeUIScrollViewDelegateCallback];
@@ -83,7 +88,7 @@
     if (internalDelegateWillRespond)
         [anInvocation invokeWithTarget:_internalDelegate];
     if (externalDelegateWillRespond)
-        [anInvocation invokeWithTarget:_externalDelegate];
+        [anInvocation invokeWithTarget:externalDelegate.get()];
 
     if (internalDelegateWillRespond && externalDelegateWillRespond)
         [_internalDelegate _didInvokeUIScrollViewDelegateCallback];
@@ -95,19 +100,19 @@
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
     BOOL internalDelegateWillRespond = [_internalDelegate respondsToSelector:aSelector];
-    BOOL externalDelegateWillRespond = [_externalDelegate respondsToSelector:aSelector];
+    BOOL externalDelegateWillRespond = [_externalDelegate.get() respondsToSelector:aSelector];
 
     if (internalDelegateWillRespond && !externalDelegateWillRespond)
         return _internalDelegate;
     if (externalDelegateWillRespond && !internalDelegateWillRespond)
-        return _externalDelegate;
+        return _externalDelegate.getAutoreleased();
     return nil;
 }
 
 @end
 
 @implementation WKScrollView {
-    id <UIScrollViewDelegate> _externalDelegate;
+    WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
     WKScrollViewDelegateForwarder *_delegateForwarder;
 }
 
@@ -132,7 +137,7 @@
 
 - (void)setDelegate:(id <UIScrollViewDelegate>)delegate
 {
-    if (_externalDelegate == delegate)
+    if (_externalDelegate.get().get() == delegate)
         return;
     _externalDelegate = delegate;
     [self _updateDelegate];
@@ -140,19 +145,20 @@
 
 - (id <UIScrollViewDelegate>)delegate
 {
-    return _externalDelegate;
+    return _externalDelegate.getAutoreleased();
 }
 
 - (void)_updateDelegate
 {
     WKScrollViewDelegateForwarder *oldForwarder = _delegateForwarder;
     _delegateForwarder = nil;
-    if (!_externalDelegate)
+    auto externalDelegate = _externalDelegate.get();
+    if (!externalDelegate)
         [super setDelegate:_internalDelegate];
     else if (!_internalDelegate)
-        [super setDelegate:_externalDelegate];
+        [super setDelegate:externalDelegate.get()];
     else {
-        _delegateForwarder = [[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:_externalDelegate];
+        _delegateForwarder = [[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:externalDelegate.get()];
         [super setDelegate:_delegateForwarder];
     }
     [oldForwarder release];

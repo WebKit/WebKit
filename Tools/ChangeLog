@@ -1,3 +1,19 @@
+2016-07-21  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] Apps using WKWebView will crash if they set the scroll view's delegate and don't nil it out later
+        https://bugs.webkit.org/show_bug.cgi?id=159980
+        rdar://problem/27450825
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/WKScrollViewDelegateCrash.mm: Added.
+        (-[TestDelegateForScrollView dealloc]): Update delegateIsDeallocated to true so that we can tell
+        when our delegate has hit -dealloc.
+        (TestWebKitAPI::TEST): Ensure that after an object has been set as the scroll view's delegate,
+        and has then been deallocated, that the scroll view's delegate is nil and the deallocated delegate
+        will not be messaged.
+
 2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Follow-up patch to r203520

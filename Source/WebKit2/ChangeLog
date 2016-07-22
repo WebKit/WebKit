@@ -1,3 +1,31 @@
+2016-07-21  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] Apps using WKWebView will crash if they set the scroll view's delegate and don't nil it out later
+        https://bugs.webkit.org/show_bug.cgi?id=159980
+        rdar://problem/27450825
+
+        Reviewed by Dan Bernstein.
+
+        The root cause of this crash is that we are not abiding the UIScrollView API that the scroll view
+        delegate property should be weak. If setters of this delegate do not know that, since the WKWebView
+        exposes the scroll view as a UIScrollView, they may forget to nil out the delegate they set and will
+        then crash.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollViewDelegateForwarder methodSignatureForSelector:]): Get a RetainPtr holding the
+        external delegate and use where needed.
+        (-[WKScrollViewDelegateForwarder respondsToSelector:]): Ditto.
+        (-[WKScrollViewDelegateForwarder forwardInvocation:]): Ditto.
+        (-[WKScrollViewDelegateForwarder forwardingTargetForSelector:]): Ditto. When returning a reference
+        to the external delegate, get a retained and autoreleased reference so the caller needn't release
+        the object when done.
+        (-[WKScrollView delegate]): Ditto.
+        (-[WKScrollView _updateDelegate]): Get a RetainPtr holding the external delegate that can be
+        used throughout this method. Use the RetainPtr to get the external delegate for setting super's
+        delegate as well as creating the delegate forwarder.
+        (-[WKScrollView setDelegate:]): Get a RetainPtr holding the external delegate and use its value for
+        comparison to the object we are setting the external delegate to.
+
 2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPhone] Playing a video on tudou.com plays only sound, no video
