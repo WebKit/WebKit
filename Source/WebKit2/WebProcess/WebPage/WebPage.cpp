@@ -2985,7 +2985,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setMainContentUserGestureOverrideEnabled(store.getBoolValueForKey(WebPreferencesKey::mainContentUserGestureOverrideEnabledKey()));
     settings.setAllowsInlineMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::allowsInlineMediaPlaybackKey()));
     settings.setAllowsInlineMediaPlaybackAfterFullscreen(store.getBoolValueForKey(WebPreferencesKey::allowsInlineMediaPlaybackAfterFullscreenKey()));
-    settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(store.getBoolValueForKey(WebPreferencesKey::inlineMediaPlaybackRequiresPlaysInlineAttributeKey()));
     settings.setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(store.getBoolValueForKey(WebPreferencesKey::allowsInlineMediaPlaybackWithPlaysInlineAttributeKey()));
     settings.setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(store.getBoolValueForKey(WebPreferencesKey::allowsInlineMediaPlaybackWithWebKitPlaysInlineAttributeKey()));
     settings.setInvisibleAutoplayNotPermitted(store.getBoolValueForKey(WebPreferencesKey::invisibleAutoplayNotPermittedKey()));

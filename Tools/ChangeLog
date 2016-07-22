@@ -1,5 +1,25 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203545. rdar://problem/26964090
+
+    2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Remove support for deprecated SPI inlineMediaPlaybackRequiresPlaysInlineAttribute
+            https://bugs.webkit.org/show_bug.cgi?id=160066
+
+            Reviewed by Dean Jackson.
+
+            * DumpRenderTree/mac/DumpRenderTree.mm:
+            (setDefaultsToConsistentValuesForTesting): Deleted.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/RequiresUserActionForPlayback.mm:
+            (RequiresUserActionForPlaybackTest::SetUp): Deleted.
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::resetPreferencesToConsistentValues): Deleted.
+            * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+            (WTR::initializeWebViewConfiguration): Deleted.
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203540. rdar://problem/26964090
 
     2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>

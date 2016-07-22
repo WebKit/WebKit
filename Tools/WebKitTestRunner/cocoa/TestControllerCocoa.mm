@@ -61,7 +61,6 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 
 #if TARGET_OS_IPHONE
     globalWebViewConfiguration.allowsInlineMediaPlayback = YES;
-    globalWebViewConfiguration._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
     globalWebViewConfiguration._allowsInlineMediaPlaybackWithPlaysInlineAttribute = NO;
     globalWebViewConfiguration._allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute = NO;
     globalWebViewConfiguration._invisibleAutoplayNotPermitted = NO;
