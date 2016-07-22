@@ -1,5 +1,15 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203447. rdar://problem/27056844
+
+    2016-07-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+            Unreviewed Mac cmake buildfix after r203426. Just for fun.
+
+            * TestWebKitAPI/PlatformMac.cmake:
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203436. rdar://problem/27056844
 
     2016-07-19  Alex Christensen  <achristensen@webkit.org>
