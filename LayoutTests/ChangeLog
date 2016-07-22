@@ -1,3 +1,22 @@
+2016-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Make parameters mandatory for attribute-related API on Element
+        https://bugs.webkit.org/show_bug.cgi?id=160059
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing layout tests to reflect the behavior change.
+
+        * fast/dom/Element/script-tests/setAttributeNS-namespace-err.js:
+        * fast/dom/Element/setAttributeNS-namespace-err-expected.txt:
+        * fast/dom/HTMLHrElement/hr-color-noshade-attribute.html:
+        * fast/dom/attribute-downcast-right.html:
+        * fast/images/style-access-during-imageChanged-style-freeze.html:
+        * fast/selectors/read-only-read-write-input-basics.html:
+        * fast/selectors/read-only-read-write-textarea-basics.html:
+        * media/video-playsinline-expected.txt:
+        * media/video-playsinline.html:
+
 2016-07-21  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r202927): The internal size of the ImageBuffer is scaled twice by the context scaleFactor

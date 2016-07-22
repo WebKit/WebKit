@@ -28,7 +28,7 @@ function runTest()
     var blob = new Blob([string], {type: "text/html"});
     var link = document.getElementById("blob-url");
     link.href = window.URL.createObjectURL(blob);
-    link.setAttribute('download');
+    link.setAttribute('download', '');
     click(link);
 }
 runTest();

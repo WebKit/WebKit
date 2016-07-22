@@ -831,16 +831,16 @@ PASS Element interface: attribute slot
 PASS Element interface: operation hasAttributes() 
 PASS Element interface: attribute attributes 
 FAIL Element interface: operation getAttributeNames() assert_own_property: interface prototype object missing non-static operation expected property "getAttributeNames" missing
-FAIL Element interface: operation getAttribute(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Element interface: operation getAttributeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Element interface: operation setAttribute(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Element interface: operation setAttributeNS(DOMString,DOMString,DOMString) assert_equals: property has wrong .length expected 3 but got 0
-FAIL Element interface: operation removeAttribute(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Element interface: operation getAttribute(DOMString) 
+PASS Element interface: operation getAttributeNS(DOMString,DOMString) 
+PASS Element interface: operation setAttribute(DOMString,DOMString) 
+PASS Element interface: operation setAttributeNS(DOMString,DOMString,DOMString) 
+PASS Element interface: operation removeAttribute(DOMString) 
 PASS Element interface: operation removeAttributeNS(DOMString,DOMString) 
 PASS Element interface: operation hasAttribute(DOMString) 
-FAIL Element interface: operation hasAttributeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Element interface: operation getAttributeNode(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Element interface: operation getAttributeNodeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+PASS Element interface: operation hasAttributeNS(DOMString,DOMString) 
+PASS Element interface: operation getAttributeNode(DOMString) 
+PASS Element interface: operation getAttributeNodeNS(DOMString,DOMString) 
 PASS Element interface: operation setAttributeNode(Attr) 
 PASS Element interface: operation setAttributeNodeNS(Attr) 
 PASS Element interface: operation removeAttributeNode(Attr) 
@@ -883,41 +883,25 @@ PASS Element interface: element must inherit property "hasAttributes" with the p
 PASS Element interface: element must inherit property "attributes" with the proper type (9) 
 FAIL Element interface: element must inherit property "getAttributeNames" with the proper type (10) assert_inherits: property "getAttributeNames" not found in prototype chain
 PASS Element interface: element must inherit property "getAttribute" with the proper type (11) 
-FAIL Element interface: calling getAttribute(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getAttribute(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "getAttributeNS" with the proper type (12) 
-FAIL Element interface: calling getAttributeNS(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getAttributeNS(DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "setAttribute" with the proper type (13) 
-FAIL Element interface: calling setAttribute(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling setAttribute(DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "setAttributeNS" with the proper type (14) 
-FAIL Element interface: calling setAttributeNS(DOMString,DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling setAttributeNS(DOMString,DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "removeAttribute" with the proper type (15) 
-FAIL Element interface: calling removeAttribute(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling removeAttribute(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "removeAttributeNS" with the proper type (16) 
 PASS Element interface: calling removeAttributeNS(DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "hasAttribute" with the proper type (17) 
 PASS Element interface: calling hasAttribute(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "hasAttributeNS" with the proper type (18) 
-FAIL Element interface: calling hasAttributeNS(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling hasAttributeNS(DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "getAttributeNode" with the proper type (19) 
-FAIL Element interface: calling getAttributeNode(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getAttributeNode(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "getAttributeNodeNS" with the proper type (20) 
-FAIL Element interface: calling getAttributeNodeNS(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getAttributeNodeNS(DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "setAttributeNode" with the proper type (21) 
 PASS Element interface: calling setAttributeNode(Attr) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "setAttributeNodeNS" with the proper type (22) 

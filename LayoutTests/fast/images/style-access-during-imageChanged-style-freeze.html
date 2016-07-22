@@ -22,7 +22,7 @@
         container.style.removeProperty("display");
         document.body.offsetTop;
         var target = document.getElementById("target");
-        target.setAttribute("foo");
+        target.setAttribute("foo", "");
         document.body.offsetTop;
         var result = document.getElementById("result");
         result.innerText = getComputedStyle(target).color === "rgb(0, 128, 0)" ? "PASS" : "FAIL";

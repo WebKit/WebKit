@@ -1241,41 +1241,25 @@ PASS Element interface: document.createElement("noscript") must inherit property
 PASS Element interface: document.createElement("noscript") must inherit property "attributes" with the proper type (8) 
 FAIL Element interface: document.createElement("noscript") must inherit property "getAttributeNames" with the proper type (9) assert_inherits: property "getAttributeNames" not found in prototype chain
 PASS Element interface: document.createElement("noscript") must inherit property "getAttribute" with the proper type (10) 
-FAIL Element interface: calling getAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNS" with the proper type (11) 
-FAIL Element interface: calling getAttributeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getAttributeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "setAttribute" with the proper type (12) 
-FAIL Element interface: calling setAttribute(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling setAttribute(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNS" with the proper type (13) 
-FAIL Element interface: calling setAttributeNS(DOMString,DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling setAttributeNS(DOMString,DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "removeAttribute" with the proper type (14) 
-FAIL Element interface: calling removeAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling removeAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "removeAttributeNS" with the proper type (15) 
 PASS Element interface: calling removeAttributeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "hasAttribute" with the proper type (16) 
 PASS Element interface: calling hasAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "hasAttributeNS" with the proper type (17) 
-FAIL Element interface: calling hasAttributeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling hasAttributeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNode" with the proper type (18) 
-FAIL Element interface: calling getAttributeNode(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getAttributeNode(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNodeNS" with the proper type (19) 
-FAIL Element interface: calling getAttributeNodeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getAttributeNodeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNode" with the proper type (20) 
 PASS Element interface: calling setAttributeNode(Attr) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNodeNS" with the proper type (21) 

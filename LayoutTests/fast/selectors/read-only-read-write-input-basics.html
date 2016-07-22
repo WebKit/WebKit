@@ -80,7 +80,7 @@ function testInputType(inputType, supportsReadonly) {
     testProperties(!supportsReadonly);
 
     // Setting readonly through attributes.
-    testCase.setAttribute("readonly");
+    testCase.setAttribute("readonly", "");
     testProperties(true);
 
     testCase.removeAttribute("readonly");
@@ -94,7 +94,7 @@ function testInputType(inputType, supportsReadonly) {
     testProperties(!supportsReadonly);
 
     // Setting disabled through attributes.
-    testCase.setAttribute("disabled");
+    testCase.setAttribute("disabled", "");
     testProperties(true);
 
     testCase.removeAttribute("disabled");

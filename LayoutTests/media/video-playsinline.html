@@ -26,7 +26,7 @@ function testPlaysInline(requiresPlaysInline, requiresWebKitPlaysInline, hasPlay
     video.controls = true;
     video.src = findMediaFile('video', 'content/test');
     run('video.playsInline = ' + hasPlaysInline);
-    run('video.' + (hasWebKitPlaysInline ? 'set' : 'remove') + 'Attribute("webkit-playsinline")');
+    run('video.' + (hasWebKitPlaysInline ? 'set' : 'remove') + 'Attribute("webkit-playsinline", "")');
     waitForEventOnce('canplaythrough', () => {
         runWithKeyDown(() => {
             run('video.play()');
