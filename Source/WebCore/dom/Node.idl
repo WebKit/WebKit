@@ -114,8 +114,7 @@
     unsigned short compareDocumentPosition(Node other);
 
     // Introduced in DOM4
-    // FIXME: other should not be optional.
-    boolean contains(optional Node? other = null);
+    boolean contains(Node? other);
 
     [EnabledAtRuntime=ShadowDOM, ImplementedAs=inDocument] readonly attribute boolean isConnected;
 
