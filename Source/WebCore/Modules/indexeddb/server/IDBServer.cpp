@@ -555,10 +555,52 @@ static void removeAllDatabasesForOriginPath(const String& originPath, std::chron
                 continue;
         }
 
+        // Deleting this database means we need to delete all files that represent it.
+        // This includes:
+        //     - The directory itself, which is named after the database.
+        //     - IndexedDB.sqlite3 and related SQLite files.
+        //     - Blob files that we stored in the directory.
+        //
+        // To be conservative, we should *not* try to delete files that are unexpected;
+        // We should only delete files we think we put there.
+        //
+        // IndexedDB blob files are named "N.blob" where N is a decimal integer,
+        // so those are the only blob files we should be trying to delete.
+        for (auto& blobPath : listDirectory(databasePath, "[0-9]*.blob")) {
+            // Globbing can't give us only filenames starting with 1-or-more digits.
+            // The above globbing gives us files that start with a digit and ends with ".blob", but there might be non-digits in between.
+            // We need to validate that each filename contains only digits before deleting it, as any other files are not ones we put there.
+            String filename = pathGetFileName(blobPath);
+            auto filenameLength = filename.length();
+
+            ASSERT(filenameLength >= 6);
+            ASSERT(filename.endsWith(".blob"));
+
+            if (filename.length() < 6)
+                continue;
+            if (!filename.endsWith(".blob"))
+                continue;
+
+            bool validFilename = true;
+            for (unsigned i = 0; i < filenameLength - 5; ++i) {
+                if (!isASCIIDigit(filename[i])) {
+                    validFilename = false;
+                    break;
+                }
+            }
+
+            if (validFilename)
+                deleteFile(blobPath);
+        }
+
+        // Now delete IndexedDB.sqlite3 and related SQLite files.
         SQLiteFileSystem::deleteDatabaseFile(databaseFile);
+
+        // And finally, if we can, delete the empty directory.
         deleteEmptyDirectory(databasePath);
     }
 
+    // If no databases remain for this origin, we can delete the origin directory as well.
     deleteEmptyDirectory(originPath);
 }
 

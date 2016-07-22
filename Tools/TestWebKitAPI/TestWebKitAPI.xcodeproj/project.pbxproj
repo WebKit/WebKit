@@ -79,6 +79,8 @@
 		510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510477751D298E03009747EB /* IDBDeleteRecovery.mm */; };
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
+		515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */; };
+		515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */; };
 		51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */; };
 		51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */; };
 		51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */; };
@@ -495,6 +497,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */,
 				5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */,
 				5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */,
 				5C9E59431D3EB5AC00E3C62E /* ApplicationCache.db-wal in Copy Resources */,
@@ -748,6 +751,8 @@
 		51393E1E1523944A005F39C5 /* DOMWindowExtensionBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionBasic.cpp; sourceTree = "<group>"; };
 		5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuCanCopyURL.mm; sourceTree = "<group>"; };
 		5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContextMenuCanCopyURL.html; sourceTree = "<group>"; };
+		515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = StoreBlobToBeDeleted.html; sourceTree = "<group>"; };
+		515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StoreBlobThenDelete.mm; sourceTree = "<group>"; };
 		51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-1.html"; sourceTree = "<group>"; };
 		51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-2.html"; sourceTree = "<group>"; };
 		51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessKillIDBCleanup.mm; sourceTree = "<group>"; };
@@ -1242,6 +1247,7 @@
 				CD9E292B1C90A71F000BB800 /* RequiresUserActionForPlayback.mm */,
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
+				515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */,
 				7CC3E1FA197E234100BE6252 /* UserContentController.mm */,
 				7C882E031C80C624006BF731 /* UserContentWorld.mm */,
 				7C882E041C80C624006BF731 /* UserContentWorldPlugIn.mm */,
@@ -1360,6 +1366,7 @@
 				46C519E31D35629600DAA51A /* LocalStorageNullEntries.localstorage */,
 				46C519E41D35629600DAA51A /* LocalStorageNullEntries.localstorage-shm */,
 				7CCB99221D3B44E7003922F6 /* open-multiple-external-url.html */,
+				515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
 			);
@@ -2212,6 +2219,7 @@
 				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
 				7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */,
 				835CF9671D25FCD6001A65D4 /* RestoreSessionStateWithoutNavigation.cpp in Sources */,
+				515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */,
 				7CCE7F261A411AF600447C4C /* Preferences.mm in Sources */,
 				7CCE7F0B1A411AE600447C4C /* PreventEmptyUserAgent.cpp in Sources */,
 				7C83E0BD1D0A650C00FEBCF3 /* FullscreenTopContentInset.mm in Sources */,
