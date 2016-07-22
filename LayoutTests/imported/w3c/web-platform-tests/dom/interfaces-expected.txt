@@ -135,19 +135,15 @@ PASS HTMLCollection interface object name
 PASS HTMLCollection interface: existence and properties of interface prototype object 
 PASS HTMLCollection interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLCollection interface: attribute length 
-FAIL HTMLCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL HTMLCollection interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLCollection interface: operation item(unsigned long) 
+PASS HTMLCollection interface: operation namedItem(DOMString) 
 PASS HTMLCollection must be primary interface of document.body.children 
 PASS Stringification of document.body.children 
 PASS HTMLCollection interface: document.body.children must inherit property "length" with the proper type (0) 
 PASS HTMLCollection interface: document.body.children must inherit property "item" with the proper type (1) 
-FAIL HTMLCollection interface: calling item(unsigned long) on document.body.children with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLCollection interface: calling item(unsigned long) on document.body.children with too few arguments must throw TypeError 
 PASS HTMLCollection interface: document.body.children must inherit property "namedItem" with the proper type (2) 
-FAIL HTMLCollection interface: calling namedItem(DOMString) on document.body.children with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLCollection interface: calling namedItem(DOMString) on document.body.children with too few arguments must throw TypeError 
 PASS MutationObserver interface: existence and properties of interface object 
 PASS MutationObserver interface object length 
 PASS MutationObserver interface object name 

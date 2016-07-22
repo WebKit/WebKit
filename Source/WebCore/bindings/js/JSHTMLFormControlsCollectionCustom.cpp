@@ -56,7 +56,10 @@ bool JSHTMLFormControlsCollection::nameGetter(ExecState* state, PropertyName pro
 
 JSValue JSHTMLFormControlsCollection::namedItem(ExecState& state)
 {
-    JSValue value = namedItems(state, this, Identifier::fromString(&state, state.argument(0).toString(&state)->value(&state)));
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
+    JSValue value = namedItems(state, this, Identifier::fromString(&state, state.uncheckedArgument(0).toString(&state)->value(&state)));
     return value.isUndefined() ? jsNull() : value;
 }
 

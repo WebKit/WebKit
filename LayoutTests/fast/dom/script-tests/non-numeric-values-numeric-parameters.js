@@ -235,7 +235,7 @@ shouldBe("nonNumericPolicy('document.body.scrollTop = x')", "'any type allowed'"
 
 // HTMLCollection
 
-shouldBe("nonNumericPolicy('document.images.item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.images.item(x)')", "'any type allowed (but not omitted)'");
 
 // HTMLInputElement
 

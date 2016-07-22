@@ -1,5 +1,17 @@
 2016-07-22  Chris Dumez  <cdumez@apple.com>
 
+        Parameter to HTMLCollection.item() / namedItem() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160099
+
+        Reviewed by Sam Weinig.
+
+        Update existing test to reflect behavior change.
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+
+2016-07-22  Chris Dumez  <cdumez@apple.com>
+
         First parameter to Window.getComputedStyle() should be mandatory and non-nullable
         https://bugs.webkit.org/show_bug.cgi?id=160097
 
