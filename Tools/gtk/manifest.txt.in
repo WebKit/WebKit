@@ -1,9 +1,13 @@
 # Global rules
 exclude #$
 exclude ChangeLog
+exclude CMakeLists.txt.user
 exclude Makefile
+exclude PlatformAppleWin.cmake
 exclude PlatformEfl.cmake
+exclude PlatformMac.cmake
 exclude PlatformWin.cmake
+exclude PlatformWinCairo.cmake
 exclude tags$
 exclude ~$
 exclude \.#$
@@ -12,7 +16,6 @@ exclude \.cproject$
 exclude \.git$
 exclude \.gitattributes$
 exclude \.gitignore$
-exclude \.gyp$
 exclude \.icns$
 exclude \.lproj$
 exclude \.m$
@@ -23,7 +26,6 @@ exclude \.order$
 exclude \.orig$
 exclude \.pdf$
 exclude \.plist$
-exclude \.pro\.user$
 exclude \.project$
 exclude \.props$
 exclude \.pyc$
@@ -41,7 +43,7 @@ exclude \.xcconfig$
 exclude \.xcodeproj$
 
 # Exclude directories from other ports
-exclude .*\/(mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win)\/.*$
+exclude .*\/(Configurations|mac|ios|spi|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win)\/.*$
 
 directory Source
 exclude Source/JavaScriptCore/tests
@@ -63,7 +65,6 @@ directory Source/WebInspectorUI/UserInterface/Images/gtk
 # Most of the files in Source/WebKit are not necessary to build GTK+ and
 # the directory includes lots of images, so we're a bit more picky here.
 exclude Source/WebKit/.*
-exclude Source/WebKit2/Configurations
 exclude Source/WebKit2/Resources
 exclude Source/WebKit2/gtk/NEWS$
 
