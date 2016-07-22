@@ -257,3 +257,5 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Pass Failure ]
 
 webkit.org/b/156070 storage/indexeddb/modern/abort-requests-cancelled.html [ Pass Timeout ]
+
+webkit.orb/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
