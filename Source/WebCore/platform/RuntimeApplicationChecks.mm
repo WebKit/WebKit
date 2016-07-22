@@ -170,6 +170,12 @@ bool IOSApplication::isMobileSafari()
     return isMobileSafari;
 }
 
+bool IOSApplication::isWebBookmarksD()
+{
+    static bool isWebBookmarksD = applicationBundleIsEqualTo("com.apple.webbookmarksd");
+    return isWebBookmarksD;
+}
+
 bool IOSApplication::isDumpRenderTree()
 {
     // We use a prefix match instead of strict equality since LayoutTestRelay may launch multiple instances of
