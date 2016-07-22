@@ -1,5 +1,19 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203538. rdar://problem/27462960
+
+    2016-07-21  Nan Wang  <n_wang@apple.com>
+
+            AX: aria-label not being used correctly in accessible name calculation of heading
+            https://bugs.webkit.org/show_bug.cgi?id=160009
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/ios-simulator/heading-with-aria-label-expected.txt: Added.
+            * accessibility/ios-simulator/heading-with-aria-label.html: Added.
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203415. rdar://problem/27409483
 
     2016-07-19  Zalan Bujtas  <zalan@apple.com>

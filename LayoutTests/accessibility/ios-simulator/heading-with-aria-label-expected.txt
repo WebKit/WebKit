@@ -1,0 +1,13 @@
+visible text visible text
+This tests that if heading has aria-label, it will override the visible text as necessary.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS heading1Text.traits == heading2Text.traits is true
+PASS heading1Text.description is 'AXLabel: test label'
+PASS heading2Text.description is 'AXLabel: visible text'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
