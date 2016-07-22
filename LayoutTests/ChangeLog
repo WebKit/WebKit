@@ -1,3 +1,11 @@
+2016-07-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Correct a TestExpectation by changing it from Failure to ImageOnlyFailure
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
         Make parameters to Element.getElementsBy*() operations mandatory
