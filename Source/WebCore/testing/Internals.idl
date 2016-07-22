@@ -98,7 +98,7 @@ enum UserInterfaceLayoutDirection {
     void clearPageCache();
     unsigned long pageCacheSize();
 
-    CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
+    CSSStyleDeclaration computedStyleIncludingVisitedInfo(Element element);
 
     [RaisesException] Node ensureShadowRoot(Element host);
     Node ensureUserAgentShadowRoot(Element host);

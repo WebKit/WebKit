@@ -151,7 +151,7 @@
     readonly attribute StyleMedia styleMedia;
 
     // DOM Level 2 Style Interface
-    CSSStyleDeclaration getComputedStyle(optional Element? element = null, optional DOMString? pseudoElement = null);
+    [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional DOMString? pseudoElement = null);
 
     // WebKit extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

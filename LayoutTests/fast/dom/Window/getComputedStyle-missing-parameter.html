@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Test that the first parameter to Window.getComputedStyle() is mandatory and not nullable.");
+
+shouldThrow("window.getComputedStyle()", "'TypeError: Not enough arguments'");
+shouldThrow("window.getComputedStyle(null)", "'TypeError: Argument 1 (\\'element\\') to DOMWindow.getComputedStyle must be an instance of Element'");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -107,7 +107,7 @@ public:
     void clearPageCache();
     unsigned pageCacheSize() const;
 
-    RefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Node&) const;
+    RefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Element&) const;
 
     Node* ensureShadowRoot(Element& host, ExceptionCode&);
     Node* ensureUserAgentShadowRoot(Element& host);

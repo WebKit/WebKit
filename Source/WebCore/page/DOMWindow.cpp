@@ -1396,11 +1396,8 @@ RefPtr<StyleMedia> DOMWindow::styleMedia() const
     return m_media;
 }
 
-RefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* element, const String& pseudoElt) const
+RefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
 {
-    if (!element)
-        return nullptr;
-
     return CSSComputedStyleDeclaration::create(element, false, pseudoElt);
 }
 

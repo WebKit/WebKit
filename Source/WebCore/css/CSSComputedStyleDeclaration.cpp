@@ -1581,16 +1581,16 @@ static Ref<CSSValue> createLineBoxContainValue(unsigned lineBoxContain)
     return CSSLineBoxContainValue::create(lineBoxContain);
 }
 
-ComputedStyleExtractor::ComputedStyleExtractor(PassRefPtr<Node> node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
-    : m_node(node)
+ComputedStyleExtractor::ComputedStyleExtractor(RefPtr<Node>&& node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
+    : m_node(WTFMove(node))
     , m_pseudoElementSpecifier(pseudoElementSpecifier)
     , m_allowVisitedStyle(allowVisitedStyle)
 {
 }
 
 
-CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(PassRefPtr<Node> n, bool allowVisitedStyle, const String& pseudoElementName)
-    : m_node(n)
+CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool allowVisitedStyle, const String& pseudoElementName)
+    : m_element(element)
     , m_allowVisitedStyle(allowVisitedStyle)
     , m_refCount(1)
 {
@@ -2322,12 +2322,12 @@ static StyleSelfAlignmentData resolveAlignSelfAuto(const StyleSelfAlignmentData&
 
 RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
-    return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).propertyValue(propertyID, updateLayout);
+    return ComputedStyleExtractor(m_element.copyRef(), m_allowVisitedStyle, m_pseudoElementSpecifier).propertyValue(propertyID, updateLayout);
 }
 
 Ref<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() const
 {
-    return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
+    return ComputedStyleExtractor(m_element.copyRef(), m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
 
 static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
@@ -3944,13 +3944,10 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
 
 unsigned CSSComputedStyleDeclaration::length() const
 {
-    Node* node = m_node.get();
-    if (!node)
-        return 0;
+    auto& element = m_element.get();
+    updateStyleIfNeededForNode(element);
 
-    updateStyleIfNeededForNode(*node);
-
-    auto* style = node->computedStyle(m_pseudoElementSpecifier);
+    auto* style = const_cast<Element&>(element).computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return 0;
 
@@ -3965,11 +3962,8 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     if (i < numComputedProperties)
         return getPropertyNameString(computedProperties[i]);
     
-    Node* node = m_node.get();
-    if (!node)
-        return String();
-
-    auto* style = node->computedStyle(m_pseudoElementSpecifier);
+    auto& element = m_element.get();
+    auto* style = const_cast<Element&>(element).computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return String();
     
@@ -4073,7 +4067,7 @@ CSSRule* CSSComputedStyleDeclaration::parentRule() const
 RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
+        return ComputedStyleExtractor(m_element.copyRef(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
@@ -4085,7 +4079,7 @@ RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyText(propertyName);
+        return ComputedStyleExtractor(m_element.copyRef(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyText(propertyName);
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)

@@ -219,8 +219,7 @@
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // DOM Level 2 Style Interface
-    [ObjCLegacyUnnamedParameters, ObjCUseDefaultView] CSSStyleDeclaration getComputedStyle(Element? element,
-                                                                  DOMString pseudoElement);
+    [ObjCLegacyUnnamedParameters, ObjCUseDefaultView] CSSStyleDeclaration getComputedStyle(Element element, DOMString pseudoElement);
 
     // WebKit extension
     // FIXME: remove the first version once optional is implemented for Objective-C.

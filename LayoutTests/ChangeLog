@@ -1,3 +1,15 @@
+2016-07-22  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to Window.getComputedStyle() should be mandatory and non-nullable
+        https://bugs.webkit.org/show_bug.cgi?id=160097
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test coverage.
+
+        * fast/dom/Window/getComputedStyle-missing-parameter-expected.txt: Added.
+        * fast/dom/Window/getComputedStyle-missing-parameter.html: Added.
+
 2016-07-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking webaudio/audionode-connect-order.html as a flaky crash on mac-wk1 debug

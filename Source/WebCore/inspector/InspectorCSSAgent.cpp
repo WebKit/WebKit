@@ -643,7 +643,7 @@ void InspectorCSSAgent::getComputedStyleForNode(ErrorString& errorString, int no
     if (!element)
         return;
 
-    RefPtr<CSSComputedStyleDeclaration> computedStyleInfo = CSSComputedStyleDeclaration::create(element, true);
+    RefPtr<CSSComputedStyleDeclaration> computedStyleInfo = CSSComputedStyleDeclaration::create(*element, true);
     Ref<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, nullptr);
     style = inspectorStyle->buildArrayForComputedStyle();
 }

@@ -783,10 +783,10 @@ bool Internals::hasPausedImageAnimations(Element& element)
     return element.renderer() && element.renderer()->hasPausedImageAnimations();
 }
 
-RefPtr<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Node& node) const
+RefPtr<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Element& element) const
 {
     bool allowVisitedStyle = true;
-    return CSSComputedStyleDeclaration::create(&node, allowVisitedStyle);
+    return CSSComputedStyleDeclaration::create(element, allowVisitedStyle);
 }
 
 Node* Internals::ensureShadowRoot(Element& host, ExceptionCode& ec)

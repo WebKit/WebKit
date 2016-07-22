@@ -31,6 +31,7 @@ namespace WebCore {
 class CSSPrimitiveValue;
 class CSSValueList;
 class Color;
+class Element;
 class FilterOperations;
 class MutableStyleProperties;
 class Node;
@@ -47,7 +48,7 @@ enum AdjustPixelValuesForComputedStyle { AdjustPixelValues, DoNotAdjustPixelValu
 
 class ComputedStyleExtractor {
 public:
-    ComputedStyleExtractor(PassRefPtr<Node>, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
+    ComputedStyleExtractor(RefPtr<Node>&&, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
     String customPropertyText(const String& propertyName) const;
@@ -87,9 +88,9 @@ private:
 
 class CSSComputedStyleDeclaration final : public CSSStyleDeclaration {
 public:
-    static Ref<CSSComputedStyleDeclaration> create(PassRefPtr<Node> node, bool allowVisitedStyle = false, const String& pseudoElementName = String())
+    static Ref<CSSComputedStyleDeclaration> create(Element& element, bool allowVisitedStyle = false, const String& pseudoElementName = String())
     {
-        return adoptRef(*new CSSComputedStyleDeclaration(node, allowVisitedStyle, pseudoElementName));
+        return adoptRef(*new CSSComputedStyleDeclaration(element, allowVisitedStyle, pseudoElementName));
     }
     virtual ~CSSComputedStyleDeclaration();
 
@@ -99,7 +100,7 @@ public:
     String getPropertyValue(CSSPropertyID) const;
 
 private:
-    WEBCORE_EXPORT CSSComputedStyleDeclaration(PassRefPtr<Node>, bool allowVisitedStyle, const String&);
+    WEBCORE_EXPORT CSSComputedStyleDeclaration(Element&, bool allowVisitedStyle, const String&);
 
     // CSSOM functions. Don't make these public.
     CSSRule* parentRule() const override;
@@ -121,7 +122,7 @@ private:
 
     RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 
-    RefPtr<Node> m_node;
+    Ref<Element> m_element;
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;
     unsigned m_refCount;
