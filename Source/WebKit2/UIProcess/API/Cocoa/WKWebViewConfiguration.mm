@@ -107,7 +107,6 @@ private:
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
     BOOL _alwaysRunsAtForegroundPriority;
     BOOL _allowsInlineMediaPlayback;
-    BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackWithPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
@@ -139,7 +138,6 @@ private:
 #if PLATFORM(IOS)
     _allowsPictureInPictureMediaPlayback = YES;
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
-    _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackWithPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
@@ -292,7 +290,6 @@ private:
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_allowsInlineMediaPlaybackAfterFullscreen = self->_allowsInlineMediaPlaybackAfterFullscreen;
-    configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
     configuration->_allowsInlineMediaPlaybackWithPlaysInlineAttribute = self->_allowsInlineMediaPlaybackWithPlaysInlineAttribute;
     configuration->_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute = self->_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute;
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
@@ -572,16 +569,6 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAlwaysRunsAtForegroundPriority:(BOOL)alwaysRunsAtForegroundPriority
 {
     _alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority;
-}
-
-- (BOOL)_inlineMediaPlaybackRequiresPlaysInlineAttribute
-{
-    return _inlineMediaPlaybackRequiresPlaysInlineAttribute;
-}
-
-- (void)_setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)requires
-{
-    _inlineMediaPlaybackRequiresPlaysInlineAttribute = requires;
 }
 
 - (BOOL)_allowsInlineMediaPlaybackWithPlaysInlineAttribute

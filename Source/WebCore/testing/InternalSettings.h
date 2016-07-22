@@ -107,7 +107,6 @@ public:
 #endif
         bool m_allowsInlineMediaPlayback;
         bool m_allowsInlineMediaPlaybackAfterFullscreen;
-        bool m_inlineMediaPlaybackRequiresPlaysInlineAttribute;
         bool m_allowsInlineMediaPlaybackWithPlaysInlineAttribute;
         bool m_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute;
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
@@ -164,7 +163,6 @@ public:
     void setScrollingTreeIncludesFrames(bool, ExceptionCode&);
     void setAllowsInlineMediaPlayback(bool, ExceptionCode&);
     void setAllowsInlineMediaPlaybackAfterFullscreen(bool, ExceptionCode&);
-    void setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool, ExceptionCode&);
     void setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(bool, ExceptionCode&);
     void setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(bool, ExceptionCode&);
     void setIndexedDBWorkersEnabled(bool, ExceptionCode&);

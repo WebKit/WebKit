@@ -1,3 +1,26 @@
+2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove support for deprecated SPI inlineMediaPlaybackRequiresPlaysInlineAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=160066
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute): Deleted.
+        (WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Deleted.
+        (-[WKWebViewConfiguration copyWithZone:]): Deleted.
+        (-[WKWebViewConfiguration _inlineMediaPlaybackRequiresPlaysInlineAttribute]): Deleted.
+        (-[WKWebViewConfiguration _setInlineMediaPlaybackRequiresPlaysInlineAttribute:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Deleted.
+
 2016-07-21  Chelsea Pugh  <cpugh@apple.com>
 
         [iOS] Apps using WKWebView will crash if they set the scroll view's delegate and don't nil it out later

@@ -77,7 +77,6 @@
     [RaisesException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
     [RaisesException] void setAllowsInlineMediaPlayback(boolean allows);
     [RaisesException] void setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
-    [RaisesException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
     [RaisesException] void setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(boolean requires);
     [RaisesException] void setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(boolean requires);
 

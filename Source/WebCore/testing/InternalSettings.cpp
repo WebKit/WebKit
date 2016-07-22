@@ -107,7 +107,6 @@ InternalSettings::Backup::Backup(Settings& settings)
 #endif
     , m_allowsInlineMediaPlayback(settings.allowsInlineMediaPlayback())
     , m_allowsInlineMediaPlaybackAfterFullscreen(settings.allowsInlineMediaPlaybackAfterFullscreen())
-    , m_inlineMediaPlaybackRequiresPlaysInlineAttribute(settings.inlineMediaPlaybackRequiresPlaysInlineAttribute())
     , m_allowsInlineMediaPlaybackWithPlaysInlineAttribute(settings.allowsInlineMediaPlaybackWithPlaysInlineAttribute())
     , m_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(settings.allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute())
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
@@ -185,7 +184,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
     settings.setAllowsInlineMediaPlayback(m_allowsInlineMediaPlayback);
     settings.setAllowsInlineMediaPlaybackAfterFullscreen(m_allowsInlineMediaPlaybackAfterFullscreen);
-    settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackRequiresPlaysInlineAttribute);
     settings.setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(m_allowsInlineMediaPlaybackWithPlaysInlineAttribute);
     settings.setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(m_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute);
     RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
@@ -576,12 +574,6 @@ void InternalSettings::setAllowsInlineMediaPlaybackAfterFullscreen(bool allows, 
 {
     InternalSettingsGuardForSettings();
     settings()->setAllowsInlineMediaPlaybackAfterFullscreen(allows);
-}
-
-void InternalSettings::setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool requires, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setInlineMediaPlaybackRequiresPlaysInlineAttribute(requires);
 }
 
 void InternalSettings::setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(bool requires, ExceptionCode& ec)

@@ -1017,7 +1017,6 @@ static void setDefaultsToConsistentValuesForTesting()
         WebKitEnableFullDocumentTeardownPreferenceKey: @YES,
         WebKitFullScreenEnabledPreferenceKey: @YES,
         WebKitAllowsInlineMediaPlaybackPreferenceKey: @YES,
-        WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey: @NO,
         WebKitAllowsInlineMediaPlaybackWithPlaysInlineAttributeKey: @NO,
         WebKitAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttributeKey: @NO,
         @"UseWebKitWebInspector": @YES,

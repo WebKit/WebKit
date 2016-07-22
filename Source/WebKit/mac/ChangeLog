@@ -1,5 +1,21 @@
 2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Remove support for deprecated SPI inlineMediaPlaybackRequiresPlaysInlineAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=160066
+
+        Reviewed by Dean Jackson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Deleted.
+        (-[WebPreferences inlineMediaPlaybackRequiresPlaysInlineAttribute]): Deleted.
+        (-[WebPreferences setInlineMediaPlaybackRequiresPlaysInlineAttribute:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Deleted.
+
+2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [iPhone] Playing a video on tudou.com plays only sound, no video
         https://bugs.webkit.org/show_bug.cgi?id=159967
         <rdar://problem/26964090>
