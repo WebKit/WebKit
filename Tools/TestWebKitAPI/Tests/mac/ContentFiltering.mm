@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
 #import <WebKit/WebKit.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 
 using Decision = WebCore::MockContentFilterSettings::Decision;
 using DecisionPoint = WebCore::MockContentFilterSettings::DecisionPoint;
