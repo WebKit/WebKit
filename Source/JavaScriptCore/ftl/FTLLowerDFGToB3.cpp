@@ -8016,6 +8016,7 @@ private:
         if (scratchFPRUsage == NeedScratchFPR)
             patchpoint->numFPScratchRegisters++;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -8078,6 +8079,7 @@ private:
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -8133,6 +8135,7 @@ private:
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->numFPScratchRegisters = 1;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {

@@ -46,17 +46,25 @@ PatchpointSpecial::~PatchpointSpecial()
 
 void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
+    PatchpointValue* patchpoint = inst.origin->as<PatchpointValue>();
     unsigned argIndex = 1;
 
-    if (inst.origin->type() != Void)
-        callback(inst.args[argIndex++], Arg::Def, inst.origin->airType(), inst.origin->airWidth());
+    if (patchpoint->type() != Void) {
+        Arg::Role role;
+        if (patchpoint->resultConstraint.kind() == ValueRep::SomeEarlyRegister)
+            role = Arg::EarlyDef;
+        else
+            role = Arg::Def;
+        
+        callback(inst.args[argIndex++], role, inst.origin->airType(), inst.origin->airWidth());
+    }
 
     forEachArgImpl(0, argIndex, inst, SameAsRep, Nullopt, callback);
     argIndex += inst.origin->numChildren();
 
-    for (unsigned i = inst.origin->as<PatchpointValue>()->numGPScratchRegisters; i--;)
+    for (unsigned i = patchpoint->numGPScratchRegisters; i--;)
         callback(inst.args[argIndex++], Arg::Scratch, Arg::GP, Arg::conservativeWidth(Arg::GP));
-    for (unsigned i = inst.origin->as<PatchpointValue>()->numFPScratchRegisters; i--;)
+    for (unsigned i = patchpoint->numFPScratchRegisters; i--;)
         callback(inst.args[argIndex++], Arg::Scratch, Arg::FP, Arg::conservativeWidth(Arg::FP));
 }
 
@@ -109,6 +117,7 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
         case ValueRep::StackArgument:
             return true;
         case ValueRep::SomeRegister:
+        case ValueRep::SomeEarlyRegister:
         case ValueRep::Register:
         case ValueRep::LateRegister:
             return false;

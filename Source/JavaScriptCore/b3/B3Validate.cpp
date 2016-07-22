@@ -338,6 +338,7 @@ public:
                     switch (value->as<PatchpointValue>()->resultConstraint.kind()) {
                     case ValueRep::WarmAny:
                     case ValueRep::SomeRegister:
+                    case ValueRep::SomeEarlyRegister:
                     case ValueRep::Register:
                     case ValueRep::StackArgument:
                         break;
@@ -346,7 +347,7 @@ public:
                         break;
                     }
                     
-                    validateStackmapConstraint(value, ConstrainedValue(value, value->as<PatchpointValue>()->resultConstraint));
+                    validateStackmapConstraint(value, ConstrainedValue(value, value->as<PatchpointValue>()->resultConstraint), ConstraintRole::Def);
                 }
                 validateStackmap(value);
                 break;
@@ -406,7 +407,11 @@ private:
             validateStackmapConstraint(stackmap, child);
     }
     
-    void validateStackmapConstraint(Value* context, const ConstrainedValue& value)
+    enum class ConstraintRole {
+        Use,
+        Def
+    };
+    void validateStackmapConstraint(Value* context, const ConstrainedValue& value, ConstraintRole role = ConstraintRole::Use)
     {
         switch (value.rep().kind()) {
         case ValueRep::WarmAny:
@@ -414,6 +419,9 @@ private:
         case ValueRep::LateColdAny:
         case ValueRep::SomeRegister:
         case ValueRep::StackArgument:
+            break;
+        case ValueRep::SomeEarlyRegister:
+            VALIDATE(role == ConstraintRole::Def, ("At ", *context, ": ", value));
             break;
         case ValueRep::Register:
         case ValueRep::LateRegister:

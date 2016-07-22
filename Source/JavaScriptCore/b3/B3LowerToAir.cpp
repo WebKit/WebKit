@@ -2194,6 +2194,7 @@ private:
                 case ValueRep::ColdAny:
                 case ValueRep::LateColdAny:
                 case ValueRep::SomeRegister:
+                case ValueRep::SomeEarlyRegister:
                     inst.args.append(tmp(patchpointValue));
                     break;
                 case ValueRep::Register: {

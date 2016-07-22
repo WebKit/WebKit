@@ -40,6 +40,7 @@ void ValueRep::addUsedRegistersTo(RegisterSet& set) const
     case ColdAny:
     case LateColdAny:
     case SomeRegister:
+    case SomeEarlyRegister:
     case Constant:
         return;
     case LateRegister:
@@ -70,6 +71,7 @@ void ValueRep::dump(PrintStream& out) const
     case ColdAny:
     case LateColdAny:
     case SomeRegister:
+    case SomeEarlyRegister:
         return;
     case LateRegister:
     case Register:
@@ -172,6 +174,9 @@ void printInternal(PrintStream& out, ValueRep::Kind kind)
         return;
     case ValueRep::SomeRegister:
         out.print("SomeRegister");
+        return;
+    case ValueRep::SomeEarlyRegister:
+        out.print("SomeEarlyRegister");
         return;
     case ValueRep::Register:
         out.print("Register");
