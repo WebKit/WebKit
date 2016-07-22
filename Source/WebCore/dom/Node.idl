@@ -96,10 +96,8 @@
     // FIXME: the spec says this can also raise on retrieval.
     [SetterRaisesException] attribute DOMString? textContent;
 
-    // FIXME: other should not be optional.
-    boolean            isSameNode(optional Node? other = null);
-    // FIXME: other should not be optional.
-    boolean            isEqualNode(optional Node? other = null);
+    boolean isSameNode(Node? other);
+    boolean isEqualNode(Node? other);
 
     DOMString?         lookupPrefix(optional DOMString? namespaceURI = null);
     boolean            isDefaultNamespace(optional DOMString? namespaceURI = null);

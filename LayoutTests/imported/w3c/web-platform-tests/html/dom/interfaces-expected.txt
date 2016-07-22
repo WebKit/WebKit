@@ -356,9 +356,7 @@ PASS Node interface: iframe.contentDocument must inherit property "normalize" wi
 PASS Node interface: iframe.contentDocument must inherit property "cloneNode" with the proper type (27) 
 PASS Node interface: calling cloneNode(boolean) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "isEqualNode" with the proper type (28) 
-FAIL Node interface: calling isEqualNode(Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
 PASS Node interface: iframe.contentDocument must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
 PASS Node interface: iframe.contentDocument must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
@@ -636,9 +634,7 @@ PASS Node interface: new Document() must inherit property "normalize" with the p
 PASS Node interface: new Document() must inherit property "cloneNode" with the proper type (27) 
 PASS Node interface: calling cloneNode(boolean) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "isEqualNode" with the proper type (28) 
-FAIL Node interface: calling isEqualNode(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
@@ -919,9 +915,7 @@ PASS Node interface: document.implementation.createDocument(null, "", null) must
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "cloneNode" with the proper type (27) 
 PASS Node interface: calling cloneNode(boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "isEqualNode" with the proper type (28) 
-FAIL Node interface: calling isEqualNode(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
@@ -1325,9 +1319,7 @@ PASS Node interface: document.createElement("noscript") must inherit property "n
 PASS Node interface: document.createElement("noscript") must inherit property "cloneNode" with the proper type (27) 
 PASS Node interface: calling cloneNode(boolean) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Node interface: document.createElement("noscript") must inherit property "isEqualNode" with the proper type (28) 
-FAIL Node interface: calling isEqualNode(Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Node interface: document.createElement("noscript") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
 PASS Node interface: document.createElement("noscript") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
 PASS Node interface: document.createElement("noscript") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 

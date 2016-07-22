@@ -216,8 +216,8 @@ PASS Node interface: attribute nodeValue
 PASS Node interface: attribute textContent 
 PASS Node interface: operation normalize() 
 PASS Node interface: operation cloneNode(boolean) 
-FAIL Node interface: operation isEqualNode(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Node interface: operation isSameNode(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Node interface: operation isEqualNode(Node) 
+PASS Node interface: operation isSameNode(Node) 
 PASS Node interface: constant DOCUMENT_POSITION_DISCONNECTED on interface object 
 PASS Node interface: constant DOCUMENT_POSITION_DISCONNECTED on interface prototype object 
 PASS Node interface: constant DOCUMENT_POSITION_PRECEDING on interface object 
@@ -373,13 +373,9 @@ PASS Node interface: new Document() must inherit property "normalize" with the p
 PASS Node interface: new Document() must inherit property "cloneNode" with the proper type (28) 
 PASS Node interface: calling cloneNode(boolean) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "isEqualNode" with the proper type (29) 
-FAIL Node interface: calling isEqualNode(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "isSameNode" with the proper type (30) 
-FAIL Node interface: calling isSameNode(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isSameNode(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
@@ -519,13 +515,9 @@ PASS Node interface: xmlDoc must inherit property "normalize" with the proper ty
 PASS Node interface: xmlDoc must inherit property "cloneNode" with the proper type (28) 
 PASS Node interface: calling cloneNode(boolean) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "isEqualNode" with the proper type (29) 
-FAIL Node interface: calling isEqualNode(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "isSameNode" with the proper type (30) 
-FAIL Node interface: calling isSameNode(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isSameNode(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
 PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
 PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
@@ -643,13 +635,9 @@ PASS Node interface: document.doctype must inherit property "normalize" with the
 PASS Node interface: document.doctype must inherit property "cloneNode" with the proper type (28) 
 PASS Node interface: calling cloneNode(boolean) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "isEqualNode" with the proper type (29) 
-FAIL Node interface: calling isEqualNode(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "isSameNode" with the proper type (30) 
-FAIL Node interface: calling isSameNode(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isSameNode(Node) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
 PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
 PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
@@ -755,13 +743,9 @@ PASS Node interface: document.createDocumentFragment() must inherit property "no
 PASS Node interface: document.createDocumentFragment() must inherit property "cloneNode" with the proper type (28) 
 PASS Node interface: calling cloneNode(boolean) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "isEqualNode" with the proper type (29) 
-FAIL Node interface: calling isEqualNode(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "isSameNode" with the proper type (30) 
-FAIL Node interface: calling isSameNode(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isSameNode(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
 PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
 PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
@@ -976,13 +960,9 @@ PASS Node interface: element must inherit property "normalize" with the proper t
 PASS Node interface: element must inherit property "cloneNode" with the proper type (28) 
 PASS Node interface: calling cloneNode(boolean) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "isEqualNode" with the proper type (29) 
-FAIL Node interface: calling isEqualNode(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "isSameNode" with the proper type (30) 
-FAIL Node interface: calling isSameNode(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isSameNode(Node) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
 PASS Node interface: element must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
 PASS Node interface: element must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
@@ -1153,13 +1133,9 @@ PASS Node interface: document.createTextNode("abc") must inherit property "norma
 PASS Node interface: document.createTextNode("abc") must inherit property "cloneNode" with the proper type (28) 
 PASS Node interface: calling cloneNode(boolean) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "isEqualNode" with the proper type (29) 
-FAIL Node interface: calling isEqualNode(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "isSameNode" with the proper type (30) 
-FAIL Node interface: calling isSameNode(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isSameNode(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
 PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
 PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
@@ -1263,13 +1239,9 @@ PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inher
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "cloneNode" with the proper type (28) 
 PASS Node interface: calling cloneNode(boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isEqualNode" with the proper type (29) 
-FAIL Node interface: calling isEqualNode(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isSameNode" with the proper type (30) 
-FAIL Node interface: calling isSameNode(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isSameNode(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
@@ -1371,13 +1343,9 @@ PASS Node interface: document.createComment("abc") must inherit property "normal
 PASS Node interface: document.createComment("abc") must inherit property "cloneNode" with the proper type (28) 
 PASS Node interface: calling cloneNode(boolean) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "isEqualNode" with the proper type (29) 
-FAIL Node interface: calling isEqualNode(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isEqualNode(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "isSameNode" with the proper type (30) 
-FAIL Node interface: calling isSameNode(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isSameNode(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
 PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
 PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
