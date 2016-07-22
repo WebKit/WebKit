@@ -219,18 +219,26 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
         return;
 
 #if PLATFORM(IOS)
+    // Keep the memory used by the cached image below some threshold, otherwise WebKit process
+    // will jetsam if it exceeds its memory limit. Only a rectangle from the PDF may be cached.
     m_cachedImageRect = cachedImageRect(context, dstRect);
-
-    // Cache the PDF image only if the size of the new image won't exceed the limit.
-    if (s_allDecodedDataSize + m_cachedImageRect.size().area() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
-        destroyDecodedData();
-        return;
-    }
 #else
     m_cachedImageRect = dstRect;
 #endif
 
-    m_cachedImageBuffer = ImageBuffer::createCompatibleBuffer(FloatRect(enclosingIntRect(m_cachedImageRect)).size(), context);
+    FloatSize cachedImageSize = FloatRect(enclosingIntRect(m_cachedImageRect)).size();
+
+#if PLATFORM(IOS)
+    IntSize scaledSize = ImageBuffer::compatibleBufferSize(cachedImageSize, context);
+
+    // Cache the PDF image only if the size of the new image won't exceed the cache threshold.
+    if (s_allDecodedDataSize + safeCast<size_t>(scaledSize.width()) * scaledSize.height() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
+        destroyDecodedData();
+        return;
+    }
+#endif
+
+    m_cachedImageBuffer = ImageBuffer::createCompatibleBuffer(cachedImageSize, context);
     if (!m_cachedImageBuffer) {
         destroyDecodedData();
         return;
