@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import <Carbon/Carbon.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -34,6 +35,20 @@
 
 static bool testedControlsManagerAfterPlaying;
 static bool receivedScriptMessage;
+
+@interface WKWebView (UserInteraction)
+
+- (void)mouseDownAtPoint:(NSPoint)point;
+
+@end
+
+@implementation WKWebView (UserInteraction)
+
+- (void)mouseDownAtPoint:(NSPoint)point {
+    [self mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(point.x, point.y) modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:0 clickCount:0 pressure:0]];
+}
+
+@end
 
 @interface DidPlayMessageHandler : NSObject <WKScriptMessageHandler> {
     RetainPtr<WKWebView> _webView;
@@ -61,7 +76,7 @@ static bool receivedScriptMessage;
     receivedScriptMessage = true;
 
     NSString *bodyString = (NSString *)[message body];
-    if ([bodyString isEqualToString:@"playing"]) {
+    if ([bodyString isEqualToString:@"playing"] || [bodyString isEqualToString:@"paused"]) {
         BOOL hasControlsManager = [_webView _hasActiveVideoForControlsManager];
         if (self.expectedToHaveControlsManager)
             EXPECT_TRUE(hasControlsManager);
@@ -69,6 +84,40 @@ static bool receivedScriptMessage;
             EXPECT_FALSE(hasControlsManager);
         testedControlsManagerAfterPlaying = true;
     }
+}
+@end
+
+@interface OnLoadMessageHandler : NSObject <WKScriptMessageHandler> {
+    RetainPtr<WKWebView> _webView;
+}
+
+@property (nonatomic, strong) dispatch_block_t onloadHandler;
+
+- (instancetype)initWithWKWebView:(WKWebView*)webView handler:(dispatch_block_t)handler;
+@end
+
+@implementation OnLoadMessageHandler
+
+- (instancetype)initWithWKWebView:(WKWebView*)webView handler:(dispatch_block_t)handler
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _webView = webView;
+    _onloadHandler = handler;
+
+    return self;
+}
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    if (![(NSString *)[message body] isEqualToString:@"loaded"])
+        return;
+
+    if (_onloadHandler)
+        _onloadHandler();
+
+    _onloadHandler = nil;
 }
 @end
 
@@ -110,6 +159,31 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
     // video is started with a script, the expectation is NO.
     [handler setExpectedToHaveControlsManager:NO];
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&testedControlsManagerAfterPlaying);
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+}
+
+TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    RetainPtr<DidPlayMessageHandler> playbackHandler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
+    [[configuration userContentController] addScriptMessageHandler:playbackHandler.get() name:@"playingHandler"];
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+
+    RetainPtr<OnLoadMessageHandler> onloadHandler = adoptNS([[OnLoadMessageHandler alloc] initWithWKWebView:webView.get() handler:^() {
+        [webView mouseDownAtPoint:NSMakePoint(50, 50)];
+    }]);
+    [[configuration userContentController] addScriptMessageHandler:onloadHandler.get() name:@"onloadHandler"];
+
+    // A small video should have a controls manager after the first user gesture, which includes pausing the video. The expectation is YES.
+    [playbackHandler setExpectedToHaveControlsManager:YES];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplaying-video-with-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&testedControlsManagerAfterPlaying);

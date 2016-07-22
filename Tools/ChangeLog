@@ -1,5 +1,29 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203464. rdar://problem/27180657
+
+    2016-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Media controls don't appear when pausing a small autoplaying video
+            https://bugs.webkit.org/show_bug.cgi?id=159972
+            <rdar://problem/27180657>
+
+            Reviewed by Beth Dakin.
+
+            Adds a new test that verifies media controls show up when pausing a small autoplayed video. Also adds mechanisms
+            for simulating basic user interaction in VideoControlsManager.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+            (-[WKWebView mouseDownAtPoint:]):
+            (-[DidPlayMessageHandler userContentController:didReceiveScriptMessage:]):
+            (-[OnLoadMessageHandler initWithWKWebView:handler:]):
+            (-[OnLoadMessageHandler userContentController:didReceiveScriptMessage:]):
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKit2Cocoa/autoplaying-video-with-audio.html: Added.
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203447. rdar://problem/27056844
 
     2016-07-20  Csaba Osztrogonác  <ossy@webkit.org>
