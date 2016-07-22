@@ -1,3 +1,19 @@
+2016-07-22  Saam Barati  <sbarati@apple.com>
+
+        REGRESSION(r203537): It made many tests crash on ARMv7 Linux platforms
+        https://bugs.webkit.org/show_bug.cgi?id=160082
+
+        Reviewed by Keith Miller.
+
+        We were improperly linking the Jump in the link buffer.
+        It caused us to be linking against the executable address
+        which always has bit 0 set. We shouldn't be doing that.
+        This patch fixes this, by using the same idiom that
+        PolymorphicAccess uses to link a jump to out of line code.
+
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateOutOfLine):
+
 2016-07-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r203603.
