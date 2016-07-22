@@ -16,7 +16,7 @@ PASS getComputedStyle(element).getPropertyValue("transition-property")
 PASS getComputedStyle(element).getPropertyValue("-webkit-transition-property")
 PASS getComputedStyle(element).getPropertyCSSValue("transition-property")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-property")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "transition-property: width;" but got "transition-property: width; -webkit-transition-property: width;"
 
 Setting "-webkit-transition-property" to "width"
 PASS element.style.transitionProperty
@@ -31,7 +31,7 @@ PASS getComputedStyle(element).getPropertyValue("transition-property")
 PASS getComputedStyle(element).getPropertyValue("-webkit-transition-property")
 PASS getComputedStyle(element).getPropertyCSSValue("transition-property")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-property")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-transition-property: width;" but got "-webkit-transition-property: width; transition-property: width;"
 
 Setting "transition-duration" to "1s"
 PASS element.style.transitionDuration
@@ -46,7 +46,7 @@ PASS getComputedStyle(element).getPropertyValue("transition-duration")
 PASS getComputedStyle(element).getPropertyValue("-webkit-transition-duration")
 PASS getComputedStyle(element).getPropertyCSSValue("transition-duration")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-duration")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "transition-duration: 1s;" but got "transition-duration: 1s; -webkit-transition-duration: 1s;"
 
 Setting "-webkit-transition-duration" to "1s"
 PASS element.style.transitionDuration
@@ -61,7 +61,7 @@ PASS getComputedStyle(element).getPropertyValue("transition-duration")
 PASS getComputedStyle(element).getPropertyValue("-webkit-transition-duration")
 PASS getComputedStyle(element).getPropertyCSSValue("transition-duration")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-duration")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-transition-duration: 1s;" but got "-webkit-transition-duration: 1s; transition-duration: 1s;"
 
 Setting "transition-timing-function" to "linear"
 PASS element.style.transitionTimingFunction
@@ -76,7 +76,7 @@ PASS getComputedStyle(element).getPropertyValue("transition-timing-function")
 PASS getComputedStyle(element).getPropertyValue("-webkit-transition-timing-function")
 PASS getComputedStyle(element).getPropertyCSSValue("transition-timing-function")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-timing-function")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "transition-timing-function: linear;" but got "transition-timing-function: linear; -webkit-transition-timing-function: linear;"
 
 Setting "-webkit-transition-timing-function" to "linear"
 PASS element.style.transitionTimingFunction
@@ -91,7 +91,7 @@ PASS getComputedStyle(element).getPropertyValue("transition-timing-function")
 PASS getComputedStyle(element).getPropertyValue("-webkit-transition-timing-function")
 PASS getComputedStyle(element).getPropertyCSSValue("transition-timing-function")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-timing-function")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-transition-timing-function: linear;" but got "-webkit-transition-timing-function: linear; transition-timing-function: linear;"
 
 Setting "transition-delay" to "0.5s"
 PASS element.style.transitionDelay
@@ -106,7 +106,7 @@ PASS getComputedStyle(element).getPropertyValue("transition-delay")
 PASS getComputedStyle(element).getPropertyValue("-webkit-transition-delay")
 PASS getComputedStyle(element).getPropertyCSSValue("transition-delay")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-delay")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "transition-delay: 0.5s;" but got "transition-delay: 0.5s; -webkit-transition-delay: 0.5s;"
 
 Setting "-webkit-transition-delay" to "0.5s"
 PASS element.style.transitionDelay
@@ -121,7 +121,7 @@ PASS getComputedStyle(element).getPropertyValue("transition-delay")
 PASS getComputedStyle(element).getPropertyValue("-webkit-transition-delay")
 PASS getComputedStyle(element).getPropertyCSSValue("transition-delay")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-delay")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-transition-delay: 0.5s;" but got "-webkit-transition-delay: 0.5s; transition-delay: 0.5s;"
 
 Setting "animation-name" to "foo"
 PASS element.style.animationName
@@ -136,7 +136,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-name")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-name")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-name")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-name")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "animation-name: foo;" but got "animation-name: foo; -webkit-animation-name: foo;"
 
 Setting "-webkit-animation-name" to "foo"
 PASS element.style.animationName
@@ -151,7 +151,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-name")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-name")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-name")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-name")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-animation-name: foo;" but got "-webkit-animation-name: foo; animation-name: foo;"
 
 Setting "animation-duration" to "1s"
 PASS element.style.animationDuration
@@ -166,7 +166,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-duration")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-duration")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-duration")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-duration")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "animation-duration: 1s;" but got "animation-duration: 1s; -webkit-animation-duration: 1s;"
 
 Setting "-webkit-animation-duration" to "1s"
 PASS element.style.animationDuration
@@ -181,7 +181,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-duration")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-duration")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-duration")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-duration")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-animation-duration: 1s;" but got "-webkit-animation-duration: 1s; animation-duration: 1s;"
 
 Setting "animation-timing-function" to "linear"
 PASS element.style.animationTimingFunction
@@ -196,7 +196,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-timing-function")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-timing-function")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-timing-function")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-timing-function")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "animation-timing-function: linear;" but got "animation-timing-function: linear; -webkit-animation-timing-function: linear;"
 
 Setting "-webkit-animation-timing-function" to "linear"
 PASS element.style.animationTimingFunction
@@ -211,7 +211,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-timing-function")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-timing-function")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-timing-function")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-timing-function")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-animation-timing-function: linear;" but got "-webkit-animation-timing-function: linear; animation-timing-function: linear;"
 
 Setting "animation-iteration-count" to "5"
 PASS element.style.animationIterationCount
@@ -226,7 +226,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-iteration-count")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-iteration-count")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-iteration-count")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-iteration-count")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "animation-iteration-count: 5;" but got "animation-iteration-count: 5; -webkit-animation-iteration-count: 5;"
 
 Setting "-webkit-animation-iteration-count" to "5"
 PASS element.style.animationIterationCount
@@ -241,7 +241,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-iteration-count")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-iteration-count")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-iteration-count")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-iteration-count")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-animation-iteration-count: 5;" but got "-webkit-animation-iteration-count: 5; animation-iteration-count: 5;"
 
 Setting "animation-direction" to "reverse"
 PASS element.style.animationDirection
@@ -256,7 +256,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-direction")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-direction")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-direction")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-direction")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "animation-direction: reverse;" but got "animation-direction: reverse; -webkit-animation-direction: reverse;"
 
 Setting "-webkit-animation-direction" to "reverse"
 PASS element.style.animationDirection
@@ -271,7 +271,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-direction")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-direction")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-direction")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-direction")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-animation-direction: reverse;" but got "-webkit-animation-direction: reverse; animation-direction: reverse;"
 
 Setting "animation-play-state" to "paused"
 PASS element.style.animationPlayState
@@ -286,7 +286,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-play-state")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-play-state")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-play-state")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-play-state")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "animation-play-state: paused;" but got "animation-play-state: paused; -webkit-animation-play-state: paused;"
 
 Setting "-webkit-animation-play-state" to "paused"
 PASS element.style.animationPlayState
@@ -301,7 +301,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-play-state")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-play-state")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-play-state")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-play-state")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-animation-play-state: paused;" but got "-webkit-animation-play-state: paused; animation-play-state: paused;"
 
 Setting "animation-delay" to "0.5s"
 PASS element.style.animationDelay
@@ -316,7 +316,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-delay")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-delay")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-delay")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-delay")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "animation-delay: 0.5s;" but got "animation-delay: 0.5s; -webkit-animation-delay: 0.5s;"
 
 Setting "-webkit-animation-delay" to "0.5s"
 PASS element.style.animationDelay
@@ -331,7 +331,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-delay")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-delay")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-delay")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-delay")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-animation-delay: 0.5s;" but got "-webkit-animation-delay: 0.5s; animation-delay: 0.5s;"
 
 Setting "animation-fill-mode" to "forwards"
 PASS element.style.animationFillMode
@@ -346,7 +346,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-fill-mode")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-fill-mode")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-fill-mode")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-fill-mode")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "animation-fill-mode: forwards;" but got "animation-fill-mode: forwards; -webkit-animation-fill-mode: forwards;"
 
 Setting "-webkit-animation-fill-mode" to "forwards"
 PASS element.style.animationFillMode
@@ -361,7 +361,7 @@ PASS getComputedStyle(element).getPropertyValue("animation-fill-mode")
 PASS getComputedStyle(element).getPropertyValue("-webkit-animation-fill-mode")
 PASS getComputedStyle(element).getPropertyCSSValue("animation-fill-mode")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-fill-mode")
-PASS element.style.cssText
+FAIL expected element.style.cssText to be "-webkit-animation-fill-mode: forwards;" but got "-webkit-animation-fill-mode: forwards; animation-fill-mode: forwards;"
 
 PASS successfullyParsed is true
 

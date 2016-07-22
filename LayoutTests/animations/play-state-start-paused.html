@@ -13,6 +13,8 @@
             width: 100px;
             height: 100px;
             background-color: green;
+            animation-delay: -0.5s;
+            animation-play-state: paused;
         }
         
         /* For manual testing. */
@@ -21,11 +23,11 @@
         }
         
         .mover {
-            animation: move 1s linear -0.5s paused;
+            animation: move 1s linear;
         }
         
         .slider {
-            animation: slide 1s linear -0.5s paused;
+            animation: slide 1s linear;
         }
         
         @keyframes move {

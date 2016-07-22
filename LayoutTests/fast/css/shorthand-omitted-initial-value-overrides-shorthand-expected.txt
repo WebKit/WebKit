@@ -16,20 +16,20 @@ PASS transition-property
 PASS transition-property
 
 Animation properties
-PASS animation-name
-PASS animation-duration
-PASS animation-timing-function
-PASS animation-iteration-count
-PASS animation-direction
-PASS animation-play-state
-PASS animation-delay
-PASS animation-fill-mode
+FAIL expected that setting "animation-name: foo; animation: 1s;" would compute animation-name to "none" but got "foo"
+FAIL expected that setting "animation-duration: 1s; animation: none;" would compute animation-duration to "0s" but got "1s"
+FAIL expected that setting "animation-timing-function: linear; animation: none;" would compute animation-timing-function to "ease" but got "linear"
+FAIL expected that setting "animation-iteration-count: 5; animation: none;" would compute animation-iteration-count to "1" but got "5"
+FAIL expected that setting "animation-direction: reverse; animation: none;" would compute animation-direction to "normal" but got "reverse"
+FAIL expected that setting "animation-play-state: paused; animation: none;" would compute animation-play-state to "running" but got "paused"
+FAIL expected that setting "animation-delay: 1s; animation: none;" would compute animation-delay to "0s" but got "1s"
+FAIL expected that setting "animation-fill-mode: forwards; animation: none;" would compute animation-fill-mode to "none" but got "forwards"
 
 Prefixed animation properties
 PASS -webkit-animation-name
-PASS animation-name
+FAIL expected that setting "-webkit-animation-name: foo; animation: none;" would compute animation-name to "none" but got "foo"
 PASS -webkit-animation-name
-PASS animation-name
+FAIL expected that setting "animation-name: foo; animation: none;" would compute animation-name to "none" but got "foo"
 
 PASS successfullyParsed is true
 

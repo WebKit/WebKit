@@ -29,7 +29,7 @@ function testSpring(description, spring, expectedValue)
         return;
     }
 
-    shouldBe("declaration.length", "1");
+    shouldBe("declaration.length", "2");
     shouldBe("declaration.getPropertyValue('transition-timing-function')", "'" + expectedValue + "'");
 
     propertyValue = declaration.getPropertyCSSValue("transition-timing-function");
