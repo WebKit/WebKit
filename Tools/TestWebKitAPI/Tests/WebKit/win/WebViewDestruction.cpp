@@ -154,6 +154,15 @@ TEST_F(WebViewDestructionWithHostWindow, CloseWithoutDestroyViewWindow)
     EXPECT_HRESULT_SUCCEEDED(m_webView->close());
 }
 
+// Tests that calling IWebView::close followed by IWebView::mainFrame does not crash.
+TEST_F(WebViewDestructionWithHostWindow, CloseThenGetMainFrame)
+{
+    EXPECT_HRESULT_SUCCEEDED(m_webView->close());
+
+    COMPtr<IWebFrame> frame;
+    EXPECT_HRESULT_FAILED(m_webView->mainFrame(&frame));
+}
+
 TEST_F(WebViewDestructionWithHostWindow, DestroyViewWindowWithoutClose)
 {
     ::DestroyWindow(m_viewWindow);

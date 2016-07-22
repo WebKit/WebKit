@@ -769,7 +769,9 @@ HRESULT WebView::close()
         m_webInspector->inspectedWebViewClosed();
 
     delete m_page;
-    m_page = 0;
+    m_page = nullptr;
+
+    m_mainFrame = nullptr;
 
     registerForIconNotification(false);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();

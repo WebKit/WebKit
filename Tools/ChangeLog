@@ -1,3 +1,13 @@
+2016-07-22  Per Arne Vollan  <pvollan@apple.com>
+
+        IWebView::mainFrame crashes if called after IWebView::close
+        https://bugs.webkit.org/show_bug.cgi?id=32868
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKit/win/WebViewDestruction.cpp:
+        (TestWebKitAPI::TEST_F): Added test.
+
 2016-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable threaded compositor by default
