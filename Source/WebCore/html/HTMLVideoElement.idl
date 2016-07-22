@@ -33,7 +33,7 @@
     readonly attribute unsigned long videoHeight;
     [Reflect, URL] attribute DOMString poster;
 
-    [Reflect=playsinline] attribute boolean playsInline;
+    [Reflect] attribute boolean playsInline;
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
