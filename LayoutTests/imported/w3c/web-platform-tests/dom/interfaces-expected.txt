@@ -849,9 +849,9 @@ PASS Element interface: attribute shadowRoot
 PASS Element interface: operation closest(DOMString) 
 PASS Element interface: operation matches(DOMString) 
 PASS Element interface: operation webkitMatchesSelector(DOMString) 
-FAIL Element interface: operation getElementsByTagName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Element interface: operation getElementsByTagNameNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Element interface: operation getElementsByClassName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Element interface: operation getElementsByTagName(DOMString) 
+PASS Element interface: operation getElementsByTagNameNS(DOMString,DOMString) 
+PASS Element interface: operation getElementsByClassName(DOMString) 
 FAIL Element interface: operation insertAdjacentElement(DOMString,Element) assert_own_property: interface prototype object missing non-static operation expected property "insertAdjacentElement" missing
 FAIL Element interface: operation insertAdjacentText(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "insertAdjacentText" missing
 PASS Element interface: attribute children 
@@ -918,17 +918,11 @@ PASS Element interface: calling matches(DOMString) on element with too few argum
 PASS Element interface: element must inherit property "webkitMatchesSelector" with the proper type (28) 
 PASS Element interface: calling webkitMatchesSelector(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "getElementsByTagName" with the proper type (29) 
-FAIL Element interface: calling getElementsByTagName(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getElementsByTagName(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "getElementsByTagNameNS" with the proper type (30) 
-FAIL Element interface: calling getElementsByTagNameNS(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getElementsByTagNameNS(DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "getElementsByClassName" with the proper type (31) 
-FAIL Element interface: calling getElementsByClassName(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getElementsByClassName(DOMString) on element with too few arguments must throw TypeError 
 FAIL Element interface: element must inherit property "insertAdjacentElement" with the proper type (32) assert_inherits: property "insertAdjacentElement" not found in prototype chain
 FAIL Element interface: calling insertAdjacentElement(DOMString,Element) on element with too few arguments must throw TypeError assert_inherits: property "insertAdjacentElement" not found in prototype chain
 FAIL Element interface: element must inherit property "insertAdjacentText" with the proper type (33) assert_inherits: property "insertAdjacentText" not found in prototype chain

@@ -42,10 +42,9 @@
     [RaisesException, InvokesCustomElementLifecycleCallbacks] Attr removeAttributeNode(Attr oldAttr);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName(optional DOMString name);
+    [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName(DOMString name);
 #else
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    HTMLCollection getElementsByTagName(optional DOMString name = "undefined");
+    HTMLCollection getElementsByTagName(DOMString name);
 #endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
@@ -65,10 +64,9 @@
     [ObjCLegacyUnnamedParameters, InvokesCustomElementLifecycleCallbacks] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(optional DOMString namespaceURI, optional DOMString localName);
+    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 #else
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    HTMLCollection getElementsByTagNameNS(optional DOMString? namespaceURI = null, optional DOMString localName = "undefined");
+    HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 #endif
 
     [ObjCLegacyUnnamedParameters] Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
@@ -128,10 +126,9 @@
 
     // HTML 5
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ImplementedAs=getElementsByClassNameForObjC] NodeList getElementsByClassName(optional DOMString name);
+    [ImplementedAs=getElementsByClassNameForObjC] NodeList getElementsByClassName(DOMString name);
 #else
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    HTMLCollection getElementsByClassName(optional DOMString name = "undefined");
+    HTMLCollection getElementsByClassName(DOMString name);
 #endif
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerHTML;
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString outerHTML;

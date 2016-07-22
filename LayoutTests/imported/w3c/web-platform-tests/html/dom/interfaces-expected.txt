@@ -1271,17 +1271,11 @@ PASS Element interface: calling closest(DOMString) on document.createElement("no
 PASS Element interface: document.createElement("noscript") must inherit property "matches" with the proper type (24) 
 PASS Element interface: calling matches(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "getElementsByTagName" with the proper type (25) 
-FAIL Element interface: calling getElementsByTagName(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getElementsByTagName(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "getElementsByTagNameNS" with the proper type (26) 
-FAIL Element interface: calling getElementsByTagNameNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getElementsByTagNameNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "getElementsByClassName" with the proper type (27) 
-FAIL Element interface: calling getElementsByClassName(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Element interface: calling getElementsByClassName(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "children" with the proper type (28) 
 PASS Element interface: document.createElement("noscript") must inherit property "firstElementChild" with the proper type (29) 
 PASS Element interface: document.createElement("noscript") must inherit property "lastElementChild" with the proper type (30) 
