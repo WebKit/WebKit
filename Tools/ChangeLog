@@ -1,5 +1,15 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203468. rdar://problem/27180657
+
+    2016-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Unreviewed iOS build fix.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm: Only import Carbon.h on Mac.
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203464. rdar://problem/27180657
 
     2016-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>

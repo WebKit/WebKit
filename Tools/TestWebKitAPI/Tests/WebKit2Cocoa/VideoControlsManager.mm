@@ -26,7 +26,11 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+
+#if PLATFORM(MAC)
 #import <Carbon/Carbon.h>
+#endif
+
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
