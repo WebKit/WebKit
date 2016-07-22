@@ -32,14 +32,17 @@
 
 namespace WebCore {
 
+class MathMLUnderOverElement;
+
 class RenderMathMLUnderOver final : public RenderMathMLScripts {
 public:
-    RenderMathMLUnderOver(Element&, RenderStyle&&);
+    RenderMathMLUnderOver(MathMLUnderOverElement&, RenderStyle&&);
 
 private:
     bool isRenderMathMLScripts() const final { return false; }
     bool isRenderMathMLUnderOver() const final { return true; }
     const char* renderName() const final { return "RenderMathMLUnderOver"; }
+    MathMLUnderOverElement& element() const;
 
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;

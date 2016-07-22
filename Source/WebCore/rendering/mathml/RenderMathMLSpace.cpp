@@ -29,12 +29,9 @@
 #if ENABLE(MATHML)
 
 #include "GraphicsContext.h"
-#include "MathMLNames.h"
 #include "PaintInfo.h"
 
 namespace WebCore {
-
-using namespace MathMLNames;
 
 RenderMathMLSpace::RenderMathMLSpace(MathMLSpaceElement& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))

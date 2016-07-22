@@ -34,7 +34,7 @@ namespace WebCore {
 
 class RenderMathMLPadded final : public RenderMathMLRow {
 public:
-    RenderMathMLPadded(Element&, RenderStyle&&);
+    RenderMathMLPadded(MathMLPaddedElement&, RenderStyle&&);
 
 private:
     const char* renderName() const final { return "RenderMathMLPadded"; }

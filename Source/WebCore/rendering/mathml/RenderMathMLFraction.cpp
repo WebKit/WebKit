@@ -31,15 +31,13 @@
 #include "RenderMathMLFraction.h"
 
 #include "GraphicsContext.h"
-#include "MathMLNames.h"
+#include "MathMLFractionElement.h"
 #include "PaintInfo.h"
 #include <cmath>
 
 namespace WebCore {
 
-using namespace MathMLNames;
-
-RenderMathMLFraction::RenderMathMLFraction(MathMLInlineContainerElement& element, RenderStyle&& style)
+RenderMathMLFraction::RenderMathMLFraction(MathMLFractionElement& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
 {
 }

@@ -30,16 +30,18 @@
 
 namespace WebCore {
 
-class MathMLScriptsElement final : public MathMLInlineContainerElement {
+class MathMLScriptsElement : public MathMLInlineContainerElement {
 public:
     static Ref<MathMLScriptsElement> create(const QualifiedName& tagName, Document&);
     const Length& subscriptShift();
     const Length& superscriptShift();
 
-private:
+protected:
     MathMLScriptsElement(const QualifiedName& tagName, Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+
+private:
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     Length m_subscriptShift;
     Length m_superscriptShift;

@@ -35,7 +35,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-inline MathMLScriptsElement::MathMLScriptsElement(const QualifiedName& tagName, Document& document)
+MathMLScriptsElement::MathMLScriptsElement(const QualifiedName& tagName, Document& document)
     : MathMLInlineContainerElement(tagName, document)
 {
 }

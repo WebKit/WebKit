@@ -28,14 +28,11 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLNames.h"
 #include <cmath>
 
 namespace WebCore {
 
-using namespace MathMLNames;
-
-RenderMathMLPadded::RenderMathMLPadded(Element& element, RenderStyle&& style)
+RenderMathMLPadded::RenderMathMLPadded(MathMLPaddedElement& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))
 {
 }

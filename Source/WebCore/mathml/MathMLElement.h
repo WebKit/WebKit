@@ -66,6 +66,12 @@ public:
     };
     static Length parseMathMLLength(const String&);
 
+    enum class BooleanValue { True, False, Default };
+    struct BooleanAttribute {
+        BooleanValue value { BooleanValue::Default };
+        bool dirty { true };
+    };
+
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
@@ -83,6 +89,7 @@ protected:
     void defaultEventHandler(Event*) override;
 
     const Length& cachedMathMLLength(const QualifiedName&, Length&);
+    const BooleanValue& cachedBooleanAttribute(const QualifiedName&, BooleanAttribute&);
 
 private:
     virtual void updateSelectedChild() { }

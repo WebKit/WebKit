@@ -525,6 +525,24 @@ const MathMLElement::Length& MathMLElement::cachedMathMLLength(const QualifiedNa
     return length;
 }
 
+const MathMLElement::BooleanValue& MathMLElement::cachedBooleanAttribute(const QualifiedName& name, BooleanAttribute& attribute)
+{
+    if (!attribute.dirty)
+        return attribute.value;
+
+    // In MathML, attribute values are case-sensitive.
+    const AtomicString& value = attributeWithoutSynchronization(name);
+    if (value == "true")
+        attribute.value = BooleanValue::True;
+    else if (value == "false")
+        attribute.value = BooleanValue::False;
+    else
+        attribute.value = BooleanValue::Default;
+    attribute.dirty = false;
+
+    return attribute.value;
+}
+
 }
 
 #endif // ENABLE(MATHML)

@@ -37,14 +37,12 @@
 
 namespace WebCore {
 
-using namespace MathMLNames;
-
 static bool isPrescriptDelimiter(const RenderObject& renderObject)
 {
     return renderObject.node() && renderObject.node()->hasTagName(MathMLNames::mprescriptsTag);
 }
 
-RenderMathMLScripts::RenderMathMLScripts(Element& element, RenderStyle&& style)
+RenderMathMLScripts::RenderMathMLScripts(MathMLScriptsElement& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
 {
     // Determine what kind of sub/sup expression we have by element name
@@ -66,9 +64,8 @@ RenderMathMLScripts::RenderMathMLScripts(Element& element, RenderStyle&& style)
     }
 }
 
-MathMLScriptsElement& RenderMathMLScripts::scriptsElement() const
+MathMLScriptsElement& RenderMathMLScripts::element() const
 {
-    ASSERT(!isRenderMathMLUnderOver());
     return static_cast<MathMLScriptsElement&>(nodeForNonAnonymous());
 }
 
@@ -260,7 +257,7 @@ void RenderMathMLScripts::getScriptMetricsAndLayoutIfNeeded(RenderBox* base, Ren
         if (!isRenderMathMLUnderOver()) {
             // It is not clear how to interpret the default shift and it is not available yet anyway.
             // Hence we just pass 0 as the default value used by toUserUnits.
-            LayoutUnit specifiedMinSubShift = toUserUnits(scriptsElement().subscriptShift(), style(), 0);
+            LayoutUnit specifiedMinSubShift = toUserUnits(element().subscriptShift(), style(), 0);
             minSubScriptShift = std::max(minSubScriptShift, specifiedMinSubShift);
         }
     }
@@ -269,7 +266,7 @@ void RenderMathMLScripts::getScriptMetricsAndLayoutIfNeeded(RenderBox* base, Ren
         if (!isRenderMathMLUnderOver()) {
             // It is not clear how to interpret the default shift and it is not available yet anyway.
             // Hence we just pass 0 as the default value used by toUserUnits.
-            LayoutUnit specifiedMinSupShift = toUserUnits(scriptsElement().superscriptShift(), style(), 0);
+            LayoutUnit specifiedMinSupShift = toUserUnits(element().superscriptShift(), style(), 0);
             minSupScriptShift = std::max(minSupScriptShift, specifiedMinSupShift);
         }
     }
