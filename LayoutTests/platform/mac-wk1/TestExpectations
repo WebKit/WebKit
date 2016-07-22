@@ -259,3 +259,5 @@ webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/XMLHttpRequest/eve
 webkit.org/b/156070 storage/indexeddb/modern/abort-requests-cancelled.html [ Pass Timeout ]
 
 webkit.orb/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
+
+webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Pass Crash ]
