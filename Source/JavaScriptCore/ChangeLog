@@ -1,3 +1,31 @@
+2016-07-22  Youenn Fablet  <youenn@apple.com>
+
+        run-builtins-generator-tests should be able to test WebCore builtins wrapper with more than one file
+        https://bugs.webkit.org/show_bug.cgi?id=159921
+
+        Reviewed by Brian Burg.
+
+        Updated built-in generator to generate only wrapper files when passed the --wrappers-only option.
+        When this option is used, wrapper files are generated but no individual file is generated.
+        When this option is not used, individual files are generated but not wrapper file is generated.
+        This allows the builtin generator test runner to generate a single WebCore-Wrappers.h-result generated for all
+        WebCore test files, like used for real in WebCore.
+        Previously wrapper code was generated individually for each WebCore test file.
+
+        Added new built-in test file to cover the case of concatenating several guards in generated WebCore wrapper files.
+
+        * Scripts/generate-js-builtins.py:
+        (concatenated_output_filename): Compute a decent name for wrapper files in case of test mode.
+        (generate_bindings_for_builtins_files): When --wrappers-only is activated, this generates only the wrapper files, not the individual files.
+        * Scripts/tests/builtins/WebCore-AnotherGuardedInternalBuiltin-Separate.js: Added.
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result: Added.
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result: Removed wrapper code.
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result: Removed wrapper code.
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result: Added, contains wrapper code for all WebCore valid test cases.
+
 2016-07-21  Saam Barati  <sbarati@apple.com>
 
         callOperation(.) variants in the DFG that explicitly take a tag/payload register should take a JSValueRegs instead

@@ -1319,18 +1319,26 @@ BUILTINS_GENERATOR_SCRIPTS = \
     $(JavaScriptCore_SCRIPTS_DIR)/lazywriter.py \
 #
 
+WebCore_BUILTINS_WRAPPERS = \
+    WebCoreJSBuiltins.h \
+    WebCoreJSBuiltins.cpp \
+    WebCoreJSBuiltinInternals.h \
+    WebCoreJSBuiltinInternals.cpp \
+
 # Adding/removing scripts should trigger regeneration, but changing which builtins are
 # generated should not affect other builtins when not passing '--combined' to the generator.
-# WebCore_BUILTINS_SOURCE_LIST = $(shell echo $(WebCore_BUILTINS_SOURCES) | perl -e 'print " " . join(" -I", split(" ", <>));')
 
 .PHONY: force
 WebCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py force
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(BUILTINS_GENERATOR_SCRIPTS)' $@
 
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --wrappers --output-directory . --framework WebCore $(WebCore_BUILTINS_SOURCES)
+$(firstword $(WebCore_BUILTINS_WRAPPERS)): WebCore_BUILTINS_DEPENDENCIES_LIST
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --wrappers-only --output-directory . --framework WebCore $(WebCore_BUILTINS_SOURCES)
 
+%Builtins.h: %.js $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --output-directory . --framework WebCore $<
 
-all : WebCore_BUILTINS_DEPENDENCIES_LIST
+all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(firstword $(WebCore_BUILTINS_WRAPPERS))
 
 # ------------------------
 

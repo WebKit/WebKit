@@ -37,7 +37,7 @@ class BuiltinsGeneratorTests:
         self.reset_results = reset_results
         self.executive = executive
 
-    def generate_from_js_builtins(self, builtins_file, output_directory, framework_name="", combined_outputs=False, generate_wrapper=False):
+    def generate_from_js_builtins(self, builtins_files, output_directory, framework_name="", combined_outputs=False, generate_wrappers=False):
         cmd = ['python',
                'JavaScriptCore/Scripts/generate-js-builtins.py',
                '--output-directory', output_directory,
@@ -48,16 +48,15 @@ class BuiltinsGeneratorTests:
         if combined_outputs:
             cmd.append('--combined')
 
-        if generate_wrapper:
-            cmd.append('--wrappers')
+        if generate_wrappers:
+            cmd.append('--wrappers-only')
 
-        cmd.append(builtins_file)
-
+        cmd.extend(builtins_files)
         exit_code = 0
         try:
             stderr_output = self.executive.run_command(cmd)
             if stderr_output:
-                self.write_error_file(builtins_file, output_directory, stderr_output)
+                self.write_error_file(framework_name + "JSBuiltins.h-error" if generate_wrappers else builtins_files[0], output_directory, stderr_output)
         except ScriptError, e:
             print e.output
             exit_code = e.exit_code
@@ -93,37 +92,61 @@ class BuiltinsGeneratorTests:
                 print 'PASS: %s' % output_file
         return changes_found
 
-    def run_tests(self, input_directory, reference_directory):
-        work_directory = reference_directory
+    def single_builtin_test(self, test_name, test_files, work_directory):
+        (framework_name, test_case, output_mode) = test_name.split('-')
+        if not framework_name or not output_mode or not test_case:
+            print "Invalid test case name: should be Framework-TestCaseName-OutputMode.js"
+            return False
 
+        combined_outputs = output_mode == "Combined"
+        return self.generate_from_js_builtins(test_files, work_directory, framework_name=framework_name, combined_outputs=combined_outputs)
+
+    def wrappers_builtin_test(self, test_name, test_files, work_directory):
+        return self.generate_from_js_builtins(test_files, work_directory, framework_name="WebCore", generate_wrappers=True)
+
+    def run_test(self, reference_directory, test_name, test_files, generate_builtin_callback):
         passed = True
+        # Generate output into the work directory (either the given one or a temp one if reset_results is not performed)
+        work_directory = reference_directory
+        if not self.reset_results:
+            work_directory = tempfile.mkdtemp("builtin-generator-tests")
+
+        if generate_builtin_callback(test_name, test_files, work_directory):
+            passed = False
+
+        if self.reset_results:
+            print "Reset results for test: %s" % (test_name)
+            return True
+
+        # Detect changes
+        if self.detect_changes(work_directory, reference_directory):
+            passed = False
+        shutil.rmtree(work_directory)
+        return passed
+
+    def run_tests(self, input_directory, reference_directory):
+        passed = True
+        separately_generated_files = []
         for input_file in os.listdir(input_directory):
             (test_name, extension) = os.path.splitext(input_file)
             if extension != '.js':
                 continue
-            # Generate output into the work directory (either the given one or a
-            # temp one if not reset_results is performed)
-            if not self.reset_results:
-                work_directory = tempfile.mkdtemp()
 
-            (framework_name, test_case, output_mode) = test_name.split('-')
-            if not framework_name or not output_mode or not test_case:
-                print "Invalid test case name: should be Framework-TestCaseName-OutputMode.js"
-                continue
-
-            combined_outputs = output_mode == "Combined"
-            generate_wrapper = framework_name == "WebCore"
-            if self.generate_from_js_builtins(os.path.join(input_directory, input_file), work_directory, framework_name=framework_name, combined_outputs=combined_outputs, generate_wrapper=generate_wrapper):
+            test_file = os.path.join(input_directory, input_file)
+            if not self.run_test(reference_directory, test_name, [test_file], self.single_builtin_test):
                 passed = False
+
+            # FIXME: Add Error parameter in filename and filter out these files here.
+            if 'Separate' in test_name and 'WebCore' in test_name and not 'Duplicate' in test_name:
+                separately_generated_files.append(test_file)
 
             if self.reset_results:
                 print "Reset results for test: %s" % (input_file)
                 continue
 
-            # Detect changes
-            if self.detect_changes(work_directory, reference_directory):
+        if separately_generated_files:
+            if not self.run_test(reference_directory, "WebCoreJSBuiltins.h", separately_generated_files, self.wrappers_builtin_test):
                 passed = False
-            shutil.rmtree(work_directory)
 
         return passed
 

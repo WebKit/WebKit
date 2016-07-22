@@ -1,3 +1,20 @@
+2016-07-22  Youenn Fablet  <youenn@apple.com>
+
+        run-builtins-generator-tests should be able to test WebCore builtins wrapper with more than one file
+        https://bugs.webkit.org/show_bug.cgi?id=159921
+
+        Reviewed by Brian Burg.
+
+        Updated builtin generator test runner to generate WebCore wrapper files based on all WebCore valid separate files.
+
+        * Scripts/webkitpy/codegen/main.py:
+        (BuiltinsGeneratorTests.generate_from_js_builtins): Passing a list of builtin files to the script.
+        (BuiltinsGeneratorTests):
+        (BuiltinsGeneratorTests.single_builtin_test): Added to handle the case of single builtin generation.
+        (BuiltinsGeneratorTests.wrappers_builtin_test): Added to handle the case of WebCore wrappers builtin generation.
+        (BuiltinsGeneratorTests.run_test): Helper routine to run a test in reset mode or normal check mode.
+        (BuiltinsGeneratorTests.run_tests): Updated to add WebCore wrappers builtin generation test.
+
 2016-07-21  Dan Bernstein  <mitz@apple.com>
 
         [Mac] webkitdirs.pm contains unused code to support outdated OS X and Xcode versions
