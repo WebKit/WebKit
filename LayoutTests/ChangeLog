@@ -1,5 +1,26 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203626. rdar://problem/27453479
+
+    2016-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            All dancers with bunny ears are female
+            https://bugs.webkit.org/show_bug.cgi?id=160102
+            <rdar://problem/27453479>
+
+            Reviewed by Simon Fraser.
+
+            * editing/deleting/delete-emoji.html:
+            * platform/mac/editing/deleting/delete-emoji-expected.txt:
+            * fast/text/emoji-gender-2-9-expected.html:
+            * fast/text/emoji-gender-2-9.html:
+            * fast/text/emoji-gender-9-expected.html:
+            * fast/text/emoji-gender-9.html:
+            * fast/text/emoji-gender-fe0f-9-expected.html:
+            * fast/text/emoji-gender-fe0f-9.html:
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203378. rdar://problem/25876032
 
     2016-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>

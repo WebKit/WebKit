@@ -38,7 +38,7 @@ static inline bool isEmojiGroupCandidate(UChar32 character)
         || character == 0x1F3F3
         || character == 0x1F441
         || (character >= 0x1F466 && character <= 0x1F469)
-        || character == 0x1F46E
+        || (character >= 0x1F46E && character <= 0x1F46F)
         || character == 0x1F471
         || character == 0x1F473
         || character == 0x1F477
