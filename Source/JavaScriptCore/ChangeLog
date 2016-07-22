@@ -1,3 +1,10 @@
+2016-07-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed EABI buildfix after r203537.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState): Added.
+
 2016-07-22  Youenn Fablet  <youenn@apple.com>
 
         run-builtins-generator-tests should be able to test WebCore builtins wrapper with more than one file
