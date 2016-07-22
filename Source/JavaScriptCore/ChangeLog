@@ -1,3 +1,15 @@
+2016-07-22  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix the Windows 64-bit build after r203537
+        https://bugs.webkit.org/show_bug.cgi?id=160080
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added new version of setupArgumentsWithExecState method.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
 2016-07-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Unreviewed EABI buildfix after r203537.
