@@ -1,3 +1,18 @@
+2016-07-22  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(203616): no FTL testing was inadvertently removed
+        https://bugs.webkit.org/show_bug.cgi?id=160100
+
+        Rubber-stamped by Filip Pizlo.
+
+        Added runNoFTL back into the set of tests we run on FTL enabled platforms.
+        Renamed runLayoutTestNoFTL to runLayoutTestDefault.  Restructured the test
+        logic for the runLayout and runNoisy variants to match the run test logic,
+        that is we always invoke runXXXDefault and invoke runXXXNoFTL for FTL
+        enabled platforms.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-07-22  Brady Eidson  <beidson@apple.com>
 
         Removing IndexedDatabases that have stored blobs doesn't remove the blob files.
