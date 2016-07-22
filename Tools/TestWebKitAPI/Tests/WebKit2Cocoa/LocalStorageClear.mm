@@ -147,11 +147,14 @@ TEST(WKWebView, ClearAppCache)
     EXPECT_GT(fileSize(shmTargetURL), 0);
     EXPECT_GT(fileSize(walTargetURL), 0);
 
+    static size_t originalWebsiteDataRecordCount;
+
     // Make sure there is a record in the WKWebsiteDataStore.
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords)
     {
-        EXPECT_EQ(websiteDataRecords.count, 1ul);
+        EXPECT_GT(websiteDataRecords.count, 0ul);
+        originalWebsiteDataRecordCount = websiteDataRecords.count;
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -166,7 +169,7 @@ TEST(WKWebView, ClearAppCache)
         EXPECT_EQ(fileSize(walTargetURL), 0);
         [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords)
         {
-            EXPECT_EQ(websiteDataRecords.count, 0ul);
+            EXPECT_EQ(websiteDataRecords.count, originalWebsiteDataRecordCount - 1);
             readyToContinue = true;
         }];
     }];
