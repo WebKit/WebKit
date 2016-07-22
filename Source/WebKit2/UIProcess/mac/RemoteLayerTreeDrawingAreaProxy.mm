@@ -423,6 +423,11 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(double)
 
 void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState()
 {
+    // We must send the didUpdate message before blocking on the next commit, otherwise
+    // we can be guaranteed that the next commit won't come until after the waitForAndDispatchImmediately times out.
+    if (m_didUpdateMessageState != Sent)
+        didRefreshDisplay(monotonicallyIncreasingTime());
+
     static std::chrono::milliseconds viewStateUpdateTimeout = [] {
         if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideViewStateUpdateTimeout"])
             return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>([value doubleValue]));
