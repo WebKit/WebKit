@@ -1,5 +1,41 @@
 2016-07-21  Saam Barati  <sbarati@apple.com>
 
+        callOperation(.) variants in the DFG that explicitly take a tag/payload register should take a JSValueRegs instead
+        https://bugs.webkit.org/show_bug.cgi?id=160007
+
+        Reviewed by Filip Pizlo.
+
+        This patch is the first step in my plan to remove all callOperation(.) variants
+        in the various JITs and to unify them using a couple template variations.
+        The steps are as follows:
+        1. Replace all explicit tag/payload pairs with JSValueRegs in the DFG
+        2. Replace all explicit tag/payload pairs with JSValueRegs in the baseline
+        3. remove callOperation(.) variants and teach setupArgumentsWithExecState
+           about JSValueRegs.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileGetDynamicVar):
+        (JSC::DFG::SpeculativeJIT::compilePutDynamicVar):
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorByVal):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::generateInternal):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2016-07-21  Saam Barati  <sbarati@apple.com>
+
         op_add/ValueAdd should be an IC in all JIT tiers
         https://bugs.webkit.org/show_bug.cgi?id=159649
 

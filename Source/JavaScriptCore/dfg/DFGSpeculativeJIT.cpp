@@ -2021,7 +2021,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
             addSlowPathGenerator(
                 slowPathCall(
                     outOfBounds, this, operationGetByValStringInt,
-                    resultTagReg, scratchReg, baseReg, propertyReg));
+                    JSValueRegs(resultTagReg, scratchReg), baseReg, propertyReg));
 #endif
         }
         
@@ -3415,7 +3415,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
             }
 
             if (addICGenerationState->shouldSlowPathRepatch)
-                addICGenerationState->slowPathCall = callOperation(operationValueAddOptimize, resultRegs, innerLeftRegs, innerRightRegs, addIC);
+                addICGenerationState->slowPathCall = callOperation(operationValueAddOptimize, resultRegs, innerLeftRegs, innerRightRegs, TrustedImmPtr(addIC));
             else
                 addICGenerationState->slowPathCall = callOperation(operationValueAdd, resultRegs, innerLeftRegs, innerRightRegs);
 
@@ -8096,7 +8096,7 @@ void SpeculativeJIT::compileGetDynamicVar(Node* node)
     flushRegisters();
     GPRFlushedCallResult2 resultTag(this);
     GPRFlushedCallResult resultPayload(this);
-    callOperation(operationGetDynamicVar, resultTag.gpr(), resultPayload.gpr(), scopeGPR, identifierUID(node->identifierNumber()), node->getPutInfo());
+    callOperation(operationGetDynamicVar, JSValueRegs(resultTag.gpr(), resultPayload.gpr()), scopeGPR, identifierUID(node->identifierNumber()), node->getPutInfo());
     m_jit.exceptionCheck();
     jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
 #endif
@@ -8116,7 +8116,7 @@ void SpeculativeJIT::compilePutDynamicVar(Node* node)
     GPRReg tag = value.tagGPR();
     GPRReg payload = value.payloadGPR();
     flushRegisters();
-    callOperation(operationPutDynamicVar, NoResult, scopeGPR, tag, payload, identifierUID(node->identifierNumber()), node->getPutInfo());
+    callOperation(operationPutDynamicVar, NoResult, scopeGPR, JSValueRegs(tag, payload), identifierUID(node->identifierNumber()), node->getPutInfo());
 #endif
     m_jit.exceptionCheck();
     noResult(node);
@@ -8142,7 +8142,7 @@ void SpeculativeJIT::compilePutAccessorByVal(Node* node)
     GPRReg accessorGPR = accessor.gpr();
 
     flushRegisters();
-    callOperation(operation, NoResult, baseGPR, subscriptRegs.tagGPR(), subscriptRegs.payloadGPR(), node->accessorAttributes(), accessorGPR);
+    callOperation(operation, NoResult, baseGPR, subscriptRegs, node->accessorAttributes(), accessorGPR);
 #endif
     m_jit.exceptionCheck();
 
