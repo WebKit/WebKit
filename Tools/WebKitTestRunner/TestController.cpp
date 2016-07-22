@@ -685,6 +685,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetMediaPlaybackAllowsInline(preferences, true);
     WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(preferences, false);
+    WKPreferencesSetAllowsInlineMediaPlaybackWithPlaysInlineAttribute(preferences, false);
+    WKPreferencesSetAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(preferences, false);
 
     WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
 

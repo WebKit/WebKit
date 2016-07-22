@@ -1,5 +1,22 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203540. rdar://problem/26964090
+
+    2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Follow-up patch to r203520
+            https://bugs.webkit.org/show_bug.cgi?id=159967
+            <rdar://problem/26964090>
+
+            Unreviewed.
+
+            * DumpRenderTree/mac/DumpRenderTree.mm:
+            (setDefaultsToConsistentValuesForTesting):
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::resetPreferencesToConsistentValues):
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203520. rdar://problem/26964090
 
     2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
