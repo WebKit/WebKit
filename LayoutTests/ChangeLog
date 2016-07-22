@@ -1,5 +1,17 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203536. rdar://problem/27430111
+
+    2016-07-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Move expected.txt file for editing/deleting/delete-emoji.html from mac-elcapitan to mac-yosemite
+
+            Unreviewed test gardening.
+
+            * platform/mac-yosemite/editing/deleting/delete-emoji-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/editing/deleting/delete-emoji-expected.txt.
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203533. rdar://problem/27430111
 
     2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
