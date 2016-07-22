@@ -232,9 +232,9 @@ PASS Node interface: constant DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC on inter
 PASS Node interface: constant DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC on interface prototype object 
 PASS Node interface: operation compareDocumentPosition(Node) 
 FAIL Node interface: operation contains(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Node interface: operation lookupPrefix(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Node interface: operation lookupNamespaceURI(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Node interface: operation isDefaultNamespace(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Node interface: operation lookupPrefix(DOMString) 
+PASS Node interface: operation lookupNamespaceURI(DOMString) 
+PASS Node interface: operation isDefaultNamespace(DOMString) 
 PASS Node interface: operation insertBefore(Node,Node) 
 PASS Node interface: operation appendChild(Node) 
 PASS Node interface: operation replaceChild(Node,Node) 
@@ -389,17 +389,11 @@ FAIL Node interface: calling contains(Node) on new Document() with too few argum
             fn.apply(obj, args);
         }" did not throw
 PASS Node interface: new Document() must inherit property "lookupPrefix" with the proper type (39) 
-FAIL Node interface: calling lookupPrefix(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupPrefix(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "lookupNamespaceURI" with the proper type (40) 
-FAIL Node interface: calling lookupNamespaceURI(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupNamespaceURI(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "isDefaultNamespace" with the proper type (41) 
-FAIL Node interface: calling isDefaultNamespace(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isDefaultNamespace(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
@@ -529,17 +523,11 @@ FAIL Node interface: calling contains(Node) on xmlDoc with too few arguments mus
             fn.apply(obj, args);
         }" did not throw
 PASS Node interface: xmlDoc must inherit property "lookupPrefix" with the proper type (39) 
-FAIL Node interface: calling lookupPrefix(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupPrefix(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "lookupNamespaceURI" with the proper type (40) 
-FAIL Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "isDefaultNamespace" with the proper type (41) 
-FAIL Node interface: calling isDefaultNamespace(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isDefaultNamespace(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
@@ -647,17 +635,11 @@ FAIL Node interface: calling contains(Node) on document.doctype with too few arg
             fn.apply(obj, args);
         }" did not throw
 PASS Node interface: document.doctype must inherit property "lookupPrefix" with the proper type (39) 
-FAIL Node interface: calling lookupPrefix(DOMString) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupPrefix(DOMString) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "lookupNamespaceURI" with the proper type (40) 
-FAIL Node interface: calling lookupNamespaceURI(DOMString) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupNamespaceURI(DOMString) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "isDefaultNamespace" with the proper type (41) 
-FAIL Node interface: calling isDefaultNamespace(DOMString) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isDefaultNamespace(DOMString) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
@@ -753,17 +735,11 @@ FAIL Node interface: calling contains(Node) on document.createDocumentFragment()
             fn.apply(obj, args);
         }" did not throw
 PASS Node interface: document.createDocumentFragment() must inherit property "lookupPrefix" with the proper type (39) 
-FAIL Node interface: calling lookupPrefix(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupPrefix(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "lookupNamespaceURI" with the proper type (40) 
-FAIL Node interface: calling lookupNamespaceURI(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "isDefaultNamespace" with the proper type (41) 
-FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isDefaultNamespace(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
@@ -968,17 +944,11 @@ FAIL Node interface: calling contains(Node) on element with too few arguments mu
             fn.apply(obj, args);
         }" did not throw
 PASS Node interface: element must inherit property "lookupPrefix" with the proper type (39) 
-FAIL Node interface: calling lookupPrefix(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupPrefix(DOMString) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "lookupNamespaceURI" with the proper type (40) 
-FAIL Node interface: calling lookupNamespaceURI(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupNamespaceURI(DOMString) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "isDefaultNamespace" with the proper type (41) 
-FAIL Node interface: calling isDefaultNamespace(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isDefaultNamespace(DOMString) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on element with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
@@ -1139,17 +1109,11 @@ FAIL Node interface: calling contains(Node) on document.createTextNode("abc") wi
             fn.apply(obj, args);
         }" did not throw
 PASS Node interface: document.createTextNode("abc") must inherit property "lookupPrefix" with the proper type (39) 
-FAIL Node interface: calling lookupPrefix(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupPrefix(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "lookupNamespaceURI" with the proper type (40) 
-FAIL Node interface: calling lookupNamespaceURI(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "isDefaultNamespace" with the proper type (41) 
-FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isDefaultNamespace(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
@@ -1243,17 +1207,11 @@ FAIL Node interface: calling contains(Node) on xmlDoc.createProcessingInstructio
             fn.apply(obj, args);
         }" did not throw
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lookupPrefix" with the proper type (39) 
-FAIL Node interface: calling lookupPrefix(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupPrefix(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lookupNamespaceURI" with the proper type (40) 
-FAIL Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isDefaultNamespace" with the proper type (41) 
-FAIL Node interface: calling isDefaultNamespace(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isDefaultNamespace(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
@@ -1345,17 +1303,11 @@ FAIL Node interface: calling contains(Node) on document.createComment("abc") wit
             fn.apply(obj, args);
         }" did not throw
 PASS Node interface: document.createComment("abc") must inherit property "lookupPrefix" with the proper type (39) 
-FAIL Node interface: calling lookupPrefix(DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupPrefix(DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "lookupNamespaceURI" with the proper type (40) 
-FAIL Node interface: calling lookupNamespaceURI(DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "isDefaultNamespace" with the proper type (41) 
-FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling isDefaultNamespace(DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "insertBefore" with the proper type (42) 
 FAIL Node interface: calling insertBefore(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);

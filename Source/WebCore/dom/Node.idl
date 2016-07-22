@@ -99,9 +99,9 @@
     boolean isSameNode(Node? other);
     boolean isEqualNode(Node? other);
 
-    DOMString?         lookupPrefix(optional DOMString? namespaceURI = null);
-    boolean            isDefaultNamespace(optional DOMString? namespaceURI = null);
-    DOMString?         lookupNamespaceURI(optional DOMString? prefix = null);
+    DOMString? lookupPrefix(DOMString? namespaceURI);
+    DOMString? lookupNamespaceURI(DOMString? prefix);
+    boolean isDefaultNamespace(DOMString? namespaceURI);
 
     // DocumentPosition
     const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
