@@ -1,3 +1,18 @@
+2016-07-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove unused code from Debounce layout test
+        https://bugs.webkit.org/show_bug.cgi?id=160049
+        <rdar://problem/27479713>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/debounce-expected.txt:
+        Updated with new delay times.
+
+        * inspector/unit-tests/debounce.html:
+        Remove unused code that was copy-pasted from other tests, and reduced
+        delay times from 100ms to 10ms to speed up test.
+
 2016-07-22  Chris Dumez  <cdumez@apple.com>
 
         Fix default parameter values for window.alert() / prompt() / confirm()
