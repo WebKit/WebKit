@@ -71,8 +71,7 @@ interface SVGSVGElement : SVGGraphicsElement {
     SVGTransform createSVGTransform();
     SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    Element getElementById([RequiresExistingAtomicString] optional DOMString elementId = "undefined");
+    Element getElementById([RequiresExistingAtomicString] DOMString elementId);
 };
 
 SVGSVGElement implements SVGExternalResourcesRequired;

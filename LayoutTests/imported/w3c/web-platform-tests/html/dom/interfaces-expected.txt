@@ -244,9 +244,7 @@ PASS Document interface: iframe.contentDocument must inherit property "captureEv
 PASS Document interface: iframe.contentDocument must inherit property "releaseEvents" with the proper type (80) 
 PASS Document interface: iframe.contentDocument must inherit property "all" with the proper type (81) 
 PASS Document interface: iframe.contentDocument must inherit property "getElementById" with the proper type (82) 
-FAIL Document interface: calling getElementById(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementById(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "children" with the proper type (83) 
 PASS Document interface: iframe.contentDocument must inherit property "firstElementChild" with the proper type (84) 
 PASS Document interface: iframe.contentDocument must inherit property "lastElementChild" with the proper type (85) 
@@ -514,9 +512,7 @@ FAIL Document interface: new Document() must inherit property "captureEvents" wi
 FAIL Document interface: new Document() must inherit property "releaseEvents" with the proper type (80) assert_inherits: property "releaseEvents" not found in prototype chain
 FAIL Document interface: new Document() must inherit property "all" with the proper type (81) assert_inherits: property "all" not found in prototype chain
 PASS Document interface: new Document() must inherit property "getElementById" with the proper type (82) 
-FAIL Document interface: calling getElementById(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementById(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "children" with the proper type (83) 
 PASS Document interface: new Document() must inherit property "firstElementChild" with the proper type (84) 
 PASS Document interface: new Document() must inherit property "lastElementChild" with the proper type (85) 
@@ -787,9 +783,7 @@ FAIL Document interface: document.implementation.createDocument(null, "", null) 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "releaseEvents" with the proper type (80) assert_inherits: property "releaseEvents" not found in prototype chain
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "all" with the proper type (81) assert_inherits: property "all" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementById" with the proper type (82) 
-FAIL Document interface: calling getElementById(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementById(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "children" with the proper type (83) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "firstElementChild" with the proper type (84) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "lastElementChild" with the proper type (85) 

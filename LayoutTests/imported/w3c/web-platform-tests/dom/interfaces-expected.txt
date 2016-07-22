@@ -272,7 +272,7 @@ PASS Document interface: operation createEvent(DOMString)
 PASS Document interface: operation createRange() 
 PASS Document interface: operation createNodeIterator(Node,unsigned long,NodeFilter) 
 PASS Document interface: operation createTreeWalker(Node,unsigned long,NodeFilter) 
-FAIL Document interface: operation getElementById(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation getElementById(DOMString) 
 PASS Document interface: attribute children 
 PASS Document interface: attribute firstElementChild 
 PASS Document interface: attribute lastElementChild 
@@ -327,9 +327,7 @@ PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilte
 PASS Document interface: new Document() must inherit property "createTreeWalker" with the proper type (27) 
 PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "getElementById" with the proper type (28) 
-FAIL Document interface: calling getElementById(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementById(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "children" with the proper type (29) 
 PASS Document interface: new Document() must inherit property "firstElementChild" with the proper type (30) 
 PASS Document interface: new Document() must inherit property "lastElementChild" with the proper type (31) 
@@ -461,9 +459,7 @@ PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilte
 PASS Document interface: xmlDoc must inherit property "createTreeWalker" with the proper type (27) 
 PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "getElementById" with the proper type (28) 
-FAIL Document interface: calling getElementById(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling getElementById(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "children" with the proper type (29) 
 PASS Document interface: xmlDoc must inherit property "firstElementChild" with the proper type (30) 
 PASS Document interface: xmlDoc must inherit property "lastElementChild" with the proper type (31) 
@@ -661,7 +657,7 @@ PASS DocumentFragment interface object length
 PASS DocumentFragment interface object name 
 PASS DocumentFragment interface: existence and properties of interface prototype object 
 PASS DocumentFragment interface: existence and properties of interface prototype object's "constructor" property 
-FAIL DocumentFragment interface: operation getElementById(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS DocumentFragment interface: operation getElementById(DOMString) 
 PASS DocumentFragment interface: attribute children 
 PASS DocumentFragment interface: attribute firstElementChild 
 PASS DocumentFragment interface: attribute lastElementChild 
@@ -673,9 +669,7 @@ PASS DocumentFragment interface: operation querySelectorAll(DOMString)
 PASS DocumentFragment must be primary interface of document.createDocumentFragment() 
 PASS Stringification of document.createDocumentFragment() 
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "getElementById" with the proper type (0) 
-FAIL DocumentFragment interface: calling getElementById(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS DocumentFragment interface: calling getElementById(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "children" with the proper type (1) 
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "firstElementChild" with the proper type (2) 
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "lastElementChild" with the proper type (3) 
