@@ -10,7 +10,7 @@
             function runTest()
             {
                 var button = document.getElementById("test");
-                button.insertBefore(document.createElement("tbody"));
+                button.insertBefore(document.createElement("tbody"), null);
                 document.body.offsetTop;
                 document.body.removeChild(button);
                 

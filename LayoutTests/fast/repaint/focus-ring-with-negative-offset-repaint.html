@@ -9,7 +9,7 @@ function repaintTest() {
         var element = document.createElement("div");
         element.style.outlineOffset = -i + "px";
         element.style.top = (30 * i) + "px";
-        document.body.insertBefore(element);
+        document.body.insertBefore(element, null);
     }
 }
 onload = runRepaintTest;

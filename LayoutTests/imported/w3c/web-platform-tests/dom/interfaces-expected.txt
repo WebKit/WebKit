@@ -391,9 +391,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on new Document() wit
 PASS Node interface: new Document() must inherit property "isDefaultNamespace" with the proper type (41) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "insertBefore" with the proper type (42) 
-FAIL Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "replaceChild" with the proper type (44) 
@@ -521,9 +519,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc with too fe
 PASS Node interface: xmlDoc must inherit property "isDefaultNamespace" with the proper type (41) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "insertBefore" with the proper type (42) 
-FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "replaceChild" with the proper type (44) 
@@ -631,9 +627,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on document.doctype w
 PASS Node interface: document.doctype must inherit property "isDefaultNamespace" with the proper type (41) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "insertBefore" with the proper type (42) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "replaceChild" with the proper type (44) 
@@ -727,9 +721,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createDoc
 PASS Node interface: document.createDocumentFragment() must inherit property "isDefaultNamespace" with the proper type (41) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "insertBefore" with the proper type (42) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling insertBefore(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "replaceChild" with the proper type (44) 
@@ -934,9 +926,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on element with too f
 PASS Node interface: element must inherit property "isDefaultNamespace" with the proper type (41) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "insertBefore" with the proper type (42) 
-FAIL Node interface: calling insertBefore(Node,Node) on element with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling insertBefore(Node,Node) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "replaceChild" with the proper type (44) 
@@ -1097,9 +1087,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createTex
 PASS Node interface: document.createTextNode("abc") must inherit property "isDefaultNamespace" with the proper type (41) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "insertBefore" with the proper type (42) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "replaceChild" with the proper type (44) 
@@ -1193,9 +1181,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc.createProce
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isDefaultNamespace" with the proper type (41) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertBefore" with the proper type (42) 
-FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceChild" with the proper type (44) 
@@ -1287,9 +1273,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createCom
 PASS Node interface: document.createComment("abc") must inherit property "isDefaultNamespace" with the proper type (41) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "insertBefore" with the proper type (42) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "appendChild" with the proper type (43) 
 PASS Node interface: calling appendChild(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "replaceChild" with the proper type (44) 

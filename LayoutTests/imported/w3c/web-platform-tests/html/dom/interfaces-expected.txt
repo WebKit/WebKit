@@ -372,9 +372,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on iframe.contentDocu
 PASS Node interface: iframe.contentDocument must inherit property "isDefaultNamespace" with the proper type (39) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "appendChild" with the proper type (41) 
 PASS Node interface: calling appendChild(Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "replaceChild" with the proper type (42) 
@@ -638,9 +636,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on new Document() wit
 PASS Node interface: new Document() must inherit property "isDefaultNamespace" with the proper type (39) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "appendChild" with the proper type (41) 
 PASS Node interface: calling appendChild(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "replaceChild" with the proper type (42) 
@@ -907,9 +903,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on document.implement
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "isDefaultNamespace" with the proper type (39) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "HierarchyRequestError (DOM Exception 3): The operation wo..." ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling insertBefore(Node,Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "appendChild" with the proper type (41) 
 PASS Node interface: calling appendChild(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "replaceChild" with the proper type (42) 
@@ -1301,9 +1295,7 @@ PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createEle
 PASS Node interface: document.createElement("noscript") must inherit property "isDefaultNamespace" with the proper type (39) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Node interface: document.createElement("noscript") must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling insertBefore(Node,Node) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Node interface: document.createElement("noscript") must inherit property "appendChild" with the proper type (41) 
 PASS Node interface: calling appendChild(Node) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Node interface: document.createElement("noscript") must inherit property "replaceChild" with the proper type (42) 

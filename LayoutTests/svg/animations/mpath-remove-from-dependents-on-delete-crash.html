@@ -19,7 +19,7 @@
             window.GCController.collect();
           else if (window.gc)
             gc();
-          document.getElementById("A").insertBefore(document.getElementById("path_a"));
+          document.getElementById("A").insertBefore(document.getElementById("path_a"), null);
           if (location.hash == '')
             location.hash = '#1';
           else

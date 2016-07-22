@@ -100,7 +100,7 @@ function run()
         };
         document.body.addEventListener('DOMSubtreeModified', mutationHandler, true);
         try {
-            iframeDoc.body.insertBefore(element);
+            iframeDoc.body.insertBefore(element, null);
         } catch (e) {
           throw e;
         } finally {
