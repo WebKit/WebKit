@@ -73,18 +73,21 @@ static bool isBackgroundState(BKSApplicationState state)
     }
 }
 
-ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackgroundSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector)
+ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackgroundSelector, SEL didCreateWindowContextSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector)
     : m_view(view)
     , m_didEnterBackgroundSelector(didEnterBackgroundSelector)
+    , m_didCreateWindowContextSelector(didCreateWindowContextSelector)
     , m_didFinishSnapshottingAfterEnteringBackgroundSelector(didFinishSnapshottingAfterEnteringBackgroundSelector)
     , m_willEnterForegroundSelector(willEnterForegroundSelector)
     , m_isInBackground(true)
     , m_weakPtrFactory(this)
     , m_didEnterBackgroundObserver(nullptr)
+    , m_didCreateWindowContextObserver(nullptr)
     , m_didFinishSnapshottingAfterEnteringBackgroundObserver(nullptr)
     , m_willEnterForegroundObserver(nullptr)
 {
     ASSERT([m_view.get() respondsToSelector:m_didEnterBackgroundSelector]);
+    ASSERT([m_view.get() respondsToSelector:m_didCreateWindowContextSelector]);
     ASSERT([m_view.get() respondsToSelector:m_didFinishSnapshottingAfterEnteringBackgroundSelector]);
     ASSERT([m_view.get() respondsToSelector:m_willEnterForegroundSelector]);
 
@@ -93,6 +96,13 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     auto weakThis = m_weakPtrFactory.createWeakPtr();
+    m_didCreateWindowContextObserver = [notificationCenter addObserverForName:@"_UIWindowDidCreateWindowContextNotification" object:window queue:nil usingBlock:[weakThis](NSNotification *) {
+        auto applicationStateTracker = weakThis.get();
+        if (!applicationStateTracker)
+            return;
+        applicationStateTracker->applicationDidCreateWindowContext();
+    }];
+
     m_didFinishSnapshottingAfterEnteringBackgroundObserver = [notificationCenter addObserverForName:@"_UIWindowWillDestroyWindowContextNotification" object:window queue:nil usingBlock:[weakThis](NSNotification *) {
         auto applicationStateTracker = weakThis.get();
         if (!applicationStateTracker)
@@ -183,6 +193,7 @@ ApplicationStateTracker::~ApplicationStateTracker()
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:m_didEnterBackgroundObserver];
+    [notificationCenter removeObserver:m_didCreateWindowContextObserver];
     [notificationCenter removeObserver:m_didFinishSnapshottingAfterEnteringBackgroundObserver];
     [notificationCenter removeObserver:m_willEnterForegroundObserver];
 }
@@ -193,6 +204,12 @@ void ApplicationStateTracker::applicationDidEnterBackground()
 
     if (auto view = m_view.get())
         wtfObjcMsgSend<void>(view.get(), m_didEnterBackgroundSelector);
+}
+
+void ApplicationStateTracker::applicationDidCreateWindowContext()
+{
+    if (auto view = m_view.get())
+        wtfObjcMsgSend<void>(view.get(), m_didCreateWindowContextSelector);
 }
 
 void ApplicationStateTracker::applicationDidFinishSnapshottingAfterEnteringBackground()
