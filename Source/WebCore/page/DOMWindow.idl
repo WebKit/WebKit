@@ -73,10 +73,12 @@
                                        optional any dialogArgs,
                                        optional DOMString featureArgs);
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    void alert(optional DOMString message = "undefined");
-    boolean confirm(optional DOMString message = "undefined");
-    DOMString? prompt(optional DOMString message = "undefined", optional DOMString? defaultValue = null);
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void alert();
+#endif
+    void alert(DOMString message);
+    boolean confirm(optional DOMString message = "");
+    DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     boolean find(optional DOMString string = "undefined",

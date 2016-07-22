@@ -1,10 +1,17 @@
+ALERT: * The line below should have no text
+ALERT: 
+ALERT: * The line below should have the text 'undefined'
 ALERT: undefined
+ALERT: * The line below should have the text 'null'
 ALERT: null
-CONFIRM: undefined
+ALERT: * The lines below should have no text
+CONFIRM: 
+CONFIRM: 
+ALERT: * The line below should have the text 'null'
 CONFIRM: null
-PROMPT: undefined, default text: 
-PROMPT: null, default text: 
-ALERT: undefined
-CONFIRM: undefined
-PROMPT: undefined, default text: 
-The alerts that show up (or if this is running under DRT, that is dumped) should contain text; none should be empty. This isn't entirely consistent with other browsers in every case, but since there's no real use case for this, it's best to be explicit rather than subtle and empty.
+ALERT: * The lines below should have no text and no default text
+PROMPT: , default text: 
+PROMPT: , default text: 
+ALERT: * The line below should have the text 'null' and the default text null
+PROMPT: null, default text: null
+

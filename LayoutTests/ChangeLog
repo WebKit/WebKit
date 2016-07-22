@@ -1,3 +1,15 @@
+2016-07-22  Chris Dumez  <cdumez@apple.com>
+
+        Fix default parameter values for window.alert() / prompt() / confirm()
+        https://bugs.webkit.org/show_bug.cgi?id=160085
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing test to reflect behavior change.
+
+        * fast/dom/Window/alert-undefined-expected.txt:
+        * fast/dom/Window/alert-undefined.html:
+
 2016-07-22  Daniel Bates  <dabates@apple.com>
 
         CSP: object-src and plugin-types directives are not respected for plugin replacements

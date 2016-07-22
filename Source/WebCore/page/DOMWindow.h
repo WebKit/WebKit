@@ -175,7 +175,7 @@ namespace WebCore {
 
         void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, std::function<void (DOMWindow&)> prepareDialogFunction);
 
-        void alert(const String& message);
+        void alert(const String& message = emptyString());
         bool confirm(const String& message);
         String prompt(const String& message, const String& defaultValue);
 
