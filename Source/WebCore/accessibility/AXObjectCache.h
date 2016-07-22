@@ -348,7 +348,7 @@ protected:
     bool isNodeInUse(Node* n) { return m_textMarkerNodes.contains(n); }
     
     // CharacterOffset functions.
-    enum TraverseOption { TraverseOptionDefault = 1 << 0, TraverseOptionToNodeEnd = 1 << 1, TraverseOptionIncludeStart = 1 << 2 };
+    enum TraverseOption { TraverseOptionDefault = 1 << 0, TraverseOptionToNodeEnd = 1 << 1, TraverseOptionIncludeStart = 1 << 2, TraverseOptionValidateOffset = 1 << 3 };
     Node* nextNode(Node*) const;
     Node* previousNode(Node*) const;
     CharacterOffset traverseToOffsetInRange(RefPtr<Range>, int, TraverseOption = TraverseOptionDefault, bool stayWithinRange = false);
