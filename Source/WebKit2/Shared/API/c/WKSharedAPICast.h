@@ -81,7 +81,6 @@ class ObjCObjectGraph;
 class WebCertificateInfo;
 class WebConnection;
 class WebContextMenuItem;
-class WebGraphicsContext;
 class WebImage;
 
 template<typename APIType> struct APITypeInfo;
@@ -100,7 +99,6 @@ WK_ADD_API_MAPPING(WKDataRef, API::Data)
 WK_ADD_API_MAPPING(WKDictionaryRef, API::Dictionary)
 WK_ADD_API_MAPPING(WKDoubleRef, API::Double)
 WK_ADD_API_MAPPING(WKErrorRef, API::Error)
-WK_ADD_API_MAPPING(WKGraphicsContextRef, WebGraphicsContext)
 WK_ADD_API_MAPPING(WKImageRef, WebImage)
 WK_ADD_API_MAPPING(WKPointRef, API::Point)
 WK_ADD_API_MAPPING(WKRectRef, API::Rect)

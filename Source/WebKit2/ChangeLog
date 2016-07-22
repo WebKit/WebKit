@@ -1,3 +1,12 @@
+2016-07-22  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of an unused API typedef
+        https://bugs.webkit.org/show_bug.cgi?id=160103
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKSharedAPICast.h:
+
 2016-07-22  Dan Bernstein  <mitz@apple.com>
 
         run-safari doesn't work with Safari 10 on 10.11
