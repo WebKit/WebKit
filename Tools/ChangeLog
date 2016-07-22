@@ -1,5 +1,31 @@
 2016-07-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203426. rdar://problem/27056844
+
+    2016-07-19  Alex Christensen  <achristensen@webkit.org>
+
+            Add regression test for r203392
+            https://bugs.webkit.org/show_bug.cgi?id=159949
+
+            Reviewed by Brady Eidson.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ApplicationCache.db: Added.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ApplicationCache.db-shm: Added.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ApplicationCache.db-wal: Added.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageClear.mm:
+            (TEST):
+            (fileSize):
+            (swizzledBundleIdentifierMobileSafari):
+            (swizzledBundleIdentifierWebBookmarksD):
+            (defaultApplicationCacheDirectory):
+            * TestWebKitAPI/cocoa/InstanceMethodSwizzler.h: Copied from TestWebKitAPI/mac/InstanceMethodSwizzler.h.
+            * TestWebKitAPI/cocoa/InstanceMethodSwizzler.mm: Copied from TestWebKitAPI/mac/InstanceMethodSwizzler.mm.
+            * TestWebKitAPI/mac/InstanceMethodSwizzler.h: Removed.
+            * TestWebKitAPI/mac/InstanceMethodSwizzler.mm: Removed.
+
+2016-07-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203541. rdar://problem/27450825
 
     2016-07-21  Chelsea Pugh  <cpugh@apple.com>
