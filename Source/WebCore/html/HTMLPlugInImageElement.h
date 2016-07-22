@@ -111,6 +111,8 @@ private:
     bool isPlugInImageElement() const final { return true; }
     bool isRestartedPlugin() const final { return m_isRestartedPlugin; }
 
+    bool allowedToLoadPluginContent(const String& url, const String& mimeType) const;
+
     void finishParsingChildren() final;
     void didAddUserAgentShadowRoot(ShadowRoot*) final;
 
