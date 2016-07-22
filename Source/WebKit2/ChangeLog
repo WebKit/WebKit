@@ -1,3 +1,29 @@
+2016-07-22  Dan Bernstein  <mitz@apple.com>
+
+        run-safari doesn't work with Safari 10 on 10.11
+        https://bugs.webkit.org/show_bug.cgi?id=159958
+        <rdar://problem/27422805>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Safari’s injected bundle may depend on the newer versions of frameworks installed in a
+        staging location. Have the engineering builds of the Web Content service look for newer
+        versions in that location.
+
+        * Configurations/BaseTarget.xcconfig: Shortened a linker flag.
+
+        * Configurations/BaseXPCService.xcconfig: Increased Mach-O header padding in production
+          builds to allow for more dyld environment commands to be added after the fact.
+
+        * Configurations/DebugRelease.xcconfig: Have the new
+          WK_WEBCONTENT_SERVICE_NEEDS_VERSIONED_FRAMEWORK_PATH_LDFLAG set to YES for macOS
+          engineering builds.
+
+        * Configurations/WebContentService.xcconfig: Include the versioned frameworks whenever
+          WK_WEBCONTENT_SERVICE_NEEDS_VERSIONED_FRAMEWORK_PATH_LDFLAG is set to YES. Have the
+          value of WK_WEBCONTENT_SERVICE_NEEDS_VERSIONED_FRAMEWORK_PATH_LDFLAG default to
+          the value of USE_STAGING_INSTALL_PATH, while letting DebugRelease.xcconfig override it.
+
 2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove support for deprecated SPI inlineMediaPlaybackRequiresPlaysInlineAttribute
