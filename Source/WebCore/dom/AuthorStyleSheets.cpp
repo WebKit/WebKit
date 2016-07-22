@@ -117,7 +117,7 @@ void AuthorStyleSheets::addStyleSheetCandidateNode(Node& node, bool createdByPar
     do {
         --it;
         Node* n = *it;
-        unsigned short position = n->compareDocumentPosition(&node);
+        unsigned short position = n->compareDocumentPosition(node);
         if (position == Node::DOCUMENT_POSITION_FOLLOWING) {
             m_styleSheetCandidateNodes.insertBefore(followingNode, &node);
             return;

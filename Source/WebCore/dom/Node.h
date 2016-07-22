@@ -494,7 +494,7 @@ public:
     virtual bool willRespondToMouseClickEvents();
     virtual bool willRespondToMouseWheelEvents();
 
-    WEBCORE_EXPORT unsigned short compareDocumentPosition(Node*);
+    WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
 
     Node* toNode() override;
 

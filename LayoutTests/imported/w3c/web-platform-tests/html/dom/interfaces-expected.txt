@@ -364,9 +364,7 @@ PASS Node interface: iframe.contentDocument must inherit property "DOCUMENT_POSI
 PASS Node interface: iframe.contentDocument must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
 PASS Node interface: iframe.contentDocument must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
 PASS Node interface: iframe.contentDocument must inherit property "compareDocumentPosition" with the proper type (35) 
-FAIL Node interface: calling compareDocumentPosition(Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "contains" with the proper type (36) 
 FAIL Node interface: calling contains(Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -642,9 +640,7 @@ PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CON
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
 PASS Node interface: new Document() must inherit property "compareDocumentPosition" with the proper type (35) 
-FAIL Node interface: calling compareDocumentPosition(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "contains" with the proper type (36) 
 FAIL Node interface: calling contains(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -923,9 +919,7 @@ PASS Node interface: document.implementation.createDocument(null, "", null) must
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "compareDocumentPosition" with the proper type (35) 
-FAIL Node interface: calling compareDocumentPosition(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "contains" with the proper type (36) 
 FAIL Node interface: calling contains(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -1327,9 +1321,7 @@ PASS Node interface: document.createElement("noscript") must inherit property "D
 PASS Node interface: document.createElement("noscript") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
 PASS Node interface: document.createElement("noscript") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
 PASS Node interface: document.createElement("noscript") must inherit property "compareDocumentPosition" with the proper type (35) 
-FAIL Node interface: calling compareDocumentPosition(Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Node interface: document.createElement("noscript") must inherit property "contains" with the proper type (36) 
 FAIL Node interface: calling contains(Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);

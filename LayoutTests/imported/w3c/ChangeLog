@@ -1,3 +1,15 @@
+2016-07-22  Chris Dumez  <cdumez@apple.com>
+
+        Parameter to Node.compareDocumentPosition() should be mandatory and non-nullable
+        https://bugs.webkit.org/show_bug.cgi?id=160071
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-07-21  Chris Dumez  <cdumez@apple.com>
 
         Parameter to Node.isSameNode() / isEqualNode() should be mandatory

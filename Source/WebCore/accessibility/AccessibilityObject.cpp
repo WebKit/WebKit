@@ -646,11 +646,11 @@ static RefPtr<Range> rangeClosestToRange(Range* referenceRange, RefPtr<Range>&& 
     
     // The treeScope for shadow nodes may not be the same scope as another element in a document.
     // Comparisons may fail in that case, which are expected behavior and should not assert.
-    if (afterRange && ((afterRange->startPosition().anchorNode()->compareDocumentPosition(referenceRange->endPosition().anchorNode()) & Node::DOCUMENT_POSITION_DISCONNECTED) == Node::DOCUMENT_POSITION_DISCONNECTED))
+    if (afterRange && (referenceRange->endPosition().isNull() || ((afterRange->startPosition().anchorNode()->compareDocumentPosition(*referenceRange->endPosition().anchorNode()) & Node::DOCUMENT_POSITION_DISCONNECTED) == Node::DOCUMENT_POSITION_DISCONNECTED)))
         return nullptr;
     ASSERT(!afterRange || afterRange->startPosition() >= referenceRange->endPosition());
     
-    if (beforeRange && ((beforeRange->endPosition().anchorNode()->compareDocumentPosition(referenceRange->startPosition().anchorNode()) & Node::DOCUMENT_POSITION_DISCONNECTED) == Node::DOCUMENT_POSITION_DISCONNECTED))
+    if (beforeRange && (referenceRange->startPosition().isNull() || ((beforeRange->endPosition().anchorNode()->compareDocumentPosition(*referenceRange->startPosition().anchorNode()) & Node::DOCUMENT_POSITION_DISCONNECTED) == Node::DOCUMENT_POSITION_DISCONNECTED)))
         return nullptr;
     ASSERT(!beforeRange || beforeRange->endPosition() <= referenceRange->startPosition());
     

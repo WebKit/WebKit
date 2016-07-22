@@ -251,7 +251,7 @@ inline bool operator<(const Position& a, const Position& b)
         return false;
     if (a.anchorNode() == b.anchorNode())
         return a.deprecatedEditingOffset() < b.deprecatedEditingOffset();
-    return b.anchorNode()->compareDocumentPosition(a.anchorNode()) == Node::DOCUMENT_POSITION_PRECEDING;
+    return b.anchorNode()->compareDocumentPosition(*a.anchorNode()) == Node::DOCUMENT_POSITION_PRECEDING;
 }
 
 inline bool operator>(const Position& a, const Position& b) 

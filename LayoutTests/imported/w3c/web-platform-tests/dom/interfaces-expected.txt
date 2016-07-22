@@ -230,7 +230,7 @@ PASS Node interface: constant DOCUMENT_POSITION_CONTAINED_BY on interface object
 PASS Node interface: constant DOCUMENT_POSITION_CONTAINED_BY on interface prototype object 
 PASS Node interface: constant DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC on interface object 
 PASS Node interface: constant DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC on interface prototype object 
-FAIL Node interface: operation compareDocumentPosition(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Node interface: operation compareDocumentPosition(Node) 
 FAIL Node interface: operation contains(Node) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Node interface: operation lookupPrefix(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Node interface: operation lookupNamespaceURI(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -383,9 +383,7 @@ PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CON
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
 PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
 PASS Node interface: new Document() must inherit property "compareDocumentPosition" with the proper type (37) 
-FAIL Node interface: calling compareDocumentPosition(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "contains" with the proper type (38) 
 FAIL Node interface: calling contains(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -525,9 +523,7 @@ PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_CONTAINS" w
 PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
 PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
 PASS Node interface: xmlDoc must inherit property "compareDocumentPosition" with the proper type (37) 
-FAIL Node interface: calling compareDocumentPosition(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "contains" with the proper type (38) 
 FAIL Node interface: calling contains(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -645,9 +641,7 @@ PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_C
 PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
 PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
 PASS Node interface: document.doctype must inherit property "compareDocumentPosition" with the proper type (37) 
-FAIL Node interface: calling compareDocumentPosition(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "contains" with the proper type (38) 
 FAIL Node interface: calling contains(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -753,9 +747,7 @@ PASS Node interface: document.createDocumentFragment() must inherit property "DO
 PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
 PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
 PASS Node interface: document.createDocumentFragment() must inherit property "compareDocumentPosition" with the proper type (37) 
-FAIL Node interface: calling compareDocumentPosition(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "contains" with the proper type (38) 
 FAIL Node interface: calling contains(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -970,9 +962,7 @@ PASS Node interface: element must inherit property "DOCUMENT_POSITION_CONTAINS" 
 PASS Node interface: element must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
 PASS Node interface: element must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
 PASS Node interface: element must inherit property "compareDocumentPosition" with the proper type (37) 
-FAIL Node interface: calling compareDocumentPosition(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "contains" with the proper type (38) 
 FAIL Node interface: calling contains(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -1143,9 +1133,7 @@ PASS Node interface: document.createTextNode("abc") must inherit property "DOCUM
 PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
 PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
 PASS Node interface: document.createTextNode("abc") must inherit property "compareDocumentPosition" with the proper type (37) 
-FAIL Node interface: calling compareDocumentPosition(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "contains" with the proper type (38) 
 FAIL Node interface: calling contains(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -1249,9 +1237,7 @@ PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inher
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "compareDocumentPosition" with the proper type (37) 
-FAIL Node interface: calling compareDocumentPosition(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "contains" with the proper type (38) 
 FAIL Node interface: calling contains(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -1353,9 +1339,7 @@ PASS Node interface: document.createComment("abc") must inherit property "DOCUME
 PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
 PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
 PASS Node interface: document.createComment("abc") must inherit property "compareDocumentPosition" with the proper type (37) 
-FAIL Node interface: calling compareDocumentPosition(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Node interface: calling compareDocumentPosition(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "contains" with the proper type (38) 
 FAIL Node interface: calling contains(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);

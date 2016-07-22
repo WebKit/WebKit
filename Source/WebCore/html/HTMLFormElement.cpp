@@ -529,7 +529,7 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
     while (left != right) {
         unsigned middle = left + ((right - left) / 2);
         ASSERT(middle < m_associatedElementsBeforeIndex || middle >= m_associatedElementsAfterIndex);
-        position = element->compareDocumentPosition(&m_associatedElements[middle]->asHTMLElement());
+        position = element->compareDocumentPosition(m_associatedElements[middle]->asHTMLElement());
         if (position & DOCUMENT_POSITION_FOLLOWING)
             right = middle;
         else
@@ -537,7 +537,7 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
     }
     
     ASSERT(left < m_associatedElementsBeforeIndex || left >= m_associatedElementsAfterIndex);
-    position = element->compareDocumentPosition(&m_associatedElements[left]->asHTMLElement());
+    position = element->compareDocumentPosition(m_associatedElements[left]->asHTMLElement());
     if (position & DOCUMENT_POSITION_FOLLOWING)
         return left;
     return left + 1;
@@ -552,7 +552,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
     // Treats separately the case where this element has the form attribute
     // for performance consideration.
     if (associatedHTMLElement.hasAttributeWithoutSynchronization(formAttr)) {
-        unsigned short position = compareDocumentPosition(&associatedHTMLElement);
+        unsigned short position = compareDocumentPosition(associatedHTMLElement);
         if (position & DOCUMENT_POSITION_PRECEDING) {
             ++m_associatedElementsBeforeIndex;
             ++m_associatedElementsAfterIndex;

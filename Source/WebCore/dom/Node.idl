@@ -111,8 +111,7 @@
     const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
     const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
-    // FIXME: other should be neither optional nor nullable.
-    unsigned short     compareDocumentPosition(optional Node? other = null);
+    unsigned short compareDocumentPosition(Node other);
 
     // Introduced in DOM4
     // FIXME: other should not be optional.
