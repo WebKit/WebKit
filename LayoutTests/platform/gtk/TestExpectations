@@ -1641,6 +1641,12 @@ webkit.org/b/158926 media/video-load-preload-none.html [ Timeout ]
 
 webkit.org/b/160019 media/media-source/media-source-small-gap.html [ Timeout ]
 
+webkit.org/b/160126 fast/forms/input-image-submit.html [ Timeout ]
+
+webkit.org/b/160127 js/regress-139548.html [ Timeout ]
+
+webkit.org/b/160128 security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2653,7 +2659,7 @@ fast/text/emoji-gender.html [ Pass ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Tests failing since switch to THREADED COMPOSITOR
+# Tests failing due to switch to THREADED COMPOSITOR
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/160119 accessibility/media-element.html [ Timeout Crash Pass ]
@@ -2733,6 +2739,7 @@ webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/160119 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/160119 media/broken-video.html [ Crash Pass ]
+webkit.org/b/160119 media/click-volume-bar-not-pausing.html [ Timeout Failure Pass ]
 webkit.org/b/160119 media/media-captions.html [ Timeout Failure Crash ]
 webkit.org/b/160119 media/media-fullscreen-inline.html [ Crash Pass ]
 webkit.org/b/160119 media/video-poster.html [ Crash Pass ]
@@ -2745,6 +2752,6 @@ webkit.org/b/160119 svg/repaint/add-outline-property-on-root.html [ ImageOnlyFai
 webkit.org/b/160119 svg/repaint/remove-outline-property-on-root.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# End of tests failing since THREADED COMPOSITOR was enabled. Don't put random test
+# End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
 # failures here. See the top of the file for where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////
