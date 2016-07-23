@@ -464,6 +464,12 @@ void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
         callback->sendSuccess(InspectorObject::create());
 }
 
+void WebAutomationSession::keyboardEventsFlushedForPage(const WebPageProxy& page)
+{
+    if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.pageID()))
+        callback->sendSuccess(InspectorObject::create());
+}
+
 void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
@@ -923,7 +929,7 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
 #endif // USE(APPKIT)
 }
 
-void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString, const String& handle, const Inspector::InspectorArray& interactions)
+void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString, const String& handle, const Inspector::InspectorArray& interactions, Ref<PerformKeyboardInteractionsCallback>&& callback)
 {
 #if !USE(APPKIT)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
@@ -985,9 +991,16 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
     }
 
     ASSERT(actionsToPerform.size());
+    if (!actionsToPerform.size())
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "No actions to perform.");
+
+    auto& callbackInMap = m_pendingKeyboardEventsFlushedCallbacksPerPage.add(page->pageID(), nullptr).iterator->value;
+    if (callbackInMap)
+        callbackInMap->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
+    callbackInMap = WTFMove(callback);
+
     for (auto& action : actionsToPerform)
         action();
-
 #endif // USE(APPKIT)
 }
 

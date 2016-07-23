@@ -1,5 +1,32 @@
 2016-07-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Automation: All key events should be processed before sending response
+        https://bugs.webkit.org/show_bug.cgi?id=160114
+        <rdar://problem/27505943>
+
+        Reviewed by Darin Adler.
+
+        When evaluating performKeyboardInteractions, we were sending all
+        NSEvents synchronously, but because WebPageProxy was doing its
+        own queueing and asynchronous processing of those key events, we
+        would receive and respond to the next Automation command before
+        having completed all of the key events.
+
+        This change makes performKeyboardInteractions asynchronous. It
+        will be notified only after WebPageProxy has exhausted its queue
+        of key events.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::keyboardEventsFlushedForPage):
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+
+2016-07-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Automation: WebAutomationSession::deleteAllCookies never calls callback, hangs automation session
         https://bugs.webkit.org/show_bug.cgi?id=160113
         <rdar://problem/27308124>
