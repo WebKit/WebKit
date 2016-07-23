@@ -1,5 +1,15 @@
 2016-07-23  Frederic Wang  <fwang@igalia.com>
 
+        Reset font-style on the <math> element
+        https://bugs.webkit.org/show_bug.cgi?id=160074
+
+        Reviewed by Darin Adler.
+
+        * mathml/presentation/math-font-style-expected.html: Added.
+        * mathml/presentation/math-font-style.html: Added.
+
+2016-07-23  Frederic Wang  <fwang@igalia.com>
+
         [MathML] PaintInfo state not properly restored after applyTransform.
         https://bugs.webkit.org/show_bug.cgi?id=160077
 

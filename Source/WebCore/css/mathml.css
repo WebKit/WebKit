@@ -42,6 +42,12 @@ math {
     */
     direction: ltr;
 
+    /*
+    Mathematical formula inside an italic paragraph should not inherit the font-style as this gives
+    poor rendering and is confusing with the mathvariant italic.
+    */
+    font-style: normal;
+
     /* Fonts with appropriate Unicode coverage and OpenType features are required for good math
     rendering. These requirements as well as the up-to-date list of known math fonts to fulfill
     these requirements are listed on http://trac.webkit.org/wiki/MathML/Fonts.
