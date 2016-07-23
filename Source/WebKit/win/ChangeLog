@@ -1,3 +1,10 @@
+2016-07-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix Windows build after r203623.
+
+        * DOMCoreClasses.cpp:
+        (DOMDocument::getComputedStyle):
+
 2016-07-22  Per Arne Vollan  <pvollan@apple.com>
 
         IWebView::mainFrame crashes if called after IWebView::close
