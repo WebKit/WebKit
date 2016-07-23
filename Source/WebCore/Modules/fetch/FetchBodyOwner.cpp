@@ -204,10 +204,11 @@ void FetchBodyOwner::blobLoadingFailed()
 
 void FetchBodyOwner::blobChunk(const char* data, size_t size)
 {
+    ASSERT(data);
 #if ENABLE(STREAMS_API)
     ASSERT(m_readableStreamSource);
-    // FIXME: If ArrayBuffer::tryCreate returns null, we should probably cancel the load.
-    m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size));
+    if (!m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size)))
+        stop();
 #else
     UNUSED_PARAM(data);
     UNUSED_PARAM(size);

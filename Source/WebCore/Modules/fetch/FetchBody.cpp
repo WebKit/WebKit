@@ -151,14 +151,14 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
 
     switch (m_type) {
     case Type::ArrayBuffer:
-        source.enqueue(m_data);
-        source.close();
+        ASSERT(m_data);
+        if (source.enqueue(RefPtr<JSC::ArrayBuffer>(m_data)))
+            source.close();
         return;
     case Type::Text: {
         Vector<uint8_t> data = extractFromText();
-        // FIXME: We should not close the source if ArrayBuffer;;tryCreate returns null.
-        source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
-        source.close();
+        if (source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size())))
+            source.close();
         return;
     }
     case Type::Blob:

@@ -59,6 +59,7 @@ function validateBufferFromString(buffer, expectedValue, message)
 function validateStreamFromString(reader, expectedValue, retrievedArrayBuffer) {
   return reader.read().then(function(data) {
     if (!data.done) {
+      assert_true(data.value instanceof Uint8Array, "Fetch ReadableStream chunks should be Uint8Array");
       var newBuffer;
       if (retrievedArrayBuffer) {
         newBuffer =  new ArrayBuffer(data.value.length + retrievedArrayBuffer.length);

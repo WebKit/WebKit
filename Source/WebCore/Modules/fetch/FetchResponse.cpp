@@ -203,8 +203,8 @@ void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
 #if ENABLE(STREAMS_API)
     ASSERT(m_response.m_readableStreamSource);
 
-    // FIXME: If ArrayBuffer::tryCreate returns null, we should probably cancel the load.
-    m_response.m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size));
+    if (!m_response.m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size)))
+        stop();
 #else
     UNUSED_PARAM(data);
     UNUSED_PARAM(size);
@@ -237,7 +237,7 @@ void FetchResponse::consumeBodyAsStream()
     if (body().type() != FetchBody::Type::Loading) {
         body().consumeAsStream(*this, *m_readableStreamSource);
         if (!m_readableStreamSource->isStarting())
-            m_readableStreamSource = nullptr;        
+            m_readableStreamSource = nullptr;
         return;
     }
 
@@ -246,9 +246,8 @@ void FetchResponse::consumeBodyAsStream()
     RefPtr<SharedBuffer> data = m_bodyLoader->startStreaming();
     if (data) {
         // FIXME: We might want to enqueue each internal SharedBuffer chunk as an individual ArrayBuffer.
-        // Also, createArrayBuffer might return nullptr which will lead to erroring the stream.
-        // We might want to cancel the load and rename createArrayBuffer to tryCreateArrayBuffer.
-        m_readableStreamSource->enqueue(data->createArrayBuffer());
+        if (!m_readableStreamSource->enqueue(data->createArrayBuffer()))
+            stop();
     }
 }
 

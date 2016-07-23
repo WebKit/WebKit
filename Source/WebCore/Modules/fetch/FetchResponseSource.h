@@ -32,6 +32,10 @@
 
 #include "ReadableStreamSource.h"
 
+namespace JSC {
+class ArrayBuffer;
+};
+
 namespace WebCore {
 
 class FetchResponse;
@@ -40,7 +44,7 @@ class FetchResponseSource final : public ReadableStreamSource {
 public:
     FetchResponseSource(FetchResponse&);
 
-    template<typename T> void enqueue(const T& t) { controller().enqueue(t); }
+    bool enqueue(RefPtr<JSC::ArrayBuffer>&& chunk) { return controller().enqueue(WTFMove(chunk)); }
     void close();
     void error(const String&);
 
