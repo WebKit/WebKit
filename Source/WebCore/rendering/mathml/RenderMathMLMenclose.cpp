@@ -211,13 +211,16 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
         return;
 
     LayoutUnit thickness = ruleThickness();
-    GraphicsContextStateSaver stateSaver(info.context());
 
-    info.context().setStrokeThickness(thickness);
-    info.context().setStrokeStyle(SolidStroke);
-    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));
-    info.context().setFillColor(Color::transparent);
-    info.applyTransform(AffineTransform().translate(paintOffset + location()));
+    // Make a copy of the PaintInfo because applyTransform will modify its rect.
+    PaintInfo paintInfo(info);
+    GraphicsContextStateSaver stateSaver(paintInfo.context());
+
+    paintInfo.context().setStrokeThickness(thickness);
+    paintInfo.context().setStrokeStyle(SolidStroke);
+    paintInfo.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));
+    paintInfo.context().setFillColor(Color::transparent);
+    paintInfo.applyTransform(AffineTransform().translate(paintOffset + location()));
 
     // In the MathML in HTML5 implementation note, the "left" notation is described as follows:
     // - center of the left vertical bar is at 3\xi_8 padding + \xi_8 border/2 = 7\xi_8/2
@@ -296,7 +299,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
         roundedRect.inflate(7 * thickness / 2);
         Path path;
         path.addRoundedRect(roundedRect);
-        info.context().strokePath(path);
+        paintInfo.context().strokePath(path);
     }
 
     // For longdiv, we use our own rules for now:
@@ -322,7 +325,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
         path.moveTo(LayoutPoint(right, top));
         path.addLineTo(LayoutPoint(left, top));
         path.addQuadCurveTo(LayoutPoint(midX, midY), FloatPoint(left, bottom));
-        info.context().strokePath(path);
+        paintInfo.context().strokePath(path);
     }
 
     // In the MathML in HTML5 implementation note, the "circle" notation is described as follows:
@@ -337,7 +340,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
         ellipseRect.setY(m_contentRect.y() - (ellipseRect.height() - m_contentRect.height()) / 2);
         Path path;
         path.addEllipse(ellipseRect);
-        info.context().strokePath(path);
+        paintInfo.context().strokePath(path);
     }
 }
 
