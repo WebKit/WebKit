@@ -38,7 +38,7 @@ log = logging.getLogger('global')
 # These match WK_lcfirst and WK_ucfirst defined in CodeGenerator.pm.
 def WK_lcfirst(str):
     str = str[:1].lower() + str[1:]
-    str = str.replace('hTML', 'html')
+    str = str.replace('dOM', 'dom')
     str = str.replace('uRL', 'url')
     str = str.replace('jS', 'js')
     str = str.replace('xML', 'xml')

@@ -193,40 +193,6 @@ static bool buildOptions(FetchRequest::InternalRequest& request, ScriptExecution
     return true;
 }
 
-static RefPtr<FetchHeaders> buildHeaders(const Dictionary& init, const FetchRequest::InternalRequest& request, const FetchHeaders* inputHeaders = nullptr)
-{
-    FetchHeaders::Guard guard = FetchHeaders::Guard::Request;
-    if (request.options.mode == FetchOptions::Mode::NoCors) {
-        const String& method = request.request.httpMethod();
-        if (method != "GET" && method != "POST" && method != "HEAD")
-            return nullptr;
-        if (!request.integrity.isEmpty())
-            return nullptr;
-        guard = FetchHeaders::Guard::RequestNoCors;
-    }
-
-    RefPtr<FetchHeaders> initialHeaders;
-    RefPtr<FetchHeaders> headers = FetchHeaders::create(guard);
-    headers->fill(init.get("headers", initialHeaders) ? initialHeaders.get() : inputHeaders);
-
-    return headers;
-}
-
-static FetchBody buildBody(const Dictionary& init, FetchHeaders& headers, FetchBody* inputBody = nullptr)
-{
-    JSC::JSValue value;
-    bool hasInitBody = init.get("body", value);
-    FetchBody body = hasInitBody ? FetchBody::extract(*init.execState(), value) : FetchBody::extractFromBody(inputBody);
-
-    String type = headers.fastGet(HTTPHeaderName::ContentType);
-    if (hasInitBody && type.isEmpty() && !body.mimeType().isEmpty()) {
-        type = body.mimeType();
-        headers.fastSet(HTTPHeaderName::ContentType, type);
-    }
-    body.setMimeType(type);
-    return body;
-}
-
 static bool validateBodyAndMethod(const FetchBody& body, const FetchRequest::InternalRequest& internalRequest)
 {
     if (body.isEmpty())
@@ -234,71 +200,77 @@ static bool validateBodyAndMethod(const FetchBody& body, const FetchRequest::Int
     return internalRequest.request.httpMethod() != "GET" && internalRequest.request.httpMethod() != "HEAD";
 }
 
-RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, const String& url, const Dictionary& init, ExceptionCode& ec)
+void FetchRequest::initializeOptions(const Dictionary& init, ExceptionCode& ec)
 {
+    ASSERT(scriptExecutionContext());
+    if (!buildOptions(m_internalRequest, *scriptExecutionContext(), init)) {
+        ec = TypeError;
+        return;
+    }
+
+    if (m_internalRequest.options.mode == FetchOptions::Mode::NoCors) {
+        const String& method = m_internalRequest.request.httpMethod();
+        if (method != "GET" && method != "POST" && method != "HEAD") {
+            ec = TypeError;
+            return;
+        }
+        if (!m_internalRequest.integrity.isEmpty()) {
+            ec = TypeError;
+            return;
+        }
+        m_headers->setGuard(FetchHeaders::Guard::RequestNoCors);
+    }
+}
+
+FetchHeaders* FetchRequest::initializeWith(const String& url, const Dictionary& init, ExceptionCode& ec)
+{
+    ASSERT(scriptExecutionContext());
     // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
-    URL requestURL = context.completeURL(url);
+    URL requestURL = scriptExecutionContext()->completeURL(url);
     if (!requestURL.isValid() || !requestURL.user().isEmpty() || !requestURL.pass().isEmpty()) {
         ec = TypeError;
         return nullptr;
     }
 
-    FetchRequest::InternalRequest internalRequest;
-    internalRequest.options.mode = Mode::Cors;
-    internalRequest.options.credentials = Credentials::Omit;
-    internalRequest.referrer = ASCIILiteral("client");
-    internalRequest.request.setURL(requestURL);
+    m_internalRequest.options.mode = Mode::Cors;
+    m_internalRequest.options.credentials = Credentials::Omit;
+    m_internalRequest.referrer = ASCIILiteral("client");
+    m_internalRequest.request.setURL(requestURL);
 
-    if (!buildOptions(internalRequest, context, init)) {
-        ec = TypeError;
-        return nullptr;
-    }
-
-    RefPtr<FetchHeaders> headers = buildHeaders(init, internalRequest);
-    if (!headers) {
-        ec = TypeError;
-        return nullptr;
-    }
-
-    FetchBody body = buildBody(init, *headers);
-    if (!validateBodyAndMethod(body, internalRequest)) {
-        ec = TypeError;
-        return nullptr;
-    }
-
-    return adoptRef(*new FetchRequest(context, WTFMove(body), headers.releaseNonNull(), WTFMove(internalRequest)));
+    initializeOptions(init, ec);
+    return m_headers.ptr();
 }
 
-RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, FetchRequest& input, const Dictionary& init, ExceptionCode& ec)
+FetchHeaders* FetchRequest::initializeWith(FetchRequest& input, const Dictionary& init, ExceptionCode& ec)
 {
     if (input.isDisturbed()) {
         ec = TypeError;
         return nullptr;
     }
 
-    FetchRequest::InternalRequest internalRequest(input.m_internalRequest);
+    m_internalRequest = input.m_internalRequest;
 
-    if (!buildOptions(internalRequest, context, init)) {
-        ec = TypeError;
-        return nullptr;
+    initializeOptions(init, ec);
+    return m_headers.ptr();
+}
+
+void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRequest* request, ExceptionCode& ec)
+{
+    if (!body.isNull())
+        m_body = FetchBody::extract(execState, body);
+    else if (request && !request->m_body.isEmpty()) {
+        m_body = FetchBody::extractFromBody(&request->m_body);
+        request->setDisturbed();
     }
 
-    RefPtr<FetchHeaders> headers = buildHeaders(init, internalRequest, input.m_headers.ptr());
-    if (!headers) {
-        ec = TypeError;
-        return nullptr;
+    String type = m_headers->fastGet(HTTPHeaderName::ContentType);
+    if (!body.isUndefined() && type.isEmpty() && !m_body.mimeType().isEmpty()) {
+        type = m_body.mimeType();
+        m_headers->fastSet(HTTPHeaderName::ContentType, type);
     }
-
-    FetchBody body = buildBody(init, *headers, &input.m_body);
-    if (!validateBodyAndMethod(body, internalRequest)) {
+    m_body.setMimeType(type);
+    if (!validateBodyAndMethod(m_body, m_internalRequest))
         ec = TypeError;
-        return nullptr;
-    }
-
-    if (!input.m_body.isEmpty())
-        input.setDisturbed();
-
-    return adoptRef(*new FetchRequest(context, WTFMove(body), headers.releaseNonNull(), WTFMove(internalRequest)));
 }
 
 String FetchRequest::referrer() const

@@ -132,6 +132,16 @@
 
 #endif
 
+
+#if ENABLE(TEST_FEATURE)
+- (void)testJSBuiltinFunction
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->testJSBuiltinFunction();
+}
+
+#endif
+
 @end
 
 WebCore::TestGlobalObject* core(DOMTestGlobalObject *wrapper)

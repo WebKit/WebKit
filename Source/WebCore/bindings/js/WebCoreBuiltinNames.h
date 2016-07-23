@@ -41,6 +41,7 @@ namespace WebCore {
     macro(controller) \
     macro(createReadableStreamSource) \
     macro(disturbed) \
+    macro(fetchRequest) \
     macro(fillFromJS) \
     macro(firstReadCallback) \
     macro(getUserMediaFromJS) \
@@ -68,6 +69,7 @@ namespace WebCore {
     macro(responseCacheIsValid) \
     macro(retrieveResponse) \
     macro(response) \
+    macro(setBody) \
     macro(setStatus) \
     macro(state) \
     macro(started) \
@@ -89,6 +91,7 @@ namespace WebCore {
     macro(ReadableStream) \
     macro(ReadableStreamReader) \
     macro(ReadableStreamController) \
+    macro(Request) \
     macro(Response) \
     macro(RTCIceCandidate) \
     macro(RTCSessionDescription) \

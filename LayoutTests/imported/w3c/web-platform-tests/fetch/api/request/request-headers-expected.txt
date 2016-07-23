@@ -53,4 +53,5 @@ PASS Request should get its content-type from the init request
 PASS Request should not get its content-type from the init request if init headers are provided 
 PASS Request should get its content-type from the body if none is provided 
 PASS Request should get its content-type from init headers if one is provided 
+PASS Testing request header creations with various objects 
 

@@ -1,3 +1,13 @@
+2016-07-23  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Request should be created with any HeadersInit data
+        https://bugs.webkit.org/show_bug.cgi?id=159672
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/builtins/builtins_generator.py:
+        (WK_lcfirst): Synchronized with CodeGenerator.pm version.
+
 2016-07-21  Filip Pizlo  <fpizlo@apple.com>
 
         Teach MarkedSpace how to allocate auxiliary storage
