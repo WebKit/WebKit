@@ -55,6 +55,9 @@ editing/pasteboard/gtk [ Pass ]
 #
 # 10. TESTS PASSING
 # Tests that pass for GTK but have different expectations in the global expectations file.
+#
+# 11. THREADED COMPOSITOR FAILURES
+# Tests that are now failing because of the switch to ThreadedCompositor.
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests that require new results.
@@ -2667,4 +2670,88 @@ imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Tests failing since switch to THREADED COMPOSITOR
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/160119 accessibility/media-element.html [ Timeout Crash Pass ]
+
+webkit.org/b/160119 animations/negative-delay.html [ Failure Pass ]
+
+webkit.org/b/160119 css3/masking/mask-base64.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
+webkit.org/b/160119 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
+
+webkit.org/b/160119 media/media-fullscreen-inline.html [ Crash Pass ]
+webkit.org/b/160119 media/video-playbackrate.html [ Crash Pass ]
+
+webkit.org/b/160119 fast/backgrounds/size/backgroundSize-in-background-shorthand.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 fast/block/basic/020.html [ Failure ]
+
+webkit.org/b/160119 fast/block/positioning/016.html [ Failure ]
+webkit.org/b/160119 fast/block/positioning/025.html [ Failure ]
+webkit.org/b/160119 fast/block/positioning/fixed-position-stacking-context.html [ Failure ]
+
+webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ Failure Pass ]
+webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ Failure ]
+webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ Failure ]
+
+webkit.org/b/160119 fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html [ Failure ]
+
+webkit.org/b/160119 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure Pass ]
+
+webkit.org/b/160119 fast/dynamic/012.html [ Failure ]
+webkit.org/b/160119 fast/dynamic/layer-hit-test-crash.html [ Failure ]
+
+webkit.org/b/160119 fast/flexbox/image-percent-max-height.html [ Failure Pass ]
+
+webkit.org/b/160119 fast/forms/enter-clicks-buttons.html [ Failure Pass ]
+webkit.org/b/160119 fast/forms/focus-selection-textarea.html [ Failure Pass ]
+
+webkit.org/b/160119 fast/layers/layer-visibility-sublayer.html [ Failure ]
+webkit.org/b/160119 fast/layers/layer-visibility.html [ Failure ]
+
+webkit.org/b/160119 fast/multicol/mixed-opacity-fixed-test.html [ Failure ]
+
+webkit.org/b/160119 fast/regions/regions-overflow-tile.html [ Failure Pass ]
+
+webkit.org/b/160119 fast/repaint/backgroundSizeRepaint.html [ Failure Pass ]
+webkit.org/b/160119 fast/repaint/selection-gap-fixed-child.html [ Failure ]
+webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
+
+webkit.org/b/160119 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Failure ]
+webkit.org/b/160119 fast/scrolling/rtl-scrollbars-sticky-document-2.html [ Failure ]
+
+webkit.org/b/160119 fast/text/crash-complex-unknown-font.html [ Failure Pass ]
+webkit.org/b/160119 fast/text/orthogonal-writing-mode-containing-block-frameView-resize-relayout.html [ ImageOnlyFailure ]
+webkit.org/b/160119 fast/text/whitespace/028.html [ Failure ]
+
+webkit.org/b/160119 imported/blink/compositing/squashing/squash-above-fixed-subpixel-2.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure ]
+
+webkit.org/b/160119 imported/blink/css3/filters/effect-reference-source-alpha-hw.html [ ImageOnlyFailure ]
+
+webkit.org/b/160119 imported/blink/svg/animations/viewspec-animated-viewbox.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/160119 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure Pass ]
+
+webkit.org/b/160119 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 media/media-captions.html [ Timeout Failure Crash ]
+webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 svg/repaint/add-outline-property-on-root.html [ ImageOnlyFailure ]
+webkit.org/b/160119 svg/repaint/remove-outline-property-on-root.html [ ImageOnlyFailure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of tests failing since THREADED COMPOSITOR was enabled. Don't put random test
+# failures here. See the top of the file for where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////
