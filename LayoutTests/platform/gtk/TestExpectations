@@ -1332,6 +1332,16 @@ webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted.h
 webkit.org/b/158919 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure Pass ]
 webkit.org/b/158919 http/tests/loading/basic-credentials-sent-automatically.html [ Failure Pass ]
 
+# This test relies on iOS-specific font fallback.
+fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
+
+# These are expected mismatches, so they should fail, and the bug is they sometimes pass.
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-1.html [ ImageOnlyFailure Pass ]
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.html [ ImageOnlyFailure Pass ]
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.xhtml [ ImageOnlyFailure Pass ]
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2579,13 +2589,6 @@ webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ 
 
 webkit.org/b/153709 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure ]
 
-# These are expected mismatches, so they should fail, and the bug is they sometimes pass.
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-1.html [ ImageOnlyFailure Pass ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.html [ ImageOnlyFailure Pass ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.xhtml [ ImageOnlyFailure Pass ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure Pass ]
-
 webkit.org/b/156438 imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Timeout Failure ]
 webkit.org/b/156438 imported/w3c/web-platform-tests/IndexedDB/keyorder.htm [ Failure ]
 webkit.org/b/156438 inspector/indexeddb/requestDatabaseNames.html [ Failure ]
@@ -2623,10 +2626,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-elemen
 webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Pass ]
 
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
-
-# This test relies on iOS-specific font fallback.
-fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
-
 
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
 
@@ -2728,6 +2727,7 @@ webkit.org/b/160119 fast/scrolling/rtl-scrollbars-sticky-document-2.html [ Failu
 
 webkit.org/b/160119 fast/text/crash-complex-unknown-font.html [ Failure Pass ]
 webkit.org/b/160119 fast/text/orthogonal-writing-mode-containing-block-frameView-resize-relayout.html [ ImageOnlyFailure ]
+
 webkit.org/b/160119 fast/text/whitespace/028.html [ Failure ]
 
 webkit.org/b/160119 imported/blink/compositing/squashing/squash-above-fixed-subpixel-2.html [ ImageOnlyFailure Pass ]
