@@ -373,7 +373,7 @@ describe('MeasurementSet', function () {
 
                 return waitForMeasurementSet();
             }).then(function () {
-                assert.equal(callCount, 2);
+                assert.equal(callCount, 3);
                 assert.equal(noCacheFetchCount, 2);
                 assert.equal(set._sortedClusters.length, 2);
                 assert.equal(requests.length, 4);

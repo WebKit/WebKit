@@ -16,6 +16,7 @@ class MeasurementSet {
         this._clusterStart = null;
         this._clusterSize = null;
         this._allFetches = {};
+        this._callbackMap = new Map;
         this._primaryClusterPromise = null;
     }
 
@@ -61,20 +62,36 @@ class MeasurementSet {
             this._primaryClusterPromise = null;
             this._allFetches = {};
         }
-        if (!this._primaryClusterPromise || noCache)
+        if (!this._primaryClusterPromise)
             this._primaryClusterPromise = this._fetchPrimaryCluster(noCache);
         var self = this;
         this._primaryClusterPromise.catch(callback);
         return this._primaryClusterPromise.then(function () {
-            var promiseList = [];
-            self.findClusters(startTime, endTime).map(function (clusterEndTime) {
-                if(!self._allFetches[clusterEndTime])
-                    self._allFetches[clusterEndTime] = self._fetchSecondaryCluster(clusterEndTime);
-                self._allFetches[clusterEndTime].then(callback, callback);
-                promiseList.push(self._allFetches[clusterEndTime]);
-            });
-            return Promise.all(promiseList);
+            self._allFetches[self._primaryClusterEndTime] = self._primaryClusterPromise;
+            return Promise.all(self.findClusters(startTime, endTime).map(function (clusterEndTime) {
+                return self._ensureClusterPromise(clusterEndTime, callback);
+            }));
         });
+    }
+
+    _ensureClusterPromise(clusterEndTime, callback)
+    {
+        if (!this._callbackMap.has(clusterEndTime))
+            this._callbackMap.set(clusterEndTime, new Set);
+        var callbackSet = this._callbackMap.get(clusterEndTime);
+        callbackSet.add(callback);
+
+        var promise = this._allFetches[clusterEndTime];
+        if (promise)
+            promise.then(callback, callback);
+        else {
+            promise = this._fetchSecondaryCluster(clusterEndTime);
+            for (var existingCallback of callbackSet)
+                promise.then(existingCallback, existingCallback);
+            this._allFetches[clusterEndTime] = promise;
+        }
+
+        return promise;
     }
 
     _constructUrl(useCache, clusterEndTime)
@@ -96,7 +113,6 @@ class MeasurementSet {
         if (noCache) {
             return RemoteAPI.getJSONWithStatus(self._constructUrl(false, null)).then(function (data) {
                 self._didFetchJSON(true, data);
-                self._allFetches[self._primaryClusterEndTime] = self._primaryClusterPromise;
             });
         }
 
@@ -110,7 +126,6 @@ class MeasurementSet {
             return Promise.reject(error);
         }).then(function (data) {
             self._didFetchJSON(true, data);
-            self._allFetches[self._primaryClusterEndTime] = self._primaryClusterPromise;
         });
     }
 

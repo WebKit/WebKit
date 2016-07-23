@@ -9,7 +9,6 @@ RemoteAPI.postJSON = function (path, data)
 
 RemoteAPI.postJSONWithStatus = function (path, data)
 {
-    console.log(document.cookie);
     return this.getJSONWithStatus(path, data || {});
 }
 

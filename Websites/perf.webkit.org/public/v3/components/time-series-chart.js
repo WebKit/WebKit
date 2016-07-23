@@ -83,6 +83,7 @@ class TimeSeriesChart extends ComponentBase {
     {
         this._sourceList = sourceList;
         this.fetchMeasurementSets(false);
+        this._fetchedTimeSeries = null;
     }
 
     fetchMeasurementSets(noCache)
@@ -90,7 +91,7 @@ class TimeSeriesChart extends ComponentBase {
         var fetching = false;
         for (var source of this._sourceList) {
             if (source.measurementSet) {
-                if (source.measurementSet.hasFetchedRange(this._startTime, this._endTime))
+                if (!noCache && source.measurementSet.hasFetchedRange(this._startTime, this._endTime))
                     continue;
                 source.measurementSet.fetchBetween(this._startTime, this._endTime, this._didFetchMeasurementSet.bind(this, source.measurementSet), noCache);
                 fetching = true;
