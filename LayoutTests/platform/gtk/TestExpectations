@@ -715,6 +715,9 @@ webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_use
 
 webkit.org/b/160024 platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html [ Failure ]
 
+# Missing support for new emoji
+webkit.org/b/160120 editing/deleting/delete-emoji.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
