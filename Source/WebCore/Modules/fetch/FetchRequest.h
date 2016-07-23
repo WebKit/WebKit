@@ -45,11 +45,8 @@ typedef int ExceptionCode;
 
 class FetchRequest final : public FetchBodyOwner {
 public:
-    static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, { }, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
-
-    FetchHeaders* initializeWith(FetchRequest&, const Dictionary&, ExceptionCode&);
-    FetchHeaders* initializeWith(const String&, const Dictionary&, ExceptionCode&);
-    void setBody(JSC::ExecState&, JSC::JSValue, FetchRequest*, ExceptionCode&);
+    static RefPtr<FetchRequest> create(ScriptExecutionContext&, FetchRequest&, const Dictionary&, ExceptionCode&);
+    static RefPtr<FetchRequest> create(ScriptExecutionContext&, const String&, const Dictionary&, ExceptionCode&);
 
     const String& method() const { return m_internalRequest.request.httpMethod(); }
     const String& url() const;
@@ -94,8 +91,6 @@ public:
 
 private:
     FetchRequest(ScriptExecutionContext&, FetchBody&&, Ref<FetchHeaders>&&, InternalRequest&&);
-
-    void initializeOptions(const Dictionary&, ExceptionCode&);
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const final;

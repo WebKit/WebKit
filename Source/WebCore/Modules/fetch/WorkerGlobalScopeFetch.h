@@ -25,8 +25,8 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#pragma once
+#ifndef WorkerGlobalScopeFetch_h
+#define WorkerGlobalScopeFetch_h
 
 #if ENABLE(FETCH_API)
 
@@ -37,13 +37,17 @@ namespace WebCore {
 
 class WorkerGlobalScope;
 class DeferredWrapper;
+class Dictionary;
 class FetchRequest;
 
 class WorkerGlobalScopeFetch {
 public:
-    static void fetch(WorkerGlobalScope&, FetchRequest&, DeferredWrapper&&);
+    static void fetch(WorkerGlobalScope&, FetchRequest&, const Dictionary&, DeferredWrapper&&);
+    static void fetch(WorkerGlobalScope&, const String&, const Dictionary&, DeferredWrapper&&);
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)
+
+#endif // WorkerGlobalScopeFetch_h

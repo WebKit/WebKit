@@ -559,7 +559,6 @@ sub WK_lcfirst
 {
     my ($object, $param) = @_;
     my $ret = lcfirst($param);
-    $ret =~ s/dOM/dom/ if $ret =~ /^dOM/;
     $ret =~ s/hTML/html/ if $ret =~ /^hTML/;
     $ret =~ s/uRL/url/ if $ret =~ /^uRL/;
     $ret =~ s/jS/js/ if $ret =~ /^jS/;

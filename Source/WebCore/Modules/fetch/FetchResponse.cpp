@@ -102,7 +102,7 @@ RefPtr<FetchResponse> FetchResponse::clone(ScriptExecutionContext& context, Exce
     return adoptRef(*new FetchResponse(context, FetchBody(m_body), FetchHeaders::create(headers()), ResourceResponse(m_response)));
 }
 
-void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, FetchPromise&& promise)
+void FetchResponse::startFetching(ScriptExecutionContext& context, const FetchRequest& request, FetchPromise&& promise)
 {
     auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
@@ -114,11 +114,35 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
         response->m_bodyLoader = Nullopt;
 }
 
+void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& input, const Dictionary& dictionary, FetchPromise&& promise)
+{
+    ExceptionCode ec = 0;
+    RefPtr<FetchRequest> fetchRequest = FetchRequest::create(context, input, dictionary, ec);
+    if (ec) {
+        promise.reject(ec);
+        return;
+    }
+    ASSERT(fetchRequest);
+    startFetching(context, *fetchRequest, WTFMove(promise));
+}
+
 const String& FetchResponse::url() const
 {
     if (m_responseURL.isNull())
         m_responseURL = m_response.url().serialize(true);
     return m_responseURL;
+}
+
+void FetchResponse::fetch(ScriptExecutionContext& context, const String& url, const Dictionary& dictionary, FetchPromise&& promise)
+{
+    ExceptionCode ec = 0;
+    RefPtr<FetchRequest> fetchRequest = FetchRequest::create(context, url, dictionary, ec);
+    if (ec) {
+        promise.reject(ec);
+        return;
+    }
+    ASSERT(fetchRequest);
+    startFetching(context, *fetchRequest, WTFMove(promise));
 }
 
 void FetchResponse::BodyLoader::didSucceed()

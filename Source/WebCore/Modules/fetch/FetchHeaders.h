@@ -26,7 +26,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef FetchHeaders_h
+#define FetchHeaders_h
 
 #if ENABLE(FETCH_API)
 
@@ -78,8 +79,6 @@ public:
 
     const HTTPHeaderMap& internalHeaders() const { return m_headers; }
 
-    void setGuard(Guard);
-
 private:
     FetchHeaders(Guard guard) : m_guard(guard) { }
     FetchHeaders(Guard guard, const HTTPHeaderMap& headers) : m_guard(guard), m_headers(headers) { }
@@ -88,12 +87,8 @@ private:
     HTTPHeaderMap m_headers;
 };
 
-inline void FetchHeaders::setGuard(Guard guard)
-{
-    ASSERT(!m_headers.size());
-    m_guard = guard;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)
+
+#endif // FetchHeaders_h

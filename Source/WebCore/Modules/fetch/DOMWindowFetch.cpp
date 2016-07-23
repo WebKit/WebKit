@@ -37,11 +37,18 @@
 
 namespace WebCore {
 
-void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest& request, DeferredWrapper&& promise)
+void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest& input, const Dictionary& dictionary, DeferredWrapper&& promise)
 {
     if (!window.scriptExecutionContext())
         return;
-    FetchResponse::fetch(*window.scriptExecutionContext(), request, WTFMove(promise));
+    FetchResponse::fetch(*window.scriptExecutionContext(), input, dictionary, WTFMove(promise));
+}
+
+void DOMWindowFetch::fetch(DOMWindow& window, const String& url, const Dictionary& dictionary, DeferredWrapper&& promise)
+{
+    if (!window.scriptExecutionContext())
+        return;
+    FetchResponse::fetch(*window.scriptExecutionContext(), url, dictionary, WTFMove(promise));
 }
 
 } // namespace WebCore

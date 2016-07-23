@@ -32,7 +32,4 @@ interface TestGlobalObject {
     void regularOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
-
-    [PrivateIdentifier, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testPrivateFunction();
-    [JSBuiltin, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testJSBuiltinFunction();
 };
