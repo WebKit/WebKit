@@ -2717,17 +2717,29 @@ webkit.org/b/160119 imported/blink/css3/blending/mix-blend-mode-has-ancestor-cli
 
 webkit.org/b/160119 imported/blink/css3/filters/effect-reference-source-alpha-hw.html [ ImageOnlyFailure ]
 
+webkit.org/b/160119 imported/blink/fast/css/first-letter-range-insert.html [ Crash Pass ]
+
 webkit.org/b/160119 imported/blink/svg/animations/viewspec-animated-viewbox.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 imported/blink/transforms/inline-transform-and-clipping-roots.html [ Crash Pass ]
 
 webkit.org/b/160119 imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/160119 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure Pass ]
 
+webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html [ Timeout Crash Pass ]
+
 webkit.org/b/160119 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/160119 media/broken-video.html [ Crash Pass ]
 webkit.org/b/160119 media/media-captions.html [ Timeout Failure Crash ]
+webkit.org/b/160119 media/media-fullscreen-inline.html [ Crash Pass ]
+webkit.org/b/160119 media/video-poster.html [ Crash Pass ]
 webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/160119 media/track/audio/audio-track-mkv-vorbis-enabled.html [ Crash Pass ]
+webkit.org/b/160119 media/track/track-css-matching-timestamps.html [ Crash Pass ]
 
 webkit.org/b/160119 svg/repaint/add-outline-property-on-root.html [ ImageOnlyFailure ]
 webkit.org/b/160119 svg/repaint/remove-outline-property-on-root.html [ ImageOnlyFailure ]
