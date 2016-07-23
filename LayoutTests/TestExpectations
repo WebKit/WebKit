@@ -623,8 +623,8 @@ webkit.org/b/139266 imported/mozilla/svg/text/dynamic-multiple-x.svg [ ImageOnly
 webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139322 imported/mozilla/svg/text/dynamic-non-scaling-stroke.svg [ ImageOnlyFailure ]
 webkit.org/b/139407 imported/mozilla/svg/as-image/border-image-simple-1.html [ ImageOnlyFailure ]
-webkit.org/b/139412 imported/mozilla/svg/filters/svg-filter-chains/clip-input.svg [ ImageOnlyFailure ]
-webkit.org/b/139412 imported/mozilla/svg/filters/svg-filter-chains/clip-output.svg [ ImageOnlyFailure ]
+webkit.org/b/139412 imported/mozilla/svg/filters/svg-filter-chains/clip-input.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/139412 imported/mozilla/svg/filters/svg-filter-chains/clip-output.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/139414 imported/mozilla/svg/filters/feColorMatrix-1.svg [ ImageOnlyFailure ]
 webkit.org/b/139414 imported/mozilla/svg/filters/feColorMatrix-2.svg [ ImageOnlyFailure ]
 webkit.org/b/139414 imported/mozilla/svg/filters/feConvolveMatrix-bias-01.svg [ ImageOnlyFailure ]
@@ -741,10 +741,10 @@ webkit.org/b/148801 imported/w3c/css/css-color-3/t422-rgba-onscreen-multiple-box
 webkit.org/b/148801 imported/w3c/css/css-color-3/t425-hsla-onscreen-multiple-boxes-c.xht [ ImageOnlyFailure ]
 
 # Many CSS WG multicol-1 tests fail with 1px differences
-webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-count-large-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-count-large-002.xht [ ImageOnlyFailure ]
-webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-rule-fraction-003.xht [ ImageOnlyFailure ]
-webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-count-computed-002.xht [ ImageOnlyFailure ]
+webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-count-large-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-count-large-002.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-rule-fraction-003.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-count-computed-002.xht [ Pass ImageOnlyFailure ]
 
 # http://www.w3.org/TR/css3-multicol/#column-span0
 # A spanning element takes up more space than the element would take up otherwise.
@@ -752,35 +752,35 @@ webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-count-computed-002.
 # In these cases, user agents may treat the element as if ‘none’ had been specified on this property.
 imported/w3c/css/css-multicol-1/multicol-span-all-child-002.xht [ WontFix ]
 
-webkit.org/b/148818 imported/w3c/css/css-multicol-1/multicol-fill-auto-block-children-002.xht [ ImageOnlyFailure ] # only scrollbar
-webkit.org/b/148818 imported/w3c/css/css-multicol-1/multicol-nested-column-rule-001.xht [ ImageOnlyFailure ] # only scrollbar
+webkit.org/b/148818 imported/w3c/css/css-multicol-1/multicol-fill-auto-block-children-002.xht [ Pass ImageOnlyFailure ] # only scrollbar
+webkit.org/b/148818 imported/w3c/css/css-multicol-1/multicol-nested-column-rule-001.xht [ Pass ImageOnlyFailure ] # only scrollbar
 
-webkit.org/b/148812 imported/w3c/css/css-multicol-1/multicol-width-small-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148814 imported/w3c/css/css-multicol-1/multicol-break-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148816 imported/w3c/css/css-multicol-1/multicol-rule-004.xht [ ImageOnlyFailure ]
-webkit.org/b/148823 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-003.xht [ ImageOnlyFailure ]
+webkit.org/b/148812 imported/w3c/css/css-multicol-1/multicol-width-small-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148814 imported/w3c/css/css-multicol-1/multicol-break-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148816 imported/w3c/css/css-multicol-1/multicol-rule-004.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148823 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-003.xht [ Pass ImageOnlyFailure ]
 
 # Causes the following test to be flaky.
 webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
 
 # FIXME: The following failures need individual bugs.
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-003.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-004.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-margin-002.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-margin-bottom-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-002.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-table-cell-vertical-align-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-count-computed-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-width-ems-001.xht [ ImageOnlyFailure ] # Could be a bad test?
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-nested-margin-002.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-nested-margin-003.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-br-inside-avoidcolumn-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-nested-margin-004.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-nested-margin-005.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-fill-auto.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-zero-height-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-child-001.xht [ ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-003.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-004.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-margin-002.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-margin-bottom-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-002.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-table-cell-vertical-align-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-count-computed-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-width-ems-001.xht [ Pass ImageOnlyFailure ] # Could be a bad test?
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-nested-margin-002.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-nested-margin-003.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-br-inside-avoidcolumn-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-nested-margin-004.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-nested-margin-005.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-fill-auto.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-zero-height-001.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-child-001.xht [ Pass ImageOnlyFailure ]
 
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
 
