@@ -1275,15 +1275,6 @@ webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Pass Failure ]
 webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout Pass ]
 
 # This failures only seem to happen if the environment variable XVFB_SCREEN_DEPTH=8 is not set
-webkit.org/b/132126 animations/3d/transform-origin-vs-functions.html [ Failure Pass ]
-webkit.org/b/132126 animations/combo-transform-translate+scale.html [ Failure Pass ]
-webkit.org/b/132126 animations/play-state.html [ Failure Pass ]
-webkit.org/b/132126 animations/3d/change-transform-in-end-event.html [ Timeout Pass ]
-webkit.org/b/132126 animations/added-while-suspended.html [ Timeout Pass ]
-webkit.org/b/132126 animations/animation-iteration-event-destroy-renderer.html [ Timeout Pass Crash ]
-webkit.org/b/132126 animations/animation-direction-normal.html [ Failure Pass ]
-webkit.org/b/132126 animations/animation-direction-reverse.html [ Crash Failure Pass ]
-webkit.org/b/132126 animations/body-removal-crash.html [ Crash Pass ]
 webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
@@ -2279,12 +2270,6 @@ webkit.org/b/132054 js/dom/global-constructors-attributes.html  [ Failure ]
 
 webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
 
-# These tests fail when accelerated compositing is enabled or when XVFB_SCREEN_DEPTH=8 is not set.
-webkit.org/b/132126 animations/play-state-paused.html [ Failure ]
-webkit.org/b/132126 animations/play-state-suspend.html [ Failure ]
-webkit.org/b/132126 animations/suspend-resume-animation.html [ Failure ]
-webkit.org/b/132126 animations/transform-non-accelerated.html [ Failure ]
-
 webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
 
 webkit.org/b/132234 fast/regions/scrolling/wheel-scrollable-single-region.html [ ImageOnlyFailure ]
@@ -2495,9 +2480,7 @@ webkit.org/b/151267 imported/blink/compositing/squashing/abspos-under-abspos-ove
 webkit.org/b/151267 imported/blink/compositing/squashing/clip-to-squashed-layer-size.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/overflow-scroll-grandchildren.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/compositing/squashing/squash-overflow-hidden-contents.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/squash-overflow-hidden-scrolltop.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/compositing/squashing/subpixel-rounding.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/transform-squashed-owner.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/will-change/stacking-context-creation.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/css3/blending/mix-blend-mode-background-size.html [ ImageOnlyFailure ]
@@ -2561,7 +2544,6 @@ webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nes
 webkit.org/b/152908 pageoverlay/overlay-installation.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-large-document-scrolled.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-large-document.html [ Failure ]
-webkit.org/b/152908 pageoverlay/overlay-small-frame-mouse-events.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-small-frame-paints.html [ Failure ]
 
 webkit.org/b/153602 fast/table/003.html [ Failure ]
