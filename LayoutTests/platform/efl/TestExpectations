@@ -640,7 +640,6 @@ webkit.org/b/155875 svg/W3C-SVG-1.1/pservers-grad-01-b.svg [ Crash ]
 Bug(EFL) fast/dom/Window/property-access-on-cached-window-after-frame-removed.html [ Crash ]
 Bug(EFL) fast/selectors/querySelector-in-range-crash.html [ Crash ]
 Bug(EFL) http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Crash ]
-Bug(EFL) imported/blink/svg/custom/svg-image-layers-crash.html [ Crash ]
 Bug(EFL) webaudio/decode-audio-data-basic.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

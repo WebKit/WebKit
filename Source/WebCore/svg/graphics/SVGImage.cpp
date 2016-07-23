@@ -395,6 +395,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         m_page->settings().setMediaEnabled(false);
         m_page->settings().setScriptEnabled(false);
         m_page->settings().setPluginsEnabled(false);
+        m_page->settings().setAcceleratedCompositingEnabled(false);
 
         Frame& frame = m_page->mainFrame();
         frame.setView(FrameView::create(frame));
