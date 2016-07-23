@@ -100,8 +100,7 @@ public:
 #endif
 
 private:
-    IOSurface(IntSize, CGColorSpaceRef, Format);
-    IOSurface(IntSize, IntSize contextSize, CGColorSpaceRef, Format);
+    IOSurface(IntSize, IntSize contextSize, CGColorSpaceRef, Format, bool& success);
     IOSurface(IOSurfaceRef, CGColorSpaceRef);
 
     static std::unique_ptr<IOSurface> surfaceFromPool(IntSize, IntSize contextSize, CGColorSpaceRef, Format);

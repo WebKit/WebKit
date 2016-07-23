@@ -119,7 +119,10 @@ void RemoteLayerBackingStore::encode(IPC::ArgumentEncoder& encoder) const
 
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
-        encoder << m_frontBuffer.surface->createSendRight();
+        if (m_frontBuffer.surface)
+            encoder << m_frontBuffer.surface->createSendRight();
+        else
+            encoder << WebCore::MachSendRight();
         return;
     }
 #endif
@@ -262,13 +265,15 @@ bool RemoteLayerBackingStore::display()
         if (m_backBuffer.surface && !willPaintEntireBackingStore)
             backImage = m_backBuffer.surface->createImage();
 
-        GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
+        if (m_frontBuffer.surface) {
+            GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
 
-        context.scale(FloatSize(1, -1));
-        context.translate(0, -expandedScaledSize.height());
-        drawInContext(context, backImage.get());
+            context.scale(FloatSize(1, -1));
+            context.translate(0, -expandedScaledSize.height());
+            drawInContext(context, backImage.get());
 
-        m_frontBuffer.surface->releaseGraphicsContext();
+            m_frontBuffer.surface->releaseGraphicsContext();
+        }
     } else
 #endif
     {
@@ -400,7 +405,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 
 #if USE(IOSURFACE)
     if (acceleratesDrawing()) {
-        layer.contents = m_frontBuffer.surface->asLayerContents();
+        layer.contents = m_frontBuffer.surface ? m_frontBuffer.surface->asLayerContents() : nil;
         return;
     }
 #endif

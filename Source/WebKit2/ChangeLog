@@ -1,3 +1,23 @@
+2016-07-22  Zalan Bujtas  <zalan@apple.com>
+
+        Handle cases when IOSurface initialization fails.
+        https://bugs.webkit.org/show_bug.cgi?id=160006
+        <rdar://problem/27495102>
+
+        Reviewed by Tim Horton and Simon Fraser.
+
+        This is an additional fix to r203514 to check if IOSurface initialization was successful.
+
+        Unable to test.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode):
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+
 2016-07-22  Chelsea Pugh  <cpugh@apple.com>
 
         [iOS] Clients should be able to decide if they want secure text entry in a form field
