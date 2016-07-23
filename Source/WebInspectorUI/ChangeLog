@@ -1,3 +1,19 @@
+2016-07-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r202876): Web Inspector: Switching away from Console tab with a lot of messages is slow
+        https://bugs.webkit.org/show_bug.cgi?id=160112
+
+        Reviewed by Joseph Pecoraro.
+
+        Showing NavigationSidebar before removing previous TabContentView can be very slow when
+        TabContentView is ConsoleTabContentView with a lot of messages. The order of operations
+        (show sidebar, change content view, show sidebar) caused more forced layouts. This patch
+        reduces the number of forced layouts by changes the order to: show content view, show sidebar,
+        show sidebar.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser.prototype._tabBarItemSelected):
+
 2016-07-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Pausing when Debugger tab is closed opens tab in wrong state
