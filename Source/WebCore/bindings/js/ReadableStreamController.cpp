@@ -84,38 +84,6 @@ bool ReadableStreamController::isControlledReadableStreamLocked() const
     return result.isTrue();
 }
 
-JSC::JSValue createReadableStream(JSC::ExecState& state, JSDOMGlobalObject* globalObject, ReadableStreamSource* source)
-{
-    JSC::JSLockHolder lock(&state);
-
-    auto jsSource = source ? toJS(&state, globalObject, *source) : JSC::jsUndefined();
-    JSC::Strong<JSC::Unknown> protect(state.vm(), jsSource);
-
-    JSC::MarkedArgumentBuffer arguments;
-    arguments.append(jsSource);
-
-    auto constructor = JSReadableStream::getConstructor(state.vm(), globalObject);
-
-    JSC::ConstructData constructData;
-    auto constructType = JSC::getConstructData(constructor, constructData);
-    ASSERT(constructType != JSC::ConstructType::None);
-
-    return construct(&state, constructor, constructType, constructData, arguments);
-}
-
-JSC::JSValue getReadableStreamReader(JSC::ExecState& state, JSC::JSValue readableStream)
-{
-    ASSERT(readableStream.isObject());
-
-    auto getReader = readableStream.getObject()->get(&state, JSC::Identifier::fromString(&state, "getReader"));
-    ASSERT(!state.hadException());
-
-    auto reader = callFunction(state, getReader, readableStream, JSC::MarkedArgumentBuffer());
-    ASSERT(!state.hadException());
-
-    return reader;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(STREAMS_API)

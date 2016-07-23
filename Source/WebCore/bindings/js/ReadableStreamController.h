@@ -66,9 +66,6 @@ private:
     JSReadableStreamController* m_jsController { nullptr };
 };
 
-JSC::JSValue createReadableStream(JSC::ExecState&, JSDOMGlobalObject*, ReadableStreamSource*);
-JSC::JSValue getReadableStreamReader(JSC::ExecState&, JSC::JSValue);
-
 inline JSDOMGlobalObject* ReadableStreamController::globalObject() const
 {
     ASSERT(m_jsController);

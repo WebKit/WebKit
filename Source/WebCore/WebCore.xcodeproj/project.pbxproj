@@ -1617,7 +1617,6 @@
 		418C395A1C8DD6990051C8A3 /* WorkerGlobalScopeFetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418C39571C8DD6960051C8A3 /* WorkerGlobalScopeFetch.cpp */; };
 		418C39601C8F0AAE0051C8A3 /* JSReadableStreamSourceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */; };
 		418C39611C8F0AB10051C8A3 /* ReadableStreamController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418C395E1C8F0AAB0051C8A3 /* ReadableStreamController.cpp */; };
-		418C39631C8F129B0051C8A3 /* JSFetchResponseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418C39621C8F12970051C8A3 /* JSFetchResponseCustom.cpp */; };
 		418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */; };
 		418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 418F88030FF957AE0080F045 /* JSAbstractWorker.h */; };
 		419BC2DE1685329900D64D6D /* VisitedLinkState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 419BC2DC1685329900D64D6D /* VisitedLinkState.cpp */; };
@@ -9198,7 +9197,6 @@
 		418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamSourceCustom.cpp; sourceTree = "<group>"; };
 		418C395E1C8F0AAB0051C8A3 /* ReadableStreamController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStreamController.cpp; sourceTree = "<group>"; };
 		418C395F1C8F0AAB0051C8A3 /* ReadableStreamController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamController.h; sourceTree = "<group>"; };
-		418C39621C8F12970051C8A3 /* JSFetchResponseCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchResponseCustom.cpp; sourceTree = "<group>"; };
 		418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractWorker.cpp; sourceTree = "<group>"; };
 		418F88030FF957AE0080F045 /* JSAbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbstractWorker.h; sourceTree = "<group>"; };
 		419BC2DC1685329900D64D6D /* VisitedLinkState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkState.cpp; sourceTree = "<group>"; };
@@ -22562,7 +22560,6 @@
 				46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */,
 				3314ACE910892086000F0E56 /* JSExceptionBase.cpp */,
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
-				418C39621C8F12970051C8A3 /* JSFetchResponseCustom.cpp */,
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
 				B56576E417DA599F00A56BDC /* JSMainThreadExecStateInstrumentation.h */,
@@ -30650,7 +30647,6 @@
 				7D4C96DC1AD4483500365A50 /* JSFetchHeaders.cpp in Sources */,
 				7E4C96DC1AD4483500365A50 /* JSFetchRequest.cpp in Sources */,
 				8E4C96DC1AD4483500365A50 /* JSFetchResponse.cpp in Sources */,
-				418C39631C8F129B0051C8A3 /* JSFetchResponseCustom.cpp in Sources */,
 				BC00F0140E0A189500FD04E3 /* JSFile.cpp in Sources */,
 				516E54FA1CCB2EA80040D954 /* JSFileCustom.cpp in Sources */,
 				2E3BC0CA117D3E0800B9409A /* JSFileError.cpp in Sources */,

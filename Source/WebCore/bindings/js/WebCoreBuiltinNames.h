@@ -34,10 +34,12 @@ namespace WebCore {
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro)\
     macro(addTrack) \
     macro(appendFromJS) \
+    macro(body) \
     macro(closeRequested) \
     macro(closedPromiseCapability) \
     macro(controlledReadableStream) \
     macro(controller) \
+    macro(createReadableStreamSource) \
     macro(disturbed) \
     macro(fillFromJS) \
     macro(firstReadCallback) \
@@ -46,6 +48,7 @@ namespace WebCore {
     macro(getSenders) \
     macro(getTracks) \
     macro(initializeWith) \
+    macro(isDisturbed) \
     macro(localStreams) \
     macro(operations) \
     macro(ownerReadableStream) \
@@ -86,6 +89,7 @@ namespace WebCore {
     macro(ReadableStream) \
     macro(ReadableStreamReader) \
     macro(ReadableStreamController) \
+    macro(Response) \
     macro(RTCIceCandidate) \
     macro(RTCSessionDescription) \
     macro(XMLHttpRequest)

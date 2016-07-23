@@ -34,12 +34,13 @@ enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredire
     ConstructorCallWith=ScriptExecutionContext,
     Exposed=(Window,Worker),
     InterfaceName=Response,
-    JSBuiltinConstructor
+    JSBuiltinConstructor,
+    PrivateIdentifier,
+    PublicIdentifier
 ]
 interface FetchResponse {
-    // FIXME: NewObject does not seem to be supported for static methods.
-    [CallWith=ScriptExecutionContext] static FetchResponse error();
-    [CallWith=ScriptExecutionContext, RaisesException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
+    [NewObject, CallWith=ScriptExecutionContext] static FetchResponse error();
+    [NewObject, CallWith=ScriptExecutionContext, RaisesException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
 
     readonly attribute ResponseType type;
 
@@ -50,11 +51,13 @@ interface FetchResponse {
     readonly attribute DOMString statusText;
     // FIXME: Add support for SameObject keyword for headers
     readonly attribute FetchHeaders headers;
-    [Custom, CachedAttribute] readonly attribute ReadableStream? body;
+    [JSBuiltin] readonly attribute ReadableStream? body;
 
     [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchResponse clone();
 
     [PrivateIdentifier, RaisesException] void setStatus(unsigned short status, DOMString statusText);
     [CallWith=ScriptState, PrivateIdentifier] void initializeWith(any body);
+    [PrivateIdentifier, NewObject] ReadableStreamSource createReadableStreamSource();
+    [PrivateIdentifier] boolean isDisturbed();
 };
 FetchResponse implements FetchBody;
