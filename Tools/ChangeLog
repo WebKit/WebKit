@@ -1,3 +1,16 @@
+2016-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Media controls should be displayed for media in media documents
+        https://bugs.webkit.org/show_bug.cgi?id=160104
+        <rdar://problem/27438936>
+
+        Reviewed by Myles C. Maxfield.
+
+        Verifies that even a small video with audio in a media document gets media controls.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+
 2016-07-22  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(203616): no FTL testing was inadvertently removed

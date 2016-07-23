@@ -254,6 +254,11 @@ bool MediaElementSession::canControlControlsManager() const
             return false;
         }
 
+        if (m_element.document().isMediaDocument()) {
+            LOG(Media, "MediaElementSession::canControlControlsManager - returning TRUE: Is media document");
+            return true;
+        }
+
         if (!m_element.hasVideo()) {
             LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: No video");
             return false;
