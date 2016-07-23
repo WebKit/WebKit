@@ -258,7 +258,7 @@ IntSize ScrollView::unscaledVisibleContentSizeIncludingObscuredArea(VisibleConte
         return platformVisibleContentSizeIncludingObscuredArea(scrollbarInclusion == IncludeScrollbars);
 
 #if USE(COORDINATED_GRAPHICS)
-    if (!m_fixedVisibleContentRect.isEmpty())
+    if (m_useFixedLayout && !m_fixedVisibleContentRect.isEmpty())
         return m_fixedVisibleContentRect.size();
 #endif
 
@@ -277,7 +277,7 @@ IntSize ScrollView::unscaledUnobscuredVisibleContentSize(VisibleContentRectInclu
         return platformVisibleContentSize(scrollbarInclusion == IncludeScrollbars);
 
 #if USE(COORDINATED_GRAPHICS)
-    if (!m_fixedVisibleContentRect.isEmpty())
+    if (m_useFixedLayout && !m_fixedVisibleContentRect.isEmpty())
         return visibleContentSize;
 #endif
 
@@ -303,7 +303,7 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
         return platformVisibleContentRect(scrollbarInclusion == IncludeScrollbars);
 
 #if USE(COORDINATED_GRAPHICS)
-    if (!m_fixedVisibleContentRect.isEmpty())
+    if (m_useFixedLayout && !m_fixedVisibleContentRect.isEmpty())
         return m_fixedVisibleContentRect;
 #endif
 

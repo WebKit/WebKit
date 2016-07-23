@@ -21,6 +21,7 @@ window.onresize = function () {
     internals.setFixedLayoutSize(400, 400);
 
     testRunner.notifyDone();
+    window.onresize = null;
 }
 </script>
 </head>

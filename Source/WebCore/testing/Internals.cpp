@@ -375,6 +375,9 @@ void Internals::resetToConsistentState(Page& page)
         page.setTopContentInset(0);
         mainFrameView->setUseFixedLayout(false);
         mainFrameView->setFixedLayoutSize(IntSize());
+#if USE(COORDINATED_GRAPHICS)
+        mainFrameView->setFixedVisibleContentRect(IntRect());
+#endif
     }
 
     WebCore::overrideUserPreferredLanguages(Vector<String>());
