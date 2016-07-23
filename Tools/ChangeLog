@@ -1,3 +1,13 @@
+2016-07-23  Youenn Fablet  <youenn@apple.com>
+
+        WPT stash server should be kept running when launching wpt server
+        https://bugs.webkit.org/show_bug.cgi?id=160052
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_launcher.py:
+        (main): waiting to read stdin while stash server is started.
+
 2016-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Media controls should be displayed for media in media documents

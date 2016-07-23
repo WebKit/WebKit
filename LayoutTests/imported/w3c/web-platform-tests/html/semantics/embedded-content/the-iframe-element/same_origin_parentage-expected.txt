@@ -1,6 +1,6 @@
 
 
-FAIL Check the frame heriarchy assert_equals: expected 200 but got 500
-FAIL Check the frame heriarchy 1 assert_equals: expected 200 but got 500
-FAIL Check the frame heriarchy 2 assert_equals: expected 200 but got 500
+PASS Check the frame heriarchy 
+PASS Check the frame heriarchy 1 
+PASS Check the frame heriarchy 2 
 

@@ -1,7 +1,6 @@
 # This Source Code Form is subject to the terms of the 3-clause BSD License
 # http://www.w3.org/Consortium/Legal/2008/03-bsd-license.html
 
-import imp
 import json
 import logging
 import os
@@ -40,11 +39,11 @@ def main(argv, stdout, stderr):
                     logged_servers.append({"protocol": protocol, "port": port, "pid": process.proc.pid})
                     logger.info("%s, port:%d, pid:%d" % (protocol, port, process.proc.pid))
 
-    # Write pids in a file in case abrupt shutdown is needed
-    with open(argv[0], "wb") as servers_file:
-        json.dump(logged_servers, servers_file)
+            # Write pids in a file in case abrupt shutdown is needed
+            with open(argv[0], "wb") as servers_file:
+                json.dump(logged_servers, servers_file)
 
-    sys.stdin.read(1)
+            sys.stdin.read(1)
 
 
 if __name__ == "__main__":

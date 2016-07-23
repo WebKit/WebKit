@@ -1,2 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
+
+PASS Create a document, adopt the node 
+PASS Create a stylesheet in innerHTML document 
 
