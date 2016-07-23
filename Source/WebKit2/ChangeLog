@@ -1,3 +1,20 @@
+2016-07-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Automation: WebAutomationSession::deleteAllCookies never calls callback, hangs automation session
+        https://bugs.webkit.org/show_bug.cgi?id=160113
+        <rdar://problem/27308124>
+
+        Reviewed by Darin Adler.
+
+        Delete all cookies appears to be a straightforward action
+        where we don't need to wait for a callback. So drop the
+        async altogether and implicitly complete the action.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2016-07-22  Zalan Bujtas  <zalan@apple.com>
 
         Handle cases when IOSurface initialization fails.

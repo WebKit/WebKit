@@ -121,7 +121,7 @@ public:
     void getAllCookies(Inspector::ErrorString&, const String& browsingContextHandle, Ref<GetAllCookiesCallback>&&) override;
     void deleteSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&&) override;
     void addSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const Inspector::InspectorObject& cookie, Ref<AddSingleCookieCallback>&&) override;
-    void deleteAllCookies(Inspector::ErrorString&, const String& browsingContextHandle, Ref<DeleteAllCookiesCallback>&&) override;
+    void deleteAllCookies(Inspector::ErrorString&, const String& browsingContextHandle) override;
 #if USE(APPKIT)
     bool wasEventSynthesizedForAutomation(NSEvent *);
     void markEventAsSynthesizedForAutomation(NSEvent *);

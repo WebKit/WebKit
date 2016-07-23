@@ -837,7 +837,7 @@ void WebAutomationSession::addSingleCookie(ErrorString& errorString, const Strin
     callback->sendSuccess();
 }
 
-void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const String& browsingContextHandle, Ref<DeleteAllCookiesCallback>&& callback)
+void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const String& browsingContextHandle)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
