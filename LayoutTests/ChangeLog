@@ -1,5 +1,14 @@
 2016-07-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed flaky test gardening for GTK
+
+        Mostly more fallout from threaded compositor
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2016-07-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         More unreviewed GTK gardening
 
         Update expectations for tests timing out
