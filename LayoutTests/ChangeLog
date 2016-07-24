@@ -1,3 +1,13 @@
+2016-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Layout test security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html timing out
+        https://bugs.webkit.org/show_bug.cgi?id=160128
+
+        Unreviewed, skip the tests.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2016-07-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test expectations fixups

@@ -563,6 +563,15 @@ webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Crash 
 # Need a new baseline for EFL port. It was added by r72173.
 Bug(EFL) fast/css/line-height-determined-by-primary-font.html [ Failure ]
 
+security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////

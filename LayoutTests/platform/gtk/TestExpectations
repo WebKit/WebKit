@@ -718,6 +718,16 @@ webkit.org/b/160024 platform/gtk/scrollbars/main-frame-scrollbar-horizontal-whee
 # Missing support for new emoji
 webkit.org/b/160120 editing/deleting/delete-emoji.html [ Skip ]
 
+# No support for QuickTime/YouTube plugin replacement.
+security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1656,8 +1666,6 @@ webkit.org/b/160019 media/media-source/media-source-small-gap.html [ Timeout ]
 webkit.org/b/160126 fast/forms/input-image-submit.html [ Timeout ]
 
 webkit.org/b/160127 js/regress-139548.html [ Timeout ]
-
-webkit.org/b/160128 security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
