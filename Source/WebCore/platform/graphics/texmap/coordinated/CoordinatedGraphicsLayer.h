@@ -193,7 +193,7 @@ private:
     void createBackingStore();
     void releaseImageBackingIfNeeded();
 
-    bool notifyFlushRequired();
+    void notifyFlushRequired();
 
     // CoordinatedImageBacking::Host
     bool imageBackingVisible() override;

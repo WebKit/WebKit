@@ -55,14 +55,13 @@ static CoordinatedLayerID toCoordinatedLayerID(GraphicsLayer* layer)
     return is<CoordinatedGraphicsLayer>(layer) ? downcast<CoordinatedGraphicsLayer>(*layer).id() : 0;
 }
 
-bool CoordinatedGraphicsLayer::notifyFlushRequired()
+void CoordinatedGraphicsLayer::notifyFlushRequired()
 {
     ASSERT(m_coordinator);
-    if (!m_coordinator->isFlushingLayerChanges()) {
-        client().notifyFlushRequired(this);
-        return true;
-    }
-    return false;
+    if (m_coordinator->isFlushingLayerChanges())
+        return;
+
+    client().notifyFlushRequired(this);
 }
 
 void CoordinatedGraphicsLayer::didChangeLayerState()
@@ -587,9 +586,6 @@ void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
 
 void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect, bool viewportIsStable)
 {
-    if (notifyFlushRequired())
-        return;
-
     if (CoordinatedGraphicsLayer* mask = downcast<CoordinatedGraphicsLayer>(maskLayer()))
         mask->flushCompositingStateForThisLayerOnly(viewportIsStable);
 
