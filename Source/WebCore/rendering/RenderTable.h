@@ -257,8 +257,8 @@ public:
         return createAnonymousWithParentRenderer(parent);
     }
 
-    const BorderValue& tableStartBorderAdjoiningCell(const RenderTableCell*) const;
-    const BorderValue& tableEndBorderAdjoiningCell(const RenderTableCell*) const;
+    const BorderValue& tableStartBorderAdjoiningCell(const RenderTableCell&) const;
+    const BorderValue& tableEndBorderAdjoiningCell(const RenderTableCell&) const;
 
     void addCaption(const RenderTableCaption*);
     void removeCaption(const RenderTableCaption*);

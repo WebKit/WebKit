@@ -121,8 +121,8 @@ public:
 
     const BorderValue& borderAdjoiningTableStart() const;
     const BorderValue& borderAdjoiningTableEnd() const;
-    const BorderValue& borderAdjoiningCellBefore(const RenderTableCell*);
-    const BorderValue& borderAdjoiningCellAfter(const RenderTableCell*);
+    const BorderValue& borderAdjoiningCellBefore(const RenderTableCell&);
+    const BorderValue& borderAdjoiningCellAfter(const RenderTableCell&);
 
     using RenderBlockFlow::nodeAtPoint;
 #ifndef NDEBUG
@@ -316,16 +316,16 @@ inline const BorderValue& RenderTableCell::borderAdjoiningTableEnd() const
     return style().borderStart();
 }
 
-inline const BorderValue& RenderTableCell::borderAdjoiningCellBefore(const RenderTableCell* cell)
+inline const BorderValue& RenderTableCell::borderAdjoiningCellBefore(const RenderTableCell& cell)
 {
-    ASSERT_UNUSED(cell, table()->cellAfter(cell) == this);
+    ASSERT_UNUSED(cell, table()->cellAfter(&cell) == this);
     // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
     return style().borderStart();
 }
 
-inline const BorderValue& RenderTableCell::borderAdjoiningCellAfter(const RenderTableCell* cell)
+inline const BorderValue& RenderTableCell::borderAdjoiningCellAfter(const RenderTableCell& cell)
 {
-    ASSERT_UNUSED(cell, table()->cellBefore(cell) == this);
+    ASSERT_UNUSED(cell, table()->cellBefore(&cell) == this);
     // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
     return style().borderEnd();
 }

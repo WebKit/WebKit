@@ -56,8 +56,8 @@ public:
 
     const BorderValue& borderAdjoiningTableStart() const;
     const BorderValue& borderAdjoiningTableEnd() const;
-    const BorderValue& borderAdjoiningStartCell(const RenderTableCell*) const;
-    const BorderValue& borderAdjoiningEndCell(const RenderTableCell*) const;
+    const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
+    const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
 
     void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
 

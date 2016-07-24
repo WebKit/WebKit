@@ -179,25 +179,25 @@ RenderTableCol* RenderTableCol::nextColumn() const
     return downcast<RenderTableCol>(next);
 }
 
-const BorderValue& RenderTableCol::borderAdjoiningCellStartBorder(const RenderTableCell*) const
+const BorderValue& RenderTableCol::borderAdjoiningCellStartBorder() const
 {
     return style().borderStart();
 }
 
-const BorderValue& RenderTableCol::borderAdjoiningCellEndBorder(const RenderTableCell*) const
+const BorderValue& RenderTableCol::borderAdjoiningCellEndBorder() const
 {
     return style().borderEnd();
 }
 
-const BorderValue& RenderTableCol::borderAdjoiningCellBefore(const RenderTableCell* cell) const
+const BorderValue& RenderTableCol::borderAdjoiningCellBefore(const RenderTableCell& cell) const
 {
-    ASSERT_UNUSED(cell, table()->colElement(cell->col() + cell->colSpan()) == this);
+    ASSERT_UNUSED(cell, table()->colElement(cell.col() + cell.colSpan()) == this);
     return style().borderStart();
 }
 
-const BorderValue& RenderTableCol::borderAdjoiningCellAfter(const RenderTableCell* cell) const
+const BorderValue& RenderTableCol::borderAdjoiningCellAfter(const RenderTableCell& cell) const
 {
-    ASSERT_UNUSED(cell, table()->colElement(cell->col() - 1) == this);
+    ASSERT_UNUSED(cell, table()->colElement(cell.col() - 1) == this);
     return style().borderEnd();
 }
 

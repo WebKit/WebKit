@@ -93,8 +93,8 @@ public:
 
     const BorderValue& borderAdjoiningTableStart() const;
     const BorderValue& borderAdjoiningTableEnd() const;
-    const BorderValue& borderAdjoiningStartCell(const RenderTableCell*) const;
-    const BorderValue& borderAdjoiningEndCell(const RenderTableCell*) const;
+    const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
+    const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
 
     const RenderTableCell* firstRowCellAdjoiningTableStart() const;
     const RenderTableCell* firstRowCellAdjoiningTableEnd() const;

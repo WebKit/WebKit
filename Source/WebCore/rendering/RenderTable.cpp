@@ -1562,19 +1562,19 @@ RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* 
     return table;
 }
 
-const BorderValue& RenderTable::tableStartBorderAdjoiningCell(const RenderTableCell* cell) const
+const BorderValue& RenderTable::tableStartBorderAdjoiningCell(const RenderTableCell& cell) const
 {
-    ASSERT(cell->isFirstOrLastCellInRow());
-    if (hasSameDirectionAs(cell->row()))
+    ASSERT(cell.isFirstOrLastCellInRow());
+    if (hasSameDirectionAs(cell.row()))
         return style().borderStart();
 
     return style().borderEnd();
 }
 
-const BorderValue& RenderTable::tableEndBorderAdjoiningCell(const RenderTableCell* cell) const
+const BorderValue& RenderTable::tableEndBorderAdjoiningCell(const RenderTableCell& cell) const
 {
-    ASSERT(cell->isFirstOrLastCellInRow());
-    if (hasSameDirectionAs(cell->row()))
+    ASSERT(cell.isFirstOrLastCellInRow());
+    if (hasSameDirectionAs(cell.row()))
         return style().borderEnd();
 
     return style().borderStart();

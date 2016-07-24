@@ -54,10 +54,10 @@ public:
     // Returns the next column or column-group.
     RenderTableCol* nextColumn() const;
 
-    const BorderValue& borderAdjoiningCellStartBorder(const RenderTableCell*) const;
-    const BorderValue& borderAdjoiningCellEndBorder(const RenderTableCell*) const;
-    const BorderValue& borderAdjoiningCellBefore(const RenderTableCell*) const;
-    const BorderValue& borderAdjoiningCellAfter(const RenderTableCell*) const;
+    const BorderValue& borderAdjoiningCellStartBorder() const;
+    const BorderValue& borderAdjoiningCellEndBorder() const;
+    const BorderValue& borderAdjoiningCellBefore(const RenderTableCell&) const;
+    const BorderValue& borderAdjoiningCellAfter(const RenderTableCell&) const;
 
     LayoutUnit offsetLeft() const override;
     LayoutUnit offsetTop() const override;
