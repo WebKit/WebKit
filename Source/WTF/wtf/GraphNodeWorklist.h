@@ -63,6 +63,8 @@ public:
     }
 
     bool saw(Node node) { return m_seen.contains(node); }
+    
+    const Set& seen() const { return m_seen; }
 
 private:
     Set m_seen;

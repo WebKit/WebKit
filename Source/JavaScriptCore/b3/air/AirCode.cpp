@@ -32,6 +32,7 @@
 #include "B3BasicBlockUtils.h"
 #include "B3Procedure.h"
 #include "B3StackSlot.h"
+#include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -79,18 +80,38 @@ CCallSpecial* Code::cCallSpecial()
     return m_cCallSpecial;
 }
 
+bool Code::isEntrypoint(BasicBlock* block) const
+{
+    if (m_entrypoints.isEmpty())
+        return !block->index();
+    
+    for (const FrequentedBlock& entrypoint : m_entrypoints) {
+        if (entrypoint.block() == block)
+            return true;
+    }
+    return false;
+}
+
 void Code::resetReachability()
 {
-    recomputePredecessors(m_blocks);
+    clearPredecessors(m_blocks);
+    if (m_entrypoints.isEmpty())
+        updatePredecessorsAfter(m_blocks[0].get());
+    else {
+        for (const FrequentedBlock& entrypoint : m_entrypoints)
+            updatePredecessorsAfter(entrypoint.block());
+    }
     
     for (auto& block : m_blocks) {
-        if (isBlockDead(block.get()))
+        if (isBlockDead(block.get()) && !isEntrypoint(block.get()))
             block = nullptr;
     }
 }
 
 void Code::dump(PrintStream& out) const
 {
+    if (!m_entrypoints.isEmpty())
+        out.print("Entrypoints: ", listDump(m_entrypoints), "\n");
     for (BasicBlock* block : *this)
         out.print(deepDump(block));
     if (stackSlots().size()) {

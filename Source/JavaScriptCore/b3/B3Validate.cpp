@@ -414,7 +414,13 @@ public:
                 for (unsigned i = 1; i < caseValues.size(); ++i)
                     VALIDATE(caseValues[i - 1] != caseValues[i], ("At ", *value, ", caseValue = ", caseValues[i]));
                 break;
-            } }
+            }
+            case EntrySwitch:
+                VALIDATE(!value->numChildren(), ("At ", *value));
+                VALIDATE(value->type() == Void, ("At ", *value));
+                VALIDATE(valueOwner.get(value)->numSuccessors() == m_procedure.numEntrypoints(), ("At ", *value));
+                break;
+            }
 
             VALIDATE(!(value->effects().writes && value->key()), ("At ", *value));
         }

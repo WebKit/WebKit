@@ -90,6 +90,11 @@ struct PatchCustom {
         return inst.args[0].special()->isTerminal(inst);
     }
 
+    static bool hasNonArgEffects(Inst& inst)
+    {
+        return inst.args[0].special()->hasNonArgEffects(inst);
+    }
+
     static bool hasNonArgNonControlEffects(Inst& inst)
     {
         return inst.args[0].special()->hasNonArgNonControlEffects(inst);
@@ -102,10 +107,18 @@ struct PatchCustom {
     }
 };
 
+template<typename Subtype>
+struct CommonCustomBase {
+    static bool hasNonArgEffects(Inst& inst)
+    {
+        return Subtype::isTerminal(inst) || Subtype::hasNonArgNonControlEffects(inst);
+    }
+};
+
 // Definition of CCall instruction. CCall is used for hot path C function calls. It's lowered to a
 // Patch with an Air CCallSpecial along with code to marshal instructions. The lowering happens
 // before register allocation, so that the register allocator sees the clobbers.
-struct CCallCustom {
+struct CCallCustom : public CommonCustomBase<CCallCustom> {
     template<typename Functor>
     static void forEachArg(Inst& inst, const Functor& functor)
     {
@@ -171,7 +184,7 @@ struct ColdCCallCustom : CCallCustom {
     }
 };
 
-struct ShuffleCustom {
+struct ShuffleCustom : public CommonCustomBase<ShuffleCustom> {
     template<typename Functor>
     static void forEachArg(Inst& inst, const Functor& functor)
     {
@@ -218,6 +231,47 @@ struct ShuffleCustom {
     }
 
     static CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&);
+};
+
+struct EntrySwitchCustom : public CommonCustomBase<EntrySwitchCustom> {
+    template<typename Func>
+    static void forEachArg(Inst&, const Func&)
+    {
+    }
+    
+    template<typename... Arguments>
+    static bool isValidFormStatic(Arguments...)
+    {
+        return !sizeof...(Arguments);
+    }
+    
+    static bool isValidForm(Inst& inst)
+    {
+        return inst.args.isEmpty();
+    }
+    
+    static bool admitsStack(Inst&, unsigned)
+    {
+        return false;
+    }
+    
+    static bool isTerminal(Inst&)
+    {
+        return true;
+    }
+    
+    static bool hasNonArgNonControlEffects(Inst&)
+    {
+        return false;
+    }
+
+    static CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&)
+    {
+        // This should never be reached because we should have lowered EntrySwitch before
+        // generation.
+        UNREACHABLE_FOR_PLATFORM();
+        return CCallHelpers::Jump();
+    }
 };
 
 } } } // namespace JSC::B3::Air

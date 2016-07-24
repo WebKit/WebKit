@@ -1,3 +1,16 @@
+2016-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should support multiple entrypoints
+        https://bugs.webkit.org/show_bug.cgi?id=159391
+
+        Reviewed by Saam Barati.
+        
+        Update some statements about ControlValue (which doesn't exist anymore) and add a blurb
+        about EntrySwitch.
+
+        * docs/b3/index.html:
+        * docs/b3/intermediate-representation.html:
+
 2016-07-20  Frederic Wang  <fwang@igalia.com>
 
         Unreviewed, new demo files for an up-coming blog post.

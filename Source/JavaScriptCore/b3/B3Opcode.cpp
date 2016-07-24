@@ -290,6 +290,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Switch:
         out.print("Switch");
         return;
+    case EntrySwitch:
+        out.print("EntrySwitch");
+        return;
     case Return:
         out.print("Return");
         return;

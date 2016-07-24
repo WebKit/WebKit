@@ -34,6 +34,7 @@
 #include "B3SparseCollection.h"
 #include "B3Type.h"
 #include "B3ValueKey.h"
+#include "CCallHelpers.h"
 #include "PureNaN.h"
 #include "RegisterAtOffsetList.h"
 #include <wtf/Bag.h>
@@ -56,6 +57,13 @@ class Value;
 class Variable;
 
 namespace Air { class Code; }
+
+// This represents B3's view of a piece of code. Note that this object must exist in a 1:1
+// relationship with Air::Code. B3::Procedure and Air::Code are just different facades of the B3
+// compiler's knowledge about a piece of code. Some kinds of state aren't perfect fits for either
+// Procedure or Code, and are placed in one or the other based on convenience. Procedure always
+// allocates a Code, and a Code cannot be allocated without an owning Procedure and they always
+// have references to each other.
 
 class Procedure {
     WTF_MAKE_NONCOPYABLE(Procedure);
@@ -209,6 +217,14 @@ public:
 
     void addFastConstant(const ValueKey&);
     bool isFastConstant(const ValueKey&);
+    
+    unsigned numEntrypoints() const { return m_numEntrypoints; }
+    void setNumEntrypoints(unsigned numEntrypoints) { m_numEntrypoints = numEntrypoints; }
+    
+    // Only call this after code generation is complete. Note that the label for the 0th entrypoint
+    // should point to exactly where the code generation cursor was before you started generating
+    // code.
+    JS_EXPORT_PRIVATE CCallHelpers::Label entrypointLabel(unsigned entrypointIndex) const;
 
     // The name has to be a string literal, since we don't do any memory management for the string.
     void setLastPhaseName(const char* name)
@@ -261,6 +277,7 @@ private:
     std::unique_ptr<CFG> m_cfg;
     std::unique_ptr<Dominators> m_dominators;
     HashSet<ValueKey> m_fastConstants;
+    unsigned m_numEntrypoints { 1 };
     const char* m_lastPhaseName;
     std::unique_ptr<OpaqueByproducts> m_byproducts;
     std::unique_ptr<Air::Code> m_code;

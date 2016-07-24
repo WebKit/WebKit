@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,67 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirSpecial.h"
+#ifndef AirLowerEntrySwitch_h
+#define AirLowerEntrySwitch_h
 
 #if ENABLE(B3_JIT)
 
-#include <limits.h>
-#include <wtf/StringPrintStream.h>
-
 namespace JSC { namespace B3 { namespace Air {
 
-const char* const Special::dumpPrefix = "&";
+class Code;
 
-Special::Special()
-{
-}
-
-Special::~Special()
-{
-}
-
-CString Special::name() const
-{
-    StringPrintStream out;
-    dumpImpl(out);
-    return out.toCString();
-}
-
-Optional<unsigned> Special::shouldTryAliasingDef(Inst&)
-{
-    return Nullopt;
-}
-
-bool Special::isTerminal(Inst&)
-{
-    return false;
-}
-
-bool Special::hasNonArgEffects(Inst&)
-{
-    return true;
-}
-
-bool Special::hasNonArgNonControlEffects(Inst&)
-{
-    return true;
-}
-
-void Special::dump(PrintStream& out) const
-{
-    out.print(dumpPrefix);
-    dumpImpl(out);
-    if (m_index != UINT_MAX)
-        out.print(m_index);
-}
-
-void Special::deepDump(PrintStream& out) const
-{
-    out.print(*this, ": ");
-    deepDumpImpl(out);
-}
+// Converts code that seems to have one entrypoint and emulates multiple entrypoints with
+// EntrySwitch into code that really has multiple entrypoints. This is accomplished by duplicating
+// the backwards transitive closure from all EntrySwitches.
+void lowerEntrySwitch(Code&);
 
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirLowerEntrySwitch_h
+

@@ -39,6 +39,7 @@
 #include "AirIteratedRegisterCoalescing.h"
 #include "AirLogRegisterPressure.h"
 #include "AirLowerAfterRegAlloc.h"
+#include "AirLowerEntrySwitch.h"
 #include "AirLowerMacros.h"
 #include "AirOpcodeUtils.h"
 #include "AirOptimizeBlockOrder.h"
@@ -127,10 +128,6 @@ void prepareForGeneration(Code& code)
     // phase.
     simplifyCFG(code);
 
-    // This sorts the basic blocks in Code to achieve an ordering that maximizes the likelihood that a high
-    // frequency successor is also the fall-through target.
-    optimizeBlockOrder(code);
-
     // This is needed to satisfy a requirement of B3::StackmapValue.
     reportUsedRegisters(code);
 
@@ -139,6 +136,16 @@ void prepareForGeneration(Code& code)
     // use. We _must_ run this after reportUsedRegisters(), since that kills variable assignments
     // that seem dead. Luckily, this phase does not change register liveness, so that's OK.
     fixPartialRegisterStalls(code);
+    
+    // Actually create entrypoints.
+    lowerEntrySwitch(code);
+    
+    // The control flow graph can be simplified further after we have lowered EntrySwitch.
+    simplifyCFG(code);
+
+    // This sorts the basic blocks in Code to achieve an ordering that maximizes the likelihood that a high
+    // frequency successor is also the fall-through target.
+    optimizeBlockOrder(code);
 
     if (shouldValidateIR())
         validate(code);
@@ -157,22 +164,11 @@ void generate(Code& code, CCallHelpers& jit)
 
     DisallowMacroScratchRegisterUsage disallowScratch(jit);
 
-    // And now, we generate code.
-    jit.emitFunctionPrologue();
-    if (code.frameSize())
-        jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
-
     auto argFor = [&] (const RegisterAtOffset& entry) -> CCallHelpers::Address {
         return CCallHelpers::Address(GPRInfo::callFrameRegister, entry.offset());
     };
     
-    for (const RegisterAtOffset& entry : code.calleeSaveRegisters()) {
-        if (entry.reg().isGPR())
-            jit.storePtr(entry.reg().gpr(), argFor(entry));
-        else
-            jit.storeDouble(entry.reg().fpr(), argFor(entry));
-    }
-
+    // And now, we generate code.
     GenerationContext context;
     context.code = &code;
     context.blockLabels.resize(code.size());
@@ -206,6 +202,20 @@ void generate(Code& code, CCallHelpers& jit)
         blockJumps[block].link(&jit);
         CCallHelpers::Label label = jit.label();
         *context.blockLabels[block] = label;
+
+        if (code.isEntrypoint(block)) {
+            jit.emitFunctionPrologue();
+            if (code.frameSize())
+                jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
+            
+            for (const RegisterAtOffset& entry : code.calleeSaveRegisters()) {
+                if (entry.reg().isGPR())
+                    jit.storePtr(entry.reg().gpr(), argFor(entry));
+                else
+                    jit.storeDouble(entry.reg().fpr(), argFor(entry));
+            }
+        }
+        
         ASSERT(block->size() >= 1);
         for (unsigned i = 0; i < block->size() - 1; ++i) {
             context.indexInBlock = i;
@@ -264,6 +274,11 @@ void generate(Code& code, CCallHelpers& jit)
     
     context.currentBlock = nullptr;
     context.indexInBlock = UINT_MAX;
+    
+    Vector<CCallHelpers::Label> entrypointLabels(code.numEntrypoints());
+    for (unsigned i = code.numEntrypoints(); i--;)
+        entrypointLabels[i] = *context.blockLabels[code.entrypoint(i).block()];
+    code.setEntrypointLabels(WTFMove(entrypointLabels));
 
     pcToOriginMap.appendItem(jit.label(), Origin());
     // FIXME: Make late paths have Origins: https://bugs.webkit.org/show_bug.cgi?id=153689

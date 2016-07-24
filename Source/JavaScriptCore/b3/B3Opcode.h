@@ -216,6 +216,11 @@ enum Opcode : int16_t {
 
     // Switch. Switches over either Int32 or Int64. Uses the SwitchValue class.
     Switch,
+    
+    // Multiple entrypoints are supported via the EntrySwitch operation. Place this in the root
+    // block and list the entrypoints as the successors. All blocks backwards-reachable from
+    // EntrySwitch are duplicated for each entrypoint.
+    EntrySwitch,
 
     // Return. Note that B3 procedures don't know their return type, so this can just return any
     // type.

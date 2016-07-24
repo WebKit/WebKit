@@ -81,16 +81,28 @@ Vector<BasicBlock*> blocksInOptimizedOrder(Code& code)
     SortedSuccessors sortedSuccessors;
     SortedSuccessors sortedSlowSuccessors;
     
-    fastWorklist.push(code[0]);
+    // We expect entrypoint lowering to have already happened.
+    RELEASE_ASSERT(code.numEntrypoints());
+
+    auto appendSuccessor = [&] (const FrequentedBlock& block) {
+        if (block.isRare())
+            sortedSlowSuccessors.append(block.block());
+        else
+            sortedSuccessors.append(block.block());
+    };
+    
+    // For everything but the first entrypoint, we push them in order of frequency and frequency
+    // class.
+    for (unsigned i = 1; i < code.numEntrypoints(); ++i)
+        appendSuccessor(code.entrypoint(i));
+    
+    // Always push the primary successor last so that it gets highest priority.
+    fastWorklist.push(code.entrypoint(0).block());
     
     while (BasicBlock* block = fastWorklist.pop()) {
         blocksInOrder.append(block);
-        for (FrequentedBlock& successor : block->successors()) {
-            if (successor.isRare())
-                sortedSlowSuccessors.append(successor.block());
-            else
-                sortedSuccessors.append(successor.block());
-        }
+        for (FrequentedBlock& successor : block->successors())
+            appendSuccessor(successor);
         sortedSuccessors.process(fastWorklist);
     }
 

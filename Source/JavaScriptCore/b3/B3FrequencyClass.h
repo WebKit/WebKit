@@ -43,6 +43,13 @@ enum class FrequencyClass : uint8_t {
     Rare
 };
 
+inline FrequencyClass maxFrequency(FrequencyClass a, FrequencyClass b)
+{
+    if (a == FrequencyClass::Normal)
+        return FrequencyClass::Normal;
+    return b;
+}
+
 } } // namespace JSC::B3
 
 namespace WTF {

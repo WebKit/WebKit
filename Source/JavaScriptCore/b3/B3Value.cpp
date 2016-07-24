@@ -612,6 +612,7 @@ Effects Value::effects() const
     case Switch:
     case Return:
     case Oops:
+    case EntrySwitch:
         result.terminal = true;
         break;
     }
@@ -790,6 +791,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case Branch:
     case Return:
     case Oops:
+    case EntrySwitch:
         return Void;
     case Select:
         ASSERT(secondChild);

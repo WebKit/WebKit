@@ -1046,7 +1046,7 @@ writeH("OpcodeGenerated") {
         | opcode |
         if opcode.custom
             outp.puts "case #{opcode.name}:"
-            outp.puts "return #{opcode.name}Custom::hasNonArgNonControlEffects(*this);"
+            outp.puts "return #{opcode.name}Custom::hasNonArgEffects(*this);"
         end
     }
     outp.puts "default:"

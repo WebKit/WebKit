@@ -33,7 +33,7 @@
     <pre><code>// Create a Procedure that holds our code.
 Procedure proc;
 BasicBlock* root = proc.addBlock();
-root->appendNew&lt;ControlValue&gt;(
+root->appendNew&lt;Value&gt;(
     proc, Return, Origin(),
     root->appendNew&lt;Value&gt;(
         proc, Add, Origin(),

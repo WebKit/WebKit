@@ -283,6 +283,7 @@ private:
         case Phi:
         case Jump:
         case Oops:
+        case EntrySwitch:
             if (UNLIKELY(numArgs))
                 badOpcode(opcode, numArgs);
             break;

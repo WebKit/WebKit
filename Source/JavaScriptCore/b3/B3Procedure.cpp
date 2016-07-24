@@ -280,6 +280,11 @@ bool Procedure::isFastConstant(const ValueKey& constant)
     return m_fastConstants.contains(constant);
 }
 
+CCallHelpers::Label Procedure::entrypointLabel(unsigned index) const
+{
+    return m_code->entrypointLabel(index);
+}
+
 void* Procedure::addDataSection(size_t size)
 {
     if (!size)

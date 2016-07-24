@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirInstInlines.h"
+#include "B3Procedure.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -54,7 +55,7 @@ public:
         HashSet<StackSlot*> validSlots;
         HashSet<BasicBlock*> validBlocks;
         HashSet<Special*> validSpecials;
-
+        
         for (BasicBlock* block : m_code)
             validBlocks.add(block);
         for (StackSlot* slot : m_code.stackSlots())
@@ -63,6 +64,10 @@ public:
             validSpecials.add(special);
 
         for (BasicBlock* block : m_code) {
+            // Blocks that are entrypoints must not have predecessors.
+            if (m_code.isEntrypoint(block))
+                VALIDATE(!block->numPredecessors(), ("At entrypoint ", *block));
+            
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
                 for (Arg& arg : inst.args) {
@@ -89,6 +94,14 @@ public:
                         VALIDATE(&arg >= &inst.args[0], ("At ", arg, " in ", inst, " in ", *block));
                         VALIDATE(&arg <= &inst.args.last(), ("At ", arg, " in ", inst, " in ", *block));
                     });
+                
+                switch (inst.opcode) {
+                case EntrySwitch:
+                    VALIDATE(block->numSuccessors() == m_code.proc().numEntrypoints(), ("At ", inst, " in ", *block));
+                    break;
+                default:
+                    break;
+                }
             }
             for (BasicBlock* successor : block->successorBlocks())
                 VALIDATE(validBlocks.contains(successor), ("In ", *block));

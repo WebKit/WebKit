@@ -39,7 +39,7 @@ namespace JSC { namespace B3 {
 template<typename BasicBlock>
 class GenericFrequentedBlock {
 public:
-    explicit GenericFrequentedBlock(
+    GenericFrequentedBlock(
         BasicBlock* block = nullptr, FrequencyClass frequency = FrequencyClass::Normal)
         : m_block(block)
         , m_frequency(frequency)

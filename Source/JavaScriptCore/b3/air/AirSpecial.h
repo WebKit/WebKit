@@ -92,6 +92,9 @@ public:
     virtual bool isTerminal(Inst&);
 
     // By default, this returns true.
+    virtual bool hasNonArgEffects(Inst&);
+
+    // By default, this returns true.
     virtual bool hasNonArgNonControlEffects(Inst&);
 
     void dump(PrintStream&) const;

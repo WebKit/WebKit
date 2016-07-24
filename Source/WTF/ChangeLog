@@ -1,3 +1,16 @@
+2016-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should support multiple entrypoints
+        https://bugs.webkit.org/show_bug.cgi?id=159391
+
+        Reviewed by Saam Barati.
+
+        * wtf/GraphNodeWorklist.h: Expose some handy functionality.
+        (WTF::GraphNodeWorklist::pop):
+        (WTF::GraphNodeWorklist::saw):
+        (WTF::GraphNodeWorklist::seen):
+        * wtf/VectorTraits.h: Fix a bug! Otherwise filling a vector of byte-sized enum classes doesn't work.
+
 2016-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] Caret placement occurs in the middle of new emoji group candidates

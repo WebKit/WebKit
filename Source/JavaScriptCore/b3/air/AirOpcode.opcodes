@@ -850,6 +850,10 @@ RetDouble U:F:64 /return
 
 Oops /terminal
 
+# This is a terminal but we express it as a Custom because we don't want it to have a code
+# generator.
+custom EntrySwitch
+
 # A Shuffle is a multi-source, multi-destination move. It simultaneously does multiple moves at once.
 # The moves are specified as triplets of src, dst, and width. For example you can request a swap this
 # way:

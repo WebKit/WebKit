@@ -86,14 +86,18 @@ void updatePredecessorsAfter(BasicBlock* root)
 }
 
 template<typename BasicBlock>
-void recomputePredecessors(Vector<std::unique_ptr<BasicBlock>>& blocks)
+void clearPredecessors(Vector<std::unique_ptr<BasicBlock>>& blocks)
 {
-    // Clear all predecessor lists first.
     for (auto& block : blocks) {
         if (block)
             block->predecessors().resize(0);
     }
+}
 
+template<typename BasicBlock>
+void recomputePredecessors(Vector<std::unique_ptr<BasicBlock>>& blocks)
+{
+    clearPredecessors(blocks);
     updatePredecessorsAfter(blocks[0].get());
 }
 

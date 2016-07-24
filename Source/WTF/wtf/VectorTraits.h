@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 #include <wtf/RefPtr.h>
 #include <utility>
 #include <memory>
+#include <type_traits>
 
 namespace WTF {
 
@@ -51,7 +52,7 @@ namespace WTF {
         static const bool canInitializeWithMemset = false;
         static const bool canMoveWithMemcpy = true;
         static const bool canCopyWithMemcpy = true;
-        static const bool canFillWithMemset = sizeof(T) == sizeof(char);
+        static const bool canFillWithMemset = sizeof(T) == sizeof(char) && std::is_integral<T>::value;
         static const bool canCompareWithMemcmp = true;
     };
 

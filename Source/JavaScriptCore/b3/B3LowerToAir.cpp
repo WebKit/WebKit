@@ -2464,6 +2464,11 @@ private:
             append(Air::Oops);
             return;
         }
+            
+        case B3::EntrySwitch: {
+            append(Air::EntrySwitch);
+            return;
+        }
 
         default:
             break;

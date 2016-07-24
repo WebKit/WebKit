@@ -1,5 +1,130 @@
 2016-07-24  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 should support multiple entrypoints
+        https://bugs.webkit.org/show_bug.cgi?id=159391
+
+        Reviewed by Saam Barati.
+        
+        This teaches B3 how to compile procedures with multiple entrypoints in the best way ever.
+        
+        Multiple entrypoints are useful. We could use them to reduce the cost of compiling OSR
+        entrypoints. We could use them to implement better try/catch.
+        
+        Multiple entrypoints are hard to support. All of the code that assumed that the root block
+        is the entrypoint would have to be changed. Transformations like moveConstants() would have
+        to do crazy things if the existence of multiple entrypoints prevented it from finding a
+        single common dominator.
+        
+        Therefore, we want to add multiple entrypoints without actually teaching the compiler that
+        there is such a thing. That's sort of what this change does.
+        
+        This adds a new opcode to both B3 and Air called EntrySwitch. It's a terminal that takes
+        one or more successors and no value children. The number of successors must match
+        Procedure::numEntrypoints(), which could be arbitrarily large. The semantics of EntrySwitch
+        are:
+        
+        - Each of the entrypoints sets a hidden Entry variable to that entrypoint's index and jumps
+          to the procedure's root block.
+        
+        - An EntrySwitch is a switch statement over this hidden Entry variable.
+        
+        The way that we actually implement this is that Air has a very late phase - after all
+        register and stack layout - that clones all code where the Entry variable is live; i.e all
+        code in the closure over predecessors of all blocks that do EntrySwitch.
+        
+        Usually, you would use this by creating an EntrySwitch in the root block, but you don't
+        have to do that. Just remember that the code before EntrySwitch gets cloned for each
+        entrypoint. We allow cloning of an arbitrarily large amount of code because restricting it,
+        and so restricing the placement of EntrySwitches, would be unelegant. It would be hard to
+        preserve this invariant. For example we wouldn't be able to lower any value before an
+        EntrySwitch to a control flow diamond.
+        
+        This patch gives us an easy-to-use way to use B3 to compile code with multiple entrypoints.
+        Inside the compiler, only code that runs very late in Air has to know about this feature.
+        We get the best of both worlds!
+        
+        Also, I finally got rid of the requirement that you explicitly cast BasicBlock* to
+        FrequentedBlock. I can no longer remember why I thought that was a good idea. Removing it
+        doesn't cause any problems and it makes code easier to write.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3BasicBlockUtils.h:
+        (JSC::B3::updatePredecessorsAfter):
+        (JSC::B3::clearPredecessors):
+        (JSC::B3::recomputePredecessors):
+        * b3/B3FrequencyClass.h:
+        (JSC::B3::maxFrequency):
+        * b3/B3Generate.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MoveConstants.cpp:
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::isFastConstant):
+        (JSC::B3::Procedure::entrypointLabel):
+        (JSC::B3::Procedure::addDataSection):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::numEntrypoints):
+        (JSC::B3::Procedure::setNumEntrypoints):
+        (JSC::B3::Procedure::setLastPhaseName):
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::cCallSpecial):
+        (JSC::B3::Air::Code::isEntrypoint):
+        (JSC::B3::Air::Code::resetReachability):
+        (JSC::B3::Air::Code::dump):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::setFrameSize):
+        (JSC::B3::Air::Code::numEntrypoints):
+        (JSC::B3::Air::Code::entrypoints):
+        (JSC::B3::Air::Code::entrypoint):
+        (JSC::B3::Air::Code::setEntrypoints):
+        (JSC::B3::Air::Code::entrypointLabel):
+        (JSC::B3::Air::Code::setEntrypointLabels):
+        (JSC::B3::Air::Code::calleeSaveRegisters):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::isTerminal):
+        (JSC::B3::Air::PatchCustom::hasNonArgEffects):
+        (JSC::B3::Air::PatchCustom::hasNonArgNonControlEffects):
+        (JSC::B3::Air::PatchCustom::generate):
+        (JSC::B3::Air::CommonCustomBase::hasNonArgEffects):
+        (JSC::B3::Air::CCallCustom::forEachArg):
+        (JSC::B3::Air::ColdCCallCustom::forEachArg):
+        (JSC::B3::Air::ShuffleCustom::forEachArg):
+        (JSC::B3::Air::EntrySwitchCustom::forEachArg):
+        (JSC::B3::Air::EntrySwitchCustom::isValidFormStatic):
+        (JSC::B3::Air::EntrySwitchCustom::isValidForm):
+        (JSC::B3::Air::EntrySwitchCustom::admitsStack):
+        (JSC::B3::Air::EntrySwitchCustom::isTerminal):
+        (JSC::B3::Air::EntrySwitchCustom::hasNonArgNonControlEffects):
+        (JSC::B3::Air::EntrySwitchCustom::generate):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        (JSC::B3::Air::generate):
+        * b3/air/AirLowerEntrySwitch.cpp: Added.
+        (JSC::B3::Air::lowerEntrySwitch):
+        * b3/air/AirLowerEntrySwitch.h: Added.
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirOptimizeBlockOrder.cpp:
+        (JSC::B3::Air::blocksInOptimizedOrder):
+        * b3/air/AirSpecial.cpp:
+        (JSC::B3::Air::Special::isTerminal):
+        (JSC::B3::Air::Special::hasNonArgEffects):
+        (JSC::B3::Air::Special::hasNonArgNonControlEffects):
+        * b3/air/AirSpecial.h:
+        * b3/air/AirValidate.cpp:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+
+2016-07-24  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix broken test. I don't know why I goofed this up without seeing it before landing.
 
         * b3/air/AirOpcode.opcodes:

@@ -702,6 +702,8 @@
 		0FDB2CEA174896C7007B3C1B /* ConcurrentJITLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CE9174896C7007B3C1B /* ConcurrentJITLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDDBFB51666EED800C55FEF /* DFGVariableAccessDataDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */; };
 		0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */; };
+		0FDF70851D3F2C2200927449 /* AirLowerEntrySwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF70831D3F2C1F00927449 /* AirLowerEntrySwitch.cpp */; };
+		0FDF70861D3F2C2500927449 /* AirLowerEntrySwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF70841D3F2C1F00927449 /* AirLowerEntrySwitch.h */; };
 		0FE050141AA9091100D33B33 /* ArgumentsMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE050151AA9091100D33B33 /* DirectArgumentsOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE0500D1AA9091100D33B33 /* DirectArgumentsOffset.cpp */; };
 		0FE050161AA9091100D33B33 /* DirectArgumentsOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE0500E1AA9091100D33B33 /* DirectArgumentsOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2911,6 +2913,8 @@
 		0FDB2CE9174896C7007B3C1B /* ConcurrentJITLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcurrentJITLock.h; sourceTree = "<group>"; };
 		0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVariableAccessDataDump.cpp; path = dfg/DFGVariableAccessDataDump.cpp; sourceTree = "<group>"; };
 		0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessDataDump.h; path = dfg/DFGVariableAccessDataDump.h; sourceTree = "<group>"; };
+		0FDF70831D3F2C1F00927449 /* AirLowerEntrySwitch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLowerEntrySwitch.cpp; path = b3/air/AirLowerEntrySwitch.cpp; sourceTree = "<group>"; };
+		0FDF70841D3F2C1F00927449 /* AirLowerEntrySwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLowerEntrySwitch.h; path = b3/air/AirLowerEntrySwitch.h; sourceTree = "<group>"; };
 		0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentsMode.h; sourceTree = "<group>"; };
 		0FE0500D1AA9091100D33B33 /* DirectArgumentsOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectArgumentsOffset.cpp; sourceTree = "<group>"; };
 		0FE0500E1AA9091100D33B33 /* DirectArgumentsOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectArgumentsOffset.h; sourceTree = "<group>"; };
@@ -4917,6 +4921,8 @@
 				0FE34C181C4B39AE0003A512 /* AirLogRegisterPressure.h */,
 				0F6183251C45BF070072450B /* AirLowerAfterRegAlloc.cpp */,
 				0F6183261C45BF070072450B /* AirLowerAfterRegAlloc.h */,
+				0FDF70831D3F2C1F00927449 /* AirLowerEntrySwitch.cpp */,
+				0FDF70841D3F2C1F00927449 /* AirLowerEntrySwitch.h */,
 				0F6183271C45BF070072450B /* AirLowerMacros.cpp */,
 				0F6183281C45BF070072450B /* AirLowerMacros.h */,
 				264091FA1BE2FD4100684DB2 /* AirOpcode.opcodes */,
@@ -8104,6 +8110,7 @@
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
+				0FDF70861D3F2C2500927449 /* AirLowerEntrySwitch.h in Headers */,
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
@@ -9414,6 +9421,7 @@
 				0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */,
 				0F6B8AD81C4EDDA200969052 /* B3DuplicateTails.cpp in Sources */,
 				527773DE1AAF83AC00BDE7E8 /* RuntimeType.cpp in Sources */,
+				0FDF70851D3F2C2200927449 /* AirLowerEntrySwitch.cpp in Sources */,
 				0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */,
 				7905BB681D12050E0019FE57 /* InlineAccess.cpp in Sources */,
 				0FE050271AA9095600D33B33 /* ScopedArguments.cpp in Sources */,
