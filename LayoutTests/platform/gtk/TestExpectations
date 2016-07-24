@@ -2646,9 +2646,6 @@ fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scr
 http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html [ Pass ]
 http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html [ Pass ]
 
-# Timing out on OS X.
-imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Pass ]
-
 # We don't support emoji genders, but half the reftests pass anyway.
 fast/text/emoji-gender-2-3.html [ Pass ]
 fast/text/emoji-gender-2-4.html [ Pass ]
@@ -2693,9 +2690,6 @@ webkit.org/b/160119 editing/input/reveal-caret-of-multiline-contenteditable.html
 # compositor introduced timeouts.
 webkit.org/b/160119 editing/selection/caret-at-bidi-boundary.html [ Failure Pass Timeout ]
 webkit.org/b/160119 editing/selection/select-bidi-run.html [ Timeout Pass ]
-
-webkit.org/b/160119 media/media-fullscreen-inline.html [ Crash Pass ]
-webkit.org/b/160119 media/video-playbackrate.html [ Crash Pass ]
 
 webkit.org/b/160119 fast/backgrounds/size/backgroundSize-in-background-shorthand.html [ ImageOnlyFailure Pass ]
 
@@ -2839,6 +2833,7 @@ webkit.org/b/160119 media/media-controller-timeupdate.html [ Timeout Pass ]
 webkit.org/b/160119 media/media-controller-unpause.html [ Timeout Pass ]
 webkit.org/b/160119 media/media-fullscreen-inline.html [ Crash Pass ]
 webkit.org/b/160119 media/restore-from-page-cache.html [ Timeout Pass Failure ]
+webkit.org/b/160119 media/video-playbackrate.html [ Crash Pass ]
 webkit.org/b/160119 media/video-poster.html [ Crash Pass ]
 webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 media/webkit-media-controls-display.html [ Crash Pass ]

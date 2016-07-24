@@ -1,5 +1,11 @@
 2016-07-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed GTK test expectations fixups
+
+        * platform/gtk/TestExpectations:
+
+2016-07-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Even more unreviewed flaky GTK test gardening
 
         * TestExpectations:
