@@ -1,3 +1,49 @@
+2016-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        [B3] Fusing immediates into test instructions should work again
+        https://bugs.webkit.org/show_bug.cgi?id=160073
+
+        Reviewed by Sam Weinig.
+
+        When we introduced BitImm, we forgot to change the Branch(BitAnd(value, constant))
+        fusion.  This emits test instructions, so it should use BitImm for the constant.  But it
+        was still using Imm!  This meant that isValidForm() always returned false.
+        
+        This fixes the code path to use BitImm, and turns off our use of BitImm64 on x86 since
+        it provides no benefit on x86 and has some risk (the code appears to play fast and loose
+        with the scratch register).
+        
+        This is not an obvious progression on anything, so I added comprehensive tests to
+        testb3, which check that we selected the optimal instruction in a variety of situations.
+        We should add more tests like this!
+
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::successorBlock):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        * b3/B3LowerToAir.h:
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::isRepresentableAs):
+        (JSC::B3::Air::Arg::usesTmp):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isRepresentableAs):
+        (JSC::B3::Air::Arg::castToType):
+        (JSC::B3::Air::Arg::asNumber):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::size):
+        (JSC::B3::Air::Code::at):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirValidate.h:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::compile):
+        (JSC::B3::compileAndRun):
+        (JSC::B3::lowerToAirForTesting):
+        (JSC::B3::testSomeEarlyRegister):
+        (JSC::B3::testBranchBitAndImmFusion):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+
 2016-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, update the exponentiation expression error message

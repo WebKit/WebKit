@@ -96,8 +96,8 @@ public:
     
     void clearSuccessors();
     JS_EXPORT_PRIVATE void appendSuccessor(FrequentedBlock);
-    void setSuccessors(FrequentedBlock);
-    void setSuccessors(FrequentedBlock, FrequentedBlock);
+    JS_EXPORT_PRIVATE void setSuccessors(FrequentedBlock);
+    JS_EXPORT_PRIVATE void setSuccessors(FrequentedBlock, FrequentedBlock);
 
     BasicBlock* successorBlock(unsigned index) const { return successor(index).block(); }
     BasicBlock*& successorBlock(unsigned index) { return successor(index).block(); }

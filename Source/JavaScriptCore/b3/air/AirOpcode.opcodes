@@ -681,17 +681,18 @@ BranchTest8 U:G:32, U:G:8, U:G:8 /branch
 BranchTest32 U:G:32, U:G:32, U:G:32 /branch
     ResCond, Tmp, Tmp
     ResCond, Tmp, BitImm
-    x86: ResCond, Addr, Imm
-    x86: ResCond, Index, Imm
+    x86: ResCond, Addr, BitImm
+    x86: ResCond, Index, BitImm
 
 # Warning: forms that take an immediate will sign-extend their immediate. You probably want
 # BranchTest32 in most cases where you use an immediate.
 64: BranchTest64 U:G:32, U:G:64, U:G:64 /branch
     ResCond, Tmp, Tmp
-    ResCond, Tmp, BitImm64
-    x86: ResCond, Addr, Imm
+    arm: ResCond, Tmp, BitImm64
+    x86: ResCond, Tmp, BitImm
+    x86: ResCond, Addr, BitImm
     x86: ResCond, Addr, Tmp
-    x86: ResCond, Index, Imm
+    x86: ResCond, Index, BitImm
 
 BranchDouble U:G:32, U:F:64, U:F:64 /branch
     DoubleCond, Tmp, Tmp
