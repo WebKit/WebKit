@@ -1,3 +1,14 @@
+2016-07-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening after r203626.
+        https://bugs.webkit.org/show_bug.cgi?id=160102
+        <rdar://problem/27453479>
+
+        Unreviewed.
+
+        * platform/ios-simulator/editing/deleting/delete-emoji-expected.txt:
+        * platform/mac-yosemite/editing/deleting/delete-emoji-expected.txt:
+
 2016-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Layout test security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html timing out
