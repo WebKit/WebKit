@@ -675,8 +675,8 @@ Branch32 U:G:32, U:G:32, U:G:32 /branch
     x86: RelCond, Index, Tmp
 
 BranchTest8 U:G:32, U:G:8, U:G:8 /branch
-    x86: ResCond, Addr, Imm
-    x86: ResCond, Index, Imm
+    x86: ResCond, Addr, BitImm
+    x86: ResCond, Index, BitImm
 
 BranchTest32 U:G:32, U:G:32, U:G:32 /branch
     ResCond, Tmp, Tmp

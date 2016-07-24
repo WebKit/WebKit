@@ -1,3 +1,11 @@
+2016-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix broken test. I don't know why I goofed this up without seeing it before landing.
+
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::run):
+
 2016-07-22  Filip Pizlo  <fpizlo@apple.com>
 
         [B3] Fusing immediates into test instructions should work again
