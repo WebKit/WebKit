@@ -38,7 +38,7 @@ function testSyntaxError(script, message) {
         {
             return ${token} a ** b;
         }
-        `, `SyntaxError: Unexpected token '**'. Unparenthesized unary expression found on the left hand side of an exponentiation expression.`);
+        `, `SyntaxError: Unexpected token '**'. Amiguous unary expression in the left hand side of the exponentiation expression; parenthesis must be used to disambiguate the expression.`);
     }
 }
 

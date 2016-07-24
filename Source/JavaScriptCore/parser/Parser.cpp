@@ -3271,7 +3271,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
         //          Check this.
         // If the binary operator <> has higher precedence than one of "**", this check does not work.
         // But it's OK for ** because the operator "**" has the highest operator precedence in the binary operators.
-        failIfTrue(match(POW) && isUnaryOpExcludingUpdateOp(leadingTokenTypeForUnaryExpression), "Unparenthesized unary expression found on the left hand side of an exponentiation expression");
+        failIfTrue(match(POW) && isUnaryOpExcludingUpdateOp(leadingTokenTypeForUnaryExpression), "Amiguous unary expression in the left hand side of the exponentiation expression; parenthesis must be used to disambiguate the expression");
 
         int precedence = isBinaryOperator(m_token.m_type);
         if (!precedence)
