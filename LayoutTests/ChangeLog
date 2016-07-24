@@ -1,3 +1,14 @@
+2016-07-24  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r203106): Crash in WebCore::MathMLElement::parseMathMLLength()
+        <https://webkit.org/b/160111>
+        <rdar://problem/27506489>
+
+        Reviewed by Chris Dumez.
+
+        * mathml/mpadded-crash-expected.txt: Added.
+        * mathml/mpadded-crash.html: Added.
+
 2016-07-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening after r203626.
