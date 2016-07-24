@@ -220,11 +220,6 @@ void RenderListItem::updateValueNow() const
     m_isValueUpToDate = true;
 }
 
-bool RenderListItem::isEmpty() const
-{
-    return lastChild() == m_marker;
-}
-
 static RenderBlock* getParentOfFirstLineBox(RenderBlock& current, RenderObject& marker)
 {
     bool inQuirksMode = current.document().inQuirksMode();

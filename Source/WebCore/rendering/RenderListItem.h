@@ -66,7 +66,6 @@ private:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
-    bool isEmpty() const override;
     void paint(PaintInfo&, const LayoutPoint&) override;
 
     void layout() override;

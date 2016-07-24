@@ -69,7 +69,7 @@ protected:
     void element() const = delete;
 
     virtual void updateShapeFromElement();
-    bool isEmpty() const override;
+    virtual bool isEmpty() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;

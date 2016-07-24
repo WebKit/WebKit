@@ -285,7 +285,7 @@ using WebCore::VisiblePosition;
         if (renderer->isFloatingOrOutOfFlowPositioned() ||
             renderer->isWidget()) {
             result = INT_MAX;
-        } else if (renderer->isEmpty()) {
+        } else if (!renderer->firstChildSlow()) {
             result = 0;
         } else if (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineElementContinuation())) {
             BOOL noCost = NO;

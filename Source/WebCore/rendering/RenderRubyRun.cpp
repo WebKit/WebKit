@@ -71,11 +71,6 @@ bool RenderRubyRun::hasRubyBase() const
     return lastChild() && lastChild()->isRubyBase();
 }
 
-bool RenderRubyRun::isEmpty() const
-{
-    return !hasRubyText() && !hasRubyBase();
-}
-
 RenderRubyText* RenderRubyRun::rubyText() const
 {
     RenderObject* child = firstChild();
@@ -193,7 +188,7 @@ void RenderRubyRun::removeChild(RenderObject& child)
         }
 
         // If any of the above leaves the run empty, destroy it as well.
-        if (isEmpty()) {
+        if (!hasRubyText() && !hasRubyBase()) {
             parent()->removeChild(*this);
             deleteLines();
             destroy();

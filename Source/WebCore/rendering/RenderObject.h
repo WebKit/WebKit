@@ -175,9 +175,6 @@ public:
 
     RenderNamedFlowFragment* currentRenderNamedFlowFragment() const;
 
-    // FIXME: The meaning of this function is unclear.
-    virtual bool isEmpty() const { return !firstChildSlow(); }
-
 #ifndef NDEBUG
     void setHasAXObject(bool flag) { m_hasAXObject = flag; }
     bool hasAXObject() const { return m_hasAXObject; }
