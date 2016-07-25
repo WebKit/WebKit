@@ -1327,16 +1327,15 @@ WebCore_BUILTINS_WRAPPERS = \
     WebCoreJSBuiltins.cpp \
     WebCoreJSBuiltinInternals.h \
     WebCoreJSBuiltinInternals.cpp \
+#
 
 # Adding/removing scripts should trigger regeneration, but changing which builtins are
 # generated should not affect other builtins when not passing '--combined' to the generator.
 
-.PHONY: force
-
-WebCore_BUILTINS_SOURCES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py force
+WebCore_BUILTINS_SOURCES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py DerivedSources.make
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(WebCore_BUILTINS_SOURCES)' $@
 
-WebCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py force
+WebCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py DerivedSources.make
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(BUILTINS_GENERATOR_SCRIPTS)' $@
 
 $(firstword $(WebCore_BUILTINS_WRAPPERS)): WebCore_BUILTINS_SOURCES_LIST $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
@@ -1400,4 +1399,3 @@ WebCoreHeaderDetection.h : $(WebCore)/AVFoundationSupport.py DerivedSources.make
 	$(PYTHON) $(WebCore)/AVFoundationSupport.py $(WEBKIT_LIBRARIES) > $@
 
 endif # Windows_NT
-

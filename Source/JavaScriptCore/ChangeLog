@@ -1,3 +1,15 @@
+2016-07-25  Darin Adler  <darin@apple.com>
+
+        Speed up make process slightly by improving "list of files" idiom
+        https://bugs.webkit.org/show_bug.cgi?id=160164
+
+        Reviewed by Mark Lam.
+
+        * DerivedSources.make: Change rules that build lists of files to only run when
+        DerivedSources.make has been modified since the last time they were run. Since the
+        list of files are inside this file, this is safe, and this is faster than always
+        comparing and regenerating the file containing the list of files each time.
+
 2016-07-24  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Request should be created with any HeadersInit data
