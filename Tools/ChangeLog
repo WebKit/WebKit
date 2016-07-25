@@ -1,3 +1,10 @@
+2016-07-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, forgot to commit this file in r203674.
+
+        * Scripts/process-linux-coredump: Added.
+        (main):
+
 2016-07-25  Philippe Normand  <pnormand@igalia.com>
 
         Improve GDB backtrace generation for GTK/EFL
