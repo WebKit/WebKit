@@ -1,3 +1,13 @@
+2016-07-25  Nan Wang  <n_wang@apple.com>
+
+        AX: AccessibilityRenderObject is adding duplicated children when CSS first-letter is being used.
+        https://bugs.webkit.org/show_bug.cgi?id=160155
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/css-first-letter-children-expected.txt: Added.
+        * accessibility/mac/css-first-letter-children.html: Added.
+
 2016-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         The web process hangs when computing elements-based snap points for a container with large max scroll offset
