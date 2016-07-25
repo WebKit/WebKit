@@ -768,8 +768,6 @@ void CoordinatedGraphicsLayer::createPlatformLayerIfNeeded()
 
 void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly(bool)
 {
-    ASSERT(m_coordinator->isFlushingLayerChanges());
-
     // When we have a transform animation, we need to update visible rect every frame to adjust the visible rect of a backing store.
     bool hasActiveTransformAnimation = selfOrAncestorHasActiveTransformAnimation();
     if (hasActiveTransformAnimation)
