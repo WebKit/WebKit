@@ -739,6 +739,10 @@ void JIT::emitMathICFast(JITMathIC<Generator>* mathIC, Instruction* currentInstr
     if (!mathIC->isRightOperandValidConstant())
         emitGetVirtualRegister(op2, rightRegs);
 
+#if ENABLE(MATH_IC_STATS)
+    auto inlineStart = label();
+#endif
+
     MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.add(currentInstruction, MathICGenerationState()).iterator->value;
 
     mathIC->m_generator = Generator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, fpRegT0, fpRegT1, scratchGPR, scratchFPR, arithProfile);
@@ -755,6 +759,15 @@ void JIT::emitMathICFast(JITMathIC<Generator>* mathIC, Instruction* currentInstr
             callOperation(nonProfiledFunction, resultRegs, leftRegs, rightRegs);
     } else
         addSlowCase(mathICGenerationState.slowPathJumps);
+
+#if ENABLE(MATH_IC_STATS)
+    auto inlineEnd = label();
+    addLinkTask([=] (LinkBuffer& linkBuffer) {
+        size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+        mathIC->m_generatedCodeSize += size;
+    });
+#endif
+
     emitPutVirtualRegister(result, resultRegs);
 }
 
@@ -793,6 +806,10 @@ void JIT::emitMathICSlow(JITMathIC<Generator>* mathIC, Instruction* currentInstr
     if (mathIC->isRightOperandValidConstant())
         emitGetVirtualRegister(op2, rightRegs);
 
+#if ENABLE(MATH_IC_STATS)
+    auto slowPathStart = label();
+#endif
+
     if (shouldEmitProfiling()) {
         ArithProfile& arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
         if (mathICGenerationState.shouldSlowPathRepatch)
@@ -801,6 +818,15 @@ void JIT::emitMathICSlow(JITMathIC<Generator>* mathIC, Instruction* currentInstr
             mathICGenerationState.slowPathCall = callOperation(profiledFunction, resultRegs, leftRegs, rightRegs, &arithProfile);
     } else
         mathICGenerationState.slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJJMic>(repatchFunction), resultRegs, leftRegs, rightRegs, TrustedImmPtr(mathIC));
+
+#if ENABLE(MATH_IC_STATS)
+    auto slowPathEnd = label();
+    addLinkTask([=] (LinkBuffer& linkBuffer) {
+        size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+        mathIC->m_generatedCodeSize += size;
+    });
+#endif
+
     emitPutVirtualRegister(result, resultRegs);
 
     addLinkTask([=] (LinkBuffer& linkBuffer) {

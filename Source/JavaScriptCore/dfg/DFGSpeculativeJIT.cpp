@@ -3423,6 +3423,10 @@ void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, boo
         rightRegs = right->jsValueRegs();
     }
 
+#if ENABLE(MATH_IC_STATS)
+    auto inlineStart = m_jit.label();
+#endif
+
     Box<MathICGenerationState> addICGenerationState = Box<MathICGenerationState>::create();
     ArithProfile* arithProfile = m_jit.graph().baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
     mathIC->m_generator = Generator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, leftFPR, rightFPR, scratchGPR, scratchFPR, arithProfile);
@@ -3441,6 +3445,9 @@ void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, boo
         addSlowPathGenerator([=, savePlans = WTFMove(savePlans)] () {
             addICGenerationState->slowPathJumps.link(&m_jit);
             addICGenerationState->slowPathStart = m_jit.label();
+#if ENABLE(MATH_IC_STATS)
+            auto slowPathStart = m_jit.label();
+#endif
 
             silentSpill(savePlans);
 
@@ -3466,6 +3473,15 @@ void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, boo
             m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 mathIC->finalizeInlineCode(*addICGenerationState, linkBuffer);
             });
+
+#if ENABLE(MATH_IC_STATS)
+            auto slowPathEnd = m_jit.label();
+            m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+                mathIC->m_generatedCodeSize += size;
+            });
+#endif
+
         });
     } else {
         if (mathIC->isLeftOperandValidConstant()) {
@@ -3480,6 +3496,14 @@ void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, boo
         callOperation(nonRepatchingFunction, resultRegs, leftRegs, rightRegs);
         m_jit.exceptionCheck();
     }
+
+#if ENABLE(MATH_IC_STATS)
+    auto inlineEnd = m_jit.label();
+    m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+        size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+        mathIC->m_generatedCodeSize += size;
+    });
+#endif
 
     jsValueResult(resultRegs, node);
     return;

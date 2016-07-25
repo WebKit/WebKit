@@ -48,6 +48,8 @@ struct MathICGenerationState {
     bool shouldSlowPathRepatch;
 };
 
+#define ENABLE_MATH_IC_STATS 0
+
 template <typename GeneratorType>
 class JITMathIC {
 public:
@@ -153,6 +155,17 @@ public:
         m_deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
             start, linkBuffer.locationOf(state.slowPathStart));
     }
+
+#if ENABLE(MATH_IC_STATS)
+    size_t m_generatedCodeSize { 0 };
+    size_t codeSize() const
+    {
+        size_t result = m_generatedCodeSize;
+        if (m_code)
+            result += m_code.size();
+        return result;
+    }
+#endif
 
     MacroAssemblerCodeRef m_code;
     CodeLocationLabel m_inlineStart;

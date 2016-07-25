@@ -1574,6 +1574,10 @@ private:
                 Box<CCallHelpers::JumpList> exceptions =
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
+#if ENABLE(MATH_IC_STATS)
+                auto inlineStart = jit.label();
+#endif
+
                 Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
                 ArithProfile* arithProfile = state->graph.baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
                 mathIC->m_generator = Generator(leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
@@ -1590,6 +1594,9 @@ private:
                         AllowMacroScratchRegisterUsage allowScratch(jit);
                         mathICGenerationState->slowPathJumps.link(&jit);
                         mathICGenerationState->slowPathStart = jit.label();
+#if ENABLE(MATH_IC_STATS)
+                        auto slowPathStart = jit.label();
+#endif
 
                         if (mathICGenerationState->shouldSlowPathRepatch) {
                             SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
@@ -1605,12 +1612,28 @@ private:
                         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                             mathIC->finalizeInlineCode(*mathICGenerationState, linkBuffer);
                         });
+
+#if ENABLE(MATH_IC_STATS)
+                        auto slowPathEnd = jit.label();
+                        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                            size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+                            mathIC->m_generatedCodeSize += size;
+                        });
+#endif
                     });
                 } else {
                     callOperation(
                         *state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
                         nonRepatchingFunction, params[0].gpr(), params[1].gpr(), params[2].gpr());
                 }
+
+#if ENABLE(MATH_IC_STATS)
+                auto inlineEnd = jit.label();
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+                    mathIC->m_generatedCodeSize += size;
+                });
+#endif
             });
 
         setJSValue(patchpoint);

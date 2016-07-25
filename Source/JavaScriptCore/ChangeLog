@@ -1,5 +1,37 @@
 2016-07-25  Saam Barati  <sbarati@apple.com>
 
+        MathICs should be able to take and dump stats about code size
+        https://bugs.webkit.org/show_bug.cgi?id=160148
+
+        Reviewed by Filip Pizlo.
+
+        This will make testing changes on MathIC going forward much easier.
+        We will be able to easily see if modifications to MathIC will lead
+        to us generating smaller code. We now only dump average size when we
+        regenerate any MathIC. This works out for large tests/pages, but is not
+        great for testing small programs. We can add more dump points later if
+        we find that we want to dump stats while running small small programs.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jitSoon):
+        (JSC::CodeBlock::dumpMathICStats):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isStrictMode):
+        (JSC::CodeBlock::ecmaMode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMathIC):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::finalizeInlineCode):
+        (JSC::JITMathIC::codeSize):
+        * jit/JITOperations.cpp:
+
+2016-07-25  Saam Barati  <sbarati@apple.com>
+
         op_mul/ArithMul(Untyped,Untyped) should be an IC
         https://bugs.webkit.org/show_bug.cgi?id=160108
 

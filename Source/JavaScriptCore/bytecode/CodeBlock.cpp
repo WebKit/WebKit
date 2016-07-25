@@ -4573,4 +4573,39 @@ void CodeBlock::jitSoon()
     m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITSoon()), this);
 }
 
+void CodeBlock::dumpMathICStats()
+{
+#if ENABLE(MATH_IC_STATS)
+    double numAdds = 0.0;
+    double totalAddSize = 0.0;
+    double numMuls = 0.0;
+    double totalMulSize = 0.0;
+
+    auto countICs = [&] (CodeBlock* codeBlock) {
+        for (JITAddIC* addIC : codeBlock->m_addICs) {
+            numAdds++;
+            totalAddSize += addIC->codeSize();
+        }
+
+        for (JITMulIC* mulIC : codeBlock->m_mulICs) {
+            numMuls++;
+            totalMulSize += mulIC->codeSize();
+        }
+
+        return false;
+    };
+    heap()->forEachCodeBlock(countICs);
+
+    dataLog("Num Adds: ", numAdds, "\n");
+    dataLog("Total Add size in bytes: ", totalAddSize, "\n");
+    dataLog("Average Add size: ", totalAddSize / numAdds, "\n");
+    dataLog("\n");
+    dataLog("Num Muls: ", numMuls, "\n");
+    dataLog("Total Mul size in bytes: ", totalMulSize, "\n");
+    dataLog("Average Mul size: ", totalMulSize / numMuls, "\n");
+
+    dataLog("-----------------------\n");
+#endif
+}
+
 } // namespace JSC
