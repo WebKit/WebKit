@@ -1,3 +1,15 @@
+2016-07-24  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Filtering is broken in the Overview timeline view
+        https://bugs.webkit.org/show_bug.cgi?id=160152
+        <rdar://problem/27517481>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SourceCodeTimelineTimelineDataGridNode.js:
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype.filterableDataForColumn):
+        Non-resource nodes should be filtered based on their display name.
+
 2016-07-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r202876): Web Inspector: Switching away from Console tab with a lot of messages is slow

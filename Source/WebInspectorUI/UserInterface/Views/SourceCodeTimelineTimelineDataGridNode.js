@@ -60,6 +60,16 @@ WebInspector.SourceCodeTimelineTimelineDataGridNode = class SourceCodeTimelineTi
         return super.createCellContent(columnIdentifier, cell);
     }
 
+    // Protected
+
+    filterableDataForColumn(columnIdentifier)
+    {
+        if (columnIdentifier === "name")
+            return this.displayName();
+
+        return super.filterableDataForColumn(columnIdentifier);
+    }
+
     // Private
 
     _createNameCellContent(cellElement)
