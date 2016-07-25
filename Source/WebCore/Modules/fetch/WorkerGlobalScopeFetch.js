@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This interface is recognized as a global object by the bindings generator.
-interface TestGlobalObject {
-    attribute DOMString regularAttribute;
-    [PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateAttribute;
-    [Conditional=TEST_FEATURE, PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateConditionalAttribute;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] attribute DOMString enabledAtRuntimeAttribute;
-    void regularOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
+// @conditional=ENABLE(FETCH_API)
 
-    [PrivateIdentifier, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testPrivateFunction();
-    [JSBuiltin, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testJSBuiltinFunction();
-};
+function fetch(input, init)
+{
+    "use strict";
+
+    try {
+        return @fetchRequest(new @Request(input, init));
+    } catch(e) {
+        return @Promise.@reject(e);
+    }
+}

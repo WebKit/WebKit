@@ -2419,12 +2419,21 @@ sub GenerateImplementation
             my $functionLength = GetFunctionLength($function);
             my $jsAttributes = ComputeFunctionSpecial($interface, $function);
             push(@implContent, "    if (${enable_function}())\n");
-            push(@implContent, "        putDirectNativeFunction(vm, this, vm.propertyNames->$functionName, $functionLength, $implementationFunction, NoIntrinsic, attributesForStructure($jsAttributes));\n");
+
+            my $propertyName = "vm.propertyNames->$functionName";
+            if ($function->signature->extendedAttributes->{"PrivateIdentifier"}) {
+                $propertyName = "static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $functionName . "PrivateName()";
+            }
+            if (IsJSBuiltin($interface, $function)) {
+                push(@implContent, "        putDirectBuiltinFunction(vm, this, $propertyName, $implementationFunction(vm), attributesForStructure($jsAttributes));\n");
+            } else {
+                push(@implContent, "        putDirectNativeFunction(vm, this, $propertyName, $functionLength, $implementationFunction, NoIntrinsic, attributesForStructure($jsAttributes));\n");
+            }
             push(@implContent, "#endif\n") if $conditionalString;
         }
         push(@implContent, "}\n\n");
     }
-    
+
     unless (ShouldUseGlobalObjectPrototype($interface)) {
         push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");

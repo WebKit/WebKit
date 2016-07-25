@@ -1,3 +1,16 @@
+2016-07-24  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Request should be created with any HeadersInit data
+        https://bugs.webkit.org/show_bug.cgi?id=159672
+
+        Reviewed by Sam Weinig.
+
+        * imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic-expected.txt: Test was previously
+        failing due to lack of support for HeadersInit data in Request constructor.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic-expected.txt: Removed.
+        * web-platform-tests/fetch/api/request/request-headers-expected.txt:
+        * web-platform-tests/fetch/api/request/request-headers.html: Adding new test.
+
 2016-07-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r203641.

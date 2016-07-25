@@ -57,9 +57,7 @@ public:
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext&, const String&, int, ExceptionCode&);
 
     using FetchPromise = DOMPromise<FetchResponse>;
-    static void fetch(ScriptExecutionContext&, FetchRequest&, const Dictionary&, FetchPromise&&);
-    static void fetch(ScriptExecutionContext&, const String&, const Dictionary&, FetchPromise&&);
-
+    static void fetch(ScriptExecutionContext&, FetchRequest&, FetchPromise&&);
 
     void setStatus(int, const String&, ExceptionCode&);
     void initializeWith(JSC::ExecState&, JSC::JSValue);

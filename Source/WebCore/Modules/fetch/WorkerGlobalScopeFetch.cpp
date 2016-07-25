@@ -36,18 +36,11 @@
 
 namespace WebCore {
 
-void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest& input, const Dictionary& dictionary, DeferredWrapper&& promise)
+void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest& request, DeferredWrapper&& promise)
 {
     if (!scope.scriptExecutionContext())
         return;
-    FetchResponse::fetch(*scope.scriptExecutionContext(), input, dictionary, WTFMove(promise));
-}
-
-void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, const String& url, const Dictionary& dictionary, DeferredWrapper&& promise)
-{
-    if (!scope.scriptExecutionContext())
-        return;
-    FetchResponse::fetch(*scope.scriptExecutionContext(), url, dictionary, WTFMove(promise));
+    FetchResponse::fetch(*scope.scriptExecutionContext(), request, WTFMove(promise));
 }
 
 } // namespace WebCore

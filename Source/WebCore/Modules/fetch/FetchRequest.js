@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This interface is recognized as a global object by the bindings generator.
-interface TestGlobalObject {
-    attribute DOMString regularAttribute;
-    [PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateAttribute;
-    [Conditional=TEST_FEATURE, PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateConditionalAttribute;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] attribute DOMString enabledAtRuntimeAttribute;
-    void regularOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
+// @conditional=ENABLE(FETCH_API)
 
-    [PrivateIdentifier, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testPrivateFunction();
-    [JSBuiltin, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testJSBuiltinFunction();
-};
+function initializeFetchRequest(input, init)
+{
+    "use strict";
+
+    if (init === @undefined)
+        init = { };
+    else if (!@isObject(init))
+        throw new @TypeError("Request init must be an object");
+
+    let headers = this.@initializeWith(input, init);
+    @assert(headers instanceof @Headers);
+
+    let inputIsRequest = input instanceof @Request;
+    if ("headers" in init)
+        @fillFetchHeaders(headers, init.headers)
+    else if (inputIsRequest)
+        @fillFetchHeaders(headers, input.headers)
+
+    let hasInitBody = init.body !== @undefined && init.body !== null;
+    this.@setBody(hasInitBody ? init.body : null, inputIsRequest ? input : null);
+
+    return this;
+}
