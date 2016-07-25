@@ -54,23 +54,25 @@ static bool receivedScriptMessage;
 
 @end
 
-@interface DidPlayMessageHandler : NSObject <WKScriptMessageHandler> {
+@interface MediaPlaybackMessageHandler : NSObject <WKScriptMessageHandler> {
     RetainPtr<WKWebView> _webView;
 }
 
 @property (nonatomic) BOOL expectedToHaveControlsManager;
+@property (nonatomic, retain) NSString *finalMessageString;
 
-- (instancetype)initWithWKWebView:(WKWebView*)webView;
+- (instancetype)initWithWKWebView:(WKWebView*)webView finalMessageString:(NSString *)finalMessageString;
 @end
 
-@implementation DidPlayMessageHandler
+@implementation MediaPlaybackMessageHandler
 
-- (instancetype)initWithWKWebView:(WKWebView*)webView
+- (instancetype)initWithWKWebView:(WKWebView*)webView finalMessageString:(NSString *)finalMessageString
 {
     if (!(self = [super init]))
         return nil;
 
     _webView = webView;
+    _finalMessageString = finalMessageString;
 
     return self;
 }
@@ -80,7 +82,7 @@ static bool receivedScriptMessage;
     receivedScriptMessage = true;
 
     NSString *bodyString = (NSString *)[message body];
-    if ([bodyString isEqualToString:@"playing"] || [bodyString isEqualToString:@"paused"]) {
+    if ([bodyString isEqualToString:self.finalMessageString]) {
         BOOL hasControlsManager = [_webView _hasActiveVideoForControlsManager];
         if (self.expectedToHaveControlsManager)
             EXPECT_TRUE(hasControlsManager);
@@ -132,7 +134,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-    RetainPtr<DidPlayMessageHandler> handler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"playing"]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
 
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
@@ -153,7 +155,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-    RetainPtr<DidPlayMessageHandler> handler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"playing"]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
 
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
@@ -174,7 +176,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-    RetainPtr<DidPlayMessageHandler> playbackHandler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
+    RetainPtr<MediaPlaybackMessageHandler> playbackHandler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"paused"]);
     [[configuration userContentController] addScriptMessageHandler:playbackHandler.get() name:@"playingHandler"];
 
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
@@ -194,12 +196,77 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 }
 
+TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAfterEnding)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"ended"]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+
+    // Since the video has ended, the expectation is NO even if the page programmatically seeks to the beginning.
+    [handler setExpectedToHaveControlsManager:NO];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"large-video-seek-after-ending" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&testedControlsManagerAfterPlaying);
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+}
+
+TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAndPlaysAfterEnding)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"replaying"]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+
+    // Since the video is still playing, the expectation is YES even if the video has ended once.
+    [handler setExpectedToHaveControlsManager:YES];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"large-video-seek-to-beginning-and-play-after-ending" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&testedControlsManagerAfterPlaying);
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+}
+
+TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoHidesControlsAfterSeekingToEnd)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"ended"]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+
+    RetainPtr<OnLoadMessageHandler> onloadHandler = adoptNS([[OnLoadMessageHandler alloc] initWithWKWebView:webView.get() handler:^() {
+        [webView mouseDownAtPoint:NSMakePoint(50, 50)];
+    }]);
+    [[configuration userContentController] addScriptMessageHandler:onloadHandler.get() name:@"onloadHandler"];
+
+    // Since the video has ended, the expectation is NO.
+    [handler setExpectedToHaveControlsManager:NO];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"large-video-hides-controls-after-seek-to-end" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&testedControlsManagerAfterPlaying);
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+}
+
 TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideoWithoutAudio)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-    RetainPtr<DidPlayMessageHandler> handler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"playing"]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
 
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
@@ -220,7 +287,7 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedWithScript)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-    RetainPtr<DidPlayMessageHandler> handler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"playing"]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
 
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);

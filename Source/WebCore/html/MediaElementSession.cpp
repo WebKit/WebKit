@@ -243,6 +243,11 @@ bool MediaElementSession::canControlControlsManager() const
         return true;
     }
 
+    if (hasBehaviorRestriction(RequirePlaybackToControlControlsManager) && !m_element.isPlaying()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Needs to be playing");
+        return false;
+    }
+
     if (m_element.muted()) {
         LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Muted");
         return false;

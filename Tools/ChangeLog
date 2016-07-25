@@ -1,3 +1,24 @@
+2016-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Media controls on apple.com don't disappear when movie finishes playing
+        https://bugs.webkit.org/show_bug.cgi?id=160068
+        <rdar://problem/26668526>
+
+        Reviewed by Darin Adler.
+
+        Adds new API tests. Please see WebCore ChangeLog for more details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (-[MediaPlaybackMessageHandler initWithWKWebView:finalMessageString:]):
+        (-[MediaPlaybackMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+        (-[DidPlayMessageHandler initWithWKWebView:]): Deleted.
+        (-[DidPlayMessageHandler userContentController:didReceiveScriptMessage:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-hides-controls-after-seek-to-end.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-seek-after-ending.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-seek-to-beginning-and-play-after-ending.html: Added.
+
 2016-07-25  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix test-webkitpy after r203674.
