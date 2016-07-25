@@ -30,6 +30,7 @@ list(APPEND WebKit2_SOURCES
 
     NetworkProcess/Downloads/mac/DownloadMac.mm
 
+    NetworkProcess/cache/NetworkCacheCodersCocoa.cpp
     NetworkProcess/cache/NetworkCacheDataCocoa.mm
     NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm
 

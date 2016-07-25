@@ -1,3 +1,31 @@
+2016-07-25  Sam Weinig  <sam@webkit.org>
+
+        Split platform specific parts of NetworkCacheCoders.cpp into separate files
+        https://bugs.webkit.org/show_bug.cgi?id=160151
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::decode): Deleted.
+        * NetworkProcess/cache/NetworkCacheCodersCocoa.cpp: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheCoders.cpp.
+        (WebKit::NetworkCache::encodeCFData): Moved.
+        (WebKit::NetworkCache::decodeCFData): Moved.
+        (WebKit::NetworkCache::encodeSecTrustRef): Moved.
+        (WebKit::NetworkCache::decodeSecTrustRef): Moved.
+        (WebKit::NetworkCache::encodeCertificateChain): Moved.
+        (WebKit::NetworkCache::decodeCertificateChain): Moved.
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::encode): Moved.
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::decode): Moved.
+        * NetworkProcess/cache/NetworkCacheCodersSoup.cpp: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheCoders.cpp.
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::encode): Moved.
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::decode): Moved.
+
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2016-07-25  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Make sure we call the ProcessAssertion invalidation handler on the main thread
