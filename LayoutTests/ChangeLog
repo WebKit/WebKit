@@ -1,3 +1,38 @@
+2016-07-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Implement repeat(auto-fit)
+        https://bugs.webkit.org/show_bug.cgi?id=159771
+
+        Reviewed by Darin Adler.
+
+        Uncommented the auto-fit cases. Split the Mozilla's 005 test in two because it was not
+        possible to fit all the content in a viewport without scrollbars.
+
+        * fast/css-grid-layout/grid-auto-fit-columns-expected.txt: Added.
+        * fast/css-grid-layout/grid-auto-fit-columns.html: Added.
+        * fast/css-grid-layout/grid-auto-fit-rows-expected.txt: Added.
+        * fast/css-grid-layout/grid-auto-fit-rows.html: Added.
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set-expected.txt:
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set.html:
+        * fast/css-grid-layout/grid-only-abspos-item-computed-style-crash-expected.txt:
+        * fast/css-grid-layout/grid-only-abspos-item-computed-style-crash.html:
+        * fast/css-grid-layout/grid-positioned-items-padding-expected.txt:
+        * fast/css-grid-layout/grid-positioned-items-padding.html:
+        * fast/css-grid-layout/grid-template-columns-rows-computed-style-gaps-content-alignment-expected.txt:
+        * fast/css-grid-layout/grid-template-columns-rows-computed-style-gaps-content-alignment.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-001-expected.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-001.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-002-expected.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-002.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-003-expected.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-003.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-004-expected.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-004.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005-part-1-expected.html: Renamed from LayoutTests/fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005-expected.html.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005-part-1.html: Copied from LayoutTests/fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005.html.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005-part-2-expected.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005-part-2.html: Renamed from LayoutTests/fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005.html.
+
 2016-07-24  Nan Wang  <n_wang@apple.com>
 
         AX: Video Controls: Volume cannot be adjusted using VO.

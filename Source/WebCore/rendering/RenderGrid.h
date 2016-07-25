@@ -57,11 +57,10 @@ public:
     bool avoidsFloats() const override { return true; }
     bool canDropAnonymousBlockChild() const override { return false; }
 
+    Vector<LayoutUnit> trackSizesForComputedStyle(GridTrackSizingDirection) const;
+
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }
-
-    LayoutUnit guttersSize(GridTrackSizingDirection, unsigned span) const;
-    LayoutUnit offsetBetweenTracks(GridTrackSizingDirection) const;
 
     size_t autoRepeatCountForDirection(GridTrackSizingDirection) const;
 
@@ -84,6 +83,12 @@ private:
     void insertItemIntoGrid(RenderBox&, const GridArea&);
 
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection) const;
+
+    typedef ListHashSet<size_t> OrderedTrackIndexSet;
+    std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(GridTrackSizingDirection) const;
+
+    bool hasAutoRepeatEmptyTracks(GridTrackSizingDirection) const;
+    bool isEmptyAutoRepeatTrack(GridTrackSizingDirection, unsigned track) const;
 
     void placeItemsOnGrid();
     void populateExplicitGridAndOrderIterator();
@@ -177,6 +182,9 @@ private:
     bool tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection, GridSizingData&);
 #endif
 
+    LayoutUnit gridGapForDirection(GridTrackSizingDirection) const;
+    LayoutUnit guttersSize(GridTrackSizingDirection, unsigned startLine, unsigned span) const;
+
     bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&, GridTrackSizingDirection, SizingOperation) const;
 
     unsigned gridColumnCount() const;
@@ -207,6 +215,9 @@ private:
     bool m_hasAnyOrthogonalChild;
 
     bool m_gridIsDirty { true };
+
+    std::unique_ptr<OrderedTrackIndexSet> m_autoRepeatEmptyColumns { nullptr };
+    std::unique_ptr<OrderedTrackIndexSet> m_autoRepeatEmptyRows { nullptr };
 };
 
 size_t inline RenderGrid::autoRepeatCountForDirection(GridTrackSizingDirection direction) const

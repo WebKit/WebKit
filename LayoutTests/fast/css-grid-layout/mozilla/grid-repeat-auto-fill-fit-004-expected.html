@@ -80,6 +80,11 @@ x:last-child {
   background: blue;
 }
 
+fill,fit {
+  float: left;
+  width: 375px;
+}
+
 </style>
 </head>
 <body>
@@ -133,60 +138,61 @@ x:last-child {
 
 </fill>
 
+<!-- This was in the original Mozilla tests. We need to remove it to keep the whole content in the viewport without scrolls. -->
+<!-- <br clear="all">
+     <br clear="all"> -->
+
+<fit>
+
+<wrap><div class="grid r1"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 float w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 w80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r12 w50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r12 xw50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 w100 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 mw80 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 w100 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r13 mw100 w50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+
 <br clear="all">
 <br clear="all">
 
-<!-- <fit>
+<wrap><div class="grid r2"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r2 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r23 w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r22 w80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r20 w50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r22 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r20 xw50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r22 w100 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r2 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r23 mw80 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r23 w100 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r23 mw100 w50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
 
-     <wrap><div class="grid r1"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 float w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 w80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r12 w50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r12 xw50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 w100 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 mw80 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 w100 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r13 mw100 w50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<br clear="all">
+<br clear="all">
 
-     <br clear="all">
-     <br clear="all">
+<wrap><div class="grid r3"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r3 float w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r3 w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r30 w80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r30 w50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r30 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r30 xw50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r30 w100 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r3 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r3 mw80 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r3 w100 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<wrap><div class="grid r3 mw100 w50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
 
-     <wrap><div class="grid r2"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r2 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r23 w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r22 w80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r20 w50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r22 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r20 xw50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r22 w100 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r2 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r23 mw80 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r23 w100 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r23 mw100 w50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
+<br clear="all">
+<br clear="all">
 
-     <br clear="all">
-     <br clear="all">
-
-     <wrap><div class="grid r3"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r3 float w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r3 w100"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r30 w80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r30 w50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r30 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r30 xw50"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r30 w100 xw80"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r3 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r3 mw80 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r3 w100 mw50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-     <wrap><div class="grid r3 mw100 w50 float"><x></x><x></x><a></a><b></b><x></x></div></wrap>
-
-     <br clear="all">
-     <br clear="all">
-
-     </fit> -->
+</fit>
 
 
 </body>

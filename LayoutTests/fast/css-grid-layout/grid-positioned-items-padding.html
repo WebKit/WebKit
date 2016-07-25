@@ -14,6 +14,11 @@
     position: relative;
 }
 
+.autoFit {
+    grid-template-columns: repeat(auto-fit, 100px);
+    grid-template-rows: repeat(auto-fit, 100px);
+}
+
 .absolute {
     position: absolute;
     top: 0;
@@ -22,6 +27,8 @@
     height: 100%;
     background: lime;
 }
+
+.gap { grid-gap: 10px; }
 
 </style>
 <script src="../../resources/check-layout.js"></script>
@@ -194,6 +201,42 @@
     </div>
     <div class="absolute" style="grid-column: 3 / foo; grid-row: 2 / 3;"
         data-offset-x="0" data-offset-y="65" data-expected-width="215" data-expected-height="150">
+    </div>
+</div>
+
+<div class="grid autoFit gap">
+    <div class="absolute" style="grid-column: auto / 1; grid-row: auto / 1;"
+         data-offset-x="0" data-offset-y="0" data-expected-width="15" data-expected-height="15">
+    </div>
+    <div class="absolute" style="grid-column: -1 / auto; grid-row: -1 / auto;"
+         data-offset-x="15" data-offset-y="15" data-expected-width="515" data-expected-height="315">
+    </div>
+</div>
+
+<div class="grid autoFit gap">
+    <div class="absolute" style="grid-column: auto / 2; grid-row: auto / 2;"
+         data-offset-x="0" data-offset-y="0" data-expected-width="15" data-expected-height="15">
+    </div>
+    <div class="absolute" style="grid-column: -2 / auto; grid-row: -2 / auto;"
+         data-offset-x="15" data-offset-y="15" data-expected-width="515" data-expected-height="315">
+    </div>
+</div>
+
+<div class="grid autoFit directionRTL gap">
+    <div class="absolute" style="grid-column: auto / 1; grid-row: auto / 1;"
+         data-offset-x="515" data-offset-y="0" data-expected-width="15" data-expected-height="15">
+    </div>
+    <div class="absolute" style="grid-column: -1 / auto; grid-row: -1 / auto;"
+         data-offset-x="0" data-offset-y="15" data-expected-width="515" data-expected-height="315">
+    </div>
+</div>
+
+<div class="grid autoFit directionRTL gap">
+    <div class="absolute" style="grid-column: auto / 2; grid-row: auto / 2;"
+         data-offset-x="515" data-offset-y="0" data-expected-width="15" data-expected-height="15">
+    </div>
+    <div class="absolute" style="grid-column: -2 / auto; grid-row: -2 / auto;"
+         data-offset-x="0" data-offset-y="15" data-expected-width="515" data-expected-height="315">
     </div>
 </div>
 

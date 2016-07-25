@@ -9,6 +9,14 @@ PASS window.getComputedStyle(grid2, '').getPropertyValue('grid-template-columns'
 PASS window.getComputedStyle(grid2, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(grid3, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(grid3, '').getPropertyValue('grid-template-rows') is "none"
+PASS window.getComputedStyle(grid4, '').getPropertyValue('grid-template-columns') is "[a] 0px [b a] 0px [b a] 0px [b a] 0px [b a] 0px [b]"
+PASS window.getComputedStyle(grid4, '').getPropertyValue('grid-template-rows') is "none"
+PASS window.getComputedStyle(grid5, '').getPropertyValue('grid-template-columns') is "none"
+PASS window.getComputedStyle(grid5, '').getPropertyValue('grid-template-rows') is "[a] 0px [b]"
+PASS window.getComputedStyle(grid6, '').getPropertyValue('grid-template-columns') is "[a] 0px [b a] 0px [b a] 0px [b] 10px 30px"
+PASS window.getComputedStyle(grid6, '').getPropertyValue('grid-template-rows') is "none"
+PASS window.getComputedStyle(grid7, '').getPropertyValue('grid-template-columns') is "none"
+PASS window.getComputedStyle(grid7, '').getPropertyValue('grid-template-rows') is "[a] 0px [b] 10px 30px"
 PASS successfullyParsed is true
 
 TEST COMPLETE
