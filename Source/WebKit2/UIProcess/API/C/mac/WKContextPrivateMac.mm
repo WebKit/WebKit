@@ -163,13 +163,3 @@ bool WKContextShouldSuggestBlockWebGL()
 {
     return WKShouldSuggestBlockingWebGL();
 }
-
-pid_t WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
-{
-    return toImpl(contextRef)->networkProcessIdentifier();
-}
-
-pid_t WKContextGetDatabaseProcessIdentifier(WKContextRef contextRef)
-{
-    return toImpl(contextRef)->databaseProcessIdentifier();
-}

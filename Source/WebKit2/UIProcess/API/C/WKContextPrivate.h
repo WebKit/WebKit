@@ -94,6 +94,9 @@ WK_EXPORT void WKContextSetMemoryCacheDisabled(WKContextRef, bool disabled);
 
 WK_EXPORT void WKContextSetFontWhitelist(WKContextRef, WKArrayRef);
 
+WK_EXPORT pid_t WKContextGetNetworkProcessIdentifier(WKContextRef context);
+WK_EXPORT pid_t WKContextGetDatabaseProcessIdentifier(WKContextRef context);
+
 #ifdef __cplusplus
 }
 #endif

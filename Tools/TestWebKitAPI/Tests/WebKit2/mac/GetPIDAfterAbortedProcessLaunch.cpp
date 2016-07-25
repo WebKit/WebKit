@@ -27,8 +27,9 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 
-#include <WebKit/WKPagePrivateMac.h>
 #include <WebKit/WKContextPrivate.h>
+#include <WebKit/WKPagePrivate.h>
+#include <WebKit/WKPagePrivateMac.h>
 
 namespace TestWebKitAPI {
 

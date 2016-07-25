@@ -41,14 +41,15 @@ class GDBCrashLogGeneratorTest(unittest.TestCase):
         if sys.platform.startswith('win'):
             return
 
-        generator = GDBCrashLogGenerator('DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), path_to_driver=None)
+        process_coredump_script_path = "/path/to/coredump-processor"
+        generator = GDBCrashLogGenerator('DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), process_coredump_script_path=process_coredump_script_path, path_to_driver=None)
 
         core_directory = os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')
-        core_pattern = os.path.join(core_directory, "core-pid_%p-_-process_%E")
+        core_pattern = "|%s /path/to/coredumps/core-pid_%%p.dump" % process_coredump_script_path
         mock_empty_crash_log = """\
 crash log for DumpRenderTree (pid 28529):
 
-Coredump core-pid_28529-_-process_DumpRenderTree not found. To enable crash logs:
+Coredump core-pid_28529.dump not found. To enable crash logs:
 
 - run this command as super-user: echo "%(core_pattern)s" > /proc/sys/kernel/core_pattern
 - enable core dumps: ulimit -c unlimited

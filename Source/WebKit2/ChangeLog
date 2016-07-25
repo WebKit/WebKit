@@ -1,3 +1,25 @@
+2016-07-25  Philippe Normand  <pnormand@igalia.com>
+
+        Improve GDB backtrace generation for GTK/EFL
+        https://bugs.webkit.org/show_bug.cgi?id=128928
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the Web, Database and Network ProcessIdentifier functions to
+        the cross-platform WKContext and WKPage implementations.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetNetworkProcessIdentifier):
+        (WKContextGetDatabaseProcessIdentifier):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetProcessIdentifier):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+
 2016-07-24  Sam Weinig  <sam@webkit.org>
 
         Add specialization for encoding/decoding WebCore::CertificateInfos in the Network Cache

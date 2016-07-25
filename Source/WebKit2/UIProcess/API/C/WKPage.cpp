@@ -2752,6 +2752,11 @@ void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportSca
 #endif
 }
 
+pid_t WKPageGetProcessIdentifier(WKPageRef page)
+{
+    return toImpl(page)->processIdentifier();
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 // -- DEPRECATED --

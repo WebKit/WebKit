@@ -149,6 +149,8 @@ WK_EXPORT void WKPageRestoreFromSessionStateWithoutNavigation(WKPageRef page, WK
 
 WK_EXPORT void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportScaleLimits);
 
+WK_EXPORT pid_t WKPageGetProcessIdentifier(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif

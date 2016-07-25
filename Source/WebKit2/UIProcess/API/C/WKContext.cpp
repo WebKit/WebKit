@@ -572,3 +572,13 @@ void WKContextSetFontWhitelist(WKContextRef contextRef, WKArrayRef arrayRef)
 {
     toImpl(contextRef)->setFontWhitelist(toImpl(arrayRef));
 }
+
+pid_t WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
+{
+    return toImpl(contextRef)->networkProcessIdentifier();
+}
+
+pid_t WKContextGetDatabaseProcessIdentifier(WKContextRef contextRef)
+{
+    return toImpl(contextRef)->databaseProcessIdentifier();
+}

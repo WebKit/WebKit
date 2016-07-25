@@ -116,11 +116,6 @@ _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef pageRef)
 #endif
 }
 
-pid_t WKPageGetProcessIdentifier(WKPageRef pageRef)
-{
-    return toImpl(pageRef)->processIdentifier();
-}
-
 bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
 {
     WebPageProxy* webPageProxy = toImpl(page);
