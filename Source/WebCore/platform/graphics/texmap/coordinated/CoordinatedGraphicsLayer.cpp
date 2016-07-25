@@ -21,17 +21,14 @@
  */
 
 #include "config.h"
-
-#if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedGraphicsLayer.h"
 
+#if USE(COORDINATED_GRAPHICS)
+
 #include "FloatQuad.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerFactory.h"
-#include "Page.h"
 #include "ScrollableArea.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
