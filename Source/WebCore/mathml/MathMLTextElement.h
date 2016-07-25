@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +35,7 @@ namespace WebCore {
 class MathMLTextElement final : public MathMLElement {
 public:
     static Ref<MathMLTextElement> create(const QualifiedName& tagName, Document&);
+    bool acceptsMathVariantAttribute() final { return true; }
 
 private:
     MathMLTextElement(const QualifiedName& tagName, Document&);

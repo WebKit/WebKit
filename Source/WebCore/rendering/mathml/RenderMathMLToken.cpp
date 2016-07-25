@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLElement.h"
 #include "MathMLNames.h"
 #include "PaintInfo.h"
 #include "RenderElement.h"
@@ -281,37 +282,37 @@ const UChar32 mathBoldPiSymbol = 0x1D6E1;
 // Characters without a valid mapping or valid aMathvar value are returned
 // unaltered.
 // Characters already in the mathematical blocks (or are one of the exceptions) are never transformed.
-// Acceptable values for mathvariant are specified in MathMLStyle.h
+// Acceptable values for mathvariant are specified in MathMLElement.h
 // The transformable characters can be found at:
 // http://lists.w3.org/Archives/Public/www-math/2013Sep/0012.html and
 // https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
-static UChar32 mathVariant(UChar32 codePoint, MathMLStyle::MathVariant mathvariant)
+static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvariant)
 {
-    ASSERT(mathvariant >= MathMLStyle::Normal && mathvariant <= MathMLStyle::Stretched);
+    ASSERT(mathvariant >= MathMLElement::MathVariant::Normal && mathvariant <= MathMLElement::MathVariant::Stretched);
 
-    if (mathvariant == MathMLStyle::Normal)
+    if (mathvariant == MathMLElement::MathVariant::Normal)
         return codePoint; // Nothing to do here.
 
     // Exceptional characters with at most one possible transformation.
     if (codePoint == holeGreekUpperTheta)
         return codePoint; // Nothing at this code point is transformed
     if (codePoint == greekLetterDigamma) {
-        if (mathvariant == MathMLStyle::Bold)
+        if (mathvariant == MathMLElement::MathVariant::Bold)
             return mathBoldCapitalDigamma;
         return codePoint;
     }
     if (codePoint == greekSmallLetterDigamma) {
-        if (mathvariant == MathMLStyle::Bold)
+        if (mathvariant == MathMLElement::MathVariant::Bold)
             return mathBoldSmallDigamma;
         return codePoint;
     }
     if (codePoint == latinSmallLetterDotlessI) {
-        if (mathvariant == MathMLStyle::Italic)
+        if (mathvariant == MathMLElement::MathVariant::Italic)
             return mathItalicSmallDotlessI;
         return codePoint;
     }
     if (codePoint == latinSmallLetterDotlessJ) {
-        if (mathvariant == MathMLStyle::Italic)
+        if (mathvariant == MathMLElement::MathVariant::Italic)
             return mathItalicSmallDotlessJ;
         return codePoint;
     }
@@ -389,19 +390,19 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLStyle::MathVariant mathvaria
         // For example the beginning of the double struck number range follows immediately after the end of the bold number range.
         // multiplier represents the order of the sequences relative to the first one.
         switch (mathvariant) {
-        case MathMLStyle::Bold:
+        case MathMLElement::MathVariant::Bold:
             multiplier = 0;
             break;
-        case MathMLStyle::DoubleStruck:
+        case MathMLElement::MathVariant::DoubleStruck:
             multiplier = 1;
             break;
-        case MathMLStyle::SansSerif:
+        case MathMLElement::MathVariant::SansSerif:
             multiplier = 2;
             break;
-        case MathMLStyle::BoldSansSerif:
+        case MathMLElement::MathVariant::BoldSansSerif:
             multiplier = 3;
             break;
-        case MathMLStyle::Monospace:
+        case MathMLElement::MathVariant::Monospace:
             multiplier = 4;
             break;
         default:
@@ -416,19 +417,19 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLStyle::MathVariant mathvaria
     }
     if (varType == Greekish) {
         switch (mathvariant) {
-        case MathMLStyle::Bold:
+        case MathMLElement::MathVariant::Bold:
             multiplier = 0;
             break;
-        case MathMLStyle::Italic:
+        case MathMLElement::MathVariant::Italic:
             multiplier = 1;
             break;
-        case MathMLStyle::BoldItalic:
+        case MathMLElement::MathVariant::BoldItalic:
             multiplier = 2;
             break;
-        case MathMLStyle::BoldSansSerif:
+        case MathMLElement::MathVariant::BoldSansSerif:
             multiplier = 3;
             break;
-        case MathMLStyle::SansSerifBoldItalic:
+        case MathMLElement::MathVariant::SansSerifBoldItalic:
             multiplier = 4;
             break;
         default:
@@ -446,23 +447,23 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLStyle::MathVariant mathvaria
         const MathVariantMapping* mapTable;
         size_t tableLength;
         switch (mathvariant) {
-        case MathMLStyle::Initial:
+        case MathMLElement::MathVariant::Initial:
             mapTable = arabicInitialMapTable;
             tableLength = WTF_ARRAY_LENGTH(arabicInitialMapTable);
             break;
-        case MathMLStyle::Tailed:
+        case MathMLElement::MathVariant::Tailed:
             mapTable = arabicTailedMapTable;
             tableLength = WTF_ARRAY_LENGTH(arabicTailedMapTable);
             break;
-        case MathMLStyle::Stretched:
+        case MathMLElement::MathVariant::Stretched:
             mapTable = arabicStretchedMapTable;
             tableLength = WTF_ARRAY_LENGTH(arabicStretchedMapTable);
             break;
-        case MathMLStyle::Looped:
+        case MathMLElement::MathVariant::Looped:
             mapTable = arabicLoopedMapTable;
             tableLength = WTF_ARRAY_LENGTH(arabicLoopedMapTable);
             break;
-        case MathMLStyle::DoubleStruck:
+        case MathMLElement::MathVariant::DoubleStruck:
             mapTable = arabicDoubleMapTable;
             tableLength = WTF_ARRAY_LENGTH(arabicDoubleMapTable);
             break;
@@ -472,9 +473,9 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLStyle::MathVariant mathvaria
         newChar = MathVariantMappingSearch(codePoint, mapTable, tableLength);
     } else {
         // Must be Latin
-        if (mathvariant > MathMLStyle::Monospace)
+        if (mathvariant > MathMLElement::MathVariant::Monospace)
             return codePoint; // Latin doesn't support the Arabic mathvariants
-        multiplier = mathvariant - 2;
+        multiplier = static_cast<int>(mathvariant) - 2;
         // This is possible because the values for NS_MATHML_MATHVARIANT_* are chosen to coincide with the order in which the encoded mathvariant characters are located within their unicode block (less an offset to avoid None and Normal variants)
         // See the Number case for an explanation of the following calculation
         tempChar = baseChar + mathBoldUpperA + multiplier * (mathItalicUpperA - mathBoldUpperA);
@@ -523,9 +524,9 @@ void RenderMathMLToken::updateMathVariantGlyph()
     AtomicString textContent = element().textContent().stripWhiteSpace().simplifyWhiteSpace();
     if (textContent.length() == 1) {
         UChar32 codePoint = textContent[0];
-        MathMLStyle::MathVariant mathvariant = mathMLStyle()->mathVariant();
-        if (mathvariant == MathMLStyle::None)
-            mathvariant = tokenElement.hasTagName(MathMLNames::miTag) ? MathMLStyle::Italic : MathMLStyle::Normal;
+        MathMLElement::MathVariant mathvariant = mathMLStyle()->mathVariant();
+        if (mathvariant == MathMLElement::MathVariant::None)
+            mathvariant = tokenElement.hasTagName(MathMLNames::miTag) ? MathMLElement::MathVariant::Italic : MathMLElement::MathVariant::Normal;
         UChar32 transformedCodePoint = mathVariant(codePoint, mathvariant);
         if (transformedCodePoint != codePoint)
             m_mathVariantGlyph = style().fontCascade().glyphDataForCharacter(transformedCodePoint, !style().isLeftToRightDirection());

@@ -81,7 +81,7 @@ RenderObject* MathMLStyle::getMathMLParentNode(RenderObject* renderer)
     return parentRenderer;
 }
 
-void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplayStyle, MathVariant oldMathVariant)
+void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplayStyle, MathMLElement::MathVariant oldMathVariant)
 {
     if (oldDisplayStyle != m_displayStyle) {
         renderer->setNeedsLayoutAndPrefWidthsRecalc();
@@ -98,59 +98,18 @@ void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplaySty
     }
 }
 
-MathMLStyle::MathVariant MathMLStyle::parseMathVariant(const AtomicString& attributeValue)
-{
-    if (attributeValue == "normal")
-        return Normal;
-    if (attributeValue == "bold")
-        return Bold;
-    if (attributeValue == "italic")
-        return Italic;
-    if (attributeValue == "bold-italic")
-        return BoldItalic;
-    if (attributeValue == "double-struck")
-        return DoubleStruck;
-    if (attributeValue == "bold-fraktur")
-        return BoldFraktur;
-    if (attributeValue == "script")
-        return Script;
-    if (attributeValue == "bold-script")
-        return BoldScript;
-    if (attributeValue == "fraktur")
-        return Fraktur;
-    if (attributeValue == "sans-serif")
-        return SansSerif;
-    if (attributeValue == "bold-sans-serif")
-        return BoldSansSerif;
-    if (attributeValue == "sans-serif-italic")
-        return SansSerifItalic;
-    if (attributeValue == "sans-serif-bold-italic")
-        return SansSerifBoldItalic;
-    if (attributeValue == "monospace")
-        return Monospace;
-    if (attributeValue == "initial")
-        return Initial;
-    if (attributeValue == "tailed")
-        return Tailed;
-    if (attributeValue == "looped")
-        return Looped;
-    if (attributeValue == "stretched")
-        return Stretched;
-    return None;
-}
-
 void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
 {
     ASSERT(renderer);
 
     bool oldDisplayStyle = m_displayStyle;
-    MathVariant oldMathVariant = m_mathVariant;
+    MathMLElement::MathVariant oldMathVariant = m_mathVariant;
     auto* parentRenderer = getMathMLParentNode(renderer);
     const MathMLStyle* parentStyle = getMathMLStyle(parentRenderer);
 
     // By default, we just inherit the style from our parent.
     m_displayStyle = false;
-    m_mathVariant = None;
+    m_mathVariant = MathMLElement::MathVariant::None;
     if (parentStyle) {
         setDisplayStyle(parentStyle->displayStyle());
         setMathVariant(parentStyle->mathVariant());
@@ -162,10 +121,8 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
         return;
     }
 
-    if (is<RenderMathMLMath>(renderer))
-        m_displayStyle = downcast<RenderElement>(renderer)->element()->attributeWithoutSynchronization(displayAttr) == "block"; // The default displaystyle of the <math> element depends on its display attribute.
-    else if (is<RenderMathMLTable>(renderer))
-        m_displayStyle = false; // The default displaystyle of <mtable> is false.
+    if (is<RenderMathMLMath>(renderer) || is<RenderMathMLTable>(renderer))
+        m_displayStyle = false; // The default displaystyle of <math> and <mtable> is false.
     else if (parentRenderer) {
         if (is<RenderMathMLFraction>(parentRenderer))
             m_displayStyle = false; // <mfrac> sets displaystyle to false within its numerator and denominator.
@@ -177,25 +134,16 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
         }
     }
 
-    // The displaystyle attribute on the <math>, <mtable> or <mstyle> elements override the default behavior.
-    const auto* element = downcast<RenderElement>(renderer)->element();
-    const QualifiedName& tagName = element->tagQName();
-    if (tagName == mathTag || tagName == mtableTag || tagName == mstyleTag) {
-        // We only modify the value of displaystyle if there is an explicit and valid attribute.
-        const AtomicString& attributeValue = element->attributeWithoutSynchronization(displaystyleAttr);
-        if (attributeValue == "true")
-            m_displayStyle = true;
-        else if (attributeValue == "false")
-            m_displayStyle = false;
+    // The displaystyle and mathvariant attributes override the default behavior.
+    auto* element = downcast<RenderElement>(renderer)->element();
+    if (is<MathMLElement>(element)) {
+        Optional<bool> displayStyle = downcast<MathMLElement>(element)->specifiedDisplayStyle();
+        if (displayStyle)
+            m_displayStyle = displayStyle.value();
+        Optional<MathMLElement::MathVariant> mathVariant = downcast<MathMLElement>(element)->specifiedMathVariant();
+        if (mathVariant)
+            m_mathVariant = mathVariant.value();
     }
-
-    // The mathvariant attribute on the <math>, <mstyle> or token elements overrides the default behavior.
-    if (is<RenderMathMLMath>(renderer) || is<RenderMathMLToken>(renderer) || tagName == mstyleTag) {
-        MathVariant mathvariant = parseMathVariant(element->attributeWithoutSynchronization(mathvariantAttr));
-        if (mathvariant != None)
-            m_mathVariant = mathvariant;
-    }
-
     updateStyleIfNeeded(renderer, oldDisplayStyle, oldMathVariant);
 }
 

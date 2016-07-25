@@ -71,8 +71,11 @@ void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicSt
         return;
     }
 
-    if (name == mathvariantAttr && renderer())
-        MathMLStyle::resolveMathMLStyleTree(renderer());
+    if (name == mathvariantAttr) {
+        m_mathVariant.dirty = true;
+        if (renderer())
+            MathMLStyle::resolveMathMLStyleTree(renderer());
+    }
 
     MathMLElement::parseAttribute(name, value);
 }

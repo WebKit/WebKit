@@ -28,6 +28,7 @@
 #if ENABLE(MATHML)
 
 #include "Element.h"
+#include "MathMLElement.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,32 +41,8 @@ public:
     bool displayStyle() const { return m_displayStyle; }
     void setDisplayStyle(bool displayStyle) { m_displayStyle = displayStyle; }
 
-    // These are the mathvariant values from the MathML recommendation.
-    // The special value none means that no explicit mathvariant value has been specified.
-    // Note that the numeral values are important for the computation performed in the mathVariant function of RenderMathMLToken, do not change them!
-    enum MathVariant {
-        None = 0,
-        Normal = 1,
-        Bold = 2,
-        Italic = 3,
-        BoldItalic = 4,
-        Script = 5,
-        BoldScript = 6,
-        Fraktur = 7,
-        DoubleStruck = 8,
-        BoldFraktur = 9,
-        SansSerif = 10,
-        BoldSansSerif = 11,
-        SansSerifItalic = 12,
-        SansSerifBoldItalic = 13,
-        Monospace = 14,
-        Initial = 15,
-        Tailed = 16,
-        Looped = 17,
-        Stretched = 18
-    };
-    MathVariant mathVariant() const { return m_mathVariant; }
-    void setMathVariant(MathVariant mathvariant) { m_mathVariant = mathvariant; }
+    MathMLElement::MathVariant mathVariant() const { return m_mathVariant; }
+    void setMathVariant(MathMLElement::MathVariant mathvariant) { m_mathVariant = mathvariant; }
 
     void resolveMathMLStyle(RenderObject*);
     static void resolveMathMLStyleTree(RenderObject*);
@@ -74,11 +51,10 @@ private:
     bool isDisplayStyleAlwaysFalse(RenderObject*);
     const MathMLStyle* getMathMLStyle(RenderObject* renderer);
     RenderObject* getMathMLParentNode(RenderObject*);
-    void updateStyleIfNeeded(RenderObject*, bool, MathVariant);
-    MathVariant parseMathVariant(const AtomicString& attributeValue);
+    void updateStyleIfNeeded(RenderObject*, bool, MathMLElement::MathVariant);
 
     bool m_displayStyle { false };
-    MathVariant m_mathVariant { None };
+    MathMLElement::MathVariant m_mathVariant { MathMLElement::MathVariant::None };
 };
 
 }

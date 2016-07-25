@@ -2,6 +2,7 @@
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -541,6 +542,67 @@ const MathMLElement::BooleanValue& MathMLElement::cachedBooleanAttribute(const Q
     attribute.dirty = false;
 
     return attribute.value;
+}
+
+MathMLElement::MathVariant MathMLElement::parseMathVariantAttribute(const AtomicString& attributeValue)
+{
+    // The mathvariant attribute values is case-sensitive.
+    if (attributeValue == "normal")
+        return MathVariant::Normal;
+    if (attributeValue == "bold")
+        return MathVariant::Bold;
+    if (attributeValue == "italic")
+        return MathVariant::Italic;
+    if (attributeValue == "bold-italic")
+        return MathVariant::BoldItalic;
+    if (attributeValue == "double-struck")
+        return MathVariant::DoubleStruck;
+    if (attributeValue == "bold-fraktur")
+        return MathVariant::BoldFraktur;
+    if (attributeValue == "script")
+        return MathVariant::Script;
+    if (attributeValue == "bold-script")
+        return MathVariant::BoldScript;
+    if (attributeValue == "fraktur")
+        return MathVariant::Fraktur;
+    if (attributeValue == "sans-serif")
+        return MathVariant::SansSerif;
+    if (attributeValue == "bold-sans-serif")
+        return MathVariant::BoldSansSerif;
+    if (attributeValue == "sans-serif-italic")
+        return MathVariant::SansSerifItalic;
+    if (attributeValue == "sans-serif-bold-italic")
+        return MathVariant::SansSerifBoldItalic;
+    if (attributeValue == "monospace")
+        return MathVariant::Monospace;
+    if (attributeValue == "initial")
+        return MathVariant::Initial;
+    if (attributeValue == "tailed")
+        return MathVariant::Tailed;
+    if (attributeValue == "looped")
+        return MathVariant::Looped;
+    if (attributeValue == "stretched")
+        return MathVariant::Stretched;
+    return MathVariant::None;
+}
+
+Optional<bool> MathMLElement::specifiedDisplayStyle()
+{
+    if (!acceptsDisplayStyleAttribute())
+        return Optional<bool>();
+    const MathMLElement::BooleanValue& specifiedDisplayStyle = cachedBooleanAttribute(displaystyleAttr, m_displayStyle);
+    return specifiedDisplayStyle == BooleanValue::Default ? Optional<bool>() : Optional<bool>(specifiedDisplayStyle == BooleanValue::True);
+}
+
+Optional<MathMLElement::MathVariant> MathMLElement::specifiedMathVariant()
+{
+    if (!acceptsMathVariantAttribute())
+        return Optional<MathVariant>();
+    if (m_mathVariant.dirty) {
+        m_mathVariant.value = parseMathVariantAttribute(attributeWithoutSynchronization(mathvariantAttr));
+        m_mathVariant.dirty = false;
+    }
+    return m_mathVariant.value == MathVariant::None ? Optional<MathVariant>() : Optional<MathVariant>(m_mathVariant.value);
 }
 
 }

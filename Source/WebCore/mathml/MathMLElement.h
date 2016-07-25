@@ -2,6 +2,7 @@
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +73,38 @@ public:
         bool dirty { true };
     };
 
+    // These are the mathvariant values from the MathML recommendation.
+    // The special value none means that no explicit mathvariant value has been specified.
+    // Note that the numeral values are important for the computation performed in the mathVariant function of RenderMathMLToken, do not change them!
+    enum class MathVariant {
+        None = 0,
+        Normal = 1,
+        Bold = 2,
+        Italic = 3,
+        BoldItalic = 4,
+        Script = 5,
+        BoldScript = 6,
+        Fraktur = 7,
+        DoubleStruck = 8,
+        BoldFraktur = 9,
+        SansSerif = 10,
+        BoldSansSerif = 11,
+        SansSerifItalic = 12,
+        SansSerifBoldItalic = 13,
+        Monospace = 14,
+        Initial = 15,
+        Tailed = 16,
+        Looped = 17,
+        Stretched = 18
+    };
+    struct MathVariantAttribute {
+        MathVariant value { MathVariant::None };
+        bool dirty { true };
+    };
+
+    virtual Optional<bool> specifiedDisplayStyle();
+    Optional<MathMLElement::MathVariant> specifiedMathVariant();
+
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
@@ -91,10 +124,17 @@ protected:
     const Length& cachedMathMLLength(const QualifiedName&, Length&);
     const BooleanValue& cachedBooleanAttribute(const QualifiedName&, BooleanAttribute&);
 
+    virtual bool acceptsDisplayStyleAttribute() { return false; }
+    virtual bool acceptsMathVariantAttribute() { return false; }
+
+    BooleanAttribute m_displayStyle;
+    MathVariantAttribute m_mathVariant;
+
 private:
     virtual void updateSelectedChild() { }
     static Length parseNumberAndUnit(const StringView&);
     static Length parseNamedSpace(const StringView&);
+    static MathVariant parseMathVariantAttribute(const AtomicString& attributeValue);
 
     bool canStartSelection() const final;
     bool isFocusable() const final;
