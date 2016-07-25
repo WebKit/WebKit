@@ -409,6 +409,7 @@ Bug(GTK) editing/secure-input [ Failure ]
 # crypto.subtle is not yet enabled, but digest algorithms are already implemented
 # and their tests are whitelisted
 webkit.org/b/133122 crypto/subtle [ Skip ]
+webkit.org/b/133122 crypto/webkitSubtle [ Skip ]
 webkit.org/b/133319 crypto/subtle/sha-1.html [ Pass ]
 webkit.org/b/133319 crypto/subtle/sha-224.html [ Pass ]
 webkit.org/b/133319 crypto/subtle/sha-256.html [ Pass ]

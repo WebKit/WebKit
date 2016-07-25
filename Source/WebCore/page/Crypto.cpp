@@ -33,7 +33,7 @@
 
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "SubtleCrypto.h"
+#include "WebKitSubtleCrypto.h"
 #include <runtime/ArrayBufferView.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 
@@ -67,13 +67,13 @@ void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)
 }
 
 #if ENABLE(SUBTLE_CRYPTO)
-SubtleCrypto* Crypto::subtle()
+WebKitSubtleCrypto* Crypto::webkitSubtle()
 {
     ASSERT(isMainThread());
-    if (!m_subtle)
-        m_subtle = SubtleCrypto::create(*document());
+    if (!m_webkitSubtle)
+        m_webkitSubtle = WebKitSubtleCrypto::create(*document());
 
-    return m_subtle.get();
+    return m_webkitSubtle.get();
 }
 #endif
 

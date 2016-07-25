@@ -1005,7 +1005,9 @@ animations/suspend-resume-animation-events.html [ Pass Failure ]
 storage/indexeddb
 imported/w3c/IndexedDB-private-browsing
 imported/w3c/web-platform-tests/IndexedDB
+crypto/subtle/rsa-indexeddb-non-exportable-private.html
 crypto/subtle/rsa-indexeddb-non-exportable.html
+crypto/subtle/rsa-indexeddb-private.html
 crypto/subtle/rsa-indexeddb.html
 fast/history/page-cache-indexed-closed-db.html
 fast/history/page-cache-indexed-opened-db.html

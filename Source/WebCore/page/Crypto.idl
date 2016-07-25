@@ -32,5 +32,5 @@
 ] interface Crypto {
     [Custom, RaisesException] ArrayBufferView getRandomValues(ArrayBufferView array);
 
-    [Conditional=SUBTLE_CRYPTO, ImplementedAs=subtle] readonly attribute SubtleCrypto webkitSubtle;
+    [Conditional=SUBTLE_CRYPTO] readonly attribute WebKitSubtleCrypto webkitSubtle;
 };

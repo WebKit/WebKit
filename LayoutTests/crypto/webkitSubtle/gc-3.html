@@ -7,7 +7,7 @@
 <body>
 <script>
 
-description("Test that window.crypto.subtle wrapper preserves custom properties.");
+description("Test that window.crypto wrapper protects all dependencies, so it can always be used to create crypto.webkitSubtle.");
 jsTestIsAsync = true;
 
 var anotherWindowCrypto;
@@ -16,9 +16,6 @@ function startTest()
 {
     anotherWindowCrypto = frames[0].crypto;
     shouldBeDefined(anotherWindowCrypto);
-    shouldBeDefined(anotherWindowCrypto.webkitSubtle);
-
-    anotherWindowCrypto.webkitSubtle.foo = "bar";
     document.body.removeChild(document.getElementsByTagName("iframe")[0]);
     gc();
     setTimeout(continueTest, 10);
@@ -33,7 +30,7 @@ function continueTest()
 function finishTest()
 {
     gc();
-    shouldBe('anotherWindowCrypto.webkitSubtle.foo', '"bar"');
+    shouldBeDefined(anotherWindowCrypto.webkitSubtle);
     finishJSTest();
 }
 

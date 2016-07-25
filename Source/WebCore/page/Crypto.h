@@ -45,7 +45,7 @@ namespace WebCore {
 typedef int ExceptionCode;
 
 class Document;
-class SubtleCrypto;
+class WebKitSubtleCrypto;
 
 class Crypto : public ContextDestructionObserver, public RefCounted<Crypto> {
 public:
@@ -57,14 +57,14 @@ public:
     void getRandomValues(JSC::ArrayBufferView*, ExceptionCode&);
 
 #if ENABLE(SUBTLE_CRYPTO)
-    SubtleCrypto* subtle();
+    WebKitSubtleCrypto* webkitSubtle();
 #endif
 
 private:
     Crypto(Document&);
 
 #if ENABLE(SUBTLE_CRYPTO)
-    RefPtr<SubtleCrypto> m_subtle;
+    RefPtr<WebKitSubtleCrypto> m_webkitSubtle;
 #endif
 };
 

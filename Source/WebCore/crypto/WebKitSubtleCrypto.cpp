@@ -23,31 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SubtleCrypto_h
-#define SubtleCrypto_h
-
-#include "ContextDestructionObserver.h" 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
+#include "WebKitSubtleCrypto.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "Document.h"
+
 namespace WebCore {
 
-class Document;
+WebKitSubtleCrypto::WebKitSubtleCrypto(Document& document)
+    : ContextDestructionObserver(&document)
+{
+}
 
-class SubtleCrypto : public ContextDestructionObserver, public RefCounted<SubtleCrypto> {
-public:
-    static Ref<SubtleCrypto> create(Document& document) { return adoptRef(*new SubtleCrypto(document)); }
-
-    Document* document() const;
-
-private:
-    SubtleCrypto(Document&);
-};
+Document* WebKitSubtleCrypto::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
+}
 
 }
 
 #endif
-
-#endif // SubtleCrypto_h

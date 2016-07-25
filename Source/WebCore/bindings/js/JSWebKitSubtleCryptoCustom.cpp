@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSSubtleCrypto.h"
+#include "JSWebKitSubtleCrypto.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -130,7 +130,7 @@ static bool cryptoKeyUsagesFromJSValue(ExecState& state, JSValue value, CryptoKe
     return true;
 }
 
-JSValue JSSubtleCrypto::encrypt(ExecState& state)
+JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
 {
     if (state.argumentCount() < 3)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -183,7 +183,7 @@ JSValue JSSubtleCrypto::encrypt(ExecState& state)
     return promiseDeferred->promise();
 }
 
-JSValue JSSubtleCrypto::decrypt(ExecState& state)
+JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
 {
     if (state.argumentCount() < 3)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -235,7 +235,7 @@ JSValue JSSubtleCrypto::decrypt(ExecState& state)
     return promiseDeferred->promise();
 }
 
-JSValue JSSubtleCrypto::sign(ExecState& state)
+JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
 {
     if (state.argumentCount() < 3)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -287,7 +287,7 @@ JSValue JSSubtleCrypto::sign(ExecState& state)
     return promiseDeferred->promise();
 }
 
-JSValue JSSubtleCrypto::verify(ExecState& state)
+JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
 {
     if (state.argumentCount() < 4)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -345,7 +345,7 @@ JSValue JSSubtleCrypto::verify(ExecState& state)
     return promiseDeferred->promise();
 }
 
-JSValue JSSubtleCrypto::digest(ExecState& state)
+JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
 {
     if (state.argumentCount() < 2)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -387,7 +387,7 @@ JSValue JSSubtleCrypto::digest(ExecState& state)
     return promiseDeferred->promise();
 }
 
-JSValue JSSubtleCrypto::generateKey(ExecState& state)
+JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
 {
     if (state.argumentCount() < 1)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -503,7 +503,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
         setDOMException(&state, ec);
 }
 
-JSValue JSSubtleCrypto::importKey(ExecState& state)
+JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
 {
     if (state.argumentCount() < 3)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -598,7 +598,7 @@ static void exportKey(ExecState& state, CryptoKeyFormat keyFormat, const CryptoK
     }
 }
 
-JSValue JSSubtleCrypto::exportKey(ExecState& state)
+JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
 {
     if (state.argumentCount() < 2)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -629,7 +629,7 @@ JSValue JSSubtleCrypto::exportKey(ExecState& state)
     return promiseDeferred->promise();
 }
 
-JSValue JSSubtleCrypto::wrapKey(ExecState& state)
+JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
 {
     if (state.argumentCount() < 4)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -698,7 +698,7 @@ JSValue JSSubtleCrypto::wrapKey(ExecState& state)
     return promiseDeferred->promise();
 }
 
-JSValue JSSubtleCrypto::unwrapKey(ExecState& state)
+JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
 {
     if (state.argumentCount() < 5)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));

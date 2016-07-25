@@ -1,3 +1,24 @@
+2016-07-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Rename SubtleCrypto to WebKitSubtleCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=160067
+        <rdar://problem/27483617>
+
+        Reviewed by Brent Fulgham.
+
+        Move tests involving crypto.webkitSubtle from crypto/subtle to crypto/webkitSubtle.
+
+        * crypto/webkitSubtle/gc-2-expected.txt: Renamed from LayoutTests/crypto/subtle/gc-2-expected.txt.
+        * crypto/webkitSubtle/gc-2.html: Renamed from LayoutTests/crypto/subtle/gc-2.html.
+        * crypto/webkitSubtle/gc-3-expected.txt: Renamed from LayoutTests/crypto/subtle/gc-3-expected.txt.
+        * crypto/webkitSubtle/gc-3.html: Renamed from LayoutTests/crypto/subtle/gc-3.html.
+        * crypto/webkitSubtle/gc-expected.txt: Renamed from LayoutTests/crypto/subtle/gc-expected.txt.
+        * crypto/webkitSubtle/gc.html: Renamed from LayoutTests/crypto/subtle/gc.html.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-07-25  Brady Eidson  <beidson@apple.com>
 
         Allow LocalStorage by default for file URLs.
