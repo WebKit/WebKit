@@ -157,21 +157,28 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
     }
 }
 
-ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, std::function<void()> invalidationCallback)
-    : m_assertionState(assertionState)
+ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, Function<void()>&& invalidationCallback)
+    : m_weakFactory(this)
+    , m_invalidationCallback(WTFMove(invalidationCallback))
+    , m_assertionState(assertionState)
 {
+    auto weakThis = createWeakPtr();
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
             LOG_ALWAYS_ERROR(true, "Unable to acquire assertion for process %d", pid);
             ASSERT_NOT_REACHED();
-            m_validity = Validity::No;
-            invalidationCallback();
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (weakThis)
+                    markAsInvalidated();
+            });
         }
     };
     m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
     m_assertion.get().invalidationHandler = ^() {
-        m_validity = Validity::No;
-        invalidationCallback();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (weakThis)
+                markAsInvalidated();
+        });
     };
 }
 
@@ -182,6 +189,14 @@ ProcessAssertion::~ProcessAssertion()
     if (ProcessAssertionClient* client = this->client())
         [[WKProcessAssertionBackgroundTaskManager shared] removeClient:*client];
     [m_assertion invalidate];
+}
+
+void ProcessAssertion::markAsInvalidated()
+{
+    ASSERT(RunLoop::isMain());
+
+    m_validity = Validity::No;
+    m_invalidationCallback();
 }
 
 void ProcessAssertion::setState(AssertionState assertionState)
@@ -240,7 +255,7 @@ void ProcessAndUIAssertion::setClient(ProcessAssertionClient& newClient)
 
 namespace WebKit {
 
-ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState, std::function<void()>)
+ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState, Function<void()>&&)
     : m_assertionState(assertionState)
 {
 }
