@@ -1,3 +1,41 @@
+2016-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        AssemblyHelpers should own all of the cell allocation methods
+        https://bugs.webkit.org/show_bug.cgi?id=160171
+
+        Reviewed by Saam Barati.
+        
+        Prior to this change we had some code in DFGSpeculativeJIT.h and some code in JIT.h that
+        did cell allocation.
+        
+        This change moves all of that code into AssemblyHelpers.h.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSCell):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObjectWithKnownSize):
+        (JSC::DFG::SpeculativeJIT::emitAllocateVariableSizedJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateDestructibleObject):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocate):
+        (JSC::AssemblyHelpers::emitAllocateJSCell):
+        (JSC::AssemblyHelpers::emitAllocateJSObject):
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateVariableSized):
+        (JSC::AssemblyHelpers::emitAllocateVariableSizedJSObject):
+        (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::isOperandConstantChar):
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::emitAllocateJSObject): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+
 2016-07-25  Saam Barati  <sbarati@apple.com>
 
         MathICs should be able to take and dump stats about code size

@@ -941,27 +941,6 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(int src)
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-template<typename StructureType>
-inline void JIT::emitAllocateJSObject(RegisterID allocator, StructureType structure, RegisterID result, RegisterID scratch)
-{
-    if (Options::forceGCSlowPaths())
-        addSlowCase(jump());
-    else {
-        loadPtr(Address(allocator, MarkedAllocator::offsetOfFreeListHead()), result);
-        addSlowCase(branchTestPtr(Zero, result));
-    }
-
-    // remove the object from the free list
-    loadPtr(Address(result), scratch);
-    storePtr(scratch, Address(allocator, MarkedAllocator::offsetOfFreeListHead()));
-
-    // initialize the object's property storage pointer
-    storePtr(TrustedImmPtr(0), Address(result, JSObject::butterflyOffset()));
-
-    // initialize the object's structure
-    emitStoreStructureWithTypeInfo(structure, result, scratch);
-}
-
 inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
 {
     ASSERT(shouldEmitProfiling());
