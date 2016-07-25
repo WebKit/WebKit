@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomicString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isVertical, InlineBox* markupBox)
-    : InlineElementBox(renderer, FloatPoint(0, y), width, firstLine, true, false, false, isVertical, 0, 0, parent)
+EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomicString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, InlineBox* markupBox)
+    : InlineElementBox(renderer, FloatPoint(0, y), width, firstLine, true, false, false, isHorizontal, 0, 0, parent)
     , m_shouldPaintMarkupBox(markupBox)
     , m_height(height)
     , m_str(ellipsisStr)
