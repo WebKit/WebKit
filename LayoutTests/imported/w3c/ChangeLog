@@ -1,3 +1,14 @@
+2016-07-25  Chris Dumez  <cdumez@apple.com>
+
+        Parameters to DOMImplementation.createDocumentType() should be mandatory and non-nullable
+        https://bugs.webkit.org/show_bug.cgi?id=160167
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline a W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+
 2016-07-24  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Request should be created with any HeadersInit data

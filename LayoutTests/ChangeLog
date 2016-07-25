@@ -1,3 +1,20 @@
+2016-07-25  Chris Dumez  <cdumez@apple.com>
+
+        Parameters to DOMImplementation.createDocumentType() should be mandatory and non-nullable
+        https://bugs.webkit.org/show_bug.cgi?id=160167
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/script-tests/DOMSelection-DocumentType.js:
+        * fast/dom/DOMImplementation/createDocumentType-err-expected.txt:
+        * fast/dom/DOMImplementation/script-tests/createDocumentType-err.js:
+        Update existing tests to reflect the behavior change.
+
+        * fast/dom/DOMImplementation/createDocumentType-parameters-expected.txt: Added.
+        * fast/dom/DOMImplementation/createDocumentType-parameters.html: Added.
+        Add layout test coverage. I have verified that this test passes on both
+        Firefox and Chrome.
+
 2016-07-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Rename SubtleCrypto to WebKitSubtleCrypto

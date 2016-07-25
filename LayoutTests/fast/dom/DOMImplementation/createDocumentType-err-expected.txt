@@ -3,17 +3,17 @@ createDocument tests modeled after mozilla's testing
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.implementation.createDocumentType('foo').toString() is "[object DocumentType]"
-PASS document.implementation.createDocumentType('foo', null).toString() is "[object DocumentType]"
-PASS createDocumentType(, ); threw INVALID_CHARACTER_ERR
-PASS createDocumentType(null, ); threw INVALID_CHARACTER_ERR
-PASS createDocumentType(, null); threw INVALID_CHARACTER_ERR
-PASS createDocumentType(, , null); threw INVALID_CHARACTER_ERR
-PASS createDocumentType(null, null); threw INVALID_CHARACTER_ERR
-PASS createDocumentType(null, null, null); threw INVALID_CHARACTER_ERR
-PASS createDocumentType(null, ""); threw INVALID_CHARACTER_ERR
-PASS createDocumentType("", null); threw INVALID_CHARACTER_ERR
-PASS createDocumentType("", ""); threw INVALID_CHARACTER_ERR
+PASS document.implementation.createDocumentType('foo') threw exception TypeError: Not enough arguments.
+PASS document.implementation.createDocumentType('foo', null) threw exception TypeError: Not enough arguments.
+PASS exceptionThrown.name is "TypeError"
+PASS exceptionThrown.name is "TypeError"
+PASS exceptionThrown.name is "TypeError"
+PASS createDocumentType(, , null)
+PASS exceptionThrown.name is "TypeError"
+PASS createDocumentType(null, null, null)
+PASS exceptionThrown.name is "TypeError"
+PASS exceptionThrown.name is "TypeError"
+PASS exceptionThrown.name is "TypeError"
 PASS createDocumentType("a:", null, null); threw NAMESPACE_ERR
 PASS createDocumentType(":foo", null, null); threw NAMESPACE_ERR
 PASS createDocumentType(":", null, null); threw NAMESPACE_ERR

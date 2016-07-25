@@ -31,7 +31,7 @@
 
     // DOM Level 2
 
-    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType(optional DOMString? qualifiedName = null, optional DOMString? publicId = null, optional DOMString? systemId = null);
+    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
 
     [NewObject, ObjCLegacyUnnamedParameters, RaisesException]
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT

@@ -27,15 +27,15 @@ function assertEquals(actual, expect, m)
 }
 
 var allTests = [
-   { args: [undefined, undefined], code: 5  },
-   { args: [null, undefined], code: 5  },
-   { args: [undefined, null], code: 5 },
-   { args: [undefined, undefined, null], code: 5 },
-   { args: [null, null], code: 5 },
-   { args: [null, null, null], code: 5 },
-   { args: [null, ""], code: 5 },
-   { args: ["", null], code: 5 },
-   { args: ["", ""], code: 5 },
+   { args: [undefined, undefined], name: "TypeError" },
+   { args: [null, undefined], name: "TypeError"  },
+   { args: [undefined, null], name: "TypeError" },
+   { args: [undefined, undefined, null] },
+   { args: [null, null], name: "TypeError" },
+   { args: [null, null, null] },
+   { args: [null, ""], name: "TypeError" },
+   { args: ["", null], name: "TypeError" },
+   { args: ["", ""], name: "TypeError" },
    { args: ["a:", null, null], code: 14 },
    { args: [":foo", null, null], code: 14 },
    { args: [":", null, null], code: 14 },
@@ -84,15 +84,20 @@ function runTests(tests, createFunctionName)
             document.implementation[createFunctionName].apply(document.implementation, test.args);
             if ('code' in test)
                 testFailed(msg + " expected exception: " + test.code);
+            else if ('name' in test)
+                testFailed(msg + " expected exception: " + test.name);
             else
                 testPassed(msg);
         } catch (e) {
-            assertEquals(e.code, test.code || "expected no exception", msg);
+            exceptionThrown = e;
+            if ('name' in test) {
+                shouldBeEqualToString("exceptionThrown.name", "" + test.name);
+            } else
+                assertEquals(e.code, test.code || "expected no exception", msg);
         }
     }
 }
 
-// Moz throws a "Not enough arguments" exception in these, we don't:
-shouldBeEqualToString("document.implementation.createDocumentType('foo').toString()", "[object DocumentType]");
-shouldBeEqualToString("document.implementation.createDocumentType('foo', null).toString()", "[object DocumentType]");
+shouldThrow("document.implementation.createDocumentType('foo')");
+shouldThrow("document.implementation.createDocumentType('foo', null)");
 runTests(allTests, "createDocumentType");
