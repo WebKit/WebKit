@@ -1,3 +1,45 @@
+2016-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Threaded Compositor] ASSERTION FAILED: !!handle ^ !!m_nativeSurfaceHandle with several layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=160143
+
+        Reviewed by Michael Catanzaro.
+
+        We have a message to set the native surface handle and another one for destroying it, the former is a normal
+        message while the latter is sync. This assertion happens if the web view is realized before the web process is
+        launched. This is the sequence:
+
+        1.- DrawingAreaProxyImpl sends SetNativeSurfaceHandleForCompositing message to the web process, since the
+        process hasn't been launched yet, the message is queued.
+        2.- Web process is launched and queued messages are now sent to the web process.
+        3.- The page is closed right after the web process is launched, and DrawingAreaProxyImpl sends
+        DestroyNativeSurfaceHandleForCompositing to the web process.
+        4.- The web process processes incoming messages, and DestroyNativeSurfaceHandleForCompositing is processed before
+        SetNativeSurfaceHandleForCompositing because it's sync.
+        5.- The web process processes SetNativeSurfaceHandleForCompositing message.
+
+        This is not only producing the assertion, it's also setting a handle for a X window already destroyed in the UI
+        process, so this could be producing the X errors we have seen in other tests. So, we need to make sure
+        SetNativeSurfaceHandleForCompositing and DestroyNativeSurfaceHandleForCompositing are handled in order by the
+        web process. We could make SetNativeSurfaceHandleForCompositing sync as well, but sync messages are just ignored
+        when sent before the web process has been launched (only normal messages are queued for obvious reasons). The
+        other option is sending the SetNativeSurfaceHandleForCompositing message with the
+        IPC::DispatchMessageEvenWhenWaitingForSyncReply flag. In this case the message is queued and dispatched on
+        process launch, but it's dispatched before other messages also queued without that flag, like
+        CreateWebPage. Since there's no WebPage the web process doesn't find a valid message receiver for it and
+        it's discarded. We need to ensure the DrawinArea object has been created before sending the
+        SetNativeSurfaceHandleForCompositing with the PC::DispatchMessageEvenWhenWaitingForSyncReply flag.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState): If we have received the first update and there's a
+        SetNativeSurfaceHandleForCompositing message pending, send it.
+        (WebKit::DrawingAreaProxyImpl::setNativeSurfaceHandleForCompositing): Do not send the message before the first
+        update is received.
+        (WebKit::DrawingAreaProxyImpl::destroyNativeSurfaceHandleForCompositing): If there was a
+        SetNativeSurfaceHandleForCompositing message pending, just ignore this destroy since the web process never
+        received the handle.
+        * UIProcess/DrawingAreaProxyImpl.h:
+
 2016-07-25  Philippe Normand  <pnormand@igalia.com>
 
         Improve GDB backtrace generation for GTK/EFL

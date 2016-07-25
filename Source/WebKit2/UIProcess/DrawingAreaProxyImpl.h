@@ -109,6 +109,10 @@ private:
     std::unique_ptr<BackingStore> m_backingStore;
 
     RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
+
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
+    uint64_t m_pendingNativeSurfaceHandleForCompositing { 0 };
+#endif
 };
 
 } // namespace WebKit

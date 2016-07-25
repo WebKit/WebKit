@@ -170,8 +170,16 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
 
     if (m_nextBackingStoreStateID != m_currentBackingStoreStateID)
         sendUpdateBackingStoreState(RespondImmediately);
-    else
+    else {
         m_hasReceivedFirstUpdate = true;
+
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
+        if (m_pendingNativeSurfaceHandleForCompositing) {
+            setNativeSurfaceHandleForCompositing(m_pendingNativeSurfaceHandleForCompositing);
+            m_pendingNativeSurfaceHandleForCompositing = 0;
+        }
+#endif
+    }
 
     if (isInAcceleratedCompositingMode()) {
         ASSERT(!m_backingStore);
@@ -310,11 +318,19 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
 #if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
 void DrawingAreaProxyImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
-    m_webPageProxy.process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID());
+    if (!m_hasReceivedFirstUpdate) {
+        m_pendingNativeSurfaceHandleForCompositing = handle;
+        return;
+    }
+    m_webPageProxy.process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void DrawingAreaProxyImpl::destroyNativeSurfaceHandleForCompositing()
 {
+    if (m_pendingNativeSurfaceHandleForCompositing) {
+        m_pendingNativeSurfaceHandleForCompositing = 0;
+        return;
+    }
     bool handled;
     m_webPageProxy.process().sendSync(Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing(), Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing::Reply(handled), m_webPageProxy.pageID());
 }
