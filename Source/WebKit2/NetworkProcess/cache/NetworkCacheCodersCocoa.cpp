@@ -107,7 +107,7 @@ static void encodeCertificateChain(Encoder& encoder, CFArrayRef certificateChain
 
     for (CFIndex i = 0; i < size; ++i) {
         ASSERT(values[i]);
-        ASSERT(CFGetTypeID(values[i]) != SecCertificateGetTypeID());
+        ASSERT(CFGetTypeID(values[i]) == SecCertificateGetTypeID());
 
         auto data = adoptCF(SecCertificateCopyData((SecCertificateRef)values[i]));
         encodeCFData(encoder, data.get());

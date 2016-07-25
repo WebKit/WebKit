@@ -1,5 +1,12 @@
 2016-07-25  Sam Weinig  <sam@webkit.org>
 
+        Fix assertion.
+
+        * NetworkProcess/cache/NetworkCacheCodersCocoa.cpp:
+        (WebKit::NetworkCache::encodeCertificateChain):
+
+2016-07-25  Sam Weinig  <sam@webkit.org>
+
         Split platform specific parts of NetworkCacheCoders.cpp into separate files
         https://bugs.webkit.org/show_bug.cgi?id=160151
 
