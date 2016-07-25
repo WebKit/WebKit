@@ -59,9 +59,6 @@ TEST(IndexedDB, DeleteRecovery)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
-    // Allow file URLs to load non-file resources
-    [configuration _setAllowUniversalAccessFromFileURLs:YES];
-
     [configuration.get().processPool _terminateDatabaseProcess];
 
     // Copy the inconsistent database files to the database directory
