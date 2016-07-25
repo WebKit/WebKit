@@ -1,3 +1,17 @@
+2016-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        The web process hangs when computing elements-based snap points for a container with large max scroll offset
+        https://bugs.webkit.org/show_bug.cgi?id=152605
+        <rdar://problem/25353661>
+
+        Reviewed by Simon Fraser.
+
+        Adds a scroll snap offset computation test case that would have previously
+        caused the web process to hang before this patch.
+
+        * css3/scroll-snap/scroll-snap-elements-container-larger-than-children-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-elements-container-larger-than-children.html: Added.
+
 2016-07-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Implement repeat(auto-fit)

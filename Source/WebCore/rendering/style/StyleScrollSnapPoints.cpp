@@ -31,8 +31,8 @@
 namespace WebCore {
 
 ScrollSnapPoints::ScrollSnapPoints()
-    : repeatOffset(100, Percent)
-    , hasRepeat(true)
+    : repeatOffset(0, Fixed)
+    , hasRepeat(false)
     , usesElements(false)
 {
 }
