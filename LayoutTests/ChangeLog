@@ -1,3 +1,15 @@
+2016-07-25  Brady Eidson  <beidson@apple.com>
+
+        Allow LocalStorage by default for file URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=160169
+
+        Reviewed by Brent Fulgham.
+
+        * storage/domstorage/localstorage/blocked-file-access-expected.txt: Removed.
+        * storage/domstorage/localstorage/file-can-access-expected.txt: Added.
+        * storage/domstorage/localstorage/file-can-access.html: Renamed from LayoutTests/storage/domstorage/localstorage/blocked-file-access.html.
+        * storage/domstorage/localstorage/resources/unblocked-example.html: Renamed from LayoutTests/storage/domstorage/localstorage/resources/blocked-example.html.
+
 2016-07-25  Nan Wang  <n_wang@apple.com>
 
         AX: AccessibilityRenderObject is adding duplicated children when CSS first-letter is being used.
