@@ -1,5 +1,26 @@
 2016-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Media controls should not be displayed for a video until it starts playing
+        https://bugs.webkit.org/show_bug.cgi?id=160092
+        <rdar://problem/26986673>
+
+        Reviewed by Beth Dakin.
+
+        Verify that multiple videos do or don't show the media controller depending on whether videos
+        are playing. Also tweaks an existing API test (VideoControlsManagerSingleLargeVideo) that was
+        passing because we were always showing media controls for large videos with audio, even if they
+        had not played back yet. This change ensures that large videos with audio show media controls
+        only after they begin to play back, and not by virtue of being large enough for main content.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-with-audio.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-with-audio-autoplay.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-with-audio.html: Added.
+
+2016-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Media controls on apple.com don't disappear when movie finishes playing
         https://bugs.webkit.org/show_bug.cgi?id=160068
         <rdar://problem/26668526>
