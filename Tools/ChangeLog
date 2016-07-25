@@ -1,3 +1,10 @@
+2016-07-25  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix test-webkitpy after r203674.
+
+        * Scripts/webkitpy/port/linux_get_crash_log_unittest.py:
+        (GDBCrashLogGeneratorTest.test_generate_crash_log):
+
 2016-07-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, forgot to commit this file in r203674.
