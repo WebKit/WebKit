@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2016 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +21,45 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#pragma once
+#include "config.h"
 
 #if ENABLE(MATHML)
-#include "MathMLElement.h"
+#include "MathMLOperatorElement.h"
+
+#include "RenderMathMLOperator.h"
 
 namespace WebCore {
 
-class MathMLTextElement : public MathMLElement {
-public:
-    static Ref<MathMLTextElement> create(const QualifiedName& tagName, Document&);
-    bool acceptsMathVariantAttribute() final { return true; }
+using namespace MathMLNames;
 
-protected:
-    MathMLTextElement(const QualifiedName& tagName, Document&);
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+MathMLOperatorElement::MathMLOperatorElement(const QualifiedName& tagName, Document& document)
+    : MathMLTextElement(tagName, document)
+{
+}
 
-private:
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool childShouldCreateRenderer(const Node&) const final;
+Ref<MathMLOperatorElement> MathMLOperatorElement::create(const QualifiedName& tagName, Document& document)
+{
+    return adoptRef(*new MathMLOperatorElement(tagName, document));
+}
 
-    void childrenChanged(const ChildChange&) final;
-    void didAttachRenderers() final;
+void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+{
+    if ((name == stretchyAttr || name == lspaceAttr || name == rspaceAttr || name == movablelimitsAttr) && renderer()) {
+        downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        return;
+    }
 
-    bool isPresentationMathML() const final { return true; }
-};
+    MathMLTextElement::parseAttribute(name, value);
+}
+
+RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+{
+    ASSERT(hasTagName(MathMLNames::moTag));
+    return createRenderer<RenderMathMLOperator>(*this, WTFMove(style));
+}
 
 }
 

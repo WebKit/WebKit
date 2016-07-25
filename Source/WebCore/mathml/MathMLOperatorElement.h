@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2016 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,27 +26,17 @@
 #pragma once
 
 #if ENABLE(MATHML)
-#include "MathMLElement.h"
+#include "MathMLTextElement.h"
 
 namespace WebCore {
 
-class MathMLTextElement : public MathMLElement {
+class MathMLOperatorElement final : public MathMLTextElement {
 public:
-    static Ref<MathMLTextElement> create(const QualifiedName& tagName, Document&);
-    bool acceptsMathVariantAttribute() final { return true; }
-
-protected:
-    MathMLTextElement(const QualifiedName& tagName, Document&);
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-
+    static Ref<MathMLOperatorElement> create(const QualifiedName& tagName, Document&);
 private:
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool childShouldCreateRenderer(const Node&) const final;
-
-    void childrenChanged(const ChildChange&) final;
-    void didAttachRenderers() final;
-
-    bool isPresentationMathML() const final { return true; }
+    MathMLOperatorElement(const QualifiedName& tagName, Document&);
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
 };
 
 }

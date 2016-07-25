@@ -34,9 +34,11 @@
 
 namespace WebCore {
 
+class MathMLOperatorElement;
+
 class RenderMathMLOperator final : public RenderMathMLToken {
 public:
-    RenderMathMLOperator(MathMLElement&, RenderStyle&&);
+    RenderMathMLOperator(MathMLOperatorElement&, RenderStyle&&);
     RenderMathMLOperator(Document&, RenderStyle&&, const String& operatorString, MathMLOperatorDictionary::Form, unsigned short flags = 0);
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);

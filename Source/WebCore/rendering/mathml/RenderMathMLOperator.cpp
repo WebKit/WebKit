@@ -33,6 +33,7 @@
 
 #include "FontSelector.h"
 #include "MathMLNames.h"
+#include "MathMLOperatorElement.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderText.h"
@@ -46,7 +47,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, RenderStyle&& style)
+RenderMathMLOperator::RenderMathMLOperator(MathMLOperatorElement& element, RenderStyle&& style)
     : RenderMathMLToken(element, WTFMove(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)

@@ -31,6 +31,7 @@
 #include "MathMLMathElement.cpp"
 #include "MathMLMencloseElement.cpp"
 #include "MathMLOperatorDictionary.cpp"
+#include "MathMLOperatorElement.cpp"
 #include "MathMLPaddedElement.cpp"
 #include "MathMLScriptsElement.cpp"
 #include "MathMLSelectElement.cpp"
