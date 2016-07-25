@@ -250,6 +250,7 @@ public:
 #if ENABLE(JIT)
     StructureStubInfo* addStubInfo(AccessType);
     JITAddIC* addJITAddIC();
+    JITMulIC* addJITMulIC();
     Bag<StructureStubInfo>::iterator stubInfoBegin() { return m_stubInfos.begin(); }
     Bag<StructureStubInfo>::iterator stubInfoEnd() { return m_stubInfos.end(); }
     
@@ -1014,6 +1015,7 @@ private:
     std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
     Bag<StructureStubInfo> m_stubInfos;
     Bag<JITAddIC> m_addICs;
+    Bag<JITMulIC> m_mulICs;
     Bag<ByValInfo> m_byValInfos;
     Bag<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;

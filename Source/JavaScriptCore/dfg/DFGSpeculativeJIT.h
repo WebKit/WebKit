@@ -36,6 +36,7 @@
 #include "DFGOSRExitJumpPlaceholder.h"
 #include "DFGSilentRegisterSavePlan.h"
 #include "DFGValueSource.h"
+#include "JITMathIC.h"
 #include "JITOperations.h"
 #include "MarkedAllocator.h"
 #include "PutKind.h"
@@ -1288,9 +1289,9 @@ public:
 
 #if USE(JSVALUE64)
 
-    JITCompiler::Call callOperation(J_JITOperation_EJJJaic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr ptr)
+    JITCompiler::Call callOperation(J_JITOperation_EJJMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr mathIC)
     {
-        m_jit.setupArgumentsWithExecState(arg1.gpr(), arg2.gpr(), ptr);
+        m_jit.setupArgumentsWithExecState(arg1.gpr(), arg2.gpr(), mathIC);
         return appendCallSetResult(operation, result.gpr());
     }
 
@@ -1711,9 +1712,9 @@ public:
     }
 #else // USE(JSVALUE32_64)
 
-    JITCompiler::Call callOperation(J_JITOperation_EJJJaic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr ptr)
+    JITCompiler::Call callOperation(J_JITOperation_EJJMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr mathIC)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), arg2.payloadGPR(), arg2.tagGPR(), ptr);
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), arg2.payloadGPR(), arg2.tagGPR(), mathIC);
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
     }
 
@@ -2451,6 +2452,9 @@ public:
     void emitUntypedRightShiftBitOp(Node*);
     void compileShiftOp(Node*);
 
+    template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
+    void compileMathIC(Node*, JITMathIC<Generator>*, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction, NonRepatchingFunction);
+
     void compileValueAdd(Node*);
     void compileArithAdd(Node*);
     void compileMakeRope(Node*);
@@ -3045,6 +3049,16 @@ public:
 
     GPRTemporary(GPRTemporary& other) = delete;
 
+    GPRTemporary(GPRTemporary&& other)
+    {
+        ASSERT(other.m_jit);
+        ASSERT(other.m_gpr != InvalidGPRReg);
+        m_jit = other.m_jit;
+        m_gpr = other.m_gpr;
+        other.m_jit = nullptr;
+        other.m_gpr = InvalidGPRReg;
+    }
+
     GPRTemporary& operator=(GPRTemporary&& other)
     {
         ASSERT(!m_jit);
@@ -3093,7 +3107,9 @@ private:
 };
 
 class FPRTemporary {
+    WTF_MAKE_NONCOPYABLE(FPRTemporary);
 public:
+    FPRTemporary(FPRTemporary&&);
     FPRTemporary(SpeculativeJIT*);
     FPRTemporary(SpeculativeJIT*, SpeculateDoubleOperand&);
     FPRTemporary(SpeculativeJIT*, SpeculateDoubleOperand&, SpeculateDoubleOperand&);
@@ -3103,11 +3119,13 @@ public:
 
     ~FPRTemporary()
     {
-        m_jit->unlock(fpr());
+        if (LIKELY(m_jit))
+            m_jit->unlock(fpr());
     }
 
     FPRReg fpr() const
     {
+        ASSERT(m_jit);
         ASSERT(m_fpr != InvalidFPRReg);
         return m_fpr;
     }

@@ -30,6 +30,7 @@
 #include "CCallHelpers.h"
 #include "JITAddGenerator.h"
 #include "JITMathICInlineResult.h"
+#include "JITMulGenerator.h"
 #include "LinkBuffer.h"
 #include "Repatch.h"
 #include "SnippetOperand.h"
@@ -54,7 +55,10 @@ public:
     CodeLocationLabel slowPathStartLocation() { return m_inlineStart.labelAtOffset(m_deltaFromStartToSlowPathStart); }
     CodeLocationCall slowPathCallLocation() { return m_inlineStart.callAtOffset(m_deltaFromStartToSlowPathCallLocation); }
 
-    bool generateInline(CCallHelpers& jit, MathICGenerationState& state)
+    bool isLeftOperandValidConstant() const { return m_generator.isLeftOperandValidConstant(); }
+    bool isRightOperandValidConstant() const { return m_generator.isRightOperandValidConstant(); }
+
+    bool generateInline(CCallHelpers& jit, MathICGenerationState& state, bool shouldEmitProfiling = true)
     {
         state.fastPathStart = jit.label();
         size_t startSize = jit.m_assembler.buffer().codeSize();
@@ -73,7 +77,7 @@ public:
         }
         case JITMathICInlineResult::GenerateFullSnippet: {
             MacroAssembler::JumpList endJumpList;
-            bool result = m_generator.generateFastPath(jit, endJumpList, state.slowPathJumps);
+            bool result = m_generator.generateFastPath(jit, endJumpList, state.slowPathJumps, shouldEmitProfiling);
             if (result) {
                 state.fastPathEnd = jit.label();
                 state.shouldSlowPathRepatch = false;
@@ -104,7 +108,9 @@ public:
 
             MacroAssembler::JumpList endJumpList; 
             MacroAssembler::JumpList slowPathJumpList; 
-            bool emittedFastPath = m_generator.generateFastPath(jit, endJumpList, slowPathJumpList);
+
+            bool shouldEmitProfiling = !JITCode::isOptimizingJIT(codeBlock->jitType());
+            bool emittedFastPath = m_generator.generateFastPath(jit, endJumpList, slowPathJumpList, shouldEmitProfiling);
             if (!emittedFastPath)
                 return;
             endJumpList.append(jit.jump());
@@ -157,6 +163,7 @@ public:
 };
 
 typedef JITMathIC<JITAddGenerator> JITAddIC;
+typedef JITMathIC<JITMulGenerator> JITMulIC;
 
 } // namespace JSC
 

@@ -44,7 +44,6 @@
 #include "JITBitXorGenerator.h"
 #include "JITDivGenerator.h"
 #include "JITLeftShiftGenerator.h"
-#include "JITMathIC.h"
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
@@ -1315,6 +1314,16 @@ void GPRTemporary::adopt(GPRTemporary& other)
     m_gpr = other.m_gpr;
     other.m_jit = 0;
     other.m_gpr = InvalidGPRReg;
+}
+
+FPRTemporary::FPRTemporary(FPRTemporary&& other)
+{
+    ASSERT(other.m_jit);
+    ASSERT(other.m_fpr != InvalidFPRReg);
+    m_jit = other.m_jit;
+    m_fpr = other.m_fpr;
+
+    other.m_jit = nullptr;
 }
 
 FPRTemporary::FPRTemporary(SpeculativeJIT* jit)
@@ -3336,6 +3345,27 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         return;
     }
 
+#if USE(JSVALUE64)
+    bool needsScratchGPRReg = true;
+    bool needsScratchFPRReg = false;
+#else
+    bool needsScratchGPRReg = true;
+    bool needsScratchFPRReg = true;
+#endif
+
+    JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC();
+    auto repatchingFunction = operationValueAddOptimize;
+    auto nonRepatchingFunction = operationValueAdd;
+    
+    compileMathIC(node, addIC, needsScratchGPRReg, needsScratchFPRReg, repatchingFunction, nonRepatchingFunction);
+}
+
+template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
+void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction repatchingFunction, NonRepatchingFunction nonRepatchingFunction)
+{
+    Edge& leftChild = node->child1();
+    Edge& rightChild = node->child2();
+
     Optional<JSValueOperand> left;
     Optional<JSValueOperand> right;
 
@@ -3347,19 +3377,29 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     FPRReg leftFPR = leftNumber.fpr();
     FPRReg rightFPR = rightNumber.fpr();
 
+    GPRReg scratchGPR = InvalidGPRReg;
+    FPRReg scratchFPR = InvalidFPRReg;
+
+    Optional<FPRTemporary> fprScratch;
+    if (needsScratchFPRReg) {
+        fprScratch = FPRTemporary(this);
+        scratchFPR = fprScratch->fpr();
+    }
+
 #if USE(JSVALUE64)
+    Optional<GPRTemporary> gprScratch;
+    if (needsScratchGPRReg) {
+        gprScratch = GPRTemporary(this);
+        scratchGPR = gprScratch->gpr();
+    }
     GPRTemporary result(this);
     JSValueRegs resultRegs = JSValueRegs(result.gpr());
-    GPRTemporary scratch(this);
-    GPRReg scratchGPR = scratch.gpr();
-    FPRReg scratchFPR = InvalidFPRReg;
 #else
     GPRTemporary resultTag(this);
     GPRTemporary resultPayload(this);
     JSValueRegs resultRegs = JSValueRegs(resultPayload.gpr(), resultTag.gpr());
-    GPRReg scratchGPR = resultTag.gpr();
-    FPRTemporary fprScratch(this);
-    FPRReg scratchFPR = fprScratch.fpr();
+    if (needsScratchGPRReg)
+        scratchGPR = resultRegs.tagGPR();
 #endif
 
     SnippetOperand leftOperand(m_state.forNode(leftChild).resultType());
@@ -3374,21 +3414,21 @@ void SpeculativeJIT::compileValueAdd(Node* node)
 
     ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    if (!leftOperand.isConst()) {
+    if (!mathIC->isLeftOperandValidConstant()) {
         left = JSValueOperand(this, leftChild);
         leftRegs = left->jsValueRegs();
     }
-    if (!rightOperand.isConst()) {
+    if (!mathIC->isRightOperandValidConstant()) {
         right = JSValueOperand(this, rightChild);
         rightRegs = right->jsValueRegs();
     }
 
-    JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC();
     Box<MathICGenerationState> addICGenerationState = Box<MathICGenerationState>::create();
     ArithProfile* arithProfile = m_jit.graph().baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-    addIC->m_generator = JITAddGenerator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, leftFPR, rightFPR, scratchGPR, scratchFPR, arithProfile);
+    mathIC->m_generator = Generator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, leftFPR, rightFPR, scratchGPR, scratchFPR, arithProfile);
 
-    bool generatedInline = addIC->generateInline(m_jit, *addICGenerationState);
+    bool shouldEmitProfiling = false;
+    bool generatedInline = mathIC->generateInline(m_jit, *addICGenerationState, shouldEmitProfiling);
 
     if (generatedInline) {
         ASSERT(!addICGenerationState->slowPathJumps.empty());
@@ -3406,38 +3446,38 @@ void SpeculativeJIT::compileValueAdd(Node* node)
 
             auto innerLeftRegs = leftRegs;
             auto innerRightRegs = rightRegs;
-            if (leftOperand.isConst()) {
+            if (mathIC->isLeftOperandValidConstant()) {
                 innerLeftRegs = resultRegs;
                 m_jit.moveValue(leftChild->asJSValue(), innerLeftRegs);
-            } else if (rightOperand.isConst()) {
+            } else if (mathIC->isRightOperandValidConstant()) {
                 innerRightRegs = resultRegs;
                 m_jit.moveValue(rightChild->asJSValue(), innerRightRegs);
             }
 
             if (addICGenerationState->shouldSlowPathRepatch)
-                addICGenerationState->slowPathCall = callOperation(operationValueAddOptimize, resultRegs, innerLeftRegs, innerRightRegs, TrustedImmPtr(addIC));
+                addICGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJJMic>(repatchingFunction), resultRegs, innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
             else
-                addICGenerationState->slowPathCall = callOperation(operationValueAdd, resultRegs, innerLeftRegs, innerRightRegs);
+                addICGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, innerLeftRegs, innerRightRegs);
 
             silentFill(savePlans);
             m_jit.exceptionCheck();
             m_jit.jump().linkTo(done, &m_jit);
 
             m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                addIC->finalizeInlineCode(*addICGenerationState, linkBuffer);
+                mathIC->finalizeInlineCode(*addICGenerationState, linkBuffer);
             });
         });
     } else {
-        if (leftOperand.isConst()) {
+        if (mathIC->isLeftOperandValidConstant()) {
             left = JSValueOperand(this, leftChild);
             leftRegs = left->jsValueRegs();
-        } else if (rightOperand.isConst()) {
+        } else if (mathIC->isRightOperandValidConstant()) {
             right = JSValueOperand(this, rightChild);
             rightRegs = right->jsValueRegs();
         }
 
         flushRegisters();
-        callOperation(operationValueAdd, resultRegs, leftRegs, rightRegs);
+        callOperation(nonRepatchingFunction, resultRegs, leftRegs, rightRegs);
         m_jit.exceptionCheck();
     }
 
@@ -4156,78 +4196,18 @@ void SpeculativeJIT::compileArithMul(Node* node)
             return;
         }
 
-        Optional<JSValueOperand> left;
-        Optional<JSValueOperand> right;
-
-        JSValueRegs leftRegs;
-        JSValueRegs rightRegs;
-
-        FPRTemporary leftNumber(this);
-        FPRTemporary rightNumber(this);
-        FPRReg leftFPR = leftNumber.fpr();
-        FPRReg rightFPR = rightNumber.fpr();
-
 #if USE(JSVALUE64)
-        GPRTemporary result(this);
-        JSValueRegs resultRegs = JSValueRegs(result.gpr());
-        GPRTemporary scratch(this);
-        GPRReg scratchGPR = scratch.gpr();
-        FPRReg scratchFPR = InvalidFPRReg;
+        bool needsScratchGPRReg = true;
+        bool needsScratchFPRReg = false;
 #else
-        GPRTemporary resultTag(this);
-        GPRTemporary resultPayload(this);
-        JSValueRegs resultRegs = JSValueRegs(resultPayload.gpr(), resultTag.gpr());
-        GPRReg scratchGPR = resultTag.gpr();
-        FPRTemporary fprScratch(this);
-        FPRReg scratchFPR = fprScratch.fpr();
+        bool needsScratchGPRReg = true;
+        bool needsScratchFPRReg = true;
 #endif
-
-        SnippetOperand leftOperand(m_state.forNode(leftChild).resultType());
-        SnippetOperand rightOperand(m_state.forNode(rightChild).resultType());
-
-        // The snippet generator does not support both operands being constant. If the left
-        // operand is already const, we'll ignore the right operand's constness.
-        if (leftChild->isInt32Constant())
-            leftOperand.setConstInt32(leftChild->asInt32());
-        else if (rightChild->isInt32Constant())
-            rightOperand.setConstInt32(rightChild->asInt32());
-
-        ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
-
-        if (!leftOperand.isPositiveConstInt32()) {
-            left = JSValueOperand(this, leftChild);
-            leftRegs = left->jsValueRegs();
-        }
-        if (!rightOperand.isPositiveConstInt32()) {
-            right = JSValueOperand(this, rightChild);
-            rightRegs = right->jsValueRegs();
-        }
-
-        JITMulGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-            leftFPR, rightFPR, scratchGPR, scratchFPR);
-        gen.generateFastPath(m_jit);
-
-        ASSERT(gen.didEmitFastPath());
-        gen.endJumpList().append(m_jit.jump());
-
-        gen.slowPathJumpList().link(&m_jit);
-        silentSpillAllRegisters(resultRegs);
-
-        if (leftOperand.isPositiveConstInt32()) {
-            leftRegs = resultRegs;
-            m_jit.moveValue(leftChild->asJSValue(), leftRegs);
-        } else if (rightOperand.isPositiveConstInt32()) {
-            rightRegs = resultRegs;
-            m_jit.moveValue(rightChild->asJSValue(), rightRegs);
-        }
-
-        callOperation(operationValueMul, resultRegs, leftRegs, rightRegs);
-
-        silentFillAllRegisters(resultRegs);
-        m_jit.exceptionCheck();
-
-        gen.endJumpList().link(&m_jit);
-        jsValueResult(resultRegs, node);
+        JITMulIC* mulIC = m_jit.codeBlock()->addJITMulIC();
+        auto repatchingFunction = operationValueMulOptimize;
+        auto nonRepatchingFunction = operationValueMul;
+        
+        compileMathIC(node, mulIC, needsScratchGPRReg, needsScratchFPRReg, repatchingFunction, nonRepatchingFunction);
         return;
     }
 

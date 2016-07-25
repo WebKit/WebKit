@@ -31,8 +31,10 @@ namespace JSC {
 
 template <typename Generator> class JITMathIC;
 class JITAddGenerator;
+class JITMulGenerator;
 
 typedef JITMathIC<JITAddGenerator> JITAddIC;
+typedef JITMathIC<JITMulGenerator> JITMulIC;
 
 } // namespace JSC
 

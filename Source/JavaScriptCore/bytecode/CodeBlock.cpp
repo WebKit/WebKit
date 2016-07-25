@@ -3013,6 +3013,11 @@ JITAddIC* CodeBlock::addJITAddIC()
     return m_addICs.add();
 }
 
+JITMulIC* CodeBlock::addJITMulIC()
+{
+    return m_mulICs.add();
+}
+
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
 {
     for (StructureStubInfo* stubInfo : m_stubInfos) {

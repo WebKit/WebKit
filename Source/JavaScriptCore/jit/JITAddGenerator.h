@@ -61,7 +61,10 @@ public:
     }
 
     JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&);
-    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList);
+    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, bool shouldEmitProfiling);
+
+    bool isLeftOperandValidConstant() const { return m_leftOperand.isConstInt32(); }
+    bool isRightOperandValidConstant() const { return m_rightOperand.isConstInt32(); }
 
 private:
     SnippetOperand m_leftOperand;

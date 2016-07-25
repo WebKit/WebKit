@@ -432,17 +432,17 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJArp oper
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJArpJaic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, ArithProfile* arithProfile, JITAddIC* addIC)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJArpMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, ArithProfile* arithProfile, TrustedImmPtr mathIC)
 {
-    setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(arithProfile), TrustedImmPtr(addIC));
+    setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(arithProfile), mathIC);
     Call call = appendCallWithExceptionCheck(operation);
     setupResults(result);
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJJaic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, JITAddIC* addIC)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr mathIC)
 {
-    setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(addIC));
+    setupArgumentsWithExecState(arg1, arg2, mathIC);
     Call call = appendCallWithExceptionCheck(operation);
     setupResults(result);
     return call;

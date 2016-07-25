@@ -1,3 +1,96 @@
+2016-07-25  Saam Barati  <sbarati@apple.com>
+
+        op_mul/ArithMul(Untyped,Untyped) should be an IC
+        https://bugs.webkit.org/show_bug.cgi?id=160108
+
+        Reviewed by Mark Lam.
+
+        This patch makes Mul a type based IC in much the same way that we made
+        Add a type-based IC. I implemented Mul in the same way. I abstracted the
+        implementation of the Add IC in the various JITs to allow for it to
+        work over arbitrary IC snippets. This will make adding Div/Sub/Pow in the
+        future easy. This patch also adds a new boolean argument to the various
+        snippet generateFastPath() methods to indicate if we should emit result profiling.
+        I added this because we want this profiling to be emitted for Mul in
+        the baseline, but not in the DFG. We used to indicate this through passing
+        in a nullptr for the ArithProfile, but we no longer do that in the upper
+        JIT tiers. So we are passing an explicit request from the JIT tier about
+        whether or not it's worth it for the IC to emit profiling.
+
+        We now emit much less code for Mul. Here is some data on the average
+        Mul snippet/IC size:
+
+                   |   JetStream  |  Unity 3D  |
+             ------| -------------|--------------
+              Old  |  ~280 bytes  | ~280 bytes |
+             ------| -------------|--------------
+              New  |   210  bytes |  185 bytes |
+             ------------------------------------
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addJITAddIC):
+        (JSC::CodeBlock::addJITMulIC):
+        (JSC::CodeBlock::findStubInfo):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::stubInfoBegin):
+        (JSC::CodeBlock::stubInfoEnd):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::GPRTemporary::adopt):
+        (JSC::DFG::FPRTemporary::FPRTemporary):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        (JSC::DFG::GPRTemporary::operator=):
+        (JSC::DFG::FPRTemporary::~FPRTemporary):
+        (JSC::DFG::FPRTemporary::fpr):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileToThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithMul):
+        * jit/JIT.h:
+        (JSC::JIT::getSlowCase):
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateInline):
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::JITAddGenerator):
+        (JSC::JITAddGenerator::isLeftOperandValidConstant):
+        (JSC::JITAddGenerator::isRightOperandValidConstant):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_sub):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::slowPathStartLocation):
+        (JSC::JITMathIC::slowPathCallLocation):
+        (JSC::JITMathIC::isLeftOperandValidConstant):
+        (JSC::JITMathIC::isRightOperandValidConstant):
+        (JSC::JITMathIC::generateInline):
+        (JSC::JITMathIC::generateOutOfLine):
+        * jit/JITMathICForwards.h:
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateInline):
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITMulGenerator.h:
+        (JSC::JITMulGenerator::JITMulGenerator):
+        (JSC::JITMulGenerator::isLeftOperandValidConstant):
+        (JSC::JITMulGenerator::isRightOperandValidConstant):
+        (JSC::JITMulGenerator::didEmitFastPath): Deleted.
+        (JSC::JITMulGenerator::endJumpList): Deleted.
+        (JSC::JITMulGenerator::slowPathJumpList): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2016-07-25  Darin Adler  <darin@apple.com>
 
         Speed up make process slightly by improving "list of files" idiom

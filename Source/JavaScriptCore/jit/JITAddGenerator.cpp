@@ -43,6 +43,8 @@ JITMathICInlineResult JITAddGenerator::generateInline(CCallHelpers& jit, MathICG
         lhs = m_arithProfile->lhsObservedType();
         rhs = m_arithProfile->rhsObservedType();
         if (lhs.isEmpty() || rhs.isEmpty()) {
+            // FIXME: ICs should be able to repatch without emitting an inline path:
+            // https://bugs.webkit.org/show_bug.cgi?id=160110
             lhs = ObservedType().withInt32();
             rhs = ObservedType().withInt32();
         }
@@ -71,7 +73,7 @@ JITMathICInlineResult JITAddGenerator::generateInline(CCallHelpers& jit, MathICG
     return JITMathICInlineResult::GenerateFullSnippet;
 }
 
-bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList)
+bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, bool shouldEmitProfiling)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_left.payloadGPR());
@@ -166,7 +168,7 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 
     // Do doubleVar + doubleVar.
     jit.addDouble(m_rightFPR, m_leftFPR);
-    if (m_arithProfile)
+    if (m_arithProfile && shouldEmitProfiling)
         m_arithProfile->emitSetDouble(jit);
         
     jit.boxDouble(m_leftFPR, m_result);

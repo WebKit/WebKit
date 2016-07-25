@@ -1536,8 +1536,17 @@ private:
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(Int64, fastResult, slowResult));
     }
-    
+
     void compileValueAdd()
+    {
+        JITAddIC* addIC = codeBlock()->addJITAddIC();
+        auto repatchingFunction = operationValueAddOptimize;
+        auto nonRepatchingFunction = operationValueAdd;
+        compileMathIC(addIC, repatchingFunction, nonRepatchingFunction);
+    }
+
+    template <typename Generator>
+    void compileMathIC(JITMathIC<Generator>* mathIC, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
     {
         Node* node = m_node;
         
@@ -1565,42 +1574,42 @@ private:
                 Box<CCallHelpers::JumpList> exceptions =
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
-                JITAddIC* addIC = jit.codeBlock()->addJITAddIC();
-                Box<MathICGenerationState> addICGenerationState = Box<MathICGenerationState>::create();
+                Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
                 ArithProfile* arithProfile = state->graph.baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-                addIC->m_generator = JITAddGenerator(leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
+                mathIC->m_generator = Generator(leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.fpScratch(0),
                     params.fpScratch(1), params.gpScratch(0), InvalidFPRReg, arithProfile);
 
-                bool generatedInline = addIC->generateInline(jit, *addICGenerationState);
+                bool shouldEmitProfiling = false;
+                bool generatedInline = mathIC->generateInline(jit, *mathICGenerationState, shouldEmitProfiling);
 
                 if (generatedInline) {
-                    ASSERT(!addICGenerationState->slowPathJumps.empty());
+                    ASSERT(!mathICGenerationState->slowPathJumps.empty());
                     auto done = jit.label();
                     params.addLatePath([=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
-                        addICGenerationState->slowPathJumps.link(&jit);
-                        addICGenerationState->slowPathStart = jit.label();
+                        mathICGenerationState->slowPathJumps.link(&jit);
+                        mathICGenerationState->slowPathStart = jit.label();
 
-                        if (addICGenerationState->shouldSlowPathRepatch) {
+                        if (mathICGenerationState->shouldSlowPathRepatch) {
                             SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
-                                operationValueAddOptimize, params[0].gpr(), params[1].gpr(), params[2].gpr(), CCallHelpers::TrustedImmPtr(addIC));
-                            addICGenerationState->slowPathCall = call.call();
+                                repatchingFunction, params[0].gpr(), params[1].gpr(), params[2].gpr(), CCallHelpers::TrustedImmPtr(mathIC));
+                            mathICGenerationState->slowPathCall = call.call();
                         } else {
                             SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic,
-                                exceptions.get(), operationValueAdd, params[0].gpr(), params[1].gpr(), params[2].gpr());
-                            addICGenerationState->slowPathCall = call.call();
+                                exceptions.get(), nonRepatchingFunction, params[0].gpr(), params[1].gpr(), params[2].gpr());
+                            mathICGenerationState->slowPathCall = call.call();
                         }
                         jit.jump().linkTo(done, &jit);
 
                         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                            addIC->finalizeInlineCode(*addICGenerationState, linkBuffer);
+                            mathIC->finalizeInlineCode(*mathICGenerationState, linkBuffer);
                         });
                     });
                 } else {
                     callOperation(
                         *state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
-                        operationValueAdd, params[0].gpr(), params[1].gpr(), params[2].gpr());
+                        nonRepatchingFunction, params[0].gpr(), params[1].gpr(), params[2].gpr());
                 }
             });
 
@@ -1762,7 +1771,10 @@ private:
         }
 
         case UntypedUse: {
-            emitBinarySnippet<JITMulGenerator>(operationValueMul);
+            JITMulIC* mulIC = codeBlock()->addJITMulIC();
+            auto repatchingFunction = operationValueMulOptimize;
+            auto nonRepatchingFunction = operationValueMul;
+            compileMathIC(mulIC, repatchingFunction, nonRepatchingFunction);
             break;
         }
 
