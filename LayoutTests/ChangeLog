@@ -1,3 +1,13 @@
+2016-07-25  Nan Wang  <n_wang@apple.com>
+
+        AX: Expose autoFillButtonType to accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=160179
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/auto-fill-types-expected.txt:
+        * accessibility/auto-fill-types.html:
+
 2016-07-25  Chris Dumez  <cdumez@apple.com>
 
         Touch properties should be on the prototype

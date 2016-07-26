@@ -2253,6 +2253,14 @@ bool AccessibilityObject::isValueAutofillAvailable() const
     
     return downcast<HTMLInputElement>(*node).autoFillButtonType() != AutoFillButtonType::None;
 }
+
+AutoFillButtonType AccessibilityObject::valueAutofillButtonType() const
+{
+    if (!isValueAutofillAvailable())
+        return AutoFillButtonType::None;
+    
+    return downcast<HTMLInputElement>(*this->node()).autoFillButtonType();
+}
     
 bool AccessibilityObject::isValueAutofilled() const
 {
