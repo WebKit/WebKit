@@ -1,18 +1,16 @@
 
-Harness Error (TIMEOUT), message = null
-
-FAIL CORS [DELETE], server allows promise_test: Unhandled rejection with value: object "TypeError: Type error"
-TIMEOUT CORS [DELETE], server refuses Test timed out
-TIMEOUT CORS [PUT], server allows Test timed out
-TIMEOUT CORS [PUT], server refuses Test timed out
-TIMEOUT CORS [PATCH], server allows Test timed out
-TIMEOUT CORS [PATCH], server refuses Test timed out
-TIMEOUT CORS [NEW], server allows Test timed out
-TIMEOUT CORS [NEW], server refuses Test timed out
-TIMEOUT CORS [GET] [x-test-header: allowed], server allows Test timed out
-TIMEOUT CORS [GET] [x-test-header: refused], server refuses Test timed out
-TIMEOUT CORS [GET] [several headers], server allows Test timed out
-TIMEOUT CORS [GET] [several headers], server refuses Test timed out
-TIMEOUT CORS [PUT] [several headers], server allows Test timed out
-TIMEOUT CORS [PUT] [several headers], server refuses Test timed out
+PASS CORS [DELETE], server allows 
+PASS CORS [DELETE], server refuses 
+PASS CORS [PUT], server allows 
+PASS CORS [PUT], server refuses 
+PASS CORS [PATCH], server allows 
+PASS CORS [PATCH], server refuses 
+PASS CORS [NEW], server allows 
+PASS CORS [NEW], server refuses 
+PASS CORS [GET] [x-test-header: allowed], server allows 
+PASS CORS [GET] [x-test-header: refused], server refuses 
+PASS CORS [GET] [several headers], server allows 
+PASS CORS [GET] [several headers], server refuses 
+PASS CORS [PUT] [several headers], server allows 
+PASS CORS [PUT] [several headers], server refuses 
 

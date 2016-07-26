@@ -1,6 +1,6 @@
 
 PASS Fetch ../resources/top.txt with no-cors mode 
 PASS Fetch http://localhost:8800/fetch/api/resources/top.txt with no-cors mode 
-FAIL Fetch https://localhost:9443/fetch/api/resources/top.txt with no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Fetch http://localhost:8801/fetch/api/resources/top.txt with no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Fetch https://localhost:9443/fetch/api/resources/top.txt with no-cors mode assert_equals: Opaque filter: status is 0 expected 0 but got 200
+FAIL Fetch http://localhost:8801/fetch/api/resources/top.txt with no-cors mode assert_equals: Opaque filter: status is 0 expected 0 but got 200
 

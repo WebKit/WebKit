@@ -83,7 +83,9 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
 
     // FIXME: Pass directly all fetch options to loader options.
     options.redirect = request.fetchOptions().redirect;
-    options.mode = FetchOptions::Mode::SameOrigin;
+    options.mode = request.fetchOptions().mode;
+    if (options.mode == FetchOptions::Mode::Cors)
+        options.setAllowCredentials(DoNotAllowStoredCredentials);
 
     m_loader = ThreadableLoader::create(&context, this, request.internalRequest(), options);
     m_isStarted = m_loader;

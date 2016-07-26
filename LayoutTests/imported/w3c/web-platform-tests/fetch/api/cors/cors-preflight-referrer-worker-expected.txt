@@ -1,9 +1,7 @@
 
-Harness Error (TIMEOUT), message = null
-
-FAIL Referrer policy: no-referrer assert_equals: Clean stash response's status is 200 expected 200 but got 500
-TIMEOUT Referrer policy: "" Test timed out
-TIMEOUT Referrer policy: origin Test timed out
-TIMEOUT Referrer policy: origin-when-cross-origin Test timed out
-TIMEOUT Referrer policy: unsafe-url Test timed out
+FAIL Referrer policy: no-referrer promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Referrer policy: "" promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Referrer policy: origin promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Referrer policy: origin-when-cross-origin promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Referrer policy: unsafe-url promise_test: Unhandled rejection with value: object "TypeError: Type error"
 
