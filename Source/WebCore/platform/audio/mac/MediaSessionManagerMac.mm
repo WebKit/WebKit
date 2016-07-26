@@ -173,7 +173,8 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
         title.utf8().data(), rate, duration, currentTime);
 
     m_nowPlayingActive = true;
-    MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), kMRPlaybackStatePlaying, dispatch_get_main_queue(), ^(MRMediaRemoteError error) {
+    MRPlaybackState playbackState = (currentSession->state() == PlatformMediaSession::Playing) ? kMRPlaybackStatePlaying : kMRPlaybackStatePaused;
+    MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), playbackState, dispatch_get_main_queue(), ^(MRMediaRemoteError error) {
 #if LOG_DISABLED
         UNUSED_PARAM(error);
 #else
