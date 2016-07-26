@@ -309,7 +309,7 @@ private:
         CanvasDidDrawApplyAll = 0xffffffff
     };
 
-    State& modifiableState() { ASSERT(!m_unrealizedSaveCount); return m_stateStack.last(); }
+    State& modifiableState() { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
     const State& state() const { return m_stateStack.last(); }
 
     void applyLineDash() const;
@@ -325,11 +325,7 @@ private:
     GraphicsContext* drawingContext() const;
 
     void unwindStateStack();
-    void realizeSaves()
-    {
-        if (m_unrealizedSaveCount)
-            realizeSavesLoop();
-    }
+    void realizeSaves();
     void realizeSavesLoop();
 
     void applyStrokePattern();
@@ -385,6 +381,7 @@ private:
     PlatformLayer* platformLayer() const override;
 #endif
 
+    static const unsigned MaxSaveCount = 1024 * 16;
     Vector<State, 1> m_stateStack;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;

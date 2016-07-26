@@ -351,12 +351,25 @@ inline void CanvasRenderingContext2D::FontProxy::drawBidiText(GraphicsContext& c
     context.drawBidiText(m_font, run, point, action);
 }
 
+void CanvasRenderingContext2D::realizeSaves()
+{
+    if (m_unrealizedSaveCount)
+        realizeSavesLoop();
+
+    if (m_unrealizedSaveCount) {
+        static NeverDestroyed<String> consoleMessage(ASCIILiteral("CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save()."));
+        canvas()->document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, consoleMessage);
+    }
+}
+
 void CanvasRenderingContext2D::realizeSavesLoop()
 {
     ASSERT(m_unrealizedSaveCount);
     ASSERT(m_stateStack.size() >= 1);
     GraphicsContext* context = drawingContext();
     do {
+        if (m_stateStack.size() > MaxSaveCount)
+            break;
         m_stateStack.append(state());
         if (context)
             context->save();
