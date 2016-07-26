@@ -46,3 +46,8 @@ void WKAuthenticationDecisionListenerCancel(WKAuthenticationDecisionListenerRef 
 {
     toImpl(authenticationListener)->cancel();
 }
+
+void WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue(WKAuthenticationDecisionListenerRef authenticationListener)
+{
+    toImpl(authenticationListener)->rejectProtectionSpaceAndContinue();
+}

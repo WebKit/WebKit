@@ -1,3 +1,32 @@
+2016-07-26  David Kilzer <ddkilzer@apple.com>
+
+        Networking process crash due to missing -[WebCoreAuthenticationClientAsChallengeSender performDefaultHandlingForAuthenticationChallenge:] implementation
+        https://bugs.webkit.org/show_bug.cgi?id=156947
+        <rdar://problem/23325160>
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::TestRunner):
+        (setRejectsProtectionSpaceAndContinueForAuthenticationChallengesCallback):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::rejectsProtectionSpaceAndContinueForAuthenticationChallenges):
+        (TestRunner::setRejectsProtectionSpaceAndContinueForAuthenticationChallenges):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:didReceiveAuthenticationChallenge:fromDataSource:]):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::queueNonLoadingScript):
+        (WTR::TestRunner::setRejectsProtectionSpaceAndContinueForAuthenticationChallenges):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveAuthenticationChallenge):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setRejectsProtectionSpaceAndContinueForAuthenticationChallenges):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        Add TestRunner.setRejectsProtectionSpaceAndContinueForAuthenticationChallenges to use for testing.
+
 2016-07-26  David Kilzer  <ddkilzer@apple.com>
 
         check-for-exit-time-destructors should be usable outside Xcode

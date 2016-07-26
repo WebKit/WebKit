@@ -1,3 +1,14 @@
+2016-07-26  David Kilzer <ddkilzer@apple.com>
+
+        Networking process crash due to missing -[WebCoreAuthenticationClientAsChallengeSender performDefaultHandlingForAuthenticationChallenge:] implementation
+        https://bugs.webkit.org/show_bug.cgi?id=156947
+        <rdar://problem/23325160>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/xmlhttprequest/auth-reject-protection-space-expected.txt: Added.
+        * http/tests/xmlhttprequest/auth-reject-protection-space.html: Added.
+
 2016-07-26  Chris Dumez  <cdumez@apple.com>
 
         Parameters to CSSStyleSheet.insertRule() / deleteRule() should be mandatory

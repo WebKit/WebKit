@@ -1,3 +1,17 @@
+2016-07-26  David Kilzer <ddkilzer@apple.com>
+
+        Networking process crash due to missing -[WebCoreAuthenticationClientAsChallengeSender performDefaultHandlingForAuthenticationChallenge:] implementation
+        https://bugs.webkit.org/show_bug.cgi?id=156947
+        <rdar://problem/23325160>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKAuthenticationDecisionListener.cpp:
+        (WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue): 
+        * UIProcess/API/C/WKAuthenticationDecisionListener.h:
+        Added new SPI for testing corresponding to calling the completion handler of
+        WKWebView.didReceiveAuthenticationChallenge with NSURLSessionAuthChallengeRejectProtectionSpace.
+
 2016-07-26  Anders Carlsson  <andersca@apple.com>
 
         Payment session does not end if user closes all Safari windows

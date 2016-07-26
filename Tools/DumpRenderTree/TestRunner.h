@@ -265,6 +265,9 @@ public:
     bool alwaysAcceptCookies() const { return m_alwaysAcceptCookies; }
     void setAlwaysAcceptCookies(bool);
     
+    bool rejectsProtectionSpaceAndContinueForAuthenticationChallenges() const { return m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges; }
+    void setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(bool value) { m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges = value; }
+    
     bool handlesAuthenticationChallenges() const { return m_handlesAuthenticationChallenges; }
     void setHandlesAuthenticationChallenges(bool handlesAuthenticationChallenges) { m_handlesAuthenticationChallenges = handlesAuthenticationChallenges; }
     
@@ -408,6 +411,7 @@ private:
     bool m_globalFlag;
     bool m_isGeolocationPermissionSet;
     bool m_geolocationPermission;
+    bool m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges;
     bool m_handlesAuthenticationChallenges;
     bool m_isPrinting;
     bool m_deferMainResourceDataLoad;
