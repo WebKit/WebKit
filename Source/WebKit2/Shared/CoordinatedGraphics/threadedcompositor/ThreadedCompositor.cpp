@@ -66,6 +66,7 @@ void ThreadedCompositor::invalidate()
     m_scene->detach();
     m_compositingRunLoop->stopUpdateTimer();
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
+        m_scene->purgeGLResources();
         m_context = nullptr;
         m_scene = nullptr;
         m_viewportController = nullptr;
