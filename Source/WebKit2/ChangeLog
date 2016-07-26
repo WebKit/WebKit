@@ -1,5 +1,22 @@
 2016-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Coordinated Graphics] Test fast/fixed-layout/fixed-layout.html crashes in debug
+        https://bugs.webkit.org/show_bug.cgi?id=160117
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that WebPage has its own m_useFixedLayout that is only updated when changed from the UI
+        process. However, layout tests doing internals.setUseFixedLayout() change the frame view directly, and the
+        WebPage doesn't notice it.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFixedVisibleContentRect): Deleted.
+        (WebKit::WebPage::sendViewportAttributesChanged): Change the assert to check the main FrameView is in fixed
+        layout mode.
+        * WebProcess/WebPage/WebPage.h:
+
+2016-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Threaded Compositor] ASSERTION FAILED: isMainThread() when ThreadedCompositor is destroyed since r203718
         https://bugs.webkit.org/show_bug.cgi?id=160197
 

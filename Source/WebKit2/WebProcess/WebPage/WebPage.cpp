@@ -1362,16 +1362,10 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 }
 
 #if USE(COORDINATED_GRAPHICS)
-void WebPage::setFixedVisibleContentRect(const IntRect& rect)
-{
-    ASSERT(m_useFixedLayout);
-
-    m_page->mainFrame().view()->setFixedVisibleContentRect(rect);
-}
-
 void WebPage::sendViewportAttributesChanged()
 {
-    ASSERT(m_useFixedLayout);
+    FrameView* view = m_page->mainFrame().view();
+    ASSERT(view && view->useFixedLayout());
 
     // Viewport properties have no impact on zero sized fixed viewports.
     if (m_viewSize.isEmpty())
@@ -1388,8 +1382,6 @@ void WebPage::sendViewportAttributesChanged()
 
     ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, 1, m_viewSize);
 
-    FrameView* view = m_page->mainFrame().view();
-
     // If no layout was done yet set contentFixedOrigin to (0,0).
     IntPoint contentFixedOrigin = view->didFirstLayout() ? view->fixedVisibleContentRect().location() : IntPoint();
 
@@ -1404,7 +1396,7 @@ void WebPage::sendViewportAttributesChanged()
 #endif
 
     contentFixedSize.scale(1 / attr.initialScale);
-    setFixedVisibleContentRect(IntRect(contentFixedOrigin, roundedIntSize(contentFixedSize)));
+    view->setFixedVisibleContentRect(IntRect(contentFixedOrigin, roundedIntSize(contentFixedSize)));
 
     attr.initialScale = m_page->viewportArguments().zoom; // Resets auto (-1) if no value was set by user.
 

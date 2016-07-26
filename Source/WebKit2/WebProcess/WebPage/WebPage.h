@@ -593,7 +593,6 @@ public:
     void pageDidScroll();
 #if USE(COORDINATED_GRAPHICS)
     void pageDidRequestScroll(const WebCore::IntPoint&);
-    void setFixedVisibleContentRect(const WebCore::IntRect&);
     void sendViewportAttributesChanged();
 #endif
 
