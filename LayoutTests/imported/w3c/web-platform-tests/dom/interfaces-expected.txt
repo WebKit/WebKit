@@ -1535,7 +1535,7 @@ PASS DOMTokenList interface: operation toggle(DOMString,boolean)
 FAIL DOMTokenList interface: operation replace(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "replace" missing
 FAIL DOMTokenList interface: operation supports(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "supports" missing
 PASS DOMTokenList interface: attribute value 
-FAIL DOMTokenList interface: stringifier assert_true: property is not enumerable expected true got false
+PASS DOMTokenList interface: stringifier 
 PASS DOMTokenList must be primary interface of document.body.classList 
 PASS Stringification of document.body.classList 
 PASS DOMTokenList interface: document.body.classList must inherit property "length" with the proper type (0) 

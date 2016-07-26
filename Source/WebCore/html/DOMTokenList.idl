@@ -37,7 +37,7 @@
     attribute DOMString value;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [NotEnumerable] DOMString toString();
+    DOMString toString();
 #endif
 };
 

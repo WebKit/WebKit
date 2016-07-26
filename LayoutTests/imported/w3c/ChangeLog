@@ -1,5 +1,16 @@
 2016-07-25  Chris Dumez  <cdumez@apple.com>
 
+        DOMTokenList.prototype.toString should be enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=160182
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that one more check is passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+
+2016-07-25  Chris Dumez  <cdumez@apple.com>
+
         Parameters to DOMImplementation.createDocumentType() should be mandatory and non-nullable
         https://bugs.webkit.org/show_bug.cgi?id=160167
 
