@@ -1,3 +1,19 @@
+2016-07-26  Enrica Casucci  <enrica@apple.com>
+
+        Support configurable autocapitalization.
+        https://bugs.webkit.org/show_bug.cgi?id=158860
+        rdar://problem/27536113
+
+        Reviewed by Tim Horton.
+
+        Autocapitalization should be enabled/disabled regardless of whether
+        we are using advance spelling feature.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::getGuessesForWord):
+
+
 2016-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Coordinated Graphics] Test fast/fixed-layout/fixed-layout.html crashes in debug
