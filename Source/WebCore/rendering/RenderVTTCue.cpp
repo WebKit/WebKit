@@ -70,6 +70,8 @@ void RenderVTTCue::layout()
 bool RenderVTTCue::initializeLayoutParameters(InlineFlowBox*& firstLineBox, LayoutUnit& step, LayoutUnit& position)
 {
     ASSERT(firstChild());
+    if (!firstChild())
+        return false;
 
     RenderBlock* parentBlock = containingBlock();
 
