@@ -1,3 +1,15 @@
+2016-07-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unreviewed, rolling out r203703.
+
+        It breaks some internal tests
+
+        Reverted changeset:
+
+        "[JSC] DFG::Node should not have its own allocator"
+        https://bugs.webkit.org/show_bug.cgi?id=160098
+        http://trac.webkit.org/changeset/203703
+
 2016-07-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] DFG::Node should not have its own allocator

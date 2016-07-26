@@ -712,46 +712,46 @@ private:
     Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            op, currentNodeOrigin(), Edge(child1), Edge(child2),
+            SpecNone, op, currentNodeOrigin(), Edge(child1), Edge(child2),
             Edge(child3));
         return addToGraph(result);
     }
     Node* addToGraph(NodeType op, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
     {
         Node* result = m_graph.addNode(
-            op, currentNodeOrigin(), child1, child2, child3);
+            SpecNone, op, currentNodeOrigin(), child1, child2, child3);
         return addToGraph(result);
     }
     Node* addToGraph(NodeType op, OpInfo info, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            op, currentNodeOrigin(), info, Edge(child1), Edge(child2),
+            SpecNone, op, currentNodeOrigin(), info, Edge(child1), Edge(child2),
             Edge(child3));
         return addToGraph(result);
     }
     Node* addToGraph(NodeType op, OpInfo info, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
     {
-        Node* result = m_graph.addNode(op, currentNodeOrigin(), info, child1, child2, child3);
+        Node* result = m_graph.addNode(SpecNone, op, currentNodeOrigin(), info, child1, child2, child3);
         return addToGraph(result);
     }
     Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            op, currentNodeOrigin(), info1, info2,
+            SpecNone, op, currentNodeOrigin(), info1, info2,
             Edge(child1), Edge(child2), Edge(child3));
         return addToGraph(result);
     }
     Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
     {
         Node* result = m_graph.addNode(
-            op, currentNodeOrigin(), info1, info2, child1, child2, child3);
+            SpecNone, op, currentNodeOrigin(), info1, info2, child1, child2, child3);
         return addToGraph(result);
     }
     
     Node* addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
     {
         Node* result = m_graph.addNode(
-            Node::VarArg, op, currentNodeOrigin(), info1, info2,
+            SpecNone, Node::VarArg, op, currentNodeOrigin(), info1, info2,
             m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs);
         addToGraph(result);
         

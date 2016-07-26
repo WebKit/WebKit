@@ -129,7 +129,7 @@ public:
         
         // And finally free the constants that we removed.
         for (Node* node : toFree)
-            m_graph.deleteNode(node);
+            m_graph.m_allocator.free(node);
         
         return true;
     }

@@ -66,11 +66,12 @@ static const char* dfgOpNames[] = {
 #undef STRINGIZE_DFG_OP_ENUM
 };
 
-Graph::Graph(VM& vm, Plan& plan)
+Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     : m_vm(vm)
     , m_plan(plan)
     , m_codeBlock(m_plan.codeBlock)
     , m_profiledBlock(m_codeBlock->alternative())
+    , m_allocator(longLivedState.m_allocator)
     , m_cfg(std::make_unique<CFG>(*this))
     , m_nextMachineLocal(0)
     , m_fixpointState(BeforeFixpoint)
@@ -86,6 +87,17 @@ Graph::Graph(VM& vm, Plan& plan)
 
 Graph::~Graph()
 {
+    for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
+        BasicBlock* block = this->block(blockIndex);
+        if (!block)
+            continue;
+
+        for (unsigned phiIndex = block->phis.size(); phiIndex--;)
+            m_allocator.free(block->phis[phiIndex]);
+        for (unsigned nodeIndex = block->size(); nodeIndex--;)
+            m_allocator.free(block->at(nodeIndex));
+    }
+    m_allocator.freeAll();
 }
 
 const char *Graph::opName(NodeType op)
@@ -567,11 +579,6 @@ void Graph::dump(PrintStream& out, DumpContext* context)
     }
 }
 
-void Graph::deleteNode(Node* node)
-{
-    m_nodes.remove(node);
-}
-
 void Graph::dethread()
 {
     if (m_form == LoadStore || m_form == SSA)
@@ -738,9 +745,9 @@ void Graph::computeRefCounts()
 void Graph::killBlockAndItsContents(BasicBlock* block)
 {
     for (unsigned phiIndex = block->phis.size(); phiIndex--;)
-        deleteNode(block->phis[phiIndex]);
-    for (Node* node : *block)
-        deleteNode(node);
+        m_allocator.free(block->phis[phiIndex]);
+    for (unsigned nodeIndex = block->size(); nodeIndex--;)
+        m_allocator.free(block->at(nodeIndex));
     
     killBlock(block);
 }

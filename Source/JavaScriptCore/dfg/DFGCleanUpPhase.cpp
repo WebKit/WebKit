@@ -69,7 +69,7 @@ public:
                 }
                 
                 if (kill)
-                    m_graph.deleteNode(node);
+                    m_graph.m_allocator.free(node);
                 else
                     block->at(targetIndex++) = node;
             }
