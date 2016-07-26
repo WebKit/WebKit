@@ -1,3 +1,16 @@
+2016-07-25  Frederic Wang  <fwang@igalia.com>
+
+        MathOperator: Add a mapping from combining to non-combining equivalents
+        https://bugs.webkit.org/show_bug.cgi?id=159513
+
+        Reviewed by Darin Adler.
+
+        * mathml/presentation/bug159513.html: Added.
+        * platform/gtk/mathml/presentation/bug159513-expected.png: Added.
+        * platform/gtk/mathml/presentation/bug159513-expected.txt: Added.
+        * platform/ios-simulator/TestExpectations: Skip this test on iOS.
+        * platform/mac/TestExpectations: Skip this test on Mac.
+
 2016-07-25  Chris Dumez  <cdumez@apple.com>
 
         Second parameter to Range.setStart() / setEnd() should be mandatory

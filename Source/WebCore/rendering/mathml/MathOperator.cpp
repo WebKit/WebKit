@@ -121,10 +121,10 @@ LayoutUnit MathOperator::stretchSize() const
     return m_operatorType == Type::VerticalOperator ? m_ascent + m_descent : m_width;
 }
 
-bool MathOperator::getBaseGlyph(const RenderStyle& style, GlyphData& baseGlyph) const
+bool MathOperator::getGlyph(const RenderStyle& style, UChar character, GlyphData& glyph) const
 {
-    baseGlyph = style.fontCascade().glyphDataForCharacter(m_baseCharacter, !style.isLeftToRightDirection());
-    return baseGlyph.font && baseGlyph.font == &style.fontCascade().primaryFont();
+    glyph = style.fontCascade().glyphDataForCharacter(character, !style.isLeftToRightDirection());
+    return glyph.font && glyph.font == &style.fontCascade().primaryFont();
 }
 
 void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
@@ -164,6 +164,47 @@ void MathOperator::setGlyphAssembly(const GlyphAssemblyData& assemblyData)
         getAscentAndDescentForGlyph(m_assembly.middle, ascent, descent);
         m_ascent = std::max(m_ascent, ascent);
         m_descent = std::max(m_descent, descent);
+    }
+}
+
+// The MathML specification recommends avoiding combining characters.
+// See https://www.w3.org/TR/MathML/chapter7.html#chars.comb-chars
+// However, many math fonts do not provide constructions for the non-combining equivalent.
+const unsigned maxFallbackPerCharacter = 3;
+static const UChar characterFallback[][maxFallbackPerCharacter] = {
+    { 0x005E, 0x0302, 0 }, // CIRCUMFLEX ACCENT
+    { 0x005F, 0x0332, 0 }, // LOW LINE
+    { 0x007E, 0x0303, 0 }, // TILDE
+    { 0x00AF, 0x0304, 0x0305 }, // MACRON
+    { 0x02C6, 0x0302, 0 }, // MODIFIER LETTER CIRCUMFLEX ACCENT
+    { 0x02C7, 0x030C, 0 } // CARON
+};
+const unsigned characterFallbackSize = WTF_ARRAY_LENGTH(characterFallback);
+
+void MathOperator::getMathVariantsWithFallback(const RenderStyle& style, bool isVertical, Vector<Glyph>& sizeVariants, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts)
+{
+    // In general, we first try and find contruction for the base glyph.
+    GlyphData baseGlyph;
+    if (!getBaseGlyph(style, baseGlyph) || !baseGlyph.font->mathData())
+        return;
+    baseGlyph.font->mathData()->getMathVariants(baseGlyph.glyph, isVertical, sizeVariants, assemblyParts);
+    if (!sizeVariants.isEmpty() || !assemblyParts.isEmpty())
+        return;
+
+    // Otherwise, we try and find fallback constructions using similar characters.
+    for (unsigned i = 0; i < characterFallbackSize; i++) {
+        unsigned j = 0;
+        if (characterFallback[i][j] == m_baseCharacter) {
+            for (j++; j < maxFallbackPerCharacter && characterFallback[i][j]; j++) {
+                GlyphData glyphData;
+                if (!getGlyph(style, characterFallback[i][j], glyphData))
+                    continue;
+                glyphData.font->mathData()->getMathVariants(glyphData.glyph, isVertical, sizeVariants, assemblyParts);
+                if (!sizeVariants.isEmpty() || !assemblyParts.isEmpty())
+                    return;
+            }
+            break;
+        }
     }
 }
 
@@ -316,7 +357,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculat
     if (baseGlyph.font->mathData()) {
         Vector<Glyph> sizeVariants;
         Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
-        baseGlyph.font->mathData()->getMathVariants(baseGlyph.glyph, isVertical, sizeVariants, assemblyParts);
+        getMathVariantsWithFallback(style, isVertical, sizeVariants, assemblyParts);
         // We verify the size variants.
         for (auto& sizeVariant : sizeVariants) {
             GlyphData glyphData(sizeVariant, baseGlyph.font);

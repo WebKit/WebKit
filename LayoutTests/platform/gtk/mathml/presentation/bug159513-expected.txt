@@ -1,0 +1,62 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x114
+  RenderBlock {HTML} at (0,0) size 800x114
+    RenderBody {BODY} at (8,16) size 784x90
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 262x17
+          text run at (0,0) width 262: "Test passes if horizontal operators stretch."
+      RenderBlock (anonymous) at (0,33) size 784x57
+        RenderMathMLMath {math} at (0,8) size 60x41
+          RenderMathMLUnderOver {mover} at (0,0) size 60x41
+            RenderMathMLSpace {mspace} at (0,10) size 60x31 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (22,1) size 16x6
+              RenderBlock (anonymous) at (0,0) size 13x19
+                RenderText {#text} at (0,-68) size 13x160
+                  text run at (0,-68) width 13: "^"
+        RenderText {#text} at (60,34) size 4x17
+          text run at (60,34) width 4: " "
+        RenderMathMLMath {math} at (64,18) size 60x40
+          RenderMathMLUnderOver {munder} at (0,0) size 60x40
+            RenderMathMLSpace {mspace} at (0,0) size 60x30 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (24,33) size 12x5
+              RenderBlock (anonymous) at (0,0) size 8x4
+                RenderText {#text} at (0,-86) size 8x160
+                  text run at (0,-86) width 8: "_"
+        RenderText {#text} at (124,34) size 4x17
+          text run at (124,34) width 4: " "
+        RenderMathMLMath {math} at (128,10) size 60x39
+          RenderMathMLUnderOver {mover} at (0,0) size 60x39
+            RenderMathMLSpace {mspace} at (0,8) size 60x31 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (23,1) size 14x8
+              RenderBlock (anonymous) at (0,0) size 13x9
+                RenderText {#text} at (0,-78) size 13x160
+                  text run at (0,-78) width 13: "~"
+        RenderText {#text} at (188,34) size 4x17
+          text run at (188,34) width 4: " "
+        RenderMathMLMath {math} at (192,0) size 60x49
+          RenderMathMLUnderOver {mover} at (0,0) size 60x49
+            RenderMathMLSpace {mspace} at (0,18) size 60x31 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (24,1) size 12x18
+              RenderBlock (anonymous) at (0,0) size 12x16
+                RenderText {#text} at (0,-71) size 12x160
+                  text run at (0,-71) width 12: "\x{AF}"
+        RenderText {#text} at (252,34) size 4x17
+          text run at (252,34) width 4: " "
+        RenderMathMLMath {math} at (256,12) size 60x37
+          RenderMathMLUnderOver {mover} at (0,0) size 60x37
+            RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (24,1) size 12x6
+              RenderBlock (anonymous) at (0,0) size 12x18
+                RenderText {#text} at (0,-69) size 12x160
+                  text run at (0,-69) width 12: "\x{2C6}"
+        RenderText {#text} at (316,34) size 4x17
+          text run at (316,34) width 4: " "
+        RenderMathMLMath {math} at (320,12) size 60x37
+          RenderMathMLUnderOver {mover} at (0,0) size 60x37
+            RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]
+            RenderMathMLOperator {mo} at (24,1) size 12x6
+              RenderBlock (anonymous) at (0,0) size 12x18
+                RenderText {#text} at (0,-69) size 12x160
+                  text run at (0,-69) width 12: "\x{2C7}"
+        RenderText {#text} at (0,0) size 0x0

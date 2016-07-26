@@ -804,6 +804,7 @@ mathml/opentype/horizontal-munderover.html [ Skip ]
 mathml/opentype/fraction-line.html [ Skip ]
 mathml/presentation/fractions-linethickness.html [ Skip ]
 mathml/opentype/large-operators-italic-correction.html [ Skip ]
+mathml/presentation/bug159513.html [ Skip ]
 
 # These tests use key navigation to test MathML links but do not seem to work on Mac.
 webkit.org/b/159662 mathml/presentation/href-enter.html [ Skip ]
