@@ -1,3 +1,17 @@
+2016-07-26  David Kilzer  <ddkilzer@apple.com>
+
+        check-for-exit-time-destructors should be usable outside Xcode
+        <https://webkit.org/b/160195>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/check-for-exit-time-destructors: Update to parse
+        -h|--help switch, or to take one argument to a binary to check
+        for exit time destructors on the command-line.  The clang
+        compiler will find these at compile-time with the
+        -Wexit-time-destructors switch, but this script will check for
+        them after-the-fact.
+
 2016-07-26  Lucas Forschler  <lforschler@apple.com>
 
         Test svn.webkit.org functionality after maintenance.
