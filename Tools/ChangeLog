@@ -1,3 +1,16 @@
+2016-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow LOG macros to be used outside the namespace, and other logging cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=160216
+
+        Reviewed by Anders Carlsson.
+        
+        initializeLoggingChannelsIfNecessary -> initializeLogChannelsIfNecessary
+
+        * DumpRenderTree/TestRunner.cpp:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2016-07-26  David Kilzer <ddkilzer@apple.com>
 
         Networking process crash due to missing -[WebCoreAuthenticationClientAsChallengeSender performDefaultHandlingForAuthenticationChallenge:] implementation

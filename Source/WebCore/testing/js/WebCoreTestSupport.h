@@ -53,7 +53,7 @@ void setTestCallbackAndStartNotificationTimer(WebCore::Frame&, JSContextRef, JSO
 void clearWheelEventTestTrigger(WebCore::Frame&) TEST_SUPPORT_EXPORT;
 
 void setLogChannelToAccumulate(const WTF::String& name) TEST_SUPPORT_EXPORT;
-void initializeLoggingChannelsIfNecessary() TEST_SUPPORT_EXPORT;
+void initializeLogChannelsIfNecessary() TEST_SUPPORT_EXPORT;
 void setAllowsAnySSLCertificate(bool) TEST_SUPPORT_EXPORT;
 
 } // namespace WebCore

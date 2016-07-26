@@ -543,6 +543,8 @@
 		0FDA7C23188330A900C954B5 /* DragImageIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C22188330A900C954B5 /* DragImageIOS.mm */; };
 		0FDA7C261883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C241883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp */; };
 		0FDA7C271883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C251883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h */; };
+		0FDCD7F31D47E655009F08BC /* LogInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDCD7F21D47E655009F08BC /* LogInitialization.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FDCD7F51D47E725009F08BC /* LogMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDCD7F41D47E725009F08BC /* LogMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDF45A71BD1C6FD00E4FA8C /* PlatformCAAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF45A61BD1C6FD00E4FA8C /* PlatformCAAnimation.cpp */; };
 		0FDF45A91BD1C82500E4FA8C /* TimingFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF45A81BD1C82500E4FA8C /* TimingFunction.cpp */; };
 		0FE5806319327A6200DE32EB /* ScrollingTreeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE5806119327A6200DE32EB /* ScrollingTreeMac.cpp */; };
@@ -4485,7 +4487,7 @@
 		A81872240977D3C0005826D9 /* NameNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872190977D3C0005826D9 /* NameNodeList.cpp */; };
 		A81872250977D3C0005826D9 /* ChildNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A818721A0977D3C0005826D9 /* ChildNodeList.cpp */; };
 		A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8239DFE09B3CF8A00B60641 /* Logging.cpp */; };
-		A8239E0109B3CF8A00B60641 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = A8239DFF09B3CF8A00B60641 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A8239E0109B3CF8A00B60641 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = A8239DFF09B3CF8A00B60641 /* Logging.h */; };
 		A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A824B4640E2EF2EA0081A7B7 /* TextRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581E809D1508D000E61D7 /* SVGNames.cpp */; };
 		A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581EA09D1508D000E61D7 /* XLinkNames.cpp */; };
@@ -8037,6 +8039,8 @@
 		0FDA7C22188330A900C954B5 /* DragImageIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragImageIOS.mm; sourceTree = "<group>"; };
 		0FDA7C241883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitPlaybackTargetAvailabilityEvent.cpp; sourceTree = "<group>"; };
 		0FDA7C251883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitPlaybackTargetAvailabilityEvent.h; sourceTree = "<group>"; };
+		0FDCD7F21D47E655009F08BC /* LogInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
+		0FDCD7F41D47E725009F08BC /* LogMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogMacros.h; sourceTree = "<group>"; };
 		0FDF45A61BD1C6FD00E4FA8C /* PlatformCAAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCAAnimation.cpp; sourceTree = "<group>"; };
 		0FDF45A81BD1C82500E4FA8C /* TimingFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimingFunction.cpp; sourceTree = "<group>"; };
 		0FE5806119327A6200DE32EB /* ScrollingTreeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeMac.cpp; sourceTree = "<group>"; };
@@ -23203,6 +23207,8 @@
 				A7AD2F860EC89D07008AB002 /* LinkHash.h */,
 				C046E1AB1208A9FE00BA2CF7 /* LocalizedStrings.cpp */,
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
+				0FDCD7F21D47E655009F08BC /* LogInitialization.h */,
+				0FDCD7F41D47E725009F08BC /* LogMacros.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
 				7AE6C9391BE0C60100E19E03 /* MainThreadSharedTimer.cpp */,
@@ -28114,6 +28120,7 @@
 				078E092617D14D1C00420AA1 /* RTCSessionDescription.h in Headers */,
 				078E094317D16E1C00420AA1 /* RTCSessionDescriptionDescriptor.h in Headers */,
 				078E094417D16E1C00420AA1 /* RTCSessionDescriptionRequest.h in Headers */,
+				0FDCD7F31D47E655009F08BC /* LogInitialization.h in Headers */,
 				078E092A17D14D1C00420AA1 /* RTCStatsReport.h in Headers */,
 				078E094517D16E1C00420AA1 /* RTCStatsRequest.h in Headers */,
 				078E092C17D14D1C00420AA1 /* RTCStatsResponse.h in Headers */,
@@ -28231,6 +28238,7 @@
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
 				FD45A94F175D3F3E00C21EC8 /* Shape.h in Headers */,
+				0FDCD7F51D47E725009F08BC /* LogMacros.h in Headers */,
 				FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */,
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,

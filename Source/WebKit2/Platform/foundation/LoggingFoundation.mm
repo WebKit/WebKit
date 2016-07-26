@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "Logging.h"
+#include "LogInitialization.h"
 
 namespace WebKit {
 

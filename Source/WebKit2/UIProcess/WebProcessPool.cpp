@@ -35,7 +35,7 @@
 #include "CustomProtocolManagerMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
-#include "Logging.h"
+#include "LogInitialization.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
@@ -63,7 +63,7 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
-#include <WebCore/Logging.h>
+#include <WebCore/LogInitialization.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
 #include <runtime/JSCInlines.h>
@@ -205,7 +205,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     addLanguageChangeObserver(this, languageChanged);
 
 #if !LOG_DISABLED
-    WebCore::initializeLoggingChannelsIfNecessary();
+    WebCore::initializeLogChannelsIfNecessary();
     WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
 

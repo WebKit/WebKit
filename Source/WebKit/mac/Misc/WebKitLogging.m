@@ -44,7 +44,7 @@ static const size_t logChannelCount = sizeof(logChannels) / sizeof(logChannels[0
 
 static NSString * const defaultsDomain = @"WebKitLogging";
 
-void WebKitInitializeLoggingChannelsIfNecessary()
+void WebKitInitializeLogChannelsIfNecessary()
 {
     static bool haveInitializedLoggingChannels = false;
     if (haveInitializedLoggingChannels)

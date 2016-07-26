@@ -38,7 +38,7 @@
 #include <JavaScriptCore/JSCTestRunnerUtils.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <WebCore/Logging.h>
+#include <WebCore/LogInitialization.h>
 #include <cstring>
 #include <locale.h>
 #include <runtime/ArrayBufferView.h>

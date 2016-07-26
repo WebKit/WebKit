@@ -1,3 +1,39 @@
+2016-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow LOG macros to be used outside the namespace, and other logging cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=160216
+
+        Reviewed by Anders Carlsson.
+
+        Fix some issues with the LOG macros.
+        
+        First, they were not usable outside the WebKit namespace in WebKit2 code. Fix by moving
+        its log channels outside of the namespace (they are protected by a unique prefix anyway).
+        
+        Second, allow LOG_WITH_STREAM to be used in WebKit2 by moving that and a helper macro
+        into LogMacros.h, which is exported from WebCore as a private header.
+        
+        Third, split the Logging.h header into two. Logging.h remains for framework-internal
+        log channels and log macros. Add LogInitialization.h which is external, and used to
+        initialize the channels.
+        
+        Finally unify "initializeLogChannels" and "initializeLoggingChannels" terminology everywhere.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        * Platform/LogInitialization.h: Copied from Source/WebKit2/Platform/foundation/LoggingFoundation.mm.
+        * Platform/Logging.cpp:
+        (WebKit::initializeLogChannelsIfNecessary):
+        * Platform/Logging.h:
+        * Platform/foundation/LoggingFoundation.mm:
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateContentRectsWithState:]):
+        (-[WKWebView _navigationGestureDidBegin]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_hiddenPageThrottlingTimer):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-07-26  David Kilzer <ddkilzer@apple.com>
 
         Networking process crash due to missing -[WebCoreAuthenticationClientAsChallengeSender performDefaultHandlingForAuthenticationChallenge:] implementation

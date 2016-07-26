@@ -51,7 +51,7 @@
 #include "WebsiteDataType.h"
 #include <WebCore/DNS.h>
 #include <WebCore/DiagnosticLoggingClient.h>
-#include <WebCore/Logging.h>
+#include <WebCore/LogInitialization.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>

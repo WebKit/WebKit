@@ -32,7 +32,7 @@
 #include "Internals.h"
 #include "JSDocument.h"
 #include "JSInternals.h"
-#include "Logging.h"
+#include "LogInitialization.h"
 #include "Page.h"
 #include "WheelEventTestTrigger.h"
 #include <JavaScriptCore/APICast.h>
@@ -107,10 +107,10 @@ void setLogChannelToAccumulate(const String& name)
 #endif
 }
 
-void initializeLoggingChannelsIfNecessary()
+void initializeLogChannelsIfNecessary()
 {
 #if !LOG_DISABLED
-    WebCore::initializeLoggingChannelsIfNecessary();
+    WebCore::initializeLogChannelsIfNecessary();
 #endif
 }
 

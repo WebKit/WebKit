@@ -26,12 +26,11 @@
 
 #include "config.h"
 #include "Logging.h"
+#include "LogInitialization.h"
 
 #include <wtf/text/CString.h>
 
 #if !LOG_DISABLED
-
-namespace WebKit {
 
 #define DEFINE_LOG_CHANNEL(name) \
     WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name) = { WTFLogChannelOff, #name };
@@ -41,6 +40,8 @@ WEBKIT2_LOG_CHANNELS(DEFINE_LOG_CHANNEL)
 static WTFLogChannel* logChannels[] = {
     WEBKIT2_LOG_CHANNELS(LOG_CHANNEL_ADDRESS)
 };
+
+namespace WebKit {
 
 const size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
 

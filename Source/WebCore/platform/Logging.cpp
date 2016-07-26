@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "Logging.h"
+#include "LogInitialization.h"
 
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -69,7 +70,7 @@ void setLogChannelToAccumulate(const String& name)
     logChannelsNeedInitialization = true;
 }
 
-void initializeLoggingChannelsIfNecessary()
+void initializeLogChannelsIfNecessary()
 {
     if (!logChannelsNeedInitialization)
         return;

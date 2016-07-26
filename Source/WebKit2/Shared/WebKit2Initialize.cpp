@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebKit2Initialize.h"
 
-#include "Logging.h"
-#include <WebCore/Logging.h>
+#include "LogInitialization.h"
+#include <WebCore/LogInitialization.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -55,7 +55,7 @@ void InitializeWebKit2()
     RunLoop::initializeMainRunLoop();
 
 #if !LOG_DISABLED
-    WebCore::initializeLoggingChannelsIfNecessary();
+    WebCore::initializeLogChannelsIfNecessary();
     WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
 }

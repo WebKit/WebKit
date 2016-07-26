@@ -105,6 +105,7 @@
 		0FCB4E6918BBE3D9000FCFC9 /* WKTextInputWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E5F18BBE3D9000FCFC9 /* WKTextInputWindowController.mm */; };
 		0FCB4E6C18BBF26A000FCFC9 /* WKContentViewInteraction.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */; };
 		0FCB4E6D18BBF26A000FCFC9 /* WKContentViewInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */; };
+		0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDCD7F61D47E92A009F08BC /* LogInitialization.h */; };
 		0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */; };
 		0FF24A2E1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */; };
 		0FF2649F1A1FF9C6001FE759 /* RemoteLayerTreeScrollingPerformanceData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F707C771A1FEE8300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.mm */; };
@@ -2065,6 +2066,7 @@
 		0FCB4E5F18BBE3D9000FCFC9 /* WKTextInputWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextInputWindowController.mm; sourceTree = "<group>"; };
 		0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentViewInteraction.h; path = ios/WKContentViewInteraction.h; sourceTree = "<group>"; };
 		0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContentViewInteraction.mm; path = ios/WKContentViewInteraction.mm; sourceTree = "<group>"; };
+		0FDCD7F61D47E92A009F08BC /* LogInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		0FF24A2F1879E4FE003ABF0C /* RemoteLayerTreeDrawingAreaProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteLayerTreeDrawingAreaProxy.messages.in; sourceTree = "<group>"; };
@@ -6541,6 +6543,7 @@
 				1A7E814E1152D2240003695B /* mac */,
 				CE1A0BCA1A48E6C60054EF74 /* spi */,
 				51B15A7D138439B200321AD8 /* unix */,
+				0FDCD7F61D47E92A009F08BC /* LogInitialization.h */,
 				51A7F2F4125BF8D4008AEB1D /* Logging.cpp */,
 				51A7F2F2125BF820008AEB1D /* Logging.h */,
 				C0E3AA451209E2BA00A49D01 /* Module.cpp */,
@@ -8059,6 +8062,7 @@
 				933DF82E1B3BC09000AEA9E3 /* WKImagePreviewViewController.h in Headers */,
 				9321D5861A38EE3C008052BE /* WKImmediateActionController.h in Headers */,
 				9321D58A1A38F196008052BE /* WKImmediateActionTypes.h in Headers */,
+				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
 				1C8E293912761E5B00BC7BD0 /* WKInspector.h in Headers */,
 				0F3C725B196F604E00AEDD0C /* WKInspectorHighlightView.h in Headers */,
 				A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */,

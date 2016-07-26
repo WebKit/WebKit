@@ -24,11 +24,11 @@
 
 #include "WebResourceLoadScheduler.h"
 
+#include "WebKitLogging.h"
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/Logging.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/PingHandle.h>
 #include <WebCore/PlatformStrategies.h>

@@ -40,7 +40,7 @@ static WTFLogChannel* logChannels[] = {
 
 static const size_t logChannelCount = sizeof(logChannels) / sizeof(logChannels[0]);
 
-void WebKitInitializeLoggingChannelsIfNecessary()
+void WebKitInitializeLogChannelsIfNecessary()
 {
     static bool haveInitializedLoggingChannels = false;
     if (haveInitializedLoggingChannels)

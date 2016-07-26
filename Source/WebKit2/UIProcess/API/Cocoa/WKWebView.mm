@@ -35,6 +35,7 @@
 #import "DiagnosticLoggingClient.h"
 #import "FindClient.h"
 #import "LegacySessionStateCoding.h"
+#import "Logging.h"
 #import "NavigationState.h"
 #import "ObjCObjectGraph.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
@@ -89,6 +90,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
+#import <WebCore/TextStream.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
@@ -2079,7 +2081,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         }
     }
 #endif
-    
+
     [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates
         unobscuredRect:unobscuredRectInContentCoordinates
         unobscuredRectInScrollViewCoordinates:unobscuredRect
@@ -2228,6 +2230,8 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
     _frozenVisibleContentRect = [self convertRect:fullViewRect toView:_contentView.get()];
     _frozenUnobscuredContentRect = [self convertRect:unobscuredRect toView:_contentView.get()];
+    
+    LOG_WITH_STREAM(VisibleRects, stream << "_navigationGestureDidBegin: freezing visibleContentRect " << _frozenVisibleContentRect.value() << " UnobscuredContentRect " << _frozenUnobscuredContentRect.value());
 }
 
 - (void)_navigationGestureDidEnd
