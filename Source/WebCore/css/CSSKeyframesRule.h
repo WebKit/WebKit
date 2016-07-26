@@ -50,8 +50,8 @@ public:
     void wrapperAppendKeyframe(Ref<StyleKeyframe>&&);
     void wrapperRemoveKeyframe(unsigned);
 
-    String name() const { return m_name; }    
-    void setName(const String& name) { m_name = AtomicString(name); }
+    const AtomicString& name() const { return m_name; }
+    void setName(const AtomicString& name) { m_name = name; }
     
     size_t findKeyframeIndex(const String& key) const;
 

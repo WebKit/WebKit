@@ -27,14 +27,13 @@
  */
 
 interface CSSKeyframesRule : CSSRule {
-    attribute DOMString? name;
+    attribute DOMString name;
     readonly attribute CSSRuleList cssRules;
     
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    void insertRule(optional DOMString rule = "undefined");
-    void appendRule(optional DOMString rule = "undefined");
-    void deleteRule(optional DOMString key = "undefined");
-    CSSKeyframeRule findRule(optional DOMString key = "undefined");
+    void insertRule(DOMString rule);
+    void appendRule(DOMString rule);
+    void deleteRule(DOMString key);
+    CSSKeyframeRule? findRule(DOMString key);
 
     getter CSSKeyframeRule (unsigned long index);
 };

@@ -1,3 +1,17 @@
+2016-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Align CSSKeyframesRule with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=160219
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * animations/CSSKeyframesRule-name-null-expected.txt: Added.
+        * animations/CSSKeyframesRule-name-null.html: Added.
+        * animations/CSSKeyframesRule-parameters-expected.txt: Added.
+        * animations/CSSKeyframesRule-parameters.html: Added.
+
 2016-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPhone] Playing a video on tudou.com plays only sound, no video
