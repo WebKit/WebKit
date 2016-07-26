@@ -23,18 +23,18 @@ interface CSSStyleSheet : StyleSheet {
     readonly attribute CSSRule          ownerRule;
     readonly attribute CSSRuleList      cssRules;
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters, RaisesException] unsigned long insertRule(optional DOMString rule = "undefined",
-                                            optional unsigned long index = 0);
-    [RaisesException] void deleteRule(optional unsigned long index = 0);
+    [ObjCLegacyUnnamedParameters, RaisesException] unsigned long insertRule(DOMString rule, unsigned long index);
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    [RaisesException, ImplementedAs=deprecatedInsertRule] unsigned long insertRule(DOMString rule); // Deprecated.
+#endif
+
+    [RaisesException] void deleteRule(unsigned long index);
 
     // IE Extensions
     readonly attribute CSSRuleList      rules;
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] long addRule(optional DOMString selector = "undefined",
-                 optional DOMString style = "undefined",
-                 optional unsigned long index);
+    // FIXME: Those operations are WebKit-specific.
+    [RaisesException] long addRule(optional DOMString selector = "undefined", optional DOMString style = "undefined", optional unsigned long index);
     [RaisesException] void removeRule(optional unsigned long index = 0);
 };
 

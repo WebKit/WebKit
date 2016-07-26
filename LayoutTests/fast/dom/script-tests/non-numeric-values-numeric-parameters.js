@@ -209,7 +209,7 @@ shouldBe("nonNumericPolicy('createCSSStyleDeclaration().item(x)')", "'any type a
 // CSSStyleSheet
 
 shouldBe("nonNumericPolicy('createCSSStyleSheet().insertRule(ruleText, x)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('createCSSStyleSheet().deleteRule(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('createCSSStyleSheet().deleteRule(x)')", "'any type allowed (but not omitted)'");
 shouldBe("nonNumericPolicy('createCSSStyleSheet().addRule(selector, styleText, x)')", "'any type allowed'");
 shouldBe("nonNumericPolicy('createCSSStyleSheet().removeRule(x)')", "'any type allowed'");
 

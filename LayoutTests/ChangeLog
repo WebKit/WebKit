@@ -1,3 +1,21 @@
+2016-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Parameters to CSSStyleSheet.insertRule() / deleteRule() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160210
+
+        Reviewed by Darin Adler.
+
+        * fast/css/stylesheet-parameters-expected.txt: Added.
+        * fast/css/stylesheet-parameters.html: Added.
+        Add layout test coverage.
+
+        * editing/selection/first-letter-selection-crash.html:
+        * fast/css/counters/asterisk-counter-update-after-layout-crash.html:
+        * fast/dom/HTMLElement/dynamic-editability-change.html:
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+        Update existing tests to reflect the behavior change.
+
 2016-07-26  George Ruan  <gruan@apple.com>
 
         HTMLVideoElement frames do not update on iOS when src is a MediaStream blob

@@ -19,7 +19,7 @@ window.onload = function() {
     test1.appendChild(document.createTextNode('a'));
     document.execCommand('selectall');
     document.body.offsetTop;
-    document.styleSheets[0].insertRule("#test2 { text-transform: uppercase }");
+    document.styleSheets[0].insertRule("#test2 { text-transform: uppercase }", 0);
     document.body.offsetTop;
     document.body.innerHTML = "PASS";
 }

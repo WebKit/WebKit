@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the parameters to CSSStyleSheet.insertRule() / deleteRule() are mandatory.");
+
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+var stylesheet = styleElement.sheet;
+shouldBe("stylesheet.__proto__", "CSSStyleSheet.prototype");
+shouldThrow("stylesheet.deleteRule()", "'TypeError: Not enough arguments'");
+shouldThrow("stylesheet.insertRule()", "'TypeError: Not enough arguments'");
+shouldThrow("stylesheet.insertRule('body { margin: 0; }')", "'TypeError: Not enough arguments'");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

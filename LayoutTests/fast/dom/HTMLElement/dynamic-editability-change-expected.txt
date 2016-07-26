@@ -17,8 +17,8 @@ PASS $("style").textContent = "* { -webkit-user-modify: read-write-plaintext-onl
 PASS newDoc("<div></div>"); style = element("style", "* { -webkit-user-modify: read-write }"); $("div").isContentEditable is false
 PASS $("body").appendChild(style); $("div").isContentEditable is true
 PASS newDoc("<div></div><style></style>"); $("div").isContentEditable is false
-PASS $("style").sheet.insertRule("* { -webkit-user-modify: read-write; }"); $("div").isContentEditable is true
-PASS $("style").sheet.insertRule("* { -webkit-user-modify: read-only !important; }"); $("div").isContentEditable is false
+PASS $("style").sheet.insertRule("* { -webkit-user-modify: read-write; }", 0); $("div").isContentEditable is true
+PASS $("style").sheet.insertRule("* { -webkit-user-modify: read-only !important; }", 0); $("div").isContentEditable is false
 
 Inline styles
 PASS newDoc("<div style='-webkit-user-modify:read-write'></div>"); $("div").isContentEditable is true

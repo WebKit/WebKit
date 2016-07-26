@@ -36,8 +36,8 @@ shouldBeTrue('$("style").textContent = "* { -webkit-user-modify: read-write-plai
 shouldBeFalse('newDoc("<div></div>"); style = element("style", "* { -webkit-user-modify: read-write }"); $("div").isContentEditable');
 shouldBeTrue('$("body").appendChild(style); $("div").isContentEditable');
 shouldBeFalse('newDoc("<div></div><style></style>"); $("div").isContentEditable');
-shouldBeTrue('$("style").sheet.insertRule("* { -webkit-user-modify: read-write; }"); $("div").isContentEditable');
-shouldBeFalse('$("style").sheet.insertRule("* { -webkit-user-modify: read-only !important; }"); $("div").isContentEditable');
+shouldBeTrue('$("style").sheet.insertRule("* { -webkit-user-modify: read-write; }", 0); $("div").isContentEditable');
+shouldBeFalse('$("style").sheet.insertRule("* { -webkit-user-modify: read-only !important; }", 0); $("div").isContentEditable');
 
 debug('');
 debug('Inline styles');

@@ -65,6 +65,7 @@ public:
     
     RefPtr<CSSRuleList> cssRules();
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
+    unsigned deprecatedInsertRule(const String& rule, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);
     
     // IE Extensions
