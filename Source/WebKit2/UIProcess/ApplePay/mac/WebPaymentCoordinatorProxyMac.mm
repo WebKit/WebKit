@@ -74,6 +74,12 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& origi
 
         ASSERT(!paymentCoordinatorProxy->m_sheetWindow);
         paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];
+
+        paymentCoordinatorProxy->m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:paymentCoordinatorProxy->m_sheetWindow.get() queue:nil usingBlock:[paymentCoordinatorProxy](NSNotification *) {
+            paymentCoordinatorProxy->hidePaymentUI();
+            paymentCoordinatorProxy->didReachFinalState();
+        }];
+
         [paymentCoordinatorProxy->m_webPageProxy.platformWindow() beginSheet:paymentCoordinatorProxy->m_sheetWindow.get() completionHandler:nullptr];
 
         completionHandler(true);
@@ -94,6 +100,9 @@ void WebPaymentCoordinatorProxy::hidePaymentUI()
     ASSERT(m_paymentAuthorizationViewController);
     ASSERT(m_paymentAuthorizationViewControllerDelegate);
     ASSERT(m_sheetWindow);
+
+    [[NSNotificationCenter defaultCenter] removeObserver:m_sheetWindowWillCloseObserver.get()];
+    m_sheetWindowWillCloseObserver = nullptr;
 
     [[m_sheetWindow sheetParent] endSheet:m_sheetWindow.get()];
     [m_paymentAuthorizationViewController setDelegate:nil];

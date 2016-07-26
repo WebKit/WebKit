@@ -1,3 +1,19 @@
+2016-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Payment session does not end if user closes all Safari windows
+        https://bugs.webkit.org/show_bug.cgi?id=160213
+        rdar://problem/27480873
+
+        Reviewed by Tim Horton.
+
+        Listen for the NSWindowWillCloseNotification of the sheet window and hide the payment UI when
+        the sheet window is going to be closed.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        (WebKit::WebPaymentCoordinatorProxy::hidePaymentUI):
+
 2016-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] ASSERTION FAILED: canAccessThreadLocalDataForThread(m_thread) after r203718
