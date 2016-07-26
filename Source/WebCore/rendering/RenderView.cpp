@@ -1201,17 +1201,6 @@ void RenderView::pushLayoutState(RenderObject& root)
     pushLayoutStateForCurrentFlowThread(root);
 }
 
-bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) const
-{
-    RenderObject* o = renderer;
-    while (o) {
-        if (o->hasTransform() || o->hasReflection())
-            return true;
-        o = o->container();
-    }
-    return false;
-}
-
 IntSize RenderView::viewportSizeForCSSViewportUnits() const
 {
     return frameView().viewportSizeForCSSViewportUnits();

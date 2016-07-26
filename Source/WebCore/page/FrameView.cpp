@@ -174,9 +174,10 @@ public:
         if (m_layoutRoot) {
             RenderView& view = m_layoutRoot->view();
             view.pushLayoutState(*m_layoutRoot);
-            m_disableLayoutState = view.shouldDisableLayoutStateForSubtree(m_layoutRoot);
-            if (m_disableLayoutState)
+            if (shouldDisableLayoutStateForSubtree()) {
                 view.disableLayoutState();
+                m_didDisableLayoutState = true;
+            }
         }
     }
 
@@ -185,14 +186,23 @@ public:
         if (m_layoutRoot) {
             RenderView& view = m_layoutRoot->view();
             view.popLayoutState(*m_layoutRoot);
-            if (m_disableLayoutState)
+            if (m_didDisableLayoutState)
                 view.enableLayoutState();
         }
     }
 
+    bool shouldDisableLayoutStateForSubtree()
+    {
+        for (auto* renderer = m_layoutRoot; renderer; renderer = renderer->container()) {
+            if (renderer->hasTransform() || renderer->hasReflection())
+                return true;
+        }
+        return false;
+    }
+    
 private:
     RenderElement* m_layoutRoot { nullptr };
-    bool m_disableLayoutState { false };
+    bool m_didDisableLayoutState { false };
 };
 
 FrameView::FrameView(Frame& frame)
