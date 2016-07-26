@@ -1,5 +1,21 @@
 2016-07-25  Chris Dumez  <cdumez@apple.com>
 
+        ClientRect properties should be on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=160165
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/css/ClientRect-attributes-prototype-expected.txt: Added.
+        * fast/css/ClientRect-attributes-prototype.html: Added.
+        Add layout test to check that ClientRect's properties are on the
+        prototype.
+
+        * fast/css/ClientRect-serialization-expected.txt: Added.
+        * fast/css/ClientRect-serialization.html: Added.
+        Add layout test to check that ClientRect has a serializer.
+
+2016-07-25  Chris Dumez  <cdumez@apple.com>
+
         Parameters to DOMImplementation.createDocumentType() should be mandatory and non-nullable
         https://bugs.webkit.org/show_bug.cgi?id=160167
 

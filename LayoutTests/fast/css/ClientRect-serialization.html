@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that ClientRect has a serializer");
+
+var clientRect = document.body.getBoundingClientRect();
+shouldBe("clientRect.__proto__", "ClientRect.prototype");
+var toJSONDescriptor = Object.getOwnPropertyDescriptor(clientRect.__proto__, "toJSON");
+shouldBeType("toJSONDescriptor.value", "Function");
+shouldBeTrue("toJSONDescriptor.enumerable");
+shouldBeTrue("toJSONDescriptor.configurable");
+shouldBeTrue("toJSONDescriptor.writable");
+
+shouldNotThrow("jsonObject = clientRect.toJSON()");
+shouldBe("jsonObject.top", "clientRect.top");
+shouldBe("jsonObject.right", "clientRect.right");
+shouldBe("jsonObject.bottom", "clientRect.bottom");
+shouldBe("jsonObject.left", "clientRect.left");
+shouldBe("jsonObject.width", "clientRect.width");
+shouldBe("jsonObject.height", "clientRect.height");
+
+shouldNotThrow("parsedJSONObject = JSON.parse(JSON.stringify(clientRect))");
+shouldBe("parsedJSONObject.top", "clientRect.top");
+shouldBe("parsedJSONObject.right", "clientRect.right");
+shouldBe("parsedJSONObject.bottom", "clientRect.bottom");
+shouldBe("parsedJSONObject.left", "clientRect.left");
+shouldBe("parsedJSONObject.width", "clientRect.width");
+shouldBe("parsedJSONObject.height", "clientRect.height");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

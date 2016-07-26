@@ -1,0 +1,28 @@
+Test that ClientRect has a serializer
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clientRect.__proto__ is ClientRect.prototype
+PASS toJSONDescriptor.value is an instance of Function
+PASS toJSONDescriptor.enumerable is true
+PASS toJSONDescriptor.configurable is true
+PASS toJSONDescriptor.writable is true
+PASS jsonObject = clientRect.toJSON() did not throw exception.
+PASS jsonObject.top is clientRect.top
+PASS jsonObject.right is clientRect.right
+PASS jsonObject.bottom is clientRect.bottom
+PASS jsonObject.left is clientRect.left
+PASS jsonObject.width is clientRect.width
+PASS jsonObject.height is clientRect.height
+PASS parsedJSONObject = JSON.parse(JSON.stringify(clientRect)) did not throw exception.
+PASS parsedJSONObject.top is clientRect.top
+PASS parsedJSONObject.right is clientRect.right
+PASS parsedJSONObject.bottom is clientRect.bottom
+PASS parsedJSONObject.left is clientRect.left
+PASS parsedJSONObject.width is clientRect.width
+PASS parsedJSONObject.height is clientRect.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

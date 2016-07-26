@@ -34,5 +34,8 @@
     readonly attribute unrestricted float left;
     readonly attribute unrestricted float width;
     readonly attribute unrestricted float height;
+
+    // FIXME: should be serializer = { attribute };
+    [Custom] Object toJSON();
 };
 

@@ -43,6 +43,7 @@
 #include "JSCanvasRenderingContext2DCustom.cpp"
 #include "JSCanvasRenderingContextCustom.cpp"
 #include "JSCharacterDataCustom.cpp"
+#include "JSClientRectCustom.cpp"
 #include "JSCommandLineAPIHostCustom.cpp"
 #include "JSCryptoCustom.cpp"
 #include "JSCustomEventCustom.cpp"
