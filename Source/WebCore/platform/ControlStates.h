@@ -56,13 +56,6 @@ public:
 
     ControlStates(States states)
         : m_states(states)
-        , m_initialized(false)
-        , m_needsRepaint(false)
-        , m_isDirty(false)
-        , m_timeSinceControlWasFocused(0)
-#if PLATFORM(COCOA)
-        , m_controlInstance(nullptr)
-#endif
     {
     }
 
@@ -101,10 +94,10 @@ public:
 
 private:
     States m_states;
-    bool m_initialized;
-    bool m_needsRepaint;
-    bool m_isDirty;
-    double m_timeSinceControlWasFocused;
+    bool m_initialized { false };
+    bool m_needsRepaint { false };
+    bool m_isDirty { false };
+    double m_timeSinceControlWasFocused { 0 };
 #if PLATFORM(COCOA)
     RetainPtr<PlatformControlInstance> m_controlInstance;
 #endif

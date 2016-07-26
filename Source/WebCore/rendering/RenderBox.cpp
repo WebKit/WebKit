@@ -28,6 +28,7 @@
 #include "CSSFontSelector.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ControlStates.h"
 #include "Document.h"
 #include "EventHandler.h"
 #include "FloatQuad.h"
@@ -109,6 +110,25 @@ static OverrideSizeMap* gExtraBlockOffsetMap = nullptr;
 static const int autoscrollBeltSize = 20;
 static const unsigned backgroundObscurationTestMaxDepth = 4;
 
+using ControlStatesRendererMap = HashMap<const RenderObject*, std::unique_ptr<ControlStates>>;
+static ControlStatesRendererMap& controlStatesRendererMap()
+{
+    static NeverDestroyed<ControlStatesRendererMap> map;
+    return map;
+}
+
+static ControlStates* controlStatesForRenderer(const RenderBox& renderer)
+{
+    return controlStatesRendererMap().ensure(&renderer, [] {
+        return std::make_unique<ControlStates>();
+    }).iterator->value.get();
+}
+
+static void removeControlStatesForRenderer(const RenderBox& renderer)
+{
+    controlStatesRendererMap().remove(&renderer);
+}
+
 bool RenderBox::s_hadOverflowClip = false;
 
 static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
@@ -158,8 +178,7 @@ RenderBox::~RenderBox()
 #endif
 
     view().unscheduleLazyRepaint(*this);
-    if (hasControlStatesForRenderer(this))
-        removeControlStatesForRenderer(this);
+    removeControlStatesForRenderer(*this);
 }
 
 RenderRegion* RenderBox::clampToStartAndEndRegions(RenderRegion* region) const
@@ -1351,15 +1370,9 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
     // If we have a native theme appearance, paint that before painting our background.
     // The theme will tell us whether or not we should also paint the CSS background.
-    ControlStates* controlStates = nullptr;
     bool borderOrBackgroundPaintingIsNeeded = true;
     if (style().hasAppearance()) {
-        if (hasControlStatesForRenderer(this))
-            controlStates = controlStatesForRenderer(this);
-        else {
-            controlStates = new ControlStates();
-            addControlStatesForRenderer(this, controlStates);
-        }
+        ControlStates* controlStates = controlStatesForRenderer(*this);
         borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *controlStates, paintInfo, paintRect);
         if (controlStates->needsRepaint())
             view().scheduleLazyRepaint(*this);

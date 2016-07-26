@@ -258,11 +258,6 @@ protected:
 
     void setHasContinuation(bool b) { m_hasContinuation = b; }
 
-    static bool hasControlStatesForRenderer(const RenderObject*);
-    static ControlStates* controlStatesForRenderer(const RenderObject*);
-    static void removeControlStatesForRenderer(const RenderObject*);
-    static void addControlStatesForRenderer(const RenderObject*, ControlStates*);
-
     void setRenderBlockHasMarginBeforeQuirk(bool b) { m_renderBlockHasMarginBeforeQuirk = b; }
     void setRenderBlockHasMarginAfterQuirk(bool b) { m_renderBlockHasMarginAfterQuirk = b; }
     void setRenderBlockShouldForceRelayoutChildren(bool b) { m_renderBlockShouldForceRelayoutChildren = b; }
