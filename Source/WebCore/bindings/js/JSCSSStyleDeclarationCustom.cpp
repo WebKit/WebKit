@@ -349,7 +349,10 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyNa
 
 JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState& state)
 {
-    const String& propertyName = state.argument(0).toString(&state)->value(&state);
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
+    String propertyName = state.uncheckedArgument(0).toWTFString(&state);
     if (state.hadException())
         return jsUndefined();
 

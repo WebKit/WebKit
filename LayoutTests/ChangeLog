@@ -1,3 +1,27 @@
+2016-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Align CSSStyleDeclaration with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=160214
+
+        Reviewed by Darin Adler.
+
+        * fast/css/CSSStyleDeclaration-cssText-null-expected.txt: Added.
+        * fast/css/CSSStyleDeclaration-cssText-null.html: Added.
+        Add layout test coverage for setting cssText to null. This test
+        passes in WebKit, Firefox and Chrome, with or without my change.
+        Our IDL wrongly reported the cssText attribute as nullable but
+        WebKit was already behaving correctly.
+
+        * fast/css/CSSStyleDeclaration-parameters-expected.txt: Added.
+        * fast/css/CSSStyleDeclaration-parameters.html: Added.
+        Add testing for omitting CSSStyleDeclaration API parameters, to
+        make sure they are mandatory. This test passes in Firefox and
+        Chrome.
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+        Update existing test to reflect behavior change.
+
 2016-07-26  David Kilzer <ddkilzer@apple.com>
 
         Networking process crash due to missing -[WebCoreAuthenticationClientAsChallengeSender performDefaultHandlingForAuthenticationChallenge:] implementation

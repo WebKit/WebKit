@@ -204,7 +204,7 @@ shouldBe("nonNumericPolicy('createCSSRuleList().item(x)')", "'any type allowed'"
 
 // CSSStyleDeclaration
 
-shouldBe("nonNumericPolicy('createCSSStyleDeclaration().item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('createCSSStyleDeclaration().item(x)')", "'any type allowed (but not omitted)'");
 
 // CSSStyleSheet
 

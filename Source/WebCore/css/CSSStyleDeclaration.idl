@@ -29,20 +29,19 @@
     SkipVTableValidation,
     ExportMacro=WEBCORE_EXPORT,
 ] interface CSSStyleDeclaration {
-    [SetterRaisesException] attribute DOMString? cssText;
+    [SetterRaisesException] attribute DOMString cssText;
 
     DOMString getPropertyValue(DOMString propertyName);
-    [Custom] CSSValue getPropertyCSSValue(optional DOMString propertyName);
+    [Custom] CSSValue? getPropertyCSSValue(DOMString propertyName);
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] DOMString removeProperty(optional DOMString propertyName = "undefined");
-    DOMString? getPropertyPriority(optional DOMString propertyName = "undefined");
+    [RaisesException] DOMString removeProperty(DOMString propertyName);
+    DOMString? getPropertyPriority(DOMString propertyName);
 
     [ObjCLegacyUnnamedParameters, RaisesException] void setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
 
-    readonly attribute unsigned long    length;
-    getter DOMString item(optional unsigned long index = 0);
-    readonly attribute CSSRule          parentRule;
+    readonly attribute unsigned long length;
+    getter DOMString item(unsigned long index);
+    readonly attribute CSSRule? parentRule;
 
     // Extensions
     // FIXME: Using "undefined" as default parameter value is wrong.
