@@ -33,7 +33,6 @@
 
 #include "Blob.h"
 #include "DOMFormData.h"
-#include "FetchBodyConsumer.h"
 #include "FetchLoader.h"
 #include "JSDOMPromise.h"
 
@@ -71,14 +70,13 @@ public:
     FetchBody() = default;
 
     void loadingFailed();
-    void loadingSucceeded();
+    void loadedAsArrayBuffer(RefPtr<ArrayBuffer>&&);
+    void loadedAsText(String&&);
 
     RefPtr<FormData> bodyForInternalRequest() const;
 
-    enum class Type { None, ArrayBuffer, Blob, FormData, Text, Loading, Loaded, ReadableStream };
+    enum class Type { None, ArrayBuffer, Loading, Text, Blob, FormData };
     Type type() const { return m_type; }
-
-    FetchBodyConsumer& consumer() { return m_consumer; }
 
 private:
     FetchBody(Ref<Blob>&&);
@@ -86,12 +84,21 @@ private:
     FetchBody(String&&);
     FetchBody(Type type) : m_type(type) { }
 
-    void consume(FetchBodyOwner&, DeferredWrapper&&);
+    struct Consumer {
+        enum class Type { Text, Blob, JSON, ArrayBuffer };
+
+        Type type;
+        DeferredWrapper promise;
+    };
+    void consume(FetchBodyOwner&, Consumer::Type, DeferredWrapper&&);
 
     Vector<uint8_t> extractFromText() const;
-    void consumeArrayBuffer(DeferredWrapper&);
-    void consumeText(DeferredWrapper&);
-    void consumeBlob(FetchBodyOwner&, DeferredWrapper&&);
+    void consumeArrayBuffer(Consumer::Type, DeferredWrapper&);
+    void consumeText(Consumer::Type, DeferredWrapper&);
+    void consumeBlob(FetchBodyOwner&, Consumer::Type, DeferredWrapper&&);
+    static FetchLoader::Type loadingType(Consumer::Type);
+    static void fulfillTextPromise(FetchBody::Consumer::Type, const String&, DeferredWrapper&);
+    static void fulfillArrayBufferPromise(FetchBody::Consumer::Type, const String&, DeferredWrapper&);
 
     Type m_type { Type::None };
     String m_mimeType;
@@ -102,8 +109,7 @@ private:
     RefPtr<ArrayBuffer> m_data;
     String m_text;
 
-    FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
-    Optional<DeferredWrapper> m_consumePromise;
+    Optional<Consumer> m_consumer;
 };
 
 } // namespace WebCore

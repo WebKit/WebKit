@@ -138,7 +138,7 @@ void FetchBodyOwner::text(DeferredWrapper&& promise)
     m_body.text(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::loadBlob(Blob& blob, FetchBodyConsumer* consumer)
+void FetchBodyOwner::loadBlob(Blob& blob, FetchLoader::Type type)
 {
     // Can only be called once for a body instance.
     ASSERT(isDisturbed());
@@ -150,7 +150,7 @@ void FetchBodyOwner::loadBlob(Blob& blob, FetchBodyConsumer* consumer)
     }
 
     m_blobLoader = { *this };
-    m_blobLoader->loader = std::make_unique<FetchLoader>(*m_blobLoader, consumer);
+    m_blobLoader->loader = std::make_unique<FetchLoader>(type, *m_blobLoader);
 
     m_blobLoader->loader->start(*scriptExecutionContext(), blob);
     if (!m_blobLoader->loader->isStarted()) {
@@ -169,6 +169,11 @@ void FetchBodyOwner::finishBlobLoading()
     unsetPendingActivity(this);
 }
 
+void FetchBodyOwner::loadedBlobAsText(String&& text)
+{
+    m_body.loadedAsText(WTFMove(text));
+}
+
 void FetchBodyOwner::blobLoadingSucceeded()
 {
     ASSERT(m_body.type() == FetchBody::Type::Blob);
@@ -179,7 +184,7 @@ void FetchBodyOwner::blobLoadingSucceeded()
         m_readableStreamSource = nullptr;
     }
 #endif
-    m_body.loadingSucceeded();
+
     finishBlobLoading();
 }
 

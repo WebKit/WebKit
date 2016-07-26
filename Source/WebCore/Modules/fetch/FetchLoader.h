@@ -26,11 +26,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef FetchLoader_h
+#define FetchLoader_h
 
 #if ENABLE(FETCH_API)
 
-#include "FetchBodyConsumer.h"
+#include "SharedBuffer.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 
@@ -43,7 +44,9 @@ class ScriptExecutionContext;
 
 class FetchLoader final : public ThreadableLoaderClient {
 public:
-    FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
+    enum class Type { ArrayBuffer, Stream, Text };
+
+    FetchLoader(Type, FetchLoaderClient&);
 
     RefPtr<SharedBuffer> startStreaming();
 
@@ -60,13 +63,18 @@ private:
     void didFinishLoading(unsigned long, double) final;
     void didFail(const ResourceError&) final;
 
+    Type type() const { return m_type; }
+
 private:
+    Type m_type { Type::ArrayBuffer };
     FetchLoaderClient& m_client;
     RefPtr<ThreadableLoader> m_loader;
-    FetchBodyConsumer* m_consumer;
+    RefPtr<SharedBuffer> m_data;
     bool m_isStarted { false };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)
+
+#endif // FetchLoader_h

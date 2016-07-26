@@ -89,26 +89,24 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     m_isStarted = m_loader;
 }
 
-FetchLoader::FetchLoader(FetchLoaderClient& client, FetchBodyConsumer* consumer)
-    : m_client(client)
-    , m_consumer(consumer)
+FetchLoader::FetchLoader(Type type, FetchLoaderClient& client)
+    : m_type(type)
+    , m_client(client)
 {
 }
 
 void FetchLoader::stop()
 {
-    if (m_consumer)
-        m_consumer->clean();
+    m_data = nullptr;
     if (m_loader)
         m_loader->cancel();
 }
 
 RefPtr<SharedBuffer> FetchLoader::startStreaming()
 {
-    ASSERT(m_consumer);
-    auto firstChunk = m_consumer->takeData();
-    m_consumer = nullptr;
-    return firstChunk;
+    ASSERT(m_type == Type::ArrayBuffer);
+    m_type = Type::Stream;
+    return WTFMove(m_data);
 }
 
 void FetchLoader::didReceiveResponse(unsigned long, const ResourceResponse& response)
@@ -116,17 +114,29 @@ void FetchLoader::didReceiveResponse(unsigned long, const ResourceResponse& resp
     m_client.didReceiveResponse(response);
 }
 
+// FIXME: We should make text and blob creation more efficient.
+// We might also want to merge this class with FileReaderLoader.
 void FetchLoader::didReceiveData(const char* value, int size)
 {
-    if (!m_consumer) {
+    if (m_type == Type::Stream) {
         m_client.didReceiveData(value, size);
         return;
     }
-    m_consumer->append(value, size);
+    if (!m_data) {
+        m_data = SharedBuffer::create(value, size);
+        return;
+    }
+    m_data->append(value, size);
 }
 
 void FetchLoader::didFinishLoading(unsigned long, double)
 {
+    if (m_type == Type::ArrayBuffer)
+        m_client.didFinishLoadingAsArrayBuffer(m_data ? m_data->createArrayBuffer() : ArrayBuffer::tryCreate(nullptr, 0));
+    else if (m_type == Type::Text)
+        m_client.didFinishLoadingAsText(m_data ? TextResourceDecoder::create(ASCIILiteral("text/plain"), "UTF-8")->decodeAndFlush(m_data->data(), m_data->size()): String());
+    m_data = nullptr;
+
     m_client.didSucceed();
 }
 
