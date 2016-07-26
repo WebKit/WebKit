@@ -208,7 +208,6 @@ set(WebKit2_SOURCES
     NetworkProcess/NetworkResourceLoadParameters.cpp
 
     NetworkProcess/Downloads/Download.cpp
-    NetworkProcess/Downloads/DownloadAuthenticationClient.cpp
     NetworkProcess/Downloads/DownloadManager.cpp
 
     Platform/Logging.cpp

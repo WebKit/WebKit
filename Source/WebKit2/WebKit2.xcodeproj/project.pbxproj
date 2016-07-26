@@ -1033,8 +1033,6 @@
 		5C1426F01C23F80900D41183 /* NetworkResourceLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */; };
 		5C1427011C23F84C00D41183 /* Download.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426F31C23F84300D41183 /* Download.cpp */; };
 		5C1427021C23F84C00D41183 /* Download.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F41C23F84300D41183 /* Download.h */; };
-		5C1427031C23F84C00D41183 /* DownloadAuthenticationClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426F51C23F84300D41183 /* DownloadAuthenticationClient.cpp */; };
-		5C1427041C23F84C00D41183 /* DownloadAuthenticationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F61C23F84300D41183 /* DownloadAuthenticationClient.h */; };
 		5C1427051C23F84C00D41183 /* DownloadID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F71C23F84300D41183 /* DownloadID.h */; };
 		5C1427061C23F84C00D41183 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426F81C23F84300D41183 /* DownloadManager.cpp */; };
 		5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F91C23F84300D41183 /* DownloadManager.h */; };
@@ -3087,8 +3085,6 @@
 		5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadParameters.h; path = NetworkProcess/NetworkResourceLoadParameters.h; sourceTree = "<group>"; };
 		5C1426F31C23F84300D41183 /* Download.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Download.cpp; path = NetworkProcess/Downloads/Download.cpp; sourceTree = "<group>"; };
 		5C1426F41C23F84300D41183 /* Download.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Download.h; path = NetworkProcess/Downloads/Download.h; sourceTree = "<group>"; };
-		5C1426F51C23F84300D41183 /* DownloadAuthenticationClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadAuthenticationClient.cpp; path = NetworkProcess/Downloads/DownloadAuthenticationClient.cpp; sourceTree = "<group>"; };
-		5C1426F61C23F84300D41183 /* DownloadAuthenticationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadAuthenticationClient.h; path = NetworkProcess/Downloads/DownloadAuthenticationClient.h; sourceTree = "<group>"; };
 		5C1426F71C23F84300D41183 /* DownloadID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadID.h; path = NetworkProcess/Downloads/DownloadID.h; sourceTree = "<group>"; };
 		5C1426F81C23F84300D41183 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadManager.cpp; path = NetworkProcess/Downloads/DownloadManager.cpp; sourceTree = "<group>"; };
 		5C1426F91C23F84300D41183 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadManager.h; path = NetworkProcess/Downloads/DownloadManager.h; sourceTree = "<group>"; };
@@ -5631,8 +5627,6 @@
 				5C14270B1C23F87100D41183 /* mac */,
 				5C1426F31C23F84300D41183 /* Download.cpp */,
 				5C1426F41C23F84300D41183 /* Download.h */,
-				5C1426F51C23F84300D41183 /* DownloadAuthenticationClient.cpp */,
-				5C1426F61C23F84300D41183 /* DownloadAuthenticationClient.h */,
 				5C1426F71C23F84300D41183 /* DownloadID.h */,
 				5C1426F81C23F84300D41183 /* DownloadManager.cpp */,
 				5C1426F91C23F84300D41183 /* DownloadManager.h */,
@@ -7493,7 +7487,6 @@
 				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
 				5C1427021C23F84C00D41183 /* Download.h in Headers */,
-				5C1427041C23F84C00D41183 /* DownloadAuthenticationClient.h in Headers */,
 				A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */,
 				5C1427051C23F84C00D41183 /* DownloadID.h in Headers */,
 				5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */,
@@ -8959,7 +8952,6 @@
 				2D3494641BCC2EC30064F0BE /* DeprecatedPDFPlugin.mm in Sources */,
 				83891B6D1A68C30B0030F386 /* DiagnosticLoggingClient.mm in Sources */,
 				5C1427011C23F84C00D41183 /* Download.cpp in Sources */,
-				5C1427031C23F84C00D41183 /* DownloadAuthenticationClient.cpp in Sources */,
 				A1DF631218E0B7C8003A3E2A /* DownloadClient.mm in Sources */,
 				5C1427131C23F89E00D41183 /* DownloadCocoa.mm in Sources */,
 				5C1427111C23F89E00D41183 /* DownloadIOS.mm in Sources */,

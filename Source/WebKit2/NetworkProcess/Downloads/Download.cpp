@@ -35,10 +35,6 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/NotImplemented.h>
 
-#if !USE(NETWORK_SESSION)
-#include "DownloadAuthenticationClient.h"
-#endif
-
 using namespace WebCore;
 
 #define DOWNLOAD_LOG_ALWAYS(...) LOG_ALWAYS(isAlwaysOnLoggingAllowed(), __VA_ARGS__)

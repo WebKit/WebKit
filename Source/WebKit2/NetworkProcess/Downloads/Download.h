@@ -68,7 +68,6 @@ class ResourceResponse;
 
 namespace WebKit {
 
-class DownloadAuthenticationClient;
 class DownloadManager;
 class NetworkSession;
 class WebPage;
@@ -110,10 +109,6 @@ public:
     void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
     void didCancel(const IPC::DataReference& resumeData);
 
-#if USE(CFNETWORK)
-    DownloadAuthenticationClient* authenticationClient();
-#endif
-
 private:
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override;
@@ -142,7 +137,6 @@ private:
 #endif
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
-    RefPtr<DownloadAuthenticationClient> m_authenticationClient;
 #endif
 #if PLATFORM(GTK) || PLATFORM(EFL)
     std::unique_ptr<WebCore::ResourceHandleClient> m_downloadClient;

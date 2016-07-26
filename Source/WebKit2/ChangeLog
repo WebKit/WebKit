@@ -1,3 +1,17 @@
+2016-07-26  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused DownloadAuthenticationClient
+        https://bugs.webkit.org/show_bug.cgi?id=160220
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * NetworkProcess/Downloads/Download.cpp:
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadAuthenticationClient.cpp: Removed.
+        * NetworkProcess/Downloads/DownloadAuthenticationClient.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Allow LOG macros to be used outside the namespace, and other logging cleanup
