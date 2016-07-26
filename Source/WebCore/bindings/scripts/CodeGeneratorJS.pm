@@ -533,18 +533,6 @@ sub HasComplexGetOwnProperty
     return 0;
 }
 
-
-sub InterfaceRequiresAttributesOnInstanceForCompatibility
-{
-    my $interface = shift;
-    my $interfaceName = $interface->name;
-
-    # Needed for compatibility with existing content
-    return 1 if $interfaceName =~ "Touch";
-
-    return 0;
-}
-
 sub InterfaceRequiresAttributesOnInstance
 {
     my $interface = shift;
@@ -559,8 +547,6 @@ sub InterfaceRequiresAttributesOnInstance
 
     # FIXME: Add support for [PrimaryGlobal] / [Global].
     return 1 if IsDOMGlobalObject($interface) && $interface->name ne "WorkerGlobalScope";
-
-    return 1 if InterfaceRequiresAttributesOnInstanceForCompatibility($interface);
 
     return 0;
 }
@@ -2573,16 +2559,6 @@ sub GenerateImplementation
                 push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                 if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
-                    # Fallback to trying to searching the prototype chain for compatibility reasons.
-                    push(@implContent, "        JSObject* thisObject = JSValue::decode(thisValue).getObject();\n");
-                    push(@implContent, "        for (thisObject = thisObject ? thisObject->getPrototypeDirect().getObject() : nullptr; thisObject; thisObject = thisObject->getPrototypeDirect().getObject()) {\n");
-                    push(@implContent, "            if ((castedThis = " . GetCastingHelperForThisObject($interface) . "(thisObject)))\n");
-                    push(@implContent, "                break;\n");
-                    push(@implContent, "        }\n");
-                    push(@implContent, "        if (!castedThis)\n");
-                    push(@implContent, "            return throwGetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
-                    push(@implContent, "        reportDeprecatedGetterError(*state, \"$interfaceName\", \"$name\");\n");
                 } else {
                     push(@implContent, "        return throwGetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
                 }
@@ -2874,16 +2850,6 @@ sub GenerateImplementation
                 push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                 if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
                     push(@implContent, "        return false;\n");
-                } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
-                    # Fallback to trying to searching the prototype chain for compatibility reasons.
-                    push(@implContent, "        JSObject* thisObject = JSValue::decode(thisValue).getObject();\n");
-                    push(@implContent, "        for (thisObject = thisObject ? thisObject->getPrototypeDirect().getObject() : nullptr; thisObject; thisObject = thisObject->getPrototypeDirect().getObject()) {\n");
-                    push(@implContent, "            if ((castedThis = " . GetCastingHelperForThisObject($interface) . "(thisObject)))\n");
-                    push(@implContent, "                break;\n");
-                    push(@implContent, "        }\n");
-                    push(@implContent, "        if (!castedThis)\n");
-                    push(@implContent, "            return throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
-                    push(@implContent, "        reportDeprecatedSetterError(*state, \"$interfaceName\", \"$name\");\n");
                 } else {
                     push(@implContent, "        return throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
                 }

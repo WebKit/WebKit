@@ -1,5 +1,17 @@
 2016-07-25  Chris Dumez  <cdumez@apple.com>
 
+        Touch properties should be on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=160174
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * platform/ios-simulator/ios/touch/Touch-attributes-prototype-expected.txt: Added.
+        * platform/ios-simulator/ios/touch/Touch-attributes-prototype.html: Added.
+
+2016-07-25  Chris Dumez  <cdumez@apple.com>
+
         ClientRect properties should be on the prototype
         https://bugs.webkit.org/show_bug.cgi?id=160165
 
