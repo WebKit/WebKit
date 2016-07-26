@@ -151,7 +151,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
             return;
         }
 
-        RenderTableRow* row = RenderTableRow::createAnonymousWithParentRenderer(this);
+        auto* row = RenderTableRow::createAnonymousWithParentRenderer(*this).release();
         addChild(row, beforeChild);
         row->addChild(child);
         return;
@@ -1577,11 +1577,16 @@ CollapsedBorderValue RenderTableSection::cachedCollapsedBorder(const RenderTable
     return it->value;
 }
 
-RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const RenderObject* parent)
+std::unique_ptr<RenderTableSection> RenderTableSection::createTableSectionWithStyle(Document& document, const RenderStyle& style)
 {
-    auto section = new RenderTableSection(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW_GROUP));
+    auto section = std::make_unique<RenderTableSection>(document, RenderStyle::createAnonymousStyleWithDisplay(style, TABLE_ROW_GROUP));
     section->initializeStyle();
     return section;
+}
+
+std::unique_ptr<RenderTableSection> RenderTableSection::createAnonymousWithParentRenderer(const RenderTable& parent)
+{
+    return RenderTableSection::createTableSectionWithStyle(parent.document(), parent.style());
 }
 
 void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsigned effectiveColumn) const

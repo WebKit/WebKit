@@ -1356,11 +1356,16 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
         setIntrinsicPaddingAfter(intrinsicPaddingAfter() - scrollbarHeight);
 }
 
-RenderTableCell* RenderTableCell::createAnonymousWithParentRenderer(const RenderObject* parent)
+std::unique_ptr<RenderTableCell> RenderTableCell::createTableCellWithStyle(Document& document, const RenderStyle& style)
 {
-    auto cell = new RenderTableCell(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_CELL));
+    auto cell = std::make_unique<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, TABLE_CELL));
     cell->initializeStyle();
     return cell;
+}
+
+std::unique_ptr<RenderTableCell> RenderTableCell::createAnonymousWithParentRenderer(const RenderTableRow& parent)
+{
+    return RenderTableCell::createTableCellWithStyle(parent.document(), parent.style());
 }
 
 } // namespace WebCore

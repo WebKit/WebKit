@@ -492,7 +492,7 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
         if (afterChild && afterChild->isAnonymous() && is<RenderTable>(*afterChild) && !afterChild->isBeforeContent())
             table = downcast<RenderTable>(afterChild);
         else {
-            table = RenderTable::createAnonymousWithParentRenderer(this);
+            table = RenderTable::createAnonymousWithParentRenderer(*this).release();
             addChild(table, beforeChild);
         }
         table->addChild(newChild);

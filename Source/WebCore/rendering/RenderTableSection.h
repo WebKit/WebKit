@@ -143,8 +143,8 @@ public:
     // FIXME: We may want to introduce a structure holding the in-flux layout information.
     LayoutUnit distributeExtraLogicalHeightToRows(LayoutUnit extraLogicalHeight);
 
-    static RenderTableSection* createAnonymousWithParentRenderer(const RenderObject*);
-    RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override { return createAnonymousWithParentRenderer(parent); }
+    static std::unique_ptr<RenderTableSection> createAnonymousWithParentRenderer(const RenderTable&);
+    std::unique_ptr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
     
     void paint(PaintInfo&, const LayoutPoint&) override;
 
@@ -152,6 +152,8 @@ protected:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
+    static std::unique_ptr<RenderTableSection> createTableSectionWithStyle(Document&, const RenderStyle&);
+
     enum ShouldIncludeAllIntersectingCells {
         IncludeAllIntersectingCells,
         DoNotIncludeAllIntersectingCells
@@ -329,6 +331,11 @@ inline CellSpan RenderTableSection::fullTableRowSpan() const
 {
     ASSERT(!m_needsCellRecalc);
     return CellSpan(0, m_grid.size());
+}
+
+inline std::unique_ptr<RenderBox> RenderTableSection::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
+{
+    return RenderTableSection::createTableSectionWithStyle(renderer.document(), renderer.style());
 }
 
 } // namespace WebCore

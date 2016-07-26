@@ -3550,9 +3550,17 @@ void RenderBlock::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint
         inlineElementContinuation()->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + inlineElementContinuation()->containingBlock()->location() - location())), paintContainer);
 }
 
-RenderBox* RenderBlock::createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const
+std::unique_ptr<RenderBlock> RenderBlock::createAnonymousBlockWithStyleAndDisplay(Document& document, const RenderStyle& style, EDisplay display)
 {
-    return createAnonymousWithParentRendererAndDisplay(parent, style().display());
+    // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
+    std::unique_ptr<RenderBlock> newBox;
+    if (display == FLEX || display == INLINE_FLEX)
+        newBox = std::make_unique<RenderFlexibleBox>(document, RenderStyle::createAnonymousStyleWithDisplay(style, FLEX));
+    else
+        newBox = std::make_unique<RenderBlockFlow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, BLOCK));
+    
+    newBox->initializeStyle();
+    return newBox;
 }
 
 LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
@@ -3813,19 +3821,6 @@ TextRun RenderBlock::constructTextRun(const LChar* characters, int length, const
 TextRun RenderBlock::constructTextRun(const UChar* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
 {
     return constructTextRun(StringView(characters, length), style, expansion);
-}
-
-RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderObject* parent, EDisplay display)
-{
-    // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
-    RenderBlock* newBox;
-    if (display == FLEX || display == INLINE_FLEX)
-        newBox = new RenderFlexibleBox(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX));
-    else
-        newBox = new RenderBlockFlow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK));
-
-    newBox->initializeStyle();
-    return newBox;
 }
 
 #ifndef NDEBUG

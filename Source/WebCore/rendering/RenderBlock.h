@@ -57,11 +57,11 @@ typedef unsigned TextRunFlags;
 class RenderBlock : public RenderBox {
 public:
     friend class LineLayoutState;
+    virtual ~RenderBlock();
 
 protected:
     RenderBlock(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBlock(Document&, RenderStyle&&, BaseTypeFlags);
-    virtual ~RenderBlock();
 
 public:
     // These two functions are overridden for inline-block.
@@ -192,11 +192,11 @@ public:
     using RenderBoxModelObject::continuation;
     using RenderBoxModelObject::setContinuation;
 
-    static RenderBlock* createAnonymousWithParentRendererAndDisplay(const RenderObject*, EDisplay = BLOCK);
-    RenderBlock* createAnonymousBlock(EDisplay display = BLOCK) const { return createAnonymousWithParentRendererAndDisplay(this, display); }
+    static std::unique_ptr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay = BLOCK);
+    RenderBlock* createAnonymousBlock(EDisplay = BLOCK) const;
     static void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
 
-    RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override;
+    std::unique_ptr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
     static bool shouldSkipCreatingRunsForObject(RenderObject& obj)
     {
@@ -392,6 +392,8 @@ protected:
     void preparePaginationBeforeBlockLayout(bool&);
 
 private:
+    static std::unique_ptr<RenderBlock> createAnonymousBlockWithStyleAndDisplay(Document&, const RenderStyle&, EDisplay);
+
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit, LayoutUnit fixedOffset, LayoutUnit) const { return fixedOffset; };
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
@@ -517,6 +519,21 @@ private:
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 LayoutUnit inlineDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock&, RenderBox&, const LayoutPoint&);
+
+inline std::unique_ptr<RenderBlock> RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay display)
+{
+    return createAnonymousBlockWithStyleAndDisplay(parent.document(), parent.style(), display);
+}
+
+inline std::unique_ptr<RenderBox> RenderBlock::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
+{
+    return createAnonymousBlockWithStyleAndDisplay(document(), renderer.style(), style().display());
+}
+
+inline RenderBlock* RenderBlock::createAnonymousBlock(EDisplay display) const
+{
+    return createAnonymousBlockWithStyleAndDisplay(document(), style(), display).release();
+}
 
 } // namespace WebCore
 

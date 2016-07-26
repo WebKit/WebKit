@@ -47,8 +47,8 @@ public:
 
     void paintOutlineForRowIfNeeded(PaintInfo&, const LayoutPoint&);
 
-    static RenderTableRow* createAnonymousWithParentRenderer(const RenderObject*);
-    RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override { return createAnonymousWithParentRenderer(parent); }
+    static std::unique_ptr<RenderTableRow> createAnonymousWithParentRenderer(const RenderTableSection&);
+    std::unique_ptr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
     void setRowIndex(unsigned);
     bool rowIndexWasSet() const { return m_rowIndex != unsetRowIndex; }
@@ -64,6 +64,8 @@ public:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
 private:
+    static std::unique_ptr<RenderTableRow> createTableRowWithStyle(Document&, const RenderStyle&);
+
     const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableRow (anonymous)" : "RenderTableRow"; }
 
     bool isTableRow() const override { return true; }
@@ -145,6 +147,11 @@ inline RenderTableRow* RenderTableSection::firstRow() const
 inline RenderTableRow* RenderTableSection::lastRow() const
 {
     return downcast<RenderTableRow>(RenderBox::lastChild());
+}
+
+inline std::unique_ptr<RenderBox> RenderTableRow::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
+{
+    return RenderTableRow::createTableRowWithStyle(renderer.document(), renderer.style());
 }
 
 } // namespace WebCore

@@ -216,7 +216,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     if (beforeChild && !is<RenderTableSection>(*beforeChild) && beforeChild->style().display() != TABLE_CAPTION && beforeChild->style().display() != TABLE_COLUMN_GROUP)
         beforeChild = nullptr;
 
-    RenderTableSection* section = RenderTableSection::createAnonymousWithParentRenderer(this);
+    auto section = RenderTableSection::createAnonymousWithParentRenderer(*this).release();
     addChild(section, beforeChild);
     section->addChild(child);
 }
@@ -1555,11 +1555,16 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     return false;
 }
 
-RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
+std::unique_ptr<RenderTable> RenderTable::createTableWithStyle(Document& document, const RenderStyle& style)
 {
-    auto table = new RenderTable(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), parent->style().display() == INLINE ? INLINE_TABLE : TABLE));
+    auto table = std::make_unique<RenderTable>(document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == INLINE ? INLINE_TABLE : TABLE));
     table->initializeStyle();
     return table;
+}
+
+std::unique_ptr<RenderTable> RenderTable::createAnonymousWithParentRenderer(const RenderElement& parent)
+{
+    return RenderTable::createTableWithStyle(parent.document(), parent.style());
 }
 
 const BorderValue& RenderTable::tableStartBorderAdjoiningCell(const RenderTableCell& cell) const
