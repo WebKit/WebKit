@@ -84,7 +84,7 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, Resou
 
     if (m_coreLoader->documentLoader()->applicationCacheHost()->maybeLoadFallbackForRedirect(m_coreLoader.get(), proposedRequest, redirectResponse))
         return;
-    // FIXME: Do we need to update NetworkResourceLoader clientCredentialPolicy in case loader policy is DoNotAskClientForCrossOriginCredentials?
+
     m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [protectedThis](ResourceRequest&& request) {
         if (!protectedThis->m_coreLoader)
             return;

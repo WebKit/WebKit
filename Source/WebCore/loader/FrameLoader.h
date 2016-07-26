@@ -39,6 +39,7 @@
 #include "PageThrottler.h"
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadNotifier.h"
+#include "ResourceLoaderOptions.h"
 #include "ResourceRequestBase.h"
 #include "SecurityContext.h"
 #include "Timer.h"

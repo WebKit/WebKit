@@ -687,7 +687,9 @@ bool ResourceLoader::shouldUseCredentialStorage()
 
 bool ResourceLoader::isAllowedToAskUserForCredentials() const
 {
-    return m_options.clientCredentialPolicy() == AskClientForAllCredentials || (m_options.clientCredentialPolicy() == DoNotAskClientForCrossOriginCredentials && m_frame->document()->securityOrigin()->canRequest(originalRequest().url()));
+    if (m_options.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials)
+        return false;
+    return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_frame->document()->securityOrigin()->canRequest(originalRequest().url()));
 }
 
 void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)

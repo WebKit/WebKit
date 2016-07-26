@@ -354,7 +354,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
     if (m_async) {
         ThreadableLoaderOptions options = m_options;
-        options.setClientCredentialPolicy(DoNotAskClientForCrossOriginCredentials);
+        options.clientCredentialPolicy = m_sameOriginRequest ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
 
         // Set to NoCors as CORS checks are done in DocumentThreadableLoader
         options.mode = FetchOptions::Mode::NoCors;
@@ -379,7 +379,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         auto& frameLoader = m_document.frame()->loader();
         if (!frameLoader.mixedContentChecker().canRunInsecureContent(m_document.securityOrigin(), requestURL))
             return;
-        identifier = frameLoader.loadResourceSynchronously(request, m_options.allowCredentials(), m_options.clientCredentialPolicy(), error, response, data);
+        identifier = frameLoader.loadResourceSynchronously(request, m_options.allowCredentials(), m_options.clientCredentialPolicy, error, response, data);
     }
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {

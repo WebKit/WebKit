@@ -194,13 +194,13 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.allowStoredCredentials = allowStoredCredentials;
     // If there is no WebFrame then this resource cannot be authenticated with the client.
-    loadParameters.clientCredentialPolicy = (webFrame && webPage && resourceLoader.isAllowedToAskUserForCredentials()) ? AskClientForAllCredentials : DoNotAskClientForAnyCredentials;
+    loadParameters.clientCredentialPolicy = (webFrame && webPage && resourceLoader.isAllowedToAskUserForCredentials()) ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
     loadParameters.defersLoading = resourceLoader.defersLoading();
     loadParameters.needsCertificateInfo = resourceLoader.shouldIncludeCertificateInfo();
     loadParameters.maximumBufferingTime = maximumBufferingTime(resource);
 
-    ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
+    ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials);
 
     if (!WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         WEBLOADERSTRATEGY_LOG_ALWAYS_ERROR("WebLoaderStrategy::scheduleLoad: Unable to schedule resource with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu", static_cast<int>(resourceLoader.request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID));

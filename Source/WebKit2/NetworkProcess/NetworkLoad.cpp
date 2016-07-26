@@ -218,9 +218,6 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& response, Resour
 
 void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
 {
-    // NetworkResourceLoader does not know whether the request is cross origin, so Web process computes an applicable credential policy for it.
-    ASSERT(m_parameters.clientCredentialPolicy != DoNotAskClientForCrossOriginCredentials);
-
     // Handle server trust evaluation at platform-level if requested, for performance reasons.
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
         && !NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation()) {
@@ -360,7 +357,7 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
         return;
     }
 
-    if (m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
+    if (m_parameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials) {
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
     }
@@ -429,10 +426,8 @@ bool NetworkLoad::shouldUseCredentialStorage(ResourceHandle* handle)
 void NetworkLoad::didReceiveAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge& challenge)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
-    // NetworkResourceLoader does not know whether the request is cross origin, so Web process computes an applicable credential policy for it.
-    ASSERT(m_parameters.clientCredentialPolicy != DoNotAskClientForCrossOriginCredentials);
 
-    if (m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
+    if (m_parameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials) {
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
         return;
     }

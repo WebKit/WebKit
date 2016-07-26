@@ -101,7 +101,7 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource* resource)
 void CrossOriginPreflightChecker::startPreflight()
 {
     auto options = m_loader.options();
-    options.setClientCredentialPolicy(DoNotAskClientForCrossOriginCredentials);
+    options.credentials = FetchOptions::Credentials::Omit;
     options.setSecurityCheck(DoSecurityCheck);
     // Don't sniff content or send load callbacks for the preflight request.
     options.setSendLoadCallbacks(DoNotSendCallbacks);
@@ -130,7 +130,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     ResourceError error;
     ResourceResponse response;
     RefPtr<SharedBuffer> data;
-    unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, error, response, data);
+    unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, error, response, data);
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {
         error.setType(ResourceError::Type::AccessControl);

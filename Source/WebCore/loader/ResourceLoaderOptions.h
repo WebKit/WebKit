@@ -75,13 +75,17 @@ enum class CachingPolicy : uint8_t {
     DisallowCaching
 };
 
+enum class ClientCredentialPolicy {
+    CannotAskClientForCredentials,
+    MayAskClientForCredentials
+};
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions()
         : m_sendLoadCallbacks(DoNotSendCallbacks)
         , m_sniffContent(DoNotSniffContent)
         , m_dataBufferingPolicy(BufferData)
         , m_allowCredentials(DoNotAllowStoredCredentials)
-        , m_clientCredentialPolicy(DoNotAskClientForAnyCredentials)
         , m_securityCheck(DoSecurityCheck)
         , m_certificateInfoPolicy(DoNotIncludeCertificateInfo)
     {
@@ -92,12 +96,12 @@ struct ResourceLoaderOptions : public FetchOptions {
         , m_sniffContent(sniffContent)
         , m_dataBufferingPolicy(dataBufferingPolicy)
         , m_allowCredentials(allowCredentials)
-        , m_clientCredentialPolicy(credentialPolicy)
         , m_securityCheck(securityCheck)
         , m_certificateInfoPolicy(certificateInfoPolicy)
         , m_contentSecurityPolicyImposition(contentSecurityPolicyImposition)
         , m_defersLoadingPolicy(defersLoadingPolicy)
         , m_cachingPolicy(cachingPolicy)
+        , clientCredentialPolicy(credentialPolicy)
     {
         this->credentials = credentials;
         this->mode = mode;
@@ -111,8 +115,6 @@ struct ResourceLoaderOptions : public FetchOptions {
     void setDataBufferingPolicy(DataBufferingPolicy policy) { m_dataBufferingPolicy = policy; }
     StoredCredentials allowCredentials() const { return static_cast<StoredCredentials>(m_allowCredentials); }
     void setAllowCredentials(StoredCredentials allow) { m_allowCredentials = allow; }
-    ClientCredentialPolicy clientCredentialPolicy() const { return static_cast<ClientCredentialPolicy>(m_clientCredentialPolicy); }
-    void setClientCredentialPolicy(ClientCredentialPolicy policy) { m_clientCredentialPolicy = policy; }
     SecurityCheckPolicy securityCheck() const { return static_cast<SecurityCheckPolicy>(m_securityCheck); }
     void setSecurityCheck(SecurityCheckPolicy check) { m_securityCheck = check; }
     CertificateInfoPolicy certificateInfoPolicy() const { return static_cast<CertificateInfoPolicy>(m_certificateInfoPolicy); }
@@ -128,12 +130,13 @@ struct ResourceLoaderOptions : public FetchOptions {
     unsigned m_sniffContent : 1;
     unsigned m_dataBufferingPolicy : 1;
     unsigned m_allowCredentials : 1; // Whether HTTP credentials and cookies are sent with the request.
-    unsigned m_clientCredentialPolicy : 2; // When we should ask the client for credentials (if we allow credentials at all).
     unsigned m_securityCheck : 1;
     unsigned m_certificateInfoPolicy : 1; // Whether the response should include certificate info.
     ContentSecurityPolicyImposition m_contentSecurityPolicyImposition { ContentSecurityPolicyImposition::DoPolicyCheck };
     DefersLoadingPolicy m_defersLoadingPolicy { DefersLoadingPolicy::AllowDefersLoading };
     CachingPolicy m_cachingPolicy { CachingPolicy::AllowCaching };
+
+    ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
 };
 
 } // namespace WebCore

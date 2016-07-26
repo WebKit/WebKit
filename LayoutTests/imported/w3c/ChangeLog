@@ -1,5 +1,22 @@
 2016-07-26  Youenn Fablet  <youenn@apple.com>
 
+        Remove ClientCredentialPolicy cross-origin option from ResourceLoaderOptions
+        https://bugs.webkit.org/show_bug.cgi?id=159413
+
+        Reviewed by Alex Christensen.
+
+        Below test changes as ResourceLoader is now computing whether to request credentials to clients if:
+        - request is authorized to request credentials (DocumentThreadableLoader only allows same-origin to make such thing)
+        - credential policy is Include or Same-Origin and request is same-origin.
+        This test changes as current fetch loader sets the credential mode to Omit, thus disabling credential request.
+
+        To be noted that only fetch API is allowing to disable credentials sending for same-origin request using "Omit"
+        credential mode.
+
+        * web-platform-tests/fetch/api/credentials/authentication-basic-expected.txt: Rebasing test.
+
+2016-07-26  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Response constructor should be able to take a ReadableStream as body
         https://bugs.webkit.org/show_bug.cgi?id=159804
 

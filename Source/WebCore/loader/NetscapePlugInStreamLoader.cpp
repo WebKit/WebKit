@@ -43,7 +43,7 @@ namespace WebCore {
 // FIXME: Skip Content Security Policy check when associated plugin element is in a user agent shadow tree.
 // See <https://bugs.webkit.org/show_bug.cgi?id=146663>.
 NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame& frame, NetscapePlugInStreamLoaderClient& client)
-    : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, DoNotBufferData, AllowStoredCredentials, AskClientForAllCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching))
+    : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, DoNotBufferData, AllowStoredCredentials, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching))
     , m_client(&client)
 {
 #if ENABLE(CONTENT_EXTENSIONS)

@@ -1,3 +1,27 @@
+2016-07-26  Youenn Fablet  <youenn@apple.com>
+
+        Remove ClientCredentialPolicy cross-origin option from ResourceLoaderOptions
+        https://bugs.webkit.org/show_bug.cgi?id=159413
+
+        Reviewed by Alex Christensen.
+
+        Renaming of ClientCredentialPolicy values.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkLoad::didReceiveAuthenticationChallenge):
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+
 2016-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Crashes and deadlocks in single web process mode

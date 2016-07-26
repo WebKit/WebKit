@@ -33,12 +33,6 @@ enum StoredCredentials {
     DoNotAllowStoredCredentials
 };
 
-enum ClientCredentialPolicy {
-    AskClientForAllCredentials,
-    DoNotAskClientForCrossOriginCredentials,
-    DoNotAskClientForAnyCredentials
-};
-
 } // namespace WebCore
 
 #endif // ResourceHandleTypes_h

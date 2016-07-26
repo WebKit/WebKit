@@ -1,3 +1,12 @@
+2016-07-26  Youenn Fablet  <youenn@apple.com>
+
+        Remove ClientCredentialPolicy cross-origin option from ResourceLoaderOptions
+        https://bugs.webkit.org/show_bug.cgi?id=159413
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic-expected.txt: Removed.
+
 2016-07-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] repeat() syntax should take a <track-list> argument
