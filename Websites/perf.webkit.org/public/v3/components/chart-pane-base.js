@@ -18,6 +18,7 @@ class ChartPaneBase extends ComponentBase {
         this._mainChartStatus = null;
         this._commitLogViewer = null;
         this._tasksForAnnotations = null;
+        this._renderedAnnotations = false;
     }
 
     configure(platformId, metricId)
@@ -92,6 +93,7 @@ class ChartPaneBase extends ComponentBase {
         var self = this;
         AnalysisTask.fetchByPlatformAndMetric(this._platformId, this._metricId, noCache).then(function (tasks) {
             self._tasksForAnnotations = tasks;
+            self._renderedAnnotations = false;
             self.render();
         });
     }
@@ -225,8 +227,9 @@ class ChartPaneBase extends ComponentBase {
 
     _renderAnnotations()
     {
-        if (!this._tasksForAnnotations)
+        if (!this._tasksForAnnotations || this._renderedAnnotations)
             return;
+        this._renderedAnnotations = true;
 
         var annotations = this._tasksForAnnotations.map(function (task) {
             var fillStyle = '#fc6';
