@@ -40,13 +40,13 @@ public:
     const Position toPosition() const;
 
     Node* container() const;
-    int offset() const;
+    unsigned offset() const;
     Node* childBefore() const;
 
     void clear();
 
     void set(Ref<Node>&& container, unsigned offset, Node* childBefore);
-    void setOffset(int offset);
+    void setOffset(unsigned);
 
     void setToBeforeChild(Node&);
     void setToAfterChild(Node&);
@@ -58,10 +58,8 @@ public:
     void ensureOffsetIsValid() const;
 
 private:
-    static const int invalidOffset = -1;
-
     RefPtr<Node> m_containerNode;
-    mutable int m_offsetInContainer { 0 };
+    mutable Optional<unsigned> m_offsetInContainer { 0 };
     RefPtr<Node> m_childBeforeBoundary;
 };
 
@@ -90,7 +88,7 @@ inline Node* RangeBoundaryPoint::childBefore() const
 
 inline void RangeBoundaryPoint::ensureOffsetIsValid() const
 {
-    if (m_offsetInContainer >= 0)
+    if (m_offsetInContainer)
         return;
 
     ASSERT(m_childBeforeBoundary);
@@ -100,13 +98,13 @@ inline void RangeBoundaryPoint::ensureOffsetIsValid() const
 inline const Position RangeBoundaryPoint::toPosition() const
 {
     ensureOffsetIsValid();
-    return createLegacyEditingPosition(m_containerNode.get(), m_offsetInContainer);
+    return createLegacyEditingPosition(m_containerNode.get(), m_offsetInContainer.value());
 }
 
-inline int RangeBoundaryPoint::offset() const
+inline unsigned RangeBoundaryPoint::offset() const
 {
     ensureOffsetIsValid();
-    return m_offsetInContainer;
+    return m_offsetInContainer.value();
 }
 
 inline void RangeBoundaryPoint::clear()
@@ -124,11 +122,11 @@ inline void RangeBoundaryPoint::set(Ref<Node>&& container, unsigned offset, Node
     m_childBeforeBoundary = childBefore;
 }
 
-inline void RangeBoundaryPoint::setOffset(int offset)
+inline void RangeBoundaryPoint::setOffset(unsigned offset)
 {
     ASSERT(m_containerNode);
     ASSERT(m_containerNode->offsetInCharacters());
-    ASSERT(m_offsetInContainer >= 0);
+    ASSERT(m_offsetInContainer);
     ASSERT(!m_childBeforeBoundary);
     m_offsetInContainer = offset;
 }
@@ -138,7 +136,7 @@ inline void RangeBoundaryPoint::setToBeforeChild(Node& child)
     ASSERT(child.parentNode());
     m_childBeforeBoundary = child.previousSibling();
     m_containerNode = child.parentNode();
-    m_offsetInContainer = m_childBeforeBoundary ? invalidOffset : 0;
+    m_offsetInContainer = m_childBeforeBoundary ? Nullopt : Optional<unsigned>(0);
 }
 
 inline void RangeBoundaryPoint::setToAfterChild(Node& child)
@@ -146,7 +144,7 @@ inline void RangeBoundaryPoint::setToAfterChild(Node& child)
     ASSERT(child.parentNode());
     m_childBeforeBoundary = &child;
     m_containerNode = child.parentNode();
-    m_offsetInContainer = m_childBeforeBoundary ? invalidOffset : 0;
+    m_offsetInContainer = m_childBeforeBoundary ? Nullopt : Optional<unsigned>(0);
 }
 
 inline void RangeBoundaryPoint::setToStartOfNode(Ref<Node>&& container)
@@ -164,23 +162,23 @@ inline void RangeBoundaryPoint::setToEndOfNode(Ref<Node>&& container)
         m_childBeforeBoundary = nullptr;
     } else {
         m_childBeforeBoundary = m_containerNode->lastChild();
-        m_offsetInContainer = m_childBeforeBoundary ? invalidOffset : 0;
+        m_offsetInContainer = m_childBeforeBoundary ? Nullopt : Optional<unsigned>(0);
     }
 }
 
 inline void RangeBoundaryPoint::childBeforeWillBeRemoved()
 {
-    ASSERT(m_offsetInContainer);
+    ASSERT(!m_offsetInContainer || m_offsetInContainer.value());
     m_childBeforeBoundary = m_childBeforeBoundary->previousSibling();
     if (!m_childBeforeBoundary)
         m_offsetInContainer = 0;
-    else if (m_offsetInContainer > 0)
-        --m_offsetInContainer;
+    else if (m_offsetInContainer && m_offsetInContainer.value() > 0)
+        --(m_offsetInContainer.value());
 }
 
 inline void RangeBoundaryPoint::invalidateOffset() const
 {
-    m_offsetInContainer = invalidOffset;
+    m_offsetInContainer = Nullopt;
 }
 
 inline bool operator==(const RangeBoundaryPoint& a, const RangeBoundaryPoint& b)

@@ -1316,8 +1316,8 @@ PASS Range interface: operation insertNode(Node)
 PASS Range interface: operation surroundContents(Node) 
 PASS Range interface: operation cloneRange() 
 PASS Range interface: operation detach() 
-FAIL Range interface: operation isPointInRange(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
-FAIL Range interface: operation comparePoint(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
+PASS Range interface: operation isPointInRange(Node,unsigned long) 
+PASS Range interface: operation comparePoint(Node,unsigned long) 
 PASS Range interface: operation intersectsNode(Node) 
 PASS Range interface: stringifier 
 PASS Range must be primary interface of document.createRange() 
@@ -1362,13 +1362,9 @@ PASS Range interface: calling surroundContents(Node) on document.createRange() w
 PASS Range interface: document.createRange() must inherit property "cloneRange" with the proper type (25) 
 PASS Range interface: document.createRange() must inherit property "detach" with the proper type (26) 
 PASS Range interface: document.createRange() must inherit property "isPointInRange" with the proper type (27) 
-FAIL Range interface: calling isPointInRange(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Range interface: calling isPointInRange(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "comparePoint" with the proper type (28) 
-FAIL Range interface: calling comparePoint(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "WrongDocumentError (DOM Exception 4): The object is in th..." ("WrongDocumentError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling comparePoint(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "intersectsNode" with the proper type (29) 
 PASS Range interface: calling intersectsNode(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range must be primary interface of detachedRange 
@@ -1413,13 +1409,9 @@ PASS Range interface: calling surroundContents(Node) on detachedRange with too f
 PASS Range interface: detachedRange must inherit property "cloneRange" with the proper type (25) 
 PASS Range interface: detachedRange must inherit property "detach" with the proper type (26) 
 PASS Range interface: detachedRange must inherit property "isPointInRange" with the proper type (27) 
-FAIL Range interface: calling isPointInRange(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Range interface: calling isPointInRange(Node,unsigned long) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "comparePoint" with the proper type (28) 
-FAIL Range interface: calling comparePoint(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "WrongDocumentError (DOM Exception 4): The object is in th..." ("WrongDocumentError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling comparePoint(Node,unsigned long) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "intersectsNode" with the proper type (29) 
 PASS Range interface: calling intersectsNode(Node) on detachedRange with too few arguments must throw TypeError 
 PASS NodeIterator interface: existence and properties of interface object 

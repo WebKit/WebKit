@@ -226,7 +226,7 @@ void Range::collapse(bool toStart)
         m_start = m_end;
 }
 
-bool Range::isPointInRange(Node& refNode, int offset, ExceptionCode& ec)
+bool Range::isPointInRange(Node& refNode, unsigned offset, ExceptionCode& ec)
 {
     if (&refNode.document() != &ownerDocument()) {
         return false;
@@ -249,7 +249,7 @@ bool Range::isPointInRange(Node& refNode, int offset, ExceptionCode& ec)
     return result;
 }
 
-short Range::comparePoint(Node& refNode, int offset, ExceptionCode& ec) const
+short Range::comparePoint(Node& refNode, unsigned offset, ExceptionCode& ec) const
 {
     // http://developer.mozilla.org/en/docs/DOM:range.comparePoint
     // This method returns -1, 0 or 1 depending on if the point described by the 
@@ -367,7 +367,7 @@ short Range::compareBoundaryPointsForBindings(unsigned short compareHow, const R
     return compareBoundaryPoints(static_cast<CompareHow>(compareHow), sourceRange, ec);
 }
 
-short Range::compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB, ExceptionCode& ec)
+short Range::compareBoundaryPoints(Node* containerA, unsigned offsetA, Node* containerB, unsigned offsetB, ExceptionCode& ec)
 {
     ASSERT(containerA);
     ASSERT(containerB);
@@ -394,7 +394,7 @@ short Range::compareBoundaryPoints(Node* containerA, int offsetA, Node* containe
     while (c && c->parentNode() != containerA)
         c = c->parentNode();
     if (c) {
-        int offsetC = 0;
+        unsigned offsetC = 0;
         Node* n = containerA->firstChild();
         while (n != c && offsetC < offsetA) {
             offsetC++;
@@ -412,7 +412,7 @@ short Range::compareBoundaryPoints(Node* containerA, int offsetA, Node* containe
     while (c && c->parentNode() != containerB)
         c = c->parentNode();
     if (c) {
-        int offsetC = 0;
+        unsigned offsetC = 0;
         Node* n = containerB->firstChild();
         while (n != c && offsetC < offsetB) {
             offsetC++;
@@ -869,9 +869,9 @@ String Range::toString() const
     for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(*n)) {
         if (n->nodeType() == Node::TEXT_NODE || n->nodeType() == Node::CDATA_SECTION_NODE) {
             const String& data = static_cast<CharacterData*>(n)->data();
-            int length = data.length();
-            int start = n == &startContainer() ? std::min(std::max(0, m_start.offset()), length) : 0;
-            int end = n == &endContainer() ? std::min(std::max(start, m_end.offset()), length) : length;
+            unsigned length = data.length();
+            unsigned start = n == &startContainer() ? std::min(std::max(0U, m_start.offset()), length) : 0U;
+            unsigned end = n == &endContainer() ? std::min(std::max(start, m_end.offset()), length) : length;
             builder.append(data, start, end - start);
         }
     }
@@ -1149,8 +1149,8 @@ void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, R
         if (renderer->isBR())
             renderer->absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
         else if (is<RenderText>(*renderer)) {
-            int startOffset = node == &startContainer() ? m_start.offset() : 0;
-            int endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<int>::max();
+            unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
+            unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
             rects.appendVector(downcast<RenderText>(*renderer).absoluteRectsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
         } else
             continue;
@@ -1176,8 +1176,8 @@ void Range::absoluteTextQuads(Vector<FloatQuad>& quads, bool useSelectionHeight,
         if (renderer->isBR())
             renderer->absoluteQuads(quads, &isFixed);
         else if (is<RenderText>(*renderer)) {
-            int startOffset = node == &startContainer() ? m_start.offset() : 0;
-            int endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<int>::max();
+            unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
+            unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
             quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
         } else
             continue;
@@ -1644,7 +1644,7 @@ static inline void boundaryTextNodesMerged(RangeBoundaryPoint& boundary, NodeWit
 {
     if (boundary.container() == oldNode.node())
         boundary.set(*oldNode.node()->previousSibling(), boundary.offset() + offset, 0);
-    else if (boundary.container() == oldNode.node()->parentNode() && boundary.offset() == oldNode.index())
+    else if (boundary.container() == oldNode.node()->parentNode() && static_cast<int>(boundary.offset()) == oldNode.index())
         boundary.set(*oldNode.node()->previousSibling(), offset, 0);
 }
 
@@ -1763,8 +1763,8 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads, CoordinateSpace spac
             }
         } else if (is<Text>(*node)) {
             if (RenderText* renderText = downcast<Text>(*node).renderer()) {
-                int startOffset = node == &startContainer() ? m_start.offset() : 0;
-                int endOffset = node == &endContainer() ? m_end.offset() : INT_MAX;
+                unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
+                unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
                 
                 auto textQuads = renderText->absoluteQuadsForRange(startOffset, endOffset);
 

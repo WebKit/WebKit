@@ -1604,7 +1604,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
     
     // Sometimes when we are getting the end CharacterOffset of a line range, the TextIterator will emit an extra space at the end
     // and make the character count greater than the Range's end offset.
-    if (toNodeEnd && currentNode->isTextNode() && currentNode == &range->endContainer() && range->endOffset() < lastStartOffset + offsetInCharacter)
+    if (toNodeEnd && currentNode->isTextNode() && currentNode == &range->endContainer() && static_cast<int>(range->endOffset()) < lastStartOffset + offsetInCharacter)
         offsetInCharacter = range->endOffset() - lastStartOffset;
     
     return CharacterOffset(currentNode, lastStartOffset, offsetInCharacter, remaining);

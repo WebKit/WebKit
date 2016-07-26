@@ -142,8 +142,8 @@ void DocumentMarkerController::removeMarkers(Range* range, DocumentMarker::Marke
         ASSERT(!m_markers.isEmpty());
 
         RefPtr<Range> textPiece = markedText.range();
-        int startOffset = textPiece->startOffset();
-        int endOffset = textPiece->endOffset();
+        unsigned startOffset = textPiece->startOffset();
+        unsigned endOffset = textPiece->endOffset();
         removeMarkers(&textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, shouldRemovePartiallyOverlappingMarker);
     }
 }
@@ -531,9 +531,9 @@ Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(Range* 
         for (auto* marker : markersFor(node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
-            if (node == &startContainer && marker->endOffset() <= static_cast<unsigned>(range->startOffset()))
+            if (node == &startContainer && marker->endOffset() <= range->startOffset())
                 continue;
-            if (node == &endContainer && marker->startOffset() >= static_cast<unsigned>(range->endOffset()))
+            if (node == &endContainer && marker->startOffset() >= range->endOffset())
                 continue;
             foundMarkers.append(marker);
         }
@@ -701,8 +701,8 @@ void DocumentMarkerController::setMarkersActive(Range* range, bool active)
     Node* pastLastNode = range->pastLastNode();
 
     for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
-        int startOffset = node == &startContainer ? range->startOffset() : 0;
-        int endOffset = node == &endContainer ? range->endOffset() : INT_MAX;
+        unsigned startOffset = node == &startContainer ? range->startOffset() : 0;
+        unsigned endOffset = node == &endContainer ? range->endOffset() : std::numeric_limits<unsigned>::max();
         setMarkersActive(node, startOffset, endOffset, active);
     }
 }

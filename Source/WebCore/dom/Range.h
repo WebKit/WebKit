@@ -59,9 +59,9 @@ public:
     Document& ownerDocument() const { return const_cast<Document&>(m_ownerDocument.get()); }
 
     Node& startContainer() const { ASSERT(m_start.container()); return *m_start.container(); }
-    int startOffset() const { return m_start.offset(); }
+    unsigned startOffset() const { return m_start.offset(); }
     Node& endContainer() const { ASSERT(m_end.container()); return *m_end.container(); }
-    int endOffset() const { return m_end.offset(); }
+    unsigned endOffset() const { return m_end.offset(); }
     bool collapsed() const { return m_start == m_end; }
 
     Node* commonAncestorContainer() const { return commonAncestorContainer(&startContainer(), &endContainer()); }
@@ -69,14 +69,14 @@ public:
     WEBCORE_EXPORT void setStart(Ref<Node>&& container, unsigned offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
     WEBCORE_EXPORT void setEnd(Ref<Node>&& container, unsigned offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
     WEBCORE_EXPORT void collapse(bool toStart);
-    WEBCORE_EXPORT bool isPointInRange(Node& refNode, int offset, ExceptionCode&);
-    short comparePoint(Node& refNode, int offset, ExceptionCode&) const;
+    WEBCORE_EXPORT bool isPointInRange(Node& refNode, unsigned offset, ExceptionCode&);
+    short comparePoint(Node& refNode, unsigned offset, ExceptionCode&) const;
     enum CompareResults { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
     CompareResults compareNode(Node& refNode, ExceptionCode&) const;
     enum CompareHow { START_TO_START, START_TO_END, END_TO_END, END_TO_START };
     WEBCORE_EXPORT short compareBoundaryPoints(CompareHow, const Range& sourceRange, ExceptionCode&) const;
     short compareBoundaryPointsForBindings(unsigned short compareHow, const Range& sourceRange, ExceptionCode&) const;
-    static short compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB, ExceptionCode&);
+    static short compareBoundaryPoints(Node* containerA, unsigned offsetA, Node* containerB, unsigned offsetB, ExceptionCode&);
     static short compareBoundaryPoints(const RangeBoundaryPoint& boundaryA, const RangeBoundaryPoint& boundaryB, ExceptionCode&);
     WEBCORE_EXPORT bool boundaryPointsValid() const;
     bool intersectsNode(Node& refNode, ExceptionCode&) const;

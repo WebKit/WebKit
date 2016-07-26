@@ -89,9 +89,15 @@
     const unsigned short NODE_BEFORE_AND_AFTER = 2;
     const unsigned short NODE_INSIDE           = 3;
 
-    [RaisesException] short comparePoint(Node refNode, optional long offset = 0);
     [RaisesException] boolean intersectsNode(Node refNode);
-    [RaisesException] boolean isPointInRange(Node refNode, optional long offset = 0);
+
+#if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
+    [RaisesException] short comparePoint(Node refNode, unsigned long offset);
+    [RaisesException] boolean isPointInRange(Node refNode, unsigned long offset);
+#else
+    [RaisesException] short comparePoint(Node refNode, long offset);
+    [RaisesException] boolean isPointInRange(Node refNode, long offset);
+#endif
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     [RaisesException] void expand(optional DOMString unit = "undefined");
