@@ -1,3 +1,38 @@
+2016-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] ASSERTION FAILED: isMainThread() when ThreadedCompositor is destroyed since r203718
+        https://bugs.webkit.org/show_bug.cgi?id=160197
+
+        Reviewed by Žan Doberšek.
+
+        ThreadedCompositor can be destroyed from a secondary thread, for example, when a task takes a reference and the
+        main threads derefs it, when the task finishes in the secondary thread the lambda ends up deleting the threaded
+        compositor. This is ok for the Threaded compositor but not for the CompositingRunLoop class. this was not a
+        problem before r203718 because the CompositingRunLoop object was created and destroyed in the same thread
+        always, but now it's part of the ThreadedCompositor class. This patch uses std:unique_ptr again to explicitly
+        create the CompositingRunLoop in the ThreadedCompositor constructor and delete in the invalidate() method to
+        make sure it happens in the main thread in both cases.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::WorkQueuePool::invalidate):
+        (WebKit::WorkQueuePool::getOrCreateWorkQueueForContext):
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::ThreadedCompositor):
+        (WebKit::ThreadedCompositor::invalidate):
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing):
+        (WebKit::ThreadedCompositor::setDeviceScaleFactor):
+        (WebKit::ThreadedCompositor::setDrawsBackground):
+        (WebKit::ThreadedCompositor::didChangeViewportSize):
+        (WebKit::ThreadedCompositor::didChangeViewportAttribute):
+        (WebKit::ThreadedCompositor::didChangeContentsSize):
+        (WebKit::ThreadedCompositor::scrollTo):
+        (WebKit::ThreadedCompositor::scrollBy):
+        (WebKit::ThreadedCompositor::updateViewport):
+        (WebKit::ThreadedCompositor::scheduleDisplayImmediately):
+        (WebKit::ThreadedCompositor::forceRepaint):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2016-07-26  Youenn Fablet  <youenn@apple.com>
 
         Remove ClientCredentialPolicy cross-origin option from ResourceLoaderOptions

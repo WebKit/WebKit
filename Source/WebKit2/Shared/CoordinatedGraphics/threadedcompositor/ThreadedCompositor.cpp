@@ -48,9 +48,9 @@ Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client)
 
 ThreadedCompositor::ThreadedCompositor(Client* client)
     : m_client(client)
-    , m_compositingRunLoop([this] { renderLayerTree(); })
+    , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
 {
-    m_compositingRunLoop.performTaskSync([this, protectedThis = makeRef(*this)] {
+    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
         m_viewportController = std::make_unique<SimpleViewportController>(this);
     });
@@ -64,19 +64,20 @@ ThreadedCompositor::~ThreadedCompositor()
 void ThreadedCompositor::invalidate()
 {
     m_scene->detach();
-    m_compositingRunLoop.stopUpdateTimer();
-    m_compositingRunLoop.performTaskSync([this, protectedThis = makeRef(*this)] {
+    m_compositingRunLoop->stopUpdateTimer();
+    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_context = nullptr;
         m_scene = nullptr;
         m_viewportController = nullptr;
     });
+    m_compositingRunLoop = nullptr;
     m_client = nullptr;
 }
 
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
-    m_compositingRunLoop.stopUpdateTimer();
-    m_compositingRunLoop.performTaskSync([this, protectedThis = makeRef(*this), handle] {
+    m_compositingRunLoop->stopUpdateTimer();
+    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), handle] {
         m_scene->setActive(!!handle);
 
         // A new native handle can't be set without destroying the previous one first if any.
@@ -89,7 +90,7 @@ void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 
 void ThreadedCompositor::setDeviceScaleFactor(float scale)
 {
-    m_compositingRunLoop.performTask([this, protectedThis = makeRef(*this), scale] {
+    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), scale] {
         m_deviceScaleFactor = scale;
         scheduleDisplayImmediately();
     });
@@ -97,7 +98,7 @@ void ThreadedCompositor::setDeviceScaleFactor(float scale)
 
 void ThreadedCompositor::setDrawsBackground(bool drawsBackground)
 {
-    m_compositingRunLoop.performTask([this, protectedThis = Ref<ThreadedCompositor>(*this), drawsBackground] {
+    m_compositingRunLoop->performTask([this, protectedThis = Ref<ThreadedCompositor>(*this), drawsBackground] {
         m_drawsBackground = drawsBackground;
         scheduleDisplayImmediately();
     });
@@ -105,35 +106,35 @@ void ThreadedCompositor::setDrawsBackground(bool drawsBackground)
 
 void ThreadedCompositor::didChangeViewportSize(const IntSize& size)
 {
-    m_compositingRunLoop.performTaskSync([this, protectedThis = makeRef(*this), size] {
+    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), size] {
         m_viewportController->didChangeViewportSize(size);
     });
 }
 
 void ThreadedCompositor::didChangeViewportAttribute(const ViewportAttributes& attr)
 {
-    m_compositingRunLoop.performTask([this, protectedThis = makeRef(*this), attr] {
+    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), attr] {
         m_viewportController->didChangeViewportAttribute(attr);
     });
 }
 
 void ThreadedCompositor::didChangeContentsSize(const IntSize& size)
 {
-    m_compositingRunLoop.performTask([this, protectedThis = makeRef(*this), size] {
+    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), size] {
         m_viewportController->didChangeContentsSize(size);
     });
 }
 
 void ThreadedCompositor::scrollTo(const IntPoint& position)
 {
-    m_compositingRunLoop.performTask([this, protectedThis = makeRef(*this), position] {
+    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), position] {
         m_viewportController->scrollTo(position);
     });
 }
 
 void ThreadedCompositor::scrollBy(const IntSize& delta)
 {
-    m_compositingRunLoop.performTask([this, protectedThis = makeRef(*this), delta] {
+    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), delta] {
         m_viewportController->scrollBy(delta);
     });
 }
@@ -158,12 +159,12 @@ void ThreadedCompositor::commitScrollOffset(uint32_t layerID, const IntSize& off
 
 void ThreadedCompositor::updateViewport()
 {
-    m_compositingRunLoop.startUpdateTimer(CompositingRunLoop::WaitUntilNextFrame);
+    m_compositingRunLoop->startUpdateTimer(CompositingRunLoop::WaitUntilNextFrame);
 }
 
 void ThreadedCompositor::scheduleDisplayImmediately()
 {
-    m_compositingRunLoop.startUpdateTimer(CompositingRunLoop::Immediate);
+    m_compositingRunLoop->startUpdateTimer(CompositingRunLoop::Immediate);
 }
 
 bool ThreadedCompositor::tryEnsureGLContext()
@@ -198,7 +199,7 @@ GLContext* ThreadedCompositor::glContext()
 
 void ThreadedCompositor::forceRepaint()
 {
-    m_compositingRunLoop.performTaskSync([this, protectedThis = makeRef(*this)] {
+    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         renderLayerTree();
     });
 }

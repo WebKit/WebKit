@@ -105,7 +105,7 @@ private:
     bool m_drawsBackground { true };
     uint64_t m_nativeSurfaceHandle { 0 };
 
-    CompositingRunLoop m_compositingRunLoop;
+    std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;
 };
 
 } // namespace WebKit

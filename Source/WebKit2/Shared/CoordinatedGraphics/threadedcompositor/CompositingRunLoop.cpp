@@ -60,7 +60,7 @@ public:
     void invalidate(void* context)
     {
         auto workQueue = m_workQueueMap.take(context);
-        RELEASE_ASSERT(workQueue);
+        ASSERT(workQueue);
         if (m_workQueueMap.isEmpty()) {
             m_sharedWorkQueue = nullptr;
             m_threadCount = 0;
@@ -85,7 +85,7 @@ private:
             // FIXME: This is OK for now, and it works for a single-thread limit. But for configurations where more (but not unlimited)
             // threads could be used, one option would be to use a HashSet here and disperse the contexts across the available threads.
             if (m_threadCount >= m_threadCountLimit) {
-                RELEASE_ASSERT(m_sharedWorkQueue);
+                ASSERT(m_sharedWorkQueue);
                 addResult.iterator->value = m_sharedWorkQueue;
             } else {
                 addResult.iterator->value = WorkQueue::create("org.webkit.ThreadedCompositorWorkQueue");
