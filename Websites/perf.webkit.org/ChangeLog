@@ -1,3 +1,17 @@
+2016-07-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: The arrow indicating the current page doesn't get updated
+        https://bugs.webkit.org/show_bug.cgi?id=160185
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by Heading's render() function not updating the DOM more than once. I don't understand
+        how this has ever worked. Fixed the bug by rendering DOM whenever the current page has changed.
+
+        * public/v3/pages/heading.js:
+        (Heading):
+        (Heading.prototype.render):
+
 2016-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix for Safari 9.
