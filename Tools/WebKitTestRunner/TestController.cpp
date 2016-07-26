@@ -684,6 +684,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
 
     WKPreferencesSetMediaPlaybackAllowsInline(preferences, true);
+    WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(preferences, false);
     WKPreferencesSetAllowsInlineMediaPlaybackWithPlaysInlineAttribute(preferences, false);
     WKPreferencesSetAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(preferences, false);
 

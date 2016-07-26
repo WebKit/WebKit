@@ -525,6 +525,7 @@ public:
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:YES],  WebKitAllowsInlineMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackAfterFullscreenPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
         [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackWithPlaysInlineAttributeKey,
         [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttributeKey,
         [NSNumber numberWithBool:YES],  WebKitMediaControlsScaleWithPageZoomPreferenceKey,
@@ -539,6 +540,7 @@ public:
 #else
         [NSNumber numberWithBool:allowsInlineMediaPlayback],   WebKitAllowsInlineMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:allowsInlineMediaPlaybackAfterFullscreen],   WebKitAllowsInlineMediaPlaybackAfterFullscreenPreferenceKey,
+        [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
         [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitAllowsInlineMediaPlaybackWithPlaysInlineAttributeKey,
         [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttributeKey,
         [NSNumber numberWithBool:NO],   WebKitMediaControlsScaleWithPageZoomPreferenceKey,
@@ -2283,6 +2285,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaPlaybackAllowsInline:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitAllowsInlineMediaPlaybackPreferenceKey];
+}
+
+- (BOOL)inlineMediaPlaybackRequiresPlaysInlineAttribute
+{
+    return [self _boolValueForKey:WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey];
+}
+
+- (void)setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey];
 }
 
 - (BOOL)allowsInlineMediaPlaybackWithPlaysInlineAttribute

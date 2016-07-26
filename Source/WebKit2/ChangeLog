@@ -1,3 +1,27 @@
+2016-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iPhone] Playing a video on tudou.com plays only sound, no video
+        https://bugs.webkit.org/show_bug.cgi?id=160178
+        <rdar://problem/27535468>
+
+        Reviewed by Eric Carlson and Dan Bernstein.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute):
+        (WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _inlineMediaPlaybackRequiresPlaysInlineAttribute]):
+        (-[WKWebViewConfiguration _setInlineMediaPlaybackRequiresPlaysInlineAttribute:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-07-26  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused DownloadAuthenticationClient

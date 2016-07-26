@@ -1,3 +1,20 @@
+2016-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iPhone] Playing a video on tudou.com plays only sound, no video
+        https://bugs.webkit.org/show_bug.cgi?id=160178
+        <rdar://problem/27535468>
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RequiresUserActionForPlayback.mm:
+        (RequiresUserActionForPlaybackTest::SetUp):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
 2016-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Allow LOG macros to be used outside the namespace, and other logging cleanup

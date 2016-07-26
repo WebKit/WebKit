@@ -262,6 +262,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMediaPlaybackAllowsInline:(BOOL)flag;
 - (BOOL)mediaPlaybackAllowsInline;
 
+- (void)setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)flag;
+- (BOOL)inlineMediaPlaybackRequiresPlaysInlineAttribute;
+
 - (void)setAllowsInlineMediaPlaybackWithPlaysInlineAttribute:(BOOL)flag;
 - (BOOL)allowsInlineMediaPlaybackWithPlaysInlineAttribute;
 
