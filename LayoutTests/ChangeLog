@@ -1,3 +1,16 @@
+2016-07-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] grid-auto-flow|row should take a <track-size>+
+        https://bugs.webkit.org/show_bug.cgi?id=160158
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-shorthand-get-set-expected.txt:
+        * fast/css-grid-layout/grid-shorthand-get-set.html:
+        * svg/css/getComputedStyle-basic-expected.txt: CSSPrimitiveValue -> CSSValueList.
+
 2016-07-25  Frederic Wang  <fwang@igalia.com>
 
         MathOperator: Add a mapping from combining to non-combining equivalents

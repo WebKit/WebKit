@@ -33,6 +33,9 @@
 #gridWithAutoFlowAndRowsAndColumns {
     grid: column 10px / 20px;
 }
+#gridWithAutoFlowAndMultipleAutoTracks {
+    grid: row 20px 10px / 100px 10%;
+}
 
 /* Bad values. */
 
@@ -58,16 +61,10 @@
     grid: column / 10px;
 }
 #gridWithWrongSlash2 {
-    grid: column 10px 20px;
-}
-#gridWithWrongSlash3 {
     grid: 5x / 10px / 20px;
 }
 #gridWithAutoFlowRowAndColumn {
     grid: row column 10px;
-}
-#gridWithoutAutoFlowAndExtraBreath {
-    grid: row 10px / 20px 30px;
 }
 #gridWithAutoFlowString1 {
     grid: row 10px "a";
@@ -109,15 +106,14 @@
 <div class="grid" id="gridWithMisplacedNone2"></div>
 <div class="grid" id="gridWithWrongSlash1"></div>
 <div class="grid" id="gridWithWrongSlash2"></div>
-<div class="grid" id="gridWithWrongSlash3"></div>
 <div class="grid" id="gridWithAutoFlowRowAndColumn"></div>
-<div class="grid" id="gridWithoutAutoFlowAndExtraBreath"></div>
 <div class="grid" id="gridWithAutoFlowString1"></div>
 <div class="grid" id="gridWithAutoFlowString2"></div>
 <div class="grid" id="gridWithAutoFlowString3"></div>
 <div class="grid" id="gridWithTemplateAndAutoFlow"></div>
 <div class="grid" id="gridWithTemplateAndMisplacedString1"></div>
 <div class="grid" id="gridWithMisplacedDense"></div>
+<div class="grid" id="gridWithAutoFlowAndMultipleAutoTracks"></div>
 <script src="resources/grid-shorthand-parsing-utils.js"></script>
 <script>
     description("This test checks that the 'grid' shorthand is properly parsed and the longhand properties correctly assigned.");
@@ -133,6 +129,7 @@
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowColumnDense"), "none", "none", "none", "column dense", "10px", "10px");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowDenseRow"), "none", "none", "none", "row dense", "10px", "10px");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndRowsAndColumns"), "none", "none", "none", "column", "20px", "10px");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndMultipleAutoTracks"), "none", "none", "none", "row", "100px 10%", "20px 10px");
 
     debug("");
     debug("Test setting wrong values for 'grid' shorthand through CSS (they should resolve to the default: 'row')");
@@ -145,9 +142,7 @@
     testGridDefinitionsValues(document.getElementById("gridWithMisplacedDense"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithWrongSlash1"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithWrongSlash2"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithWrongSlash3"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowRowAndColumn"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithoutAutoFlowAndExtraBreath"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString1"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString2"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString3"), "none", "none", "none", "row", "auto", "auto");

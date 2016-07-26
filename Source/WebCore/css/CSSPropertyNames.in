@@ -498,8 +498,8 @@ justify-items [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentDat
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 grid [Longhands=grid-template-rows|grid-template-columns|grid-template-areas|grid-auto-flow|grid-auto-rows|grid-auto-columns|grid-column-gap|grid-row-gap]
 grid-area [Longhands=grid-row-start|grid-column-start|grid-row-end|grid-column-end]
-grid-auto-columns [Converter=GridTrackSize]
-grid-auto-rows [Converter=GridTrackSize]
+grid-auto-columns [Converter=GridTrackSizeList]
+grid-auto-rows [Converter=GridTrackSizeList]
 grid-column-end [ConditionalConverter=GridPosition, NameForMethods=GridItemColumnEnd]
 grid-column-gap [Initial=initialZeroLength, Converter=Length]
 grid-column-start [ConditionalConverter=GridPosition, NameForMethods=GridItemColumnStart]

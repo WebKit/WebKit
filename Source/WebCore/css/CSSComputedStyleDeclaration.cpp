@@ -1111,6 +1111,16 @@ static void addValuesForNamedGridLinesAtIndex(OrderedNamedLinesCollector& collec
         list.append(WTFMove(lineNames));
 }
 
+static Ref<CSSValueList> valueForGridTrackSizeList(GridTrackSizingDirection direction, const RenderStyle& style)
+{
+    auto& autoTrackSizes = direction == ForColumns ? style.gridAutoColumns() : style.gridAutoRows();
+
+    auto list = CSSValueList::createSpaceSeparated();
+    for (auto& trackSize : autoTrackSizes)
+        list->append(specifiedValueForGridTrackSize(trackSize, style));
+    return list;
+}
+
 static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, RenderObject* renderer, const RenderStyle& style)
 {
     bool isRowAxis = direction == ForColumns;
@@ -2881,14 +2891,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         }
 
         // Specs mention that getComputedStyle() should return the used value of the property instead of the computed
-        // one for grid-definition-{rows|columns} but not for the grid-auto-{rows|columns} as things like
+        // one for grid-template-{rows|columns} but not for the grid-auto-{rows|columns} as things like
         // grid-auto-columns: 2fr; cannot be resolved to a value in pixels as the '2fr' means very different things
         // depending on the size of the explicit grid or the number of implicit tracks added to the grid. See
         // http://lists.w3.org/Archives/Public/www-style/2013Nov/0014.html
         case CSSPropertyGridAutoColumns:
-            return specifiedValueForGridTrackSize(style->gridAutoColumns(), *style);
+            return valueForGridTrackSizeList(ForColumns, *style);
         case CSSPropertyGridAutoRows:
-            return specifiedValueForGridTrackSize(style->gridAutoRows(), *style);
+            return valueForGridTrackSizeList(ForRows, *style);
 
         case CSSPropertyGridTemplateColumns:
             return valueForGridTrackList(ForColumns, renderer, *style);

@@ -2759,14 +2759,14 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyGridAutoRows:
         if (!isCSSGridLayoutEnabled())
             return false;
-        parsedValue = parseGridTrackSize(*m_valueList);
+        parsedValue = parseGridTrackList(GridAuto);
         break;
 
     case CSSPropertyGridTemplateColumns:
     case CSSPropertyGridTemplateRows:
         if (!isCSSGridLayoutEnabled())
             return false;
-        parsedValue = parseGridTrackList();
+        parsedValue = parseGridTrackList(GridTemplate);
         break;
 
     case CSSPropertyGridColumnStart:
@@ -5689,7 +5689,7 @@ bool CSSParser::parseGridTemplateRowsAndAreasAndColumns(bool important)
     RefPtr<CSSValue> templateColumns;
     if (m_valueList->current()) {
         ASSERT(isForwardSlashOperator(*m_valueList->current()));
-        templateColumns = parseGridTemplateColumns(DisallowRepeat);
+        templateColumns = parseGridTemplateColumns(GridTemplateNoRepeat);
         if (!templateColumns)
             return false;
         // The template-columns <track-list> can't be 'none'.
@@ -5733,7 +5733,7 @@ bool CSSParser::parseGridTemplateShorthand(bool important)
     if (firstValueIsNone)
         rowsValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
     else
-        rowsValue = parseGridTrackList();
+        rowsValue = parseGridTrackList(GridTemplate);
 
     if (rowsValue) {
         auto columnsValue = parseGridTemplateColumns();
@@ -5783,13 +5783,13 @@ bool CSSParser::parseGridShorthand(bool important)
     RefPtr<CSSValue> autoRowsValue;
 
     if (m_valueList->current()) {
-        autoRowsValue = parseGridTrackSize(*m_valueList);
+        autoRowsValue = parseGridTrackList(GridAuto);
         if (!autoRowsValue)
             return false;
         if (m_valueList->current()) {
             if (!isForwardSlashOperator(*m_valueList->current()) || !m_valueList->next())
                 return false;
-            autoColumnsValue = parseGridTrackSize(*m_valueList);
+            autoColumnsValue = parseGridTrackList(GridAuto);
             if (!autoColumnsValue)
                 return false;
         }
@@ -5931,6 +5931,8 @@ RefPtr<CSSValue> CSSParser::parseGridTrackList(TrackListType trackListType)
 
     CSSParserValue* value = m_valueList->current();
     if (value->id == CSSValueNone) {
+        if (trackListType == GridAuto)
+            return nullptr;
         m_valueList->next();
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
     }
@@ -5938,17 +5940,22 @@ RefPtr<CSSValue> CSSParser::parseGridTrackList(TrackListType trackListType)
     auto values = CSSValueList::createSpaceSeparated();
     // Handle leading  <custom-ident>*.
     value = m_valueList->current();
-    if (value && value->unit == CSSParserValue::ValueList)
+    bool allowGridLineNames = trackListType != GridAuto;
+    if (value && value->unit == CSSParserValue::ValueList) {
+        if (!allowGridLineNames)
+            return nullptr;
         parseGridLineNames(*m_valueList, values);
+    }
 
     bool seenTrackSizeOrRepeatFunction = false;
     bool seenAutoRepeat = false;
     bool allTracksAreFixedSized = true;
+    bool repeatAllowed = trackListType == GridTemplate;
     while (CSSParserValue* currentValue = m_valueList->current()) {
         if (isForwardSlashOperator(*currentValue))
             break;
         if (currentValue->unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(currentValue->function->name, "repeat(")) {
-            if (trackListType == DisallowRepeat)
+            if (!repeatAllowed)
                 return nullptr;
             bool isAutoRepeat;
             if (!parseGridTrackRepeatFunction(values, isAutoRepeat, allTracksAreFixedSized))
@@ -5971,8 +5978,11 @@ RefPtr<CSSValue> CSSParser::parseGridTrackList(TrackListType trackListType)
 
         // This will handle the trailing <custom-ident>* in the grammar.
         value = m_valueList->current();
-        if (value && value->unit == CSSParserValue::ValueList)
+        if (value && value->unit == CSSParserValue::ValueList) {
+            if (!allowGridLineNames)
+                return nullptr;
             parseGridLineNames(*m_valueList, values);
+        }
     }
 
     if (!seenTrackSizeOrRepeatFunction)

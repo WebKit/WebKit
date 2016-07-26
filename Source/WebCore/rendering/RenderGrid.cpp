@@ -875,7 +875,7 @@ const GridTrackSize& RenderGrid::rawGridTrackSize(GridTrackSizingDirection direc
     bool isRowAxis = direction == ForColumns;
     auto& trackStyles = isRowAxis ? style().gridColumns() : style().gridRows();
     auto& autoRepeatTrackStyles = isRowAxis ? style().gridAutoRepeatColumns() : style().gridAutoRepeatRows();
-    auto& autoTrackSize = isRowAxis ? style().gridAutoColumns() : style().gridAutoRows();
+    auto& autoTrackStyles = isRowAxis ? style().gridAutoColumns() : style().gridAutoRows();
     unsigned insertionPoint = isRowAxis ? style().gridAutoRepeatColumnsInsertionPoint() : style().gridAutoRepeatRowsInsertionPoint();
     unsigned repetitions = autoRepeatCountForDirection(direction);
 
@@ -885,12 +885,17 @@ const GridTrackSize& RenderGrid::rawGridTrackSize(GridTrackSizingDirection direc
     unsigned explicitTracksCount = trackStyles.size() + repetitions;
 
     int untranslatedIndexAsInt = translatedIndex + (isRowAxis ? m_smallestColumnStart : m_smallestRowStart);
-    if (untranslatedIndexAsInt < 0)
-        return autoTrackSize;
+    unsigned autoTrackStylesSize = autoTrackStyles.size();
+    if (untranslatedIndexAsInt < 0) {
+        int index = untranslatedIndexAsInt % static_cast<int>(autoTrackStylesSize);
+        // We need to traspose the index because the first negative implicit line will get the last defined auto track and so on.
+        index += index ? autoTrackStylesSize : 0;
+        return autoTrackStyles[index];
+    }
 
     unsigned untranslatedIndex = static_cast<unsigned>(untranslatedIndexAsInt);
     if (untranslatedIndex >= explicitTracksCount)
-        return autoTrackSize;
+        return autoTrackStyles[(untranslatedIndex - explicitTracksCount) % autoTrackStylesSize];
 
     if (!repetitions || untranslatedIndex < insertionPoint)
         return trackStyles[untranslatedIndex];

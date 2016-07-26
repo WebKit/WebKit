@@ -329,11 +329,11 @@ rect: style.getPropertyCSSValue(font-variant-alternates) : [object CSSPrimitiveV
 rect: style.getPropertyValue(font-variant-east-asian) : normal
 rect: style.getPropertyCSSValue(font-variant-east-asian) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(grid-auto-columns) : auto
-rect: style.getPropertyCSSValue(grid-auto-columns) : [object CSSPrimitiveValue]
+rect: style.getPropertyCSSValue(grid-auto-columns) : [object CSSValueList]
 rect: style.getPropertyValue(grid-auto-flow) : row
 rect: style.getPropertyCSSValue(grid-auto-flow) : [object CSSValueList]
 rect: style.getPropertyValue(grid-auto-rows) : auto
-rect: style.getPropertyCSSValue(grid-auto-rows) : [object CSSPrimitiveValue]
+rect: style.getPropertyCSSValue(grid-auto-rows) : [object CSSValueList]
 rect: style.getPropertyValue(grid-column-end) : auto
 rect: style.getPropertyCSSValue(grid-column-end) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(grid-column-start) : auto
@@ -863,11 +863,11 @@ g: style.getPropertyCSSValue(font-variant-alternates) : [object CSSPrimitiveValu
 g: style.getPropertyValue(font-variant-east-asian) : normal
 g: style.getPropertyCSSValue(font-variant-east-asian) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(grid-auto-columns) : auto
-g: style.getPropertyCSSValue(grid-auto-columns) : [object CSSPrimitiveValue]
+g: style.getPropertyCSSValue(grid-auto-columns) : [object CSSValueList]
 g: style.getPropertyValue(grid-auto-flow) : row
 g: style.getPropertyCSSValue(grid-auto-flow) : [object CSSValueList]
 g: style.getPropertyValue(grid-auto-rows) : auto
-g: style.getPropertyCSSValue(grid-auto-rows) : [object CSSPrimitiveValue]
+g: style.getPropertyCSSValue(grid-auto-rows) : [object CSSValueList]
 g: style.getPropertyValue(grid-column-end) : auto
 g: style.getPropertyCSSValue(grid-column-end) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(grid-column-start) : auto

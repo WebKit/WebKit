@@ -31,6 +31,13 @@
     grid-auto-columns: minmax(10vw, auto);
 }
 
+.gridAutoMultipleTracks {
+    width: 100px;
+    height: 50px;
+    grid-auto-rows: 10px 20px 30px;
+    grid-auto-columns: 25px 50px 100px;
+}
+
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
@@ -47,6 +54,19 @@
     <div class="sizedToGridArea thirdRowAutoColumn"></div>
     <div class="sizedToGridArea autoRowThirdColumn"></div>
 </div>
+<div class="grid gridAutoMultipleTracks" id="gridAutoMultipleTracks">
+    <div style="grid-column: 1; grid-row: 1"></div>
+    <div style="grid-column: 2; grid-row: 2"></div>
+    <div style="grid-column: 3; grid-row: 3"></div>
+    <div style="grid-column: 4; grid-row: 4"></div>
+</div>
+<div class="grid gridAutoMultipleTracks" id="gridAutoMultipleTracksNegativeIndexes">
+    <div style="grid-column: -2; grid-row: -2"></div>
+    <div style="grid-column: -3; grid-row: -3"></div>
+    <div style="grid-column: -4; grid-row: -4"></div>
+    <div style="grid-column: -5; grid-row: -5"></div>
+</div>
+
 <script>
 description('Test that setting and getting grid-auto-columns and grid-auto-rows works as expected');
 
@@ -62,6 +82,8 @@ testGridAutoDefinitionsValues(document.getElementById("gridAutoFixedFixedWithChi
 testGridTemplatesValues(document.getElementById("gridAutoFixedFixedWithChildren"), "50px", "30px");
 testGridAutoDefinitionsValues(document.getElementById("gridAutoFixedFixedWithFixedFixedWithChildren"), "30px", "40px");
 testGridTemplatesValues(document.getElementById("gridAutoFixedFixedWithFixedFixedWithChildren"), "20px", "15px", "20px 40px 40px", "15px 30px 30px");
+testGridTemplatesValues(document.getElementById("gridAutoMultipleTracks"), "25px 50px 100px 25px", "10px 20px 30px 10px");
+testGridTemplatesValues(document.getElementById("gridAutoMultipleTracksNegativeIndexes"), "100px 25px 50px 100px", "30px 10px 20px 30px");
 
 debug("");
 debug("Test that grid-template-* definitions are not affected by grid-auto-* definitions");
@@ -76,64 +98,31 @@ document.body.appendChild(element);
 shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'auto'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'auto'");
 
+function testAutoValues(autoCols, autoRows, computedAutoCols, computedAutoRows) {
+     element = document.createElement("div");
+     document.body.appendChild(element);
+     element.style.fontSize = "10px";
+     element.style.gridAutoColumns = autoCols;
+     element.style.gridAutoRows = autoRows;
+     shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", computedAutoCols || autoCols);
+     shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", computedAutoRows || autoRows);
+}
+
 debug("");
 debug("Test getting and setting grid-auto-columns and grid-auto-rows through JS");
-element.style.font = "10px Ahem";
-element.style.gridAutoColumns = "18em";
-element.style.gridAutoRows = "66em";
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'180px'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'660px'");
-
-element = document.createElement("div");
-document.body.appendChild(element);
-element.style.gridAutoColumns = "minmax(-webkit-min-content, 8vh)";
-element.style.gridAutoRows = "minmax(10vw, -webkit-min-content)";
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'minmax(-webkit-min-content, 48px)'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'minmax(80px, -webkit-min-content)'");
-
-element = document.createElement("div");
-document.body.appendChild(element);
-element.style.gridAutoColumns = "minmax(-webkit-min-content, -webkit-max-content)";
-element.style.gridAutoRows = "minmax(-webkit-max-content, -webkit-min-content)";
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'minmax(-webkit-min-content, -webkit-max-content)'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'minmax(-webkit-max-content, -webkit-min-content)'");
+testAutoValues("18em", "66em", "180px", "660px");
+testAutoValues("minmax(-webkit-min-content, 8vh)", "minmax(10vw, -webkit-min-content)", "minmax(-webkit-min-content, 48px)", "minmax(80px, -webkit-min-content)");
+testAutoValues("minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content)");
+testAutoValues("minmax(-webkit-min-content, 10px) 48px 5%", "auto 30px minmax(10%, 60%)");
 
 debug("");
 debug("Test setting grid-auto-columns and grid-auto-rows to bad minmax value through JS");
-element = document.createElement("div");
-document.body.appendChild(element);
-// No comma.
-element.style.gridAutoColumns = "minmax(10px 20px)";
-// Only 1 argument provided.
-element.style.gridAutoRows = "minmax(10px)";
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'auto'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'auto'");
-
-element = document.createElement("div");
-document.body.appendChild(element);
-// Nested minmax.
-element.style.gridAutoColumns = "minmax(minmax(10px, 20px), 20px)";
-// Only 2 arguments are allowed.
-element.style.gridAutoRows = "minmax(10px, 20px, 30px)";
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'auto'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'auto'");
-
-element = document.createElement("div");
-document.body.appendChild(element);
-// No breadth value.
-element.style.gridAutoColumns = "minmax()";
-// No comma.
-element.style.gridAutoRows = "minmax(30px 30% 30em)";
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'auto'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'auto'");
-
-element = document.createElement("div");
-document.body.appendChild(element);
-// None is not allowed for grid-auto-{rows|columns}.
-element.style.gridAutoColumns = "none";
-element.style.gridAutoRows = "none";
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'auto'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'auto'");
+testAutoValues("minmax(10px 20px)", "minmax(10px)", "auto", "auto");
+testAutoValues("minmax(minmax(10px, 20px), 20px)", "minmax(10px, 20px, 30px)", "auto", "auto");
+testAutoValues("minmax()", "minmax(30px 30% 30em)", "auto", "auto");
+testAutoValues("none", "none", "auto", "auto");
+testAutoValues("10px [a] 20px", "[z] auto [y] -webkit-min-content", "auto", "auto");
+testAutoValues("repeat(2, 10px [a] 20px)", "[z] repeat(auto-fit, 100px)", "auto", "auto");
 
 function testInherit()
 {
