@@ -1,3 +1,13 @@
+2016-07-26  Mark Lam  <mark.lam@apple.com>
+
+        Remove unused DEBUG_WITH_BREAKPOINT configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=160203
+
+        Reviewed by Keith Miller.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDebugHook):
+
 2016-07-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Unreviewed, rolling out r203703.

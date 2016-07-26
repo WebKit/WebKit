@@ -3411,13 +3411,9 @@ void BytecodeGenerator::emitPopWithScope()
 
 void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, unsigned line, unsigned charOffset, unsigned lineStart)
 {
-#if ENABLE(DEBUG_WITH_BREAKPOINT)
-    if (debugHookID != DidReachBreakpoint)
-        return;
-#else
     if (!m_shouldEmitDebugHooks)
         return;
-#endif
+
     JSTextPosition divot(line, charOffset, lineStart);
     emitExpressionInfo(divot, divot, divot);
     emitOpcode(op_debug);
