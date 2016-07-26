@@ -1,3 +1,84 @@
+2016-07-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] DFG::Node should not have its own allocator
+        https://bugs.webkit.org/show_bug.cgi?id=160098
+
+        Reviewed by Geoffrey Garen.
+
+        We need some design changes for DFG::Node:
+        -Accessing the index must be fast. B3 uses indices for sets
+         and maps, it is a lot faster than hashing pointers.
+        -We should be able to subclass DFG::Node to specialize it.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAllocator.h: Removed.
+        (JSC::DFG::Allocator::Region::size): Deleted.
+        (JSC::DFG::Allocator::Region::headerSize): Deleted.
+        (JSC::DFG::Allocator::Region::numberOfThingsPerRegion): Deleted.
+        (JSC::DFG::Allocator::Region::data): Deleted.
+        (JSC::DFG::Allocator::Region::isInThisRegion): Deleted.
+        (JSC::DFG::Allocator::Region::regionFor): Deleted.
+        (JSC::DFG::Allocator<T>::Allocator): Deleted.
+        (JSC::DFG::Allocator<T>::~Allocator): Deleted.
+        (JSC::DFG::Allocator<T>::allocate): Deleted.
+        (JSC::DFG::Allocator<T>::free): Deleted.
+        (JSC::DFG::Allocator<T>::freeAll): Deleted.
+        (JSC::DFG::Allocator<T>::reset): Deleted.
+        (JSC::DFG::Allocator<T>::indexOf): Deleted.
+        (JSC::DFG::Allocator<T>::allocatorOf): Deleted.
+        (JSC::DFG::Allocator<T>::bumpAllocate): Deleted.
+        (JSC::DFG::Allocator<T>::freeListAllocate): Deleted.
+        (JSC::DFG::Allocator<T>::allocateSlow): Deleted.
+        (JSC::DFG::Allocator<T>::freeRegionsStartingAt): Deleted.
+        (JSC::DFG::Allocator<T>::startBumpingIn): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        (JSC::DFG::CPSRethreadingPhase::addPhiSilently):
+        * dfg/DFGCleanUpPhase.cpp:
+        (JSC::DFG::CleanUpPhase::run):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        * dfg/DFGConstantHoistingPhase.cpp:
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::fixupBlock):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::deleteNode):
+        (JSC::DFG::Graph::killBlockAndItsContents):
+        (JSC::DFG::Graph::~Graph): Deleted.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addNode):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGLongLivedState.cpp: Removed.
+        (JSC::DFG::LongLivedState::LongLivedState): Deleted.
+        (JSC::DFG::LongLivedState::~LongLivedState): Deleted.
+        (JSC::DFG::LongLivedState::shrinkToFit): Deleted.
+        * dfg/DFGLongLivedState.h: Removed.
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::index): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::index):
+        * dfg/DFGNodeAllocator.h: Removed.
+        (operator new ): Deleted.
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPlan.h:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::runThread):
+        * runtime/VM.cpp:
+        (JSC::VM::VM): Deleted.
+        * runtime/VM.h:
+
 2016-07-25  Filip Pizlo  <fpizlo@apple.com>
 
         AssemblyHelpers should own all of the cell allocation methods

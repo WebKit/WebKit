@@ -93,7 +93,7 @@ private:
             for (unsigned phiIndex = 0; phiIndex < block->phis.size(); ++phiIndex) {
                 Node* phi = block->phis[phiIndex];
                 if (!phi->shouldGenerate()) {
-                    m_graph.m_allocator.free(phi);
+                    m_graph.deleteNode(phi);
                     block->phis[phiIndex--] = block->phis.last();
                     block->phis.removeLast();
                 }

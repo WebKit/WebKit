@@ -90,7 +90,7 @@ private:
                     break;
                 case Phantom:
                     if (!node->child1()) {
-                        m_graph.m_allocator.free(node);
+                        m_graph.deleteNode(node);
                         continue;
                     }
                     switch (node->child1()->op()) {
@@ -112,7 +112,7 @@ private:
             block->resize(toIndex);
             
             for (unsigned phiIndex = block->phis.size(); phiIndex--;)
-                m_graph.m_allocator.free(block->phis[phiIndex]);
+                m_graph.deleteNode(block->phis[phiIndex]);
             block->phis.resize(0);
         }
     }
@@ -132,7 +132,7 @@ private:
     
     ALWAYS_INLINE Node* addPhiSilently(BasicBlock* block, const NodeOrigin& origin, VariableAccessData* variable)
     {
-        Node* result = m_graph.addNode(SpecNone, Phi, origin, OpInfo(variable));
+        Node* result = m_graph.addNode(Phi, origin, OpInfo(variable));
         block->phis.append(result);
         return result;
     }

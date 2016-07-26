@@ -83,7 +83,7 @@ public:
                     if (!m_state.isValid()) {
                         NodeOrigin origin = block->at(nodeIndex)->origin;
                         for (unsigned killIndex = nodeIndex; killIndex < block->size(); ++killIndex)
-                            m_graph.m_allocator.free(block->at(killIndex));
+                            m_graph.deleteNode(block->at(killIndex));
                         block->resize(nodeIndex);
                         block->appendNode(m_graph, SpecNone, Unreachable, origin);
                         didClipBlock = true;

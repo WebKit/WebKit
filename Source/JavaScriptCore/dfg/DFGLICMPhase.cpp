@@ -341,7 +341,7 @@ private:
         // code. But for now we just assert that's the case.
         DFG_ASSERT(m_graph, node, !(node->flags() & NodeHasVarArgs));
         
-        nodeRef = m_graph.addNode(SpecNone, Check, originalOrigin, node->children);
+        nodeRef = m_graph.addNode(Check, originalOrigin, node->children);
         
         return true;
     }
