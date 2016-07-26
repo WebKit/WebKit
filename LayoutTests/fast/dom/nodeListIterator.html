@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
@@ -7,126 +7,28 @@
         <script>
             description('Testing of NodeList iterable capacities.');
 
-            // Modifying Array prototype to ensure this does not impact NodeList iterable methods.
-            var entriesFunction = Array.prototype.entries;
-            Array.prototype.entries = function() {
-                console.log("Array.prototype.entries called");
-              return entriesFunction.apply(this, arguments);
-            }
-            var forEachFunction = Array.prototype.forEach;
-            Array.prototype.forEach = function() {
-                console.log("Array.prototype.forEach called");
-              return forEachFunction.apply(this, arguments);
-            }
-            var keysFunction = Array.prototype.keys;
-            Array.prototype.keys = function() {
-                console.log("Array.prototype.keys called");
-              return keysFunction.apply(this, arguments);
-            }
-            var valuesFunction = Array.prototype.values;
-            Array.prototype.values = function() {
-                console.log("Array.prototype.values called");
-              return valuesFunction.apply(this, arguments);
-            }
-
-            if (window.testRunner)
-                testRunner.dumpAsText();
-
-            var end;
-            function checkEndIterator(iteratorValue) {
-              end = iteratorValue;
-              shouldBe('end.done', 'true');
-              shouldBe('end.value', 'undefined');
-            }
-
             var testingGround = document.createElement('div');
-            var children = [document.createElement('div'), document.createElement('ol')];
-            testingGround.appendChild(children[0]);
-            testingGround.appendChild(children[1]);
+            var nodes = [document.createElement('div'), document.createElement('ol')];
+            testingGround.appendChild(nodes[0]);
+            testingGround.appendChild(nodes[1]);
             document.body.appendChild(testingGround);
 
             var nodeList = testingGround.childNodes;
 
-            shouldBeTrue('nodeList.entries === entriesFunction');
-            shouldBeTrue('nodeList.forEach === forEachFunction');
-            shouldBeTrue('nodeList.keys === keysFunction');
-            shouldBeTrue('nodeList.values === valuesFunction');
-
-            shouldBe("nodeList.length", "2");
-
-            var index = 0;
-            for (var item of nodeList)
-                shouldBe('item', 'children[index++]');
-
-            pair = Array.from(nodeList);
-            shouldBe('pair[0]', 'children[0]');
-            shouldBe('pair[1]', 'children[1]');
-
-            index = 0;
-            var node;
-            var forEachIndex;
-            var forEachContainer;
-            var thisValue;
-            nodeList.forEach(function(n, i, c) {
-                node = n;
-                forEachIndex = i;
-                forEachContainer = c;
-                thisValue = this;
-                shouldBe('forEachContainer', 'nodeList');
-                shouldBe('forEachIndex', 'index');
-                shouldBe('node', 'children[index++]');
-                shouldBe('thisValue', 'window');
-            });
-
-            nodeList.forEach(function() {
-                thisValue = this;
-                shouldBe('thisValue', 'window');
-            }, undefined);
-
-            var givenThisValue = nodeList;
-            nodeList.forEach(function() {
-                thisValue = this;
-                shouldBe('thisValue', 'givenThisValue');
-            }, givenThisValue);
-
-            var iterator = nodeList.keys();
-            shouldBe('iterator.next().value', '0');
-            shouldBe('iterator.next().value', '1');
-            checkEndIterator(iterator.next());
-
-            var iterator = nodeList.values();
-            shouldBe('iterator.next().value', 'children[0]');
-            shouldBe('iterator.next().value', 'children[1]');
-            checkEndIterator(iterator.next());
-
-            var iterator = nodeList.entries();
-            var pair = iterator.next().value;
-            shouldBe('pair.length', '2');
-            shouldBe('pair[0]', '0');
-            shouldBe('pair[1]', 'children[0]');
-            pair = iterator.next().value;
-            shouldBe('pair.length', '2');
-            shouldBe('pair[0]', '1');
-            shouldBe('pair[1]', 'children[1]');
-            checkEndIterator(iterator.next());
-
-            testingGround.appendChild(document.createElement('ul'));
-            testingGround.appendChild(document.createElement('p'));
-            checkEndIterator(iterator.next());
-
-            var descriptor = Object.getOwnPropertyDescriptor(NodeList.prototype, Symbol.iterator);
-            shouldBeTrue('descriptor.configurable');
-            shouldBeTrue('descriptor.writable');
-            shouldBeFalse('descriptor.enumerable');
-
-            shouldNotThrow('NodeList.prototype[Symbol.iterator] = valuesFunction;');
-            var counter = 0;
-            for (var a of nodeList) {
-                shouldBeTrue('a instanceof Node');
-                counter++;
+            function checkItemType(item) {
+                return item instanceof Node;
             }
-            shouldBe('counter', '4');
+            function createIterable(items) {
+                items.push(nodes[0]);
+                items.push(nodes[1]);
+                return nodeList;
+            }
+            function updateIterable() {
+                testingGround.appendChild(document.createElement('ul'));
+                testingGround.appendChild(document.createElement('p'));
+            }
         </script>
+        <script src="iterable-tests.js"></script>
         <script src="../../resources/js-test-post.js"></script>
     </body>
 </html>

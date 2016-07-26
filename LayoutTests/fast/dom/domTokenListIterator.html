@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title class="a b">Testing of DOMTokenList iterable capacities</title>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description('Testing of DOMTokenList iterable capacities.');
+
+            var testingGround = document.getElementsByTagName('title')[0];
+            var classList = testingGround.classList;
+
+            function checkItemType(item) {
+                return typeof item === 'string';
+            }
+            function createIterable(items) {
+                items.push(classList[0]);
+                items.push(classList[1]);
+                return classList;
+            }
+            function updateIterable() {
+                testingGround.setAttribute("class", "a b c d");
+            }
+          </script>
+        <script src="iterable-tests.js"></script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

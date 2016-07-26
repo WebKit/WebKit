@@ -1,3 +1,16 @@
+2016-07-26  Youenn Fablet  <youenn@apple.com>
+
+        DOMTokenList should be iterable
+        https://bugs.webkit.org/show_bug.cgi?id=160183
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/domTokenListIterator-expected.txt: Added.
+        * fast/dom/domTokenListIterator.html: Added.
+        * fast/dom/iterable-tests.js: Added.
+        * fast/dom/nodeListIterator-expected.txt:
+        * fast/dom/nodeListIterator.html: Making use of iterable-tests.js
+
 2016-07-26  John Wilander  <wilander@apple.com>
 
         Stop supporting compressed character sets BOCU-1 and SCSU
