@@ -1,3 +1,25 @@
+2016-07-26  John Wilander  <wilander@apple.com>
+
+        Stop supporting compressed character sets BOCU-1 and SCSU
+        https://bugs.webkit.org/show_bug.cgi?id=159581
+
+        Reviewed by Brent Fulgham.
+
+        WebKit should not support the compressed character sets BOCU-1 and SCSU.
+        Chrome and Firefox don't and these old formats may pass server-side character
+        filters while still rendering in WebKit.
+
+        The HTML specification says "The above prohibits supporting, for example,
+        CESU-8, UTF-7, BOCU-1, SCSU, EBCDIC, and UTF-32."
+        https://html.spec.whatwg.org/#character-encodings
+
+        * http/tests/misc/char-encoding-bocu-1-blacklisted-expected.txt: Added.
+        * http/tests/misc/char-encoding-bocu-1-blacklisted.html: Added.
+        * http/tests/misc/char-encoding-scsu-blacklisted-expected.txt: Added.
+        * http/tests/misc/char-encoding-scsu-blacklisted.html: Added.
+        * http/tests/misc/resources/bocu-1-cyrillic.php: Added.
+        * http/tests/misc/resources/scsu-cyrillic.php: Added.
+
 2016-07-26  Youenn Fablet  <youenn@apple.com>
 
         Remove ClientCredentialPolicy cross-origin option from ResourceLoaderOptions
