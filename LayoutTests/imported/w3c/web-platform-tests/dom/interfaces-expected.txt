@@ -1306,7 +1306,7 @@ PASS Range interface: constant END_TO_END on interface object
 PASS Range interface: constant END_TO_END on interface prototype object 
 PASS Range interface: constant END_TO_START on interface object 
 PASS Range interface: constant END_TO_START on interface prototype object 
-FAIL Range interface: operation compareBoundaryPoints(unsigned short,Range) assert_equals: property has wrong .length expected 2 but got 0
+PASS Range interface: operation compareBoundaryPoints(unsigned short,Range) 
 PASS Range interface: operation deleteContents() 
 PASS Range interface: operation extractContents() 
 PASS Range interface: operation cloneContents() 
