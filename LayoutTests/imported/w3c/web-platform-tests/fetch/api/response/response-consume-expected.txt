@@ -3,9 +3,13 @@ PASS Consume response's body as text
 PASS Consume response's body as blob 
 PASS Consume response's body as arrayBuffer 
 PASS Consume response's body as json 
-FAIL Consume response's body as formData promise_test: Unhandled rejection with value: undefined
+FAIL Consume response's body as formData promise_test: Unhandled rejection with value: "Not implemented"
 PASS Consume blob response's body as blob 
 PASS Consume blob response's body as text 
 PASS Consume blob response's body as json 
 PASS Consume blob response's body as arrayBuffer 
+PASS Consume stream response's body as blob 
+PASS Consume stream response's body as text 
+PASS Consume stream response's body as json 
+PASS Consume stream response's body as arrayBuffer 
 

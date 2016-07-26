@@ -51,3 +51,27 @@ function fillFetchHeaders(headers, headersInit)
         @Headers.prototype.@appendFromJS.@call(headers, name, headersInit[name]);
     }
 }
+
+function consumeStream(response, type)
+{
+    @assert(response instanceof @Response);
+    @assert(response.@body instanceof @ReadableStream);
+
+    if (@isReadableStreamDisturbed(response.@body))
+        return @Promise.@reject(new @TypeError("Cannot consume a disturbed Response body ReadableStream"));
+
+    try {
+        let reader = new @ReadableStreamReader(response.@body);
+
+        @Response.prototype.@startConsumingStream.@call(response, type);
+        let pull = (result) => {
+            if (result.done)
+                return @Response.prototype.@finishConsumingStream.@call(response);
+            @Response.prototype.@consumeChunk.@call(response, result.value);
+            return @Promise.prototype.@then.@call(@readFromReadableStreamReader(reader), pull);
+        }
+        return @Promise.prototype.@then.@call(@readFromReadableStreamReader(reader), pull);
+    } catch(e) {
+        return @Promise.@reject(e);
+    }
+}

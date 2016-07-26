@@ -1631,6 +1631,7 @@
 		41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */; };
 		41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */; };
 		41C760B10EDE03D300C1655F /* ScriptState.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C760B00EDE03D300C1655F /* ScriptState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41CF8BE71D46226700707DC9 /* FetchBodyConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */; };
 		41D015CA0F4B5C71004A662F /* ContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D015C80F4B5C71004A662F /* ContentType.h */; };
 		41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D015C90F4B5C71004A662F /* ContentType.cpp */; };
 		41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */; };
@@ -9218,6 +9219,9 @@
 		41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformMessagePortChannel.cpp; path = default/PlatformMessagePortChannel.cpp; sourceTree = "<group>"; };
 		41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformMessagePortChannel.h; path = default/PlatformMessagePortChannel.h; sourceTree = "<group>"; };
 		41C760B00EDE03D300C1655F /* ScriptState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptState.h; sourceTree = "<group>"; };
+		41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodyConsumer.cpp; sourceTree = "<group>"; };
+		41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBodyConsumer.h; sourceTree = "<group>"; };
+		41CF8BE61D46222C00707DC9 /* FetchInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchInternals.js; sourceTree = "<group>"; };
 		41D015C80F4B5C71004A662F /* ContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentType.h; sourceTree = "<group>"; };
 		41D015C90F4B5C71004A662F /* ContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentType.cpp; sourceTree = "<group>"; };
 		41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
@@ -17098,12 +17102,15 @@
 				41F54F7D1C50C4F600338488 /* FetchBody.cpp */,
 				41F54F7E1C50C4F600338488 /* FetchBody.h */,
 				41F54F7F1C50C4F600338488 /* FetchBody.idl */,
+				41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */,
+				41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */,
 				4147E2B31C89912600A7E715 /* FetchBodyOwner.cpp */,
 				4147E2B21C88337F00A7E715 /* FetchBodyOwner.h */,
 				41F54F821C50C4F600338488 /* FetchHeaders.cpp */,
 				41F54F831C50C4F600338488 /* FetchHeaders.h */,
 				41F54F841C50C4F600338488 /* FetchHeaders.idl */,
 				41F54F851C50C4F600338488 /* FetchHeaders.js */,
+				41CF8BE61D46222C00707DC9 /* FetchInternals.js */,
 				4147E2B41C89912600A7E715 /* FetchLoader.cpp */,
 				4147E2B51C89912600A7E715 /* FetchLoader.h */,
 				4147E2B61C89912600A7E715 /* FetchLoaderClient.h */,
@@ -30772,6 +30779,7 @@
 				BC06EDE30BFD6D0D00856E9D /* JSHTMLTableCellElement.cpp in Sources */,
 				BC06ED9D0BFD660600856E9D /* JSHTMLTableColElement.cpp in Sources */,
 				BC06EE040BFD71AA00856E9D /* JSHTMLTableElement.cpp in Sources */,
+				41CF8BE71D46226700707DC9 /* FetchBodyConsumer.cpp in Sources */,
 				BC06ED9F0BFD660600856E9D /* JSHTMLTableRowElement.cpp in Sources */,
 				BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */,
 				D6489D25166FFCF1007C031B /* JSHTMLTemplateElement.cpp in Sources */,

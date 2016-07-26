@@ -818,6 +818,7 @@ set(WebCore_SOURCES
 
     Modules/fetch/DOMWindowFetch.cpp
     Modules/fetch/FetchBody.cpp
+    Modules/fetch/FetchBodyConsumer.cpp
     Modules/fetch/FetchBodyOwner.cpp
     Modules/fetch/FetchHeaders.cpp
     Modules/fetch/FetchLoader.cpp

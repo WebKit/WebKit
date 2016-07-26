@@ -33,6 +33,7 @@
 
 #include "Blob.h"
 #include "DOMFormData.h"
+#include "FetchBodyConsumer.h"
 #include "FetchLoader.h"
 #include "JSDOMPromise.h"
 
@@ -70,13 +71,14 @@ public:
     FetchBody() = default;
 
     void loadingFailed();
-    void loadedAsArrayBuffer(RefPtr<ArrayBuffer>&&);
-    void loadedAsText(String&&);
+    void loadingSucceeded();
 
     RefPtr<FormData> bodyForInternalRequest() const;
 
-    enum class Type { None, ArrayBuffer, Loading, Text, Blob, FormData };
+    enum class Type { None, ArrayBuffer, Blob, FormData, Text, Loading, Loaded, ReadableStream };
     Type type() const { return m_type; }
+
+    FetchBodyConsumer& consumer() { return m_consumer; }
 
 private:
     FetchBody(Ref<Blob>&&);
@@ -84,21 +86,12 @@ private:
     FetchBody(String&&);
     FetchBody(Type type) : m_type(type) { }
 
-    struct Consumer {
-        enum class Type { Text, Blob, JSON, ArrayBuffer };
-
-        Type type;
-        DeferredWrapper promise;
-    };
-    void consume(FetchBodyOwner&, Consumer::Type, DeferredWrapper&&);
+    void consume(FetchBodyOwner&, DeferredWrapper&&);
 
     Vector<uint8_t> extractFromText() const;
-    void consumeArrayBuffer(Consumer::Type, DeferredWrapper&);
-    void consumeText(Consumer::Type, DeferredWrapper&);
-    void consumeBlob(FetchBodyOwner&, Consumer::Type, DeferredWrapper&&);
-    static FetchLoader::Type loadingType(Consumer::Type);
-    static void fulfillTextPromise(FetchBody::Consumer::Type, const String&, DeferredWrapper&);
-    static void fulfillArrayBufferPromise(FetchBody::Consumer::Type, const String&, DeferredWrapper&);
+    void consumeArrayBuffer(DeferredWrapper&);
+    void consumeText(DeferredWrapper&);
+    void consumeBlob(FetchBodyOwner&, DeferredWrapper&&);
 
     Type m_type { Type::None };
     String m_mimeType;
@@ -109,7 +102,8 @@ private:
     RefPtr<ArrayBuffer> m_data;
     String m_text;
 
-    Optional<Consumer> m_consumer;
+    FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
+    Optional<DeferredWrapper> m_consumePromise;
 };
 
 } // namespace WebCore
