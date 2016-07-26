@@ -30,6 +30,9 @@ function main() {
         var analysisTaskPage = new AnalysisTaskPage();
         analysisTaskPage.setParentPage(analysisCategoryPage);
 
+        var buildRequestQueuePage = new BuildRequestQueuePage();
+        buildRequestQueuePage.setParentPage(analysisCategoryPage);
+
         var heading = new Heading(manifest.siteTitle);
         heading.addPageGroup([summaryPage, chartsPage, analysisCategoryPage].filter(function (page) { return page; }));
 
@@ -42,6 +45,7 @@ function main() {
         router.addPage(chartsPage);
         router.addPage(createAnalysisTaskPage);
         router.addPage(analysisTaskPage);
+        router.addPage(buildRequestQueuePage);
         router.addPage(analysisCategoryPage);
         for (var page of dashboardPages)
             router.addPage(page);

@@ -177,7 +177,7 @@ describe('/api/build-requests', function () {
             assert.ok(!buildRequests[0].hasFinished());
             assert.ok(!buildRequests[0].hasStarted());
             assert.ok(buildRequests[0].isPending());
-            assert.equal(buildRequests[0].statusLabel(), 'Waiting to be scheduled');
+            assert.equal(buildRequests[0].statusLabel(), 'Waiting');
 
             assert.equal(buildRequests[1].id(), 701);
             assert.equal(buildRequests[1].testGroupId(), 600);
@@ -188,7 +188,7 @@ describe('/api/build-requests', function () {
             assert.ok(!buildRequests[1].hasFinished());
             assert.ok(!buildRequests[1].hasStarted());
             assert.ok(buildRequests[1].isPending());
-            assert.equal(buildRequests[1].statusLabel(), 'Waiting to be scheduled');
+            assert.equal(buildRequests[1].statusLabel(), 'Waiting');
 
             assert.equal(buildRequests[2].id(), 702);
             assert.equal(buildRequests[2].testGroupId(), 600);
@@ -199,7 +199,7 @@ describe('/api/build-requests', function () {
             assert.ok(!buildRequests[2].hasFinished());
             assert.ok(!buildRequests[2].hasStarted());
             assert.ok(buildRequests[2].isPending());
-            assert.equal(buildRequests[2].statusLabel(), 'Waiting to be scheduled');
+            assert.equal(buildRequests[2].statusLabel(), 'Waiting');
 
             assert.equal(buildRequests[3].id(), 703);
             assert.equal(buildRequests[3].testGroupId(), 600);
@@ -210,7 +210,7 @@ describe('/api/build-requests', function () {
             assert.ok(!buildRequests[3].hasFinished());
             assert.ok(!buildRequests[3].hasStarted());
             assert.ok(buildRequests[3].isPending());
-            assert.equal(buildRequests[3].statusLabel(), 'Waiting to be scheduled');
+            assert.equal(buildRequests[3].statusLabel(), 'Waiting');
 
             let osx = Repository.findById(9);
             assert.equal(osx.name(), 'OS X');

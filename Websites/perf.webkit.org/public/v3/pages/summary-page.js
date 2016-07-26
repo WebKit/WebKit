@@ -33,7 +33,7 @@ class SummaryPage extends PageWithHeading {
         super.open(state);
 
         var current = Date.now();
-        var timeRange = [current - 7 * 24 * 3600 * 1000, current];
+        var timeRange = [current - 24 * 3600 * 1000, current];
         for (var group of this._configGroups)
             group.fetchAndComputeSummary(timeRange).then(this.render.bind(this));
     }
@@ -250,7 +250,7 @@ class SummaryPageConfigurationGroup {
         this._measurementSets = [];
         this._configurationList = [];
         this._setToRatio = new Map;
-        this._ratio = null;
+        this._ratio = NaN;
         this._label = null;
         this._missingPlatforms = new Set;
         this._platformsWithoutBaseline = new Set;

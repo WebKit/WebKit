@@ -19,7 +19,7 @@ function main($path) {
         if (!$group)
             exit_with_error('GroupNotFound', array('id' => $group_id));
         $test_groups = array($group);
-        $build_requests_fetcher->fetch_for_group($group_id);
+        $build_requests_fetcher->fetch_for_group($group['testgroup_task'], $group_id);
     } else {
         $task_id = array_get($_GET, 'task');
         if (!$task_id)

@@ -5,6 +5,8 @@ class BuildRequest extends DataModelObject {
     constructor(id, object)
     {
         super(id, object);
+        this._triggerable = object.triggerable;
+        this._analysisTaskId = object.task;
         this._testGroupId = object.testGroupId;
         console.assert(!object.testGroup || object.testGroup instanceof TestGroup);
         this._testGroup = object.testGroup;
@@ -20,6 +22,7 @@ class BuildRequest extends DataModelObject {
         this._status = object.status;
         this._statusUrl = object.url;
         this._buildId = object.build;
+        this._createdAt = new Date(object.createdAt);
         this._result = null;
     }
 
@@ -33,6 +36,7 @@ class BuildRequest extends DataModelObject {
         this._buildId = object.build;
     }
 
+    analysisTaskId() { return this._analysisTaskId; }
     testGroupId() { return this._testGroupId; }
     testGroup() { return this._testGroup; }
     platform() { return this._platform; }
@@ -49,7 +53,7 @@ class BuildRequest extends DataModelObject {
     {
         switch (this._status) {
         case 'pending':
-            return 'Waiting to be scheduled';
+            return 'Waiting';
         case 'scheduled':
             return 'Scheduled';
         case 'running':
@@ -65,12 +69,65 @@ class BuildRequest extends DataModelObject {
     statusUrl() { return this._statusUrl; }
 
     buildId() { return this._buildId; }
+    createdAt() { return this._createdAt; }
+
+    waitingTime(referenceTime)
+    {
+        const units = [
+            {unit: 'week', length: 7 * 24 * 3600},
+            {unit: 'day', length: 24 * 3600},
+            {unit: 'hour', length: 3600},
+            {unit: 'minute', length: 60},
+        ];
+
+        var diff = (referenceTime - this.createdAt()) / 1000;
+
+        var indexOfFirstSmallEnoughUnit = units.length - 1;
+        for (var i = 0; i < units.length; i++) {
+            if (diff > 1.5 * units[i].length) {
+                indexOfFirstSmallEnoughUnit = i;
+                break;
+            }
+        }
+
+        var label = '';
+        var lastUnit = false;
+        for (var i = indexOfFirstSmallEnoughUnit; !lastUnit; i++) {
+            lastUnit = i == indexOfFirstSmallEnoughUnit + 1 || i == units.length - 1;
+            var length = units[i].length;
+            var valueForUnit = lastUnit ? Math.round(diff / length) : Math.floor(diff / length);
+
+            var unit = units[i].unit + (valueForUnit == 1 ? '' : 's');
+            if (label)
+                label += ' ';
+            label += `${valueForUnit} ${unit}`;
+
+            diff = diff - valueForUnit * length;
+        }
+
+        return label;
+    }
 
     result() { return this._result; }
     setResult(result)
     {
         this._result = result;
         this._testGroup.didSetResult(this);
+    }
+
+    static fetchTriggerables()
+    {
+        return this.cachedFetch('/api/triggerables/').then(function (response) {
+            return response.triggerables.map(function (entry) { return {id: entry.id, name: entry.name}; });
+        });
+    }
+
+    // FIXME: Create a real model object for triggerables.
+    static cachedRequestsForTriggerableID(id)
+    {
+        return this.all().filter(function (request) {
+            return request._triggerable == id;
+        });
     }
 
     static fetchForTriggerable(triggerable)

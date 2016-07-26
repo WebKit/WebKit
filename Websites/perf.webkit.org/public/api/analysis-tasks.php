@@ -83,7 +83,6 @@ function fetch_associated_data_for_tasks($db, &$tasks) {
         $task = &$task_by_id[$build_count['task']];
         $task['buildRequestCount'] = $build_count['total'];
         $task['finishedBuildRequestCount'] = $build_count['finished'];
-        $task['category'] = determine_category($task);
     }
 
     return array('analysisTasks' => $tasks, 'bugs' => $bugs, 'commits' => $commits);
@@ -103,27 +102,12 @@ function format_task($task_row) {
         'startRunTime' => Database::to_js_time($task_row['task_start_run_time']),
         'endRun' => $task_row['task_end_run'],
         'endRunTime' => Database::to_js_time($task_row['task_end_run_time']),
-        'category' => null,
         'result' => $task_row['task_result'],
         'needed' => $task_row['task_needed'] ? Database::is_true($task_row['task_needed']) : null,
         'bugs' => array(),
         'causes' => array(),
         'fixes' => array(),
     );
-}
-
-function determine_category($task) {
-    $category = 'unconfirmed';
-
-    $result = $task['result'];
-    if ($result == 'unchanged' || $result == 'inconclusive' || $task['fixes'] || ($result == 'progression' && $task['causes']))
-        $category = 'closed';
-    else if ($task['causes'])
-        $category = 'identified';
-    else if ($result)
-        $category = 'bisecting';
-
-    return $category;
 }
 
 main(array_key_exists('PATH_INFO', $_SERVER) ? explode('/', trim($_SERVER['PATH_INFO'], '/')) : array());

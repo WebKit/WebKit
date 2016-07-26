@@ -71,7 +71,7 @@ class AnalysisTask extends LabeledObject {
     fixes() { return this._fixes; }
     platform() { return this._platform; }
     metric() { return this._metric; }
-    category() { return this._category; }
+
     changeType() { return this._changeType; }
 
     updateName(newName) { return this._updateRemoteState({name: newName}); }
@@ -146,12 +146,25 @@ class AnalysisTask extends LabeledObject {
         });
     }
 
+    category()
+    {
+        var category = 'unconfirmed';
+
+        if (this._changeType == 'unchanged' || this._changeType == 'inconclusive'
+            || (this._changeType == 'regression' && this._fixes.length)
+            || (this._changeType == 'progression' && (this._causes.length || this._fixes.length)))
+            category = 'closed';
+        else if (this._causes.length || this._fixes.length || this._changeType == 'regression' || this._changeType == 'progression')
+            category = 'investigated';
+
+        return category;
+    }
+
     static categories()
     {
         return [
             'unconfirmed',
-            'bisecting',
-            'identified',
+            'investigated',
             'closed'
         ];
     }

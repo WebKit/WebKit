@@ -1,3 +1,119 @@
+2016-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should show the list of a pending A/B testing jobs
+        https://bugs.webkit.org/show_bug.cgi?id=160138
+
+        Rubber-stamped by Chris Dumez.
+
+        Add a page to show the list of A/B testing build requests per triggerable. Ideally, we would like to
+        see a queue per builder but that would require changes to database tables and syncing scripts.
+
+        Because this page is most useful when the analysis task with which each build request is associated,
+        JSON API at /api/build-requests/ has been modified to return the analysis task ID for each request.
+
+        Also streamlined the page that shows the list of analysis tasks per Chris' feedback by consolidating
+        "Bisecting" and "Identified" into "Investigated" and moving the toolbar from the upper left corner
+        inside the heading to right beneath the heading above the table. Also made the category page serialize
+        the filter an user had typed in so that reloading the page doesn't clear it.
+
+        * public/api/analysis-tasks.php:
+        (fetch_associated_data_for_tasks): Removed 'category' from the list of columns returned as the notion
+        of 'category' is only relevant in UI, and it's better computed in the front-end.
+        (format_task): Ditto.
+        (determine_category): Deleted.
+
+        * public/api/test-groups.php:
+        (main):
+
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestsFetcher::fetch_for_task): Include the analysis task ID in the rows.
+        (BuildRequestsFetcher::fetch_for_group): Ditto. Ditto.
+        (BuildRequestsFetcher::fetch_incomplete_requests_for_triggerable): Ditto.
+        (BuildRequestsFetcher::results_internal): Ditto.
+
+        * public/v3/index.html:
+
+        * public/v3/main.js:
+        (main): Create a newly introduced BuildRequestQueuePage as a subpage of AnalysisCategoryPage.
+
+        * public/v3/components/ratio-bar-graph.js:
+        (RatioBarGraph.prototype.update): Fixed a bogus assertion here. ratio can be any number. The coercion
+        into [-1, 1] is done inside RatioBarGraph's render() function.
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.prototype.category): Moved the code to compute the analysis task's category from
+        determine_category in analysis-tasks.php. Also merged "bisecting" and "identified" into "investigated".
+        (AnalysisTask.categories): Merged "bisecting" and "identified" into "investigated".
+
+        * public/v3/models/build-request.js:
+        (BuildRequest): Remember the triggerable and the analysis task associated with this request as well as
+        the time at when this request was created.        
+        (BuildRequest.prototype.analysisTaskId): Added.
+        (BuildRequest.prototype.statusLabel): Use a shorter label: "Waiting" for "pending" status.
+        (BuildRequest.prototype.createdAt): Added.
+        (BuildRequest.prototype.waitingTime): Added. Returns a human readable time duration since the creation
+        of this build request such as "2 hours 21 minutes" against a reference time.
+        (BuildRequest.fetchTriggerables): Added.
+        (BuildRequest.cachedRequestsForTriggerableID): Added. Used when navigating back to 
+
+        * public/v3/pages/analysis-category-page.js:
+        (AnalysisCategoryPage): Construct AnalysisCategoryToolbar and store it in this._categoryToolbar since it
+        no longer inherits from Toolbar class, which PageWithHeading recognizes and stores.
+        (AnalysisCategoryPage.prototype.title):
+        (AnalysisCategoryPage.prototype.serializeState): Added.
+        (AnalysisCategoryPage.prototype.stateForCategory): Added. Include the filter in the serialization.
+        (AnalysisCategoryPage.prototype.updateFromSerializedState): Restore the filter from the URL state.
+        (AnalysisCategoryPage.prototype.filterDidChange): Added. Called by AnalysisCategoryToolbar to update
+        the URL state in addition to calling render() as done previously via setFilterCallback.
+        (AnalysisCategoryPage.prototype.render): Always call _categoryToolbar.render() since the hyperlinks for
+        the category pages now include the filter, which can be updated in each call.
+        (AnalysisCategoryPage.cssTemplate):
+
+        * public/v3/pages/analysis-category-toolbar.js:
+        (AnalysisCategoryToolbar): Inherits from ComponentBase instead of Toolbar since AnalysisCategoryToolbar
+        no longer works with Heading class unlike other subclasses of Toolbar class.
+        (AnalysisCategoryToolbar.prototype.setCategoryPage): Added.
+        (AnalysisCategoryToolbar.prototype.setFilterCallback): Deleted.
+        (AnalysisCategoryToolbar.prototype.setFilter): Added. Used to restore from a serialized URL state.
+        (AnalysisCategoryToolbar.prototype.render): Don't recreate the input element as it clears the value as
+        well as the selection of the element. Also use AnalysisCategoryPage's stateForCategory to serialize the
+        category name and the current filter for each hyperlink.
+        (AnalysisCategoryToolbar.prototype._filterMayHaveChanged): Now takes an boolean argument specifying
+        whether the URL state should be updated or not. We update the URL only when a change event is fired to
+        avoid constantly updating it while an user is still typing.
+        (AnalysisCategoryToolbar.cssTemplate): Added.
+        (AnalysisCategoryToolbar.htmlTemplate): Added a button to open the newly added queue page.
+
+        * public/v3/pages/build-request-queue-page.js:
+        (BuildRequestQueuePage): Added.
+        (BuildRequestQueuePage.prototype.routeName): Added.
+        (BuildRequestQueuePage.prototype.pageTitle): Added.
+        (BuildRequestQueuePage.prototype.open): Added. Fetch open build requests for every triggerables using
+        the same API as the syncing scripts.
+        (BuildRequestQueuePage.prototype.render): Added.
+        (BuildRequestQueuePage.prototype._constructBuildRequestTable): Added. Construct a table for the list of
+        pending, scheduled or running build requests in the order syncing scripts would see. Note that the list
+        of build requests returned by /api/build-requests/* can contain completed, canceled, or failed requests
+        since the JSON returns all build requests associated with each test group if one of the requests of the
+        group have not finished. This helps syncing scripts picking the right builder for A/B testing when it
+        had previously been unloaded or crashed in the middle of processing a test group. This characteristics
+        of the API actually helps us here because we can reliably compute the total number of build requests in
+        the group. The first half of this function does this counting as well as collapses all but the first
+        unfinished build requests into a "contraction" row, which just shows the number of build requests that
+        are remaining in the group.
+        (BuildRequestQueuePage.cssTemplate): Added.
+        (BuildRequestQueuePage.htmlTemplate): Added.
+
+        * public/v3/pages/summary-page.js:
+        (SummaryPage.prototype.open): Use one-day median instead of seven-day median to compute the status.
+        (SummaryPageConfigurationGroup): Initialize _ratio to NaN. This was causing assertion failures in
+        RatioBarGraph's update() while measurement sets are being fetched.
+
+        * server-tests/api-build-requests-tests.js: Updated the tests per change in BuildRequest's statusLabel.
+        * unit-tests/analysis-task-tests.js: Ditto.
+        * unit-tests/test-groups-tests.js: Ditto.
+        * unit-tests/build-request-tests.js: Added tests for BuildRequest's waitingTime.
+
 2016-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r203035): Marking points as an outlier no longer updates charts

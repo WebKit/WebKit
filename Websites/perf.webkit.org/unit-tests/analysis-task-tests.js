@@ -175,7 +175,7 @@ describe('AnalysisTask', function () {
                 assert.ok(task.hasResults());
                 assert.ok(task.hasPendingRequests());
                 assert.equal(task.requestLabel(), '6 of 14');
-                assert.equal(task.category(), 'identified');
+                assert.equal(task.category(), 'investigated');
                 assert.equal(task.changeType(), 'regression');
                 assert.equal(task.startMeasurementId(), 37117949);
                 assert.equal(task.startTime(), 1454444458791);

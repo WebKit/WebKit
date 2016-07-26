@@ -2,8 +2,9 @@
 class AnalysisCategoryPage extends PageWithHeading {
     constructor()
     {
-        super('Analysis', new AnalysisCategoryToolbar);
-        this.toolbar().setFilterCallback(this.render.bind(this));
+        super('Analysis');
+        this._categoryToolbar = this.content().querySelector('analysis-category-toolbar').component();
+        this._categoryToolbar.setCategoryPage(this);
         this._renderedList = false;
         this._renderedFilter = false;
         this._fetched = false;
@@ -12,7 +13,7 @@ class AnalysisCategoryPage extends PageWithHeading {
 
     title()
     {
-        var category = this.toolbar().currentCategory();
+        var category = this._categoryToolbar.currentCategory();
         return (category ? category.charAt(0).toUpperCase() + category.slice(1) + ' ' : '') + 'Analysis Tasks';
     }
     routeName() { return 'analysis'; }
@@ -30,26 +31,50 @@ class AnalysisCategoryPage extends PageWithHeading {
         super.open(state);
     }
 
+    serializeState()
+    {
+        return this.stateForCategory(this._categoryToolbar.currentCategory());
+    }
+
+    stateForCategory(category)
+    {
+        var state = {category: category};
+        var filter = this._categoryToolbar.filter();
+        if (filter)
+            state.filter = filter;
+        return state;
+    }
+
     updateFromSerializedState(state, isOpen)
     {
         if (state.category instanceof Set)
             state.category = Array.from(state.category.values())[0];
+        if (state.filter instanceof Set)
+            state.filter = Array.from(state.filter.values())[0];
 
-        if (this.toolbar().setCategoryIfValid(state.category))
+        if (this._categoryToolbar.setCategoryIfValid(state.category))
             this._renderedList = false;
+
+        if (state.filter)
+            this._categoryToolbar.setFilter(state.filter);
 
         if (!isOpen)
             this.render();
+    }
+
+    filterDidChange(shouldUpdateState)
+    {
+        this.render();
+        if (shouldUpdateState)
+            this.scheduleUrlStateUpdate();
     }
 
     render()
     {
         Instrumentation.startMeasuringTime('AnalysisCategoryPage', 'render');
 
-        if (!this._renderedList) {
-            super.render();
-            this.toolbar().render();
-        }
+        super.render();
+        this._categoryToolbar.render();
 
         if (this._errorMessage) {
             console.assert(!this._fetched);
@@ -69,7 +94,7 @@ class AnalysisCategoryPage extends PageWithHeading {
             this._renderedList = true;
         }
 
-        var filter = this.toolbar().filter();
+        var filter = this._categoryToolbar.filter();
         if (filter || this._renderedFilter) {
             Instrumentation.startMeasuringTime('AnalysisCategoryPage', 'filterByKeywords');
             var keywordList = filter ? filter.toLowerCase().split(/\s+/) : [];
@@ -98,7 +123,7 @@ class AnalysisCategoryPage extends PageWithHeading {
         Instrumentation.startMeasuringTime('AnalysisCategoryPage', 'reconstructTaskList');
 
         console.assert(this.router());
-        var currentCategory = this.toolbar().currentCategory();
+        var currentCategory = this._categoryToolbar.currentCategory();
 
         var tasks = AnalysisTask.all().filter(function (task) {
             return task.category() == currentCategory;
@@ -164,6 +189,7 @@ class AnalysisCategoryPage extends PageWithHeading {
     static htmlTemplate()
     {
         return `
+            <div class="toolbar-container"><analysis-category-toolbar></analysis-category-toolbar></div>
             <div class="analysis-task-category">
                 <table>
                     <thead>
@@ -184,6 +210,10 @@ class AnalysisCategoryPage extends PageWithHeading {
     static cssTemplate()
     {
         return `
+            .toolbar-container {
+                text-align: center;
+            }
+
             .analysis-task-category {
                 width: calc(100% - 2rem);
                 margin: 1rem;

@@ -13,21 +13,23 @@ class BuildRequestsFetcher {
     }
 
     function fetch_for_task($task_id) {
-        $this->rows = $this->db->query_and_fetch_all('SELECT *
+        $this->rows = $this->db->query_and_fetch_all('SELECT *, testgroup_task as task_id
             FROM build_requests LEFT OUTER JOIN builds ON request_build = build_id, analysis_test_groups
             WHERE request_group = testgroup_id AND testgroup_task = $1
             ORDER BY request_group, request_order', array($task_id));
     }
 
-    function fetch_for_group($test_group_id) {
+    function fetch_for_group($task_id, $test_group_id) {
         $this->rows = $this->db->query_and_fetch_all('SELECT *
             FROM build_requests LEFT OUTER JOIN builds ON request_build = build_id
             WHERE request_group = $1 ORDER BY request_order', array($test_group_id));
+        foreach ($this->rows as &$row)
+            $row['task_id'] = $task_id;
     }
 
     function fetch_incomplete_requests_for_triggerable($triggerable_id) {
-        $this->rows = $this->db->query_and_fetch_all('SELECT * FROM build_requests,
-            (SELECT testgroup_id, (case when testgroup_author is not null then 0 else 1 end) as author_order, testgroup_created_at
+        $this->rows = $this->db->query_and_fetch_all('SELECT *, test_groups.testgroup_task as task_id FROM build_requests,
+            (SELECT testgroup_id, testgroup_task, (case when testgroup_author is not null then 0 else 1 end) as author_order, testgroup_created_at
                 FROM analysis_test_groups WHERE EXISTS
                     (SELECT 1 FROM build_requests WHERE testgroup_id = request_group AND request_status
                         IN (\'pending\', \'scheduled\', \'running\'))) AS test_groups
@@ -64,6 +66,7 @@ class BuildRequestsFetcher {
 
             array_push($requests, array(
                 'id' => $row['request_id'],
+                'task' => $row['task_id'],
                 'triggerable' => $row['request_triggerable'],
                 'test' => $resolve_ids ? $test_path_resolver->path_for_test($test_id) : $test_id,
                 'platform' => $resolve_ids ? $id_to_platform_name[$platform_id] : $platform_id,

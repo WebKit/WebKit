@@ -11,7 +11,7 @@ class RatioBarGraph extends ComponentBase {
 
     update(ratio, label, showWarningIcon)
     {
-        console.assert(isNaN(ratio) || (ratio >= -1 && ratio <= 1));
+        console.assert(typeof(ratio) == 'number');
         this._ratio = ratio;
         this._label = label;
         this._showWarningIcon = showWarningIcon;
