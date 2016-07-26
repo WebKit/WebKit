@@ -1,3 +1,27 @@
+2016-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Align NamedNodeMap with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=160204
+
+        Reviewed by Darin Adler.
+
+        * dom/html/level2/core/hc_namednodemapinvalidtype1-expected.txt: Removed.
+        * dom/html/level2/core/hc_namednodemapinvalidtype1.html: Removed.
+        * dom/xhtml/level2/core/hc_namednodemapinvalidtype1-expected.txt: Removed.
+        * dom/xhtml/level2/core/hc_namednodemapinvalidtype1.xhtml: Removed.
+        Drop outdated DOM level 2 tests that expect the wrong exception type to
+        be thrown when passing a non-Attr node in.
+
+        * fast/dom/NamedNodeMap-parameters-expected.txt: Added.
+        * fast/dom/NamedNodeMap-parameters.html: Added.
+        Add layout test coverage. I have verified that this test is passing in
+        both Firefox and Chrome.
+
+        * fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt:
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+        Update / rebaseline existing tests to reflect behavior change.
+
 2016-07-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Infinite Canvas context save() causes WebKit to crash

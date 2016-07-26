@@ -22,18 +22,23 @@
     GenerateIsReachable=ImplElementRoot,
     ImplementationLacksVTable,
 ] interface NamedNodeMap {
-
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    getter Node getNamedItem(optional DOMString name = "undefined");
-    [RaisesException] Node setNamedItem(Node node);
-    [RaisesException] Node removeNamedItem(optional DOMString name = "undefined");
-    getter Node item(optional unsigned long index = 0);
     readonly attribute unsigned long length;
 
-    // Introduced in DOM Level 2:
-
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters] Node getNamedItemNS(optional DOMString? namespaceURI = null, optional DOMString localName = "undefined");
-    [RaisesException] Node setNamedItemNS(Node node);
-    [ObjCLegacyUnnamedParameters, RaisesException] Node removeNamedItemNS(optional DOMString? namespaceURI = null, optional DOMString localName = "undefined");
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    getter Attr? getNamedItem(DOMString name);
+    [RaisesException] Attr? setNamedItem(Attr attr);
+    [RaisesException] Attr removeNamedItem(DOMString name);
+    getter Attr? item(unsigned long index);
+    Attr? getNamedItemNS(DOMString? namespaceURI, DOMString localName);
+    [RaisesException, ImplementedAs=setNamedItem] Attr? setNamedItemNS(Attr attr);
+    [RaisesException] Attr removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
+#else
+    getter Node? getNamedItem(DOMString name);
+    [RaisesException] Node? setNamedItem(Node node);
+    [RaisesException] Node removeNamedItem(DOMString name);
+    getter Node? item(unsigned long index);
+    [ObjCLegacyUnnamedParameters] Node? getNamedItemNS(DOMString? namespaceURI, DOMString localName);
+    [RaisesException, ImplementedAs=setNamedItem] Node? setNamedItemNS(Node node);
+    [ObjCLegacyUnnamedParameters, RaisesException] Node removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
+#endif
 };

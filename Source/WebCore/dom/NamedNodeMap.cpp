@@ -43,17 +43,17 @@ void NamedNodeMap::deref()
     m_element.deref();
 }
 
-RefPtr<Node> NamedNodeMap::getNamedItem(const AtomicString& name) const
+RefPtr<Attr> NamedNodeMap::getNamedItem(const AtomicString& name) const
 {
     return m_element.getAttributeNode(name);
 }
 
-RefPtr<Node> NamedNodeMap::getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const
+RefPtr<Attr> NamedNodeMap::getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const
 {
     return m_element.getAttributeNodeNS(namespaceURI, localName);
 }
 
-RefPtr<Node> NamedNodeMap::removeNamedItem(const AtomicString& name, ExceptionCode& ec)
+RefPtr<Attr> NamedNodeMap::removeNamedItem(const AtomicString& name, ExceptionCode& ec)
 {
     unsigned index = m_element.hasAttributes() ? m_element.findAttributeIndexByName(name, shouldIgnoreAttributeCase(m_element)) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
@@ -69,7 +69,7 @@ Vector<AtomicString> NamedNodeMap::supportedPropertyNames()
     return Vector<AtomicString>();
 }
 
-RefPtr<Node> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode& ec)
+RefPtr<Attr> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode& ec)
 {
     unsigned index = m_element.hasAttributes() ? m_element.findAttributeIndexByName(QualifiedName(nullAtom, localName, namespaceURI)) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
@@ -79,23 +79,21 @@ RefPtr<Node> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, c
     return m_element.detachAttribute(index);
 }
 
-RefPtr<Node> NamedNodeMap::setNamedItem(Node& node, ExceptionCode& ec)
+RefPtr<Attr> NamedNodeMap::setNamedItem(Attr& attr, ExceptionCode& ec)
 {
-    // Not mentioned in spec: throw a HIERARCHY_REQUEST_ERROR if the user passes in a non-attribute node
+    return m_element.setAttributeNode(attr, ec);
+}
+
+RefPtr<Attr> NamedNodeMap::setNamedItem(Node& node, ExceptionCode& ec)
+{
     if (!is<Attr>(node)) {
-        ec = HIERARCHY_REQUEST_ERR;
+        ec = TypeError;
         return nullptr;
     }
-
-    return m_element.setAttributeNode(downcast<Attr>(node), ec);
+    return setNamedItem(downcast<Attr>(node), ec);
 }
 
-RefPtr<Node> NamedNodeMap::setNamedItemNS(Node& node, ExceptionCode& ec)
-{
-    return setNamedItem(node, ec);
-}
-
-RefPtr<Node> NamedNodeMap::item(unsigned index) const
+RefPtr<Attr> NamedNodeMap::item(unsigned index) const
 {
     if (index >= length())
         return 0;

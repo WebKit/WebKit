@@ -48,7 +48,7 @@ PASS nonNumericPolicy('document.createEvent("MouseEvent").initMouseEvent("a", fa
 PASS nonNumericPolicy('document.createEvent("MouseEvent").initMouseEvent("a", false, false, null, 0, 0, 0, x, 0, false, false, false, false, 0, null)') is 'any type allowed'
 PASS nonNumericPolicy('document.createEvent("MouseEvent").initMouseEvent("a", false, false, null, 0, 0, 0, 0, x, false, false, false, false, 0, null)') is 'any type allowed'
 PASS nonNumericPolicy('document.createEvent("MouseEvent").initMouseEvent("a", false, false, null, 0, 0, 0, 0, 0, false, false, false, false, x, null)') is 'any type allowed'
-PASS nonNumericPolicy('document.body.attributes.item(x)') is 'any type allowed'
+PASS nonNumericPolicy('document.body.attributes.item(x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('document.createNodeIterator(document, x, null, false)') is 'any type allowed'
 PASS nonNumericPolicy('document.getElementsByTagName("div").item(x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('document.createRange().setStart(document, x)') is 'any type allowed (but not omitted)'

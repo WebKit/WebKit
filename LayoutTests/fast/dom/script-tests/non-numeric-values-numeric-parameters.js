@@ -291,7 +291,7 @@ shouldBe("nonNumericPolicy('document.createEvent(\"MouseEvent\").initMouseEvent(
 
 // NamedNodeMap
 
-shouldBe("nonNumericPolicy('document.body.attributes.item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.body.attributes.item(x)')", "'any type allowed (but not omitted)'");
 
 // NodeIterator
 

@@ -25,13 +25,13 @@
 #ifndef NamedNodeMap_h
 #define NamedNodeMap_h
 
+#include "Attr.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class Node;
 class Element;
 
 typedef int ExceptionCode;
@@ -51,17 +51,17 @@ public:
 
     // Public DOM interface.
 
-    RefPtr<Node> getNamedItem(const AtomicString&) const;
-    RefPtr<Node> removeNamedItem(const AtomicString& name, ExceptionCode&);
+    RefPtr<Attr> getNamedItem(const AtomicString&) const;
+    RefPtr<Attr> removeNamedItem(const AtomicString& name, ExceptionCode&);
     Vector<AtomicString> supportedPropertyNames();
 
-    RefPtr<Node> getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
-    RefPtr<Node> removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode&);
+    RefPtr<Attr> getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
+    RefPtr<Attr> removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode&);
 
-    RefPtr<Node> setNamedItem(Node&, ExceptionCode&);
-    RefPtr<Node> setNamedItemNS(Node&, ExceptionCode&);
+    RefPtr<Attr> setNamedItem(Attr&, ExceptionCode&);
+    RefPtr<Attr> setNamedItem(Node&, ExceptionCode&); // for legacy bindings.
 
-    RefPtr<Node> item(unsigned index) const;
+    RefPtr<Attr> item(unsigned index) const;
     unsigned length() const;
 
     Element& element() const { return m_element; }
