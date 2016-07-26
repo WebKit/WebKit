@@ -21,6 +21,7 @@
 .gridAutoRepeatAndFixedAfter { grid-template-rows: repeat(auto-fill, [first] 30px [last]) [foo] minmax(60px, 80px) [bar] minmax(45px, -webkit-max-content); }
 .gridAutoRepeatAndFixed { grid-template-rows: [start] repeat(2, 50px [a]) [middle] repeat(auto-fill, [autofoo] 15px [autobar]) minmax(5%, 10%) [end]; }
 .gridMultipleNames { grid-template-rows: [start] 20px [foo] 50% repeat(auto-fill, [bar] 20px [start foo]) [foo] 10% [end bar]; }
+.gridMultipleTracks { grid-template-rows: [start] 20px repeat(auto-fill, [a] 2em [b c] 10% [d]) [e] minmax(75px, 1fr) [last]; }
 
 .item { background-color: cyan; }
 
@@ -140,6 +141,16 @@
 
 <div class="grid gridMultipleNames gap">
     <div class="item" style="grid-row: foo / bar 2"  data-offset-y="40" data-offset-x="0" data-expected-height="180" data-expected-width="25"></div>
+</div>
+
+<div class="grid gridMultipleTracks">
+    <div class="item" style="grid-row: a / 2 c"  data-offset-y="20" data-offset-x="0" data-expected-height="84" data-expected-width="25"></div>
+    <div class="item" style="grid-row: 3 / e; grid-column: 2;"  data-offset-y="52" data-offset-x="25" data-expected-height="72" data-expected-width="25"></div>
+</div>
+
+<div class="grid gridMultipleTracks gap">
+    <div class="item" style="grid-row: a / c"  data-offset-y="40" data-offset-x="0" data-expected-height="32" data-expected-width="25"></div>
+    <div class="item" style="grid-row: 3 / last; grid-column: 2;"  data-offset-y="92" data-offset-x="25" data-expected-height="115" data-expected-width="25"></div>
 </div>
 
 </body>

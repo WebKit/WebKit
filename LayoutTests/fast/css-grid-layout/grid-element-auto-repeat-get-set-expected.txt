@@ -24,6 +24,10 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is 
 PASS element.style.gridTemplateColumns is "repeat(auto-fit, [foo bar] 150px)"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "0px [foo bar] 0px [foo bar]"
 PASS element.style.gridTemplateRows is "repeat(auto-fit, 24em [foo bar])"
+PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "[start] 200px 100px [end start] 200px 100px [end]"
+PASS element.style.gridTemplateColumns is "repeat(auto-fill, [start] 200px 100px [end])"
+PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "100px [foo a] 20px [b] 60px [c a] 20px [b] 60px [c a] 20px [b] 60px [c a] 20px [b] 60px [c a] 20px [b] 60px [c bar] 30px"
+PASS element.style.gridTemplateRows is "100px [foo] repeat(auto-fill, [a] 2em [b] 10% [c]) [bar] 3em"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "[foo bar] 0px [foo bar] 0px"
 PASS element.style.gridTemplateColumns is "repeat(auto-fit, [foo bar] minmax(270px, 1fr))"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "[foo] 0px [bar foo] 0px [bar foo] 0px [bar]"
@@ -40,6 +44,10 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is 
 PASS element.style.gridTemplateColumns is "[a] repeat(auto-fit, [z] 100px [y]) [b] 30px [c] 20px [e]"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "[a b] 30px [c d] 20px [e z] 0px [y z] 0px [y z] 0px [y z] 0px [y z] 0px [y]"
 PASS element.style.gridTemplateRows is "[a b] 30px [c d] 20px [e] repeat(auto-fit, [z] 100px [y])"
+PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "[start] 0px 0px [end start] 0px 0px [end]"
+PASS element.style.gridTemplateColumns is "repeat(auto-fit, [start] 200px 100px [end])"
+PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "100px [foo a] 0px [b] 0px [c a] 0px [b] 0px [c a] 0px [b] 0px [c a] 0px [b] 0px [c a] 0px [b] 0px [c bar] 30px"
+PASS element.style.gridTemplateRows is "100px [foo] repeat(auto-fit, [a] 2em [b] 10% [c]) [bar] 3em"
 
 Test invalid repeat syntax.
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"

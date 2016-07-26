@@ -66,7 +66,8 @@ private:
 
     unsigned m_insertionPoint;
     unsigned m_lastLine;
-    unsigned m_repetitions;
+    unsigned m_autoRepeatTotalTracks;
+    unsigned m_autoRepeatTrackListLength;
 };
 
 // Class with all the code related to grid items positions resolution.

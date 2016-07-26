@@ -68,6 +68,12 @@
     grid-template-rows: repeat(2, 10px) [end] auto;
     grid-template-columns: repeat(2, 250px) 15% [last];
 }
+
+.multipleTrackRepeat {
+    grid-template-rows: repeat(3, -webkit-min-content [a] -webkit-max-content [b c] 20px [d]) [e] 1em;
+    grid-template-columns: [start] 20px repeat(2, [a] minmax(20px, -webkit-min-content) -webkit-max-content [b]) 200px [c] -webkit-min-content [end];
+}
+
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -94,6 +100,7 @@
     <div class="gridItem"></div>
 </div>
 <div class="grid definite mixNonRepeatAfterRepeat alignContentStart" id="mixNonRepeatAfterRepeat"></div>
+<div class="grid multipleTrackRepeat" id="multipleTrackRepeat"></div>
 
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script>
@@ -111,6 +118,7 @@
     testGridTemplatesValues(document.getElementById("leadingNamedGridLineRepeat"), "[start] 250px 250px", "[start] 10px 10px");
     testGridTemplatesValues(document.getElementById("mixRepeatAfterNonRepeat"), "[start] 140px 250px 250px", "44px 10px 10px");
     testGridTemplatesValues(document.getElementById("mixNonRepeatAfterRepeat"), "250px 250px 120px [last]", "10px 10px [end] 0px");
+ testGridTemplatesValues(document.getElementById("multipleTrackRepeat"), "[start] 20px [a] 20px 0px [b a] 20px 0px [b] 200px [c] 0px [end]", "0px [a] 0px [b c] 20px [d] 0px [a] 0px [b c] 20px [d] 0px [a] 0px [b c] 20px [d e] 16px");
 
     debug("");
     debug("Test invalid repeat syntax.");
@@ -130,8 +138,10 @@
     testInvalidSyntax("repeat(1, [foo])");
     testInvalidSyntax("repeat(1, )");
     testInvalidSyntax("repeat(1)");
+    testInvalidSyntax("repeat(3, [a] [a] 100px 200px)");
     // Nesting is no allowed.
     testInvalidSyntax("repeat(2, repeat(1, auto))");
+    testInvalidSyntax("repeat(2, [a] 100px 200px repeat(2, 20px))");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

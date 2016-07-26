@@ -6022,9 +6022,6 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list, bool& isAutoRep
 
     unsigned numberOfTracks = 0;
     while (arguments->current()) {
-        if (isAutoRepeat && numberOfTracks)
-            return false;
-
         RefPtr<CSSValue> trackSize = parseGridTrackSize(*arguments);
         if (!trackSize)
             return false;

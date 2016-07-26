@@ -1036,11 +1036,12 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
 class OrderedNamedLinesCollector {
     WTF_MAKE_NONCOPYABLE(OrderedNamedLinesCollector);
 public:
-    OrderedNamedLinesCollector(const RenderStyle& style, bool isRowAxis, unsigned repetitions)
+    OrderedNamedLinesCollector(const RenderStyle& style, bool isRowAxis, unsigned autoRepeatTracksCount)
         : m_orderedNamedGridLines(isRowAxis ? style.orderedNamedGridColumnLines() : style.orderedNamedGridRowLines())
         , m_orderedNamedAutoRepeatGridLines(isRowAxis ? style.autoRepeatOrderedNamedGridColumnLines() : style.autoRepeatOrderedNamedGridRowLines())
         , m_insertionPoint(isRowAxis ? style.gridAutoRepeatColumnsInsertionPoint() : style.gridAutoRepeatRowsInsertionPoint())
-        , m_repetitions(repetitions)
+        , m_autoRepeatTotalTracks(autoRepeatTracksCount)
+        , m_autoRepeatTrackListLength(isRowAxis ? style.gridAutoRepeatColumns().size() : style.gridAutoRepeatRows().size())
     {
     }
 
@@ -1055,7 +1056,8 @@ private:
     const OrderedNamedGridLinesMap& m_orderedNamedGridLines;
     const OrderedNamedGridLinesMap& m_orderedNamedAutoRepeatGridLines;
     unsigned m_insertionPoint;
-    unsigned m_repetitions;
+    unsigned m_autoRepeatTotalTracks;
+    unsigned m_autoRepeatTrackListLength;
 };
 
 void OrderedNamedLinesCollector::appendLines(CSSGridLineNamesValue& lineNamesValue, unsigned index, NamedLinesType type) const
@@ -1078,9 +1080,10 @@ void OrderedNamedLinesCollector::collectLineNamesForIndex(CSSGridLineNamesValue&
         return;
     }
 
-    ASSERT(m_repetitions);
-    if (i > m_insertionPoint + m_repetitions) {
-        appendLines(lineNamesValue, i - (m_repetitions - 1), NamedLines);
+    ASSERT(m_autoRepeatTotalTracks);
+
+    if (i > m_insertionPoint + m_autoRepeatTotalTracks) {
+        appendLines(lineNamesValue, i - (m_autoRepeatTotalTracks - 1), NamedLines);
         return;
     }
 
@@ -1090,14 +1093,16 @@ void OrderedNamedLinesCollector::collectLineNamesForIndex(CSSGridLineNamesValue&
         return;
     }
 
-    if (i == m_insertionPoint + m_repetitions) {
-        appendLines(lineNamesValue, 1, AutoRepeatNamedLines);
+    if (i == m_insertionPoint + m_autoRepeatTotalTracks) {
+        appendLines(lineNamesValue, m_autoRepeatTrackListLength, AutoRepeatNamedLines);
         appendLines(lineNamesValue, m_insertionPoint + 1, NamedLines);
         return;
     }
 
-    appendLines(lineNamesValue, 1, AutoRepeatNamedLines);
-    appendLines(lineNamesValue, 0, AutoRepeatNamedLines);
+    unsigned autoRepeatIndexInFirstRepetition = (i - m_insertionPoint) % m_autoRepeatTrackListLength;
+    if (!autoRepeatIndexInFirstRepetition && i > m_insertionPoint)
+        appendLines(lineNamesValue, m_autoRepeatTrackListLength, AutoRepeatNamedLines);
+    appendLines(lineNamesValue, autoRepeatIndexInFirstRepetition, AutoRepeatNamedLines);
 }
 
 static void addValuesForNamedGridLinesAtIndex(OrderedNamedLinesCollector& collector, unsigned i, CSSValueList& list)
@@ -1141,8 +1146,8 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     if (trackListIsEmpty)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
-    unsigned repetitions = isRenderGrid ? downcast<RenderGrid>(renderer)->autoRepeatCountForDirection(direction) : 0;
-    OrderedNamedLinesCollector collector(style, isRowAxis, repetitions);
+    unsigned autoRepeatTotalTracks = isRenderGrid ? downcast<RenderGrid>(renderer)->autoRepeatCountForDirection(direction) : 0;
+    OrderedNamedLinesCollector collector(style, isRowAxis, autoRepeatTotalTracks);
     auto list = CSSValueList::createSpaceSeparated();
     unsigned insertionIndex;
     if (isRenderGrid) {

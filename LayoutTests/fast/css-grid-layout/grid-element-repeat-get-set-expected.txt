@@ -26,8 +26,12 @@ PASS window.getComputedStyle(mixRepeatAfterNonRepeat, '').getPropertyValue('grid
 PASS window.getComputedStyle(mixRepeatAfterNonRepeat, '').getPropertyValue('grid-template-rows') is "44px 10px 10px"
 PASS window.getComputedStyle(mixNonRepeatAfterRepeat, '').getPropertyValue('grid-template-columns') is "250px 250px 120px [last]"
 PASS window.getComputedStyle(mixNonRepeatAfterRepeat, '').getPropertyValue('grid-template-rows') is "10px 10px [end] 0px"
+PASS window.getComputedStyle(multipleTrackRepeat, '').getPropertyValue('grid-template-columns') is "[start] 20px [a] 20px 0px [b a] 20px 0px [b] 200px [c] 0px [end]"
+PASS window.getComputedStyle(multipleTrackRepeat, '').getPropertyValue('grid-template-rows') is "0px [a] 0px [b c] 20px [d] 0px [a] 0px [b c] 20px [d] 0px [a] 0px [b c] 20px [d e] 16px"
 
 Test invalid repeat syntax.
+PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"

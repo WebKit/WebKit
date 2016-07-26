@@ -1,5 +1,28 @@
 2016-07-25  Sergio Villar Senin  <svillar@igalia.com>
 
+        [css-grid] repeat() syntax should take a <track-list> argument
+        https://bugs.webkit.org/show_bug.cgi?id=160162
+
+        Reviewed by Darin Adler.
+
+        Added new test cases with multiple tracks inside repeat() notation, both for fixed an
+        automatic (auto-fill & auto-fit) repetitions.
+
+        * fast/css-grid-layout/grid-auto-fill-columns-expected.txt:
+        * fast/css-grid-layout/grid-auto-fill-columns.html:
+        * fast/css-grid-layout/grid-auto-fill-rows-expected.txt:
+        * fast/css-grid-layout/grid-auto-fill-rows.html:
+        * fast/css-grid-layout/grid-auto-fit-columns-expected.txt:
+        * fast/css-grid-layout/grid-auto-fit-columns.html:
+        * fast/css-grid-layout/grid-auto-fit-rows-expected.txt:
+        * fast/css-grid-layout/grid-auto-fit-rows.html:
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set-expected.txt:
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set.html:
+        * fast/css-grid-layout/grid-element-repeat-get-set-expected.txt:
+        * fast/css-grid-layout/grid-element-repeat-get-set.html:
+
+2016-07-25  Sergio Villar Senin  <svillar@igalia.com>
+
         [css-grid] grid-auto-flow|row should take a <track-size>+
         https://bugs.webkit.org/show_bug.cgi?id=160158
 

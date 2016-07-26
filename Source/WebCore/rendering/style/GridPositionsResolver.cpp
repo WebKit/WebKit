@@ -71,7 +71,7 @@ static const String implicitNamedGridLineForSide(const String& lineName, GridPos
 
 NamedLineCollection::NamedLineCollection(const RenderStyle& gridContainerStyle, const String& namedLine, GridTrackSizingDirection direction, unsigned lastLine, unsigned autoRepeatTracksCount)
     : m_lastLine(lastLine)
-    , m_repetitions(autoRepeatTracksCount)
+    , m_autoRepeatTotalTracks(autoRepeatTracksCount)
 {
     bool isRowAxis = direction == ForColumns;
     const NamedGridLinesMap& gridLineNames = isRowAxis ? gridContainerStyle.namedGridColumnLines() : gridContainerStyle.namedGridRowLines();
@@ -84,6 +84,8 @@ NamedLineCollection::NamedLineCollection(const RenderStyle& gridContainerStyle, 
     m_autoRepeatNamedLinesIndexes = autoRepeatLinesIterator == autoRepeatGridLineNames.end() ? nullptr : &autoRepeatLinesIterator->value;
 
     m_insertionPoint = isRowAxis ? gridContainerStyle.gridAutoRepeatColumnsInsertionPoint() : gridContainerStyle.gridAutoRepeatRowsInsertionPoint();
+
+    m_autoRepeatTrackListLength = isRowAxis ? gridContainerStyle.gridAutoRepeatColumns().size() : gridContainerStyle.gridAutoRepeatRows().size();
 }
 
 bool NamedLineCollection::isValidNamedLineOrArea(const String& namedLine, const RenderStyle& gridContainerStyle, GridPositionSide side)
@@ -112,22 +114,24 @@ size_t NamedLineCollection::find(unsigned line) const
     if (!m_autoRepeatNamedLinesIndexes || line < m_insertionPoint)
         return m_namedLinesIndexes ? m_namedLinesIndexes->find(line) : notFound;
 
-    if (line <= (m_insertionPoint + m_repetitions)) {
+    if (line <= (m_insertionPoint + m_autoRepeatTotalTracks)) {
         size_t localIndex = line - m_insertionPoint;
 
+        size_t indexInFirstRepetition = localIndex % m_autoRepeatTrackListLength;
+        if (indexInFirstRepetition)
+            return m_autoRepeatNamedLinesIndexes->find(indexInFirstRepetition);
+
         // The line names defined in the last line are also present in the first line of the next
-        // repetition (if any). Same for the line names defined in the first line. Note that there
-        // is only one auto-repeated track allowed by the syntax, that's why it's enough to store
-        // indexes 0 and 1 (before and after the track size).
-        if (localIndex == m_repetitions)
-            return m_autoRepeatNamedLinesIndexes->find(1u);
+        // repetition (if any). Same for the line names defined in the first line.
+        if (localIndex == m_autoRepeatTotalTracks)
+            return m_autoRepeatNamedLinesIndexes->find(m_autoRepeatTrackListLength);
         size_t position = m_autoRepeatNamedLinesIndexes->find(0u);
         if (position != notFound)
             return position;
-        return localIndex ? m_autoRepeatNamedLinesIndexes->find(1u) : notFound;
+        return localIndex ? m_autoRepeatNamedLinesIndexes->find(m_autoRepeatTrackListLength) : notFound;
     }
 
-    return m_namedLinesIndexes ? m_namedLinesIndexes->find(line - (m_repetitions - 1)) : notFound;
+    return m_namedLinesIndexes ? m_namedLinesIndexes->find(line - (m_autoRepeatTotalTracks - 1)) : notFound;
 }
 
 bool NamedLineCollection::contains(unsigned line) const
@@ -143,7 +147,7 @@ unsigned NamedLineCollection::firstPosition() const
 
     if (!m_autoRepeatNamedLinesIndexes) {
         if (!m_insertionPoint || m_insertionPoint < m_namedLinesIndexes->at(firstLine))
-            return m_namedLinesIndexes->at(firstLine) + (m_repetitions ? m_repetitions - 1 : 0);
+            return m_namedLinesIndexes->at(firstLine) + (m_autoRepeatTotalTracks ? m_autoRepeatTotalTracks - 1 : 0);
         return m_namedLinesIndexes->at(firstLine);
     }
 
@@ -151,7 +155,7 @@ unsigned NamedLineCollection::firstPosition() const
         return m_autoRepeatNamedLinesIndexes->at(firstLine) + m_insertionPoint;
 
     if (!m_insertionPoint)
-        return m_autoRepeatNamedLinesIndexes->at(firstLine);
+        return std::min(m_namedLinesIndexes->at(firstLine) + m_autoRepeatTotalTracks, m_autoRepeatNamedLinesIndexes->at(firstLine));
 
     return std::min(m_namedLinesIndexes->at(firstLine), m_autoRepeatNamedLinesIndexes->at(firstLine) + m_insertionPoint);
 }
