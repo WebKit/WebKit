@@ -29,6 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePaySession.h"
+#include "PaymentAuthorizationStatus.h"
 #include "PaymentCoordinatorClient.h"
 #include "URL.h"
 
@@ -103,6 +104,10 @@ void PaymentCoordinator::completePaymentSession(PaymentAuthorizationStatus statu
     ASSERT(m_activeSession);
 
     m_client.completePaymentSession(status);
+
+    if (!isFinalStateStatus(status))
+        return;
+
     m_activeSession = nullptr;
 }
 
