@@ -28,16 +28,14 @@
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
+#include "CompositingRunLoop.h"
 #include "CoordinatedGraphicsScene.h"
 #include "SimpleViewportController.h"
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/TransformationMatrix.h>
-#include <wtf/Condition.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 struct CoordinatedGraphicsState;
@@ -45,7 +43,6 @@ struct CoordinatedGraphicsState;
 
 namespace WebKit {
 
-class CompositingRunLoop;
 class CoordinatedGraphicsScene;
 class CoordinatedGraphicsSceneClient;
 
@@ -89,22 +86,18 @@ private:
     void updateViewport() override;
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
 
+    // SimpleViewportController::Client.
+    void didChangeVisibleRect() override;
+
     void renderLayerTree();
     void scheduleDisplayImmediately();
-    void didChangeVisibleRect() override;
 
     bool tryEnsureGLContext();
     WebCore::GLContext* glContext();
 
-    void createCompositingThread();
-    void runCompositingThread();
-    void terminateCompositingThread();
-    static void compositingThreadEntry(void*);
-
-    Client* m_client;
+    Client* m_client { nullptr };
     RefPtr<CoordinatedGraphicsScene> m_scene;
     std::unique_ptr<SimpleViewportController> m_viewportController;
-
     std::unique_ptr<WebCore::GLContext> m_context;
 
     WebCore::IntSize m_viewportSize;
@@ -112,13 +105,7 @@ private:
     bool m_drawsBackground { true };
     uint64_t m_nativeSurfaceHandle { 0 };
 
-    std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;
-
-    ThreadIdentifier m_threadIdentifier { 0 };
-    Condition m_initializeRunLoopCondition;
-    Lock m_initializeRunLoopConditionMutex;
-    Condition m_terminateRunLoopCondition;
-    Lock m_terminateRunLoopConditionMutex;
+    CompositingRunLoop m_compositingRunLoop;
 };
 
 } // namespace WebKit

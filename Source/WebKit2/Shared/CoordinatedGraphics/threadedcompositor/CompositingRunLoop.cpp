@@ -28,31 +28,106 @@
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
-#include <wtf/CurrentTime.h>
+#include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
+class WorkQueuePool {
+    WTF_MAKE_NONCOPYABLE(WorkQueuePool);
+    friend class NeverDestroyed<WorkQueuePool>;
+public:
+    static WorkQueuePool& singleton()
+    {
+        ASSERT(isMainThread());
+        static NeverDestroyed<WorkQueuePool> workQueuePool;
+        return workQueuePool;
+    }
+
+    void dispatch(void* context, Function<void ()>&& function)
+    {
+        ASSERT(isMainThread());
+        getOrCreateWorkQueueForContext(context).dispatch(WTFMove(function));
+    }
+
+    RunLoop& runLoop(void* context)
+    {
+        return getOrCreateWorkQueueForContext(context).runLoop();
+    }
+
+    void invalidate(void* context)
+    {
+        auto workQueue = m_workQueueMap.take(context);
+        RELEASE_ASSERT(workQueue);
+        if (m_workQueueMap.isEmpty()) {
+            m_sharedWorkQueue = nullptr;
+            m_threadCount = 0;
+        } else if (workQueue->hasOneRef())
+            m_threadCount--;
+    }
+
+private:
+    WorkQueuePool()
+    {
+#if PLATFORM(GTK)
+        m_threadCountLimit = 1;
+#else
+        m_threadCountLimit = std::numeric_limits<unsigned>::max();
+#endif
+    }
+
+    WorkQueue& getOrCreateWorkQueueForContext(void* context)
+    {
+        auto addResult = m_workQueueMap.add(context, nullptr);
+        if (addResult.isNewEntry) {
+            // FIXME: This is OK for now, and it works for a single-thread limit. But for configurations where more (but not unlimited)
+            // threads could be used, one option would be to use a HashSet here and disperse the contexts across the available threads.
+            if (m_threadCount >= m_threadCountLimit) {
+                RELEASE_ASSERT(m_sharedWorkQueue);
+                addResult.iterator->value = m_sharedWorkQueue;
+            } else {
+                addResult.iterator->value = WorkQueue::create("org.webkit.ThreadedCompositorWorkQueue");
+                if (!m_threadCount)
+                    m_sharedWorkQueue = addResult.iterator->value;
+                m_threadCount++;
+            }
+        }
+
+        return *addResult.iterator->value;
+    }
+
+    HashMap<void*, RefPtr<WorkQueue>> m_workQueueMap;
+    RefPtr<WorkQueue> m_sharedWorkQueue;
+    unsigned m_threadCount { 0 };
+    unsigned m_threadCountLimit;
+};
+
 CompositingRunLoop::CompositingRunLoop(std::function<void ()>&& updateFunction)
-    : m_runLoop(RunLoop::current())
-    , m_updateTimer(m_runLoop, this, &CompositingRunLoop::updateTimerFired)
+    : m_updateTimer(WorkQueuePool::singleton().runLoop(this), this, &CompositingRunLoop::updateTimerFired)
     , m_updateFunction(WTFMove(updateFunction))
 {
+}
+
+CompositingRunLoop::~CompositingRunLoop()
+{
+    WorkQueuePool::singleton().invalidate(this);
 }
 
 void CompositingRunLoop::performTask(Function<void ()>&& function)
 {
     ASSERT(isMainThread());
-    m_runLoop.dispatch(WTFMove(function));
+    WorkQueuePool::singleton().dispatch(this, WTFMove(function));
 }
 
 void CompositingRunLoop::performTaskSync(Function<void ()>&& function)
 {
     ASSERT(isMainThread());
     LockHolder locker(m_dispatchSyncConditionMutex);
-    m_runLoop.dispatch([this, function = WTFMove(function)] {
-        LockHolder locker(m_dispatchSyncConditionMutex);
+    WorkQueuePool::singleton().dispatch(this, [this, function = WTFMove(function)] {
         function();
+        LockHolder locker(m_dispatchSyncConditionMutex);
         m_dispatchSyncCondition.notifyOne();
     });
     m_dispatchSyncCondition.wait(m_dispatchSyncConditionMutex);
@@ -80,17 +155,6 @@ void CompositingRunLoop::updateTimerFired()
 {
     m_updateFunction();
     m_lastUpdateTime = monotonicallyIncreasingTime();
-}
-
-void CompositingRunLoop::run()
-{
-    m_runLoop.run();
-}
-
-void CompositingRunLoop::stop()
-{
-    m_updateTimer.stop();
-    m_runLoop.stop();
 }
 
 } // namespace WebKit

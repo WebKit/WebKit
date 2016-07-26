@@ -1,3 +1,54 @@
+2016-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Crashes and deadlocks in single web process mode
+        https://bugs.webkit.org/show_bug.cgi?id=160160
+
+        Reviewed by Žan Doberšek.
+
+        Every WebPage has its own threaded compositor that runs its own compositing thread. That means that when there's
+        more than one WebPage in the same process, we are running OpenGL stuff in different secondary threads. That's
+        causing crashes and deadlocks in X and graphics drivers. We should ensure there's a single compositing thread
+        per process when multiple threads is not supported. This is causing unit test
+        WebKit2.WKPageGetScaleFactorNotZero to time out since we switched to the threaded compositor. That test is
+        creating two pages in the same web process, and most of the times the web process crashes or deadlocks causing
+        the test to never finish and time out.
+        This patch makes CompositingRunLoop use a thread pool that spawns the compositing threads and schedules the tasks
+        there.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::WorkQueuePool::singleton):
+        (WebKit::WorkQueuePool::dispatch):
+        (WebKit::WorkQueuePool::runLoop):
+        (WebKit::WorkQueuePool::invalidate):
+        (WebKit::WorkQueuePool::WorkQueuePool):
+        (WebKit::WorkQueuePool::getOrCreateWorkQueueForContext):
+        (WebKit::CompositingRunLoop::CompositingRunLoop):
+        (WebKit::CompositingRunLoop::~CompositingRunLoop):
+        (WebKit::CompositingRunLoop::performTask):
+        (WebKit::CompositingRunLoop::performTaskSync):
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::ThreadedCompositor):
+        (WebKit::ThreadedCompositor::invalidate):
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing):
+        (WebKit::ThreadedCompositor::setDeviceScaleFactor):
+        (WebKit::ThreadedCompositor::setDrawsBackground):
+        (WebKit::ThreadedCompositor::didChangeViewportSize):
+        (WebKit::ThreadedCompositor::didChangeViewportAttribute):
+        (WebKit::ThreadedCompositor::didChangeContentsSize):
+        (WebKit::ThreadedCompositor::scrollTo):
+        (WebKit::ThreadedCompositor::scrollBy):
+        (WebKit::ThreadedCompositor::purgeBackingStores):
+        (WebKit::ThreadedCompositor::renderNextFrame):
+        (WebKit::ThreadedCompositor::commitScrollOffset):
+        (WebKit::ThreadedCompositor::updateViewport):
+        (WebKit::ThreadedCompositor::scheduleDisplayImmediately):
+        (WebKit::ThreadedCompositor::forceRepaint):
+        (WebKit::ThreadedCompositor::tryEnsureGLContext): Deleted.
+        (WebKit::ThreadedCompositor::glContext): Deleted.
+        (WebKit::ThreadedCompositor::updateSceneState): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2016-07-25  Sam Weinig  <sam@webkit.org>
 
         Fix assertion.
