@@ -1,3 +1,47 @@
+2016-07-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the tests for legacy custom elements API
+        https://bugs.webkit.org/show_bug.cgi?id=160209
+
+        Reviewed by Chris Dumez.
+
+        Removed the tests for legacy custom elements v0 API. The tests for the new v1 API is at fast/custom-elements.
+
+        * fast/dom/custom: Removed.
+        * fast/dom/custom/document-register-basic-expected.txt: Removed.
+        * fast/dom/custom/document-register-basic.html: Removed.
+        * fast/dom/custom/document-register-namespace-expected.txt: Removed.
+        * fast/dom/custom/document-register-namespace.html: Removed.
+        * fast/dom/custom/document-register-reentrant-null-constructor-expected.txt: Removed.
+        * fast/dom/custom/document-register-reentrant-null-constructor.html: Removed.
+        * fast/dom/custom/document-register-reentrant-returning-fake-expected.txt: Removed.
+        * fast/dom/custom/document-register-reentrant-returning-fake.html: Removed.
+        * fast/dom/custom/document-register-reentrant-throwing-constructor-expected.txt: Removed.
+        * fast/dom/custom/document-register-reentrant-throwing-constructor.html: Removed.
+        * fast/dom/custom/document-register-type-extensions-expected.txt: Removed.
+        * fast/dom/custom/document-register-type-extensions.html: Removed.
+        * fast/dom/custom/lifecycle-ready-createElement-recursion-expected.txt: Removed.
+        * fast/dom/custom/lifecycle-ready-createElement-recursion.html: Removed.
+        * fast/dom/custom/lifecycle-ready-createElement-reentrancy-expected.txt: Removed.
+        * fast/dom/custom/lifecycle-ready-createElement-reentrancy.html: Removed.
+        * fast/dom/custom/lifecycle-ready-creation-api-expected.txt: Removed.
+        * fast/dom/custom/lifecycle-ready-creation-api.html: Removed.
+        * fast/dom/custom/lifecycle-ready-innerHTML-expected.txt: Removed.
+        * fast/dom/custom/lifecycle-ready-innerHTML.html: Removed.
+        * fast/dom/custom/lifecycle-ready-parser-only-expected.html: Removed.
+        * fast/dom/custom/lifecycle-ready-parser-only.html: Removed.
+        * fast/dom/custom/lifecycle-ready-parser-script-expected.txt: Removed.
+        * fast/dom/custom/lifecycle-ready-parser-script.html: Removed.
+        * fast/dom/custom/lifecycle-ready-paste-expected.txt: Removed.
+        * fast/dom/custom/lifecycle-ready-paste.html: Removed.
+        * fast/dom/custom/resources: Removed.
+        * fast/dom/custom/resources/document-register-fuzz.js: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-07-26  Chris Dumez  <cdumez@apple.com>
 
         Second parameter to Range.isPointInRange() / comparePoint() should be mandatory

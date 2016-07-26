@@ -391,9 +391,6 @@ webkit.org/b/131546 media/track/track-in-band-mode.html [ Skip ]
 Bug(GTK) http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 Bug(GTK) media/track/track-datacue-value.html [ Skip ]
 
-# Require ENABLE(CUSTOM_ELEMENTS) support
-webkit.org/b/110735 fast/dom/custom [ Skip ]
-
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
 
