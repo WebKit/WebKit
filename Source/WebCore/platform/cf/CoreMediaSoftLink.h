@@ -127,6 +127,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferCreateCopy, OSSt
 #define CMSampleBufferCreateCopy softLink_CoreMedia_CMSampleBufferCreateCopy
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferCreateCopyWithNewTiming, OSStatus, (CFAllocatorRef allocator, CMSampleBufferRef originalSBuf, CMItemCount numSampleTimingEntries, const CMSampleTimingInfo *sampleTimingArray, CMSampleBufferRef *sBufCopyOut), (allocator, originalSBuf, numSampleTimingEntries, sampleTimingArray, sBufCopyOut))
 #define CMSampleBufferCreateCopyWithNewTiming softLink_CoreMedia_CMSampleBufferCreateCopyWithNewTiming
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferCreateReadyWithImageBuffer, OSStatus, (CFAllocatorRef allocator, CVImageBufferRef imageBuffer, CMVideoFormatDescriptionRef formatDescription, const CMSampleTimingInfo *sampleTiming, CMSampleBufferRef *sBufOut), (allocator, imageBuffer, formatDescription, sampleTiming, sBufOut))
+#define CMSampleBufferCreateReadyWithImageBuffer softLink_CoreMedia_CMSampleBufferCreateReadyWithImageBuffer
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferGetDecodeTimeStamp, CMTime, (CMSampleBufferRef sbuf), (sbuf))
 #define CMSampleBufferGetDecodeTimeStamp softLink_CoreMedia_CMSampleBufferGetDecodeTimeStamp
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferGetDuration, CMTime, (CMSampleBufferRef sbuf), (sbuf))
@@ -153,6 +155,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimebaseSetTime, OSStatus, (
 #define CMTimebaseSetTime softLink_CoreMedia_CMTimebaseSetTime
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeCopyAsDictionary, CFDictionaryRef, (CMTime time, CFAllocatorRef allocator), (time, allocator))
 #define CMTimeCopyAsDictionary softLink_CoreMedia_CMTimeCopyAsDictionary
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMVideoFormatDescriptionCreateForImageBuffer, OSStatus, (CFAllocatorRef allocator, CVImageBufferRef imageBuffer, CMVideoFormatDescriptionRef *outDesc), (allocator, imageBuffer, outDesc))
+#define CMVideoFormatDescriptionCreateForImageBuffer softLink_CoreMedia_CMVideoFormatDescriptionCreateForImageBuffer
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMVideoFormatDescriptionGetDimensions, CMVideoDimensions, (CMVideoFormatDescriptionRef videoDesc), (videoDesc))
 #define CMVideoFormatDescriptionGetDimensions softLink_CoreMedia_CMVideoFormatDescriptionGetDimensions
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, (CMVideoFormatDescriptionRef videoDesc, Boolean usePixelAspectRatio, Boolean useCleanAperture), (videoDesc, usePixelAspectRatio, useCleanAperture))

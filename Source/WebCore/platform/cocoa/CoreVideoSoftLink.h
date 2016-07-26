@@ -62,7 +62,13 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVOpenGLESTextureGetTarget, GL
 #define CVOpenGLESTextureGetTarget softLink_CoreVideo_CVOpenGLESTextureGetTarget
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVOpenGLESTextureGetName, GLuint, (CVOpenGLESTextureRef image), (image))
 #define CVOpenGLESTextureGetName softLink_CoreVideo_CVOpenGLESTextureGetName
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVPixelBufferCreate, CVReturn, (CFAllocatorRef allocator, size_t width, size_t height, OSType pixelFormatType, CFDictionaryRef pixelBufferAttributes, CVPixelBufferRef *pixelBufferOut), (allocator, width, height, pixelFormatType, pixelBufferAttributes, pixelBufferOut))
+#define CVPixelBufferCreate softLink_CoreVideo_CVPixelBufferCreate
 
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferCGBitmapContextCompatibilityKey, CFStringRef)
+#define kCVPixelBufferCGBitmapContextCompatibilityKey get_CoreVideo_kCVPixelBufferCGBitmapContextCompatibilityKey()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferCGImageCompatibilityKey, CFStringRef)
+#define kCVPixelBufferCGImageCompatibilityKey get_CoreVideo_kCVPixelBufferCGImageCompatibilityKey()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey, CFStringRef)
 #define kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey get_CoreVideo_kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey()
 #else

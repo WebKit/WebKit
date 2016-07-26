@@ -59,8 +59,11 @@ public:
 protected:
     MockRealtimeVideoSource(const String& name = ASCIILiteral("Mock video device"));
     virtual void updatePlatformLayer() const { }
+    virtual void updateSampleBuffer() { }
 
     ImageBuffer* imageBuffer() const;
+
+    double elapsedTime();
 
 private:
     void updateSettings(RealtimeMediaSourceSettings&) override;
@@ -79,8 +82,6 @@ private:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
 
     void generateFrame();
-
-    double elapsedTime();
 
     float m_baseFontSize { 0 };
     FontCascade m_timeFont;

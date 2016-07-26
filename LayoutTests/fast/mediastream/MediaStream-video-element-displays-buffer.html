@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="./resources/getUserMedia-helper.js"></script>
+</head>
+<body onload="start()">
+<p id="description"></p>
+<div id="console"></div>
+<video controls width="680" height="360"></video>
+<canvas width="680" height="360"></canvas>
+<script>
+    let mediaStream;
+    let video;
+    
+    let buffer;
+    
+    function isPixelTransparent(pixel)
+    {
+        return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 0;
+    }
+
+    function isPixelBlack(pixel)
+    {
+        return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 255;
+    }
+
+    function verifyFramesBeingDisplayed()
+    {
+        let canvas = document.querySelector('canvas');
+        let context = canvas.getContext('2d');
+
+        debug('<br> === checking pixels ===');
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        let x = canvas.width * .035;
+        let y = canvas.height * 0.6 + 2 + x;
+        
+        buffer = context.getImageData(x, y, 1, 1).data;
+        shouldBeTrue('isPixelTransparent(buffer)');
+        
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        buffer = context.getImageData(x, y, 1, 1).data;
+        shouldBeFalse('isPixelTransparent(buffer)');
+        shouldBeFalse('isPixelBlack(buffer)');
+
+        finishJSTest();
+    }
+
+    function canplay()
+    {
+        evalAndLog('video.play()');
+    }
+
+    function start()
+    {
+        description("Tests that the stream displays captured buffers to the video element.");
+
+        video = document.querySelector('video');
+        video.addEventListener('canplay', canplay, false);
+        video.addEventListener('playing', verifyFramesBeingDisplayed, false);
+
+        getUserMedia("allow", {video:true}, setupVideoElementWithStream);
+    }
+
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
