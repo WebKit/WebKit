@@ -774,6 +774,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
 
     m_workQueueManager.clearWorkQueue();
 
+    m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges = false;
     m_handlesAuthenticationChallenges = false;
     m_authenticationUsername = String();
     m_authenticationPassword = String();
