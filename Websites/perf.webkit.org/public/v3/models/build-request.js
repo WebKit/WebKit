@@ -73,7 +73,7 @@ class BuildRequest extends DataModelObject {
 
     waitingTime(referenceTime)
     {
-        const units = [
+        var units = [
             {unit: 'week', length: 7 * 24 * 3600},
             {unit: 'day', length: 24 * 3600},
             {unit: 'hour', length: 3600},
