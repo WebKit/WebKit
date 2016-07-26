@@ -506,7 +506,7 @@ bool RenderTableCell::hasStartBorderAdjoiningTable() const
 {
     bool isStartColumn = !col();
     bool isEndColumn = table()->colToEffCol(col() + colSpan() - 1) == table()->numEffCols() - 1;
-    bool hasSameDirectionAsTable = hasSameDirectionAs(section());
+    bool hasSameDirectionAsTable = isDirectionSame(this, section());
 
     // The table direction determines the row direction. In mixed directionality, we cannot guarantee that
     // we have a common border with the table (think a ltr table with rtl start cell).
@@ -517,7 +517,7 @@ bool RenderTableCell::hasEndBorderAdjoiningTable() const
 {
     bool isStartColumn = !col();
     bool isEndColumn = table()->colToEffCol(col() + colSpan() - 1) == table()->numEffCols() - 1;
-    bool hasSameDirectionAsTable = hasSameDirectionAs(section());
+    bool hasSameDirectionAsTable = isDirectionSame(this, section());
 
     // The table direction determines the row direction. In mixed directionality, we cannot guarantee that
     // we have a common border with the table (think a ltr table with ltr end cell).

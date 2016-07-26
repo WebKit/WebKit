@@ -301,7 +301,7 @@ inline bool RenderTableCell::isBaselineAligned() const
 inline const BorderValue& RenderTableCell::borderAdjoiningTableStart() const
 {
     ASSERT(isFirstOrLastCellInRow());
-    if (section()->hasSameDirectionAs(table()))
+    if (isDirectionSame(section(), table()))
         return style().borderStart();
 
     return style().borderEnd();
@@ -310,7 +310,7 @@ inline const BorderValue& RenderTableCell::borderAdjoiningTableStart() const
 inline const BorderValue& RenderTableCell::borderAdjoiningTableEnd() const
 {
     ASSERT(isFirstOrLastCellInRow());
-    if (section()->hasSameDirectionAs(table()))
+    if (isDirectionSame(section(), table()))
         return style().borderEnd();
 
     return style().borderStart();

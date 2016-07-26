@@ -242,14 +242,14 @@ private:
 
 inline const BorderValue& RenderTableSection::borderAdjoiningTableStart() const
 {
-    if (hasSameDirectionAs(table()))
+    if (isDirectionSame(this, table()))
         return style().borderStart();
     return style().borderEnd();
 }
 
 inline const BorderValue& RenderTableSection::borderAdjoiningTableEnd() const
 {
-    if (hasSameDirectionAs(table()))
+    if (isDirectionSame(this, table()))
         return style().borderEnd();
     return style().borderStart();
 }

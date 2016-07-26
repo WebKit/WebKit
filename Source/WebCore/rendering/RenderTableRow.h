@@ -107,16 +107,14 @@ inline unsigned RenderTableRow::rowIndex() const
 
 inline const BorderValue& RenderTableRow::borderAdjoiningTableStart() const
 {
-    RenderTableSection* section = this->section();
-    if (section && section->hasSameDirectionAs(table()))
+    if (isDirectionSame(section(), table()))
         return style().borderStart();
     return style().borderEnd();
 }
 
 inline const BorderValue& RenderTableRow::borderAdjoiningTableEnd() const
 {
-    RenderTableSection* section = this->section();
-    if (section && section->hasSameDirectionAs(table()))
+    if (isDirectionSame(section(), table()))
         return style().borderEnd();
     return style().borderStart();
 }

@@ -1422,24 +1422,24 @@ unsigned RenderTableSection::numColumns() const
 const BorderValue& RenderTableSection::borderAdjoiningStartCell(const RenderTableCell& cell) const
 {
     ASSERT(cell.isFirstOrLastCellInRow());
-    return hasSameDirectionAs(&cell) ? style().borderStart() : style().borderEnd();
+    return isDirectionSame(this, &cell) ? style().borderStart() : style().borderEnd();
 }
 
 const BorderValue& RenderTableSection::borderAdjoiningEndCell(const RenderTableCell& cell) const
 {
     ASSERT(cell.isFirstOrLastCellInRow());
-    return hasSameDirectionAs(&cell) ? style().borderEnd() : style().borderStart();
+    return isDirectionSame(this, &cell) ? style().borderEnd() : style().borderStart();
 }
 
 const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableStart() const
 {
-    unsigned adjoiningStartCellColumnIndex = hasSameDirectionAs(table()) ? 0 : table()->lastColumnIndex();
+    unsigned adjoiningStartCellColumnIndex = isDirectionSame(this, table()) ? 0 : table()->lastColumnIndex();
     return cellAt(0, adjoiningStartCellColumnIndex).primaryCell();
 }
 
 const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableEnd() const
 {
-    unsigned adjoiningEndCellColumnIndex = hasSameDirectionAs(table()) ? table()->lastColumnIndex() : 0;
+    unsigned adjoiningEndCellColumnIndex = isDirectionSame(this, table()) ? table()->lastColumnIndex() : 0;
     return cellAt(0, adjoiningEndCellColumnIndex).primaryCell();
 }
 

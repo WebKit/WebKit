@@ -378,6 +378,8 @@ inline RenderTableSection* RenderTable::topSection() const
     return m_foot;
 }
 
+inline bool isDirectionSame(const RenderBox* tableItem, const RenderBox* otherTableItem) { return tableItem && otherTableItem ? tableItem->style().direction() == otherTableItem->style().direction() : true; }
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTable, isTable())

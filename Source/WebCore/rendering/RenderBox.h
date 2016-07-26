@@ -604,8 +604,6 @@ public:
         return nullptr;
     }
 
-    bool hasSameDirectionAs(const RenderBox* object) const { return style().direction() == object->style().direction(); }
-
 #if ENABLE(CSS_SHAPES)
     ShapeOutsideInfo* shapeOutsideInfo() const
     {
