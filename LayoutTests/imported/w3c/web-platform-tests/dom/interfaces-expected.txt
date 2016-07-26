@@ -1291,8 +1291,8 @@ PASS Range interface: attribute endContainer
 PASS Range interface: attribute endOffset 
 PASS Range interface: attribute collapsed 
 PASS Range interface: attribute commonAncestorContainer 
-FAIL Range interface: operation setStart(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
-FAIL Range interface: operation setEnd(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
+PASS Range interface: operation setStart(Node,unsigned long) 
+PASS Range interface: operation setEnd(Node,unsigned long) 
 PASS Range interface: operation setStartBefore(Node) 
 PASS Range interface: operation setStartAfter(Node) 
 PASS Range interface: operation setEndBefore(Node) 
@@ -1329,13 +1329,9 @@ PASS Range interface: document.createRange() must inherit property "endOffset" w
 PASS Range interface: document.createRange() must inherit property "collapsed" with the proper type (4) 
 PASS Range interface: document.createRange() must inherit property "commonAncestorContainer" with the proper type (5) 
 PASS Range interface: document.createRange() must inherit property "setStart" with the proper type (6) 
-FAIL Range interface: calling setStart(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Range interface: calling setStart(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "setEnd" with the proper type (7) 
-FAIL Range interface: calling setEnd(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Range interface: calling setEnd(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "setStartBefore" with the proper type (8) 
 PASS Range interface: calling setStartBefore(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "setStartAfter" with the proper type (9) 
@@ -1384,13 +1380,9 @@ PASS Range interface: detachedRange must inherit property "endOffset" with the p
 PASS Range interface: detachedRange must inherit property "collapsed" with the proper type (4) 
 PASS Range interface: detachedRange must inherit property "commonAncestorContainer" with the proper type (5) 
 PASS Range interface: detachedRange must inherit property "setStart" with the proper type (6) 
-FAIL Range interface: calling setStart(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Range interface: calling setStart(Node,unsigned long) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "setEnd" with the proper type (7) 
-FAIL Range interface: calling setEnd(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Range interface: calling setEnd(Node,unsigned long) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "setStartBefore" with the proper type (8) 
 PASS Range interface: calling setStartBefore(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "setStartAfter" with the proper type (9) 

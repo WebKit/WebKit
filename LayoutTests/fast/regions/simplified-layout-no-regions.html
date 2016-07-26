@@ -34,11 +34,11 @@
 
             document.body.offsetParent;
             var range = document.createRange();
-            range.setStart(document.getElementById("start"));
-            range.setEnd(document.getElementById("start"));
+            range.setStart(document.getElementById("start"), 0);
+            range.setEnd(document.getElementById("start"), 0);
             range.surroundContents(document.getElementById("third"));
             range.setStart(document.getElementById("second"), 1);
-            range.setEnd(document.getElementById("end"));
+            range.setEnd(document.getElementById("end"), 0);
             range.deleteContents();
             document.body.offsetParent;
 

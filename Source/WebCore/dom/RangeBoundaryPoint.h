@@ -45,7 +45,7 @@ public:
 
     void clear();
 
-    void set(Ref<Node>&& container, int offset, Node* childBefore);
+    void set(Ref<Node>&& container, unsigned offset, Node* childBefore);
     void setOffset(int offset);
 
     void setToBeforeChild(Node&);
@@ -116,9 +116,8 @@ inline void RangeBoundaryPoint::clear()
     m_childBeforeBoundary = nullptr;
 }
 
-inline void RangeBoundaryPoint::set(Ref<Node>&& container, int offset, Node* childBefore)
+inline void RangeBoundaryPoint::set(Ref<Node>&& container, unsigned offset, Node* childBefore)
 {
-    ASSERT(offset >= 0);
     ASSERT(childBefore == (offset ? container->traverseToChildAt(offset - 1) : 0));
     m_containerNode = WTFMove(container);
     m_offsetInContainer = offset;

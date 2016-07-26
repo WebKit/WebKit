@@ -19,7 +19,7 @@ Markup.description('Test that having a non-editable style and link elements does
 function $(id) { return document.getElementById(id); }
 
 var range = document.createRange();
-range.setStart($('start'));
+range.setStart($('start'), 0);
 range.setEnd($('end'), NaN);
 
 getSelection().addRange(range);

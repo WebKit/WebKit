@@ -160,7 +160,7 @@ static inline bool checkForDifferentRootContainer(const RangeBoundaryPoint& star
     return startRootContainer != endRootContainer || (Range::compareBoundaryPoints(start, end, ASSERT_NO_EXCEPTION) > 0);
 }
 
-void Range::setStart(Ref<Node>&& refNode, int offset, ExceptionCode& ec)
+void Range::setStart(Ref<Node>&& refNode, unsigned offset, ExceptionCode& ec)
 {
     bool didMoveDocument = false;
     if (&refNode->document() != &ownerDocument()) {
@@ -179,7 +179,7 @@ void Range::setStart(Ref<Node>&& refNode, int offset, ExceptionCode& ec)
         collapse(true);
 }
 
-void Range::setEnd(Ref<Node>&& refNode, int offset, ExceptionCode& ec)
+void Range::setEnd(Ref<Node>&& refNode, unsigned offset, ExceptionCode& ec)
 {
     bool didMoveDocument = false;
     if (&refNode->document() != &ownerDocument()) {
@@ -921,7 +921,7 @@ void Range::detach()
     // This is now a no-op as per the DOM specification.
 }
 
-Node* Range::checkNodeWOffset(Node& node, int offset, ExceptionCode& ec) const
+Node* Range::checkNodeWOffset(Node& node, unsigned offset, ExceptionCode& ec) const
 {
     switch (node.nodeType()) {
         case Node::DOCUMENT_TYPE_NODE:
@@ -931,7 +931,7 @@ Node* Range::checkNodeWOffset(Node& node, int offset, ExceptionCode& ec) const
         case Node::COMMENT_NODE:
         case Node::TEXT_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
-            if (static_cast<unsigned>(offset) > downcast<CharacterData>(node).length())
+            if (offset > downcast<CharacterData>(node).length())
                 ec = INDEX_SIZE_ERR;
             return nullptr;
         case Node::ATTRIBUTE_NODE:

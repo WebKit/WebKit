@@ -33,8 +33,14 @@
     readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void setStart(Node refNode, optional long offset = 0);
-    [ObjCLegacyUnnamedParameters, RaisesException] void setEnd(Node refNode, optional long offset = 0);
+#if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
+    [RaisesException] void setStart(Node refNode, unsigned long offset);
+    [RaisesException] void setEnd(Node refNode, unsigned long offset);
+#else
+    [ObjCLegacyUnnamedParameters, RaisesException] void setStart(Node refNode, long offset);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setEnd(Node refNode, long offset);
+#endif
+
     [RaisesException] void setStartBefore(Node refNode);
     [RaisesException] void setStartAfter(Node refNode);
     [RaisesException] void setEndBefore(Node refNode);

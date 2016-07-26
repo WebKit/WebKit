@@ -66,8 +66,8 @@ public:
 
     Node* commonAncestorContainer() const { return commonAncestorContainer(&startContainer(), &endContainer()); }
     WEBCORE_EXPORT static Node* commonAncestorContainer(Node* containerA, Node* containerB);
-    WEBCORE_EXPORT void setStart(Ref<Node>&& container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    WEBCORE_EXPORT void setEnd(Ref<Node>&& container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setStart(Ref<Node>&& container, unsigned offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setEnd(Ref<Node>&& container, unsigned offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
     WEBCORE_EXPORT void collapse(bool toStart);
     WEBCORE_EXPORT bool isPointInRange(Node& refNode, int offset, ExceptionCode&);
     short comparePoint(Node& refNode, int offset, ExceptionCode&) const;
@@ -159,7 +159,7 @@ private:
 
     void setDocument(Document&);
 
-    Node* checkNodeWOffset(Node&, int offset, ExceptionCode&) const;
+    Node* checkNodeWOffset(Node&, unsigned offset, ExceptionCode&) const;
 
     enum ActionType { Delete, Extract, Clone };
     RefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);

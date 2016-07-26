@@ -1,5 +1,16 @@
 2016-07-25  Chris Dumez  <cdumez@apple.com>
 
+        Second parameter to Range.setStart() / setEnd() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160184
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+
+2016-07-25  Chris Dumez  <cdumez@apple.com>
+
         DOMTokenList.prototype.toString should be enumerable
         https://bugs.webkit.org/show_bug.cgi?id=160182
 
