@@ -1,3 +1,19 @@
+2016-07-26  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Object.getOwnPropertyDescriptors should not add undefined props to result
+        https://bugs.webkit.org/show_bug.cgi?id=159409
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        * tests/es6.yaml:
+        * tests/es6/Object_static_methods_Object.getOwnPropertyDescriptors-proxy.js:
+        (testPropertiesIndexedSetterOnPrototypeThrows.set get var): Deleted.
+        (testPropertiesIndexedSetterOnPrototypeThrows): Deleted.
+        * tests/stress/Object_static_methods_Object.getOwnPropertyDescriptors-proxy.js: Renamed from Source/JavaScriptCore/tests/es6/Object_static_methods_Object.getOwnPropertyDescriptors-proxy.js.
+        * tests/stress/Object_static_methods_Object.getOwnPropertyDescriptors.js: Renamed from Source/JavaScriptCore/tests/es6/Object_static_methods_Object.getOwnPropertyDescriptors.js.
+
 2016-07-26  Mark Lam  <mark.lam@apple.com>
 
         Remove unused DEBUG_WITH_BREAKPOINT configuration.
