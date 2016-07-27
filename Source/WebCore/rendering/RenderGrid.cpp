@@ -2112,9 +2112,9 @@ void RenderGrid::populateGridPositionsForDirection(GridSizingData& sizingData, G
     offsetBetweenTracks = offset.distributionOffset;
 }
 
-static inline LayoutUnit computeOverflowAlignmentOffset(OverflowAlignment overflow, LayoutUnit trackBreadth, LayoutUnit childBreadth)
+static LayoutUnit computeOverflowAlignmentOffset(OverflowAlignment overflow, LayoutUnit trackSize, LayoutUnit childSize)
 {
-    LayoutUnit offset = trackBreadth - childBreadth;
+    LayoutUnit offset = trackSize - childSize;
     switch (overflow) {
     case OverflowAlignmentSafe:
         // If overflow is 'safe', we have to make sure we don't overflow the 'start'
@@ -2263,34 +2263,51 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
 GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) const
 {
     bool hasSameWritingMode = child.style().writingMode() == style().writingMode();
+    bool childIsLTR = child.style().isLeftToRightDirection();
 
     switch (child.style().resolvedAlignSelf(style(), selfAlignmentNormalBehavior).position()) {
     case ItemPositionSelfStart:
-        // If orthogonal writing-modes, this computes to 'start'.
-        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
-        // self-start is based on the child's block axis direction. That's why we need to check against the grid container's block flow.
-        return (isOrthogonalChild(child) || hasSameWritingMode) ? GridAxisStart : GridAxisEnd;
+        // FIXME: Should we implement this logic in a generic utility function ?
+        // Aligns the alignment subject to be flush with the edge of the alignment container
+        // corresponding to the alignment subject's 'start' side in the column axis.
+        if (isOrthogonalChild(child)) {
+            // If orthogonal writing-modes, self-start will be based on the child's inline-axis
+            // direction (inline-start), because it's the one parallel to the column axis.
+            if (style().isFlippedBlocksWritingMode())
+                return childIsLTR ? GridAxisEnd : GridAxisStart;
+            return childIsLTR ? GridAxisStart : GridAxisEnd;
+        }
+        // self-start is based on the child's block-flow direction. That's why we need to check against the grid container's block-flow direction.
+        return hasSameWritingMode ? GridAxisStart : GridAxisEnd;
     case ItemPositionSelfEnd:
-        // If orthogonal writing-modes, this computes to 'end'.
-        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
-        // self-end is based on the child's block axis direction. That's why we need to check against the grid container's block flow.
-        return (isOrthogonalChild(child) || hasSameWritingMode) ? GridAxisEnd : GridAxisStart;
+        // FIXME: Should we implement this logic in a generic utility function ?
+        // Aligns the alignment subject to be flush with the edge of the alignment container
+        // corresponding to the alignment subject's 'end' side in the column axis.
+        if (isOrthogonalChild(child)) {
+            // If orthogonal writing-modes, self-end will be based on the child's inline-axis
+            // direction, (inline-end) because it's the one parallel to the column axis.
+            if (style().isFlippedBlocksWritingMode())
+                return childIsLTR ? GridAxisStart : GridAxisEnd;
+            return childIsLTR ? GridAxisEnd : GridAxisStart;
+        }
+        // self-end is based on the child's block-flow direction. That's why we need to check against the grid container's block-flow direction.
+        return hasSameWritingMode ? GridAxisEnd : GridAxisStart;
     case ItemPositionLeft:
-        // The alignment axis (column axis) and the inline axis are parallell in
-        // orthogonal writing mode. Otherwise this this is equivalent to 'start'.
-        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
+        // Aligns the alignment subject to be flush with the alignment container's 'line-left' edge.
+        // The alignment axis (column axis) is always orthogonal to the inline axis, hence this value behaves as 'start'.
         return GridAxisStart;
     case ItemPositionRight:
-        // The alignment axis (column axis) and the inline axis are parallell in
-        // orthogonal writing mode. Otherwise this this is equivalent to 'start'.
-        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
-        return isOrthogonalChild(child) ? GridAxisEnd : GridAxisStart;
+        // Aligns the alignment subject to be flush with the alignment container's 'line-right' edge.
+        // The alignment axis (column axis) is always orthogonal to the inline axis, hence this value behaves as 'start'.
+        return GridAxisStart;
     case ItemPositionCenter:
         return GridAxisCenter;
     case ItemPositionFlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
+        // Aligns the alignment subject to be flush with the alignment container's 'start' edge (block-start) in the column axis.
     case ItemPositionStart:
         return GridAxisStart;
     case ItemPositionFlexEnd: // Only used in flex layout, otherwise equivalent to 'end'.
+        // Aligns the alignment subject to be flush with the alignment container's 'end' edge (block-end) in the column axis.
     case ItemPositionEnd:
         return GridAxisEnd;
     case ItemPositionStretch:
@@ -2311,28 +2328,51 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
 GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) const
 {
     bool hasSameDirection = child.style().direction() == style().direction();
-    bool isLTR = style().isLeftToRightDirection();
+    bool gridIsLTR = style().isLeftToRightDirection();
 
     switch (child.style().resolvedJustifySelf(style(), selfAlignmentNormalBehavior).position()) {
     case ItemPositionSelfStart:
-        // For orthogonal writing-modes, this computes to 'start'
-        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
-        // self-start is based on the child's direction. That's why we need to check against the grid container's direction.
-        return (isOrthogonalChild(child) || hasSameDirection) ? GridAxisStart : GridAxisEnd;
+        // FIXME: Should we implement this logic in a generic utility function ?
+        // Aligns the alignment subject to be flush with the edge of the alignment container
+        // corresponding to the alignment subject's 'start' side in the row axis.
+        if (isOrthogonalChild(child)) {
+            // If orthogonal writing-modes, self-start will be based on the child's block-axis
+            // direction, because it's the one parallel to the row axis.
+            if (child.style().isFlippedBlocksWritingMode())
+                return gridIsLTR ? GridAxisEnd : GridAxisStart;
+            return gridIsLTR ? GridAxisStart : GridAxisEnd;
+        }
+        // self-start is based on the child's inline-flow direction. That's why we need to check against the grid container's direction.
+        return hasSameDirection ? GridAxisStart : GridAxisEnd;
     case ItemPositionSelfEnd:
-        // For orthogonal writing-modes, this computes to 'start'
-        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
-        return (isOrthogonalChild(child) || hasSameDirection) ? GridAxisEnd : GridAxisStart;
+        // FIXME: Should we implement this logic in a generic utility function ?
+        // Aligns the alignment subject to be flush with the edge of the alignment container
+        // corresponding to the alignment subject's 'end' side in the row axis.
+        if (isOrthogonalChild(child)) {
+            // If orthogonal writing-modes, self-end will be based on the child's block-axis
+            // direction, because it's the one parallel to the row axis.
+            if (child.style().isFlippedBlocksWritingMode())
+                return gridIsLTR ? GridAxisStart : GridAxisEnd;
+            return gridIsLTR ? GridAxisEnd : GridAxisStart;
+        }
+        // self-end is based on the child's inline-flow direction. That's why we need to check against the grid container's direction.
+        return hasSameDirection ? GridAxisEnd : GridAxisStart;
     case ItemPositionLeft:
-        return isLTR ? GridAxisStart : GridAxisEnd;
+        // Aligns the alignment subject to be flush with the alignment container's 'line-left' edge.
+        // We want the physical 'left' side, so we have to take account, container's inline-flow direction.
+        return gridIsLTR ? GridAxisStart : GridAxisEnd;
     case ItemPositionRight:
-        return isLTR ? GridAxisEnd : GridAxisStart;
+        // Aligns the alignment subject to be flush with the alignment container's 'line-right' edge.
+        // We want the physical 'right' side, so we have to take account, container's inline-flow direction.
+        return gridIsLTR ? GridAxisEnd : GridAxisStart;
     case ItemPositionCenter:
         return GridAxisCenter;
     case ItemPositionFlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
+        // Aligns the alignment subject to be flush with the alignment container's 'start' edge (inline-start) in the row axis.
     case ItemPositionStart:
         return GridAxisStart;
     case ItemPositionFlexEnd: // Only used in flex layout, otherwise equivalent to 'end'.
+        // Aligns the alignment subject to be flush with the alignment container's 'end' edge (inline-end) in the row axis.
     case ItemPositionEnd:
         return GridAxisEnd;
     case ItemPositionStretch:
@@ -2371,9 +2411,9 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
         // (this does not have to be done for the last track as there are no more m_rowPositions after it).
         if (childEndLine < m_rowPositions.size() - 1)
             endOfRow -= gridGapForDirection(ForRows) + m_offsetBetweenRows;
-        LayoutUnit childBreadth = child.logicalHeight() + child.marginLogicalHeight();
+        LayoutUnit columnAxisChildSize = isOrthogonalChild(child) ? child.logicalWidth() + child.marginLogicalWidth() : child.logicalHeight() + child.marginLogicalHeight();
         auto overflow = child.style().resolvedAlignSelf(style(), selfAlignmentNormalBehavior).overflow();
-        LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfRow - startOfRow, childBreadth);
+        LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfRow - startOfRow, columnAxisChildSize);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
     }
@@ -2404,9 +2444,9 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
         // (this does not have to be done for the last track as there are no more m_columnPositions after it).
         if (childEndLine < m_columnPositions.size() - 1)
             endOfColumn -= gridGapForDirection(ForColumns) + m_offsetBetweenColumns;
-        LayoutUnit childBreadth = child.logicalWidth() + child.marginLogicalWidth();
+        LayoutUnit rowAxisChildSize = isOrthogonalChild(child) ? child.logicalHeight() + child.marginLogicalHeight() : child.logicalWidth() + child.marginLogicalWidth();
         auto overflow = child.style().resolvedJustifySelf(style(), selfAlignmentNormalBehavior).overflow();
-        LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfColumn - startOfColumn, childBreadth);
+        LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfColumn - startOfColumn, rowAxisChildSize);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
     }
@@ -2532,7 +2572,7 @@ LayoutPoint RenderGrid::findChildLogicalPosition(const RenderBox& child) const
     // We stored m_columnPositions's data ignoring the direction, hence we might need now
     // to translate positions from RTL to LTR, as it's more convenient for painting.
     if (!style().isLeftToRightDirection())
-        rowAxisOffset = translateRTLCoordinate(rowAxisOffset) - child.logicalWidth();
+        rowAxisOffset = translateRTLCoordinate(rowAxisOffset) - (isOrthogonalChild(child) ? child.logicalHeight()  : child.logicalWidth());
 
     // "In the positioning phase [...] calculations are performed according to the writing mode
     // of the containing block of the box establishing the orthogonal flow." However, the

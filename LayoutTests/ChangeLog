@@ -1,3 +1,37 @@
+2016-07-27  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Handle alignment with orthogonal flows
+        https://bugs.webkit.org/show_bug.cgi?id=159295
+
+        Reviewed by Darin Adler.
+
+        Now that grid sizing and positioning issues wrt orthogonal flows have
+        been clarified in the last spec draft, we can adapt now our alignment
+        logic to work with orthogonal flows.
+
+        These tests ensure that alignment works as expected in the cases where
+        grid and its children are orthogonal.
+
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-vertical-lr-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-vertical-lr.html: Added.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-vertical-rl-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-vertical-rl.html: Added.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows.html: Added.
+        * fast/css-grid-layout/resources/grid-alignment.css:
+        (.alignContentSpaceBetween):
+        (.alignContentSpaceAround):
+        (.alignContentSpaceEvenly):
+        (.alignContentStretch):
+        (.selfStart):
+        (.selfEnd):
+        (.selfCenter):
+        (.selfRight):
+        (.selfLeft):
+        (.selfSelfStart):
+        (.selfSelfEnd):
+        (.itemsSelfEnd): Deleted.
+
 2016-07-26  Youenn Fablet  <youennf@gmail.com>
 
         JS Built-ins should throw this-error messages consistently with binding generated code
