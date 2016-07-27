@@ -133,6 +133,15 @@ def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=Fa
         return subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=directoryToZip)
 
 
+def dirContainsdwo(directory):
+    sourcedir = os.path.join(_configurationBuildDirectory, directory)
+    for root, dirs, files in os.walk(sourcedir, topdown=False):
+        for name in files:
+            if name.endswith(".dwo"):
+                return True
+    return False
+
+
 def archiveBuiltProduct(configuration, platform, fullPlatform):
     assert platform in ('mac', 'win', 'gtk', 'efl', 'ios')
 
@@ -180,6 +189,12 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
         os.mkdir(thinDirectory)
 
         neededDirectories = ["bin", "lib"]
+
+        # When debug fission is enabled the directories below contain dwo files
+        # with the debug information needed to generate backtraces with GDB.
+        for objectDir in ["Tools", "Source"]:
+            if dirContainsdwo(objectDir):
+                neededDirectories.append(objectDir)
 
         # On GTK we need this for the WebKit GObject DOM bindings API break test
         if platform == 'gtk':
