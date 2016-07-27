@@ -4394,7 +4394,7 @@ PASS HTMLSelectElement interface: attribute type
 PASS HTMLSelectElement interface: attribute options 
 PASS HTMLSelectElement interface: attribute length 
 PASS HTMLSelectElement interface: operation item(unsigned long) 
-FAIL HTMLSelectElement interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLSelectElement interface: operation namedItem(DOMString) 
 PASS HTMLSelectElement interface: operation add([object Object],[object Object],[object Object],[object Object]) 
 PASS HTMLSelectElement interface: operation remove() 
 PASS HTMLSelectElement interface: operation remove(long) 
@@ -4424,9 +4424,7 @@ PASS HTMLSelectElement interface: document.createElement("select") must inherit 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "item" with the proper type (11) 
 PASS HTMLSelectElement interface: calling item(unsigned long) on document.createElement("select") with too few arguments must throw TypeError 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "namedItem" with the proper type (12) 
-FAIL HTMLSelectElement interface: calling namedItem(DOMString) on document.createElement("select") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLSelectElement interface: calling namedItem(DOMString) on document.createElement("select") with too few arguments must throw TypeError 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "add" with the proper type (13) 
 PASS HTMLSelectElement interface: calling add([object Object],[object Object],[object Object],[object Object]) on document.createElement("select") with too few arguments must throw TypeError 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "remove" with the proper type (14) 
@@ -5717,7 +5715,7 @@ PASS PluginArray interface: existence and properties of interface prototype obje
 PASS PluginArray interface: operation refresh(boolean) 
 PASS PluginArray interface: attribute length 
 PASS PluginArray interface: operation item(unsigned long) 
-FAIL PluginArray interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS PluginArray interface: operation namedItem(DOMString) 
 PASS MimeTypeArray interface: existence and properties of interface object 
 PASS MimeTypeArray interface object length 
 PASS MimeTypeArray interface object name 
@@ -5725,7 +5723,7 @@ PASS MimeTypeArray interface: existence and properties of interface prototype ob
 PASS MimeTypeArray interface: existence and properties of interface prototype object's "constructor" property 
 PASS MimeTypeArray interface: attribute length 
 PASS MimeTypeArray interface: operation item(unsigned long) 
-FAIL MimeTypeArray interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS MimeTypeArray interface: operation namedItem(DOMString) 
 PASS Plugin interface: existence and properties of interface object 
 PASS Plugin interface object length 
 PASS Plugin interface object name 
@@ -5736,7 +5734,7 @@ PASS Plugin interface: attribute description
 PASS Plugin interface: attribute filename 
 PASS Plugin interface: attribute length 
 PASS Plugin interface: operation item(unsigned long) 
-FAIL Plugin interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Plugin interface: operation namedItem(DOMString) 
 PASS MimeType interface: existence and properties of interface object 
 PASS MimeType interface object length 
 PASS MimeType interface object name 

@@ -27,6 +27,5 @@
     Conditional=WEB_RTC,
 ] interface RTCStatsResponse {
     sequence<RTCStatsReport> result();
-    // FIXME: The default parameter value is wrong.
-    getter RTCStatsReport namedItem(optional DOMString name = "undefined");
+    getter RTCStatsReport namedItem(DOMString name);
 };

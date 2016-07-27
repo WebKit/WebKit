@@ -27,7 +27,7 @@
     [CustomSetter, SetterRaisesException] attribute unsigned long length;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    getter Node namedItem(optional DOMString name);
+    getter Node namedItem(DOMString name);
 #else
     getter HTMLOptionElement? item(unsigned long index);
     getter HTMLOptionElement? namedItem(DOMString name);
