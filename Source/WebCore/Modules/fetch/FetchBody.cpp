@@ -39,11 +39,10 @@
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
+#include "JSReadableStream.h"
 #include "ReadableStreamSource.h"
 
 namespace WebCore {
-
-static Ref<Blob> blobFromArrayBuffer(ArrayBuffer*, const String&);
 
 FetchBody::FetchBody(Ref<Blob>&& blob)
     : m_type(Type::Blob)
@@ -75,6 +74,8 @@ FetchBody FetchBody::extract(JSC::ExecState& state, JSC::JSValue value)
         return FetchBody(*JSDOMFormData::toWrapped(value));
     if (value.isString())
         return FetchBody(value.toWTFString(&state));
+    if (value.inherits(JSReadableStream::info()))
+        return { Type::ReadableStream };
     return { };
 }
 
@@ -89,13 +90,16 @@ FetchBody FetchBody::extractFromBody(FetchBody* body)
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, DeferredWrapper&& promise)
 {
     ASSERT(m_type != Type::None);
-    consume(owner, Consumer::Type::ArrayBuffer, WTFMove(promise));
+    m_consumer.setType(FetchBodyConsumer::Type::ArrayBuffer);
+    consume(owner, WTFMove(promise));
 }
 
 void FetchBody::blob(FetchBodyOwner& owner, DeferredWrapper&& promise)
 {
     ASSERT(m_type != Type::None);
-    consume(owner, Consumer::Type::Blob, WTFMove(promise));
+    m_consumer.setType(FetchBodyConsumer::Type::Blob);
+    m_consumer.setContentType(Blob::normalizedContentType(extractMIMETypeFromMediaType(m_mimeType)));
+    consume(owner, WTFMove(promise));
 }
 
 void FetchBody::json(FetchBodyOwner& owner, DeferredWrapper&& promise)
@@ -106,7 +110,8 @@ void FetchBody::json(FetchBodyOwner& owner, DeferredWrapper&& promise)
         fulfillPromiseWithJSON(promise, m_text);
         return;
     }
-    consume(owner, Consumer::Type::JSON, WTFMove(promise));
+    m_consumer.setType(FetchBodyConsumer::Type::JSON);
+    consume(owner, WTFMove(promise));
 }
 
 void FetchBody::text(FetchBodyOwner& owner, DeferredWrapper&& promise)
@@ -117,113 +122,95 @@ void FetchBody::text(FetchBodyOwner& owner, DeferredWrapper&& promise)
         promise.resolve(m_text);
         return;
     }
-    consume(owner, Consumer::Type::Text, WTFMove(promise));
+    m_consumer.setType(FetchBodyConsumer::Type::Text);
+    consume(owner, WTFMove(promise));
 }
 
-void FetchBody::consume(FetchBodyOwner& owner, Consumer::Type type, DeferredWrapper&& promise)
+void FetchBody::consume(FetchBodyOwner& owner, DeferredWrapper&& promise)
 {
-    if (m_type == Type::ArrayBuffer) {
-        consumeArrayBuffer(type, promise);
-        return;
-    }
-    if (m_type == Type::Text) {
-        consumeText(type, promise);
-        return;
-    }
-    if (m_type == Type::Blob) {
-        consumeBlob(owner, type, WTFMove(promise));
-        return;
-    }
-    if (m_type == Type::Loading) {
-        // FIXME: We should be able to change the loading type to text if consumer type is JSON or Text.
-        m_consumer = Consumer({type, WTFMove(promise)});
-        return;
-    }
+    // This should be handled by FetchBodyOwner
+    ASSERT(m_type != Type::None);
+    // This should be handled by JS built-ins
+    ASSERT(m_type != Type::ReadableStream);
 
-    // FIXME: Support other types.
-    promise.reject(0);
+    switch (m_type) {
+    case Type::ArrayBuffer:
+        consumeArrayBuffer(promise);
+        return;
+    case Type::Text:
+        consumeText(promise);
+        return;
+    case Type::Blob:
+        consumeBlob(owner, WTFMove(promise));
+        return;
+    case Type::Loading:
+        m_consumePromise = WTFMove(promise);
+        return;
+    case Type::Loaded:
+        m_consumer.resolve(promise);
+        return;
+    default:
+        // FIXME: Support other types.
+        promise.reject(0);
+    }
 }
 
 #if ENABLE(STREAMS_API)
 void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& source)
 {
+    // This should be handled by FetchResponse
     ASSERT(m_type != Type::Loading);
+    // This should be handled by JS built-ins
+    ASSERT(m_type != Type::ReadableStream);
 
+    bool closeStream = false;
     switch (m_type) {
     case Type::ArrayBuffer:
         ASSERT(m_data);
-        if (source.enqueue(RefPtr<JSC::ArrayBuffer>(m_data)))
-            source.close();
-        return;
+        closeStream = source.enqueue(RefPtr<JSC::ArrayBuffer>(m_data));
+        break;
     case Type::Text: {
         Vector<uint8_t> data = extractFromText();
-        if (source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size())))
-            source.close();
-        return;
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        break;
     }
     case Type::Blob:
         ASSERT(m_blob);
-        owner.loadBlob(*m_blob, FetchLoader::Type::Stream);
-        return;
+        owner.loadBlob(*m_blob, nullptr);
+        break;
     case Type::None:
-        source.close();
-        return;
+        closeStream = true;
+        break;
+    case Type::Loaded: {
+        closeStream = source.enqueue(m_consumer.takeAsArrayBuffer());
+        break;
+    }
     default:
         source.error(ASCIILiteral("not implemented"));
     }
+
+    if (closeStream)
+        source.close();
 }
 #endif
 
-void FetchBody::consumeArrayBuffer(Consumer::Type type, DeferredWrapper& promise)
+void FetchBody::consumeArrayBuffer(DeferredWrapper& promise)
 {
-    if (type == Consumer::Type::ArrayBuffer) {
-        fulfillPromiseWithArrayBuffer(promise, m_data.get());
-        return;
-    }
-    if (type == Consumer::Type::Blob) {
-        promise.resolve(blobFromArrayBuffer(m_data.get(), Blob::normalizedContentType(extractMIMETypeFromMediaType(m_mimeType))));
-        return;
-    }
-
-    ASSERT(type == Consumer::Type::Text || type == Consumer::Type::JSON);
-    // FIXME: Do we need TextResourceDecoder to create a String to decode UTF-8 data.
-    fulfillTextPromise(type, TextResourceDecoder::create(ASCIILiteral("text/plain"), "UTF-8")->decodeAndFlush(static_cast<const char*>(m_data->data()), m_data->byteLength()), promise);
+    m_consumer.resolveWithData(promise, static_cast<const uint8_t*>(m_data->data()), m_data->byteLength());
 }
 
-void FetchBody::consumeText(Consumer::Type type, DeferredWrapper& promise)
+void FetchBody::consumeText(DeferredWrapper& promise)
 {
-    ASSERT(type == Consumer::Type::ArrayBuffer || type == Consumer::Type::Blob);
-
-    if (type == Consumer::Type::ArrayBuffer) {
-        Vector<uint8_t> data = extractFromText();
-        fulfillPromiseWithArrayBuffer(promise, data.data(), data.size());
-        return;
-    }
-    String contentType = Blob::normalizedContentType(extractMIMETypeFromMediaType(m_mimeType));
-    promise.resolve(Blob::create(extractFromText(), contentType));
+    Vector<uint8_t> data = extractFromText();
+    m_consumer.resolveWithData(promise, data.data(), data.size());
 }
 
-FetchLoader::Type FetchBody::loadingType(Consumer::Type type)
-{
-    switch (type) {
-    case Consumer::Type::JSON:
-    case Consumer::Type::Text:
-        return FetchLoader::Type::Text;
-    case Consumer::Type::Blob:
-    case Consumer::Type::ArrayBuffer:
-        return FetchLoader::Type::ArrayBuffer;
-    default:
-        ASSERT_NOT_REACHED();
-        return FetchLoader::Type::ArrayBuffer;
-    };
-}
-
-void FetchBody::consumeBlob(FetchBodyOwner& owner, Consumer::Type type, DeferredWrapper&& promise)
+void FetchBody::consumeBlob(FetchBodyOwner& owner, DeferredWrapper&& promise)
 {
     ASSERT(m_blob);
 
-    m_consumer = Consumer({type, WTFMove(promise)});
-    owner.loadBlob(*m_blob, loadingType(type));
+    m_consumePromise = WTFMove(promise);
+    owner.loadBlob(*m_blob, &m_consumer);
 }
 
 Vector<uint8_t> FetchBody::extractFromText() const
@@ -236,63 +223,21 @@ Vector<uint8_t> FetchBody::extractFromText() const
     return value;
 }
 
-static inline Ref<Blob> blobFromArrayBuffer(ArrayBuffer* buffer, const String& contentType)
-{
-    if (!buffer)
-        return Blob::create(Vector<uint8_t>(), contentType);
-
-    // FIXME: We should try to move buffer to Blob without doing this copy.
-    Vector<uint8_t> value(buffer->byteLength());
-    memcpy(value.data(), buffer->data(), buffer->byteLength());
-    return Blob::create(WTFMove(value), contentType);
-}
-
-void FetchBody::fulfillTextPromise(FetchBody::Consumer::Type type, const String& text, DeferredWrapper& promise)
-{
-    ASSERT(type == Consumer::Type::Text || type == Consumer::Type::JSON);
-    if (type == FetchBody::Consumer::Type::Text)
-        promise.resolve(text);
-    else
-        fulfillPromiseWithJSON(promise, text);
-}
-
 void FetchBody::loadingFailed()
 {
-    ASSERT(m_consumer);
-    m_consumer->promise.reject(0);
-    m_consumer = Nullopt;
+    if (m_consumePromise) {
+        m_consumePromise->reject(0);
+        m_consumePromise = Nullopt;
+    }
 }
 
-void FetchBody::loadedAsArrayBuffer(RefPtr<ArrayBuffer>&& buffer)
+void FetchBody::loadingSucceeded()
 {
-    if (m_type == Type::Loading) {
-        m_type = Type::ArrayBuffer;
-        m_data = buffer;
-        if (m_consumer) {
-            consumeArrayBuffer(m_consumer->type, m_consumer->promise);
-            m_consumer = Nullopt;
-        }
-        return;
+    m_type = m_consumer.hasData() ? Type::Loaded : Type::None;
+    if (m_consumePromise) {
+        m_consumer.resolve(*m_consumePromise);
+        m_consumePromise = Nullopt;
     }
-
-    ASSERT(m_consumer);
-    ASSERT(m_consumer->type == Consumer::Type::Blob || m_consumer->type == Consumer::Type::ArrayBuffer);
-    if (m_consumer->type == Consumer::Type::ArrayBuffer)
-        fulfillPromiseWithArrayBuffer(m_consumer->promise, buffer.get());
-    else {
-        ASSERT(m_blob);
-        m_consumer->promise.resolve(blobFromArrayBuffer(buffer.get(), m_blob->type()));
-    }
-    m_consumer = Nullopt;
-}
-
-void FetchBody::loadedAsText(String&& text)
-{
-    ASSERT(m_consumer);
-    ASSERT(m_consumer->type == Consumer::Type::Text || m_consumer->type == Consumer::Type::JSON);
-
-    fulfillTextPromise(m_consumer->type, text, m_consumer->promise);
-    m_consumer = Nullopt;
 }
 
 RefPtr<FormData> FetchBody::bodyForInternalRequest() const

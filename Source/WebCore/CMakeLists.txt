@@ -818,6 +818,7 @@ set(WebCore_SOURCES
 
     Modules/fetch/DOMWindowFetch.cpp
     Modules/fetch/FetchBody.cpp
+    Modules/fetch/FetchBodyConsumer.cpp
     Modules/fetch/FetchBodyOwner.cpp
     Modules/fetch/FetchHeaders.cpp
     Modules/fetch/FetchLoader.cpp
@@ -3773,7 +3774,6 @@ add_custom_command(
     DEPENDS ${BUILTINS_GENERATOR_SCRIPTS}
     COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --wrappers-only --framework WebCore --output-directory ${DERIVED_SOURCES_WEBCORE_DIR} ${WebCore_BUILTINS_SOURCES}
     VERBATIM)
-list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.cpp)
 list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.cpp)
 list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.h)
 list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.h)

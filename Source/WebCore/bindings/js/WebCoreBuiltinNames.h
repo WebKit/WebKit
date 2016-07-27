@@ -35,14 +35,18 @@ namespace WebCore {
     macro(addTrack) \
     macro(appendFromJS) \
     macro(body) \
+    macro(cloneForJS) \
     macro(closeRequested) \
     macro(closedPromiseCapability) \
+    macro(consume) \
+    macro(consumeChunk) \
     macro(controlledReadableStream) \
     macro(controller) \
     macro(createReadableStreamSource) \
     macro(disturbed) \
     macro(fetchRequest) \
     macro(fillFromJS) \
+    macro(finishConsumingStream) \
     macro(firstReadCallback) \
     macro(getUserMediaFromJS) \
     macro(getRemoteStreams) \
@@ -74,6 +78,7 @@ namespace WebCore {
     macro(setBody) \
     macro(setStatus) \
     macro(state) \
+    macro(startConsumingStream) \
     macro(started) \
     macro(startedPromise) \
     macro(storedError) \

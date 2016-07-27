@@ -48,6 +48,12 @@ function initializeFetchResponse(body, init)
     if (body !== @undefined && body !== null) {
         if (status == 101 || status == 204 || status == 205 || status == 304)
             throw new @TypeError("Response cannot have a body with the given status");
+
+        // FIXME: Use @isReadableStream once it is no longer guarded by STREAMS_API guard.
+        let isBodyReadableStream = (@isObject(body) && !!body.@underlyingSource);
+        if (isBodyReadableStream)
+          this.@body = body;
+
         this.@initializeWith(body);
     }
 
@@ -70,4 +76,78 @@ function body()
         }
     }
     return this.@body;
+}
+
+function clone()
+{
+    if (!this instanceof @Response)
+        throw new @TypeError("Function should be called on a Response");
+
+    if (@Response.prototype.@isDisturbed.@call(this))
+        throw new @TypeError("Cannot clone a disturbed Response");
+
+    var cloned = @Response.prototype.@cloneForJS.@call(this);
+    if (this.@body) {
+        var teedReadableStreams = @teeReadableStream(this.@body, false);
+        this.@body = teedReadableStreams[0];
+        cloned.@body = teedReadableStreams[1];
+    }
+    return cloned;
+}
+
+// consume and consumeStream single parameter should be kept in sync with FetchBodyConsumer::Type.
+function arrayBuffer()
+{
+    if (!this instanceof @Response)
+        throw new @TypeError("Function should be called on a Response");
+
+    const arrayBufferConsumerType = 1;
+    if (!this.@body)
+        return @Response.prototype.@consume.@call(this, arrayBufferConsumerType);
+
+    return @consumeStream(this, arrayBufferConsumerType);
+}
+
+function blob()
+{
+    if (!this instanceof @Response)
+        throw new @TypeError("Function should be called on a Response");
+
+    const blobConsumerType = 2;
+    if (!this.@body)
+        return @Response.prototype.@consume.@call(this, blobConsumerType);
+
+    return @consumeStream(this, blobConsumerType);
+}
+
+function formData()
+{
+    if (!this instanceof @Response)
+        throw new @TypeError("Function should be called on a Response");
+
+    return @Promise.@reject("Not implemented");
+}
+
+function json()
+{
+    if (!this instanceof @Response)
+        throw new @TypeError("Function should be called on a Response");
+
+    const jsonConsumerType = 3;
+    if (!this.@body)
+        return @Response.prototype.@consume.@call(this, jsonConsumerType);
+
+    return @consumeStream(this, jsonConsumerType);
+}
+
+function text()
+{
+    if (!this instanceof @Response)
+        throw new @TypeError("Function should be called on a Response");
+
+    const textConsumerType = 4;
+    if (!this.@body)
+        return @Response.prototype.@consume.@call(this, textConsumerType);
+
+    return @consumeStream(this, textConsumerType);
 }
