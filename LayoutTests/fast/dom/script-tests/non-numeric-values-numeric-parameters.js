@@ -278,7 +278,7 @@ shouldBe("nonNumericPolicy('document.createEvent(\"KeyboardEvent\").initKeyboard
 
 // MediaList
 
-shouldBe("nonNumericPolicy('createMediaList().item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('createMediaList().item(x)')", "'any type allowed (but not omitted)'");
 
 // MouseEvent
 

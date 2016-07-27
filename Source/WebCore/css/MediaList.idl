@@ -30,14 +30,13 @@
     ImplementationLacksVTable,
 ] interface MediaList {
 
-    [SetterRaisesException] attribute DOMString? mediaText;
+    [SetterRaisesException, TreatNullAs=EmptyString] attribute DOMString mediaText;
     readonly attribute unsigned long length;
 
-    getter DOMString? item(optional unsigned long index = 0);
+    getter DOMString? item(unsigned long index);
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] void deleteMedium(optional DOMString oldMedium = "undefined");
-    [RaisesException] void appendMedium(optional DOMString newMedium = "undefined");
+    [RaisesException] void deleteMedium(DOMString oldMedium);
+    [RaisesException] void appendMedium(DOMString newMedium);
 
 };
 

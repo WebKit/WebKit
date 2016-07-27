@@ -1,3 +1,26 @@
+2016-07-27  Chris Dumez  <cdumez@apple.com>
+
+        Align MediaList with the CSSOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=160257
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/MediaList-mediaText-null-expected.txt: Added.
+        * fast/css/MediaList-mediaText-null.html: Added.
+        Add test coverage for MediaList.mediaText to make sure it is not nullable
+        and treats null as the empty string. Our IDL did not match the
+        specification here but our behavior was correct. Therefore, this test is
+        passing with and without my change. I just wanted to make sure we had
+        good coverage since I updated our IDL to match the specification.
+
+        * fast/css/MediaList-parameters-expected.txt: Added.
+        * fast/css/MediaList-parameters.html: Added.
+        Add test coverage for mandatory parameters.
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+        Update existing test to reflect behavior change.
+
 2016-07-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Correct the syntax used to skip js/regress/script-tests/bigswitch-indirect-symbol.js
