@@ -1,3 +1,11 @@
+2016-07-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/27574303.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-07-27  Chris Dumez  <cdumez@apple.com>
 
         First parameter to Document.execCommand() / queryCommand*() should be mandatory

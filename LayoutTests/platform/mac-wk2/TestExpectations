@@ -467,7 +467,8 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 [ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
 
 # PiP tests are only enabled for Sierra WebKit2.
-[ Sierra+ ] media/controls/picture-in-picture.html [ Pass ]
+# rdar://problem/27574303
+[ Sierra+ ] media/controls/picture-in-picture.html [ Pass Failure ]
 [ Sierra+ ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass ]
 [ Sierra+ ] media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
 [ Sierra+ ] media/fullscreen-video-going-into-pip.html [ Pass ]
