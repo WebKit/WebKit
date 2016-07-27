@@ -1,5 +1,16 @@
 2016-07-26  Chris Dumez  <cdumez@apple.com>
 
+        Move 'dir' attribute from HTMLDocument to Document
+        https://bugs.webkit.org/show_bug.cgi?id=160231
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-07-26  Chris Dumez  <cdumez@apple.com>
+
         Second parameter to History.pushState() / replaceState() should be mandatory
         https://bugs.webkit.org/show_bug.cgi?id=160230
 

@@ -865,6 +865,9 @@ public:
     String title() const { return m_title.string(); }
     void setTitle(const String&, ExceptionCode&);
 
+    const AtomicString& dir() const;
+    void setDir(const AtomicString&);
+
     void titleElementAdded(Element& titleElement);
     void titleElementRemoved(Element& titleElement);
     void titleElementTextChanged(Element& titleElement);

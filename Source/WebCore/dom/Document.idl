@@ -162,6 +162,7 @@
     // Moved down from HTMLDocument
 
     [SetterRaisesException] attribute DOMString title;
+    attribute DOMString dir;
 
     readonly attribute DOMString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

@@ -45,9 +45,6 @@ public:
     int width();
     int height();
 
-    const AtomicString& dir() const;
-    void setDir(const AtomicString&);
-
     String designMode() const;
     void setDesignMode(const String&);
 

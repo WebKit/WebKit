@@ -49,9 +49,8 @@
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     readonly attribute long width;
     readonly attribute long height;
-#endif
-
     attribute DOMString dir;
+#endif
 
     attribute DOMString designMode;
     readonly attribute DOMString compatMode;

@@ -7085,4 +7085,19 @@ void Document::removeViewportDependentPicture(HTMLPictureElement& picture)
     m_viewportDependentPictures.remove(&picture);
 }
 
+const AtomicString& Document::dir() const
+{
+    auto* documentElement = this->documentElement();
+    if (!is<HTMLHtmlElement>(documentElement))
+        return nullAtom;
+    return downcast<HTMLHtmlElement>(*documentElement).dir();
+}
+
+void Document::setDir(const AtomicString& value)
+{
+    auto* documentElement = this->documentElement();
+    if (is<HTMLHtmlElement>(documentElement))
+        downcast<HTMLHtmlElement>(*documentElement).setDir(value);
+}
+
 } // namespace WebCore

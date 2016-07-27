@@ -19,7 +19,7 @@ PASS Document interface: attribute cookie
 PASS Document interface: attribute lastModified 
 PASS Document interface: attribute readyState 
 PASS Document interface: attribute title 
-FAIL Document interface: attribute dir assert_true: The prototype object must have a property "dir" expected true got false
+PASS Document interface: attribute dir 
 PASS Document interface: attribute body 
 PASS Document interface: attribute head 
 PASS Document interface: attribute images 
@@ -444,7 +444,7 @@ PASS Document interface: new Document() must inherit property "cookie" with the 
 PASS Document interface: new Document() must inherit property "lastModified" with the proper type (38) 
 PASS Document interface: new Document() must inherit property "readyState" with the proper type (39) 
 PASS Document interface: new Document() must inherit property "title" with the proper type (41) 
-FAIL Document interface: new Document() must inherit property "dir" with the proper type (42) assert_inherits: property "dir" not found in prototype chain
+PASS Document interface: new Document() must inherit property "dir" with the proper type (42) 
 PASS Document interface: new Document() must inherit property "body" with the proper type (43) 
 PASS Document interface: new Document() must inherit property "head" with the proper type (44) 
 PASS Document interface: new Document() must inherit property "images" with the proper type (45) 
@@ -711,7 +711,7 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "lastModified" with the proper type (38) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "readyState" with the proper type (39) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "title" with the proper type (41) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "dir" with the proper type (42) assert_inherits: property "dir" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "dir" with the proper type (42) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "body" with the proper type (43) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "head" with the proper type (44) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "images" with the proper type (45) 
