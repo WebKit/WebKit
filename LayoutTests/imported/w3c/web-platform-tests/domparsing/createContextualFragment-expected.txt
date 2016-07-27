@@ -1,7 +1,6 @@
 
 PASS Must not throw INVALID_STATE_ERR for a detached node. 
-FAIL Must throw TypeError when calling without arguments assert_throws: function "function () {
-                range.createContextualFragm..." did not throw
+PASS Must throw TypeError when calling without arguments 
 PASS Simple test with paragraphs 
 PASS Don't auto-create <body> when applied to <html> 
 PASS <script>s should be run when appended to the document (but not before) 

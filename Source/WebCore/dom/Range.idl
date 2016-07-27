@@ -76,8 +76,7 @@
 
     // extensions
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] DocumentFragment createContextualFragment(optional DOMString html = "undefined");
+    [RaisesException, NewObject] DocumentFragment createContextualFragment(DOMString html);
 
     // WebKit extensions
 

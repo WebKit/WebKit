@@ -1,5 +1,16 @@
 2016-07-27  Chris Dumez  <cdumez@apple.com>
 
+        First parameter to Range.createContextualFragment() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160266
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that one more check is passing.
+
+        * web-platform-tests/domparsing/createContextualFragment-expected.txt:
+
+2016-07-27  Chris Dumez  <cdumez@apple.com>
+
         First parameter to indexed property getters should be mandatory
         https://bugs.webkit.org/show_bug.cgi?id=160259
 
