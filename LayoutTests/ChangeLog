@@ -1,3 +1,18 @@
+2016-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] SF-Heavy is inaccessible by web content
+        https://bugs.webkit.org/show_bug.cgi?id=160186
+        <rdar://problem/27434423>
+
+        Reviewed by Dean Jackson.
+
+        * platform/ios-simulator/TestExpectations: system-font-weight-italic.html
+        is expected to fail on iOS 9.
+        * fast/text/system-font-weight-italic-expected.txt: Added.
+        * fast/text/system-font-weight-italic.html: Added.
+        * fast/text/system-font-weight-expected.txt: Added.
+        * fast/text/system-font-weight.html: Added.
+
 2016-07-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip failing JSC test regress/script-tests/bigswitch-indirect-symbol.js

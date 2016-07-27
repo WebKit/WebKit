@@ -3007,3 +3007,6 @@ webkit.org/b/142969 editing/spelling/copy-paste-crash.html
 
 # This test is iPad only
 platform/ios-simulator/media/video-interruption-suspendunderlock.html [ Skip ]
+
+# System font on iOS 9 cannot be bold and italic.
+fast/text/system-font-weight-italic.html [ Failure ]
