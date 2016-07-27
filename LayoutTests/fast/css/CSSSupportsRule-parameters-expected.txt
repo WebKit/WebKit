@@ -1,0 +1,13 @@
+Tests that the parameters to CSSSupportsRule.insertRule() / deleteRule() are mandatory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS supportsRule.__proto__ is CSSSupportsRule.prototype
+PASS supportsRule.insertRule() threw exception TypeError: Not enough arguments.
+PASS supportsRule.insertRule('width: 0') threw exception TypeError: Not enough arguments.
+PASS supportsRule.deleteRule() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

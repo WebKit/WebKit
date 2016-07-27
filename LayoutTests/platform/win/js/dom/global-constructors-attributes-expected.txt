@@ -123,6 +123,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'CSSStyleSheet').hasOwnProperty('ge
 PASS Object.getOwnPropertyDescriptor(global, 'CSSStyleSheet').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSStyleSheet').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSStyleSheet').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'CSSSupportsRule').value is CSSSupportsRule
+PASS Object.getOwnPropertyDescriptor(global, 'CSSSupportsRule').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSSSupportsRule').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSSSupportsRule').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSSSupportsRule').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValue').value is CSSValue
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValue').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValue').hasOwnProperty('set') is false
