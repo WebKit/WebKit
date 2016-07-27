@@ -1,3 +1,19 @@
+2016-07-27  Chris Dumez  <cdumez@apple.com>
+
+        Fix m_isInBackground initialization for Safari View Services
+        https://bugs.webkit.org/show_bug.cgi?id=160255
+        <rdar://problem/27569255>
+
+        Reviewed by Tim Horton.
+
+        Fix m_isInBackground initialization for Safari View Services. The
+        code was using m_applicationStateMonitor without initializing it.
+        Instead, use the local applicationStateMonitor and make sure we
+        invalidate it before it gets released.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+
 2016-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Coordinated Graphics] Improve scheduling of tasks between threads in CoordinatedGraphicsScene
