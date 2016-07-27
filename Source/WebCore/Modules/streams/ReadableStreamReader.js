@@ -30,7 +30,7 @@ function cancel(reason)
     "use strict";
 
     if (!@isReadableStreamReader(this))
-        return @Promise.@reject(new @TypeError("Function should be called on a ReadableStreamReader"));
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamReader", "cancel"));
 
     if (!this.@ownerReadableStream)
         return @Promise.@reject(new @TypeError("cancel() called on a reader owned by no readable stream"));
@@ -43,7 +43,7 @@ function read()
     "use strict";
 
     if (!@isReadableStreamReader(this))
-        return @Promise.@reject(new @TypeError("Function should be called on a ReadableStreamReader"));
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamReader", "read"));
     if (!this.@ownerReadableStream)
         return @Promise.@reject(new @TypeError("read() called on a reader owned by no readable stream"));
 
@@ -55,7 +55,7 @@ function releaseLock()
     "use strict";
 
     if (!@isReadableStreamReader(this))
-        throw new @TypeError("Function should be called on a ReadableStreamReader");
+        throw @makeThisTypeError("ReadableStreamReader", "releaseLock");
 
     const stream = this.@ownerReadableStream;
     if (!stream)
@@ -78,7 +78,7 @@ function closed()
     "use strict";
 
     if (!@isReadableStreamReader(this))
-        return @Promise.@reject(new @TypeError("Callee of closed is not a ReadableStreamReader"));
+        return @Promise.@reject(@makeGetterTypeError("ReadableStreamReader", "closed"));
 
     return this.@closedPromiseCapability.@promise;
 }

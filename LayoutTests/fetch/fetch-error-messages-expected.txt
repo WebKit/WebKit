@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 11: TypeError: The Response.body getter can only be used on instances of Response
+
+PASS Exercising TypeError messages in Fetch Response 
+

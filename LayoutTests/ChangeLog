@@ -1,3 +1,15 @@
+2016-07-26  Youenn Fablet  <youennf@gmail.com>
+
+        JS Built-ins should throw this-error messages consistently with binding generated code
+        https://bugs.webkit.org/show_bug.cgi?id=160191
+
+        Reviewed by Darin Adler.
+
+        * fetch/fetch-error-messages-expected.txt: Added.
+        * fetch/fetch-error-messages.html: Added.
+        * streams/readable-stream-error-messages-expected.txt: Added.
+        * streams/readable-stream-error-messages.html: Added.
+
 2016-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] SF-Heavy is inaccessible by web content

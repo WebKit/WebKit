@@ -833,11 +833,6 @@ JSC::EncodedJSValue throwConstructorDocumentUnavailableError(JSC::ExecState& sta
     return throwVMError(&state, createReferenceError(&state, makeString(interfaceName, " constructor associated document is unavailable")));
 }
 
-JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
-{
-    return throwVMTypeError(&state, makeString("The ", interfaceName, '.', attributeName, " getter can only be used on instances of ", interfaceName));
-}
-
 void throwSequenceTypeError(JSC::ExecState& state)
 {
     throwTypeError(state, ASCIILiteral("Value is not a sequence"));
@@ -848,15 +843,30 @@ void throwNonFiniteTypeError(ExecState& state)
     throwTypeError(&state, ASCIILiteral("The provided value is non-finite"));
 }
 
+String makeGetterTypeErrorMessage(const char* interfaceName, const char* attributeName)
+{
+    return makeString("The ", interfaceName, '.', attributeName, " getter can only be used on instances of ", interfaceName);
+}
+
+JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
+{
+    return throwVMTypeError(&state, makeGetterTypeErrorMessage(interfaceName, attributeName));
+}
+
 bool throwSetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
 {
     throwTypeError(state, makeString("The ", interfaceName, '.', attributeName, " setter can only be used on instances of ", interfaceName));
     return false;
 }
 
+String makeThisTypeErrorMessage(const char* interfaceName, const char* functionName)
+{
+    return makeString("Can only call ", interfaceName, '.', functionName, " on instances of ", interfaceName);
+}
+
 EncodedJSValue throwThisTypeError(JSC::ExecState& state, const char* interfaceName, const char* functionName)
 {
-    return throwVMTypeError(&state, makeString("Can only call ", interfaceName, '.', functionName, " on instances of ", interfaceName));
+    return throwTypeError(state, makeThisTypeErrorMessage(interfaceName, functionName));
 }
 
 void callFunctionWithCurrentArguments(JSC::ExecState& state, JSC::JSObject& thisObject, JSC::JSFunction& function)

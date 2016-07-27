@@ -56,6 +56,9 @@ function initializeFetchResponse(body, init)
 
 function body()
 {
+    if (!(this instanceof @Response))
+        throw @makeGetterTypeError("Response", "body");
+
     if (!this.@body) {
         if (@Response.prototype.@isDisturbed.@call(this)) {
             this.@body = new @ReadableStream();

@@ -30,7 +30,7 @@ function enqueue(chunk)
     "use strict";
 
     if (!@isReadableStreamController(this))
-        throw new @TypeError("Function should be called on a ReadableStreamController");
+        throw @makeThisTypeError("ReadableStreamController", "enqueue");
 
     const stream = this.@controlledReadableStream;
 
@@ -48,7 +48,7 @@ function error(error)
     "use strict";
 
     if (!@isReadableStreamController(this))
-        throw new @TypeError("Function should be called on a ReadableStreamController");
+        throw @makeThisTypeError("ReadableStreamController", "error");
 
     const stream = this.@controlledReadableStream;
     if (stream.@state !== @streamReadable)
@@ -62,7 +62,7 @@ function close()
     "use strict";
 
     if (!@isReadableStreamController(this))
-        throw new @TypeError("Function should be called on a ReadableStreamController");
+        throw @makeThisTypeError("ReadableStreamController", "close");
 
     const stream = this.@controlledReadableStream;
     if (stream.@closeRequested)
@@ -79,7 +79,7 @@ function desiredSize()
     "use strict";
 
     if (!@isReadableStreamController(this))
-        throw new @TypeError("Function should be called on a ReadableStreamController");
+        throw @makeGetterTypeError("ReadableStreamController", "desiredSize");
 
     return @getReadableStreamDesiredSize(this.@controlledReadableStream);
 }

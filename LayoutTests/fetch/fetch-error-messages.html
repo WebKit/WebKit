@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+function printMethodError(method, target)
+{
+    try {
+        method.call(target);
+        assert_unreached();
+    } catch(e) {
+         console.log(e);
+    }
+}
+
+function printGetterError(object, getterName, target)
+{
+    const getter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(object), getterName).get;
+    printMethodError(getter, target);
+}
+
+test(function(test) {
+    // This test prints exceptions to check the format of their messages.
+
+    var request = new Request("");
+    var response = new Response("");
+
+    printGetterError(response, "body", request);
+
+}, "Exercising TypeError messages in Fetch Response");
+</script>

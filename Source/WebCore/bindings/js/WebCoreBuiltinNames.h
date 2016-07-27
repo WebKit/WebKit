@@ -51,6 +51,8 @@ namespace WebCore {
     macro(initializeWith) \
     macro(isDisturbed) \
     macro(localStreams) \
+    macro(makeThisTypeError) \
+    macro(makeGetterTypeError) \
     macro(operations) \
     macro(ownerReadableStream) \
     macro(privateGetStats) \
