@@ -269,8 +269,7 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
 
-        if (!CGAffineTransformIsIdentity(transform))
-            [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:animationDuration + 0.1];
+        [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:animationDuration + 0.1];
     });
 }
 
@@ -283,13 +282,18 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     if ([_videoSublayer superlayer] != self)
         return;
     
+    if (CGRectEqualToRect(self.modelVideoLayerFrame, [self bounds]) && CGAffineTransformIsIdentity([(UIView *)[_videoSublayer delegate] transform]))
+        return;
+    
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
     
-    self.modelVideoLayerFrame = [self bounds];
-    ASSERT(_fullscreenInterface->model());
-    _fullscreenInterface->model()->setVideoLayerFrame(self.modelVideoLayerFrame);
+    if (!CGRectEqualToRect(self.modelVideoLayerFrame, [self bounds])) {
+        self.modelVideoLayerFrame = [self bounds];
+        ASSERT(_fullscreenInterface->model());
+        _fullscreenInterface->model()->setVideoLayerFrame(self.modelVideoLayerFrame);
+    }
     [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
     
     [CATransaction commit];
