@@ -32,6 +32,14 @@ WebInspector.CodeMirrorEditor = class CodeMirrorEditor
 
         let codeMirror = new CodeMirror(place, options);
 
+        // Override some Mac specific keybindings.
+        if (WebInspector.Platform.name === "mac") {
+            codeMirror.addKeyMap({
+                "Home": () => { codeMirror.scrollIntoView({line: 0, ch: 0}); },
+                "End": () => { codeMirror.scrollIntoView({line: codeMirror.lineCount() - 1, ch: null}); },
+            });
+        }
+
         // Set up default controllers that should be present for
         // all CodeMirror editor instances.
         new WebInspector.CodeMirrorTextKillController(codeMirror);
