@@ -47,11 +47,11 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "SourceBuffer.h"
-#include <wtf/spi/darwin/dyldSPI.h>
 
 #if PLATFORM(IOS)
 #include "AudioSession.h"
 #include "RuntimeApplicationChecks.h"
+#include <wtf/spi/darwin/dyldSPI.h>
 #endif
 
 namespace WebCore {
