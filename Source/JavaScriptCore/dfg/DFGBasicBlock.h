@@ -239,6 +239,14 @@ struct BasicBlock : RefCounted<BasicBlock> {
     struct SSAData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
+        void invalidate()
+        {
+            liveAtTail.clear();
+            liveAtHead.clear();
+            valuesAtHead.clear();
+            valuesAtTail.clear();
+        }
+
         AvailabilityMap availabilityAtHead;
         AvailabilityMap availabilityAtTail;
         

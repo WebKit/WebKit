@@ -1,3 +1,42 @@
+2016-07-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Fix a bunch of use-after-free of DFG::Node
+        https://bugs.webkit.org/show_bug.cgi?id=160228
+
+        Reviewed by Mark Lam.
+
+        FTL had a few places where we use a node after it has been
+        deleted. The dangling pointers come from the SSA liveness information
+        kept on the basic blocks.
+
+        This patch fixes the issues I could find and adds liveness invalidation
+        to help finding dependencies like these.
+
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::SSAData::invalidate):
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        Constant folding phase was deleting nodes in the loop over basic blocks.
+        The problem is the deleted nodes can be referenced by other blocks.
+        When the abstract interpreter was manipulating the abstract values of those
+        it was doing so on the dead nodes.
+
+        * dfg/DFGConstantHoistingPhase.cpp:
+        Just invalidation. Nothing wrong here since the useless nodes were
+        kept live while iterating the blocks.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::killBlockAndItsContents):
+        (JSC::DFG::Graph::killUnreachableBlocks):
+        (JSC::DFG::Graph::invalidateNodeLiveness):
+
+        * dfg/DFGGraph.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        We had a lot of use-after-free in LCIM because we were using the stale
+        live nodes deleted by previous phases.
+
 2016-07-27  Keith Miller  <keith_miller@apple.com>
 
         concatAppendOne should allocate using the indexing type of the array if it cannot merge

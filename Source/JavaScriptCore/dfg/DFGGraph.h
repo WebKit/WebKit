@@ -533,6 +533,7 @@ public:
     void substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal);
     
     void invalidateCFG();
+    void invalidateNodeLiveness();
     
     void clearFlagsOnAllNodes(NodeFlags);
     

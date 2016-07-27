@@ -744,6 +744,8 @@ void Graph::computeRefCounts()
 
 void Graph::killBlockAndItsContents(BasicBlock* block)
 {
+    if (auto& ssaData = block->ssa)
+        ssaData->invalidate();
     for (unsigned phiIndex = block->phis.size(); phiIndex--;)
         m_allocator.free(block->phis[phiIndex]);
     for (unsigned nodeIndex = block->size(); nodeIndex--;)
@@ -754,9 +756,8 @@ void Graph::killBlockAndItsContents(BasicBlock* block)
 
 void Graph::killUnreachableBlocks()
 {
-    // FIXME: This probably creates dangling references from Upsilons to Phis in SSA.
-    // https://bugs.webkit.org/show_bug.cgi?id=159164
-    
+    invalidateNodeLiveness();
+
     for (BlockIndex blockIndex = 0; blockIndex < numBlocks(); ++blockIndex) {
         BasicBlock* block = this->block(blockIndex);
         if (!block)
@@ -776,6 +777,15 @@ void Graph::invalidateCFG()
     m_controlEquivalenceAnalysis = nullptr;
     m_backwardsDominators = nullptr;
     m_backwardsCFG = nullptr;
+}
+
+void Graph::invalidateNodeLiveness()
+{
+    if (m_form != SSA)
+        return;
+
+    for (BasicBlock* block : blocksInNaturalOrder())
+        block->ssa->invalidate();
 }
 
 void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal)
