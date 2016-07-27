@@ -1,3 +1,11 @@
+2016-07-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Correct the syntax used to skip js/regress/script-tests/bigswitch-indirect-symbol.js
+
+        Unreviewed test gardening.
+
+        * js/regress/script-tests/bigswitch-indirect-symbol.js:
+
 2016-07-27  Chris Dumez  <cdumez@apple.com>
 
         First parameter to indexed property getters should be mandatory
