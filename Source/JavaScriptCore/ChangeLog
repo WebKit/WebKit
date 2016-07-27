@@ -1,3 +1,19 @@
+2016-07-27  Keith Miller  <keith_miller@apple.com>
+
+        concatAppendOne should allocate using the indexing type of the array if it cannot merge
+        https://bugs.webkit.org/show_bug.cgi?id=160261
+        <rdar://problem/27530122>
+
+        Reviewed by Mark Lam.
+
+        Before, if we could not merge the indexing types for copying, we would allocate the
+        the array as ArrayWithUndecided. Instead, we should allocate an array with the original
+        array's indexing type.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::concatAppendOne):
+        * tests/stress/concat-append-one-with-sparse-array.js: Added.
+
 2016-07-27  Saam Barati  <sbarati@apple.com>
 
         We don't optimize for-in properly in baseline JIT (maybe other JITs too) with an object with symbols
