@@ -24,7 +24,6 @@
 
 #include "WebResourceLoadScheduler.h"
 
-#include "WebKitLogging.h"
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
@@ -126,8 +125,6 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
 
-    LOG(ResourceLoading, "WebResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
-
 #if PLATFORM(IOS)
     // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.
     if (!isSuspendingPendingRequests() && resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->iOSOriginalRequest().url())) {
@@ -221,7 +218,6 @@ void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resou
 
 void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
 {
-    LOG(ResourceLoading, "WebResourceLoadScheduler::servePendingRequests. m_suspendPendingRequestsCount=%d", m_suspendPendingRequestsCount); 
     if (isSuspendingPendingRequests())
         return;
 
@@ -242,8 +238,6 @@ void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimum
 
 void WebResourceLoadScheduler::servePendingRequests(HostInformation* host, ResourceLoadPriority minimumPriority)
 {
-    LOG(ResourceLoading, "WebResourceLoadScheduler::servePendingRequests HostInformation.m_name='%s'", host->name().latin1().data());
-
     auto priority = ResourceLoadPriority::Highest;
     while (true) {
         auto& requestsPending = host->requestsPending(priority);
@@ -291,14 +285,12 @@ void WebResourceLoadScheduler::resumePendingRequests()
     
 void WebResourceLoadScheduler::scheduleServePendingRequests()
 {
-    LOG(ResourceLoading, "WebResourceLoadScheduler::scheduleServePendingRequests, m_requestTimer.isActive()=%u", m_requestTimer.isActive());
     if (!m_requestTimer.isActive())
         m_requestTimer.startOneShot(0);
 }
 
 void WebResourceLoadScheduler::requestTimerFired()
 {
-    LOG(ResourceLoading, "WebResourceLoadScheduler::requestTimerFired\n");
     servePendingRequests();
 }
 
@@ -338,7 +330,6 @@ void WebResourceLoadScheduler::HostInformation::schedule(ResourceLoader* resourc
     
 void WebResourceLoadScheduler::HostInformation::addLoadInProgress(ResourceLoader* resourceLoader)
 {
-    LOG(ResourceLoading, "HostInformation '%s' loading '%s'. Current count %d", m_name.latin1().data(), resourceLoader->url().string().latin1().data(), m_requestsLoading.size());
     m_requestsLoading.add(resourceLoader);
 }
     

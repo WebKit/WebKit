@@ -1,5 +1,22 @@
 2016-07-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the Windows debug build.
+        
+        WebResourceLoadScheduler's logging was a holdover from it being in WebCore,
+        and prior to r203749 WebKit was actually using a WebCore log channel.
+        
+        For some reason this doesn't build on Windows debug, so just remove
+        this logging for now.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::scheduleLoad): Deleted.
+        (WebResourceLoadScheduler::servePendingRequests): Deleted.
+        (WebResourceLoadScheduler::scheduleServePendingRequests): Deleted.
+        (WebResourceLoadScheduler::requestTimerFired): Deleted.
+        (WebResourceLoadScheduler::HostInformation::addLoadInProgress): Deleted.
+
+2016-07-26  Simon Fraser  <simon.fraser@apple.com>
+
         Sort the project files.
 
         * WebKit.xcodeproj/project.pbxproj:

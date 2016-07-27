@@ -60,7 +60,6 @@ extern "C" {
     M(Progress) \
     M(Redirect) \
     M(RemoteInspector) \
-    M(ResourceLoading) \
     M(TextInput) \
     M(Timing) \
     M(View) \

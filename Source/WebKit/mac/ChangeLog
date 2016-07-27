@@ -1,3 +1,15 @@
+2016-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Windows debug build.
+        
+        WebResourceLoadScheduler's logging was a holdover from it being in WebCore,
+        and prior to r203749 WebKit was actually using a WebCore log channel.
+        
+        For some reason this doesn't build on Windows debug, so just remove
+        this logging for now.
+
+        * Misc/WebKitLogging.h:
+
 2016-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPhone] Playing a video on tudou.com plays only sound, no video
