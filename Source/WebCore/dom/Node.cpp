@@ -1216,23 +1216,60 @@ bool Node::isEqualNode(Node* other) const
     if (nodeType != other->nodeType())
         return false;
     
-    if (nodeName() != other->nodeName())
-        return false;
-    
-    if (localName() != other->localName())
-        return false;
-    
-    if (namespaceURI() != other->namespaceURI())
-        return false;
-    
-    if (prefix() != other->prefix())
-        return false;
-    
-    if (nodeValue() != other->nodeValue())
-        return false;
-    
-    if (is<Element>(*this) && !downcast<Element>(*this).hasEquivalentAttributes(downcast<Element>(other)))
-        return false;
+    switch (nodeType) {
+    case Node::DOCUMENT_TYPE_NODE: {
+        auto& thisDocType = downcast<DocumentType>(*this);
+        auto& otherDocType = downcast<DocumentType>(*other);
+        if (thisDocType.name() != otherDocType.name())
+            return false;
+        if (thisDocType.publicId() != otherDocType.publicId())
+            return false;
+        if (thisDocType.systemId() != otherDocType.systemId())
+            return false;
+        if (thisDocType.internalSubset() != otherDocType.internalSubset())
+            return false;
+        break;
+        }
+    case Node::ELEMENT_NODE: {
+        auto& thisElement = downcast<Element>(*this);
+        auto& otherElement = downcast<Element>(*other);
+        if (thisElement.tagQName() != otherElement.tagQName())
+            return false;
+        if (!thisElement.hasEquivalentAttributes(&otherElement))
+            return false;
+        break;
+        }
+    case Node::PROCESSING_INSTRUCTION_NODE: {
+        auto& thisProcessingInstruction = downcast<ProcessingInstruction>(*this);
+        auto& otherProcessingInstruction = downcast<ProcessingInstruction>(*other);
+        if (thisProcessingInstruction.target() != otherProcessingInstruction.target())
+            return false;
+        if (thisProcessingInstruction.data() != otherProcessingInstruction.data())
+            return false;
+        break;
+        }
+    case Node::CDATA_SECTION_NODE:
+    case Node::TEXT_NODE:
+    case Node::COMMENT_NODE: {
+        auto& thisCharacterData = downcast<CharacterData>(*this);
+        auto& otherCharacterData = downcast<CharacterData>(*other);
+        if (thisCharacterData.data() != otherCharacterData.data())
+            return false;
+        break;
+        }
+    case Node::ATTRIBUTE_NODE: {
+        auto& thisAttribute = downcast<Attr>(*this);
+        auto& otherAttribute = downcast<Attr>(*other);
+        if (thisAttribute.qualifiedName() != otherAttribute.qualifiedName())
+            return false;
+        if (thisAttribute.value() != otherAttribute.value())
+            return false;
+        break;
+        }
+    case Node::DOCUMENT_NODE:
+    case Node::DOCUMENT_FRAGMENT_NODE:
+        break;
+    }
     
     Node* child = firstChild();
     Node* otherChild = other->firstChild();
@@ -1247,22 +1284,6 @@ bool Node::isEqualNode(Node* other) const
     
     if (otherChild)
         return false;
-    
-    if (nodeType == DOCUMENT_TYPE_NODE) {
-        const DocumentType* documentTypeThis = static_cast<const DocumentType*>(this);
-        const DocumentType* documentTypeOther = static_cast<const DocumentType*>(other);
-        
-        if (documentTypeThis->publicId() != documentTypeOther->publicId())
-            return false;
-
-        if (documentTypeThis->systemId() != documentTypeOther->systemId())
-            return false;
-
-        if (documentTypeThis->internalSubset() != documentTypeOther->internalSubset())
-            return false;
-
-        // FIXME: We don't compare entities or notations because currently both are always empty.
-    }
     
     return true;
 }

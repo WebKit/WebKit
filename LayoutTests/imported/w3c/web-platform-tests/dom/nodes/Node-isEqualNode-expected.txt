@@ -6,6 +6,6 @@ PASS processing instructions should be compared on target and data
 PASS text nodes should be compared on data 
 PASS comments should be compared on data 
 PASS document fragments should not be compared based on properties 
-FAIL documents should not be compared based on properties assert_true: default HTML documents, created different ways expected true got false
+PASS documents should not be compared based on properties 
 PASS node equality testing should test descendant equality too 
 

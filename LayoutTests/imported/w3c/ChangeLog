@@ -1,5 +1,17 @@
 2016-07-26  Chris Dumez  <cdumez@apple.com>
 
+        Align Node.isEqualNode() with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=160224
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline W3C test now that one more check is passing. We are now
+        passing all the checks in this test like Firefox and Chrome.
+
+        * web-platform-tests/dom/nodes/Node-isEqualNode-expected.txt:
+
+2016-07-26  Chris Dumez  <cdumez@apple.com>
+
         Range.prototype.compareBoundaryPoints.length should be 2
         https://bugs.webkit.org/show_bug.cgi?id=160217
 
