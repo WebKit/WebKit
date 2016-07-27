@@ -1,3 +1,21 @@
+2016-07-27  Saam Barati  <sbarati@apple.com>
+
+        We don't optimize for-in properly in baseline JIT (maybe other JITs too) with an object with symbols
+        https://bugs.webkit.org/show_bug.cgi?id=160211
+        <rdar://problem/27572612>
+
+        Reviewed by Geoffrey Garen.
+
+        The fast for-in iteration mode assumes all inline/out-of-line properties
+        can be iterated in linear order. This is not true if we have Symbols
+        because Symbols should not be iterated by for-in.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::add):
+        * tests/stress/symbol-should-not-break-for-in.js: Added.
+        (assert):
+        (foo):
+
 2016-07-27  Mark Lam  <mark.lam@apple.com>
 
         The second argument for Function.prototype.apply should be array-like or null/undefined.
