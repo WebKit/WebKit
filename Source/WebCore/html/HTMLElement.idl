@@ -46,9 +46,8 @@
 
     [RaisesException] Element insertAdjacentElement(DOMString where, Element element);
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] void insertAdjacentHTML(optional DOMString where = "undefined", optional DOMString html = "undefined");
-    [RaisesException] void insertAdjacentText(optional DOMString where = "undefined", optional DOMString text = "undefined");
+    [RaisesException] void insertAdjacentHTML(DOMString where, DOMString html);
+    [RaisesException] void insertAdjacentText(DOMString where, DOMString text);
 
     [SetterRaisesException] attribute DOMString contentEditable;
     readonly attribute boolean isContentEditable;

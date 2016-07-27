@@ -1,5 +1,17 @@
 2016-07-27  Chris Dumez  <cdumez@apple.com>
 
+        Parameters to insertAdjacentText() / insertAdjacentHTML() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160274
+
+        Reviewed by Darin Adler.
+
+        Add test coverage.
+
+        * fast/dom/Element/insertAdjacentText-parameters-expected.txt: Added.
+        * fast/dom/Element/insertAdjacentText-parameters.html: Added.
+
+2016-07-27  Chris Dumez  <cdumez@apple.com>
+
         Parameters to DOMParser.parseFromString() should be mandatory
         https://bugs.webkit.org/show_bug.cgi?id=160268
 
