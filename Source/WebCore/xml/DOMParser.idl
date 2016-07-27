@@ -21,6 +21,5 @@
     Constructor,
     ImplementationLacksVTable,
 ] interface DOMParser {
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] Document parseFromString(optional DOMString str = "undefined", optional DOMString contentType = "undefined");
+    [RaisesException, NewObject] Document parseFromString(DOMString str, DOMString contentType);
 };
