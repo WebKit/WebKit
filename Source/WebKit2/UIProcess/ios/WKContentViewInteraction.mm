@@ -264,7 +264,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     RetainPtr<WKFocusedElementInfo> _focusedElementInfo;
     RetainPtr<UIView> _customInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _suggestions;
-    RetainPtr<NSString> _textContentType;
     BOOL _accessoryViewShouldNotShow;
     BOOL _forceSecureTextEntry;
 }
@@ -365,20 +364,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     _suggestions = adoptNS([suggestions copy]);
     [suggestionDelegate setSuggestions:suggestions];
 #endif
-}
-
-- (NSString *)textContentType
-{
-    return _textContentType.get();
-}
-
-- (void)setTextContentType:(NSString *)textContentType
-{
-    if (textContentType == _textContentType || [textContentType isEqualToString:_textContentType.get()])
-        return;
-
-    _textContentType = adoptNS([textContentType copy]);
-    [_contentView reloadInputViews];
 }
 
 - (void)invalidate
@@ -3024,10 +3009,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     }
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-    if (NSString *textContentType = [_formInputSession textContentType])
-        [_traits setTextContentType:textContentType];
-    else
-        [_traits setTextContentType:contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName)];
+    [_traits setTextContentType:contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName)];
 #endif
 
     return _traits.get();

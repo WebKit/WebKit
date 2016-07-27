@@ -1,3 +1,19 @@
+2016-07-27  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] Remove unused textContentType SPI from _WKFormInputSession
+        https://bugs.webkit.org/show_bug.cgi?id=160260
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/_WKFormInputSession.h: Remove unused SPI.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInputTraits]): Set textContentType of _traits to whatever we classify it as based
+        on the assisted node info. The default textContentType is nil, and that is our fallback in our method
+        for determining textContentType.
+        (-[WKFormInputSession textContentType]): Deleted.
+        (-[WKFormInputSession setTextContentType:]): Deleted.
+
 2016-07-27  Chris Dumez  <cdumez@apple.com>
 
         Fix m_isInBackground initialization for Safari View Services
