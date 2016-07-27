@@ -51,7 +51,6 @@ public:
 
     void updateViewport() override;
     void renderNextFrame() override;
-    void purgeBackingStores() override;
 
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
 

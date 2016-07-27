@@ -53,7 +53,6 @@ public:
     class Client {
     public:
         virtual void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&, float) = 0;
-        virtual void purgeBackingStores() = 0;
         virtual void renderNextFrame() = 0;
         virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) = 0;
     };
@@ -81,7 +80,6 @@ private:
     ThreadedCompositor(Client*);
 
     // CoordinatedGraphicsSceneClient
-    void purgeBackingStores() override;
     void renderNextFrame() override;
     void updateViewport() override;
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;

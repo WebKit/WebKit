@@ -1,5 +1,51 @@
 2016-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Coordinated Graphics] Improve scheduling of tasks between threads in CoordinatedGraphicsScene
+        https://bugs.webkit.org/show_bug.cgi?id=160238
+
+        Reviewed by Michael Catanzaro.
+
+        This patch makes the following improvements:
+
+         - Avoid scheduling tasks to the main thread if the scene is detached.
+         - Do not take references when not actually sending tasks to another threads.
+         - Use Function instead of std::function on dispatch methods.
+         - Remove purgeBackingStores that is actually never called. It's only scheduled from purgeGLResources() that
+           is always called after detach.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::dispatchOnMainThread):
+        (WebKit::CoordinatedGraphicsScene::dispatchOnClientRunLoop):
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebKit::CoordinatedGraphicsScene::updateViewport):
+        (WebKit::CoordinatedGraphicsScene::onNewBufferAvailable):
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        (WebKit::CoordinatedGraphicsScene::renderNextFrame):
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+        (WebKit::CoordinatedGraphicsScene::commitScrollOffset):
+        (WebKit::CoordinatedGraphicsScene::detach):
+        (WebKit::CoordinatedGraphicsScene::setActive):
+        (WebKit::CoordinatedGraphicsScene::dispatchCommitScrollOffset): Deleted.
+        (WebKit::CoordinatedGraphicsScene::purgeBackingStores): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::purgeBackingStores): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::purgeBackingStores): Deleted.
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::invalidate):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::invalidate):
+        (WebKit::CoordinatedLayerTreeHost::purgeBackingStores): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
+2016-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Remove network setup from web process
         https://bugs.webkit.org/show_bug.cgi?id=160236
 

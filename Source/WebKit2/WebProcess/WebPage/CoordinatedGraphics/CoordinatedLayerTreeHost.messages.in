@@ -23,7 +23,6 @@
 messages -> CoordinatedLayerTreeHost LegacyReceiver {
     SetVisibleContentsRect(WebCore::FloatRect visibleContentsRect, WebCore::FloatPoint trajectoryVectory)
     RenderNextFrame()
-    PurgeBackingStores()
     CommitScrollOffset(uint32_t layerID, WebCore::IntSize offset)
 }
 #endif

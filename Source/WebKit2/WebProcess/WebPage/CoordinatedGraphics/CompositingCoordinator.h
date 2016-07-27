@@ -66,6 +66,8 @@ public:
     CompositingCoordinator(WebCore::Page*, CompositingCoordinator::Client&);
     virtual ~CompositingCoordinator();
 
+    void invalidate();
+
     void setRootCompositingLayer(WebCore::GraphicsLayer*);
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
     void sizeDidChange(const WebCore::IntSize&);
@@ -73,11 +75,9 @@ public:
 
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     void renderNextFrame();
-    void purgeBackingStores();
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
     void createRootLayer(const WebCore::IntSize&);
-    void clearRootLayer() { m_rootLayer = nullptr; }
     WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
     WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 
@@ -122,6 +122,8 @@ private:
     void initializeRootCompositingLayerIfNeeded();
     void flushPendingImageBackingChanges();
     void clearPendingStateChanges();
+
+    void purgeBackingStores();
 
     void scheduleReleaseInactiveAtlases();
 

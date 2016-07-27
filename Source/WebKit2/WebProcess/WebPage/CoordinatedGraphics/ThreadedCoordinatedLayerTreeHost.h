@@ -82,11 +82,6 @@ private:
             m_layerTreeHost.setVisibleContentsRect(rect, trajectoryVector, scale);
         }
 
-        void purgeBackingStores() override
-        {
-            m_layerTreeHost.purgeBackingStores();
-        }
-
         void renderNextFrame() override
         {
             m_layerTreeHost.renderNextFrame();

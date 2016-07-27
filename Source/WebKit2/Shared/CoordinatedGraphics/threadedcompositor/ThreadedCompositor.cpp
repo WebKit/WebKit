@@ -140,12 +140,6 @@ void ThreadedCompositor::scrollBy(const IntSize& delta)
     });
 }
 
-void ThreadedCompositor::purgeBackingStores()
-{
-    ASSERT(isMainThread());
-    m_client->purgeBackingStores();
-}
-
 void ThreadedCompositor::renderNextFrame()
 {
     ASSERT(isMainThread());
