@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 2.13.4
+=================
+
+What's new in WebKitGTK+ 2.13.4?
+
+  - Switched to use the threaded compositor. Accelerated compositing mode is now always enabled by default
+    and happens in a separate thread in the web process.
+  - Make web view background colors work in accelerated compositing mode.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.13.3
 =================
 

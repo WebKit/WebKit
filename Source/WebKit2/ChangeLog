@@ -1,3 +1,9 @@
+2016-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.4 release.
+
+        * gtk/NEWS: Add release notes for 2.13.4.
+
 2016-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the project files.
