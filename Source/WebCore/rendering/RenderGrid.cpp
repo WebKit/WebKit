@@ -261,17 +261,13 @@ public:
         ASSERT_NOT_REACHED();
         sizingState = ColumnSizingFirstIteration;
     }
-    bool isValidTransition(GridTrackSizingDirection direction)
+    bool isValidTransition(GridTrackSizingDirection direction) const
     {
         switch (sizingState) {
         case ColumnSizingFirstIteration:
+        case ColumnSizingSecondIteration:
             return direction == ForColumns;
         case RowSizingFirstIteration:
-            return direction == ForRows;
-        case ColumnSizingSecondIteration:
-            if (direction == ForRows)
-                sizingState = RowSizingFirstIteration;
-            return true;
         case RowSizingSecondIteration:
             return direction == ForRows;
         }
