@@ -2319,15 +2319,18 @@ EncodedJSValue JIT_OPERATION operationValueAddOptimize(ExecState* exec, EncodedJ
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
     auto nonOptimizeVariant = operationValueAddNoOptimize;
+    if (ArithProfile* arithProfile = addIC->m_generator.arithProfile())
+        arithProfile->observeLHSAndRHS(op1, op2);
     addIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();
 #endif
 
-    JSValue op1 = JSValue::decode(encodedOp1);
-    JSValue op2 = JSValue::decode(encodedOp2);
     return JSValue::encode(jsAdd(exec, op1, op2));
 }
 
@@ -2392,6 +2395,8 @@ EncodedJSValue JIT_OPERATION operationValueMulOptimize(ExecState* exec, EncodedJ
     NativeCallFrameTracer tracer(vm, exec);
 
     auto nonOptimizeVariant = operationValueMulNoOptimize;
+    if (ArithProfile* arithProfile = mulIC->m_generator.arithProfile())
+        arithProfile->observeLHSAndRHS(JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
     mulIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
 
 #if ENABLE(MATH_IC_STATS)

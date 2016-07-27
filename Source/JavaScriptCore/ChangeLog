@@ -1,3 +1,55 @@
+2016-07-27  Saam Barati  <sbarati@apple.com>
+
+        MathICs should be able to emit only a jump along the inline path when they don't have any type data
+        https://bugs.webkit.org/show_bug.cgi?id=160110
+
+        Reviewed by Mark Lam.
+
+        This patch allows for MathIC fast-path generation to be delayed.
+        We delay when we don't see any observed type information for
+        the lhs/rhs operand, which implies that the MathIC has never
+        executed. This is profitable for two main reasons:
+        1. If the math operation never executes, we emit much less code.
+        2. Once we get type information for the lhs/rhs, we can emit better code.
+
+        To implement this, we just emit a jump to the slow path call
+        that will repatch on first execution.
+
+        New data for add:
+                   |   JetStream  |  Unity 3D  |
+             ------| -------------|--------------
+              Old  |   148 bytes  |  143 bytes |
+             ------| -------------|--------------
+              New  |   116  bytes |  113 bytes |
+             ------------------------------------
+
+        New data for mul:
+                   |   JetStream  |  Unity 3D  |
+             ------| -------------|--------------
+              Old  |   210 bytes  |  185 bytes |
+             ------| -------------|--------------
+              New  |   170  bytes |  137 bytes |
+             ------------------------------------
+
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateInline):
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::isLeftOperandValidConstant):
+        (JSC::JITAddGenerator::isRightOperandValidConstant):
+        (JSC::JITAddGenerator::arithProfile):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateInline):
+        (JSC::JITMathIC::generateOutOfLine):
+        (JSC::JITMathIC::finalizeInlineCode):
+        * jit/JITMathICInlineResult.h:
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateInline):
+        * jit/JITMulGenerator.h:
+        (JSC::JITMulGenerator::isLeftOperandValidConstant):
+        (JSC::JITMulGenerator::isRightOperandValidConstant):
+        (JSC::JITMulGenerator::arithProfile):
+        * jit/JITOperations.cpp:
+
 2016-07-26  Saam Barati  <sbarati@apple.com>
 
         rollout r203666

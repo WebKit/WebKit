@@ -64,6 +64,8 @@ public:
     bool isLeftOperandValidConstant() const { return m_leftOperand.isPositiveConstInt32(); }
     bool isRightOperandValidConstant() const { return m_rightOperand.isPositiveConstInt32(); }
 
+    ArithProfile* arithProfile() const { return m_arithProfile; }
+
 private:
     SnippetOperand m_leftOperand;
     SnippetOperand m_rightOperand;
