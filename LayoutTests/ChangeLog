@@ -1,3 +1,15 @@
+2016-07-27  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to Document.execCommand() / queryCommand*() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160258
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/dom/Document/editing-parameters-expected.txt: Added.
+        * fast/dom/Document/editing-parameters.html: Added.
+
 2016-07-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix a typo in TestExpectations.

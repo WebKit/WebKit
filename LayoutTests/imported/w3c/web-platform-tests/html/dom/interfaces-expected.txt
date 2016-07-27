@@ -40,12 +40,12 @@ PASS Document interface: attribute defaultView
 PASS Document interface: attribute activeElement 
 PASS Document interface: operation hasFocus() 
 FAIL Document interface: attribute designMode assert_true: The prototype object must have a property "designMode" expected true got false
-FAIL Document interface: operation execCommand(DOMString,boolean,DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation queryCommandEnabled(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation queryCommandIndeterm(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation queryCommandState(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation queryCommandSupported(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation queryCommandValue(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation execCommand(DOMString,boolean,DOMString) 
+PASS Document interface: operation queryCommandEnabled(DOMString) 
+PASS Document interface: operation queryCommandIndeterm(DOMString) 
+PASS Document interface: operation queryCommandState(DOMString) 
+PASS Document interface: operation queryCommandSupported(DOMString) 
+PASS Document interface: operation queryCommandValue(DOMString) 
 FAIL Document interface: attribute commands assert_true: The prototype object must have a property "commands" expected true got false
 PASS Document interface: attribute onreadystatechange 
 FAIL Document interface: attribute fgColor assert_true: The prototype object must have a property "fgColor" expected true got false
@@ -207,29 +207,17 @@ PASS Document interface: iframe.contentDocument must inherit property "activeEle
 PASS Document interface: iframe.contentDocument must inherit property "hasFocus" with the proper type (61) 
 PASS Document interface: iframe.contentDocument must inherit property "designMode" with the proper type (62) 
 PASS Document interface: iframe.contentDocument must inherit property "execCommand" with the proper type (63) 
-FAIL Document interface: calling execCommand(DOMString,boolean,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling execCommand(DOMString,boolean,DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "queryCommandEnabled" with the proper type (64) 
-FAIL Document interface: calling queryCommandEnabled(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandEnabled(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "queryCommandIndeterm" with the proper type (65) 
-FAIL Document interface: calling queryCommandIndeterm(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandIndeterm(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "queryCommandState" with the proper type (66) 
-FAIL Document interface: calling queryCommandState(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandState(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "queryCommandSupported" with the proper type (67) 
-FAIL Document interface: calling queryCommandSupported(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandSupported(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "queryCommandValue" with the proper type (68) 
-FAIL Document interface: calling queryCommandValue(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandValue(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 FAIL Document interface: iframe.contentDocument must inherit property "commands" with the proper type (69) assert_inherits: property "commands" not found in prototype chain
 PASS Document interface: iframe.contentDocument must inherit property "onreadystatechange" with the proper type (70) 
 PASS Document interface: iframe.contentDocument must inherit property "fgColor" with the proper type (71) 
@@ -471,29 +459,17 @@ PASS Document interface: new Document() must inherit property "activeElement" wi
 PASS Document interface: new Document() must inherit property "hasFocus" with the proper type (61) 
 FAIL Document interface: new Document() must inherit property "designMode" with the proper type (62) assert_inherits: property "designMode" not found in prototype chain
 PASS Document interface: new Document() must inherit property "execCommand" with the proper type (63) 
-FAIL Document interface: calling execCommand(DOMString,boolean,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling execCommand(DOMString,boolean,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "queryCommandEnabled" with the proper type (64) 
-FAIL Document interface: calling queryCommandEnabled(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandEnabled(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "queryCommandIndeterm" with the proper type (65) 
-FAIL Document interface: calling queryCommandIndeterm(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandIndeterm(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "queryCommandState" with the proper type (66) 
-FAIL Document interface: calling queryCommandState(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandState(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "queryCommandSupported" with the proper type (67) 
-FAIL Document interface: calling queryCommandSupported(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandSupported(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "queryCommandValue" with the proper type (68) 
-FAIL Document interface: calling queryCommandValue(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandValue(DOMString) on new Document() with too few arguments must throw TypeError 
 FAIL Document interface: new Document() must inherit property "commands" with the proper type (69) assert_inherits: property "commands" not found in prototype chain
 PASS Document interface: new Document() must inherit property "onreadystatechange" with the proper type (70) 
 FAIL Document interface: new Document() must inherit property "fgColor" with the proper type (71) assert_inherits: property "fgColor" not found in prototype chain
@@ -738,29 +714,17 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "hasFocus" with the proper type (61) 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "designMode" with the proper type (62) assert_inherits: property "designMode" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "execCommand" with the proper type (63) 
-FAIL Document interface: calling execCommand(DOMString,boolean,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling execCommand(DOMString,boolean,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandEnabled" with the proper type (64) 
-FAIL Document interface: calling queryCommandEnabled(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandEnabled(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandIndeterm" with the proper type (65) 
-FAIL Document interface: calling queryCommandIndeterm(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandIndeterm(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandState" with the proper type (66) 
-FAIL Document interface: calling queryCommandState(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandState(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandSupported" with the proper type (67) 
-FAIL Document interface: calling queryCommandSupported(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandSupported(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandValue" with the proper type (68) 
-FAIL Document interface: calling queryCommandValue(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling queryCommandValue(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "commands" with the proper type (69) assert_inherits: property "commands" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onreadystatechange" with the proper type (70) 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "fgColor" with the proper type (71) assert_inherits: property "fgColor" not found in prototype chain

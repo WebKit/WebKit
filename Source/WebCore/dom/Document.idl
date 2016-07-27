@@ -140,24 +140,20 @@
                                                   optional XPathResult? inResult);
 
     // Common extensions
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    boolean execCommand(optional DOMString command = "undefined",
-                        optional boolean userInterface = false,
-                        optional DOMString? value = null);
+    // FIXME: The default value for the last parameter should be the empty string.
+    boolean execCommand(DOMString command, optional boolean userInterface = false, optional DOMString? value = null);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // FIXME: remove the these two versions once optional is implemented for Objective-C.
-    boolean            execCommand(DOMString command,
-                                   boolean userInterface);
-    boolean            execCommand(DOMString command);
+    boolean execCommand(DOMString command, boolean userInterface);
+    boolean execCommand(DOMString command);
 #endif
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    boolean            queryCommandEnabled(optional DOMString command = "undefined");
-    boolean            queryCommandIndeterm(optional DOMString command = "undefined");
-    boolean            queryCommandState(optional DOMString command = "undefined");
-    boolean            queryCommandSupported(optional DOMString command = "undefined");
-    DOMString          queryCommandValue(optional DOMString command = "undefined");
+    boolean queryCommandEnabled(DOMString command);
+    boolean queryCommandIndeterm(DOMString command);
+    boolean queryCommandState(DOMString command);
+    boolean queryCommandSupported(DOMString command);
+    DOMString queryCommandValue(DOMString command);
 
     // Moved down from HTMLDocument
 

@@ -1,3 +1,14 @@
+2016-07-27  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to Document.execCommand() / queryCommand*() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160258
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-07-26  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Response constructor should be able to take a ReadableStream as body
