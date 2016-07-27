@@ -562,6 +562,9 @@ JSValue JSDOMWindow::postMessage(ExecState& state)
 
 JSValue JSDOMWindow::setTimeout(ExecState& state)
 {
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
     ContentSecurityPolicy* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
     if (state.hadException())
@@ -581,6 +584,9 @@ JSValue JSDOMWindow::setTimeout(ExecState& state)
 
 JSValue JSDOMWindow::setInterval(ExecState& state)
 {
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
     ContentSecurityPolicy* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
     if (state.hadException())

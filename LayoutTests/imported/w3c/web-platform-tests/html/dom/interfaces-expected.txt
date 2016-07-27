@@ -5454,23 +5454,15 @@ PASS Window interface: calling btoa(DOMString) on window with too few arguments 
 PASS Window interface: window must inherit property "atob" with the proper type (115) 
 PASS Window interface: calling atob(DOMString) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "setTimeout" with the proper type (116) 
-FAIL Window interface: calling setTimeout(Function,long,any) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Window interface: calling setTimeout(Function,long,any) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "setTimeout" with the proper type (117) 
-FAIL Window interface: calling setTimeout(DOMString,long,any) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Window interface: calling setTimeout(DOMString,long,any) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "clearTimeout" with the proper type (118) 
 PASS Window interface: calling clearTimeout(long) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "setInterval" with the proper type (119) 
-FAIL Window interface: calling setInterval(Function,long,any) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Window interface: calling setInterval(Function,long,any) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "setInterval" with the proper type (120) 
-FAIL Window interface: calling setInterval(DOMString,long,any) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Window interface: calling setInterval(DOMString,long,any) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "clearInterval" with the proper type (121) 
 PASS Window interface: calling clearInterval(long) on window with too few arguments must throw TypeError 
 FAIL Window interface: window must inherit property "createImageBitmap" with the proper type (122) assert_own_property: expected property "createImageBitmap" missing
