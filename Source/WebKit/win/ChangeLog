@@ -1,3 +1,9 @@
+2016-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Win debug build after r203749.
+
+        * WebView.cpp:
+
 2016-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Allow LOG macros to be used outside the namespace, and other logging cleanup
