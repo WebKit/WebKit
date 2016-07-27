@@ -1,3 +1,4 @@
+// @skip
 var thing0 = Symbol();
 var thing1 = Symbol();
 var thing2 = Symbol();

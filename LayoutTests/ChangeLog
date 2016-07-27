@@ -1,3 +1,12 @@
+2016-07-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip failing JSC test regress/script-tests/bigswitch-indirect-symbol.js
+        https://bugs.webkit.org/show_bug.cgi?id=160035
+
+        Unreviewed test gardening.
+
+        * js/regress/script-tests/bigswitch-indirect-symbol.js:
+
 2016-07-26  Chris Dumez  <cdumez@apple.com>
 
         Second parameter to History.pushState() / replaceState() should be mandatory
