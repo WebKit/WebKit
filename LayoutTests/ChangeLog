@@ -1,3 +1,25 @@
+2016-07-27  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Fix some video/canvas tests that should be passing
+        https://bugs.webkit.org/show_bug.cgi?id=160023
+
+        Reviewed by Carlos Garcia Campos.
+
+        Modify the tests to use a tolerance of 6 when running on the GTK or EFL platforms. Also,
+        added new expectations for the tests that need them.
+
+        * fast/canvas/canvas-createPattern-video-loading.html:
+        * fast/canvas/canvas-createPattern-video-modify.html:
+        * media/video-canvas-createPattern.html:
+        * platform/efl/fast/canvas/canvas-createPattern-video-loading-expected.txt: Added.
+        * platform/efl/fast/canvas/canvas-createPattern-video-modify-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-createPattern-video-loading-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-createPattern-video-modify-expected.txt: Added.
+        * resources/platform-helper.js: Added.
+        (isGtk):
+        (isEfl):
+        (videoCanvasPixelComparisonTolerance):
+
 2016-07-27  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Streams API] Replace ReadableStreamReader by ReadableStreamDefaultReader

@@ -3,6 +3,7 @@
         <title>Create patterns on canvas using video</title>
         <script src="media-file.js"></script>
         <script src="video-test.js"></script>
+        <script src="../resources/platform-helper.js"></script>
         <script>
             var video;
             var numberOfSeeks = 4;
@@ -52,7 +53,7 @@
                 document.getElementById('canvases').appendChild(canvas);
 
                 expectedResults.forEach(function(element) {
-                    checkColorAtLocation(ctx, element[0], element[1], element[2], element[3], element[4], 2);
+                    checkColorAtLocation(ctx, element[0], element[1], element[2], element[3], element[4], videoCanvasPixelComparisonTolerance());
                 });
 
                 // Ensure that the test seeks a couple of times.

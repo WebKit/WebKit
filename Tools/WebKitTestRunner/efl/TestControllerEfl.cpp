@@ -156,6 +156,7 @@ void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& testO
 
 void TestController::platformConfigureViewForTest(const TestInvocation&)
 {
+    WKPageSetApplicationNameForUserAgent(mainWebView()->page(), WKStringCreateWithUTF8CString("WebKitTestRunnerEFL"));
 }
 
 void TestController::platformResetPreferencesToConsistentValues()

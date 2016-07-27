@@ -3,6 +3,7 @@
 <head>
     <script src="../../resources/js-test-pre.js"></script>
     <script src="../../media/media-file.js"></script>
+    <script src="../../resources/platform-helper.js"></script>
 </head>
 <body>
 <script>
@@ -40,7 +41,7 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             expectedResults.forEach(function(element) {
-                checkPixels(context, element[0], element[1], element[2], element[3], element[4], 2);
+                checkPixels(context, element[0], element[1], element[2], element[3], element[4], videoCanvasPixelComparisonTolerance());
             });
 
             finishJSTest();

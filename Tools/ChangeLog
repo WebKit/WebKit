@@ -1,3 +1,18 @@
+2016-07-27  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Fix some video/canvas tests that should be passing
+        https://bugs.webkit.org/show_bug.cgi?id=160023
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a platform identifier to the TestRunner's page user agent when the tests are run on the
+        EFL or GTK platforms.
+
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformConfigureViewForTest):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformConfigureViewForTest):
+
 2016-07-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [Tools] The built product doesn't contains the dwo files when DEBUG_FISSION is enabled.

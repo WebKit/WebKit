@@ -140,6 +140,7 @@ const char* TestController::platformLibraryPathForTesting()
 
 void TestController::platformConfigureViewForTest(const TestInvocation&)
 {
+    WKPageSetApplicationNameForUserAgent(mainWebView()->page(), WKStringCreateWithUTF8CString("WebKitTestRunnerGTK"));
 }
 
 void TestController::platformResetPreferencesToConsistentValues()
