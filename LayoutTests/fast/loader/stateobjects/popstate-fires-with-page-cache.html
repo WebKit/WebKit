@@ -31,7 +31,7 @@ function onTestWindowLoad(event)
     switch (testWindowLoadFireCount) {
     case 1:
         debug('pushState with new state object for page 1');
-        testWindow.history.pushState('newState');
+        testWindow.history.pushState('newState', '');
         debug('going to page 2');
         // Set the location in a timeout to generate a history entry
         setTimeout(function() {testWindow.location.href = 'resources/popstate-fires-with-page-cache-2.html';}, 0);            

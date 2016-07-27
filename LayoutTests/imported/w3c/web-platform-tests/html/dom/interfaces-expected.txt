@@ -5550,13 +5550,9 @@ PASS History interface: calling go(long) on window.history with too few argument
 PASS History interface: window.history must inherit property "back" with the proper type (4) 
 PASS History interface: window.history must inherit property "forward" with the proper type (5) 
 PASS History interface: window.history must inherit property "pushState" with the proper type (6) 
-FAIL History interface: calling pushState(any,DOMString,DOMString) on window.history with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS History interface: calling pushState(any,DOMString,DOMString) on window.history with too few arguments must throw TypeError 
 PASS History interface: window.history must inherit property "replaceState" with the proper type (7) 
-FAIL History interface: calling replaceState(any,DOMString,DOMString) on window.history with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS History interface: calling replaceState(any,DOMString,DOMString) on window.history with too few arguments must throw TypeError 
 PASS Location interface: existence and properties of interface object 
 PASS Location interface object length 
 PASS Location interface object name 

@@ -55,17 +55,22 @@ JSValue JSHistory::state(ExecState& state) const
 
 JSValue JSHistory::pushState(ExecState& state)
 {
-    auto historyState = SerializedScriptValue::create(&state, state.argument(0), 0, 0);
+    auto argCount = state.argumentCount();
+    if (UNLIKELY(argCount < 2))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
+    auto historyState = SerializedScriptValue::create(&state, state.uncheckedArgument(0), 0, 0);
     if (state.hadException())
         return jsUndefined();
 
-    String title = valueToStringWithUndefinedOrNullCheck(&state, state.argument(1));
+    // FIXME: title should not be nullable.
+    String title = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(1));
     if (state.hadException())
         return jsUndefined();
 
     String url;
-    if (state.argumentCount() > 2) {
-        url = valueToStringWithUndefinedOrNullCheck(&state, state.argument(2));
+    if (argCount > 2) {
+        url = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
         if (state.hadException())
             return jsUndefined();
     }
@@ -81,17 +86,22 @@ JSValue JSHistory::pushState(ExecState& state)
 
 JSValue JSHistory::replaceState(ExecState& state)
 {
-    auto historyState = SerializedScriptValue::create(&state, state.argument(0), 0, 0);
+    auto argCount = state.argumentCount();
+    if (UNLIKELY(argCount < 2))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
+    auto historyState = SerializedScriptValue::create(&state, state.uncheckedArgument(0), 0, 0);
     if (state.hadException())
         return jsUndefined();
 
-    String title = valueToStringWithUndefinedOrNullCheck(&state, state.argument(1));
+    // FIXME: title should not be nullable.
+    String title = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(1));
     if (state.hadException())
         return jsUndefined();
 
     String url;
-    if (state.argumentCount() > 2) {
-        url = valueToStringWithUndefinedOrNullCheck(&state, state.argument(2));
+    if (argCount > 2) {
+        url = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
         if (state.hadException())
             return jsUndefined();
     }
