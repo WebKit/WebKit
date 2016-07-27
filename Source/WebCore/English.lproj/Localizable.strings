@@ -79,6 +79,9 @@
 /* File Upload single video label */
 "1 Video (file upload on page label for one video)" = "1 Video";
 
+/* Option in segmented control for choosing list type in text editing */
+"1. 2. 3.…" = "1. 2. 3.…";
+
 /* Menu item title for KEYGEN pop-up menu */
 "1024 (Medium Grade)" = "1024 (Medium Grade)";
 
@@ -289,6 +292,12 @@
 /* Undo action name */
 "Insert List (Undo action name)" = "Insert List";
 
+/* Option in segmented control for inserting a bulleted list in text editing */
+"Insert a bulleted list" = "Insert a bulleted list";
+
+/* Option in segmented control for inserting a numbered list in text editing */
+"Insert a numbered list" = "Insert a numbered list";
+
 /* Inspect Element context menu item */
 "Inspect Element" = "Inspect Element";
 
@@ -364,8 +373,14 @@
 /* Empty select list */
 "No Options Select Popover" = "No Options";
 
+/* Accessibility label for not inserting a list in text editing */
+"No list" = "No list";
+
 /* Label for only item in menu that appears when clicking on the search field image, when no searches have been performed */
 "No recent searches" = "No recent searches";
+
+/* Option in segmented control for choosing list type in text editing */
+"None" = "None";
 
 /* WebKitErrorCannotUseRestrictedPort description */
 "Not allowed to use restricted network port" = "Not allowed to use restricted network port";
@@ -603,6 +618,9 @@
 
 /* WebKitErrorBlockedByContentBlocker description */
 "The URL was blocked by a content blocker" = "The URL was blocked by a content blocker";
+
+/* WebKitErrorFrameLoadBlockedByContentFilter description */
+"The URL was blocked by a content filter" = "The URL was blocked by a content filter";
 
 /* WKErrorWebViewInvalidated description */
 "The WKWebView was invalidated" = "The WKWebView was invalidated";
@@ -1117,5 +1135,6 @@
 /* An ARIA accessibility group that acts as an dialog. */
 "web dialog" = "web dialog";
 
-/* WebKitErrorFrameLoadBlockedByContentFilter description */
-"The URL was blocked by a content filter" = "The URL was blocked by a content filter";
+/* Option in segmented control for choosing list type in text editing */
+"•" = "•";
+
