@@ -28,7 +28,7 @@
     CustomIsReachable,
     SkipVTableValidation,
 ] interface CSSRuleList {
-    readonly attribute unsigned long    length;
-    getter CSSRule item(optional unsigned long index = 0);
+    readonly attribute unsigned long length;
+    getter CSSRule item(unsigned long index);
 };
 

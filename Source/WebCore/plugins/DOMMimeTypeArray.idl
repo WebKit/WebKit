@@ -23,7 +23,7 @@
     InterfaceName=MimeTypeArray,
 ] interface DOMMimeTypeArray {
     readonly attribute unsigned long length;
-    getter DOMMimeType item(optional unsigned long index = 0);
+    getter DOMMimeType item(unsigned long index);
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     getter DOMMimeType namedItem(optional DOMString name = "undefined");

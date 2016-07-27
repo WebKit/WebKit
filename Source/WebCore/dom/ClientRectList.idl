@@ -29,7 +29,7 @@
     ExportMacro=WEBCORE_EXPORT,
 ] interface ClientRectList {
     readonly attribute unsigned long length;
-    getter ClientRect item(optional unsigned long index = 0);
+    getter ClientRect item(unsigned long index);
     // FIXME: Fix list behavior to allow custom exceptions to be thrown.
 };
 

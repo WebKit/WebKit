@@ -35,7 +35,7 @@
     ImplementationLacksVTable,
 ] interface DataTransferItemList {
     readonly attribute long length;
-    getter DataTransferItem item(optional unsigned long index = 0);
+    getter DataTransferItem item(unsigned long index);
 
     void clear();
     void add(File? file);

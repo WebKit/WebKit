@@ -44,5 +44,5 @@
 
     readonly attribute unsigned short operationType;
 
-    getter CSSValue (optional unsigned long index = 0);
+    getter CSSValue (unsigned long index);
 };

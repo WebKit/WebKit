@@ -9,7 +9,7 @@
 
         function main(){
             var e = window.document.styleSheets[0].cssRules[0];
-            e.cssRules.item().parentStyleSheet.removeRule();
+            e.cssRules.item(0).parentStyleSheet.removeRule();
             e.name = 'bar';
             document.getElementById('console').innerHTML = "PASSED";
         }

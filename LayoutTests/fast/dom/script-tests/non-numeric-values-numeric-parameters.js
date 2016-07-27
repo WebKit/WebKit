@@ -200,7 +200,7 @@ shouldBe("nonNumericPolicy('createCSSMediaRule().deleteRule(x)')", "'any type al
 
 // CSSRuleList
 
-shouldBe("nonNumericPolicy('createCSSRuleList().item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('createCSSRuleList().item(x)')", "'any type allowed (but not omitted)'");
 
 // CSSStyleDeclaration
 
@@ -215,7 +215,7 @@ shouldBe("nonNumericPolicy('createCSSStyleSheet().removeRule(x)')", "'any type a
 
 // CSSValueList
 
-shouldBe("nonNumericPolicy('createCSSValueList().item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('createCSSValueList().item(x)')", "'any type allowed (but not omitted)'");
 
 // Document
 
@@ -323,7 +323,7 @@ shouldBe("nonNumericPolicy('getSelection().getRangeAt(x)')", "'any type allowed'
 
 // StyleSheetList
 
-shouldBe("nonNumericPolicy('document.styleSheets.item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.styleSheets.item(x)')", "'any type allowed (but not omitted)'");
 
 // Text
 

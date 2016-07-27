@@ -104,9 +104,13 @@ bool JSHTMLAllCollection::nameGetter(ExecState* state, PropertyName propertyName
 
 JSValue JSHTMLAllCollection::item(ExecState& state)
 {
-    if (Optional<uint32_t> index = parseIndex(*state.argument(0).toString(&state)->value(&state).impl()))
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
+    String argument = state.uncheckedArgument(0).toWTFString(&state);
+    if (Optional<uint32_t> index = parseIndex(*argument.impl()))
         return toJS(&state, globalObject(), wrapped().item(index.value()));
-    return namedItems(state, this, Identifier::fromString(&state, state.argument(0).toString(&state)->value(&state)));
+    return namedItems(state, this, Identifier::fromString(&state, argument));
 }
 
 JSValue JSHTMLAllCollection::namedItem(ExecState& state)
