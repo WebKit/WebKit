@@ -62,6 +62,11 @@
 
 .sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row {
     display: flex;
+    flex-wrap: wrap;
+}
+
+.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .metric-section-row {
+    flex-wrap: nowrap;
 }
 
 .sidebar > .panel.details.css-style .visual > .details-section .details-section > .content > .group + .group > .row:first-child {
@@ -87,10 +92,6 @@
 
 .sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row > .visual-style-property-container > .visual-style-property-title {
     width: 55px;
-}
-
-.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row > .visual-style-property-container:not(.layout-reversed):last-child {
-    margin-right: 11px;
 }
 
 .visual-style-property-container.transition,

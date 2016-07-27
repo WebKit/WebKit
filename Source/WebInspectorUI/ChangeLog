@@ -1,3 +1,28 @@
+2016-07-27  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Visual Styles Sidebar should have only one column when it's narrow
+        https://bugs.webkit.org/show_bug.cgi?id=159905
+        <rdar://problem/27413248>
+
+        Reviewed by Joseph Pecoraro.
+
+        Many CSS values often get clipped in the two colunm layout. Change the layout to one colunm
+        when visual style rows get too narrow.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .metric-section-row):
+        Wrap all rows except for position/padding/margin controls.
+
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row > .visual-style-property-container:not(.layout-reversed):last-child): Deleted.
+        Margin between the first and the second column doesn't make sense one column layout.
+        Set the margin in .visual-style-property-container instead.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateMetricSectionRows):
+        * UserInterface/Views/VisualStylePropertyEditor.css:
+        (.visual-style-property-container):
+
 2016-07-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Web Inspector: CodeMirror-based editor bindings for Home and End don't match system behavior

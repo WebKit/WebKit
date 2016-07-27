@@ -429,6 +429,10 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
             this._addMetricsMouseListeners(properties[right], prefix);
         }
 
+        vertical.element.classList.add("metric-section-row");
+        horizontal.element.classList.add("metric-section-row");
+        allLinkRow.element.classList.add("metric-section-row");
+
         return [vertical, allLinkRow, horizontal];
     }
 
