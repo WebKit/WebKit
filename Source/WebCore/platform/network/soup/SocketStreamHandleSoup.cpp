@@ -70,6 +70,7 @@ SocketStreamHandle::SocketStreamHandle(GSocketConnection* socketConnection, Sock
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
     GRefPtr<GSocketConnection> connection = socketConnection;
+    relaxAdoptionRequirement();
     connected(WTFMove(connection));
 }
 
