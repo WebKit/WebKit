@@ -1247,9 +1247,11 @@ void ResourceHandle::receivedRequestToPerformDefaultHandling(const Authenticatio
     ASSERT_NOT_REACHED();
 }
 
-void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
+void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& challenge)
 {
-    ASSERT_NOT_REACHED();
+    // This is only used by layout tests, soup based ports don't implement this.
+    notImplemented();
+    receivedRequestToContinueWithoutCredential(challenge);
 }
 
 static bool waitingToSendRequest(ResourceHandle* handle)
