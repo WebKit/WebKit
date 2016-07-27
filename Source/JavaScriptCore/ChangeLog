@@ -1,3 +1,36 @@
+2016-07-26  Saam Barati  <sbarati@apple.com>
+
+        rollout r203666
+        https://bugs.webkit.org/show_bug.cgi?id=160226
+
+        Unreviewed rollout.
+
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::successorBlock):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        * b3/B3LowerToAir.h:
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::isRepresentableAs):
+        (JSC::B3::Air::Arg::usesTmp):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isRepresentableAs):
+        (JSC::B3::Air::Arg::asNumber):
+        (JSC::B3::Air::Arg::castToType): Deleted.
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::size):
+        (JSC::B3::Air::Code::at):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirValidate.h:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::compileAndRun):
+        (JSC::B3::testSomeEarlyRegister):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+        (JSC::B3::lowerToAirForTesting): Deleted.
+        (JSC::B3::testBranchBitAndImmFusion): Deleted.
+
 2016-07-26  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Object.getOwnPropertyDescriptors should not add undefined props to result

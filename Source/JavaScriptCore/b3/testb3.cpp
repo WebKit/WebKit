@@ -135,22 +135,6 @@ T compileAndRun(Procedure& procedure, Arguments... arguments)
     return invoke<T>(*compile(procedure), arguments...);
 }
 
-void lowerToAirForTesting(Procedure& proc)
-{
-    proc.resetReachability();
-    
-    if (shouldBeVerbose())
-        dataLog("B3 before lowering:\n", proc);
-    
-    validate(proc);
-    lowerToAir(proc);
-    
-    if (shouldBeVerbose())
-        dataLog("Air after lowering:\n", proc.code());
-    
-    Air::validate(proc.code());
-}
-
 template<typename Type>
 struct Operand {
     const char* name;
@@ -12827,48 +12811,6 @@ void testSomeEarlyRegister()
     run(false);
 }
 
-void testBranchBitAndImmFusion(
-    B3::Opcode valueModifier, Type valueType, int64_t constant,
-    Air::Opcode expectedOpcode, Air::Arg::Kind firstKind)
-{
-    // Currently this test should pass on all CPUs. But some CPUs may not support this fused
-    // instruction. It's OK to skip this test on those CPUs.
-    
-    Procedure proc;
-    
-    BasicBlock* root = proc.addBlock();
-    BasicBlock* one = proc.addBlock();
-    BasicBlock* two = proc.addBlock();
-    
-    Value* left = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    
-    if (valueModifier != Identity) {
-        if (MemoryValue::accepts(valueModifier))
-            left = root->appendNew<MemoryValue>(proc, valueModifier, valueType, Origin(), left);
-        else
-            left = root->appendNew<Value>(proc, valueModifier, valueType, Origin(), left);
-    }
-    
-    root->appendNew<Value>(
-        proc, Branch, Origin(),
-        root->appendNew<Value>(
-            proc, BitAnd, Origin(), left,
-            root->appendIntConstant(proc, Origin(), valueType, constant)));
-    root->setSuccessors(FrequentedBlock(one), FrequentedBlock(two));
-    
-    one->appendNew<Value>(proc, Oops, Origin());
-    two->appendNew<Value>(proc, Oops, Origin());
-
-    lowerToAirForTesting(proc);
-
-    // The first basic block must end in a BranchTest64(resCond, tmp, bitImm).
-    Air::Inst terminal = proc.code()[0]->last();
-    CHECK_EQ(terminal.opcode, expectedOpcode);
-    CHECK_EQ(terminal.args[0].kind(), Air::Arg::ResCond);
-    CHECK_EQ(terminal.args[1].kind(), firstKind);
-    CHECK(terminal.args[2].kind() == Air::Arg::BitImm || terminal.args[2].kind() == Air::Arg::BitImm64);
-}
-
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -14282,17 +14224,6 @@ void run(const char* filter)
 
     RUN(testSomeEarlyRegister());
     
-    RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
-    RUN(testBranchBitAndImmFusion(Identity, Int64, 0xff, Air::BranchTest32, Air::Arg::Tmp));
-    RUN(testBranchBitAndImmFusion(Trunc, Int32, 1, Air::BranchTest32, Air::Arg::Tmp));
-    RUN(testBranchBitAndImmFusion(Trunc, Int32, 0xff, Air::BranchTest32, Air::Arg::Tmp));
-    if (isX86()) {
-        RUN(testBranchBitAndImmFusion(Load8S, Int32, 1, Air::BranchTest8, Air::Arg::Addr));
-        RUN(testBranchBitAndImmFusion(Load8Z, Int32, 1, Air::BranchTest8, Air::Arg::Addr));
-        RUN(testBranchBitAndImmFusion(Load, Int32, 1, Air::BranchTest32, Air::Arg::Addr));
-        RUN(testBranchBitAndImmFusion(Load, Int64, 1, Air::BranchTest32, Air::Arg::Addr));
-    }
-
     if (tasks.isEmpty())
         usage();
 

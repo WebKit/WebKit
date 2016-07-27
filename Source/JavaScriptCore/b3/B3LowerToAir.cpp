@@ -1330,43 +1330,22 @@ private:
                 Value* left = value->child(0);
                 Value* right = value->child(1);
 
-                bool hasRightConst;
-                int64_t rightConst;
-                Arg rightImm;
-                Arg rightImm64;
+                // FIXME: We don't actually have to worry about leftImm.
+                // https://bugs.webkit.org/show_bug.cgi?id=150954
 
-                hasRightConst = right->hasInt();
-                if (hasRightConst) {
-                    rightConst = right->asInt();
-                    rightImm = bitImm(right);
-                    rightImm64 = bitImm64(right);
-                }
+                Arg leftImm = imm(left);
+                Arg rightImm = imm(right);
                 
-                auto tryTestLoadImm = [&] (Arg::Width width, Arg::Signedness signedness, B3::Opcode loadOpcode) -> Inst {
-                    if (!hasRightConst)
-                        return Inst();
-                    // Signed loads will create high bits, so if the immediate has high bits
-                    // then we cannot proceed. Consider BitAnd(Load8S(ptr), 0x101). This cannot
-                    // be turned into testb (ptr), $1, since if the high bit within that byte
-                    // was set then it would be extended to include 0x100. The handling below
-                    // won't anticipate this, so we need to catch it here.
-                    if (signedness == Arg::Signed
-                        && !Arg::isRepresentableAs(width, Arg::Unsigned, rightConst))
-                        return Inst();
-                    
-                    // FIXME: If this is unsigned then we can chop things off of the immediate.
-                    // This might make the immediate more legal. Perhaps that's a job for
-                    // strength reduction?
-                    
-                    if (rightImm) {
+                auto tryTestLoadImm = [&] (Arg::Width width, B3::Opcode loadOpcode) -> Inst {
+                    if (rightImm && rightImm.isRepresentableAs(width, Arg::Unsigned)) {
                         if (Inst result = tryTest(width, loadPromise(left, loadOpcode), rightImm)) {
                             commitInternal(left);
                             return result;
                         }
                     }
-                    if (rightImm64) {
-                        if (Inst result = tryTest(width, loadPromise(left, loadOpcode), rightImm64)) {
-                            commitInternal(left);
+                    if (leftImm && leftImm.isRepresentableAs(width, Arg::Unsigned)) {
+                        if (Inst result = tryTest(width, leftImm, loadPromise(right, loadOpcode))) {
+                            commitInternal(right);
                             return result;
                         }
                     }
@@ -1376,28 +1355,24 @@ private:
                 if (canCommitInternal) {
                     // First handle test's that involve fewer bits than B3's type system supports.
 
-                    if (Inst result = tryTestLoadImm(Arg::Width8, Arg::Unsigned, Load8Z))
+                    if (Inst result = tryTestLoadImm(Arg::Width8, Load8Z))
                         return result;
                     
-                    if (Inst result = tryTestLoadImm(Arg::Width8, Arg::Signed, Load8S))
+                    if (Inst result = tryTestLoadImm(Arg::Width8, Load8S))
                         return result;
                     
-                    if (Inst result = tryTestLoadImm(Arg::Width16, Arg::Unsigned, Load16Z))
+                    if (Inst result = tryTestLoadImm(Arg::Width16, Load16Z))
                         return result;
                     
-                    if (Inst result = tryTestLoadImm(Arg::Width16, Arg::Signed, Load16S))
+                    if (Inst result = tryTestLoadImm(Arg::Width16, Load16S))
                         return result;
 
-                    // This allows us to use a 32-bit test for 64-bit BitAnd if the immediate is
-                    // representable as an unsigned 32-bit value. The logic involved is the same
-                    // as if we were pondering using a 32-bit test for
-                    // BitAnd(SExt(Load(ptr)), const), in the sense that in both cases we have
-                    // to worry about high bits. So, we use the "Signed" version of this helper.
-                    if (Inst result = tryTestLoadImm(Arg::Width32, Arg::Signed, Load))
-                        return result;
+                    // Now handle test's that involve a load and an immediate. Note that immediates
+                    // are 32-bit, and we want zero-extension. Hence, the immediate form is compiled
+                    // as a 32-bit test. Note that this spits on the grave of inferior endians, such
+                    // as the big one.
                     
-                    // This is needed to handle 32-bit test for arbitrary 32-bit immediates.
-                    if (Inst result = tryTestLoadImm(width, Arg::Unsigned, Load))
+                    if (Inst result = tryTestLoadImm(Arg::Width32, Load))
                         return result;
                     
                     // Now handle test's that involve a load.
@@ -1416,23 +1391,30 @@ private:
 
                 // Now handle test's that involve an immediate and a tmp.
 
-                if (hasRightConst) {
-                    if ((width == Arg::Width32 && rightConst == 0xffffffff)
-                        || (width == Arg::Width64 && rightConst == -1)) {
+                if (leftImm) {
+                    if ((width == Arg::Width32 && leftImm.value() == 0xffffffff)
+                        || (width == Arg::Width64 && leftImm.value() == -1)) {
+                        ArgPromise argPromise = tmpPromise(right);
+                        if (Inst result = tryTest(width, argPromise, argPromise))
+                            return result;
+                    }
+                    if (leftImm.isRepresentableAs<uint32_t>()) {
+                        if (Inst result = tryTest(Arg::Width32, leftImm, tmpPromise(right)))
+                            return result;
+                    }
+                }
+
+                if (rightImm) {
+                    if ((width == Arg::Width32 && rightImm.value() == 0xffffffff)
+                        || (width == Arg::Width64 && rightImm.value() == -1)) {
                         ArgPromise argPromise = tmpPromise(left);
                         if (Inst result = tryTest(width, argPromise, argPromise))
                             return result;
                     }
-                    if (isRepresentableAs<uint32_t>(rightConst)) {
+                    if (rightImm.isRepresentableAs<uint32_t>()) {
                         if (Inst result = tryTest(Arg::Width32, tmpPromise(left), rightImm))
                             return result;
-                        if (Inst result = tryTest(Arg::Width32, tmpPromise(left), rightImm64))
-                            return result;
                     }
-                    if (Inst result = tryTest(width, tmpPromise(left), rightImm))
-                        return result;
-                    if (Inst result = tryTest(width, tmpPromise(left), rightImm64))
-                        return result;
                 }
 
                 // Finally, just do tmp's.
@@ -1450,37 +1432,37 @@ private:
             }
         }
 
-        if (Arg::isValidBitImmForm(-1)) {
+        if (Arg::isValidImmForm(-1)) {
             if (canCommitInternal && value->as<MemoryValue>()) {
                 // Handle things like Branch(Load8Z(value))
 
-                if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8Z), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8Z), Arg::imm(-1))) {
                     commitInternal(value);
                     return result;
                 }
 
-                if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8S), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8S), Arg::imm(-1))) {
                     commitInternal(value);
                     return result;
                 }
 
-                if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16Z), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16Z), Arg::imm(-1))) {
                     commitInternal(value);
                     return result;
                 }
 
-                if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16S), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16S), Arg::imm(-1))) {
                     commitInternal(value);
                     return result;
                 }
 
-                if (Inst result = tryTest(width, loadPromise(value), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(width, loadPromise(value), Arg::imm(-1))) {
                     commitInternal(value);
                     return result;
                 }
             }
 
-            if (Inst result = test(width, resCond, tmpPromise(value), Arg::bitImm(-1)))
+            if (Inst result = test(width, resCond, tmpPromise(value), Arg::imm(-1)))
                 return result;
         }
         

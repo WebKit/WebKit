@@ -57,7 +57,31 @@ bool Arg::isStackMemory() const
 
 bool Arg::isRepresentableAs(Width width, Signedness signedness) const
 {
-    return isRepresentableAs(width, signedness, value());
+    switch (signedness) {
+    case Signed:
+        switch (width) {
+        case Width8:
+            return isRepresentableAs<int8_t>();
+        case Width16:
+            return isRepresentableAs<int16_t>();
+        case Width32:
+            return isRepresentableAs<int32_t>();
+        case Width64:
+            return isRepresentableAs<int64_t>();
+        }
+    case Unsigned:
+        switch (width) {
+        case Width8:
+            return isRepresentableAs<uint8_t>();
+        case Width16:
+            return isRepresentableAs<uint16_t>();
+        case Width32:
+            return isRepresentableAs<uint32_t>();
+        case Width64:
+            return isRepresentableAs<uint64_t>();
+        }
+    }
+    ASSERT_NOT_REACHED();
 }
 
 bool Arg::usesTmp(Air::Tmp tmp) const

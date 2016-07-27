@@ -490,7 +490,7 @@ writeH("Opcode") {
     
     outp.puts "namespace WTF {"
     outp.puts "class PrintStream;"
-    outp.puts "JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Opcode);"
+    outp.puts "void printInternal(PrintStream&, JSC::B3::Air::Opcode);"
     outp.puts "} // namespace WTF"
 }
 
