@@ -261,3 +261,5 @@ webkit.org/b/156070 storage/indexeddb/modern/abort-requests-cancelled.html [ Pas
 webkit.orb/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
 webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Pass Crash ]
+
+webkit.org/b/160227 [ ElCapitan Debug ] inspector/memory/tracking.html [ Pass Crash ]
