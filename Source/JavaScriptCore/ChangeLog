@@ -1,3 +1,23 @@
+2016-07-27  Mark Lam  <mark.lam@apple.com>
+
+        The second argument for Function.prototype.apply should be array-like or null/undefined.
+        https://bugs.webkit.org/show_bug.cgi?id=160212
+        <rdar://problem/27328525>
+
+        Reviewed by Filip Pizlo.
+
+        The spec for Function.prototype.apply says its second argument can only be null,
+        undefined, or must be array-like.  See
+        https://tc39.github.io/ecma262/#sec-function.prototype.apply and
+        https://tc39.github.io/ecma262/#sec-createlistfromarraylike.
+
+        Our previous implementation was not handling this correctly for SymbolType.
+        This is now fixed.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        * tests/stress/apply-second-argument-must-be-array-like.js: Added.
+
 2016-07-27  Saam Barati  <sbarati@apple.com>
 
         MathICs should be able to emit only a jump along the inline path when they don't have any type data
