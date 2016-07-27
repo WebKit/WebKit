@@ -33,7 +33,7 @@
     Exposed=(Window,Worker),
     JSBuiltin,
     NoInterfaceObject
-] interface ReadableStreamReader {
+] interface ReadableStreamDefaultReader {
     [NotEnumerable] Promise read();
     [NotEnumerable] Promise cancel(optional any reason);
     [NotEnumerable] void releaseLock();

@@ -1,3 +1,26 @@
+2016-07-27  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Streams API] Replace ReadableStreamReader by ReadableStreamDefaultReader
+        https://bugs.webkit.org/show_bug.cgi?id=160194
+
+        Reviewed by Youenn Fablet.
+
+        Replaced ReadableStreamReader by ReadableStreamDefaultReader to align
+        with updated Streams API specification.
+
+        No change in functionality.
+
+        * streams/brand-checks.html:
+        * streams/readable-stream-controller-error-expected.txt:
+        * streams/readable-stream-controller-error.html:
+        * streams/readable-stream-default-reader-read-expected.txt: Renamed from LayoutTests/streams/readable-stream-reader-read-expected.txt.
+        * streams/readable-stream-default-reader-read.html: Renamed from LayoutTests/streams/readable-stream-reader-read.html.
+        * streams/readable-stream-error-messages-expected.txt:
+        * streams/readable-stream-error-messages.html:
+        * streams/reference-implementation/readable-stream-reader-expected.txt:
+        * streams/shadowing-Promise-expected.txt:
+        * streams/shadowing-Promise.html:
+
 2016-07-27  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Handle alignment with orthogonal flows

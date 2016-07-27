@@ -69,7 +69,7 @@ function body()
         if (@Response.prototype.@isDisturbed.@call(this)) {
             this.@body = new @ReadableStream();
             // Get reader to lock it.
-            new @ReadableStreamReader(this.@body);
+            new @ReadableStreamDefaultReader(this.@body);
         } else {
             var source = @Response.prototype.@createReadableStreamSource.@call(this);
             this.@body = source ? new @ReadableStream(source) : null;

@@ -4,7 +4,7 @@
 <script>
 // This is updated till https://github.com/whatwg/streams/commit/4ba861e6f60c248060811830e11271c84b439cc3
 
-var test1 = async_test('Erroring a ReadableStream after checking closed should reject ReadableStreamReader closed promise');
+var test1 = async_test('Erroring a ReadableStream after checking closed should reject ReadableStreamDefaultReader closed promise');
 test1.step(function() {
     var controller;
     var rs = new ReadableStream({
@@ -24,7 +24,7 @@ test1.step(function() {
     controller.error(rsError);
 });
 
-var test2 = async_test('Erroring a ReadableStream before checking closed should reject ReadableStreamReader closed promise');
+var test2 = async_test('Erroring a ReadableStream before checking closed should reject ReadableStreamDefaultReader closed promise');
 test2.step(function() {
     var controller;
     var rs = new ReadableStream({

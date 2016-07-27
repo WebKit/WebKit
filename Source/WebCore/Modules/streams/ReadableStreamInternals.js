@@ -27,12 +27,12 @@
 // @conditional=ENABLE(STREAMS_API)
 // @internal
 
-function privateInitializeReadableStreamReader(stream)
+function privateInitializeReadableStreamDefaultReader(stream)
 {
     "use strict";
 
     if (!@isReadableStream(stream))
-       throw new @TypeError("ReadableStreamReader needs a ReadableStream");
+       throw new @TypeError("ReadableStreamDefaultReader needs a ReadableStream");
     if (@isReadableStreamLocked(stream))
        throw new @TypeError("ReadableStream is locked");
 
@@ -73,7 +73,7 @@ function teeReadableStream(stream, shouldClone)
     @assert(@isReadableStream(stream));
     @assert(typeof(shouldClone) === "boolean");
 
-    const reader = new @ReadableStreamReader(stream);
+    const reader = new @ReadableStreamDefaultReader(stream);
 
     const teeState = {
         closedOrErrored: false,
@@ -116,7 +116,7 @@ function teeReadableStreamPullFunction(teeState, reader, shouldClone)
     "use strict";
 
     return function() {
-        @Promise.prototype.@then.@call(@readFromReadableStreamReader(reader), function(result) {
+        @Promise.prototype.@then.@call(@readFromReadableStreamDefaultReader(reader), function(result) {
             @assert(@isObject(result));
             @assert(typeof result.done === "boolean");
             if (result.done && !teeState.closedOrErrored) {
@@ -177,7 +177,7 @@ function isReadableStream(stream)
     return @isObject(stream) && !!stream.@underlyingSource;
 }
 
-function isReadableStreamReader(reader)
+function isReadableStreamDefaultReader(reader)
 {
     "use strict";
 
@@ -226,7 +226,7 @@ function requestReadableStreamPull(stream)
         return;
     if ((!@isReadableStreamLocked(stream) || !stream.@reader.@readRequests.length) && @getReadableStreamDesiredSize(stream) <= 0)
         return;
- 
+
     if (stream.@pulling) {
         stream.@pullAgain = true;
         return;
@@ -299,7 +299,7 @@ function closeReadableStream(stream)
     @assert(!stream.@closeRequested);
     @assert(stream.@state !== @streamErrored);
     if (stream.@state === @streamClosed)
-        return; 
+        return;
     stream.@closeRequested = true;
     if (!stream.@queue.content.length)
         @finishClosingReadableStream(stream);
@@ -335,7 +335,7 @@ function enqueueInReadableStream(stream, chunk)
     @requestReadableStreamPull(stream);
 }
 
-function readFromReadableStreamReader(reader)
+function readFromReadableStreamDefaultReader(reader)
 {
     "use strict";
 

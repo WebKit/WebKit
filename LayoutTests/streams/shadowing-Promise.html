@@ -127,15 +127,15 @@ test(function() {
 }, 'Streams should not directly use ReadableStream public APIs');
 
 promise_test(function() {
-    const ReadableStreamReader = new ReadableStream().getReader().constructor;
-    const ReadableStreamReaderReadBackup = ReadableStreamReader.prototype.read;
+    const ReadableStreamDefaultReader = new ReadableStream().getReader().constructor;
+    const ReadableStreamDefaultReaderReadBackup = ReadableStreamDefaultReader.prototype.read;
 
     function cleanTest() {
-        ReadableStreamReader.prototype.read = ReadableStreamReaderReadBackup;
+        ReadableStreamDefaultReader.prototype.read = ReadableStreamDefaultReaderReadBackup;
     }
 
     try {
-        ReadableStreamReader.prototype.read = function() { assert_unreached("streams should not use this ReadableStreamReader.read method"); };
+        ReadableStreamDefaultReader.prototype.read = function() { assert_unreached("streams should not use this ReadableStreamDefaultReader.read method"); };
 
         [s1, s2] = new ReadableStream({
             start: function(controller) {
@@ -148,7 +148,7 @@ promise_test(function() {
         cleanTest();
         assert_unreached("test should not throw");
     }
-}, 'Streams should not directly use ReadableStreamReader read public API');
+}, 'Streams should not directly use ReadableStreamDefaultReader read public API');
 
 promise_test(function() {
     const ArrayPushBackup = Array.prototype.push;

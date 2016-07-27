@@ -219,7 +219,7 @@
         },
         "url": "http://www.w3.org/TR/resource-timing/",
         "webkit-url": "https://webkit.org/b/61138",
-        "keywords": ["resourcetiming","resource timing","rsrc"], 
+        "keywords": ["resourcetiming","resource timing","rsrc"],
         "description": "Provides detailed timing information to JavaScript for sub-resources loaded by the page.",
         "contact": {
             "name": "Jonathan Davis",
@@ -678,7 +678,7 @@
         "url": "https://streams.spec.whatwg.org/#rs",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=138967",
         "specification": "Streams",
-        "comment": "The ReadableStream and ReadableStreamReader interfaces are available but not functional."
+        "comment": "The implementation does not support ReadableStreamBYOBReader."
     },
     {
         "name": "Shadow DOM",

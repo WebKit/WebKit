@@ -99,7 +99,7 @@
 #include "JSWebGLRenderingContextBase.cpp"
 #include "JSWebGLSampler.cpp"
 #include "JSWebGLShader.cpp"
-#include "JSWebGLShaderPrecisionFormat.cpp" 
+#include "JSWebGLShaderPrecisionFormat.cpp"
 #include "JSWebGLSync.cpp"
 #include "JSWebGLTexture.cpp"
 #include "JSWebGLTransformFeedback.cpp"
@@ -396,7 +396,7 @@
 #if ENABLE(STREAMS_API)
 #include "JSReadableStream.cpp"
 #include "JSReadableStreamController.cpp"
-#include "JSReadableStreamReader.cpp"
+#include "JSReadableStreamDefaultReader.cpp"
 #include "JSWritableStream.cpp"
 #endif
 #include "JSRect.cpp"

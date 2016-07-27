@@ -86,7 +86,7 @@ function getReader()
     if (!@isReadableStream(this))
         throw @makeThisTypeError("ReadableStream", "getReader");
 
-    return new @ReadableStreamReader(this);
+    return new @ReadableStreamDefaultReader(this);
 }
 
 function pipeThrough(streams, options)

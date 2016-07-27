@@ -25,7 +25,7 @@
 #include "JSDOMConstructor.h"
 #include "JSReadableStream.h"
 #include "JSReadableStreamController.h"
-#include "JSReadableStreamReader.h"
+#include "JSReadableStreamDefaultReader.h"
 #include "ReadableStreamInternalsBuiltins.h"
 #include <runtime/CallData.h>
 
@@ -39,11 +39,11 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamController(ExecState& exec
     return throwVMTypeError(&exec, ASCIILiteral("ReadableStreamController constructor should not be called directly"));
 }
 
-EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState& exec)
+EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultReader(ExecState& exec)
 {
     JSReadableStream* stream = jsDynamicCast<JSReadableStream*>(exec.argument(0));
     if (!stream)
-        return throwVMTypeError(&exec, ASCIILiteral("ReadableStreamReader constructor parameter is not a ReadableStream"));
+        return throwVMTypeError(&exec, ASCIILiteral("ReadableStreamDefaultReader constructor parameter is not a ReadableStream"));
 
     JSValue jsFunction = stream->get(&exec, Identifier::fromString(&exec, "getReader"));
 
@@ -54,18 +54,18 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState& exec)
 }
 
 // Private JS ReadableStreamReder and ReadableStreamController constructors.
-typedef JSBuiltinConstructor<JSReadableStreamReader> JSBuiltinReadableStreamReaderPrivateConstructor;
+typedef JSBuiltinConstructor<JSReadableStreamDefaultReader> JSBuiltinReadableStreamDefaultReaderPrivateConstructor;
 typedef JSBuiltinConstructor<JSReadableStreamController> JSBuiltinReadableStreamControllerPrivateConstructor;
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamReaderPrivateConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamControllerPrivateConstructor);
 
-template<> const ClassInfo JSBuiltinReadableStreamReaderPrivateConstructor::s_info = { "ReadableStreamReaderPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamReaderPrivateConstructor) };
+template<> const ClassInfo JSBuiltinReadableStreamDefaultReaderPrivateConstructor::s_info = { "ReadableStreamDefaultReaderPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor) };
 template<> const ClassInfo JSBuiltinReadableStreamControllerPrivateConstructor::s_info = { "ReadableStreamControllerPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamControllerPrivateConstructor) };
 
-template<> FunctionExecutable* JSBuiltinReadableStreamReaderPrivateConstructor::initializeExecutable(JSC::VM& vm)
+template<> FunctionExecutable* JSBuiltinReadableStreamDefaultReaderPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
-    return readableStreamInternalsPrivateInitializeReadableStreamReaderCodeGenerator(vm);
+    return readableStreamInternalsPrivateInitializeReadableStreamDefaultReaderCodeGenerator(vm);
 }
 
 template<> FunctionExecutable* JSBuiltinReadableStreamControllerPrivateConstructor::initializeExecutable(JSC::VM& vm)
@@ -73,9 +73,9 @@ template<> FunctionExecutable* JSBuiltinReadableStreamControllerPrivateConstruct
     return readableStreamInternalsPrivateInitializeReadableStreamControllerCodeGenerator(vm);
 }
 
-JSObject* createReadableStreamReaderPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
+JSObject* createReadableStreamDefaultReaderPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSBuiltinReadableStreamReaderPrivateConstructor::create(vm, JSBuiltinReadableStreamReaderPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
+    return JSBuiltinReadableStreamDefaultReaderPrivateConstructor::create(vm, JSBuiltinReadableStreamDefaultReaderPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
 }
 
 JSObject* createReadableStreamControllerPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)

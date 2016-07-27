@@ -61,16 +61,16 @@ function consumeStream(response, type)
         return @Promise.@reject(new @TypeError("Cannot consume a disturbed Response body ReadableStream"));
 
     try {
-        let reader = new @ReadableStreamReader(response.@body);
+        let reader = new @ReadableStreamDefaultReader(response.@body);
 
         @Response.prototype.@startConsumingStream.@call(response, type);
         let pull = (result) => {
             if (result.done)
                 return @Response.prototype.@finishConsumingStream.@call(response);
             @Response.prototype.@consumeChunk.@call(response, result.value);
-            return @Promise.prototype.@then.@call(@readFromReadableStreamReader(reader), pull);
+            return @Promise.prototype.@then.@call(@readFromReadableStreamDefaultReader(reader), pull);
         }
-        return @Promise.prototype.@then.@call(@readFromReadableStreamReader(reader), pull);
+        return @Promise.prototype.@then.@call(@readFromReadableStreamDefaultReader(reader), pull);
     } catch(e) {
         return @Promise.@reject(e);
     }

@@ -5,7 +5,7 @@
 <script>
 // This is updated till https://github.com/whatwg/streams/commit/4ba861e6f60c248060811830e11271c84b439cc3
 
-let ReadableStreamReader = (new ReadableStream()).getReader().constructor;
+let ReadableStreamDefaultReader = (new ReadableStream()).getReader().constructor;
 
 function fakeWritableStream() {
   return {
@@ -25,7 +25,7 @@ function realReadableStream() {
 function fakeReadableStream() {
     return {
         cancel: function(reason) { return Promise.resolve(); },
-        getReader: function() { return new ReadableStreamReader(new ReadableStream()); },
+        getReader: function() { return new ReadableStreamDefaultReader(new ReadableStream()); },
         pipeThrough: function(obj, options) { return obj.readable; },
         pipeTo: function() { return Promise.resolve(); },
         tee: function() { return [realReadableStream(), realReadableStream()]; }
