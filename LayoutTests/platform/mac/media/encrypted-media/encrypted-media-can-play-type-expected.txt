@@ -4,7 +4,7 @@ Test Encrypted Media extension of HTMLMediaElement canPlayType() method.
 The test is designed to pass with any implementation regardless of supported media types and relies on the expected log to detect the expected results for some types. To get sufficient coverage, it is important that an implementation support clearkey encryption of at least one of the types below.
 
 Always return the empty string for no type.
-EXPECTED (video.canPlayType() == '') OK
+TEST(video.canPlayType()) THROWS('TypeError: Not enough arguments') OK
 
 Always return the empty string for an empty type.
 EXPECTED (video.canPlayType('') == '') OK

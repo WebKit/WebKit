@@ -48,11 +48,10 @@
     readonly attribute TimeRanges buffered;
     void load();
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
 #if (defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA) || (defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2)
-    DOMString canPlayType(optional DOMString type = "undefined", optional DOMString? keySystem = null);
+    DOMString canPlayType(DOMString type, optional DOMString? keySystem = null);
 #else
-    DOMString canPlayType(optional DOMString type = "undefined");
+    DOMString canPlayType(DOMString type);
 #endif
 
     // ready state

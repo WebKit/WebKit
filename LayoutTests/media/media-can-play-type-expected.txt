@@ -1,7 +1,7 @@
 
 Test HTMLMediaElement canPlayType() method.
 
-EXPECTED (video.canPlayType() == '') OK
+TEST(video.canPlayType()) THROWS('TypeError: Not enough arguments') OK
 EXPECTED (video.canPlayType('video/') == '') OK
 EXPECTED (video.canPlayType('video/blahblah') == '') OK
 EXPECTED (video.canPlayType('video/blahblah; codecs="blah, , blah"') == '') OK

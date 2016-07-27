@@ -13,7 +13,7 @@
             video = mediaElement = document.getElementsByTagName('video')[0];
 
             consoleWrite("Always return the empty string for no type.");
-            testExpected("video.canPlayType()", "");
+            testException("video.canPlayType()", "'TypeError: Not enough arguments'");
 
             consoleWrite("<br>Always return the empty string for an empty type.");
             testExpected("video.canPlayType('')", "");

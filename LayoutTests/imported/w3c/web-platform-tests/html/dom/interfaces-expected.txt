@@ -1850,9 +1850,7 @@ PASS HTMLMediaElement interface: document.createElement("video") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "buffered" with the proper type (10) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "load" with the proper type (11) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "canPlayType" with the proper type (12) 
-FAIL HTMLMediaElement interface: calling canPlayType(DOMString) on document.createElement("video") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLMediaElement interface: calling canPlayType(DOMString) on document.createElement("video") with too few arguments must throw TypeError 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "HAVE_NOTHING" with the proper type (13) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "HAVE_METADATA" with the proper type (14) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "HAVE_CURRENT_DATA" with the proper type (15) 
@@ -1906,9 +1904,7 @@ PASS HTMLMediaElement interface: document.createElement("audio") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "buffered" with the proper type (10) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "load" with the proper type (11) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "canPlayType" with the proper type (12) 
-FAIL HTMLMediaElement interface: calling canPlayType(DOMString) on document.createElement("audio") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLMediaElement interface: calling canPlayType(DOMString) on document.createElement("audio") with too few arguments must throw TypeError 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "HAVE_NOTHING" with the proper type (13) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "HAVE_METADATA" with the proper type (14) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "HAVE_CURRENT_DATA" with the proper type (15) 
@@ -1957,9 +1953,7 @@ PASS HTMLMediaElement interface: new Audio() must inherit property "preload" wit
 PASS HTMLMediaElement interface: new Audio() must inherit property "buffered" with the proper type (10) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "load" with the proper type (11) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "canPlayType" with the proper type (12) 
-FAIL HTMLMediaElement interface: calling canPlayType(DOMString) on new Audio() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLMediaElement interface: calling canPlayType(DOMString) on new Audio() with too few arguments must throw TypeError 
 PASS HTMLMediaElement interface: new Audio() must inherit property "HAVE_NOTHING" with the proper type (13) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "HAVE_METADATA" with the proper type (14) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "HAVE_CURRENT_DATA" with the proper type (15) 
@@ -2064,7 +2058,7 @@ PASS HTMLMediaElement interface: attribute networkState
 PASS HTMLMediaElement interface: attribute preload 
 PASS HTMLMediaElement interface: attribute buffered 
 PASS HTMLMediaElement interface: operation load() 
-FAIL HTMLMediaElement interface: operation canPlayType(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLMediaElement interface: operation canPlayType(DOMString) 
 PASS HTMLMediaElement interface: constant HAVE_NOTHING on interface object 
 PASS HTMLMediaElement interface: constant HAVE_NOTHING on interface prototype object 
 PASS HTMLMediaElement interface: constant HAVE_METADATA on interface object 

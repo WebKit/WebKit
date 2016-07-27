@@ -6,7 +6,7 @@
             function start() {
                 video = document.getElementsByTagName('video')[0];
 
-                testExpected("video.canPlayType()", "");
+                testException("video.canPlayType()", "'TypeError: Not enough arguments'");
                 testExpected("video.canPlayType('video/')", "");
                 testExpected("video.canPlayType('video/blahblah')", "");
                 testExpected("video.canPlayType('video/blahblah; codecs=\"blah,  , blah\"')", "");
