@@ -44,7 +44,7 @@ WebInspector.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WebInsp
 
     createCellContent(columnIdentifier, cell)
     {
-        var cell = columnIdentifier === "name" ? this._makeNameCell() : this._makeOutlet(columnIdentifier, document.createTextNode());
+        cell = columnIdentifier === "name" ? this._makeNameCell() : this._makeOutlet(columnIdentifier, document.createTextNode("–"));
         this._updateCell(columnIdentifier);
         return cell;
     }

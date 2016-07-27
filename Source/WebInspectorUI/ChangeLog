@@ -1,3 +1,19 @@
+2016-07-27  Brian Burg  <bburg@apple.com>
+
+        Regression(r203535): Uncaught Exception: TypeError: Not enough arguments at LayerTreeDataGridNode.js:47
+        https://bugs.webkit.org/show_bug.cgi?id=160187
+        <rdar://problem/27540435>
+
+        Reviewed by Eric Carlson.
+
+        After r203535, document.createTextNode() requires an argument.
+
+        * UserInterface/Views/LayerTreeDataGridNode.js:
+        (WebInspector.LayerTreeDataGridNode.prototype.createCellContent):
+        Since this use-site is for creating a cell in an unknown column,
+        initialize it to '–'. Previously it would have been the string
+        "undefined" or empty.
+
 2016-07-24  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Filtering is broken in the Overview timeline view
