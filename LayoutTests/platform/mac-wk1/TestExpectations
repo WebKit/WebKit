@@ -220,9 +220,6 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 # <rdar://problem/23431065>
 [ Sierra+ ] animations/animation-welcome-safari.html [ Pass Failure ]
 
-# <rdar://problem/23884199> Crashed in com.apple.WebKitLegacy: WebEditorClient::didCheckSucceed
-[ Sierra+ ] editing/spelling/spellcheck-attribute.html [ Pass Crash ]
-
 # <rdar://problem/24818712>
 [ Sierra+ ] editing/spelling/spelling-insert-html.html [ Pass Timeout ]
 

@@ -1,3 +1,10 @@
+2016-07-28  Alexey Proskuryakov  <ap@apple.com>
+
+        macOS Sierra test result gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-07-28  Chris Dumez  <cdumez@apple.com>
 
         2 first parameters to input.setSelectionRange() should be mandatory

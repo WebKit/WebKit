@@ -700,9 +700,6 @@ webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pa
 # Always very slow, frequently timing out (only on bots, not locally).
 webkit.org/b/121331 [ Yosemite ElCapitan ] http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout ]
 
-# <rdar://problem/26701829> com.apple.WebKit.WebContent.Development crashed in com.apple.security: Security::Mutex::unlock + 9
-[ Sierra+ ] http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout Crash ]
-
 # isProtocolHandlerRegistered() isn't supported yet.
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
 
@@ -1399,32 +1396,9 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 # <rdar://problem/26632402> LayoutTest media/video-loop.html is a flaky timeout
 [ Sierra+ ] media/video-loop.html [ Pass Timeout ]
 
-# rdar://problem/26215686
-[ Sierra+ ] fast/canvas/canvas-composite-text-alpha.html [ Failure ]
-
-# rdar://problem/25578897
-[ Sierra+ ] fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ Pass ImageOnlyFailure ]
-
-# rdar://problem/26924977
-[ Sierra+ ] fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
-[ Sierra+ ] webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
-
-# rdar://problem/26927203
-[ Sierra+ ] css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
-[ Sierra+ ] css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
-[ Sierra+ ] css3/font-variant-all.html [ ImageOnlyFailure ]
-[ Sierra+ ] css3/font-variant-font-face-all.html [ ImageOnlyFailure ]
-
-# rdar://problem/26950065
-[ Sierra+ ] editing/mac/input/unconfirmed-text-navigation-with-page-cache.html [ Skip ]
-
 # rdar://problem/26952627
 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ Pass ImageOnlyFailure ]
 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ Pass ImageOnlyFailure ]
-
-# rdar://problem/27000853
-[ Sierra+ ] fast/canvas/canvas-strokePath-gradient-shadow.html [ Failure ]
-[ Sierra+ ] fast/canvas/canvas-strokeRect-gradient-shadow.html [ Failure ]
 
 # rdar://problem/27141291
 [ Sierra+ ] editing/selection/triple-click-in-pre.html [ Failure ]
@@ -1432,10 +1406,6 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 webkit.org/b/159379 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Failure ]
 
 webkit.org/b/158747 [ ElCapitan ] media/restore-from-page-cache.html [ Pass Failure ]
-
-# rdar://problem/27182687
-[ Sierra+ ] canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
-[ Sierra+ ] imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
 
 # rdar://problem/27187013
 [ Sierra+ ] fast/block/float/overhanging-tall-block.html [ Failure ]
