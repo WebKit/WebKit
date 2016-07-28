@@ -530,6 +530,7 @@ editing/unsupported-content/table-delete-001.html [ Failure Pass ]
 editing/unsupported-content/table-delete-003.html [ Failure Pass ]
 
 # Compositing tests that fail:
+compositing/backing/backface-visibility-flip.html [ Failure ]
 compositing/backing/child-layer-no-backing.html [ Failure ]
 compositing/backing/inline-block-no-backing.html [ Failure ]
 compositing/backing/no-backing-for-clip-overhang.html [ Failure ]
@@ -598,6 +599,7 @@ compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Fa
 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 compositing/overflow/content-gains-scrollbars.html [ Failure ]
 compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
+compositing/overflow/scroll-ancestor-update.html [ Failure ]
 compositing/repaint/fixed-background-scroll.html [ Failure ]
 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
 compositing/repaint/resize-repaint.html [ Failure ]

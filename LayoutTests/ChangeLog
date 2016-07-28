@@ -1,3 +1,16 @@
+2016-07-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unskip some compositing tests on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=152131
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/compositing/overflow/overflow-compositing-descendant-expected.txt: Added.
+        * platform/ios-simulator/compositing/overflow/scroll-ancestor-update-expected.txt: Added.
+
 2016-07-28  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Streams API] Replace ReadableStreamController by ReadableStreamDefaultController

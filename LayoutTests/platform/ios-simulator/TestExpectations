@@ -445,8 +445,6 @@ compositing/geometry/preserve-3d-switching.html [ Failure ]
 compositing/geometry/clipped-video-controller.html
 compositing/geometry/video-fixed-scrolling.html
 compositing/geometry/video-opacity-overlay.html
-compositing/overflow/overflow-compositing-descendant.html
-compositing/overflow/scroll-ancestor-update.html
 compositing/reflections/load-video-in-reflection.html
 compositing/regions/floated-region-with-transformed-child.html
 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html

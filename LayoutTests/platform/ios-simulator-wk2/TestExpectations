@@ -35,15 +35,11 @@ compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
 webkit.org/b/157105 compositing/contents-scale/incremental-change.html [ Pass ImageOnlyFailure ]
 
 # Compositing test that time out:
-compositing/animation/animation-compositing.html
-compositing/backing/backface-visibility-flip.html
 compositing/checkerboard.html
 compositing/contents-scale/animating.html
 compositing/layer-creation/animation-overlap-with-children.html
-compositing/overflow/overflow-compositing-descendant.html
 compositing/overflow/scroll-ancestor-update.html
 compositing/visible-rect/animated.html
-compositing/video/video-border-radius.html
 
 # CSS tests that fail:
 css3/blending/blend-mode-simple-composited.html [ Failure ]
