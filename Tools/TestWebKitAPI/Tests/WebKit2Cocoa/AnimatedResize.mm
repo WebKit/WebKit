@@ -88,6 +88,9 @@ static RetainPtr<WKWebView> animatedResizeWebView()
     return webView;
 }
 
+// FIXME: This test times out only when run in the WebKit Testing simulator, but
+// not e.g. in a fresh simulator.
+#if 0
 TEST(WebKit2, ResizeWithHiddenContentDoesNotHang)
 {
     auto webView = animatedResizeWebView();
@@ -107,6 +110,7 @@ TEST(WebKit2, ResizeWithHiddenContentDoesNotHang)
         didEndAnimatedResize = false;
     }
 }
+#endif
 
 TEST(WebKit2, AnimatedResizeDoesNotHang)
 {

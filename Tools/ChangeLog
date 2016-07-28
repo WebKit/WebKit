@@ -1,5 +1,15 @@
 2016-07-28  Tim Horton  <timothy_horton@apple.com>
 
+        Disable WebKit2.ResizeWithHiddenContentDoesNotHang for now
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+        (animatedResizeWebView):
+        (TEST):
+        This test times out only when run in the WebKit Testing simulator environment,
+        but not in a fresh simulator. Disabling to keep the bots green while under investigation.
+
+2016-07-28  Tim Horton  <timothy_horton@apple.com>
+
         Frequent animation lags when interacting with Safari (sidebar, tab switching, etc.)
         https://bugs.webkit.org/show_bug.cgi?id=160289
         <rdar://problem/27553464>
