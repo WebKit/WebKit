@@ -1,3 +1,56 @@
+2016-07-28  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Web Inspector: Waterfall view should be visible in Network tab and Network Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=160061
+
+        Reviewed by Joseph Pecoraro.
+
+        Adds a Timeline-column (waterfall) to the Network tab and Network Timeline.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Add "Timeline" localized string.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        Add the Timeline-column with a TimelineRuler as the headerview,
+        and properties for updating current time.
+
+        (WebInspector.NetworkGridContentView.prototype.get secondsPerPixel):
+        (WebInspector.NetworkGridContentView.prototype.get startTime):
+        (WebInspector.NetworkGridContentView.prototype.get currentTime):
+        (WebInspector.NetworkGridContentView.prototype.get endTime):
+        Acting as a graphDataSource used by TimelineDataGridNode.
+
+        (WebInspector.NetworkGridContentView.prototype.shown):
+        (WebInspector.NetworkGridContentView.prototype.reset):
+        (WebInspector.NetworkGridContentView.prototype.layout):
+        Refresh graphs and update the TimelineRuler on layout changes.
+
+        (WebInspector.NetworkGridContentView.prototype._networkTimelineRecordAdded):
+        Add listeners for when resources are finished to stop the timer.
+
+        (WebInspector.NetworkGridContentView.prototype._update):
+        (WebInspector.NetworkGridContentView.prototype._startUpdatingCurrentTime):
+        (WebInspector.NetworkGridContentView.prototype._stopUpdatingCurrentTime):
+        Adding a timer which updates the TimelineRuler and the layout
+        if any non-finished requests are running.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        Add the Timeline-column with a TimelineRuler as the headerview.
+
+        (WebInspector.NetworkTimelineView.prototype.get secondsPerPixel):
+        (WebInspector.NetworkTimelineView.prototype.layout):
+        Refresh graphs on layout changes.
+
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.tree-outline.timeline-data-grid .item:hover .subtitle):
+        (.data-grid.timeline th):
+        (.data-grid.timeline th.graph-column > .timeline-ruler):
+        (.data-grid.timeline td.graph-column):
+        (.data-grid.timeline td.graph-column > .cell-content):
+        (.data-grid.timeline td.graph-column .timeline-record-bar):
+
 2016-07-28  Chris Dumez  <cdumez@apple.com>
 
         Parameter to table.deleteRow() / body.deleteRow() should be mandatory
