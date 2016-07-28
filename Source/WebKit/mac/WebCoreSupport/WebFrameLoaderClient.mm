@@ -333,8 +333,8 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    id object = nil;
-    BOOL shouldRelease = NO;
+    RetainPtr<id> object;
+
 #if PLATFORM(IOS)
     if (implementations->webThreadIdentifierForRequestFunc) {
         object = CallResourceLoadDelegateInWebThread(implementations->webThreadIdentifierForRequestFunc, webView, @selector(webThreadWebView:identifierForInitialRequest:fromDataSource:), request.nsURLRequest(UpdateHTTPBody), dataSource(loader));
@@ -342,15 +342,10 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
 #endif
     if (implementations->identifierForRequestFunc)
         object = CallResourceLoadDelegate(implementations->identifierForRequestFunc, webView, @selector(webView:identifierForInitialRequest:fromDataSource:), request.nsURLRequest(UpdateHTTPBody), dataSource(loader));
-    else {
-        object = [[NSObject alloc] init];
-        shouldRelease = YES;
-    }
+    else
+        object = adoptNS([[NSObject alloc] init]);
 
-    [webView _addObject:object forIdentifier:identifier];
-
-    if (shouldRelease)
-        [object release];
+    [webView _addObject:object.get() forIdentifier:identifier];
 }
 
 void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
