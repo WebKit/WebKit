@@ -2,5 +2,5 @@ context.arguments.missing
 Defined in "Web IDL" (draft)
 Actual output:
 
-FAIL Canvas test: context.arguments.missing assert_throws: function "function () { canvas.getContext(); }" did not throw
+PASS Canvas test: context.arguments.missing 
 

@@ -112,7 +112,7 @@ FAIL probablySupportsContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 
 FAIL getContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } }) returns false (context does not exist)
 
 Testing how probablySupportsContext handles no parameters
-PASS document.createElement('canvas').probablySupportsContext() is false
+PASS document.createElement('canvas').probablySupportsContext() threw exception TypeError: Not enough arguments.
 
 PASS successfullyParsed is true
 Some tests failed.

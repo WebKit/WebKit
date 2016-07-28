@@ -158,7 +158,7 @@ function run_tests()
 
     debug("");
     debug("Testing how probablySupportsContext handles no parameters");
-    shouldBeFalse("document.createElement('canvas').probablySupportsContext()");
+    shouldThrow("document.createElement('canvas').probablySupportsContext()");
 
     debug("");
 }

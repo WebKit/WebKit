@@ -871,8 +871,8 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     HTMLCanvasElement: {
-        getContext: "[contextId]",
-        probablySupportsContext: "[contextId]",
+        getContext: "contextId",
+        probablySupportsContext: "contextId",
         toDataURL: "[type]",
         __proto__: null,
     },

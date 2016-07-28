@@ -69,8 +69,11 @@ static void get3DContextAttributes(ExecState& state, RefPtr<CanvasContextAttribu
 
 JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 {
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
     HTMLCanvasElement& canvas = wrapped();
-    const String& contextId = state.argument(0).toString(&state)->value(&state);
+    const String& contextId = state.uncheckedArgument(0).toWTFString(&state);
     
     RefPtr<CanvasContextAttributes> attrs;
 #if ENABLE(WEBGL)
@@ -89,10 +92,11 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 
 JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState& state)
 {
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
     HTMLCanvasElement& canvas = wrapped();
-    if (!state.argumentCount())
-        return jsBoolean(false);
-    const String& contextId = state.uncheckedArgument(0).toString(&state)->value(&state);
+    const String& contextId = state.uncheckedArgument(0).toWTFString(&state);
     if (state.hadException())
         return jsUndefined();
     

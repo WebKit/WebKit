@@ -4803,8 +4803,8 @@ PASS HTMLCanvasElement interface: existence and properties of interface prototyp
 PASS HTMLCanvasElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLCanvasElement interface: attribute width 
 PASS HTMLCanvasElement interface: attribute height 
-FAIL HTMLCanvasElement interface: operation getContext(DOMString,any) assert_equals: property has wrong .length expected 1 but got 0
-FAIL HTMLCanvasElement interface: operation probablySupportsContext(DOMString,any) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLCanvasElement interface: operation getContext(DOMString,any) 
+PASS HTMLCanvasElement interface: operation probablySupportsContext(DOMString,any) 
 FAIL HTMLCanvasElement interface: operation setContext(RenderingContext) assert_own_property: interface prototype object missing non-static operation expected property "setContext" missing
 FAIL HTMLCanvasElement interface: operation transferControlToProxy() assert_own_property: interface prototype object missing non-static operation expected property "transferControlToProxy" missing
 PASS HTMLCanvasElement interface: operation toDataURL(DOMString,any) 
@@ -4814,13 +4814,9 @@ PASS Stringification of document.createElement("canvas")
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "width" with the proper type (0) 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "height" with the proper type (1) 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "getContext" with the proper type (2) 
-FAIL HTMLCanvasElement interface: calling getContext(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLCanvasElement interface: calling getContext(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "probablySupportsContext" with the proper type (3) 
-FAIL HTMLCanvasElement interface: calling probablySupportsContext(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLCanvasElement interface: calling probablySupportsContext(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError 
 FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "setContext" with the proper type (4) assert_inherits: property "setContext" not found in prototype chain
 FAIL HTMLCanvasElement interface: calling setContext(RenderingContext) on document.createElement("canvas") with too few arguments must throw TypeError assert_inherits: property "setContext" not found in prototype chain
 FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "transferControlToProxy" with the proper type (5) assert_inherits: property "transferControlToProxy" not found in prototype chain
