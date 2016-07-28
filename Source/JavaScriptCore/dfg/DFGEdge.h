@@ -144,8 +144,7 @@ public:
 #endif
     }
     bool doesKill() const { return DFG::doesKill(killStatus()); }
-    bool doesNotKill() const { return !doesKill(); }
-    
+
     bool isSet() const { return !!node(); }
 
     Edge sanitized() const

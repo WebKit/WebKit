@@ -11321,17 +11321,6 @@ private:
         // Doubles and Int52 have been converted by ValueRep()
         DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
     }
-    
-    bool doesKill(Edge edge)
-    {
-        if (edge.doesNotKill())
-            return false;
-        
-        if (edge->hasConstant())
-            return false;
-        
-        return true;
-    }
 
     void addAvailableRecovery(
         Node* node, RecoveryOpcode opcode, LValue left, LValue right, DataFormat format)
