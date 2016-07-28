@@ -1,3 +1,21 @@
+2016-07-28  George Ruan  <gruan@apple.com>
+
+        HTMLVideoElement with MediaStream src shows paused image when all video tracks are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=160222
+        <rdar://problem/27557313>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-expected.html: Added.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled-expected.txt: Added.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html: Added. Checks
+        that the video frames display captured media if all video tracks were disabled and then a single
+        video track is re-enabled. This test also checks that an initial frame is painted to
+        canvas if the video has not yet been played.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled.html: Added. Reference tests the
+        frames of the video to be black, since the canvas is painted black regardless of the state of the video frames
+        if displayMode of MediaPlayerPrivateMediaStreamAVFObjC is PaintItBlack.
+
 2016-07-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unskip some CSS tests that previously timed out on ios-simulator.
