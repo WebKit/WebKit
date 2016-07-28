@@ -32,6 +32,7 @@
 #define DocumentThreadableLoader_h
 
 #include "CrossOriginPreflightChecker.h"
+#include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "ThreadableLoader.h"
 
@@ -81,7 +82,7 @@ namespace WebCore {
         void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
         void notifyFinished(CachedResource*) override;
 
-        void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
+        void didReceiveResponse(unsigned long identifier, const ResourceResponse&, ResourceResponse::Tainting);
         void didReceiveData(unsigned long identifier, const char* data, int dataLength);
         void didFinishLoading(unsigned long identifier, double finishTime);
         void didFail(unsigned long identifier, const ResourceError&);

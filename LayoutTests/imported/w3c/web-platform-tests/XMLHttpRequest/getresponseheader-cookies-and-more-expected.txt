@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: line 23: Refused to get unsafe header "set-cookie"
-CONSOLE MESSAGE: line 24: Refused to get unsafe header "set-cookie2"
-CONSOLE MESSAGE: line 23: Refused to get unsafe header "set-cookie"
-CONSOLE MESSAGE: line 24: Refused to get unsafe header "set-cookie2"
-CONSOLE MESSAGE: line 23: Refused to get unsafe header "set-cookie"
-CONSOLE MESSAGE: line 24: Refused to get unsafe header "set-cookie2"
 
 PASS XMLHttpRequest: getResponseHeader() custom/non-existent headers and cookies 
 

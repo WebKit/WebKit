@@ -65,6 +65,9 @@ public:
     CrossThreadData crossThreadData() const;
     static ResourceResponse fromCrossThreadData(CrossThreadData&&);
 
+    enum class Tainting { Basic, Cors, Opaque };
+    static ResourceResponse filterResponse(const ResourceResponse&, Tainting);
+
     bool isNull() const { return m_isNull; }
     WEBCORE_EXPORT bool isHTTP() const;
     bool isSuccessful() const;

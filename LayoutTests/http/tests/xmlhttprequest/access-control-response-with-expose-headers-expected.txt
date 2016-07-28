@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "X-TEST"
 Test for bug 41210: Cross Origin XMLHttpRequest can not expose headers indicated in Access-Control-Expose-Headers HTTP Response Header.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

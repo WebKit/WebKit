@@ -180,15 +180,4 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
     return true;
 }
 
-void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHeaderSet& headerSet)
-{
-    Vector<String> headers;
-    headerValue.split(',', false, headers);
-    for (auto& header : headers) {
-        String strippedHeader = header.stripWhiteSpace();
-        if (!strippedHeader.isEmpty())
-            headerSet.add(strippedHeader);
-    }
-}
-
 } // namespace WebCore

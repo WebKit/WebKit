@@ -268,10 +268,10 @@ void DocumentThreadableLoader::dataSent(CachedResource* resource, unsigned long 
 void DocumentThreadableLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
     ASSERT_UNUSED(resource, resource == m_resource);
-    didReceiveResponse(m_resource->identifier(), response);
+    didReceiveResponse(m_resource->identifier(), response, m_resource->responseTainting());
 }
 
-void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response, ResourceResponse::Tainting tainting)
 {
     ASSERT(m_client);
 
@@ -283,7 +283,16 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
         }
     }
 
-    m_client->didReceiveResponse(identifier, response);
+    ASSERT(response.type() != ResourceResponse::Type::Error);
+    if (response.type() == ResourceResponse::Type::Default) {
+        // FIXME: To be removed once the real fetch mode is passed to underlying loaders.
+        if (options().mode == FetchOptions::Mode::Cors && tainting == ResourceResponse::Tainting::Opaque)
+            tainting = ResourceResponse::Tainting::Cors;
+        m_client->didReceiveResponse(identifier, ResourceResponse::filterResponse(response, tainting));
+    } else {
+        ASSERT(response.isNull() && response.type() == ResourceResponse::Type::Opaqueredirect);
+        m_client->didReceiveResponse(identifier, response);
+    }
 }
 
 void DocumentThreadableLoader::dataReceived(CachedResource* resource, const char* data, int dataLength)
@@ -386,7 +395,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         if (requestURL.isLocalFile()) {
             // We don't want XMLHttpRequest to raise an exception for file:// resources, see <rdar://problem/4962298>.
             // FIXME: XMLHttpRequest quirks should be in XMLHttpRequest code, not in DocumentThreadableLoader.cpp.
-            didReceiveResponse(identifier, response);
+            didReceiveResponse(identifier, response, ResourceResponse::Tainting::Basic);
             didFinishLoading(identifier, 0.0);
             return;
         }
@@ -409,7 +418,10 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         }
     }
 
-    didReceiveResponse(identifier, response);
+    ResourceResponse::Tainting tainting = ResourceResponse::Tainting::Basic;
+    if (!m_sameOriginRequest)
+        tainting = m_options.mode == FetchOptions::Mode::Cors ? ResourceResponse::Tainting::Cors : ResourceResponse::Tainting::Opaque;
+    didReceiveResponse(identifier, response, tainting);
 
     if (data)
         didReceiveData(identifier, data->data(), data->size());

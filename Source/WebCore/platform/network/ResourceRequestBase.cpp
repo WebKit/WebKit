@@ -313,9 +313,14 @@ void ResourceRequestBase::setHTTPOrigin(const String& httpOrigin)
     setHTTPHeaderField(HTTPHeaderName::Origin, httpOrigin);
 }
 
+bool ResourceRequestBase::hasHTTPOrigin() const
+{
+    return m_httpHeaderFields.contains(HTTPHeaderName::Origin);
+}
+
 void ResourceRequestBase::clearHTTPOrigin()
 {
-    updateResourceRequest(); 
+    updateResourceRequest();
 
     m_httpHeaderFields.remove(HTTPHeaderName::Origin);
 

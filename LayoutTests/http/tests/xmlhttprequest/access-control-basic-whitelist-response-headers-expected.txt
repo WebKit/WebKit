@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 25: Refused to get unsafe header "x-webkit"
 PASS: Response header cache-control allowed.
 PASS: Response header content-language allowed.
 PASS: Response header content-type allowed.

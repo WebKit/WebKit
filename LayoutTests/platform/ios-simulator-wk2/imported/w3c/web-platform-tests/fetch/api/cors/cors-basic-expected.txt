@@ -1,16 +1,16 @@
 
-FAIL Same domain different port [no-cors mode] assert_equals: Opaque filter: status is 0 expected 0 but got 200
+PASS Same domain different port [no-cors mode] 
 PASS Same domain different port [server forbid CORS] 
-FAIL Same domain different port [cors mode] assert_equals: CORS response's type is cors expected "cors" but got "basic"
+PASS Same domain different port [cors mode] 
 FAIL Same domain different protocol different port [no-cors mode] promise_test: Unhandled rejection with value: object "TypeError: Type error"
 PASS Same domain different protocol different port [server forbid CORS] 
 FAIL Same domain different protocol different port [cors mode] promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Cross domain basic usage [no-cors mode] assert_equals: Opaque filter: status is 0 expected 0 but got 200
+PASS Cross domain basic usage [no-cors mode] 
 PASS Cross domain basic usage [server forbid CORS] 
-FAIL Cross domain basic usage [cors mode] assert_equals: CORS response's type is cors expected "cors" but got "basic"
-FAIL Cross domain different port [no-cors mode] assert_equals: Opaque filter: status is 0 expected 0 but got 200
+PASS Cross domain basic usage [cors mode] 
+PASS Cross domain different port [no-cors mode] 
 PASS Cross domain different port [server forbid CORS] 
-FAIL Cross domain different port [cors mode] assert_equals: CORS response's type is cors expected "cors" but got "basic"
+PASS Cross domain different port [cors mode] 
 FAIL Cross domain different protocol [no-cors mode] promise_test: Unhandled rejection with value: object "TypeError: Type error"
 PASS Cross domain different protocol [server forbid CORS] 
 FAIL Cross domain different protocol [cors mode] promise_test: Unhandled rejection with value: object "TypeError: Type error"

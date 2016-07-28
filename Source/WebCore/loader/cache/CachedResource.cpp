@@ -281,7 +281,14 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
 #endif
     m_resourceRequest.setPriority(loadPriority());
 
-    addAdditionalRequestHeaders(cachedResourceLoader);
+    if (type() != MainResource) {
+        if (m_resourceRequest.hasHTTPOrigin())
+            m_origin = SecurityOrigin::createFromString(m_resourceRequest.httpOrigin());
+        else
+            m_origin = cachedResourceLoader.document()->securityOrigin();
+        ASSERT(m_origin);
+        addAdditionalRequestHeaders(cachedResourceLoader);
+    }
 
     // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
     // We should look into removing the expectation of that knowledge from the platform network stacks.
@@ -367,6 +374,23 @@ bool CachedResource::passesSameOriginPolicyCheck(SecurityOrigin& securityOrigin)
     return passesAccessControlCheck(securityOrigin);
 }
 
+void CachedResource::setCrossOrigin()
+{
+    ASSERT(m_options.mode != FetchOptions::Mode::SameOrigin);
+    m_responseTainting = (m_options.mode == FetchOptions::Mode::Cors) ? ResourceResponse::Tainting::Cors : ResourceResponse::Tainting::Opaque;
+}
+
+bool CachedResource::isCrossOrigin() const
+{
+    return m_responseTainting != ResourceResponse::Tainting::Basic;
+}
+
+bool CachedResource::isClean() const
+{
+    // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-same-origin
+    return !loadFailedOrCanceled() && m_responseTainting != ResourceResponse::Tainting::Opaque;
+}
+
 bool CachedResource::isExpired() const
 {
     if (m_response.isNull())
@@ -426,8 +450,8 @@ const ResourceResponse& CachedResource::responseForSameOriginPolicyChecks() cons
 
 void CachedResource::setResponse(const ResourceResponse& response)
 {
+    ASSERT(m_response.type() == ResourceResponse::Type::Default);
     m_response = response;
-    m_response.setType(m_responseType);
     m_response.setRedirected(m_redirectChainCacheStatus.status != RedirectChainCacheStatus::NoRedirection);
 
     m_varyingHeaderValues = collectVaryingRequestHeaders(m_resourceRequest, m_response, m_sessionID);

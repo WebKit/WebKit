@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef ResourceRequestBase_h
@@ -100,8 +100,9 @@ public:
     WEBCORE_EXPORT String httpReferrer() const;
     WEBCORE_EXPORT void setHTTPReferrer(const String&);
     WEBCORE_EXPORT void clearHTTPReferrer();
-    
+
     String httpOrigin() const;
+    bool hasHTTPOrigin() const;
     void setHTTPOrigin(const String&);
     WEBCORE_EXPORT void clearHTTPOrigin();
 

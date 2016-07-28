@@ -32,11 +32,17 @@
 #define HTTPParsers_h
 
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+typedef HashSet<String, ASCIICaseInsensitiveHash> HTTPHeaderSet;
+
+enum class HTTPHeaderName;
 
 enum class XSSProtectionDisposition {
     Invalid,
@@ -94,6 +100,15 @@ enum HTTPVersion { Unknown, HTTP_1_0, HTTP_1_1 };
 size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReason, String& method, String& url, HTTPVersion&);
 size_t parseHTTPHeader(const char* data, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict = true);
 size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned char>& body);
+
+void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHeaderSet&);
+
+// HTTP Header routine as per https://fetch.spec.whatwg.org/#terminology-headers
+bool isForbiddenHeaderName(const String&);
+bool isForbiddenResponseHeaderName(const String&);
+bool isSimpleHeader(const String& name, const String& value);
+bool isCrossOriginSafeHeader(HTTPHeaderName, const HTTPHeaderSet&);
+bool isCrossOriginSafeHeader(const String&, const HTTPHeaderSet&);
 
 inline bool isHTTPSpace(UChar character)
 {

@@ -33,6 +33,7 @@
 #include "config.h"
 #include "HTTPParsers.h"
 
+#include "HTTPHeaderNames.h"
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -753,6 +754,104 @@ size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned cha
     body.append(data, length);
 
     return length;
+}
+
+void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHeaderSet& headerSet)
+{
+    Vector<String> headers;
+    headerValue.split(',', false, headers);
+    for (auto& header : headers) {
+        String strippedHeader = header.stripWhiteSpace();
+        if (!strippedHeader.isEmpty())
+            headerSet.add(strippedHeader);
+    }
+}
+
+// Implememtnation of https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name
+bool isForbiddenHeaderName(const String& name)
+{
+    HTTPHeaderName headerName;
+    if (findHTTPHeaderName(name, headerName)) {
+        switch (headerName) {
+        case HTTPHeaderName::AcceptCharset:
+        case HTTPHeaderName::AcceptEncoding:
+        case HTTPHeaderName::AccessControlRequestHeaders:
+        case HTTPHeaderName::AccessControlRequestMethod:
+        case HTTPHeaderName::Connection:
+        case HTTPHeaderName::ContentLength:
+        case HTTPHeaderName::Cookie:
+        case HTTPHeaderName::Cookie2:
+        case HTTPHeaderName::Date:
+        case HTTPHeaderName::DNT:
+        case HTTPHeaderName::Expect:
+        case HTTPHeaderName::Host:
+        case HTTPHeaderName::KeepAlive:
+        case HTTPHeaderName::Origin:
+        case HTTPHeaderName::Referer:
+        case HTTPHeaderName::TE:
+        case HTTPHeaderName::Trailer:
+        case HTTPHeaderName::TransferEncoding:
+        case HTTPHeaderName::Upgrade:
+        case HTTPHeaderName::Via:
+            return true;
+        default:
+            break;
+        }
+    }
+    return startsWithLettersIgnoringASCIICase(name, "sec-") || startsWithLettersIgnoringASCIICase(name, "proxy-");
+}
+
+bool isForbiddenResponseHeaderName(const String& name)
+{
+    return equalLettersIgnoringASCIICase(name, "set-cookie") || equalLettersIgnoringASCIICase(name, "set-cookie2");
+}
+
+bool isSimpleHeader(const String& name, const String& value)
+{
+    HTTPHeaderName headerName;
+    if (!findHTTPHeaderName(name, headerName))
+        return false;
+    switch (headerName) {
+    case HTTPHeaderName::Accept:
+    case HTTPHeaderName::AcceptLanguage:
+    case HTTPHeaderName::ContentLanguage:
+        return true;
+    case HTTPHeaderName::ContentType: {
+        String mimeType = extractMIMETypeFromMediaType(value);
+        return equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded") || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data") || equalLettersIgnoringASCIICase(mimeType, "text/plain");
+    }
+    default:
+        return false;
+    }
+}
+
+bool isCrossOriginSafeHeader(HTTPHeaderName name, const HTTPHeaderSet& accessControlExposeHeaderSet)
+{
+    switch (name) {
+    case HTTPHeaderName::CacheControl:
+    case HTTPHeaderName::ContentLanguage:
+    case HTTPHeaderName::ContentType:
+    case HTTPHeaderName::Expires:
+    case HTTPHeaderName::LastModified:
+    case HTTPHeaderName::Pragma:
+    case HTTPHeaderName::Accept:
+        return true;
+    case HTTPHeaderName::SetCookie:
+    case HTTPHeaderName::SetCookie2:
+        return false;
+    default:
+        break;
+    }
+    return accessControlExposeHeaderSet.contains(httpHeaderNameString(name).toStringWithoutCopying());
+}
+
+bool isCrossOriginSafeHeader(const String& name, const HTTPHeaderSet& accessControlExposeHeaderSet)
+{
+#ifndef ASSERT_DISABLED
+    HTTPHeaderName headerName;
+    ASSERT(!findHTTPHeaderName(name, headerName));
+#endif
+    return accessControlExposeHeaderSet.contains(name);
 }
 
 }
