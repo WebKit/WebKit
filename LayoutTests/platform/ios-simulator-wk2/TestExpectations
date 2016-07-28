@@ -50,18 +50,6 @@ css3/flexbox/flexbox-baseline.html [ Failure ]
 css3/masking/mask-base64.html [ ImageOnlyFailure ]
 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyFailure ]
 
-# CSS tests that time out:
-css3/filters/composited-during-animation.html
-css3/filters/crash-filter-animation-invalid-url.html
-css3/filters/filter-animation-from-none-hw.html
-css3/filters/filter-animation-from-none-multi.html
-css3/filters/filter-animation-from-none.html
-css3/filters/filter-animation-hw.html
-css3/filters/filter-animation-multi-hw.html
-css3/filters/filter-animation-multi.html
-css3/filters/filter-animation.html
-css3/masking/clip-path-animation.html
-
 # jquery test that time out:
 jquery/manipulation.html
 
