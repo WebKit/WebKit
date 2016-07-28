@@ -1,3 +1,13 @@
+2016-07-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        64-bit alignment check isn't necessary in ARMAssembler::prepareExecutableCopy after r202214
+        https://bugs.webkit.org/show_bug.cgi?id=159711
+
+        Reviewed by Mark Lam.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::prepareExecutableCopy):
+
 2016-07-27  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove some unused code from FTL

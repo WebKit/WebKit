@@ -395,8 +395,6 @@ void ARMAssembler::prepareExecutableCopy(void* to)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
-    if (!m_buffer.isAligned(8))
-        bkpt(0);
 
     char* data = reinterpret_cast<char*>(m_buffer.data());
     ptrdiff_t delta = reinterpret_cast<char*>(to) - data;
