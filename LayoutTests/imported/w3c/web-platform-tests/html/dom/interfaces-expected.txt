@@ -4904,23 +4904,23 @@ PASS CanvasRenderingContext2D interface: operation clearRect(unrestricted double
 PASS CanvasRenderingContext2D interface: operation fillRect(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation strokeRect(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation beginPath() 
-FAIL CanvasRenderingContext2D interface: operation fill(CanvasFillRule) assert_equals: property has wrong .length expected 0 but got 1
-FAIL CanvasRenderingContext2D interface: operation fill(Path2D,CanvasFillRule) assert_equals: property has wrong .length expected 0 but got 1
-FAIL CanvasRenderingContext2D interface: operation stroke() assert_equals: property has wrong .length expected 0 but got 1
-FAIL CanvasRenderingContext2D interface: operation stroke(Path2D) assert_equals: property has wrong .length expected 0 but got 1
+PASS CanvasRenderingContext2D interface: operation fill(CanvasFillRule) 
+PASS CanvasRenderingContext2D interface: operation fill(Path2D,CanvasFillRule) 
+PASS CanvasRenderingContext2D interface: operation stroke() 
+PASS CanvasRenderingContext2D interface: operation stroke(Path2D) 
 FAIL CanvasRenderingContext2D interface: operation drawSystemFocusRing(Element) assert_own_property: interface prototype object missing non-static operation expected property "drawSystemFocusRing" missing
 FAIL CanvasRenderingContext2D interface: operation drawSystemFocusRing(Path2D,Element) assert_own_property: interface prototype object missing non-static operation expected property "drawSystemFocusRing" missing
 FAIL CanvasRenderingContext2D interface: operation drawCustomFocusRing(Element) assert_own_property: interface prototype object missing non-static operation expected property "drawCustomFocusRing" missing
 FAIL CanvasRenderingContext2D interface: operation drawCustomFocusRing(Path2D,Element) assert_own_property: interface prototype object missing non-static operation expected property "drawCustomFocusRing" missing
 FAIL CanvasRenderingContext2D interface: operation scrollPathIntoView() assert_own_property: interface prototype object missing non-static operation expected property "scrollPathIntoView" missing
 FAIL CanvasRenderingContext2D interface: operation scrollPathIntoView(Path2D) assert_own_property: interface prototype object missing non-static operation expected property "scrollPathIntoView" missing
-FAIL CanvasRenderingContext2D interface: operation clip(CanvasFillRule) assert_equals: property has wrong .length expected 0 but got 1
-FAIL CanvasRenderingContext2D interface: operation clip(Path2D,CanvasFillRule) assert_equals: property has wrong .length expected 0 but got 1
+PASS CanvasRenderingContext2D interface: operation clip(CanvasFillRule) 
+PASS CanvasRenderingContext2D interface: operation clip(Path2D,CanvasFillRule) 
 FAIL CanvasRenderingContext2D interface: operation resetClip() assert_own_property: interface prototype object missing non-static operation expected property "resetClip" missing
-FAIL CanvasRenderingContext2D interface: operation isPointInPath(unrestricted double,unrestricted double,CanvasFillRule) assert_equals: property has wrong .length expected 2 but got 3
-FAIL CanvasRenderingContext2D interface: operation isPointInPath(Path2D,unrestricted double,unrestricted double,CanvasFillRule) assert_equals: property has wrong .length expected 2 but got 3
-FAIL CanvasRenderingContext2D interface: operation isPointInStroke(unrestricted double,unrestricted double) assert_equals: property has wrong .length expected 2 but got 3
-FAIL CanvasRenderingContext2D interface: operation isPointInStroke(Path2D,unrestricted double,unrestricted double) assert_equals: property has wrong .length expected 2 but got 3
+PASS CanvasRenderingContext2D interface: operation isPointInPath(unrestricted double,unrestricted double,CanvasFillRule) 
+PASS CanvasRenderingContext2D interface: operation isPointInPath(Path2D,unrestricted double,unrestricted double,CanvasFillRule) 
+PASS CanvasRenderingContext2D interface: operation isPointInStroke(unrestricted double,unrestricted double) 
+PASS CanvasRenderingContext2D interface: operation isPointInStroke(Path2D,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation fillText(DOMString,unrestricted double,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation strokeText(DOMString,unrestricted double,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation measureText(DOMString) 

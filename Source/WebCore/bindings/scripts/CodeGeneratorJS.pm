@@ -1707,12 +1707,21 @@ sub GetFunctionLength
 {
     my $function = shift;
 
-    my $length = 0;
-    foreach my $parameter (@{$function->parameters}) {
-        # Abort as soon as we find the first optional parameter as no mandatory
-        # parameter can follow an optional one.
-        last if $parameter->isOptional || $parameter->isVariadic;
-        $length++;
+    my $getOverloadLength = sub {
+        my $function = shift;
+
+        my $length = 0;
+        foreach my $parameter (@{$function->parameters}) {
+            last if $parameter->isOptional || $parameter->isVariadic;
+            $length++;
+        }
+        return $length;
+    };
+
+    my $length = &$getOverloadLength($function);
+    foreach my $overload (@{$function->{overloads}}) {
+        my $newLength = &$getOverloadLength($overload);
+        $length = $newLength if $newLength < $length;
     }
     return $length;
 }
