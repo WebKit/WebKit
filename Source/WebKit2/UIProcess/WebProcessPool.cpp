@@ -730,6 +730,9 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
     if (m_configuration->fullySynchronousModeIsAllowedForTesting())
         process->connection()->allowFullySynchronousModeForTesting();
 
+    if (m_configuration->ignoreSynchronousMessagingTimeoutsForTesting())
+        process->connection()->ignoreTimeoutsForTesting();
+
     m_connectionClient.didCreateConnection(this, process->webConnection());
 }
 

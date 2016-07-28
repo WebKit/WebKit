@@ -385,9 +385,16 @@ bool Connection::sendSyncReply(std::unique_ptr<MessageEncoder> encoder)
     return sendMessage(WTFMove(encoder));
 }
 
+std::chrono::milliseconds Connection::timeoutRespectingIgnoreTimeoutsForTesting(std::chrono::milliseconds timeout) const
+{
+    return m_ignoreTimeoutsForTesting ? std::chrono::milliseconds::max() : timeout;
+}
+
 std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags)
 {
     ASSERT(RunLoop::isMain());
+
+    timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
 
     bool hasIncomingSynchronousMessage = false;
 
@@ -532,6 +539,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
 
     sendMessage(WTFMove(encoder), 0, true);
 
+    timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
     pendingReply.semaphore.wait(currentTime() + (timeout.count() / 1000.0));
 
     // Finally, pop the pending sync reply information.
@@ -546,6 +554,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
 
 std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, std::chrono::milliseconds timeout, unsigned syncSendFlags)
 {
+    timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
     double absoluteTime = currentTime() + (timeout.count() / 1000.0);
 
     willSendSyncMessage(syncSendFlags);

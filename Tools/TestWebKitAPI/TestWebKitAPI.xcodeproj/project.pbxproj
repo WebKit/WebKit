@@ -52,12 +52,14 @@
 		2D51A0C71C8BF00C00765C45 /* DOMHTMLVideoElementWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D51A0C51C8BF00400765C45 /* DOMHTMLVideoElementWrapper.mm */; };
 		2DC4CF771D2D9DD800ECCC94 /* DataDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */; };
 		2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */; };
+		2DE71AFE1D49C0BD00904094 /* AnimatedResize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */; };
+		2DE71B001D49C3ED00904094 /* blinking-div.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DE71AFF1D49C2F000904094 /* blinking-div.html */; };
 		2E14A5291D3FE96B0010F35B /* autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E14A5281D3FE8B80010F35B /* autoplaying-video-with-audio.html */; };
 		2E1B7B001D41ABA7007558B4 /* large-video-seek-after-ending.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1B7AFF1D41A95F007558B4 /* large-video-seek-after-ending.html */; };
 		2E1B7B021D41B1B9007558B4 /* large-video-hides-controls-after-seek-to-end.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1B7B011D41B1B3007558B4 /* large-video-hides-controls-after-seek-to-end.html */; };
-		2E1DFDF11D42E1E400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */; };
 		2E1DFDED1D42A51100714A00 /* large-videos-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDEC1D42A41C00714A00 /* large-videos-with-audio.html */; };
 		2E1DFDEF1D42A6F200714A00 /* large-videos-with-audio-autoplay.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDEE1D42A6EB00714A00 /* large-videos-with-audio-autoplay.html */; };
+		2E1DFDF11D42E1E400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */; };
 		2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
@@ -509,6 +511,7 @@
 				2E1DFDEF1D42A6F200714A00 /* large-videos-with-audio-autoplay.html in Copy Resources */,
 				2E1DFDED1D42A51100714A00 /* large-videos-with-audio.html in Copy Resources */,
 				5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */,
+				2DE71B001D49C3ED00904094 /* blinking-div.html in Copy Resources */,
 				5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */,
 				5C9E59431D3EB5AC00E3C62E /* ApplicationCache.db-wal in Copy Resources */,
 				2E14A5291D3FE96B0010F35B /* autoplaying-video-with-audio.html in Copy Resources */,
@@ -707,12 +710,14 @@
 		2DD355351BD08378005DF4A7 /* AutoLayoutIntegration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutoLayoutIntegration.mm; sourceTree = "<group>"; };
 		2DD7D3A9178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResizeReversePaginatedWebView.cpp; sourceTree = "<group>"; };
 		2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "lots-of-text-vertical-lr.html"; sourceTree = "<group>"; };
+		2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AnimatedResize.mm; sourceTree = "<group>"; };
+		2DE71AFF1D49C2F000904094 /* blinking-div.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "blinking-div.html"; sourceTree = "<group>"; };
 		2E14A5281D3FE8B80010F35B /* autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
 		2E1B7AFF1D41A95F007558B4 /* large-video-seek-after-ending.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-seek-after-ending.html"; sourceTree = "<group>"; };
 		2E1B7B011D41B1B3007558B4 /* large-video-hides-controls-after-seek-to-end.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-hides-controls-after-seek-to-end.html"; sourceTree = "<group>"; };
-		2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-seek-to-beginning-and-play-after-ending.html"; sourceTree = "<group>"; };
 		2E1DFDEC1D42A41C00714A00 /* large-videos-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-with-audio.html"; sourceTree = "<group>"; };
 		2E1DFDEE1D42A6EB00714A00 /* large-videos-with-audio-autoplay.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-with-audio-autoplay.html"; sourceTree = "<group>"; };
+		2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-seek-to-beginning-and-play-after-ending.html"; sourceTree = "<group>"; };
 		2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainIOS.mm; sourceTree = "<group>"; };
 		2E7765CE16C4D81100BA2BB1 /* mainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainMac.mm; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
@@ -1226,6 +1231,7 @@
 				A16F66B81C40E9E100BD4D24 /* Resources */,
 				7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */,
 				A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */,
+				2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */,
 				2DD355351BD08378005DF4A7 /* AutoLayoutIntegration.mm */,
 				A13EBBAC1B87436F00097110 /* BundleParameters.mm */,
 				A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */,
@@ -1358,6 +1364,7 @@
 				5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */,
 				2E14A5281D3FE8B80010F35B /* autoplaying-video-with-audio.html */,
 				93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */,
+				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
 				A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */,
 				5714ECB81CA8B58800051AC8 /* DownloadRequestOriginalURL.html */,
 				5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */,
@@ -2218,6 +2225,7 @@
 				7CCE7F241A411AF600447C4C /* Navigation.mm in Sources */,
 				A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */,
 				7CCE7F021A411AE600447C4C /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */,
+				2DE71AFE1D49C0BD00904094 /* AnimatedResize.mm in Sources */,
 				51A587861D273AA9004BA9AF /* IndexedDBDatabaseProcessKill.mm in Sources */,
 				7CCE7F031A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */,
 				7CCE7F041A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */,

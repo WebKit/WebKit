@@ -301,9 +301,9 @@ void WebPageProxy::synchronizeDynamicViewportUpdate()
     }
 
     // If m_dynamicViewportSizeUpdateWaitingForTarget is false, we are waiting for the next valid frame with the hope it is the one for the new target.
-    // If m_dynamicViewportSizeUpdateWaitingForTarget is still true, this is a desesperate attempt to get the valid frame before finishing the animation.
+    // If m_dynamicViewportSizeUpdateWaitingForTarget is still true, this is a desperate attempt to get the valid frame before finishing the animation.
     if (m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit)
-        m_process->connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_pageID, std::chrono::seconds(1), IPC::InterruptWaitingIfSyncMessageArrives);
+        m_drawingArea->waitForDidUpdateViewState();
 
     m_dynamicViewportSizeUpdateWaitingForTarget = false;
     m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;

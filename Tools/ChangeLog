@@ -1,3 +1,23 @@
+2016-07-28  Tim Horton  <timothy_horton@apple.com>
+
+        Frequent animation lags when interacting with Safari (sidebar, tab switching, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=160289
+        <rdar://problem/27553464>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm: Added.
+        (-[AnimatedResizeNavigationDelegate _webView:renderingProgressDidChange:]):
+        (-[AnimatedResizeWebView _endAnimatedResize]):
+        (animatedResizeWebView):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/blinking-div.html: Added.
+        Add two tests that ensure that hidden-content and animated resizes
+        don't cause unnecessary synchronous waits. Only the hidden-content
+        one fails before my patch, but it seemed reasonable to add both anyway.
+
 2016-07-28  David Kilzer  <ddkilzer@apple.com>
 
         webkit-patch upload --suggest-reviewers shouldn't break in the presence of deleted or moved files

@@ -92,6 +92,16 @@
     _processPoolConfiguration->setDiskCacheSpeculativeValidationEnabled(enabled);
 }
 
+- (BOOL)ignoreSynchronousMessagingTimeoutsForTesting
+{
+    return _processPoolConfiguration->ignoreSynchronousMessagingTimeoutsForTesting();
+}
+
+- (void)setIgnoreSynchronousMessagingTimeoutsForTesting:(BOOL)ignoreSynchronousMessagingTimeoutsForTesting
+{
+    _processPoolConfiguration->setIgnoreSynchronousMessagingTimeoutsForTesting(ignoreSynchronousMessagingTimeoutsForTesting);
+}
+
 - (NSArray *)cachePartitionedURLSchemes
 {
     auto schemes = _processPoolConfiguration->cachePartitionedURLSchemes();

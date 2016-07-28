@@ -1,3 +1,49 @@
+2016-07-28  Tim Horton  <timothy_horton@apple.com>
+
+        Frequent animation lags when interacting with Safari (sidebar, tab switching, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=160289
+        <rdar://problem/27553464>
+
+        Reviewed by Simon Fraser.
+
+        API Tests: WebKit2.AnimatedResizeDoesNotHang, WebKit2.ResizeWithHiddenContentDoesNotHang
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        Avoid calling _endAnimatedResize when a commit comes in when we haven't yet received
+        a dynamic viewport update reply (and thus don't have a transaction ID to wait on).
+        Previously, in this case, _resizeAnimationTransformTransactionID would be 0,
+        and *any* commit would cause _endAnimatedResize to be called, causing us to always
+        fall into the worst-case sync wait.
+        
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::synchronizeDynamicViewportUpdate):
+        Make use of waitForDidUpdateViewState instead of having a separate waitForAndDispatchImmediately
+        here, because it knows to do things like dispatch the didUpdate message if it's still
+        pending. This also shortens the sync wait timeout from 1s to 500ms, which makes it
+        consistent with e.g. the newly-parented-view timeout duration, and should be nothing
+        but positive.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::timeoutRespectingIgnoreTimeoutsForTesting):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::sendSyncMessageFromSecondaryThread):
+        (IPC::Connection::waitForSyncReply):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::ignoreTimeoutsForTesting):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration ignoreSynchronousMessagingTimeoutsForTesting]):
+        (-[_WKProcessPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processDidFinishLaunching):
+        Add a mechanism for clients to cause all synchronous message timeouts to be effectively infinite.
+        The new API tests use this to ensure that the test will time out if they ever enter
+        the bad state (otherwise, the shorter sync wait timeout could make the test still pass).
+
 2016-07-27  Andy Estes  <aestes@apple.com>
 
         [iOS] Add WKUIDelegate SPI for specifying that an attachment list is from a managed source
