@@ -30,7 +30,7 @@ function cancel(reason)
     "use strict";
 
     if (!@isReadableStreamDefaultReader(this))
-        return @Promise.@reject(new @TypeError("Can only call ReadableStreamDefaultReader.cancel on instances of ReadableStreamDefaultReader"));
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "cancel"));
 
     if (!this.@ownerReadableStream)
         return @Promise.@reject(new @TypeError("cancel() called on a reader owned by no readable stream"));
@@ -43,7 +43,7 @@ function read()
     "use strict";
 
     if (!@isReadableStreamDefaultReader(this))
-        return @Promise.@reject(new @TypeError("Can only call ReadableStreamDefaultReader.read on instances of ReadableStreamDefaultReader"));
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "read"));
     if (!this.@ownerReadableStream)
         return @Promise.@reject(new @TypeError("read() called on a reader owned by no readable stream"));
 
@@ -55,7 +55,7 @@ function releaseLock()
     "use strict";
 
     if (!@isReadableStreamDefaultReader(this))
-        throw new @TypeError("Can only call ReadableStreamDefaultReader.releaseLock on instances of ReadableStreamDefaultReader");
+        throw @makeThisTypeError("ReadableStreamDefaultReader", "releaseLock");
 
     const stream = this.@ownerReadableStream;
     if (!stream)
@@ -78,7 +78,7 @@ function closed()
     "use strict";
 
     if (!@isReadableStreamDefaultReader(this))
-        return @Promise.@reject(new @TypeError("The ReadableStreamDefaultReader.closed getter can only be used on instances of ReadableStreamDefaultReader"));
+        return @Promise.@reject(@makeGetterTypeError("ReadableStreamDefaultReader", "closed"));
 
     return this.@closedPromiseCapability.@promise;
 }
