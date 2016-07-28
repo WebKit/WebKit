@@ -5322,9 +5322,7 @@ PASS Window interface: window must inherit property "print" with the proper type
 PASS Window interface: window must inherit property "showModalDialog" with the proper type (34) 
 PASS Window interface: calling showModalDialog(DOMString,any) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "postMessage" with the proper type (35) 
-FAIL Window interface: calling postMessage(any,DOMString,[object Object]) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "SyntaxError (DOM Exception 12): The string did not match ..." ("SyntaxError") expected object "TypeError" ("TypeError")
+PASS Window interface: calling postMessage(any,DOMString,[object Object]) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "captureEvents" with the proper type (36) 
 PASS Window interface: window must inherit property "releaseEvents" with the proper type (37) 
 PASS Window interface: window must inherit property "onabort" with the proper type (38) 

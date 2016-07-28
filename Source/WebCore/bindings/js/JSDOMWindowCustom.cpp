@@ -518,6 +518,9 @@ JSValue JSDOMWindow::showModalDialog(ExecState& state)
 
 static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
 {
+    if (UNLIKELY(state.argumentCount() < 2))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
     MessagePortArray messagePorts;
     ArrayBufferArray arrayBuffers;
 
@@ -530,7 +533,7 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
     int targetOriginArgIndex = 1;
     if (state.argumentCount() > 2) {
         int transferablesArgIndex = 2;
-        if (state.argument(2).isString()) {
+        if (state.uncheckedArgument(2).isString()) {
             targetOriginArgIndex = 2;
             transferablesArgIndex = 1;
         }
@@ -539,12 +542,12 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
     if (state.hadException())
         return jsUndefined();
 
-    auto message = SerializedScriptValue::create(&state, state.argument(0), &messagePorts, &arrayBuffers);
+    auto message = SerializedScriptValue::create(&state, state.uncheckedArgument(0), &messagePorts, &arrayBuffers);
 
     if (state.hadException())
         return jsUndefined();
 
-    String targetOrigin = valueToStringWithUndefinedOrNullCheck(&state, state.argument(targetOriginArgIndex));
+    String targetOrigin = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(targetOriginArgIndex));
     if (state.hadException())
         return jsUndefined();
 
