@@ -962,7 +962,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     HTMLTableElement: {
-        deleteRow: "[index]",
+        deleteRow: "index",
         insertRow: "[index]",
         __proto__: null,
     },
@@ -974,7 +974,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     HTMLTableSectionElement: {
-        deleteRow: "[index]",
+        deleteRow: "index",
         insertRow: "[index]",
         __proto__: null,
     },

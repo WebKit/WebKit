@@ -2449,7 +2449,7 @@ PASS HTMLTableElement interface: attribute tBodies
 PASS HTMLTableElement interface: operation createTBody() 
 PASS HTMLTableElement interface: attribute rows 
 PASS HTMLTableElement interface: operation insertRow(long) 
-FAIL HTMLTableElement interface: operation deleteRow(long) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLTableElement interface: operation deleteRow(long) 
 FAIL HTMLTableElement interface: attribute sortable assert_true: The prototype object must have a property "sortable" expected true got false
 FAIL HTMLTableElement interface: operation stopSorting() assert_own_property: interface prototype object missing non-static operation expected property "stopSorting" missing
 PASS HTMLTableElement interface: attribute align 
@@ -2478,9 +2478,7 @@ PASS HTMLTableElement interface: document.createElement("table") must inherit pr
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "insertRow" with the proper type (12) 
 PASS HTMLTableElement interface: calling insertRow(long) on document.createElement("table") with too few arguments must throw TypeError 
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "deleteRow" with the proper type (13) 
-FAIL HTMLTableElement interface: calling deleteRow(long) on document.createElement("table") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
+PASS HTMLTableElement interface: calling deleteRow(long) on document.createElement("table") with too few arguments must throw TypeError 
 FAIL HTMLTableElement interface: document.createElement("table") must inherit property "sortable" with the proper type (14) assert_inherits: property "sortable" not found in prototype chain
 FAIL HTMLTableElement interface: document.createElement("table") must inherit property "stopSorting" with the proper type (15) assert_inherits: property "stopSorting" not found in prototype chain
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "align" with the proper type (16) 
@@ -2535,7 +2533,7 @@ PASS HTMLTableSectionElement interface: existence and properties of interface pr
 PASS HTMLTableSectionElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLTableSectionElement interface: attribute rows 
 PASS HTMLTableSectionElement interface: operation insertRow(long) 
-FAIL HTMLTableSectionElement interface: operation deleteRow(long) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLTableSectionElement interface: operation deleteRow(long) 
 PASS HTMLTableSectionElement interface: attribute align 
 PASS HTMLTableSectionElement interface: attribute ch 
 PASS HTMLTableSectionElement interface: attribute chOff 
@@ -2546,9 +2544,7 @@ PASS HTMLTableSectionElement interface: document.createElement("tbody") must inh
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "insertRow" with the proper type (1) 
 PASS HTMLTableSectionElement interface: calling insertRow(long) on document.createElement("tbody") with too few arguments must throw TypeError 
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "deleteRow" with the proper type (2) 
-FAIL HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("tbody") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
+PASS HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("tbody") with too few arguments must throw TypeError 
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "align" with the proper type (3) 
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "ch" with the proper type (4) 
 PASS HTMLTableSectionElement interface: document.createElement("tbody") must inherit property "chOff" with the proper type (5) 
@@ -2559,9 +2555,7 @@ PASS HTMLTableSectionElement interface: document.createElement("thead") must inh
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "insertRow" with the proper type (1) 
 PASS HTMLTableSectionElement interface: calling insertRow(long) on document.createElement("thead") with too few arguments must throw TypeError 
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "deleteRow" with the proper type (2) 
-FAIL HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("thead") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
+PASS HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("thead") with too few arguments must throw TypeError 
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "align" with the proper type (3) 
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "ch" with the proper type (4) 
 PASS HTMLTableSectionElement interface: document.createElement("thead") must inherit property "chOff" with the proper type (5) 
@@ -2572,9 +2566,7 @@ PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inh
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "insertRow" with the proper type (1) 
 PASS HTMLTableSectionElement interface: calling insertRow(long) on document.createElement("tfoot") with too few arguments must throw TypeError 
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "deleteRow" with the proper type (2) 
-FAIL HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("tfoot") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
+PASS HTMLTableSectionElement interface: calling deleteRow(long) on document.createElement("tfoot") with too few arguments must throw TypeError 
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "align" with the proper type (3) 
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "ch" with the proper type (4) 
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "chOff" with the proper type (5) 
