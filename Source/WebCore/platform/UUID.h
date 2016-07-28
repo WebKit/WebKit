@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UUID_h
-#define UUID_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -43,12 +42,7 @@ namespace WebCore {
 // This algorithm sets the version number as well as two reserved bits. All other bits are set using a random or pseudorandom
 // data source. Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8,
 // 9, A, or B for y.
-//
-// On Windows, version 4 UUIDs are used since Windows 2000 (http://msdn.microsoft.com/en-us/library/aa446557.aspx).
-// On MacOSX, version 4 UUIDs are used since Tiger (http://developer.apple.com/mac/library/technotes/tn/tn1103.html#TNTAG8).
-// On Linux, the kernel offers the procfs pseudo-file /proc/sys/kernel/random/uuid that yields version 4 UUIDs (http://hbfs.wordpress.com/2008/09/30/ueid-unique-enough-ids/).
+
 WEBCORE_EXPORT String createCanonicalUUIDString();
 
 }
-
-#endif
