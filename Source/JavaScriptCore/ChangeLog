@@ -1,3 +1,14 @@
+2016-07-28  Mark Lam  <mark.lam@apple.com>
+
+        StringView should have an explicit m_is8Bit field.
+        https://bugs.webkit.org/show_bug.cgi?id=160282
+        <rdar://problem/27327943>
+
+        Reviewed by Benjamin Poulain.
+
+        * tests/stress/string-joining-long-strings-should-not-crash.js: Added.
+        (catch):
+
 2016-07-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Typo fix after r121885

@@ -1,3 +1,48 @@
+2016-07-28  Mark Lam  <mark.lam@apple.com>
+
+        StringView should have an explicit m_is8Bit field.
+        https://bugs.webkit.org/show_bug.cgi?id=160282
+        <rdar://problem/27327943>
+
+        Reviewed by Benjamin Poulain.
+
+        The current implementation reserves 1 bit in the 32-bit m_length field as an
+        is16Bit flag.  As a result, a StringView is incapable of handling strings that
+        have a length of 32-bit in size.  This results in a mismatch with the
+        expectations of String, StringImpl, and JavaScriptCore's JSString which all
+        support a 32-bit unsigned length.
+
+        This patch fixes this issue by introducing an explicit m_is8Bit field, thereby
+        allowing m_length to be a full 32-bit again.
+
+        We also introduced a clear() convenience method to set the fields of StringView
+        to empty values.  Previously, we were duplicating the code for clearing those
+        fields.  We now call clear() in all those places instead.
+
+        Note: in clear(), we set m_is8Bit to true because we want an empty StringView
+        to be 8-bit rather than 16-bit.  This is consistent with what the empty() method
+        returns.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::setUnderlyingString):
+        (WTF::StringView::StringView):
+        (WTF::StringView::operator=):
+        (WTF::StringView::initialize):
+        (WTF::StringView::clear):
+        (WTF::StringView::empty):
+        (WTF::StringView::length):
+        (WTF::StringView::operator bool):
+        (WTF::StringView::is8Bit):
+        (WTF::StringView::substring):
+        (WTF::StringView::getCharactersWithUpconvert):
+        (WTF::StringView::toString):
+        (WTF::StringView::toAtomicString):
+        (WTF::StringView::toFloat):
+        (WTF::StringView::toInt):
+        (WTF::StringView::toIntStrict):
+        (WTF::StringView::toStringWithoutCopying):
+        (WTF::StringView::find):
+
 2016-07-24  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should support multiple entrypoints
