@@ -1,3 +1,16 @@
+2016-07-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Hiding a column which contains a TimelineRuler as the headerview, doesn't hide the headerView
+        https://bugs.webkit.org/show_bug.cgi?id=160093
+        <rdar://problem/27499300>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._positionHeaderViews):
+        Remove early return so that a header view in a hidden column will have
+        its width resized to zero, matching the column.
+
 2016-07-28  Johan K. Jensen  <johan_jensen@apple.com>
 
         Web Inspector: Waterfall view should be visible in Network tab and Network Timeline

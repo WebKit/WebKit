@@ -984,17 +984,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     _positionHeaderViews()
     {
-        let visibleHeaderViews = false;
-        for (let column of this.columns.values()) {
-            if (column["headerView"] && !column["hidden"]) {
-                visibleHeaderViews = true;
-                break;
-            }
-        }
-
-        if (!visibleHeaderViews)
-            return;
-
         let left = 0;
         let headerViews = [];
         let lefts = [];
