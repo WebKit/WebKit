@@ -48,30 +48,34 @@
 
 namespace WebCore {
 
+Ref<SocketStreamHandle> SocketStreamHandle::create(const URL& url, SocketStreamHandleClient& client, NetworkingContext&, SessionID)
+{
+    Ref<SocketStreamHandle> socket = adoptRef(*new SocketStreamHandle(url, client));
+
+    unsigned port = url.hasPort() ? url.port() : (url.protocolIs("wss") ? 443 : 80);
+    GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
+    if (url.protocolIs("wss"))
+        g_socket_client_set_tls(socketClient.get(), TRUE);
+    Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
+    g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, socket->m_cancellable.get(),
+        reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
+    return socket;
+}
+
+Ref<SocketStreamHandle> SocketStreamHandle::create(GSocketConnection* socketConnection, SocketStreamHandleClient& client)
+{
+    Ref<SocketStreamHandle> socket = adoptRef(*new SocketStreamHandle(URL(), client));
+
+    GRefPtr<GSocketConnection> connection = socketConnection;
+    socket->connected(WTFMove(connection));
+    return socket;
+}
+
 SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client)
     : SocketStreamHandleBase(url, client)
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
-    unsigned port = url.hasPort() ? url.port() : (url.protocolIs("wss") ? 443 : 80);
-
-    GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
-    if (url.protocolIs("wss"))
-        g_socket_client_set_tls(socketClient.get(), TRUE);
-    relaxAdoptionRequirement();
-    RefPtr<SocketStreamHandle> protectedThis(this);
-    g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, m_cancellable.get(),
-        reinterpret_cast<GAsyncReadyCallback>(connectedCallback), protectedThis.leakRef());
-}
-
-SocketStreamHandle::SocketStreamHandle(GSocketConnection* socketConnection, SocketStreamHandleClient& client)
-    : SocketStreamHandleBase(URL(), client)
-    , m_cancellable(adoptGRef(g_cancellable_new()))
-{
-    LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
-    GRefPtr<GSocketConnection> connection = socketConnection;
-    relaxAdoptionRequirement();
-    connected(WTFMove(connection));
 }
 
 SocketStreamHandle::~SocketStreamHandle()
