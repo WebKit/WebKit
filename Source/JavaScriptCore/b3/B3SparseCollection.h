@@ -26,8 +26,6 @@
 #ifndef B3SparseCollection_h
 #define B3SparseCollection_h
 
-#if ENABLE(B3_JIT)
-
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -139,8 +137,6 @@ private:
 };
 
 } } // namespace JSC::B3
-
-#endif // ENABLE(B3_JIT)
 
 #endif // B3SparseCollection_h
 

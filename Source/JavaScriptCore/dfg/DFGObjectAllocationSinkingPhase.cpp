@@ -2102,7 +2102,6 @@ private:
                 data->identifierNumber = identifierNumber;
 
                 return m_graph.addNode(
-                    SpecNone,
                     PutByOffset,
                     origin.takeValidExit(canExit),
                     OpInfo(data),
@@ -2137,7 +2136,6 @@ private:
             }
 
             return m_graph.addNode(
-                SpecNone,
                 MultiPutByOffset,
                 origin.takeValidExit(canExit),
                 OpInfo(data),
@@ -2148,7 +2146,6 @@ private:
 
         case ClosureVarPLoc: {
             return m_graph.addNode(
-                SpecNone,
                 PutClosureVar,
                 origin.takeValidExit(canExit),
                 OpInfo(location.info()),

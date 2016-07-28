@@ -101,7 +101,7 @@ public:
                 m_graph.invalidateNodeLiveness();
 
                 for (Node* node : nodesToDelete)
-                    m_graph.m_allocator.free(node);
+                    m_graph.deleteNode(node);
 
                 m_graph.invalidateCFG();
                 m_graph.resetReachability();

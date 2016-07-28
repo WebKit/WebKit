@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "B3SparseCollection.h"
 #include "BasicBlockLocation.h"
 #include "CodeBlock.h"
 #include "DFGAbstractValue.h"
@@ -230,6 +231,8 @@ struct StackAccessData {
 //
 // Node represents a single operation in the data flow graph.
 struct Node {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     enum VarArgTag { VarArg };
     
     Node() { }
@@ -346,9 +349,8 @@ struct Node {
     
     NodeType op() const { return static_cast<NodeType>(m_op); }
     NodeFlags flags() const { return m_flags; }
-    
-    // This is not a fast method.
-    unsigned index() const;
+
+    unsigned index() const { return m_index; }
     
     void setOp(NodeType op)
     {
@@ -2344,6 +2346,9 @@ struct Node {
     AdjacencyList children;
 
 private:
+    friend class B3::SparseCollection<Node>;
+
+    unsigned m_index { std::numeric_limits<unsigned>::max() };
     unsigned m_op : 10; // real type is NodeType
     unsigned m_flags : 20;
     // The virtual register number (spill location) associated with this .
@@ -2351,7 +2356,7 @@ private:
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
     unsigned m_refCount;
     // The prediction ascribed to this node after propagation.
-    SpeculatedType m_prediction;
+    SpeculatedType m_prediction { SpecNone };
     // Immediate values, accesses type-checked via accessors above. The first one is
     // big enough to store a pointer.
     uintptr_t m_opInfo;

@@ -38,7 +38,6 @@
 #include "CommonIdentifiers.h"
 #include "CommonSlowPaths.h"
 #include "CustomGetterSetter.h"
-#include "DFGLongLivedState.h"
 #include "DFGWorklist.h"
 #include "Disassembler.h"
 #include "ErrorInstance.h"
@@ -290,11 +289,6 @@ VM::VM(VMType vmType, HeapType heapType)
     }
 
     callFrameForCatch = nullptr;
-
-#if ENABLE(DFG_JIT)
-    if (canUseJIT())
-        dfgState = std::make_unique<DFG::LongLivedState>();
-#endif
     
     // Initialize this last, as a free way of asserting that VM initialization itself
     // won't use this.

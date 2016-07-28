@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"
-#include "DFGNodeAllocator.h"
 #include "DFGPromotedHeapLocation.h"
 #include "JSCInlines.h"
 
@@ -62,11 +61,6 @@ void BranchTarget::dump(PrintStream& out) const
     
     if (count == count) // If the count is not NaN, then print it.
         out.print("/w:", count);
-}
-
-unsigned Node::index() const
-{
-    return NodeAllocator::allocatorOf(this)->indexOf(this);
 }
 
 bool Node::hasVariableAccessData(Graph& graph)
