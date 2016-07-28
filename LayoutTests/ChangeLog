@@ -1,5 +1,17 @@
 2016-07-28  Chris Dumez  <cdumez@apple.com>
 
+        First parameter to SVGDocument.createEvent() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160296
+
+        Reviewed by Alex Christensen.
+
+        Add test coverage.
+
+        * svg/dom/SVGDocument-createEvent-expected.txt: Added.
+        * svg/dom/SVGDocument-createEvent.html: Added.
+
+2016-07-28  Chris Dumez  <cdumez@apple.com>
+
         Parameters to CanvasGradient.addColorStop() should be mandatory
         https://bugs.webkit.org/show_bug.cgi?id=160297
 
