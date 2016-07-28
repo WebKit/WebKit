@@ -1460,8 +1460,7 @@ public:
     
     static ptrdiff_t maxJumpReplacementSize()
     {
-        ARMAssembler::maxJumpReplacementSize();
-        return 0;
+        return ARMAssembler::maxJumpReplacementSize();
     }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
