@@ -1,3 +1,15 @@
+2016-07-28  Chris Dumez  <cdumez@apple.com>
+
+        Parameter to tr.deleteCell() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160308
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing test to reflect behavior change.
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+
 2016-07-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/dom/Window/child-window-focus.html as flaky on mac-wk2

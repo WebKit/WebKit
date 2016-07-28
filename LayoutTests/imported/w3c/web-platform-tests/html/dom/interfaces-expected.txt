@@ -2588,7 +2588,7 @@ PASS HTMLTableRowElement interface: attribute rowIndex
 PASS HTMLTableRowElement interface: attribute sectionRowIndex 
 PASS HTMLTableRowElement interface: attribute cells 
 PASS HTMLTableRowElement interface: operation insertCell(long) 
-FAIL HTMLTableRowElement interface: operation deleteCell(long) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLTableRowElement interface: operation deleteCell(long) 
 PASS HTMLTableRowElement interface: attribute align 
 PASS HTMLTableRowElement interface: attribute ch 
 PASS HTMLTableRowElement interface: attribute chOff 
@@ -2602,9 +2602,7 @@ PASS HTMLTableRowElement interface: document.createElement("tr") must inherit pr
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "insertCell" with the proper type (3) 
 PASS HTMLTableRowElement interface: calling insertCell(long) on document.createElement("tr") with too few arguments must throw TypeError 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "deleteCell" with the proper type (4) 
-FAIL HTMLTableRowElement interface: calling deleteCell(long) on document.createElement("tr") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError (DOM Exception 1): The index is not in the..." ("IndexSizeError") expected object "TypeError" ("TypeError")
+PASS HTMLTableRowElement interface: calling deleteCell(long) on document.createElement("tr") with too few arguments must throw TypeError 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "align" with the proper type (5) 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "ch" with the proper type (6) 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "chOff" with the proper type (7) 

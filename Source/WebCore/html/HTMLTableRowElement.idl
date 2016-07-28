@@ -28,6 +28,6 @@ interface HTMLTableRowElement : HTMLElement {
     [Reflect=charoff] attribute DOMString chOff;
     [Reflect] attribute DOMString vAlign;
     [RaisesException] HTMLElement insertCell(optional long index = -1);
-    [RaisesException] void deleteCell(optional long index = 0);
+    [RaisesException] void deleteCell(long index);
 };
 

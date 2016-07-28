@@ -260,7 +260,7 @@ shouldBe("nonNumericPolicy('createHTMLTableElement().deleteRow(x)')", "'any type
 // HTMLTableRowElement
 
 shouldBe("nonNumericPolicy('createHTMLTableRowElement().insertCell(x)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('createHTMLTableRowElement().deleteCell(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('createHTMLTableRowElement().deleteCell(x)')", "'any type allowed (but not omitted)'");
 
 // HTMLTableSectionElement
 

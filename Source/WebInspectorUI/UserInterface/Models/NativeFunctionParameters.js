@@ -968,7 +968,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     HTMLTableRowElement: {
-        deleteCell: "[index]",
+        deleteCell: "index",
         insertCell: "[index]",
         __proto__: null,
     },
