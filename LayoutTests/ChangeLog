@@ -1,3 +1,12 @@
+2016-07-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/dom/Window/child-window-focus.html as flaky on mac-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=160309
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-07-28  George Ruan  <gruan@apple.com>
 
         HTMLVideoElement with MediaStream src shows paused image when all video tracks are disabled
