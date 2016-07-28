@@ -96,9 +96,7 @@
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Custom] void setSelectionRange(long start, long end);
 #else
-    [Custom] void setSelectionRange(optional long start,
-                                    optional long end,
-                                    optional DOMString direction);
+    [Custom] void setSelectionRange(long start, long end, optional DOMString direction);
 #endif
 
     // Non-standard attributes

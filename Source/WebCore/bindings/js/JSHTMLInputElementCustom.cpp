@@ -91,13 +91,16 @@ void JSHTMLInputElement::setSelectionDirection(ExecState& state, JSValue value)
 
 JSValue JSHTMLInputElement::setSelectionRange(ExecState& state)
 {
+    if (UNLIKELY(state.argumentCount() < 2))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
     HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
         return throwTypeError(&state);
 
-    int start = state.argument(0).toInt32(&state);
-    int end = state.argument(1).toInt32(&state);
-    String direction = state.argument(2).toString(&state)->value(&state);
+    int start = state.uncheckedArgument(0).toInt32(&state);
+    int end = state.uncheckedArgument(1).toInt32(&state);
+    String direction = state.argument(2).toWTFString(&state);
 
     input.setSelectionRange(start, end, direction);
     return jsUndefined();

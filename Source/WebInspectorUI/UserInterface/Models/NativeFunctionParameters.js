@@ -909,7 +909,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     HTMLInputElement: {
         setCustomValidity: "error",
         setRangeText: "replacement",
-        setSelectionRange: "[start], [end], [direction]",
+        setSelectionRange: "start, end, [direction]",
         stepDown: "[n]",
         stepUp: "[n]",
         __proto__: null,

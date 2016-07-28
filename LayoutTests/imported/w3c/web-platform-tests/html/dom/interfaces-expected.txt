@@ -2776,7 +2776,7 @@ PASS HTMLInputElement interface: attribute selectionEnd
 PASS HTMLInputElement interface: attribute selectionDirection 
 PASS HTMLInputElement interface: operation setRangeText(DOMString) 
 PASS HTMLInputElement interface: operation setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) 
-FAIL HTMLInputElement interface: operation setSelectionRange(unsigned long,unsigned long,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+PASS HTMLInputElement interface: operation setSelectionRange(unsigned long,unsigned long,DOMString) 
 PASS HTMLInputElement interface: attribute align 
 PASS HTMLInputElement interface: attribute useMap 
 PASS HTMLInputElement must be primary interface of document.createElement("input") 
@@ -2842,9 +2842,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on document.cre
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on document.createElement("input") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on document.createElement("input") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on document.createElement("input") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("text") 
@@ -2910,9 +2908,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("text") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("text") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("text") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("text") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("text") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("text") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("hidden") 
@@ -3044,9 +3040,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("search") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("search") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("search") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("search") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("search") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("search") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("tel") 
@@ -3112,9 +3106,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("tel") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("tel") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("tel") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("tel") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("url") 
@@ -3180,9 +3172,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("url") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("url") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("url") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("url") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("url") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("url") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("email") 
@@ -3248,9 +3238,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("email") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("email") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("email") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("email") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("email") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("email") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("password") 
@@ -3316,9 +3304,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("password") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("password") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("password") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("password") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("password") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("password") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("date") 
@@ -3384,9 +3370,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("date") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("date") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("date") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("date") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("date") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("date") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("month") 
@@ -3452,9 +3436,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("month") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("month") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("month") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("month") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("month") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("month") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("week") 
@@ -3520,9 +3502,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("week") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("week") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("week") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("week") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("week") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("week") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("time") 
@@ -3588,9 +3568,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("time") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("time") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("time") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("time") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("time") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("time") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("datetime-local") 
@@ -3656,9 +3634,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("datetime-local") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("datetime-local") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("datetime-local") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("number") 
@@ -3724,9 +3700,7 @@ PASS HTMLInputElement interface: calling setRangeText(DOMString) on createInput(
 PASS HTMLInputElement interface: createInput("number") must inherit property "setRangeText" with the proper type (54) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) on createInput("number") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("number") must inherit property "setSelectionRange" with the proper type (55) 
-FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("number") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on createInput("number") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("number") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "useMap" with the proper type (57) 
 PASS HTMLInputElement must be primary interface of createInput("range") 

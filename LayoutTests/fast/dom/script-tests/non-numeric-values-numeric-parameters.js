@@ -240,7 +240,7 @@ shouldBe("nonNumericPolicy('document.images.item(x)')", "'any type allowed (but 
 // HTMLInputElement
 
 shouldBe("nonNumericPolicy('document.createElement(\"input\").setSelectionRange(x, 0)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('document.createElement(\"input\").setSelectionRange(0, x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.createElement(\"input\").setSelectionRange(0, x)')", "'any type allowed (but not omitted)'");
 
 // HTMLOptionsCollection
 
