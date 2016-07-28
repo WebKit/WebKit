@@ -491,7 +491,7 @@ video::-webkit-media-controls-panel .picture-in-picture-button {
     min-width: 18px;
     height: 12px;
 
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 12" fill="rgba(255,255,255,0.45)"><polygon points="6 8 1 8 1 1 14 1 14 6 15 6 15 0 0 0 0 9 6 9 6 8"/><rect x="7" y="7" width="9" height="5"/><polyline points="5.33 2 5.33 3 3.67 3 5.67 5 5 5.67 3 3.67 3 5.33 2 5.33 2 2"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 12" fill="rgba(255,255,255,0.45)"><polygon points="6 8 1 8 1 1 14 1 14 6 15 6 15 0 0 0 0 9 6 9 6 8"/><rect x="7" y="7" width="9" height="5"/><polyline transform="translate(4, 4) rotate(180) translate(-4, -4)" points="5.33 2 5.33 3 3.67 3 5.67 5 5 5.67 3 3.67 3 5.33 2 5.33 2 2"/></svg>');
   }
 
 video::-webkit-media-controls-panel .picture-in-picture-button.return-from-picture-in-picture {
