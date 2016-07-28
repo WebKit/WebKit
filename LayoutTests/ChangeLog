@@ -1,3 +1,21 @@
+2016-07-28  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Streams API] Replace ReadableStreamController by ReadableStreamDefaultController
+        https://bugs.webkit.org/show_bug.cgi?id=160242
+
+        Reviewed by Youenn Fablet.
+
+        Replaced ReadableStreamController by ReadableStreamDefaultController to align
+        with updated Streams API specification.
+
+        No change in functionality.
+
+        * streams/readable-stream-default-controller-error-expected.txt: Renamed from LayoutTests/streams/readable-stream-controller-error-expected.txt.
+        * streams/readable-stream-default-controller-error.html: Renamed from LayoutTests/streams/readable-stream-controller-error.html.
+        * streams/readable-stream-error-messages-expected.txt:
+        * streams/readable-stream-error-messages.html:
+        * streams/reference-implementation/readable-stream-expected.txt:
+
 2016-07-28  Youenn Fablet  <youenn@apple.com>
 
         Compute fetch response type in case of cross-origin requests

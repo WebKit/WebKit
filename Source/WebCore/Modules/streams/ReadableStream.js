@@ -52,7 +52,7 @@ function initializeReadableStream(underlyingSource, strategy)
     this.@reader = @undefined;
     this.@storedError = @undefined;
     this.@disturbed = false;
-    this.@controller = new @ReadableStreamController(this);
+    this.@controller = new @ReadableStreamDefaultController(this);
     this.@strategy = @validateAndNormalizeQueuingStrategy(strategy.size, strategy.highWaterMark);
 
     @promiseInvokeOrNoopNoCatch(underlyingSource, "start", [this.@controller]).@then(() => {

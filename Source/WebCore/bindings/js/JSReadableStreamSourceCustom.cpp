@@ -37,14 +37,14 @@ namespace WebCore {
 
 JSValue JSReadableStreamSource::start(ExecState& state)
 {
-    JSReadableStreamController* controller = jsDynamicCast<JSReadableStreamController*>(state.argument(0));
+    JSReadableStreamDefaultController* controller = jsDynamicCast<JSReadableStreamDefaultController*>(state.argument(0));
     ASSERT(controller);
 
     JSReadableStreamSource* jsSource = const_cast<JSReadableStreamSource*>(this);
     m_controller.set(state.vm(), jsSource, state.argument(0));
 
     JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
-    wrapped().start(ReadableStreamController(controller), DeferredWrapper(&state, globalObject(), promiseDeferred));
+    wrapped().start(ReadableStreamDefaultController(controller), DeferredWrapper(&state, globalObject(), promiseDeferred));
     return promiseDeferred->promise();
 }
 

@@ -28,7 +28,7 @@
 
 
 #include "config.h"
-#include "ReadableStreamController.h"
+#include "ReadableStreamDefaultController.h"
 
 #if ENABLE(STREAMS_API)
 
@@ -45,7 +45,7 @@ static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFu
     return call(&state, jsFunction, callType, callData, thisValue, arguments);
 }
 
-JSC::JSValue ReadableStreamController::invoke(JSC::ExecState& state, JSC::JSObject& object, const char* propertyName, JSC::JSValue parameter)
+JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC::JSObject& object, const char* propertyName, JSC::JSValue parameter)
 {
     JSC::JSLockHolder lock(&state);
 
@@ -65,7 +65,7 @@ JSC::JSValue ReadableStreamController::invoke(JSC::ExecState& state, JSC::JSObje
     return callFunction(state, function, &object, arguments);
 }
 
-bool ReadableStreamController::isControlledReadableStreamLocked() const
+bool ReadableStreamDefaultController::isControlledReadableStreamLocked() const
 {
     auto& state = *globalObject()->globalExec();
     JSC::JSLockHolder lock(&state);

@@ -96,8 +96,8 @@ namespace WebCore {
     macro(MediaStream) \
     macro(MediaStreamTrack) \
     macro(ReadableStream) \
+    macro(ReadableStreamDefaultController) \
     macro(ReadableStreamDefaultReader) \
-    macro(ReadableStreamController) \
     macro(Request) \
     macro(Response) \
     macro(RTCIceCandidate) \

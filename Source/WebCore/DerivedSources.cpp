@@ -395,7 +395,7 @@
 #include "JSRange.cpp"
 #if ENABLE(STREAMS_API)
 #include "JSReadableStream.cpp"
-#include "JSReadableStreamController.cpp"
+#include "JSReadableStreamDefaultController.cpp"
 #include "JSReadableStreamDefaultReader.cpp"
 #include "JSWritableStream.cpp"
 #endif

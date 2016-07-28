@@ -24,7 +24,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSReadableStream.h"
-#include "JSReadableStreamController.h"
+#include "JSReadableStreamDefaultController.h"
 #include "JSReadableStreamDefaultReader.h"
 #include "ReadableStreamInternalsBuiltins.h"
 #include <runtime/CallData.h>
@@ -33,10 +33,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-// Public JS ReadableStreamReder and ReadableStreamController constructor callbacks.
-EncodedJSValue JSC_HOST_CALL constructJSReadableStreamController(ExecState& exec)
+// Public JS ReadableStreamReder and ReadableStreamDefaultController constructor callbacks.
+EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultController(ExecState& exec)
 {
-    return throwVMTypeError(&exec, ASCIILiteral("ReadableStreamController constructor should not be called directly"));
+    return throwVMTypeError(&exec, ASCIILiteral("ReadableStreamDefaultController constructor should not be called directly"));
 }
 
 EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultReader(ExecState& exec)
@@ -53,24 +53,24 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultReader(ExecState& e
     return JSValue::encode(call(&exec, jsFunction, callType, callData, stream, noArguments));
 }
 
-// Private JS ReadableStreamReder and ReadableStreamController constructors.
+// Private JS ReadableStreamDefaultReader and ReadableStreamDefaultController constructors.
 typedef JSBuiltinConstructor<JSReadableStreamDefaultReader> JSBuiltinReadableStreamDefaultReaderPrivateConstructor;
-typedef JSBuiltinConstructor<JSReadableStreamController> JSBuiltinReadableStreamControllerPrivateConstructor;
+typedef JSBuiltinConstructor<JSReadableStreamDefaultController> JSBuiltinReadableStreamDefaultControllerPrivateConstructor;
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor);
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamControllerPrivateConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamDefaultControllerPrivateConstructor);
 
 template<> const ClassInfo JSBuiltinReadableStreamDefaultReaderPrivateConstructor::s_info = { "ReadableStreamDefaultReaderPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor) };
-template<> const ClassInfo JSBuiltinReadableStreamControllerPrivateConstructor::s_info = { "ReadableStreamControllerPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamControllerPrivateConstructor) };
+template<> const ClassInfo JSBuiltinReadableStreamDefaultControllerPrivateConstructor::s_info = { "ReadableStreamDefaultControllerPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultControllerPrivateConstructor) };
 
 template<> FunctionExecutable* JSBuiltinReadableStreamDefaultReaderPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
     return readableStreamInternalsPrivateInitializeReadableStreamDefaultReaderCodeGenerator(vm);
 }
 
-template<> FunctionExecutable* JSBuiltinReadableStreamControllerPrivateConstructor::initializeExecutable(JSC::VM& vm)
+template<> FunctionExecutable* JSBuiltinReadableStreamDefaultControllerPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
-    return readableStreamInternalsPrivateInitializeReadableStreamControllerCodeGenerator(vm);
+    return readableStreamInternalsPrivateInitializeReadableStreamDefaultControllerCodeGenerator(vm);
 }
 
 JSObject* createReadableStreamDefaultReaderPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
@@ -78,9 +78,9 @@ JSObject* createReadableStreamDefaultReaderPrivateConstructor(VM& vm, JSDOMGloba
     return JSBuiltinReadableStreamDefaultReaderPrivateConstructor::create(vm, JSBuiltinReadableStreamDefaultReaderPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
 }
 
-JSObject* createReadableStreamControllerPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
+JSObject* createReadableStreamDefaultControllerPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSBuiltinReadableStreamControllerPrivateConstructor::create(vm, JSBuiltinReadableStreamControllerPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
+    return JSBuiltinReadableStreamDefaultControllerPrivateConstructor::create(vm, JSBuiltinReadableStreamDefaultControllerPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
 }
 
 } // namespace WebCore

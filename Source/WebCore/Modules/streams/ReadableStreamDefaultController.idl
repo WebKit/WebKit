@@ -33,7 +33,7 @@
     Exposed=(Window,Worker),
     JSBuiltin,
     NoInterfaceObject
-] interface ReadableStreamController {
+] interface ReadableStreamDefaultController {
     [NotEnumerable] void enqueue(optional any chunk);
     [NotEnumerable] void close();
     [NotEnumerable] void error(optional any error);

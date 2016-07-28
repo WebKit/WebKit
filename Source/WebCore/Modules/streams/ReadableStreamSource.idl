@@ -32,7 +32,7 @@
     SkipVTableValidation
 ] interface ReadableStreamSource {
     // Methods to support push sources. To support all sources, pull method might need to be added, and cancel may return a promise.
-    [Custom] Promise start(ReadableStreamController controller);
+    [Custom] Promise start(ReadableStreamDefaultController controller);
     void cancel(any reason);
 
     [PrivateIdentifier] void firstReadCallback();

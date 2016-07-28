@@ -26,13 +26,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ReadableStreamController_h
-#define ReadableStreamController_h
+#ifndef ReadableStreamDefaultController_h
+#define ReadableStreamDefaultController_h
 
 #if ENABLE(STREAMS_API)
 
 #include "JSDOMBinding.h"
-#include "JSReadableStreamController.h"
+#include "JSReadableStreamDefaultController.h"
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/TypedArrays.h>
@@ -41,9 +41,9 @@ namespace WebCore {
 
 class ReadableStreamSource;
 
-class ReadableStreamController {
+class ReadableStreamDefaultController {
 public:
-    explicit ReadableStreamController(JSReadableStreamController* controller) : m_jsController(controller) { }
+    explicit ReadableStreamDefaultController(JSReadableStreamDefaultController* controller) : m_jsController(controller) { }
 
     static JSC::JSValue invoke(JSC::ExecState&, JSC::JSObject&, const char*, JSC::JSValue);
 
@@ -62,17 +62,17 @@ private:
 
     JSDOMGlobalObject* globalObject() const;
 
-    // The owner of ReadableStreamController is responsible to keep uncollected the JSReadableStreamController.
-    JSReadableStreamController* m_jsController { nullptr };
+    // The owner of ReadableStreamDefaultController is responsible to keep uncollected the JSReadableStreamDefaultController.
+    JSReadableStreamDefaultController* m_jsController { nullptr };
 };
 
-inline JSDOMGlobalObject* ReadableStreamController::globalObject() const
+inline JSDOMGlobalObject* ReadableStreamDefaultController::globalObject() const
 {
     ASSERT(m_jsController);
     return static_cast<JSDOMGlobalObject*>(m_jsController->globalObject());
 }
 
-inline bool ReadableStreamController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
+inline bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
 {
     JSC::ExecState& state = *globalObject()->globalExec();
     JSC::JSLockHolder locker(&state);
@@ -90,7 +90,7 @@ inline bool ReadableStreamController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
 }
 
 template<>
-inline void ReadableStreamController::error<String>(const String& result)
+inline void ReadableStreamDefaultController::error<String>(const String& result)
 {
     JSC::ExecState* state = globalObject()->globalExec();
     JSC::JSLockHolder locker(state);
@@ -101,4 +101,4 @@ inline void ReadableStreamController::error<String>(const String& result)
 
 #endif // ENABLE(STREAMS_API)
 
-#endif // ReadableStreamController_h
+#endif // ReadableStreamDefaultController_h

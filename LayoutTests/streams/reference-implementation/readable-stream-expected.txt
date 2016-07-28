@@ -32,7 +32,7 @@ PASS ReadableStream strategies: the default strategy should continue giving desi
 PASS ReadableStream integration test: adapting a random push source 
 PASS ReadableStream integration test: adapting a sync pull source 
 PASS ReadableStream integration test: adapting an async pull source 
-PASS ReadableStreamController methods should continue working properly when scripts lose their reference to the readable stream 
+PASS ReadableStreamDefaultController methods should continue working properly when scripts lose their reference to the readable stream 
 PASS ReadableStream closed promise should fulfill even if the stream and reader JS references are lost 
 PASS ReadableStream closed promise should reject even if stream and reader JS references are lost 
 

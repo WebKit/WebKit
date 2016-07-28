@@ -53,12 +53,12 @@ function privateInitializeReadableStreamDefaultReader(stream)
     return this;
 }
 
-function privateInitializeReadableStreamController(stream)
+function privateInitializeReadableStreamDefaultController(stream)
 {
     "use strict";
 
     if (!@isReadableStream(stream))
-        throw new @TypeError("ReadableStreamController needs a ReadableStream");
+        throw new @TypeError("ReadableStreamDefaultController needs a ReadableStream");
     if (stream.@controller !== @undefined)
         throw new @TypeError("ReadableStream already has a controller");
     this.@controlledReadableStream = stream;
@@ -186,7 +186,7 @@ function isReadableStreamDefaultReader(reader)
     return @isObject(reader) && reader.@ownerReadableStream !== @undefined;
 }
 
-function isReadableStreamController(controller)
+function isReadableStreamDefaultController(controller)
 {
     "use strict";
 
