@@ -1,3 +1,20 @@
+2016-07-27  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add WKUIDelegate SPI for specifying that an attachment list is from a managed source
+        https://bugs.webkit.org/show_bug.cgi?id=160280
+        <rdar://problem/27471815>
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/spi/ios/UIKitSPI.h: Declared
+        UIPreviewItemTypeAttachment, UIPreviewDataAttachmentList, and UIPreviewDataAttachmentIndex.
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Declared -_attachmentListForWebView:sourceIsManaged:.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]): Used UIPreviewItemTypeAttachment,
+        UIPreviewDataAttachmentList, and UIPreviewDataAttachmentIndex. If uiDelegate responds to
+        -_attachmentListForWebView:sourceIsManaged:, called it instead of -_attachmentListForWebView:.
+        Set sourceIsManaged as the value for the UIPreviewDataAttachmentListSourceIsManaged key in dataForPreview.
+
 2016-07-27  Chelsea Pugh  <cpugh@apple.com>
 
         [iOS] Remove unused textContentType SPI from _WKFormInputSession
