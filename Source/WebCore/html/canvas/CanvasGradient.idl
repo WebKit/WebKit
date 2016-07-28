@@ -25,7 +25,6 @@
 [
     ImplementationLacksVTable,
 ] interface CanvasGradient {
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] void addColorStop(optional float offset = NaN, optional DOMString color = "undefined");
+    [RaisesException] void addColorStop(float offset, DOMString color);
 };
 
