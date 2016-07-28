@@ -1,3 +1,18 @@
+2016-07-28  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r203826.
+        https://bugs.webkit.org/show_bug.cgi?id=160314
+
+        The test added with this change fails on El Capitan WK2.
+        (Requested by ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "HTMLVideoElement with MediaStream src shows paused image when
+        all video tracks are disabled"
+        https://bugs.webkit.org/show_bug.cgi?id=160222
+        http://trac.webkit.org/changeset/203826
+
 2016-07-28  Alexey Proskuryakov  <ap@apple.com>
 
         macOS Sierra test result gardening.

@@ -129,37 +129,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBufferFromTrack(Med
     if (&track != m_mediaStreamPrivate->activeVideoTrack())
         return;
 
-    if (shouldEnqueueVideoSampleBuffer()) {
+    if (m_displayMode == LivePreview && [m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
         [m_sampleBufferDisplayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-        m_isFrameDisplayed = true;
         
         if (!m_hasEverEnqueuedVideoFrame) {
             m_hasEverEnqueuedVideoFrame = true;
             m_player->firstVideoFrameAvailable();
-
-            updatePausedImage();
         }
     }
-}
-
-bool MediaPlayerPrivateMediaStreamAVFObjC::shouldEnqueueVideoSampleBuffer() const
-{
-    if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData])
-        return false;
-
-    if (m_displayMode == LivePreview)
-        return true;
-
-    if (m_displayMode == PausedImage && !m_isFrameDisplayed)
-        return true;
-
-    return false;
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::flushAndRemoveVideoSampleBuffers()
-{
-    [m_sampleBufferDisplayLayer flushAndRemoveImage];
-    m_isFrameDisplayed = false;
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer()
@@ -171,7 +148,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer()
 #ifndef NDEBUG
     [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaStreamAVFObjC AVSampleBufferDisplayLayer"];
 #endif
-    m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black);
     
     renderingModeChanged();
     
@@ -281,24 +257,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode()
         return;
     m_displayMode = displayMode;
 
-    if (m_displayMode < PausedImage && m_sampleBufferDisplayLayer)
-        flushAndRemoveVideoSampleBuffers();
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::updatePausedImage()
-{
-    ASSERT(m_displayMode == currentDisplayMode());
-
-    if (m_displayMode < PausedImage)
+    if (m_displayMode == None)
         return;
-
-    RefPtr<Image> image = m_mediaStreamPrivate->currentFrameImage();
-    ASSERT(image);
-    if (!image)
-        return;
-
-    m_pausedImage = image->getCGImageRef();
-    ASSERT(m_pausedImage);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::play()
@@ -326,7 +286,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
     m_clock->stop();
     m_playing = false;
     updateDisplayMode();
-    updatePausedImage();
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::paused() const
@@ -618,8 +577,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext& context, const
 
 void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
-    if (m_displayMode == None || !metaDataAvailable() || context.paintingDisabled())
+    if (m_displayMode == None || !metaDataAvailable() || context.paintingDisabled() || !m_haveEverPlayed)
         return;
+
 
     if (m_displayMode == LivePreview)
         m_mediaStreamPrivate->paintCurrentFrameInContext(context, rect);
