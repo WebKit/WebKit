@@ -1,3 +1,13 @@
+2016-07-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/loading/basic-credentials-sent-automatically.html as flaky on mac and ios-sim wk2
+        https://bugs.webkit.org/show_bug.cgi?id=159427
+
+        Unreivewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2016-07-27  Chris Dumez  <cdumez@apple.com>
 
         First parameter to HTMLMediaElement.canPlayType() should be mandatory

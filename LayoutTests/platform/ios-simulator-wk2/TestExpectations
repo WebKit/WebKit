@@ -1914,3 +1914,5 @@ webkit.org/b/159840 [ Release ] http/tests/cache/disk-cache/disk-cache-request-m
 webkit.org/b/159884 [ Debug ] http/tests/loading/basic-auth-resend-wrong-credentials.html [ Pass Failure ]
 
 webkit.org/b/159881 [ Release ] fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-002.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/159427 http/tests/loading/basic-credentials-sent-automatically.html [ Pass Failure ]
