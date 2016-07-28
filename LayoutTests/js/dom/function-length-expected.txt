@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS window.confirm.length is 0
-PASS window.open.length is 2
+PASS window.open.length is 0
 PASS window.showModalDialog.length is 1
 PASS window.setTimeout.length is 1
 PASS window.clearTimeout.length is 0

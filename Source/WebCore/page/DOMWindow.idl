@@ -65,9 +65,7 @@
     void print();
     void stop();
 
-    [Custom] DOMWindow open(DOMString url,
-                            DOMString name,
-                            optional DOMString options);
+    [Custom] DOMWindow open(optional DOMString url = "about:blank", optional DOMString target = "_blank", [TreatNullAs=EmptyString] optional DOMString features = "");
 
     [Custom] any showModalDialog(DOMString url,
                                        optional any dialogArgs,

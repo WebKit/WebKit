@@ -444,14 +444,15 @@ JSValue JSDOMWindow::open(ExecState& state)
     String urlString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(0));
     if (state.hadException())
         return jsUndefined();
-    AtomicString frameName = state.argument(1).isUndefinedOrNull() ? "_blank" : state.argument(1).toString(&state)->value(&state);
+    JSValue targetValue = state.argument(1);
+    AtomicString target = targetValue.isUndefinedOrNull() ? AtomicString("_blank", AtomicString::ConstructFromLiteral) : targetValue.toString(&state)->toAtomicString(&state);
     if (state.hadException())
         return jsUndefined();
     String windowFeaturesString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(2));
     if (state.hadException())
         return jsUndefined();
 
-    RefPtr<DOMWindow> openedWindow = wrapped().open(urlString, frameName, windowFeaturesString, activeDOMWindow(&state), firstDOMWindow(&state));
+    RefPtr<DOMWindow> openedWindow = wrapped().open(urlString, target, windowFeaturesString, activeDOMWindow(&state), firstDOMWindow(&state));
     if (!openedWindow)
         return jsUndefined();
     return toJS(&state, openedWindow.get());
