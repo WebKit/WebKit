@@ -40,7 +40,7 @@ class ProcessingTimesJSON(webapp.RequestHandler):
             return "pass"
         elif status_message == "Fail":
             return "fail"
-        elif status_message == "Error: " + queue_name + " did not process patch.":
+        elif "did not process patch" in status_message:
             return "not processed"
         elif status_message == "Error: " + queue_name + " unable to apply patch.":
             return "could not apply"

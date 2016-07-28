@@ -1,3 +1,34 @@
+2016-07-28  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS error message "Error: * did not process patch" should include explanation
+        https://bugs.webkit.org/show_bug.cgi?id=159903
+        <rdar://problem/27410788>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._build_bubble): Display more detailed error message on bubbles when patch
+        is not processed.
+        * QueueStatusServer/handlers/processingtimesjson.py:
+        (ProcessingTimesJSON._resultFromFinalStatus): Updated error message to match with rest
+        of the code.
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        (CommitQueueTask.validate): Add more information about validation failure.
+        (CommitQueueTask.run): Pass the error details in the PatchIsNotValid exception.
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        (EarlyWarningSystemTask.validate): Add more information about validation failure.
+        (EarlyWarningSystemTask.run): Pass the error details in the PatchIsNotValid exception.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchIsNotValid.__init__): Add the failure_message argument.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.review_patch): Re-word the error message and include
+        failure details.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue.process_work_item): Same.
+        (StyleQueue.review_patch): Same.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (test_non_valid_patch): Updated test-cases messages to match the above changes.
+
 2016-07-27  Alexey Proskuryakov  <ap@apple.com>
 
         LayoutTestRelay should wait for WebKitTestRunnerApp installation to complete

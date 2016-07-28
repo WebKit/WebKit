@@ -37,9 +37,10 @@ class UnableToApplyPatch(Exception):
 
 
 class PatchIsNotValid(Exception):
-    def __init__(self, patch):
+    def __init__(self, patch, failure_message):
         Exception.__init__(self)
         self.patch = patch
+        self.failure_message = failure_message
 
 
 class PatchAnalysisTaskDelegate(object):

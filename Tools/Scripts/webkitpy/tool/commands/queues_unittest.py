@@ -389,7 +389,7 @@ MOCK: release_work_item: commit-queue 10005
         patch = tool.bugs.fetch_attachment(10007)  # _patch8, resolved bug, without review flag, not marked obsolete (maybe already landed)
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
-            "process_work_item": """MOCK: update_status: commit-queue Error: commit-queue did not process patch.
+            "process_work_item": """MOCK: update_status: commit-queue Error: commit-queue did not process patch. Reason: Bug is already closed.
 MOCK: release_work_item: commit-queue 10007
 """,
         }
@@ -431,7 +431,7 @@ Running: webkit-patch --status-host=example.com build --no-clean --no-update --b
 MOCK: update_status: commit-queue Built patch
 Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=mac
 MOCK: update_status: commit-queue Passed tests
-MOCK: update_status: commit-queue Error: commit-queue did not process patch.
+MOCK: update_status: commit-queue Error: commit-queue did not process patch. Reason: Patch is obsolete.
 MOCK: release_work_item: commit-queue 10000
 """
         self.maxDiff = None

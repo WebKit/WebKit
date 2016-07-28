@@ -87,8 +87,8 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
                 # Caller unlocks when review_patch returns True, so we only need to unlock on transient failure.
                 self._unlock_patch(patch)
             return succeeded
-        except PatchIsNotValid:
-            self._did_error(patch, "%s did not process patch." % self.name)
+        except PatchIsNotValid as error:
+            self._did_error(patch, "%s did not process patch. Reason: %s" % (self.name, error.failure_message))
             return False
         except UnableToApplyPatch, e:
             self._did_error(patch, "%s unable to apply patch." % self.name)
