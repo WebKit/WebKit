@@ -113,6 +113,7 @@
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SubresourceLoader.h>
@@ -149,7 +150,6 @@
 #import <WebCore/FileSystemIOS.h>
 #import <WebCore/NSFileManagerSPI.h>
 #import <WebCore/QuickLook.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #endif
 
 #if HAVE(APP_LINKS)
@@ -357,6 +357,14 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
         static_cast<WebDocumentLoaderMac*>(loader)->increaseLoadCount(identifier);
 
     NSURLRequest *currentURLRequest = request.nsURLRequest(UpdateHTTPBody);
+
+#if PLATFORM(MAC)
+    if (MacApplication::isAppleMail() && loader->substituteData().isValid()) {
+        // Mail.app checks for this property to detect data / archive loads.
+        [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)currentURLRequest];
+    }
+#endif
+
     NSURLRequest *newURLRequest = currentURLRequest;
 #if PLATFORM(IOS)
     if (implementations->webThreadWillSendRequestFunc) {

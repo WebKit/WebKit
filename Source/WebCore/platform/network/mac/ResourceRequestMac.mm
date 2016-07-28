@@ -52,12 +52,6 @@ void ResourceRequest::updateNSURLRequest()
         m_nsRequest = adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:m_cfRequest.get()]);
 }
 
-void ResourceRequest::applyWebArchiveHackForMail()
-{
-    // Hack because Mail checks for this property to detect data / archive loads
-    _CFURLRequestSetProtocolProperty(cfURLRequest(DoNotUpdateHTTPBody), CFSTR("WebDataRequest"), CFSTR(""));
-}
-
 #endif
 
 } // namespace WebCore

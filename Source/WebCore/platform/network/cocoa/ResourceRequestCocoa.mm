@@ -208,14 +208,6 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     m_nsRequest = adoptNS(nsRequest);
 }
 
-#if !PLATFORM(IOS)
-void ResourceRequest::applyWebArchiveHackForMail()
-{
-    // Hack because Mail checks for this property to detect data / archive loads
-    [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)nsURLRequest(DoNotUpdateHTTPBody)];
-}
-#endif
-
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
     updatePlatformRequest();

@@ -83,9 +83,6 @@ public:
 
     WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
 
-#if PLATFORM(MAC)
-    void applyWebArchiveHackForMail();
-#endif
 #if PLATFORM(COCOA)
 #if USE(CFNETWORK)
     bool encodingRequiresPlatformData() const { return m_httpBody || m_cfRequest; }
