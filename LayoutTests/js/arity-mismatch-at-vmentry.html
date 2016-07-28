@@ -29,7 +29,7 @@
 
     var dispatch_fn = function() {
         evt = document.createEvent("Event");
-        evt.initEvent("readystatechange");
+        evt.initEvent("readystatechange", false, false);
         document.getElementById("span").dispatchEvent(evt);
     }
 

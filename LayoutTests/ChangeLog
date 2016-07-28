@@ -1,5 +1,19 @@
 2016-07-28  Chris Dumez  <cdumez@apple.com>
 
+        Parameters to Event.initEvent() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=160320
+
+        Reviewed by Darin Adler.
+
+        Update existing tests to make sure they call initEvent() will all 3
+        parameters.
+
+        * fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml:
+        * fast/forms/form-submission-create-crash.xhtml:
+        * js/arity-mismatch-at-vmentry.html:
+
+2016-07-28  Chris Dumez  <cdumez@apple.com>
+
         First parameter to canvas.getContext() / probablySupportsContext() should be mandatory
         https://bugs.webkit.org/show_bug.cgi?id=160312
 

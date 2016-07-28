@@ -19,7 +19,7 @@ document.execCommand("SelectAll");
 document.getElementById("object").textContent = "A";
 document.addEventListener("beforeload", setText, true);
 event = document.createEvent("Event");
-event.initEvent("beforeload", false);
+event.initEvent("beforeload", false, false);
 document.documentElement.dispatchEvent(event);
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -14,7 +14,7 @@ document.getElementById("submit").appendChild(textNode);
 
 runTest = function() {
     event = document.createEvent("MouseEvent");
-    event.initEvent("click");
+    event.initEvent("click", false, false);
     textNode.dispatchEvent(event);
     if (window.testRunner)
         testRunner.notifyDone();

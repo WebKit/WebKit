@@ -2368,9 +2368,7 @@ PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("
 PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must have own property "isTrusted" 
 PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new TrackEvent("addtrack", {track:document.createElement("track").track}) must inherit property "initEvent" with the proper type (16) 
-FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new TrackEvent("addtrack", {track:document.createElement("track").track}) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Event interface: calling initEvent(DOMString,boolean,boolean) on new TrackEvent("addtrack", {track:document.createElement("track").track}) with too few arguments must throw TypeError 
 PASS HTMLMapElement interface: existence and properties of interface object 
 PASS HTMLMapElement interface object length 
 PASS HTMLMapElement interface object name 
@@ -5507,9 +5505,7 @@ PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit p
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must have own property "isTrusted" 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "initEvent" with the proper type (16) 
-FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new PopStateEvent("popstate", { data: {} }) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Event interface: calling initEvent(DOMString,boolean,boolean) on new PopStateEvent("popstate", { data: {} }) with too few arguments must throw TypeError 
 PASS HashChangeEvent interface: existence and properties of interface object 
 PASS HashChangeEvent interface object length 
 PASS HashChangeEvent interface object name 
@@ -5827,9 +5823,7 @@ PASS Event interface: new CloseEvent("close") must inherit property "defaultPrev
 PASS Event interface: new CloseEvent("close") must have own property "isTrusted" 
 PASS Event interface: new CloseEvent("close") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new CloseEvent("close") must inherit property "initEvent" with the proper type (16) 
-FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new CloseEvent("close") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Event interface: calling initEvent(DOMString,boolean,boolean) on new CloseEvent("close") with too few arguments must throw TypeError 
 PASS MessageChannel interface: existence and properties of interface object 
 PASS MessageChannel interface object length 
 PASS MessageChannel interface object name 

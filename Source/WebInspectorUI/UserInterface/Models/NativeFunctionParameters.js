@@ -813,7 +813,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     Event: {
-        initEvent: "[type], [canBubble], [cancelable]",
+        initEvent: "type, canBubble, cancelable",
         __proto__: null,
     },
 

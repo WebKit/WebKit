@@ -66,10 +66,7 @@
     void               stopPropagation();
     void               preventDefault();
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters] void initEvent(optional DOMString eventTypeArg = "undefined",
-                                  optional boolean canBubbleArg = false,
-                                  optional boolean cancelableArg = false);
+    [ObjCLegacyUnnamedParameters] void initEvent(DOMString eventTypeArg, boolean canBubbleArg, boolean cancelableArg);
 
     // DOM Level 3 Additions.
     readonly attribute boolean defaultPrevented;
