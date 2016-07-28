@@ -1,3 +1,13 @@
+2016-07-27  Alexey Proskuryakov  <ap@apple.com>
+
+        LayoutTestRelay should wait for WebKitTestRunnerApp installation to complete
+        https://bugs.webkit.org/show_bug.cgi?id=160262
+
+        Reviewed by Daniel Bates.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController installApp]):
+
 2016-07-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable WebCoreNSURLSessionTest API tests on ios-simulator
