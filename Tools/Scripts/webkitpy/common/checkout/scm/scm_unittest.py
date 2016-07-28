@@ -1,5 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (C) 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
 # Copyright (C) 2011 Daniel Bates (dbates@intudata.com). All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -410,7 +410,7 @@ class SCMTest(unittest.TestCase):
 
     def _shared_test_revisions_changing_file(self):
         self.assertItemsEqual(self.scm.revisions_changing_file("test_file"), [5, 4, 3, 2])
-        self.assertRaises(ScriptError, self.scm.revisions_changing_file, "non_existent_file")
+        self.assertItemsEqual(self.scm.revisions_changing_file("non_existent_file"), [])
 
     def _shared_test_committer_email_for_revision(self):
         self.assertEqual(self.scm.committer_email_for_revision(3), getpass.getuser())  # Committer "email" will be the current user
@@ -704,9 +704,16 @@ class SVNTest(SCMTest):
         os.chdir(test_dir_path)
         scm = detect_scm_system(test_dir_path)
         self.assertEqual(scm.checkout_root, self.svn_checkout_path) # Sanity check that detection worked right.
-        patch_contents = scm.create_patch()
-        # Our fake 'svn-create-patch' returns $PWD instead of a patch, check that it was executed from the root of the repo.
-        self.assertEqual("%s\n" % os.path.realpath(scm.checkout_root), patch_contents)  # Add a \n because echo adds a \n.
+        actual_patch_contents = scm.create_patch()
+        expected_patch_contents = """Index: test_dir2/test_file2
+===================================================================
+--- test_dir2/test_file2\t(revision 0)
++++ test_dir2/test_file2\t(working copy)
+@@ -0,0 +1 @@
++test content
+\\ No newline at end of file
+"""
+        self.assertEqual(expected_patch_contents, actual_patch_contents)
 
     def test_detection(self):
         self.assertEqual(self.scm.display_name(), "svn")

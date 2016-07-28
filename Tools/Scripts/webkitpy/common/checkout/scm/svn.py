@@ -1,5 +1,5 @@
 # Copyright (c) 2009, 2010, 2011 Google Inc. All rights reserved.
-# Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (c) 2009, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -236,9 +236,13 @@ class SVN(SCM, SVNRepository):
 
     def revisions_changing_file(self, path, limit=5):
         revisions = []
-        # svn log will exit(1) (and thus self.run will raise) if the path does not exist.
+        # svn log will exit(1) (and thus self.run will raise) if a path is not known to svn.
         log_command = ['log', '--quiet', '--limit=%s' % limit, path]
-        for line in self._run_svn(log_command, cwd=self.checkout_root).splitlines():
+        try:
+            log_output = self._run_svn(log_command, cwd=self.checkout_root)
+        except ScriptError, e:
+            return []
+        for line in log_output.splitlines():
             match = re.search('^r(?P<revision>\d+) ', line)
             if not match:
                 continue

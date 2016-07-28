@@ -1,3 +1,24 @@
+2016-07-28  David Kilzer  <ddkilzer@apple.com>
+
+        webkit-patch upload --suggest-reviewers shouldn't break in the presence of deleted or moved files
+        <https://webkit.org/b/83342>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.revisions_changing_file): Remove code to raise an exception
+        when the file doesn't exist.  If a file was moved or renamed,
+        then this caused the script to terminate, which was very
+        frustrating when you wanted a list of reviewers.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (SCMTest._shared_test_revisions_changing_file): Update test
+        expectation to return an empty list of revisions.
+        (test_create_patch_is_full_patch): Drive-by fix when running all
+        webkitpy tests (including scm tests).
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.revisions_changing_file): Catch ScriptError exceptions and
+        return an empty array of revisions if this occurs.
+
 2016-07-28  Aakash Jain  <aakash_jain@apple.com>
 
         EWS error message "Error: * did not process patch" should include explanation
