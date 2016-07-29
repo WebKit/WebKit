@@ -43,7 +43,7 @@
 typedef AVCaptureAudioChannel AVCaptureAudioChannelType;
 typedef AVCaptureAudioDataOutput AVCaptureAudioDataOutputType;
 typedef AVCaptureConnection AVCaptureConnectionType;
-typedef AVCaptureDevice AVCaptureDeviceType;
+typedef AVCaptureDevice AVCaptureDeviceTypedef;
 typedef AVCaptureDeviceInput AVCaptureDeviceInputType;
 typedef AVCaptureOutput AVCaptureOutputType;
 
@@ -62,12 +62,12 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 
 namespace WebCore {
 
-RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceType* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraint)
+RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraint)
 {
     return adoptRef(new AVAudioCaptureSource(device, id, constraint));
 }
     
-AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceType* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraints)
+AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraints)
     : AVMediaCaptureSource(device, id, RealtimeMediaSource::Audio, constraints)
 {
     m_inputDescription = std::make_unique<AudioStreamBasicDescription>();
