@@ -235,6 +235,36 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedWithScript)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 }
 
+TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    
+    __block bool finishedLoad = false;
+    dispatch_block_t handleFinishedLoad = ^()
+    {
+        finishedLoad = true;
+    };
+    OnLoadMessageHandler *handler = [[OnLoadMessageHandler alloc] initWithWKWebView:webView.get() handler:handleFinishedLoad];
+    
+    NSString *onloadScript = @"window.onload = function() { window.webkit.messageHandlers.onloadHandler.postMessage('loaded'); }";
+    WKUserScript *script = [[WKUserScript alloc] initWithSource:onloadScript injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
+    [[configuration userContentController] addUserScript:script];
+    [[configuration userContentController] addScriptMessageHandler:handler name:@"onloadHandler"];
+    
+    NSURL *urlOfVideo = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadFileURL:urlOfVideo allowingReadAccessToURL:[urlOfVideo URLByDeletingLastPathComponent]];
+    
+    TestWebKitAPI::Util::run(&finishedLoad);
+    
+    // We expect the media controller to be present because this is a media document.
+    EXPECT_TRUE([webView _hasActiveVideoForControlsManager]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
