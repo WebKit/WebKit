@@ -1,3 +1,12 @@
+2016-07-29  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: removed unused variable.
+
+        Not reviewed.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add TestWebKitAPI support for interacting with media controls
