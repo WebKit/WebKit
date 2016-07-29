@@ -124,6 +124,8 @@ private:
 
     void enqueueAudioSampleBufferFromTrack(MediaStreamTrackPrivate&, PlatformSample);
     void enqueueVideoSampleBufferFromTrack(MediaStreamTrackPrivate&, PlatformSample);
+    bool shouldEnqueueVideoSampleBuffer() const;
+    void flushAndRemoveVideoSampleBuffers();
 
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
@@ -161,6 +163,7 @@ private:
     };
     DisplayMode currentDisplayMode() const;
     void updateDisplayMode();
+    void updatePausedImage();
 
     // MediaStreamPrivate::Observer
     void activeStatusChanged() override;
@@ -201,6 +204,7 @@ private:
     bool m_ended { false };
     bool m_hasEverEnqueuedVideoFrame { false };
     bool m_hasReceivedMedia { false };
+    bool m_isFrameDisplayed { false };
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;

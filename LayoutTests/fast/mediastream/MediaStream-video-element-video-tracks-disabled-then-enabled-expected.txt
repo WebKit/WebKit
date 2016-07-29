@@ -1,0 +1,32 @@
+Tests that re-enabling a video MediaStreamTrack when all tracks were previously disabled causes captured media to display.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaDevices.getUserMedia generated a stream successfully.
+video.src = window.URL.createObjectURL(mediaStream)
+
+ === beginning round of pixel tests ===
+PASS pixel was white
+
+ === all video tracks disabled ===
+PASS pixel was black.
+
+ === video track reenabled ===
+PASS pixel was white.
+
+ ===== play video =====
+video.play()
+
+ === beginning round of pixel tests ===
+PASS pixel was white
+
+ === all video tracks disabled ===
+PASS pixel was black.
+
+ === video track reenabled ===
+PASS pixel was white.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

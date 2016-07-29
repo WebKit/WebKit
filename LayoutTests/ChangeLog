@@ -1,3 +1,23 @@
+2016-07-29  George Ruan  <gruan@apple.com>
+
+        HTMLVideoElement with MediaStream src shows paused image when all video tracks are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=160222
+        <rdar://problem/27557313>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-expected.html: Added.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled-expected.txt: Added.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html: Added. Checks
+        that the video frames display captured media if all video tracks were disabled and then a single
+        video track is re-enabled. This test also checks that an initial frame is painted to
+        canvas if the video has not yet been played.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled.html: Added. Reference tests the
+        frames of the video to be black, since the canvas is painted black regardless of the state of the video frames
+        if displayMode of MediaPlayerPrivateMediaStreamAVFObjC is PaintItBlack.
+        * platform/mac-wk2/TestExpectations: MediaStream-video-element-video-tracks-disabled.html fails on El
+        Capitan due to incorrect behavior of AVSampleBufferDisplayLayer's API call flushAndRemoveImage.
+
 2016-07-29  Youenn Fablet  <youenn@apple.com>
 
         CrossOrigin preflight checker should compute the right Access-Control-Request-Headers value
