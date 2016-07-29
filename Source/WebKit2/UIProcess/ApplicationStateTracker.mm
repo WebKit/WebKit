@@ -144,7 +144,8 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         ASSERT(applicationPID);
 
         auto applicationStateMonitor = adoptNS([[BKSApplicationStateMonitor alloc] init]);
-        m_isInBackground = isBackgroundState([m_applicationStateMonitor mostElevatedApplicationStateForPID:applicationPID]);
+        m_isInBackground = isBackgroundState([applicationStateMonitor mostElevatedApplicationStateForPID:applicationPID]);
+        [applicationStateMonitor invalidate];
 
         m_didEnterBackgroundObserver = [notificationCenter addObserverForName:@"_UIViewServiceHostDidEnterBackgroundNotification" object:serviceViewController queue:nil usingBlock:[this](NSNotification *) {
             applicationDidEnterBackground();
