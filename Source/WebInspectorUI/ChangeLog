@@ -1,3 +1,41 @@
+2016-07-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r195456): Web Inspector: Changing tabs in Styles sidebar shouldn't change sidebar's width
+        https://bugs.webkit.org/show_bug.cgi?id=159646
+        <rdar://problem/27286338>
+
+        Reviewed by Brian Burg.
+
+        Remember sidebar width on per tab basis. For example, Node, Styles, and Layers sidebar panels in
+        Elements tab should all have the same width, but Resource sidebar panel in Debugger tab should NOT
+        share its width Element tab's sidebar.
+
+        TabContentView stores the width but TabBrowser manages saving and restoring it.
+        The same way collapsed sidebar state is handled.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.set collapsed):
+        Don't change sidebar's width when sidebar panels change.
+
+        (WebInspector.Sidebar.prototype._recalculateWidth):
+        (WebInspector.Sidebar.prototype.set selectedSidebarPanel): Deleted.
+        Pass newWidth as an argument so it can be saved in TabBrowser.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel): Deleted.
+        (WebInspector.SidebarPanel.prototype.get savedWidth): Deleted.
+        (WebInspector.SidebarPanel.prototype.sizeDidChange): Deleted.
+        Remove the per sidebar panel width setting that was added in r195456.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype._detailsSidebarWidthDidChange):
+        (WebInspector.TabBrowser.prototype._showDetailsSidebarPanelsForTabContentView):
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView):
+        (WebInspector.TabContentView.prototype.get detailsSidebarWidthSetting):
+        Store details sidebar width on TabContentView.
+
 2016-07-29  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Assertion in NetworkGridContentView when updating data grid for the first time

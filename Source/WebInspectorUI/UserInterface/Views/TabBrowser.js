@@ -43,6 +43,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         if (this._detailsSidebar) {
             this._detailsSidebar.addEventListener(WebInspector.Sidebar.Event.CollapsedStateDidChange, this._sidebarCollapsedStateDidChange, this);
             this._detailsSidebar.addEventListener(WebInspector.Sidebar.Event.SidebarPanelSelected, this._sidebarPanelSelected, this);
+            this._detailsSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._detailsSidebarWidthDidChange, this);
         }
 
         this._contentViewContainer = new WebInspector.ContentViewContainer;
@@ -275,6 +276,19 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
             tabContentView.detailsSidebarCollapsedSetting.value = this._detailsSidebar.collapsed;
     }
 
+    _detailsSidebarWidthDidChange(event)
+    {
+        if (this._ignoreSidebarEvents)
+            return;
+
+        let tabContentView = this.selectedTabContentView;
+        if (!tabContentView)
+            return;
+
+        if (event.target === this._detailsSidebar && event.data)
+            tabContentView.detailsSidebarWidthSetting.value = event.data.newWidth;
+    }
+
     _showNavigationSidebarPanelForTabContentView(tabContentView)
     {
         if (!this._navigationSidebar)
@@ -322,6 +336,9 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
             this._ignoreSidebarEvents = false;
             return;
         }
+
+        if (tabContentView.detailsSidebarWidthSetting.value)
+            this._detailsSidebar.width = tabContentView.detailsSidebarWidthSetting.value;
 
         if (tabContentView.managesDetailsSidebarPanels) {
             tabContentView.showDetailsSidebarPanels();
