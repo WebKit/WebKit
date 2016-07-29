@@ -154,13 +154,14 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
         FloatSize userBounds = sizeForDestinationSize(FloatSize(width.unsafeGet(), height.unsafeGet()));
         m_data.surface = IOSurface::create(m_data.backingStoreSize, IntSize(userBounds), colorSpace);
-        cgContext = m_data.surface->ensurePlatformContext();
-        if (cgContext)
-            CGContextClearRect(cgContext.get(), FloatRect(FloatPoint(), userBounds));
-        else
-            m_data.surface = nullptr;
+        if (m_data.surface) {
+            cgContext = m_data.surface->ensurePlatformContext();
+            if (cgContext)
+                CGContextClearRect(cgContext.get(), FloatRect(FloatPoint(), userBounds));
+            else
+                m_data.surface = nullptr;
+        }
 #endif
-
         if (!cgContext)
             accelerateRendering = false; // If allocation fails, fall back to non-accelerated path.
     }

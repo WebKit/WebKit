@@ -57,17 +57,18 @@ inline std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::surfaceFromPool(I
 
 std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::create(IntSize size, CGColorSpaceRef colorSpace, Format pixelFormat)
 {
-    if (auto cachedSurface = surfaceFromPool(size, size, colorSpace, pixelFormat))
-        return cachedSurface;
-
-    return std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace, pixelFormat));
+    return IOSurface::create(size, size, colorSpace, pixelFormat);
 }
 
 std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::create(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format pixelFormat)
 {
     if (auto cachedSurface = surfaceFromPool(size, contextSize, colorSpace, pixelFormat))
         return cachedSurface;
-    return std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace, pixelFormat));
+    bool success = false;
+    auto surface = std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace, pixelFormat, success));
+    if (!success)
+        return nullptr;
+    return surface;
 }
 
 std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromSendRight(const MachSendRight& sendRight, CGColorSpaceRef colorSpace)
@@ -90,10 +91,11 @@ std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromImage(CGImageR
     size_t height = CGImageGetHeight(image);
 
     auto surface = IOSurface::create(IntSize(width, height), sRGBColorSpaceRef());
+    if (!surface)
+        return nullptr;
     auto surfaceContext = surface->ensurePlatformContext();
     CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
     CGContextFlush(surfaceContext);
-
     return surface;
 }
 
@@ -179,11 +181,15 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
 
 }
 
-WebCore::IOSurface::IOSurface(IntSize size, CGColorSpaceRef colorSpace, Format format)
+WebCore::IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format format, bool& success)
     : m_colorSpace(colorSpace)
     , m_size(size)
-    , m_contextSize(size)
+    , m_contextSize(contextSize)
 {
+    ASSERT(!success);
+    ASSERT(contextSize.width() <= size.width());
+    ASSERT(contextSize.height() <= size.height());
+
     NSDictionary *options;
 
     switch (format) {
@@ -200,19 +206,12 @@ WebCore::IOSurface::IOSurface(IntSize size, CGColorSpaceRef colorSpace, Format f
         options = optionsForBiplanarSurface(size, '422f', 1, 1);
         break;
     }
-    
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
-    m_totalBytes = IOSurfaceGetAllocSize(m_surface.get());
-    if (!m_surface)
-        NSLog(@"Surface creation failed for options %@", options);
-}
-
-WebCore::IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format pixelFormat)
-    : IOSurface(size, colorSpace, pixelFormat)
-{
-    ASSERT(contextSize.width() <= size.width());
-    ASSERT(contextSize.height() <= size.height());
-    m_contextSize = contextSize;
+    success = !!m_surface;
+    if (success)
+        m_totalBytes = IOSurfaceGetAllocSize(m_surface.get());
+    else
+        LOG_ALWAYS_ERROR(true, "Surface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
 }
 
 WebCore::IOSurface::IOSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)
@@ -396,8 +395,12 @@ void WebCore::IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& i
     }
 
     auto destinationSurface = IOSurface::create(inSurface->size(), inSurface->colorSpace(), format);
-    IOSurfaceRef destinationIOSurfaceRef = destinationSurface->surface();
+    if (!destinationSurface) {
+        callback(nullptr);
+        return;
+    }
 
+    IOSurfaceRef destinationIOSurfaceRef = destinationSurface->surface();
     IOSurfaceAcceleratorCompletion completion;
     completion.completionRefCon = new std::function<void(std::unique_ptr<WebCore::IOSurface>)> (WTFMove(callback));
     completion.completionRefCon2 = destinationSurface.release();
