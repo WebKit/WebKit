@@ -186,6 +186,12 @@ static inline RenderObject* firstChildConsideringContinuation(RenderObject& rend
 {
     RenderObject* firstChild = renderer.firstChildSlow();
 
+    // We don't want to include the end of a continuation as the firstChild of the
+    // anonymous parent, because everything has already been linked up via continuation.
+    // CSS first-letter selector is an example of this case.
+    if (renderer.isAnonymous() && firstChild && firstChild->isInlineElementContinuation())
+        firstChild = nullptr;
+    
     if (!firstChild && isInlineWithContinuation(renderer))
         firstChild = firstChildInContinuation(downcast<RenderInline>(renderer));
 
