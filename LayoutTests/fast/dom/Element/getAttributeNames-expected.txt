@@ -1,0 +1,30 @@
+Test the Element.getAttributeNames() API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.getAttributeNames().length is 0
+PASS element.getAttributeNames().length is 1
+PASS element.getAttributeNames()[0] is element.attributes[0].name
+PASS element.getAttributeNames()[0] is "foo"
+PASS element.getAttributeNames().length is 0
+PASS element.getAttributeNames().length is 4
+PASS element.getAttributeNames()[0] is "foo"
+PASS element.getAttributeNames()[1] is "FOO"
+PASS element.getAttributeNames()[2] is "foo"
+PASS element.getAttributeNames()[3] is "dummy:foo"
+PASS element.getAttributeNames()[0] is element.attributes[0].name
+PASS element.getAttributeNames()[1] is element.attributes[1].name
+PASS element.getAttributeNames()[2] is element.attributes[2].name
+PASS element.getAttributeNames()[3] is element.attributes[3].name
+PASS element.getAttributeNames().length is 3
+PASS element.getAttributeNames()[0] is "foo"
+PASS element.getAttributeNames()[1] is "foo"
+PASS element.getAttributeNames()[2] is "dummy:foo"
+PASS element.getAttributeNames()[0] is element.attributes[0].name
+PASS element.getAttributeNames()[1] is element.attributes[1].name
+PASS element.getAttributeNames()[2] is element.attributes[2].name
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

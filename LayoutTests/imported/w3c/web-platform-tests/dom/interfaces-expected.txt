@@ -742,7 +742,7 @@ PASS Element interface: attribute classList
 PASS Element interface: attribute slot 
 PASS Element interface: operation hasAttributes() 
 PASS Element interface: attribute attributes 
-FAIL Element interface: operation getAttributeNames() assert_own_property: interface prototype object missing non-static operation expected property "getAttributeNames" missing
+PASS Element interface: operation getAttributeNames() 
 PASS Element interface: operation getAttribute(DOMString) 
 PASS Element interface: operation getAttributeNS(DOMString,DOMString) 
 PASS Element interface: operation setAttribute(DOMString,DOMString) 
@@ -793,7 +793,7 @@ PASS Element interface: element must inherit property "classList" with the prope
 PASS Element interface: element must inherit property "slot" with the proper type (7) 
 PASS Element interface: element must inherit property "hasAttributes" with the proper type (8) 
 PASS Element interface: element must inherit property "attributes" with the proper type (9) 
-FAIL Element interface: element must inherit property "getAttributeNames" with the proper type (10) assert_inherits: property "getAttributeNames" not found in prototype chain
+PASS Element interface: element must inherit property "getAttributeNames" with the proper type (10) 
 PASS Element interface: element must inherit property "getAttribute" with the proper type (11) 
 PASS Element interface: calling getAttribute(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "getAttributeNS" with the proper type (12) 

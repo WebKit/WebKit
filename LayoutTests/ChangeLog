@@ -1,5 +1,18 @@
 2016-07-28  Chris Dumez  <cdumez@apple.com>
 
+        Add support for Element.getAttributeNames()
+        https://bugs.webkit.org/show_bug.cgi?id=160327
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage. I have verified that this test is passing in
+        Firefox 47.
+
+        * fast/dom/Element/getAttributeNames-expected.txt: Added.
+        * fast/dom/Element/getAttributeNames.html: Added.
+
+2016-07-28  Chris Dumez  <cdumez@apple.com>
+
         window.open.length should be 0
         https://bugs.webkit.org/show_bug.cgi?id=160323
 

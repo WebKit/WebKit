@@ -498,6 +498,19 @@ const AtomicString& Element::getAttribute(const QualifiedName& name) const
     return nullAtom;
 }
 
+Vector<String> Element::getAttributeNames() const
+{
+    Vector<String> attributesVector;
+    if (!hasAttributes())
+        return attributesVector;
+
+    auto attributes = attributesIterator();
+    attributesVector.reserveInitialCapacity(attributes.attributeCount());
+    for (auto& attribute : attributes)
+        attributesVector.uncheckedAppend(attribute.name().toString());
+    return attributesVector;
+}
+
 bool Element::isFocusable() const
 {
     if (!inDocument() || !supportsFocus())

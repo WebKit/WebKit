@@ -1149,7 +1149,7 @@ PASS Element interface: document.createElement("noscript") must inherit property
 PASS Element interface: document.createElement("noscript") must inherit property "classList" with the proper type (6) 
 PASS Element interface: document.createElement("noscript") must inherit property "hasAttributes" with the proper type (7) 
 PASS Element interface: document.createElement("noscript") must inherit property "attributes" with the proper type (8) 
-FAIL Element interface: document.createElement("noscript") must inherit property "getAttributeNames" with the proper type (9) assert_inherits: property "getAttributeNames" not found in prototype chain
+PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNames" with the proper type (9) 
 PASS Element interface: document.createElement("noscript") must inherit property "getAttribute" with the proper type (10) 
 PASS Element interface: calling getAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNS" with the proper type (11) 

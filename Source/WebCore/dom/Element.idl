@@ -118,6 +118,8 @@
 
     void scrollIntoView(optional boolean alignWithTop = true);
 
+    sequence<DOMString> getAttributeNames();
+
     // WebKit extensions
 
     void scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);

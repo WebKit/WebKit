@@ -77,6 +77,7 @@ public:
     WEBCORE_EXPORT void setAttributeWithoutSynchronization(const QualifiedName&, const AtomicString& value);
     void setSynchronizedLazyAttribute(const QualifiedName&, const AtomicString& value);
     bool removeAttribute(const QualifiedName&);
+    Vector<String> getAttributeNames() const;
 
     // Typed getters and setters for language bindings.
     int getIntegralAttribute(const QualifiedName& attributeName) const;

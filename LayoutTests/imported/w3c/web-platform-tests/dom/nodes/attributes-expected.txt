@@ -48,7 +48,7 @@ FAIL setAttributeNode on bound attribute should throw InUseAttributeError Test b
 PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute 
 PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute (outer shell) 
 PASS setAttributeNode called with an Attr that has the same name as an existing one should not change attribute order 
-FAIL getAttributeNames tests el.getAttributeNames is not a function. (In 'el.getAttributeNames()', 'el.getAttributeNames' is undefined)
+PASS getAttributeNames tests 
 FAIL Own property correctness with basic attributes assert_array_equals: lengths differ, expected 4 got 2
 FAIL Own property correctness with non-namespaced attribute before same-name namespaced one assert_array_equals: lengths differ, expected 5 got 3
 FAIL Own property correctness with namespaced attribute before same-name non-namespaced one assert_array_equals: lengths differ, expected 5 got 3
