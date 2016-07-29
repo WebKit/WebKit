@@ -472,10 +472,6 @@ static bool isValidPaymentRequestPropertyName(const String& propertyName)
         "total",
         "lineItems",
         "applicationData",
-
-        // FIXME: Get rid of these.
-        "requiredBillingAddressFields",
-        "requiredShippingAddressFields",
     };
 
     for (auto& validPropertyName : validPropertyNames) {
@@ -494,6 +490,16 @@ static Optional<PaymentRequest> createPaymentRequest(DOMWindow& window, const Di
     dictionary.getOwnPropertyNames(propertyNames);
 
     for (auto& propertyName : propertyNames) {
+        if (propertyName == "requiredShippingAddressFields") {
+            window.printErrorMessage("\"requiredShippingAddressFields\" has been deprecated. Please switch to \"requiredShippingContactFields\" instead.");
+            return Nullopt;
+        }
+
+        if (propertyName == "requiredBillingAddressFields") {
+            window.printErrorMessage("\"requiredBillingAddressFields\" has been deprecated. Please switch to \"requiredBillingContactFields\" instead.");
+            return Nullopt;
+        }
+
         if (!isValidPaymentRequestPropertyName(propertyName)) {
             auto message = makeString("\"" + propertyName, "\" is not a valid payment request property name.");
             window.printErrorMessage(message);
@@ -528,17 +534,7 @@ static Optional<PaymentRequest> createPaymentRequest(DOMWindow& window, const Di
             return Nullopt;
 
         paymentRequest.setRequiredBillingContactFields(*requiredBillingContactFields);
-    } else if (auto requiredBillingAddressFieldsArray = dictionary.get<ArrayValue>("requiredBillingAddressFields")) {
-        if (PageConsoleClient* pageConsole = window.console())
-            pageConsole->addMessage(MessageSource::JS, MessageLevel::Warning, "\"requiredBillingAddressFields\" has been deprecated and will stop working shortly. Please switch to \"requiredBillingContactFields\" instead.");
-
-        auto requiredBillingAddressFields = createContactFields(window, *requiredBillingAddressFieldsArray);
-        if (!requiredBillingAddressFields)
-            return Nullopt;
-
-        paymentRequest.setRequiredBillingContactFields(*requiredBillingAddressFields);
     }
-
 
     if (auto billingContactValue = dictionary.get<JSC::JSValue>("billingContact")) {
         String errorMessage;
@@ -557,17 +553,7 @@ static Optional<PaymentRequest> createPaymentRequest(DOMWindow& window, const Di
             return Nullopt;
 
         paymentRequest.setRequiredShippingContactFields(*requiredShippingContactFields);
-    } else if (auto requiredShippingAddressFieldsArray = dictionary.get<ArrayValue>("requiredShippingAddressFields")) {
-        if (PageConsoleClient* pageConsole = window.console())
-            pageConsole->addMessage(MessageSource::JS, MessageLevel::Warning, "\"requiredShippingAddressFields\" has been deprecated and will stop working shortly. Please switch to \"requiredShippingContactFields\" instead.");
-
-        auto requiredShippingAddressFields = createContactFields(window, *requiredShippingAddressFieldsArray);
-        if (!requiredShippingAddressFields)
-            return Nullopt;
-
-        paymentRequest.setRequiredShippingContactFields(*requiredShippingAddressFields);
     }
-
 
     if (auto shippingContactValue = dictionary.get<JSC::JSValue>("shippingContact")) {
         String errorMessage;
