@@ -1,3 +1,36 @@
+2016-07-29  Michael Saboff  <msaboff@apple.com>
+
+        Refactor DFG::Node::hasLocal() to accessesStack()
+        https://bugs.webkit.org/show_bug.cgi?id=160357
+
+        Reviewed by Filip Pizlo.
+
+        Refactoring in preparation for using register arguments for JavaScript calls.
+
+        Renamed Node::hasLocal() to Node::accessesStack() and changed all uses accordingly.
+        Also changed uses of Node::hasVariableAccessData() to accessesStack() where that
+        use guards stack operation logic associated with the Node's VariableAccessData.
+
+        The hasVariableAccessData() check now implies no more than the node has a
+        VariableAccessData and nothing about its use of that data to coordinate stack   
+        accesses.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlock):
+        * dfg/DFGMaximalFlushInsertionPhase.cpp:
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRegularBlock):
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRootBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::containsMovHint):
+        (JSC::DFG::Node::accessesStack):
+        (JSC::DFG::Node::hasLocal): Deleted.
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGValidate.cpp:
+
 2016-07-29  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Use the same data structures for DFG and Air Liveness Analysis

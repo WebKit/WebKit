@@ -273,7 +273,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         for (unsigned i = 0; i < data.variants.size(); ++i)
             out.print(comma, inContext(data.variants[i], context));
     }
-    ASSERT(node->hasVariableAccessData(*this) == node->hasLocal(*this));
+    ASSERT(node->hasVariableAccessData(*this) == node->accessesStack(*this));
     if (node->hasVariableAccessData(*this)) {
         VariableAccessData* variableAccessData = node->tryGetVariableAccessData();
         if (variableAccessData) {
@@ -370,7 +370,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "WasHoisted");
     out.print(")");
 
-    if (node->hasVariableAccessData(*this) && node->tryGetVariableAccessData())
+    if (node->accessesStack(*this) && node->tryGetVariableAccessData())
         out.print("  predicting ", SpeculationDump(node->tryGetVariableAccessData()->prediction()));
     else if (node->hasHeapPrediction())
         out.print("  predicting ", SpeculationDump(node->getHeapPrediction()));
@@ -1530,7 +1530,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* node)
     while (node) {
         CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
         
-        if (node->hasLocal(*this)) {
+        if (node->accessesStack(*this)) {
             ValueProfile* result = [&] () -> ValueProfile* {
                 if (!node->local().isArgument())
                     return nullptr;

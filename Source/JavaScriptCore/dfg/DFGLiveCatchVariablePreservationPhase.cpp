@@ -122,7 +122,7 @@ public:
                     }
                 }
 
-                if (node->hasVariableAccessData(m_graph))
+                if (node->accessesStack(m_graph))
                     currentBlockAccessData.operand(node->local()) = node->variableAccessData();
             }
         }
