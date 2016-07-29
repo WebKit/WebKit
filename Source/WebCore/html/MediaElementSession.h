@@ -95,6 +95,7 @@ public:
         InvisibleAutoplayNotPermitted = 1 << 11,
         OverrideUserGestureRequirementForMainContent = 1 << 12,
         RequireUserGestureToControlControlsManager = 1 << 13,
+        RequirePlaybackToControlControlsManager = 1 << 14,
         AllRestrictions = ~NoRestrictions,
     };
     typedef unsigned BehaviorRestrictions;
