@@ -21,7 +21,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXButton
 
 
-            title: AXTitle: Elapsed
+            title: AXTitle: Elapsed 00:00
             role: AXRole: AXTimer
 
 
@@ -33,7 +33,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXSlider
 
 
-            title: AXTitle: Remaining
+            title: AXTitle: Remaining -00:06
             role: AXRole: AXTimer
 
 
@@ -46,7 +46,7 @@ State at 'canplaythrough' event:
 
 
             title: AXTitle: Mute
-            role: AXRole: AXButton
+            role: AXRole: AXCheckbox
 
 
             title: AXTitle: Display Full Screen

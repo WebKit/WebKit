@@ -21,7 +21,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXSlider
 
 
-            title: AXTitle: Remaining
+            title: AXTitle: Remaining -00:06
             role: AXRole: AXTimer
 
 
@@ -30,7 +30,7 @@ State at 'canplaythrough' event:
 
 
             title: AXTitle: Mute
-            role: AXRole: AXButton
+            role: AXRole: AXCheckbox
 
 
             title: AXTitle: Volume

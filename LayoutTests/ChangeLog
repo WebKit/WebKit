@@ -1,3 +1,22 @@
+2016-07-29  Nan Wang  <n_wang@apple.com>
+
+        AX: Media controls accessibility improvement
+        https://bugs.webkit.org/show_bug.cgi?id=160223
+        <rdar://problem/27558003>
+
+        Reviewed by Eric Carlson.
+
+        * accessibility/mac/video-volume-slider-accessibility-expected.txt:
+        * accessibility/mac/video-volume-slider-accessibility.html:
+        * accessibility/media-emits-object-replacement-expected.txt:
+        * media/media-controls-accessibility-expected.txt: Added.
+        * media/media-controls-accessibility.html: Added.
+        * platform/efl/accessibility/media-element-expected.txt:
+        * platform/efl/accessibility/media-emits-object-replacement-expected.txt:
+        * platform/gtk/accessibility/media-element-expected.txt:
+        * platform/gtk/accessibility/media-emits-object-replacement-expected.txt:
+        * platform/mac/accessibility/media-element-expected.txt:
+
 2016-07-29  Daniel Bates  <dabates@apple.com>
 
         Unskip some media tests on iOS when run in WebKitTestRunner

@@ -421,6 +421,7 @@ Controller.prototype = {
         this.listenFor(timeline, 'mousemove', this.handleTimelineMouseMove);
         this.listenFor(timeline, 'mousedown', this.handleTimelineMouseDown);
         this.listenFor(timeline, 'mouseup', this.handleTimelineMouseUp);
+        this.listenFor(timeline, 'keydown', this.handleTimelineKeyDown);
         timeline.step = .01;
 
         this.timelineContextName = "_webkit-media-controls-timeline-" + this.host.generateUUID();
@@ -447,6 +448,8 @@ Controller.prototype = {
         var muteButton = this.controls.muteButton = document.createElement('button');
         muteButton.setAttribute('pseudo', '-webkit-media-controls-mute-button');
         muteButton.setAttribute('aria-label', this.UIString('Mute'));
+        // Make the mute button a checkbox since it only has on/off states.
+        muteButton.setAttribute('role', 'checkbox');
         this.listenFor(muteButton, 'click', this.handleMuteButtonClicked);
 
         var minButton = this.controls.minButton = document.createElement('button');
@@ -477,6 +480,7 @@ Controller.prototype = {
         volume.max = 1;
         volume.step = .05;
         this.listenFor(volume, 'input', this.handleVolumeSliderInput);
+        this.listenFor(volume, 'change', this.handleVolumeSliderChange);
         this.listenFor(volume, 'mousedown', this.handleVolumeSliderMouseDown);
         this.listenFor(volume, 'mouseup', this.handleVolumeSliderMouseUp);
 
@@ -863,6 +867,36 @@ Controller.prototype = {
         } else
             this.controls.pictureInPictureButton.classList.add(this.ClassNames.hidden);
     },
+    
+    timelineStepFromVideoDuration: function()
+    {
+        var step;
+        var duration = this.video.duration;
+        if (duration <= 10)
+            step = .5;
+        else if (duration <= 60)
+            step = 1;
+        else if (duration <= 600)
+            step = 10;
+        else if (duration <= 3600)
+            step = 30;
+        else
+            step = 60;
+        
+        return step;
+    },
+    
+    incrementTimelineValue: function()
+    {
+        var value = this.video.currentTime + this.timelineStepFromVideoDuration();
+        return value > this.video.duration ? this.video.duration : value;
+    },
+
+    decrementTimelineValue: function()
+    {
+        var value = this.video.currentTime - this.timelineStepFromVideoDuration();
+        return value < 0 ? 0 : value;
+    },
 
     showInlinePlaybackPlaceholderWhenSafe: function() {
         if (this.presentationMode() != 'picture-in-picture')
@@ -1122,12 +1156,22 @@ Controller.prototype = {
     {
         this.scrubbing = false;
     },
+    
+    handleTimelineKeyDown: function(event)
+    {
+        if (event.keyCode == this.KeyCodes.left)
+            this.controls.timeline.value = this.decrementTimelineValue();
+        else if (event.keyCode == this.KeyCodes.right)
+            this.controls.timeline.value = this.incrementTimelineValue();
+    },
 
     handleMuteButtonClicked: function(event)
     {
         this.video.muted = !this.video.muted;
         if (this.video.muted)
-            this.controls.muteButton.setAttribute('aria-label', this.UIString('Unmute'));
+            this.controls.muteButton.setAttribute('aria-checked', 'true');
+        else
+            this.controls.muteButton.setAttribute('aria-checked', 'false');
         this.drawVolumeBackground();
         return true;
     },
@@ -1141,7 +1185,7 @@ Controller.prototype = {
     {
         if (this.video.muted) {
             this.video.muted = false;
-            this.controls.muteButton.setAttribute('aria-label', this.UIString('Mute'));
+            this.controls.muteButton.setAttribute('aria-checked', 'false');
         }
         this.video.volume = 0;
         return true;
@@ -1151,20 +1195,30 @@ Controller.prototype = {
     {
         if (this.video.muted) {
             this.video.muted = false;
-            this.controls.muteButton.setAttribute('aria-label', this.UIString('Mute'));
+            this.controls.muteButton.setAttribute('aria-checked', 'false');
         }
         this.video.volume = 1;
     },
 
-    handleVolumeSliderInput: function(event)
+    updateVideoVolume: function()
     {
         if (this.video.muted) {
             this.video.muted = false;
-            this.controls.muteButton.setAttribute('aria-label', this.UIString('Mute'));
+            this.controls.muteButton.setAttribute('aria-checked', 'false');
         }
         this.video.volume = this.controls.volume.value;
-        this.controls.volume.setAttribute('aria-valuetext', this.controls.volume.value * 100 + '%');
+        this.controls.volume.setAttribute('aria-valuetext', `${parseInt(this.controls.volume.value * 100)}%`);
+    },
+
+    handleVolumeSliderInput: function(event)
+    {
+        this.updateVideoVolume();
         this.drawVolumeBackground();
+    },
+    
+    handleVolumeSliderChange: function(event)
+    {
+        this.updateVideoVolume();
     },
 
     handleVolumeSliderMouseDown: function(event)
@@ -1709,8 +1763,10 @@ Controller.prototype = {
         var currentTime = this.video.currentTime;
         var timeRemaining = currentTime - this.video.duration;
         this.currentTimeClone.innerText = this.controls.currentTime.innerText = this.formatTime(currentTime);
+        this.controls.currentTime.setAttribute('aria-label', `${this.UIString('Elapsed')} ${this.formatTime(currentTime)}`);
         this.controls.timeline.value = this.video.currentTime;
         this.remainingTimeClone.innerText = this.controls.remainingTime.innerText = this.formatTime(timeRemaining);
+        this.controls.remainingTime.setAttribute('aria-label', `${this.UIString('Remaining')} ${this.formatTime(timeRemaining)}`);
     },
     
     updateControlsWhileScrubbing: function()
@@ -2084,7 +2140,7 @@ Controller.prototype = {
             this.controls.muteButton.classList.remove(this.ClassNames.muted);
             this.controls.volume.value = this.video.volume;
         }
-        this.controls.volume.setAttribute('aria-valuetext', this.controls.volume.value * 100 + '%');
+        this.controls.volume.setAttribute('aria-valuetext', `${parseInt(this.controls.volume.value * 100)}%`);
         this.drawVolumeBackground();
     },
 
