@@ -272,6 +272,10 @@ function splitExtension(test)
 
 function stripExtension(test)
 {
+    // Temporary fix, also in Tools/Scripts/webkitpy/layout_tests/constrollers/test_result_writer.py, line 95.
+    // FIXME: Refactor to avoid confusing reference to both test and process names.
+    if (splitExtension(test)[1].length > 5)
+        return test;
     return splitExtension(test)[0];
 }
 

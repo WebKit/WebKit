@@ -1,3 +1,16 @@
+2016-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        Crash Log Clobbering on Unbound Crashes
+        https://bugs.webkit.org/show_bug.cgi?id=160198
+        <rdar://problem/27472618>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs): Fix header order.
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.output_filename): Only remove file extension if it is clearly a file extension.
+
 2016-07-29  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Update for contributors.json
