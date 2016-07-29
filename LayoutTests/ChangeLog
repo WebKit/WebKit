@@ -1,3 +1,18 @@
+2016-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS Sierra] Test gardening after r198859
+        https://bugs.webkit.org/show_bug.cgi?id=160358
+        <rdar://problem/26422274>
+
+        Reviewed by Zalan Bujtas.
+
+        RTL Scrollbars are not enabled on WK1, so this test should be marked in the
+        same way as all the other RTL scrollbars tests.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2016-07-29  Alexey Proskuryakov  <ap@apple.com>
 
         Remove a Sierra specific expectation for http/tests/navigation/forward-and-cancel.html,

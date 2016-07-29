@@ -240,9 +240,6 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 # rdar://problem/26789221
 [ Sierra+ ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Failure ]
 
-# rdar://problem/26422274
-[ Sierra+ ] fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
-
 # rdar://problem/26422407
 [ Sierra+ ] imported/blink/compositing/child-transform-with-anchor-point.html  [ ImageOnlyFailure ]
 

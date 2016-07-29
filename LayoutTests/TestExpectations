@@ -977,6 +977,7 @@ fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ ImageOnlyFa
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Skip ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
 
 # <a download> does not support Blobs
 webkit.org/b/156099 http/tests/security/anchor-download-allow-blob.html [ Failure ]

@@ -466,9 +466,6 @@ webkit.org/b/158237 fast/scrolling/scroll-container-horizontally.html [ Pass Tim
 
 webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-delete-objectstore-db.html [ Pass Timeout ]
 
-# This test only produces an RTL token on Sierra.
-[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
-
 # PiP tests are only enabled for Sierra WebKit2.
 # rdar://problem/27574303
 [ Sierra+ ] media/controls/picture-in-picture.html [ Pass Failure ]
@@ -513,6 +510,9 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
+# This test only produces an RTL token on Sierra.
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
 
 # <rdar://problem/25063128>
 [ Sierra+ ] media/media-controls-drag-timeline-set-controls-property.html [ Pass Timeout ]
