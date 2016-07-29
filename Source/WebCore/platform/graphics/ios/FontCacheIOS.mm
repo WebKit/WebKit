@@ -134,6 +134,52 @@ float FontCache::weightOfCTFont(CTFontRef font)
     return result;
 }
 
+static RetainPtr<CTFontDescriptorRef> baseSystemFontDescriptor(FontWeight weight, bool bold, float size)
+{
+    CTFontUIFontType fontType = kCTFontUIFontSystem;
+    if (weight > FontWeight300) {
+        if (bold)
+            fontType = kCTFontUIFontEmphasizedSystem;
+    } else if (weight > FontWeight200)
+        fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemLight);
+    else if (weight > FontWeight100)
+        fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemThin);
+    else
+        fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemUltraLight);
+    return adoptCF(CTFontDescriptorCreateForUIType(fontType, size, nullptr));
+}
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+static RetainPtr<NSDictionary> systemFontModificationAttributes(FontWeight weight, bool italic)
+{
+    RetainPtr<NSMutableDictionary> traitsDictionary = adoptNS([[NSMutableDictionary alloc] init]);
+
+    ASSERT(weight >= FontWeight100 && weight <= FontWeight900);
+    float ctWeights[] = { -0.7, -0.5, -0.23, 0, 0.2, 0.3, 0.4, 0.6, 0.8 };
+    [traitsDictionary setObject:[NSNumber numberWithFloat:ctWeights[weight]] forKey:static_cast<NSString *>(kCTFontWeightTrait)];
+
+    [traitsDictionary setObject:@YES forKey:static_cast<NSString *>(kCTFontUIFontDesignTrait)];
+
+    if (italic)
+        [traitsDictionary setObject:[NSNumber numberWithInt:kCTFontItalicTrait] forKey:static_cast<NSString *>(kCTFontSymbolicTrait)];
+
+    return @{ static_cast<NSString *>(kCTFontTraitsAttribute) : traitsDictionary.get() };
+}
+#endif
+
+static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontWeight weight, bool bold, bool italic, float size)
+{
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = baseSystemFontDescriptor(weight, bold, size);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    RetainPtr<NSDictionary> attributes = systemFontModificationAttributes(weight, italic);
+    return adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), static_cast<CFDictionaryRef>(attributes.get())));
+#else
+    if (italic)
+        return adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), kCTFontItalicTrait, kCTFontItalicTrait));
+    return fontDescriptor;
+#endif
+}
+
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, CTFontSymbolicTraits traits, float size)
 {
     if (family.startsWith("UICTFontTextStyle")) {
@@ -147,22 +193,7 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
     }
 
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font")) {
-        CTFontUIFontType fontType = kCTFontUIFontSystem;
-        if (weight > FontWeight300) {
-            // The code below has been copied from CoreText/UIFoundation. However, in WebKit we synthesize the oblique,
-            // so we should investigate the result <rdar://problem/14449340>:
-            if (traits & kCTFontTraitBold)
-                fontType = kCTFontUIFontEmphasizedSystem;
-        } else if (weight > FontWeight200)
-            fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemLight);
-        else if (weight > FontWeight100)
-            fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemThin);
-        else
-            fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemUltraLight);
-        RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(fontType, size, nullptr));
-        if (traits & kCTFontTraitItalic)
-            fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), kCTFontItalicTrait, kCTFontItalicTrait));
-        return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+        return adoptCF(CTFontCreateWithFontDescriptor(systemFontDescriptor(weight, traits & kCTFontTraitBold, traits & kCTFontTraitItalic, size).get(), size, nullptr));
     }
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {
