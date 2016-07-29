@@ -108,8 +108,6 @@ private:
     BOOL _alwaysRunsAtForegroundPriority;
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
-    BOOL _allowsInlineMediaPlaybackWithPlaysInlineAttribute;
-    BOOL _allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
 #endif
 
@@ -140,8 +138,6 @@ private:
     _allowsPictureInPictureMediaPlayback = YES;
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
-    _allowsInlineMediaPlaybackWithPlaysInlineAttribute = !_allowsInlineMediaPlayback;
-    _allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = NO;
     if (linkedOnOrAfter(WebKit::LibraryVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
@@ -293,8 +289,6 @@ private:
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_allowsInlineMediaPlaybackAfterFullscreen = self->_allowsInlineMediaPlaybackAfterFullscreen;
     configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
-    configuration->_allowsInlineMediaPlaybackWithPlaysInlineAttribute = self->_allowsInlineMediaPlaybackWithPlaysInlineAttribute;
-    configuration->_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute = self->_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute;
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
     configuration->_selectionGranularity = self->_selectionGranularity;
@@ -582,26 +576,6 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)requires
 {
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = requires;
-}
-
-- (BOOL)_allowsInlineMediaPlaybackWithPlaysInlineAttribute
-{
-    return _allowsInlineMediaPlaybackWithPlaysInlineAttribute;
-}
-
-- (void)_setAllowsInlineMediaPlaybackWithPlaysInlineAttribute:(BOOL)requires
-{
-    _allowsInlineMediaPlaybackWithPlaysInlineAttribute = requires;
-}
-
-- (BOOL)_allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute
-{
-    return _allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute;
-}
-
-- (void)_setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute:(BOOL)requires
-{
-    _allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute = requires;
 }
 
 - (BOOL)_allowsInlineMediaPlaybackAfterFullscreen

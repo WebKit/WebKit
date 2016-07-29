@@ -1,3 +1,30 @@
+2016-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove deprecated SPI for video inline / fullscreen controls
+        https://bugs.webkit.org/show_bug.cgi?id=160318
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAllowsInlineMediaPlaybackWithPlaysInlineAttribute): Deleted.
+        (WKPreferencesGetAllowsInlineMediaPlaybackWithPlaysInlineAttribute): Deleted.
+        (WKPreferencesSetAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute): Deleted.
+        (WKPreferencesGetAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Deleted.
+        (-[WKWebViewConfiguration copyWithZone:]): Deleted.
+        (-[WKWebViewConfiguration _allowsInlineMediaPlaybackWithPlaysInlineAttribute]): Deleted.
+        (-[WKWebViewConfiguration _setAllowsInlineMediaPlaybackWithPlaysInlineAttribute:]): Deleted.
+        (-[WKWebViewConfiguration _allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute]): Deleted.
+        (-[WKWebViewConfiguration _setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Deleted.
+
 2016-07-28  Tim Horton  <timothy_horton@apple.com>
 
         Frequent animation lags when interacting with Safari (sidebar, tab switching, etc.)
