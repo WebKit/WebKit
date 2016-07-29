@@ -118,7 +118,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
 
     // 9. If msg is the empty String, return name.
     if (!messageString.length())
-        return JSValue::encode(name.isString() ? name : jsNontrivialString(exec, nameString));
+        return JSValue::encode(name.isString() ? name : jsString(exec, nameString));
 
     // 10. Return the result of concatenating name, ":", a single space character, and msg.
     return JSValue::encode(jsMakeNontrivialString(exec, nameString, ": ", messageString));
