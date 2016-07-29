@@ -44,6 +44,7 @@ enum ObjSize { "small", "much-much-larger" };
 enum TestConfidence { "high", "kinda-low" };
 
 [
+    ConstructorCallWith=Document,
     Constructor(TestCallback testCallback, TestCallbackFunction testCallbackFunction),
     InterfaceName=TestObject
 ] interface TestObj {

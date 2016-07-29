@@ -1,3 +1,27 @@
+2016-07-28  Youenn Fablet  <youennf@gmail.com>
+
+        Binding generator should expose the visible interface name in error messages
+        https://bugs.webkit.org/show_bug.cgi?id=160192
+
+        Reviewed by Darin Adler.
+
+        * editing/selection/extend-expected.txt:
+        * fast/dom/Window/getComputedStyle-missing-parameter-expected.txt:
+        * fast/dom/Window/getComputedStyle-missing-parameter.html:
+        * fetch/fetch-error-messages-expected.txt:
+        * fetch/fetch-error-messages.html: Adding test for Request.
+        * js/dom/toString-and-valueOf-override-expected.txt:
+        * js/getOwnPropertyDescriptor-unforgeable-attributes-expected.txt:
+        * js/getOwnPropertyDescriptor-window-attributes-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-syntax-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-syntax.html:
+        * webaudio/createMediaStreamSource-null-expected.txt:
+        * webaudio/createMediaStreamSource-null.html:
+        * webaudio/decode-audio-data-basic-expected.txt:
+        * webaudio/decode-audio-data-basic.html:
+        * webaudio/mediaelementaudiosourcenode-expected.txt:
+        * webaudio/mediaelementaudiosourcenode.html:
+
 2016-07-28  Chris Dumez  <cdumez@apple.com>
 
         Add support for Element.getAttributeNames()

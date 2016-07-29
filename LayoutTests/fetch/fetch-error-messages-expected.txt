@@ -1,4 +1,6 @@
 CONSOLE MESSAGE: line 11: TypeError: The Response.body getter can only be used on instances of Response
+CONSOLE MESSAGE: line 11: TypeError: The Request.method getter can only be used on instances of Request
+CONSOLE MESSAGE: line 11: TypeError: Can only call Request.clone on instances of Request
 
 PASS Exercising TypeError messages in Fetch Response 
 

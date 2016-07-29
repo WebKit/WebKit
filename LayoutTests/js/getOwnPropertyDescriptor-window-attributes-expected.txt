@@ -8,7 +8,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is an instance of Function
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is true
-PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.screen getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The Window.screen getter can only be used on instances of Window.
 PASS descriptor.get.call(window) === window.screen is true
 PASS descriptor.get.call() === window.screen is true
 
@@ -17,7 +17,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is undefined.
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is true
-PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.navigator getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The Window.navigator getter can only be used on instances of Window.
 PASS descriptor.get.call(window) === window.navigator is true
 PASS descriptor.get.call() === window.navigator is true
 
@@ -26,7 +26,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is an instance of Function
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is true
-PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.self getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The Window.self getter can only be used on instances of Window.
 PASS descriptor.get.call(window) === window.self is true
 PASS descriptor.get.call() === window.self is true
 
@@ -35,7 +35,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is undefined.
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is true
-PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.frameElement getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The Window.frameElement getter can only be used on instances of Window.
 PASS descriptor.get.call(window) === window.frameElement is true
 PASS descriptor.get.call() === window.frameElement is true
 
@@ -44,7 +44,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is an instance of Function
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is true
-PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.name getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The Window.name getter can only be used on instances of Window.
 PASS descriptor.get.call(window) === window.name is true
 PASS descriptor.get.call() === window.name is true
 

@@ -25,6 +25,8 @@ test(function(test) {
     var response = new Response("");
 
     printGetterError(response, "body", request);
+    printGetterError(request, "method", response);
+    printMethodError(request.clone, response);
 
 }, "Exercising TypeError messages in Fetch Response");
 </script>

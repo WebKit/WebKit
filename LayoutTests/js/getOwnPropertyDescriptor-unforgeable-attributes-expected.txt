@@ -95,7 +95,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is an instance of Function
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is false
-PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.location getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Window.location getter can only be used on instances of Window.
 PASS descriptor.get.call(window) === window.location is true
 
 * Window.window
@@ -103,7 +103,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is undefined.
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is false
-PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.window getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Window.window getter can only be used on instances of Window.
 PASS descriptor.get.call(window) === window.window is true
 
 * Window.top
@@ -111,7 +111,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is undefined.
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is false
-PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.top getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Window.top getter can only be used on instances of Window.
 PASS descriptor.get.call(window) === window.top is true
 
 * Window.document
@@ -119,7 +119,7 @@ PASS descriptor.get is an instance of Function
 PASS descriptor.set is undefined.
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is false
-PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.document getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Window.document getter can only be used on instances of Window.
 PASS successfullyParsed is true
 
 TEST COMPLETE
