@@ -1,5 +1,31 @@
 2016-07-28  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203671. rdar://problem/27409315
+
+    2016-07-24  Sam Weinig  <sam@webkit.org>
+
+            Add specialization for encoding/decoding WebCore::CertificateInfos in the Network Cache
+            <rdar://problem/27409315>
+            https://bugs.webkit.org/show_bug.cgi?id=160144
+
+            Reviewed by Chris Dumez.
+
+            * NetworkProcess/cache/NetworkCacheCoders.cpp:
+            (WebKit::NetworkCache::encodeCFData):
+            (WebKit::NetworkCache::decodeCFData):
+            (WebKit::NetworkCache::encodeSecTrustRef):
+            (WebKit::NetworkCache::decodeSecTrustRef):
+            (WebKit::NetworkCache::encodeCertificateChain):
+            (WebKit::NetworkCache::decodeCertificateChain):
+            (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::encode):
+            (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::decode):
+
+            * NetworkProcess/cache/NetworkCacheStorage.h:
+            (WebKit::NetworkCache::Storage::version):
+            Bump the version and lastStableVersion to account for the format change.
+
+2016-07-28  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203635. rdar://problem/27505943
 
     2016-07-22  Joseph Pecoraro  <pecoraro@apple.com>

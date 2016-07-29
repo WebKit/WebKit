@@ -87,10 +87,10 @@ public:
     size_t capacity() const { return m_capacity; }
     size_t approximateSize() const;
 
-    static const unsigned version = 8;
+    static const unsigned version = 9;
 #if PLATFORM(MAC)
     /// Allow the last stable version of the cache to co-exist with the latest development one.
-    static const unsigned lastStableVersion = 8;
+    static const unsigned lastStableVersion = 9;
 #endif
 
     String basePath() const;
