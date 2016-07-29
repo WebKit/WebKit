@@ -36,6 +36,7 @@ WK_EXPORT WKTypeID WKAuthenticationDecisionListenerGetTypeID();
 
 WK_EXPORT void WKAuthenticationDecisionListenerUseCredential(WKAuthenticationDecisionListenerRef authenticationListener, WKCredentialRef credential);
 WK_EXPORT void WKAuthenticationDecisionListenerCancel(WKAuthenticationDecisionListenerRef authenticationListener);
+WK_EXPORT void WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue(WKAuthenticationDecisionListenerRef);
 
 #ifdef __cplusplus
 }

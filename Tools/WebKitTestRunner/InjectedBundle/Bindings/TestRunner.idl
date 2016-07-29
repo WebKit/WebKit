@@ -199,6 +199,7 @@ interface TestRunner {
     void queueNonLoadingScript(DOMString script);
 
     // Authentication
+    void setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(boolean value);
     void setHandlesAuthenticationChallenges(boolean value);
     void setShouldLogCanAuthenticateAgainstProtectionSpace(boolean value);
     void setAuthenticationUsername(DOMString username);

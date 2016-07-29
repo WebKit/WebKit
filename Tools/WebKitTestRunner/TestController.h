@@ -125,6 +125,7 @@ public:
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 
+    void setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(bool value) { m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges = value; }
     void setHandlesAuthenticationChallenges(bool value) { m_handlesAuthenticationChallenges = value; }
     void setAuthenticationUsername(String username) { m_authenticationUsername = username; }
     void setAuthenticationPassword(String password) { m_authenticationPassword = password; }
@@ -324,6 +325,7 @@ private:
     bool m_policyDelegateEnabled { false };
     bool m_policyDelegatePermissive { false };
 
+    bool m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges { false };
     bool m_handlesAuthenticationChallenges { false };
     String m_authenticationUsername;
     String m_authenticationPassword;

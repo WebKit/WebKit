@@ -104,6 +104,7 @@ TestRunner::TestRunner(const std::string& testURL, const std::string& expectedPi
     , m_globalFlag(false)
     , m_isGeolocationPermissionSet(false)
     , m_geolocationPermission(false)
+    , m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges(false)
     , m_handlesAuthenticationChallenges(false)
     , m_isPrinting(false)
     , m_deferMainResourceDataLoad(true)
@@ -1061,6 +1062,18 @@ static JSValueRef setGeolocationPermissionCallback(JSContextRef context, JSObjec
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setGeolocationPermission(JSValueToBoolean(context, arguments[0]));
 
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef setRejectsProtectionSpaceAndContinueForAuthenticationChallengesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+    
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(JSValueToBoolean(context, arguments[0]));
+    
     return JSValueMakeUndefined(context);
 }
 
@@ -2128,6 +2141,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "setUseDeferredFrameLoading", setUseDeferredFrameLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setDomainRelaxationForbiddenForURLScheme", setDomainRelaxationForbiddenForURLSchemeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setGeolocationPermission", setGeolocationPermissionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setRejectsProtectionSpaceAndContinueForAuthenticationChallenges", setRejectsProtectionSpaceAndContinueForAuthenticationChallengesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setHandlesAuthenticationChallenges", setHandlesAuthenticationChallengesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setIconDatabaseEnabled", setIconDatabaseEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAutomaticLinkDetectionEnabled", setAutomaticLinkDetectionEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

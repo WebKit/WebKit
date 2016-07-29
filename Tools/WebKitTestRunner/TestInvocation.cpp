@@ -599,7 +599,14 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetHandlesAuthenticationChallenge")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "SetRejectsProtectionSpaceAndContinueForAuthenticationChallenges")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(WKBooleanGetValue(value));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetHandlesAuthenticationChallenges")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
         TestController::singleton().setHandlesAuthenticationChallenges(WKBooleanGetValue(value));

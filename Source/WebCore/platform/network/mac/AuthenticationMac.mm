@@ -71,6 +71,18 @@ using namespace WebCore;
     m_client = 0;
 }
 
+- (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (m_client)
+        m_client->receivedRequestToPerformDefaultHandling(core(challenge));
+}
+
+- (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (m_client)
+        m_client->receivedChallengeRejection(core(challenge));
+}
+
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (m_client)
