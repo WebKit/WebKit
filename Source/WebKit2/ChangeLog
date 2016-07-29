@@ -1,3 +1,23 @@
+2016-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Database Process: ASSERTION FAILED: paths.size() == handles.size() with SANDBOX_EXTENSIONS disabled
+        https://bugs.webkit.org/show_bug.cgi?id=160188
+
+        Reviewed by Sergio Villar Senin.
+
+        This happens in ports with sandbox extensions disabled, and it's making several tests to crash in debug
+        builds. The SandboxExtension implementation is empty in case of building with sandbox extensions disabled, so
+        that we are actually allocating no extensions at all in
+        NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs(). When the message arrives to database
+        process, we have a list of paths, but an empty list of hanldes which causes the assertion. We can just avoid
+        that message entirely in case of building without sandbox extensions.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs):
+
 2016-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove deprecated SPI for video inline / fullscreen controls
