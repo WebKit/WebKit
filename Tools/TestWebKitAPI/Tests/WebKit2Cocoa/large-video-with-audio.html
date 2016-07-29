@@ -12,11 +12,13 @@
 
     function playing() {
         window.clearTimeout(timeout);
-        try {
-            window.webkit.messageHandlers.playingHandler.postMessage('playing');
-        } catch(e) {
-            window.location = 'callback:playing';
-        }
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.playingHandler.postMessage('playing');
+            } catch(e) {
+                window.location = 'callback:playing';
+            }
+        }, 0);
     }
 
     function notPlaying() {
