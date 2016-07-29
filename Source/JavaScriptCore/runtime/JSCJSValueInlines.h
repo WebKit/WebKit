@@ -70,7 +70,7 @@ inline double JSValue::asNumber() const
 
 inline JSValue jsNaN()
 {
-    return JSValue(PNaN);
+    return JSValue(JSValue::EncodeAsDouble, PNaN);
 }
 
 inline JSValue::JSValue(char i)
@@ -140,6 +140,7 @@ inline JSValue::JSValue(unsigned long long i)
 
 inline JSValue::JSValue(double d)
 {
+    // Note: while this behavior is undefined for NaN and inf, the subsequent statement will catch these cases.
     const int32_t asInt32 = static_cast<int32_t>(d);
     if (asInt32 != d || (!asInt32 && std::signbit(d))) { // true for -0.0
         *this = JSValue(EncodeAsDouble, d);

@@ -1,3 +1,21 @@
+2016-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        Undefined Behavior in JSValue cast from NaN
+        https://bugs.webkit.org/show_bug.cgi?id=160322
+
+        Reviewed by Mark Lam.
+
+        JSValues can be constructed from doubles, and in some cases, are deliberately constructed with NaN values.
+
+        In circumstances where NaN is bound through the default JSValue constructor, however, an undefined conversion
+        to int32_t occurs.  While the subsequent if statement should fail and construct the JSValue through the explicit
+        double constructor, given that the deliberate use of NaN is fairly common, it seems that the jsNaN() function
+        should immediately call the explicit double constructor both for efficiency and to prevent inadvertent
+        suppressing of any other bugs which may be instantiating a JSValue with a NaN double.
+
+        * runtime/JSCJSValueInlines.h:
+        (JSC::jsNaN): Explicit double construction for NaN JSValues to avoid undefined behavior.
+
 2016-07-29  Michael Saboff  <msaboff@apple.com>
 
         Refactor DFG::Node::hasLocal() to accessesStack()
