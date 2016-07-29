@@ -1,3 +1,19 @@
+2016-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add TestWebKitAPI support for interacting with media controls
+        https://bugs.webkit.org/show_bug.cgi?id=160342
+        <rdar://problem/27610246>
+
+        Reviewed by Beth Dakin.
+
+        Adds support for testing interaction with some media controls, as well as a basic test
+        verifying that media control teardown after interaction does not result in a crash.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (-[WKWebView mouseDownAtPoint:]):
+        (-[WKWebView performAfterLoading:]):
+        (TestWebKitAPI::TEST):
+
 2016-07-29  Jonathan Bedard  <jbedard@apple.com>
 
         Crash Log Clobbering on Unbound Crashes

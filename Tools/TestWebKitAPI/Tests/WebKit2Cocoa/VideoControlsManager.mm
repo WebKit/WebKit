@@ -40,20 +40,6 @@
 static bool testedControlsManagerAfterPlaying;
 static bool receivedScriptMessage;
 
-@interface WKWebView (UserInteraction)
-
-- (void)mouseDownAtPoint:(NSPoint)point;
-
-@end
-
-@implementation WKWebView (UserInteraction)
-
-- (void)mouseDownAtPoint:(NSPoint)point {
-    [self mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(point.x, point.y) modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:0 clickCount:0 pressure:0]];
-}
-
-@end
-
 @interface MediaPlaybackMessageHandler : NSObject <WKScriptMessageHandler> {
     RetainPtr<WKWebView> _webView;
 }
@@ -125,6 +111,35 @@ static bool receivedScriptMessage;
 
     _onloadHandler = nil;
 }
+@end
+
+@interface WKWebView (WKWebViewAdditions)
+
+- (void)_interactWithMediaControlsForTesting;
+
+@end
+
+@interface WKWebView (TestingAdditions)
+
+- (void)mouseDownAtPoint:(NSPoint)point;
+- (void)performAfterLoading:(dispatch_block_t)actions;
+
+@end
+
+@implementation WKWebView (TestingAdditions)
+
+- (void)mouseDownAtPoint:(NSPoint)point {
+    [self mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(point.x, point.y) modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:0 clickCount:0 pressure:0]];
+}
+
+- (void)performAfterLoading:(dispatch_block_t)actions {
+    OnLoadMessageHandler *handler = [[OnLoadMessageHandler alloc] initWithWKWebView:self handler:actions];
+    NSString *onloadScript = @"window.onload = function() { window.webkit.messageHandlers.onloadHandler.postMessage('loaded'); }";
+    WKUserScript *script = [[WKUserScript alloc] initWithSource:onloadScript injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
+    [[[self configuration] userContentController] addUserScript:script];
+    [[[self configuration] userContentController] addScriptMessageHandler:handler name:@"onloadHandler"];
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -350,6 +365,32 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedWithScript)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 }
 
+TEST(VideoControlsManager, VideoControlsManagerTearsDownMediaControlsOnDealloc)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+
+    NSURL *urlOfVideo = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadFileURL:urlOfVideo allowingReadAccessToURL:[urlOfVideo URLByDeletingLastPathComponent]];
+
+    __block bool finishedTest = false;
+    [webView performAfterLoading:^()
+    {
+        // Verify that we tear down the media controls properly, such that we don't crash when the web view is released.
+        if ([webView respondsToSelector:@selector(_interactWithMediaControlsForTesting)])
+            [webView _interactWithMediaControlsForTesting];
+
+        [webView release];
+        finishedTest = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finishedTest);
+}
+
 TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -360,16 +401,10 @@ TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
     [[window contentView] addSubview:webView.get()];
     
     __block bool finishedLoad = false;
-    dispatch_block_t handleFinishedLoad = ^()
+    [webView performAfterLoading:^()
     {
         finishedLoad = true;
-    };
-    OnLoadMessageHandler *handler = [[OnLoadMessageHandler alloc] initWithWKWebView:webView.get() handler:handleFinishedLoad];
-    
-    NSString *onloadScript = @"window.onload = function() { window.webkit.messageHandlers.onloadHandler.postMessage('loaded'); }";
-    WKUserScript *script = [[WKUserScript alloc] initWithSource:onloadScript injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
-    [[configuration userContentController] addUserScript:script];
-    [[configuration userContentController] addScriptMessageHandler:handler name:@"onloadHandler"];
+    }];
     
     NSURL *urlOfVideo = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
     [webView loadFileURL:urlOfVideo allowingReadAccessToURL:[urlOfVideo URLByDeletingLastPathComponent]];
