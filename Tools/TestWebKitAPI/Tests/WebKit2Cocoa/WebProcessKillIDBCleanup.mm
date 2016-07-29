@@ -60,9 +60,6 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
-    // Allow file URLs to load non-file resources
-    [configuration _setAllowUniversalAccessFromFileURLs:YES];
-
     [configuration.get().processPool _terminateDatabaseProcess];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
