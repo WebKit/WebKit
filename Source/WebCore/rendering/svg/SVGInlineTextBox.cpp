@@ -612,7 +612,6 @@ void SVGInlineTextBox::paintText(GraphicsContext& context, const RenderStyle* st
     if (style != selectionStyle)
         SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifferenceRepaint, *selectionStyle);
 
-    TextRun selectionTextRun = constructTextRun(selectionStyle, fragment);
     paintTextWithShadows(context, selectionStyle, textRun, fragment, startPosition, endPosition);
 
     if (style != selectionStyle)
