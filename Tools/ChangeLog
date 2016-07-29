@@ -1,3 +1,10 @@
+2016-07-29  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Update for contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=160294
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove deprecated SPI for video inline / fullscreen controls
