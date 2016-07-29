@@ -181,6 +181,9 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._timelineRuler.zeroTime = this.zeroTime;
         this._timelineRuler.startTime = this.zeroTime;
 
+        if (this.startTime >= this.endTime)
+            return;
+
         for (let dataGridNode of this._dataGrid.children)
             dataGridNode.refreshGraph();
 
@@ -287,17 +290,14 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     {
         console.assert(this._scheduledCurrentTimeUpdateIdentifier);
 
-        let startTime = this.startTime;
-        let currentTime = this.currentTime;
-        let endTime = this.endTime;
-        let timespanSinceLastUpdate = (timestamp - this._lastUpdateTimestamp) / 1000 || 0;
+        if (!isNaN(this._lastUpdateTimestamp)) {
+            let timespanSinceLastUpdate = (timestamp - this._lastUpdateTimestamp) / 1000 || 0;
+            this._timelineRuler.endTime = this.currentTime + timespanSinceLastUpdate;
 
-        currentTime += timespanSinceLastUpdate;
+            this.updateLayout();
+        }
 
-        this._timelineRuler.endTime = currentTime;
         this._lastUpdateTimestamp = timestamp;
-        this.updateLayout();
-
         this._scheduledCurrentTimeUpdateIdentifier = requestAnimationFrame(this._updateCallback);
     }
 

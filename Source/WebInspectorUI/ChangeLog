@@ -1,3 +1,22 @@
+2016-07-29  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Assertion in NetworkGridContentView when updating data grid for the first time
+        https://bugs.webkit.org/show_bug.cgi?id=160330
+        <rdar://problem/27600905>
+
+        Reviewed by Brian Burg.
+
+        When the first grid node is added, a view layout and current time update
+        are scheduled. A view layout occurring before the current time is updated
+        should be skipped, since the ruler end time hasn't been set.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype.layout):
+        Skip layout until current time is updated.
+        (WebInspector.NetworkGridContentView.prototype._update):
+        Remove unused variables `startTime` and `endTime`. Don't force a layout
+        if the elapsed time is zero.
+
 2016-07-28  Chris Dumez  <cdumez@apple.com>
 
         Parameters to Event.initEvent() should be mandatory
