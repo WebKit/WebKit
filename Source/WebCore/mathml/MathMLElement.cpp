@@ -397,16 +397,16 @@ int MathMLElement::tabIndex() const
     return Element::tabIndex();
 }
 
-static inline StringView skipLeadingAndTrailingWhitespace(const String& string)
+static inline StringView skipLeadingAndTrailingWhitespace(const StringView& stringView)
 {
-    unsigned start = 0, stringLength = string.length();
-    while (stringLength > 0 && isHTMLSpace(string[start])) {
+    unsigned start = 0, stringLength = stringView.length();
+    while (stringLength > 0 && isHTMLSpace(stringView[start])) {
         start++;
         stringLength--;
     }
-    while (stringLength > 0 && isHTMLSpace(string[start + stringLength - 1]))
+    while (stringLength > 0 && isHTMLSpace(stringView[start + stringLength - 1]))
         stringLength--;
-    return string.substring(start, stringLength);
+    return stringView.substring(start, stringLength);
 }
 
 MathMLElement::Length MathMLElement::parseNumberAndUnit(const StringView& string)
