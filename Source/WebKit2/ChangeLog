@@ -1,3 +1,23 @@
+2016-07-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash with an Invalid Web Process IPC Message ID: WebPageProxy.AttributedStringForCharacterRangeCallback
+        https://bugs.webkit.org/show_bug.cgi?id=160334
+        <rdar://problem/27078089>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The crash is most likely caused by an MESSAGE_CHECK failure in WebPageProxy::attributedStringForCharacterRangeCallback
+        which marks the currently dispatching message was invalid inside the macro.
+
+        Make sure we never fail this check by sending an empty EditingRange in attributedSubstringForCharacterRangeAsync when
+        the editing range we're about to send to the UIProcess is invalid in WebProcess.
+
+        Unfortunately, no new tests since we don't have any reproduction and I couldn't spot any code path in which we end up
+        with an invalid EditingRage here with multiple inspection of the relevant code.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::attributedSubstringForCharacterRangeAsync):
+
 2016-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Split calculateCacheSizes in two methods
