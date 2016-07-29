@@ -803,26 +803,6 @@ bool WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute(WKPreferenc
     return toImpl(preferencesRef)->inlineMediaPlaybackRequiresPlaysInlineAttribute();
 }
 
-void WKPreferencesSetAllowsInlineMediaPlaybackWithPlaysInlineAttribute(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setAllowsInlineMediaPlaybackWithPlaysInlineAttribute(flag);
-}
-
-bool WKPreferencesGetAllowsInlineMediaPlaybackWithPlaysInlineAttribute(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->allowsInlineMediaPlaybackWithPlaysInlineAttribute();
-}
-
-void WKPreferencesSetAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(flag);
-}
-
-bool WKPreferencesGetAllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute();
-}
-
 void WKPreferencesSetMediaControlsScaleWithPageZoom(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setMediaControlsScaleWithPageZoom(flag);

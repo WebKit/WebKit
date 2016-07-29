@@ -77,8 +77,6 @@ public:
 #if TARGET_OS_IPHONE
         configuration.get().allowsInlineMediaPlayback = YES;
         configuration.get()._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
-        configuration.get()._allowsInlineMediaPlaybackWithPlaysInlineAttribute = NO;
-        configuration.get()._allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute = NO;
 #endif
     }
 
