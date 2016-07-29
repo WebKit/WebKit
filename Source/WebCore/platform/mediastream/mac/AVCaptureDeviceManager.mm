@@ -45,7 +45,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
-typedef AVCaptureDevice AVCaptureDeviceType;
+typedef AVCaptureDevice AVCaptureDeviceTypedef;
 typedef AVCaptureSession AVCaptureSessionType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
@@ -147,7 +147,7 @@ Vector<CaptureDeviceInfo>& AVCaptureDeviceManager::captureDeviceList()
     return m_devices;
 }
 
-inline static bool shouldConsiderDeviceInDeviceList(AVCaptureDeviceType *device)
+inline static bool shouldConsiderDeviceInDeviceList(AVCaptureDeviceTypedef *device)
 {
     if (![device isConnected])
         return false;
@@ -162,7 +162,7 @@ inline static bool shouldConsiderDeviceInDeviceList(AVCaptureDeviceType *device)
 
 void AVCaptureDeviceManager::refreshCaptureDeviceList()
 {
-    for (AVCaptureDeviceType *platformDevice in [getAVCaptureDeviceClass() devices]) {
+    for (AVCaptureDeviceTypedef *platformDevice in [getAVCaptureDeviceClass() devices]) {
         if (!shouldConsiderDeviceInDeviceList(platformDevice))
             continue;
 
@@ -287,7 +287,7 @@ bool AVCaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*
 
 RealtimeMediaSource* AVCaptureDeviceManager::createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo& captureDevice, MediaConstraints* constraints)
 {
-    AVCaptureDeviceType *device = [getAVCaptureDeviceClass() deviceWithUniqueID:captureDevice.m_persistentDeviceID];
+    AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:captureDevice.m_persistentDeviceID];
     if (!device)
         return nullptr;
 
@@ -320,7 +320,7 @@ void AVCaptureDeviceManager::deviceConnected()
     refreshCaptureDeviceList();
 }
 
-void AVCaptureDeviceManager::deviceDisconnected(AVCaptureDeviceType* device)
+void AVCaptureDeviceManager::deviceDisconnected(AVCaptureDeviceTypedef* device)
 {
     Vector<CaptureDeviceInfo>& devices = captureDeviceList();
 
@@ -395,7 +395,7 @@ const RealtimeMediaSourceSupportedConstraints& AVCaptureDeviceManager::supported
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (m_callback) {
-            AVCaptureDeviceType *device = [notification object];
+            AVCaptureDeviceTypedef *device = [notification object];
             m_callback->deviceDisconnected(device);
         }
     });
