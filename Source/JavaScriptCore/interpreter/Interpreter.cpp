@@ -215,10 +215,12 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
         length = jsCast<ScopedArguments*>(cell)->length(callFrame);
         break;
     case StringType:
+    case SymbolType:
         callFrame->vm().throwException(callFrame, createInvalidFunctionApplyParameterError(callFrame,  arguments));
         return 0;
+        
     default:
-        ASSERT(arguments.isObject());
+        RELEASE_ASSERT(arguments.isObject());
         length = getLength(callFrame, jsCast<JSObject*>(cell));
         if (UNLIKELY(callFrame->hadException()))
             return 0;
