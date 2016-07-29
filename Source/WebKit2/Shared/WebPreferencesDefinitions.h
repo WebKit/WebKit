@@ -156,6 +156,7 @@
     macro(MainContentUserGestureOverrideEnabled, mainContentUserGestureOverrideEnabled, Bool, bool, false, "", "") \
     macro(AllowsInlineMediaPlayback, allowsInlineMediaPlayback, Bool, bool, DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK, "", "") \
     macro(AllowsInlineMediaPlaybackAfterFullscreen, allowsInlineMediaPlaybackAfterFullscreen, Bool, bool, DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK_AFTER_FULLSCREEN, "", "") \
+    macro(InlineMediaPlaybackRequiresPlaysInlineAttribute, inlineMediaPlaybackRequiresPlaysInlineAttribute, Bool, bool, DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE, "", "") \
     macro(AllowsInlineMediaPlaybackWithPlaysInlineAttribute, allowsInlineMediaPlaybackWithPlaysInlineAttribute, Bool, bool, DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK_WITH_PLAYS_INLINE_ATTRIBUTE, "", "") \
     macro(AllowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute, allowsInlineMediaPlaybackWithWebKitPlaysInlineAttribute, Bool, bool, DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK_WITH_WEBKIT_PLAYS_INLINE_ATTRIBUTE, "", "") \
     macro(InvisibleAutoplayNotPermitted, invisibleAutoplayNotPermitted, Bool, bool, DEFAULT_INVISIBLE_AUTOPLAY_NOT_PERMITTED, "", "") \

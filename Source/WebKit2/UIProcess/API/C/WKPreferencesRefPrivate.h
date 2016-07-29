@@ -191,6 +191,10 @@ WK_EXPORT bool WKPreferencesGetMainContentUserGestureOverrideEnabled(WKPreferenc
 WK_EXPORT void WKPreferencesSetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(WKPreferencesRef preferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute(WKPreferencesRef preferencesRef);
+
 // Defaults to true on iOS, false elsewhere.
 WK_EXPORT void WKPreferencesSetAllowsInlineMediaPlaybackWithPlaysInlineAttribute(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetAllowsInlineMediaPlaybackWithPlaysInlineAttribute(WKPreferencesRef preferencesRef);
