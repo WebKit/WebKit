@@ -1,3 +1,39 @@
+2016-07-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Use the same data structures for DFG and Air Liveness Analysis
+        https://bugs.webkit.org/show_bug.cgi?id=160346
+
+        Reviewed by Geoffrey Garen.
+
+        In Air, we minimized memory accesses during liveness analysis
+        with a couple of tricks:
+        -Use a single Sparse Set ADT for the live value of each block.
+        -Manipulate compact positive indices instead of hashing values.
+
+        This patch brings the same ideas to DFG.
+
+        This patch still uses the same fixpoint algorithms.
+        The reason is Edge's KillStatus used by other phases. We cannot
+        use a block-boundary liveness algorithm and update KillStatus
+        simultaneously. It's something I'll probably revisit at some point.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::forAllValues):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::dump):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::maxNodeCount):
+        (JSC::DFG::Graph::nodeAt):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::setLiveValues):
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::LivenessAnalysisPhase::LivenessAnalysisPhase):
+        (JSC::DFG::LivenessAnalysisPhase::run):
+        (JSC::DFG::LivenessAnalysisPhase::processBlock):
+        (JSC::DFG::LivenessAnalysisPhase::addChildUse):
+        (JSC::DFG::LivenessAnalysisPhase::process): Deleted.
+
 2016-07-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, ByValInfo is only used in JIT enabled environments

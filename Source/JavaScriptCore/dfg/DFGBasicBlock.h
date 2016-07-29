@@ -249,10 +249,9 @@ struct BasicBlock : RefCounted<BasicBlock> {
 
         AvailabilityMap availabilityAtHead;
         AvailabilityMap availabilityAtTail;
-        
-        bool liveAtTailIsDirty { false };
-        HashSet<Node*> liveAtTail;
-        HashSet<Node*> liveAtHead;
+
+        Vector<Node*> liveAtHead;
+        Vector<Node*> liveAtTail;
         struct NodeAbstractValuePair {
             Node* node;
             AbstractValue value;

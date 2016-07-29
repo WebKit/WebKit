@@ -195,6 +195,8 @@ public:
         return node;
     }
     void deleteNode(Node*);
+    unsigned maxNodeCount() const { return m_nodes.size(); }
+    Node* nodeAt(unsigned index) const { return m_nodes[index]; }
 
     void dethread();
     

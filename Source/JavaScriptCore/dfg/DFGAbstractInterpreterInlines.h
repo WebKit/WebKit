@@ -2963,10 +2963,8 @@ void AbstractInterpreter<AbstractStateType>::forAllValues(
     for (size_t i = clobberLimit; i--;)
         functor(forNode(m_state.block()->at(i)));
     if (m_graph.m_form == SSA) {
-        HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtHead.begin();
-        HashSet<Node*>::iterator end = m_state.block()->ssa->liveAtHead.end();
-        for (; iter != end; ++iter)
-            functor(forNode(*iter));
+        for (Node* node : m_state.block()->ssa->liveAtHead)
+            functor(forNode(node));
     }
     for (size_t i = m_state.variables().numberOfArguments(); i--;)
         functor(m_state.variables().argument(i));
@@ -3024,10 +3022,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
     CommaPrinter comma(" ");
     HashSet<Node*> seen;
     if (m_graph.m_form == SSA) {
-        HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtHead.begin();
-        HashSet<Node*>::iterator end = m_state.block()->ssa->liveAtHead.end();
-        for (; iter != end; ++iter) {
-            Node* node = *iter;
+        for (Node* node : m_state.block()->ssa->liveAtHead) {
             seen.add(node);
             AbstractValue& value = forNode(node);
             if (value.isClear())
@@ -3044,10 +3039,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
         out.print(comma, node, ":", value);
     }
     if (m_graph.m_form == SSA) {
-        HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtTail.begin();
-        HashSet<Node*>::iterator end = m_state.block()->ssa->liveAtTail.end();
-        for (; iter != end; ++iter) {
-            Node* node = *iter;
+        for (Node* node : m_state.block()->ssa->liveAtTail) {
             if (seen.contains(node))
                 continue;
             AbstractValue& value = forNode(node);

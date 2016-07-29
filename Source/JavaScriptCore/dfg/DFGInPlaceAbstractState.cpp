@@ -74,17 +74,14 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     m_structureClobberState = basicBlock->cfaStructureClobberStateAtHead;
 }
 
-static void setLiveValues(HashMap<Node*, AbstractValue>& values, HashSet<Node*>& live)
+static void setLiveValues(HashMap<Node*, AbstractValue>& values, const Vector<Node*>& liveNodes)
 {
     values.clear();
-    
-    HashSet<Node*>::iterator iter = live.begin();
-    HashSet<Node*>::iterator end = live.end();
-    for (; iter != end; ++iter)
-        values.add(*iter, AbstractValue());
+    for (Node* node : liveNodes)
+        values.add(node, AbstractValue());
 }
 
-static void setLiveValues(Vector<BasicBlock::SSAData::NodeAbstractValuePair>& values, HashSet<Node*>& live)
+static void setLiveValues(Vector<BasicBlock::SSAData::NodeAbstractValuePair>& values, const Vector<Node*>& live)
 {
     values.resize(0);
     values.reserveCapacity(live.size());
@@ -203,10 +200,7 @@ bool InPlaceAbstractState::endBasicBlock()
         for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
             changed |= block->valuesAtTail[i].merge(m_variables[i]);
 
-        HashSet<Node*>::iterator iter = block->ssa->liveAtTail.begin();
-        HashSet<Node*>::iterator end = block->ssa->liveAtTail.end();
-        for (; iter != end; ++iter) {
-            Node* node = *iter;
+        for (Node* node : block->ssa->liveAtTail) {
             changed |= block->ssa->valuesAtTail.find(node)->value.merge(forNode(node));
         }
         break;
