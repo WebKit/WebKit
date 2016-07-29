@@ -1,3 +1,26 @@
+2016-07-28  Michael Saboff  <msaboff@apple.com>
+
+        ARM64: Fused left shift with a right shift can create NaNs from integers
+        https://bugs.webkit.org/show_bug.cgi?id=160329
+
+        Reviewed by Geoffrey Garen.
+
+        When we fuse a left shift and a right shift of integers where the shift amounts
+        are the same and the size of the quantity being shifted is 8 bits, we rightly
+        generate a sign extend byte instruction.  On ARM64, we were sign extending
+        to a 64 bit quantity, when we really wanted to sign extend to a 32 bit quantity.
+
+        Checking the ARM64 marco assembler and we were extending to 64 bits for all
+        four combinations of zero / sign and 8 / 16 bits.
+        
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::zeroExtend16To32):
+        (JSC::MacroAssemblerARM64::signExtend16To32):
+        (JSC::MacroAssemblerARM64::zeroExtend8To32):
+        (JSC::MacroAssemblerARM64::signExtend8To32):
+        * tests/stress/regress-160329.js: New test added.
+        (narrow):
+
 2016-07-28  Mark Lam  <mark.lam@apple.com>
 
         StringView should have an explicit m_is8Bit field.
