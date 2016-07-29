@@ -113,17 +113,14 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(const ResourceReques
 {
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
-    auto crossOriginRequest = request;
-    updateRequestForAccessControl(crossOriginRequest, securityOrigin(), m_options.allowCredentials());
-
-    if ((m_options.preflightPolicy == ConsiderPreflight && isSimpleCrossOriginAccessRequest(crossOriginRequest.httpMethod(), crossOriginRequest.httpHeaderFields())) || m_options.preflightPolicy == PreventPreflight)
-        makeSimpleCrossOriginAccessRequest(crossOriginRequest);
+    if ((m_options.preflightPolicy == ConsiderPreflight && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields())) || m_options.preflightPolicy == PreventPreflight)
+        makeSimpleCrossOriginAccessRequest(request);
     else {
         m_simpleRequest = false;
-        if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(securityOrigin().toString(), crossOriginRequest.url(), m_options.allowCredentials(), crossOriginRequest.httpMethod(), crossOriginRequest.httpHeaderFields()))
-            preflightSuccess(WTFMove(crossOriginRequest));
+        if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(securityOrigin().toString(), request.url(), m_options.allowCredentials(), request.httpMethod(), request.httpHeaderFields()))
+            preflightSuccess(ResourceRequest(request));
         else
-            makeCrossOriginAccessRequestWithPreflight(WTFMove(crossOriginRequest));
+            makeCrossOriginAccessRequestWithPreflight(ResourceRequest(request));
     }
 }
 
@@ -138,7 +135,9 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
         return;
     }
 
-    loadRequest(request, DoSecurityCheck);
+    auto crossOriginRequest = request;
+    updateRequestForAccessControl(crossOriginRequest, securityOrigin(), m_options.allowCredentials());
+    loadRequest(crossOriginRequest, DoSecurityCheck);
 }
 
 void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(ResourceRequest&& request)
@@ -334,7 +333,7 @@ void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error
 void DocumentThreadableLoader::preflightSuccess(ResourceRequest&& request)
 {
     ResourceRequest actualRequest(WTFMove(request));
-    actualRequest.setHTTPOrigin(securityOrigin().toString());
+    updateRequestForAccessControl(actualRequest, securityOrigin(), m_options.allowCredentials());
 
     m_preflightChecker = Nullopt;
 

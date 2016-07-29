@@ -116,19 +116,29 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     const HTTPHeaderMap& requestHeaderFields = request.httpHeaderFields();
 
     if (!requestHeaderFields.isEmpty()) {
+        Vector<String> unsafeHeaders;
+        for (const auto& headerField : requestHeaderFields.commonHeaders()) {
+            if (!isCrossOriginSafeRequestHeader(headerField.key, headerField.value))
+                unsafeHeaders.append(httpHeaderNameString(headerField.key).toStringWithoutCopying().convertToASCIILowercase());
+        }
+        for (const auto& headerField : requestHeaderFields.uncommonHeaders())
+            unsafeHeaders.append(headerField.key.convertToASCIILowercase());
+
+        std::sort(unsafeHeaders.begin(), unsafeHeaders.end(), WTF::codePointCompareLessThan);
+
         StringBuilder headerBuffer;
-        
+
         bool appendComma = false;
-        for (const auto& headerField : requestHeaderFields) {
+        for (const auto& headerField : unsafeHeaders) {
+            // FIXME: header names should be separated by 0x2C, without space.
             if (appendComma)
                 headerBuffer.appendLiteral(", ");
             else
                 appendComma = true;
-            
-            headerBuffer.append(headerField.key);
-        }
 
-        preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestHeaders, headerBuffer.toString().convertToASCIILowercase());
+            headerBuffer.append(headerField);
+        }
+        preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestHeaders, headerBuffer.toString());
     }
 
     return preflightRequest;

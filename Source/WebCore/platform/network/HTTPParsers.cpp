@@ -854,4 +854,22 @@ bool isCrossOriginSafeHeader(const String& name, const HTTPHeaderSet& accessCont
     return accessControlExposeHeaderSet.contains(name);
 }
 
+// Implements https://fetch.spec.whatwg.org/#cors-safelisted-request-header
+bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
+{
+    switch (name) {
+    case HTTPHeaderName::Accept:
+    case HTTPHeaderName::AcceptLanguage:
+    case HTTPHeaderName::ContentLanguage:
+        return true;
+    case HTTPHeaderName::ContentType: {
+        String mimeType = extractMIMETypeFromMediaType(value);
+        return equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded") || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data") || equalLettersIgnoringASCIICase(mimeType, "text/plain");
+    }
+    default:
+        // FIXME: Should we also make safe other headers (DPR, Downlink, Save-Data...)? That would require validating their values.
+        return false;
+    }
+}
+
 }

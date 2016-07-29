@@ -13,4 +13,5 @@ PASS Cross domain [GET] [Content-Type: application/x-www-form-urlencoded]
 PASS Cross domain [GET] [Content-Type: multipart/form-data] 
 PASS Cross domain [GET] [Content-Type: text/plain] 
 PASS Cross domain [GET] [Content-Type: text/plain;charset=utf-8] 
+PASS Cross domain [GET] [Content-Type: Text/Plain;charset=utf-8] 
 

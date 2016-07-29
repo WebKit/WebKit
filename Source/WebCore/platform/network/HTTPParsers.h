@@ -109,6 +109,7 @@ bool isForbiddenResponseHeaderName(const String&);
 bool isSimpleHeader(const String& name, const String& value);
 bool isCrossOriginSafeHeader(HTTPHeaderName, const HTTPHeaderSet&);
 bool isCrossOriginSafeHeader(const String&, const HTTPHeaderSet&);
+bool isCrossOriginSafeRequestHeader(HTTPHeaderName, const String&);
 
 inline bool isHTTPSpace(UChar character)
 {

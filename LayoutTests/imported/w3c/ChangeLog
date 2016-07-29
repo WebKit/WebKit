@@ -1,3 +1,19 @@
+2016-07-29  Youenn Fablet  <youenn@apple.com>
+
+        CrossOrigin preflight checker should compute the right Access-Control-Request-Headers value
+        https://bugs.webkit.org/show_bug.cgi?id=160028
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/cors/cors-no-preflight-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-no-preflight-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.js:
+        (corsNoPreflight): fixing bugs in that test and adding new test to cover mime type checking that should ignore case.
+        * web-platform-tests/fetch/api/cors/cors-preflight-worker.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight.js:
+        (corsPreflight): Adding safe headers to the request and checking more precisely sent Access-Control-Request-Headers header value.
+
 2016-07-28  Chris Dumez  <cdumez@apple.com>
 
         Add support for Element.getAttributeNames()
