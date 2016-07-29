@@ -81,6 +81,10 @@ TARGET_MAC_OS_X_VERSION_MAJOR_13 = 101300;
 
 SDKROOT = macosx.internal;
 
+// FIXME: Remove these settings once <rdar://problem/27459890> is fixed.
+CODE_SIGNING_ALLOWED[sdk=iphonesimulator*] = YES;
+AD_HOC_CODE_SIGNING_ALLOWED[sdk=iphonesimulator*] = YES;
+
 WEBKIT_UMBRELLA_FRAMEWORKS_DIR = $(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 WEBCORE_PRIVATE_HEADERS_DIR = $(WEBKIT_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders;
 

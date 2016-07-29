@@ -1,3 +1,17 @@
+2016-07-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] TestWebKitAPI bundle targets are not code signed
+        https://bugs.webkit.org/show_bug.cgi?id=160328
+        <rdar://problem/27409246>
+
+        Reviewed by Andy Estes.
+
+        Workaround <rdar://problem/27459890> by explicitly defining Xcode build settings
+        CODE_SIGNING_ALLOWED and AD_HOC_CODE_SIGNING_ALLOWED to be YES so as to allow the
+        the TestWebKitAPI bundle targets to be code signed when building for the iOS simulator.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+
 2016-07-28  Tim Horton  <timothy_horton@apple.com>
 
         Disable WebKit2.ResizeWithHiddenContentDoesNotHang for now
