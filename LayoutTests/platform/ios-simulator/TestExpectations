@@ -114,7 +114,6 @@ pointer-lock
 http/tests/pointer-lock
 
 # FIXME: Media tests not supported on iOS
-media
 http/tests/media
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
 
@@ -126,7 +125,29 @@ platform/ios-simulator/ios/fast/forms/range-input-touches.html [ Skip ]
 platform/ios-simulator/ios/fast/text/data-detectors/phone-disabled.html [ Skip ]
 platform/ios-simulator/ios/fast/text/data-detectors/phone.html [ Skip ]
 
+# WebKitDataCue is supported, not DataCue
+media/track/track-datacue.html
+
+# Codecs not supported
+media/media-can-play-ogg.html [ WontFix ]
+media/media-can-play-flac-audio.html  [ WontFix ]
+media/track/in-band [ WontFix ]
+media/track/audio [ WontFix ]
+media/track/video [ WontFix ]
+
+media/video-controls-captions.html [ WontFix ]
+
+# The logic in this test is no longer correct for Apple ports
+media/track/track-user-preferences.html [ WontFix ]
+
+# This test requires the QuickTime LOOP user data property, which AVFoundation and QTKit64 do not support.
+media/video-does-not-loop.html [ WontFix ]
+
+# This test uses movie matricies, which AVFoundation and QTKit64 do not support.
+media/video-size-intrinsic-scale.html [ WontFix ]
+
 # MediaSource is not currently supported on iOS.
+media/media-source
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
 fast/history/page-cache-media-source-closed.html [ Skip ]
 fast/history/page-cache-media-source-opened.html [ Skip ]
@@ -3008,3 +3029,123 @@ platform/ios-simulator/media/video-interruption-suspendunderlock.html [ Skip ]
 
 # System font on iOS 9 cannot be bold and italic.
 fast/text/system-font-weight-italic.html [ Failure ]
+
+media/accessibility-closed-captions-has-aria-owns.html
+media/airplay-autoplay.html
+media/airplay-target-availability.html
+media/audio-delete-while-slider-thumb-clicked.html
+media/audio-playback-restriction-play.html
+media/audio-playback-restriction-removed-track-enabled.html
+
+# needs enhanced eventSender.contextMenu() return value
+webkit.org/b/116651 media/context-menu-actions.html
+
+media/crash-closing-page-with-media-as-plugin-fallback.html
+
+webkit.org/b/122042 media/media-controller-playback.html
+
+media/media-controls-drag-timeline-set-controls-property.html
+media/media-event-listeners.html
+media/media-fullscreen-inline.html
+
+webkit.org/b/136708 media/media-fullscreen-not-in-document.html
+
+media/media-fullscreen-return-to-inline.html
+media/no-autoplay-with-user-gesture-requirement.html
+media/video-controls-drag.html
+media/video-controls-fullscreen-volume.html
+media/video-controls-no-display-with-text-track.html
+media/video-controls-show-on-kb-or-ax-event.html
+media/video-fullscreen-restriction-removed.html
+media/video-play-require-user-gesture.html
+media/video-playsinline.html
+media/video-remote-control-playpause.html
+media/video-volume-slider-drag.html
+media/video-webkit-playsinline.html
+media/volume-bar-empty-when-muted.html
+
+webkit.org/b/103926 media/track/opera
+
+webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
+webkit.org/b/112659 media/video-playing-and-pause.html [ Skip ]
+
+webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html
+webkit.org/b/112492 media/track/track-prefer-captions.html
+
+# WebVTT tests don't work because they need more than a 800x600 snapshot.
+# They are also flakily failing on WebKit2, as snapshot sometimes has a black rectangle for video element instead of white one.
+webkit.org/b/131476 media/track/w3c/track/webvtt
+
+media/video-object-fit-change.html [ ImageOnlyFailure ]
+media/video-object-fit.html [ ImageOnlyFailure ]
+
+media/W3C/video/canPlayType/canPlayType_codecs_order_2.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_two_implies_one_4.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
+media/audio-as-video-fullscreen.html [ Failure ]
+media/audio-delete-while-step-button-clicked.html [ Failure ]
+media/audio-mpeg-supported.html [ Failure ]
+media/audio-playback-restriction-removed-muted.html [ Failure ]
+media/click-volume-bar-not-pausing.html [ Failure ]
+media/controls-drag-timebar.html [ Failure ]
+media/event-attributes.html [ Failure ]
+media/media-can-play-wav-audio.html [ Failure ]
+media/media-can-play-webm.html [ Failure ]
+media/media-captions-no-controls.html [ Failure ]
+media/media-controller-drag-crash.html [ Failure ]
+media/media-controls-cancel-events.html [ Failure ]
+media/media-controls-invalid-url.html [ Failure ]
+media/media-controls-play-button-updates.html [ Failure ]
+media/media-controls-timeline-updates-after-playing.html [ Failure ]
+media/media-controls-timeline-updates-when-hovered.html [ Failure ]
+media/media-controls-timeline-updates.html [ Failure ]
+media/media-document-audio-repaint.html [ Failure ]
+media/media-higher-prio-audio-stream.html [ Failure ]
+media/media-volume-slider-rendered-below.html [ Failure ]
+media/media-volume-slider-rendered-normal.html [ Failure ]
+media/nodesFromRect-shadowContent.html [ Failure ]
+media/progress-events-generated-correctly.html [ Failure ]
+media/restore-from-page-cache.html [ Failure ]
+media/tab-focus-inside-media-elements.html [ Failure ]
+media/track/track-cue-rendering-on-resize.html [ Failure ]
+media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
+media/track/track-cue-rendering.html [ Failure ]
+media/track/track-forced-subtitles-in-band.html [ Failure ]
+media/track/track-in-band-mode.html [ Failure ]
+media/track/track-in-band-subtitles-too-large.html [ Failure ]
+media/track/track-long-word-container-sizing.html [ Failure ]
+media/track/track-manual-mode.html [ Failure ]
+media/track/w3c/interfaces/TextTrackCue/align.html [ Failure ]
+media/track/w3c/interfaces/TextTrackCue/endTime.html [ Failure ]
+media/track/w3c/interfaces/TextTrackCue/id.html [ Failure ]
+media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Failure ]
+media/track/w3c/interfaces/TextTrackCue/startTime.html [ Failure ]
+media/track/w3c/interfaces/TextTrackCue/track.html [ Failure ]
+media/video-autoplay-allowed-but-fullscreen-required.html [ Failure ]
+media/video-background-tab-playback.html [ Failure ]
+media/video-colorspace-yuv420.html [ Failure ]
+media/video-colorspace-yuv422.html [ Failure ]
+media/video-controls-audiotracks-trackmenu.html [ Failure ]
+media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
+media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
+media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html [ Failure ]
+media/video-controls-drop-and-restore-timeline.html [ Failure ]
+media/video-controls-in-media-document.html [ Failure ]
+media/video-controls-no-scripting.html [ Failure ]
+media/video-controls-toggling.html [ Failure ]
+media/video-controls-transformed.html [ Failure ]
+media/video-controls-visible-audio-only.html [ Failure ]
+media/video-controls-visible-exiting-fullscreen.html [ Failure ]
+media/video-controls-zoomed.html [ Failure ]
+media/video-frame-accurate-seek.html [ Failure ]
+media/video-fullscreeen-only-controls.html [ Failure ]
+media/video-fullscreeen-only-playback.html [ Failure ]
+media/video-initially-hidden-volume-slider-up.html [ Failure ]
+media/video-play-audio-require-user-gesture.html [ Failure ]
+media/video-trackmenu-selection.html [ Failure ]
+media/video-volume.html [ Failure ]
+
+media/track/track-in-band-legacy-api.html [ Failure ]

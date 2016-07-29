@@ -1,3 +1,16 @@
+2016-07-29  Daniel Bates  <dabates@apple.com>
+
+        Unskip some media tests on iOS when run in WebKitTestRunner
+
+        As a step towards running the various media tests on iOS, unskip LayoutTests/media
+        when run in WebKitTestRunner in the iOS Simulator. Incorporate the reasons we skip some
+        of the iOS tests from r189372. For now continue to skip LayoutTest/media when run in
+        DumpRenderTree in the iOS Simulator as many tests crash and are otherwise flaky. Further
+        investigation is required.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-07-29  George Ruan  <gruan@apple.com>
 
         HTMLVideoElement with MediaStream src shows paused image when all video tracks are disabled

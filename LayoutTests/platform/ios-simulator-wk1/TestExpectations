@@ -1379,3 +1379,6 @@ fast/loader/iframe-src-invalid-url.html [ Skip ]
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
 webkit.org/b/158237 fast/scrolling/scroll-container-horizontally.html [ Timeout ]
+
+# FIXME: Many media tests fail
+media
