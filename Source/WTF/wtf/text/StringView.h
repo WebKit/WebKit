@@ -48,17 +48,17 @@ namespace WTF {
 using CharacterMatchFunction = bool (*)(UChar);
 
 // StringView is a non-owning reference to a string, similar to the proposed std::string_view.
-// Whether the string is 8-bit or 16-bit is encoded in the upper bit of the length member.
-// This means that strings longer than 2 gigacharacters cannot be represented.
 
 class StringView {
 public:
     StringView();
+#if CHECK_STRINGVIEW_LIFETIME
     ~StringView();
     StringView(StringView&&);
     StringView(const StringView&);
     StringView& operator=(StringView&&);
     StringView& operator=(const StringView&);
+#endif
 
     StringView(const String&);
     StringView(const StringImpl&);
@@ -202,6 +202,7 @@ inline StringView::StringView()
     // FIXME: It's peculiar that null strings are 16-bit and empty strings return 8-bit (according to the is8Bit function).
 }
 
+#if CHECK_STRINGVIEW_LIFETIME
 inline StringView::~StringView()
 {
     setUnderlyingString(nullptr);
@@ -258,6 +259,7 @@ inline StringView& StringView::operator=(const StringView& other)
 
     return *this;
 }
+#endif // CHECK_STRINGVIEW_LIFETIME
 
 inline void StringView::initialize(const LChar* characters, unsigned length)
 {

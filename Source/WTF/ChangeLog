@@ -1,3 +1,39 @@
+2016-07-29  Mark Lam  <mark.lam@apple.com>
+
+        Make StringView capable of being passed or returned in only 2 registers.
+        https://bugs.webkit.org/show_bug.cgi?id=160344
+
+        Reviewed by Geoffrey Garen.
+
+        We just need to #if out copy and move constructors and assignment operators.
+
+        After this change, the following test code:
+
+            JS_EXPORT_PRIVATE StringView returnStringView(StringView sv)
+            {
+                return sv;
+            }
+
+        ... compiles to the following for x86_64:
+
+            __ZN3JSC16returnStringViewEN3WTF10StringViewE:
+            000000000093fb20        pushq   %rbp
+            000000000093fb21        movq    %rsp, %rbp
+            000000000093fb24        movq    %rdi, %rax // Copy from arg word 0 to ret word 0.
+            000000000093fb27        movq    %rsi, %rdx // Copy from arg word 1 to ret word 1.
+            000000000093fb2a        popq    %rbp
+            000000000093fb2b        retq
+
+        ... and this for arm64:
+
+            __ZN3JSC16returnStringViewEN3WTF10StringViewE:
+            0000000000818504        ret // arg word 0 and 1 are in the same regs as ret word 0 and 1.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::StringView):
+        (WTF::StringView::~StringView):
+        (WTF::StringView::operator=):
+
 2016-07-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove PassRef.h after r177259
