@@ -51,7 +51,6 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLOperatorElement& element, Rende
     : RenderMathMLToken(element, WTFMove(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
-    , m_textContent(0)
     , m_isVertical(true)
 {
     updateTokenContent();
@@ -67,6 +66,16 @@ RenderMathMLOperator::RenderMathMLOperator(Document& document, RenderStyle&& sty
     , m_operatorFlags(flags)
 {
     updateTokenContent(operatorString);
+}
+
+MathMLOperatorElement& RenderMathMLOperator::element() const
+{
+    return static_cast<MathMLOperatorElement&>(nodeForNonAnonymous());
+}
+
+UChar RenderMathMLOperator::textContent() const
+{
+    return isAnonymous() ? m_textContent : element().operatorText();
 }
 
 void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag flag, const QualifiedName& name)
@@ -101,7 +110,7 @@ void RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry(const MathMLOper
 void RenderMathMLOperator::setOperatorProperties()
 {
     // We determine the stretch direction (default is vertical).
-    m_isVertical = MathMLOperatorDictionary::isVertical(m_textContent);
+    m_isVertical = MathMLOperatorDictionary::isVertical(textContent());
 
     // We determine the form of the operator.
     bool explicitForm = true;
@@ -137,14 +146,14 @@ void RenderMathMLOperator::setOperatorProperties()
     m_minSize = style().fontCascade().size(); // This sets minsize to "1em".
     m_maxSize = intMaxForLayoutUnit; // This sets maxsize to "infinity".
 
-    if (m_textContent) {
+    if (textContent()) {
         // Then we try to find the default values from the operator dictionary.
-        if (const MathMLOperatorDictionary::Entry* entry = MathMLOperatorDictionary::getEntry(m_textContent, m_operatorForm))
+        if (const MathMLOperatorDictionary::Entry* entry = MathMLOperatorDictionary::getEntry(textContent(), m_operatorForm))
             setOperatorPropertiesFromOpDictEntry(entry);
         else if (!explicitForm) {
             // If we did not find the desired operator form and if it was not set explicitely, we use the first one in the following order: Infix, Prefix, Postfix.
             // This is to handle bad MathML markup without explicit <mrow> delimiters like "<mo>(</mo><mi>a</mi><mo>)</mo><mo>(</mo><mi>b</mi><mo>)</mo>" where the inner parenthesis should not be considered infix.
-            if (const MathMLOperatorDictionary::Entry* entry = MathMLOperatorDictionary::getEntry(m_textContent)) {
+            if (const MathMLOperatorDictionary::Entry* entry = MathMLOperatorDictionary::getEntry(textContent())) {
                 m_operatorForm = static_cast<MathMLOperatorDictionary::Form>(entry->form); // We override the form previously determined.
                 setOperatorPropertiesFromOpDictEntry(entry);
             }
@@ -246,7 +255,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         preferredWidth = m_maxPreferredLogicalWidth;
         if (isInvisibleOperator()) {
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
-            GlyphData data = style().fontCascade().glyphDataForCharacter(m_textContent, false);
+            GlyphData data = style().fontCascade().glyphDataForCharacter(textContent(), false);
             float glyphWidth = data.font ? data.font->widthForGlyph(data.glyph) : 0;
             ASSERT(glyphWidth <= preferredWidth);
             preferredWidth -= glyphWidth;
@@ -292,15 +301,8 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
     clearNeedsLayout();
 }
 
-void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
+void RenderMathMLOperator::rebuildTokenContent()
 {
-    // We collapse the whitespace and replace the hyphens by minus signs.
-    AtomicString textContent = operatorString.stripWhiteSpace().simplifyWhiteSpace().replace(hyphenMinus, minusSign).impl();
-
-    // We verify whether the operator text can be represented by a single UChar.
-    // FIXME: This does not handle surrogate pairs (https://bugs.webkit.org/show_bug.cgi?id=122296).
-    // FIXME: This does not handle <mo> operators with multiple characters (https://bugs.webkit.org/show_bug.cgi?id=124828).
-    m_textContent = textContent.length() == 1 ? textContent[0] : 0;
     setOperatorProperties();
 
     if (useMathOperator()) {
@@ -311,7 +313,7 @@ void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
             type = MathOperator::Type::DisplayOperator;
         else
             type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
-        m_mathOperator.setOperator(style(), m_textContent, type);
+        m_mathOperator.setOperator(style(), textContent(), type);
     }
 
     setNeedsLayoutAndPrefWidthsRecalc();
@@ -320,14 +322,15 @@ void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
 void RenderMathMLOperator::updateTokenContent(const String& operatorString)
 {
     ASSERT(isAnonymous());
-    rebuildTokenContent(operatorString);
+    m_textContent = MathMLOperatorElement::parseOperatorText(operatorString);
+    rebuildTokenContent();
 }
 
 void RenderMathMLOperator::updateTokenContent()
 {
     ASSERT(!isAnonymous());
     RenderMathMLToken::updateTokenContent();
-    rebuildTokenContent(element().textContent());
+    rebuildTokenContent();
 }
 
 void RenderMathMLOperator::updateFromElement()
@@ -343,7 +346,7 @@ void RenderMathMLOperator::updateOperatorProperties()
 
 bool RenderMathMLOperator::shouldAllowStretching() const
 {
-    return m_textContent && (hasOperatorFlag(MathMLOperatorDictionary::Stretchy) || isLargeOperatorInDisplayStyle());
+    return textContent() && (hasOperatorFlag(MathMLOperatorDictionary::Stretchy) || isLargeOperatorInDisplayStyle());
 }
 
 bool RenderMathMLOperator::useMathOperator() const
@@ -352,7 +355,7 @@ bool RenderMathMLOperator::useMathOperator() const
     // 1) Stretchy and large operators, since they require special painting.
     // 2) The minus sign, since it can be obtained from a hyphen in the DOM.
     // 3) The anonymous operators created by mfenced, since they do not have text content in the DOM.
-    return shouldAllowStretching() || m_textContent == minusSign || isAnonymous();
+    return shouldAllowStretching() || textContent() == minusSign || isAnonymous();
 }
 
 void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

@@ -33,10 +33,16 @@ namespace WebCore {
 class MathMLOperatorElement final : public MathMLTextElement {
 public:
     static Ref<MathMLOperatorElement> create(const QualifiedName& tagName, Document&);
+    static UChar parseOperatorText(const String&);
+    UChar operatorText();
+
 private:
     MathMLOperatorElement(const QualifiedName& tagName, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    void childrenChanged(const ChildChange&) final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
+
+    Optional<UChar> m_operatorText;
 };
 
 }

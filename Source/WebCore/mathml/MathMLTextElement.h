@@ -39,13 +39,13 @@ public:
 
 protected:
     MathMLTextElement(const QualifiedName& tagName, Document&);
+    void childrenChanged(const ChildChange&) override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const final;
 
-    void childrenChanged(const ChildChange&) final;
     void didAttachRenderers() final;
 
     bool isPresentationMathML() const final { return true; }

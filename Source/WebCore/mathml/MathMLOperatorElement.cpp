@@ -30,6 +30,7 @@
 #include "MathMLOperatorElement.h"
 
 #include "RenderMathMLOperator.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -43,6 +44,33 @@ MathMLOperatorElement::MathMLOperatorElement(const QualifiedName& tagName, Docum
 Ref<MathMLOperatorElement> MathMLOperatorElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new MathMLOperatorElement(tagName, document));
+}
+
+UChar MathMLOperatorElement::parseOperatorText(const String& string)
+{
+    // We collapse the whitespace and replace the hyphens by minus signs.
+    AtomicString textContent = string.stripWhiteSpace().simplifyWhiteSpace().replace(hyphenMinus, minusSign).impl();
+
+    // We verify whether the operator text can be represented by a single UChar.
+    // FIXME: This is a really inefficient way to extract a character from a string (https://webkit.org/b/160241#c7).
+    // FIXME: This does not handle surrogate pairs (https://webkit.org/b/122296).
+    // FIXME: This does not handle <mo> operators with multiple characters (https://webkit.org/b/124828).
+    return textContent.length() == 1 ? textContent[0] : 0;
+}
+
+UChar MathMLOperatorElement::operatorText()
+{
+    if (m_operatorText)
+        return m_operatorText.value();
+
+    m_operatorText = Optional<UChar>(parseOperatorText(textContent()));
+    return m_operatorText.value();
+}
+
+void MathMLOperatorElement::childrenChanged(const ChildChange& change)
+{
+    m_operatorText = Optional<UChar>();
+    MathMLTextElement::childrenChanged(change);
 }
 
 void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

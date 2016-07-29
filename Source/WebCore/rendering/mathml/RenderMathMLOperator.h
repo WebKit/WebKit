@@ -40,6 +40,7 @@ class RenderMathMLOperator final : public RenderMathMLToken {
 public:
     RenderMathMLOperator(MathMLOperatorElement&, RenderStyle&&);
     RenderMathMLOperator(Document&, RenderStyle&&, const String& operatorString, MathMLOperatorDictionary::Form, unsigned short flags = 0);
+    MathMLOperatorElement& element() const;
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
     void stretchTo(LayoutUnit width);
@@ -56,7 +57,7 @@ public:
     void updateTokenContent() final;
     void updateOperatorProperties();
     void updateFromElement() final;
-    UChar textContent() const { return m_textContent; }
+    UChar textContent() const;
 
 private:
     virtual void setOperatorProperties();
@@ -72,11 +73,11 @@ private:
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
     bool isRenderMathMLOperator() const final { return true; }
     // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
-    bool isInvisibleOperator() const { return 0x2061 <= m_textContent && m_textContent <= 0x2064; }
+    bool isInvisibleOperator() { return 0x2061 <= textContent() && textContent() <= 0x2064; }
 
     Optional<int> firstLineBaseline() const final;
     RenderMathMLOperator* unembellishedOperator() final { return this; }
-    void rebuildTokenContent(const String& operatorString);
+    void rebuildTokenContent();
 
     bool shouldAllowStretching() const;
     bool useMathOperator() const;
