@@ -44,6 +44,7 @@
 @property (nonatomic, copy) NSArray<UITextSuggestion *> *suggestions WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic) BOOL accessoryViewShouldNotShow WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, copy) NSString *textContentType WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic) BOOL forceSecureTextEntry WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 @end

@@ -266,6 +266,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     RetainPtr<NSArray<UITextSuggestion *>> _suggestions;
     RetainPtr<NSString> _textContentType;
     BOOL _accessoryViewShouldNotShow;
+    BOOL _forceSecureTextEntry;
 }
 
 - (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo userObject:(NSObject <NSSecureCoding> *)userObject
@@ -321,6 +322,20 @@ const CGFloat minimumTapHighlightRadius = 2.0;
         return;
 
     _accessoryViewShouldNotShow = accessoryViewShouldNotShow;
+    [_contentView reloadInputViews];
+}
+
+- (BOOL)forceSecureTextEntry
+{
+    return _forceSecureTextEntry;
+}
+
+- (void)setForceSecureTextEntry:(BOOL)forceSecureTextEntry
+{
+    if (_forceSecureTextEntry == forceSecureTextEntry)
+        return;
+
+    _forceSecureTextEntry = forceSecureTextEntry;
     [_contentView reloadInputViews];
 }
 
@@ -2974,7 +2989,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!_traits)
         _traits = adoptNS([[UITextInputTraits alloc] init]);
 
-    [_traits setSecureTextEntry:_assistedNodeInformation.elementType == InputType::Password];
+    [_traits setSecureTextEntry:_assistedNodeInformation.elementType == InputType::Password || [_formInputSession forceSecureTextEntry]];
     [_traits setShortcutConversionType:_assistedNodeInformation.elementType == InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault];
 
     if (!_assistedNodeInformation.formAction.isEmpty())
