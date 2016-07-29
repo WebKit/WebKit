@@ -161,6 +161,10 @@ using namespace HTMLNames;
 #define NSAccessibilityValueAutofillAvailableAttribute @"AXValueAutofillAvailable"
 #endif
 
+#ifndef NSAccessibilityValueAutofillTypeAttribute
+#define NSAccessibilityValueAutofillTypeAttribute @"AXValueAutofillType"
+#endif
+
 #ifndef NSAccessibilityLanguageAttribute
 #define NSAccessibilityLanguageAttribute @"AXLanguage"
 #endif
@@ -3236,6 +3240,17 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if ([attributeName isEqualToString:NSAccessibilityValueAutofillAvailableAttribute])
         return @(m_object->isValueAutofillAvailable());
+    
+    if ([attributeName isEqualToString:NSAccessibilityValueAutofillTypeAttribute]) {
+        switch (m_object->valueAutofillButtonType()) {
+        case AutoFillButtonType::None:
+            return @"none";
+        case AutoFillButtonType::Credentials:
+            return @"credentials";
+        case AutoFillButtonType::Contacts:
+            return @"contacts";
+        }
+    }
     
     if ([attributeName isEqualToString:NSAccessibilityValueAutofilledAttribute])
         return @(m_object->isValueAutofilled());

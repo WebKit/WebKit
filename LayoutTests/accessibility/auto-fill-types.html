@@ -19,16 +19,19 @@
         var textField = document.getElementById("textfield");
         var axTextField = accessibilityController.accessibleElementById("textfield");
         debug("Initial auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
+        debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
 
         window.internals.setShowAutoFillButton(document.getElementById("textfield"), "AutoFillButtonTypeContacts");
         var contactsButton = axTextField.childAtIndex(1);
         debug("Contact button role: " + contactsButton.role);
         debug("Contact button label: " + contactsButton.description);
+        debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
 
         window.internals.setShowAutoFillButton(document.getElementById("textfield"), "AutoFillButtonTypeCredentials");
         var credentialsButton = axTextField.childAtIndex(1);
         debug("Credentials button role: " + credentialsButton.role);
         debug("Credentials button label: " + credentialsButton.description);
+        debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
 
         debug("Post auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
     }
