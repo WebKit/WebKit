@@ -46,6 +46,7 @@ class PaymentMethod;
 class URL;
 }
 
+OBJC_CLASS NSObject;
 OBJC_CLASS NSWindow;
 OBJC_CLASS PKPaymentAuthorizationViewController;
 OBJC_CLASS WKPaymentAuthorizationViewControllerDelegate;
@@ -143,6 +144,7 @@ private:
 #if PLATFORM(MAC)
     uint64_t m_showPaymentUIRequestSeed { 0 };
     RetainPtr<NSWindow> m_sheetWindow;
+    RetainPtr<NSObject *> m_sheetWindowWillCloseObserver;
 #endif
 };
 
