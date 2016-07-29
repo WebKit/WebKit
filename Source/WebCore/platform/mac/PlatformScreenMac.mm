@@ -143,11 +143,10 @@ bool screenSupportsExtendedColor(Widget* widget)
     if (!widget)
         return false;
 
-    auto colorSpace = screen(widget).colorSpace.CGColorSpace;
-
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    return CGColorSpaceIsWideGamutRGB(colorSpace);
+    return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
 #else
+    auto colorSpace = screen(widget).colorSpace.CGColorSpace;
     auto iccData = adoptCF(CGColorSpaceCopyICCProfile(colorSpace));
     auto profile = adoptCF(ColorSyncProfileCreate(iccData.get(), nullptr));
     return profile && ColorSyncProfileIsWideGamut(profile.get());
