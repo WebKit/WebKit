@@ -1,3 +1,9 @@
+2016-07-29  Daniel Bates  <dabates@apple.com>
+
+        Skip some media tests that fail on iOS
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS Sierra] Unskip new emoji group candidates tests

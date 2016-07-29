@@ -3149,3 +3149,8 @@ media/video-trackmenu-selection.html [ Failure ]
 media/video-volume.html [ Failure ]
 
 media/track/track-in-band-legacy-api.html [ Failure ]
+media/track/video-track-alternate-groups.html [ Failure ]
+
+media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Failure ]
+
+media/video-seek-to-current-time.html [ Failure ]
