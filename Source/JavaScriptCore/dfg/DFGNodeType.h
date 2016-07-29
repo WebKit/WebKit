@@ -239,7 +239,7 @@ namespace JSC { namespace DFG {
     macro(CheckNotEmpty, NodeMustGenerate) \
     macro(CheckBadCell, NodeMustGenerate) \
     macro(CheckInBounds, NodeMustGenerate) \
-    macro(CheckIdent, NodeMustGenerate) \
+    macro(CheckStringIdent, NodeMustGenerate) \
     macro(CheckTypeInfoFlags, NodeMustGenerate) /* Takes an OpInfo with the flags you want to test are set */\
     \
     /* Optimizations for array mutation. */\

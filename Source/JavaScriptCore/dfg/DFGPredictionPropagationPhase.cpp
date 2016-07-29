@@ -1045,7 +1045,7 @@ private:
         case CheckStructure:
         case CheckCell:
         case CheckNotEmpty:
-        case CheckIdent:
+        case CheckStringIdent:
         case CheckBadCell:
         case PutStructure:
         case Phantom:

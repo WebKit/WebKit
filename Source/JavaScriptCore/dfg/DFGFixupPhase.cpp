@@ -1214,12 +1214,8 @@ private:
             break;
         }
 
-        case CheckIdent: {
-            UniquedStringImpl* uid = node->uidOperand();
-            if (uid->isSymbol())
-                fixEdge<SymbolUse>(node->child1());
-            else
-                fixEdge<StringIdentUse>(node->child1());
+        case CheckStringIdent: {
+            fixEdge<StringIdentUse>(node->child1());
             break;
         }
             

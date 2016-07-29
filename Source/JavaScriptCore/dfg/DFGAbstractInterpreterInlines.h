@@ -1398,7 +1398,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
 
             if (node->op() == CompareEq && leftConst.isSymbol() && rightConst.isSymbol()) {
-                setConstant(node, jsBoolean(asSymbol(leftConst)->privateName() == asSymbol(rightConst)->privateName()));
+                setConstant(node, jsBoolean(asSymbol(leftConst) == asSymbol(rightConst)));
                 break;
             }
         }
@@ -2626,29 +2626,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case CheckIdent: {
+    case CheckStringIdent: {
         AbstractValue& value = forNode(node->child1());
         UniquedStringImpl* uid = node->uidOperand();
-        ASSERT(uid->isSymbol() ? !(value.m_type & ~SpecSymbol) : !(value.m_type & ~SpecStringIdent)); // Edge filtering should have already ensured this.
+        ASSERT(!(value.m_type & ~SpecStringIdent)); // Edge filtering should have already ensured this.
 
         JSValue childConstant = value.value();
         if (childConstant) {
-            if (uid->isSymbol()) {
-                ASSERT(childConstant.isSymbol());
-                if (asSymbol(childConstant)->privateName().uid() == uid) {
-                    m_state.setFoundConstants(true);
-                    break;
-                }
-            } else {
-                ASSERT(childConstant.isString());
-                if (asString(childConstant)->tryGetValueImpl() == uid) {
-                    m_state.setFoundConstants(true);
-                    break;
-                }
+            ASSERT(childConstant.isString());
+            if (asString(childConstant)->tryGetValueImpl() == uid) {
+                m_state.setFoundConstants(true);
+                break;
             }
         }
 
-        filter(value, uid->isSymbol() ? SpecSymbol : SpecStringIdent);
+        filter(value, SpecStringIdent);
         break;
     }
 

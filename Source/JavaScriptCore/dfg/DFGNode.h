@@ -1519,7 +1519,7 @@ public:
 
     bool hasUidOperand()
     {
-        return op() == CheckIdent;
+        return op() == CheckStringIdent;
     }
 
     UniquedStringImpl* uidOperand()

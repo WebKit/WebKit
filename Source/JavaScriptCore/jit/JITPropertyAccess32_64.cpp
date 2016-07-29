@@ -279,7 +279,7 @@ JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
     return slowCases;
 }
 
-JITGetByIdGenerator JIT::emitGetByValWithCachedId(Instruction* currentInstruction, const Identifier& propertyName, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases)
+JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, Instruction* currentInstruction, const Identifier& propertyName, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases)
 {
     int dst = currentInstruction[1].u.operand;
 
@@ -288,7 +288,7 @@ JITGetByIdGenerator JIT::emitGetByValWithCachedId(Instruction* currentInstructio
     // scratch: regT4
 
     slowCases.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::CellTag)));
-    emitIdentifierCheck(regT2, regT4, propertyName, slowCases);
+    emitByValIdentifierCheck(byValInfo, regT2, regT4, propertyName, slowCases);
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::stubUnavailableRegisters(),
@@ -485,7 +485,7 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
     return slowCases;
 }
 
-JITPutByIdGenerator JIT::emitPutByValWithCachedId(Instruction* currentInstruction, PutKind putKind, const Identifier& propertyName, JumpList& doneCases, JumpList& slowCases)
+JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Instruction* currentInstruction, PutKind putKind, const Identifier& propertyName, JumpList& doneCases, JumpList& slowCases)
 {
     // base: tag(regT1), payload(regT0)
     // property: tag(regT3), payload(regT2)
@@ -494,7 +494,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Instruction* currentInstructio
     int value = currentInstruction[3].u.operand;
 
     slowCases.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::CellTag)));
-    emitIdentifierCheck(regT2, regT2, propertyName, slowCases);
+    emitByValIdentifierCheck(byValInfo, regT2, regT2, propertyName, slowCases);
 
     // Write barrier breaks the registers. So after issuing the write barrier,
     // reload the registers.

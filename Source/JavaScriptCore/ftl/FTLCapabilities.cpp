@@ -128,7 +128,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckCell:
     case CheckBadCell:
     case CheckNotEmpty:
-    case CheckIdent:
+    case CheckStringIdent:
     case CheckWatchdogTimer:
     case StringCharCodeAt:
     case StringFromCharCode:

@@ -225,7 +225,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckCell:
     case CheckBadCell:
     case CheckNotEmpty:
-    case CheckIdent:
+    case CheckStringIdent:
     case RegExpExec:
     case RegExpTest:
     case CompareLess:

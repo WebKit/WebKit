@@ -102,8 +102,7 @@ namespace JSC { namespace FTL {
     macro(Structure_classInfo, Structure::classInfoOffset()) \
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
     macro(Structure_prototype, Structure::prototypeOffset()) \
-    macro(Structure_structureID, Structure::structureIDOffset()) \
-    macro(Symbol_privateName, Symbol::offsetOfPrivateName())
+    macro(Structure_structureID, Structure::structureIDOffset())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(DirectArguments_storage, DirectArguments::storageOffset(), sizeof(EncodedJSValue)) \

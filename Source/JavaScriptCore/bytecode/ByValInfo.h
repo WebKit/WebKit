@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+class Symbol;
+
 #if ENABLE(JIT)
 
 class StructureStubInfo;
@@ -232,6 +234,7 @@ struct ByValInfo {
     unsigned slowPathCount;
     RefPtr<JITStubRoutine> stubRoutine;
     Identifier cachedId;
+    WriteBarrier<Symbol> cachedSymbol;
     StructureStubInfo* stubInfo;
     bool tookSlowPath : 1;
     bool seen : 1;

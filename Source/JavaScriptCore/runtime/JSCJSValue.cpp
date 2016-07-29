@@ -252,7 +252,9 @@ void JSValue::dumpInContextAssumingStructure(
             } else
                 out.print(" (unresolved)");
             out.print(": ", impl);
-        } else if (structure->classInfo()->isSubClassOf(Structure::info()))
+        } else if (structure->classInfo()->isSubClassOf(Symbol::info()))
+            out.print("Symbol: ", RawPointer(asCell()));
+        else if (structure->classInfo()->isSubClassOf(Structure::info()))
             out.print("Structure: ", inContext(*jsCast<Structure*>(asCell()), context));
         else {
             out.print("Cell: ", RawPointer(asCell()));

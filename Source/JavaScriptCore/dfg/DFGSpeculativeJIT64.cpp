@@ -1607,6 +1607,24 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     jump(notTaken);
 }
 
+void SpeculativeJIT::compileSymbolUntypedEquality(Node* node, Edge symbolEdge, Edge untypedEdge)
+{
+    SpeculateCellOperand symbol(this, symbolEdge);
+    JSValueOperand untyped(this, untypedEdge);
+    GPRTemporary result(this, Reuse, symbol, untyped);
+
+    GPRReg symbolGPR = symbol.gpr();
+    GPRReg untypedGPR = untyped.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    speculateSymbol(symbolEdge, symbolGPR);
+
+    // At this point we know that we can perform a straight-forward equality comparison on pointer
+    // values because we are doing strict equality.
+    m_jit.compare64(MacroAssembler::Equal, symbolGPR, untypedGPR, resultGPR);
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileInt32Compare(Node* node, MacroAssembler::RelationalCondition condition)
 {
     if (node->child1()->isInt32Constant()) {
@@ -4281,8 +4299,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CheckIdent:
-        compileCheckIdent(node);
+    case CheckStringIdent:
+        compileCheckStringIdent(node);
         break;
 
     case GetExecutable: {

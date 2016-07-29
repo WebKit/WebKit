@@ -252,25 +252,20 @@ private:
                 break;
             }
 
-            case CheckIdent: {
+            case CheckStringIdent: {
                 UniquedStringImpl* uid = node->uidOperand();
                 const UniquedStringImpl* constantUid = nullptr;
 
                 JSValue childConstant = m_state.forNode(node->child1()).value();
                 if (childConstant) {
-                    if (uid->isSymbol()) {
-                        if (childConstant.isSymbol())
-                            constantUid = asSymbol(childConstant)->privateName().uid();
-                    } else {
-                        if (childConstant.isString()) {
-                            if (const auto* impl = asString(childConstant)->tryGetValueImpl()) {
-                                // Edge filtering requires that a value here should be StringIdent.
-                                // However, a constant value propagated in DFG is not filtered.
-                                // So here, we check the propagated value is actually an atomic string.
-                                // And if it's not, we just ignore.
-                                if (impl->isAtomic())
-                                    constantUid = static_cast<const UniquedStringImpl*>(impl);
-                            }
+                    if (childConstant.isString()) {
+                        if (const auto* impl = asString(childConstant)->tryGetValueImpl()) {
+                            // Edge filtering requires that a value here should be StringIdent.
+                            // However, a constant value propagated in DFG is not filtered.
+                            // So here, we check the propagated value is actually an atomic string.
+                            // And if it's not, we just ignore.
+                            if (impl->isAtomic())
+                                constantUid = static_cast<const UniquedStringImpl*>(impl);
                         }
                     }
                 }

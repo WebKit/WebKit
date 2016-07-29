@@ -575,7 +575,7 @@ void JSFunction::setFunctionName(ExecState* exec, JSValue value)
         if (uid->isNullSymbol())
             name = emptyString();
         else
-            name = makeString("[", String(asSymbol(value)->privateName().uid()), ']');
+            name = makeString('[', String(uid), ']');
     } else {
         VM& vm = exec->vm();
         JSString* jsStr = value.toString(exec);

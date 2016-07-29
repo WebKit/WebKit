@@ -1,3 +1,139 @@
+2016-07-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        JSC::Symbol should be hash-consed
+        https://bugs.webkit.org/show_bug.cgi?id=158908
+
+        Reviewed by Filip Pizlo.
+
+        Previously, SymbolImpls held by symbols represent identity of symbols.
+        When we check the equality between symbols, we need to load SymbolImpls of symbols and compare them.
+
+        This patch performs hash-consing onto the symbols. We cache symbols in per-VM's SymbolImpl-keyed WeakGCMap.
+        When creating a new symbol from SymbolImpl, we first query to this map and reuse the previously created symbol
+        if it is found. This ensures that one-on-one correspondence between SymbolImpl and symbol. So now, we can use
+        pointer-comparison to query the equality of symbols.
+
+        This change drops SymbolImpl loads when checking the equality. Furthermore, we can use DFG CheckCell to symbol
+        when we would like to ensure that the given value is the expected symbol. This cleans up GetByVal's symbol-keyd
+        caching. Then, we changed CheckIdent to CheckStringIdent since it only checks the string case now. The symbol
+        case is handled by CheckCell.
+
+        Additionally, this patch also cleans up Map / Set implementation since we can use the logic for JSCell to symbols.
+
+        The performance effects in the related benchmarks are the followings.
+
+                                                               baseline                   patch
+
+            bigswitch-indirect-symbol-or-undefined         85.6214+-1.0063     ^     63.0522+-0.8615        ^ definitely 1.3579x faster
+            bigswitch-indirect-symbol                      84.9653+-0.6258     ^     80.4900+-0.8008        ^ definitely 1.0556x faster
+            fold-put-by-val-with-symbol-to-multi-put-by-offset
+                                                            9.4396+-0.3726            9.2941+-0.3311          might be 1.0157x faster
+            inlined-put-by-val-with-symbol-transition
+                                                           49.5477+-0.2401     ?     49.7533+-0.3369        ?
+            get-by-val-with-symbol-self-or-proto           11.9740+-0.0798     ?     12.1706+-0.2723        ? might be 1.0164x slower
+            get-by-val-with-symbol-quadmorphic-check-structure-elimination-simple
+                                                            4.1364+-0.0841            4.0872+-0.0925          might be 1.0120x faster
+            put-by-val-with-symbol                         11.3709+-0.0223           11.3613+-0.0264
+            get-by-val-with-symbol-proto-or-self           11.8984+-0.0706     ?     11.9030+-0.0787        ?
+            polymorphic-put-by-val-with-symbol             31.4176+-0.0558           31.3825+-0.0447
+            implicit-bigswitch-indirect-symbol             61.3115+-0.6577     ^     58.0098+-0.1212        ^ definitely 1.0569x faster
+            get-by-val-with-symbol-bimorphic-check-structure-elimination-simple
+                                                            3.3139+-0.0565     ^      2.9947+-0.0732        ^ definitely 1.1066x faster
+            get-by-val-with-symbol-chain-from-try-block
+                                                            2.2316+-0.0179            2.2137+-0.0210
+            get-by-val-with-symbol-bimorphic-check-structure-elimination
+                                                           10.6031+-0.2216     ^     10.0939+-0.1977        ^ definitely 1.0504x faster
+            get-by-val-with-symbol-check-structure-elimination
+                                                            8.5576+-0.1521     ^      7.7107+-0.1308        ^ definitely 1.1098x faster
+            put-by-val-with-symbol-slightly-polymorphic
+                                                            3.1957+-0.0538     ^      2.9181+-0.0708        ^ definitely 1.0951x faster
+            put-by-val-with-symbol-replace-and-transition
+                                                           11.8253+-0.0757     ^     11.6590+-0.0351        ^ definitely 1.0143x faster
+
+            <geometric>                                    13.3911+-0.0527     ^     12.7376+-0.0457        ^ definitely 1.0513x faster
+
+        * bytecode/ByValInfo.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasUidOperand):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSymbolEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleSymbolEquality):
+        (JSC::DFG::SpeculativeJIT::compileCheckStringIdent):
+        (JSC::DFG::SpeculativeJIT::extractStringImplFromBinarySymbols): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCheckIdent): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSymbolUntypedEquality): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSymbolUntypedEquality):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSymbolUntypedEquality):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckStringIdent):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckIdent): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::lowSymbolUID): Deleted.
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        (JSC::tryGetByValOptimize):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitByValIdentifierCheck):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        (JSC::JIT::emitIdentifierCheck): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitPutByValWithCachedId):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqualSlowCaseInline): Deleted.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::setFunctionName):
+        * runtime/MapData.h:
+        * runtime/MapDataInlines.h:
+        (JSC::JSIterator>::clear): Deleted.
+        (JSC::JSIterator>::find): Deleted.
+        (JSC::JSIterator>::add): Deleted.
+        (JSC::JSIterator>::remove): Deleted.
+        (JSC::JSIterator>::replaceAndPackBackingStore): Deleted.
+        * runtime/Symbol.cpp:
+        (JSC::Symbol::finishCreation):
+        (JSC::Symbol::create):
+        * runtime/Symbol.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tests/stress/symbol-equality-over-gc.js: Added.
+        (shouldBe):
+        (test):
+
 2016-07-28  Mark Lam  <mark.lam@apple.com>
 
         ASSERTION FAILED in errorProtoFuncToString() when Error name is a single char string.

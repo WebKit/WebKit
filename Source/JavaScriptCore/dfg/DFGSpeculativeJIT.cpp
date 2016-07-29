@@ -5310,50 +5310,44 @@ void SpeculativeJIT::compileBooleanCompare(Node* node, MacroAssembler::Relationa
     unblessedBooleanResult(result.gpr(), node);
 }
 
-template<typename Functor>
-void SpeculativeJIT::extractStringImplFromBinarySymbols(Edge leftSymbolEdge, Edge rightSymbolEdge, const Functor& functor)
+void SpeculativeJIT::compileSymbolEquality(Node* node)
 {
-    SpeculateCellOperand left(this, leftSymbolEdge);
-    SpeculateCellOperand right(this, rightSymbolEdge);
-    GPRTemporary leftTemp(this);
-    GPRTemporary rightTemp(this);
+    SpeculateCellOperand left(this, node->child1());
+    SpeculateCellOperand right(this, node->child2());
+    GPRTemporary result(this, Reuse, left, right);
 
     GPRReg leftGPR = left.gpr();
     GPRReg rightGPR = right.gpr();
-    GPRReg leftTempGPR = leftTemp.gpr();
-    GPRReg rightTempGPR = rightTemp.gpr();
+    GPRReg resultGPR = result.gpr();
 
-    speculateSymbol(leftSymbolEdge, leftGPR);
-    speculateSymbol(rightSymbolEdge, rightGPR);
+    speculateSymbol(node->child1(), leftGPR);
+    speculateSymbol(node->child2(), rightGPR);
 
-    m_jit.loadPtr(JITCompiler::Address(leftGPR, Symbol::offsetOfPrivateName()), leftTempGPR);
-    m_jit.loadPtr(JITCompiler::Address(rightGPR, Symbol::offsetOfPrivateName()), rightTempGPR);
-
-    functor(leftTempGPR, rightTempGPR);
-}
-
-void SpeculativeJIT::compileSymbolEquality(Node* node)
-{
-    extractStringImplFromBinarySymbols(node->child1(), node->child2(), [&] (GPRReg leftStringImpl, GPRReg rightStringImpl) {
-        m_jit.comparePtr(JITCompiler::Equal, leftStringImpl, rightStringImpl, leftStringImpl);
-        unblessedBooleanResult(leftStringImpl, node);
-    });
+    m_jit.comparePtr(JITCompiler::Equal, leftGPR, rightGPR, resultGPR);
+    unblessedBooleanResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compilePeepHoleSymbolEquality(Node* node, Node* branchNode)
 {
+    SpeculateCellOperand left(this, node->child1());
+    SpeculateCellOperand right(this, node->child2());
+
+    GPRReg leftGPR = left.gpr();
+    GPRReg rightGPR = right.gpr();
+
+    speculateSymbol(node->child1(), leftGPR);
+    speculateSymbol(node->child2(), rightGPR);
+
     BasicBlock* taken = branchNode->branchData()->taken.block;
     BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
 
-    extractStringImplFromBinarySymbols(node->child1(), node->child2(), [&] (GPRReg leftStringImpl, GPRReg rightStringImpl) {
-        if (taken == nextBlock()) {
-            branchPtr(JITCompiler::NotEqual, leftStringImpl, rightStringImpl, notTaken);
-            jump(taken);
-        } else {
-            branchPtr(JITCompiler::Equal, leftStringImpl, rightStringImpl, taken);
-            jump(notTaken);
-        }
-    });
+    if (taken == nextBlock()) {
+        branchPtr(JITCompiler::NotEqual, leftGPR, rightGPR, notTaken);
+        jump(taken);
+    } else {
+        branchPtr(JITCompiler::Equal, leftGPR, rightGPR, taken);
+        jump(notTaken);
+    }
 }
 
 void SpeculativeJIT::compileStringEquality(
@@ -5997,28 +5991,21 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
     } }
 }
 
-void SpeculativeJIT::compileCheckIdent(Node* node)
+void SpeculativeJIT::compileCheckStringIdent(Node* node)
 {
-    SpeculateCellOperand operand(this, node->child1());
+    SpeculateCellOperand string(this, node->child1());
+    GPRTemporary storage(this);
+
+    GPRReg stringGPR = string.gpr();
+    GPRReg storageGPR = storage.gpr();
+
+    speculateString(node->child1(), stringGPR);
+    speculateStringIdentAndLoadStorage(node->child1(), stringGPR, storageGPR);
+
     UniquedStringImpl* uid = node->uidOperand();
-    if (uid->isSymbol()) {
-        speculateSymbol(node->child1(), operand.gpr());
-        speculationCheck(
-            BadIdent, JSValueSource(), nullptr,
-            m_jit.branchPtr(
-                JITCompiler::NotEqual,
-                JITCompiler::Address(operand.gpr(), Symbol::offsetOfPrivateName()),
-                TrustedImmPtr(uid)));
-    } else {
-        speculateString(node->child1(), operand.gpr());
-        speculateStringIdent(node->child1(), operand.gpr());
-        speculationCheck(
-            BadIdent, JSValueSource(), nullptr,
-            m_jit.branchPtr(
-                JITCompiler::NotEqual,
-                JITCompiler::Address(operand.gpr(), JSString::offsetOfValue()),
-                TrustedImmPtr(uid)));
-    }
+    speculationCheck(
+        BadIdent, JSValueSource(), nullptr,
+        m_jit.branchPtr(JITCompiler::NotEqual, storageGPR, TrustedImmPtr(uid)));
     noResult(node);
 }
 
@@ -8318,36 +8305,6 @@ void SpeculativeJIT::compileCompareEqPtr(Node* node)
     m_jit.boxBooleanPayload(true, resultGPR);
     notEqual.link(&m_jit);
     blessedBooleanResult(resultGPR, node);
-}
-
-void SpeculativeJIT::compileSymbolUntypedEquality(Node* node, Edge symbolEdge, Edge untypedEdge)
-{
-    SpeculateCellOperand symbol(this, symbolEdge);
-    JSValueOperand untyped(this, untypedEdge);
-    GPRTemporary leftTemp(this);
-    GPRTemporary rightTemp(this);
-    
-    GPRReg symbolGPR = symbol.gpr();
-    JSValueRegs untypedRegs = untyped.jsValueRegs();
-    GPRReg leftTempGPR = leftTemp.gpr();
-    GPRReg rightTempGPR = rightTemp.gpr();
-    
-    speculateSymbol(symbolEdge, symbolGPR);
-    
-    JITCompiler::Jump notCell = m_jit.branchIfNotCell(untypedRegs);
-    JITCompiler::Jump isSymbol = m_jit.branchIfSymbol(untypedRegs.payloadGPR());
-    
-    notCell.link(&m_jit);
-    m_jit.move(TrustedImm32(0), leftTempGPR);
-    JITCompiler::Jump done = m_jit.jump();
-    
-    isSymbol.link(&m_jit);
-    m_jit.loadPtr(JITCompiler::Address(symbolGPR, Symbol::offsetOfPrivateName()), leftTempGPR);
-    m_jit.loadPtr(JITCompiler::Address(untypedRegs.payloadGPR(), Symbol::offsetOfPrivateName()), rightTempGPR);
-    m_jit.comparePtr(JITCompiler::Equal, leftTempGPR, rightTempGPR, leftTempGPR);
-    
-    done.link(&m_jit);
-    unblessedBooleanResult(leftTempGPR, node);
 }
 
 } } // namespace JSC::DFG

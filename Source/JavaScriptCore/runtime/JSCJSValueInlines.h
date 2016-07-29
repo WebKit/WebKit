@@ -941,7 +941,7 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
         bool sym2 = v2.isSymbol();
         if (sym1 || sym2) {
             if (sym1 && sym2)
-                return asSymbol(v1)->privateName() == asSymbol(v2)->privateName();
+                return asSymbol(v1) == asSymbol(v2);
             return false;
         }
 
@@ -970,9 +970,6 @@ ALWAYS_INLINE bool JSValue::strictEqualSlowCaseInline(ExecState* exec, JSValue v
 
     if (v1.asCell()->isString() && v2.asCell()->isString())
         return WTF::equal(*asString(v1)->value(exec).impl(), *asString(v2)->value(exec).impl());
-    if (v1.asCell()->isSymbol() && v2.asCell()->isSymbol())
-        return asSymbol(v1)->privateName() == asSymbol(v2)->privateName();
-
     return v1 == v2;
 }
 

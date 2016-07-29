@@ -2348,8 +2348,6 @@ public:
     void compileStringZeroLength(Node*);
     void compileMiscStrictEq(Node*);
 
-    template<typename Functor>
-    void extractStringImplFromBinarySymbols(Edge leftSymbolEdge, Edge rightSymbolEdge, const Functor&);
     void compileSymbolEquality(Node*);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
     void compileSymbolUntypedEquality(Node*, Edge symbolEdge, Edge untypedEdge);
@@ -2436,7 +2434,7 @@ public:
     void compileGetArrayLength(Node*);
 
     void compileCheckTypeInfoFlags(Node*);
-    void compileCheckIdent(Node*);
+    void compileCheckStringIdent(Node*);
     
     void compileValueRep(Node*);
     void compileDoubleRep(Node*);

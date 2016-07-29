@@ -612,7 +612,7 @@ static OptimizationResult tryPutByValOptimize(ExecState* exec, JSValue baseValue
 
     if (baseValue.isObject() && isStringOrSymbol(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(exec);
-        if (!subscript.isString() || !parseIndex(propertyName)) {
+        if (subscript.isSymbol() || !parseIndex(propertyName)) {
             ASSERT(exec->bytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
@@ -624,8 +624,12 @@ static OptimizationResult tryPutByValOptimize(ExecState* exec, JSValue baseValue
                     optimizationResult = OptimizationResult::GiveUp;
                 }
             } else {
+                CodeBlock* codeBlock = exec->codeBlock();
+                ConcurrentJITLocker locker(codeBlock->m_lock);
                 byValInfo->seen = true;
                 byValInfo->cachedId = propertyName;
+                if (subscript.isSymbol())
+                    byValInfo->cachedSymbol.set(vm, codeBlock, asSymbol(subscript));
                 optimizationResult = OptimizationResult::SeenOnce;
             }
         }
@@ -690,9 +694,7 @@ static OptimizationResult tryDirectPutByValOptimize(ExecState* exec, JSObject* o
             optimizationResult = OptimizationResult::GiveUp;
     } else if (isStringOrSymbol(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(exec);
-        Optional<uint32_t> index = parseIndex(propertyName);
-
-        if (!subscript.isString() || !index) {
+        if (subscript.isSymbol() || !parseIndex(propertyName)) {
             ASSERT(exec->bytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
@@ -704,8 +706,12 @@ static OptimizationResult tryDirectPutByValOptimize(ExecState* exec, JSObject* o
                     optimizationResult = OptimizationResult::GiveUp;
                 }
             } else {
+                CodeBlock* codeBlock = exec->codeBlock();
+                ConcurrentJITLocker locker(codeBlock->m_lock);
                 byValInfo->seen = true;
                 byValInfo->cachedId = propertyName;
+                if (subscript.isSymbol())
+                    byValInfo->cachedSymbol.set(vm, codeBlock, asSymbol(subscript));
                 optimizationResult = OptimizationResult::SeenOnce;
             }
         }
@@ -1686,7 +1692,7 @@ static OptimizationResult tryGetByValOptimize(ExecState* exec, JSValue baseValue
 
     if (baseValue.isObject() && isStringOrSymbol(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(exec);
-        if (!subscript.isString() || !parseIndex(propertyName)) {
+        if (subscript.isSymbol() || !parseIndex(propertyName)) {
             ASSERT(exec->bytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
@@ -1698,11 +1704,14 @@ static OptimizationResult tryGetByValOptimize(ExecState* exec, JSValue baseValue
                     optimizationResult = OptimizationResult::GiveUp;
                 }
             } else {
+                CodeBlock* codeBlock = exec->codeBlock();
+                ConcurrentJITLocker locker(codeBlock->m_lock);
                 byValInfo->seen = true;
                 byValInfo->cachedId = propertyName;
+                if (subscript.isSymbol())
+                    byValInfo->cachedSymbol.set(vm, codeBlock, asSymbol(subscript));
                 optimizationResult = OptimizationResult::SeenOnce;
             }
-
         }
     }
 

@@ -108,6 +108,7 @@ class Structure;
 #if ENABLE(REGEXP_TRACING)
 class RegExp;
 #endif
+class Symbol;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
 class UnlinkedFunctionExecutable;
@@ -335,6 +336,8 @@ public:
 
     AtomicStringTable* atomicStringTable() const { return m_atomicStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
+
+    WeakGCMap<SymbolImpl*, Symbol, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
 
     enum class DeletePropertyMode {
         // Default behaviour of deleteProperty, matching the spec.

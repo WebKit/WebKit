@@ -209,7 +209,7 @@ JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
     return slowCases;
 }
 
-JITGetByIdGenerator JIT::emitGetByValWithCachedId(Instruction* currentInstruction, const Identifier& propertyName, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases)
+JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, Instruction* currentInstruction, const Identifier& propertyName, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases)
 {
     // base: regT0
     // property: regT1
@@ -218,7 +218,7 @@ JITGetByIdGenerator JIT::emitGetByValWithCachedId(Instruction* currentInstructio
     int dst = currentInstruction[1].u.operand;
 
     slowCases.append(emitJumpIfNotJSCell(regT1));
-    emitIdentifierCheck(regT1, regT3, propertyName, slowCases);
+    emitByValIdentifierCheck(byValInfo, regT1, regT3, propertyName, slowCases);
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
@@ -428,7 +428,7 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
     return slowCases;
 }
 
-JITPutByIdGenerator JIT::emitPutByValWithCachedId(Instruction* currentInstruction, PutKind putKind, const Identifier& propertyName, JumpList& doneCases, JumpList& slowCases)
+JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Instruction* currentInstruction, PutKind putKind, const Identifier& propertyName, JumpList& doneCases, JumpList& slowCases)
 {
     // base: regT0
     // property: regT1
@@ -438,7 +438,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Instruction* currentInstructio
     int value = currentInstruction[3].u.operand;
 
     slowCases.append(emitJumpIfNotJSCell(regT1));
-    emitIdentifierCheck(regT1, regT1, propertyName, slowCases);
+    emitByValIdentifierCheck(byValInfo, regT1, regT1, propertyName, slowCases);
 
     // Write barrier breaks the registers. So after issuing the write barrier,
     // reload the registers.
@@ -1253,16 +1253,15 @@ void JIT::emitWriteBarrier(JSCell* owner)
         callOperation(operationUnconditionalWriteBarrier, owner);
 }
 
-void JIT::emitIdentifierCheck(RegisterID cell, RegisterID scratch, const Identifier& propertyName, JumpList& slowCases)
+void JIT::emitByValIdentifierCheck(ByValInfo* byValInfo, RegisterID cell, RegisterID scratch, const Identifier& propertyName, JumpList& slowCases)
 {
-    if (propertyName.isSymbol()) {
-        slowCases.append(branchStructure(NotEqual, Address(cell, JSCell::structureIDOffset()), m_vm->symbolStructure.get()));
-        loadPtr(Address(cell, Symbol::offsetOfPrivateName()), scratch);
-    } else {
+    if (propertyName.isSymbol())
+        slowCases.append(branchPtr(NotEqual, cell, TrustedImmPtr(byValInfo->cachedSymbol.get())));
+    else {
         slowCases.append(branchStructure(NotEqual, Address(cell, JSCell::structureIDOffset()), m_vm->stringStructure.get()));
         loadPtr(Address(cell, JSString::offsetOfValue()), scratch);
+        slowCases.append(branchPtr(NotEqual, scratch, TrustedImmPtr(propertyName.impl())));
     }
-    slowCases.append(branchPtr(NotEqual, scratch, TrustedImmPtr(propertyName.impl())));
 }
 
 void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
@@ -1325,7 +1324,7 @@ void JIT::privateCompileGetByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     Jump slowDoneCase;
     JumpList slowCases;
 
-    JITGetByIdGenerator gen = emitGetByValWithCachedId(currentInstruction, propertyName, fastDoneCase, slowDoneCase, slowCases);
+    JITGetByIdGenerator gen = emitGetByValWithCachedId(byValInfo, currentInstruction, propertyName, fastDoneCase, slowDoneCase, slowCases);
 
     ConcurrentJITLocker locker(m_codeBlock->m_lock);
     LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock);
@@ -1414,7 +1413,7 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     JumpList doneCases;
     JumpList slowCases;
 
-    JITPutByIdGenerator gen = emitPutByValWithCachedId(currentInstruction, putKind, propertyName, doneCases, slowCases);
+    JITPutByIdGenerator gen = emitPutByValWithCachedId(byValInfo, currentInstruction, putKind, propertyName, doneCases, slowCases);
 
     ConcurrentJITLocker locker(m_codeBlock->m_lock);
     LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock);

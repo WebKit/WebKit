@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #ifndef Symbol_h
 #define Symbol_h
 
-#include "JSCell.h"
 #include "JSString.h"
 #include "PrivateName.h"
 
@@ -48,28 +47,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(SymbolType, StructureFlags), info());
     }
 
-    static Symbol* create(VM& vm)
-    {
-        Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm);
-        symbol->finishCreation(vm);
-        return symbol;
-    }
-
-    static Symbol* create(ExecState* exec, JSString* description)
-    {
-        VM& vm = exec->vm();
-        String desc = description->value(exec);
-        Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm, desc);
-        symbol->finishCreation(vm);
-        return symbol;
-    }
-
-    static Symbol* create(VM& vm, SymbolImpl& uid)
-    {
-        Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm, uid);
-        symbol->finishCreation(vm);
-        return symbol;
-    }
+    static Symbol* create(VM&);
+    static Symbol* create(ExecState*, JSString* description);
+    static Symbol* create(VM&, SymbolImpl& uid);
 
     const PrivateName& privateName() const { return m_privateName; }
     String descriptiveString() const;
@@ -79,8 +59,6 @@ public:
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
     double toNumber(ExecState*) const;
 
-    static size_t offsetOfPrivateName() { return OBJECT_OFFSETOF(Symbol, m_privateName); }
-
 protected:
     static void destroy(JSCell*);
 
@@ -88,11 +66,7 @@ protected:
     Symbol(VM&, const String&);
     Symbol(VM&, SymbolImpl& uid);
 
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
+    void finishCreation(VM&);
 
     PrivateName m_privateName;
 };

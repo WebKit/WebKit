@@ -43,7 +43,6 @@ inline void MapDataImpl<Entry, JSIterator>::clear()
     m_cellKeyedTable.clear();
     m_valueKeyedTable.clear();
     m_stringKeyedTable.clear();
-    m_symbolKeyedTable.clear();
     m_capacity = 0;
     m_size = 0;
     m_deletedCount = 0;
@@ -59,12 +58,6 @@ inline Entry* MapDataImpl<Entry, JSIterator>::find(ExecState* exec, KeyType key)
     if (key.value.isString()) {
         auto iter = m_stringKeyedTable.find(asString(key.value)->value(exec).impl());
         if (iter == m_stringKeyedTable.end())
-            return 0;
-        return &m_entries.get()[iter->value];
-    }
-    if (key.value.isSymbol()) {
-        auto iter = m_symbolKeyedTable.find(asSymbol(key.value)->privateName().uid());
-        if (iter == m_symbolKeyedTable.end())
             return 0;
         return &m_entries.get()[iter->value];
     }
@@ -120,8 +113,6 @@ inline Entry* MapDataImpl<Entry, JSIterator>::add(ExecState* exec, JSCell* owner
 {
     if (key.value.isString())
         return add(exec, owner, m_stringKeyedTable, asString(key.value)->value(exec).impl(), key);
-    if (key.value.isSymbol())
-        return add(exec, owner, m_symbolKeyedTable, asSymbol(key.value)->privateName().uid(), key);
     if (key.value.isCell())
         return add(exec, owner, m_cellKeyedTable, key.value.asCell(), key);
     return add(exec, owner, m_valueKeyedTable, JSValue::encode(key.value), key);
@@ -145,12 +136,6 @@ inline bool MapDataImpl<Entry, JSIterator>::remove(ExecState* exec, KeyType key)
             return false;
         location = iter->value;
         m_stringKeyedTable.remove(iter);
-    }  else if (key.value.isSymbol()) {
-        auto iter = m_symbolKeyedTable.find(asSymbol(key.value)->privateName().uid());
-        if (iter == m_symbolKeyedTable.end())
-            return false;
-        location = iter->value;
-        m_symbolKeyedTable.remove(iter);
     } else if (key.value.isCell()) {
         auto iter = m_cellKeyedTable.find(key.value.asCell());
         if (iter == m_cellKeyedTable.end())
@@ -199,8 +184,6 @@ inline void MapDataImpl<Entry, JSIterator>::replaceAndPackBackingStore(Entry* de
     for (auto ptr = m_cellKeyedTable.begin(); ptr != m_cellKeyedTable.end(); ++ptr)
         ptr->value = m_entries.get()[ptr->value].key().get().asInt32();
     for (auto ptr = m_stringKeyedTable.begin(); ptr != m_stringKeyedTable.end(); ++ptr)
-        ptr->value = m_entries.get()[ptr->value].key().get().asInt32();
-    for (auto ptr = m_symbolKeyedTable.begin(); ptr != m_symbolKeyedTable.end(); ++ptr)
         ptr->value = m_entries.get()[ptr->value].key().get().asInt32();
 
     ASSERT((m_size - newEnd) == m_deletedCount);

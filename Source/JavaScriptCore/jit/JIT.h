@@ -395,10 +395,10 @@ namespace JSC {
         JumpList emitFloatTypedArrayPutByVal(Instruction*, PatchableJump& badType, TypedArrayType);
 
         // Identifier check helper for GetByVal and PutByVal.
-        void emitIdentifierCheck(RegisterID cell, RegisterID scratch, const Identifier&, JumpList& slowCases);
+        void emitByValIdentifierCheck(ByValInfo*, RegisterID cell, RegisterID scratch, const Identifier&, JumpList& slowCases);
 
-        JITGetByIdGenerator emitGetByValWithCachedId(Instruction*, const Identifier&, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases);
-        JITPutByIdGenerator emitPutByValWithCachedId(Instruction*, PutKind, const Identifier&, JumpList& doneCases, JumpList& slowCases);
+        JITGetByIdGenerator emitGetByValWithCachedId(ByValInfo*, Instruction*, const Identifier&, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases);
+        JITPutByIdGenerator emitPutByValWithCachedId(ByValInfo*, Instruction*, PutKind, const Identifier&, JumpList& doneCases, JumpList& slowCases);
 
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 
