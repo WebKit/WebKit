@@ -27,56 +27,18 @@
 #include "config.h"
 #include "WebProcess.h"
 
-#include "CertificateInfo.h"
-#include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
-#include <WebCore/FileSystem.h>
-#include <WebCore/Language.h>
 #include <WebCore/MemoryCache.h>
-#include <WebCore/PageCache.h>
-#include <WebCore/ResourceHandle.h>
-#include <WebCore/SoupNetworkSession.h>
-#include <libsoup/soup.h>
-#include <wtf/RAMSize.h>
-#include <wtf/glib/GRefPtr.h>
-#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
-    unsigned cacheTotalCapacity = 0;
-    unsigned cacheMinDeadCapacity = 0;
-    unsigned cacheMaxDeadCapacity = 0;
-    auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
-    unsigned pageCacheSize = 0;
-
-    unsigned long urlCacheMemoryCapacity = 0;
-    unsigned long urlCacheDiskCapacity = 0;
-
-    uint64_t diskFreeSize = 0;
-
-    uint64_t memSize = WTF::ramSize() / WTF::MB;
-    calculateCacheSizes(cacheModel, memSize, diskFreeSize,
-                        cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
-                        pageCacheSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
-
-    auto& memoryCache = WebCore::MemoryCache::singleton();
-    memoryCache.setDisabled(cacheModel == CacheModelDocumentViewer);
-    memoryCache.setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
-    memoryCache.setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    WebCore::PageCache::singleton().setMaxSize(pageCacheSize);
-
-#if PLATFORM(GTK)
-    WebCore::PageCache::singleton().setShouldClearBackingStores(true);
-#endif
+    // FIXME: this is no longer soup specific, this file should be renamed.
+    WebCore::MemoryCache::singleton().setDisabled(cacheModel == CacheModelDocumentViewer);
 }
 
-void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear)
-{
-}
-
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& parameters)
+void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&&)
 {
 }
 

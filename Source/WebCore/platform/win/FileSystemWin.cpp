@@ -447,4 +447,10 @@ Vector<String> listDirectory(const String& directory, const String& filter)
     return entries;
 }
 
+bool getVolumeFreeSpace(const String&, uint64_t&)
+{
+    notImplemented();
+    return false;
+}
+
 } // namespace WebCore

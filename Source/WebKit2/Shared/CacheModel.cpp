@@ -27,13 +27,15 @@
 #include "CacheModel.h"
 
 #include <algorithm>
+#include <wtf/RAMSize.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
-void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t diskFreeSize,
-    unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, std::chrono::seconds& deadDecodedDataDeletionInterval,
-    unsigned& pageCacheCapacity, unsigned long& urlCacheMemoryCapacity, unsigned long& urlCacheDiskCapacity)
+void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, std::chrono::seconds& deadDecodedDataDeletionInterval, unsigned& pageCacheCapacity)
 {
+    uint64_t memorySize = ramSize() / MB;
+
     switch (cacheModel) {
     case CacheModelDocumentViewer: {
         // Page cache capacity (in pages)
@@ -41,22 +43,16 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
 
         // Object cache capacities (in bytes)
         if (memorySize >= 2048)
-            cacheTotalCapacity = 96 * 1024 * 1024;
+            cacheTotalCapacity = 96 * MB;
         else if (memorySize >= 1536)
-            cacheTotalCapacity = 64 * 1024 * 1024;
+            cacheTotalCapacity = 64 * MB;
         else if (memorySize >= 1024)
-            cacheTotalCapacity = 32 * 1024 * 1024;
+            cacheTotalCapacity = 32 * MB;
         else if (memorySize >= 512)
-            cacheTotalCapacity = 16 * 1024 * 1024;
+            cacheTotalCapacity = 16 * MB;
 
         cacheMinDeadCapacity = 0;
         cacheMaxDeadCapacity = 0;
-
-        // Foundation memory cache capacity (in bytes)
-        urlCacheMemoryCapacity = 0;
-
-        // Disk cache capacity (in bytes)
-        urlCacheDiskCapacity = 0;
 
         break;
     }
@@ -71,36 +67,16 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
 
         // Object cache capacities (in bytes)
         if (memorySize >= 2048)
-            cacheTotalCapacity = 96 * 1024 * 1024;
+            cacheTotalCapacity = 96 * MB;
         else if (memorySize >= 1536)
-            cacheTotalCapacity = 64 * 1024 * 1024;
+            cacheTotalCapacity = 64 * MB;
         else if (memorySize >= 1024)
-            cacheTotalCapacity = 32 * 1024 * 1024;
+            cacheTotalCapacity = 32 * MB;
         else if (memorySize >= 512)
-            cacheTotalCapacity = 16 * 1024 * 1024;
+            cacheTotalCapacity = 16 * MB;
 
         cacheMinDeadCapacity = cacheTotalCapacity / 8;
         cacheMaxDeadCapacity = cacheTotalCapacity / 4;
-
-        // Foundation memory cache capacity (in bytes)
-        if (memorySize >= 2048)
-            urlCacheMemoryCapacity = 4 * 1024 * 1024;
-        else if (memorySize >= 1024)
-            urlCacheMemoryCapacity = 2 * 1024 * 1024;
-        else if (memorySize >= 512)
-            urlCacheMemoryCapacity = 1 * 1024 * 1024;
-        else
-            urlCacheMemoryCapacity =      512 * 1024; 
-
-        // Disk cache capacity (in bytes)
-        if (diskFreeSize >= 16384)
-            urlCacheDiskCapacity = 75 * 1024 * 1024;
-        else if (diskFreeSize >= 8192)
-            urlCacheDiskCapacity = 40 * 1024 * 1024;
-        else if (diskFreeSize >= 4096)
-            urlCacheDiskCapacity = 30 * 1024 * 1024;
-        else
-            urlCacheDiskCapacity = 20 * 1024 * 1024;
 
         break;
     }
@@ -115,16 +91,16 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
 
         // Object cache capacities (in bytes)
         // (Testing indicates that value / MB depends heavily on content and
-        // browsing pattern. Even growth above 128MB can have substantial 
+        // browsing pattern. Even growth above 128MB can have substantial
         // value / MB for some content / browsing patterns.)
         if (memorySize >= 2048)
-            cacheTotalCapacity = 128 * 1024 * 1024;
+            cacheTotalCapacity = 128 * MB;
         else if (memorySize >= 1536)
-            cacheTotalCapacity = 96 * 1024 * 1024;
+            cacheTotalCapacity = 96 * MB;
         else if (memorySize >= 1024)
-            cacheTotalCapacity = 64 * 1024 * 1024;
+            cacheTotalCapacity = 64 * MB;
         else if (memorySize >= 512)
-            cacheTotalCapacity = 32 * 1024 * 1024;
+            cacheTotalCapacity = 32 * MB;
 
         cacheMinDeadCapacity = cacheTotalCapacity / 4;
         cacheMaxDeadCapacity = cacheTotalCapacity / 2;
@@ -135,37 +111,84 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
 
         deadDecodedDataDeletionInterval = std::chrono::seconds { 60 };
 
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+    };
+}
+
+void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsigned& urlCacheMemoryCapacity, uint64_t& urlCacheDiskCapacity)
+{
+    switch (cacheModel) {
+    case CacheModelDocumentViewer: {
+        // Foundation memory cache capacity (in bytes)
+        urlCacheMemoryCapacity = 0;
+
+        // Disk cache capacity (in bytes)
+        urlCacheDiskCapacity = 0;
+
+        break;
+    }
+    case CacheModelDocumentBrowser: {
+        uint64_t memorySize = ramSize() / MB;
+
+        // Foundation memory cache capacity (in bytes)
+        if (memorySize >= 2048)
+            urlCacheMemoryCapacity = 4 * MB;
+        else if (memorySize >= 1024)
+            urlCacheMemoryCapacity = 2 * MB;
+        else if (memorySize >= 512)
+            urlCacheMemoryCapacity = 1 * MB;
+        else
+            urlCacheMemoryCapacity = 512 * KB;
+
+        // Disk cache capacity (in bytes)
+        if (diskFreeSize >= 16384)
+            urlCacheDiskCapacity = 75 * MB;
+        else if (diskFreeSize >= 8192)
+            urlCacheDiskCapacity = 40 * MB;
+        else if (diskFreeSize >= 4096)
+            urlCacheDiskCapacity = 30 * MB;
+        else
+            urlCacheDiskCapacity = 20 * MB;
+
+        break;
+    }
+    case CacheModelPrimaryWebBrowser: {
+        uint64_t memorySize = ramSize() / MB;
+
 #if PLATFORM(IOS)
         if (memorySize >= 1024)
-            urlCacheMemoryCapacity = 16 * 1024 * 1024;
+            urlCacheMemoryCapacity = 16 * MB;
         else
-            urlCacheMemoryCapacity = 8 * 1024 * 1024;
+            urlCacheMemoryCapacity = 8 * MB;
 #else
         // Foundation memory cache capacity (in bytes)
         // (These values are small because WebCore does most caching itself.)
         if (memorySize >= 1024)
-            urlCacheMemoryCapacity = 4 * 1024 * 1024;
+            urlCacheMemoryCapacity = 4 * MB;
         else if (memorySize >= 512)
-            urlCacheMemoryCapacity = 2 * 1024 * 1024;
+            urlCacheMemoryCapacity = 2 * MB;
         else if (memorySize >= 256)
-            urlCacheMemoryCapacity = 1 * 1024 * 1024;
+            urlCacheMemoryCapacity = 1 * MB;
         else
-            urlCacheMemoryCapacity =      512 * 1024;
+            urlCacheMemoryCapacity = 512 * KB;
 #endif
 
         // Disk cache capacity (in bytes)
         if (diskFreeSize >= 16384)
-            urlCacheDiskCapacity = 500 * 1024 * 1024;
+            urlCacheDiskCapacity = 500 * MB;
         else if (diskFreeSize >= 8192)
-            urlCacheDiskCapacity = 250 * 1024 * 1024;
+            urlCacheDiskCapacity = 250 * MB;
         else if (diskFreeSize >= 4096)
-            urlCacheDiskCapacity = 125 * 1024 * 1024;
+            urlCacheDiskCapacity = 125 * MB;
         else if (diskFreeSize >= 2048)
-            urlCacheDiskCapacity = 100 * 1024 * 1024;
+            urlCacheDiskCapacity = 100 * MB;
         else if (diskFreeSize >= 1024)
-            urlCacheDiskCapacity = 75 * 1024 * 1024;
+            urlCacheDiskCapacity = 75 * MB;
         else
-            urlCacheDiskCapacity = 50 * 1024 * 1024;
+            urlCacheDiskCapacity = 50 * MB;
 
         break;
     }

@@ -48,10 +48,8 @@
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/NSAccessibilitySPI.h>
-#import <WebCore/PageCache.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/pthreadSPI.h>
 #import <WebCore/VNodeTracker.h>
@@ -61,7 +59,6 @@
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
 #import <stdio.h>
-#import <wtf/RAMSize.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/GraphicsServicesSPI.h>
@@ -75,45 +72,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t volumeFreeSize(NSString *path)
+void WebProcess::platformSetCacheModel(CacheModel)
 {
-    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:path error:NULL];
-    return [[fileSystemAttributesDictionary objectForKey:NSFileSystemFreeSize] unsignedLongLongValue];
-}
-
-void WebProcess::platformSetCacheModel(CacheModel cacheModel)
-{
-    RetainPtr<NSString> nsurlCacheDirectory = adoptNS((NSString *)WKCopyFoundationCacheDirectory());
-    if (!nsurlCacheDirectory)
-        nsurlCacheDirectory = NSHomeDirectory();
-
-    uint64_t memSize = ramSize() / 1024 / 1024;
-
-    // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
-    // count doesn't align exactly to a megabyte boundary.
-    uint64_t diskFreeSize = volumeFreeSize(nsurlCacheDirectory.get()) / 1024 / 1000;
-
-    unsigned cacheTotalCapacity = 0;
-    unsigned cacheMinDeadCapacity = 0;
-    unsigned cacheMaxDeadCapacity = 0;
-    auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
-    unsigned pageCacheSize = 0;
-    unsigned long urlCacheMemoryCapacity = 0;
-    unsigned long urlCacheDiskCapacity = 0;
-
-    calculateCacheSizes(cacheModel, memSize, diskFreeSize,
-        cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
-        pageCacheSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
-
-    auto& memoryCache = MemoryCache::singleton();
-    memoryCache.setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
-    memoryCache.setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    PageCache::singleton().setMaxSize(pageCacheSize);
-}
-
-void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear)
-{
-    // FIXME: Remove this.
 }
 
 #if USE(APPKIT)

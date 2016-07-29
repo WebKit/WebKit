@@ -1,5 +1,48 @@
 2016-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Split calculateCacheSizes in two methods
+        https://bugs.webkit.org/show_bug.cgi?id=160237
+
+        Reviewed by Darin Adler.
+
+        It's used to calculate memory and disk cache sizes, but only the web process is interested in memory caches, and
+        the network process in disk cache. We can also avoid a lot of duplicated code between ports to set the cache model.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setCacheModel): Use calculateURLCacheSizes to set the disk cache size and call
+        platformSetURLCacheSize if not set to allow ports to setup platform specific cache.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformSetURLCacheSize): Remove common code that is now in cross-platform file.
+        (WebKit::volumeFreeSize): Deleted.
+        (WebKit::NetworkProcess::platformSetCacheModel): Renamed to platformSetURLCacheSize().
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformSetURLCacheSize): Remove common code that is now in cross-platform file.
+        (WebKit::getCacheDiskFreeSize): Deleted.
+        (WebKit::NetworkProcess::platformSetCacheModel): Renamed to platformSetURLCacheSize().
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateMemoryCacheSizes): Calculate the memory and page cache sizes.
+        (WebKit::calculateURLCacheSizes): Calculate the disk cache size.
+        (WebKit::calculateCacheSizes): Deleted.
+        * Shared/CacheModel.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess): Tell the page cache to clear backing stores for GTK+ port too. This was done before when
+        setting the cache model.
+        (WebKit::WebProcess::setCacheModel): Use calculateMemoryCacheSizes to setup memory caches and call
+        platformSetCacheModel to allow ports do more setup according to the cache model.
+        (WebKit::WebProcess::clearResourceCaches): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformSetCacheModel): Remove common code that is now in cross-platform file.
+        (WebKit::volumeFreeSize): Deleted.
+        (WebKit::WebProcess::platformClearResourceCaches): Deleted.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformSetCacheModel): Remove common code that is now in cross-platform file.
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformClearResourceCaches): Deleted.
+
+2016-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Database Process: ASSERTION FAILED: paths.size() == handles.size() with SANDBOX_EXTENSIONS disabled
         https://bugs.webkit.org/show_bug.cgi?id=160188
 

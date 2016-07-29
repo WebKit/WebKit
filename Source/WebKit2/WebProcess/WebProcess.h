@@ -261,7 +261,6 @@ private:
     void resetPlugInAutoStartOriginHashes(const HashMap<WebCore::SessionID, HashMap<unsigned, double>>& hashes);
 
     void platformSetCacheModel(CacheModel);
-    void platformClearResourceCaches(ResourceCachesToClear);
 
     void setEnhancedAccessibility(bool);
     

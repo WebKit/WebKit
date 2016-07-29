@@ -98,6 +98,15 @@ bool moveFile(const String& oldPath, const String& newPath)
     return [manager moveItemAtURL:[NSURL fileURLWithPath:oldPath] toURL:[NSURL fileURLWithPath:newPath] error:nil];
 }
 
+bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
+{
+    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:(NSString *)path error:NULL];
+    if (!fileSystemAttributesDictionary)
+        return false;
+    freeSpace = [[fileSystemAttributesDictionary objectForKey:NSFileSystemFreeSize] unsignedLongLongValue];
+    return true;
+}
+
 #if !PLATFORM(IOS)
 bool deleteEmptyDirectory(const String& path)
 {

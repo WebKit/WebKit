@@ -538,11 +538,34 @@ void NetworkProcess::setCacheModel(uint32_t cm)
 {
     CacheModel cacheModel = static_cast<CacheModel>(cm);
 
-    if (!m_hasSetCacheModel || cacheModel != m_cacheModel) {
-        m_hasSetCacheModel = true;
-        m_cacheModel = cacheModel;
-        platformSetCacheModel(cacheModel);
+    if (m_hasSetCacheModel && (cacheModel == m_cacheModel))
+        return;
+
+    m_hasSetCacheModel = true;
+    m_cacheModel = cacheModel;
+
+    unsigned urlCacheMemoryCapacity = 0;
+    uint64_t urlCacheDiskCapacity = 0;
+    uint64_t diskFreeSize = 0;
+    if (WebCore::getVolumeFreeSpace(m_diskCacheDirectory, diskFreeSize)) {
+        // As a fudge factor, use 1000 instead of 1024, in case the reported byte
+        // count doesn't align exactly to a megabyte boundary.
+        diskFreeSize /= KB * 1000;
+        calculateURLCacheSizes(cacheModel, diskFreeSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
     }
+
+    if (m_diskCacheSizeOverride >= 0)
+        urlCacheDiskCapacity = m_diskCacheSizeOverride;
+
+#if ENABLE(NETWORK_CACHE)
+    auto& networkCache = NetworkCache::singleton();
+    if (networkCache.isEnabled()) {
+        networkCache.setCapacity(urlCacheDiskCapacity);
+        return;
+    }
+#endif
+
+    platformSetURLCacheSize(urlCacheMemoryCapacity, urlCacheDiskCapacity);
 }
 
 void NetworkProcess::setCanHandleHTTPSServerTrustEvaluation(bool value)
