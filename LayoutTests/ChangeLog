@@ -1,3 +1,10 @@
+2016-07-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove a Sierra specific expectation for http/tests/navigation/forward-and-cancel.html,
+        we already have an identical one in platform/mac.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-07-29  Daniel Bates  <dabates@apple.com>
 
         Skip some media tests that fail on iOS

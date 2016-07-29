@@ -214,9 +214,6 @@ fast/repaint/vertical-text-repaint.html [ Pass Failure ]
 
 webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 
-# <rdar://problem/23421541>
-[ Sierra+ ] http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
-
 # <rdar://problem/23431065>
 [ Sierra+ ] animations/animation-welcome-safari.html [ Pass Failure ]
 
