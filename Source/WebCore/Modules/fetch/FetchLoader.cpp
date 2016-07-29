@@ -78,14 +78,12 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.setSniffContent(DoNotSniffContent);
     options.setDataBufferingPolicy(DoNotBufferData);
     options.preflightPolicy = ConsiderPreflight;
-    options.setAllowCredentials(AllowStoredCredentials);
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     // FIXME: Pass directly all fetch options to loader options.
     options.redirect = request.fetchOptions().redirect;
     options.mode = request.fetchOptions().mode;
-    if (options.mode == FetchOptions::Mode::Cors)
-        options.setAllowCredentials(DoNotAllowStoredCredentials);
+    options.credentials = request.fetchOptions().credentials;
 
     m_loader = ThreadableLoader::create(&context, this, request.internalRequest(), options);
     m_isStarted = m_loader;

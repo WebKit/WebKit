@@ -90,7 +90,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     options.setSniffContent(DoNotSniffContent);
     options.setDataBufferingPolicy(DoNotBufferData);
     options.preflightPolicy = ConsiderPreflight;
-    options.setAllowCredentials(AllowStoredCredentials);
+    options.credentials = FetchOptions::Credentials::Include;
     options.mode = FetchOptions::Mode::SameOrigin;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 

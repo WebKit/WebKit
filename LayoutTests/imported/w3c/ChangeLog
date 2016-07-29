@@ -1,5 +1,21 @@
 2016-07-29  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Activate credentials mode
+        https://bugs.webkit.org/show_bug.cgi?id=160292
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/cors/cors-cookies-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies.js: Fixin otherRemote computation.
+        (corsCookies): ensuring cookie clean-up is done in case of error before going to the next test.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker-expected.txt:
+        * web-platform-tests/fetch/api/credentials/cookies-expected.txt:
+        * web-platform-tests/fetch/api/credentials/cookies-worker-expected.txt:
+
+2016-07-29  Youenn Fablet  <youenn@apple.com>
+
         CrossOrigin preflight checker should compute the right Access-Control-Request-Headers value
         https://bugs.webkit.org/show_bug.cgi?id=160028
 

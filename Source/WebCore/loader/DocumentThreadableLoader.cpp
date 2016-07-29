@@ -96,6 +96,8 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
 
     ASSERT_WITH_SECURITY_IMPLICATION(isAllowedByContentSecurityPolicy(request.url()));
 
+    m_options.setAllowCredentials((m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_sameOriginRequest)) ? AllowStoredCredentials : DoNotAllowStoredCredentials);
+
     if (m_sameOriginRequest || m_options.mode == FetchOptions::Mode::NoCors) {
         loadRequest(request, DoSecurityCheck);
         return;
@@ -370,6 +372,8 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         CachedResourceRequest newRequest(request, options);
         if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
             newRequest.setInitiator(m_options.initiator);
+        newRequest.mutableResourceRequest().setAllowCookies(m_options.allowCredentials() == AllowStoredCredentials);
+
         ASSERT(!m_resource);
         m_resource = m_document.cachedResourceLoader().requestRawResource(newRequest);
         if (m_resource)
@@ -377,6 +381,9 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
         return;
     }
+
+    // If credentials mode is 'Omit', we should disable cookie sending.
+    ASSERT(m_options.credentials != FetchOptions::Credentials::Omit);
 
     // FIXME: ThreadableLoaderOptions.sniffContent is not supported for synchronous requests.
     RefPtr<SharedBuffer> data;

@@ -39,8 +39,9 @@ function corsCookies(desc, baseURL1, baseURL2, credentialsMode, cookies) {
       //clean cookies
       return fetch(urlSetCookie + urlCleanParameters, {"credentials": "include"});
     }).catch(function(e) {
-      fetch(urlSetCookie + urlCleanParameters, {"credentials": "include"});
-      throw e;
+        return fetch(urlSetCookie + urlCleanParameters, {"credentials": "include"}).then(function(resp) {
+          throw e;
+        })
     });
   }, desc);
 }
@@ -48,7 +49,7 @@ function corsCookies(desc, baseURL1, baseURL2, credentialsMode, cookies) {
 var local = get_host_info().HTTP_ORIGIN;
 var remote = get_host_info().HTTP_REMOTE_ORIGIN;
 // FIXME: otherRemote might not be accessible on some test environments.
-var otherRemote = "www." + local;
+var otherRemote = local.replace("http://", "http://www.");
 
 corsCookies("Omit mode: no cookie sent", local, local, "omit", ["g=7"]);
 corsCookies("Include mode: 1 cookie", remote, remote, "include", ["a=1"]);

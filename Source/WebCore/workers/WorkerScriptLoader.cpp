@@ -64,8 +64,11 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
 
     ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(scriptExecutionContext));
 
+    // Only used for importScripts that prescribes NoCors mode.
+    ASSERT(mode == FetchOptions::Mode::NoCors);
+
     ThreadableLoaderOptions options;
-    options.setAllowCredentials(AllowStoredCredentials);
+    options.credentials = FetchOptions::Credentials::Include;
     options.mode = mode;
     options.setSendLoadCallbacks(SendCallbacks);
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
@@ -83,8 +86,12 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     if (!request)
         return;
 
+    // Only used for loading worker scripts in classic mode.
+    // FIXME: We should add an option to set credential mode.
+    ASSERT(mode == FetchOptions::Mode::SameOrigin);
+
     ThreadableLoaderOptions options;
-    options.setAllowCredentials(AllowStoredCredentials);
+    options.credentials = FetchOptions::Credentials::SameOrigin;
     options.mode = mode;
     options.setSendLoadCallbacks(SendCallbacks);
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;

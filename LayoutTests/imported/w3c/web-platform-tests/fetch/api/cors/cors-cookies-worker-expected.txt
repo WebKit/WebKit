@@ -1,5 +1,5 @@
 
-FAIL Omit mode: no cookie sent assert_false: Request should have no cookie expected false got true
+PASS Omit mode: no cookie sent 
 FAIL Include mode: 1 cookie assert_equals: Request includes cookie(s) expected (string) "a=1" but got (object) null
 PASS Include mode: local cookies are not sent with remote request 
 PASS Include mode: remote cookies are not sent with local request 

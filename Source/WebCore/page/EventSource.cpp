@@ -103,12 +103,9 @@ void EventSource::connect()
     if (!m_lastEventId.isEmpty())
         request.setHTTPHeaderField(HTTPHeaderName::LastEventID, m_lastEventId);
 
-    SecurityOrigin& origin = *scriptExecutionContext()->securityOrigin();
-
     ThreadableLoaderOptions options;
     options.setSendLoadCallbacks(SendCallbacks);
     options.setSniffContent(DoNotSniffContent);
-    options.setAllowCredentials((origin.canRequest(m_url) || m_withCredentials) ? AllowStoredCredentials : DoNotAllowStoredCredentials);
     options.credentials = m_withCredentials ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     options.preflightPolicy = PreventPreflight;
     options.mode = FetchOptions::Mode::Cors;
