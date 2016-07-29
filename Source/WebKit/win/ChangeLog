@@ -1,3 +1,12 @@
+2016-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove PassRef.h after r177259
+        https://bugs.webkit.org/show_bug.cgi?id=160348
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebVisitedLinkStore.h:
+
 2016-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix Win debug build after r203749.

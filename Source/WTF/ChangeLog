@@ -1,3 +1,12 @@
+2016-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove PassRef.h after r177259
+        https://bugs.webkit.org/show_bug.cgi?id=160348
+
+        Reviewed by Andreas Kling.
+
+        * wtf/PassRef.h: Removed.
+
 2016-07-28  Mark Lam  <mark.lam@apple.com>
 
         StringView should have an explicit m_is8Bit field.
