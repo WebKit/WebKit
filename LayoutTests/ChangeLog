@@ -1,3 +1,16 @@
+2016-07-29  Zalan Bujtas  <zalan@apple.com>
+
+        Do not set negative rate on AVSampleBufferRenderSynchronizer.
+        https://bugs.webkit.org/show_bug.cgi?id=160326
+        <rdar://problem/27355214>
+
+        Reviewed by Eric Carlson.
+
+        Negative rate is not supported at the moment.
+
+        * http/tests/media/media-source/mediasource-play-then-seek-back-with-remote-control-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-play-then-seek-back-with-remote-control.html: Added.
+
 2016-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS Sierra] Test gardening after r198859
