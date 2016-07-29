@@ -3102,8 +3102,10 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
     for (unsigned i = 0; i < m_objectAllocationProfiles.size(); ++i)
         m_objectAllocationProfiles[i].visitAggregate(visitor);
 
+#if ENABLE(JIT)
     for (ByValInfo* byValInfo : m_byValInfos)
         visitor.append(&byValInfo->cachedSymbol);
+#endif
 
 #if ENABLE(DFG_JIT)
     if (JITCode::isOptimizingJIT(jitType()))

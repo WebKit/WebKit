@@ -1,3 +1,11 @@
+2016-07-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, ByValInfo is only used in JIT enabled environments
+        https://bugs.webkit.org/show_bug.cgi?id=158908
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+
 2016-07-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JSC::Symbol should be hash-consed
