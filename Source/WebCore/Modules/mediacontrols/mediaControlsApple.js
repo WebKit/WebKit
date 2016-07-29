@@ -475,7 +475,7 @@ Controller.prototype = {
         volume.type = 'range';
         volume.min = 0;
         volume.max = 1;
-        volume.step = .01;
+        volume.step = .05;
         this.listenFor(volume, 'input', this.handleVolumeSliderInput);
         this.listenFor(volume, 'mousedown', this.handleVolumeSliderMouseDown);
         this.listenFor(volume, 'mouseup', this.handleVolumeSliderMouseUp);
@@ -1163,6 +1163,7 @@ Controller.prototype = {
             this.controls.muteButton.setAttribute('aria-label', this.UIString('Mute'));
         }
         this.video.volume = this.controls.volume.value;
+        this.controls.volume.setAttribute('aria-valuetext', this.controls.volume.value * 100 + '%');
         this.drawVolumeBackground();
     },
 
@@ -2083,6 +2084,7 @@ Controller.prototype = {
             this.controls.muteButton.classList.remove(this.ClassNames.muted);
             this.controls.volume.value = this.video.volume;
         }
+        this.controls.volume.setAttribute('aria-valuetext', this.controls.volume.value * 100 + '%');
         this.drawVolumeBackground();
     },
 
