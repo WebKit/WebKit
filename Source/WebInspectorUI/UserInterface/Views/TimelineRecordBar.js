@@ -225,6 +225,12 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
     refresh(graphDataSource)
     {
+        console.assert(graphDataSource.zeroTime);
+        console.assert(graphDataSource.startTime);
+        console.assert(graphDataSource.currentTime);
+        console.assert(graphDataSource.endTime);
+        console.assert(graphDataSource.secondsPerPixel);
+
         if (!this._records || !this._records.length)
             return false;
 
@@ -303,10 +309,21 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
         if (inactiveUnfinished)
             barActiveStartTime = graphCurrentTime;
+        else if (this._renderMode === WebInspector.TimelineRecordBar.RenderMode.Normal) {
+            // Hide the inactive segment when its duration is less than the minimum displayable size.
+            let minimumSegmentDuration = graphDataSource.secondsPerPixel * WebInspector.TimelineRecordBar.MinimumWidthPixels;
+            if (barActiveStartTime - barStartTime < minimumSegmentDuration) {
+                barActiveStartTime = barStartTime;
+                if (this._inactiveBarElement)
+                    this._inactiveBarElement.remove();
+            }
+        }
 
-        var middlePercentage = (barActiveStartTime - barStartTime) / barDuration;
+        let showInactiveSegment = barActiveStartTime > barStartTime;
+        this._element.classList.toggle("has-inactive-segment", showInactiveSegment);
 
-        if (this._renderMode !== WebInspector.TimelineRecordBar.RenderMode.ActiveOnly) {
+        let middlePercentage = (barActiveStartTime - barStartTime) / barDuration;
+        if (showInactiveSegment && this._renderMode !== WebInspector.TimelineRecordBar.RenderMode.ActiveOnly) {
             if (!this._inactiveBarElement) {
                 this._inactiveBarElement = document.createElement("div");
                 this._inactiveBarElement.classList.add("segment");

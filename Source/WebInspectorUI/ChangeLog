@@ -1,3 +1,24 @@
+2016-07-29  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Inactive/active network bar segments overlap when latency is zero
+        https://bugs.webkit.org/show_bug.cgi?id=160147
+        <rdar://problem/27516007>
+
+        Reviewed by Joseph Pecoraro.
+
+        TimelineRecordBar should hide the inactive segment when its duration
+        is less than the minimum displayable size. The active segment can
+        assume the whole width of the bar.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph.prototype.get secondsPerPixel):
+        Make secondsPerPixel available during TimelineRecordBars.refresh.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.prototype.refresh):
+        Check inactive duration against the minimum display size,
+        and add/remove DOM nodes and bar styles as needed.
+
 2016-07-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r195456): Web Inspector: Changing tabs in Styles sidebar shouldn't change sidebar's width

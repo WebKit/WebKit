@@ -148,6 +148,8 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
         return this._timelineOverview;
     }
 
+    get secondsPerPixel() { return this._timelineOverview.secondsPerPixel; }
+
     get visible()
     {
         return this._visible;
