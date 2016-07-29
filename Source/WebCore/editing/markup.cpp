@@ -540,7 +540,7 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
         // the structure and appearance of the copied markup.
         specialCommonAncestor = ancestorToRetainStructureAndAppearance(commonAncestor);
 
-        if (auto* parentListNode = downcast<Element>(enclosingNodeOfType(firstPositionInOrBeforeNode(range->firstNode()), isListItem))) {
+        if (auto* parentListNode = enclosingNodeOfType(firstPositionInOrBeforeNode(range->firstNode()), isListItem)) {
             if (!editingIgnoresContent(*parentListNode) && WebCore::areRangesEqual(VisibleSelection::selectionFromContentsOfNode(parentListNode).toNormalizedRange().get(), range)) {
                 specialCommonAncestor = parentListNode->parentNode();
                 while (specialCommonAncestor && !isListHTMLElement(specialCommonAncestor))
