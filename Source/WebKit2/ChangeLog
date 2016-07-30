@@ -1,3 +1,15 @@
+2016-07-30  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] WebKit.framework is touched on incremental build even if nothing’s changed
+        https://bugs.webkit.org/show_bug.cgi?id=160383
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed the output files listed under the
+          Copy iOS Sandbox Profiles for Manual Sandboxing script build phase, because it doesn’t
+          produce those files on macOS. With no outputs listed, the script will still run every
+          time, but the fact that it has run won’t trigger touching the framework.
+
 2016-07-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash with an Invalid Web Process IPC Message ID: WebPageProxy.AttributedStringForCharacterRangeCallback
