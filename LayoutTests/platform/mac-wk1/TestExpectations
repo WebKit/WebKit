@@ -217,9 +217,6 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 # <rdar://problem/23421541>
 [ Sierra+ ] http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
 
-# <rdar://problem/23431065>
-[ Sierra+ ] animations/animation-welcome-safari.html [ Pass Failure ]
-
 # <rdar://problem/24818712>
 [ Sierra+ ] editing/spelling/spelling-insert-html.html [ Pass Timeout ]
 

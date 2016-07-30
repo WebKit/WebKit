@@ -1,3 +1,13 @@
+2016-07-30  Alexey Proskuryakov  <ap@apple.com>
+
+    Merge r203945.
+
+    2016-07-30  Alexey Proskuryakov  <ap@apple.com>
+
+            macOS Sierra test result gardening.
+
+            * platform/mac-wk1/TestExpectations:
+
 2016-07-28  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r203764. rdar://problem/27434423
