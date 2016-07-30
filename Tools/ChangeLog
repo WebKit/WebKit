@@ -1,3 +1,15 @@
+2016-07-29  David Kilzer  <ddkilzer@apple.com>
+
+        Ignore most check-webkit-style checks for ANGLE project
+        <https://webkit.org/b/160333>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/style/checker.py: Ignore all checkers except:
+        - No tabs.
+        - No spaces at the end of lines.
+        - No carriage returns (DOS line endings).
+
 2016-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Media controls are not displayed for some autoplaying videos at certain browser dimensions
