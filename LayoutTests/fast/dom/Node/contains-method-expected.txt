@@ -12,7 +12,7 @@ PASS document.contains(test1TextChild) is true
 PASS document.contains(document) is true
 PASS test1.contains(test1) is true
 PASS test1TextChild.contains(test1TextChild) is true
-PASS test1.contains(123) is false
+PASS test1.contains(123) threw exception TypeError: Argument 1 ('other') to Node.contains must be an instance of Node.
 PASS test1.contains(null) is false
 PASS document.contains(iframe) is false
 PASS iframe.contains(iframe) is true

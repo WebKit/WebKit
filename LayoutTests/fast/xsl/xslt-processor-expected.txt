@@ -60,7 +60,7 @@ Success
 2.2 fragment with undefined output document:
 Success
 2.3 use non-DOMDocument output parameter:
-****Failure**** (expected exception, instead got result: "null")
+Success
 2.4 transform to same fragment twice:
 Success
 2.5 transformed fragment containing only text:

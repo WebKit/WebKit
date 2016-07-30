@@ -41,7 +41,7 @@
 			    // Add a listener for clipboard copy events which will then check how much memory was used to perform
 			    // the copy and also finish the test. setTimeout() is used with a zero delay in order to cause this to
 			    // run after the copy is finished.
-			    document.getElementById("animationFrame").contentWindow.document.addEventListener("copy",
+			    document.getElementById("animationFrame").contentWindow.document.addEventListener("copy", function() {
 			        setTimeout(
 			        	function()
 			            {
@@ -50,7 +50,7 @@
 			                shouldBeTrue("changeInCommittedVMBytes < 200000000");
 			                window.finishJSTest();
 			            },
-			            0),
+			            0) },
 			        false);
 
 			    // Exit if execCommand("copy") is not supported since that is needed to automatically copy the animation

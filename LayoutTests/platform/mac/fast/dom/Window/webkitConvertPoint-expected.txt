@@ -27,8 +27,7 @@ This test exercises the webkitConvertPointFromNodeToPage() function
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 Test parameter passing - should not crash
-PASS Missing parameter test
-Test did not crash and therefore was successful
+PASS webkitConvertPointFromNodeToPage(new WebKitPoint(0, 0)) threw exception TypeError: Argument 1 ('node') to Window.webkitConvertPointFromNodeToPage must be an instance of Node.
 
 PASS null parameter test a
 Test did not crash and therefore was successful

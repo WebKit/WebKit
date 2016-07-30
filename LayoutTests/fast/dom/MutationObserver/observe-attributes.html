@@ -595,7 +595,7 @@ function testAttributeFilterNonHTMLDocument() {
     function start() {
         debug('Testing that attributeFilter respects case with non-HTML elements.');
 
-        svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', 'svg');
+        svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', null);
         mutations = null;
         observer = new MutationObserver(function(m) {
             mutations = m;

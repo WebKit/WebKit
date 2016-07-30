@@ -1,3 +1,32 @@
+2016-07-30  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Enable strict type checking for operations' nullable parameters of wrapper types
+        https://bugs.webkit.org/show_bug.cgi?id=160374
+
+        Reviewed by Youenn Fablet.
+
+        Update / rebaseline existing tests to reflect behavior change. Also fix
+        several bugs in tests that became obvious now that we throw.
+
+        * editing/execCommand/indent-pre-expected.txt:
+        * editing/execCommand/indent-pre.html:
+        * editing/selection/4895428-2.html:
+        * editing/selection/move-by-word-visually-null-box.html:
+        * fast/dom/DOMImplementation/detached-doctype.html:
+        * fast/dom/MutationObserver/observe-attributes.html:
+        * fast/dom/Node/contains-method-expected.txt:
+        * fast/dom/Node/script-tests/contains-method.js:
+        * fast/dom/Window/webkitConvertPoint.html:
+        * fast/dom/adopt-node-crash-2.html:
+        * fast/dom/incompatible-operations-expected.txt:
+        * fast/dom/incompatible-operations.html:
+        * fast/events/selectstart-by-arrow-keys.html:
+        * fast/images/image-copy-memory-usage.html:
+        * fast/xsl/xslt-processor-expected.txt:
+        * http/tests/misc/webtiming-cross-origin-and-back1.html:
+        * platform/mac/fast/dom/Window/webkitConvertPoint-expected.txt:
+        * svg/custom/unicode-in-tspan-multi-svg-crash.html:
+
 2016-07-29  Chris Dumez  <cdumez@apple.com>
 
         Window's named properties should be exposed on a WindowProperties object in its prototype

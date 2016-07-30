@@ -113,12 +113,7 @@
             description("This test exercises the webkitConvertPointFromNodeToPage() function");
             
             debug("Test parameter passing - should not crash");
-            var point = webkitConvertPointFromNodeToPage(new WebKitPoint(0, 0));
-            if (point == null)
-                testPassed("Missing parameter test");
-            else
-                testFailed("Missing parameter test");
-            debug("Test did not crash and therefore was successful");
+            shouldThrow("webkitConvertPointFromNodeToPage(new WebKitPoint(0, 0))");
             debug("");
             point = webkitConvertPointFromNodeToPage(null, new WebKitPoint(0, 0));
             if (point == null)

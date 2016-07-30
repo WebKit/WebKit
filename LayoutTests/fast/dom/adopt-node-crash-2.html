@@ -25,6 +25,8 @@ function doit()
     if (window.testRunner)
         testRunner.notifyDone();
 }
-document.addEventListener("DOMContentLoaded", setTimeout("doit()", 1), false);
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout("doit()", 1);
+}, false);
 </script>
 </html>

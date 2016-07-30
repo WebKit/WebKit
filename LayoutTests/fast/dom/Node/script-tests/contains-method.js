@@ -14,7 +14,7 @@ shouldBeTrue("document.contains(test1TextChild)");
 shouldBeTrue("document.contains(document)");
 shouldBeTrue("test1.contains(test1)");
 shouldBeTrue("test1TextChild.contains(test1TextChild)");
-shouldBeFalse("test1.contains(123)");
+shouldThrow("test1.contains(123)");
 shouldBeFalse("test1.contains(null)");
 
 // Cross document tests

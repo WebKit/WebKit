@@ -34,8 +34,8 @@ shouldThrow("aNode.appendChild('knort')");
 
 shouldThrow("aNode.appendChild(void 0)");
 
-shouldBeFalse("aNode.isSameNode(aDOMImplementation)");
-shouldBeFalse("aNode.isSameNode('foo')");
+shouldThrow("aNode.isSameNode(aDOMImplementation)");
+shouldThrow("aNode.isSameNode('foo')");
 shouldBeFalse("aNode.isSameNode(void 0)");
 shouldBe("aNode.lookupPrefix(aDOMImplementation)", "null");
 shouldBe("aNode.lookupPrefix(void 0)", "null");

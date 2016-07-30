@@ -9,7 +9,7 @@ onload = function() {
 
         // Test NULL VisiblePosition.
         var selection = getSelection();
-        selection.setPosition(0, 0);
+        selection.setPosition(null, 0);
         selection.modify("move", "right", "-webkit-visual-word");
         document.body.innerHTML = "Crash test passed";
     } finally {

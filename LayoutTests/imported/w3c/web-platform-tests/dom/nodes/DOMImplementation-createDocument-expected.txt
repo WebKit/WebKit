@@ -267,7 +267,7 @@ PASS createDocument test 153: "foo:","xmlns:foo",null,"NAMESPACE_ERR"
 PASS createDocument test 154: "foo:","xmlfoo:bar",null,null 
 PASS createDocument test 154: metadata for "foo:","xmlfoo:bar",null 
 PASS createDocument test 154: characterSet aliases for "foo:","xmlfoo:bar",null 
-FAIL createDocument test 155: null,null,false,object "TypeError" assert_throws: function "function () { document.implementation.createDocument(name..." did not throw
+PASS createDocument test 155: null,null,false,object "TypeError" 
 PASS createDocument test 156: null,null,null,null 
 PASS createDocument test 156: metadata for null,null,null 
 PASS createDocument test 156: characterSet aliases for null,null,null 
