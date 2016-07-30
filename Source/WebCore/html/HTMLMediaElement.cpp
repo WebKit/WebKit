@@ -3068,8 +3068,10 @@ void HTMLMediaElement::play(PlayPromise&& promise)
     if (ScriptController::processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
-    if (!playInternal())
+    if (!playInternal()) {
         promise.reject(NotAllowedError);
+        return;
+    }
 
     m_pendingPlayPromises.append(WTFMove(promise));
 }
@@ -3092,7 +3094,7 @@ bool HTMLMediaElement::playInternal()
     
     if (!m_mediaSession->clientWillBeginPlayback()) {
         LOG(Media, "  returning because of interruption");
-        return false;
+        return true; // Treat as success because we will begin playback on cessation of the interruption.
     }
 
     // 4.8.10.9. Playing the media resource
