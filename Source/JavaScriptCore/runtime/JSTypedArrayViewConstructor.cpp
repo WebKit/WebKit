@@ -49,7 +49,7 @@ void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalO
 {
     Base::finishCreation(vm, "TypedArray");
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(3), DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontEnum | ReadOnly);
     putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum);
 
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->of, typedArrayConstructorOfCodeGenerator, DontEnum);
@@ -63,44 +63,10 @@ Structure* JSTypedArrayViewConstructor::createStructure(
 }
 
 
-// The only way we can call this function is through Reflect.construct or if they mucked with the TypedArray prototype chain.
-// In either case we are ok with this being slow.
+
 static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(ExecState* exec)
 {
-    JSValue value = exec->newTarget();
-
-    JSObject* object = jsDynamicCast<JSObject*>(value);
-    if (!object)
-        return JSValue::encode(throwTypeError(exec, ASCIILiteral("new.target passed to TypedArray is not an object.")));
-
-    ConstructData data;
-    if (object->methodTable()->getConstructData(object, data) == ConstructType::None)
-        return JSValue::encode(throwTypeError(exec, ASCIILiteral("new.target passed to TypedArray is not a valid constructor.")));
-
-    for (; !value.isNull(); value = jsCast<JSObject*>(value)->getPrototypeDirect()) {
-        if (jsDynamicCast<JSTypedArrayViewConstructor*>(value))
-            return JSValue::encode(throwTypeError(exec, ASCIILiteral("Unable to find TypedArray constructor that inherits from TypedArray.")));
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSInt8Array>*>(value))
-            return constructGenericTypedArrayView<JSInt8Array>(exec);
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSInt16Array>*>(value))
-            return constructGenericTypedArrayView<JSInt16Array>(exec);
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSInt32Array>*>(value))
-            return constructGenericTypedArrayView<JSInt32Array>(exec);
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSUint8Array>*>(value))
-            return constructGenericTypedArrayView<JSUint8Array>(exec);
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSUint16Array>*>(value))
-            return constructGenericTypedArrayView<JSUint16Array>(exec);
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSUint32Array>*>(value))
-            return constructGenericTypedArrayView<JSUint32Array>(exec);
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSUint8ClampedArray>*>(value))
-            return constructGenericTypedArrayView<JSUint8ClampedArray>(exec);
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSFloat32Array>*>(value))
-            return constructGenericTypedArrayView<JSFloat32Array>(exec);
-        if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSFloat64Array>*>(value))
-            return constructGenericTypedArrayView<JSFloat64Array>(exec);
-    }
-    
-    return JSValue::encode(throwTypeError(exec, ASCIILiteral("Unable to find TypedArray constructor in prototype-chain, hit null.")));
+    return throwVMTypeError(exec, ASCIILiteral("%TypedArray% should not be called directly"));
 }
 
 ConstructType JSTypedArrayViewConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -111,8 +77,8 @@ ConstructType JSTypedArrayViewConstructor::getConstructData(JSCell*, ConstructDa
 
 CallType JSTypedArrayViewConstructor::getCallData(JSCell*, CallData& callData)
 {
-    callData.native.function = nullptr;
-    return CallType::None;
+    callData.native.function = constructTypedArrayView;
+    return CallType::Host;
 }
 
 } // namespace JSC

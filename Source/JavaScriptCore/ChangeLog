@@ -1,3 +1,21 @@
+2016-07-29  Keith Miller  <keith_miller@apple.com>
+
+        TypedArray super constructor has some incompatabilities
+        https://bugs.webkit.org/show_bug.cgi?id=160369
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes the length proprety of the TypedArray super constructor.
+        Additionally, the TypedArray super constructor should no longer be callable.
+
+        Also, this patch fixes the expected result of some test262 tests.
+
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        (JSC::constructTypedArrayView):
+        (JSC::JSTypedArrayViewConstructor::getCallData):
+        * tests/test262.yaml:
+
 2016-07-29  Jonathan Bedard  <jbedard@apple.com>
 
         Undefined Behavior in JSValue cast from NaN
