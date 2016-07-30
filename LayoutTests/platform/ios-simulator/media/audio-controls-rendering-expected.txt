@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600 isolatesBlending
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 156x19
+          text run at (0,0) width 156: "Test controls placement."
+      RenderBlock (anonymous) at (0,36) size 784x138
+        RenderMedia {AUDIO} at (0,0) size 260x39 [bgcolor=#0000FF]
+        RenderBR {BR} at (260,39) size 0x0
+        RenderBR {BR} at (0,39) size 0x19
+        RenderMedia {AUDIO} at (0,59) size 320x39 [bgcolor=#0000FF]
+        RenderBR {BR} at (320,98) size 0x0
+        RenderBR {BR} at (0,98) size 0x19
+        RenderBR {BR} at (0,118) size 0x19
+layer at (8,44) size 260x39 scrollHeight 89
+  RenderFlexibleBox {DIV} at (0,0) size 260x39
+layer at (8,44) size 260x39
+  RenderBlock (positioned) {DIV} at (0,0) size 260x39
+layer at (8,44) size 260x39
+  RenderFlexibleBox {DIV} at (0,0) size 260x39 [bgcolor=#D4D4D4]
+layer at (12,44) size 42x39 blendMode: plus-darker
+  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]
+layer at (8,103) size 320x39 scrollHeight 89
+  RenderFlexibleBox {DIV} at (0,0) size 320x39
+layer at (8,103) size 320x39
+  RenderBlock (positioned) {DIV} at (0,0) size 320x39
+layer at (8,103) size 320x39
+  RenderFlexibleBox {DIV} at (0,0) size 320x39 [bgcolor=#D4D4D4]
+layer at (12,103) size 42x39 blendMode: plus-darker
+  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]
+layer at (8,162) size 320x100 isolatesBlending
+  RenderMedia {AUDIO} at (8,162) size 320x100 [bgcolor=#0000FF]
+layer at (8,162) size 320x100 scrollHeight 150
+  RenderFlexibleBox {DIV} at (0,0) size 320x100
+layer at (8,223) size 320x39
+  RenderBlock (positioned) {DIV} at (0,61) size 320x39
+layer at (8,223) size 320x39
+  RenderFlexibleBox {DIV} at (0,0) size 320x39 [bgcolor=#D4D4D4]
+layer at (12,223) size 42x39 blendMode: plus-darker
+  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]
