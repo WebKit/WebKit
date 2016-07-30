@@ -132,11 +132,20 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     RefPtr<SharedBuffer> data;
     unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, error, response, data);
 
+    // FIXME: Investigate why checking for response httpStatusCode here. In particular, can we have a not-null error and a 2XX response.
     if (!error.isNull() && response.httpStatusCode() <= 0) {
         error.setType(ResourceError::Type::AccessControl);
         loader.preflightFailure(identifier, error);
         return;
     }
+
+    // FIXME: Ideally, we should ask platformLoadResourceSynchronously to set ResourceResponse isRedirected and use it here.
+    bool isRedirect = preflightRequest.url().strippedForUseAsReferrer() != response.url().strippedForUseAsReferrer();
+    if (isRedirect || !response.isSuccessful()) {
+        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl));
+        return;
+    }
+
     validatePreflightResponse(loader, WTFMove(request), identifier, response);
 }
 

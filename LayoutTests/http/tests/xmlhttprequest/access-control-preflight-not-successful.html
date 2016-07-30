@@ -1,0 +1,74 @@
+<p>Tests that not successful preflight responses make preflight failing</p>
+
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function runTest(url, expectSyncSuccess, expectAsyncSuccess, triggerPreflight)
+{
+    log("Testing " + url + " (sync)");
+    log("Expecting success: " + expectSyncSuccess);
+
+    var req = new XMLHttpRequest();
+    req.open("GET", url, false);
+    if (triggerPreflight)
+        req.setRequestHeader("x-webkit", "foo");
+
+    try {
+        req.send(null);
+        log((expectSyncSuccess ? "PASS" : "FAIL") + ": " + req.responseText);
+    } catch (ex) {
+        log((expectSyncSuccess ? "FAIL" : "PASS") + ": " + ex);
+    }
+
+    log("Testing " + url + "(async)");
+    log("Expecting success: " + expectAsyncSuccess);
+
+    req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    if (triggerPreflight)
+        req.setRequestHeader("x-webkit", "foo");
+
+    req.onload = function() {
+        log((expectAsyncSuccess ? "PASS" : "FAIL") + ": " + req.responseText);
+        nextTest();
+    }
+    req.onerror = function() {
+        log((expectAsyncSuccess ? "FAIL" : "PASS") + ": " + req.status);
+        nextTest();
+    }
+    req.send(null);
+}
+
+var tests = [
+    // No preflight, hence ok
+    ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
+    true, true, false],
+    // Preflight receiving redirection hence failing at preflight step, which should be shown by console log message.
+    ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
+    false, false, true],
+    // Receiving a 404, no preflight, hence ok
+    ["http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php", true, true, false],
+    // Receiving a 404 as preflight response, hence ko at preflight step, which should be shown by console log message.
+    ["http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php", false, false, true],
+]
+
+var currentTest = 0;
+
+function nextTest() {
+    if (currentTest < tests.length)
+        runTest.apply(null, tests[currentTest++]);
+    else if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+nextTest();
+</script>

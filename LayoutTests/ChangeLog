@@ -1,3 +1,15 @@
+2016-07-30  Youenn Fablet  <youenn@apple.com>
+
+        Synchronous preflight should check for successful responses
+        https://bugs.webkit.org/show_bug.cgi?id=159350
+
+        Reviewed by Darin Adler.
+
+        * http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-preflight-not-successful.html: Added, not all tests are passing as CORS checks.
+        for redirections are not well supported for synchronous loading.
+        * http/tests/xmlhttprequest/resources/status-404-without-body.php:
+
 2016-07-30  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Enable strict type checking for operations' nullable parameters of wrapper types
