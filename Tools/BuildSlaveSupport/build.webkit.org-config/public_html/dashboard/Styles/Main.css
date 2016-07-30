@@ -166,6 +166,8 @@ table.queue-grid td.logo img.logo {
     position: absolute;
     top: 29px;
     left: 26px;
+    -webkit-clip-path: circle(72px at center);
+    clip-path: circle(72px at center);
 }
 
 table.queue-grid tr.platform.ios-simulator-9 img.logo {
