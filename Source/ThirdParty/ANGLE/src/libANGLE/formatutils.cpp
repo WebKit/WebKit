@@ -29,9 +29,9 @@ static inline void InsertFormatMapping(FormatMap *map, GLenum format, GLenum typ
     map->insert(FormatPair(FormatTypePair(format, type), internalFormat));
 }
 
-FormatMap BuildFormatMap()
+FormatMap& BuildFormatMap()
 {
-    FormatMap map;
+    auto& map = *new FormatMap;
 
     //                       | Format               | Type                             | Internal format          |
     InsertFormatMapping(&map, GL_RGBA,               GL_UNSIGNED_BYTE,                  GL_RGBA8);
@@ -392,9 +392,9 @@ static InternalFormat CompressedFormat(GLuint compressedBlockWidth, GLuint compr
 typedef std::pair<GLenum, InternalFormat> InternalFormatInfoPair;
 typedef std::map<GLenum, InternalFormat> InternalFormatInfoMap;
 
-static InternalFormatInfoMap BuildInternalFormatInfoMap()
+static InternalFormatInfoMap& BuildInternalFormatInfoMap()
 {
-    InternalFormatInfoMap map;
+    auto& map = *new InternalFormatInfoMap;
 
     // clang-format off
     // From ES 3.0.1 spec, table 3.12
@@ -576,13 +576,13 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
 
 static const InternalFormatInfoMap &GetInternalFormatMap()
 {
-    static const InternalFormatInfoMap formatMap = BuildInternalFormatInfoMap();
+    static const InternalFormatInfoMap& formatMap = BuildInternalFormatInfoMap();
     return formatMap;
 }
 
-static FormatSet BuildAllSizedInternalFormatSet()
+static FormatSet& BuildAllSizedInternalFormatSet()
 {
-    FormatSet result;
+    auto& result = *new FormatSet;
 
     const InternalFormatInfoMap &formats = GetInternalFormatMap();
     for (InternalFormatInfoMap::const_iterator i = formats.begin(); i != formats.end(); i++)
@@ -742,7 +742,7 @@ GLenum GetSizedInternalFormat(GLenum internalFormat, GLenum type)
     }
     else
     {
-        static const FormatMap formatMap = BuildFormatMap();
+        static const FormatMap& formatMap = BuildFormatMap();
         FormatMap::const_iterator iter = formatMap.find(FormatTypePair(internalFormat, type));
         if (iter != formatMap.end())
         {
@@ -757,7 +757,7 @@ GLenum GetSizedInternalFormat(GLenum internalFormat, GLenum type)
 
 const FormatSet &GetAllSizedInternalFormats()
 {
-    static FormatSet formatSet = BuildAllSizedInternalFormatSet();
+    static FormatSet& formatSet = BuildAllSizedInternalFormatSet();
     return formatSet;
 }
 

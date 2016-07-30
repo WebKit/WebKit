@@ -34,7 +34,7 @@ void output(bool traceInDebugOnly, MessageType messageType, DebugTraceOutputType
 {
     if (DebugAnnotationsActive())
     {
-        static std::vector<char> buffer(512);
+        static auto& buffer = *new std::vector<char>(512);
         size_t len = FormatStringIntoVector(format, vararg, buffer);
         std::wstring formattedWideMessage(buffer.begin(), buffer.begin() + len);
 

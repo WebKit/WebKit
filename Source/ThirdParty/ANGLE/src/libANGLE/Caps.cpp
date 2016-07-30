@@ -72,7 +72,7 @@ void TextureCapsMap::remove(GLenum internalFormat)
 
 const TextureCaps &TextureCapsMap::get(GLenum internalFormat) const
 {
-    static TextureCaps defaultUnsupportedTexture;
+    static auto& defaultUnsupportedTexture = *new TextureCaps;
     InternalFormatToCapsMap::const_iterator iter = mCapsMap.find(internalFormat);
     return (iter != mCapsMap.end()) ? iter->second : defaultUnsupportedTexture;
 }

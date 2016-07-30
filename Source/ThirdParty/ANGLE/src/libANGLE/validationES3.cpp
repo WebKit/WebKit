@@ -44,9 +44,9 @@ static inline void InsertES3FormatCombo(ES3FormatCombinationSet *set, GLenum int
     set->insert(info);
 }
 
-ES3FormatCombinationSet BuildES3FormatSet()
+ES3FormatCombinationSet& BuildES3FormatSet()
 {
-    ES3FormatCombinationSet set;
+    auto& set = *new ES3FormatCombinationSet;
 
     // Format combinations from ES 3.0.1 spec, table 3.2
 
@@ -217,7 +217,7 @@ static bool ValidateTexImageFormatCombination(gl::Context *context, GLenum inter
     bool formatSupported = false;
     bool typeSupported = false;
 
-    static const ES3FormatCombinationSet es3FormatSet = BuildES3FormatSet();
+    static const ES3FormatCombinationSet& es3FormatSet = BuildES3FormatSet();
     for (ES3FormatCombinationSet::const_iterator i = es3FormatSet.begin(); i != es3FormatSet.end(); i++)
     {
         if (i->format == format || i->type == type)
@@ -591,9 +591,9 @@ struct EffectiveInternalFormatInfo
 
 typedef std::vector<EffectiveInternalFormatInfo> EffectiveInternalFormatList;
 
-static EffectiveInternalFormatList BuildSizedEffectiveInternalFormatList()
+static EffectiveInternalFormatList& BuildSizedEffectiveInternalFormatList()
 {
-    EffectiveInternalFormatList list;
+    auto& list = *new EffectiveInternalFormatList;
 
     // OpenGL ES 3.0.3 Specification, Table 3.17, pg 141: Effective internal format coresponding to destination internal format and
     //                                                    linear source buffer component sizes.
@@ -612,9 +612,9 @@ static EffectiveInternalFormatList BuildSizedEffectiveInternalFormatList()
     return list;
 }
 
-static EffectiveInternalFormatList BuildUnsizedEffectiveInternalFormatList()
+static EffectiveInternalFormatList& BuildUnsizedEffectiveInternalFormatList()
 {
-    EffectiveInternalFormatList list;
+    auto& list = *new EffectiveInternalFormatList;
 
     // OpenGL ES 3.0.3 Specification, Table 3.17, pg 141: Effective internal format coresponding to destination internal format and
     //                                                    linear source buffer component sizes.
@@ -640,12 +640,12 @@ static bool GetEffectiveInternalFormat(const InternalFormat &srcFormat, const In
 
     if (destFormat.pixelBytes > 0)
     {
-        static const EffectiveInternalFormatList sizedList = BuildSizedEffectiveInternalFormatList();
+        static const EffectiveInternalFormatList& sizedList = BuildSizedEffectiveInternalFormatList();
         list = &sizedList;
     }
     else
     {
-        static const EffectiveInternalFormatList unsizedList = BuildUnsizedEffectiveInternalFormatList();
+        static const EffectiveInternalFormatList& unsizedList = BuildUnsizedEffectiveInternalFormatList();
         list = &unsizedList;
         targetFormat = destFormat.format;
     }
@@ -683,9 +683,9 @@ struct CopyConversion
 
 typedef std::set<CopyConversion> CopyConversionSet;
 
-static CopyConversionSet BuildValidES3CopyTexImageCombinations()
+static CopyConversionSet& BuildValidES3CopyTexImageCombinations()
 {
-    CopyConversionSet set;
+    auto& set = *new CopyConversionSet;
 
     // From ES 3.0.1 spec, table 3.15
     set.insert(CopyConversion(GL_ALPHA, GL_RGBA));
@@ -733,7 +733,7 @@ static bool IsValidES3CopyTexImageCombination(GLenum textureInternalFormat, GLen
     const InternalFormat &textureInternalFormatInfo = GetInternalFormatInfo(textureInternalFormat);
     const InternalFormat &framebufferInternalFormatInfo = GetInternalFormatInfo(frameBufferInternalFormat);
 
-    static const CopyConversionSet conversionSet = BuildValidES3CopyTexImageCombinations();
+    static const CopyConversionSet& conversionSet = BuildValidES3CopyTexImageCombinations();
     if (conversionSet.find(CopyConversion(textureInternalFormatInfo.format, framebufferInternalFormatInfo.format)) != conversionSet.end())
     {
         // Section 3.8.5 of the GLES 3.0.3 spec states that source and destination formats

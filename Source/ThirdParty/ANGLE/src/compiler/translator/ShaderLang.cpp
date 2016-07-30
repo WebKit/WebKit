@@ -371,7 +371,7 @@ const std::map<std::string, unsigned int> *ShGetUniformRegisterMap(const ShHandl
 
     return translator->getUniformRegisterMap();
 #else
-    static std::map<std::string, unsigned int> map;
+    static auto& map = *new std::map<std::string, unsigned int>;
     return &map;
 #endif  // ANGLE_ENABLE_HLSL
 }

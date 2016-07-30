@@ -1,3 +1,46 @@
+2016-07-29  David Kilzer  <ddkilzer@apple.com>
+
+        ANGLE: Fix global constructors and exit-time destructors
+        <https://webkit.org/b/160332>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        - Add warning flags.
+
+        * src/common/angleutils.cpp:
+        (FormatString):
+        * src/common/angleutils.h:
+        (MakeStaticString):
+        * src/common/debug.cpp:
+        * src/common/mathutil.cpp:
+        (gl::g_sharedexp_max):
+        (gl::convertRGBFloatsTo999E5):
+        * src/compiler/translator/ShaderLang.cpp:
+        (ShGetUniformRegisterMap):
+        * src/libANGLE/Caps.cpp:
+        (gl::TextureCapsMap::get):
+        * src/libANGLE/Device.cpp:
+        (egl::GetDeviceSet):
+        * src/libANGLE/Display.cpp:
+        (egl::Display::getClientExtensionString):
+        * src/libANGLE/formatutils.cpp:
+        (gl::BuildFormatMap):
+        (gl::BuildInternalFormatInfoMap):
+        (gl::GetInternalFormatMap):
+        (gl::BuildAllSizedInternalFormatSet):
+        (gl::GetSizedInternalFormat):
+        (gl::GetAllSizedInternalFormats):
+        * src/libANGLE/validationES3.cpp:
+        (gl::BuildES3FormatSet):
+        (gl::ValidateTexImageFormatCombination):
+        (gl::BuildSizedEffectiveInternalFormatList):
+        (gl::BuildUnsizedEffectiveInternalFormatList):
+        (gl::GetEffectiveInternalFormat):
+        (gl::BuildValidES3CopyTexImageCombinations):
+        (gl::IsValidES3CopyTexImageCombination):
+        - Fix global constructors and exit-time destructors.
+
 2016-07-13  Enrica Casucci  <enrica@apple.com>
 
         Update supported platforms in xcconfig files to match the sdk names.

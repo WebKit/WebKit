@@ -38,7 +38,7 @@ static std::string GenerateExtensionsString(const T &extensions)
 typedef std::set<egl::Device *> DeviceSet;
 static DeviceSet *GetDeviceSet()
 {
-    static DeviceSet devices;
+    static auto& devices = *new DeviceSet;
     return &devices;
 }
 

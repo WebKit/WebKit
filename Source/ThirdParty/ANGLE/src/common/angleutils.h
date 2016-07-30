@@ -116,7 +116,7 @@ inline bool IsMaskFlagSet(T mask, T flag)
 
 inline const char* MakeStaticString(const std::string &str)
 {
-    static std::set<std::string> strings;
+    static auto& strings = *new std::set<std::string>;
     std::set<std::string>::iterator it = strings.find(str);
     if (it != strings.end())
     {

@@ -82,21 +82,21 @@ typedef std::map<EGLNativeWindowType, Surface*> WindowSurfaceMap;
 // associated with it.
 static WindowSurfaceMap *GetWindowSurfaces()
 {
-    static WindowSurfaceMap windowSurfaces;
+    static auto& windowSurfaces = *new WindowSurfaceMap;
     return &windowSurfaces;
 }
 
 typedef std::map<EGLNativeDisplayType, Display *> ANGLEPlatformDisplayMap;
 static ANGLEPlatformDisplayMap *GetANGLEPlatformDisplayMap()
 {
-    static ANGLEPlatformDisplayMap displays;
+    static auto& displays = *new ANGLEPlatformDisplayMap;
     return &displays;
 }
 
 typedef std::map<Device *, Display *> DevicePlatformDisplayMap;
 static DevicePlatformDisplayMap *GetDevicePlatformDisplayMap()
 {
-    static DevicePlatformDisplayMap displays;
+    static auto& displays = *new DevicePlatformDisplayMap;
     return &displays;
 }
 
@@ -949,7 +949,7 @@ const ClientExtensions &Display::getClientExtensions()
 
 const std::string &Display::getClientExtensionString()
 {
-    static const std::string clientExtensionsString = GenerateExtensionsString(getClientExtensions());
+    static const auto& clientExtensionsString = *new std::string(GenerateExtensionsString(getClientExtensions()));
     return clientExtensionsString;
 }
 
