@@ -1,5 +1,11 @@
 2016-07-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Land test expectations for rdar://problem/27611932.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-07-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Test gardening on ios-simualtor after some media tests were unskipped in r203906.
 
         Unreviewed test gardening.

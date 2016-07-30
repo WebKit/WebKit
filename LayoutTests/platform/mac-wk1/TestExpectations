@@ -254,3 +254,6 @@ webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass 
 webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Pass Crash ]
 
 webkit.org/b/160227 [ ElCapitan Debug ] inspector/memory/tracking.html [ Pass Crash ]
+
+# rdar://problem/27611932
+[ Sierra+ ] editing/mac/attributed-string/font-style-variant-effect.html [ Failure ]
