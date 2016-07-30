@@ -1,3 +1,9 @@
+2016-07-30  Alexey Proskuryakov  <ap@apple.com>
+
+        macOS Sierra test result gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-07-30  Youenn Fablet  <youenn@apple.com>
 
         Synchronous preflight should check for successful responses
