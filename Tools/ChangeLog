@@ -1,3 +1,15 @@
+2016-07-29  Alan Sien Wei Hshieh  <hshieh@apple.com>
+
+        The Sierra asset at build.webkit.org/dashboard/images/Sierra*.png has a white background
+        https://bugs.webkit.org/show_bug.cgi?id=160377
+
+        Reviewed by Brian Weinstein.
+
+        Update assets to remove the white background and use a transparent background instead.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Sierra.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Sierra@2x.png:
+
 2016-07-29  David Kilzer  <ddkilzer@apple.com>
 
         Ignore most check-webkit-style checks for ANGLE project
