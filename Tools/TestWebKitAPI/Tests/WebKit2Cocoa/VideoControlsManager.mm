@@ -415,6 +415,44 @@ TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
     EXPECT_TRUE([webView _hasActiveVideoForControlsManager]);
 }
 
+TEST(VideoControlsManager, VideoControlsManagerLongSkinnyVideoInWideMainFrame)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1600, 800) configuration:configuration.get()]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"playing"]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
+    [handler setExpectedToHaveControlsManager:NO];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"skinny-autoplaying-video-with-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&testedControlsManagerAfterPlaying);
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+}
+
+TEST(VideoControlsManager, VideoControlsManagerFullSizeVideoInWideMainFrame)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1600, 800) configuration:configuration.get()]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+
+    RetainPtr<MediaPlaybackMessageHandler> handler = adoptNS([[MediaPlaybackMessageHandler alloc] initWithWKWebView:webView.get() finalMessageString:@"playing"]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
+    [handler setExpectedToHaveControlsManager:YES];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"full-size-autoplaying-video-with-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&testedControlsManagerAfterPlaying);
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200

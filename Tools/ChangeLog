@@ -1,3 +1,20 @@
+2016-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Media controls are not displayed for some autoplaying videos at certain browser dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=160360
+        <rdar://problem/27179484>
+
+        Reviewed by Myles C. Maxfield.
+
+        Adds two tests verifying that videos may be considered main content as long as they
+        are large enough and cover a majority of the mainframe's viewport.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/full-size-autoplaying-video-with-audio.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/skinny-autoplaying-video-with-audio.html: Added.
+
 2016-07-29  Mark Lam  <mark.lam@apple.com>
 
         Gardening: removed unused variable.

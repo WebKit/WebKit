@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        video {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+    <script>
+    function finishTest() {
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.playingHandler.postMessage("playing");
+            } catch(e) { }
+        }, 0);
+    }
+   </script>
+</head>
+<body>
+    <video autoplay src="video-with-audio.mp4" webkit-playsinline onplaying=finishTest()></video>
+</body>
+</html>
