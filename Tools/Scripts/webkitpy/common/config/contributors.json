@@ -1960,16 +1960,6 @@
             "maheshkk"
          ]
       },
-      "Manuel Rego Casasnovas" : {
-         "emails" : [
-            "rego@igalia.com"
-         ],
-         "expertise" : "WebKitGTK+ port, WebKit2",
-         "nicks" : [
-            "rego",
-            "mrego"
-         ]
-      },
       "Marcelo Lira" : {
          "emails" : [
             "marcelo.lira@openbossa.org",
@@ -4610,6 +4600,16 @@
          "expertise" : "JavaScript/ECMAScript, Performance, Security, Basic types and data structures, FastMalloc, DOM Bindings for JavaScript, Core DOM, HTML DOM, JavaScript DOM Bindings, WebKit API (Mac, Win), HTML Editing, Networking, Tools, New Features / Standards Support, General (probably a good backup on most topics even if not specifically an expert)",
          "nicks" : [
             "othermaciej"
+         ]
+      },
+      "Manuel Rego Casasnovas" : {
+         "emails" : [
+            "rego@igalia.com"
+         ],
+         "expertise" : "Layout, CSS, Selection, WebKitGTK+ port",
+         "nicks" : [
+            "rego",
+            "mrego"
          ]
       },
       "Mario Sanchez Prada" : {

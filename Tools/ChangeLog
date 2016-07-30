@@ -1,3 +1,9 @@
+2016-07-30  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed: add myself to the reviewers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-07-29  Alexey Proskuryakov  <ap@apple.com>
 
         Undo r203939, and copy over a rule that clips the logos.
