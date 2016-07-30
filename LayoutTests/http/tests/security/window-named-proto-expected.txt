@@ -1,4 +1,2 @@
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "null" from accessing a frame with origin "http://localhost:8080".  The frame requesting access has a protocol of "data", the frame being accessed has a protocol of "http". Protocols must match.
-
-CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'parent.__proto__.alert')
+CONSOLE MESSAGE: line 2: TypeError: null is not an object (evaluating 'document.body.innerHTML')
 

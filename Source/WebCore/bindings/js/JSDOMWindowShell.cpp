@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "GCController.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowProperties.h"
 #include "JSEventTarget.h"
 #include "ScriptController.h"
 #include <heap/StrongInlines.h>
@@ -85,7 +86,11 @@ void JSDOMWindowShell::setWindow(RefPtr<DOMWindow>&& domWindow)
     Structure* structure = JSDOMWindow::createStructure(vm, 0, prototype.get());
     JSDOMWindow* jsDOMWindow = JSDOMWindow::create(vm, structure, *domWindow, this);
     prototype->structure()->setGlobalObject(vm, jsDOMWindow);
-    prototype->structure()->setPrototypeWithoutTransition(vm, JSEventTarget::prototype(vm, jsDOMWindow));
+
+    Structure* windowPropertiesStructure = JSDOMWindowProperties::createStructure(vm, jsDOMWindow, JSEventTarget::prototype(vm, jsDOMWindow));
+    JSDOMWindowProperties* windowProperties = JSDOMWindowProperties::create(windowPropertiesStructure, *jsDOMWindow);
+
+    prototype->structure()->setPrototypeWithoutTransition(vm, windowProperties);
     setWindow(vm, jsDOMWindow);
     ASSERT(jsDOMWindow->globalObject() == jsDOMWindow);
     ASSERT(prototype->globalObject() == jsDOMWindow);

@@ -1,9 +1,11 @@
 PASS window.hasOwnProperty("Element") is true
 PASS window.hasOwnProperty("x") is true
 PASS window.hasOwnProperty("y") is false
-PASS window.hasOwnProperty("f") is true
-PASS window.hasOwnProperty("div") is true
-FAIL window.hasOwnProperty("a") should be true. Was false.
+PASS window.hasOwnProperty("f") is false
+PASS window.__proto__.__proto__.hasOwnProperty("f") is true
+PASS window.hasOwnProperty("div") is false
+PASS window.__proto__.__proto__.hasOwnProperty("div") is true
+PASS window.hasOwnProperty("a") is false
 PASS Element is not undefined
 PASS x is 1
 FAIL y should be undefined. Was 2
