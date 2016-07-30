@@ -1,3 +1,14 @@
+2016-07-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/block/float/overhanging-tall-block.html for Sierra.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/fast/block/float/overhanging-tall-block-expected.png: Renamed from LayoutTests/platform/mac/fast/block/float/overhanging-tall-block-expected.png.
+        * platform/mac-elcapitan/fast/block/float/overhanging-tall-block-expected.txt: Copied from LayoutTests/platform/mac/fast/block/float/overhanging-tall-block-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt:
+
 2016-07-29  Daniel Bates  <dabates@apple.com>
 
         Crash under HTMLMediaElement::{resolve, reject}PendingPlayPromises() when playback is interrupted
