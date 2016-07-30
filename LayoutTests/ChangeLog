@@ -1,5 +1,11 @@
 2016-07-30  Alexey Proskuryakov  <ap@apple.com>
 
+        macOS Sierra test result gardening for media/video-loop.html.
+
+        * platform/mac/TestExpectations:
+
+2016-07-30  Alexey Proskuryakov  <ap@apple.com>
+
         macOS Sierra test result gardening.
 
         * platform/mac-wk1/TestExpectations:
