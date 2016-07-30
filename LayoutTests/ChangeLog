@@ -1,6 +1,16 @@
 2016-07-30  Alexey Proskuryakov  <ap@apple.com>
 
-    Merge r203945.
+        Merge r203947.
+
+    2016-07-30  Alexey Proskuryakov  <ap@apple.com>
+
+            macOS Sierra test result gardening for media/video-loop.html.
+
+            * platform/mac/TestExpectations:
+
+2016-07-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Merge r203945.
 
     2016-07-30  Alexey Proskuryakov  <ap@apple.com>
 
