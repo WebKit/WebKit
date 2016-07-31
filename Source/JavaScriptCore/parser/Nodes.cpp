@@ -117,7 +117,7 @@ StatementNode* ScopeNode::singleStatement() const
 
 // ------------------------------ ProgramNode -----------------------------
 
-ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack&& funcStack, VariableEnvironment& lexicalVariables, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, FunctionParameters*, const SourceCode& source, CodeFeatures features, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants)
+ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack&& funcStack, VariableEnvironment& lexicalVariables, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, FunctionParameters*, const SourceCode& source, CodeFeatures features, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, varEnvironment, WTFMove(funcStack), lexicalVariables, WTFMove(sloppyModeHoistedFunctions), features, innerArrowFunctionCodeFeatures, numConstants)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)
@@ -126,16 +126,17 @@ ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startL
 
 // ------------------------------ ModuleProgramNode -----------------------------
 
-ModuleProgramNode::ModuleProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack&& funcStack, VariableEnvironment& lexicalVariables, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, FunctionParameters*, const SourceCode& source, CodeFeatures features, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants)
+ModuleProgramNode::ModuleProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack&& funcStack, VariableEnvironment& lexicalVariables, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, FunctionParameters*, const SourceCode& source, CodeFeatures features, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&& moduleScopeData)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, varEnvironment, WTFMove(funcStack), lexicalVariables, WTFMove(sloppyModeHoistedFunctions), features, innerArrowFunctionCodeFeatures, numConstants)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)
+    , m_moduleScopeData(*WTFMove(moduleScopeData))
 {
 }
 
 // ------------------------------ EvalNode -----------------------------
 
-EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack&& funcStack, VariableEnvironment& lexicalVariables, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, FunctionParameters*, const SourceCode& source, CodeFeatures features, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants)
+EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack&& funcStack, VariableEnvironment& lexicalVariables, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, FunctionParameters*, const SourceCode& source, CodeFeatures features, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, varEnvironment, WTFMove(funcStack), lexicalVariables, WTFMove(sloppyModeHoistedFunctions), features, innerArrowFunctionCodeFeatures, numConstants)
     , m_endColumn(endColumn)
 {
@@ -181,7 +182,7 @@ void FunctionMetadataNode::setEndPosition(JSTextPosition position)
 
 // ------------------------------ FunctionNode -----------------------------
 
-FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack&& funcStack, VariableEnvironment& lexicalVariables, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, FunctionParameters* parameters, const SourceCode& sourceCode, CodeFeatures features, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants)
+FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack&& funcStack, VariableEnvironment& lexicalVariables, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, FunctionParameters* parameters, const SourceCode& sourceCode, CodeFeatures features, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
     : ScopeNode(parserArena, startLocation, endLocation, sourceCode, children, varEnvironment, WTFMove(funcStack), lexicalVariables, WTFMove(sloppyModeHoistedFunctions), features, innerArrowFunctionCodeFeatures, numConstants)
     , m_parameters(parameters)
     , m_startColumn(startColumn)

@@ -2130,6 +2130,7 @@
 		FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */; };
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF040511AAE662D00BD28B0 /* CompareAndSwapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */; };
+		A79D3ED9C5064DD0A8466A3A /* ModuleScopeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 000BEAF0DF604481AF6AB68C /* ModuleScopeData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -4417,6 +4418,7 @@
 		FEDA50D51B97F4D9009A3B4F /* PingPongStackOverflowTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingPongStackOverflowTest.h; path = API/tests/PingPongStackOverflowTest.h; sourceTree = "<group>"; };
 		FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompareAndSwapTest.cpp; path = API/tests/CompareAndSwapTest.cpp; sourceTree = "<group>"; };
 		FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompareAndSwapTest.h; path = API/tests/CompareAndSwapTest.h; sourceTree = "<group>"; };
+		000BEAF0DF604481AF6AB68C /* ModuleScopeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModuleScopeData.h; path = ModuleScopeData.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5582,6 +5584,7 @@
 				A7A7EE7711B98B8D0065A14F /* SyntaxChecker.h */,
 				79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */,
 				79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */,
+				000BEAF0DF604481AF6AB68C /* ModuleScopeData.h */,
 			);
 			path = parser;
 			sourceTree = "<group>";
@@ -8229,6 +8232,7 @@
 				86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */,
 				262D85B71C0D650F006ACB61 /* AirFixPartialRegisterStalls.h in Headers */,
 				86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */,
+				A79D3ED9C5064DD0A8466A3A /* ModuleScopeData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

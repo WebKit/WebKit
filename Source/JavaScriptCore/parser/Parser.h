@@ -28,6 +28,7 @@
 #include "Executable.h"
 #include "JSGlobalObject.h"
 #include "Lexer.h"
+#include "ModuleScopeData.h"
 #include "Nodes.h"
 #include "ParserArena.h"
 #include "ParserError.h"
@@ -128,27 +129,6 @@ ALWAYS_INLINE static bool isIdentifierOrKeyword(const JSToken& token)
     return token.m_type == IDENT || token.m_type & KeywordTokenFlag;
 }
 
-class ModuleScopeData : public RefCounted<ModuleScopeData> {
-public:
-    static Ref<ModuleScopeData> create() { return adoptRef(*new ModuleScopeData); }
-
-    const IdentifierSet& exportedBindings() const { return m_exportedBindings; }
-
-    bool exportName(const Identifier& exportedName)
-    {
-        return m_exportedNames.add(exportedName.impl()).isNewEntry;
-    }
-
-    void exportBinding(const Identifier& localName)
-    {
-        m_exportedBindings.add(localName.impl());
-    }
-
-private:
-    IdentifierSet m_exportedNames { };
-    IdentifierSet m_exportedBindings { };
-};
-
 struct Scope {
     WTF_MAKE_NONCOPYABLE(Scope);
 
@@ -216,7 +196,6 @@ public:
         , m_lexicalVariables(WTFMove(other.m_lexicalVariables))
         , m_usedVariables(WTFMove(other.m_usedVariables))
         , m_closedVariableCandidates(WTFMove(other.m_closedVariableCandidates))
-        , m_moduleScopeData(WTFMove(other.m_moduleScopeData))
         , m_functionDeclarations(WTFMove(other.m_functionDeclarations))
     {
     }
@@ -277,11 +256,8 @@ public:
             break;
 
         case SourceParseMode::ProgramMode:
-            break;
-
         case SourceParseMode::ModuleAnalyzeMode:
         case SourceParseMode::ModuleEvaluateMode:
-            setIsModule();
             break;
         }
     }
@@ -311,12 +287,6 @@ public:
             computeLexicallyCapturedVariablesAndPurgeCandidates();
 
         return m_lexicalVariables;
-    }
-
-    ModuleScopeData& moduleScopeData() const
-    {
-        ASSERT(m_moduleScopeData);
-        return *m_moduleScopeData;
     }
 
     void computeLexicallyCapturedVariablesAndPurgeCandidates()
@@ -731,11 +701,6 @@ private:
         m_isArrowFunction = true;
     }
 
-    void setIsModule()
-    {
-        m_moduleScopeData = ModuleScopeData::create();
-    }
-
     const VM* m_vm;
     bool m_shadowsArguments;
     bool m_usesEval;
@@ -771,7 +736,6 @@ private:
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
     UniquedStringImplPtrSet m_sloppyModeHoistableFunctionCandidates;
     HashSet<UniquedStringImpl*> m_closedVariableCandidates;
-    RefPtr<ModuleScopeData> m_moduleScopeData;
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };
 
@@ -1176,7 +1140,8 @@ private:
     bool exportName(const Identifier& ident)
     {
         ASSERT(currentScope().index() == 0);
-        return currentScope()->moduleScopeData().exportName(ident);
+        ASSERT(m_moduleScopeData);
+        return m_moduleScopeData->exportName(ident);
     }
 
     ScopeStack m_scopeStack;
@@ -1442,7 +1407,7 @@ private:
     template <class TreeBuilder> typename TreeBuilder::ImportSpecifier parseImportClauseItem(TreeBuilder&, ImportSpecifierType);
     template <class TreeBuilder> typename TreeBuilder::ModuleName parseModuleName(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseImportDeclaration(TreeBuilder&);
-    template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<const Identifier*>& maybeLocalNames, bool& hasKeywordForLocalBindings);
+    template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<std::pair<const Identifier*, const Identifier*>>& maybeExportedLocalNames, bool& hasKeywordForLocalBindings);
     template <class TreeBuilder> TreeStatement parseExportDeclaration(TreeBuilder&);
 
     enum class FunctionDefinitionType { Expression, Declaration, Method };
@@ -1623,6 +1588,7 @@ private:
     ExpressionErrorClassifier* m_expressionErrorClassifier;
     bool m_isEvalContext;
     bool m_immediateParentAllowsFunctionDeclarationInStatement;
+    RefPtr<ModuleScopeData> m_moduleScopeData;
     
     struct DepthManager {
         DepthManager(int* depth)
@@ -1697,7 +1663,8 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     *m_source,
                                     m_features,
                                     currentScope()->innerArrowFunctionFeatures(),
-                                    m_numConstants);
+                                    m_numConstants,
+                                    WTFMove(m_moduleScopeData));
         result->setLoc(m_source->firstLine(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
         result->setEndOffset(m_lexer->currentOffset());
 

@@ -44,18 +44,11 @@ public:
 
     JSModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
-    void declareExportAlias(const Identifier& localName, const Identifier& exportName);
-
 private:
-    typedef HashMap<RefPtr<UniquedStringImpl>, Identifier, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> IdentifierAliasMap;
-
-    void exportVariable(const RefPtr<UniquedStringImpl>&, const VariableEnvironmentEntry&);
-
-    Identifier exportedBinding(const RefPtr<UniquedStringImpl>& ident);
+    void exportVariable(ModuleProgramNode&, const RefPtr<UniquedStringImpl>&, const VariableEnvironmentEntry&);
 
     VM* m_vm;
     Strong<JSModuleRecord> m_moduleRecord;
-    IdentifierAliasMap m_aliasMap;
 };
 
 } // namespace JSC

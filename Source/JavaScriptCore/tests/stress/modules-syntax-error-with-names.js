@@ -192,26 +192,61 @@ export default function hello () { }
 export default 20;
 `, `SyntaxError: Only one 'default' export is allowed.:4`);
 
+checkModuleSyntaxError(String.raw`
+var a = 42;
+var b = 55;
+export { a as Cocoa, b as Cocoa };
+`, `SyntaxError: Cannot export a duplicate name 'Cocoa'.:4`);
+
+checkModuleSyntaxError(String.raw`
+var a = 42;
+var b = 55;
+export { a as Cocoa, b as Cocoa };
+`, `SyntaxError: Cannot export a duplicate name 'Cocoa'.:4`);
+
+checkModuleSyntaxError(String.raw`
+var Cocoa = 42;
+var b = 55;
+export { Cocoa, b as Cocoa };
+`, `SyntaxError: Cannot export a duplicate name 'Cocoa'.:4`);
+
+checkModuleSyntaxError(String.raw`
+export var Cocoa = 42;
+var b = 55;
+export { b as Cocoa };
+`, `SyntaxError: Cannot export a duplicate name 'Cocoa'.:4`);
+
+checkModuleSyntaxError(String.raw`
+var a = 42;
+export { a as Cocoa };
+export function Cocoa() { }
+`, `SyntaxError: Cannot export a duplicate function name: 'Cocoa'.:5`);
+
+checkModuleSyntaxError(String.raw`
+var a = 42;
+export { a as Cocoa };
+export class Cocoa { }
+`, `SyntaxError: Cannot export a duplicate class name: 'Cocoa'.:5`);
+
 // FIXME: These tests also should be passed. But now, var and lexical declared names can be co-exist on Script / Module top level scope.
 // This will be fixed when this issue is fixed for Script environment.
 // http://www.ecma-international.org/ecma-262/6.0/#sec-scripts-static-semantics-early-errors
 // http://www.ecma-international.org/ecma-262/6.0/#sec-module-semantics-static-semantics-early-errors
-//
+checkModuleSyntaxError(String.raw`
+import A from "Cocoa"
+var A = 20;
+`, `SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'A'.:3`);
+
 // checkModuleSyntaxError(String.raw`
-// import A from "Cocoa"
-// var A = 20;
-// `, ``);
-//
-// checkModuleSyntaxError(String.raw`
 // var A = 20;
 // import A from "Cocoa"
 // `, ``);
-//
-// checkModuleSyntaxError(String.raw`
-// import A from "Cocoa"
-// var A = 20;
-// `, ``);
-//
+
+checkModuleSyntaxError(String.raw`
+import A from "Cocoa"
+var A = 20;
+`, `SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'A'.:3`);
+
 // checkModuleSyntaxError(String.raw`
 // var A = 20;
 // import A from "Cocoa"

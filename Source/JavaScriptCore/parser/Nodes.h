@@ -52,6 +52,7 @@ namespace JSC {
     class JSScope;
     class ScopeNode;
     class ModuleAnalyzer;
+    class ModuleScopeData;
 
     typedef SmallPtrSet<UniquedStringImpl*> UniquedStringImplPtrSet;
 
@@ -1644,7 +1645,7 @@ namespace JSC {
 
     class ProgramNode : public ScopeNode {
     public:
-        ProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
+        ProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
@@ -1659,7 +1660,7 @@ namespace JSC {
 
     class EvalNode : public ScopeNode {
     public:
-        EvalNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
+        EvalNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
         ALWAYS_INLINE unsigned startColumn() const { return 0; }
         unsigned endColumn() const { return m_endColumn; }
@@ -1674,17 +1675,23 @@ namespace JSC {
 
     class ModuleProgramNode : public ScopeNode {
     public:
-        ModuleProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
+        ModuleProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
 
         static const bool scopeIsFunction = false;
 
+        ModuleScopeData& moduleScopeData()
+        {
+            return m_moduleScopeData;
+        }
+
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
         unsigned m_startColumn;
         unsigned m_endColumn;
+        Ref<ModuleScopeData> m_moduleScopeData;
     };
 
     class ModuleNameNode : public Node {
@@ -1915,7 +1922,7 @@ namespace JSC {
 
     class FunctionNode final : public ScopeNode {
     public:
-        FunctionNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
+        FunctionNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
         FunctionParameters* parameters() const { return m_parameters; }
 

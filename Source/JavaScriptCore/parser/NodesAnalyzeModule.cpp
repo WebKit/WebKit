@@ -65,9 +65,8 @@ void ExportAllDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
     analyzer.moduleRecord()->addStarExportEntry(m_moduleName->moduleName());
 }
 
-void ExportDefaultDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
+void ExportDefaultDeclarationNode::analyzeModule(ModuleAnalyzer&)
 {
-    analyzer.declareExportAlias(m_localName, analyzer.vm().propertyNames->defaultKeyword);
 }
 
 void ExportLocalDeclarationNode::analyzeModule(ModuleAnalyzer&)
@@ -86,11 +85,7 @@ void ExportNamedDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
             // In this case, no local variable names are imported into the current module.
             // "v" indirectly points the binding in "mod".
             analyzer.moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createIndirect(specifier->exportedName(), specifier->localName(), m_moduleName->moduleName()));
-            continue;
         }
-
-        if (specifier->localName() != specifier->exportedName())
-            analyzer.declareExportAlias(specifier->localName(), specifier->exportedName());
     }
 }
 

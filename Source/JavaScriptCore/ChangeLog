@@ -1,3 +1,82 @@
+2016-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Module binding can be exported by multiple names
+        https://bugs.webkit.org/show_bug.cgi?id=160343
+
+        Reviewed by Saam Barati.
+
+        ES6 Module can export the same local binding by using multiple names.
+        For example,
+
+            ```
+            var value = 42;
+
+            export { value };
+            export { value as value2 };
+            ```
+
+        Currently, we only allowed one local binding to be exported with one name. So, in the above case,
+        the local binding "value" is exported as "value2" and "value" name is not exported. This is wrong.
+
+        To fix this issue, we collect the correspondence (local name => exported name) to the local bindings
+        in the parser. Previously, we only maintained the exported local bindings in the parser. And utilize
+        this information when creating the export entries in ModuleAnalyzer.
+
+        And this patch also moves ModuleScopeData from the Scope object to the Parser class since exported
+        names should be managed per-module, not per-scope.
+
+        This change fixes several test262 failures.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::exportVariable):
+        (JSC::ModuleAnalyzer::analyze):
+        (JSC::ModuleAnalyzer::exportedBinding): Deleted.
+        (JSC::ModuleAnalyzer::declareExportAlias): Deleted.
+        * parser/ModuleAnalyzer.h:
+        * parser/ModuleScopeData.h: Copied from Source/JavaScriptCore/parser/ModuleAnalyzer.h.
+        (JSC::ModuleScopeData::create):
+        (JSC::ModuleScopeData::exportedBindings):
+        (JSC::ModuleScopeData::exportName):
+        (JSC::ModuleScopeData::exportBinding):
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode):
+        * parser/Nodes.h:
+        (JSC::ModuleProgramNode::moduleScopeData):
+        * parser/NodesAnalyzeModule.cpp:
+        (JSC::ExportDefaultDeclarationNode::analyzeModule):
+        (JSC::ExportNamedDeclarationNode::analyzeModule): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClassDeclaration):
+        (JSC::Parser<LexerType>::parseExportSpecifier):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        * parser/Parser.h:
+        (JSC::Parser::exportName):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::ModuleScopeData::create): Deleted.
+        (JSC::ModuleScopeData::exportedBindings): Deleted.
+        (JSC::ModuleScopeData::exportName): Deleted.
+        (JSC::ModuleScopeData::exportBinding): Deleted.
+        (JSC::Scope::Scope): Deleted.
+        (JSC::Scope::setSourceParseMode): Deleted.
+        (JSC::Scope::moduleScopeData): Deleted.
+        (JSC::Scope::setIsModule): Deleted.
+        * tests/modules/aliased-names.js: Added.
+        * tests/modules/aliased-names/main.js: Added.
+        (change):
+        * tests/stress/modules-syntax-error-with-names.js:
+        (export.Cocoa):
+        (SyntaxError.Cannot.export.a.duplicate.name):
+        * tests/test262.yaml:
+
 2016-07-30  Mark Lam  <mark.lam@apple.com>
 
         Assertion failure while setting the length of an ArrayClass array.
