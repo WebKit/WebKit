@@ -1,3 +1,22 @@
+2016-07-31  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][Unix] Implement missing WebKit::SharedMemory::create() function
+        https://bugs.webkit.org/show_bug.cgi?id=160364
+
+        Reviewed by Carlos Garcia Campos.
+
+        The WebKit::SharedMemory::create() function is missing for the Unix
+        platform, which is also used by the GTK+ port. The latter is going
+        to need this in place to use the common content filtering code.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::accessModeMMap): Added helper function to convert a
+        SharedMemory::Protection value into flags useable with mmap().
+        (WebKit::SharedMemory::create): Added. Implementation reuses code
+        existing in the SharedMemory::allocate() function.
+        (WebKit::SharedMemory::allocate): Reimplemented in terms of
+        SharedMemory::create().
+
 2016-07-30  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] WebKit.framework is touched on incremental build even if nothing’s changed
