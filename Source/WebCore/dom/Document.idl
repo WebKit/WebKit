@@ -170,7 +170,7 @@
 
     [GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
 
-    [SetterRaisesException, ImplementedAs=bodyOrFrameset, StrictTypeChecking] attribute HTMLElement? body;
+    [SetterRaisesException, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
 
     readonly attribute HTMLHeadElement? head;
     readonly attribute HTMLCollection images;

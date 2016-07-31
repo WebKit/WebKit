@@ -21,6 +21,6 @@
  */
 
 interface SVGNumber {
-    [StrictTypeChecking] attribute unrestricted float value;
+    attribute unrestricted float value;
 };
 

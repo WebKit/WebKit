@@ -25,9 +25,9 @@
  */
 
 interface SVGPathSegCurvetoQuadraticAbs : SVGPathSeg {
-    [StrictTypeChecking] attribute unrestricted float x;
-    [StrictTypeChecking] attribute unrestricted float y;
-    [StrictTypeChecking] attribute unrestricted float x1;
-    [StrictTypeChecking] attribute unrestricted float y1;
+    attribute unrestricted float x;
+    attribute unrestricted float y;
+    attribute unrestricted float x1;
+    attribute unrestricted float y1;
 };
 

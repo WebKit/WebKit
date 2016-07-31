@@ -1,3 +1,17 @@
+2016-07-30  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Enable strict type checking for nullable attribute setters of wrapper types
+        https://bugs.webkit.org/show_bug.cgi?id=160375
+
+        Reviewed by Darin Adler.
+
+        Rebaseline / update existing tests to reflect behavior change.
+
+        * fast/speechsynthesis/speech-synthesis-crash-on-bad-utterance-expected.txt:
+        * fast/speechsynthesis/speech-synthesis-crash-on-bad-utterance.html:
+        * webaudio/convolver-setBuffer-null-expected.txt:
+        * webaudio/convolver-setBuffer-null.html:
+
 2016-07-30  Alexey Proskuryakov  <ap@apple.com>
 
         macOS Sierra test result gardening for media/video-loop.html.

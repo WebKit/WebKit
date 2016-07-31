@@ -21,8 +21,8 @@
  */
 
 interface SVGPoint {
-    [StrictTypeChecking] attribute unrestricted float x;
-    [StrictTypeChecking] attribute unrestricted float y;
+    attribute unrestricted float x;
+    attribute unrestricted float y;
 
     [StrictTypeChecking] SVGPoint matrixTransform(SVGMatrix matrix);
 };

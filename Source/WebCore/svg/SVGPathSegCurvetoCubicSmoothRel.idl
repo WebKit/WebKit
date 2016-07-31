@@ -25,9 +25,9 @@
  */ 
 
 interface SVGPathSegCurvetoCubicSmoothRel : SVGPathSeg {
-    [StrictTypeChecking] attribute unrestricted float x;
-    [StrictTypeChecking] attribute unrestricted float y;
-    [StrictTypeChecking] attribute unrestricted float x2;
-    [StrictTypeChecking] attribute unrestricted float y2;
+    attribute unrestricted float x;
+    attribute unrestricted float y;
+    attribute unrestricted float x2;
+    attribute unrestricted float y2;
 };
 

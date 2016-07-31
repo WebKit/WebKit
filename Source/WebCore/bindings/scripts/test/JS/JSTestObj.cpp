@@ -2931,7 +2931,14 @@ bool setJSTestObjTestNullableObjAttr(ExecState* state, EncodedJSValue thisValue,
         return throwSetterTypeError(*state, "TestObject", "testNullableObjAttr");
     }
     auto& impl = castedThis->wrapped();
-    auto nativeValue = JSTestObj::toWrapped(value);
+    TestObj* nativeValue = nullptr;
+    if (!value.isUndefinedOrNull()) {
+        nativeValue = JSTestObj::toWrapped(value);
+        if (UNLIKELY(!nativeValue)) {
+            throwAttributeTypeError(*state, "TestObject", "testNullableObjAttr", "TestObj");
+            return false;
+        }
+    }
     impl.setTestNullableObjAttr(WTFMove(nativeValue));
     return true;
 }
@@ -3679,7 +3686,14 @@ bool setJSTestObjMutablePoint(ExecState* state, EncodedJSValue thisValue, Encode
         return throwSetterTypeError(*state, "TestObject", "mutablePoint");
     }
     auto& impl = castedThis->wrapped();
-    auto nativeValue = JSSVGPoint::toWrapped(value);
+    SVGPropertyTearOff<SVGPoint>* nativeValue = nullptr;
+    if (!value.isUndefinedOrNull()) {
+        nativeValue = JSSVGPoint::toWrapped(value);
+        if (UNLIKELY(!nativeValue)) {
+            throwAttributeTypeError(*state, "TestObject", "mutablePoint", "SVGPoint");
+            return false;
+        }
+    }
     impl.setMutablePoint(WTFMove(nativeValue));
     return true;
 }
@@ -3694,7 +3708,14 @@ bool setJSTestObjImmutablePoint(ExecState* state, EncodedJSValue thisValue, Enco
         return throwSetterTypeError(*state, "TestObject", "immutablePoint");
     }
     auto& impl = castedThis->wrapped();
-    auto nativeValue = JSSVGPoint::toWrapped(value);
+    SVGPropertyTearOff<SVGPoint>* nativeValue = nullptr;
+    if (!value.isUndefinedOrNull()) {
+        nativeValue = JSSVGPoint::toWrapped(value);
+        if (UNLIKELY(!nativeValue)) {
+            throwAttributeTypeError(*state, "TestObject", "immutablePoint", "SVGPoint");
+            return false;
+        }
+    }
     impl.setImmutablePoint(WTFMove(nativeValue));
     return true;
 }

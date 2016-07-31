@@ -15,7 +15,7 @@ if (window.testRunner) {
     dragFilesOntoInput(file1, ["foo.txt"]);
     dragFilesOntoInput(file2, ["bar.txt"]);
 
-    file1.files = "foo";
+    shouldThrow('file1.files = "foo"');
     shouldBe("file1.files.length", "1");
     shouldBeEqualToString("file1.files.item(0).name", "foo.txt");
 

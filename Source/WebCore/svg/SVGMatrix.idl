@@ -23,12 +23,12 @@
 interface SVGMatrix {
     // FIXME: these attributes should all be floats but since we implement
     // AffineTransform with doubles setting these as doubles makes more sense.
-    [StrictTypeChecking] attribute unrestricted double a;
-    [StrictTypeChecking] attribute unrestricted double b;
-    [StrictTypeChecking] attribute unrestricted double c;
-    [StrictTypeChecking] attribute unrestricted double d;
-    [StrictTypeChecking] attribute unrestricted double e;
-    [StrictTypeChecking] attribute unrestricted double f;
+    attribute unrestricted double a;
+    attribute unrestricted double b;
+    attribute unrestricted double c;
+    attribute unrestricted double d;
+    attribute unrestricted double e;
+    attribute unrestricted double f;
 
     [StrictTypeChecking] SVGMatrix multiply(SVGMatrix secondMatrix);
     [RaisesException] SVGMatrix inverse();

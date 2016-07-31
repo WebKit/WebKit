@@ -2925,6 +2925,7 @@ sub GenerateImplementation
                             push(@implContent, "    auto& impl = forwardedImpl.get();\n");
                         }
                         $attribute = $codeGenerator->GetAttributeFromInterface($interface, $type, $putForwards);
+                        $type = $attribute->signature->type;
                     } else {
                         push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                     }
@@ -2937,20 +2938,15 @@ sub GenerateImplementation
 
                 my $shouldPassByReference = ShouldPassWrapperByReference($attribute->signature, $interface);
 
-                # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
-                # interface type, then if the incoming value does not implement that interface, a TypeError
-                # is thrown rather than silently passing NULL to the C++ code.
-                # Per the Web IDL and ECMAScript specifications, incoming values can always be converted to
-                # both strings and numbers, so do not throw TypeError if the attribute is of these types.
                 my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $attribute->signature, "value", $attribute->signature->extendedAttributes->{"Conditional"});
-                if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"} && !$shouldPassByReference && $codeGenerator->IsWrapperType($type)) {
+                if (!$shouldPassByReference && $codeGenerator->IsWrapperType($type)) {
                     $implIncludes{"<runtime/Error.h>"} = 1;
                     push(@implContent, "    " . GetNativeTypeFromSignature($interface, $attribute->signature) . " nativeValue = nullptr;\n");
                     push(@implContent, "    if (!value.isUndefinedOrNull()) {\n");
                     push(@implContent, "        nativeValue = $nativeValue;\n");
                     if ($mayThrowException) {
-                        push(@implContent, "    if (UNLIKELY(state->hadException()))\n");
-                        push(@implContent, "        return false;\n");
+                        push(@implContent, "        if (UNLIKELY(state->hadException()))\n");
+                        push(@implContent, "            return false;\n");
                     }
                     push(@implContent, "        if (UNLIKELY(!nativeValue)) {\n");
                     push(@implContent, "            throwAttributeTypeError(*state, \"$visibleInterfaceName\", \"$name\", \"$type\");\n");

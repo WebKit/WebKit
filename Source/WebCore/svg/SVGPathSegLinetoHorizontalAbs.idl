@@ -25,6 +25,6 @@
  */
 
 interface SVGPathSegLinetoHorizontalAbs : SVGPathSeg {
-    [StrictTypeChecking] attribute unrestricted float x;
+    attribute unrestricted float x;
 };
 

@@ -136,9 +136,6 @@ enum TestConfidence { "high", "kinda-low" };
     [GetterRaisesException] attribute DOMString stringAttrWithGetterException;
     [SetterRaisesException] attribute DOMString stringAttrWithSetterException;
 
-    // Strict type checking.
-    [StrictTypeChecking] attribute TestObj? strictTypeCheckingAttribute;
-
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
     [Custom] void customMethod();
@@ -312,7 +309,6 @@ enum TestConfidence { "high", "kinda-low" };
     [ImplementedAs=banana] void orange();
     [ImplementedAs=blueberry] attribute long strawberry;
 
-    [StrictTypeChecking] attribute unrestricted float strictFloat;
     [StrictTypeChecking, RaisesException] boolean strictFunction(DOMString str, unrestricted float a, long b);
 
     [StrictTypeChecking, RaisesException] boolean strictFunctionWithSequence(TestObj? objArg, sequence<unsigned long> a);

@@ -25,12 +25,12 @@
  */
 
 interface SVGPathSegArcRel : SVGPathSeg {
-    [StrictTypeChecking] attribute unrestricted float x;
-    [StrictTypeChecking] attribute unrestricted float y;
-    [StrictTypeChecking] attribute unrestricted float r1;
-    [StrictTypeChecking] attribute unrestricted float r2;
-    [StrictTypeChecking] attribute unrestricted float angle;
-    [StrictTypeChecking] attribute boolean largeArcFlag;
-    [StrictTypeChecking] attribute boolean sweepFlag;
+    attribute unrestricted float x;
+    attribute unrestricted float y;
+    attribute unrestricted float r1;
+    attribute unrestricted float r2;
+    attribute unrestricted float angle;
+    attribute boolean largeArcFlag;
+    attribute boolean sweepFlag;
 };
 

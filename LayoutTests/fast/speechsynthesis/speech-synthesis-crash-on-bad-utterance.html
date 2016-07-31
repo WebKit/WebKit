@@ -16,7 +16,7 @@
 
      // Don't crash. An utterance voice is supposed to take a voice object, not a string.
      var x = new SpeechSynthesisUtterance('Hello World');
-     x.voice = "asdf";
+     shouldThrow('x.voice = "asdf"');
 
      // Don't crash. An utterance is supposed to take a string, not a number.
      x = new SpeechSynthesisUtterance(223);
