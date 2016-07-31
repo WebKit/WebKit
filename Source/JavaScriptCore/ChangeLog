@@ -1,3 +1,33 @@
+2016-07-30  Mark Lam  <mark.lam@apple.com>
+
+        Assertion failure while setting the length of an ArrayClass array.
+        https://bugs.webkit.org/show_bug.cgi?id=160381
+        <rdar://problem/27328703>
+
+        Reviewed by Filip Pizlo.
+
+        When setting large length values, we're currently treating ArrayClass as a
+        ContiguousIndexingType array.  This results in an assertion failure.  This is
+        now fixed.
+
+        There are currently only 2 places where we create arrays with indexing type
+        ArrayClass: ArrayPrototype and RuntimeArray.  The fix in JSArray:;setLength()
+        takes care of ArrayPrototype.
+
+        RuntimeArray already checks for the setting of its length property, and will
+        throw a RangeError.  Hence, there's no change is needed for the RuntimeArray.
+        Instead, I added some test cases ensure that the check and throw behavior does
+        not change without notice.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        * tests/stress/array-setLength-on-ArrayClass-with-large-length.js: Added.
+        (toString):
+        (assertEqual):
+        * tests/stress/array-setLength-on-ArrayClass-with-small-length.js: Added.
+        (toString):
+        (assertEqual):
+
 2016-07-29  Keith Miller  <keith_miller@apple.com>
 
         TypedArray super constructor has some incompatabilities

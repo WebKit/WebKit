@@ -191,4 +191,9 @@ PASS typeof objCObjectOfClass('NSCFString') is 'string'
 PASS typeof objCObjectOfClass('WebScriptObject') is 'object'
 PASS objCObjectOfClass('NSArray') instanceof Array is true
 PASS concatenateArray(objCArrayOfString()) is 'onetwothree'
+PASS let arr = objCArrayOfString(); arr.length is 3
+PASS let arr = objCArrayOfString(); arr.length = 0 threw exception RangeError: Range error.
+PASS let arr = objCArrayOfString(); arr.length = 5 threw exception RangeError: Range error.
+PASS let arr = objCArrayOfString(); arr.length = 0x40000000 threw exception RangeError: Range error.
+PASS let arr = objCArrayOfString(); try { arr.length = 0 } catch(e) { } arr.length is 3
 

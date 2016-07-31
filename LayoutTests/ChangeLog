@@ -1,3 +1,16 @@
+2016-07-30  Mark Lam  <mark.lam@apple.com>
+
+        Assertion failure while setting the length of an ArrayClass array.
+        https://bugs.webkit.org/show_bug.cgi?id=160381
+        <rdar://problem/27328703>
+
+        Reviewed by Filip Pizlo.
+
+        Test that RuntimeArrays will throw an error if we try to set its length.
+
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+        * platform/mac/fast/dom/wrapper-classes-objc-expected.txt:
+
 2016-07-30  Chris Dumez  <cdumez@apple.com>
 
         Enable strict type checking for Window dictionary members
