@@ -949,6 +949,14 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     [result appendString:string];
 }
 
+- (BOOL)_accessibilityHasTouchEventListener
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    return m_object->hasTouchEventListener();
+}
+
 - (BOOL)_accessibilityValueIsAutofilled
 {
     if (![self _prepareAccessibilityCall])

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AccessibilityObject.h"
 #import "AccessibilityRenderObject.h"
+#import "EventNames.h"
 #import "HTMLInputElement.h"
 #import "RenderObject.h"
 #import "WAKView.h"
@@ -80,7 +81,16 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
 {
     return DefaultBehavior;
 }
-    
+
+bool AccessibilityObject::hasTouchEventListener() const
+{
+    for (Node* node = this->node(); node; node = node->parentNode()) {
+        if (node->hasEventListeners(eventNames().touchstartEvent) || node->hasEventListeners(eventNames().touchendEvent))
+            return true;
+    }
+    return false;
+}
+
 } // WebCore
 
 #endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS)

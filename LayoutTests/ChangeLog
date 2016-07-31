@@ -1,3 +1,13 @@
+2016-07-31  Nan Wang  <n_wang@apple.com>
+
+        AX: Add a check for touch event listener on iOS accessibility object
+        https://bugs.webkit.org/show_bug.cgi?id=160388
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/has-touch-event-listener-expected.txt: Added.
+        * accessibility/ios-simulator/has-touch-event-listener.html: Added.
+
 2016-07-30  Mark Lam  <mark.lam@apple.com>
 
         Assertion failure while setting the length of an ArrayClass array.
