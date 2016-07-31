@@ -1,5 +1,16 @@
 2016-07-30  Chris Dumez  <cdumez@apple.com>
 
+        Enable strict type checking for Window dictionary members
+        https://bugs.webkit.org/show_bug.cgi?id=160356
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C test now that one more check is passing.
+
+        * web-platform-tests/dom/events/Event-subclasses-constructors-expected.txt:
+
+2016-07-30  Chris Dumez  <cdumez@apple.com>
+
         [WebIDL] Enable strict type checking for operations' nullable parameters of wrapper types
         https://bugs.webkit.org/show_bug.cgi?id=160374
 

@@ -617,6 +617,24 @@ function shouldThrow(_a, _e, _message)
         testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
 }
 
+function shouldThrowErrorName(_a, _name)
+{
+    var _exception;
+    try {
+        typeof _a == "function" ? _a() : eval(_a);
+    } catch (e) {
+        _exception = e;
+    }
+
+    if (_exception) {
+        if (_exception.name == _name)
+            testPassed(_a + " threw exception " + _exception + ".");
+        else
+            testFailed(_a + " should throw a " + _name + ". Threw a " + _exception.name + ".");
+    } else
+        testFailed(_a + " should throw a " + _name + ". Did not throw.");
+}
+
 function shouldHaveHadError(message)
 {
     if (errorMessage) {

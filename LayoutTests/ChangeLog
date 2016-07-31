@@ -1,5 +1,33 @@
 2016-07-30  Chris Dumez  <cdumez@apple.com>
 
+        Enable strict type checking for Window dictionary members
+        https://bugs.webkit.org/show_bug.cgi?id=160356
+
+        Reviewed by Darin Adler.
+
+        Update existing tests to reflect behavior change.
+
+        * fast/events/constructors/composition-event-constructor-expected.txt:
+        * fast/events/constructors/composition-event-constructor.html:
+        * fast/events/constructors/focus-event-constructor-expected.txt:
+        * fast/events/constructors/focus-event-constructor.html:
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+        * fast/events/constructors/mouse-event-constructor.html:
+        * fast/events/constructors/ui-event-constructor-expected.txt:
+        * fast/events/constructors/ui-event-constructor.html:
+        * fast/events/constructors/wheel-event-constructor.html:
+        * platform/mac/fast/events/constructors/mouse-event-constructor-expected.txt:
+        * platform/mac/fast/events/constructors/wheel-event-constructor-expected.txt:
+
+        * resources/js-test-pre.js:
+        Add a shouldThrowErrorName() utility function that is similar to shouldThrow()
+        but only checks the error name instead of the full error message. Checking
+        only the error name has the benefit of working across browsers and facilitating
+        refactoring of error messages.
+
+2016-07-30  Chris Dumez  <cdumez@apple.com>
+
         [WebIDL] Enable strict type checking for nullable attribute setters of wrapper types
         https://bugs.webkit.org/show_bug.cgi?id=160375
 
