@@ -41,9 +41,9 @@ interface SVGLength {
 
     [SetterRaisesException] attribute DOMString valueAsString;
 
-    [StrictTypeChecking, RaisesException] void newValueSpecifiedUnits(unsigned short unitType, 
+    [RaisesException] void newValueSpecifiedUnits(unsigned short unitType,
                                                      unrestricted float valueInSpecifiedUnits);
 
-    [Custom, StrictTypeChecking, RaisesException] void convertToSpecifiedUnits(unsigned short unitType);
+    [Custom, RaisesException] void convertToSpecifiedUnits(unsigned short unitType);
 };
 

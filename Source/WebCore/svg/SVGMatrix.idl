@@ -30,16 +30,16 @@ interface SVGMatrix {
     attribute unrestricted double e;
     attribute unrestricted double f;
 
-    [StrictTypeChecking] SVGMatrix multiply(SVGMatrix secondMatrix);
+    SVGMatrix multiply(SVGMatrix secondMatrix);
     [RaisesException] SVGMatrix inverse();
-    [Immutable, StrictTypeChecking] SVGMatrix translate(unrestricted float x, unrestricted float y);
-    [Immutable, StrictTypeChecking] SVGMatrix scale(unrestricted float scaleFactor);
-    [Immutable, StrictTypeChecking] SVGMatrix scaleNonUniform(unrestricted float scaleFactorX, unrestricted float scaleFactorY);
-    [Immutable, StrictTypeChecking] SVGMatrix rotate(unrestricted float angle);
-    [StrictTypeChecking, RaisesException] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
+    [Immutable] SVGMatrix translate(unrestricted float x, unrestricted float y);
+    [Immutable] SVGMatrix scale(unrestricted float scaleFactor);
+    [Immutable] SVGMatrix scaleNonUniform(unrestricted float scaleFactorX, unrestricted float scaleFactorY);
+    [Immutable] SVGMatrix rotate(unrestricted float angle);
+    [RaisesException] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
     [Immutable] SVGMatrix flipX();
     [Immutable] SVGMatrix flipY();
-    [Immutable, StrictTypeChecking] SVGMatrix skewX(unrestricted float angle);
-    [Immutable, StrictTypeChecking] SVGMatrix skewY(unrestricted float angle);
+    [Immutable] SVGMatrix skewX(unrestricted float angle);
+    [Immutable] SVGMatrix skewY(unrestricted float angle);
 };
 

@@ -28,10 +28,10 @@ interface SVGLengthList {
     readonly attribute unsigned long numberOfItems;
 
     [RaisesException] void clear();
-    [StrictTypeChecking, RaisesException] SVGLength initialize(SVGLength item);
-    [StrictTypeChecking, RaisesException] SVGLength getItem(unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGLength insertItemBefore(SVGLength item, unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGLength replaceItem(SVGLength item, unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGLength removeItem(unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGLength appendItem(SVGLength item);
+    [RaisesException] SVGLength initialize(SVGLength item);
+    [RaisesException] SVGLength getItem(unsigned long index);
+    [RaisesException] SVGLength insertItemBefore(SVGLength item, unsigned long index);
+    [RaisesException] SVGLength replaceItem(SVGLength item, unsigned long index);
+    [RaisesException] SVGLength removeItem(unsigned long index);
+    [RaisesException] SVGLength appendItem(SVGLength item);
 };

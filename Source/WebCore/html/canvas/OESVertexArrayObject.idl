@@ -31,8 +31,8 @@
 ] interface OESVertexArrayObject {
     const unsigned long VERTEX_ARRAY_BINDING_OES = 0x85B5;
 
-    [StrictTypeChecking] WebGLVertexArrayObjectOES createVertexArrayOES();
-    [StrictTypeChecking] void deleteVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
-    [StrictTypeChecking] boolean isVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
-    [StrictTypeChecking, RaisesException] void bindVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
+    WebGLVertexArrayObjectOES createVertexArrayOES();
+    void deleteVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
+    boolean isVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
+    [RaisesException] void bindVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
 };

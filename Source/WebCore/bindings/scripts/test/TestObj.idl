@@ -309,11 +309,6 @@ enum TestConfidence { "high", "kinda-low" };
     [ImplementedAs=banana] void orange();
     [ImplementedAs=blueberry] attribute long strawberry;
 
-    [StrictTypeChecking, RaisesException] boolean strictFunction(DOMString str, unrestricted float a, long b);
-
-    [StrictTypeChecking, RaisesException] boolean strictFunctionWithSequence(TestObj? objArg, sequence<unsigned long> a);
-    [StrictTypeChecking, RaisesException] boolean strictFunctionWithArray(TestObj objArg, long[] array);
-
     // ObjectiveC reserved words.
     readonly attribute long      description;
     attribute long               id;

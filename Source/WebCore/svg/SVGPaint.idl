@@ -40,7 +40,7 @@
     readonly attribute unsigned short paintType;
     readonly attribute DOMString uri;
 
-    [StrictTypeChecking] void setUri(DOMString uri);
-    [StrictTypeChecking, RaisesException] void setPaint(unsigned short paintType, DOMString uri, DOMString rgbColor, DOMString iccColor);
+    void setUri(DOMString uri);
+    [RaisesException] void setPaint(unsigned short paintType, DOMString uri, DOMString rgbColor, DOMString iccColor);
 };
 

@@ -34,8 +34,8 @@ interface SVGAngle {
 
     [SetterRaisesException] attribute DOMString valueAsString;
 
-    [StrictTypeChecking, RaisesException] void newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
+    [RaisesException] void newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
 
-    [StrictTypeChecking, RaisesException] void convertToSpecifiedUnits(unsigned short unitType);
+    [RaisesException] void convertToSpecifiedUnits(unsigned short unitType);
 };
 

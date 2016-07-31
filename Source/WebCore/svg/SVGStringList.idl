@@ -27,11 +27,11 @@ interface SVGStringList {
     readonly attribute unsigned long numberOfItems;
 
     [RaisesException] void clear();
-    [StrictTypeChecking, RaisesException] DOMString initialize(DOMString item);
-    [StrictTypeChecking, RaisesException] DOMString getItem(unsigned long index);
-    [StrictTypeChecking, RaisesException] DOMString insertItemBefore(DOMString item, unsigned long index);
-    [StrictTypeChecking, RaisesException] DOMString replaceItem(DOMString item, unsigned long index);
-    [StrictTypeChecking, RaisesException] DOMString removeItem(unsigned long index);
-    [StrictTypeChecking, RaisesException] DOMString appendItem(DOMString item);
+    [RaisesException] DOMString initialize(DOMString item);
+    [RaisesException] DOMString getItem(unsigned long index);
+    [RaisesException] DOMString insertItemBefore(DOMString item, unsigned long index);
+    [RaisesException] DOMString replaceItem(DOMString item, unsigned long index);
+    [RaisesException] DOMString removeItem(unsigned long index);
+    [RaisesException] DOMString appendItem(DOMString item);
 };
 

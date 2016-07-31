@@ -24,6 +24,6 @@ interface SVGPoint {
     attribute unrestricted float x;
     attribute unrestricted float y;
 
-    [StrictTypeChecking] SVGPoint matrixTransform(SVGMatrix matrix);
+    SVGPoint matrixTransform(SVGMatrix matrix);
 };
 

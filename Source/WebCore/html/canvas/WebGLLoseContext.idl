@@ -28,6 +28,6 @@
     Conditional=WEBGL,
     GenerateIsReachable=ImplWebGLRenderingContext,
 ] interface WebGLLoseContext {
-    [StrictTypeChecking] void loseContext();
-    [StrictTypeChecking] void restoreContext();
+    void loseContext();
+    void restoreContext();
 };

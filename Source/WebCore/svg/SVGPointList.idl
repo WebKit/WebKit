@@ -27,10 +27,10 @@ interface SVGPointList {
     readonly attribute unsigned long numberOfItems;
 
     [RaisesException] void clear();
-    [StrictTypeChecking, RaisesException] SVGPoint initialize(SVGPoint item);
-    [StrictTypeChecking, RaisesException] SVGPoint getItem(unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGPoint insertItemBefore(SVGPoint item, unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGPoint replaceItem(SVGPoint item, unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGPoint removeItem(unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGPoint appendItem(SVGPoint item);
+    [RaisesException] SVGPoint initialize(SVGPoint item);
+    [RaisesException] SVGPoint getItem(unsigned long index);
+    [RaisesException] SVGPoint insertItemBefore(SVGPoint item, unsigned long index);
+    [RaisesException] SVGPoint replaceItem(SVGPoint item, unsigned long index);
+    [RaisesException] SVGPoint removeItem(unsigned long index);
+    [RaisesException] SVGPoint appendItem(SVGPoint item);
 };

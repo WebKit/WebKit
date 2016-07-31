@@ -213,7 +213,6 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (DOMSVGPoint *)mutablePointFunction;
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)orange;
-- (BOOL)strictFunction:(NSString *)str a:(float)a b:(int)b;
 - (void)any:(float)a b:(int)b;
 - (void)attachShadowRoot:(DOMTestDictionary *)init;
 @end

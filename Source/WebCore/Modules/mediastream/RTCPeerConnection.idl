@@ -45,11 +45,11 @@
     sequence<RTCRtpReceiver> getReceivers();
     sequence<RTCRtpTransceiver> getTransceivers();
 
-    [PrivateIdentifier, PublicIdentifier, StrictTypeChecking, RaisesException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
-    [PrivateIdentifier, PublicIdentifier, StrictTypeChecking, RaisesException] void removeTrack(RTCRtpSender sender);
+    [PrivateIdentifier, PublicIdentifier, RaisesException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
+    [PrivateIdentifier, PublicIdentifier, RaisesException] void removeTrack(RTCRtpSender sender);
 
-    [StrictTypeChecking, RaisesException] RTCRtpTransceiver addTransceiver(MediaStreamTrack track, optional RTCRtpTransceiverInit init);
-    [StrictTypeChecking, RaisesException] RTCRtpTransceiver addTransceiver(DOMString kind, optional RTCRtpTransceiverInit init);
+    [RaisesException] RTCRtpTransceiver addTransceiver(MediaStreamTrack track, optional RTCRtpTransceiverInit init);
+    [RaisesException] RTCRtpTransceiver addTransceiver(DOMString kind, optional RTCRtpTransceiverInit init);
 
     // Legacy MediaSream-based API (implemented on top of the RTP Media API)
     [JSBuiltin] sequence<MediaStream> getLocalStreams();

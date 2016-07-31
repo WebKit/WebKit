@@ -691,9 +691,6 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(JSC::ExecSt
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequence(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(JSC::ExecState*);
@@ -1265,9 +1262,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "mutablePointFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMutablePointFunction), (intptr_t) (0) } },
     { "immutablePointFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionImmutablePointFunction), (intptr_t) (0) } },
     { "orange", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOrange), (intptr_t) (0) } },
-    { "strictFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionStrictFunction), (intptr_t) (3) } },
-    { "strictFunctionWithSequence", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionStrictFunctionWithSequence), (intptr_t) (2) } },
-    { "strictFunctionWithArray", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionStrictFunctionWithArray), (intptr_t) (2) } },
     { "variadicStringMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicStringMethod), (intptr_t) (1) } },
     { "variadicDoubleMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicDoubleMethod), (intptr_t) (1) } },
     { "variadicNodeMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicNodeMethod), (intptr_t) (1) } },
@@ -5869,81 +5863,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(ExecState* state)
     auto& impl = castedThis->wrapped();
     impl.banana();
     return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState* state)
-{
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, "TestObject", "strictFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    auto& impl = castedThis->wrapped();
-    if (UNLIKELY(state->argumentCount() < 3))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
-    ExceptionCode ec = 0;
-    auto str = state->argument(0).toWTFString(state);
-    if (UNLIKELY(state->hadException()))
-        return JSValue::encode(jsUndefined());
-    auto a = convert<float>(*state, state->argument(1), ShouldAllowNonFinite::Yes);
-    if (UNLIKELY(state->hadException()))
-        return JSValue::encode(jsUndefined());
-    auto b = convert<int32_t>(*state, state->argument(2), NormalConversion);
-    if (UNLIKELY(state->hadException()))
-        return JSValue::encode(jsUndefined());
-    JSValue result = jsBoolean(impl.strictFunction(WTFMove(str), WTFMove(a), WTFMove(b), ec));
-
-    setDOMException(state, ec);
-    return JSValue::encode(result);
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequence(ExecState* state)
-{
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, "TestObject", "strictFunctionWithSequence");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    auto& impl = castedThis->wrapped();
-    if (UNLIKELY(state->argumentCount() < 2))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
-    ExceptionCode ec = 0;
-    TestObj* objArg = nullptr;
-    if (!state->argument(0).isUndefinedOrNull()) {
-        objArg = JSTestObj::toWrapped(state->uncheckedArgument(0));
-        if (UNLIKELY(!objArg))
-            return throwArgumentTypeError(*state, 0, "objArg", "TestObject", "strictFunctionWithSequence", "TestObj");
-    }
-    auto a = toNativeArray<uint32_t>(*state, state->argument(1));
-    if (UNLIKELY(state->hadException()))
-        return JSValue::encode(jsUndefined());
-    JSValue result = jsBoolean(impl.strictFunctionWithSequence(WTFMove(objArg), WTFMove(a), ec));
-
-    setDOMException(state, ec);
-    return JSValue::encode(result);
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(ExecState* state)
-{
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, "TestObject", "strictFunctionWithArray");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    auto& impl = castedThis->wrapped();
-    if (UNLIKELY(state->argumentCount() < 2))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
-    ExceptionCode ec = 0;
-    auto objArg = JSTestObj::toWrapped(state->argument(0));
-    if (UNLIKELY(!objArg))
-        return throwArgumentTypeError(*state, 0, "objArg", "TestObject", "strictFunctionWithArray", "TestObj");
-    auto array = toNativeArray<int32_t>(*state, state->argument(1));
-    if (UNLIKELY(state->hadException()))
-        return JSValue::encode(jsUndefined());
-    JSValue result = jsBoolean(impl.strictFunctionWithArray(*objArg, WTFMove(array), ec));
-
-    setDOMException(state, ec);
-    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(ExecState* state)

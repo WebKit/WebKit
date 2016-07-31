@@ -33,5 +33,5 @@
 ] interface RTCRtpSender {
     readonly attribute MediaStreamTrack? track;
 
-    [StrictTypeChecking, RaisesException] Promise replaceTrack(MediaStreamTrack withTrack);
+    [RaisesException] Promise replaceTrack(MediaStreamTrack withTrack);
 };

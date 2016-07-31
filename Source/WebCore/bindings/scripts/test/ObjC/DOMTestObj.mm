@@ -1603,15 +1603,6 @@
     IMPL->banana();
 }
 
-- (BOOL)strictFunction:(NSString *)str a:(float)a b:(int)b
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    BOOL result = IMPL->strictFunction(str, a, b, ec);
-    WebCore::raiseOnDOMError(ec);
-    return result;
-}
-
 - (void)any:(float)a b:(int)b
 {
     WebCore::JSMainThreadNullState state;

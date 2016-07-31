@@ -900,35 +900,6 @@ WEBKIT_API void
 webkit_dom_test_obj_orange(WebKitDOMTestObj* self);
 
 /**
- * webkit_dom_test_obj_strict_function:
- * @self: A #WebKitDOMTestObj
- * @str: A #gchar
- * @a: A #gfloat
- * @b: A #glong
- * @error: #GError
- *
- * Returns: A #gboolean
- *
- * Stability: Unstable
-**/
-WEBKIT_API gboolean
-webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, glong b, GError** error);
-
-/**
- * webkit_dom_test_obj_strict_function_with_array:
- * @self: A #WebKitDOMTestObj
- * @objArg: A #WebKitDOMTestObj
- * @array: A #glong
- * @error: #GError
- *
- * Returns: A #gboolean
- *
- * Stability: Unstable
-**/
-WEBKIT_API gboolean
-webkit_dom_test_obj_strict_function_with_array(WebKitDOMTestObj* self, WebKitDOMTestObj* objArg, glong array, GError** error);
-
-/**
  * webkit_dom_test_obj_variadic_string_method:
  * @self: A #WebKitDOMTestObj
  * @head: A #gchar

@@ -467,207 +467,207 @@ NoInterfaceObject,
     readonly attribute GLsizei drawingBufferWidth;
     readonly attribute GLsizei drawingBufferHeight;
 
-    [StrictTypeChecking, RaisesException] void activeTexture(GLenum texture);
-    [StrictTypeChecking, RaisesException] void attachShader(WebGLProgram? program, WebGLShader? shader);
-    [StrictTypeChecking, RaisesException] void bindAttribLocation(WebGLProgram? program, GLuint index, DOMString name);
-    [StrictTypeChecking, RaisesException] void bindBuffer(GLenum target, WebGLBuffer? buffer);
-    [StrictTypeChecking, RaisesException] void bindFramebuffer(GLenum target, WebGLFramebuffer? framebuffer);
-    [StrictTypeChecking, RaisesException] void bindRenderbuffer(GLenum target, WebGLRenderbuffer? renderbuffer);
-    [StrictTypeChecking, RaisesException] void bindTexture(GLenum target, WebGLTexture? texture);
-    [StrictTypeChecking] void blendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-    [StrictTypeChecking] void blendEquation(GLenum mode);
-    [StrictTypeChecking] void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
-    [StrictTypeChecking] void blendFunc(GLenum sfactor, GLenum dfactor);
-    [StrictTypeChecking] void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
-    [StrictTypeChecking, RaisesException] void bufferData(GLenum target, ArrayBuffer data, GLenum usage);
-    [StrictTypeChecking, RaisesException] void bufferData(GLenum target, ArrayBufferView data, GLenum usage);
-    [StrictTypeChecking, RaisesException] void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
-    [StrictTypeChecking, RaisesException] void bufferSubData(GLenum target, GLintptr offset, ArrayBuffer? data);
-    [StrictTypeChecking, RaisesException] void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView? data);
+    [RaisesException] void activeTexture(GLenum texture);
+    [RaisesException] void attachShader(WebGLProgram? program, WebGLShader? shader);
+    [RaisesException] void bindAttribLocation(WebGLProgram? program, GLuint index, DOMString name);
+    [RaisesException] void bindBuffer(GLenum target, WebGLBuffer? buffer);
+    [RaisesException] void bindFramebuffer(GLenum target, WebGLFramebuffer? framebuffer);
+    [RaisesException] void bindRenderbuffer(GLenum target, WebGLRenderbuffer? renderbuffer);
+    [RaisesException] void bindTexture(GLenum target, WebGLTexture? texture);
+    void blendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
+    void blendEquation(GLenum mode);
+    void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
+    void blendFunc(GLenum sfactor, GLenum dfactor);
+    void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
+    [RaisesException] void bufferData(GLenum target, ArrayBuffer data, GLenum usage);
+    [RaisesException] void bufferData(GLenum target, ArrayBufferView data, GLenum usage);
+    [RaisesException] void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
+    [RaisesException] void bufferSubData(GLenum target, GLintptr offset, ArrayBuffer? data);
+    [RaisesException] void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView? data);
 
-    [StrictTypeChecking] GLenum checkFramebufferStatus(GLenum target);
-    [StrictTypeChecking] void clear(GLbitfield mask);
-    [StrictTypeChecking] void clearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-    [StrictTypeChecking] void clearDepth(GLclampf depth);
-    [StrictTypeChecking] void clearStencil(GLint s);
-    [StrictTypeChecking] void colorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
-    [StrictTypeChecking, RaisesException] void compileShader(WebGLShader? shader);
+    GLenum checkFramebufferStatus(GLenum target);
+    void clear(GLbitfield mask);
+    void clearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
+    void clearDepth(GLclampf depth);
+    void clearStencil(GLint s);
+    void colorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
+    [RaisesException] void compileShader(WebGLShader? shader);
 
-    [StrictTypeChecking] void compressedTexImage2D(GLenum target, GLint level, GLenum internalformat,
+    void compressedTexImage2D(GLenum target, GLint level, GLenum internalformat,
     GLsizei width, GLsizei height, GLint border, ArrayBufferView data);
-    [StrictTypeChecking] void compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
+    void compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
    GLsizei width, GLsizei height, GLenum format, ArrayBufferView data);
     
-    [StrictTypeChecking] void copyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
-    [StrictTypeChecking] void copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+    void copyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
+    void copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 
-    [StrictTypeChecking] WebGLBuffer createBuffer();
-    [StrictTypeChecking] WebGLFramebuffer createFramebuffer();
-    [StrictTypeChecking] WebGLProgram createProgram();
-    [StrictTypeChecking] WebGLRenderbuffer createRenderbuffer();
-    [StrictTypeChecking, RaisesException] WebGLShader createShader(GLenum type);
-    [StrictTypeChecking] WebGLTexture createTexture();
+    WebGLBuffer createBuffer();
+    WebGLFramebuffer createFramebuffer();
+    WebGLProgram createProgram();
+    WebGLRenderbuffer createRenderbuffer();
+    [RaisesException] WebGLShader createShader(GLenum type);
+    WebGLTexture createTexture();
 
-    [StrictTypeChecking] void cullFace(GLenum mode);
+    void cullFace(GLenum mode);
 
-    [StrictTypeChecking] void deleteBuffer(WebGLBuffer? buffer);
-    [StrictTypeChecking] void deleteFramebuffer(WebGLFramebuffer? framebuffer);
-    [StrictTypeChecking] void deleteProgram(WebGLProgram? program);
-    [StrictTypeChecking] void deleteRenderbuffer(WebGLRenderbuffer? renderbuffer);
-    [StrictTypeChecking] void deleteShader(WebGLShader? shader);
-    [StrictTypeChecking] void deleteTexture(WebGLTexture? texture);
+    void deleteBuffer(WebGLBuffer? buffer);
+    void deleteFramebuffer(WebGLFramebuffer? framebuffer);
+    void deleteProgram(WebGLProgram? program);
+    void deleteRenderbuffer(WebGLRenderbuffer? renderbuffer);
+    void deleteShader(WebGLShader? shader);
+    void deleteTexture(WebGLTexture? texture);
 
-    [StrictTypeChecking] void depthFunc(GLenum func);
-    [StrictTypeChecking] void depthMask(GLboolean flag);
-    [StrictTypeChecking] void depthRange(GLclampf zNear, GLclampf zFar);
-    [StrictTypeChecking, RaisesException] void detachShader(WebGLProgram? program, WebGLShader? shader);
-    [StrictTypeChecking] void disable(GLenum cap);
-    [StrictTypeChecking, RaisesException] void disableVertexAttribArray(GLuint index);
-    [StrictTypeChecking, RaisesException] void drawArrays(GLenum mode, GLint first, GLsizei count);
-    [StrictTypeChecking, RaisesException] void drawElements(GLenum mode, GLsizei count, GLenum type, GLintptr offset);
+    void depthFunc(GLenum func);
+    void depthMask(GLboolean flag);
+    void depthRange(GLclampf zNear, GLclampf zFar);
+    [RaisesException] void detachShader(WebGLProgram? program, WebGLShader? shader);
+    void disable(GLenum cap);
+    [RaisesException] void disableVertexAttribArray(GLuint index);
+    [RaisesException] void drawArrays(GLenum mode, GLint first, GLsizei count);
+    [RaisesException] void drawElements(GLenum mode, GLsizei count, GLenum type, GLintptr offset);
 
-    [StrictTypeChecking] void enable(GLenum cap);
-    [StrictTypeChecking, RaisesException] void enableVertexAttribArray(GLuint index);
-    [StrictTypeChecking] void finish();
-    [StrictTypeChecking] void flush();
-    [StrictTypeChecking, RaisesException] void framebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, WebGLRenderbuffer? renderbuffer);
-    [StrictTypeChecking, RaisesException] void framebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, WebGLTexture? texture, GLint level);
-    [StrictTypeChecking] void frontFace(GLenum mode);
-    [StrictTypeChecking] void generateMipmap(GLenum target);
+    void enable(GLenum cap);
+    [RaisesException] void enableVertexAttribArray(GLuint index);
+    void finish();
+    void flush();
+    [RaisesException] void framebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, WebGLRenderbuffer? renderbuffer);
+    [RaisesException] void framebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, WebGLTexture? texture, GLint level);
+    void frontFace(GLenum mode);
+    void generateMipmap(GLenum target);
     
-    [StrictTypeChecking, RaisesException] WebGLActiveInfo getActiveAttrib(WebGLProgram? program, GLuint index);
-    [StrictTypeChecking, RaisesException] WebGLActiveInfo getActiveUniform(WebGLProgram? program, GLuint index);
+    [RaisesException] WebGLActiveInfo getActiveAttrib(WebGLProgram? program, GLuint index);
+    [RaisesException] WebGLActiveInfo getActiveUniform(WebGLProgram? program, GLuint index);
 
-    [StrictTypeChecking, Custom, RaisesException] void getAttachedShaders(WebGLProgram? program);
+    [Custom, RaisesException] void getAttachedShaders(WebGLProgram? program);
 
-    [StrictTypeChecking] GLint getAttribLocation(WebGLProgram? program, DOMString name);
+    GLint getAttribLocation(WebGLProgram? program, DOMString name);
 
-    [StrictTypeChecking, Custom] any getBufferParameter(GLenum target, GLenum pname);
+    [Custom] any getBufferParameter(GLenum target, GLenum pname);
 
-    [StrictTypeChecking] WebGLContextAttributes getContextAttributes();
+    WebGLContextAttributes getContextAttributes();
 
-    [StrictTypeChecking] GLenum getError();
+    GLenum getError();
 
     // object getExtension(DOMString name);
-    [StrictTypeChecking, Custom] any getExtension(DOMString name);
+    [Custom] any getExtension(DOMString name);
 
-    [StrictTypeChecking, Custom, RaisesException] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
-    [StrictTypeChecking, Custom, RaisesException] any getParameter(GLenum pname);
-    [StrictTypeChecking, Custom, RaisesException] any getProgramParameter(WebGLProgram? program, GLenum pname);
-    [StrictTypeChecking, RaisesException] DOMString? getProgramInfoLog(WebGLProgram? program);
-    [StrictTypeChecking, Custom, RaisesException] any getRenderbufferParameter(GLenum target, GLenum pname);
-    [StrictTypeChecking, Custom, RaisesException] any getShaderParameter(WebGLShader? shader, GLenum pname);
+    [Custom, RaisesException] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
+    [Custom, RaisesException] any getParameter(GLenum pname);
+    [Custom, RaisesException] any getProgramParameter(WebGLProgram? program, GLenum pname);
+    [RaisesException] DOMString? getProgramInfoLog(WebGLProgram? program);
+    [Custom, RaisesException] any getRenderbufferParameter(GLenum target, GLenum pname);
+    [Custom, RaisesException] any getShaderParameter(WebGLShader? shader, GLenum pname);
 
-    [StrictTypeChecking, RaisesException] DOMString? getShaderInfoLog(WebGLShader? shader);
+    [RaisesException] DOMString? getShaderInfoLog(WebGLShader? shader);
 
-    [StrictTypeChecking, RaisesException] WebGLShaderPrecisionFormat getShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype);
+    [RaisesException] WebGLShaderPrecisionFormat getShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype);
 
-    [StrictTypeChecking, RaisesException] DOMString? getShaderSource(WebGLShader? shader);
+    [RaisesException] DOMString? getShaderSource(WebGLShader? shader);
 
-    [StrictTypeChecking, Custom] sequence<DOMString> getSupportedExtensions();
+    [Custom] sequence<DOMString> getSupportedExtensions();
 
-    [StrictTypeChecking, Custom, RaisesException] any getTexParameter(GLenum target, GLenum pname);
+    [Custom, RaisesException] any getTexParameter(GLenum target, GLenum pname);
 
-    [StrictTypeChecking, Custom, RaisesException] any getUniform(WebGLProgram? program, WebGLUniformLocation? location);
+    [Custom, RaisesException] any getUniform(WebGLProgram? program, WebGLUniformLocation? location);
 
-    [StrictTypeChecking, RaisesException] WebGLUniformLocation getUniformLocation(WebGLProgram? program, DOMString name);
+    [RaisesException] WebGLUniformLocation getUniformLocation(WebGLProgram? program, DOMString name);
 
-    [StrictTypeChecking, Custom, RaisesException] any getVertexAttrib(GLuint index, GLenum pname);
+    [Custom, RaisesException] any getVertexAttrib(GLuint index, GLenum pname);
 
-    [StrictTypeChecking] GLsizeiptr getVertexAttribOffset(GLuint index, GLenum pname);
+    GLsizeiptr getVertexAttribOffset(GLuint index, GLenum pname);
 
-    [StrictTypeChecking] void hint(GLenum target, GLenum mode);
-    [StrictTypeChecking] GLboolean isBuffer(WebGLBuffer? buffer);
-    [StrictTypeChecking] GLboolean isContextLost();
-    [StrictTypeChecking] GLboolean isEnabled(GLenum cap);
-    [StrictTypeChecking] GLboolean isFramebuffer(WebGLFramebuffer? framebuffer);
-    [StrictTypeChecking] GLboolean isProgram(WebGLProgram? program);
-    [StrictTypeChecking] GLboolean isRenderbuffer(WebGLRenderbuffer? renderbuffer);
-    [StrictTypeChecking] GLboolean isShader(WebGLShader? shader);
-    [StrictTypeChecking] GLboolean isTexture(WebGLTexture? texture);
-    [StrictTypeChecking] void lineWidth(GLfloat width);
-    [StrictTypeChecking, RaisesException] void linkProgram(WebGLProgram? program);
-    [StrictTypeChecking] void pixelStorei(GLenum pname, GLint param);
-    [StrictTypeChecking] void polygonOffset(GLfloat factor, GLfloat units);
+    void hint(GLenum target, GLenum mode);
+    GLboolean isBuffer(WebGLBuffer? buffer);
+    GLboolean isContextLost();
+    GLboolean isEnabled(GLenum cap);
+    GLboolean isFramebuffer(WebGLFramebuffer? framebuffer);
+    GLboolean isProgram(WebGLProgram? program);
+    GLboolean isRenderbuffer(WebGLRenderbuffer? renderbuffer);
+    GLboolean isShader(WebGLShader? shader);
+    GLboolean isTexture(WebGLTexture? texture);
+    void lineWidth(GLfloat width);
+    [RaisesException] void linkProgram(WebGLProgram? program);
+    void pixelStorei(GLenum pname, GLint param);
+    void polygonOffset(GLfloat factor, GLfloat units);
 
-    [StrictTypeChecking, RaisesException] void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView pixels);
+    [RaisesException] void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView pixels);
     
-    [StrictTypeChecking] void releaseShaderCompiler();
-    [StrictTypeChecking] void renderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
-    [StrictTypeChecking] void sampleCoverage(GLclampf value, GLboolean invert);
-    [StrictTypeChecking] void scissor(GLint x, GLint y, GLsizei width, GLsizei height);
-    [StrictTypeChecking, RaisesException] void shaderSource(WebGLShader? shader, DOMString string);
-    [StrictTypeChecking] void stencilFunc(GLenum func, GLint ref, GLuint mask);
-    [StrictTypeChecking] void stencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask);
-    [StrictTypeChecking] void stencilMask(GLuint mask);
-    [StrictTypeChecking] void stencilMaskSeparate(GLenum face, GLuint mask);
-    [StrictTypeChecking] void stencilOp(GLenum fail, GLenum zfail, GLenum zpass);
-    [StrictTypeChecking] void stencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass);
+    void releaseShaderCompiler();
+    void renderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
+    void sampleCoverage(GLclampf value, GLboolean invert);
+    void scissor(GLint x, GLint y, GLsizei width, GLsizei height);
+    [RaisesException] void shaderSource(WebGLShader? shader, DOMString string);
+    void stencilFunc(GLenum func, GLint ref, GLuint mask);
+    void stencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask);
+    void stencilMask(GLuint mask);
+    void stencilMaskSeparate(GLenum face, GLuint mask);
+    void stencilOp(GLenum fail, GLenum zfail, GLenum zpass);
+    void stencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass);
 
-    [StrictTypeChecking] void texParameterf(GLenum target, GLenum pname, GLfloat param);
-    [StrictTypeChecking] void texParameteri(GLenum target, GLenum pname, GLint param);
+    void texParameterf(GLenum target, GLenum pname, GLfloat param);
+    void texParameteri(GLenum target, GLenum pname, GLint param);
 
     // Supported forms:
-    [StrictTypeChecking, RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height,
+    [RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height,
   GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
-    [StrictTypeChecking, RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
+    [RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
   GLenum format, GLenum type, ImageData? pixels);
-    [StrictTypeChecking, RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
+    [RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
   GLenum format, GLenum type, HTMLImageElement? image);
-    [StrictTypeChecking, RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
+    [RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
   GLenum format, GLenum type, HTMLCanvasElement? canvas);
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    [StrictTypeChecking, RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
+    [RaisesException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
   GLenum format, GLenum type, HTMLVideoElement? video);
 #endif
 
-    [StrictTypeChecking, RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
+    [RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
  GLsizei width, GLsizei height,
  GLenum format, GLenum type, ArrayBufferView? pixels);
-    [StrictTypeChecking, RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
+    [RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
  GLenum format, GLenum type, ImageData? pixels);
-    [StrictTypeChecking, RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
+    [RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
  GLenum format, GLenum type, HTMLImageElement? image);
-    [StrictTypeChecking, RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
+    [RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
  GLenum format, GLenum type, HTMLCanvasElement? canvas);
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    [StrictTypeChecking, RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
+    [RaisesException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
  GLenum format, GLenum type, HTMLVideoElement? video);
 #endif
 
-    [StrictTypeChecking, RaisesException] void uniform1f(WebGLUniformLocation? location, GLfloat x);
-    [StrictTypeChecking, Custom, RaisesException] void uniform1fv(WebGLUniformLocation? location, Float32Array v);
-    [StrictTypeChecking, RaisesException] void uniform1i(WebGLUniformLocation? location, GLint x);
-    [StrictTypeChecking, Custom, RaisesException] void uniform1iv(WebGLUniformLocation? location, Int32Array v);
-    [StrictTypeChecking, RaisesException] void uniform2f(WebGLUniformLocation? location, GLfloat x, GLfloat y);
-    [StrictTypeChecking, Custom, RaisesException] void uniform2fv(WebGLUniformLocation? location, Float32Array v);
-    [StrictTypeChecking, RaisesException] void uniform2i(WebGLUniformLocation? location, GLint x, GLint y);
-    [StrictTypeChecking, Custom, RaisesException] void uniform2iv(WebGLUniformLocation? location, Int32Array v);
-    [StrictTypeChecking, RaisesException] void uniform3f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z);
-    [StrictTypeChecking, Custom, RaisesException] void uniform3fv(WebGLUniformLocation? location, Float32Array v);
-    [StrictTypeChecking, RaisesException] void uniform3i(WebGLUniformLocation? location, GLint x, GLint y, GLint z);
-    [StrictTypeChecking, Custom, RaisesException] void uniform3iv(WebGLUniformLocation? location, Int32Array v);
-    [StrictTypeChecking, RaisesException] void uniform4f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-    [StrictTypeChecking, Custom, RaisesException] void uniform4fv(WebGLUniformLocation? location, Float32Array v);
-    [StrictTypeChecking, RaisesException] void uniform4i(WebGLUniformLocation? location, GLint x, GLint y, GLint z, GLint w);
-    [StrictTypeChecking, Custom, RaisesException] void uniform4iv(WebGLUniformLocation? location, Int32Array v);
+    [RaisesException] void uniform1f(WebGLUniformLocation? location, GLfloat x);
+    [Custom, RaisesException] void uniform1fv(WebGLUniformLocation? location, Float32Array v);
+    [RaisesException] void uniform1i(WebGLUniformLocation? location, GLint x);
+    [Custom, RaisesException] void uniform1iv(WebGLUniformLocation? location, Int32Array v);
+    [RaisesException] void uniform2f(WebGLUniformLocation? location, GLfloat x, GLfloat y);
+    [Custom, RaisesException] void uniform2fv(WebGLUniformLocation? location, Float32Array v);
+    [RaisesException] void uniform2i(WebGLUniformLocation? location, GLint x, GLint y);
+    [Custom, RaisesException] void uniform2iv(WebGLUniformLocation? location, Int32Array v);
+    [RaisesException] void uniform3f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z);
+    [Custom, RaisesException] void uniform3fv(WebGLUniformLocation? location, Float32Array v);
+    [RaisesException] void uniform3i(WebGLUniformLocation? location, GLint x, GLint y, GLint z);
+    [Custom, RaisesException] void uniform3iv(WebGLUniformLocation? location, Int32Array v);
+    [RaisesException] void uniform4f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    [Custom, RaisesException] void uniform4fv(WebGLUniformLocation? location, Float32Array v);
+    [RaisesException] void uniform4i(WebGLUniformLocation? location, GLint x, GLint y, GLint z, GLint w);
+    [Custom, RaisesException] void uniform4iv(WebGLUniformLocation? location, Int32Array v);
 
-    [StrictTypeChecking, Custom, RaisesException] void uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
-    [StrictTypeChecking, Custom, RaisesException] void uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
-    [StrictTypeChecking, Custom, RaisesException] void uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
+    [Custom, RaisesException] void uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
+    [Custom, RaisesException] void uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
+    [Custom, RaisesException] void uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
 
-    [StrictTypeChecking, RaisesException] void useProgram(WebGLProgram? program);
-    [StrictTypeChecking, RaisesException] void validateProgram(WebGLProgram? program);
+    [RaisesException] void useProgram(WebGLProgram? program);
+    [RaisesException] void validateProgram(WebGLProgram? program);
 
-    [StrictTypeChecking] void vertexAttrib1f(GLuint indx, GLfloat x);
-    [StrictTypeChecking, Custom] void vertexAttrib1fv(GLuint indx, Float32Array values);
-    [StrictTypeChecking] void vertexAttrib2f(GLuint indx, GLfloat x, GLfloat y);
-    [StrictTypeChecking, Custom] void vertexAttrib2fv(GLuint indx, Float32Array values);
-    [StrictTypeChecking] void vertexAttrib3f(GLuint indx, GLfloat x, GLfloat y, GLfloat z);
-    [StrictTypeChecking, Custom] void vertexAttrib3fv(GLuint indx, Float32Array values);
-    [StrictTypeChecking] void vertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-    [StrictTypeChecking, Custom] void vertexAttrib4fv(GLuint indx, Float32Array values);
-    [StrictTypeChecking, RaisesException] void vertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLintptr offset);
+    void vertexAttrib1f(GLuint indx, GLfloat x);
+    [Custom] void vertexAttrib1fv(GLuint indx, Float32Array values);
+    void vertexAttrib2f(GLuint indx, GLfloat x, GLfloat y);
+    [Custom] void vertexAttrib2fv(GLuint indx, Float32Array values);
+    void vertexAttrib3f(GLuint indx, GLfloat x, GLfloat y, GLfloat z);
+    [Custom] void vertexAttrib3fv(GLuint indx, Float32Array values);
+    void vertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    [Custom] void vertexAttrib4fv(GLuint indx, Float32Array values);
+    [RaisesException] void vertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLintptr offset);
 
-    [StrictTypeChecking] void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+    void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
 };
