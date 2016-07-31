@@ -533,20 +533,6 @@
     WebCore::raiseOnDOMError(ec);
 }
 
-- (DOMTestObj *)strictTypeCheckingAttribute
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->strictTypeCheckingAttribute()));
-}
-
-- (void)setStrictTypeCheckingAttribute:(DOMTestObj *)newStrictTypeCheckingAttribute
-{
-    WebCore::JSMainThreadNullState state;
-    ASSERT(newStrictTypeCheckingAttribute);
-
-    IMPL->setStrictTypeCheckingAttribute(core(newStrictTypeCheckingAttribute));
-}
-
 - (int)customAttr
 {
     WebCore::JSMainThreadNullState state;
@@ -884,18 +870,6 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->setBlueberry(newStrawberry);
-}
-
-- (float)strictFloat
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->strictFloat();
-}
-
-- (void)setStrictFloat:(float)newStrictFloat
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setStrictFloat(newStrictFloat);
 }
 
 - (int)descriptionName

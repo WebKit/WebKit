@@ -97,7 +97,6 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property int attrWithSetterExceptionWithMessage;
 @property (copy) NSString *stringAttrWithGetterException;
 @property (copy) NSString *stringAttrWithSetterException;
-@property (strong) DOMTestObj *strictTypeCheckingAttribute;
 @property int customAttr;
 @property (strong) DOMTestObj *jsBuiltinAttribute;
 @property (readonly, strong) DOMTestObj *jsBuiltinReadOnlyAttribute;
@@ -121,7 +120,6 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property (strong) DOMSVGPoint *mutablePoint;
 @property (strong) DOMSVGPoint *immutablePoint;
 @property int strawberry;
-@property float strictFloat;
 @property (readonly) int descriptionName;
 @property int idName;
 @property (readonly, copy) NSString *hashName;

@@ -790,8 +790,6 @@ JSC::EncodedJSValue jsTestObjStringAttrWithGetterException(JSC::ExecState*, JSC:
 bool setJSTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjStrictTypeCheckingAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjStrictTypeCheckingAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjOnfoo(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -851,8 +849,6 @@ JSC::EncodedJSValue jsTestObjImmutablePoint(JSC::ExecState*, JSC::EncodedJSValue
 bool setJSTestObjImmutablePoint(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStrawberry(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjStrawberry(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjStrictFloat(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjStrictFloat(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjDescription(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjId(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjId(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
@@ -1089,7 +1085,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "attrWithSetterExceptionWithMessage", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithSetterExceptionWithMessage), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttrWithSetterExceptionWithMessage) } },
     { "stringAttrWithGetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithGetterException) } },
     { "stringAttrWithSetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithSetterException) } },
-    { "strictTypeCheckingAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStrictTypeCheckingAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStrictTypeCheckingAttribute) } },
     { "customAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCustomAttr) } },
 #if ENABLE(Condition4)
     { "jsBuiltinAttribute", Accessor | Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testObjJsBuiltinAttributeCodeGenerator), (intptr_t) (setTestObjJsBuiltinAttributeCodeGenerator) } },
@@ -1134,7 +1129,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "mutablePoint", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjMutablePoint), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjMutablePoint) } },
     { "immutablePoint", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjImmutablePoint), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjImmutablePoint) } },
     { "strawberry", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStrawberry), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStrawberry) } },
-    { "strictFloat", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStrictFloat), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStrictFloat) } },
     { "description", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjDescription), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "id", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjId), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjId) } },
     { "hash", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjHash), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
@@ -2010,21 +2004,6 @@ EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* state, EncodedJ
 }
 
 
-EncodedJSValue jsTestObjStrictTypeCheckingAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, "TestObject", "strictTypeCheckingAttribute");
-    }
-    auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), impl.strictTypeCheckingAttribute());
-    return JSValue::encode(result);
-}
-
-
 EncodedJSValue jsTestObjCustomAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     UNUSED_PARAM(state);
@@ -2424,21 +2403,6 @@ EncodedJSValue jsTestObjStrawberry(ExecState* state, EncodedJSValue thisValue, P
     }
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.blueberry());
-    return JSValue::encode(result);
-}
-
-
-EncodedJSValue jsTestObjStrictFloat(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, "TestObject", "strictFloat");
-    }
-    auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.strictFloat());
     return JSValue::encode(result);
 }
 
@@ -3317,28 +3281,6 @@ bool setJSTestObjStringAttrWithSetterException(ExecState* state, EncodedJSValue 
 }
 
 
-bool setJSTestObjStrictTypeCheckingAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
-        return throwSetterTypeError(*state, "TestObject", "strictTypeCheckingAttribute");
-    }
-    auto& impl = castedThis->wrapped();
-    TestObj* nativeValue = nullptr;
-    if (!value.isUndefinedOrNull()) {
-        nativeValue = JSTestObj::toWrapped(value);
-        if (UNLIKELY(!nativeValue)) {
-            throwAttributeTypeError(*state, "TestObject", "strictTypeCheckingAttribute", "TestObj");
-            return false;
-        }
-    }
-    impl.setStrictTypeCheckingAttribute(WTFMove(nativeValue));
-    return true;
-}
-
-
 bool setJSTestObjCustomAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
@@ -3734,23 +3676,6 @@ bool setJSTestObjStrawberry(ExecState* state, EncodedJSValue thisValue, EncodedJ
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setBlueberry(WTFMove(nativeValue));
-    return true;
-}
-
-
-bool setJSTestObjStrictFloat(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
-        return throwSetterTypeError(*state, "TestObject", "strictFloat");
-    }
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = convert<float>(*state, value, ShouldAllowNonFinite::Yes);
-    if (UNLIKELY(state->hadException()))
-        return false;
-    impl.setStrictFloat(WTFMove(nativeValue));
     return true;
 }
 

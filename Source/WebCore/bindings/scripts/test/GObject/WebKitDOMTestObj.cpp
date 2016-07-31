@@ -115,7 +115,6 @@ enum {
     PROP_ATTR_WITH_SETTER_EXCEPTION_WITH_MESSAGE,
     PROP_STRING_ATTR_WITH_GETTER_EXCEPTION,
     PROP_STRING_ATTR_WITH_SETTER_EXCEPTION,
-    PROP_STRICT_TYPE_CHECKING_ATTRIBUTE,
     PROP_WITH_SCRIPT_STATE_ATTRIBUTE,
     PROP_WITH_CALL_WITH_AND_SETTER_CALL_WITH_ATTRIBUTE,
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE,
@@ -133,7 +132,6 @@ enum {
     PROP_MUTABLE_POINT,
     PROP_IMMUTABLE_POINT,
     PROP_STRAWBERRY,
-    PROP_STRICT_FLOAT,
     PROP_DESCRIPTION,
     PROP_ID,
     PROP_HASH,
@@ -260,9 +258,6 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     case PROP_STRAWBERRY:
         webkit_dom_test_obj_set_strawberry(self, g_value_get_long(value));
-        break;
-    case PROP_STRICT_FLOAT:
-        webkit_dom_test_obj_set_strict_float(self, g_value_get_float(value));
         break;
     case PROP_ID:
         webkit_dom_test_obj_set_id(self, g_value_get_long(value));
@@ -395,9 +390,6 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
     case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
         g_value_take_string(value, webkit_dom_test_obj_get_string_attr_with_setter_exception(self));
         break;
-    case PROP_STRICT_TYPE_CHECKING_ATTRIBUTE:
-        g_value_set_object(value, webkit_dom_test_obj_get_strict_type_checking_attribute(self));
-        break;
     case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
         g_value_set_long(value, webkit_dom_test_obj_get_with_script_state_attribute(self));
         break;
@@ -448,9 +440,6 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_STRAWBERRY:
         g_value_set_long(value, webkit_dom_test_obj_get_strawberry(self));
-        break;
-    case PROP_STRICT_FLOAT:
-        g_value_set_float(value, webkit_dom_test_obj_get_strict_float(self));
         break;
     case PROP_DESCRIPTION:
         g_value_set_long(value, webkit_dom_test_obj_get_description(self));
@@ -882,16 +871,6 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_STRICT_TYPE_CHECKING_ATTRIBUTE,
-        g_param_spec_object(
-            "strict-type-checking-attribute",
-            "TestObj:strict-type-checking-attribute",
-            "read-only WebKitDOMTestObj* TestObj:strict-type-checking-attribute",
-            WEBKIT_DOM_TYPE_TEST_OBJ,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_WITH_SCRIPT_STATE_ATTRIBUTE,
         g_param_spec_long(
             "with-script-state-attribute",
@@ -1058,16 +1037,6 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:strawberry",
             "read-write glong TestObj:strawberry",
             G_MINLONG, G_MAXLONG, 0,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_STRICT_FLOAT,
-        g_param_spec_float(
-            "strict-float",
-            "TestObj:strict-float",
-            "read-write gfloat TestObj:strict-float",
-            -G_MAXFLOAT, G_MAXFLOAT, 0,
             WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(
@@ -2722,25 +2691,6 @@ void webkit_dom_test_obj_set_string_attr_with_setter_exception(WebKitDOMTestObj*
     }
 }
 
-WebKitDOMTestObj* webkit_dom_test_obj_get_strict_type_checking_attribute(WebKitDOMTestObj* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    WebCore::TestObj* item = WebKit::core(self);
-    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->strictTypeCheckingAttribute());
-    return WebKit::kit(gobjectResult.get());
-}
-
-void webkit_dom_test_obj_set_strict_type_checking_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::TestObj* convertedValue = WebKit::core(value);
-    item->setStrictTypeCheckingAttribute(convertedValue);
-}
-
 glong webkit_dom_test_obj_get_with_script_state_attribute(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -3011,23 +2961,6 @@ void webkit_dom_test_obj_set_strawberry(WebKitDOMTestObj* self, glong value)
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
     WebCore::TestObj* item = WebKit::core(self);
     item->setBlueberry(value);
-}
-
-gfloat webkit_dom_test_obj_get_strict_float(WebKitDOMTestObj* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    WebCore::TestObj* item = WebKit::core(self);
-    gfloat result = item->strictFloat();
-    return result;
-}
-
-void webkit_dom_test_obj_set_strict_float(WebKitDOMTestObj* self, gfloat value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    WebCore::TestObj* item = WebKit::core(self);
-    item->setStrictFloat(value);
 }
 
 glong webkit_dom_test_obj_get_description(WebKitDOMTestObj* self)
