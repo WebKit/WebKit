@@ -132,7 +132,7 @@ public:
     void createdMessagePort(MessagePort&);
     void destroyedMessagePort(MessagePort&);
 
-    virtual void didLoadResourceSynchronously(const ResourceRequest&);
+    virtual void didLoadResourceSynchronously();
 
     void ref() { refScriptExecutionContext(); }
     void deref() { derefScriptExecutionContext(); }

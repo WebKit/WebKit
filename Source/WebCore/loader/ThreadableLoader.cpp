@@ -58,26 +58,26 @@ ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& ba
 {
 }
 
-RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, ResourceRequest&& request, const ThreadableLoaderOptions& options)
 {
     ASSERT(client);
     ASSERT(context);
 
     if (is<WorkerGlobalScope>(*context))
-        return WorkerThreadableLoader::create(downcast<WorkerGlobalScope>(context), client, WorkerRunLoop::defaultMode(), request, options);
+        return WorkerThreadableLoader::create(downcast<WorkerGlobalScope>(context), client, WorkerRunLoop::defaultMode(), WTFMove(request), options);
 
-    return DocumentThreadableLoader::create(downcast<Document>(*context), *client, request, options);
+    return DocumentThreadableLoader::create(downcast<Document>(*context), *client, WTFMove(request), options);
 }
 
-void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
+void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
     ASSERT(context);
 
     if (is<WorkerGlobalScope>(*context))
-        WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(context), request, client, options);
+        WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(context), WTFMove(request), client, options);
     else
-        DocumentThreadableLoader::loadResourceSynchronously(downcast<Document>(*context), request, client, options);
-    context->didLoadResourceSynchronously(request);
+        DocumentThreadableLoader::loadResourceSynchronously(downcast<Document>(*context), WTFMove(request), client, options);
+    context->didLoadResourceSynchronously();
 }
 
 } // namespace WebCore

@@ -1421,7 +1421,7 @@ private:
     void setCachedDOMCookies(const String&);
     bool isDOMCookieCacheValid() const { return m_cookieCacheExpiryTimer.isActive(); }
     void invalidateDOMCookieCache();
-    void didLoadResourceSynchronously(const ResourceRequest&) final;
+    void didLoadResourceSynchronously() final;
 
     void checkViewportDependentPictures();
 

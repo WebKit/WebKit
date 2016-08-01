@@ -49,10 +49,10 @@ namespace WebCore {
 
 static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMode";
 
-WorkerThreadableLoader::WorkerThreadableLoader(WorkerGlobalScope* workerGlobalScope, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+WorkerThreadableLoader::WorkerThreadableLoader(WorkerGlobalScope* workerGlobalScope, ThreadableLoaderClient* client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options)
     : m_workerGlobalScope(workerGlobalScope)
     , m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client))
-    , m_bridge(*new MainThreadBridge(*m_workerClientWrapper, workerGlobalScope->thread().workerLoaderProxy(), taskMode, request, options, workerGlobalScope->url().strippedForUseAsReferrer(), workerGlobalScope->securityOrigin(), workerGlobalScope->contentSecurityPolicy()))
+    , m_bridge(*new MainThreadBridge(*m_workerClientWrapper, workerGlobalScope->thread().workerLoaderProxy(), taskMode, WTFMove(request), options, workerGlobalScope->url().strippedForUseAsReferrer(), workerGlobalScope->securityOrigin(), workerGlobalScope->contentSecurityPolicy()))
 {
 }
 
@@ -61,7 +61,7 @@ WorkerThreadableLoader::~WorkerThreadableLoader()
     m_bridge.destroy();
 }
 
-void WorkerThreadableLoader::loadResourceSynchronously(WorkerGlobalScope* workerGlobalScope, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
+void WorkerThreadableLoader::loadResourceSynchronously(WorkerGlobalScope* workerGlobalScope, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
     WorkerRunLoop& runLoop = workerGlobalScope->thread().runLoop();
 
@@ -69,7 +69,7 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerGlobalScope* worker
     String mode = loadResourceSynchronouslyMode;
     mode.append(String::number(runLoop.createUniqueId()));
 
-    RefPtr<WorkerThreadableLoader> loader = WorkerThreadableLoader::create(workerGlobalScope, &client, mode, request, options);
+    RefPtr<WorkerThreadableLoader> loader = WorkerThreadableLoader::create(workerGlobalScope, &client, mode, WTFMove(request), options);
     MessageQueueWaitResult result = MessageQueueMessageReceived;
     while (!loader->done() && result != MessageQueueTerminated)
         result = runLoop.runInMode(workerGlobalScope, mode);
@@ -98,7 +98,7 @@ LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, con
 }
 
 WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy& loaderProxy, const String& taskMode,
-    const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer,
+    ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer,
     const SecurityOrigin* securityOrigin, const ContentSecurityPolicy* contentSecurityPolicy)
     : m_workerClientWrapper(&workerClientWrapper)
     , m_loaderProxy(loaderProxy)
@@ -112,6 +112,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
 
     auto optionsCopy = std::make_unique<LoaderTaskOptions>(options, outgoingReferrer, *securityOrigin);
 
+    // Can we benefit from request being an r-value to create more efficiently its isolated copy?
     m_loaderProxy.postTaskToLoader([this, request = request.isolatedCopy(), options = WTFMove(optionsCopy), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy)](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
@@ -120,7 +121,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
 
         // FIXME: If the site requests a local resource, then this will return a non-zero value but the sync path will return a 0 value.
         // Either this should return 0 or the other code path should call a failure callback.
-        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, request, options->options, WTFMove(options->origin), WTFMove(contentSecurityPolicyCopy));
+        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, WTFMove(request), options->options, WTFMove(options->origin), WTFMove(contentSecurityPolicyCopy));
         ASSERT(m_mainThreadLoader || m_loadingFinished);
     });
 }

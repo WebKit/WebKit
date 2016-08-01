@@ -95,9 +95,9 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     if (m_client)
-        m_loader = ThreadableLoader::create(scriptExecutionContext, this, request, options);
+        m_loader = ThreadableLoader::create(scriptExecutionContext, this, WTFMove(request), options);
     else
-        ThreadableLoader::loadResourceSynchronously(scriptExecutionContext, request, *this, options);
+        ThreadableLoader::loadResourceSynchronously(scriptExecutionContext, WTFMove(request), *this, options);
 }
 
 void FileReaderLoader::cancel()

@@ -44,8 +44,8 @@ CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequ
 {
 }
 
-CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, const ResourceLoaderOptions& options)
-    : m_resourceRequest(resourceRequest)
+CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options)
+    : m_resourceRequest(WTFMove(resourceRequest))
     , m_options(options)
     , m_forPreload(false)
     , m_defer(NoDefer)

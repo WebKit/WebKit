@@ -176,7 +176,7 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
     m_messagePorts.remove(&messagePort);
 }
 
-void ScriptExecutionContext::didLoadResourceSynchronously(const ResourceRequest&)
+void ScriptExecutionContext::didLoadResourceSynchronously()
 {
 }
 

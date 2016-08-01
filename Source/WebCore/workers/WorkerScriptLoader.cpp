@@ -73,7 +73,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     options.setSendLoadCallbacks(SendCallbacks);
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 
-    WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(scriptExecutionContext), *request, *this, options);
+    WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(scriptExecutionContext), WTFMove(*request), *this, options);
 }
 
 void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient* client)
@@ -98,7 +98,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
 
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);
-    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, *request, options);
+    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, WTFMove(*request), options);
 }
 
 const URL& WorkerScriptLoader::responseURL() const
