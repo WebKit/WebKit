@@ -123,7 +123,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLModElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLOListElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLObjectElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLObjectElementPrivate.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLOptGroupElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLOptionElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLOptionsCollection.h \
