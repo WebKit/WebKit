@@ -75,7 +75,7 @@ VPATH = \
     $(WebCore)/websockets \
 #
 
-NON_SVG_BINDING_IDLS = \
+JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
 	$(WebCore)/Modules/applepay/ApplePayPaymentAuthorizedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl \
@@ -430,7 +430,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/html/HTMLTableRowElement.idl \
     $(WebCore)/html/HTMLTableSectionElement.idl \
     $(WebCore)/html/HTMLTemplateElement.idl \
-    $(WebCore)/html/HTMLTextAreaElement.idl \
     $(WebCore)/html/HTMLTimeElement.idl \
     $(WebCore)/html/HTMLTitleElement.idl \
     $(WebCore)/html/HTMLTrackElement.idl \
@@ -572,7 +571,8 @@ NON_SVG_BINDING_IDLS = \
     InternalSettingsGenerated.idl
 #
 
-SVG_BINDING_IDLS = \
+JS_ONLY_BINDING_IDLS = \
+    $(WebCore)/html/HTMLTextAreaElement.idl \
     $(WebCore)/svg/SVGAElement.idl \
     $(WebCore)/svg/SVGAltGlyphDefElement.idl \
     $(WebCore)/svg/SVGAltGlyphElement.idl \
@@ -791,7 +791,7 @@ ADDITIONAL_EVENT_TARGET_FACTORY =
 
 -include WebCoreDerivedSourcesAdditions.make
 
-NON_SVG_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
+JS_AND_OBJC_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 
 all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
 
@@ -803,7 +803,7 @@ $(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
 endif # MACOS
 
 ifneq ($(WTF_PLATFORM_IOS), 1)
-NON_SVG_BINDING_IDLS += \
+JS_AND_OBJC_BINDING_IDLS += \
     $(WebCore)/dom/Touch.idl \
     $(WebCore)/dom/TouchEvent.idl \
     $(WebCore)/dom/TouchList.idl
@@ -811,9 +811,9 @@ endif
 
 .PHONY : all
 
-BINDING_IDLS = $(NON_SVG_BINDING_IDLS) $(SVG_BINDING_IDLS)
+JS_BINDING_IDLS = $(JS_AND_OBJC_BINDING_IDLS) $(JS_ONLY_BINDING_IDLS)
 
-JS_DOM_CLASSES=$(basename $(notdir $(BINDING_IDLS)))
+JS_DOM_CLASSES=$(basename $(notdir $(JS_BINDING_IDLS)))
 
 JS_DOM_HEADERS=$(filter-out JSEventListener.h, $(JS_DOM_CLASSES:%=JS%.h))
 
@@ -1234,8 +1234,8 @@ define NL
 
 endef
 
-$(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES) DerivedSources.make
-	$(foreach f,$(BINDING_IDLS),@echo $(f)>>$(IDL_FILES_TMP)$(NL))
+$(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(JS_BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES) DerivedSources.make
+	$(foreach f,$(JS_BINDING_IDLS),@echo $(f)>>$(IDL_FILES_TMP)$(NL))
 	$(call preprocess_idls_script, $(PREPROCESS_IDLS_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
 	$(DELETE) $(IDL_FILES_TMP)
 
@@ -1352,7 +1352,7 @@ all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(firstword $(WebCo
 
 ifeq ($(OS),MACOS)
 
-OBJC_DOM_CLASSES=$(basename $(notdir $(NON_SVG_BINDING_IDLS)))
+OBJC_DOM_CLASSES=$(basename $(notdir $(JS_AND_OBJC_BINDING_IDLS)))
 
 OBJC_DOM_HEADERS=$(filter-out DOMDOMWindow.h DOMDOMMimeType.h DOMDOMPlugin.h,$(OBJC_DOM_CLASSES:%=DOM%.h))
 
