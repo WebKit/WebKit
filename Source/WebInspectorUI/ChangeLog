@@ -1,3 +1,33 @@
+2016-08-01  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Waterfall graph in Network tab shows too much whitespace/dead time
+        https://bugs.webkit.org/show_bug.cgi?id=160373
+
+        Reviewed by Timothy Hatcher.
+
+        Track the start and end time separate from the ruler to remove
+        leading/trailing whitespace in the graph. Also prevent network
+        record bars from being clipped.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        (WebInspector.NetworkGridContentView.prototype.get zeroTime):
+        Set equal to the ruler start time.
+        (WebInspector.NetworkGridContentView.prototype.reset):
+        Reset start and end time.
+        (WebInspector.NetworkGridContentView.prototype.layout):
+        Set the initial values for ruler start/zero time if needed.
+        (WebInspector.NetworkGridContentView.prototype._networkTimelineRecordAdded):
+        Set the start time if needed.
+        Reduce debounce from 250ms to 150ms. This prevents the current time from
+        exceeding the end time by as wide a margin, while keeping the current
+        time "timer" from being restarted too frequently.
+
+        (WebInspector.NetworkGridContentView.prototype._stopUpdatingCurrentTime):
+        Update the ruler end time and schedule a layout.
+        Add padding equal to the time needed to draw a network bar at minimum width
+        to prevent bars from being clipped.
+
 2016-07-29  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Inactive/active network bar segments overlap when latency is zero

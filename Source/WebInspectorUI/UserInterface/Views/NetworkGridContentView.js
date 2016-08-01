@@ -107,6 +107,8 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._pendingRecords = [];
         this._loadingResourceCount = 0;
         this._lastUpdateTimestamp = NaN;
+        this._startTime = NaN;
+        this._endTime = NaN;
         this._scheduledCurrentTimeUpdateIdentifier = undefined;
     }
 
@@ -116,6 +118,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     get startTime() { return this._timelineRuler.startTime; }
     get currentTime() { return this.endTime || this.startTime; }
     get endTime() { return this._timelineRuler.endTime; }
+    get zeroTime() { return this._timelineRuler.startTime; }
 
     get selectionPathComponents()
     {
@@ -125,11 +128,6 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         var pathComponent = new WebInspector.GeneralTreeElementPathComponent(this._contentTreeOutline.selectedTreeElement);
         pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._treeElementPathComponentSelected, this);
         return [pathComponent];
-    }
-
-    get zeroTime()
-    {
-        return WebInspector.timelineManager.persistentNetworkTimeline.startTime;
     }
 
     get navigationItems()
@@ -169,6 +167,8 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         this._loadingResourceCount = 0;
         this._lastUpdateTimestamp = NaN;
+        this._startTime = NaN;
+        this._endTime = NaN;
 
         this._timelineRuler.startTime = 0;
         this._timelineRuler.endTime = 0;
@@ -178,8 +178,10 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
     layout()
     {
-        this._timelineRuler.zeroTime = this.zeroTime;
-        this._timelineRuler.startTime = this.zeroTime;
+        if (!isNaN(this._startTime)) {
+            this._timelineRuler.zeroTime = this._startTime;
+            this._timelineRuler.startTime = this._startTime;
+        }
 
         if (this.startTime >= this.endTime)
             return;
@@ -219,7 +221,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
     _networkTimelineRecordAdded(event)
     {
-        var resourceTimelineRecord = event.data.record;
+        let resourceTimelineRecord = event.data.record;
         console.assert(resourceTimelineRecord instanceof WebInspector.ResourceTimelineRecord);
 
         let update = (event) => {
@@ -233,7 +235,8 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
             if (this._loadingResourceCount)
                 return;
 
-            this.debounce(250)._stopUpdatingCurrentTime();
+            this._endTime = resourceTimelineRecord.endTime;
+            this.debounce(150)._stopUpdatingCurrentTime();
         };
 
         this._pendingRecords.push(resourceTimelineRecord);
@@ -249,8 +252,12 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         resource.addEventListener(WebInspector.Resource.Event.LoadingDidFail, update, this);
 
         this._loadingResourceCount++;
-        if (this._loadingResourceCount && !this._scheduledCurrentTimeUpdateIdentifier)
+        if (this._loadingResourceCount && !this._scheduledCurrentTimeUpdateIdentifier) {
+            if (isNaN(this._startTime))
+                this._startTime = resourceTimelineRecord.startTime;
+
             this._startUpdatingCurrentTime();
+        }
     }
 
     _treeElementPathComponentSelected(event)
@@ -325,6 +332,9 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         cancelAnimationFrame(this._scheduledCurrentTimeUpdateIdentifier);
         this._scheduledCurrentTimeUpdateIdentifier = undefined;
+
+        this._timelineRuler.endTime = this._endTime + WebInspector.TimelineRecordBar.MinimumWidthPixels * this.secondsPerPixel;
+        this.needsLayout();
     }
 };
 
