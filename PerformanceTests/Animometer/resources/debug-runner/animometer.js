@@ -216,6 +216,14 @@ window.optionsManager =
         document.body.classList.remove("display-progress-bar");
 
         document.body.classList.add("display-" + optionsManager.valueForOption("display"));
+    },
+    
+    updateTiles: function()
+    {
+        document.body.classList.remove("tiles-big");
+        document.body.classList.remove("tiles-classic");
+
+        document.body.classList.add("tiles-" + optionsManager.valueForOption("tiles"));
     }
 };
 
@@ -503,6 +511,7 @@ Utilities.extendObject(window.benchmarkController, {
         document.forms["complexity-graph-options"].addEventListener("change", benchmarkController.onComplexityGraphOptionsChanged, true);
         optionsManager.updateUIFromLocalStorage();
         optionsManager.updateDisplay();
+        optionsManager.updateTiles();
 
         if (benchmarkController.startBenchmarkImmediatelyIfEncoded())
             return;
@@ -556,12 +565,16 @@ Utilities.extendObject(window.benchmarkController, {
 
     onBenchmarkOptionsChanged: function(event)
     {
-        if (event.target.name == "controller") {
+        switch (event.target.name) {
+        case "controller":
             suitesManager.updateEditsElementsState();
-            return;
-        }
-        if (event.target.name == "display") {
+            break;
+        case "display":
             optionsManager.updateDisplay();
+            break;
+        case "tiles":
+            optionsManager.updateTiles();
+            break;
         }
     },
 

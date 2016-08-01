@@ -350,6 +350,16 @@ label.tree-label {
     background-color: rgb(235, 96, 32);
 }
 
+body.showing-test-container.tiles-big {
+    overflow: hidden;
+}
+
+body.showing-test-container.tiles-classic {
+    width: 3000px;
+    height: 3000px;
+    overflow: scroll;
+}
+
 /* -------------------------------------------------------------------------- */
 /*                           Results Section                                  */
 /* -------------------------------------------------------------------------- */

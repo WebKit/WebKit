@@ -1,3 +1,22 @@
+2016-08-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add an option to run the MotionMark tests with classic tile size (512x512)
+        https://bugs.webkit.org/show_bug.cgi?id=160371
+
+        Reviewed by Darin Adler.
+
+        Setting the body to large size (3000x3000) and overflow to scroll forces
+        the classic tile size (512x512). This option does not affect the canvas
+        tests because the canvas is displayed on one tile regardless of its size.
+
+        * Animometer/developer.html:
+        * Animometer/resources/debug-runner/animometer.css:
+        (body.showing-test-container.tiles-big):
+        (body.showing-test-container.tiles-classic):
+        * Animometer/resources/debug-runner/animometer.js:
+        * Animometer/resources/runner/animometer.js:
+        (window.benchmarkController.startBenchmark):
+
 2016-06-29  Filip Pizlo  <fpizlo@apple.com>
 
         Generators violate bytecode liveness validation

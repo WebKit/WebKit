@@ -506,6 +506,7 @@ window.benchmarkController = {
         var options = {
             "test-interval": 30,
             "display": "minimal",
+            "tiles": "big",
             "controller": "ramp",
             "kalman-process-error": 1,
             "kalman-measurement-error": 4,
