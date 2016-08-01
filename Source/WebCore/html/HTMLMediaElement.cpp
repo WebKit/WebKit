@@ -5463,19 +5463,29 @@ void HTMLMediaElement::exitFullscreen()
 #endif
     if (hasMediaControls())
         mediaControls()->exitedFullscreen();
-    if (document().page() && is<HTMLVideoElement>(*this)) {
-        if (m_mediaSession->requiresFullscreenForVideoPlayback(*this) && (!document().settings() || !document().settings()->allowsInlineMediaPlaybackAfterFullscreen() || isVideoTooSmallForInlinePlayback()))
+
+    if (!document().page() || !is<HTMLVideoElement>(*this))
+        return;
+
+    if (!paused() && m_mediaSession->requiresFullscreenForVideoPlayback(*this)) {
+        if (!document().settings() || !document().settings()->allowsInlineMediaPlaybackAfterFullscreen() || isVideoTooSmallForInlinePlayback())
             pauseInternal();
+        else {
+            // Allow inline playback, but set 'playsinline' so pausing and starting again (e.g. when scrubbing) won't go back to fullscreen.
+            // Also set the controls attribute so the user will be able to control playback.
+            setBooleanAttribute(HTMLNames::playsinlineAttr, true);
+            setControls(true);
+        }
+    }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-        if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped())
-            document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
-        else
+    if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped())
+        document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
+    else
 #endif
-        if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
-            document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
-            scheduleEvent(eventNames().webkitendfullscreenEvent);
-        }
+    if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
+        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
+        scheduleEvent(eventNames().webkitendfullscreenEvent);
     }
 }
 
