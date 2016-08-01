@@ -1,3 +1,14 @@
+2016-08-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac][iOS] Adopt MediaRemote "seek to playback position"
+        https://bugs.webkit.org/show_bug.cgi?id=160405
+        <rdar://problem/27547583>
+
+        Reviewed by Dean Jackson.
+
+        * media/remote-control-command-seek-expected.txt: Added.
+        * media/remote-control-command-seek.html: Added.
+
 2016-08-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         Update Apache configuration for Arch Linux
