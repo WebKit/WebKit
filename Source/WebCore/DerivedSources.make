@@ -431,9 +431,7 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/html/HTMLTableSectionElement.idl \
     $(WebCore)/html/HTMLTemplateElement.idl \
     $(WebCore)/html/HTMLTimeElement.idl \
-    $(WebCore)/html/HTMLTitleElement.idl \
     $(WebCore)/html/HTMLTrackElement.idl \
-    $(WebCore)/html/HTMLUListElement.idl \
     $(WebCore)/html/HTMLUnknownElement.idl \
     $(WebCore)/html/HTMLVideoElement.idl \
     $(WebCore)/html/ImageData.idl \
@@ -573,6 +571,8 @@ JS_AND_OBJC_BINDING_IDLS = \
 
 JS_ONLY_BINDING_IDLS = \
     $(WebCore)/html/HTMLTextAreaElement.idl \
+    $(WebCore)/html/HTMLTitleElement.idl \
+    $(WebCore)/html/HTMLUListElement.idl \
     $(WebCore)/svg/SVGAElement.idl \
     $(WebCore)/svg/SVGAltGlyphDefElement.idl \
     $(WebCore)/svg/SVGAltGlyphElement.idl \

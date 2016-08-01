@@ -24,10 +24,9 @@
  */
 
 #import "config.h"
-#import "DOMHTMLTextAreaElement.h"
+#import "DOMHTMLTextAreaElementInternal.h"
 
 #import "DOMHTMLFormElementInternal.h"
-#import "DOMHTMLTextAreaElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMNodeListInternal.h"
 #import "DOMValidityStateInternal.h"
