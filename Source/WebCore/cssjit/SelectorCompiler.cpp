@@ -3214,10 +3214,22 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
 
     generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::AffectedByHover);
 
+    Assembler::JumpList successCases;
+    if (m_selectorContext != SelectorContext::QuerySelector && fragment.relationToRightFragment != FragmentRelation::Rightmost) {
+        // :hover always matches when not in rightmost position when collecting rules for descendant style invalidation optimization.
+        // Resolving style for a matching descendant will set parent childrenAffectedByHover bit even when the element is not currently hovered.
+        // This bit has to be set for the event based :hover invalidation to work.
+        // FIXME: We should just collect style relation bits and apply them as needed when computing style invalidation optimization.
+        LocalRegister checkingContext(m_registerAllocator);
+        successCases.append(branchOnResolvingMode(Assembler::Equal, SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements, checkingContext));
+    }
+
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(elementIsHovered);
     functionCall.setOneArgument(elementAddressRegister);
     failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
+
+    successCases.link(&m_assembler);
 }
 
 void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
