@@ -80,8 +80,8 @@ function body()
 
 function clone()
 {
-    if (!this instanceof @Response)
-        throw new @TypeError("Function should be called on a Response");
+    if (!(this instanceof @Response))
+        throw @makeThisTypeError("Response", "clone");
 
     if (@Response.prototype.@isDisturbed.@call(this))
         throw new @TypeError("Cannot clone a disturbed Response");
@@ -98,8 +98,8 @@ function clone()
 // consume and consumeStream single parameter should be kept in sync with FetchBodyConsumer::Type.
 function arrayBuffer()
 {
-    if (!this instanceof @Response)
-        throw new @TypeError("Function should be called on a Response");
+    if (!(this instanceof @Response))
+        return @Promise.@reject(@makeThisTypeError("Response", "arrayBuffer"));
 
     const arrayBufferConsumerType = 1;
     if (!this.@body)
@@ -110,8 +110,8 @@ function arrayBuffer()
 
 function blob()
 {
-    if (!this instanceof @Response)
-        throw new @TypeError("Function should be called on a Response");
+    if (!(this instanceof @Response))
+        return @Promise.@reject(@makeThisTypeError("Response", "blob"));
 
     const blobConsumerType = 2;
     if (!this.@body)
@@ -122,16 +122,16 @@ function blob()
 
 function formData()
 {
-    if (!this instanceof @Response)
-        throw new @TypeError("Function should be called on a Response");
+    if (!(this instanceof @Response))
+        return @Promise.@reject(@makeThisTypeError("Response", "formData"));
 
     return @Promise.@reject("Not implemented");
 }
 
 function json()
 {
-    if (!this instanceof @Response)
-        throw new @TypeError("Function should be called on a Response");
+    if (!(this instanceof @Response))
+        return @Promise.@reject(@makeThisTypeError("Response", "json"));
 
     const jsonConsumerType = 3;
     if (!this.@body)
@@ -142,8 +142,8 @@ function json()
 
 function text()
 {
-    if (!this instanceof @Response)
-        throw new @TypeError("Function should be called on a Response");
+    if (!(this instanceof @Response))
+        return @Promise.@reject(@makeThisTypeError("Response", "text"));
 
     const textConsumerType = 4;
     if (!this.@body)

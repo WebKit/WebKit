@@ -12,21 +12,36 @@ function printMethodError(method, target)
     }
 }
 
+function printPromiseMethodError(method, target)
+{
+    return method.call(target).then(assert_unreached, (e) => {
+         console.log("Promise rejected with: " + e);
+    });
+}
+
 function printGetterError(object, getterName, target)
 {
     const getter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(object), getterName).get;
     printMethodError(getter, target);
 }
 
-test(function(test) {
+promise_test(function(test) {
     // This test prints exceptions to check the format of their messages.
 
     var request = new Request("");
     var response = new Response("");
 
-    printGetterError(response, "body", request);
-    printGetterError(request, "method", response);
-    printMethodError(request.clone, response);
-
-}, "Exercising TypeError messages in Fetch Response");
+    var results = [
+        printMethodError(response.clone, request),
+        printPromiseMethodError(response.arrayBuffer, request),
+        printPromiseMethodError(response.blob, request),
+        printPromiseMethodError(response.formData, request),
+        printPromiseMethodError(response.json, request),
+        printPromiseMethodError(response.text, request),
+        printGetterError(response, "body", request),
+        printGetterError(request, "method", response),
+        printMethodError(request.clone, response),
+    ];
+    return Promise.all(results);
+}, "Exercising TypeError messages in Fetch Request and Response");
 </script>

@@ -1,3 +1,13 @@
+2016-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Fetch Response built-ins should use @makeThisTypeError
+        https://bugs.webkit.org/show_bug.cgi?id=160290
+
+        Reviewed by Darin Adler.
+
+        * fetch/fetch-error-messages-expected.txt:
+        * fetch/fetch-error-messages.html:
+
 2016-07-31  Nan Wang  <n_wang@apple.com>
 
         AX: Add a check for touch event listener on iOS accessibility object
