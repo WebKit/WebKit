@@ -152,7 +152,7 @@ public:
     // Recomputes predecessors and deletes unreachable blocks.
     void resetReachability();
 
-    void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
     unsigned size() const { return m_blocks.size(); }
     BasicBlock* at(unsigned index) const { return m_blocks[index].get(); }
