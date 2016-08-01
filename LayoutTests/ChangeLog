@@ -1,5 +1,22 @@
 2016-07-31  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203931. rdar://problem/27317407
+
+    2016-07-29  Daniel Bates  <dabates@apple.com>
+
+            Crash under HTMLMediaElement::{resolve, reject}PendingPlayPromises() when playback is interrupted
+            https://bugs.webkit.org/show_bug.cgi?id=160366
+            <rdar://problem/27317407>
+
+            Reviewed by Eric Carlson.
+
+            * media/non-existent-video-playback-interrupted-expected.txt: Added.
+            * media/non-existent-video-playback-interrupted.html: Added.
+            * media/video-playback-interrupted-expected.txt: Added.
+            * media/video-playback-interrupted.html: Added.
+
+2016-07-31  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203924. rdar://problem/27355214
 
     2016-07-29  Zalan Bujtas  <zalan@apple.com>
