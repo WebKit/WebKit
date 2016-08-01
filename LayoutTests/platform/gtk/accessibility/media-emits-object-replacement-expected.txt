@@ -6,14 +6,14 @@ AXRole: AXWebArea
     AXRole: AXSection AXValue: a <obj> b
         AXRole: AXVideo 
             AXRole: AXToolbar 
-                AXRole: AXButton 
+                AXRole: AXCheckBox 
                 AXRole: AXSlider 
                 AXRole: AXTimer AXValue: 00:00
     AXRole: AXSection AXValue: <\n>
     AXRole: AXSection AXValue: a <obj> b
         AXRole: AXAudio 
             AXRole: AXToolbar 
-                AXRole: AXButton 
+                AXRole: AXCheckBox 
                 AXRole: AXSlider 
                 AXRole: AXTimer AXValue: 00:00
     AXRole: AXSection AXValue: End of test

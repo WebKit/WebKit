@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<video id="video" controls></video>
+<p id="description"></p>
+<div id="console"></div>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="media-file.js"></script>
+<script src="media-controls.js"></script>
+<script src="video-test.js"></script>
+</head>
+
+<script>
+
+description("This tests that media controls have correct accessibility information.");
+
+if (window.accessibilityController) {
+    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1); 
+    video.src = findMediaFile("video", "content/test");
+    
+    var videoElement;
+    var elapsedTimer, remainingTimer, timeline, muteButton;
+    var rightArrow = true;
+    run("video.load()");
+    waitForEvent("canplaythrough", function () {
+        videoElement = accessibilityController.accessibleElementById("video");
+        // Elapsed and remaining timer have the right ax label.
+        elapsedTimer = videoElement.childAtIndex(0).childAtIndex(3);
+        remainingTimer = videoElement.childAtIndex(0).childAtIndex(5);
+        debug("elapsedTimer.description: " + elapsedTimer.description);
+        debug("remainingTimer.description: " + remainingTimer.description + "\n");
+              
+        // Mute button should be a checkbox with on/off state.
+        muteButton = videoElement.childAtIndex(0).childAtIndex(9);
+        debug("muteButton.description: " + muteButton.description);
+        debug("muteButton.role: " + muteButton.role);
+        debug("muteButton.stringValue: " + muteButton.stringValue);
+        debug("press muteButton");
+        muteButton.press();
+        debug("muteButton.stringValue: " + muteButton.stringValue + "\n");
+              
+        // Left/Right arrow key should have 0.5 second step on timeline. 
+        checkTimeLineValue(rightArrow);
+    }); 
+    
+    waitForEvent("seeked", function () {
+        var timeline = mediaControlsElement(internals.shadowRoot(video).firstChild.firstChild, '-webkit-media-controls-timeline');
+        if (!timeline)
+            throw "Failed to find -webkit-media-controls-timeline";
+        debug("timeline.value: " + parseFloat(timeline.value).toFixed(1));
+        if (rightArrow) {
+            rightArrow = false;
+            checkTimeLineValue(rightArrow);
+        } else {
+            debug("");
+            endTest();
+        }
+    });
+}
+     
+function checkTimeLineValue(isRightArrow)
+{
+    var timeline = mediaControlsElement(internals.shadowRoot(video).firstChild.firstChild, '-webkit-media-controls-timeline');
+    if (!timeline)
+        throw "Failed to find -webkit-media-controls-timeline";
+        
+    timeline.focus();
+    if (isRightArrow) {
+        eventSender.keyDown("rightArrow");
+    } else {
+        eventSender.keyDown("leftArrow");
+    }
+}
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</html>
