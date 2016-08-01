@@ -2039,22 +2039,28 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
 
 static bool checkUncaughtException(VM& vm, GlobalObject* globalObject, JSValue exception, const String& expectedExceptionName)
 {
+    vm.clearException();
     if (!exception) {
         printf("Expected uncaught exception with name '%s' but none was thrown\n", expectedExceptionName.utf8().data());
         return false;
     }
 
-    JSValue exceptionName = exception.get(globalObject->globalExec(), vm.propertyNames->name);
-
-    if (JSString* exceptionNameStr = jsDynamicCast<JSString*>(exceptionName)) {
-        const String& name = exceptionNameStr->value(globalObject->globalExec());
-        if (name == expectedExceptionName)
-            return true;
-        printf("Expected uncaught exception with name '%s' but got one with name '%s'\n", expectedExceptionName.utf8().data(), name.utf8().data());
-        dumpException(globalObject, exception);
+    ExecState* exec = globalObject->globalExec();
+    JSValue exceptionClass = globalObject->get(exec, Identifier::fromString(exec, expectedExceptionName));
+    if (!exceptionClass.isObject() || vm.exception()) {
+        printf("Expected uncaught exception with name '%s' but given exception class is not defined\n", expectedExceptionName.utf8().data());
         return false;
     }
-    printf("Expected uncaught exception with name '%s' but exception value did not have a name property\n", expectedExceptionName.utf8().data());
+
+    bool isInstanceOfExpectedException = jsCast<JSObject*>(exceptionClass)->hasInstance(exec, exception);
+    if (vm.exception()) {
+        printf("Expected uncaught exception with name '%s' but given exception class fails performing hasInstance\n", expectedExceptionName.utf8().data());
+        return false;
+    }
+    if (isInstanceOfExpectedException)
+        return true;
+
+    printf("Expected uncaught exception with name '%s' but exception value is not instance of this exception class\n", expectedExceptionName.utf8().data());
     dumpException(globalObject, exception);
     return false;
 }

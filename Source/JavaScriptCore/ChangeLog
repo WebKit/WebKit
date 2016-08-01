@@ -1,5 +1,20 @@
 2016-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Should check Test262Error correctly
+        https://bugs.webkit.org/show_bug.cgi?id=159862
+
+        Reviewed by Saam Barati.
+
+        Test262Error in the harness does not have "name" property.
+        Rather than checking "name" property, peforming `instanceof` is better to check the class of the exception.
+
+        * jsc.cpp:
+        (checkUncaughtException):
+        * runtime/JSObject.h:
+        * tests/test262.yaml:
+
+2016-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Module binding can be exported by multiple names
         https://bugs.webkit.org/show_bug.cgi?id=160343
 
