@@ -426,6 +426,10 @@ EncodedJSValue JIT_OPERATION operationValueMulProfiledNoOptimize(ExecState*, Enc
 EncodedJSValue JIT_OPERATION operationValueMulProfiled(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueSub(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueSubProfiled(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueSubOptimize(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueSubNoOptimize(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueSubProfiledOptimize(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile*, JITSubIC*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueSubProfiledNoOptimize(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile*, JITSubIC*) WTF_INTERNAL;
 
 void JIT_OPERATION operationProcessTypeProfilerLog(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationProcessShadowChickenLog(ExecState*) WTF_INTERNAL;

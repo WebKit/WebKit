@@ -3923,53 +3923,19 @@ void SpeculativeJIT::compileArithSub(Node* node)
     }
 
     case UntypedUse: {
-        Edge& leftChild = node->child1();
-        Edge& rightChild = node->child2();
-
-        JSValueOperand left(this, leftChild);
-        JSValueOperand right(this, rightChild);
-
-        JSValueRegs leftRegs = left.jsValueRegs();
-        JSValueRegs rightRegs = right.jsValueRegs();
-
-        FPRTemporary leftNumber(this);
-        FPRTemporary rightNumber(this);
-        FPRReg leftFPR = leftNumber.fpr();
-        FPRReg rightFPR = rightNumber.fpr();
-
 #if USE(JSVALUE64)
-        GPRTemporary result(this);
-        JSValueRegs resultRegs = JSValueRegs(result.gpr());
-        GPRTemporary scratch(this);
-        GPRReg scratchGPR = scratch.gpr();
-        FPRReg scratchFPR = InvalidFPRReg;
+        bool needsScratchGPRReg = true;
+        bool needsScratchFPRReg = false;
 #else
-        GPRTemporary resultTag(this);
-        GPRTemporary resultPayload(this);
-        JSValueRegs resultRegs = JSValueRegs(resultPayload.gpr(), resultTag.gpr());
-        GPRReg scratchGPR = resultTag.gpr();
-        FPRTemporary fprScratch(this);
-        FPRReg scratchFPR = fprScratch.fpr();
+        bool needsScratchGPRReg = true;
+        bool needsScratchFPRReg = true;
 #endif
 
-        SnippetOperand leftOperand(m_state.forNode(leftChild).resultType());
-        SnippetOperand rightOperand(m_state.forNode(rightChild).resultType());
-
-        JITSubGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-            leftFPR, rightFPR, scratchGPR, scratchFPR);
-        gen.generateFastPath(m_jit);
-
-        ASSERT(gen.didEmitFastPath());
-        gen.endJumpList().append(m_jit.jump());
-
-        gen.slowPathJumpList().link(&m_jit);
-        silentSpillAllRegisters(resultRegs);
-        callOperation(operationValueSub, resultRegs, leftRegs, rightRegs);
-        silentFillAllRegisters(resultRegs);
-        m_jit.exceptionCheck();
-
-        gen.endJumpList().link(&m_jit);
-        jsValueResult(resultRegs, node);
+        JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC();
+        auto repatchingFunction = operationValueSubOptimize;
+        auto nonRepatchingFunction = operationValueSub;
+        
+        compileMathIC(node, subIC, needsScratchGPRReg, needsScratchFPRReg, repatchingFunction, nonRepatchingFunction);
         return;
     }
 

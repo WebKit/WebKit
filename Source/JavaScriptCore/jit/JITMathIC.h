@@ -32,6 +32,7 @@
 #include "JITAddGenerator.h"
 #include "JITMathICInlineResult.h"
 #include "JITMulGenerator.h"
+#include "JITSubGenerator.h"
 #include "LinkBuffer.h"
 #include "Repatch.h"
 #include "SnippetOperand.h"
@@ -240,6 +241,7 @@ public:
 
 typedef JITMathIC<JITAddGenerator> JITAddIC;
 typedef JITMathIC<JITMulGenerator> JITMulIC;
+typedef JITMathIC<JITSubGenerator> JITSubIC;
 
 } // namespace JSC
 

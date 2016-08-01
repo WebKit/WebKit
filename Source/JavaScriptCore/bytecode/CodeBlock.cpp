@@ -3018,6 +3018,11 @@ JITMulIC* CodeBlock::addJITMulIC()
     return m_mulICs.add();
 }
 
+JITSubIC* CodeBlock::addJITSubIC()
+{
+    return m_subICs.add();
+}
+
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
 {
     for (StructureStubInfo* stubInfo : m_stubInfos) {
@@ -4585,6 +4590,8 @@ void CodeBlock::dumpMathICStats()
     double totalAddSize = 0.0;
     double numMuls = 0.0;
     double totalMulSize = 0.0;
+    double numSubs = 0.0;
+    double totalSubSize = 0.0;
 
     auto countICs = [&] (CodeBlock* codeBlock) {
         for (JITAddIC* addIC : codeBlock->m_addICs) {
@@ -4595,6 +4602,11 @@ void CodeBlock::dumpMathICStats()
         for (JITMulIC* mulIC : codeBlock->m_mulICs) {
             numMuls++;
             totalMulSize += mulIC->codeSize();
+        }
+
+        for (JITSubIC* subIC : codeBlock->m_subICs) {
+            numSubs++;
+            totalSubSize += subIC->codeSize();
         }
 
         return false;
@@ -4608,6 +4620,10 @@ void CodeBlock::dumpMathICStats()
     dataLog("Num Muls: ", numMuls, "\n");
     dataLog("Total Mul size in bytes: ", totalMulSize, "\n");
     dataLog("Average Mul size: ", totalMulSize / numMuls, "\n");
+    dataLog("\n");
+    dataLog("Num Subs: ", numSubs, "\n");
+    dataLog("Total Sub size in bytes: ", totalSubSize, "\n");
+    dataLog("Average Sub size: ", totalSubSize / numSubs, "\n");
 
     dataLog("-----------------------\n");
 #endif

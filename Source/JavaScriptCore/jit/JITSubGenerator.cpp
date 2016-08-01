@@ -27,12 +27,58 @@
 #include "JITSubGenerator.h"
 
 #include "ArithProfile.h"
+#include "JITMathIC.h"
 
 #if ENABLE(JIT)
 
 namespace JSC {
 
-void JITSubGenerator::generateFastPath(CCallHelpers& jit)
+JITMathICInlineResult JITSubGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state)
+{
+    // We default to speculating int32.
+    ObservedType lhs = ObservedType().withInt32();
+    ObservedType rhs = ObservedType().withInt32();
+    if (m_arithProfile) {
+        lhs = m_arithProfile->lhsObservedType();
+        rhs = m_arithProfile->rhsObservedType();
+    }
+
+    if (lhs.isOnlyNonNumber() && rhs.isOnlyNonNumber())
+        return JITMathICInlineResult::DontGenerate;
+
+    if (lhs.isOnlyNumber() && rhs.isOnlyNumber()) {
+        if (!jit.supportsFloatingPoint())
+            return JITMathICInlineResult::DontGenerate;
+
+        if (!m_leftOperand.definitelyIsNumber())
+            state.slowPathJumps.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
+        if (!m_rightOperand.definitelyIsNumber())
+            state.slowPathJumps.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
+        state.slowPathJumps.append(jit.branchIfInt32(m_left));
+        state.slowPathJumps.append(jit.branchIfInt32(m_right));
+        jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
+        jit.unboxDoubleNonDestructive(m_right, m_rightFPR, m_scratchGPR, m_scratchFPR);
+        jit.subDouble(m_rightFPR, m_leftFPR);
+        jit.boxDouble(m_leftFPR, m_result);
+
+        return JITMathICInlineResult::GeneratedFastPath;
+    }
+    if (lhs.isOnlyInt32() && rhs.isOnlyInt32()) {
+        ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
+        state.slowPathJumps.append(jit.branchIfNotInt32(m_left));
+        state.slowPathJumps.append(jit.branchIfNotInt32(m_right));
+
+        jit.move(m_left.payloadGPR(), m_scratchGPR);
+        state.slowPathJumps.append(jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_scratchGPR));
+
+        jit.boxInt32(m_scratchGPR, m_result);
+        return JITMathICInlineResult::GeneratedFastPath;
+    }
+
+    return JITMathICInlineResult::GenerateFullSnippet;
+}
+
+bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, bool shouldEmitProfiling)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_left.payloadGPR());
@@ -43,29 +89,27 @@ void JITSubGenerator::generateFastPath(CCallHelpers& jit)
     ASSERT(m_scratchFPR != InvalidFPRReg);
 #endif
 
-    m_didEmitFastPath = true;
-
     CCallHelpers::Jump leftNotInt = jit.branchIfNotInt32(m_left);
     CCallHelpers::Jump rightNotInt = jit.branchIfNotInt32(m_right);
 
     jit.move(m_left.payloadGPR(), m_scratchGPR);
-    m_slowPathJumpList.append(jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_scratchGPR));
+    slowPathJumpList.append(jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_scratchGPR));
 
     jit.boxInt32(m_scratchGPR, m_result);
 
-    m_endJumpList.append(jit.jump());
+    endJumpList.append(jit.jump());
 
     if (!jit.supportsFloatingPoint()) {
-        m_slowPathJumpList.append(leftNotInt);
-        m_slowPathJumpList.append(rightNotInt);
-        return;
+        slowPathJumpList.append(leftNotInt);
+        slowPathJumpList.append(rightNotInt);
+        return true;
     }
 
     leftNotInt.link(&jit);
     if (!m_leftOperand.definitelyIsNumber())
-        m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
+        slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
     if (!m_rightOperand.definitelyIsNumber())
-        m_slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
+        slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
 
     jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
     CCallHelpers::Jump rightIsDouble = jit.branchIfNotInt32(m_right);
@@ -75,7 +119,7 @@ void JITSubGenerator::generateFastPath(CCallHelpers& jit)
 
     rightNotInt.link(&jit);
     if (!m_rightOperand.definitelyIsNumber())
-        m_slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
+        slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
 
     jit.convertInt32ToDouble(m_left.payloadGPR(), m_leftFPR);
 
@@ -85,10 +129,12 @@ void JITSubGenerator::generateFastPath(CCallHelpers& jit)
     rightWasInteger.link(&jit);
 
     jit.subDouble(m_rightFPR, m_leftFPR);
-    if (m_arithProfile)
+    if (m_arithProfile && shouldEmitProfiling)
         m_arithProfile->emitSetDouble(jit);
 
     jit.boxDouble(m_leftFPR, m_result);
+
+    return true;
 }
 
 } // namespace JSC

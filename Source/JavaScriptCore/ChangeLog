@@ -1,3 +1,52 @@
+2016-08-01  Saam Barati  <sbarati@apple.com>
+
+        Sub should be a Math IC
+        https://bugs.webkit.org/show_bug.cgi?id=160270
+
+        Reviewed by Mark Lam.
+
+        This makes Sub an IC like Mul and Add. I'm seeing the following
+        improvements of average Sub size on Unity and JetStream:
+
+                   |   JetStream  |  Unity 3D  |
+             ------| -------------|--------------
+              Old  |   202 bytes  |  205 bytes |
+             ------| -------------|--------------
+              New  |   134  bytes |  134 bytes |
+             ------------------------------------
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addJITMulIC):
+        (JSC::CodeBlock::addJITSubIC):
+        (JSC::CodeBlock::findStubInfo):
+        (JSC::CodeBlock::dumpMathICStats):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::stubInfoBegin):
+        (JSC::CodeBlock::stubInfoEnd):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emit_op_pow):
+        * jit/JITMathIC.h:
+        * jit/JITMathICForwards.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITSubGenerator.cpp:
+        (JSC::JITSubGenerator::generateInline):
+        (JSC::JITSubGenerator::generateFastPath):
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::JITSubGenerator):
+        (JSC::JITSubGenerator::isLeftOperandValidConstant):
+        (JSC::JITSubGenerator::isRightOperandValidConstant):
+        (JSC::JITSubGenerator::arithProfile):
+        (JSC::JITSubGenerator::didEmitFastPath): Deleted.
+        (JSC::JITSubGenerator::endJumpList): Deleted.
+        (JSC::JITSubGenerator::slowPathJumpList): Deleted.
+
 2016-08-01  Keith Miller  <keith_miller@apple.com>
 
         We should not keep the JavaScript tests inside the Source/JavaScriptCore/ directory.
