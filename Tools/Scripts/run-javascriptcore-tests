@@ -263,23 +263,23 @@ sub runJSCStressTests
             "PerformanceTests/JetStream/cdjs/cdjs-tests.yaml",
             "PerformanceTests/ES6SampleBench/Air/airjs-tests.yaml",
             "PerformanceTests/ES6SampleBench/Basic/basic-tests.yaml",
-            "Source/JavaScriptCore/tests/executableAllocationFuzz.yaml",
-            "Source/JavaScriptCore/tests/exceptionFuzz.yaml",
+            "JSTests/executableAllocationFuzz.yaml",
+            "JSTests/exceptionFuzz.yaml",
             "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
             "PerformanceTests/SunSpider/shadow-chicken.yaml",
             "PerformanceTests/SunSpider/tests/v8-v6",
-            "Source/JavaScriptCore/tests/stress",
+            "JSTests/stress",
             "LayoutTests/js/regress/script-tests",
             "PerformanceTests/SunSpider/profiler-test.yaml",
             "LayoutTests/jsc-layout-tests.yaml",
-            "Source/JavaScriptCore/tests/typeProfiler.yaml",
-            "Source/JavaScriptCore/tests/controlFlowProfiler.yaml",
-            "Source/JavaScriptCore/tests/es6.yaml",
-            "Source/JavaScriptCore/tests/modules.yaml");
+            "JSTests/typeProfiler.yaml",
+            "JSTests/controlFlowProfiler.yaml",
+            "JSTests/es6.yaml",
+            "JSTests/modules.yaml");
     }
 
     if ($runMozillaTests) {
-        push(@testList, "Source/JavaScriptCore/tests/mozilla/mozilla-tests.yaml");
+        push(@testList, "JSTests/mozilla/mozilla-tests.yaml");
     }
 
     # Set LANG environment variable so the stress tests will work with newer ruby (<rdar://problem/15010705>)

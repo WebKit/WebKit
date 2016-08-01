@@ -1,3 +1,23 @@
+2016-08-01  Keith Miller  <keith_miller@apple.com>
+
+        We should not keep the JavaScript tests inside the Source/JavaScriptCore/ directory.
+        https://bugs.webkit.org/show_bug.cgi?id=160372
+
+        Rubber stamped by Geoffrey Garen.
+
+        This patch moves all the JavaScript tests from Source/JavaScriptCore/tests to
+        a new top level directory, JSTests. Having the tests in the Source directory
+        was both confusing and inconvenient for people that just want to checkout the
+        source code of WebKit. Since there is no other obvious place to put all the
+        JavaScript tests a new top level directory seemed the most sensible.
+
+        * JSTests/: Copied from Source/JavaScriptCore/tests.
+        * Source/JavaScriptCore/tests/: Deleted.
+        * Scripts/import-test262-tests:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/update-javascriptcore-test-res:
+
+
 2016-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.4 release.
