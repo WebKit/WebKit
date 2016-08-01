@@ -36,10 +36,10 @@ namespace WebCore {
 
 class MathMLOperatorElement;
 
-class RenderMathMLOperator final : public RenderMathMLToken {
+class RenderMathMLOperator : public RenderMathMLToken {
 public:
     RenderMathMLOperator(MathMLOperatorElement&, RenderStyle&&);
-    RenderMathMLOperator(Document&, RenderStyle&&, const String& operatorString, MathMLOperatorDictionary::Form, unsigned short flags = 0);
+    RenderMathMLOperator(Document&, RenderStyle&&, MathMLOperatorDictionary::Form, unsigned short flags = 0);
     MathMLOperatorElement& element() const;
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
@@ -53,11 +53,16 @@ public:
     bool isVertical() const { return m_isVertical; }
     LayoutUnit italicCorrection() const { return m_mathOperator.italicCorrection(); }
 
-    void updateTokenContent(const String& operatorString);
     void updateTokenContent() final;
     void updateOperatorProperties();
     void updateFromElement() final;
-    UChar textContent() const;
+    virtual UChar textContent() const;
+
+protected:
+    void rebuildTokenContent();
+
+    MathMLOperatorDictionary::Form m_operatorForm;
+    unsigned short m_operatorFlags;
 
 private:
     virtual void setOperatorProperties();
@@ -77,7 +82,6 @@ private:
 
     Optional<int> firstLineBaseline() const final;
     RenderMathMLOperator* unembellishedOperator() final { return this; }
-    void rebuildTokenContent();
 
     bool shouldAllowStretching() const;
     bool useMathOperator() const;
@@ -88,14 +92,11 @@ private:
 
     LayoutUnit verticalStretchedOperatorShift() const;
 
-    LayoutUnit m_stretchHeightAboveBaseline;
-    LayoutUnit m_stretchDepthBelowBaseline;
+    LayoutUnit m_stretchHeightAboveBaseline { 0 };
+    LayoutUnit m_stretchDepthBelowBaseline { 0 };
     LayoutUnit m_stretchWidth;
 
-    UChar m_textContent;
-    bool m_isVertical;
-    MathMLOperatorDictionary::Form m_operatorForm;
-    unsigned short m_operatorFlags;
+    bool m_isVertical { true };
     LayoutUnit m_leadingSpace;
     LayoutUnit m_trailingSpace;
     LayoutUnit m_minSize;

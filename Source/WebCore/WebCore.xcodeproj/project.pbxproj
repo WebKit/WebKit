@@ -1700,6 +1700,8 @@
 		439046D812DA25E800AF80A2 /* RenderMathMLBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046C412DA25E800AF80A2 /* RenderMathMLBlock.h */; };
 		439046D912DA25E800AF80A2 /* RenderMathMLFenced.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046C512DA25E800AF80A2 /* RenderMathMLFenced.cpp */; };
 		439046DA12DA25E800AF80A2 /* RenderMathMLFenced.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046C612DA25E800AF80A2 /* RenderMathMLFenced.h */; };
+		439046D912DA25E800AF81B3 /* RenderMathMLFencedOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046C512DA25E800AF81B3 /* RenderMathMLFencedOperator.cpp */; };
+		439046DA12DA25E800AF81B3 /* RenderMathMLFencedOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046C612DA25E800AF81B3 /* RenderMathMLFencedOperator.h */; };
 		439046DB12DA25E800AF80A2 /* RenderMathMLFraction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046C712DA25E800AF80A2 /* RenderMathMLFraction.cpp */; };
 		439046DC12DA25E800AF80A2 /* RenderMathMLFraction.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046C812DA25E800AF80A2 /* RenderMathMLFraction.h */; };
 		439046DD12DA25E800AF80A2 /* RenderMathMLMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046C912DA25E800AF80A2 /* RenderMathMLMath.cpp */; };
@@ -9329,6 +9331,8 @@
 		439046C412DA25E800AF80A2 /* RenderMathMLBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLBlock.h; sourceTree = "<group>"; };
 		439046C512DA25E800AF80A2 /* RenderMathMLFenced.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLFenced.cpp; sourceTree = "<group>"; };
 		439046C612DA25E800AF80A2 /* RenderMathMLFenced.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLFenced.h; sourceTree = "<group>"; };
+		439046C512DA25E800AF81B3 /* RenderMathMLFencedOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLFencedOperator.cpp; sourceTree = "<group>"; };
+		439046C612DA25E800AF81B3 /* RenderMathMLFencedOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLFencedOperator.h; sourceTree = "<group>"; };
 		439046C712DA25E800AF80A2 /* RenderMathMLFraction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLFraction.cpp; sourceTree = "<group>"; };
 		439046C812DA25E800AF80A2 /* RenderMathMLFraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLFraction.h; sourceTree = "<group>"; };
 		439046C912DA25E800AF80A2 /* RenderMathMLMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLMath.cpp; sourceTree = "<group>"; };
@@ -17167,6 +17171,8 @@
 				439046C412DA25E800AF80A2 /* RenderMathMLBlock.h */,
 				439046C512DA25E800AF80A2 /* RenderMathMLFenced.cpp */,
 				439046C612DA25E800AF80A2 /* RenderMathMLFenced.h */,
+				439046C512DA25E800AF81B3 /* RenderMathMLFencedOperator.cpp */,
+				439046C612DA25E800AF81B3 /* RenderMathMLFencedOperator.h */,
 				439046C712DA25E800AF80A2 /* RenderMathMLFraction.cpp */,
 				439046C812DA25E800AF80A2 /* RenderMathMLFraction.h */,
 				439046C912DA25E800AF80A2 /* RenderMathMLMath.cpp */,
@@ -27966,6 +27972,7 @@
 				0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */,
 				439046D812DA25E800AF80A2 /* RenderMathMLBlock.h in Headers */,
 				439046DA12DA25E800AF80A2 /* RenderMathMLFenced.h in Headers */,
+				439046DA12DA25E800AF81B3 /* RenderMathMLFencedOperator.h in Headers */,
 				439046DC12DA25E800AF80A2 /* RenderMathMLFraction.h in Headers */,
 				439046DE12DA25E800AF80A2 /* RenderMathMLMath.h in Headers */,
 				439046E012DA25E800AF80A2 /* RenderMathMLOperator.h in Headers */,
@@ -31679,6 +31686,7 @@
 				0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */,
 				439046D712DA25E800AF80A2 /* RenderMathMLBlock.cpp in Sources */,
 				439046D912DA25E800AF80A2 /* RenderMathMLFenced.cpp in Sources */,
+				439046D912DA25E800AF81B3 /* RenderMathMLFencedOperator.cpp in Sources */,
 				439046DB12DA25E800AF80A2 /* RenderMathMLFraction.cpp in Sources */,
 				439046DD12DA25E800AF80A2 /* RenderMathMLMath.cpp in Sources */,
 				3571883EEF618793751E4089 /* RenderMathMLMenclose.cpp in Sources */,

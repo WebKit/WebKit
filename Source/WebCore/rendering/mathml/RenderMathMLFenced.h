@@ -28,7 +28,7 @@
 #if ENABLE(MATHML)
 
 #include "MathMLInlineContainerElement.h"
-#include "RenderMathMLOperator.h"
+#include "RenderMathMLFencedOperator.h"
 #include "RenderMathMLRow.h"
 
 namespace WebCore {
@@ -44,14 +44,14 @@ private:
     void addChild(RenderObject* child, RenderObject* beforeChild) final;
     void updateFromElement() final;
 
-    RenderPtr<RenderMathMLOperator> createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
+    RenderPtr<RenderMathMLFencedOperator> createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
     void makeFences();
 
     String m_open;
     String m_close;
     RefPtr<StringImpl> m_separators;
 
-    RenderMathMLOperator* m_closeFenceRenderer;
+    RenderMathMLFencedOperator* m_closeFenceRenderer;
 };
 
 }

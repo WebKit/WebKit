@@ -32,7 +32,7 @@
 #include "FontSelector.h"
 #include "MathMLNames.h"
 #include "RenderInline.h"
-#include "RenderMathMLOperator.h"
+#include "RenderMathMLFencedOperator.h"
 #include "RenderText.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -78,24 +78,25 @@ void RenderMathMLFenced::updateFromElement()
         makeFences();
     else {
         // FIXME: The mfenced element fails to update dynamically when its open, close and separators attributes are changed (https://bugs.webkit.org/show_bug.cgi?id=57696).
-        downcast<RenderMathMLOperator>(*firstChild()).updateTokenContent(m_open);
-        m_closeFenceRenderer->updateTokenContent(m_close);
+        if (is<RenderMathMLFencedOperator>(*firstChild()))
+            downcast<RenderMathMLFencedOperator>(*firstChild()).updateOperatorContent(m_open);
+        m_closeFenceRenderer->updateOperatorContent(m_close);
     }
 }
 
-RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
+RenderPtr<RenderMathMLFencedOperator> RenderMathMLFenced::createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
 {
-    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK), operatorString, form, flag);
+    RenderPtr<RenderMathMLFencedOperator> newOperator = createRenderer<RenderMathMLFencedOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK), operatorString, form, flag);
     newOperator->initializeStyle();
     return newOperator;
 }
 
 void RenderMathMLFenced::makeFences()
 {
-    RenderPtr<RenderMathMLOperator> openFence = createMathMLOperator(m_open, MathMLOperatorDictionary::Prefix, MathMLOperatorDictionary::Fence);
+    RenderPtr<RenderMathMLFencedOperator> openFence = createMathMLOperator(m_open, MathMLOperatorDictionary::Prefix, MathMLOperatorDictionary::Fence);
     RenderMathMLRow::addChild(openFence.leakPtr(), firstChild());
 
-    RenderPtr<RenderMathMLOperator> closeFence = createMathMLOperator(m_close, MathMLOperatorDictionary::Postfix, MathMLOperatorDictionary::Fence);
+    RenderPtr<RenderMathMLFencedOperator> closeFence = createMathMLOperator(m_close, MathMLOperatorDictionary::Postfix, MathMLOperatorDictionary::Fence);
     m_closeFenceRenderer = closeFence.get();
     RenderMathMLRow::addChild(closeFence.leakPtr());
 }
@@ -108,7 +109,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
 
     // FIXME: Adding or removing a child should possibly cause all later separators to shift places if they're different, as later child positions change by +1 or -1. This should also handle surrogate pairs. See https://bugs.webkit.org/show_bug.cgi?id=125938.
 
-    RenderPtr<RenderMathMLOperator> separatorRenderer;
+    RenderPtr<RenderMathMLFencedOperator> separatorRenderer;
     if (m_separators.get()) {
         unsigned int count = 0;
         for (Node* position = child->node(); position; position = position->previousSibling()) {

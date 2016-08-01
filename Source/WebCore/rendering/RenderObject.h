@@ -338,6 +338,7 @@ public:
     virtual bool isRenderMathMLMath() const { return false; }
     virtual bool isRenderMathMLMenclose() const { return false; }
     virtual bool isRenderMathMLFenced() const { return false; }
+    virtual bool isRenderMathMLFencedOperator() const { return false; }
     virtual bool isRenderMathMLFraction() const { return false; }
     virtual bool isRenderMathMLPadded() const { return false; }
     virtual bool isRenderMathMLRoot() const { return false; }

@@ -49,23 +49,15 @@ using namespace MathMLNames;
 
 RenderMathMLOperator::RenderMathMLOperator(MathMLOperatorElement& element, RenderStyle&& style)
     : RenderMathMLToken(element, WTFMove(style))
-    , m_stretchHeightAboveBaseline(0)
-    , m_stretchDepthBelowBaseline(0)
-    , m_isVertical(true)
 {
     updateTokenContent();
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Document& document, RenderStyle&& style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
+RenderMathMLOperator::RenderMathMLOperator(Document& document, RenderStyle&& style, MathMLOperatorDictionary::Form form, unsigned short flags)
     : RenderMathMLToken(document, WTFMove(style))
-    , m_stretchHeightAboveBaseline(0)
-    , m_stretchDepthBelowBaseline(0)
-    , m_textContent(0)
-    , m_isVertical(true)
     , m_operatorForm(form)
     , m_operatorFlags(flags)
 {
-    updateTokenContent(operatorString);
 }
 
 MathMLOperatorElement& RenderMathMLOperator::element() const
@@ -75,7 +67,8 @@ MathMLOperatorElement& RenderMathMLOperator::element() const
 
 UChar RenderMathMLOperator::textContent() const
 {
-    return isAnonymous() ? m_textContent : element().operatorText();
+    ASSERT(!isAnonymous());
+    return element().operatorText();
 }
 
 void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag flag, const QualifiedName& name)
@@ -317,13 +310,6 @@ void RenderMathMLOperator::rebuildTokenContent()
     }
 
     setNeedsLayoutAndPrefWidthsRecalc();
-}
-
-void RenderMathMLOperator::updateTokenContent(const String& operatorString)
-{
-    ASSERT(isAnonymous());
-    m_textContent = MathMLOperatorElement::parseOperatorText(operatorString);
-    rebuildTokenContent();
 }
 
 void RenderMathMLOperator::updateTokenContent()
