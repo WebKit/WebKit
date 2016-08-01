@@ -1,5 +1,26 @@
 2016-08-01  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Grid column resizer elements positioned incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=160311
+        <rdar://problem/27595586>
+
+        Reviewed by Brian Burg.
+
+        Perform a resize layout on a newly shown tab content view if the tab
+        browser was resized before showing the tab.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype.layout):
+        Mark all recent tab content views (except for the current view)
+        as needing a resize layout.
+
+        (WebInspector.TabBrowser.prototype._tabBarItemSelected):
+        If the tab browser was resized while the view was hidden, update the
+        view's layout for the new content view container size.
+
+2016-08-01  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Waterfall graph in Network tab shows too much whitespace/dead time
         https://bugs.webkit.org/show_bug.cgi?id=160373
 
