@@ -1,5 +1,21 @@
 2016-07-31  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203916. rdar://problem/27594995
+
+    2016-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Backspace key removes only the rainbow from the rainbow flag
+            https://bugs.webkit.org/show_bug.cgi?id=160349
+            <rdar://problem/27594995>
+
+            Reviewed by Dean Jackson.
+
+            * platform/mac/editing/deleting/delete-emoji-expected.txt:
+            * platform/mac-yosemite/editing/deleting/delete-emoji-expected.txt:
+            * platform/ios-simulator/editing/deleting/delete-emoji-expected.txt:
+
+2016-07-31  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203913. rdar://problem/27558003
 
     2016-07-29  Nan Wang  <n_wang@apple.com>
