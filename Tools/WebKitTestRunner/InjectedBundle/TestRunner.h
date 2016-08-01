@@ -269,10 +269,10 @@ public:
     bool hasCustomFullScreenBehavior() const { return m_customFullScreenBehavior; }
 
     // Web notifications.
-    void grantWebNotificationPermission(JSStringRef origin);
-    void denyWebNotificationPermission(JSStringRef origin);
-    void removeAllWebNotificationPermissions();
-    void simulateWebNotificationClick(JSValueRef notification);
+    static void grantWebNotificationPermission(JSStringRef origin);
+    static void denyWebNotificationPermission(JSStringRef origin);
+    static void removeAllWebNotificationPermissions();
+    static void simulateWebNotificationClick(JSValueRef notification);
 
     // Geolocation.
     void setGeolocationPermission(bool);

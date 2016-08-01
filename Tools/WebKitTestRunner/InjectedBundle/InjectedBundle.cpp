@@ -190,7 +190,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_pixelResultIsPending = false;
 
         resetLocalSettings();
-        m_testRunner->removeAllWebNotificationPermissions();
+        TestRunner::removeAllWebNotificationPermissions();
 
         InjectedBundle::page()->resetAfterTest();
 
