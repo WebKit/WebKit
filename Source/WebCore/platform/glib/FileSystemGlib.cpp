@@ -368,6 +368,19 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
     return -1;
 }
 
+bool moveFile(const String& oldPath, const String& newPath)
+{
+    GUniquePtr<gchar> oldFilename = unescapedFilename(oldPath);
+    if (!oldFilename)
+        return false;
+
+    GUniquePtr<gchar> newFilename = unescapedFilename(newPath);
+    if (!newFilename)
+        return false;
+
+    return g_rename(oldFilename.get(), newFilename.get()) != -1;
+}
+
 bool unloadModule(PlatformModule module)
 {
 #if OS(WINDOWS)
