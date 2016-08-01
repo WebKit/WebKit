@@ -146,7 +146,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLVideoElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMImplementation.h \
     $(PRIVATE_HEADERS_DIR)/DOMKeyboardEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMMediaError.h \
     $(PRIVATE_HEADERS_DIR)/DOMMediaList.h \
     $(PRIVATE_HEADERS_DIR)/DOMMouseEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMMutationEvent.h \
