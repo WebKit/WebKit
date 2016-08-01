@@ -135,7 +135,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
         // Nest the message.
         var type = messageView instanceof WebInspector.ConsoleCommandView ? null : messageView.message.type;
-        if (type !== WebInspector.ConsoleMessage.MessageType.EndGroup) {
+        if (this._nestingLevel && type !== WebInspector.ConsoleMessage.MessageType.EndGroup) {
             var x = 16 * this._nestingLevel;
             var messageElement = messageView.element;
             messageElement.style.left = x + "px";
