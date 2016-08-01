@@ -473,7 +473,8 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
 {
-    m_rate = rate;
+    // AVSampleBufferRenderSynchronizer does not support negative rate yet.
+    m_rate = std::max<double>(rate, 0);
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
 }
