@@ -115,7 +115,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         _log.debug('Copying WebKit web platform server config.json')
         config_wk_filename = self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "config.json")
         if self._filesystem.isfile(config_wk_filename):
-            config_json = self._filesystem.read_text_file(config_wk_filename).replace("%CERTS_DIR%", self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "_wpt_certs"))
+            config_json = self._filesystem.read_text_file(config_wk_filename).replace("%CERTS_DIR%", self._filesystem.join(self._output_dir, "_wpt_certs"))
             self._filesystem.write_text_file(self._filesystem.join(self._doc_root, "config.json"), config_json)
 
         wpt_testharnessjs_file = self._filesystem.join(self._doc_root, "resources", "testharness.js")

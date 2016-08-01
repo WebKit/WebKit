@@ -10,12 +10,11 @@
          "openssl": {
              "openssl_binary": "openssl",
              "base_path": "%CERTS_DIR%",
-             "base_conf_path": null,
              "force_regenerate": false
          },
          "pregenerated": {
-             "host_key_path":  "%CERTS_DIR%/localhost.key",
-             "host_cert_path":  "%CERTS_DIR%/localhost.pem"
+             "host_key_path": null,
+             "host_cert_path": null
          },
          "none": {}
         }

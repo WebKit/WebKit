@@ -1,3 +1,15 @@
+2016-08-01  Youenn Fablet  <youenn@apple.com>
+
+        Make wpt server generate its certificates in layout test results folder
+        https://bugs.webkit.org/show_bug.cgi?id=160422
+
+        Reviewed by Chris Dumez.
+
+        * resources/_wpt_certs/.gitignore: Removed.
+        * resources/_wpt_certs/localhost.key: Removed.
+        * resources/_wpt_certs/localhost.pem: Removed.
+        * resources/config.json:
+
 2016-07-30  Chris Dumez  <cdumez@apple.com>
 
         Enable strict type checking for Window dictionary members
