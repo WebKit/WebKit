@@ -1,3 +1,14 @@
+2016-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Freeze all the DOMHTML* Objective-C bindings
+        https://bugs.webkit.org/show_bug.cgi?id=160424
+
+        Reviewed by Tim Horton.
+
+        Don't migrate DOMHTMLEmbedElementPrivate.h - it was just an empty header.
+
+        * MigrateHeaders.make:
+
 2016-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove deprecated SPI for video inline / fullscreen controls

@@ -96,7 +96,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMHTMLElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLEmbedElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLEmbedElementPrivate.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFontElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFormElement.h \
