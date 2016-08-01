@@ -951,6 +951,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             if (m_strictParsing || element.isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
                 addStyleRelation(checkingContext, element, Style::Relation::AffectedByHover);
 
+                // See the comment in generateElementIsHovered() in SelectorCompiler.
+                if (checkingContext.resolvingMode == SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements && !context.isMatchElement)
+                    return true;
+
                 if (element.hovered() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassHover))
                     return true;
             }

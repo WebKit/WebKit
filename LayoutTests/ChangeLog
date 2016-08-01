@@ -1,3 +1,13 @@
+2016-08-01  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r196383): Drop down CSS menus not working on cnet.com, apmex.com
+        https://bugs.webkit.org/show_bug.cgi?id=160390
+
+        Reviewed by Simon Fraser.
+
+        * fast/selectors/hover-invalidation-descendant-dynamic-expected.txt: Added.
+        * fast/selectors/hover-invalidation-descendant-dynamic.html: Added.
+
 2016-07-31  Youenn Fablet  <youenn@apple.com>
 
         Fetch Response built-ins should use @makeThisTypeError

@@ -288,6 +288,7 @@ fast/css/pseudo-active-style-sharing-5.html [ Skip ]
 fast/css/pseudo-active-style-sharing-6.html [ Skip ]
 fast/css/pseudo-active-with-programmatic-focus.html [ Skip ]
 http/tests/security/history-username-password.html [ Skip ]
+fast/selectors/hover-invalidation-descendant-dynamic.html [ Skip ]
 
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
 
