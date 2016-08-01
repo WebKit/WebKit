@@ -689,7 +689,6 @@
 		1A144B4D1D4FF77300D9E32C /* DOMDOMTokenListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A144B4C1D4FF76900D9E32C /* DOMDOMTokenListInternal.h */; };
 		1A144B501D4FF7F100D9E32C /* DOMDOMTokenList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A144B4F1D4FF7DD00D9E32C /* DOMDOMTokenList.mm */; };
 		1A144B511D4FF9BD00D9E32C /* DOMDOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A144B4E1D4FF7DD00D9E32C /* DOMDOMTokenList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A144B521D50024300D9E32C /* DOMHTMLTitleElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85992EB90AA5069500AC0785 /* DOMHTMLTitleElement.mm */; };
 		1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D137E0A5325520064BF5F /* DOMXPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D137F0A5325520064BF5F /* DOMXPath.mm */; };
 		1A219B3B0DCA87AB0040E3A0 /* npfunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -31569,7 +31568,6 @@
 				973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */,
 				6B693A341C51A95D00B03BEF /* ResourceLoadObserver.cpp in Sources */,
 				7A929CA61C598A9E004DF226 /* ResourceLoadStatistics.cpp in Sources */,
-				1A144B521D50024300D9E32C /* DOMHTMLTitleElement.mm in Sources */,
 				7AD3CDD91C8A002F00F12698 /* ResourceLoadStatisticsStore.cpp in Sources */,
 				5C9B860C1C21E3C900110F36 /* ResourceLoadTiming.mm in Sources */,
 				514C767C0CE923A1007EF3CD /* ResourceRequestBase.cpp in Sources */,
