@@ -47,10 +47,6 @@
 #include "StyleResolver.h"
 #include "Text.h"
 
-#if PLATFORM(IOS)
-#include "WKContentObservation.h"
-#endif
-
 namespace WebCore {
 
 namespace Style {
@@ -265,60 +261,6 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     return update;
 }
 
-#if PLATFORM(IOS)
-static EVisibility elementImplicitVisibility(const Element* element)
-{
-    RenderObject* renderer = element->renderer();
-    if (!renderer)
-        return VISIBLE;
-
-    auto& style = renderer->style();
-
-    Length width(style.width());
-    Length height(style.height());
-    if ((width.isFixed() && width.value() <= 0) || (height.isFixed() && height.value() <= 0))
-        return HIDDEN;
-
-    Length top(style.top());
-    Length left(style.left());
-    if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
-        return HIDDEN;
-
-    if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
-        return HIDDEN;
-    return VISIBLE;
-}
-
-class CheckForVisibilityChangeOnRecalcStyle {
-public:
-    CheckForVisibilityChangeOnRecalcStyle(Element* element, const RenderStyle* currentStyle)
-        : m_element(element)
-        , m_previousDisplay(currentStyle ? currentStyle->display() : NONE)
-        , m_previousVisibility(currentStyle ? currentStyle->visibility() : HIDDEN)
-        , m_previousImplicitVisibility(WKObservingContentChanges() && WKObservedContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : VISIBLE)
-    {
-    }
-    ~CheckForVisibilityChangeOnRecalcStyle()
-    {
-        if (!WKObservingContentChanges())
-            return;
-        if (m_element->isInUserAgentShadowTree())
-            return;
-        auto* style = m_element->renderStyle();
-        if (!style)
-            return;
-        if ((m_previousDisplay == NONE && style->display() != NONE) || (m_previousVisibility == HIDDEN && style->visibility() != HIDDEN)
-            || (m_previousImplicitVisibility == HIDDEN && elementImplicitVisibility(m_element.get()) == VISIBLE))
-            WKSetObservedContentChange(WKContentVisibilityChange);
-    }
-private:
-    RefPtr<Element> m_element;
-    EDisplay m_previousDisplay;
-    EVisibility m_previousVisibility;
-    EVisibility m_previousImplicitVisibility;
-};
-#endif // PLATFORM(IOS)
-
 void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change change)
 {
     scope().selectorFilter.pushParent(&element);
@@ -448,9 +390,6 @@ void TreeResolver::resolveComposedTree()
 
         bool shouldResolve = shouldResolveElement(element, parent.change) || affectedByPreviousSibling;
         if (shouldResolve) {
-#if PLATFORM(IOS)
-            CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(&element, element.renderStyle());
-#endif
             element.resetComputedStyle();
 
             if (element.hasCustomStyleResolveCallbacks()) {

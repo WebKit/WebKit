@@ -1,3 +1,16 @@
+2016-08-01  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r198943): drop-down menu navigation on fiddlevideo.com doesn't appear on iOS, works on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=160406
+
+        Reviewed by Simon Fraser.
+
+        This stuff has had zero test coverage. Adding a basic UIScript based test.
+
+        * TestExpectations:
+        * fast/content-observation/click-event-suppression-on-content-change-expected.txt: Added.
+        * fast/content-observation/click-event-suppression-on-content-change.html: Added.
+
 2016-08-01  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac][iOS] Adopt MediaRemote "seek to playback position"
