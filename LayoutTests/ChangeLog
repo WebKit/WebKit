@@ -1,3 +1,11 @@
+2016-08-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land updated baseline for rdar://problem/27611932.
+
+        * editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac-elcapitan/editing/mac/attributed-string/font-style-variant-effect-expected.txt: Copied from LayoutTests/editing/mac/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-wk1/TestExpectations:
+
 2016-08-01  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r198943): drop-down menu navigation on fiddlevideo.com doesn't appear on iOS, works on OS X
