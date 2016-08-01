@@ -63,8 +63,10 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind 
     int alignedFrameSizeForParameters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(),
         newCodeBlock->numParameters() + CallFrame::headerSizeInRegisters);
     int paddedStackSpace = alignedFrameSizeForParameters - frameSize;
+    
+    Register* newStack = exec->registers() - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), paddedStackSpace);
 
-    if (UNLIKELY(!vm.ensureStackCapacityFor(exec->registers() - paddedStackSpace % stackAlignmentRegisters())))
+    if (UNLIKELY(!vm.ensureStackCapacityFor(newStack)))
         return -1;
     return paddedStackSpace;
 }

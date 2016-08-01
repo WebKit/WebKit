@@ -1,3 +1,13 @@
+2016-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize varargs stack overflow checks
+        https://bugs.webkit.org/show_bug.cgi?id=160425
+
+        Reviewed by Michael Saboff.
+
+        * stress/arity-check-ftl-throw-more-args.js: Added.
+        (catch):
+
 2016-08-01  Keith Miller  <keith_miller@apple.com>
 
         We should not keep the JavaScript tests inside the Source/JavaScriptCore/ directory.
