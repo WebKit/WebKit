@@ -48,8 +48,6 @@
 @property NSTimeInterval valueAsDate;
 @property double valueAsNumber;
 @property unsigned width;
-@property (readonly, strong) DOMValidityState *validity;
-@property (readonly, copy) NSString *validationMessage;
 @property (readonly, strong) DOMNodeList *labels;
 @property (copy) NSString *selectionDirection;
 @property BOOL incremental;
@@ -59,8 +57,6 @@
 
 - (void)stepUp:(int)n;
 - (void)stepDown:(int)n;
-- (BOOL)checkValidity;
-- (void)setCustomValidity:(NSString *)error;
 - (void)setRangeText:(NSString *)replacement;
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode;
 - (void)setValueForUser:(NSString *)value;

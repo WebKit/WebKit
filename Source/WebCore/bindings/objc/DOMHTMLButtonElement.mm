@@ -29,7 +29,6 @@
 #import "DOMHTMLFormElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMNodeListInternal.h"
-#import "DOMValidityStateInternal.h"
 #import "ExceptionHandlers.h"
 #import "HTMLButtonElement.h"
 #import "HTMLFormElement.h"
@@ -39,7 +38,6 @@
 #import "NodeList.h"
 #import "ThreadCheck.h"
 #import "URL.h"
-#import "ValidityState.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
 
@@ -77,42 +75,6 @@
     return kit(WTF::getPtr(IMPL->form()));
 }
 
-- (NSString *)formAction
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->formAction();
-}
-
-- (void)setFormAction:(NSString *)newFormAction
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setFormAction(newFormAction);
-}
-
-- (NSString *)formEnctype
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->formEnctype();
-}
-
-- (void)setFormEnctype:(NSString *)newFormEnctype
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setFormEnctype(newFormEnctype);
-}
-
-- (NSString *)formMethod
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->formMethod();
-}
-
-- (void)setFormMethod:(NSString *)newFormMethod
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setFormMethod(newFormMethod);
-}
-
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
@@ -123,30 +85,6 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->setType(newType);
-}
-
-- (BOOL)formNoValidate
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->hasAttributeWithoutSynchronization(WebCore::HTMLNames::formnovalidateAttr);
-}
-
-- (void)setFormNoValidate:(BOOL)newFormNoValidate
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setBooleanAttribute(WebCore::HTMLNames::formnovalidateAttr, newFormNoValidate);
-}
-
-- (NSString *)formTarget
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::formtargetAttr);
-}
-
-- (void)setFormTarget:(NSString *)newFormTarget
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::formtargetAttr, newFormTarget);
 }
 
 - (NSString *)name
@@ -179,24 +117,6 @@
     return IMPL->willValidate();
 }
 
-- (DOMValidityState *)validity
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->validity()));
-}
-
-- (NSString *)validationMessage
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->validationMessage();
-}
-
-- (DOMNodeList *)labels
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->labels()));
-}
-
 - (NSString *)accessKey
 {
     WebCore::JSMainThreadNullState state;
@@ -207,18 +127,6 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, newAccessKey);
-}
-
-- (BOOL)checkValidity
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->checkValidity();
-}
-
-- (void)setCustomValidity:(NSString *)error
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setCustomValidity(error);
 }
 
 - (void)click

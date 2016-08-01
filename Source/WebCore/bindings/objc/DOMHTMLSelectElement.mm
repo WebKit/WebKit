@@ -32,7 +32,6 @@
 #import "DOMHTMLOptionsCollectionInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMNodeListInternal.h"
-#import "DOMValidityStateInternal.h"
 #import "ExceptionHandlers.h"
 #import "HTMLCollection.h"
 #import "HTMLElement.h"
@@ -46,7 +45,6 @@
 #import "NodeList.h"
 #import "ThreadCheck.h"
 #import "URL.h"
-#import "ValidityState.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
 
@@ -108,18 +106,6 @@
     IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
 }
 
-- (BOOL)required
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->hasAttributeWithoutSynchronization(WebCore::HTMLNames::requiredAttr);
-}
-
-- (void)setRequired:(BOOL)newRequired
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setBooleanAttribute(WebCore::HTMLNames::requiredAttr, newRequired);
-}
-
 - (int)size
 {
     WebCore::JSMainThreadNullState state;
@@ -150,12 +136,6 @@
     return IMPL->length();
 }
 
-- (DOMHTMLCollection *)selectedOptions
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->selectedOptions()));
-}
-
 - (int)selectedIndex
 {
     WebCore::JSMainThreadNullState state;
@@ -184,36 +164,6 @@
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->willValidate();
-}
-
-- (DOMValidityState *)validity
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->validity()));
-}
-
-- (NSString *)validationMessage
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->validationMessage();
-}
-
-- (DOMNodeList *)labels
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->labels()));
-}
-
-- (NSString *)autocomplete
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->autocomplete();
-}
-
-- (void)setAutocomplete:(NSString *)newAutocomplete
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAutocomplete(newAutocomplete);
 }
 
 - (DOMNode *)item:(unsigned)index
@@ -252,18 +202,6 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->removeByIndex(index);
-}
-
-- (BOOL)checkValidity
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->checkValidity();
-}
-
-- (void)setCustomValidity:(NSString *)error
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setCustomValidity(error);
 }
 
 @end

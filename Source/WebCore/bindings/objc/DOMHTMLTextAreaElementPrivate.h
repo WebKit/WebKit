@@ -35,15 +35,11 @@
 @property BOOL required;
 @property (copy) NSString *wrap;
 @property (readonly) unsigned textLength;
-@property (readonly, strong) DOMValidityState *validity;
-@property (readonly, copy) NSString *validationMessage;
 @property (readonly, strong) DOMNodeList *labels;
 @property (copy) NSString *selectionDirection;
 @property BOOL autocorrect;
 @property (copy) NSString *autocapitalize;
 @property (copy) NSString *autocomplete;
-- (BOOL)checkValidity;
-- (void)setCustomValidity:(NSString *)error;
 - (void)setRangeText:(NSString *)replacement;
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode;
 @end

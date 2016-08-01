@@ -30,7 +30,6 @@
 #import "DOMHTMLFormElementInternal.h"
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
-#import "DOMValidityStateInternal.h"
 #import "ExceptionHandlers.h"
 #import "HTMLCollection.h"
 #import "HTMLFieldSetElement.h"
@@ -47,76 +46,10 @@
 
 @implementation DOMHTMLFieldSetElement
 
-- (BOOL)disabled
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr);
-}
-
-- (void)setDisabled:(BOOL)newDisabled
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setBooleanAttribute(WebCore::HTMLNames::disabledAttr, newDisabled);
-}
-
 - (DOMHTMLFormElement *)form
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->form()));
-}
-
-- (NSString *)name
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getNameAttribute();
-}
-
-- (void)setName:(NSString *)newName
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
-}
-
-- (NSString *)type
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->type();
-}
-
-- (DOMHTMLCollection *)elements
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->elementsForNativeBindings()));
-}
-
-- (BOOL)willValidate
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->willValidate();
-}
-
-- (DOMValidityState *)validity
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->validity()));
-}
-
-- (NSString *)validationMessage
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->validationMessage();
-}
-
-- (BOOL)checkValidity
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->checkValidity();
-}
-
-- (void)setCustomValidity:(NSString *)error
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setCustomValidity(error);
 }
 
 @end

@@ -346,27 +346,19 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/WebKitTransitionEvent.idl \
     $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \
-    $(WebCore)/fileapi/Blob.idl \
-    $(WebCore)/fileapi/File.idl \
-    $(WebCore)/fileapi/FileError.idl \
     $(WebCore)/fileapi/FileException.idl \
-    $(WebCore)/fileapi/FileList.idl \
     $(WebCore)/fileapi/FileReader.idl \
     $(WebCore)/fileapi/FileReaderSync.idl \
     $(WebCore)/html/DOMFormData.idl \
     $(WebCore)/html/DOMSettableTokenList.idl \
-    $(WebCore)/html/DOMTokenList.idl \
     $(WebCore)/html/DOMURL.idl \
     $(WebCore)/html/ImageData.idl \
     $(WebCore)/html/MediaController.idl \
-    $(WebCore)/html/MediaError.idl \
     $(WebCore)/html/MediaKeyError.idl \
     $(WebCore)/html/MediaKeyEvent.idl \
     $(WebCore)/html/RadioNodeList.idl \
     $(WebCore)/html/TextMetrics.idl \
-    $(WebCore)/html/TimeRanges.idl \
     $(WebCore)/html/URLUtils.idl \
-    $(WebCore)/html/ValidityState.idl \
     $(WebCore)/html/VoidCallback.idl \
     $(WebCore)/html/canvas/ANGLEInstancedArrays.idl \
     $(WebCore)/html/canvas/CanvasGradient.idl \
@@ -493,6 +485,11 @@ JS_AND_OBJC_BINDING_IDLS = \
 #
 
 JS_ONLY_BINDING_IDLS = \
+	$(WebCore)/fileapi/Blob.idl \
+	$(WebCore)/fileapi/File.idl \
+	$(WebCore)/fileapi/FileError.idl \
+	$(WebCore)/fileapi/FileList.idl \
+	$(WebCore)/html/DOMTokenList.idl \
 	$(WebCore)/html/HTMLAnchorElement.idl \
 	$(WebCore)/html/HTMLAppletElement.idl \
 	$(WebCore)/html/HTMLAreaElement.idl \
@@ -573,6 +570,9 @@ JS_ONLY_BINDING_IDLS = \
     $(WebCore)/html/HTMLUListElement.idl \
     $(WebCore)/html/HTMLUnknownElement.idl \
     $(WebCore)/html/HTMLVideoElement.idl \
+    $(WebCore)/html/MediaError.idl \
+    $(WebCore)/html/TimeRanges.idl \
+    $(WebCore)/html/ValidityState.idl \
     $(WebCore)/svg/SVGAElement.idl \
     $(WebCore)/svg/SVGAltGlyphDefElement.idl \
     $(WebCore)/svg/SVGAltGlyphElement.idl \

@@ -33,7 +33,6 @@
 #import "DOMNodeListInternal.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
-#import "DOMValidityStateInternal.h"
 #import "ExceptionHandlers.h"
 #import "FileList.h"
 #import "HTMLElement.h"
@@ -47,7 +46,6 @@
 #import "RenderElement.h"
 #import "ThreadCheck.h"
 #import "URL.h"
-#import "ValidityState.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
 
@@ -489,12 +487,6 @@
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->willValidate();
-}
-
-- (DOMValidityState *)validity
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->validity()));
 }
 
 - (NSString *)validationMessage

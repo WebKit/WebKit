@@ -30,7 +30,6 @@
 #import "DOMHTMLFormElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
-#import "DOMValidityStateInternal.h"
 #import "Document.h"
 #import "ExceptionHandlers.h"
 #import "HTMLFormElement.h"
@@ -40,7 +39,6 @@
 #import "RenderElement.h"
 #import "ThreadCheck.h"
 #import "URL.h"
-#import "ValidityState.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
 
@@ -246,24 +244,6 @@
     IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, newWidth);
 }
 
-- (BOOL)willValidate
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->willValidate();
-}
-
-- (DOMValidityState *)validity
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->validity()));
-}
-
-- (NSString *)validationMessage
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->validationMessage();
-}
-
 - (DOMDocument *)contentDocument
 {
     WebCore::JSMainThreadNullState state;
@@ -276,18 +256,6 @@
     if (!IMPL->renderer() || !IMPL->renderer()->isImage())
         return nil;
     return [self _getURLAttribute:@"data"];
-}
-
-- (BOOL)checkValidity
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->checkValidity();
-}
-
-- (void)setCustomValidity:(NSString *)error
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setCustomValidity(error);
 }
 
 @end
