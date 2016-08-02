@@ -152,9 +152,6 @@ bool SubresourceLoader::init(const ResourceRequest& request)
     // SubresourceLoader could use the document origin as a default and set PotentiallyCrossOriginEnabled requests accordingly.
     // This would simplify resource loader users as they would only need to set fetch mode to Cors.
     m_origin = m_resource->origin();
-    // https://fetch.spec.whatwg.org/#main-fetch, step 11, data URL here is considered not cross origin.
-    if (!request.url().protocolIsData() && m_origin && !m_origin->canRequest(request.url()))
-        m_resource->setCrossOrigin();
 
     return true;
 }

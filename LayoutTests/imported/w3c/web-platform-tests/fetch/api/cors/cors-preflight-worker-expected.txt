@@ -7,10 +7,10 @@ PASS CORS [PATCH], server allows
 PASS CORS [PATCH], server refuses 
 PASS CORS [NEW], server allows 
 PASS CORS [NEW], server refuses 
-FAIL CORS [GET] [x-test-header: allowed], server allows assert_equals: Access-Control-Allow-Headers value expected "x-test-header1" but got "referer,x-test-header1"
+PASS CORS [GET] [x-test-header: allowed], server allows 
 PASS CORS [GET] [x-test-header: refused], server refuses 
-FAIL CORS [GET] [several headers], server allows assert_equals: Access-Control-Allow-Headers value expected "content-type,x-test-header-a,x-test-header-b,x-test-header-c,x-test-header-d,x-test-header1,x-test-header2,x-test-header3" but got "content-type,referer,x-test-header-a,x-test-header-b,x-test-header-c,x-test-header-d,x-test-header1,x-test-header2,x-test-header3"
+PASS CORS [GET] [several headers], server allows 
 PASS CORS [GET] [several headers], server refuses 
-FAIL CORS [PUT] [several headers], server allows assert_equals: Access-Control-Allow-Headers value expected "content-type,x-test-header-a,x-test-header-b,x-test-header-c,x-test-header-d,x-test-header1,x-test-header2,x-test-header3" but got "content-type,referer,x-test-header-a,x-test-header-b,x-test-header-c,x-test-header-d,x-test-header1,x-test-header2,x-test-header3"
+PASS CORS [PUT] [several headers], server allows 
 PASS CORS [PUT] [several headers], server refuses 
 

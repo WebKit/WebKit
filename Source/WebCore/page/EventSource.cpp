@@ -111,7 +111,8 @@ void EventSource::connect()
     options.dataBufferingPolicy = DoNotBufferData;
     options.contentSecurityPolicyEnforcement = scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
 
-    m_loader = ThreadableLoader::create(scriptExecutionContext(), this, WTFMove(request), options);
+    ASSERT(scriptExecutionContext());
+    m_loader = ThreadableLoader::create(*scriptExecutionContext(), *this, WTFMove(request), options);
 
     // FIXME: Can we just use m_loader for this, null it out when it's no longer in flight, and eliminate the m_requestInFlight member?
     if (m_loader)

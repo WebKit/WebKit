@@ -713,7 +713,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         // ThreadableLoader::create can return null here, for example if we're no longer attached to a page or if a content blocker blocks the load.
         // This is true while running onunload handlers.
         // FIXME: Maybe we need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
-        m_loader = ThreadableLoader::create(scriptExecutionContext(), this, WTFMove(request), options);
+        m_loader = ThreadableLoader::create(*scriptExecutionContext(), *this, WTFMove(request), options);
 
         // Neither this object nor the JavaScript wrapper should be deleted while
         // a request is in progress because we need to keep the listeners alive,
@@ -726,7 +726,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         }
     } else {
         InspectorInstrumentation::willLoadXHRSynchronously(scriptExecutionContext());
-        ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), WTFMove(request), *this, options);
+        ThreadableLoader::loadResourceSynchronously(*scriptExecutionContext(), WTFMove(request), *this, options);
         InspectorInstrumentation::didLoadXHRSynchronously(scriptExecutionContext());
     }
 

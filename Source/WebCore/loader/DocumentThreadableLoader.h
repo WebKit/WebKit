@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DocumentThreadableLoader_h
-#define DocumentThreadableLoader_h
+#pragma once
 
 #include "CrossOriginPreflightChecker.h"
 #include "ResourceResponse.h"
@@ -48,7 +48,7 @@ namespace WebCore {
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&);
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
 
-        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&);
+        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, String&& referrer);
         static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&);
 
         virtual ~DocumentThreadableLoader();
@@ -71,7 +71,7 @@ namespace WebCore {
             LoadAsynchronously
         };
 
-        DocumentThreadableLoader(Document&, ThreadableLoaderClient&, BlockingBehavior, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&);
+        DocumentThreadableLoader(Document&, ThreadableLoaderClient&, BlockingBehavior, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, String&&);
 
         void clearResource();
 
@@ -103,6 +103,7 @@ namespace WebCore {
 
         Document& document() { return m_document; }
         const ThreadableLoaderOptions& options() const { return m_options; }
+        const String& referrer() const { return m_referrer; }
         bool isLoading() { return m_resource || m_preflightChecker; }
 
         CachedResourceHandle<CachedRawResource> m_resource;
@@ -110,6 +111,7 @@ namespace WebCore {
         Document& m_document;
         ThreadableLoaderOptions m_options;
         RefPtr<SecurityOrigin> m_origin;
+        String m_referrer;
         bool m_sameOriginRequest;
         bool m_simpleRequest;
         bool m_async;
@@ -118,5 +120,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // DocumentThreadableLoader_h

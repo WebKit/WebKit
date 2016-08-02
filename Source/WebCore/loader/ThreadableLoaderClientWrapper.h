@@ -40,7 +40,7 @@ namespace WebCore {
 
 class ThreadableLoaderClientWrapper : public ThreadSafeRefCounted<ThreadableLoaderClientWrapper> {
 public:
-    static Ref<ThreadableLoaderClientWrapper> create(ThreadableLoaderClient* client)
+    static Ref<ThreadableLoaderClientWrapper> create(ThreadableLoaderClient& client)
     {
         return adoptRef(*new ThreadableLoaderClientWrapper(client));
     }
@@ -95,14 +95,10 @@ public:
     }
 
 protected:
-    explicit ThreadableLoaderClientWrapper(ThreadableLoaderClient* client)
-        : m_client(client)
-        , m_done(false)
-    {
-    }
+    explicit ThreadableLoaderClientWrapper(ThreadableLoaderClient& client) : m_client(&client) { }
 
     ThreadableLoaderClient* m_client;
-    bool m_done;
+    bool m_done { false };
 };
 
 } // namespace WebCore

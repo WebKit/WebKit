@@ -294,6 +294,11 @@ ResourceRequest FetchRequest::internalRequest() const
     ResourceRequest request = m_internalRequest.request;
     request.setHTTPHeaderFields(m_headers->internalHeaders());
     request.setHTTPBody(body().bodyForInternalRequest());
+
+    // FIXME: Support no-referrer and client. Ensure this case-sensitive comparison is ok.
+    if (m_internalRequest.referrer != "no-referrer" && m_internalRequest.referrer != "client")
+        request.setHTTPReferrer(m_internalRequest.referrer);
+
     return request;
 }
 

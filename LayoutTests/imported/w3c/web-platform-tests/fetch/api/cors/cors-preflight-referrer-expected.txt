@@ -1,7 +1,7 @@
 
-FAIL Referrer policy: no-referrer promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Referrer policy: "" promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Referrer policy: origin promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Referrer policy: origin-when-cross-origin promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Referrer policy: unsafe-url promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Referrer policy: no-referrer 
+PASS Referrer policy: "" 
+PASS Referrer policy: origin 
+PASS Referrer policy: origin-when-cross-origin 
+PASS Referrer policy: unsafe-url 
 

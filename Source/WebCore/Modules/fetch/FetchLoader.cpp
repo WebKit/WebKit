@@ -67,7 +67,7 @@ void FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
     options.mode = FetchOptions::Mode::SameOrigin;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
-    m_loader = ThreadableLoader::create(&context, this, WTFMove(request), options);
+    m_loader = ThreadableLoader::create(context, *this, WTFMove(request), options);
     m_isStarted = m_loader;
 }
 
@@ -77,7 +77,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.sendLoadCallbacks = SendCallbacks;
     options.dataBufferingPolicy = DoNotBufferData;
 
-    m_loader = ThreadableLoader::create(&context, this, request.internalRequest(), options);
+    m_loader = ThreadableLoader::create(context, *this, request.internalRequest(), options);
     m_isStarted = m_loader;
 }
 

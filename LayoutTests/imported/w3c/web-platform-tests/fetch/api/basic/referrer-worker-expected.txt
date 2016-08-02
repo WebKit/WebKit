@@ -1,0 +1,4 @@
+
+PASS origin-when-cross-origin policy on a same-origin URL 
+PASS origin-when-cross-origin policy on a cross-origin URL 
+

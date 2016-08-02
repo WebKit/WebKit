@@ -49,8 +49,8 @@ namespace WebCore {
     class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public ThreadableLoader {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static void loadResourceSynchronously(WorkerGlobalScope*, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
-        static Ref<WorkerThreadableLoader> create(WorkerGlobalScope* workerGlobalScope, ThreadableLoaderClient* client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options)
+        static void loadResourceSynchronously(WorkerGlobalScope&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
+        static Ref<WorkerThreadableLoader> create(WorkerGlobalScope& workerGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options)
         {
             return adoptRef(*new WorkerThreadableLoader(workerGlobalScope, client, taskMode, WTFMove(request), options));
         }
@@ -85,7 +85,7 @@ namespace WebCore {
         // case 2. xhr gets aborted and the worker context continues running.
         //    The ThreadableLoaderClientWrapper has the underlying client cleared, so no more calls
         //    go through it.  All tasks posted from the worker object's thread to the worker context's
-        //    thread contain the RefPtr<ThreadableLoaderClientWrapper> object, so the 
+        //    thread contain the RefPtr<ThreadableLoaderClientWrapper> object, so the
         //    ThreadableLoaderClientWrapper instance is there until all tasks are executed.
         class MainThreadBridge : public ThreadableLoaderClient {
         public:
@@ -120,10 +120,10 @@ namespace WebCore {
             String m_taskMode;
         };
 
-        WorkerThreadableLoader(WorkerGlobalScope*, ThreadableLoaderClient*, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&);
+        WorkerThreadableLoader(WorkerGlobalScope&, ThreadableLoaderClient&, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&);
 
-        RefPtr<WorkerGlobalScope> m_workerGlobalScope;
-        RefPtr<ThreadableLoaderClientWrapper> m_workerClientWrapper;
+        Ref<WorkerGlobalScope> m_workerGlobalScope;
+        Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
         MainThreadBridge& m_bridge;
     };
 

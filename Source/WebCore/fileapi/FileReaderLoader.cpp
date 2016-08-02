@@ -73,6 +73,8 @@ FileReaderLoader::~FileReaderLoader()
 
 void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blob& blob)
 {
+    ASSERT(scriptExecutionContext);
+
     // The blob is read by routing through the request handling layer given a temporary public url.
     m_urlForReading = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
     if (m_urlForReading.isEmpty()) {
@@ -93,9 +95,9 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     if (m_client)
-        m_loader = ThreadableLoader::create(scriptExecutionContext, this, WTFMove(request), options);
+        m_loader = ThreadableLoader::create(*scriptExecutionContext, *this, WTFMove(request), options);
     else
-        ThreadableLoader::loadResourceSynchronously(scriptExecutionContext, WTFMove(request), *this, options);
+        ThreadableLoader::loadResourceSynchronously(*scriptExecutionContext, WTFMove(request), *this, options);
 }
 
 void FileReaderLoader::cancel()

@@ -108,6 +108,9 @@ void CrossOriginPreflightChecker::startPreflight()
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         preflightRequest.setInitiator(m_loader.options().initiator);
 
+    if (!m_loader.referrer().isNull())
+        preflightRequest.mutableResourceRequest().setHTTPReferrer(m_loader.referrer());
+
     ASSERT(!m_resource);
     m_resource = m_loader.document().cachedResourceLoader().requestRawResource(preflightRequest);
     if (m_resource)
@@ -123,6 +126,10 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     ResourceError error;
     ResourceResponse response;
     RefPtr<SharedBuffer> data;
+
+    if (!loader.referrer().isNull())
+        preflightRequest.setHTTPReferrer(loader.referrer());
+
     unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, error, response, data);
 
     // FIXME: Investigate why checking for response httpStatusCode here. In particular, can we have a not-null error and a 2XX response.

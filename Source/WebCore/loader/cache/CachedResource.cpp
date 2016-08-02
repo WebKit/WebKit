@@ -183,9 +183,9 @@ void CachedResource::failBeforeStarting()
     error(CachedResource::LoadError);
 }
 
-static void addAdditionalRequestHeadersToRequest(ResourceRequest& request, const CachedResourceLoader& cachedResourceLoader, CachedResource::Type type)
+static void addAdditionalRequestHeadersToRequest(ResourceRequest& request, const CachedResourceLoader& cachedResourceLoader, CachedResource& resource)
 {
-    if (type == CachedResource::MainResource)
+    if (resource.type() == CachedResource::MainResource)
         return;
     // In some cases we may try to load resources in frameless documents. Such loads always fail.
     // FIXME: We shouldn't get this far.
@@ -206,8 +206,29 @@ static void addAdditionalRequestHeadersToRequest(ResourceRequest& request, const
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
     }
 
-    auto referrerPolicy = cachedResourceLoader.document() ? cachedResourceLoader.document()->referrerPolicy() : ReferrerPolicy::Default;
-    outgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrer);
+    // FIXME: Refactor SecurityPolicy::generateReferrerHeader to align with new terminology used in https://w3c.github.io/webappsec-referrer-policy.
+    switch (resource.options().referrerPolicy) {
+    case FetchOptions::ReferrerPolicy::EmptyString: {
+        ReferrerPolicy referrerPolicy = cachedResourceLoader.document() ? cachedResourceLoader.document()->referrerPolicy() : ReferrerPolicy::Default;
+        outgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrer);
+        break; }
+    case FetchOptions::ReferrerPolicy::NoReferrerWhenDowngrade:
+        outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Default, request.url(), outgoingReferrer);
+        break;
+    case FetchOptions::ReferrerPolicy::NoReferrer:
+        outgoingReferrer = String();
+        break;
+    case FetchOptions::ReferrerPolicy::Origin:
+        outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Origin, request.url(), outgoingReferrer);
+        break;
+    case FetchOptions::ReferrerPolicy::OriginWhenCrossOrigin:
+        if (resource.isCrossOrigin())
+            outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Origin, request.url(), outgoingReferrer);
+        break;
+    case FetchOptions::ReferrerPolicy::UnsafeUrl:
+        break;
+    };
+
     if (outgoingReferrer.isEmpty())
         request.clearHTTPReferrer();
     else
@@ -219,7 +240,7 @@ static void addAdditionalRequestHeadersToRequest(ResourceRequest& request, const
 
 void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& cachedResourceLoader)
 {
-    addAdditionalRequestHeadersToRequest(m_resourceRequest, cachedResourceLoader, type());
+    addAdditionalRequestHeadersToRequest(m_resourceRequest, cachedResourceLoader, *this);
 }
 
 void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
@@ -287,6 +308,10 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
         else
             m_origin = cachedResourceLoader.document()->securityOrigin();
         ASSERT(m_origin);
+
+        if (!m_resourceRequest.url().protocolIsData() && m_origin && !m_origin->canRequest(m_resourceRequest.url()))
+            setCrossOrigin();
+
         addAdditionalRequestHeaders(cachedResourceLoader);
     }
 
@@ -809,7 +834,7 @@ bool CachedResource::varyHeaderValuesMatch(const ResourceRequest& request, const
         return true;
 
     ResourceRequest requestWithFullHeaders(request);
-    addAdditionalRequestHeadersToRequest(requestWithFullHeaders, cachedResourceLoader, type());
+    addAdditionalRequestHeadersToRequest(requestWithFullHeaders, cachedResourceLoader, *this);
 
     return verifyVaryingRequestHeaders(m_varyingHeaderValues, requestWithFullHeaders, m_sessionID);
 }

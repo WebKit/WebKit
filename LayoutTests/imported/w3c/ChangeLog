@@ -1,3 +1,22 @@
+2016-08-02  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Add support to ReferrerPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=160404
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/basic/referrer-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/referrer-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/referrer-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/referrer.html: Added.
+        * web-platform-tests/fetch/api/basic/referrer.js: Added.
+        (runTest):
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.js:
+        (corsPreflightReferrer): fix infrastructure bug in test and fix expected referrer policy in default case.
+        * web-platform-tests/fetch/api/cors/cors-preflight-worker-expected.txt:
+
 2016-08-01  Youenn Fablet  <youenn@apple.com>
 
         Make wpt server generate its certificates in layout test results folder
