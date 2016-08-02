@@ -84,7 +84,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader& loader, const
 
         if (options.mode == FetchOptions::Mode::Cors) {
             ASSERT(loader.document()->securityOrigin());
-            updateRequestForAccessControl(request.mutableResourceRequest(), *loader.document()->securityOrigin(), options.allowCredentials());
+            updateRequestForAccessControl(request.mutableResourceRequest(), *loader.document()->securityOrigin(), options.allowCredentials);
         }
         if (CachedResourceHandle<CachedImage> cachedImage = loader.requestImage(request)) {
             detachPendingImage();

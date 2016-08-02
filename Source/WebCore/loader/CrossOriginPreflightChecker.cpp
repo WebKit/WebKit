@@ -69,12 +69,12 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     }
 
     String description;
-    if (!passesAccessControlCheck(response, loader.options().allowCredentials(), loader.securityOrigin(), description)) {
+    if (!passesAccessControlCheck(response, loader.options().allowCredentials, loader.securityOrigin(), description)) {
         loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description, ResourceError::Type::AccessControl));
         return;
     }
 
-    auto result = std::make_unique<CrossOriginPreflightResultCacheItem>(loader.options().allowCredentials());
+    auto result = std::make_unique<CrossOriginPreflightResultCacheItem>(loader.options().allowCredentials);
     if (!result->parse(response, description)
         || !result->allowsCrossOriginMethod(request.httpMethod(), description)
         || !result->allowsCrossOriginHeaders(request.httpHeaderFields(), description)) {
@@ -100,15 +100,8 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource* resource)
 
 void CrossOriginPreflightChecker::startPreflight()
 {
-    auto options = m_loader.options();
+    ResourceLoaderOptions options = static_cast<FetchOptions>(m_loader.options());
     options.credentials = FetchOptions::Credentials::Omit;
-    options.setSecurityCheck(DoSecurityCheck);
-    // Don't sniff content or send load callbacks for the preflight request.
-    options.setSendLoadCallbacks(DoNotSendCallbacks);
-    options.setSniffContent(DoNotSniffContent);
-    // Keep buffering the data for the preflight request.
-    options.setDataBufferingPolicy(BufferData);
-
     options.redirect = FetchOptions::Redirect::Manual;
 
     CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin()), options);

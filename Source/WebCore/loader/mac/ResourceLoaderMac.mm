@@ -51,7 +51,7 @@ CFCachedURLResponseRef ResourceLoader::willCacheResponse(ResourceHandle*, CFCach
 
 NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCachedURLResponse* response)
 {
-    if (m_options.sendLoadCallbacks() == DoNotSendCallbacks)
+    if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
         return nullptr;
     return frameLoader()->client().willCacheResponse(documentLoader(), identifier(), response);
 }
@@ -71,7 +71,7 @@ void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
         CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
         unsigned dataLen = static_cast<unsigned>(CFDataGetLength(data));
 
-        if (m_options.dataBufferingPolicy() == BufferData) {
+        if (m_options.dataBufferingPolicy == BufferData) {
             if (!m_resourceData)
                 m_resourceData = SharedBuffer::create();
             m_resourceData->append(data);
@@ -80,7 +80,7 @@ void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
         // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
         // However, with today's computers and networking speeds, this won't happen in practice.
         // Could be an issue with a giant local file.
-        if (m_options.sendLoadCallbacks() == SendCallbacks && m_frame)
+        if (m_options.sendLoadCallbacks == SendCallbacks && m_frame)
             frameLoader()->notifier().didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(data)), dataLen, dataLen);
     }
 }

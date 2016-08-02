@@ -61,7 +61,7 @@ namespace WebCore {
 ResourceLoader::ResourceLoader(Frame& frame, ResourceLoaderOptions options)
     : m_frame(&frame)
     , m_documentLoader(frame.loader().activeDocumentLoader())
-    , m_defersLoading(options.defersLoadingPolicy() == DefersLoadingPolicy::AllowDefersLoading && frame.page()->defersLoading())
+    , m_defersLoading(options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame.page()->defersLoading())
     , m_options(options)
 {
 }
@@ -125,9 +125,9 @@ bool ResourceLoader::init(const ResourceRequest& r)
     }
 #endif
     
-    m_defersLoading = m_options.defersLoadingPolicy() == DefersLoadingPolicy::AllowDefersLoading && m_frame->page()->defersLoading();
+    m_defersLoading = m_options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && m_frame->page()->defersLoading();
 
-    if (m_options.securityCheck() == DoSecurityCheck && !m_frame->document()->securityOrigin()->canDisplay(clientRequest.url())) {
+    if (m_options.securityCheck == DoSecurityCheck && !m_frame->document()->securityOrigin()->canDisplay(clientRequest.url())) {
         FrameLoader::reportLocalLoadFailed(m_frame.get(), clientRequest.url().string());
         releaseResources();
         return false;
@@ -206,12 +206,12 @@ void ResourceLoader::start()
         return;
     }
 
-    m_handle = ResourceHandle::create(frameLoader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent() == SniffContent);
+    m_handle = ResourceHandle::create(frameLoader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == SniffContent);
 }
 
 void ResourceLoader::setDefersLoading(bool defers)
 {
-    if (m_options.defersLoadingPolicy() == DefersLoadingPolicy::DisallowDefersLoading)
+    if (m_options.defersLoadingPolicy == DefersLoadingPolicy::DisallowDefersLoading)
         return;
 
     m_defersLoading = defers;
@@ -268,14 +268,14 @@ void ResourceLoader::loadDataURL()
 }
 
 void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
-{ 
-    m_options.setDataBufferingPolicy(dataBufferingPolicy); 
+{
+    m_options.dataBufferingPolicy = dataBufferingPolicy;
 
     // Reset any already buffered data
     if (dataBufferingPolicy == DoNotBufferData)
         m_resourceData = nullptr;
 }
-    
+
 void ResourceLoader::willSwitchToSubstituteResource()
 {
     ASSERT(!m_documentLoader->isSubstituteLoadPending(this));
@@ -286,7 +286,7 @@ void ResourceLoader::willSwitchToSubstituteResource()
 
 void ResourceLoader::addDataOrBuffer(const char* data, unsigned length, SharedBuffer* buffer, DataPayloadType dataPayloadType)
 {
-    if (m_options.dataBufferingPolicy() == DoNotBufferData)
+    if (m_options.dataBufferingPolicy == DoNotBufferData)
         return;
 
     if (!m_resourceData || dataPayloadType == DataPayloadWholeResource) {
@@ -350,7 +350,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
         return;
     }
 
-    if (m_options.sendLoadCallbacks() == SendCallbacks) {
+    if (m_options.sendLoadCallbacks == SendCallbacks) {
         if (createdResourceIdentifier)
             frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
 
@@ -458,8 +458,8 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
     if (FormData* data = m_request.httpBody())
         data->removeGeneratedFilesIfNeeded();
-        
-    if (m_options.sendLoadCallbacks() == SendCallbacks)
+
+    if (m_options.sendLoadCallbacks == SendCallbacks)
         frameLoader()->notifier().didReceiveResponse(this, m_response);
 }
 
@@ -489,11 +489,11 @@ void ResourceLoader::didReceiveDataOrBuffer(const char* data, unsigned length, R
     Ref<ResourceLoader> protectedThis(*this);
 
     addDataOrBuffer(data, length, buffer.get(), dataPayloadType);
-    
+
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
-    if (m_options.sendLoadCallbacks() == SendCallbacks && m_frame)
+    if (m_options.sendLoadCallbacks == SendCallbacks && m_frame)
         frameLoader()->notifier().didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length, static_cast<int>(encodedDataLength));
 }
 
@@ -519,7 +519,7 @@ void ResourceLoader::didFinishLoadingOnePart(double finishTime)
     if (m_notifiedLoadComplete)
         return;
     m_notifiedLoadComplete = true;
-    if (m_options.sendLoadCallbacks() == SendCallbacks)
+    if (m_options.sendLoadCallbacks == SendCallbacks)
         frameLoader()->notifier().didFinishLoad(this, finishTime);
 }
 
@@ -545,7 +545,7 @@ void ResourceLoader::cleanupForError(const ResourceError& error)
     if (m_notifiedLoadComplete)
         return;
     m_notifiedLoadComplete = true;
-    if (m_options.sendLoadCallbacks() == SendCallbacks && m_identifier)
+    if (m_options.sendLoadCallbacks == SendCallbacks && m_identifier)
         frameLoader()->notifier().didFailToLoad(this, error);
 }
 
@@ -678,9 +678,9 @@ void ResourceLoader::cannotShowURL(ResourceHandle*)
 
 bool ResourceLoader::shouldUseCredentialStorage()
 {
-    if (m_options.allowCredentials() == DoNotAllowStoredCredentials)
+    if (m_options.allowCredentials == DoNotAllowStoredCredentials)
         return false;
-    
+
     Ref<ResourceLoader> protectedThis(*this);
     return frameLoader()->client().shouldUseCredentialStorage(documentLoader(), identifier());
 }
@@ -700,7 +700,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
     // anything including possibly derefing this; one example of this is Radar 3266216.
     Ref<ResourceLoader> protectedThis(*this);
 
-    if (m_options.allowCredentials() == AllowStoredCredentials) {
+    if (m_options.allowCredentials == AllowStoredCredentials) {
         if (isAllowedToAskUserForCredentials()) {
             frameLoader()->notifier().didReceiveAuthenticationChallenge(this, challenge);
             return;

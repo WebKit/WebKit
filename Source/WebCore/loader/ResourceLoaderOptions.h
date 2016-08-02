@@ -81,60 +81,35 @@ enum class ClientCredentialPolicy {
 };
 
 struct ResourceLoaderOptions : public FetchOptions {
-    ResourceLoaderOptions()
-        : m_sendLoadCallbacks(DoNotSendCallbacks)
-        , m_sniffContent(DoNotSniffContent)
-        , m_dataBufferingPolicy(BufferData)
-        , m_allowCredentials(DoNotAllowStoredCredentials)
-        , m_securityCheck(DoSecurityCheck)
-        , m_certificateInfoPolicy(DoNotIncludeCertificateInfo)
-    {
-    }
+    ResourceLoaderOptions() { }
+
+    ResourceLoaderOptions(const FetchOptions& options) : FetchOptions(options) { }
 
     ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentials allowCredentials, ClientCredentialPolicy credentialPolicy, FetchOptions::Credentials credentials, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
-        : m_sendLoadCallbacks(sendLoadCallbacks)
-        , m_sniffContent(sniffContent)
-        , m_dataBufferingPolicy(dataBufferingPolicy)
-        , m_allowCredentials(allowCredentials)
-        , m_securityCheck(securityCheck)
-        , m_certificateInfoPolicy(certificateInfoPolicy)
-        , m_contentSecurityPolicyImposition(contentSecurityPolicyImposition)
-        , m_defersLoadingPolicy(defersLoadingPolicy)
-        , m_cachingPolicy(cachingPolicy)
+        : sendLoadCallbacks(sendLoadCallbacks)
+        , sniffContent(sniffContent)
+        , dataBufferingPolicy(dataBufferingPolicy)
+        , allowCredentials(allowCredentials)
+        , securityCheck(securityCheck)
+        , certificateInfoPolicy(certificateInfoPolicy)
+        , contentSecurityPolicyImposition(contentSecurityPolicyImposition)
+        , defersLoadingPolicy(defersLoadingPolicy)
+        , cachingPolicy(cachingPolicy)
         , clientCredentialPolicy(credentialPolicy)
     {
         this->credentials = credentials;
         this->mode = mode;
     }
 
-    SendCallbackPolicy sendLoadCallbacks() const { return static_cast<SendCallbackPolicy>(m_sendLoadCallbacks); }
-    void setSendLoadCallbacks(SendCallbackPolicy allow) { m_sendLoadCallbacks = allow; }
-    ContentSniffingPolicy sniffContent() const { return static_cast<ContentSniffingPolicy>(m_sniffContent); }
-    void setSniffContent(ContentSniffingPolicy policy) { m_sniffContent = policy; }
-    DataBufferingPolicy dataBufferingPolicy() const { return static_cast<DataBufferingPolicy>(m_dataBufferingPolicy); }
-    void setDataBufferingPolicy(DataBufferingPolicy policy) { m_dataBufferingPolicy = policy; }
-    StoredCredentials allowCredentials() const { return static_cast<StoredCredentials>(m_allowCredentials); }
-    void setAllowCredentials(StoredCredentials allow) { m_allowCredentials = allow; }
-    SecurityCheckPolicy securityCheck() const { return static_cast<SecurityCheckPolicy>(m_securityCheck); }
-    void setSecurityCheck(SecurityCheckPolicy check) { m_securityCheck = check; }
-    CertificateInfoPolicy certificateInfoPolicy() const { return static_cast<CertificateInfoPolicy>(m_certificateInfoPolicy); }
-    void setCertificateInfoPolicy(CertificateInfoPolicy policy) { m_certificateInfoPolicy = policy; }
-    ContentSecurityPolicyImposition contentSecurityPolicyImposition() const { return m_contentSecurityPolicyImposition; }
-    void setContentSecurityPolicyImposition(ContentSecurityPolicyImposition imposition) { m_contentSecurityPolicyImposition = imposition; }
-    DefersLoadingPolicy defersLoadingPolicy() const { return m_defersLoadingPolicy; }
-    void setDefersLoadingPolicy(DefersLoadingPolicy defersLoadingPolicy) { m_defersLoadingPolicy = defersLoadingPolicy; }
-    CachingPolicy cachingPolicy() const { return m_cachingPolicy; }
-    void setCachingPolicy(CachingPolicy cachingPolicy) { m_cachingPolicy = cachingPolicy; }
-
-    unsigned m_sendLoadCallbacks : 1;
-    unsigned m_sniffContent : 1;
-    unsigned m_dataBufferingPolicy : 1;
-    unsigned m_allowCredentials : 1; // Whether HTTP credentials and cookies are sent with the request.
-    unsigned m_securityCheck : 1;
-    unsigned m_certificateInfoPolicy : 1; // Whether the response should include certificate info.
-    ContentSecurityPolicyImposition m_contentSecurityPolicyImposition { ContentSecurityPolicyImposition::DoPolicyCheck };
-    DefersLoadingPolicy m_defersLoadingPolicy { DefersLoadingPolicy::AllowDefersLoading };
-    CachingPolicy m_cachingPolicy { CachingPolicy::AllowCaching };
+    SendCallbackPolicy sendLoadCallbacks { DoNotSendCallbacks };
+    ContentSniffingPolicy sniffContent { DoNotSniffContent };
+    DataBufferingPolicy dataBufferingPolicy { BufferData };
+    StoredCredentials allowCredentials { DoNotAllowStoredCredentials };
+    SecurityCheckPolicy securityCheck { DoSecurityCheck };
+    CertificateInfoPolicy certificateInfoPolicy { DoNotIncludeCertificateInfo };
+    ContentSecurityPolicyImposition contentSecurityPolicyImposition { ContentSecurityPolicyImposition::DoPolicyCheck };
+    DefersLoadingPolicy defersLoadingPolicy { DefersLoadingPolicy::AllowDefersLoading };
+    CachingPolicy cachingPolicy { CachingPolicy::AllowCaching };
 
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
 };

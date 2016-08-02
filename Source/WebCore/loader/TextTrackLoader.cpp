@@ -153,7 +153,7 @@ bool TextTrackLoader::load(const URL& url, const String& crossOriginMode, bool i
     Document* document = downcast<Document>(m_scriptExecutionContext);
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.setContentSecurityPolicyImposition(isInitiatingElementInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
+    options.contentSecurityPolicyImposition = isInitiatingElementInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     CachedResourceRequest cueRequest(ResourceRequest(document->completeURL(url)), options);
 

@@ -48,12 +48,12 @@ static RefPtr<StyleImage> loadPendingImage(Document& document, const StyleImage&
 {
     auto& pendingImage = downcast<StylePendingImage>(image);
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.setContentSecurityPolicyImposition(element && element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
+    options.contentSecurityPolicyImposition = element && element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     // FIXME: Why does shape-outside have different policy than other properties?
     if (loadPolicy == LoadPolicy::ShapeOutside) {
         options.mode = FetchOptions::Mode::Cors;
-        options.setAllowCredentials(DoNotAllowStoredCredentials);
+        options.allowCredentials = DoNotAllowStoredCredentials;
     }
 
     if (auto imageValue = pendingImage.cssImageValue())
@@ -171,7 +171,7 @@ static void loadPendingSVGFilters(const PendingResources& pendingResources, Docu
         return;
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.setContentSecurityPolicyImposition(element && element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
+    options.contentSecurityPolicyImposition = element && element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     for (auto& filterOperation : pendingResources.pendingSVGFilters)
         filterOperation->getOrCreateCachedSVGDocumentReference()->load(document.cachedResourceLoader(), options);

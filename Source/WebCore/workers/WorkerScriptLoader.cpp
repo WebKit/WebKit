@@ -70,7 +70,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     ThreadableLoaderOptions options;
     options.credentials = FetchOptions::Credentials::Include;
     options.mode = mode;
-    options.setSendLoadCallbacks(SendCallbacks);
+    options.sendLoadCallbacks = SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 
     WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(scriptExecutionContext), WTFMove(*request), *this, options);
@@ -93,7 +93,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     ThreadableLoaderOptions options;
     options.credentials = FetchOptions::Credentials::SameOrigin;
     options.mode = mode;
-    options.setSendLoadCallbacks(SendCallbacks);
+    options.sendLoadCallbacks = SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 
     // During create, callbacks may happen which remove the last reference to this object.
