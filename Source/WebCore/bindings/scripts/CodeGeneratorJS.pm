@@ -317,9 +317,9 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "        unsigned index = optionalIndex.value();\n");
         # Assume that if there's a setter, the index will be writable
         if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
-            push(@getOwnPropertySlotImpl, "        unsigned attributes = ${namespaceMaybe}DontDelete;\n");
+            push(@getOwnPropertySlotImpl, "        unsigned attributes = 0;\n");
         } else {
-            push(@getOwnPropertySlotImpl, "        unsigned attributes = ${namespaceMaybe}DontDelete | ${namespaceMaybe}ReadOnly;\n");
+            push(@getOwnPropertySlotImpl, "        unsigned attributes = ${namespaceMaybe}ReadOnly;\n");
         }
         push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject, attributes, " . GetIndexedGetterExpression($indexedGetterFunction) . ");\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
@@ -344,7 +344,7 @@ sub GenerateGetOwnPropertySlotBody
         }
         push(@getOwnPropertySlotImpl, "        JSValue value;\n");
         push(@getOwnPropertySlotImpl, "        if (thisObject->nameGetter(state, propertyName, value)) {\n");
-        push(@getOwnPropertySlotImpl, "            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);\n");
+        push(@getOwnPropertySlotImpl, "            slot.setValue(thisObject, ReadOnly | DontEnum, value);\n");
         push(@getOwnPropertySlotImpl, "            return true;\n");
         push(@getOwnPropertySlotImpl, "        }\n");
         push(@getOwnPropertySlotImpl, "    }\n");

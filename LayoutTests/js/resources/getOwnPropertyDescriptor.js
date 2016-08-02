@@ -45,14 +45,14 @@ var globalWindowGetter = Object.getOwnPropertyDescriptor(global, 'window').get;
 descriptorShouldBe("global", "'window'", {get: 'globalWindowGetter', set: undefined, enumerable: true, configurable: false});
 descriptorShouldBe("global", "'XMLHttpRequest'", {writable: true, enumerable: false, configurable: true, value:"XMLHttpRequest"});
 descriptorShouldBe("global", "0", {writable: true, enumerable: false, configurable: false, value:"global[0]"});
-descriptorShouldBe("document.getElementsByTagName('div')", "0", {writable: false, enumerable: true, configurable: false, value:"document.getElementsByTagName('div')[0]"});
-descriptorShouldBe("document.getElementsByClassName('pass')", "0", {writable: false, enumerable: true, configurable: false, value:"document.getElementsByClassName('pass')[0]"});
+descriptorShouldBe("document.getElementsByTagName('div')", "0", {writable: false, enumerable: true, configurable: true, value:"document.getElementsByTagName('div')[0]"});
+descriptorShouldBe("document.getElementsByClassName('pass')", "0", {writable: false, enumerable: true, configurable: true, value:"document.getElementsByClassName('pass')[0]"});
 var canvas = document.createElement("canvas");
 var canvasPixelArray = canvas.getContext("2d").createImageData(10,10).data;
 descriptorShouldBe("canvasPixelArray", "0", {writable: true, enumerable: true, configurable: false, value:"canvasPixelArray[0]"});
 var select = document.createElement("select");
 select.innerHTML = "<option>foo</option>";
-descriptorShouldBe("select", "0", {writable: true, enumerable: true, configurable: false, value:"select[0]"});
+descriptorShouldBe("select", "0", {writable: true, enumerable: true, configurable: true, value:"select[0]"});
 
 var objectWithGetter = {};
 function getterFunc(){};

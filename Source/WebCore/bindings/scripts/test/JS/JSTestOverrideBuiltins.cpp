@@ -132,7 +132,7 @@ bool JSTestOverrideBuiltins::getOwnPropertySlot(JSObject* object, ExecState* sta
     if (thisObject->classInfo() == info()) {
         JSValue value;
         if (thisObject->nameGetter(state, propertyName, value)) {
-            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+            slot.setValue(thisObject, ReadOnly | DontEnum, value);
             return true;
         }
     }

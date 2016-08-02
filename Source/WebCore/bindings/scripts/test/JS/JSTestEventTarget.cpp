@@ -126,7 +126,7 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* state, P
     Optional<uint32_t> optionalIndex = parseIndex(propertyName);
     if (optionalIndex && optionalIndex.value() < thisObject->wrapped().length()) {
         unsigned index = optionalIndex.value();
-        unsigned attributes = DontDelete | ReadOnly;
+        unsigned attributes = ReadOnly;
         slot.setValue(thisObject, attributes, toJS(state, thisObject->globalObject(), thisObject->wrapped().item(index)));
         return true;
     }
@@ -139,7 +139,7 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* state, P
     if (!optionalIndex && thisObject->classInfo() == info()) {
         JSValue value;
         if (thisObject->nameGetter(state, propertyName, value)) {
-            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+            slot.setValue(thisObject, ReadOnly | DontEnum, value);
             return true;
         }
     }

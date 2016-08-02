@@ -1350,7 +1350,7 @@ bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyN
     Optional<uint32_t> optionalIndex = parseIndex(propertyName);
     if (optionalIndex) {
         unsigned index = optionalIndex.value();
-        unsigned attributes = DontDelete | ReadOnly;
+        unsigned attributes = ReadOnly;
         slot.setValue(thisObject, attributes, jsStringOrUndefined(state, thisObject->wrapped().item(index)));
         return true;
     }

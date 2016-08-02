@@ -134,12 +134,12 @@ PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).va
 PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).enumerable is true
-PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).configurable is false
+PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).configurable is true
 PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 0).value is document.getElementsByClassName('pass')[0]
 PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 0).hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 0).hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 0).enumerable is true
-PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 0).configurable is false
+PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 0).configurable is true
 PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 0).value is canvasPixelArray[0]
 PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 0).hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 0).hasOwnProperty('set') is false
@@ -149,7 +149,7 @@ PASS Object.getOwnPropertyDescriptor(select, 0).value is select[0]
 PASS Object.getOwnPropertyDescriptor(select, 0).hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(select, 0).hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(select, 0).enumerable is true
-PASS Object.getOwnPropertyDescriptor(select, 0).configurable is false
+PASS Object.getOwnPropertyDescriptor(select, 0).configurable is true
 PASS Object.getOwnPropertyDescriptor(objectWithGetter, 'getter').get is getterFunc
 PASS Object.getOwnPropertyDescriptor(objectWithGetter, 'getter').set is undefined
 PASS Object.getOwnPropertyDescriptor(objectWithGetter, 'getter').hasOwnProperty('value') is false

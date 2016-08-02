@@ -10,9 +10,9 @@ description('Test the JavaScript property descriptor of the name getter.');
 
 var NodeList = document.getElementsByTagName('div');
 
-shouldBe("Object.getOwnPropertyDescriptor(NodeList, 'aWildId').configurable", 'false');
-shouldBe("Object.getOwnPropertyDescriptor(NodeList, 'aWildId').enumerable", 'false');
-shouldBe("Object.getOwnPropertyDescriptor(NodeList, 'aWildId').writable", 'false');
+shouldBeTrue("Object.getOwnPropertyDescriptor(NodeList, 'aWildId').configurable");
+shouldBeFalse("Object.getOwnPropertyDescriptor(NodeList, 'aWildId').enumerable");
+shouldBeFalse("Object.getOwnPropertyDescriptor(NodeList, 'aWildId').writable");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
