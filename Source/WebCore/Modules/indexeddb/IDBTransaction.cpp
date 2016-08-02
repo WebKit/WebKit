@@ -38,6 +38,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBError.h"
 #include "IDBEventDispatcher.h"
+#include "IDBGetRecordData.h"
 #include "IDBIndex.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
@@ -729,11 +730,11 @@ void IDBTransaction::didIterateCursorOnServer(IDBRequest& request, const IDBResu
     request.didOpenOrIterateCursor(resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetRecord(ExecState& execState, IDBObjectStore& objectStore, const IDBKeyRangeData& keyRangeData)
+Ref<IDBRequest> IDBTransaction::requestGetRecord(ExecState& execState, IDBObjectStore& objectStore, const IDBGetRecordData& getRecordData)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetRecord");
     ASSERT(isActive());
-    ASSERT(!keyRangeData.isNull);
+    ASSERT(!getRecordData.keyRangeData.isNull);
     ASSERT(currentThread() == m_database->originThreadID());
 
     RELEASE_ASSERT(scriptExecutionContext());
@@ -742,7 +743,7 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(ExecState& execState, IDBObject
     Ref<IDBRequest> request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());
 
-    auto operation = IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, keyRangeData);
+    auto operation = IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, getRecordData);
     scheduleOperation(WTFMove(operation));
 
     return request;
@@ -764,7 +765,7 @@ Ref<IDBRequest> IDBTransaction::requestGetKey(ExecState& execState, IDBIndex& in
     return requestIndexRecord(execState, index, IndexedDB::IndexRecordType::Key, range);
 }
 
-Ref<IDBRequest> IDBTransaction::requestIndexRecord(ExecState& execState, IDBIndex& index, IndexedDB::IndexRecordType type, const IDBKeyRangeData&range)
+Ref<IDBRequest> IDBTransaction::requestIndexRecord(ExecState& execState, IDBIndex& index, IndexedDB::IndexRecordType type, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(isActive());
@@ -777,18 +778,19 @@ Ref<IDBRequest> IDBTransaction::requestIndexRecord(ExecState& execState, IDBInde
     Ref<IDBRequest> request = IDBRequest::createGet(*scriptExecutionContext(), index, type, *this);
     addRequest(request.get());
 
-    auto operation = IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, range);
+    IDBGetRecordData getRecordData = { range };
+    auto operation = IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, getRecordData);
     scheduleOperation(WTFMove(operation));
 
     return request;
 }
 
-void IDBTransaction::getRecordOnServer(IDBClient::TransactionOperation& operation, const IDBKeyRangeData& keyRange)
+void IDBTransaction::getRecordOnServer(IDBClient::TransactionOperation& operation, const IDBGetRecordData& getRecordData)
 {
     LOG(IndexedDB, "IDBTransaction::getRecordOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    m_database->connectionProxy().getRecord(operation, keyRange);
+    m_database->connectionProxy().getRecord(operation, getRecordData);
 }
 
 void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultData& resultData)

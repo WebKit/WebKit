@@ -40,6 +40,7 @@ class IDBRequestData;
 class IDBTransactionInfo;
 class IDBValue;
 class SerializedScriptValue;
+struct IDBGetRecordData;
 struct IDBKeyRangeData;
 struct SecurityOriginData;
 }
@@ -95,7 +96,7 @@ public:
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
     void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
     void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, unsigned overwriteMode);
-    void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
+    void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
     void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
     void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&);

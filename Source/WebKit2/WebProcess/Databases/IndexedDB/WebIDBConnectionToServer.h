@@ -57,7 +57,7 @@ public:
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&) final;
     void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) final;
     void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, const WebCore::IndexedDB::ObjectStoreOverwriteMode) final;
-    void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) final;
+    void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&) final;
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) final;
     void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) final;
     void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&) final;

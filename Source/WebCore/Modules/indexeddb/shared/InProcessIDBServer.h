@@ -68,7 +68,7 @@ public:
     void createIndex(const IDBRequestData&, const IDBIndexInfo&) final;
     void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) final;
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode) final;
-    void getRecord(const IDBRequestData&, const IDBKeyRangeData&) final;
+    void getRecord(const IDBRequestData&, const IDBGetRecordData&) final;
     void getCount(const IDBRequestData&, const IDBKeyRangeData&) final;
     void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) final;
     void openCursor(const IDBRequestData&, const IDBCursorInfo&) final;

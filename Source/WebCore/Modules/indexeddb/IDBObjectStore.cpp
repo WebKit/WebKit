@@ -35,6 +35,7 @@
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBError.h"
+#include "IDBGetRecordData.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
 #include "IDBKeyRangeData.h"
@@ -184,7 +185,7 @@ RefPtr<IDBRequest> IDBObjectStore::get(ExecState& execState, JSValue key, Except
         return nullptr;
     }
 
-    return m_transaction->requestGetRecord(execState, *this, idbKey.ptr());
+    return m_transaction->requestGetRecord(execState, *this, { idbKey.ptr() });
 }
 
 RefPtr<IDBRequest> IDBObjectStore::get(ExecState& execState, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
@@ -209,7 +210,7 @@ RefPtr<IDBRequest> IDBObjectStore::get(ExecState& execState, IDBKeyRange* keyRan
         return nullptr;
     }
 
-    return m_transaction->requestGetRecord(execState, *this, keyRangeData);
+    return m_transaction->requestGetRecord(execState, *this, { keyRangeData });
 }
 
 RefPtr<IDBRequest> IDBObjectStore::add(ExecState& execState, JSValue value, JSValue key, ExceptionCodeWithMessage& ec)

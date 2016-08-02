@@ -2081,6 +2081,8 @@
 		510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */; };
 		510192D518B6B9B7007FC7A1 /* ImageControlsRootElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */; };
 		510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */; };
+		5105F0691D4BA9D900FB80BC /* IDBGetRecordData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5105F0681D4BA54100FB80BC /* IDBGetRecordData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5105F06B1D4BB12700FB80BC /* IDBGetRecordData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5105F06A1D4BB0BC00FB80BC /* IDBGetRecordData.cpp */; };
 		5106D7BD18BDB76F000AB166 /* ContextMenuContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */; };
 		5106D7BE18BDB76F000AB166 /* ContextMenuContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510A58E41BAA40B100C19282 /* InProcessIDBServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510A58E21BAA40AE00C19282 /* InProcessIDBServer.cpp */; };
@@ -9513,6 +9515,8 @@
 		510192D818B7D7AB007FC7A1 /* imageControlsMac.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = imageControlsMac.css; sourceTree = "<group>"; };
 		5103105E1BA8E090003329C0 /* IDBDatabaseIdentifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseIdentifier.cpp; sourceTree = "<group>"; };
 		5103105F1BA8E090003329C0 /* IDBDatabaseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseIdentifier.h; sourceTree = "<group>"; };
+		5105F0681D4BA54100FB80BC /* IDBGetRecordData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBGetRecordData.h; sourceTree = "<group>"; };
+		5105F06A1D4BB0BC00FB80BC /* IDBGetRecordData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBGetRecordData.cpp; sourceTree = "<group>"; };
 		5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuContext.cpp; sourceTree = "<group>"; };
 		5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuContext.h; sourceTree = "<group>"; };
 		510A58E21BAA40AE00C19282 /* InProcessIDBServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InProcessIDBServer.cpp; sourceTree = "<group>"; };
@@ -17566,6 +17570,8 @@
 				5148453D1BB9D076006A72ED /* IDBError.h */,
 				51F798EB1BE880D3008AE491 /* IDBIndexInfo.cpp */,
 				51F798EC1BE880D3008AE491 /* IDBIndexInfo.h */,
+				5105F0681D4BA54100FB80BC /* IDBGetRecordData.h */,
+				5105F06A1D4BB0BC00FB80BC /* IDBGetRecordData.cpp */,
 				5160712C1BD8307200DBC4F2 /* IDBObjectStoreInfo.cpp */,
 				5160712D1BD8307200DBC4F2 /* IDBObjectStoreInfo.h */,
 				510A58F51BACC4A500C19282 /* IDBRequestData.cpp */,
@@ -26305,6 +26311,7 @@
 				A8EA7CB80A192B9C00A8EF5F /* HTMLHeadingElement.h in Headers */,
 				A8EA7CAF0A192B9C00A8EF5F /* HTMLHRElement.h in Headers */,
 				A871DE270A152AC800B12A68 /* HTMLHtmlElement.h in Headers */,
+				5105F0691D4BA9D900FB80BC /* IDBGetRecordData.h in Headers */,
 				A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */,
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
 				A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */,
@@ -30115,6 +30122,7 @@
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,
 				2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */,
 				A871DC270A15205700B12A68 /* HTMLMetaElement.cpp in Sources */,
+				5105F06B1D4BB12700FB80BC /* IDBGetRecordData.cpp in Sources */,
 				A454424A119B3661009BE912 /* HTMLMeterElement.cpp in Sources */,
 				A8CFF7A90A156978000A4234 /* HTMLModElement.cpp in Sources */,
 				A8DF3FD5097FA0FC0052981B /* HTMLNameCollection.cpp in Sources */,

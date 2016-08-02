@@ -32,6 +32,7 @@
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
 #include "IDBCursorInfo.h"
+#include "IDBGetRecordData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
@@ -271,10 +272,10 @@ void InProcessIDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKe
     });
 }
 
-void InProcessIDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+void InProcessIDBServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData)
 {
-    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), requestData, keyRangeData] {
-        m_server->getRecord(requestData, keyRangeData);
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), requestData, getRecordData] {
+        m_server->getRecord(requestData, getRecordData);
     });
 }
 

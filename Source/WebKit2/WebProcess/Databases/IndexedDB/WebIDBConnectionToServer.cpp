@@ -138,9 +138,9 @@ void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const
     send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, value, static_cast<unsigned>(mode)));
 }
 
-void WebIDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range)
+void WebIDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData)
 {
-    send(Messages::WebIDBConnectionToClient::GetRecord(requestData, range));
+    send(Messages::WebIDBConnectionToClient::GetRecord(requestData, getRecordData));
 }
 
 void WebIDBConnectionToServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& range)

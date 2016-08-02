@@ -30,6 +30,7 @@
 
 #include "IDBCursorInfo.h"
 #include "IDBDatabase.h"
+#include "IDBGetRecordData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
@@ -164,12 +165,12 @@ void IDBConnectionProxy::putOrAdd(TransactionOperation& operation, IDBKeyData&& 
     callConnectionOnMainThread(&IDBConnectionToServer::putOrAdd, requestData, keyData, value, mode);
 }
 
-void IDBConnectionProxy::getRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
+void IDBConnectionProxy::getRecord(TransactionOperation& operation, const IDBGetRecordData& getRecordData)
 {
     const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    callConnectionOnMainThread(&IDBConnectionToServer::getRecord, requestData, keyRange);
+    callConnectionOnMainThread(&IDBConnectionToServer::getRecord, requestData, getRecordData);
 }
 
 void IDBConnectionProxy::getCount(TransactionOperation& operation, const IDBKeyRangeData& keyRange)

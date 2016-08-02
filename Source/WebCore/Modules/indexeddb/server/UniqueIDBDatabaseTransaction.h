@@ -43,6 +43,7 @@ class IDBObjectStoreInfo;
 class IDBRequestData;
 class IDBValue;
 
+struct IDBGetRecordData;
 struct IDBKeyRangeData;
 
 namespace IDBServer {
@@ -72,7 +73,7 @@ public:
     void createIndex(const IDBRequestData&, const IDBIndexInfo&);
     void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode);
-    void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
+    void getRecord(const IDBRequestData&, const IDBGetRecordData&);
     void getCount(const IDBRequestData&, const IDBKeyRangeData&);
     void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
     void openCursor(const IDBRequestData&, const IDBCursorInfo&);

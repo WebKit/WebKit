@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursorInfo.h"
+#include "IDBGetRecordData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBResultData.h"
 #include "IDBServer.h"
@@ -913,7 +914,7 @@ void UniqueIDBDatabase::didPerformPutOrAdd(uint64_t callbackIdentifier, const ID
     performKeyDataCallback(callbackIdentifier, error, resultKey);
 }
 
-void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range, GetResultCallback callback)
+void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData, GetResultCallback callback)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getRecord");
@@ -923,9 +924,9 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBKe
         return;
 
     if (uint64_t indexIdentifier = requestData.indexIdentifier())
-        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetIndexRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), indexIdentifier, requestData.indexRecordType(), range));
+        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetIndexRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), indexIdentifier, requestData.indexRecordType(), getRecordData.keyRangeData));
     else
-        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), range));
+        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), getRecordData.keyRangeData));
 }
 
 void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& keyRangeData)

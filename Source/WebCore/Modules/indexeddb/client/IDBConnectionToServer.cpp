@@ -30,6 +30,7 @@
 
 #include "IDBConnectionProxy.h"
 #include "IDBDatabase.h"
+#include "IDBGetRecordData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
@@ -171,13 +172,13 @@ void IDBConnectionToServer::didPutOrAdd(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+void IDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::getRecord");
     ASSERT(isMainThread());
-    ASSERT(!keyRangeData.isNull);
+    ASSERT(!getRecordData.keyRangeData.isNull);
 
-    m_delegate->getRecord(requestData, keyRangeData);
+    m_delegate->getRecord(requestData, getRecordData);
 }
 
 void IDBConnectionToServer::didGetRecord(const IDBResultData& resultData)

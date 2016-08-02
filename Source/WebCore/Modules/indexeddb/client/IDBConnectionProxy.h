@@ -51,6 +51,8 @@ class IDBTransaction;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
+struct IDBGetRecordData;
+
 namespace IDBClient {
 
 class IDBConnectionToServer;
@@ -71,7 +73,7 @@ public:
     void createIndex(TransactionOperation&, const IDBIndexInfo&);
     void deleteIndex(TransactionOperation&, uint64_t objectStoreIdentifier, const String& indexName);
     void putOrAdd(TransactionOperation&, IDBKeyData&&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
-    void getRecord(TransactionOperation&, const IDBKeyRangeData&);
+    void getRecord(TransactionOperation&, const IDBGetRecordData&);
     void getCount(TransactionOperation&, const IDBKeyRangeData&);
     void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
     void openCursor(TransactionOperation&, const IDBCursorInfo&);

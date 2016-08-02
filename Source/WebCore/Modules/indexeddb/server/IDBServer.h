@@ -46,6 +46,8 @@ class IDBCursorInfo;
 class IDBRequestData;
 class IDBValue;
 
+struct IDBGetRecordData;
+
 namespace IDBServer {
 
 class IDBBackingStoreTemporaryFileHandler;
@@ -70,7 +72,7 @@ public:
     WEBCORE_EXPORT void createIndex(const IDBRequestData&, const IDBIndexInfo&);
     WEBCORE_EXPORT void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
     WEBCORE_EXPORT void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode);
-    WEBCORE_EXPORT void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
+    WEBCORE_EXPORT void getRecord(const IDBRequestData&, const IDBGetRecordData&);
     WEBCORE_EXPORT void getCount(const IDBRequestData&, const IDBKeyRangeData&);
     WEBCORE_EXPORT void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
     WEBCORE_EXPORT void openCursor(const IDBRequestData&, const IDBCursorInfo&);

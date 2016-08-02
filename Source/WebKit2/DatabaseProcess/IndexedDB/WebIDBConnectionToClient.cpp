@@ -34,6 +34,7 @@
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebIDBResult.h"
 #include <WebCore/IDBError.h>
+#include <WebCore/IDBGetRecordData.h>
 #include <WebCore/IDBResultData.h>
 #include <WebCore/IDBValue.h>
 #include <WebCore/ThreadSafeDataBuffer.h>
@@ -264,9 +265,9 @@ void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDB
     DatabaseProcess::singleton().idbServer().putOrAdd(request, key, value, mode);
 }
 
-void WebIDBConnectionToClient::getRecord(const IDBRequestData& request, const IDBKeyRangeData& range)
+void WebIDBConnectionToClient::getRecord(const IDBRequestData& request, const IDBGetRecordData& getRecordData)
 {
-    DatabaseProcess::singleton().idbServer().getRecord(request, range);
+    DatabaseProcess::singleton().idbServer().getRecord(request, getRecordData);
 }
 
 void WebIDBConnectionToClient::getCount(const IDBRequestData& request, const IDBKeyRangeData& range)

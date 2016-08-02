@@ -30,6 +30,8 @@
 #include "EventTarget.h"
 #include "IDBActiveDOMObject.h"
 #include "IDBError.h"
+#include "IDBGetRecordData.h"
+#include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBTransactionInfo.h"
 #include "IndexedDB.h"
@@ -114,7 +116,7 @@ public:
     std::unique_ptr<IDBIndex> createIndex(IDBObjectStore&, const IDBIndexInfo&);
 
     Ref<IDBRequest> requestPutOrAdd(JSC::ExecState&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
-    Ref<IDBRequest> requestGetRecord(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestGetRecord(JSC::ExecState&, IDBObjectStore&, const IDBGetRecordData&);
     Ref<IDBRequest> requestDeleteRecord(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestClearObjectStore(JSC::ExecState&, IDBObjectStore&);
     Ref<IDBRequest> requestCount(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&);
@@ -177,7 +179,7 @@ private:
     void putOrAddOnServer(IDBClient::TransactionOperation&, RefPtr<IDBKey>, RefPtr<SerializedScriptValue>, const IndexedDB::ObjectStoreOverwriteMode&);
     void didPutOrAddOnServer(IDBRequest&, const IDBResultData&);
 
-    void getRecordOnServer(IDBClient::TransactionOperation&, const IDBKeyRangeData&);
+    void getRecordOnServer(IDBClient::TransactionOperation&, const IDBGetRecordData&);
     void didGetRecordOnServer(IDBRequest&, const IDBResultData&);
 
     void getCountOnServer(IDBClient::TransactionOperation&, const IDBKeyRangeData&);
