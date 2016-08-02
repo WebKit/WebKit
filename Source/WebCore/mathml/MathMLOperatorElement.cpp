@@ -127,6 +127,7 @@ static const QualifiedName& propertyFlagToAttributeName(MathMLOperatorDictionary
         return symmetricAttr;
     }
     ASSERT_NOT_REACHED();
+    return nullQName();
 }
 
 void MathMLOperatorElement::computeOperatorFlag(MathMLOperatorDictionary::Flag flag)
