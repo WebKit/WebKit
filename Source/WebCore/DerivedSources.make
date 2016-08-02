@@ -264,13 +264,10 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/css/WebKitCSSFilterValue.idl \
     $(WebCore)/css/CSSKeyframeRule.idl \
     $(WebCore)/css/CSSKeyframesRule.idl \
-    $(WebCore)/css/WebKitCSSMatrix.idl \
     $(WebCore)/css/WebKitCSSRegionRule.idl \
     $(WebCore)/css/WebKitCSSTransformValue.idl \
     $(WebCore)/css/WebKitCSSViewportRule.idl \
-    $(WebCore)/dom/AnimationEvent.idl \
     $(WebCore)/dom/Attr.idl \
-    $(WebCore)/dom/AutocompleteErrorEvent.idl \
     $(WebCore)/dom/BeforeLoadEvent.idl \
     $(WebCore)/dom/BeforeUnloadEvent.idl \
     $(WebCore)/dom/CDATASection.idl \
@@ -319,7 +316,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/NonElementParentNode.idl \
     $(WebCore)/dom/NonDocumentTypeChildNode.idl \
     $(WebCore)/dom/OverflowEvent.idl \
-    $(WebCore)/dom/PageTransitionEvent.idl \
     $(WebCore)/dom/ParentNode.idl \
     $(WebCore)/dom/PopStateEvent.idl \
     $(WebCore)/dom/ProcessingInstruction.idl \
@@ -332,12 +328,9 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/StringCallback.idl \
     $(WebCore)/dom/Text.idl \
     $(WebCore)/dom/TextEvent.idl \
-    $(WebCore)/dom/TransitionEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
-    $(WebCore)/dom/WebKitAnimationEvent.idl \
     $(WebCore)/dom/WebKitNamedFlow.idl \
-    $(WebCore)/dom/WebKitTransitionEvent.idl \
     $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/FileException.idl \
@@ -477,9 +470,16 @@ JS_ONLY_BINDING_IDLS = \
 	$(WebCore)/css/MediaList.idl \
 	$(WebCore)/css/StyleSheet.idl \
 	$(WebCore)/css/StyleSheetList.idl \
+    $(WebCore)/css/WebKitCSSMatrix.idl \
+	$(WebCore)/dom/AnimationEvent.idl \
+	$(WebCore)/dom/AutocompleteErrorEvent.idl \
 	$(WebCore)/dom/NodeFilter.idl \
 	$(WebCore)/dom/NodeIterator.idl \
+	$(WebCore)/dom/PageTransitionEvent.idl \
 	$(WebCore)/dom/Range.idl \
+	$(WebCore)/dom/TransitionEvent.idl \
+	$(WebCore)/dom/WebKitAnimationEvent.idl \
+	$(WebCore)/dom/WebKitTransitionEvent.idl \
 	$(WebCore)/fileapi/Blob.idl \
 	$(WebCore)/fileapi/File.idl \
 	$(WebCore)/fileapi/FileError.idl \
