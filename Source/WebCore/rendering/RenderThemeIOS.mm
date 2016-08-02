@@ -1380,8 +1380,8 @@ const CGFloat attachmentIconSize = 48;
 
 const CGFloat attachmentItemMargin = 8;
 
-const CGFloat attachmentTitleMaximumWidth = 140;
-const CFIndex attachmentTitleMaximumLineCount = 2;
+const CGFloat attachmentWrappingTextMaximumWidth = 140;
+const CFIndex attachmentWrappingTextMaximumLineCount = 2;
 
 static RetainPtr<CTFontRef> attachmentActionFont()
 {
@@ -1432,7 +1432,7 @@ struct AttachmentInfo {
     CGFloat contentYOrigin { 0 };
 
 private:
-    void buildTitleLines(const RenderAttachment&, unsigned maximumLineCount);
+    void buildWrappedLines(const String&, CTFontRef, UIColor *, unsigned maximumLineCount);
     void buildSingleLine(const String&, CTFontRef, UIColor *);
 
     void addLine(CTLineRef);
@@ -1453,28 +1453,25 @@ void AttachmentInfo::addLine(CTLineRef line)
     lines.append(labelLine);
 }
 
-void AttachmentInfo::buildTitleLines(const RenderAttachment& attachment, unsigned maximumLineCount)
+void AttachmentInfo::buildWrappedLines(const String& text, CTFontRef font, UIColor *color, unsigned maximumLineCount)
 {
-    RetainPtr<CTFontRef> font = attachmentTitleFont();
-
-    String title = attachment.attachmentElement().attachmentTitle();
-    if (title.isEmpty())
+    if (text.isEmpty())
         return;
 
     NSDictionary *textAttributes = @{
-        (id)kCTFontAttributeName: (id)font.get(),
-        (id)kCTForegroundColorAttributeName: attachmentTitleColor()
+        (id)kCTFontAttributeName: (id)font,
+        (id)kCTForegroundColorAttributeName: color
     };
-    RetainPtr<NSAttributedString> attributedTitle = adoptNS([[NSAttributedString alloc] initWithString:title attributes:textAttributes]);
-    RetainPtr<CTFramesetterRef> titleFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedTitle.get()));
+    RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
+    RetainPtr<CTFramesetterRef> framesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedText.get()));
 
     CFRange fitRange;
-    CGSize titleTextSize = CTFramesetterSuggestFrameSizeWithConstraints(titleFramesetter.get(), CFRangeMake(0, 0), nullptr, CGSizeMake(attachmentTitleMaximumWidth, CGFLOAT_MAX), &fitRange);
+    CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter.get(), CFRangeMake(0, 0), nullptr, CGSizeMake(attachmentWrappingTextMaximumWidth, CGFLOAT_MAX), &fitRange);
 
-    RetainPtr<CGPathRef> titlePath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, titleTextSize.width, titleTextSize.height), nullptr));
-    RetainPtr<CTFrameRef> titleFrame = adoptCF(CTFramesetterCreateFrame(titleFramesetter.get(), fitRange, titlePath.get(), nullptr));
+    RetainPtr<CGPathRef> textPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, textSize.width, textSize.height), nullptr));
+    RetainPtr<CTFrameRef> textFrame = adoptCF(CTFramesetterCreateFrame(framesetter.get(), fitRange, textPath.get(), nullptr));
 
-    CFArrayRef ctLines = CTFrameGetLines(titleFrame.get());
+    CFArrayRef ctLines = CTFrameGetLines(textFrame.get());
     CFIndex lineCount = CFArrayGetCount(ctLines);
     if (!lineCount)
         return;
@@ -1492,12 +1489,12 @@ void AttachmentInfo::buildTitleLines(const RenderAttachment& attachment, unsigne
     // Combine it into one last line, and center-truncate it.
     CTLineRef firstRemainingLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
     CFIndex remainingRangeStart = CTLineGetStringRange(firstRemainingLine).location;
-    NSRange remainingRange = NSMakeRange(remainingRangeStart, [attributedTitle length] - remainingRangeStart);
-    NSAttributedString *remainingString = [attributedTitle attributedSubstringFromRange:remainingRange];
+    NSRange remainingRange = NSMakeRange(remainingRangeStart, [attributedText length] - remainingRangeStart);
+    NSAttributedString *remainingString = [attributedText attributedSubstringFromRange:remainingRange];
     RetainPtr<CTLineRef> remainingLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)remainingString));
     RetainPtr<NSAttributedString> ellipsisString = adoptNS([[NSAttributedString alloc] initWithString:@"\u2026" attributes:textAttributes]);
     RetainPtr<CTLineRef> ellipsisLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)ellipsisString.get()));
-    RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine.get(), attachmentTitleMaximumWidth, kCTLineTruncationMiddle, ellipsisLine.get()));
+    RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine.get(), attachmentWrappingTextMaximumWidth, kCTLineTruncationMiddle, ellipsisLine.get()));
 
     if (!truncatedLine)
         truncatedLine = remainingLine;
@@ -1587,6 +1584,7 @@ AttachmentInfo::AttachmentInfo(const RenderAttachment& attachment)
 
     hasProgress = getAttachmentProgress(attachment, progress);
 
+    String title = attachment.attachmentElement().attachmentTitle();
     String action = attachment.attachmentElement().attributeWithoutSynchronization(actionAttr);
     String subtitle = attachment.attachmentElement().attributeWithoutSynchronization(subtitleAttr);
 
@@ -1605,10 +1603,10 @@ AttachmentInfo::AttachmentInfo(const RenderAttachment& attachment)
             yOffset += iconRect.height() + attachmentItemMargin;
         }
     } else
-        buildSingleLine(action, attachmentActionFont().get(), attachmentActionColor(attachment));
+        buildWrappedLines(action, attachmentActionFont().get(), attachmentActionColor(attachment), attachmentWrappingTextMaximumLineCount);
 
     bool forceSingleLineTitle = !action.isEmpty() || !subtitle.isEmpty() || hasProgress;
-    buildTitleLines(attachment, forceSingleLineTitle ? 1 : attachmentTitleMaximumLineCount);
+    buildWrappedLines(title, attachmentTitleFont().get(), attachmentTitleColor(), forceSingleLineTitle ? 1 : attachmentWrappingTextMaximumLineCount);
     buildSingleLine(subtitle, attachmentSubtitleFont().get(), attachmentSubtitleColor());
 
     if (!lines.isEmpty()) {

@@ -58,6 +58,9 @@ fast/harness/concurrent-ui-side-scripts.html [ Skip ]
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html
 
+# This test only makes sense on iOS
+fast/attachment/attachment-wrapping-action.html
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
