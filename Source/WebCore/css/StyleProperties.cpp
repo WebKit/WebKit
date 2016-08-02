@@ -640,14 +640,15 @@ bool MutableStyleProperties::removeShorthandProperty(CSSPropertyID propertyID)
     if (!shorthand.length())
         return false;
 
-    bool ret = removePropertiesInSet(shorthand.properties(), shorthand.length());
+    bool propertiesWereRemoved = removePropertiesInSet(shorthand.properties(), shorthand.length());
 
     CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propertyID);
     if (prefixingVariant == propertyID)
-        return ret;
+        return propertiesWereRemoved;
 
     StylePropertyShorthand shorthandPrefixingVariant = shorthandForProperty(prefixingVariant);
-    return removePropertiesInSet(shorthandPrefixingVariant.properties(), shorthandPrefixingVariant.length());
+    bool prefixedVariantPropertiesWereRemoved = removePropertiesInSet(shorthandPrefixingVariant.properties(), shorthandPrefixingVariant.length());
+    return propertiesWereRemoved || prefixedVariantPropertiesWereRemoved;
 }
 
 bool MutableStyleProperties::removeProperty(CSSPropertyID propertyID, String* returnText)
@@ -673,8 +674,6 @@ bool MutableStyleProperties::removeProperty(CSSPropertyID propertyID, String* re
     // and sweeping them when the vector grows too big.
     m_propertyVector.remove(foundPropertyIndex);
 
-    removePrefixedOrUnprefixedProperty(propertyID);
-
     return true;
 }
 
@@ -695,14 +694,6 @@ bool MutableStyleProperties::removeCustomProperty(const String& propertyName, St
     m_propertyVector.remove(foundPropertyIndex);
 
     return true;
-}
-
-void MutableStyleProperties::removePrefixedOrUnprefixedProperty(CSSPropertyID propertyID)
-{
-    int foundPropertyIndex = findPropertyIndex(prefixingVariantForPropertyId(propertyID));
-    if (foundPropertyIndex == -1)
-        return;
-    m_propertyVector.remove(foundPropertyIndex);
 }
 
 bool StyleProperties::propertyIsImportant(CSSPropertyID propertyID) const
@@ -801,40 +792,12 @@ bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSPropert
                 return false;
 
             *toReplace = property;
-            setPrefixingVariantProperty(property);
             return true;
         }
     }
 
-    return appendPrefixingVariantProperty(property);
-}
-
-static unsigned getIndexInShorthandVectorForPrefixingVariant(const CSSProperty& property, CSSPropertyID prefixingVariant)
-{
-    if (!property.isSetFromShorthand())
-        return 0;
-
-    CSSPropertyID prefixedShorthand = prefixingVariantForPropertyId(property.shorthandID());
-    return indexOfShorthandForLonghand(prefixedShorthand, matchingShorthandsForLonghand(prefixingVariant));
-}
-
-bool MutableStyleProperties::appendPrefixingVariantProperty(const CSSProperty& property)
-{
     m_propertyVector.append(property);
-    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(property.id());
-    if (prefixingVariant == property.id())
-        return true;
-
-    m_propertyVector.append(CSSProperty(prefixingVariant, property.value(), property.isImportant(), property.isSetFromShorthand(), getIndexInShorthandVectorForPrefixingVariant(property, prefixingVariant), property.metadata().m_implicit));
     return true;
-}
-
-void MutableStyleProperties::setPrefixingVariantProperty(const CSSProperty& property)
-{
-    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(property.id());
-    CSSProperty* toReplace = findCSSPropertyWithID(prefixingVariant);
-    if (toReplace && prefixingVariant != property.id())
-        *toReplace = CSSProperty(prefixingVariant, property.value(), property.isImportant(), property.isSetFromShorthand(), getIndexInShorthandVectorForPrefixingVariant(property, prefixingVariant), property.metadata().m_implicit);
 }
 
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
@@ -920,6 +883,7 @@ String StyleProperties::asText() const
             case CSSPropertyAnimationIterationCount:
             case CSSPropertyAnimationDirection:
             case CSSPropertyAnimationFillMode:
+            case CSSPropertyAnimationPlayState:
                 shorthandPropertyID = CSSPropertyAnimation;
                 break;
             case CSSPropertyBackgroundPositionX:
@@ -1019,6 +983,7 @@ String StyleProperties::asText() const
             case CSSPropertyWebkitAnimationIterationCount:
             case CSSPropertyWebkitAnimationDirection:
             case CSSPropertyWebkitAnimationFillMode:
+            case CSSPropertyWebkitAnimationPlayState:
                 shorthandPropertyID = CSSPropertyWebkitAnimation;
                 break;
             case CSSPropertyFlexDirection:

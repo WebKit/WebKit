@@ -1,3 +1,28 @@
+2016-08-02  Dean Jackson  <dino@apple.com>
+
+        Reapply fixes for webkit.org/b/159450 and webkit.org/b/157569
+        https://bugs.webkit.org/show_bug.cgi?id=160474
+        <rdar://problem/27668170>
+
+        Reviewed by Simon Fraser.
+
+        The fixes are behaviour we want. They just caused a regression
+        on medium.com (reverted in http://trac.webkit.org/r203380).
+
+        Now that we've branched, revert the reversion (which itself
+        was a reversion), so we can fix the actual bug:
+        https://bugs.webkit.org/show_bug.cgi?id=160478
+
+        * animations/fill-mode-forwards-zero-duration.html:
+        * animations/play-state-start-paused.html:
+        * animations/script-tests/spring-parsing.js:
+        (testSpring):
+        * animations/spring-parsing-expected.txt:
+        * animations/unprefixed-properties-expected.txt:
+        * animations/unprefixed-properties.html:
+        * fast/css/prefixed-unprefixed-variant-style-declaration-expected.txt:
+        * fast/css/shorthand-omitted-initial-value-overrides-shorthand-expected.txt:
+
 2016-08-02  Eric Carlson  <eric.carlson@apple.com>
 
         Cleanup HTMLMediaElement track lists.
