@@ -43,6 +43,11 @@ StackVisitor::StackVisitor(CallFrame* startFrame)
     if (startFrame) {
         m_frame.m_VMEntryFrame = startFrame->vm().topVMEntryFrame;
         topFrame = startFrame->vm().topCallFrame;
+        
+        if (topFrame && static_cast<void*>(m_frame.m_VMEntryFrame) == static_cast<void*>(topFrame)) {
+            topFrame = vmEntryRecord(m_frame.m_VMEntryFrame)->m_prevTopCallFrame;
+            m_frame.m_VMEntryFrame = vmEntryRecord(m_frame.m_VMEntryFrame)->m_prevTopVMEntryFrame;
+        }
     } else {
         m_frame.m_VMEntryFrame = 0;
         topFrame = 0;

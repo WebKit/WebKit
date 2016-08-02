@@ -1,3 +1,46 @@
+2016-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r203990): JSC Debug test stress/arity-check-ftl-throw.js failing
+        https://bugs.webkit.org/show_bug.cgi?id=160438
+
+        Reviewed by Mark Lam.
+        
+        In r203990 I fixed a bug where CommonSlowPaths.h/arityCheckFor() was basically failing at
+        catching stack overflow due to large parameter count. It would only catch regular old stack
+        overflow, like if the frame pointer was already past the limit.
+        
+        This had a secondary problem: unfortunately all of our tests for what happens when you overflow
+        the stack due to large parameter count were not going down that path at all, so we haven't had
+        test coverage for this in ages.  There were bugs in all tiers of the engine when handling this
+        case.
+
+        We need to be able to roll back the topCallFrame on paths that are meant to throw an exception
+        from the caller. Otherwise, we'd crash in StackVisitor because it would see a busted stack
+        frame. Rolling back like this "just works" except when the caller is the VM entry frame. I had
+        some choices here. I could have forced anyone who is rolling back to always skip VM entry
+        frames. They can't do it in a way that changes the value of VM::topVMEntryFrame, which is what
+        a stack frame roll back normally does, since exception unwinding needs to see the current value
+        of topVMEntryFrame. So, we have a choice to either try to magically avoid all of the paths that
+        look at topCallFrame, or give topCallFrame a state that unambiguously signals that we are
+        sitting right on top of a VM entry frame without having succeeded at making a JS call. The only
+        place that really needs to know is StackVisitor, which wants to start scanning at topCallFrame.
+        To signal this, I could have either made topCallFrame point to the real top JS call frame
+        without also rolling back topVMEntryFrame, or I could make topCallFrame == topVMEntryFrame. The
+        latter felt somehow cleaner. I filed a bug (https://bugs.webkit.org/show_bug.cgi?id=160441) for
+        converting topCallFrame to a void*, which would give us a chance to harden the rest of the
+        engine against this case.
+        
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::StackVisitor):
+        We may do ShadowChicken processing, which invokes StackVisitor, when we have topCallFrame
+        pointing at topVMEntryFrame. This teaches StackVisitor how to handle this case. I believe that
+        StackVisitor is the only place that needs to be taught about this at this time, because it's
+        one of the few things that access topCallFrame along this special path.
+        
+        * jit/JITOperations.cpp: Roll back the top call frame.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL): Roll back the top call frame.
+
 2016-08-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC][ARM64] Fix branchTest32/64 taking an immediate as mask

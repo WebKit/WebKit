@@ -182,7 +182,8 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
     int slotsToAdd = CommonSlowPaths::arityCheckFor(exec, vm, CodeForCall);
     if (slotsToAdd < 0) {
         exec = exec->callerFrame();
-        ErrorHandlingScope errorScope(exec->vm());
+        vm.topCallFrame = exec;
+        ErrorHandlingScope errorScope(vm);
         CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
@@ -195,7 +196,8 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
     int slotsToAdd = CommonSlowPaths::arityCheckFor(exec, vm, CodeForConstruct);
     if (slotsToAdd < 0) {
         exec = exec->callerFrame();
-        ErrorHandlingScope errorScope(exec->vm());
+        vm.topCallFrame = exec;
+        ErrorHandlingScope errorScope(vm);
         CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
