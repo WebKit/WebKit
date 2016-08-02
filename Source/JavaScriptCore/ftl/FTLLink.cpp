@@ -140,7 +140,7 @@ void link(State& state)
         jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
         CCallHelpers::Call callArityCheck = jit.call();
 
-        auto noException = jit.branch32(CCallHelpers::AboveOrEqual, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(0));
+        auto noException = jit.branch32(CCallHelpers::GreaterThanOrEqual, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(0));
         jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
         jit.move(CCallHelpers::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
         jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
@@ -148,10 +148,10 @@ void link(State& state)
         jit.jumpToExceptionHandler();
         noException.link(&jit);
 
-#if !ASSERT_DISABLED
-        jit.load64(vm.addressOfException(), GPRInfo::regT1);
-        jit.jitAssertIsNull(GPRInfo::regT1);
-#endif
+        if (!ASSERT_DISABLED) {
+            jit.load64(vm.addressOfException(), GPRInfo::regT1);
+            jit.jitAssertIsNull(GPRInfo::regT1);
+        }
 
         jit.move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
         jit.emitFunctionEpilogue();
