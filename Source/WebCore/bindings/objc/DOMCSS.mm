@@ -33,8 +33,6 @@
 #import "DOMCSSCharsetRule.h"
 #import "DOMCSSFontFaceRule.h"
 #import "DOMCSSImportRule.h"
-#import "DOMCSSKeyframeRule.h"
-#import "DOMCSSKeyframesRule.h"
 #import "DOMCSSMediaRule.h"
 #import "DOMCSSPageRule.h"
 #import "DOMCSSPrimitiveValue.h"
@@ -42,16 +40,11 @@
 #import "DOMCSSStyleDeclaration.h"
 #import "DOMCSSStyleRule.h"
 #import "DOMCSSStyleSheet.h"
-#import "DOMCSSSupportsRule.h"
 #import "DOMCSSUnknownRule.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMCSSValueList.h"
 #import "DOMInternal.h"
 #import "DOMStyleSheetInternal.h"
-
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-#import "DOMWebKitCSSViewportRule.h"
-#endif
 
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
@@ -84,11 +77,11 @@ Class kitClass(WebCore::CSSRule* impl)
         case DOM_PAGE_RULE:
             return [DOMCSSPageRule class];
         case DOM_KEYFRAMES_RULE:
-            return [DOMCSSKeyframesRule class];
+            return [DOMCSSRule class];
         case DOM_KEYFRAME_RULE:
-            return [DOMCSSKeyframeRule class];
+            return [DOMCSSRule class];
         case DOM_SUPPORTS_RULE:
-            return [DOMCSSSupportsRule class];
+            return [DOMCSSRule class];
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         case DOM_WEBKIT_VIEWPORT_RULE:
             return [DOMCSSRule class];

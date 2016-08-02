@@ -248,7 +248,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/css/CSSStyleDeclaration.idl \
     $(WebCore)/css/CSSStyleRule.idl \
     $(WebCore)/css/CSSStyleSheet.idl \
-    $(WebCore)/css/CSSSupportsRule.idl \
     $(WebCore)/css/CSSUnknownRule.idl \
     $(WebCore)/css/CSSValue.idl \
     $(WebCore)/css/CSSValueList.idl \
@@ -261,8 +260,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/css/RGBColor.idl \
     $(WebCore)/css/Rect.idl \
     $(WebCore)/css/StyleMedia.idl \
-    $(WebCore)/css/CSSKeyframeRule.idl \
-    $(WebCore)/css/CSSKeyframesRule.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeUnloadEvent.idl \
     $(WebCore)/dom/CDATASection.idl \
@@ -302,7 +299,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/MutationEvent.idl \
     $(WebCore)/dom/MutationObserver.idl \
     $(WebCore)/dom/MutationRecord.idl \
-    $(WebCore)/dom/DOMNamedFlowCollection.idl \
     $(WebCore)/dom/NamedNodeMap.idl \
     $(WebCore)/dom/Node.idl \
     $(WebCore)/dom/NodeList.idl \
@@ -323,7 +319,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/TextEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
-    $(WebCore)/dom/WebKitNamedFlow.idl \
     $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/FileException.idl \
@@ -460,6 +455,9 @@ JS_AND_OBJC_BINDING_IDLS = \
 #
 
 JS_ONLY_BINDING_IDLS = \
+	$(WebCore)/css/CSSKeyframeRule.idl \
+	$(WebCore)/css/CSSKeyframesRule.idl \
+	$(WebCore)/css/CSSSupportsRule.idl \
 	$(WebCore)/css/MediaList.idl \
 	$(WebCore)/css/StyleSheet.idl \
 	$(WebCore)/css/StyleSheetList.idl \
@@ -471,6 +469,7 @@ JS_ONLY_BINDING_IDLS = \
 	$(WebCore)/dom/AnimationEvent.idl \
 	$(WebCore)/dom/AutocompleteErrorEvent.idl \
 	$(WebCore)/dom/BeforeLoadEvent.idl \
+	$(WebCore)/dom/DOMNamedFlowCollection.idl \
 	$(WebCore)/dom/MessageEvent.idl \
 	$(WebCore)/dom/MessagePort.idl \
 	$(WebCore)/dom/NodeFilter.idl \
@@ -479,6 +478,7 @@ JS_ONLY_BINDING_IDLS = \
 	$(WebCore)/dom/Range.idl \
 	$(WebCore)/dom/TransitionEvent.idl \
 	$(WebCore)/dom/WebKitAnimationEvent.idl \
+	$(WebCore)/dom/WebKitNamedFlow.idl \
 	$(WebCore)/dom/WebKitTransitionEvent.idl \
 	$(WebCore)/fileapi/Blob.idl \
 	$(WebCore)/fileapi/File.idl \
