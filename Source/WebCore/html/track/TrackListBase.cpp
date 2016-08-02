@@ -46,6 +46,16 @@ TrackListBase::TrackListBase(HTMLMediaElement* element, ScriptExecutionContext* 
 
 TrackListBase::~TrackListBase()
 {
+    clearElement();
+}
+
+void TrackListBase::clearElement()
+{
+    m_element = nullptr;
+    for (auto& track : m_inbandTracks) {
+        track->setMediaElement(nullptr);
+        track->clearClient();
+    }
 }
 
 Element* TrackListBase::element() const

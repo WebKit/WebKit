@@ -1,3 +1,13 @@
+2016-08-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Cleanup HTMLMediaElement track lists.
+        https://bugs.webkit.org/show_bug.cgi?id=160470
+
+        Reviewed by David Kilzer.
+
+        * media/range-extract-contents-crash-expected.txt: Added.
+        * media/range-extract-contents-crash.html: Added.
+
 2016-08-02  Chris Dumez  <cdumez@apple.com>
 
         Named / Indexed properties should be configurable
