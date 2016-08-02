@@ -174,11 +174,24 @@ list(APPEND WebCore_SOURCES
     bindings/objc/DOMCustomXPathNSResolver.mm
     bindings/objc/DOMEvents.mm
     bindings/objc/DOMHTML.mm
+    bindings/objc/DOMHTMLAnchorElement.mm
+    bindings/objc/DOMHTMLAreaElement.mm
+    bindings/objc/DOMHTMLImageElement.mm
+    bindings/objc/DOMHTMLInputElement.mm
+    bindings/objc/DOMHTMLLinkElement.mm
+    bindings/objc/DOMHTMLObjectElement.mm
     bindings/objc/DOMInternal.mm
+    bindings/objc/DOMMediaList.mm
+    bindings/objc/DOMNodeIterator.mm
     bindings/objc/DOMObject.mm
+    bindings/objc/DOMRange.mm
+    bindings/objc/DOMStyleSheet.mm
+    bindings/objc/DOMTreeWalker.mm
     bindings/objc/DOMUIKitExtensions.mm
     bindings/objc/DOMUtility.mm
     bindings/objc/DOMXPath.mm
+    bindings/objc/DOMXPathExpression.mm
+    bindings/objc/DOMXPathResult.mm
     bindings/objc/ExceptionHandlers.mm
     bindings/objc/ObjCEventListener.mm
     bindings/objc/ObjCNodeFilterCondition.mm
@@ -374,6 +387,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm
     platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
     platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm
+    platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
     platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
@@ -765,10 +779,8 @@ set(ObjC_Bindings_IDL_FILES
     css/CSSValue.idl
     css/CSSValueList.idl
     css/Counter.idl
-    css/MediaList.idl
     css/RGBColor.idl
     css/Rect.idl
-    css/StyleSheet.idl
     css/StyleSheetList.idl
     css/WebKitCSSFilterValue.idl
     css/WebKitCSSRegionRule.idl
@@ -797,16 +809,12 @@ set(ObjC_Bindings_IDL_FILES
     dom/MutationEvent.idl
     dom/NamedNodeMap.idl
     dom/Node.idl
-    dom/NodeFilter.idl
-    dom/NodeIterator.idl
     dom/NodeList.idl
     dom/OverflowEvent.idl
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
-    dom/Range.idl
     dom/Text.idl
     dom/TextEvent.idl
-    dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/WebKitNamedFlow.idl
     dom/WheelEvent.idl
@@ -816,9 +824,7 @@ set(ObjC_Bindings_IDL_FILES
     fileapi/FileList.idl
 
     html/DOMTokenList.idl
-    html/HTMLAnchorElement.idl
     html/HTMLAppletElement.idl
-    html/HTMLAreaElement.idl
     html/HTMLBRElement.idl
     html/HTMLBaseElement.idl
     html/HTMLBaseFontElement.idl
@@ -842,12 +848,9 @@ set(ObjC_Bindings_IDL_FILES
     html/HTMLHeadingElement.idl
     html/HTMLHtmlElement.idl
     html/HTMLIFrameElement.idl
-    html/HTMLImageElement.idl
-    html/HTMLInputElement.idl
     html/HTMLLIElement.idl
     html/HTMLLabelElement.idl
     html/HTMLLegendElement.idl
-    html/HTMLLinkElement.idl
     html/HTMLMapElement.idl
     html/HTMLMarqueeElement.idl
     html/HTMLMenuElement.idl
@@ -855,7 +858,6 @@ set(ObjC_Bindings_IDL_FILES
     html/HTMLMetaElement.idl
     html/HTMLModElement.idl
     html/HTMLOListElement.idl
-    html/HTMLObjectElement.idl
     html/HTMLOptGroupElement.idl
     html/HTMLOptionElement.idl
     html/HTMLOptionsCollection.idl
@@ -879,11 +881,6 @@ set(ObjC_Bindings_IDL_FILES
     html/MediaError.idl
     html/TimeRanges.idl
     html/ValidityState.idl
-    page/AbstractView.idl
-
-    xml/XPathExpression.idl
-    xml/XPathNSResolver.idl
-    xml/XPathResult.idl
 )
 
 set(ObjC_BINDINGS_NO_MM
