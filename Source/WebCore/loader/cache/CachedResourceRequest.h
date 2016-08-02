@@ -62,9 +62,6 @@ public:
     const AtomicString& initiatorName() const;
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
 
-    void setInitiator(DocumentLoader&);
-    DocumentLoader* initiatingDocumentLoader() const { return m_initiatingDocumentLoader.get(); }
-
     void setAsPotentiallyCrossOrigin(const String&, Document&);
 
 private:
@@ -76,7 +73,6 @@ private:
     DeferOption m_defer;
     RefPtr<Element> m_initiatorElement;
     AtomicString m_initiatorName;
-    RefPtr<DocumentLoader> m_initiatingDocumentLoader;
 };
 
 } // namespace WebCore

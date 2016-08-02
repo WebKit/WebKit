@@ -77,11 +77,6 @@ void CachedResourceRequest::setInitiator(const AtomicString& name)
     m_initiatorName = name;
 }
 
-void CachedResourceRequest::setInitiator(DocumentLoader& documentLoader)
-{
-    m_initiatingDocumentLoader = &documentLoader;
-}
-
 const AtomicString& CachedResourceRequest::initiatorName() const
 {
     if (m_initiatorElement)
