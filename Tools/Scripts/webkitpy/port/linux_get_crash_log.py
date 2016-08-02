@@ -45,6 +45,8 @@ class GDBCrashLogGenerator(object):
         proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         errors = [stderr_line.strip().decode('utf8', 'ignore') for stderr_line in stderr.splitlines()]
+        if proc.returncode != 0:
+            stdout = ('ERROR: The gdb process exited with non-zero return code %s\n\n' % proc.returncode) + stdout
         return (stdout.decode('utf8', 'ignore'), errors)
 
     def generate_crash_log(self, stdout, stderr):
