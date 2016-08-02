@@ -1,3 +1,13 @@
+2016-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Disable Inline Caching on ARMv7 traditional until proper fix
+        https://bugs.webkit.org/show_bug.cgi?id=159759
+
+        Reviewed by Saam Barati.
+
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateInline):
+
 2016-08-01  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r203990): JSC Debug test stress/arity-check-ftl-throw.js failing
