@@ -96,8 +96,8 @@ public:
 #else
     void didStart();
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
-#endif
     void didReceiveResponse(const WebCore::ResourceResponse&);
+#endif
     void didReceiveData(uint64_t length);
     bool shouldDecodeSourceDataOfMIMEType(const String& mimeType);
 #if !USE(NETWORK_SESSION)

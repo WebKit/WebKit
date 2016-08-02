@@ -1,3 +1,17 @@
+2016-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        _WKDownloadDelegate.didReceiveResponse should be called before decideDestinationWithSuggestedFilename
+        https://bugs.webkit.org/show_bug.cgi?id=160437
+        <rdar://problem/27578272>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadDelegate _download:didReceiveResponse:]):
+        (-[DownloadDelegate _download:decideDestinationWithSuggestedFilename:allowOverwrite:]):
+        (runTest):
+        Add a boolean to make sure that didReceiveResponse is called before decideDestinationWithSuggestedFilename.
+
 2016-08-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [Tools] The GDB backtrace report tool don't checks the gdb return code.

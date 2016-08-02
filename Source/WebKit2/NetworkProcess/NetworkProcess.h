@@ -107,7 +107,7 @@ public:
 #endif
 
 #if USE(NETWORK_SESSION)
-    void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceRequest&);
+    void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 #endif
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

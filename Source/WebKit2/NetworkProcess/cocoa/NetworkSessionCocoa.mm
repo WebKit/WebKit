@@ -301,7 +301,6 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         networkDataTask->transferSandboxExtensionToDownload(*download);
         ASSERT(WebCore::fileExists(networkDataTask->pendingDownloadLocation()));
         download->didCreateDestination(networkDataTask->pendingDownloadLocation());
-        download->didReceiveResponse([downloadTask response]);
         auto pendingDownload = downloadManager.dataTaskBecameDownloadTask(downloadID, WTFMove(download));
 
         networkDataTask->didBecomeDownload();

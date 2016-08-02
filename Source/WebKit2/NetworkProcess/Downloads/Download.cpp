@@ -82,7 +82,6 @@ void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& 
 {
     m_downloadManager.downloadsAuthenticationManager().didReceiveAuthenticationChallenge(*this, authenticationChallenge);
 }
-#endif
 
 void Download::didReceiveResponse(const ResourceResponse& response)
 {
@@ -90,6 +89,7 @@ void Download::didReceiveResponse(const ResourceResponse& response)
 
     send(Messages::DownloadProxy::DidReceiveResponse(response));
 }
+#endif
 
 void Download::didReceiveData(uint64_t length)
 {

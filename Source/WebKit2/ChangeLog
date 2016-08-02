@@ -1,3 +1,35 @@
+2016-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        _WKDownloadDelegate.didReceiveResponse should be called before decideDestinationWithSuggestedFilename
+        https://bugs.webkit.org/show_bug.cgi?id=160437
+        <rdar://problem/27578272>
+
+        Reviewed by Brady Eidson.
+
+        This preserves the behavior of the NSURLConnection/NSURLDownload code path.
+        decideDestinationWithSuggestedFilename might need some information from the didReceiveResponse callback
+        in order to decide what the suggested filename should be.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::didReceiveAuthenticationChallenge):
+        (WebKit::Download::didReceiveResponse):
+        (WebKit::Download::didReceiveData):
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::setPendingDownloadID):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        * NetworkProcess/NetworkLoad.h:
+        (WebKit::NetworkLoad::pendingDownloadID):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::pendingDownloadCanceled):
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+
 2016-07-31  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][Unix] Implement missing WebKit::SharedMemory::create() function

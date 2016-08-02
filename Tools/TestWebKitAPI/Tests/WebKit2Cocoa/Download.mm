@@ -42,6 +42,7 @@
 #import <wtf/text/WTFString.h>
 
 static bool isDone;
+static bool hasReceivedResponse;
 static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
 @interface DownloadDelegate : NSObject <_WKDownloadDelegate>
@@ -64,6 +65,7 @@ static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withEx
 
 - (void)_download:(_WKDownload *)download didReceiveResponse:(NSURLResponse *)response
 {
+    hasReceivedResponse = true;
     EXPECT_EQ(_download, download);
     EXPECT_TRUE(_expectedContentLength == 0);
     EXPECT_TRUE(_receivedContentLength == 0);
@@ -79,6 +81,7 @@ static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withEx
 
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
 {
+    EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
 
     WebCore::PlatformFileHandle fileHandle;
@@ -122,6 +125,7 @@ static void runTest(id <WKNavigationDelegate> navigationDelegate, id <_WKDownloa
     [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate];
 
     isDone = false;
+    hasReceivedResponse = false;
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&isDone);
 }
