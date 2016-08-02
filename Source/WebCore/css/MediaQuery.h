@@ -49,6 +49,8 @@ public:
 
     bool operator==(const MediaQuery& other) const;
 
+    void shrinkToFit() { m_expressions.shrinkToFit(); }
+
 private:
     String serialize() const;
 

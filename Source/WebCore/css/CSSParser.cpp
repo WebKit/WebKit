@@ -12905,8 +12905,10 @@ Ref<StyleRuleMedia> CSSParser::createMediaRule(RefPtr<MediaQuerySet>&& media, Ru
         // To comply with w3c test suite expectation, create an empty media query
         // even when it is syntactically incorrect.
         rule = StyleRuleMedia::create(MediaQuerySet::create(), emptyRules);
-    } else
+    } else {
+        media->shrinkToFit();
         rule = StyleRuleMedia::create(media.releaseNonNull(), rules ? *rules : emptyRules);
+    }
     processAndAddNewRuleToSourceTreeIfNeeded();
     return rule.releaseNonNull();
 }

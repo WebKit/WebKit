@@ -66,6 +66,8 @@ public:
 
     Ref<MediaQuerySet> copy() const { return adoptRef(*new MediaQuerySet(*this)); }
 
+    void shrinkToFit();
+
 private:
     MediaQuerySet();
     MediaQuerySet(const String& mediaQuery, bool fallbackToDescription);

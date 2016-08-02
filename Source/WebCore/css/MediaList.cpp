@@ -158,6 +158,7 @@ bool MediaQuerySet::parse(const String& mediaString)
             return false;
     }
     m_queries = WTFMove(result);
+    shrinkToFit();
     return true;
 }
 
@@ -196,6 +197,13 @@ String MediaQuerySet::mediaText() const
         needComma = true;
     }
     return text.toString();
+}
+
+void MediaQuerySet::shrinkToFit()
+{
+    m_queries.shrinkToFit();
+    for (auto& query : m_queries)
+        query.shrinkToFit();
 }
 
 MediaList::MediaList(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
