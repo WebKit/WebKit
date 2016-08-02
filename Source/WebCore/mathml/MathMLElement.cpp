@@ -207,7 +207,7 @@ unsigned MathMLElement::colSpan() const
 {
     if (!hasTagName(mtdTag))
         return 1u;
-    const AtomicString& colSpanValue = attributeWithoutSynchronization(columnspanAttr);
+    auto& colSpanValue = attributeWithoutSynchronization(columnspanAttr);
     return std::max(1u, limitToOnlyHTMLNonNegative(colSpanValue, 1u));
 }
 
@@ -215,7 +215,7 @@ unsigned MathMLElement::rowSpan() const
 {
     if (!hasTagName(mtdTag))
         return 1u;
-    const AtomicString& rowSpanValue = attributeWithoutSynchronization(rowspanAttr);
+    auto& rowSpanValue = attributeWithoutSynchronization(rowspanAttr);
     static const unsigned maxRowspan = 8190; // This constant comes from HTMLTableCellElement.
     return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), maxRowspan));
 }
@@ -280,7 +280,7 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
 bool MathMLElement::childShouldCreateRenderer(const Node& child) const
 {
     if (hasTagName(annotation_xmlTag)) {
-        const AtomicString& value = attributeWithoutSynchronization(MathMLNames::encodingAttr);
+        auto& value = attributeWithoutSynchronization(MathMLNames::encodingAttr);
 
         // See annotation-xml.model.mathml, annotation-xml.model.svg and annotation-xml.model.xhtml in the HTML5 RelaxNG schema.
 
@@ -330,10 +330,10 @@ void MathMLElement::defaultEventHandler(Event* event)
             return;
         }
         if (MouseEvent::canTriggerActivationBehavior(*event)) {
-            const AtomicString& href = attributeWithoutSynchronization(hrefAttr);
-            String url = stripLeadingAndTrailingHTMLSpaces(href);
+            auto& href = attributeWithoutSynchronization(hrefAttr);
+            const auto& url = stripLeadingAndTrailingHTMLSpaces(href);
             event->setDefaultHandled();
-            if (Frame* frame = document().frame())
+            if (auto* frame = document().frame())
                 frame->loader().urlSelected(document().completeURL(url), "_self", event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }

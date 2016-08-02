@@ -54,14 +54,14 @@ void RenderMathMLFenced::updateFromElement()
     const auto& fenced = element();
 
     // The open operator defaults to a left parenthesis.
-    AtomicString open = fenced.attributeWithoutSynchronization(MathMLNames::openAttr);
+    auto& open = fenced.attributeWithoutSynchronization(MathMLNames::openAttr);
     m_open = open.isNull() ? gOpeningBraceChar : open;
 
     // The close operator defaults to a right parenthesis.
-    AtomicString close = fenced.attributeWithoutSynchronization(MathMLNames::closeAttr);
+    auto& close = fenced.attributeWithoutSynchronization(MathMLNames::closeAttr);
     m_close = close.isNull() ? gClosingBraceChar : close;
 
-    AtomicString separators = fenced.attributeWithoutSynchronization(MathMLNames::separatorsAttr);
+    auto& separators = fenced.attributeWithoutSynchronization(MathMLNames::separatorsAttr);
     if (!separators.isNull()) {
         StringBuilder characters;
         for (unsigned int i = 0; i < separators.length(); i++) {

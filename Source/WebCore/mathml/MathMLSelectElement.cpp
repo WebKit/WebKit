@@ -136,7 +136,7 @@ Element* MathMLSelectElement::getSelectedActionChild()
         return child;
 
     // The value of the actiontype attribute is case-sensitive.
-    const AtomicString& actiontype = attributeWithoutSynchronization(MathMLNames::actiontypeAttr);
+    auto& actiontype = attributeWithoutSynchronization(MathMLNames::actiontypeAttr);
     if (actiontype == "statusline")
         // FIXME: implement user interaction for the "statusline" action type (http://wkbug/124922).
         { }
@@ -185,7 +185,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
             if (child->hasAttributeWithoutSynchronization(MathMLNames::srcAttr))
                 continue;
             // If the <annotation-xml> element has an encoding attribute describing presentation MathML, SVG or HTML we assume the content can be displayed and we stop here.
-            const AtomicString& value = child->attributeWithoutSynchronization(MathMLNames::encodingAttr);
+            auto& value = child->attributeWithoutSynchronization(MathMLNames::encodingAttr);
             if (isMathMLEncoding(value) || isSVGEncoding(value) || isHTMLEncoding(value))
                 return child;
         }
