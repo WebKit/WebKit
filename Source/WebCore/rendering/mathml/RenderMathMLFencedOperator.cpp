@@ -37,8 +37,9 @@ namespace WebCore {
 using namespace MathMLOperatorDictionary;
 
 RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, RenderStyle&& style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
-    : RenderMathMLOperator(document, WTFMove(style), flags)
+    : RenderMathMLOperator(document, WTFMove(style))
     , m_operatorForm(form)
+    , m_operatorFlags(flags)
 {
     updateOperatorContent(operatorString);
 

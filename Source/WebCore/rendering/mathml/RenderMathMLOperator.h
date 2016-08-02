@@ -39,7 +39,7 @@ class MathMLOperatorElement;
 class RenderMathMLOperator : public RenderMathMLToken {
 public:
     RenderMathMLOperator(MathMLOperatorElement&, RenderStyle&&);
-    RenderMathMLOperator(Document&, RenderStyle&&, unsigned short flags = 0);
+    RenderMathMLOperator(Document&, RenderStyle&&);
     MathMLOperatorElement& element() const;
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
@@ -47,7 +47,7 @@ public:
     LayoutUnit stretchSize() const { return m_isVertical ? m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline : m_stretchWidth; }
     void resetStretchSize();
 
-    bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const { return m_operatorFlags & flag; }
+    virtual bool hasOperatorFlag(MathMLOperatorDictionary::Flag) const;
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp) && mathMLStyle()->displayStyle(); }
     bool shouldMoveLimits() const { return hasOperatorFlag(MathMLOperatorDictionary::MovableLimits) && !mathMLStyle()->displayStyle(); }
     bool isVertical() const { return m_isVertical; }
@@ -67,7 +67,6 @@ protected:
     LayoutUnit m_trailingSpace;
     LayoutUnit m_minSize;
     LayoutUnit m_maxSize;
-    unsigned short m_operatorFlags;
 
 private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
@@ -89,9 +88,6 @@ private:
 
     bool shouldAllowStretching() const;
     bool useMathOperator() const;
-
-    void setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag, const QualifiedName&);
-    void setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
 
     LayoutUnit verticalStretchedOperatorShift() const;
 

@@ -38,7 +38,7 @@ public:
     UChar operatorText();
     void setOperatorFormDirty() { m_dictionaryProperty = Nullopt; }
     MathMLOperatorDictionary::Form form() { return dictionaryProperty().form; }
-    unsigned short flags();
+    bool hasProperty(MathMLOperatorDictionary::Flag);
     Length defaultLeadingSpace();
     Length defaultTrailingSpace();
 
@@ -61,6 +61,13 @@ private:
     Optional<DictionaryProperty> m_dictionaryProperty;
     DictionaryProperty computeDictionaryProperty();
     const DictionaryProperty& dictionaryProperty();
+
+    struct OperatorProperties {
+        unsigned short flags;
+        unsigned short dirtyFlags { MathMLOperatorDictionary::allFlags };
+    };
+    OperatorProperties m_properties;
+    void computeOperatorFlag(MathMLOperatorDictionary::Flag);
 };
 
 }

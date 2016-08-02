@@ -53,9 +53,8 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLOperatorElement& element, Rende
     updateTokenContent();
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Document& document, RenderStyle&& style, unsigned short flags)
+RenderMathMLOperator::RenderMathMLOperator(Document& document, RenderStyle&& style)
     : RenderMathMLToken(document, WTFMove(style))
-    , m_operatorFlags(flags)
 {
 }
 
@@ -70,20 +69,9 @@ UChar RenderMathMLOperator::textContent() const
     return element().operatorText();
 }
 
-void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag flag, const QualifiedName& name)
+bool RenderMathMLOperator::hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const
 {
-    setOperatorFlagFromAttributeValue(flag, element().attributeWithoutSynchronization(name));
-}
-
-void RenderMathMLOperator::setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag flag, const AtomicString& attributeValue)
-{
-    ASSERT(!isAnonymous());
-
-    if (attributeValue == "true")
-        m_operatorFlags |= flag;
-    else if (attributeValue == "false")
-        m_operatorFlags &= ~flag;
-    // We ignore absent or invalid attributes.
+    return element().hasProperty(flag);
 }
 
 void RenderMathMLOperator::setOperatorProperties()
@@ -92,7 +80,6 @@ void RenderMathMLOperator::setOperatorProperties()
     m_isVertical = MathMLOperatorDictionary::isVertical(textContent());
 
     // Initialize with the default values.
-    m_operatorFlags = element().flags();
     m_leadingSpace = toUserUnits(element().defaultLeadingSpace(), style(), 0);
     m_trailingSpace = toUserUnits(element().defaultTrailingSpace(), style(), 0);
     m_minSize = style().fontCascade().size(); // This sets minsize to "1em".
@@ -100,15 +87,6 @@ void RenderMathMLOperator::setOperatorProperties()
 
     if (!isAnonymous()) {
         // Finally, we make the attribute values override the default.
-
-        setOperatorFlagFromAttribute(MathMLOperatorDictionary::Fence, MathMLNames::fenceAttr);
-        setOperatorFlagFromAttribute(MathMLOperatorDictionary::Separator, MathMLNames::separatorAttr);
-        setOperatorFlagFromAttribute(MathMLOperatorDictionary::Stretchy, MathMLNames::stretchyAttr);
-        setOperatorFlagFromAttribute(MathMLOperatorDictionary::Symmetric, MathMLNames::symmetricAttr);
-        setOperatorFlagFromAttribute(MathMLOperatorDictionary::LargeOp, MathMLNames::largeopAttr);
-        setOperatorFlagFromAttribute(MathMLOperatorDictionary::MovableLimits, MathMLNames::movablelimitsAttr);
-        setOperatorFlagFromAttribute(MathMLOperatorDictionary::Accent, MathMLNames::accentAttr);
-
         parseMathMLLength(element().attributeWithoutSynchronization(MathMLNames::lspaceAttr), m_leadingSpace, &style(), false); // FIXME: Negative leading space must be implemented (https://bugs.webkit.org/show_bug.cgi?id=124830).
         parseMathMLLength(element().attributeWithoutSynchronization(MathMLNames::rspaceAttr), m_trailingSpace, &style(), false); // FIXME: Negative trailing space must be implemented (https://bugs.webkit.org/show_bug.cgi?id=124830).
 

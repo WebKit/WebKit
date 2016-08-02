@@ -41,9 +41,11 @@ private:
     bool isRenderMathMLFencedOperator() const final { return true; }
     void setOperatorProperties() final;
     UChar textContent() const final { return m_textContent; }
+    bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const final { return m_operatorFlags & flag; }
 
     UChar m_textContent { 0 };
     MathMLOperatorDictionary::Form m_operatorForm;
+    unsigned short m_operatorFlags;
 };
 
 }; // namespace WebCore

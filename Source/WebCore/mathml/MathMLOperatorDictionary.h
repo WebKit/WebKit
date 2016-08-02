@@ -43,6 +43,7 @@ enum Flag {
     Stretchy = 0x20,
     Symmetric = 0x40
 };
+const unsigned allFlags = Accent | Fence | LargeOp | MovableLimits | Separator | Stretchy | Symmetric;
 struct Entry {
     UChar character;
     unsigned form : 2;
