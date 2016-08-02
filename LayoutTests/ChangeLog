@@ -1,5 +1,14 @@
 2016-08-02  Youenn Fablet  <youenn@apple.com>
 
+        Skip fetch API worker tests in Debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=160448
+
+        Unreviewed.
+
+        * TestExpectations:
+
+2016-08-02  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Fetch promises should not reject or resolve when ActiveDOMObjects are being stopped
         https://bugs.webkit.org/show_bug.cgi?id=160420
 
