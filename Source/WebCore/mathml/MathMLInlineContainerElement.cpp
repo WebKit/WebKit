@@ -90,9 +90,9 @@ void MathMLInlineContainerElement::parseAttribute(const QualifiedName& name, con
     bool displayStyleAttribute = name == displaystyleAttr && acceptsDisplayStyleAttribute();
     bool mathVariantAttribute = name == mathvariantAttr && acceptsMathVariantAttribute();
     if (displayStyleAttribute)
-        m_displayStyle.dirty = true;
+        m_displayStyle = Nullopt;
     if (mathVariantAttribute)
-        m_mathVariant.dirty = true;
+        m_mathVariant = Nullopt;
     if ((displayStyleAttribute || mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 

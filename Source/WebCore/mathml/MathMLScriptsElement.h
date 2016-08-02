@@ -43,8 +43,8 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    Length m_subscriptShift;
-    Length m_superscriptShift;
+    Optional<Length> m_subscriptShift;
+    Optional<Length> m_superscriptShift;
 };
 
 }

@@ -517,31 +517,29 @@ MathMLElement::Length MathMLElement::parseMathMLLength(const String& string)
     return parseNamedSpace(stringView);
 }
 
-const MathMLElement::Length& MathMLElement::cachedMathMLLength(const QualifiedName& name, Length& length)
+const MathMLElement::Length& MathMLElement::cachedMathMLLength(const QualifiedName& name, Optional<Length>& length)
 {
-    if (length.dirty) {
-        length = parseMathMLLength(attributeWithoutSynchronization(name));
-        length.dirty = false;
-    }
-    return length;
+    if (length)
+        return length.value();
+    length = parseMathMLLength(attributeWithoutSynchronization(name));
+    return length.value();
 }
 
-const MathMLElement::BooleanValue& MathMLElement::cachedBooleanAttribute(const QualifiedName& name, BooleanAttribute& attribute)
+const MathMLElement::BooleanValue& MathMLElement::cachedBooleanAttribute(const QualifiedName& name, Optional<BooleanValue>& attribute)
 {
-    if (!attribute.dirty)
-        return attribute.value;
+    if (attribute)
+        return attribute.value();
 
     // In MathML, attribute values are case-sensitive.
     const AtomicString& value = attributeWithoutSynchronization(name);
     if (value == "true")
-        attribute.value = BooleanValue::True;
+        attribute = BooleanValue::True;
     else if (value == "false")
-        attribute.value = BooleanValue::False;
+        attribute = BooleanValue::False;
     else
-        attribute.value = BooleanValue::Default;
-    attribute.dirty = false;
+        attribute = BooleanValue::Default;
 
-    return attribute.value;
+    return attribute.value();
 }
 
 MathMLElement::MathVariant MathMLElement::parseMathVariantAttribute(const AtomicString& attributeValue)
@@ -589,20 +587,18 @@ MathMLElement::MathVariant MathMLElement::parseMathVariantAttribute(const Atomic
 Optional<bool> MathMLElement::specifiedDisplayStyle()
 {
     if (!acceptsDisplayStyleAttribute())
-        return Optional<bool>();
+        return Nullopt;
     const MathMLElement::BooleanValue& specifiedDisplayStyle = cachedBooleanAttribute(displaystyleAttr, m_displayStyle);
-    return specifiedDisplayStyle == BooleanValue::Default ? Optional<bool>() : Optional<bool>(specifiedDisplayStyle == BooleanValue::True);
+    return toOptionalBool(specifiedDisplayStyle);
 }
 
 Optional<MathMLElement::MathVariant> MathMLElement::specifiedMathVariant()
 {
     if (!acceptsMathVariantAttribute())
-        return Optional<MathVariant>();
-    if (m_mathVariant.dirty) {
-        m_mathVariant.value = parseMathVariantAttribute(attributeWithoutSynchronization(mathvariantAttr));
-        m_mathVariant.dirty = false;
-    }
-    return m_mathVariant.value == MathVariant::None ? Optional<MathVariant>() : Optional<MathVariant>(m_mathVariant.value);
+        return Nullopt;
+    if (!m_mathVariant)
+        m_mathVariant = parseMathVariantAttribute(attributeWithoutSynchronization(mathvariantAttr));
+    return m_mathVariant.value() == MathVariant::None ? Nullopt : m_mathVariant;
 }
 
 }

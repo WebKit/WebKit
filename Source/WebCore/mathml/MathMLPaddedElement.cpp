@@ -73,15 +73,15 @@ const MathMLElement::Length& MathMLPaddedElement::voffset()
 void MathMLPaddedElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == widthAttr)
-        m_width.dirty = true;
+        m_width = Nullopt;
     else if (name == heightAttr)
-        m_height.dirty = true;
+        m_height = Nullopt;
     else if (name == depthAttr)
-        m_depth.dirty = true;
+        m_depth = Nullopt;
     else if (name == lspaceAttr)
-        m_lspace.dirty = true;
+        m_lspace = Nullopt;
     else if (name == voffsetAttr)
-        m_voffset.dirty = true;
+        m_voffset = Nullopt;
 
     MathMLElement::parseAttribute(name, value);
 }

@@ -58,13 +58,13 @@ Optional<bool> MathMLMathElement::specifiedDisplayStyle()
 {
     if (cachedBooleanAttribute(displaystyleAttr, m_displayStyle) == BooleanValue::Default) {
         // The default displaystyle value of the <math> depends on the display attribute, so we parse it here.
-        const AtomicString& value = attributeWithoutSynchronization(displayAttr);
+        auto& value = attributeWithoutSynchronization(displayAttr);
         if (value == "block")
-            m_displayStyle.value = BooleanValue::True;
+            m_displayStyle = BooleanValue::True;
         else if (value == "inline")
-            m_displayStyle.value = BooleanValue::False;
+            m_displayStyle = BooleanValue::False;
     }
-    return m_displayStyle.value == BooleanValue::Default ? Optional<bool>() : Optional<bool>(m_displayStyle.value == BooleanValue::True);
+    return toOptionalBool(m_displayStyle.value());
 }
 
 void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -72,9 +72,9 @@ void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomicSt
     bool displayStyleAttribute = (name == displaystyleAttr || name == displayAttr);
     bool mathVariantAttribute = name == mathvariantAttr;
     if (displayStyleAttribute)
-        m_displayStyle.dirty = true;
+        m_displayStyle = Nullopt;
     if (mathVariantAttribute)
-        m_mathVariant.dirty = true;
+        m_mathVariant = Nullopt;
     if ((displayStyleAttribute || mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 

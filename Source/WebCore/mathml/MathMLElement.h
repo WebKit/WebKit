@@ -63,15 +63,10 @@ public:
     struct Length {
         LengthType type { LengthType::ParsingFailed };
         float value { 0 };
-        bool dirty { true };
     };
     static Length parseMathMLLength(const String&);
 
     enum class BooleanValue { True, False, Default };
-    struct BooleanAttribute {
-        BooleanValue value { BooleanValue::Default };
-        bool dirty { true };
-    };
 
     // These are the mathvariant values from the MathML recommendation.
     // The special value none means that no explicit mathvariant value has been specified.
@@ -97,13 +92,9 @@ public:
         Looped = 17,
         Stretched = 18
     };
-    struct MathVariantAttribute {
-        MathVariant value { MathVariant::None };
-        bool dirty { true };
-    };
 
     virtual Optional<bool> specifiedDisplayStyle();
-    Optional<MathMLElement::MathVariant> specifiedMathVariant();
+    Optional<MathVariant> specifiedMathVariant();
 
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
@@ -121,14 +112,15 @@ protected:
     bool willRespondToMouseClickEvents() override;
     void defaultEventHandler(Event*) override;
 
-    const Length& cachedMathMLLength(const QualifiedName&, Length&);
-    const BooleanValue& cachedBooleanAttribute(const QualifiedName&, BooleanAttribute&);
+    const Length& cachedMathMLLength(const QualifiedName&, Optional<Length>&);
+    const BooleanValue& cachedBooleanAttribute(const QualifiedName&, Optional<BooleanValue>&);
 
     virtual bool acceptsDisplayStyleAttribute() { return false; }
     virtual bool acceptsMathVariantAttribute() { return false; }
 
-    BooleanAttribute m_displayStyle;
-    MathVariantAttribute m_mathVariant;
+    static Optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? Nullopt : Optional<bool>(value == BooleanValue::True); }
+    Optional<BooleanValue> m_displayStyle;
+    Optional<MathVariant> m_mathVariant;
 
 private:
     virtual void updateSelectedChild() { }

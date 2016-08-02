@@ -63,13 +63,13 @@ UChar MathMLOperatorElement::operatorText()
     if (m_operatorText)
         return m_operatorText.value();
 
-    m_operatorText = Optional<UChar>(parseOperatorText(textContent()));
+    m_operatorText = parseOperatorText(textContent());
     return m_operatorText.value();
 }
 
 void MathMLOperatorElement::childrenChanged(const ChildChange& change)
 {
-    m_operatorText = Optional<UChar>();
+    m_operatorText = Nullopt;
     MathMLTextElement::childrenChanged(change);
 }
 

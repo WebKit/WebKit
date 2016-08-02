@@ -65,7 +65,7 @@ void MathMLTextElement::childrenChanged(const ChildChange& change)
 void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == mathvariantAttr) {
-        m_mathVariant.dirty = true;
+        m_mathVariant = Nullopt;
         if (renderer())
             MathMLStyle::resolveMathMLStyleTree(renderer());
     }

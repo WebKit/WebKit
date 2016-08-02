@@ -47,42 +47,41 @@ Ref<MathMLFractionElement> MathMLFractionElement::create(const QualifiedName& ta
 
 const MathMLElement::Length& MathMLFractionElement::lineThickness()
 {
-    if (!m_lineThickness.dirty)
-        return m_lineThickness;
+    if (m_lineThickness)
+        return m_lineThickness.value();
 
     // The MathML3 recommendation states that "medium" is the default thickness.
     // However, it only states that "thin" and "thick" are respectively thiner and thicker.
     // The MathML in HTML5 implementation note suggests 50% and 200% and these values are also used in Gecko.
-    String thickness = attributeWithoutSynchronization(linethicknessAttr);
+    auto& thickness = attributeWithoutSynchronization(linethicknessAttr);
+    m_lineThickness = Length();
     if (equalLettersIgnoringASCIICase(thickness, "thin")) {
-        m_lineThickness.type = LengthType::UnitLess;
-        m_lineThickness.value = .5;
+        m_lineThickness.value().type = LengthType::UnitLess;
+        m_lineThickness.value().value = .5;
     } else if (equalLettersIgnoringASCIICase(thickness, "medium")) {
-        m_lineThickness.type = LengthType::UnitLess;
-        m_lineThickness.value = 1;
+        m_lineThickness.value().type = LengthType::UnitLess;
+        m_lineThickness.value().value = 1;
     } else if (equalLettersIgnoringASCIICase(thickness, "thick")) {
-        m_lineThickness.type = LengthType::UnitLess;
-        m_lineThickness.value = 2;
+        m_lineThickness.value().type = LengthType::UnitLess;
+        m_lineThickness.value().value = 2;
     } else
         m_lineThickness = parseMathMLLength(thickness);
-    m_lineThickness.dirty = false;
-    return m_lineThickness;
+    return m_lineThickness.value();
 }
 
-MathMLFractionElement::FractionAlignment MathMLFractionElement::cachedFractionAlignment(const QualifiedName& name, FractionAlignmentAttribute& alignment)
+MathMLFractionElement::FractionAlignment MathMLFractionElement::cachedFractionAlignment(const QualifiedName& name, Optional<FractionAlignment>& alignment)
 {
-    if (!alignment.dirty)
-        return alignment.value;
+    if (alignment)
+        return alignment.value();
 
-    String value = attributeWithoutSynchronization(name);
+    auto& value = attributeWithoutSynchronization(name);
     if (equalLettersIgnoringASCIICase(value, "left"))
-        alignment.value = FractionAlignmentLeft;
+        alignment = FractionAlignmentLeft;
     else if (equalLettersIgnoringASCIICase(value, "right"))
-        alignment.value = FractionAlignmentRight;
+        alignment = FractionAlignmentRight;
     else
-        alignment.value = FractionAlignmentCenter;
-    alignment.dirty = false;
-    return alignment.value;
+        alignment = FractionAlignmentCenter;
+    return alignment.value();
 }
 
 MathMLFractionElement::FractionAlignment MathMLFractionElement::numeratorAlignment()
@@ -98,11 +97,11 @@ MathMLFractionElement::FractionAlignment MathMLFractionElement::denominatorAlign
 void MathMLFractionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == linethicknessAttr)
-        m_lineThickness.dirty = true;
+        m_lineThickness = Nullopt;
     else if (name == numalignAttr)
-        m_numeratorAlignment.dirty = true;
+        m_numeratorAlignment = Nullopt;
     else if (name == denomalignAttr)
-        m_denominatorAlignment.dirty = true;
+        m_denominatorAlignment = Nullopt;
 
     MathMLElement::parseAttribute(name, value);
 }
