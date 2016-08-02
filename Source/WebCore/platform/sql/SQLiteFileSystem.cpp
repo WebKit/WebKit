@@ -88,15 +88,13 @@ bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
     String walFileName = makeString(fileName, ASCIILiteral("-wal"));
     String shmFileName = makeString(fileName, ASCIILiteral("-shm"));
 
-    if (!deleteFile(fileName))
-        return false;
-
-    // Try to delete both the wal and shm files, whether or not they are actually there.
+    // Try to delete all three files whether or not they are there.
+    deleteFile(fileName);
     deleteFile(walFileName);
     deleteFile(shmFileName);
 
-    // If either the wal or shm files remain after the delete attempt, the overall delete operation failed.
-    return !fileExists(walFileName) && !fileExists(shmFileName);
+    // If any of the wal or shm files remain after the delete attempt, the overall delete operation failed.
+    return !fileExists(fileName) && !fileExists(walFileName) && !fileExists(shmFileName);
 }
 
 #if PLATFORM(IOS)

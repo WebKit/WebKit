@@ -543,10 +543,7 @@ static void removeAllDatabasesForOriginPath(const String& originPath, std::chron
     for (auto& databasePath : databasePaths) {
         String databaseFile = pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
 
-        if (!fileExists(databaseFile))
-            continue;
-
-        if (modifiedSince > std::chrono::system_clock::time_point::min()) {
+        if (modifiedSince > std::chrono::system_clock::time_point::min() && fileExists(databaseFile)) {
             time_t modificationTime;
             if (!getFileModificationTime(databaseFile, modificationTime))
                 continue;

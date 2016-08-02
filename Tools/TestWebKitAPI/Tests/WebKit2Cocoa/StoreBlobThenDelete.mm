@@ -74,6 +74,18 @@ TEST(IndexedDB, StoreBlobThenDelete)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:blobFilePath]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:databaseFilePath]);
 
+    // To make sure that the -wal and -shm files for a database are deleted even if the sqlite3 file is already missing,
+    // we need to:
+    // 1 - Create the path for a fake database that won't actively be in use
+    // 2 - Move -wal and -shm files into that directory
+    // 3 - Make sure the entire directory is deleted
+    NSString *fakeDatabasePath = [@"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/file__0/FakeDatabasePath" stringByExpandingTildeInPath];
+    NSString *fakeShmPath = [@"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/file__0/FakeDatabasePath/IndexedDB.sqlite3-wal" stringByExpandingTildeInPath];
+    NSString *fakeWalPath = [@"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/file__0/FakeDatabasePath/IndexedDB.sqlite3-shm" stringByExpandingTildeInPath];
+    [[NSFileManager defaultManager] createDirectoryAtPath:fakeDatabasePath withIntermediateDirectories:NO attributes:nil error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:databaseFilePath toPath:fakeShmPath error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:databaseFilePath toPath:fakeWalPath error:nil];
+
     // Make some other .blob files in the database directory to later validate that only appropriate files are deleted.
     NSString *otherBlob1 = [@"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/file__0/StoreBlobToBeDeleted/7182.blob" stringByExpandingTildeInPath];
     NSString *otherBlob2 = [@"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/file__0/StoreBlobToBeDeleted/1a.blob" stringByExpandingTildeInPath];
@@ -96,6 +108,11 @@ TEST(IndexedDB, StoreBlobThenDelete)
         EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob2]);
         EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob3]);
         EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob4]);
+
+        // Make sure everything related to the fake database is gone.
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fakeShmPath]);
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fakeWalPath]);
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fakeDatabasePath]);
 
         // Now delete them so we're not leaving files around.
         [[NSFileManager defaultManager] removeItemAtPath:otherBlob2 error:nil];
