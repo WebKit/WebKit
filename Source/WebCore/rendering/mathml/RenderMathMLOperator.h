@@ -61,12 +61,13 @@ public:
 protected:
     void rebuildTokenContent();
     virtual void setOperatorProperties();
+    virtual LayoutUnit leadingSpace() const;
+    virtual LayoutUnit trailingSpace() const;
+    virtual LayoutUnit minSize() const;
+    virtual LayoutUnit maxSize() const;
+    virtual bool useMathOperator() const;
 
     bool m_isVertical { true };
-    LayoutUnit m_leadingSpace;
-    LayoutUnit m_trailingSpace;
-    LayoutUnit m_minSize;
-    LayoutUnit m_maxSize;
 
 private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
@@ -74,20 +75,15 @@ private:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
     void paint(PaintInfo&, const LayoutPoint&) final;
 
-    void setLeadingSpace(LayoutUnit leadingSpace) { m_leadingSpace = leadingSpace; }
-    void setTrailingSpace(LayoutUnit trailingSpace) { m_trailingSpace = trailingSpace; }
-
     const char* renderName() const final { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
     bool isRenderMathMLOperator() const final { return true; }
-    // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
-    bool isInvisibleOperator() { return 0x2061 <= textContent() && textContent() <= 0x2064; }
+    bool isInvisibleOperator() const;
 
     Optional<int> firstLineBaseline() const final;
     RenderMathMLOperator* unembellishedOperator() final { return this; }
 
     bool shouldAllowStretching() const;
-    bool useMathOperator() const;
 
     LayoutUnit verticalStretchedOperatorShift() const;
 

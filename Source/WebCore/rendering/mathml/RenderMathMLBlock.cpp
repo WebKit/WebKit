@@ -173,21 +173,6 @@ LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& s
     }
 }
 
-bool parseMathMLLength(const String& string, LayoutUnit& lengthValue, const RenderStyle* style, bool allowNegative)
-{
-    MathMLElement::Length length = MathMLElement::parseMathMLLength(string);
-    if (length.type == MathMLElement::LengthType::ParsingFailed)
-        return false;
-
-    LayoutUnit value = toUserUnits(length, *style, lengthValue);
-
-    if (!allowNegative && value < 0)
-        return false;
-
-    lengthValue = value;
-    return true;
-}
-
 Optional<int> RenderMathMLTable::firstLineBaseline() const
 {
     // By default the vertical center of <mtable> is aligned on the math axis.

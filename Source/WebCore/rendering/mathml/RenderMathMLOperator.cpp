@@ -65,8 +65,14 @@ MathMLOperatorElement& RenderMathMLOperator::element() const
 
 UChar RenderMathMLOperator::textContent() const
 {
-    ASSERT(!isAnonymous());
     return element().operatorText();
+}
+
+bool RenderMathMLOperator::isInvisibleOperator() const
+{
+    // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
+    UChar character = textContent();
+    return 0x2061 <= character && character <= 0x2064;
 }
 
 bool RenderMathMLOperator::hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const
@@ -74,24 +80,40 @@ bool RenderMathMLOperator::hasOperatorFlag(MathMLOperatorDictionary::Flag flag) 
     return element().hasProperty(flag);
 }
 
+LayoutUnit RenderMathMLOperator::leadingSpace() const
+{
+    // FIXME: Negative leading spaces must be implemented (https://webkit.org/b/124830).
+    LayoutUnit leadingSpace = toUserUnits(element().defaultLeadingSpace(), style(), 0);
+    leadingSpace = toUserUnits(element().leadingSpace(), style(), leadingSpace);
+    return std::max<LayoutUnit>(0, leadingSpace);
+}
+
+LayoutUnit RenderMathMLOperator::trailingSpace() const
+{
+    // FIXME: Negative trailing spaces must be implemented (https://webkit.org/b/124830).
+    LayoutUnit trailingSpace = toUserUnits(element().defaultTrailingSpace(), style(), 0);
+    trailingSpace = toUserUnits(element().trailingSpace(), style(), trailingSpace);
+    return std::max<LayoutUnit>(0, trailingSpace);
+}
+
+LayoutUnit RenderMathMLOperator::minSize() const
+{
+    LayoutUnit minSize = style().fontCascade().size(); // Default minsize is "1em".
+    minSize = toUserUnits(element().minSize(), style(), minSize);
+    return std::max<LayoutUnit>(0, minSize);
+}
+
+LayoutUnit RenderMathMLOperator::maxSize() const
+{
+    LayoutUnit maxSize = intMaxForLayoutUnit; // Default maxsize is "infinity".
+    maxSize = toUserUnits(element().maxSize(), style(), maxSize);
+    return std::max<LayoutUnit>(0, maxSize);
+}
+
 void RenderMathMLOperator::setOperatorProperties()
 {
     // We determine the stretch direction (default is vertical).
     m_isVertical = MathMLOperatorDictionary::isVertical(textContent());
-
-    // FIXME: Negative leading spaces must be implemented (https://webkit.org/b/124830).
-    m_leadingSpace = toUserUnits(element().defaultLeadingSpace(), style(), 0);
-    m_leadingSpace = std::max<LayoutUnit>(0, toUserUnits(element().leadingSpace(), style(), m_leadingSpace));
-
-    // FIXME: Negative trailing spaces must be implemented (https://webkit.org/b/124830).
-    m_trailingSpace = toUserUnits(element().defaultTrailingSpace(), style(), 0);
-    m_trailingSpace = std::max<LayoutUnit>(0, toUserUnits(element().trailingSpace(), style(), m_trailingSpace));
-
-    m_minSize = style().fontCascade().size(); // Default minsize is "1em".
-    m_minSize = std::max<LayoutUnit>(0, toUserUnits(element().minSize(), style(), m_minSize));
-
-    m_maxSize = intMaxForLayoutUnit; // Default maxsize is "infinity".
-    m_maxSize = std::max<LayoutUnit>(0, toUserUnits(element().maxSize(), style(), m_maxSize));
 }
 
 void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
@@ -118,10 +140,14 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
     LayoutUnit size = stretchSize();
     float aspect = 1.0;
     if (size > 0) {
-        if (size < m_minSize)
-            aspect = float(m_minSize) / size;
-        else if (m_maxSize < size)
-            aspect = float(m_maxSize) / size;
+        LayoutUnit minSizeValue = minSize();
+        if (size < minSizeValue)
+            aspect = minSizeValue.toFloat() / size;
+        else {
+            LayoutUnit maxSizeValue = maxSize();
+            if (maxSizeValue < size)
+                aspect = maxSizeValue.toFloat() / size;
+        }
     }
     m_stretchHeightAboveBaseline *= aspect;
     m_stretchDepthBelowBaseline *= aspect;
@@ -178,7 +204,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
 
     // FIXME: The spacing should be added to the whole embellished operator (https://webkit.org/b/124831).
     // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
-    preferredWidth = m_leadingSpace + preferredWidth + m_trailingSpace;
+    preferredWidth = leadingSpace() + preferredWidth + trailingSpace();
 
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = preferredWidth;
 
@@ -192,21 +218,24 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
     if (!relayoutChildren && simplifiedLayout())
         return;
 
+    LayoutUnit leadingSpaceValue = leadingSpace();
+    LayoutUnit trailingSpaceValue = trailingSpace();
+
     if (useMathOperator()) {
         for (auto child = firstChildBox(); child; child = child->nextSiblingBox())
             child->layoutIfNeeded();
-        setLogicalWidth(m_leadingSpace + m_mathOperator.width() + m_trailingSpace);
+        setLogicalWidth(leadingSpaceValue + m_mathOperator.width() + trailingSpaceValue);
         setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent());
     } else {
         // We first do the normal layout without spacing.
         recomputeLogicalWidth();
         LayoutUnit width = logicalWidth();
-        setLogicalWidth(width - m_leadingSpace - m_trailingSpace);
+        setLogicalWidth(width - leadingSpaceValue - trailingSpaceValue);
         RenderMathMLToken::layoutBlock(relayoutChildren, pageLogicalHeight);
         setLogicalWidth(width);
 
         // We then move the children to take spacing into account.
-        LayoutPoint horizontalShift(style().direction() == LTR ? m_leadingSpace : -m_leadingSpace, 0);
+        LayoutPoint horizontalShift(style().direction() == LTR ? leadingSpaceValue : -leadingSpaceValue, 0);
         for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
             child->setLocation(child->location() + horizontalShift);
     }
@@ -260,8 +289,7 @@ bool RenderMathMLOperator::useMathOperator() const
     // We use the MathOperator class to handle the following cases:
     // 1) Stretchy and large operators, since they require special painting.
     // 2) The minus sign, since it can be obtained from a hyphen in the DOM.
-    // 3) The anonymous operators created by mfenced, since they do not have text content in the DOM.
-    return shouldAllowStretching() || textContent() == minusSign || isAnonymous();
+    return shouldAllowStretching() || textContent() == minusSign;
 }
 
 void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -293,7 +321,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
         return;
 
     LayoutPoint operatorTopLeft = paintOffset + location();
-    operatorTopLeft.move(style().isLeftToRightDirection() ? m_leadingSpace : m_trailingSpace, 0);
+    operatorTopLeft.move(style().isLeftToRightDirection() ? leadingSpace() : trailingSpace(), 0);
 
     // Center horizontal operators.
     if (!m_isVertical)

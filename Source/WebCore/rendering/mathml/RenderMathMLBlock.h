@@ -114,8 +114,6 @@ private:
     Ref<MathMLStyle> m_mathMLStyle;
 };
 
-// Parsing functions for MathML Length values
-bool parseMathMLLength(const String&, LayoutUnit&, const RenderStyle*, bool allowNegative = true);
 LayoutUnit toUserUnits(const MathMLElement::Length&, const RenderStyle&, const LayoutUnit& referenceValue);
 
 } // namespace WebCore
