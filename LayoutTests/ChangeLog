@@ -1,3 +1,19 @@
+2016-08-01  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Fix fast/events/touch/document-create-touch-list-ios.html
+        https://bugs.webkit.org/show_bug.cgi?id=160429
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix several bugs in fast/events/touch/document-create-touch-list-ios.html:
+        1. Use proper parameters to TouchEvent.initTouchEvent() so that it no longer throws.
+        2. For the check testing passing bad parameters to createTouchList(), print PASS
+           if it throws instead of FAIL since this is the expected behavior.
+
+        * fast/events/touch/document-create-touch-list-ios-expected.txt:
+        * fast/events/touch/script-tests/document-create-touch-list-ios.js:
+        (catch): Deleted.
+
 2016-08-01  Alexey Proskuryakov  <ap@apple.com>
 
         Sierra test expectations gardening for editing/input/password-echo-textnode.html.

@@ -21,7 +21,7 @@ try {
     var tl = document.createTouchList(t, t2);
 
     var evt = document.createEvent("TouchEvent");
-    evt.initTouchEvent(tl, tl, tl, "touchstart", window, 0, 0, 0, 0, true, false, false, false);
+    evt.initTouchEvent("touchstart", false, false, window, 0, 0, 0, 0, 0, true, false, false, false, tl, tl, tl, 1, 0);
 
     document.body.addEventListener("touchstart", function handleTouchStart(ev) {
         ts = ev;
@@ -38,11 +38,7 @@ try {
 }
 
 // Test createTouchList with invalid arguments which throws exceptions.
-try {
-    var tl = document.createTouchList(1, 2);
-} catch(e) {
-    testFailed("An exception was thrown: " + e.message);
-}
+shouldThrow("var tl = document.createTouchList(1, 2)");
 
 successfullyParsed = true;
 isSuccessfullyParsed();
