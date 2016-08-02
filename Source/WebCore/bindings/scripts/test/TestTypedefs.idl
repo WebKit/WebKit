@@ -42,7 +42,7 @@
 
     void func(optional ARRAY_OF_LONGS x = []);
 
-    void setShadow(DOUBLE width, DOUBLE height, unrestricted float blur, [StrictTypeChecking] optional STRING color, optional DOUBLE alpha);
+    void setShadow(DOUBLE width, DOUBLE height, unrestricted float blur, optional STRING color, optional DOUBLE alpha);
 
     ULONGLONG methodWithSequenceArg(sequence<SCRIPT_VALUE> sequenceArg);
 

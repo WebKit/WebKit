@@ -1956,16 +1956,7 @@ sub GenerateParametersCheckExpression
         my $value = "arg$parameterIndex";
         my $type = $parameter->type;
 
-        # For DOMString with StrictTypeChecking only Null, Undefined and Object
-        # are accepted for compatibility. Otherwise, no restrictions are made to
-        # match the non-overloaded behavior.
-        # FIXME: Implement WebIDL overload resolution algorithm.
-        if ($type eq "DOMString" || $codeGenerator->IsEnumType($type)) {
-            if ($parameter->extendedAttributes->{"StrictTypeChecking"}) {
-                push(@andExpression, "(${value}.isUndefinedOrNull() || ${value}.isString() || ${value}.isObject())");
-                $usedArguments{$parameterIndex} = 1;
-            }
-        } elsif ($codeGenerator->IsCallbackInterface($parameter->type)) {
+        if ($codeGenerator->IsCallbackInterface($parameter->type)) {
             # For Callbacks only checks if the value is null or object.
             if ($codeGenerator->IsFunctionOnlyCallbackInterface($parameter->type)) {
                 push(@andExpression, "(${value}.isNull() || ${value}.isFunction())");

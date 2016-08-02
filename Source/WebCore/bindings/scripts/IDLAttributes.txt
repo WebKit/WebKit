@@ -120,7 +120,6 @@ SetterRaisesException
 SetterRaisesExceptionWithMessage
 SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
 SkipVTableValidation
-StrictTypeChecking
 SuppressToJSObject
 TreatNullAs=EmptyString
 TreatReturnedNaNDateAs=Null|NaN

@@ -251,9 +251,9 @@ enum TestConfidence { "high", "kinda-low" };
 
 #if defined(TESTING_JS)
     // Overloads
-    void    overloadedMethod(TestObj? objArg, [StrictTypeChecking] DOMString strArg);
+    void    overloadedMethod(TestObj? objArg, DOMString strArg);
     void    overloadedMethod(TestObj? objArg, optional long longArg);
-    void    overloadedMethod([StrictTypeChecking] DOMString strArg);
+    void    overloadedMethod(DOMString strArg);
     void    overloadedMethod(long longArg);
     void    overloadedMethod(TestCallback callback);
     void    overloadedMethod(DOMStringList? listArg);
