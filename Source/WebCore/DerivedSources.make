@@ -256,14 +256,11 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/css/DOMCSSNamespace.idl \
     $(WebCore)/css/FontFace.idl \
     $(WebCore)/css/FontFaceSet.idl \
-    $(WebCore)/css/MediaList.idl \
     $(WebCore)/css/MediaQueryList.idl \
     $(WebCore)/css/MediaQueryListListener.idl \
     $(WebCore)/css/RGBColor.idl \
     $(WebCore)/css/Rect.idl \
     $(WebCore)/css/StyleMedia.idl \
-    $(WebCore)/css/StyleSheet.idl \
-    $(WebCore)/css/StyleSheetList.idl \
     $(WebCore)/css/WebKitCSSFilterValue.idl \
     $(WebCore)/css/CSSKeyframeRule.idl \
     $(WebCore)/css/CSSKeyframesRule.idl \
@@ -318,8 +315,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/DOMNamedFlowCollection.idl \
     $(WebCore)/dom/NamedNodeMap.idl \
     $(WebCore)/dom/Node.idl \
-    $(WebCore)/dom/NodeFilter.idl \
-    $(WebCore)/dom/NodeIterator.idl \
     $(WebCore)/dom/NodeList.idl \
     $(WebCore)/dom/NonElementParentNode.idl \
     $(WebCore)/dom/NonDocumentTypeChildNode.idl \
@@ -330,7 +325,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/ProcessingInstruction.idl \
     $(WebCore)/dom/ProgressEvent.idl \
     $(WebCore)/dom/ProgressEvent.idl \
-    $(WebCore)/dom/Range.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
     $(WebCore)/dom/SecurityPolicyViolationEvent.idl \
     $(WebCore)/dom/ShadowRoot.idl \
@@ -475,16 +469,17 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/xml/XMLHttpRequestProgressEvent.idl \
     $(WebCore)/xml/XMLHttpRequestUpload.idl \
     $(WebCore)/xml/XMLSerializer.idl \
-    $(WebCore)/xml/XPathEvaluator.idl \
-    $(WebCore)/xml/XPathException.idl \
-    $(WebCore)/xml/XPathExpression.idl \
-    $(WebCore)/xml/XPathNSResolver.idl \
-    $(WebCore)/xml/XPathResult.idl \
     $(WebCore)/xml/XSLTProcessor.idl \
     InternalSettingsGenerated.idl
 #
 
 JS_ONLY_BINDING_IDLS = \
+	$(WebCore)/css/MediaList.idl \
+	$(WebCore)/css/StyleSheet.idl \
+	$(WebCore)/css/StyleSheetList.idl \
+	$(WebCore)/dom/NodeFilter.idl \
+	$(WebCore)/dom/NodeIterator.idl \
+	$(WebCore)/dom/Range.idl \
 	$(WebCore)/fileapi/Blob.idl \
 	$(WebCore)/fileapi/File.idl \
 	$(WebCore)/fileapi/FileError.idl \
@@ -719,7 +714,12 @@ JS_ONLY_BINDING_IDLS = \
     $(WebCore)/svg/SVGViewElement.idl \
     $(WebCore)/svg/SVGViewSpec.idl \
     $(WebCore)/svg/SVGZoomAndPan.idl \
-    $(WebCore)/svg/SVGZoomEvent.idl
+    $(WebCore)/svg/SVGZoomEvent.idl \
+    $(WebCore)/xml/XPathEvaluator.idl \
+    $(WebCore)/xml/XPathException.idl \
+    $(WebCore)/xml/XPathExpression.idl \
+    $(WebCore)/xml/XPathNSResolver.idl \
+    $(WebCore)/xml/XPathResult.idl \
 #
 
 PYTHON = python

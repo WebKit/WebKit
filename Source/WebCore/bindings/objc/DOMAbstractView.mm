@@ -27,10 +27,10 @@
  */
 
 #import "config.h"
-#import "DOMInternal.h" // import first to make the private/public trick work
 #import "DOMAbstractViewInternal.h"
 
 #import "DOMDocumentInternal.h"
+#import "DOMInternal.h"
 #import "DOMWindow.h"
 #import "Document.h"
 #import "ExceptionHandlers.h"
