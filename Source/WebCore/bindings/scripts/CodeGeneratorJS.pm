@@ -1782,14 +1782,20 @@ sub GetOverloadThatMatches
 
 # Implements the overload resolution algorithm, as defined in the Web IDL specification:
 # http://heycam.github.io/webidl/#es-overloads
-sub GenerateOverloadedFunction
+sub GenerateOverloadedFunctionOrConstructor
 {
-    my ($function, $interface) = @_;
+    my ($function, $interface, $isConstructor) = @_;
     my %allSets = ComputeEffectiveOverloadSet($function->{overloads});
 
-    my $kind = $function->isStatic ? "Constructor" : (OperationShouldBeOnInstance($interface, $function) ? "Instance" : "Prototype");
     my $interfaceName = $interface->name;
-    my $functionName = "js${interfaceName}${kind}Function" . $codeGenerator->WK_ucfirst($function->signature->name);
+    my $className = "JS$interfaceName";
+    my $functionName;
+    if ($isConstructor) {
+        $functionName = "construct${className}";
+    } else {
+        my $kind = $function->isStatic ? "Constructor" : (OperationShouldBeOnInstance($interface, $function) ? "Instance" : "Prototype");
+        $functionName = "js${interfaceName}${kind}Function" . $codeGenerator->WK_ucfirst($function->signature->name);
+    }
 
     my $generateOverloadCallIfNecessary = sub {
         my ($overload, $condition) = @_;
@@ -1859,8 +1865,12 @@ sub GenerateOverloadedFunction
 
     my $maxArgCount = LengthOfLongestFunctionParameterList($function->{overloads});
 
+    if ($isConstructor) {
+        push(@implContent, "template<> EncodedJSValue JSC_HOST_CALL ${className}Constructor::construct(ExecState* state)\n");
+    } else {
+        push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* state)\n");
+    }
     push(@implContent, <<END);    
-EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* state)
 {
     size_t argsCount = std::min<size_t>($maxArgCount, state->argumentCount());
 END
@@ -1942,56 +1952,6 @@ END
     push(@implContent, "}\n\n");
 }
 
-sub GenerateParametersCheckExpression
-{
-    my $numParameters = shift;
-    my $function = shift;
-
-    my @andExpression = ();
-    push(@andExpression, "argsCount == $numParameters");
-    my $parameterIndex = 0;
-    my %usedArguments = ();
-    foreach my $parameter (@{$function->parameters}) {
-        last if $parameterIndex >= $numParameters;
-        my $value = "arg$parameterIndex";
-        my $type = $parameter->type;
-
-        if ($codeGenerator->IsCallbackInterface($parameter->type)) {
-            # For Callbacks only checks if the value is null or object.
-            if ($codeGenerator->IsFunctionOnlyCallbackInterface($parameter->type)) {
-                push(@andExpression, "(${value}.isNull() || ${value}.isFunction())");
-            } else {
-                push(@andExpression, "(${value}.isNull() || ${value}.isObject())");
-            }
-            $usedArguments{$parameterIndex} = 1;
-        } elsif ($codeGenerator->IsDictionaryType($parameter->type)) {
-            push(@andExpression, "(${value}.isUndefinedOrNull() || ${value}.isObject())");
-            $usedArguments{$parameterIndex} = 1;
-        } elsif (($codeGenerator->GetArrayOrSequenceType($type) || $codeGenerator->IsTypedArrayType($type) || $codeGenerator->IsWrapperType($type)) && $type ne "EventListener") {
-            my $condition = "";
-
-            if ($parameter->isNullable) {
-                $condition .= "${value}.isUndefinedOrNull() || ";
-            } elsif ($parameter->isOptional) {
-                $condition .= "${value}.isUndefined() || ";
-            }
-
-            if ($codeGenerator->GetArrayOrSequenceType($type)) {
-                # FIXME: Add proper support for T[], T[]?, sequence<T>.
-                $condition .= "(${value}.isObject() && isJSArray(${value}))";
-            } else {
-                $condition .= "(${value}.isObject() && asObject(${value})->inherits(JS${type}::info()))";
-            }
-            push(@andExpression, "(" . $condition . ")");
-            $usedArguments{$parameterIndex} = 1;
-        }
-        $parameterIndex++;
-    }
-    my $res = join(" && ", @andExpression);
-    $res = "($res)" if @andExpression > 1;
-    return ($res, sort {$a <=> $b} (keys %usedArguments));
-}
-
 # As per Web IDL specification, the length of a function Object is its number of mandatory parameters.
 sub GetFunctionLength
 {
@@ -2014,37 +1974,6 @@ sub GetFunctionLength
         $length = $newLength if $newLength < $length;
     }
     return $length;
-}
-
-sub GenerateFunctionParametersCheck
-{
-    my $function = shift;
-
-    my @orExpression = ();
-    my $numParameters = 0;
-    my @neededArguments = ();
-    my $hasVariadic = 0;
-    my $numMandatoryParams = @{$function->parameters};
-
-    foreach my $parameter (@{$function->parameters}) {
-        if ($parameter->isOptional) {
-            my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
-            push(@orExpression, $expression);
-            push(@neededArguments, @usedArguments);
-            $numMandatoryParams--;
-        }
-        if ($parameter->isVariadic) {
-            $hasVariadic = 1;
-            last;
-        }
-        $numParameters++;
-    }
-    if (!$hasVariadic) {
-        my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
-        push(@orExpression, $expression);
-        push(@neededArguments, @usedArguments);
-    }
-    return ($numMandatoryParams, join(" || ", @orExpression), @neededArguments);
 }
 
 sub LengthOfLongestFunctionParameterList
@@ -3448,7 +3377,7 @@ END
             push(@implContent, "#endif\n\n") if $conditional;
 
             # Generate a function dispatching call to the rest of the overloads.
-            GenerateOverloadedFunction($function, $interface) if !$isCustom && $isOverloaded && $function->{overloadIndex} == @{$function->{overloads}};
+            GenerateOverloadedFunctionOrConstructor($function, $interface, 0) if !$isCustom && $isOverloaded && $function->{overloadIndex} == @{$function->{overloads}};
         }
 
         push(@implContent, $endAppleCopyright) if $inAppleCopyright;
@@ -5185,7 +5114,7 @@ sub GenerateConstructorDefinitions
             foreach my $constructor (@constructors) {
                 GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $constructor);
             }
-            GenerateOverloadedConstructorDefinition($outputArray, $className, $interface);
+            GenerateOverloadedFunctionOrConstructor(@{$interface->constructors}[0], $interface, 1);
         } elsif (@constructors == 1) {
             GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $constructors[0]);
         } else {
@@ -5194,51 +5123,6 @@ sub GenerateConstructorDefinitions
     }
 
     GenerateConstructorHelperMethods($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor);
-}
-
-sub GenerateOverloadedConstructorDefinition
-{
-    my $outputArray = shift;
-    my $className = shift;
-    my $interface = shift;
-
-    # FIXME: Implement support for overloaded constructors with variadic arguments.
-    my $lengthOfLongestOverloadedConstructorParameterList = LengthOfLongestFunctionParameterList($interface->constructors);
-
-    push(@$outputArray, <<END);
-template<> EncodedJSValue JSC_HOST_CALL ${className}Constructor::construct(ExecState* state)
-{
-    size_t argsCount = std::min<size_t>($lengthOfLongestOverloadedConstructorParameterList, state->argumentCount());
-END
-
-    my %fetchedArguments = ();
-    my $leastNumMandatoryParams = 255;
-
-    my @constructors = @{$interface->constructors};
-    foreach my $overload (@constructors) {
-        my $functionName = "construct${className}";
-        my ($numMandatoryParams, $parametersCheck, @neededArguments) = GenerateFunctionParametersCheck($overload);
-        $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
-
-        foreach my $parameterIndex (@neededArguments) {
-            next if exists $fetchedArguments{$parameterIndex};
-            push(@$outputArray, "    JSValue arg$parameterIndex(state->argument($parameterIndex));\n");
-            $fetchedArguments{$parameterIndex} = 1;
-        }
-
-        push(@$outputArray, "    if ($parametersCheck)\n");
-        push(@$outputArray, "        return ${functionName}$overload->{overloadedIndex}(state);\n");
-    }
-
-    if ($leastNumMandatoryParams >= 1) {
-        push(@$outputArray, "    if (UNLIKELY(argsCount < $leastNumMandatoryParams))\n");
-        push(@$outputArray, "        return throwVMError(state, createNotEnoughArgumentsError(state));\n");
-    }
-    push(@$outputArray, <<END);
-    return throwVMTypeError(state);
-}
-
-END
 }
 
 sub GenerateConstructorDefinition
@@ -5333,10 +5217,10 @@ END
             push(@$outputArray, "    return construct${className}(*exec);\n");
             push(@$outputArray, "}\n\n");
          } elsif (!HasCustomConstructor($interface) && (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor)) {
-            if ($function->{overloadedIndex} && $function->{overloadedIndex} > 0) {
-                push(@$outputArray, "static inline EncodedJSValue construct${className}$function->{overloadedIndex}(ExecState* state)\n");
-            }
-            else {
+            my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
+            if ($isOverloaded) {
+                push(@$outputArray, "static inline EncodedJSValue construct${className}$function->{overloadIndex}(ExecState* state)\n");
+            } else {
                 push(@$outputArray, "template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecState* state)\n");
             }
 

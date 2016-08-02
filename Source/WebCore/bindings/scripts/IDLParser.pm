@@ -2306,7 +2306,6 @@ sub applyExtendedAttributeList
             $constructor->signature->name("Constructor");
             $constructor->signature->extendedAttributes($extendedAttributeList);
             $constructor->parameters($param);
-            $constructor->{overloadedIndex} = $index++;
             push(@{$interface->constructors}, $constructor);
         }
         delete $extendedAttributeList->{"Constructors"};
@@ -2332,7 +2331,6 @@ sub applyExtendedAttributeList
             $customConstructor->signature->name("CustomConstructor");
             $customConstructor->signature->extendedAttributes($extendedAttributeList);
             $customConstructor->parameters($param);
-            $customConstructor->{overloadedIndex} = $index++;
             push(@{$interface->customConstructors}, $customConstructor);
         }
         delete $extendedAttributeList->{"CustomConstructors"};

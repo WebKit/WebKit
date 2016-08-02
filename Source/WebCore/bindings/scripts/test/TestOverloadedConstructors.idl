@@ -30,6 +30,6 @@
     Constructor(ArrayBufferView arrayBufferView),
     Constructor(Blob blob),
     Constructor(DOMString string),
-    Constructor(long... longArgs) // FIXME: Implement support for overloaded constructors with variadic arguments.
+    Constructor(long... longArgs)
 ] interface TestOverloadedConstructors {
 };

@@ -1,3 +1,16 @@
+2016-08-02  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Extend new overload resolution algorithm support to constructors
+        https://bugs.webkit.org/show_bug.cgi?id=160455
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline existing test as we now provide slightly different
+        exception messages when given bad overloaded constructor parameters.
+
+        * fast/canvas/canvas-imageData-expected.txt:
+        * fast/canvas/script-tests/canvas-imageData.js:
+
 2016-08-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking two media tests as flaky crashes on ios-simulator-wk2

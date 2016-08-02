@@ -614,6 +614,13 @@ sub LinkOverloadedFunctions
         $function->{overloads} = $nameToFunctionsMap{$name};
         $function->{overloadIndex} = @{$nameToFunctionsMap{$name}};
     }
+
+    my $index = 1;
+    foreach my $constructor (@{$interface->constructors}) {
+        $constructor->{overloads} = $interface->constructors;
+        $constructor->{overloadIndex} = $index;
+        $index++;
+    }
 }
 
 sub AttributeNameForGetterAndSetter

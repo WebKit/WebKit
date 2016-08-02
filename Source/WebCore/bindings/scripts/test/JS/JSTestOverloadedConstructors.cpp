@@ -130,19 +130,21 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
 template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::construct(ExecState* state)
 {
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
-    JSValue arg0(state->argument(0));
-    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSArrayBuffer::info())))))
-        return constructJSTestOverloadedConstructors1(state);
-    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSArrayBufferView::info())))))
-        return constructJSTestOverloadedConstructors2(state);
-    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSBlob::info())))))
-        return constructJSTestOverloadedConstructors3(state);
-    if (argsCount == 1)
-        return constructJSTestOverloadedConstructors4(state);
-    if ()
+    if (argsCount == 0) {
         return constructJSTestOverloadedConstructors5(state);
-    if (UNLIKELY(argsCount < 1))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
+    }
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSArrayBuffer::info()))
+            return constructJSTestOverloadedConstructors1(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSArrayBufferView::info()))
+            return constructJSTestOverloadedConstructors2(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
+            return constructJSTestOverloadedConstructors3(state);
+        if (distinguishingArg.isNumber())
+            return constructJSTestOverloadedConstructors5(state);
+        return constructJSTestOverloadedConstructors4(state);
+    }
     return throwVMTypeError(state);
 }
 
