@@ -40,7 +40,7 @@ namespace WebCore {
 
 CFCachedURLResponseRef ResourceLoader::willCacheResponse(ResourceHandle*, CFCachedURLResponseRef cachedResponse)
 {
-    if (m_options.sendLoadCallbacks() == DoNotSendCallbacks)
+    if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
         return nullptr;
 
     RetainPtr<NSCachedURLResponse> nsCachedResponse = adoptNS([[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse]);
