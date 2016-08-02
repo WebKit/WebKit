@@ -1,5 +1,143 @@
 2016-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Move the redirected XComposite window to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=160389
+
+        Reviewed by Žan Doberšek.
+
+        In the current code, the UI process creates the redirected window that the web process uses to render
+        accelerated contents. The redirected window is sent to the web process as native surface handle, and using
+        XDamage extension the UI process takes a pixmap of the redirected window to render into the widget when there
+        are updates. This requires several points of synchronization between UI and web processes. When the web view is
+        resized, the UI process first resizes the redirected window and then sends a new backing store ID to the web
+        process. The time between the redirected window is resized and the web process renders the new contents the UI
+        process keeps rendering the previous contents with the previous size in the new window with the new size. This
+        makes the resize process slow, and it produces rendering artifacts quite often. The redirected window is created
+        when the web view is realized, to be able to inherit the XVisual from the parent window, and the native window
+        handle is sent to the web process. The time until the window is realized, the web process doesn't have a context
+        to render into, so the UI process simply renders an empty page. When the web view is unrealized, for example if
+        the web view is reparented, the redirected window is destroyed, and a sync message is sent to the web process to
+        destroy the current gl context and stop drawing. This needs to happen synchronously, because the UI process
+        can't remove the redirected window until the web process has stopped rendering into it. This makes also the
+        reparenting process quite unstable and risky.
+        To all those synchronization points we now have to add the synchronization with the compositing thread when
+        using the threaded compositor. The threaded compositor made resizing, reparenting, etc. even worse. We can't
+        avoid the synchronization with the threaded compositor, but we can reduce the synchronization points and improve
+        the current ones by moving the redirected window to the web process. In this case is web process who creates the
+        redirected window, so we can be sure that it always has a valid native surface handle to render into. This means
+        we no longer need the IPC message to send the native surface handle from the UI process to the web process, nor
+        the sync message to destroy it either. This also means we no longer need to wait until the view is realized to
+        start rendering accelerated contents, and we don't need to stop when it's unrealized either. We don't really
+        need to inherit the XVisual from the parent window if the redirected window always uses always a RGBA visual
+        when available. That way we always render into a transparent window that is composed into the web view
+        widget. And when the web view is resized, we no longer need to destroy the GL context either, because we use the
+        same redirected window as the native handle, but create a new pixmap that is what we send to the UI process as
+        layer tree context ID. The layer tree context ID is already sent to the UI process by the drawing area as part
+        of the backing store update process, so we don't need any new IPC message for this. When the web view is
+        resized, the UI process sends a backing store state update message to the web process that updates its size,
+        relayouts and then renders the new contents, so that when the update backing store state reply gets to the UI
+        process, we already have a new pixmap with the new contents updated. This makes resizing smooth again, and
+        avoids flickering and rendering artifacts. And finally all this also prevents several race conditions that were
+        causing X errors and web process crashes.
+
+        * PlatformGTK.cmake:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create): Make it possible to optionally pass a native surface handle for
+        compositing to the ThreadedCompositor contructor.
+        (WebKit::ThreadedCompositor::ThreadedCompositor): Initialize the native surface handle and make the scene active
+        after the thread initialization if we already have a valid handle.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode): Pass the layer tree context ID to the web view.
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode): Notify the web view about the update.
+        (WebKit::PageClientImpl::willEnterAcceleratedCompositingMode): Deleted.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetAcceleratedCompositingPixmap): Helper function to update the pixmap used to render the
+        accelerated contents.
+        (webkitWebViewBaseRealize): Remove the code to create the redirected window.
+        (webkitWebViewBaseUnrealize): Remove the code to destroy the redirected window.
+        (webkitWebViewBaseDispose): Reset the accelerated compositing pixmap.
+        (webkitWebViewRenderAcceleratedCompositingResults): Use the accelerated compositing pixmap surface.
+        (webkitWebViewBaseSizeAllocate): Remove the code to resize the redirected window.
+        (webkitWebViewBaseEnterAcceleratedCompositingMode): Update the accelerated compositing pixmap.
+        (webkitWebViewBaseUpdateAcceleratedCompositingMode): Ditto.
+        (webkitWebViewBaseExitAcceleratedCompositingMode): Reset the accelerated compositing pixmap.
+        (webkitWebViewBaseDidRelaunchWebProcess): Remove the code to send native surface handle to the web process.
+        (webkitWebViewBasePageClosed): Reset the accelerated compositing pixmap.
+        (_WebKitWebViewBasePrivate::updateViewStateTimerFired): Deleted.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState): Handle the case when the layer tree context ID
+        changes without leaving the accelerated compositing mode, calling updateAcceleratedCompositingMode().
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode): Let the web view know we are leaving accelerated
+        compositing mode even when it's forced, since in case of web process crash we need to leave the accelerated
+        compositing mode in the UI process.
+        (WebKit::DrawingAreaProxyImpl::willEnterAcceleratedCompositingMode): This message was added only to prepare the
+        redirected window when the web process was about to enter accelerated compositing mode, so it's no longer needed.
+        (WebKit::DrawingAreaProxyImpl::setNativeSurfaceHandleForCompositing): This is now only used when building
+        without redirected XComposite window support.
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willEnterAcceleratedCompositingMode): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebView.h:
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp: Removed.
+        * UIProcess/gtk/XDamageNotifier.cpp: Helper class to be notified about XDamage events.
+        (WebKit::XDamageNotifier::singleton):
+        (WebKit::XDamageNotifier::XDamageNotifier):
+        (WebKit::XDamageNotifier::add):
+        (WebKit::XDamageNotifier::remove):
+        (WebKit::XDamageNotifier::filterXDamageEvent):
+        (WebKit::XDamageNotifier::notify):
+        * UIProcess/gtk/XDamageNotifier.h: Added.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::willEnterAcceleratedCompositingMode): Deleted.
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::willEnterAcceleratedCompositingMode): Deleted.
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::enterAcceleratedCompositingMode): Remove code to send
+        WillEnterAcceleratedCompositingMode message.
+        (WebKit::AcceleratedDrawingArea::setNativeSurfaceHandleForCompositing): This is now only used when building
+        without redirected XComposite window support.
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost): Create a redirected window and
+        pass the window ID as native surface handle to the threaded compositor. Use the redirected window pixmap as
+        layer tree context.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::invalidate): Destroy the redirected window.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged): Resize the redirected window and
+        update the layer tree context.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::sizeDidChange): Ditto.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::LayerTreeHostGtk): Create a redirected window and texture mapper that uses the window
+        ID as native surface handle. Use the redirected window pixmap as layer tree context.
+        (WebKit::LayerTreeHostGtk::makeContextCurrent): Use the redirected window as native handle.
+        (WebKit::LayerTreeHostGtk::invalidate): Destroy the redirected window.
+        (WebKit::LayerTreeHostGtk::sizeDidChange): Resize the redirected window and update the layer tree context.
+        (WebKit::LayerTreeHostGtk::deviceOrPageScaleFactorChanged): Ditto.
+        (WebKit::LayerTreeHostGtk::createTextureMapper): Helper function to create the texture mapper.
+        (WebKit::LayerTreeHostGtk::setNativeSurfaceHandleForCompositing): Use createTextureMapper().
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+        * WebProcess/WebPage/gtk/RedirectedXCompositeWindow.cpp: Added.
+        (WebKit::RedirectedXCompositeWindow::create):
+        (WebKit::RedirectedXCompositeWindow::RedirectedXCompositeWindow):
+        (WebKit::RedirectedXCompositeWindow::~RedirectedXCompositeWindow):
+        (WebKit::RedirectedXCompositeWindow::resize):
+        * WebProcess/WebPage/gtk/RedirectedXCompositeWindow.h: Renamed from Source/WebKit2/UIProcess/gtk/RedirectedXCompositeWindow.h.
+        (WebKit::RedirectedXCompositeWindow::window):
+        (WebKit::RedirectedXCompositeWindow::pixmap):
+
+2016-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Database Process: ASSERTION FAILED: filePaths.size() == result.handles().size() with SANDBOX_EXTENSIONS disabled
         https://bugs.webkit.org/show_bug.cgi?id=160398
 

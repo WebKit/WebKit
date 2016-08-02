@@ -480,10 +480,6 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& la
     m_impl->setAcceleratedCompositingRootLayer(renderLayer);
 }
 
-void PageClientImpl::willEnterAcceleratedCompositingMode()
-{
-}
-
 void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
 {
     m_impl->setAcceleratedCompositingRootLayer(rootLayer);

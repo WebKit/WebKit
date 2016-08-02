@@ -41,18 +41,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client, uint64_t nativeSurfaceHandle)
 {
-    return adoptRef(*new ThreadedCompositor(client));
+    return adoptRef(*new ThreadedCompositor(client, nativeSurfaceHandle));
 }
 
-ThreadedCompositor::ThreadedCompositor(Client* client)
+ThreadedCompositor::ThreadedCompositor(Client* client, uint64_t nativeSurfaceHandle)
     : m_client(client)
+    , m_nativeSurfaceHandle(nativeSurfaceHandle)
     , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
 {
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
         m_viewportController = std::make_unique<SimpleViewportController>(this);
+        m_scene->setActive(!!m_nativeSurfaceHandle);
     });
 }
 

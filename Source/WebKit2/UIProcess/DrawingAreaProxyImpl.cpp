@@ -157,15 +157,16 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
     m_webPageProxy.process().responsivenessTimer().stop();
 
     if (layerTreeContext != m_layerTreeContext) {
-        if (!m_layerTreeContext.isEmpty()) {
+        if (layerTreeContext.isEmpty() && !m_layerTreeContext.isEmpty()) {
             exitAcceleratedCompositingMode();
             ASSERT(m_layerTreeContext.isEmpty());
-        }
-
-        if (!layerTreeContext.isEmpty()) {
+        } else if (!layerTreeContext.isEmpty() && m_layerTreeContext.isEmpty()) {
             enterAcceleratedCompositingMode(layerTreeContext);
             ASSERT(layerTreeContext == m_layerTreeContext);
-        }            
+        } else {
+            updateAcceleratedCompositingMode(layerTreeContext);
+            ASSERT(layerTreeContext == m_layerTreeContext);
+        }
     }
 
     if (m_nextBackingStoreStateID != m_currentBackingStoreStateID)
@@ -173,7 +174,7 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
     else {
         m_hasReceivedFirstUpdate = true;
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
         if (m_pendingNativeSurfaceHandleForCompositing) {
             setNativeSurfaceHandleForCompositing(m_pendingNativeSurfaceHandleForCompositing);
             m_pendingNativeSurfaceHandleForCompositing = 0;
@@ -219,15 +220,6 @@ void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(uint64_t backingStor
         return;
 
     updateAcceleratedCompositingMode(layerTreeContext);
-}
-
-void DrawingAreaProxyImpl::willEnterAcceleratedCompositingMode(uint64_t backingStoreStateID)
-{
-    // WillEnterAcceleratedCompositingMode message is sent when the LayerTreeHost is created in the Web Process.
-    // This can happen while there's still a DidUpdateBackingStoreState pending, in which case we are receiving
-    // here the new backingStoreStateID, but m_currentBackingStoreStateID hasn't been updated yet.
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_nextBackingStoreStateID);
-    m_webPageProxy.willEnterAcceleratedCompositingMode();
 }
 
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
@@ -315,7 +307,7 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
     m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
 }
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
 void DrawingAreaProxyImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     if (!m_hasReceivedFirstUpdate) {
@@ -351,8 +343,7 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
     ASSERT(isInAcceleratedCompositingMode());
 
     m_layerTreeContext = LayerTreeContext();
-    if (!alwaysUseCompositing())
-        m_webPageProxy.exitAcceleratedCompositingMode();
+    m_webPageProxy.exitAcceleratedCompositingMode();
 }
 
 void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)

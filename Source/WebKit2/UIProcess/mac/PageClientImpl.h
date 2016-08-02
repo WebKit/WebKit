@@ -138,7 +138,6 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-    void willEnterAcceleratedCompositingMode() override;
 
     PassRefPtr<ViewSnapshot> takeViewSnapshot() override;
     void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;

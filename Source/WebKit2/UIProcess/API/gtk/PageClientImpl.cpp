@@ -216,9 +216,9 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, con
     return WebColorPickerGtk::create(*page, color, rect);
 }
 
-void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
+void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    webkitWebViewBaseEnterAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    webkitWebViewBaseEnterAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget), layerTreeContext);
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
@@ -226,14 +226,9 @@ void PageClientImpl::exitAcceleratedCompositingMode()
     webkitWebViewBaseExitAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
-void PageClientImpl::willEnterAcceleratedCompositingMode()
+void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    webkitWebViewBaseWillEnterAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
-}
-
-void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
-{
-    notImplemented();
+    webkitWebViewBaseUpdateAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget), layerTreeContext);
 }
 
 void PageClientImpl::pageClosed()

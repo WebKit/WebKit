@@ -103,7 +103,6 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-    void willEnterAcceleratedCompositingMode() override;
     void setAcceleratedCompositingRootLayer(LayerOrView *) override;
     LayerOrView *acceleratedCompositingRootLayer() const override;
     LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }

@@ -41,6 +41,7 @@ struct CoordinatedGraphicsState;
 
 namespace WebKit {
 
+class RedirectedXCompositeWindow;
 class WebPage;
 
 class ThreadedCoordinatedLayerTreeHost final : public CoordinatedLayerTreeHost {
@@ -64,7 +65,7 @@ private:
     void forceRepaint() override;
     bool forceRepaintAsync(uint64_t callbackID) override { return false; }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
 #endif
 
@@ -103,10 +104,13 @@ private:
     void didFlushRootLayer(const WebCore::FloatRect&) override { }
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
 
-    WebCore::IntPoint m_prevScrollPosition;
     CompositorClient m_compositorClient;
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    std::unique_ptr<RedirectedXCompositeWindow> m_redirectedWindow;
+#endif
     RefPtr<ThreadedCompositor> m_compositor;
     float m_lastScaleFactor { 1 };
+    WebCore::IntPoint m_prevScrollPosition;
     WebCore::IntPoint m_lastScrollPosition;
 };
 

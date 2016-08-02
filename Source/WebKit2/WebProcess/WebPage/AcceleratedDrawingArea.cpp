@@ -318,11 +318,9 @@ void AcceleratedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* grap
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
-    m_webPage.send(Messages::DrawingAreaProxy::WillEnterAcceleratedCompositingMode(m_backingStoreStateID));
-
     ASSERT(!m_layerTreeHost);
     m_layerTreeHost = LayerTreeHost::create(m_webPage);
-#if PLATFORM(GTK) && USE(TEXTURE_MAPPER)
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (m_nativeSurfaceHandleForCompositing)
         m_layerTreeHost->setNativeSurfaceHandleForCompositing(m_nativeSurfaceHandleForCompositing);
 #endif
@@ -354,7 +352,7 @@ void AcceleratedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Conn
 }
 #endif
 
-#if PLATFORM(GTK) && USE(TEXTURE_MAPPER)
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
 void AcceleratedDrawingArea::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     m_nativeSurfaceHandleForCompositing = handle;

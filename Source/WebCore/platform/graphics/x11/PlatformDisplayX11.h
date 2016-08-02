@@ -29,6 +29,7 @@
 #if PLATFORM(X11)
 
 #include "PlatformDisplay.h"
+#include <wtf/Optional.h>
 
 typedef struct _XDisplay Display;
 
@@ -41,6 +42,8 @@ public:
     virtual ~PlatformDisplayX11();
 
     Display* native() const { return m_display; }
+    bool supportsXComposite() const;
+    bool supportsXDamage(Optional<int>& damageEventBase) const;
 
 private:
     Type type() const override { return PlatformDisplay::Type::X11; }
@@ -51,6 +54,9 @@ private:
 
     Display* m_display;
     bool m_ownedDisplay;
+    mutable Optional<bool> m_supportsXComposite;
+    mutable Optional<bool> m_supportsXDamage;
+    mutable Optional<int> m_damageEventBase;
 };
 
 } // namespace WebCore

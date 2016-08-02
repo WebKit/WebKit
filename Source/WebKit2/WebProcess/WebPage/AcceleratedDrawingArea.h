@@ -63,7 +63,7 @@ protected:
     void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 #endif
 
-#if PLATFORM(GTK) && USE(TEXTURE_MAPPER)
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
     void destroyNativeSurfaceHandleForCompositing(bool&) override;
 #endif

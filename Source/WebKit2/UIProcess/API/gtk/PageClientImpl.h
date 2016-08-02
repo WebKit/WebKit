@@ -92,7 +92,6 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-    void willEnterAcceleratedCompositingMode() override;
 
     void handleDownloadRequest(DownloadProxy*) override;
     void didChangeContentSize(const WebCore::IntSize&) override;

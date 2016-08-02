@@ -39,6 +39,8 @@
 
 namespace WebKit {
 
+class RedirectedXCompositeWindow;
+
 class LayerTreeHostGtk final : public LayerTreeHost, WebCore::GraphicsLayerClient {
 public:
     static Ref<LayerTreeHostGtk> create(WebPage&);
@@ -65,7 +67,9 @@ private:
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
 
+#if !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
+#endif
 
     class RenderFrameScheduler {
     public:
@@ -98,12 +102,16 @@ private:
     void flushAndRenderLayers();
     bool renderFrame();
     bool makeContextCurrent();
+    void createTextureMapper();
 
     std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
     std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     std::unique_ptr<WebCore::GLContext> m_context;
     WebCore::TransformationMatrix m_scaleMatrix;
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    std::unique_ptr<RedirectedXCompositeWindow> m_redirectedWindow;
+#endif
     RenderFrameScheduler m_renderFrameScheduler;
 };
 
