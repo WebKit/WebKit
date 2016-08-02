@@ -67,8 +67,6 @@ bool SecurityOrigin::shouldUseInnerURL(const URL& url)
 // security origin can be parsed using this algorithm.
 URL SecurityOrigin::extractInnerURL(const URL& url)
 {
-    if (url.innerURL())
-        return *url.innerURL();
     // FIXME: Update this callsite to use the innerURL member function when
     // we finish implementing it.
     return URL(ParsedURLString, decodeURLEscapeSequences(url.path()));
