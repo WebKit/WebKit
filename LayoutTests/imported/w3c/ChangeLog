@@ -1,3 +1,16 @@
+2016-08-02  Chris Dumez  <cdumez@apple.com>
+
+        HTMLCollection's named getter should only do 'name' attribute matching for HTMLElements
+        https://bugs.webkit.org/show_bug.cgi?id=160456
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/dom/nodes/Document-getElementsByTagName-expected.txt:
+        Rebaseline. We are still failing but on the next check.
+
+        * web-platform-tests/dom/nodes/Element-children-expected.txt:
+        Rebaseline now that one more check is passing.
+
 2016-08-02  Youenn Fablet  <youenn@apple.com>
 
         Skip fetch API worker tests in Debug mode
