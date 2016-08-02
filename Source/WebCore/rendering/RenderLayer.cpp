@@ -4274,7 +4274,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars
         && ((isPaintingScrollingContent && isPaintingCompositedBackground)
         || (!isPaintingScrollingContent && isPaintingCompositedForeground));
-    bool shouldPaintContent = (m_hasVisibleContent || paintFlags & PaintLayerIgnoreVisibility) && isSelfPaintingLayer && !isPaintingOverlayScrollbars;
+    bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars;
 
     if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly && !renderer().isRenderView() && !renderer().isDocumentElementRenderer())
         return;
