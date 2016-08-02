@@ -232,9 +232,9 @@ void findEndWordBoundary(StringView text, int position, int* end)
 int findNextWordFromIndex(StringView text, int position, bool forward)
 {   
 #if USE(APPKIT)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
     if (!text.length())
         return 0;
-    // FIXME: Remove when <rdar://problem/27380532> is fixed.
     if (!text.is8Bit() && !forward) {
         int chunkSize = 256;
         int decrement = chunkSize / 2;
@@ -257,6 +257,7 @@ int findNextWordFromIndex(StringView text, int position, bool forward)
         }
         return 0;
     }
+#endif
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()];
     int result = [attributedString nextWordFromIndex:position forward:forward];
     [attributedString release];
