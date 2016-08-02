@@ -2520,8 +2520,24 @@ public:
 
     Jump branchTest64(ResultCondition cond, RegisterID reg, TrustedImm64 mask)
     {
-        move(mask, getCachedDataTempRegisterIDAndInvalidate());
-        return branchTest64(cond, reg, dataTempRegister);
+        if (mask.m_value == -1) {
+            if ((cond == Zero) || (cond == NonZero))
+                return Jump(makeCompareAndBranch<64>(static_cast<ZeroCondition>(cond), reg));
+            m_assembler.tst<64>(reg, reg);
+        } else if (hasOneBitSet(mask.m_value) && ((cond == Zero) || (cond == NonZero)))
+            return Jump(makeTestBitAndBranch(reg, getLSBSet(mask.m_value), static_cast<ZeroCondition>(cond)));
+        else {
+            LogicalImmediate logicalImm = LogicalImmediate::create64(mask.m_value);
+
+            if (logicalImm.isValid()) {
+                m_assembler.tst<64>(reg, logicalImm);
+                return Jump(makeBranch(cond));
+            }
+
+            move(mask, getCachedDataTempRegisterIDAndInvalidate());
+            m_assembler.tst<64>(reg, dataTempRegister);
+        }
+        return Jump(makeBranch(cond));
     }
 
     Jump branchTest64(ResultCondition cond, Address address, RegisterID mask)

@@ -1,3 +1,16 @@
+2016-08-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC][ARM64] Fix branchTest32/64 taking an immediate as mask
+        https://bugs.webkit.org/show_bug.cgi?id=160439
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/MathExtras.h:
+        (getLSBSet):
+        This was not working at all for MacroAssembler.
+        Since TrustedImm32/64 are signed integers, the arithmetic shift would
+        never get rid of the top bit and we get an infinite loop.
+
 2016-07-29  Mark Lam  <mark.lam@apple.com>
 
         Make StringView capable of being passed or returned in only 2 registers.

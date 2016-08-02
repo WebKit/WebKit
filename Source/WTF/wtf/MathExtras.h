@@ -215,9 +215,11 @@ template<typename T> inline bool hasTwoOrMoreBitsSet(T value)
 
 template <typename T> inline unsigned getLSBSet(T value)
 {
+    typedef typename std::make_unsigned<T>::type UnsignedT;
     unsigned result = 0;
 
-    while (value >>= 1)
+    UnsignedT unsignedValue = static_cast<UnsignedT>(value);
+    while (unsignedValue >>= 1)
         ++result;
 
     return result;

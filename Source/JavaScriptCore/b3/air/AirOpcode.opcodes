@@ -680,7 +680,7 @@ BranchTest8 U:G:32, U:G:8, U:G:8 /branch
 
 BranchTest32 U:G:32, U:G:32, U:G:32 /branch
     ResCond, Tmp, Tmp
-    x86: ResCond, Tmp, BitImm
+    ResCond, Tmp, BitImm
     x86: ResCond, Addr, BitImm
     x86: ResCond, Index, BitImm
 
@@ -688,6 +688,7 @@ BranchTest32 U:G:32, U:G:32, U:G:32 /branch
 # BranchTest32 in most cases where you use an immediate.
 64: BranchTest64 U:G:32, U:G:64, U:G:64 /branch
     ResCond, Tmp, Tmp
+    arm64: ResCond, Tmp, BitImm64
     x86: ResCond, Tmp, BitImm
     x86: ResCond, Addr, BitImm
     x86: ResCond, Addr, Tmp

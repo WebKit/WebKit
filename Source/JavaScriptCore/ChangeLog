@@ -1,3 +1,15 @@
+2016-08-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC][ARM64] Fix branchTest32/64 taking an immediate as mask
+        https://bugs.webkit.org/show_bug.cgi?id=160439
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchTest64):
+        * b3/air/AirOpcode.opcodes:
+        Fix the ARM64 codegen to lower BitImm64 without using a scratch register.
+
 2016-07-22  Filip Pizlo  <fpizlo@apple.com>
 
         [B3] Fusing immediates into test instructions should work again
