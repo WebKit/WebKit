@@ -55,21 +55,4 @@ EncodedJSValue JSC_HOST_CALL constructJSDOMFormData(ExecState& exec)
     return JSValue::encode(toJSNewlyCreated(&exec, jsConstructor->globalObject(), WTFMove(domFormData)));
 }
 
-JSValue JSDOMFormData::append(ExecState& exec)
-{
-    if (exec.argumentCount() >= 2) {
-        String name = exec.uncheckedArgument(0).toWTFString(&exec);
-        JSValue value = exec.uncheckedArgument(1);
-        if (value.inherits(JSBlob::info())) {
-            String filename;
-            if (exec.argumentCount() >= 3 && !exec.uncheckedArgument(2).isUndefinedOrNull())
-                filename = exec.uncheckedArgument(2).toWTFString(&exec);
-            wrapped().append(name, JSBlob::toWrapped(value), filename);
-        } else
-            wrapped().append(name, value.toWTFString(&exec));
-    }
-
-    return jsUndefined();
-}
-
 } // namespace WebCore

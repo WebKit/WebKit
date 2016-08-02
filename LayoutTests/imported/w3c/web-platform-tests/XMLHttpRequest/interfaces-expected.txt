@@ -120,8 +120,8 @@ PASS FormData interface object length
 PASS FormData interface object name 
 PASS FormData interface: existence and properties of interface prototype object 
 PASS FormData interface: existence and properties of interface prototype object's "constructor" property 
-FAIL FormData interface: operation append(USVString,Blob,USVString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL FormData interface: operation append(USVString,USVString) assert_equals: property has wrong .length expected 2 but got 0
+PASS FormData interface: operation append(USVString,Blob,USVString) 
+PASS FormData interface: operation append(USVString,USVString) 
 FAIL FormData interface: operation delete(USVString) assert_own_property: interface prototype object missing non-static operation expected property "delete" missing
 FAIL FormData interface: operation get(USVString) assert_own_property: interface prototype object missing non-static operation expected property "get" missing
 FAIL FormData interface: operation getAll(USVString) assert_own_property: interface prototype object missing non-static operation expected property "getAll" missing
@@ -131,13 +131,9 @@ FAIL FormData interface: operation set(USVString,USVString) assert_own_property:
 PASS FormData must be primary interface of new FormData() 
 PASS Stringification of new FormData() 
 PASS FormData interface: new FormData() must inherit property "append" with the proper type (0) 
-FAIL FormData interface: calling append(USVString,Blob,USVString) on new FormData() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS FormData interface: calling append(USVString,Blob,USVString) on new FormData() with too few arguments must throw TypeError 
 PASS FormData interface: new FormData() must inherit property "append" with the proper type (1) 
-FAIL FormData interface: calling append(USVString,USVString) on new FormData() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS FormData interface: calling append(USVString,USVString) on new FormData() with too few arguments must throw TypeError 
 FAIL FormData interface: new FormData() must inherit property "delete" with the proper type (2) assert_inherits: property "delete" not found in prototype chain
 FAIL FormData interface: calling delete(USVString) on new FormData() with too few arguments must throw TypeError assert_inherits: property "delete" not found in prototype chain
 FAIL FormData interface: new FormData() must inherit property "get" with the proper type (3) assert_inherits: property "get" not found in prototype chain
@@ -153,13 +149,9 @@ FAIL FormData interface: calling set(USVString,USVString) on new FormData() with
 PASS FormData must be primary interface of new FormData(form) 
 PASS Stringification of new FormData(form) 
 PASS FormData interface: new FormData(form) must inherit property "append" with the proper type (0) 
-FAIL FormData interface: calling append(USVString,Blob,USVString) on new FormData(form) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS FormData interface: calling append(USVString,Blob,USVString) on new FormData(form) with too few arguments must throw TypeError 
 PASS FormData interface: new FormData(form) must inherit property "append" with the proper type (1) 
-FAIL FormData interface: calling append(USVString,USVString) on new FormData(form) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS FormData interface: calling append(USVString,USVString) on new FormData(form) with too few arguments must throw TypeError 
 FAIL FormData interface: new FormData(form) must inherit property "delete" with the proper type (2) assert_inherits: property "delete" not found in prototype chain
 FAIL FormData interface: calling delete(USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "delete" not found in prototype chain
 FAIL FormData interface: new FormData(form) must inherit property "get" with the proper type (3) assert_inherits: property "get" not found in prototype chain

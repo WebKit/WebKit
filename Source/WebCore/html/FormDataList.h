@@ -34,7 +34,10 @@ public:
     public:
         Item() { }
         Item(const WTF::CString& data) : m_data(data) { }
-        Item(PassRefPtr<Blob> blob, const String& filename) : m_blob(blob), m_filename(filename) { }
+        Item(Ref<Blob>&& blob, const String& filename)
+            : m_blob(WTFMove(blob))
+            , m_filename(filename)
+        { }
 
         const WTF::CString& data() const { return m_data; }
         Blob* blob() const { return m_blob.get(); }
@@ -63,10 +66,10 @@ public:
         appendString(key);
         appendString(String::number(value));
     }
-    void appendBlob(const String& key, PassRefPtr<Blob> blob, const String& filename = String())
+    void appendBlob(const String& key, Ref<Blob>&& blob, const String& filename = String())
     {
         appendString(key);
-        appendBlob(blob, filename);
+        appendBlob(WTFMove(blob), filename);
     }
 
     const Vector<Item>& items() const { return m_items; }
@@ -75,7 +78,7 @@ public:
 private:
     void appendString(const CString&);
     void appendString(const String&);
-    void appendBlob(PassRefPtr<Blob>, const String& filename);
+    void appendBlob(Ref<Blob>&&, const String& filename);
 
     TextEncoding m_encoding;
     Vector<Item> m_items;

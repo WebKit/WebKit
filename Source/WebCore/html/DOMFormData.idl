@@ -35,10 +35,7 @@
     InterfaceName=FormData,
     ImplementationLacksVTable,
 ] interface DOMFormData {
-    // void append(DOMString name, DOMString value);
-    // void append(DOMString name, Blob value, optional DOMString filename);
-    [Custom] void append(optional DOMString name,
-                         optional DOMString value,
-                         optional DOMString filename);
+    void append(DOMString name, DOMString value);
+    void append(DOMString name, Blob value, optional DOMString filename);
 };
 

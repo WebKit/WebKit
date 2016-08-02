@@ -1,5 +1,14 @@
 2016-08-02  Chris Dumez  <cdumez@apple.com>
 
+        Drop custom bindings for FormData.append()
+        https://bugs.webkit.org/show_bug.cgi?id=160466
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+
+2016-08-02  Chris Dumez  <cdumez@apple.com>
+
         Named / Indexed properties should be configurable
         https://bugs.webkit.org/show_bug.cgi?id=160457
 

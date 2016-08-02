@@ -42,9 +42,9 @@ void FormDataList::appendString(const CString& s)
     m_items.append(s);
 }
 
-void FormDataList::appendBlob(PassRefPtr<Blob> blob, const String& filename)
+void FormDataList::appendBlob(Ref<Blob>&& blob, const String& filename)
 {
-    m_items.append(Item(blob, filename));
+    m_items.append(Item(WTFMove(blob), filename));
 }
 
 } // namespace

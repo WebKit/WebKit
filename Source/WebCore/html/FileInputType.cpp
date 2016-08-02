@@ -155,7 +155,7 @@ bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const
     }
 
     for (unsigned i = 0; i < numFiles; ++i)
-        encoding.appendBlob(element().name(), fileList->item(i));
+        encoding.appendBlob(element().name(), *fileList->item(i));
     return true;
 }
 
