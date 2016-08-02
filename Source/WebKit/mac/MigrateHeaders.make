@@ -224,21 +224,9 @@ all : \
 
 endif
 
-ifneq ($(filter ENABLE_IOS_TOUCH_EVENTS ENABLE_TOUCH_EVENTS, $(FEATURE_DEFINES)), )
-all : \
-    $(PRIVATE_HEADERS_DIR)/DOMTouch.h \
-    $(PRIVATE_HEADERS_DIR)/DOMTouchEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMTouchList.h
-endif
-
 ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS, $(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
 all : \
     $(PRIVATE_HEADERS_DIR)/WebEventRegion.h
-endif
-
-ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS, $(FEATURE_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)
-all : \
-    $(PRIVATE_HEADERS_DIR)/DOMGestureEvent.h
 endif
 
 WEBCORE_HEADER_REPLACE_RULES = -e 's/<WebCore\//<WebKitLegacy\//' -e s/DOMDOMImplementation/DOMImplementation/ -e "s/(^ *)WEBCORE_EXPORT /\1/"

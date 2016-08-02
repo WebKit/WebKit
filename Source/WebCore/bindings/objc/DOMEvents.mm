@@ -28,9 +28,7 @@
 #import "config.h"
 #import "DOMEventInternal.h"
 
-#import "DOMBeforeLoadEvent.h"
 #import "DOMKeyboardEvent.h"
-#import "DOMMessageEvent.h"
 #import "DOMMouseEvent.h"
 #import "DOMMutationEvent.h"
 #import "DOMOverflowEvent.h"
@@ -40,25 +38,13 @@
 #import "Event.h"
 #import "EventNames.h"
 
-#if ENABLE(TOUCH_EVENTS)
-#import "DOMTouchEvent.h"
-#endif
-
-#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
-#import "DOMGestureEvent.h"
-#endif
-
 using WebCore::eventNames;
 
 Class kitClass(WebCore::Event* impl)
 {
     switch (impl->eventInterface()) {
-    case WebCore::BeforeLoadEventInterfaceType:
-        return [DOMBeforeLoadEvent class];
     case WebCore::KeyboardEventInterfaceType:
         return [DOMKeyboardEvent class];
-    case WebCore::MessageEventInterfaceType:
-        return [DOMMessageEvent class];
     case WebCore::MouseEventInterfaceType:
         return [DOMMouseEvent class];
     case WebCore::MutationEventInterfaceType:
@@ -72,17 +58,6 @@ Class kitClass(WebCore::Event* impl)
         return [DOMTextEvent class];
     case WebCore::WheelEventInterfaceType:
         return [DOMWheelEvent class];
-
-#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
-    case WebCore::TouchEventInterfaceType:
-        return [DOMTouchEvent class];
-#endif
-
-#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
-    case WebCore::GestureEventInterfaceType:
-        return [DOMGestureEvent class];
-#endif
-
     default:
         if (impl->isUIEvent())
             return [DOMUIEvent class];

@@ -1,3 +1,15 @@
+2016-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove more unused/uninstalled Objective-C DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=160464
+
+        Reviewed by Darin Adler.
+
+        Update test results.
+
+        * platform/mac/fast/dom/wrapper-classes-objc-expected.txt:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+
 2016-08-02  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Extend new overload resolution algorithm support to constructors

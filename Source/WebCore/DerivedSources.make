@@ -261,14 +261,9 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/css/RGBColor.idl \
     $(WebCore)/css/Rect.idl \
     $(WebCore)/css/StyleMedia.idl \
-    $(WebCore)/css/WebKitCSSFilterValue.idl \
     $(WebCore)/css/CSSKeyframeRule.idl \
     $(WebCore)/css/CSSKeyframesRule.idl \
-    $(WebCore)/css/WebKitCSSRegionRule.idl \
-    $(WebCore)/css/WebKitCSSTransformValue.idl \
-    $(WebCore)/css/WebKitCSSViewportRule.idl \
     $(WebCore)/dom/Attr.idl \
-    $(WebCore)/dom/BeforeLoadEvent.idl \
     $(WebCore)/dom/BeforeUnloadEvent.idl \
     $(WebCore)/dom/CDATASection.idl \
     $(WebCore)/dom/CharacterData.idl \
@@ -303,8 +298,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/HashChangeEvent.idl \
     $(WebCore)/dom/KeyboardEvent.idl \
     $(WebCore)/dom/MessageChannel.idl \
-    $(WebCore)/dom/MessageEvent.idl \
-    $(WebCore)/dom/MessagePort.idl \
     $(WebCore)/dom/MouseEvent.idl \
     $(WebCore)/dom/MutationEvent.idl \
     $(WebCore)/dom/MutationObserver.idl \
@@ -471,8 +464,15 @@ JS_ONLY_BINDING_IDLS = \
 	$(WebCore)/css/StyleSheet.idl \
 	$(WebCore)/css/StyleSheetList.idl \
     $(WebCore)/css/WebKitCSSMatrix.idl \
+    $(WebCore)/css/WebKitCSSFilterValue.idl \
+    $(WebCore)/css/WebKitCSSRegionRule.idl \
+    $(WebCore)/css/WebKitCSSTransformValue.idl \
+    $(WebCore)/css/WebKitCSSViewportRule.idl \
 	$(WebCore)/dom/AnimationEvent.idl \
 	$(WebCore)/dom/AutocompleteErrorEvent.idl \
+	$(WebCore)/dom/BeforeLoadEvent.idl \
+	$(WebCore)/dom/MessageEvent.idl \
+	$(WebCore)/dom/MessagePort.idl \
 	$(WebCore)/dom/NodeFilter.idl \
 	$(WebCore)/dom/NodeIterator.idl \
 	$(WebCore)/dom/PageTransitionEvent.idl \
@@ -791,7 +791,7 @@ ADDITIONAL_EVENT_TARGET_FACTORY =
 
 -include WebCoreDerivedSourcesAdditions.make
 
-JS_AND_OBJC_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
+JS_ONLY_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 
 all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
 
@@ -803,7 +803,7 @@ $(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
 endif # MACOS
 
 ifneq ($(WTF_PLATFORM_IOS), 1)
-JS_AND_OBJC_BINDING_IDLS += \
+JS_ONLY_BINDING_IDLS += \
     $(WebCore)/dom/Touch.idl \
     $(WebCore)/dom/TouchEvent.idl \
     $(WebCore)/dom/TouchList.idl

@@ -48,12 +48,6 @@
 #import "DOMCSSValueList.h"
 #import "DOMInternal.h"
 #import "DOMStyleSheetInternal.h"
-#import "DOMWebKitCSSFilterValue.h"
-#import "DOMWebKitCSSTransformValue.h"
-
-#if ENABLE(CSS_REGIONS)
-#import "DOMWebKitCSSRegionRule.h"
-#endif
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 #import "DOMWebKitCSSViewportRule.h"
@@ -97,11 +91,11 @@ Class kitClass(WebCore::CSSRule* impl)
             return [DOMCSSSupportsRule class];
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         case DOM_WEBKIT_VIEWPORT_RULE:
-            return [DOMWebKitCSSViewportRule class];
+            return [DOMCSSRule class];
 #endif
 #if ENABLE(CSS_REGIONS)
         case DOM_WEBKIT_REGION_RULE:
-            return [DOMWebKitCSSRegionRule class];
+            return [DOMCSSRule class];
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -117,10 +111,6 @@ Class kitClass(WebCore::CSSValue* impl)
         case WebCore::CSSValue::CSS_PRIMITIVE_VALUE:
             return [DOMCSSPrimitiveValue class];
         case WebCore::CSSValue::CSS_VALUE_LIST:
-            if (impl->isWebKitCSSTransformValue())
-                return [DOMWebKitCSSTransformValue class];
-            if (impl->isWebKitCSSFilterValue())
-                return [DOMWebKitCSSFilterValue class];
             return [DOMCSSValueList class];
         case WebCore::CSSValue::CSS_INHERIT:
         case WebCore::CSSValue::CSS_INITIAL:

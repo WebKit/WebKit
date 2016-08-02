@@ -1,3 +1,14 @@
+2016-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove more unused/uninstalled Objective-C DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=160464
+
+        Reviewed by Darin Adler.
+
+        Stop installing unused headers.
+
+        * MigrateHeaders.make:
+
 2016-08-01  Anders Carlsson  <andersca@apple.com>
 
         Bring back a file - it needs to be copied by WebCore.
