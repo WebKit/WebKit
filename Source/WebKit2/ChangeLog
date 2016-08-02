@@ -1,3 +1,25 @@
+2016-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Database Process: ASSERTION FAILED: filePaths.size() == result.handles().size() with SANDBOX_EXTENSIONS disabled
+        https://bugs.webkit.org/show_bug.cgi?id=160398
+
+        Reviewed by Brady Eidson.
+
+        Same assert as in bug #160188, but this time in preregisterSandboxExtensionsIfNecessary.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseProcess.messages.in:
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::handleGetResult):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::preregisterSandboxExtensionsForOptionallyFileBackedBlob):
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Databases/DatabaseProcessProxy.messages.in:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::preregisterSandboxExtensionsIfNecessary):
+
 2016-08-01  Alex Christensen  <achristensen@webkit.org>
 
         _WKDownloadDelegate.didReceiveResponse should be called before decideDestinationWithSuggestedFilename

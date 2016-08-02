@@ -76,7 +76,9 @@ public:
     void accessToTemporaryFileComplete(const String& path) final;
 #endif
 
+#if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, std::function<void (SandboxExtension::HandleArray&&)> completionHandler);
+#endif
 
 private:
     DatabaseProcess();
@@ -105,9 +107,8 @@ private:
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
 #if ENABLE(SANDBOX_EXTENSIONS)
     void grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray&);
-#endif
-
     void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&&);
+#endif
 
 #if ENABLE(INDEXED_DATABASE)
     Vector<RefPtr<WebCore::SecurityOrigin>> indexedDatabaseOrigins();

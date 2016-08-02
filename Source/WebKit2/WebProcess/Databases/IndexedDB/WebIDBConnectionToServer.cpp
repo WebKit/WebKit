@@ -258,7 +258,9 @@ static void preregisterSandboxExtensionsIfNecessary(const WebIDBResult& result)
 
     const auto& filePaths = result.resultData().getResult().value().blobFilePaths();
 
+#if ENABLE(SANDBOX_EXTENSIONS)
     ASSERT(filePaths.size() == result.handles().size());
+#endif
 
     if (!filePaths.isEmpty())
         WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::PreregisterSandboxExtensionsForOptionallyFileBackedBlob(filePaths, result.handles()), 0);
