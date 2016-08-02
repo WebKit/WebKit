@@ -1902,3 +1902,6 @@ webkit.org/b/159881 [ Release ] fast/shapes/shape-outside-floats/shape-outside-b
 webkit.org/b/159427 http/tests/loading/basic-credentials-sent-automatically.html [ Pass Failure ]
 
 webkit.org/b/160368 [ Release ] http/tests/xmlhttprequest/workers/methods-async.html [ Pass Timeout ]
+
+webkit.org/b/160367 media/track/media-element-enqueue-event-crash.html [ Pass Crash ]
+webkit.org/b/160367 media/track/track-remove-crash.html [ Pass Crash ]
