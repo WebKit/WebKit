@@ -12,11 +12,11 @@ PASS aNode.isSameNode(void 0) is false
 PASS aNode.lookupPrefix(aDOMImplementation) is null
 PASS aNode.lookupPrefix(void 0) is null
 PASS aNode.cloneNode(aDOMImplementation) instanceof HTMLDivElement is true
-PASS aSelect.add(aDOMImplementation, aDOMImplementation) threw exception TypeError: Type error.
-PASS aSelect.add(aDOMImplementation, anOption) threw exception TypeError: Type error.
+PASS aSelect.add(aDOMImplementation, aDOMImplementation) threw exception TypeError: Argument 1 ('element') to HTMLSelectElement.add must be an instance of HTMLElement.
+PASS aSelect.add(aDOMImplementation, anOption) threw exception TypeError: Argument 1 ('element') to HTMLSelectElement.add must be an instance of HTMLElement.
 PASS aSelect.add(anOption, aDOMImplementation) is undefined.
-PASS aSelect.add(void 0, void 0) threw exception TypeError: Type error.
-PASS aSelect.add(void 0, anOption) threw exception TypeError: Type error.
+PASS aSelect.add(void 0, void 0) threw exception TypeError: Argument 1 ('element') to HTMLSelectElement.add must be an instance of HTMLElement.
+PASS aSelect.add(void 0, anOption) threw exception TypeError: Argument 1 ('element') to HTMLSelectElement.add must be an instance of HTMLElement.
 PASS aSelect.add(anOption, void 0) is undefined.
 PASS successfullyParsed is true
 

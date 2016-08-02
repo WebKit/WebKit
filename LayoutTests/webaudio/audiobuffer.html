@@ -49,7 +49,7 @@ try {
     testPassed("Exception has been thrown correctly when index is not less than numberOfChannels.");
 }
 
-shouldThrow("context.createBuffer(null, false)", "'TypeError: Type error'");
+shouldThrowErrorName("context.createBuffer(null, false)", "TypeError");
 
 </script>
 

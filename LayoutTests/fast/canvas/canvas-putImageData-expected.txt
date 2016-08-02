@@ -144,7 +144,7 @@ PASS getPixel(1,1) is [0,128,0,255]
 PASS getPixel(9,9) is [0,128,0,255]
 PASS getPixel(1,1) is [0,128,0,255]
 PASS getPixel(9,9) is [0,128,0,255]
-PASS context.putImageData({}, 0, 0) threw exception TypeError: Type error.
+PASS context.putImageData({}, 0, 0) threw exception TypeError: Argument 1 ('imagedata') to CanvasRenderingContext2D.putImageData must be an instance of ImageData.
 PASS context.putImageData(buffer, NaN, 0, 0, 0, 0, 0) threw exception TypeError: The provided value is non-finite.
 PASS context.putImageData(buffer, 0, NaN, 0, 0, 0, 0) threw exception TypeError: The provided value is non-finite.
 PASS context.putImageData(buffer, 0, 0, NaN, 0, 0, 0) threw exception TypeError: The provided value is non-finite.

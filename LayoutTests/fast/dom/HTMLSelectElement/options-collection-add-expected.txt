@@ -9,9 +9,9 @@ PASS testAdd() threw exception TypeError: Not enough arguments.
 
 Call HTMLOptionsCollection.add() with only one argument:
 PASS testAdd(createOption("Y9")) is "0,1,2,Y9"
-PASS testAdd("foo") threw exception TypeError: Type error.
-PASS testAdd(undefined) threw exception TypeError: Type error.
-PASS testAdd(null) threw exception TypeError: Type error.
+PASS testAdd("foo") threw exception TypeError: Argument 1 ('element') to HTMLOptionsCollection.add must be an instance of HTMLElement.
+PASS testAdd(undefined) threw exception TypeError: Argument 1 ('element') to HTMLOptionsCollection.add must be an instance of HTMLElement.
+PASS testAdd(null) threw exception TypeError: Argument 1 ('element') to HTMLOptionsCollection.add must be an instance of HTMLElement.
 
 Call HTMLOptionsCollection.add() with two arguments:
 PASS testAdd(createGroup("Y1", "Y2"), null) is "0,1,2,Y1,Y2"
@@ -52,9 +52,9 @@ PASS testAdd(createOption("X"), mySelect.options[1]) is "0,X,1,2"
 PASS testAdd(createOption("X"), mySelect.options[2]) is "0,1,X,2"
 PASS testAdd(createOption("Y25"), 0, 1) is "Y25,0,1,2"
 PASS testAdd(createOption("Y25"), mySelect.options[0], 1) is "Y25,0,1,2"
-PASS testAdd("foo", 0) threw exception TypeError: Type error.
-PASS testAdd(undefined, 0) threw exception TypeError: Type error.
-PASS testAdd(null, 0) threw exception TypeError: Type error.
+PASS testAdd("foo", 0) threw exception TypeError: Argument 1 ('element') to HTMLOptionsCollection.add must be an instance of HTMLElement.
+PASS testAdd(undefined, 0) threw exception TypeError: Argument 1 ('element') to HTMLOptionsCollection.add must be an instance of HTMLElement.
+PASS testAdd(null, 0) threw exception TypeError: Argument 1 ('element') to HTMLOptionsCollection.add must be an instance of HTMLElement.
 
 Call HTMLOptionsCollection.add() with three arguments (when it only takes two arguments):
 PASS testAdd(createOption("X"), 0, "unnecessary extra argument - should be ignored") is "X,0,1,2"

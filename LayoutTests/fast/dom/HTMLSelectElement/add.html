@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script src="resources/html-select-and-options-collection-utilities.js"></script>
 </head>
 <body>
@@ -23,9 +23,9 @@ shouldThrow("testAdd()");
 
 debug("<br>Call HTMLSelectElement.add() with one argument:");
 shouldBeEqualToString('testAdd(createOption("Y1"))', "0,1,2,Y1");
-shouldThrow('testAdd("foo")');
-shouldThrow("testAdd(undefined)");
-shouldThrow("testAdd(null)");
+shouldThrowErrorName('testAdd("foo")', "TypeError");
+shouldThrowErrorName("testAdd(undefined)", "TypeError");
+shouldThrowErrorName("testAdd(null)", "TypeError");
 
 debug("<br>Call HTMLSelectElement.add() with two arguments:");
 shouldBeEqualToString('testAdd(createOption("Y2"), null)', "0,1,2,Y2");
@@ -54,13 +54,14 @@ shouldBeEqualToString('testAdd(createOption("Y24"), -2)', "0,1,2,Y24");
 shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[0])', "X,0,1,2");
 shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[1])', "0,X,1,2");
 shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[2])', "0,1,X,2");
-shouldThrow('testAdd("foo", 0)', "'TypeError: Type error'");
-shouldThrow('testAdd(undefined, 0)', "'TypeError: Type error'");
-shouldThrow('testAdd(null, 0)', "'TypeError: Type error'");
+shouldThrowErrorName('testAdd("foo", 0)', "TypeError");
+shouldThrowErrorName('testAdd(undefined, 0)', "TypeError");
+shouldThrowErrorName('testAdd(null, 0)', "TypeError");
 
 debug("<br>Call HTMLSelectElement.add() with three arguments (when it only takes two arguments):");
 shouldBeEqualToString('testAdd(createOption("X"), 0, "unnecessary extra argument - should be ignored")', "X,0,1,2");
 shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[1], "unnecessary extra argument - should be ignored")', "0,X,1,2");
 </script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

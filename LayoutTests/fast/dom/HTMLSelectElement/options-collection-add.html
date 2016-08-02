@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script src="resources/html-select-and-options-collection-utilities.js"></script>
 </head>
 <body>
@@ -29,9 +29,9 @@ shouldThrow("testAdd()");
 
 debug("<br>Call HTMLOptionsCollection.add() with only one argument:");
 shouldBeEqualToString('testAdd(createOption("Y9"))', "0,1,2,Y9");
-shouldThrow('testAdd("foo")');
-shouldThrow("testAdd(undefined)");
-shouldThrow("testAdd(null)");
+shouldThrowErrorName('testAdd("foo")', "TypeError");
+shouldThrowErrorName("testAdd(undefined)", "TypeError");
+shouldThrowErrorName("testAdd(null)", "TypeError");
 
 debug("<br>Call HTMLOptionsCollection.add() with two arguments:");
 shouldBeEqualToString('testAdd(createGroup("Y1", "Y2"), null)', "0,1,2,Y1,Y2");
@@ -76,14 +76,15 @@ shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[1])', "0,X,1,
 shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[2])', "0,1,X,2");
 shouldBeEqualToString('testAdd(createOption("Y25"), 0, 1)', "Y25,0,1,2");
 shouldBeEqualToString('testAdd(createOption("Y25"), mySelect.options[0], 1)', "Y25,0,1,2");
-shouldThrow('testAdd("foo", 0)', "'TypeError: Type error'");
-shouldThrow('testAdd(undefined, 0)', "'TypeError: Type error'");
-shouldThrow('testAdd(null, 0)', "'TypeError: Type error'");
+shouldThrowErrorName('testAdd("foo", 0)', "TypeError");
+shouldThrowErrorName('testAdd(undefined, 0)', "TypeError");
+shouldThrowErrorName('testAdd(null, 0)', "TypeError");
 
 debug("<br>Call HTMLOptionsCollection.add() with three arguments (when it only takes two arguments):");
 shouldBeEqualToString('testAdd(createOption("X"), 0, "unnecessary extra argument - should be ignored")', "X,0,1,2");
 shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[1], "unnecessary extra argument - should be ignored")', "0,X,1,2");
 shouldBeEqualToString('testAdd(createGroup("G1", "G2"), 1, "unnecessary extra argument - should be ignored")', "0,G1,G2,1,2");
 </script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -266,7 +266,7 @@ enum TestConfidence { "high", "kinda-low" };
     // FIXME: Implement support for overloaded functions with variadic arguments.
     void    overloadedMethod(Blob... blobArgs);
 
-    void overloadedMethodWithOptionalParameter(TestObj? objArg1, optional TestObj? objArg2 = null);
+    void overloadedMethodWithOptionalParameter(DOMString strArg, optional TestObj? objArg = null);
     void overloadedMethodWithOptionalParameter(TestObj? objArg, optional long longArg);
 #endif
 
@@ -277,7 +277,7 @@ enum TestConfidence { "high", "kinda-low" };
 
     // Static method with conditional on overloaded methods
     [Conditional=Condition1] static void overloadedMethod1(long arg);
-    [Conditional=Condition1] static void overloadedMethod1([StrictTypeChecking] DOMString type);
+    [Conditional=Condition1] static void overloadedMethod1(DOMString type);
 
     void classMethodWithClamp([Clamp] unsigned short objArgsShort, [Clamp] unsigned long objArgsLong);
     void classMethodWithEnforceRange([EnforceRange] unsigned short objArgsShort, [EnforceRange] unsigned long objArgsLong);

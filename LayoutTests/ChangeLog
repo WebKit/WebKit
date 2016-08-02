@@ -1,3 +1,33 @@
+2016-08-02  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Implement overload resolution algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=160394
+
+        Reviewed by Darin Adler.
+
+        Update / Rebaseline existing test. There is no major behavior change.
+        We sometimes get a different exception message than we used to.
+
+        * fast/canvas/canvas-clip-path-expected.txt:
+        * fast/canvas/canvas-fill-path-expected.txt:
+        * fast/canvas/canvas-path-addPath-expected.txt:
+        * fast/canvas/canvas-path-isPointInPath-expected.txt:
+        * fast/canvas/canvas-path-isPointInStroke-expected.txt:
+        * fast/canvas/canvas-putImageData-expected.txt:
+        * fast/canvas/canvas-putImageData.js:
+        * fast/canvas/canvas-stroke-path-expected.txt:
+        * fast/canvas/webgl/script-tests/texImageTest.js:
+        * fast/canvas/webgl/texImageTest-expected.txt:
+        * fast/dom/HTMLSelectElement/add-expected.txt:
+        * fast/dom/HTMLSelectElement/add.html:
+        * fast/dom/HTMLSelectElement/options-collection-add-expected.txt:
+        * fast/dom/HTMLSelectElement/options-collection-add.html:
+        * fast/dom/incompatible-operations-expected.txt:
+        * js/dom/select-options-add-expected.txt:
+        * webaudio/audiobuffer-expected.txt:
+        * webaudio/audiobuffer.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-with-invalid-data.html:
+
 2016-08-02  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed test gardening.

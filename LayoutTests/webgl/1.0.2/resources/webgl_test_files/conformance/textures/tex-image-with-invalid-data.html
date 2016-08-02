@@ -71,7 +71,7 @@ function test(desc, func, expected) {
         exc = x;
     }
 
-    if (expected == gl.INVALID_OPERATION) {
+    if (expected == gl.INVALID_OPERATION || expected == gl.INVALID_VALUE) {
       glErrorShouldBe(gl, expected);
     } else if (expected == "exception") {
         if (exc) {
@@ -89,17 +89,18 @@ test("Passing a buffer not large enough to texImage2D should generate an INVALID
      },
      gl.INVALID_OPERATION);
 
-test("Passing texImage2D parameter data of Number type should throw an exception",
+// We do not do strict type checking for ArrayBufferView type.
+test("Passing texImage2D parameter data of Number type should generate an INVALID_OPERATION",
      function () {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, 42);
      },
-     "exception");
+     gl.INVALID_OPERATION);
 
-test("Passing texImage2D parameter data of String type should throw a TypeError",
+test("Passing texImage2D parameter data of String type should generate an INVALID_OPERATION",
      function () {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, "not a buffer");
      },
-     "exception");
+     gl.INVALID_OPERATION);
 test("Passing a buffer not large enough to texSubImage2D should generate an INVALID_OPERATION",
      function () {
         var tooSmall = new Uint8Array(64);
@@ -107,17 +108,17 @@ test("Passing a buffer not large enough to texSubImage2D should generate an INVA
      },
      gl.INVALID_OPERATION);
 
-test("Passing texSubImage2D parameter data of Number type should throw a TypeError",
+test("Passing texSubImage2D parameter data of Number type should generate an INVALID_VALUE",
      function () {
         gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, 42);
      },
-     "exception");
+     gl.INVALID_VALUE);
 
-test("Passing texSubImage2D parameter data of String type should throw a TypeError",
+test("Passing texSubImage2D parameter data of String type should generate an INVALID_VALUE",
      function () {
         gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, "not a buffer");
      },
-     "exception");
+     gl.INVALID_VALUE);
 
 debug("");
 var successfullyParsed = true;

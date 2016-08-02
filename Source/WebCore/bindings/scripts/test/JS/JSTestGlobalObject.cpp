@@ -398,19 +398,17 @@ static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation(ExecState* state)
 {
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
 #if ENABLE(TEST_FEATURE)
-    if (argsCount == 1)
+        if (distinguishingArg.isNumber())
+            return jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2(state);
+#endif
+#if ENABLE(TEST_FEATURE)
         return jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1(state);
 #endif
-
-#if ENABLE(TEST_FEATURE)
-    if (argsCount == 1)
-        return jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2(state);
-#endif
-
-    if (UNLIKELY(argsCount < 1))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
-    return throwVMTypeError(state);
+    }
+    return argsCount < 1 ? throwVMError(state, createNotEnoughArgumentsError(state)) : throwVMTypeError(state);
 }
 
 #if ENABLE(TEST_FEATURE)

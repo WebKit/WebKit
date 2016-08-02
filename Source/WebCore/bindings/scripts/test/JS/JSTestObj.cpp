@@ -3869,19 +3869,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation(ExecState* state)
 {
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
 #if ENABLE(TEST_FEATURE)
-    if (argsCount == 1)
+        if (distinguishingArg.isNumber())
+            return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2(state);
+#endif
+#if ENABLE(TEST_FEATURE)
         return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1(state);
 #endif
-
-#if ENABLE(TEST_FEATURE)
-    if (argsCount == 1)
-        return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2(state);
-#endif
-
-    if (UNLIKELY(argsCount < 1))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
-    return throwVMTypeError(state);
+    }
+    return argsCount < 1 ? throwVMError(state, createNotEnoughArgumentsError(state)) : throwVMTypeError(state);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* state)
@@ -5422,34 +5420,41 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecState* state)
 {
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
-    JSValue arg0(state->argument(0));
-    JSValue arg1(state->argument(1));
-    if ((argsCount == 2 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))) && (arg1.isUndefinedOrNull() || arg1.isString() || arg1.isObject())))
-        return jsTestObjPrototypeFunctionOverloadedMethod1(state);
-    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
-        return jsTestObjPrototypeFunctionOverloadedMethod2(state);
-    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || arg0.isString() || arg0.isObject())))
-        return jsTestObjPrototypeFunctionOverloadedMethod3(state);
-    if (argsCount == 1)
-        return jsTestObjPrototypeFunctionOverloadedMethod4(state);
-    if ((argsCount == 1 && (arg0.isNull() || arg0.isObject())))
-        return jsTestObjPrototypeFunctionOverloadedMethod5(state);
-    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSDOMStringList::info())))))
-        return jsTestObjPrototypeFunctionOverloadedMethod6(state);
-    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && isJSArray(arg0)))))
-        return jsTestObjPrototypeFunctionOverloadedMethod7(state);
-    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
-        return jsTestObjPrototypeFunctionOverloadedMethod8(state);
-    if ((argsCount == 1 && ((arg0.isObject() && isJSArray(arg0)))))
-        return jsTestObjPrototypeFunctionOverloadedMethod9(state);
-    if ((argsCount == 1 && ((arg0.isObject() && isJSArray(arg0)))))
-        return jsTestObjPrototypeFunctionOverloadedMethod10(state);
-    if (argsCount == 1)
-        return jsTestObjPrototypeFunctionOverloadedMethod11(state);
-    if ()
+    if (argsCount == 0) {
         return jsTestObjPrototypeFunctionOverloadedMethod12(state);
-    if (UNLIKELY(argsCount < 1))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
+    }
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
+        if (distinguishingArg.isUndefinedOrNull())
+            return jsTestObjPrototypeFunctionOverloadedMethod2(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethod2(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestCallback::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethod5(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSDOMStringList::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethod6(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethod8(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethod12(state);
+        if (distinguishingArg.isObject() && isJSArray(distinguishingArg))
+            return jsTestObjPrototypeFunctionOverloadedMethod7(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->type() != RegExpObjectType)
+            return jsTestObjPrototypeFunctionOverloadedMethod5(state);
+        if (distinguishingArg.isNumber())
+            return jsTestObjPrototypeFunctionOverloadedMethod4(state);
+        return jsTestObjPrototypeFunctionOverloadedMethod3(state);
+    }
+    if (argsCount == 2) {
+        JSValue distinguishingArg = state->uncheckedArgument(1);
+        if (distinguishingArg.isUndefined())
+            return jsTestObjPrototypeFunctionOverloadedMethod2(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethod12(state);
+        if (distinguishingArg.isNumber())
+            return jsTestObjPrototypeFunctionOverloadedMethod2(state);
+        return jsTestObjPrototypeFunctionOverloadedMethod1(state);
+    }
     return throwVMTypeError(state);
 }
 
@@ -5463,19 +5468,16 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptio
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    TestObj* objArg1 = nullptr;
-    if (!state->argument(0).isUndefinedOrNull()) {
-        objArg1 = JSTestObj::toWrapped(state->uncheckedArgument(0));
-        if (UNLIKELY(!objArg1))
-            return throwArgumentTypeError(*state, 0, "objArg1", "TestObject", "overloadedMethodWithOptionalParameter", "TestObj");
-    }
-    TestObj* objArg2 = nullptr;
+    auto strArg = state->argument(0).toWTFString(state);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    TestObj* objArg = nullptr;
     if (!state->argument(1).isUndefinedOrNull()) {
-        objArg2 = JSTestObj::toWrapped(state->uncheckedArgument(1));
-        if (UNLIKELY(!objArg2))
-            return throwArgumentTypeError(*state, 1, "objArg2", "TestObject", "overloadedMethodWithOptionalParameter", "TestObj");
+        objArg = JSTestObj::toWrapped(state->uncheckedArgument(1));
+        if (UNLIKELY(!objArg))
+            return throwArgumentTypeError(*state, 1, "objArg", "TestObject", "overloadedMethodWithOptionalParameter", "TestObj");
     }
-    impl.overloadedMethodWithOptionalParameter(WTFMove(objArg1), WTFMove(objArg2));
+    impl.overloadedMethodWithOptionalParameter(WTFMove(strArg), WTFMove(objArg));
     return JSValue::encode(jsUndefined());
 }
 
@@ -5505,15 +5507,23 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptio
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter(ExecState* state)
 {
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
-    JSValue arg0(state->argument(0));
-    JSValue arg1(state->argument(1));
-    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))) && (arg1.isUndefinedOrNull() || (arg1.isObject() && asObject(arg1)->inherits(JSTestObj::info())))))
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
+        if (distinguishingArg.isUndefinedOrNull())
+            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
         return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
-    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
-        return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
-    if (UNLIKELY(argsCount < 1))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
-    return throwVMTypeError(state);
+    }
+    if (argsCount == 2) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
+        if (distinguishingArg.isUndefinedOrNull())
+            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
+        return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
+    }
+    return argsCount < 1 ? throwVMError(state, createNotEnoughArgumentsError(state)) : throwVMTypeError(state);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(ExecState* state)
@@ -5569,20 +5579,17 @@ static inline EncodedJSValue jsTestObjConstructorFunctionOverloadedMethod12(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecState* state)
 {
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
 #if ENABLE(Condition1)
-    if (argsCount == 1)
-        return jsTestObjConstructorFunctionOverloadedMethod11(state);
+        if (distinguishingArg.isNumber())
+            return jsTestObjConstructorFunctionOverloadedMethod11(state);
 #endif
-
-    JSValue arg0(state->argument(0));
 #if ENABLE(Condition1)
-    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || arg0.isString() || arg0.isObject())))
         return jsTestObjConstructorFunctionOverloadedMethod12(state);
 #endif
-
-    if (UNLIKELY(argsCount < 1))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
-    return throwVMTypeError(state);
+    }
+    return argsCount < 1 ? throwVMError(state, createNotEnoughArgumentsError(state)) : throwVMTypeError(state);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(ExecState* state)
@@ -6082,14 +6089,15 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloadedFunction(ExecState* state)
 {
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
-    if (argsCount == 1)
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSFetchRequest::info()))
+            return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2(state);
+        if (distinguishingArg.isNumber())
+            return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1(state);
         return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1(state);
-    JSValue arg0(state->argument(0));
-    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSFetchRequest::info())))))
-        return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2(state);
-    if (UNLIKELY(argsCount < 1))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
-    return throwVMTypeError(state);
+    }
+    return argsCount < 1 ? throwVMError(state, createNotEnoughArgumentsError(state)) : throwVMTypeError(state);
 }
 
 static EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise(ExecState*, JSPromiseDeferred*);

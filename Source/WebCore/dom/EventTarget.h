@@ -139,8 +139,8 @@ public:
         bool once;
     };
 
-    void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture);
-    void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture);
+    void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture = false);
+    void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture = false);
     void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const AddEventListenerOptions&);
     void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const ListenerOptions&);
     virtual bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { });

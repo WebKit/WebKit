@@ -201,7 +201,7 @@ pixelShouldBe(1, 1, [0, 128,0,255]);
 pixelShouldBe(9, 9, [0, 128,0,255]);
 
 
-shouldThrow("context.putImageData({}, 0, 0)", "'TypeError: Type error'");
+shouldThrowErrorName("context.putImageData({}, 0, 0)", "TypeError");
 shouldThrow("context.putImageData(buffer, NaN, 0, 0, 0, 0, 0)", "'TypeError: The provided value is non-finite'");
 shouldThrow("context.putImageData(buffer, 0, NaN, 0, 0, 0, 0)", "'TypeError: The provided value is non-finite'");
 shouldThrow("context.putImageData(buffer, 0, 0, NaN, 0, 0, 0)", "'TypeError: The provided value is non-finite'");

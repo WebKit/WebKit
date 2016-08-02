@@ -31,14 +31,14 @@ PASS ctx.fill(Number.MAX_VALUE) threw exception TypeError: Argument 1 ('winding'
 PASS ctx.fill(function() {}) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
 PASS ctx.fill(false) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
 PASS ctx.fill(new Date()) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
-PASS ctx.fill(0, 'nonzero') threw exception TypeError: Type error.
-PASS ctx.fill(null, 'nonzero') threw exception TypeError: Type error.
-PASS ctx.fill('path2d', 'nonzero') threw exception TypeError: Type error.
+PASS ctx.fill(0, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.fill must be an instance of DOMPath.
+PASS ctx.fill(null, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.fill must be an instance of DOMPath.
+PASS ctx.fill('path2d', 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.fill must be an instance of DOMPath.
 FAIL ctx.fill(undefined) should throw an exception. Was undefined.
-PASS ctx.fill(Number.MAX_VALUE, 'nonzero') threw exception TypeError: Type error.
-PASS ctx.fill(function() {}, 'nonzero') threw exception TypeError: Type error.
-PASS ctx.fill(false, 'nonzero') threw exception TypeError: Type error.
-PASS ctx.fill(new Date(), 'nonzero') threw exception TypeError: Type error.
+PASS ctx.fill(Number.MAX_VALUE, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.fill must be an instance of DOMPath.
+PASS ctx.fill(function() {}, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.fill must be an instance of DOMPath.
+PASS ctx.fill(false, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.fill must be an instance of DOMPath.
+PASS ctx.fill(new Date(), 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.fill must be an instance of DOMPath.
 PASS successfullyParsed is true
 
 TEST COMPLETE

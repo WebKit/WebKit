@@ -25,7 +25,7 @@ shouldBeUndefined("context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, conte
 
 shouldThrow("context.texSubImage2D(context.TEXTURE_2D)");
 shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, 0, context.RGBA, context.UNSIGNED_BYTE, null)");
-shouldThrow("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, 0, context.RGBA, context.UNSIGNED_BYTE, 0)");
+shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, 0, context.RGBA, context.UNSIGNED_BYTE, 0)"); // We do not do strict type checking on ArrayBufferView.
 shouldThrow("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, context.UNSIGNED_BYTE, 0)");
 shouldBeUndefined("context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, false)");
 shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, context.RGBA, context.UNSIGNED_BYTE, imageData)");

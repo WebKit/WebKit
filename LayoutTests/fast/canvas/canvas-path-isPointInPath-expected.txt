@@ -10,20 +10,20 @@ PASS ctx.isPointInPath(path, 50, 50, 'nonzero') is true
 PASS ctx.isPointInPath(path, 50, 50, 'evenodd') is false
 PASS ctx.isPointInPath(path, 50, 50, 'nonzero') is false
 PASS ctx.isPointInPath(null, 50, 50) threw exception TypeError: Argument 3 ('winding') to CanvasRenderingContext2D.isPointInPath must be one of: "nonzero", "evenodd".
-PASS ctx.isPointInPath(null, 50, 50, 'nonzero') threw exception TypeError: Type error.
-PASS ctx.isPointInPath(null, 50, 50, 'evenodd') threw exception TypeError: Type error.
+PASS ctx.isPointInPath(null, 50, 50, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath(null, 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
 PASS ctx.isPointInPath([], 50, 50) threw exception TypeError: Argument 3 ('winding') to CanvasRenderingContext2D.isPointInPath must be one of: "nonzero", "evenodd".
-PASS ctx.isPointInPath([], 50, 50, 'nonzero') threw exception TypeError: Type error.
-PASS ctx.isPointInPath([], 50, 50, 'evenodd') threw exception TypeError: Type error.
+PASS ctx.isPointInPath([], 50, 50, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath([], 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
 PASS ctx.isPointInPath({}, 50, 50) threw exception TypeError: Argument 3 ('winding') to CanvasRenderingContext2D.isPointInPath must be one of: "nonzero", "evenodd".
-PASS ctx.isPointInPath({}, 50, 50, 'nonzero') threw exception TypeError: Type error.
-PASS ctx.isPointInPath({}, 50, 50, 'evenodd') threw exception TypeError: Type error.
-PASS ctx.isPointInPath('path2d', 50, 50, 'evenodd') threw exception TypeError: Type error.
-PASS ctx.isPointInPath(undefined, 50, 50, 'evenodd') threw exception TypeError: Type error.
-PASS ctx.isPointInPath(Number.MAX_VALUE, 50, 50, 'evenodd') threw exception TypeError: Type error.
-PASS ctx.isPointInPath(function() {}, 50, 50, 'evenodd') threw exception TypeError: Type error.
-PASS ctx.isPointInPath(false, 50, 50, 'evenodd') threw exception TypeError: Type error.
-PASS ctx.isPointInPath(new Date(), 50, 50, 'evenodd') threw exception TypeError: Type error.
+PASS ctx.isPointInPath({}, 50, 50, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath({}, 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath('path2d', 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath(undefined, 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath(Number.MAX_VALUE, 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath(function() {}, 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath(false, 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
+PASS ctx.isPointInPath(new Date(), 50, 50, 'evenodd') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInPath must be an instance of DOMPath.
 PASS successfullyParsed is true
 
 TEST COMPLETE

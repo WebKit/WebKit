@@ -53,9 +53,13 @@
     HTMLOptionElement? namedItem(DOMString name);
 #endif
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void add(HTMLElement element, optional HTMLElement? before = null);
+    [ObjCLegacyUnnamedParameters, RaisesException] void add(HTMLElement element, HTMLElement? before);
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [RaisesException] void add(HTMLElement element, optional long index = 0);
+    // FIXME: Should be:
+    // void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
+    [RaisesException] void add(HTMLElement element, long index);
+    [RaisesException] void add(HTMLElement element);
+
     // In JavaScript, we support both option index and option object parameters.
     // As of this writing this cannot be auto-generated.
     [Custom] void remove(/* indexOrOption */);

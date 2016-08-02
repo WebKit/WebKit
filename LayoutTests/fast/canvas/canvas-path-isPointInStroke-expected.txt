@@ -21,9 +21,9 @@ PASS ctx.isPointInStroke(path,70,122) is false
 PASS ctx.isPointInStroke(path,18,70) is false
 PASS ctx.isPointInStroke(path,NaN,122) is false
 PASS ctx.isPointInStroke(path,18,NaN) is false
-PASS ctx.isPointInStroke(null,70,20) threw exception TypeError: Type error.
-PASS ctx.isPointInStroke([],20,70) threw exception TypeError: Type error.
-PASS ctx.isPointInStroke({},120,70) threw exception TypeError: Type error.
+PASS ctx.isPointInStroke(null,70,20) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInStroke must be an instance of DOMPath.
+PASS ctx.isPointInStroke([],20,70) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInStroke must be an instance of DOMPath.
+PASS ctx.isPointInStroke({},120,70) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.isPointInStroke must be an instance of DOMPath.
 PASS ctx.isPointInPath('path2d', 50, 50) threw exception TypeError: Argument 3 ('winding') to CanvasRenderingContext2D.isPointInPath must be one of: "nonzero", "evenodd".
 PASS ctx.isPointInPath(undefined, 50, 50) threw exception TypeError: Argument 3 ('winding') to CanvasRenderingContext2D.isPointInPath must be one of: "nonzero", "evenodd".
 PASS ctx.isPointInPath(Number.MAX_VALUE, 50, 50) threw exception TypeError: Argument 3 ('winding') to CanvasRenderingContext2D.isPointInPath must be one of: "nonzero", "evenodd".
