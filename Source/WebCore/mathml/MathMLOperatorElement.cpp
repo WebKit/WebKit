@@ -35,6 +35,7 @@
 namespace WebCore {
 
 using namespace MathMLNames;
+using namespace MathMLOperatorDictionary;
 
 MathMLOperatorElement::MathMLOperatorElement(const QualifiedName& tagName, Document& document)
     : MathMLTextElement(tagName, document)
@@ -60,21 +61,87 @@ UChar MathMLOperatorElement::parseOperatorText(const String& string)
 
 UChar MathMLOperatorElement::operatorText()
 {
-    if (m_operatorText)
-        return m_operatorText.value();
-
-    m_operatorText = parseOperatorText(textContent());
+    if (!m_operatorText)
+        m_operatorText = parseOperatorText(textContent());
     return m_operatorText.value();
+}
+
+MathMLOperatorElement::DictionaryProperty MathMLOperatorElement::computeDictionaryProperty()
+{
+    DictionaryProperty dictionaryProperty;
+
+    // We first determine the form attribute and use the default spacing and properties.
+    const auto& value = attributeWithoutSynchronization(formAttr);
+    bool explicitForm = true;
+    if (value == "prefix")
+        dictionaryProperty.form = Prefix;
+    else if (value == "infix")
+        dictionaryProperty.form = Infix;
+    else if (value == "postfix")
+        dictionaryProperty.form = Postfix;
+    else {
+        // FIXME: We should use more advanced heuristics indicated in the specification to determine the operator form (https://bugs.webkit.org/show_bug.cgi?id=124829).
+        explicitForm = false;
+        if (!previousSibling() && nextSibling())
+            dictionaryProperty.form = Prefix;
+        else if (previousSibling() && !nextSibling())
+            dictionaryProperty.form = Postfix;
+        else
+            dictionaryProperty.form = Infix;
+    }
+
+    // We then try and find an entry in the operator dictionary to override the default values.
+    if (auto entry = search(operatorText(), dictionaryProperty.form, explicitForm)) {
+        dictionaryProperty.form = static_cast<MathMLOperatorDictionary::Form>(entry.value().form);
+        dictionaryProperty.leadingSpaceInMathUnit = entry.value().lspace;
+        dictionaryProperty.trailingSpaceInMathUnit = entry.value().rspace;
+        dictionaryProperty.flags = entry.value().flags;
+    }
+
+    return dictionaryProperty;
+}
+
+const MathMLOperatorElement::DictionaryProperty& MathMLOperatorElement::dictionaryProperty()
+{
+    if (!m_dictionaryProperty)
+        m_dictionaryProperty = computeDictionaryProperty();
+    return m_dictionaryProperty.value();
+}
+
+unsigned short MathMLOperatorElement::flags()
+{
+    // FIXME: We should also handle boolean attributes here (https://webkit.org/b/160190).
+    return dictionaryProperty().flags;
+}
+
+MathMLElement::Length MathMLOperatorElement::defaultLeadingSpace()
+{
+    Length space;
+    space.type = LengthType::MathUnit;
+    space.value = static_cast<float>(dictionaryProperty().leadingSpaceInMathUnit);
+    return space;
+}
+
+MathMLElement::Length MathMLOperatorElement::defaultTrailingSpace()
+{
+    Length space;
+    space.type = LengthType::MathUnit;
+    space.value = static_cast<float>(dictionaryProperty().trailingSpaceInMathUnit);
+    return space;
 }
 
 void MathMLOperatorElement::childrenChanged(const ChildChange& change)
 {
     m_operatorText = Nullopt;
+    m_dictionaryProperty = Nullopt;
     MathMLTextElement::childrenChanged(change);
 }
 
 void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
+    if (name == formAttr)
+        m_dictionaryProperty = Nullopt;
+
     if ((name == stretchyAttr || name == lspaceAttr || name == rspaceAttr || name == movablelimitsAttr) && renderer()) {
         downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
         return;

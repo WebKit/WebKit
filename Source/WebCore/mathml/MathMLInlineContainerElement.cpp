@@ -32,6 +32,7 @@
 #include "MathMLInlineContainerElement.h"
 
 #include "MathMLNames.h"
+#include "MathMLOperatorElement.h"
 #include "RenderMathMLBlock.h"
 #include "RenderMathMLFenced.h"
 #include "RenderMathMLMenclose.h"
@@ -54,6 +55,11 @@ Ref<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const Qua
 
 void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
 {
+    for (auto child = firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(MathMLNames::moTag))
+            static_cast<MathMLOperatorElement*>(child)->setOperatorFormDirty();
+    }
+
     // FIXME: Parsing of operator properties should be done in the element classes rather than in the renderer classes.
     // See https://webkit.org/b/156537
     if (renderer() && is<RenderMathMLRow>(*renderer()))

@@ -26,6 +26,7 @@
 #pragma once
 
 #if ENABLE(MATHML)
+#include "MathMLOperatorDictionary.h"
 #include "MathMLTextElement.h"
 
 namespace WebCore {
@@ -35,6 +36,11 @@ public:
     static Ref<MathMLOperatorElement> create(const QualifiedName& tagName, Document&);
     static UChar parseOperatorText(const String&);
     UChar operatorText();
+    void setOperatorFormDirty() { m_dictionaryProperty = Nullopt; }
+    MathMLOperatorDictionary::Form form() { return dictionaryProperty().form; }
+    unsigned short flags();
+    Length defaultLeadingSpace();
+    Length defaultTrailingSpace();
 
 private:
     MathMLOperatorElement(const QualifiedName& tagName, Document&);
@@ -43,6 +49,18 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     Optional<UChar> m_operatorText;
+
+    struct DictionaryProperty {
+        MathMLOperatorDictionary::Form form;
+        // Default leading and trailing spaces are "thickmathspace".
+        unsigned short leadingSpaceInMathUnit { 5 };
+        unsigned short trailingSpaceInMathUnit { 5 };
+        // Default operator properties are all set to "false".
+        unsigned short flags { 0 };
+    };
+    Optional<DictionaryProperty> m_dictionaryProperty;
+    DictionaryProperty computeDictionaryProperty();
+    const DictionaryProperty& dictionaryProperty();
 };
 
 }

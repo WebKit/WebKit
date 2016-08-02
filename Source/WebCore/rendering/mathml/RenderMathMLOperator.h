@@ -39,7 +39,7 @@ class MathMLOperatorElement;
 class RenderMathMLOperator : public RenderMathMLToken {
 public:
     RenderMathMLOperator(MathMLOperatorElement&, RenderStyle&&);
-    RenderMathMLOperator(Document&, RenderStyle&&, MathMLOperatorDictionary::Form, unsigned short flags = 0);
+    RenderMathMLOperator(Document&, RenderStyle&&, unsigned short flags = 0);
     MathMLOperatorElement& element() const;
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
@@ -60,12 +60,16 @@ public:
 
 protected:
     void rebuildTokenContent();
+    virtual void setOperatorProperties();
 
-    MathMLOperatorDictionary::Form m_operatorForm;
+    bool m_isVertical { true };
+    LayoutUnit m_leadingSpace;
+    LayoutUnit m_trailingSpace;
+    LayoutUnit m_minSize;
+    LayoutUnit m_maxSize;
     unsigned short m_operatorFlags;
 
 private:
-    virtual void setOperatorProperties();
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
@@ -88,7 +92,6 @@ private:
 
     void setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag, const QualifiedName&);
     void setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
-    void setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry*);
 
     LayoutUnit verticalStretchedOperatorShift() const;
 
@@ -96,11 +99,6 @@ private:
     LayoutUnit m_stretchDepthBelowBaseline { 0 };
     LayoutUnit m_stretchWidth;
 
-    bool m_isVertical { true };
-    LayoutUnit m_leadingSpace;
-    LayoutUnit m_trailingSpace;
-    LayoutUnit m_minSize;
-    LayoutUnit m_maxSize;
     MathOperator m_mathOperator;
 };
 

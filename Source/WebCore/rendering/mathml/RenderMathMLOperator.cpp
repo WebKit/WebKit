@@ -53,9 +53,8 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLOperatorElement& element, Rende
     updateTokenContent();
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Document& document, RenderStyle&& style, MathMLOperatorDictionary::Form form, unsigned short flags)
+RenderMathMLOperator::RenderMathMLOperator(Document& document, RenderStyle&& style, unsigned short flags)
     : RenderMathMLToken(document, WTFMove(style))
-    , m_operatorForm(form)
     , m_operatorFlags(flags)
 {
 }
@@ -87,71 +86,17 @@ void RenderMathMLOperator::setOperatorFlagFromAttributeValue(MathMLOperatorDicti
     // We ignore absent or invalid attributes.
 }
 
-void RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry* entry)
-{
-    // If this operator is anonymous, we preserve the Fence and Separator properties. This is to handle the case of RenderMathMLFenced.
-    if (isAnonymous())
-        m_operatorFlags = (m_operatorFlags & (MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator)) | entry->flags;
-    else
-        m_operatorFlags = entry->flags;
-
-    // Leading and trailing space is specified as multiple of 1/18em.
-    m_leadingSpace = entry->lspace * style().fontCascade().size() / 18;
-    m_trailingSpace = entry->rspace * style().fontCascade().size() / 18;
-}
-
 void RenderMathMLOperator::setOperatorProperties()
 {
     // We determine the stretch direction (default is vertical).
     m_isVertical = MathMLOperatorDictionary::isVertical(textContent());
 
-    // We determine the form of the operator.
-    bool explicitForm = true;
-    if (!isAnonymous()) {
-        const AtomicString& form = element().attributeWithoutSynchronization(MathMLNames::formAttr);
-        if (form == "prefix")
-            m_operatorForm = MathMLOperatorDictionary::Prefix;
-        else if (form == "infix")
-            m_operatorForm = MathMLOperatorDictionary::Infix;
-        else if (form == "postfix")
-            m_operatorForm = MathMLOperatorDictionary::Postfix;
-        else {
-            // FIXME: We should use more advanced heuristics indicated in the specification to determine the operator form (https://bugs.webkit.org/show_bug.cgi?id=124829).
-            explicitForm = false;
-            if (!element().previousSibling() && element().nextSibling())
-                m_operatorForm = MathMLOperatorDictionary::Prefix;
-            else if (element().previousSibling() && !element().nextSibling())
-                m_operatorForm = MathMLOperatorDictionary::Postfix;
-            else
-                m_operatorForm = MathMLOperatorDictionary::Infix;
-        }
-    }
-
-    // We determine the default values of the operator properties.
-
-    // First we initialize with the default values for unknown operators.
-    if (isAnonymous())
-        m_operatorFlags &= MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator; // This resets all but the Fence and Separator properties.
-    else
-        m_operatorFlags = 0; // This resets all the operator properties.
-    m_leadingSpace = 5 * style().fontCascade().size() / 18; // This sets leading space to "thickmathspace".
-    m_trailingSpace = 5 * style().fontCascade().size() / 18; // This sets trailing space to "thickmathspace".
+    // Initialize with the default values.
+    m_operatorFlags = element().flags();
+    m_leadingSpace = toUserUnits(element().defaultLeadingSpace(), style(), 0);
+    m_trailingSpace = toUserUnits(element().defaultTrailingSpace(), style(), 0);
     m_minSize = style().fontCascade().size(); // This sets minsize to "1em".
     m_maxSize = intMaxForLayoutUnit; // This sets maxsize to "infinity".
-
-    if (textContent()) {
-        // Then we try to find the default values from the operator dictionary.
-        if (const MathMLOperatorDictionary::Entry* entry = MathMLOperatorDictionary::getEntry(textContent(), m_operatorForm))
-            setOperatorPropertiesFromOpDictEntry(entry);
-        else if (!explicitForm) {
-            // If we did not find the desired operator form and if it was not set explicitely, we use the first one in the following order: Infix, Prefix, Postfix.
-            // This is to handle bad MathML markup without explicit <mrow> delimiters like "<mo>(</mo><mi>a</mi><mo>)</mo><mo>(</mo><mi>b</mi><mo>)</mo>" where the inner parenthesis should not be considered infix.
-            if (const MathMLOperatorDictionary::Entry* entry = MathMLOperatorDictionary::getEntry(textContent())) {
-                m_operatorForm = static_cast<MathMLOperatorDictionary::Form>(entry->form); // We override the form previously determined.
-                setOperatorPropertiesFromOpDictEntry(entry);
-            }
-        }
-    }
 
     if (!isAnonymous()) {
         // Finally, we make the attribute values override the default.

@@ -28,6 +28,7 @@
 #if ENABLE(MATHML)
 
 #include <unicode/utypes.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -49,8 +50,7 @@ struct Entry {
     unsigned rspace : 3;
     unsigned flags : 8;
 };
-const Entry* getEntry(UChar, Form);
-const Entry* getEntry(UChar);
+Optional<Entry> search(UChar, Form, bool explicitForm);
 bool isVertical(UChar);
 }
 
