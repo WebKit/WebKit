@@ -1337,10 +1337,10 @@
 		2DEC66531C82D02E0099846A /* DOMHTMLVideoElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DEC664C1C82CFBF0099846A /* DOMHTMLVideoElement.mm */; };
 		2DEC66551C82D0410099846A /* DOMHTMLMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEC664E1C82CFF60099846A /* DOMHTMLMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DEC66561C82D0440099846A /* DOMHTMLMediaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DEC664F1C82CFF60099846A /* DOMHTMLMediaElement.mm */; };
-		2DEC66721C83F2AF0099846A /* DOMTimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEC666F1C83F2AF0099846A /* DOMTimeRanges.h */; };
+		2DEC66721C83F2AF0099846A /* DOMTimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEC666F1C83F2AF0099846A /* DOMTimeRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DEC66731C83F2AF0099846A /* DOMTimeRanges.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DEC66701C83F2AF0099846A /* DOMTimeRanges.mm */; };
 		2DEC66741C83F2AF0099846A /* DOMTimeRangesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEC66711C83F2AF0099846A /* DOMTimeRangesInternal.h */; };
-		2DEC66781C8403C30099846A /* DOMMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEC66751C8403C30099846A /* DOMMediaError.h */; };
+		2DEC66781C8403C30099846A /* DOMMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEC66751C8403C30099846A /* DOMMediaError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DEC66791C8403C30099846A /* DOMMediaError.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DEC66761C8403C30099846A /* DOMMediaError.mm */; };
 		2DEC667A1C8403C30099846A /* DOMMediaErrorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEC66771C8403C30099846A /* DOMMediaErrorInternal.h */; };
 		2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */; };

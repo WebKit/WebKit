@@ -1,5 +1,11 @@
 2016-08-01  Anders Carlsson  <andersca@apple.com>
 
+        Bring back a file - it needs to be copied by WebCore.
+
+        * MigrateHeaders.make:
+
+2016-08-01  Anders Carlsson  <andersca@apple.com>
+
         Remove another file.
 
         * MigrateHeaders.make:
