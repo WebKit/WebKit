@@ -79,22 +79,19 @@ void RenderMathMLOperator::setOperatorProperties()
     // We determine the stretch direction (default is vertical).
     m_isVertical = MathMLOperatorDictionary::isVertical(textContent());
 
-    // Initialize with the default values.
+    // FIXME: Negative leading spaces must be implemented (https://webkit.org/b/124830).
     m_leadingSpace = toUserUnits(element().defaultLeadingSpace(), style(), 0);
+    m_leadingSpace = std::max<LayoutUnit>(0, toUserUnits(element().leadingSpace(), style(), m_leadingSpace));
+
+    // FIXME: Negative trailing spaces must be implemented (https://webkit.org/b/124830).
     m_trailingSpace = toUserUnits(element().defaultTrailingSpace(), style(), 0);
-    m_minSize = style().fontCascade().size(); // This sets minsize to "1em".
-    m_maxSize = intMaxForLayoutUnit; // This sets maxsize to "infinity".
+    m_trailingSpace = std::max<LayoutUnit>(0, toUserUnits(element().trailingSpace(), style(), m_trailingSpace));
 
-    if (!isAnonymous()) {
-        // Finally, we make the attribute values override the default.
-        parseMathMLLength(element().attributeWithoutSynchronization(MathMLNames::lspaceAttr), m_leadingSpace, &style(), false); // FIXME: Negative leading space must be implemented (https://bugs.webkit.org/show_bug.cgi?id=124830).
-        parseMathMLLength(element().attributeWithoutSynchronization(MathMLNames::rspaceAttr), m_trailingSpace, &style(), false); // FIXME: Negative trailing space must be implemented (https://bugs.webkit.org/show_bug.cgi?id=124830).
+    m_minSize = style().fontCascade().size(); // Default minsize is "1em".
+    m_minSize = std::max<LayoutUnit>(0, toUserUnits(element().minSize(), style(), m_minSize));
 
-        parseMathMLLength(element().attributeWithoutSynchronization(MathMLNames::minsizeAttr), m_minSize, &style(), false);
-        const AtomicString& maxsize = element().attributeWithoutSynchronization(MathMLNames::maxsizeAttr);
-        if (maxsize != "infinity")
-            parseMathMLLength(maxsize, m_maxSize, &style(), false);
-    }
+    m_maxSize = intMaxForLayoutUnit; // Default maxsize is "infinity".
+    m_maxSize = std::max<LayoutUnit>(0, toUserUnits(element().maxSize(), style(), m_maxSize));
 }
 
 void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)

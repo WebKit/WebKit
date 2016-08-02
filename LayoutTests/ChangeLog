@@ -1,3 +1,14 @@
+2016-08-02  Frederic Wang  <fwang@igalia.com>
+
+        Move parsing of operator length attributes to MathMLOperatorElement
+        https://bugs.webkit.org/show_bug.cgi?id=160301
+
+        Reviewed by Darin Adler.
+
+        * mathml/presentation/stretchy-minsize-maxsize-expected.html: Update the test for negative
+        minsize and maxsize to align on the behavior suggested in the MathML recommendation.
+        * mathml/presentation/stretchy-minsize-maxsize.html: Ditto.
+
 2016-08-02  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Implement overload resolution algorithm

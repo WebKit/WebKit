@@ -41,6 +41,10 @@ public:
     bool hasProperty(MathMLOperatorDictionary::Flag);
     Length defaultLeadingSpace();
     Length defaultTrailingSpace();
+    const Length& leadingSpace();
+    const Length& trailingSpace();
+    const Length& minSize();
+    const Length& maxSize();
 
 private:
     MathMLOperatorElement(const QualifiedName& tagName, Document&);
@@ -68,6 +72,11 @@ private:
     };
     OperatorProperties m_properties;
     void computeOperatorFlag(MathMLOperatorDictionary::Flag);
+
+    Optional<Length> m_leadingSpace;
+    Optional<Length> m_trailingSpace;
+    Optional<Length> m_minSize;
+    Optional<Length> m_maxSize;
 };
 
 }

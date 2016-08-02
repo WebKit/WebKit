@@ -165,6 +165,8 @@ LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& s
         return referenceValue * length.value;
     case MathMLElement::LengthType::ParsingFailed:
         return referenceValue;
+    case MathMLElement::LengthType::Infinity:
+        return intMaxForLayoutUnit;
     default:
         ASSERT_NOT_REACHED();
         return referenceValue;

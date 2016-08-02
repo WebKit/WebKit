@@ -179,6 +179,37 @@ MathMLElement::Length MathMLOperatorElement::defaultTrailingSpace()
     return space;
 }
 
+const MathMLElement::Length& MathMLOperatorElement::leadingSpace()
+{
+    return cachedMathMLLength(MathMLNames::lspaceAttr, m_leadingSpace);
+}
+
+const MathMLElement::Length& MathMLOperatorElement::trailingSpace()
+{
+    return cachedMathMLLength(MathMLNames::rspaceAttr, m_trailingSpace);
+}
+
+const MathMLElement::Length& MathMLOperatorElement::minSize()
+{
+    return cachedMathMLLength(MathMLNames::minsizeAttr, m_minSize);
+}
+
+const MathMLElement::Length& MathMLOperatorElement::maxSize()
+{
+    if (m_maxSize)
+        return m_maxSize.value();
+
+    const AtomicString& value = attributeWithoutSynchronization(MathMLNames::maxsizeAttr);
+    if (value == "infinity") {
+        Length maxsize;
+        maxsize.type = LengthType::Infinity;
+        m_maxSize = maxsize;
+    } else
+        m_maxSize = parseMathMLLength(value);
+
+    return m_maxSize.value();
+}
+
 void MathMLOperatorElement::childrenChanged(const ChildChange& change)
 {
     m_operatorText = Nullopt;
@@ -213,6 +244,14 @@ void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const Atom
         m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
     } else if (auto flag = attributeNameToPropertyFlag(name))
         m_properties.dirtyFlags |= flag.value();
+    else if (name == lspaceAttr)
+        m_leadingSpace = Nullopt;
+    else if (name == rspaceAttr)
+        m_trailingSpace = Nullopt;
+    else if (name == minsizeAttr)
+        m_minSize = Nullopt;
+    else if (name == maxsizeAttr)
+        m_maxSize = Nullopt;
 
     if ((name == stretchyAttr || name == lspaceAttr || name == rspaceAttr || name == movablelimitsAttr) && renderer()) {
         downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
