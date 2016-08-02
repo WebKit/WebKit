@@ -1,0 +1,9 @@
+
+FAIL URL query:  assert_unreached: Unexpected message event Reached unreachable code
+FAIL URL query: ?type= assert_unreached: Unexpected message event Reached unreachable code
+FAIL URL query: ?type=x assert_unreached: Unexpected message event Reached unreachable code
+FAIL URL query: ?type=x/x assert_unreached: Unexpected message event Reached unreachable code
+PASS URL query: ?type=text/javascript 
+PASS URL query: ?type=text/ecmascript 
+PASS URL query: ?type=text/ecmascript;yay 
+

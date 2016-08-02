@@ -80,6 +80,8 @@ public:
 
     FetchBodyConsumer& consumer() { return m_consumer; }
 
+    void cleanConsumePromise() { m_consumePromise = Nullopt; }
+
 private:
     FetchBody(Ref<Blob>&&);
     FetchBody(Ref<DOMFormData>&&);

@@ -48,6 +48,8 @@ FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, FetchBody&& body
 
 void FetchBodyOwner::stop()
 {
+    m_body.cleanConsumePromise();
+
     if (m_blobLoader) {
         if (m_blobLoader->loader)
             m_blobLoader->loader->stop();

@@ -197,6 +197,7 @@ bool FetchResponse::BodyLoader::start(ScriptExecutionContext& context, const Fet
 
 void FetchResponse::BodyLoader::stop()
 {
+    m_promise = Nullopt;
     if (m_loader)
         m_loader->stop();
 }
