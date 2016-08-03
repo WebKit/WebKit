@@ -1,4 +1,3 @@
- 
 
 PASS Node.isEqualNode 
 PASS Node.isEqualNode 1 
@@ -14,4 +13,4 @@ PASS isEqualNode should return false if elements have different prefix
 PASS isEqualNode should return false if elements have different local name 
 PASS isEqualNode should return true when the attributes have different prefixes 
 PASS isEqualNode should return true when only the internal subsets of DocumentTypes differ. 
-
+ 

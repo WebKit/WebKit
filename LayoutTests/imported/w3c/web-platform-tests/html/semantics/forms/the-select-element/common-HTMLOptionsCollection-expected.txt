@@ -1,5 +1,4 @@
 
-
 PASS On getting, the length attribute must return the number of nodes represented by the collection. 
 PASS Changing the length adds new nodes; The number of new nodes = new length minus old length 
 PASS New nodes have no value 

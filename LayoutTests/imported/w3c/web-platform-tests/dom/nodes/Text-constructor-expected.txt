@@ -1,5 +1,4 @@
 
-
 PASS new Text(): prototype chain 
 PASS new Text(): instanceof 
 PASS new Text(): no arguments 

@@ -1,3 +1,5 @@
+
+PASS get elements in document 
 test link #foo
 text
 text caption
@@ -7,6 +9,3 @@ td text
 td te xt
 TEXT foot
 xt te
-
-PASS get elements in document 
-

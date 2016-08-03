@@ -1,7 +1,5 @@
 Test of Removal Adding of Elements
 
-The result of this test is logged above.
-
 
 PASS Dynamic Removal of Elements 
-
+The result of this test is logged above.

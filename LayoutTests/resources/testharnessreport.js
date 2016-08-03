@@ -68,7 +68,12 @@ if (self.testRunner) {
         }
 
         results.innerText = resultStr;
-        document.body.appendChild(results);
+        var log = document.getElementById("log");
+        if (log)
+            log.appendChild(results);
+        else
+            document.body.appendChild(results);
+
         testRunner.notifyDone();
     });
 }

@@ -1,5 +1,4 @@
-Number:   Select number:  
 
 FAIL options label/value undefined is not an object (evaluating 'datalist.options.length')
 PASS If an element has a datalist element ancestor, it is barred from constraint validation 
-
+Number:   Select number:  

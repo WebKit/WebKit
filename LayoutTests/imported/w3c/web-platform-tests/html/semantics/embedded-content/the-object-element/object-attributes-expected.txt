@@ -1,6 +1,5 @@
- 
 
 FAIL object.contentWindow undefined is not an object (evaluating 'obj1.contentWindow.name')
 FAIL object.width assert_equals: The width should be 100px. expected "100px" but got "auto"
 FAIL object.height assert_equals: The height should be 50px. expected "50px" but got "auto"
-
+ 

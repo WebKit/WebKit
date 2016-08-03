@@ -2,117 +2,6 @@ Description
 
 This test validates the ol element.
 
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-list item
-Ordered List
-
-list item
-list item
-
-
-
-
-
-
-
-
-
-
-
-
-list item
 
 PASS The prototype for OL is HTMLOListElement.prototype 
 FAIL 'reversed' property should be defined on OL. assert_own_property: expected property "reversed" missing
@@ -139,4 +28,114 @@ PASS IDL and content attribute parse start of '-4.03' correctly.
 PASS IDL and content attribute parse start of '4.9' correctly. 
 PASS IDL and content attribute parse start of '-4.9' correctly. 
 PASS IDL and content attribute parse start of '7e2' correctly. 
+Ordered List
 
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+
+
+
+
+
+
+
+
+
+
+
+
+list item

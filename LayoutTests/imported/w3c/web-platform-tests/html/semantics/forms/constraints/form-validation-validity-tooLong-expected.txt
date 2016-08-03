@@ -1,5 +1,4 @@
 
-
 PASS [INPUT in TEXT status] Non-dirty value - maxlength is not set 
 PASS [INPUT in TEXT status] Non-dirty value - value is empty string 
 PASS [INPUT in TEXT status] Non-dirty value - length of value is less than maxlength 

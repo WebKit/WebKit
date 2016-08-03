@@ -1,7 +1,5 @@
 Implementers looking to fix bugs might want to use the original version of this suite's test framework, which conveniently aggregates similar errors and only reports failures. This file is (part of) the authoritative conformance test suite, and is suitable for incorporation into automated test suites.
 
-(Note: missing tests for types tokenlist, settable tokenlist, limited double.)
-
 
 PASS form.title: typeof IDL attribute 
 PASS form.title: IDL get with DOM attribute unset 
@@ -16852,4 +16850,4 @@ PASS meter.tabIndex: IDL set to 2147483647 followed by IDL get
 PASS meter.tabIndex: IDL set to -2147483648 should not throw 
 PASS meter.tabIndex: IDL set to -2147483648 followed by getAttribute() 
 PASS meter.tabIndex: IDL set to -2147483648 followed by IDL get 
-
+(Note: missing tests for types tokenlist, settable tokenlist, limited double.)

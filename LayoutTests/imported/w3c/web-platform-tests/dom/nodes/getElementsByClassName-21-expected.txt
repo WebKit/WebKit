@@ -1,3 +1,5 @@
+
+PASS delete element from collection 
 test link #foo
 text
 text caption
@@ -6,6 +8,3 @@ td text
 td te xt
 TEXT foot
 xt te
-
-PASS delete element from collection 
-

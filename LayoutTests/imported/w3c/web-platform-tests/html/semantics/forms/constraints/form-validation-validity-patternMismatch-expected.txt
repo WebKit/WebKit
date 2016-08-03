@@ -1,5 +1,4 @@
 
-
 PASS [INPUT in TEXT status] The pattern attribute is not set 
 PASS [INPUT in TEXT status] The value attibute is empty string 
 PASS [INPUT in TEXT status] The value attribute matches the pattern attribute 

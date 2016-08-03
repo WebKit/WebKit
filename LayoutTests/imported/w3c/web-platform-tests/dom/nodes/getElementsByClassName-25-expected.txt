@@ -1,3 +1,5 @@
+
+PASS verify spacing is handled correctly 
 test link #foo
 text caption
 TEXT head
@@ -6,6 +8,3 @@ td text
 td te xt
 TEXT foot
 xt te
-
-PASS verify spacing is handled correctly 
-

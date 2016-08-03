@@ -1,7 +1,6 @@
+
+FAIL ':enabled' elements that are not disabled assert_array_equals: lengths differ, expected 9 got 8
  button1 button2      
 
 
  
-
-FAIL ':enabled' elements that are not disabled assert_array_equals: lengths differ, expected 9 got 8
-

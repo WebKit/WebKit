@@ -1,7 +1,5 @@
 Implementers looking to fix bugs might want to use the original version of this suite's test framework, which conveniently aggregates similar errors and only reports failures. This file is (part of) the authoritative conformance test suite, and is suitable for incorporation into automated test suites.
 
-(Note: missing tests for types tokenlist.)
-
 
 PASS applet.title: typeof IDL attribute 
 PASS applet.title: IDL get with DOM attribute unset 
@@ -6622,4 +6620,4 @@ PASS font.size: IDL set to object "test-toString" followed by IDL get
 PASS font.size: IDL set to object "test-valueOf" should not throw 
 PASS font.size: IDL set to object "test-valueOf" followed by getAttribute() 
 PASS font.size: IDL set to object "test-valueOf" followed by IDL get 
-
+(Note: missing tests for types tokenlist.)

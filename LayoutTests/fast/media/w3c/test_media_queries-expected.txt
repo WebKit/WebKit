@@ -1,5 +1,4 @@
 
-
 PASS query (orientation) should be parseable 
 PASS query not (orientation) should not be parseable 
 PASS query only (orientation) should not be parseable 

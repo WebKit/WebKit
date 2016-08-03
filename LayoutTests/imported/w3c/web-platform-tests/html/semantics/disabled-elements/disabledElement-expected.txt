@@ -1,5 +1,3 @@
-button      
-w3 foobar
 
 PASS The body element must be the active element if no element is focused 
 PASS A disabled <button> should not be focusable 
@@ -11,4 +9,5 @@ PASS A disabled <textarea> should not be focusable
 PASS A disabled <input[type=radio]> should not be focusable 
 PASS A disabled <a> should be focusable 
 PASS A disabled <span> should be focusable 
-
+button      
+w3 foobar

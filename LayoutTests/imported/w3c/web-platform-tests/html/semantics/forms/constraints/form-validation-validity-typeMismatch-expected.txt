@@ -1,5 +1,4 @@
 
-
 PASS [INPUT in EMAIL status] The value is empty 
 PASS [INPUT in EMAIL status] The value is a valid email address 
 PASS [INPUT in EMAIL status] The value is a valid email address with some white spaces. 

@@ -1,5 +1,4 @@
 
-
 PASS new Comment(): prototype chain 
 PASS new Comment(): instanceof 
 PASS new Comment(): no arguments 

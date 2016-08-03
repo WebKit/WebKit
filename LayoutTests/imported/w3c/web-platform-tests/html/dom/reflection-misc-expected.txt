@@ -1,7 +1,5 @@
 Implementers looking to fix bugs might want to use the original version of this suite's test framework, which conveniently aggregates similar errors and only reports failures. This file is (part of) the authoritative conformance test suite, and is suitable for incorporation into automated test suites.
 
-(Note: missing tests for types tokenlist.)
-
 
 PASS html.title: typeof IDL attribute 
 PASS html.title: IDL get with DOM attribute unset 
@@ -8445,4 +8443,4 @@ PASS undefinedelement.tabIndex: IDL set to 2147483647 followed by IDL get
 PASS undefinedelement.tabIndex: IDL set to -2147483648 should not throw 
 PASS undefinedelement.tabIndex: IDL set to -2147483648 followed by getAttribute() 
 PASS undefinedelement.tabIndex: IDL set to -2147483648 followed by IDL get 
-
+(Note: missing tests for types tokenlist.)

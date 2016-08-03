@@ -1,4 +1,3 @@
-                  
 
 PASS If there is one img, it should be returned (name) 
 PASS If there are two imgs, a collection should be returned. (name) 
@@ -8,4 +7,4 @@ PASS If there are two imgs, the one with a name should be returned. (name and id
 PASS If there are two imgs, the one with a name should be returned. (id and name) 
 PASS A name should affect getting an img by id 
 PASS An id shouldn't affect getting an img by name 
-
+                  

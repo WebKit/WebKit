@@ -1,9 +1,9 @@
-     
-     
 
 PASS document.forms 
 PASS document.forms.item with string arg 
 PASS document.forms with empty string 
 FAIL document.forms iteration assert_array_equals: property 3, expected "item" but got "length"
 PASS document.forms getOwnPropertyNames 
+     
+     
 

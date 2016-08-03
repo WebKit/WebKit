@@ -1,5 +1,3 @@
-hello
-hello
 
 PASS slotchange event must fire on a default slot element inside an open shadow root  in a document 
 PASS slotchange event must fire on a default slot element inside a closed shadow root  in a document 
@@ -33,4 +31,6 @@ PASS slotchange event must fire at the end of current microtask after mutation o
 PASS slotchange event must fire at the end of current microtask after mutation observers are invoked inside a closed shadow root  in a document when slots's contents change 
 PASS slotchange event must fire at the end of current microtask after mutation observers are invoked inside an open shadow root  not in a document when slots's contents change 
 PASS slotchange event must fire at the end of current microtask after mutation observers are invoked inside a closed shadow root  not in a document when slots's contents change 
+hello
+hello
 

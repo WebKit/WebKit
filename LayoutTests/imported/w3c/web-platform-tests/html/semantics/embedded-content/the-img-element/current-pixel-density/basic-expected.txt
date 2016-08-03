@@ -1,4 +1,3 @@
-              
 
 PASS <img src="/images/green-256x256.png" data-expect="256"> 
 PASS <img srcset="/images/green-256x256.png 1x" data-expect="256"> 
@@ -14,4 +13,4 @@ FAIL <img srcset="/images/green-256x256.png 256w" sizes="0px" data-expect="0"> a
 PASS <img srcset="data:image/svg+xml,&lt;svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='-1%20-1%202%202'%20width='20'%20height='20'&gt;&lt;circle%20r='1'/&gt;&lt;/svg&gt; 2x" data-expect="10"> 
 PASS <img srcset="data:image/svg+xml,&lt;svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='-1%20-1%202%202'%20width='20'&gt;&lt;circle%20r='1'/&gt;&lt;/svg&gt; 2x" data-expect="10"> 
 PASS <img srcset="data:image/svg+xml,&lt;svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='-1%20-1%202%202'%20height='20'&gt;&lt;circle%20r='1'/&gt;&lt;/svg&gt; 2x" data-expect="10"> 
-
+              

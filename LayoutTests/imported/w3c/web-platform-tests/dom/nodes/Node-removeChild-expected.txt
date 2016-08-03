@@ -1,4 +1,3 @@
- test
 
 PASS Passing a detached element from the main document to removeChild should not affect it. 
 PASS Passing a non-detached element from the main document to removeChild should not affect it. 
@@ -28,4 +27,4 @@ PASS Passing a detached comment from a synthetic document to removeChild should 
 PASS Passing a non-detached comment from a synthetic document to removeChild should not affect it. 
 PASS Calling removeChild on a comment from a synthetic document with no children should throw NOT_FOUND_ERR. 
 PASS Passing a value that is not a Node reference to removeChild should throw TypeError. 
-b
+ test b

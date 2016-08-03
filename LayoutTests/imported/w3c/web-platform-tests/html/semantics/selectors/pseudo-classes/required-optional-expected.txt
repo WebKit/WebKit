@@ -1,4 +1,3 @@
-      
 
 PASS ':required' matches required <input>s, <select>s and <textarea>s 
 PASS ':optional' matches elements <input>s, <select>s and <textarea>s that are not required 
@@ -6,4 +5,4 @@ PASS ':required' doesn't match elements whose required attribute has been remove
 PASS ':optional' matches elements whose required attribute has been removed 
 PASS ':required' matches elements whose required attribute has been added 
 PASS ':optional' doesn't match elements whose required attribute has been added 
-
+      

@@ -1,5 +1,4 @@
 
-
 FAIL [INPUT in TEXT status] Non-dirty value - minLength is not set assert_true: The tooShort attribute doesn't exist. expected true got false
 FAIL [INPUT in TEXT status] Non-dirty value - value is empty string assert_true: The tooShort attribute doesn't exist. expected true got false
 FAIL [INPUT in TEXT status] Non-dirty value - length of value is greater than minLength assert_true: The tooShort attribute doesn't exist. expected true got false

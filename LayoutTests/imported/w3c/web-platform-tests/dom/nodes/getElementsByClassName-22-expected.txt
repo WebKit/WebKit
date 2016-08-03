@@ -1,3 +1,5 @@
+
+PASS move item in collection order 
 test link #foo
 text caption
 TEXT head
@@ -6,6 +8,3 @@ td text
 td te xt
 TEXT foot
 xt te
-
-PASS move item in collection order 
-

@@ -1,11 +1,3 @@
-         
-    
- 
- 
-paragraph1.
-
-paragraph2.
-
 
 PASS The :read-write pseudo-class must not match input elements to which the readonly attribute does not apply 
 PASS The :read-only pseudo-class must match input elements to which the readonly attribute does not apply 
@@ -25,4 +17,10 @@ PASS The :read-write pseudo-class must match elements that are editable
 PASS The :read-only pseudo-class must not match elements that are editable 
 PASS The :read-write pseudo-class must match elements that are editing hosts 
 PASS The :read-only pseudo-class must not match elements that are editing hosts 
+         
+    
+ 
+ 
+paragraph1.
 
+paragraph2.

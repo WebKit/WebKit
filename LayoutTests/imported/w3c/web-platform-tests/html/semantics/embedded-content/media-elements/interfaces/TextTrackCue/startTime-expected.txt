@@ -1,6 +1,5 @@
 CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
 
-
 PASS TextTrackCue.startTime, script-created cue 
 FAIL TextTrackCue.startTime, parsed cue assert_unreached: got error event Reached unreachable code
 

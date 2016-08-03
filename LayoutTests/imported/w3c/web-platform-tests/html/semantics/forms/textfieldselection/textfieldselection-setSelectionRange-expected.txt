@@ -1,4 +1,3 @@
-  
 
 Harness Error (TIMEOUT), message = null
 
@@ -48,4 +47,4 @@ PASS textarea setSelectionRange(NaN,1)
 PASS textarea setSelectionRange(null,1) 
 PASS textarea setSelectionRange(undefined,1) 
 TIMEOUT textarea setSelectionRange fires a select event Test timed out
-
+  

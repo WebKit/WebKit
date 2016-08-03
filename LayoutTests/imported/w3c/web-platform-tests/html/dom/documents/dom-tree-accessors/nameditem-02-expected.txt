@@ -1,4 +1,3 @@
-               
 
 PASS If the only named item is an iframe, the contentWindow should be returned. 
 PASS If there are two iframes, a collection should be returned. 
@@ -8,4 +7,4 @@ PASS If an iframe has an id and no name, it should not be returned.
 PASS If an iframe has a name and a different id, it should be returned by its name. 
 PASS If an iframe has an id and a different name, it should not be returned by its id. 
 PASS An iframe whose name looks like an array index should work. 
-
+               

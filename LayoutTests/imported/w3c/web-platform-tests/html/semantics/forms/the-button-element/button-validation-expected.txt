@@ -1,4 +1,3 @@
-button button button button button button
 
 PASS missing type attribute 
 PASS submit type attribute 
@@ -6,4 +5,4 @@ PASS reset type attribute
 PASS button type attribute 
 FAIL menu type attribute assert_equals: expected "menu" but got "submit"
 PASS invalid type attribute 
-
+button button button button button button

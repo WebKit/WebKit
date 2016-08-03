@@ -1,4 +1,3 @@
-caption
 
 PASS createCaption method creates new caption if existing caption is not in html namespace 
 PASS createCaption method returns the first caption element child of the table 
@@ -8,4 +7,4 @@ PASS createCaption will not copy table's prefix
 PASS deleteCaption method removes the first caption element child of the table element 
 PASS deleteCaption method not remove caption that is not in html namespace 
 PASS Setting caption rethrows exception 
-
+caption

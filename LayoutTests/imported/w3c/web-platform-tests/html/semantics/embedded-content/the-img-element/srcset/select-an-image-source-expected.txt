@@ -1,4 +1,3 @@
-            
 
 PASS "data:,a 1x, data:,b 1x" 
 PASS "data:,a , data:,b 1x" 
@@ -13,4 +12,4 @@ PASS "data:,a 1w, data:,b 1x" sizes="1px"
 PASS "data:,a 1x, data:,b 1w" sizes="1px" 
 PASS "data:,a 1w, data:,b 2x" sizes="0.5px" 
 PASS "data:,a 2x, data:,b 1w" sizes="0.5px" 
-
+            

@@ -1,5 +1,3 @@
-Test JS objects as NodeFilters
-
 
 PASS Testing with raw function filter 
 PASS Testing with object filter 
@@ -11,4 +9,4 @@ PASS Testing with function having acceptNode function
 PASS Testing acceptNode callee 
 PASS Testing with filter function that throws 
 PASS Testing with filter object that throws 
-
+Test JS objects as NodeFilters

@@ -1,5 +1,4 @@
 
-
 FAIL document.open replacing singleton window assert_equals: expected (undefined) undefined but got (number) 1
 FAIL document.open replacing singleton location assert_equals: expected (undefined) undefined but got (number) 1
 FAIL document.open replacing singleton history assert_equals: expected (undefined) undefined but got (number) 1

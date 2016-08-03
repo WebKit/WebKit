@@ -1,7 +1,3 @@
-      
-      
-      
-      
 
 FAIL form autocomplete attribute missing assert_equals: expected "on" but got ""
 FAIL form autocomplete attribute on assert_equals: expected "on" but got ""
@@ -60,4 +56,7 @@ PASS tel-local-suffix is an allowed autocomplete field name
 PASS tel-extension is an allowed autocomplete field name 
 PASS email is an allowed autocomplete field name 
 PASS impp is an allowed autocomplete field name 
-
+      
+      
+      
+      

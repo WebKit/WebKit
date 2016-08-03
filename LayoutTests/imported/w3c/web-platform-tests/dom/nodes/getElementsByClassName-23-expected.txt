@@ -1,3 +1,5 @@
+
+PASS multiple defined classes 
 test link #foo
 text
 text caption
@@ -7,6 +9,3 @@ td text
 td te xt
 TEXT foot
 xt te
-
-PASS multiple defined classes 
-
