@@ -1,3 +1,10 @@
+2016-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, move LayoutTest out of platform/ios-simulator/ios.
+
+        * fast/events/touch/ios/Touch-attributes-prototype-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/touch/Touch-attributes-prototype-expected.txt.
+        * fast/events/touch/ios/Touch-attributes-prototype.html: Renamed from LayoutTests/platform/ios-simulator/ios/touch/Touch-attributes-prototype.html.
+
 2016-08-03  Saam Barati  <sbarati@apple.com>
 
         Implement nested rest destructuring w.r.t the ES7 spec
