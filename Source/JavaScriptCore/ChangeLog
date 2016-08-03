@@ -1,3 +1,11 @@
+2016-08-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Fix Windows build after r204065
+
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::observeTransitions):
+        AbstractValue is bigger on Windows for an unknown reason.
+
 2016-08-02  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Fix 32bits jsc after r204065
