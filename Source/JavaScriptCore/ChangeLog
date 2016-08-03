@@ -1,3 +1,51 @@
+2016-08-02  Saam Barati  <sbarati@apple.com>
+
+        update a class extending null w.r.t the ES7 spec
+        https://bugs.webkit.org/show_bug.cgi?id=160417
+
+        Reviewed by Keith Miller.
+
+        When a class extends null, it should not be marked as a derived class.
+        This was changed in the ES2016 spec, and this patch makes the needed
+        changes in JSC to follow the spec. This allows classes to extend
+        null and have their default constructor invoked without throwing an exception.
+        This also prevents |this| from being under TDZ at the start of the constructor.
+        Because ES6 allows arbitrary expressions in the `class <ident> extends <expr>`
+        syntax, we don't know statically if a constructor is extending null or not.
+        Therefore, we don't always know statically if it's a base or derived constructor.
+        I solved this by putting a boolean on the constructor function under a private
+        symbol named isDerivedConstructor when doing class construction. We only need
+        to put this boolean on constructors that may extend null. Constructors that are
+        declared in a class with no extends syntax can tell statically that they are a base constructor.
+
+        I've also renamed the ConstructorKind::Derived enum value to be
+        ConstructorKind::Extends to better indicate that we can't answer
+        the "am I a derived constructor?" question statically.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        * builtins/BuiltinNames.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::ensureThis):
+        (JSC::BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/ParserModes.h:
+
 2016-08-02  Enrica Casucci  <enrica@apple.com>
 
         Allow building with content filtering disabled.

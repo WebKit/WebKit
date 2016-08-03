@@ -127,6 +127,7 @@ namespace JSC {
     macro(isArray) \
     macro(isArrayConstructor) \
     macro(isConstructor) \
+    macro(isDerivedConstructor) \
     macro(isRegExpObject) \
     macro(concatMemcpy) \
     macro(appendMemcpy) \

@@ -1,3 +1,35 @@
+2016-08-02  Saam Barati  <sbarati@apple.com>
+
+        update a class extending null w.r.t the ES7 spec
+        https://bugs.webkit.org/show_bug.cgi?id=160417
+
+        Reviewed by Keith Miller.
+
+        * Changelog:
+        * stress/class-derived-from-null.js: Added.
+        (assert):
+        (test):
+        (test1.C):
+        (test1):
+        (jsNull):
+        (test2.C):
+        (test2):
+        (test3.C):
+        (test3.D):
+        (test3.E):
+        (test3):
+        (test4.E):
+        (test4):
+        (test5.E):
+        (test5):
+        (test6.Base):
+        (test6.D):
+        (test6.E):
+        (test6.F):
+        (test6.G):
+        (test6):
+        * test262.yaml:
+
 2016-08-01  Filip Pizlo  <fpizlo@apple.com>
 
         Rationalize varargs stack overflow checks

@@ -30,12 +30,12 @@ PASS x = { }; new (class extends Base { constructor() { return x } });:::x
 PASS x instanceof Base
 PASS new (class extends Base { constructor() { } }):::ReferenceError: Cannot access uninitialized variable.
 PASS new (class extends Base { constructor() { return 1; } }):::TypeError: Cannot return a non-object type in the constructor of a derived class.
-PASS new (class extends null { constructor() { return undefined } }):::ReferenceError: Cannot access uninitialized variable.
+PASS new (class extends null { constructor() { return undefined } })
 PASS new (class extends null { constructor() { super(); return undefined } }):::TypeError: function is not a constructor (evaluating 'super()')
 PASS x = { }; new (class extends null { constructor() { return x } });:::x
 PASS x instanceof Object
-PASS new (class extends null { constructor() { } }):::ReferenceError: Cannot access uninitialized variable.
-PASS new (class extends null { constructor() { return 1; } }):::TypeError: Cannot return a non-object type in the constructor of a derived class.
+PASS new (class extends null { constructor() { } })
+PASS new (class extends null { constructor() { return 1; } })
 PASS new (class extends null { constructor() { super() } }):::TypeError: function is not a constructor (evaluating 'super()')
 PASS new (class { constructor() { super() } }):::SyntaxError: super is not valid in this context.
 PASS function x() { super(); }:::SyntaxError: super is not valid in this context.

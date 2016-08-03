@@ -53,7 +53,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
         break;
     case ConstructorKind::Base:
         return createExecutable(m_vm, makeSource(baseConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
-    case ConstructorKind::Derived:
+    case ConstructorKind::Extends:
         return createExecutable(m_vm, makeSource(derivedConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
     }
     ASSERT_NOT_REACHED();

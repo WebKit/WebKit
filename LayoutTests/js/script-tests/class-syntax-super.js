@@ -113,12 +113,12 @@ shouldBe('x = { }; new (class extends Base { constructor() { return x } });', 'x
 shouldBeFalse('x instanceof Base');
 shouldThrow('new (class extends Base { constructor() { } })', '"ReferenceError: Cannot access uninitialized variable."');
 shouldThrow('new (class extends Base { constructor() { return 1; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
-shouldThrow('new (class extends null { constructor() { return undefined } })');
+shouldNotThrow('new (class extends null { constructor() { return undefined } })');
 shouldThrow('new (class extends null { constructor() { super(); return undefined } })', '"TypeError: function is not a constructor (evaluating \'super()\')"');
 shouldBe('x = { }; new (class extends null { constructor() { return x } });', 'x');
 shouldBeTrue('x instanceof Object');
-shouldThrow('new (class extends null { constructor() { } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('new (class extends null { constructor() { return 1; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
+shouldNotThrow('new (class extends null { constructor() { } })');
+shouldNotThrow('new (class extends null { constructor() { return 1; } })');
 shouldThrow('new (class extends null { constructor() { super() } })', '"TypeError: function is not a constructor (evaluating \'super()\')"');
 shouldThrow('new (class { constructor() { super() } })', '"SyntaxError: super is not valid in this context."');
 shouldThrow('function x() { super(); }', '"SyntaxError: super is not valid in this context."');

@@ -57,10 +57,10 @@ PASS Object.getPrototypeOf((class extends null { constructor () { super(); } }).
 PASS new (class extends undefined { constructor () { this } }):::TypeError: The superclass is not an object.
 PASS x = undefined; new (class extends x { constructor () { super(); } }):::TypeError: The superclass is not an object.
 PASS class x {}; new (class extends null { constructor () { return new x; } }) instanceof x
-PASS new (class extends null { constructor () { this; } }):::ReferenceError: Cannot access uninitialized variable.
+PASS new (class extends null { constructor () { this; } })
 PASS new (class extends null { constructor () { super(); } }):::TypeError: function is not a constructor (evaluating 'super()')
 PASS x = {}; new (class extends null { constructor () { return x } }):::x
-PASS y = 12; new (class extends null { constructor () { return y; } }):::TypeError: Cannot return a non-object type in the constructor of a derived class.
+PASS y = 12; class C extends null { constructor () { return y; } }; new C instanceof C;
 PASS class x {}; new (class extends null { constructor () { return new x; } }) instanceof x
 PASS x = null; Object.getPrototypeOf((class extends x { }).prototype):::null
 PASS Object.prototype.isPrototypeOf(class { })
