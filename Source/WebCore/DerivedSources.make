@@ -236,30 +236,6 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/crypto/CryptoKey.idl \
     $(WebCore)/crypto/CryptoKeyPair.idl \
     $(WebCore)/crypto/WebKitSubtleCrypto.idl \
-    $(WebCore)/css/CSSCharsetRule.idl \
-    $(WebCore)/css/CSSFontFaceLoadEvent.idl \
-    $(WebCore)/css/CSSFontFaceRule.idl \
-    $(WebCore)/css/CSSImportRule.idl \
-    $(WebCore)/css/CSSMediaRule.idl \
-    $(WebCore)/css/CSSPageRule.idl \
-    $(WebCore)/css/CSSPrimitiveValue.idl \
-    $(WebCore)/css/CSSRule.idl \
-    $(WebCore)/css/CSSRuleList.idl \
-    $(WebCore)/css/CSSStyleDeclaration.idl \
-    $(WebCore)/css/CSSStyleRule.idl \
-    $(WebCore)/css/CSSStyleSheet.idl \
-    $(WebCore)/css/CSSUnknownRule.idl \
-    $(WebCore)/css/CSSValue.idl \
-    $(WebCore)/css/CSSValueList.idl \
-    $(WebCore)/css/Counter.idl \
-    $(WebCore)/css/DOMCSSNamespace.idl \
-    $(WebCore)/css/FontFace.idl \
-    $(WebCore)/css/FontFaceSet.idl \
-    $(WebCore)/css/MediaQueryList.idl \
-    $(WebCore)/css/MediaQueryListListener.idl \
-    $(WebCore)/css/RGBColor.idl \
-    $(WebCore)/css/Rect.idl \
-    $(WebCore)/css/StyleMedia.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeUnloadEvent.idl \
     $(WebCore)/dom/CDATASection.idl \
@@ -287,16 +263,10 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/Entity.idl \
     $(WebCore)/dom/EntityReference.idl \
     $(WebCore)/dom/ErrorEvent.idl \
-    $(WebCore)/dom/Event.idl \
-    $(WebCore)/dom/EventListener.idl \
-    $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \
     $(WebCore)/dom/GlobalEventHandlers.idl \
     $(WebCore)/dom/HashChangeEvent.idl \
-    $(WebCore)/dom/KeyboardEvent.idl \
     $(WebCore)/dom/MessageChannel.idl \
-    $(WebCore)/dom/MouseEvent.idl \
-    $(WebCore)/dom/MutationEvent.idl \
     $(WebCore)/dom/MutationObserver.idl \
     $(WebCore)/dom/MutationRecord.idl \
     $(WebCore)/dom/NamedNodeMap.idl \
@@ -304,22 +274,16 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/NodeList.idl \
     $(WebCore)/dom/NonElementParentNode.idl \
     $(WebCore)/dom/NonDocumentTypeChildNode.idl \
-    $(WebCore)/dom/OverflowEvent.idl \
     $(WebCore)/dom/ParentNode.idl \
     $(WebCore)/dom/PopStateEvent.idl \
     $(WebCore)/dom/ProcessingInstruction.idl \
-    $(WebCore)/dom/ProgressEvent.idl \
-    $(WebCore)/dom/ProgressEvent.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
     $(WebCore)/dom/SecurityPolicyViolationEvent.idl \
     $(WebCore)/dom/ShadowRoot.idl \
     $(WebCore)/dom/Slotable.idl \
     $(WebCore)/dom/StringCallback.idl \
     $(WebCore)/dom/Text.idl \
-    $(WebCore)/dom/TextEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
-    $(WebCore)/dom/UIEvent.idl \
-    $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/FileException.idl \
     $(WebCore)/fileapi/FileReader.idl \
@@ -455,14 +419,38 @@ JS_AND_OBJC_BINDING_IDLS = \
 #
 
 JS_ONLY_BINDING_IDLS = \
+	$(WebCore)/css/CSSCharsetRule.idl \
+	$(WebCore)/css/CSSFontFaceLoadEvent.idl \
+	$(WebCore)/css/CSSFontFaceRule.idl \
+	$(WebCore)/css/CSSImportRule.idl \
 	$(WebCore)/css/CSSKeyframeRule.idl \
 	$(WebCore)/css/CSSKeyframesRule.idl \
+	$(WebCore)/css/CSSMediaRule.idl \
+	$(WebCore)/css/CSSPageRule.idl \
+	$(WebCore)/css/CSSPrimitiveValue.idl \
+	$(WebCore)/css/CSSRule.idl \
+	$(WebCore)/css/CSSRuleList.idl \
+	$(WebCore)/css/CSSStyleDeclaration.idl \
+	$(WebCore)/css/CSSStyleRule.idl \
+	$(WebCore)/css/CSSStyleSheet.idl \
 	$(WebCore)/css/CSSSupportsRule.idl \
+	$(WebCore)/css/CSSUnknownRule.idl \
+	$(WebCore)/css/CSSValue.idl \
+	$(WebCore)/css/CSSValueList.idl \
+	$(WebCore)/css/Counter.idl \
+	$(WebCore)/css/DOMCSSNamespace.idl \
+	$(WebCore)/css/FontFace.idl \
+	$(WebCore)/css/FontFaceSet.idl \
 	$(WebCore)/css/MediaList.idl \
+	$(WebCore)/css/MediaQueryList.idl \
+	$(WebCore)/css/MediaQueryListListener.idl \
+	$(WebCore)/css/RGBColor.idl \
+	$(WebCore)/css/Rect.idl \
+	$(WebCore)/css/StyleMedia.idl \
 	$(WebCore)/css/StyleSheet.idl \
 	$(WebCore)/css/StyleSheetList.idl \
-    $(WebCore)/css/WebKitCSSMatrix.idl \
     $(WebCore)/css/WebKitCSSFilterValue.idl \
+    $(WebCore)/css/WebKitCSSMatrix.idl \
     $(WebCore)/css/WebKitCSSRegionRule.idl \
     $(WebCore)/css/WebKitCSSTransformValue.idl \
     $(WebCore)/css/WebKitCSSViewportRule.idl \
@@ -480,6 +468,18 @@ JS_ONLY_BINDING_IDLS = \
 	$(WebCore)/dom/WebKitAnimationEvent.idl \
 	$(WebCore)/dom/WebKitNamedFlow.idl \
 	$(WebCore)/dom/WebKitTransitionEvent.idl \
+    $(WebCore)/dom/Event.idl \
+    $(WebCore)/dom/EventListener.idl \
+    $(WebCore)/dom/EventTarget.idl \
+    $(WebCore)/dom/KeyboardEvent.idl \
+    $(WebCore)/dom/MouseEvent.idl \
+    $(WebCore)/dom/MutationEvent.idl \
+    $(WebCore)/dom/OverflowEvent.idl \
+    $(WebCore)/dom/ProgressEvent.idl \
+    $(WebCore)/dom/ProgressEvent.idl \
+    $(WebCore)/dom/TextEvent.idl \
+    $(WebCore)/dom/UIEvent.idl \
+    $(WebCore)/dom/WheelEvent.idl \
 	$(WebCore)/fileapi/Blob.idl \
 	$(WebCore)/fileapi/File.idl \
 	$(WebCore)/fileapi/FileError.idl \
