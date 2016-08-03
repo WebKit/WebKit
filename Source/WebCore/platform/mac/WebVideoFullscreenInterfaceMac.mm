@@ -467,8 +467,7 @@ void WebVideoFullscreenInterfaceMac::enterFullscreen()
 
         if (m_fullscreenChangeObserver)
             m_fullscreenChangeObserver->didEnterFullscreen();
-    } else
-        ASSERT_NOT_REACHED();
+    }
 }
 
 void WebVideoFullscreenInterfaceMac::exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow)
@@ -491,7 +490,14 @@ void WebVideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode(HTMLMe
     if ([m_webVideoFullscreenInterfaceObjC didRequestExitingPIP])
         return;
 
-    [m_webVideoFullscreenInterfaceObjC setExitingToStandardFullscreen:mode == HTMLMediaElementEnums::VideoFullscreenModeStandard];
+    bool isExitingToStandardFullscreen = mode == HTMLMediaElementEnums::VideoFullscreenModeStandard;
+    // On Mac, standard fullscreen is handled by the Fullscreen API and not by WebVideoFullscreenManager.
+    // Just update m_mode directly to HTMLMediaElementEnums::VideoFullscreenModeStandard in that case to keep
+    // m_mode in sync with the fullscreen mode in HTMLMediaElement.
+    if (isExitingToStandardFullscreen)
+        m_mode = HTMLMediaElementEnums::VideoFullscreenModeStandard;
+
+    [m_webVideoFullscreenInterfaceObjC setExitingToStandardFullscreen:isExitingToStandardFullscreen];
     [m_webVideoFullscreenInterfaceObjC exitPIP];
 }
 

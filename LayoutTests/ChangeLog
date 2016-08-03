@@ -1,3 +1,14 @@
+2016-08-02  Ada Chan  <adachan@apple.com>
+
+        [Mac] media/pip-video-going-into-fullscreen.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=160469
+
+        Reviewed by Eric Carlson.
+
+        Re-enable media/pip-video-going-into-fullscreen.html on Sierra.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-08-03  Youenn Fablet  <youenn@apple.com>
 
         http/tests/fetch/fetch-in-worker-crash.html is sometimes crashing

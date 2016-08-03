@@ -5079,7 +5079,7 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     if (m_videoFullscreenMode != VideoFullscreenModeNone)
         exitFullscreen();
 
-    setPreparedForInline(true);
+    setPreparedToReturnVideoLayerToInline(true);
 
     updatePlaybackControlsManager();
     m_inActiveDocument = false;
@@ -5529,7 +5529,7 @@ PlatformLayer* HTMLMediaElement::platformLayer() const
     return m_player ? m_player->platformLayer() : nullptr;
 }
 
-void HTMLMediaElement::setPreparedForInline(bool value)
+void HTMLMediaElement::setPreparedToReturnVideoLayerToInline(bool value)
 {
     m_preparedForInline = value;
     if (m_preparedForInline && m_preparedForInlineCompletionHandler) {

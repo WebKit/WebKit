@@ -215,9 +215,9 @@ bool MediaControlsHost::isVideoLayerInline()
     return m_mediaElement->isVideoLayerInline();
 }
 
-void MediaControlsHost::setPreparedForInline(bool value)
+void MediaControlsHost::setPreparedToReturnVideoLayerToInline(bool value)
 {
-    m_mediaElement->setPreparedForInline(value);
+    m_mediaElement->setPreparedToReturnVideoLayerToInline(value);
 }
 
 bool MediaControlsHost::userGestureRequired() const

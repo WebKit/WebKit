@@ -536,6 +536,11 @@ ControllerIOS.prototype = {
         Controller.prototype.setShouldListenForPlaybackTargetAvailabilityEvent.call(this, shouldListen);
     },
 
+    shouldReturnVideoLayerToInline: function()
+    {
+        return this.presentationMode() === 'inline';
+    },
+
     handlePresentationModeChange: function(event)
     {
         var presentationMode = this.presentationMode();

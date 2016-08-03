@@ -66,7 +66,7 @@ public:
     bool supportsFullscreen();
     bool isVideoLayerInline();
     bool userGestureRequired() const;
-    void setPreparedForInline(bool);
+    void setPreparedToReturnVideoLayerToInline(bool);
 
     void updateCaptionDisplaySizes();
     void enteredFullscreen();

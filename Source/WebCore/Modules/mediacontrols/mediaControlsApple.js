@@ -909,6 +909,12 @@ Controller.prototype = {
             setTimeout(this.showInlinePlaybackPlaceholderWhenSafe.bind(this), this.PlaceholderPollingDelay);
     },
 
+    shouldReturnVideoLayerToInline: function()
+    {
+        var presentationMode = this.presentationMode();
+        return presentationMode === 'inline' || presentationMode === 'fullscreen';
+    },
+
     handlePresentationModeChange: function(event)
     {
         var presentationMode = this.presentationMode();
@@ -951,7 +957,7 @@ Controller.prototype = {
         this.resetHideControlsTimer();
         if (presentationMode != 'fullscreen' && this.video.paused && this.controlsAreHidden())
             this.showControls();
-        this.host.setPreparedForInline(presentationMode === 'inline')
+        this.host.setPreparedToReturnVideoLayerToInline(this.shouldReturnVideoLayerToInline());
     },
 
     handleFullscreenChange: function(event)

@@ -130,7 +130,7 @@ public:
     WEBCORE_EXPORT PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
     bool isVideoLayerInline();
-    void setPreparedForInline(bool);
+    void setPreparedToReturnVideoLayerToInline(bool);
     void waitForPreparedForInlineThen(std::function<void()> completionHandler = [] { });
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler = [] { });
