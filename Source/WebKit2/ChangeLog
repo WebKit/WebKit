@@ -1,3 +1,12 @@
+2016-08-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Document how to initialize WebKitFaviconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=160391
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+
 2016-08-02  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r203385): Frequent RELEASE_ASSERT in WebKit::RemoteLayerTreeDrawingArea::flushLayers()
