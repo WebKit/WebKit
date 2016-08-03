@@ -34,7 +34,8 @@ class RemoteCommandListenerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~RemoteCommandListenerClient() { }
-    virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) = 0;
+    virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) = 0;
+    virtual bool supportsSeeking() const = 0;
 };
 
 class RemoteCommandListener {
@@ -42,6 +43,10 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<RemoteCommandListener> create(RemoteCommandListenerClient&);
     RemoteCommandListener(RemoteCommandListenerClient& client) : m_client(client) { }
     virtual ~RemoteCommandListener() { }
+
+    virtual void updateSupportedCommands() { }
+
+    RemoteCommandListenerClient& client() const { return m_client; }
 
 protected:
     RemoteCommandListenerClient& m_client;

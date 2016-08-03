@@ -46,13 +46,15 @@ public:
 
 protected:
     WeakPtr<RemoteCommandListenerIOS> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-    
+    void updateSupportedCommands() override;
+
     WeakPtrFactory<RemoteCommandListenerIOS> m_weakPtrFactory;
     RetainPtr<id> m_playTarget;
     RetainPtr<id> m_pauseTarget;
     RetainPtr<id> m_togglePlayPauseTarget;
     RetainPtr<id> m_seekForwardTarget;
     RetainPtr<id> m_seekBackwardTarget;
+    RetainPtr<id> m_seekToTimeTarget;
 };
 
 }

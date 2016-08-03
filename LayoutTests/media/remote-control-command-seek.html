@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+
+                waitForEvent('loadedmetadata', loadedmetadata, false, true, document)
+                waitForEvent('timeupdate', seeked)
+
+                consoleWrite('* set video.src');
+                video.src = findMediaFile('video', 'content/test');
+            }
+
+            function loadedmetadata()
+            {
+                consoleWrite('<br>* Send a seek command.');
+                run("internals.postRemoteControlCommand('seekToPlaybackPosition', 1.6)");
+                consoleWrite('');
+            }
+
+            function seeked()
+            {
+                testExpected('video.currentTime.toFixed(1)', 1.6);
+                consoleWrite("");
+                endTest();
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that the "seekToPlaybackPosition" remote control command works.</p>
+        <video controls></video>
+    </body>
+</html>
