@@ -108,8 +108,7 @@ bool EventHandler::wheelEvent(WebEvent *event)
 bool EventHandler::dispatchSimulatedTouchEvent(IntPoint location)
 {
     bool handled = handleTouchEvent(PlatformEventFactory::createPlatformSimulatedTouchEvent(PlatformEvent::TouchStart, location));
-    if (handled)
-        handleTouchEvent(PlatformEventFactory::createPlatformSimulatedTouchEvent(PlatformEvent::TouchEnd, location));
+    handled |= handleTouchEvent(PlatformEventFactory::createPlatformSimulatedTouchEvent(PlatformEvent::TouchEnd, location));
     return handled;
 }
     

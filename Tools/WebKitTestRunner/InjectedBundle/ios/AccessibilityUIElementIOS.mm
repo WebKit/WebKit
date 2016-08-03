@@ -806,6 +806,7 @@ void AccessibilityUIElement::showMenu()
 
 void AccessibilityUIElement::press()
 {
+    [m_element _accessibilityActivate];
 }
 
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const
