@@ -78,11 +78,6 @@
 
 @end
 
-WebCore::Rect* core(DOMRect *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::Rect*>(wrapper->_internal) : 0;
-}
-
 DOMRect *kit(WebCore::Rect* value)
 {
     WebCoreThreadViolationCheckRoundOne();

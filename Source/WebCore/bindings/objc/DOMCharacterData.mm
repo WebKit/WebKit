@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMCharacterDataInternal.h"
+#import "DOMCharacterData.h"
 
 #import "CharacterData.h"
 #import "DOMElementInternal.h"
@@ -152,14 +152,3 @@
 }
 
 @end
-
-WebCore::CharacterData* core(DOMCharacterData *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CharacterData*>(wrapper->_internal) : 0;
-}
-
-DOMCharacterData *kit(WebCore::CharacterData* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCharacterData*>(kit(static_cast<WebCore::Node*>(value)));
-}

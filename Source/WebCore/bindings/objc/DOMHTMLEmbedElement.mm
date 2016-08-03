@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLEmbedElementInternal.h"
+#import "DOMHTMLEmbedElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -113,14 +113,3 @@
 }
 
 @end
-
-WebCore::HTMLEmbedElement* core(DOMHTMLEmbedElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLEmbedElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLEmbedElement *kit(WebCore::HTMLEmbedElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLEmbedElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

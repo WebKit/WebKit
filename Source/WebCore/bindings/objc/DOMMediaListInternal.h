@@ -30,5 +30,4 @@ namespace WebCore {
 class MediaList;
 }
 
-WEBCORE_EXPORT WebCore::MediaList* core(DOMMediaList *);
 WEBCORE_EXPORT DOMMediaList *kit(WebCore::MediaList*);

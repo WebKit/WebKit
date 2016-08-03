@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMCSSMediaRuleInternal.h"
+#import "DOMCSSMediaRule.h"
 
 #import "CSSMediaRule.h"
 #import "CSSRuleList.h"
@@ -83,14 +83,3 @@
 }
 
 @end
-
-WebCore::CSSMediaRule* core(DOMCSSMediaRule *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSMediaRule*>(wrapper->_internal) : 0;
-}
-
-DOMCSSMediaRule *kit(WebCore::CSSMediaRule* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCSSMediaRule*>(kit(static_cast<WebCore::CSSRule*>(value)));
-}

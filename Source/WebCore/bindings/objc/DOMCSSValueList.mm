@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMCSSValueListInternal.h"
+#import "DOMCSSValueList.h"
 
 #import "CSSValue.h"
 #import "CSSValueList.h"
@@ -53,14 +53,3 @@
 }
 
 @end
-
-WebCore::CSSValueList* core(DOMCSSValueList *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSValueList*>(wrapper->_internal) : 0;
-}
-
-DOMCSSValueList *kit(WebCore::CSSValueList* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCSSValueList*>(kit(static_cast<WebCore::CSSValue*>(value)));
-}

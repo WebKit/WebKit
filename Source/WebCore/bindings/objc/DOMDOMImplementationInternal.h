@@ -29,5 +29,4 @@ namespace WebCore {
 class DOMImplementation;
 }
 
-WEBCORE_EXPORT WebCore::DOMImplementation* core(DOMImplementation *);
 WEBCORE_EXPORT DOMImplementation *kit(WebCore::DOMImplementation*);

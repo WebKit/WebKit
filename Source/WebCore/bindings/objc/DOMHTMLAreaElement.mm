@@ -217,9 +217,3 @@ WebCore::HTMLAreaElement* core(DOMHTMLAreaElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLAreaElement*>(wrapper->_internal) : 0;
 }
-
-DOMHTMLAreaElement *kit(WebCore::HTMLAreaElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLAreaElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

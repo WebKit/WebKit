@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLLegendElementInternal.h"
+#import "DOMHTMLLegendElement.h"
 
 #import "DOMHTMLFormElementInternal.h"
 #import "DOMNodeInternal.h"
@@ -73,14 +73,3 @@
 }
 
 @end
-
-WebCore::HTMLLegendElement* core(DOMHTMLLegendElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLLegendElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLLegendElement *kit(WebCore::HTMLLegendElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLLegendElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

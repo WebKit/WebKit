@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLOptGroupElementInternal.h"
+#import "DOMHTMLOptGroupElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -65,14 +65,3 @@
 }
 
 @end
-
-WebCore::HTMLOptGroupElement* core(DOMHTMLOptGroupElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLOptGroupElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLOptGroupElement *kit(WebCore::HTMLOptGroupElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLOptGroupElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

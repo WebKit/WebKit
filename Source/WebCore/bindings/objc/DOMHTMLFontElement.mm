@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLFontElementInternal.h"
+#import "DOMHTMLFontElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -77,14 +77,3 @@
 }
 
 @end
-
-WebCore::HTMLFontElement* core(DOMHTMLFontElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLFontElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLFontElement *kit(WebCore::HTMLFontElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLFontElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

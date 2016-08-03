@@ -40,11 +40,6 @@
 
 @end
 
-WebCore::Comment* core(DOMComment *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::Comment*>(wrapper->_internal) : 0;
-}
-
 DOMComment *kit(WebCore::Comment* value)
 {
     WebCoreThreadViolationCheckRoundOne();

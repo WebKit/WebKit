@@ -162,11 +162,6 @@
 
 @end
 
-WebCore::HTMLScriptElement* core(DOMHTMLScriptElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLScriptElement*>(wrapper->_internal) : 0;
-}
-
 DOMHTMLScriptElement *kit(WebCore::HTMLScriptElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();

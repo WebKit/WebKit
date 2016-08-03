@@ -98,11 +98,6 @@
 
 @end
 
-WebCore::RGBColor* core(DOMRGBColor *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::RGBColor*>(wrapper->_internal) : 0;
-}
-
 DOMRGBColor *kit(WebCore::RGBColor* value)
 {
     WebCoreThreadViolationCheckRoundOne();

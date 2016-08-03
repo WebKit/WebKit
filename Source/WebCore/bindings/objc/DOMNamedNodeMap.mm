@@ -133,11 +133,6 @@
 
 @end
 
-WebCore::NamedNodeMap* core(DOMNamedNodeMap *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::NamedNodeMap*>(wrapper->_internal) : 0;
-}
-
 DOMNamedNodeMap *kit(WebCore::NamedNodeMap* value)
 {
     WebCoreThreadViolationCheckRoundOne();

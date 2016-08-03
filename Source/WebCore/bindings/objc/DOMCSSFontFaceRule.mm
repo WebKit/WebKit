@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMCSSFontFaceRuleInternal.h"
+#import "DOMCSSFontFaceRule.h"
 
 #import "CSSFontFaceRule.h"
 #import "CSSStyleDeclaration.h"
@@ -49,14 +49,3 @@
 }
 
 @end
-
-WebCore::CSSFontFaceRule* core(DOMCSSFontFaceRule *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSFontFaceRule*>(wrapper->_internal) : 0;
-}
-
-DOMCSSFontFaceRule *kit(WebCore::CSSFontFaceRule* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCSSFontFaceRule*>(kit(static_cast<WebCore::CSSRule*>(value)));
-}

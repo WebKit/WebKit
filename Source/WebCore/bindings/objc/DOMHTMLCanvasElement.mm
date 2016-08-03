@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLCanvasElementInternal.h"
+#import "DOMHTMLCanvasElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -73,14 +73,3 @@
 }
 
 @end
-
-WebCore::HTMLCanvasElement* core(DOMHTMLCanvasElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLCanvasElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLCanvasElement *kit(WebCore::HTMLCanvasElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLCanvasElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

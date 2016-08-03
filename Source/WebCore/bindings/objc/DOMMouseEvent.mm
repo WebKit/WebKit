@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMMouseEventInternal.h"
+#import "DOMMouseEvent.h"
 
 #import "DOMAbstractViewInternal.h"
 #import "DOMEventInternal.h"
@@ -174,14 +174,3 @@
 }
 
 @end
-
-WebCore::MouseEvent* core(DOMMouseEvent *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::MouseEvent*>(wrapper->_internal) : 0;
-}
-
-DOMMouseEvent *kit(WebCore::MouseEvent* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMMouseEvent*>(kit(static_cast<WebCore::Event*>(value)));
-}

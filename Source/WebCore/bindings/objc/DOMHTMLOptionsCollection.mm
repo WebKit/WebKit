@@ -110,11 +110,6 @@
 
 @end
 
-WebCore::HTMLOptionsCollection* core(DOMHTMLOptionsCollection *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLOptionsCollection*>(wrapper->_internal) : 0;
-}
-
 DOMHTMLOptionsCollection *kit(WebCore::HTMLOptionsCollection* value)
 {
     WebCoreThreadViolationCheckRoundOne();

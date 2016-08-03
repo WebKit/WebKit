@@ -30,5 +30,4 @@ namespace WebCore {
 class TreeWalker;
 }
 
-WEBCORE_EXPORT WebCore::TreeWalker* core(DOMTreeWalker *);
 WEBCORE_EXPORT DOMTreeWalker *kit(WebCore::TreeWalker*);

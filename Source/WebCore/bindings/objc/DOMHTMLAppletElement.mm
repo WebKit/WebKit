@@ -24,11 +24,8 @@
  */
 
 #import "config.h"
-#import "DOMInternal.h"
-
 #import "DOMHTMLAppletElement.h"
 
-#import "DOMHTMLAppletElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
 #import "HTMLAppletElement.h"
@@ -176,14 +173,3 @@
 }
 
 @end
-
-WebCore::HTMLAppletElement* core(DOMHTMLAppletElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLAppletElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLAppletElement *kit(WebCore::HTMLAppletElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLAppletElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

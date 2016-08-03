@@ -30,4 +30,3 @@ class HTMLTableColElement;
 }
 
 WEBCORE_EXPORT WebCore::HTMLTableColElement* core(DOMHTMLTableColElement *);
-WEBCORE_EXPORT DOMHTMLTableColElement *kit(WebCore::HTMLTableColElement*);

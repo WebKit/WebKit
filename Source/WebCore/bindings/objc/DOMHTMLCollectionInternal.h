@@ -29,6 +29,5 @@ namespace WebCore {
 class HTMLCollection;
 }
 
-WEBCORE_EXPORT WebCore::HTMLCollection* core(DOMHTMLCollection *);
 WEBCORE_EXPORT DOMHTMLCollection *kit(WebCore::HTMLCollection*);
 Class kitClass(WebCore::HTMLCollection*);

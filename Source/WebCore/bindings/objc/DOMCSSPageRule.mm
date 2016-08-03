@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMCSSPageRuleInternal.h"
+#import "DOMCSSPageRule.h"
 
 #import "CSSPageRule.h"
 #import "CSSStyleDeclaration.h"
@@ -62,14 +62,3 @@
 }
 
 @end
-
-WebCore::CSSPageRule* core(DOMCSSPageRule *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSPageRule*>(wrapper->_internal) : 0;
-}
-
-DOMCSSPageRule *kit(WebCore::CSSPageRule* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCSSPageRule*>(kit(static_cast<WebCore::CSSRule*>(value)));
-}

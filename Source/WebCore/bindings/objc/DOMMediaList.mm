@@ -97,11 +97,6 @@
 
 @end
 
-WebCore::MediaList* core(DOMMediaList *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::MediaList*>(wrapper->_internal) : 0;
-}
-
 DOMMediaList *kit(WebCore::MediaList* value)
 {
     WebCoreThreadViolationCheckRoundOne();

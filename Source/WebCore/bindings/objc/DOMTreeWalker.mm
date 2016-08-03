@@ -137,11 +137,6 @@
 
 @end
 
-WebCore::TreeWalker* core(DOMTreeWalker *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::TreeWalker*>(wrapper->_internal) : 0;
-}
-
 DOMTreeWalker *kit(WebCore::TreeWalker* value)
 {
     WebCoreThreadViolationCheckRoundOne();

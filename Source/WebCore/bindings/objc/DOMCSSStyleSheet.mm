@@ -108,11 +108,6 @@
 
 @end
 
-WebCore::CSSStyleSheet* core(DOMCSSStyleSheet *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSStyleSheet*>(wrapper->_internal) : 0;
-}
-
 DOMCSSStyleSheet *kit(WebCore::CSSStyleSheet* value)
 {
     WebCoreThreadViolationCheckRoundOne();

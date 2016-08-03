@@ -73,11 +73,6 @@
 
 @end
 
-WebCore::CSSValue* core(DOMCSSValue *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSValue*>(wrapper->_internal) : 0;
-}
-
 DOMCSSValue *kit(WebCore::CSSValue* value)
 {
     WebCoreThreadViolationCheckRoundOne();

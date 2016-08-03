@@ -30,5 +30,4 @@ namespace WebCore {
 class DOMTokenList;
 }
 
-WEBCORE_EXPORT WebCore::DOMTokenList* core(DOMDOMTokenList *);
 WEBCORE_EXPORT DOMDOMTokenList *kit(WebCore::DOMTokenList*);

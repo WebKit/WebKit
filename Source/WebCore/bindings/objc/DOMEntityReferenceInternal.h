@@ -29,5 +29,4 @@ namespace WebCore {
 class EntityReference;
 }
 
-WEBCORE_EXPORT WebCore::EntityReference* core(DOMEntityReference *);
 WEBCORE_EXPORT DOMEntityReference *kit(WebCore::EntityReference*);

@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLBRElementInternal.h"
+#import "DOMHTMLBRElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -53,14 +53,3 @@
 }
 
 @end
-
-WebCore::HTMLBRElement* core(DOMHTMLBRElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLBRElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLBRElement *kit(WebCore::HTMLBRElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLBRElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

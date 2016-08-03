@@ -29,5 +29,4 @@ namespace WebCore {
 class Rect;
 }
 
-WEBCORE_EXPORT WebCore::Rect* core(DOMRect *);
 WEBCORE_EXPORT DOMRect *kit(WebCore::Rect*);

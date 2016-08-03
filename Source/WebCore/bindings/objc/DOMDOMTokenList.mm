@@ -93,10 +93,6 @@
 
 @end
 
-WebCore::DOMTokenList* core(DOMDOMTokenList *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::DOMTokenList*>(wrapper->_internal) : 0;
-}
 
 DOMDOMTokenList *kit(WebCore::DOMTokenList* value)
 {

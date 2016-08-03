@@ -29,6 +29,5 @@ namespace WebCore {
 class CSSRule;
 }
 
-WEBCORE_EXPORT WebCore::CSSRule* core(DOMCSSRule *);
 WEBCORE_EXPORT DOMCSSRule *kit(WebCore::CSSRule*);
 Class kitClass(WebCore::CSSRule*);

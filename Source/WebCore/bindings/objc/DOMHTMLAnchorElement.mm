@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLAnchorElementInternal.h"
+#import "DOMHTMLAnchorElement.h"
 
 #import "DOMDOMTokenListInternal.h"
 #import "DOMNodeInternal.h"
@@ -268,14 +268,3 @@
 }
 
 @end
-
-WebCore::HTMLAnchorElement* core(DOMHTMLAnchorElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLAnchorElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLAnchorElement *kit(WebCore::HTMLAnchorElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLAnchorElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

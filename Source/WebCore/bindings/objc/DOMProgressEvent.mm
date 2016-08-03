@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMProgressEventInternal.h"
+#import "DOMProgressEvent.h"
 
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
@@ -58,14 +58,3 @@
 }
 
 @end
-
-WebCore::ProgressEvent* core(DOMProgressEvent *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::ProgressEvent*>(wrapper->_internal) : 0;
-}
-
-DOMProgressEvent *kit(WebCore::ProgressEvent* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMProgressEvent*>(kit(static_cast<WebCore::Event*>(value)));
-}

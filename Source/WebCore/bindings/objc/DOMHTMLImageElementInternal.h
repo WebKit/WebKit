@@ -30,4 +30,3 @@ class HTMLImageElement;
 }
 
 WEBCORE_EXPORT WebCore::HTMLImageElement* core(DOMHTMLImageElement *);
-WEBCORE_EXPORT DOMHTMLImageElement *kit(WebCore::HTMLImageElement*);

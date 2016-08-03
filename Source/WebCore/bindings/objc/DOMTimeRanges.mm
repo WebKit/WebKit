@@ -81,11 +81,6 @@
 
 @end
 
-WebCore::TimeRanges* core(DOMTimeRanges *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::TimeRanges*>(wrapper->_internal) : 0;
-}
-
 DOMTimeRanges *kit(WebCore::TimeRanges* value)
 {
     WebCoreThreadViolationCheckRoundOne();

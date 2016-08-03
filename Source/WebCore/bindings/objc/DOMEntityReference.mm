@@ -40,11 +40,6 @@
 
 @end
 
-WebCore::EntityReference* core(DOMEntityReference *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::EntityReference*>(wrapper->_internal) : 0;
-}
-
 DOMEntityReference *kit(WebCore::EntityReference* value)
 {
     WebCoreThreadViolationCheckRoundOne();

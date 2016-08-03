@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLParamElementInternal.h"
+#import "DOMHTMLParamElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -89,14 +89,3 @@
 }
 
 @end
-
-WebCore::HTMLParamElement* core(DOMHTMLParamElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLParamElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLParamElement *kit(WebCore::HTMLParamElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLParamElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

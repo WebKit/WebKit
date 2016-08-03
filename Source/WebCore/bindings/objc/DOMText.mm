@@ -65,11 +65,6 @@
 
 @end
 
-WebCore::Text* core(DOMText *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::Text*>(wrapper->_internal) : 0;
-}
-
 DOMText *kit(WebCore::Text* value)
 {
     WebCoreThreadViolationCheckRoundOne();

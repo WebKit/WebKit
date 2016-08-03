@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLMapElementInternal.h"
+#import "DOMHTMLMapElement.h"
 
 #import "DOMHTMLCollectionInternal.h"
 #import "DOMNodeInternal.h"
@@ -61,14 +61,3 @@
 }
 
 @end
-
-WebCore::HTMLMapElement* core(DOMHTMLMapElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLMapElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLMapElement *kit(WebCore::HTMLMapElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLMapElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

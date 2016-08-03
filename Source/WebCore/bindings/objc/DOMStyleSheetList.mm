@@ -68,11 +68,6 @@
 
 @end
 
-WebCore::StyleSheetList* core(DOMStyleSheetList *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::StyleSheetList*>(wrapper->_internal) : 0;
-}
-
 DOMStyleSheetList *kit(WebCore::StyleSheetList* value)
 {
     WebCoreThreadViolationCheckRoundOne();

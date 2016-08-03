@@ -65,11 +65,6 @@
 
 @end
 
-WebCore::Blob* core(DOMBlob *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::Blob*>(wrapper->_internal) : 0;
-}
-
 DOMBlob *kit(WebCore::Blob* value)
 {
     WebCoreThreadViolationCheckRoundOne();

@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLParagraphElementInternal.h"
+#import "DOMHTMLParagraphElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -53,14 +53,3 @@
 }
 
 @end
-
-WebCore::HTMLParagraphElement* core(DOMHTMLParagraphElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLParagraphElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLParagraphElement *kit(WebCore::HTMLParagraphElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLParagraphElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

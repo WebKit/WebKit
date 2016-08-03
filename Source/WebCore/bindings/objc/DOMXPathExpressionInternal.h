@@ -29,5 +29,4 @@ namespace WebCore {
 class XPathExpression;
 }
 
-WEBCORE_EXPORT WebCore::XPathExpression* core(DOMXPathExpression *);
 WEBCORE_EXPORT DOMXPathExpression *kit(WebCore::XPathExpression*);

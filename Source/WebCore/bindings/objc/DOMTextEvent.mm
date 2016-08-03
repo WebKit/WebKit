@@ -24,14 +24,11 @@
  */
 
 #import "config.h"
-#import "DOMInternal.h"
-
 #import "DOMTextEvent.h"
 
 #import "DOMAbstractViewInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
-#import "DOMTextEventInternal.h"
 #import "DOMWindow.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
@@ -58,14 +55,3 @@
 }
 
 @end
-
-WebCore::TextEvent* core(DOMTextEvent *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::TextEvent*>(wrapper->_internal) : 0;
-}
-
-DOMTextEvent *kit(WebCore::TextEvent* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMTextEvent*>(kit(static_cast<WebCore::Event*>(value)));
-}

@@ -118,9 +118,3 @@ WebCore::HTMLTableColElement* core(DOMHTMLTableColElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLTableColElement*>(wrapper->_internal) : 0;
 }
-
-DOMHTMLTableColElement *kit(WebCore::HTMLTableColElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLTableColElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

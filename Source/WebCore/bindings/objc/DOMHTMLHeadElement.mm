@@ -54,11 +54,6 @@
 
 @end
 
-WebCore::HTMLHeadElement* core(DOMHTMLHeadElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLHeadElement*>(wrapper->_internal) : 0;
-}
-
 DOMHTMLHeadElement *kit(WebCore::HTMLHeadElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();

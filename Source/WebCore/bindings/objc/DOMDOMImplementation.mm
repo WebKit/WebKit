@@ -133,11 +133,6 @@
 
 @end
 
-WebCore::DOMImplementation* core(DOMImplementation *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::DOMImplementation*>(wrapper->_internal) : 0;
-}
-
 DOMImplementation *kit(WebCore::DOMImplementation* value)
 {
     WebCoreThreadViolationCheckRoundOne();

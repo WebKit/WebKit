@@ -30,5 +30,4 @@ namespace WebCore {
 class MediaError;
 }
 
-WEBCORE_EXPORT WebCore::MediaError* core(DOMMediaError *);
 WEBCORE_EXPORT DOMMediaError *kit(WebCore::MediaError*);

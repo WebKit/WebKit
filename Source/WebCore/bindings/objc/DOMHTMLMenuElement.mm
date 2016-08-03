@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLMenuElementInternal.h"
+#import "DOMHTMLMenuElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -52,14 +52,3 @@
 }
 
 @end
-
-WebCore::HTMLMenuElement* core(DOMHTMLMenuElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLMenuElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLMenuElement *kit(WebCore::HTMLMenuElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLMenuElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

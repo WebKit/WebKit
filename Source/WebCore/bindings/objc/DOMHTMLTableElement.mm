@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLTableElementInternal.h"
+#import "DOMHTMLTableElement.h"
 
 #import "DOMHTMLCollectionInternal.h"
 #import "DOMHTMLElementInternal.h"
@@ -276,14 +276,3 @@
 }
 
 @end
-
-WebCore::HTMLTableElement* core(DOMHTMLTableElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLTableElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLTableElement *kit(WebCore::HTMLTableElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLTableElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

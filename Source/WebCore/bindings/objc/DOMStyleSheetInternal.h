@@ -29,6 +29,5 @@ namespace WebCore {
 class StyleSheet;
 }
 
-WEBCORE_EXPORT WebCore::StyleSheet* core(DOMStyleSheet *);
 WEBCORE_EXPORT DOMStyleSheet *kit(WebCore::StyleSheet*);
 Class kitClass(WebCore::StyleSheet*);

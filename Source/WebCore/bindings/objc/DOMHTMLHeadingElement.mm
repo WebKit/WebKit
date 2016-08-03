@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLHeadingElementInternal.h"
+#import "DOMHTMLHeadingElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -53,14 +53,3 @@
 }
 
 @end
-
-WebCore::HTMLHeadingElement* core(DOMHTMLHeadingElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLHeadingElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLHeadingElement *kit(WebCore::HTMLHeadingElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLHeadingElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

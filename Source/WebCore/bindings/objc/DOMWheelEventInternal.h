@@ -31,4 +31,3 @@ class WheelEvent;
 }
 
 WEBCORE_EXPORT WebCore::WheelEvent* core(DOMWheelEvent *);
-WEBCORE_EXPORT DOMWheelEvent *kit(WebCore::WheelEvent*);

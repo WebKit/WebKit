@@ -29,5 +29,4 @@ namespace WebCore {
 class Counter;
 }
 
-WEBCORE_EXPORT WebCore::Counter* core(DOMCounter *);
 WEBCORE_EXPORT DOMCounter *kit(WebCore::Counter*);

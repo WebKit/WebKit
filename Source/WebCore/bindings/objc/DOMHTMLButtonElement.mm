@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLButtonElementInternal.h"
+#import "DOMHTMLButtonElement.h"
 
 #import "DOMHTMLFormElementInternal.h"
 #import "DOMNodeInternal.h"
@@ -136,14 +136,3 @@
 }
 
 @end
-
-WebCore::HTMLButtonElement* core(DOMHTMLButtonElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLButtonElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLButtonElement *kit(WebCore::HTMLButtonElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLButtonElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

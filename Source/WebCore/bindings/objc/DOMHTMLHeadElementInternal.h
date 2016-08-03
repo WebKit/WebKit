@@ -29,5 +29,4 @@ namespace WebCore {
 class HTMLHeadElement;
 }
 
-WEBCORE_EXPORT WebCore::HTMLHeadElement* core(DOMHTMLHeadElement *);
 WEBCORE_EXPORT DOMHTMLHeadElement *kit(WebCore::HTMLHeadElement*);

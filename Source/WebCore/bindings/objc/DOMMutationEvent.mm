@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMMutationEventInternal.h"
+#import "DOMMutationEvent.h"
 
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
@@ -84,14 +84,3 @@
 }
 
 @end
-
-WebCore::MutationEvent* core(DOMMutationEvent *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::MutationEvent*>(wrapper->_internal) : 0;
-}
-
-DOMMutationEvent *kit(WebCore::MutationEvent* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMMutationEvent*>(kit(static_cast<WebCore::Event*>(value)));
-}

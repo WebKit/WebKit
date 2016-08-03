@@ -40,11 +40,6 @@
 
 @end
 
-WebCore::CDATASection* core(DOMCDATASection *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CDATASection*>(wrapper->_internal) : 0;
-}
-
 DOMCDATASection *kit(WebCore::CDATASection* value)
 {
     WebCoreThreadViolationCheckRoundOne();

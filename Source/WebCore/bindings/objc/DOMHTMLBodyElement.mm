@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLBodyElementInternal.h"
+#import "DOMHTMLBodyElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -113,14 +113,3 @@
 }
 
 @end
-
-WebCore::HTMLBodyElement* core(DOMHTMLBodyElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLBodyElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLBodyElement *kit(WebCore::HTMLBodyElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLBodyElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

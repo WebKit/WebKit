@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLTitleElementInternal.h"
+#import "DOMHTMLTitleElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -54,14 +54,3 @@
 }
 
 @end
-
-WebCore::HTMLTitleElement* core(DOMHTMLTitleElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLTitleElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLTitleElement *kit(WebCore::HTMLTitleElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLTitleElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

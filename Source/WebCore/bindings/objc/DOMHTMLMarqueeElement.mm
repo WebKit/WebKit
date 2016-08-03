@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLMarqueeElementInternal.h"
+#import "DOMHTMLMarqueeElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -187,14 +187,3 @@
 }
 
 @end
-
-WebCore::HTMLMarqueeElement* core(DOMHTMLMarqueeElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLMarqueeElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLMarqueeElement *kit(WebCore::HTMLMarqueeElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLMarqueeElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

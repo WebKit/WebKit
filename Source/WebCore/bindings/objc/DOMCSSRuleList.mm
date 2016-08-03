@@ -67,11 +67,6 @@
 
 @end
 
-WebCore::CSSRuleList* core(DOMCSSRuleList *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSRuleList*>(wrapper->_internal) : 0;
-}
-
 DOMCSSRuleList *kit(WebCore::CSSRuleList* value)
 {
     WebCoreThreadViolationCheckRoundOne();

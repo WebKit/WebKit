@@ -30,4 +30,3 @@ class HTMLLinkElement;
 }
 
 WEBCORE_EXPORT WebCore::HTMLLinkElement* core(DOMHTMLLinkElement *);
-WEBCORE_EXPORT DOMHTMLLinkElement *kit(WebCore::HTMLLinkElement*);

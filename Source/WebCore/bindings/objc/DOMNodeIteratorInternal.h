@@ -30,5 +30,4 @@ namespace WebCore {
 class NodeIterator;
 }
 
-WEBCORE_EXPORT WebCore::NodeIterator* core(DOMNodeIterator *);
 WEBCORE_EXPORT DOMNodeIterator *kit(WebCore::NodeIterator*);

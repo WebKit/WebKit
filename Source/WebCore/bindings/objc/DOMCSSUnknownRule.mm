@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMCSSUnknownRuleInternal.h"
+#import "DOMCSSUnknownRule.h"
 
 #import "CSSUnknownRule.h"
 #import "DOMCSSRuleInternal.h"
@@ -40,14 +40,3 @@
 @implementation DOMCSSUnknownRule
 
 @end
-
-WebCore::CSSUnknownRule* core(DOMCSSUnknownRule *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSUnknownRule*>(wrapper->_internal) : 0;
-}
-
-DOMCSSUnknownRule *kit(WebCore::CSSUnknownRule* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCSSUnknownRule*>(kit(static_cast<WebCore::CSSRule*>(value)));
-}

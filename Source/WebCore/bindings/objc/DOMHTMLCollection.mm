@@ -81,11 +81,6 @@
 
 @end
 
-WebCore::HTMLCollection* core(DOMHTMLCollection *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLCollection*>(wrapper->_internal) : 0;
-}
-
 DOMHTMLCollection *kit(WebCore::HTMLCollection* value)
 {
     WebCoreThreadViolationCheckRoundOne();

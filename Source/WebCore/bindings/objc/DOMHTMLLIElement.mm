@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLLIElementInternal.h"
+#import "DOMHTMLLIElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -65,14 +65,3 @@
 }
 
 @end
-
-WebCore::HTMLLIElement* core(DOMHTMLLIElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLLIElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLLIElement *kit(WebCore::HTMLLIElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLLIElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

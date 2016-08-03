@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMOverflowEventInternal.h"
+#import "DOMOverflowEvent.h"
 
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
@@ -64,14 +64,3 @@
 }
 
 @end
-
-WebCore::OverflowEvent* core(DOMOverflowEvent *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::OverflowEvent*>(wrapper->_internal) : 0;
-}
-
-DOMOverflowEvent *kit(WebCore::OverflowEvent* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMOverflowEvent*>(kit(static_cast<WebCore::Event*>(value)));
-}

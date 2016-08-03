@@ -107,9 +107,3 @@ WebCore::WheelEvent* core(DOMWheelEvent *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::WheelEvent*>(wrapper->_internal) : 0;
 }
-
-DOMWheelEvent *kit(WebCore::WheelEvent* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMWheelEvent*>(kit(static_cast<WebCore::Event*>(value)));
-}

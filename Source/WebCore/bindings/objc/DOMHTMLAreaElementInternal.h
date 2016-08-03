@@ -30,4 +30,3 @@ class HTMLAreaElement;
 }
 
 WEBCORE_EXPORT WebCore::HTMLAreaElement* core(DOMHTMLAreaElement *);
-WEBCORE_EXPORT DOMHTMLAreaElement *kit(WebCore::HTMLAreaElement*);

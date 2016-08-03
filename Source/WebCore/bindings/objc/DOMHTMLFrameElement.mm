@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLFrameElementInternal.h"
+#import "DOMHTMLFrameElement.h"
 
 #import "DOMAbstractViewInternal.h"
 #import "DOMDocumentInternal.h"
@@ -177,14 +177,3 @@
 }
 
 @end
-
-WebCore::HTMLFrameElement* core(DOMHTMLFrameElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLFrameElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLFrameElement *kit(WebCore::HTMLFrameElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLFrameElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

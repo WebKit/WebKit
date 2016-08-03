@@ -29,5 +29,4 @@ namespace WebCore {
 class File;
 }
 
-WEBCORE_EXPORT WebCore::File* core(DOMFile *);
 WEBCORE_EXPORT DOMFile *kit(WebCore::File*);

@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLMetaElementInternal.h"
+#import "DOMHTMLMetaElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -89,14 +89,3 @@
 }
 
 @end
-
-WebCore::HTMLMetaElement* core(DOMHTMLMetaElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLMetaElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLMetaElement *kit(WebCore::HTMLMetaElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLMetaElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

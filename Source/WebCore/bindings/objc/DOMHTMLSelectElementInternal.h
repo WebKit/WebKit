@@ -30,4 +30,3 @@ class HTMLSelectElement;
 }
 
 WEBCORE_EXPORT WebCore::HTMLSelectElement* core(DOMHTMLSelectElement *);
-WEBCORE_EXPORT DOMHTMLSelectElement *kit(WebCore::HTMLSelectElement*);

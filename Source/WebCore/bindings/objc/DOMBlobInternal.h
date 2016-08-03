@@ -29,5 +29,4 @@ namespace WebCore {
 class Blob;
 }
 
-WEBCORE_EXPORT WebCore::Blob* core(DOMBlob *);
 WEBCORE_EXPORT DOMBlob *kit(WebCore::Blob*);

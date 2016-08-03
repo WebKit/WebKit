@@ -88,11 +88,6 @@
 
 @end
 
-WebCore::CSSRule* core(DOMCSSRule *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSRule*>(wrapper->_internal) : 0;
-}
-
 DOMCSSRule *kit(WebCore::CSSRule* value)
 {
     WebCoreThreadViolationCheckRoundOne();

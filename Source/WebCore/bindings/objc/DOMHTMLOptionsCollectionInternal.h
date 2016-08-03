@@ -29,5 +29,4 @@ namespace WebCore {
 class HTMLOptionsCollection;
 }
 
-WEBCORE_EXPORT WebCore::HTMLOptionsCollection* core(DOMHTMLOptionsCollection *);
 WEBCORE_EXPORT DOMHTMLOptionsCollection *kit(WebCore::HTMLOptionsCollection*);

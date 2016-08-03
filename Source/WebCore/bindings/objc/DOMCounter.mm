@@ -71,11 +71,6 @@
 
 @end
 
-WebCore::Counter* core(DOMCounter *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::Counter*>(wrapper->_internal) : 0;
-}
-
 DOMCounter *kit(WebCore::Counter* value)
 {
     WebCoreThreadViolationCheckRoundOne();

@@ -73,11 +73,6 @@
 
 @end
 
-WebCore::XPathExpression* core(DOMXPathExpression *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::XPathExpression*>(wrapper->_internal) : 0;
-}
-
 DOMXPathExpression *kit(WebCore::XPathExpression* value)
 {
     WebCoreThreadViolationCheckRoundOne();

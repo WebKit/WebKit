@@ -29,5 +29,4 @@ namespace WebCore {
 class CSSRuleList;
 }
 
-WEBCORE_EXPORT WebCore::CSSRuleList* core(DOMCSSRuleList *);
 WEBCORE_EXPORT DOMCSSRuleList *kit(WebCore::CSSRuleList*);

@@ -288,9 +288,3 @@ WebCore::HTMLImageElement* core(DOMHTMLImageElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLImageElement*>(wrapper->_internal) : 0;
 }
-
-DOMHTMLImageElement *kit(WebCore::HTMLImageElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLImageElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

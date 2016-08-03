@@ -29,5 +29,4 @@ namespace WebCore {
 class Text;
 }
 
-WEBCORE_EXPORT WebCore::Text* core(DOMText *);
 WEBCORE_EXPORT DOMText *kit(WebCore::Text*);

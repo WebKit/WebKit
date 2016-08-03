@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLQuoteElementInternal.h"
+#import "DOMHTMLQuoteElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -53,14 +53,3 @@
 }
 
 @end
-
-WebCore::HTMLQuoteElement* core(DOMHTMLQuoteElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLQuoteElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLQuoteElement *kit(WebCore::HTMLQuoteElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLQuoteElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

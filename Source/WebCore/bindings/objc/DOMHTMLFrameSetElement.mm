@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLFrameSetElementInternal.h"
+#import "DOMHTMLFrameSetElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -65,14 +65,3 @@
 }
 
 @end
-
-WebCore::HTMLFrameSetElement* core(DOMHTMLFrameSetElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLFrameSetElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLFrameSetElement *kit(WebCore::HTMLFrameSetElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLFrameSetElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

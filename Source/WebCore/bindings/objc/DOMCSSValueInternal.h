@@ -29,6 +29,5 @@ namespace WebCore {
 class CSSValue;
 }
 
-WEBCORE_EXPORT WebCore::CSSValue* core(DOMCSSValue *);
 WEBCORE_EXPORT DOMCSSValue *kit(WebCore::CSSValue*);
 Class kitClass(WebCore::CSSValue*);

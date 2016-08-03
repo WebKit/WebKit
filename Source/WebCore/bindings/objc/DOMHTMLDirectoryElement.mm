@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLDirectoryElementInternal.h"
+#import "DOMHTMLDirectoryElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -52,14 +52,3 @@
 }
 
 @end
-
-WebCore::HTMLDirectoryElement* core(DOMHTMLDirectoryElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLDirectoryElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLDirectoryElement *kit(WebCore::HTMLDirectoryElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLDirectoryElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

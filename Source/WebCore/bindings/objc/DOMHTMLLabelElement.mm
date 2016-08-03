@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLLabelElementInternal.h"
+#import "DOMHTMLLabelElement.h"
 
 #import "DOMHTMLElementInternal.h"
 #import "DOMHTMLFormElementInternal.h"
@@ -81,14 +81,3 @@
 }
 
 @end
-
-WebCore::HTMLLabelElement* core(DOMHTMLLabelElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLLabelElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLLabelElement *kit(WebCore::HTMLLabelElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLLabelElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

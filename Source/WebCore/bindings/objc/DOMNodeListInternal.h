@@ -29,5 +29,4 @@ namespace WebCore {
 class NodeList;
 }
 
-WEBCORE_EXPORT WebCore::NodeList* core(DOMNodeList *);
 WEBCORE_EXPORT DOMNodeList *kit(WebCore::NodeList*);

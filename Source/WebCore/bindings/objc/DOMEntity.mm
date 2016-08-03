@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMEntityInternal.h"
+#import "DOMEntity.h"
 
 #import "DOMNodeInternal.h"
 #import "Entity.h"
@@ -58,14 +58,3 @@
 }
 
 @end
-
-WebCore::Entity* core(DOMEntity *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::Entity*>(wrapper->_internal) : 0;
-}
-
-DOMEntity *kit(WebCore::Entity* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMEntity*>(kit(static_cast<WebCore::Node*>(value)));
-}

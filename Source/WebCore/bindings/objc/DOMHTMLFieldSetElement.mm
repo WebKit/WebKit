@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLFieldSetElementInternal.h"
+#import "DOMHTMLFieldSetElement.h"
 
 #import "DOMHTMLCollectionInternal.h"
 #import "DOMHTMLFormElementInternal.h"
@@ -53,14 +53,3 @@
 }
 
 @end
-
-WebCore::HTMLFieldSetElement* core(DOMHTMLFieldSetElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLFieldSetElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLFieldSetElement *kit(WebCore::HTMLFieldSetElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLFieldSetElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

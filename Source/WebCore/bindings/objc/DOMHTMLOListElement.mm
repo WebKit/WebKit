@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLOListElementInternal.h"
+#import "DOMHTMLOListElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -89,14 +89,3 @@
 }
 
 @end
-
-WebCore::HTMLOListElement* core(DOMHTMLOListElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLOListElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLOListElement *kit(WebCore::HTMLOListElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLOListElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

@@ -29,5 +29,4 @@ namespace WebCore {
 class NamedNodeMap;
 }
 
-WEBCORE_EXPORT WebCore::NamedNodeMap* core(DOMNamedNodeMap *);
 WEBCORE_EXPORT DOMNamedNodeMap *kit(WebCore::NamedNodeMap*);

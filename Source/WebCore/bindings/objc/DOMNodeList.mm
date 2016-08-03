@@ -65,11 +65,6 @@
 
 @end
 
-WebCore::NodeList* core(DOMNodeList *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::NodeList*>(wrapper->_internal) : 0;
-}
-
 DOMNodeList *kit(WebCore::NodeList* value)
 {
     WebCoreThreadViolationCheckRoundOne();

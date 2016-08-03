@@ -102,9 +102,3 @@ WebCore::HTMLStyleElement* core(DOMHTMLStyleElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLStyleElement*>(wrapper->_internal) : 0;
 }
-
-DOMHTMLStyleElement *kit(WebCore::HTMLStyleElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLStyleElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

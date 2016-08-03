@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 
-#import "DOMHTMLVideoElementInternal.h"
+#import "DOMHTMLVideoElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -144,16 +144,5 @@
 }
 
 @end
-
-WebCore::HTMLVideoElement* core(DOMHTMLVideoElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLVideoElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLVideoElement *kit(WebCore::HTMLVideoElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLVideoElement*>(kit(static_cast<WebCore::Node*>(value)));
-}
 
 #endif // ENABLE(VIDEO)

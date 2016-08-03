@@ -29,5 +29,4 @@ namespace WebCore {
 class CDATASection;
 }
 
-WEBCORE_EXPORT WebCore::CDATASection* core(DOMCDATASection *);
 WEBCORE_EXPORT DOMCDATASection *kit(WebCore::CDATASection*);

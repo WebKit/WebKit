@@ -29,5 +29,4 @@ namespace WebCore {
 class HTMLScriptElement;
 }
 
-WEBCORE_EXPORT WebCore::HTMLScriptElement* core(DOMHTMLScriptElement *);
 WEBCORE_EXPORT DOMHTMLScriptElement *kit(WebCore::HTMLScriptElement*);

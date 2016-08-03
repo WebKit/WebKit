@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMKeyboardEventInternal.h"
+#import "DOMKeyboardEvent.h"
 
 #import "DOMAbstractViewInternal.h"
 #import "DOMEventInternal.h"
@@ -133,14 +133,3 @@
 }
 
 @end
-
-WebCore::KeyboardEvent* core(DOMKeyboardEvent *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::KeyboardEvent*>(wrapper->_internal) : 0;
-}
-
-DOMKeyboardEvent *kit(WebCore::KeyboardEvent* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMKeyboardEvent*>(kit(static_cast<WebCore::Event*>(value)));
-}

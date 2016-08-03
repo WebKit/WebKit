@@ -30,4 +30,3 @@ class HTMLStyleElement;
 }
 
 WEBCORE_EXPORT WebCore::HTMLStyleElement* core(DOMHTMLStyleElement *);
-WEBCORE_EXPORT DOMHTMLStyleElement *kit(WebCore::HTMLStyleElement*);

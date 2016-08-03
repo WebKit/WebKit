@@ -29,5 +29,4 @@ namespace WebCore {
 class TimeRanges;
 }
 
-WEBCORE_EXPORT WebCore::TimeRanges* core(DOMTimeRanges *);
 WEBCORE_EXPORT DOMTimeRanges *kit(WebCore::TimeRanges*);

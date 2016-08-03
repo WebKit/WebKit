@@ -29,5 +29,4 @@ namespace WebCore {
 class Comment;
 }
 
-WEBCORE_EXPORT WebCore::Comment* core(DOMComment *);
 WEBCORE_EXPORT DOMComment *kit(WebCore::Comment*);

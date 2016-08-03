@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMCSSStyleRuleInternal.h"
+#import "DOMCSSStyleRule.h"
 
 #import "CSSStyleDeclaration.h"
 #import "CSSStyleRule.h"
@@ -62,14 +62,3 @@
 }
 
 @end
-
-WebCore::CSSStyleRule* core(DOMCSSStyleRule *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSStyleRule*>(wrapper->_internal) : 0;
-}
-
-DOMCSSStyleRule *kit(WebCore::CSSStyleRule* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCSSStyleRule*>(kit(static_cast<WebCore::CSSRule*>(value)));
-}

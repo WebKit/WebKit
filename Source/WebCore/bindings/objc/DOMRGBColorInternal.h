@@ -29,5 +29,4 @@ namespace WebCore {
 class RGBColor;
 }
 
-WEBCORE_EXPORT WebCore::RGBColor* core(DOMRGBColor *);
 WEBCORE_EXPORT DOMRGBColor *kit(WebCore::RGBColor*);

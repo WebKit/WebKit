@@ -220,11 +220,6 @@
 
 @end
 
-WebCore::HTMLFormElement* core(DOMHTMLFormElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLFormElement*>(wrapper->_internal) : 0;
-}
-
 DOMHTMLFormElement *kit(WebCore::HTMLFormElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();

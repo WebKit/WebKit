@@ -131,11 +131,6 @@
 
 @end
 
-WebCore::CSSPrimitiveValue* core(DOMCSSPrimitiveValue *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSPrimitiveValue*>(wrapper->_internal) : 0;
-}
-
 DOMCSSPrimitiveValue *kit(WebCore::CSSPrimitiveValue* value)
 {
     WebCoreThreadViolationCheckRoundOne();

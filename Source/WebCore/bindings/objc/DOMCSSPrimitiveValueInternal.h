@@ -29,5 +29,4 @@ namespace WebCore {
 class CSSPrimitiveValue;
 }
 
-WEBCORE_EXPORT WebCore::CSSPrimitiveValue* core(DOMCSSPrimitiveValue *);
 WEBCORE_EXPORT DOMCSSPrimitiveValue *kit(WebCore::CSSPrimitiveValue*);

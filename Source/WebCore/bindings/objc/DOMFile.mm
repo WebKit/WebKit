@@ -54,11 +54,6 @@
 
 @end
 
-WebCore::File* core(DOMFile *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::File*>(wrapper->_internal) : 0;
-}
-
 DOMFile *kit(WebCore::File* value)
 {
     WebCoreThreadViolationCheckRoundOne();

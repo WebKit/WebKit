@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLPreElementInternal.h"
+#import "DOMHTMLPreElement.h"
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -64,14 +64,3 @@
 }
 
 @end
-
-WebCore::HTMLPreElement* core(DOMHTMLPreElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLPreElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLPreElement *kit(WebCore::HTMLPreElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLPreElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

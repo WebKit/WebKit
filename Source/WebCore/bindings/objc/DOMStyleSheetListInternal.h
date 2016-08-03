@@ -29,5 +29,4 @@ namespace WebCore {
 class StyleSheetList;
 }
 
-WEBCORE_EXPORT WebCore::StyleSheetList* core(DOMStyleSheetList *);
 WEBCORE_EXPORT DOMStyleSheetList *kit(WebCore::StyleSheetList*);

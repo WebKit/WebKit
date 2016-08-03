@@ -64,11 +64,6 @@
 
 @end
 
-WebCore::MediaError* core(DOMMediaError *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::MediaError*>(wrapper->_internal) : 0;
-}
-
 DOMMediaError *kit(WebCore::MediaError* value)
 {
     WebCoreThreadViolationCheckRoundOne();

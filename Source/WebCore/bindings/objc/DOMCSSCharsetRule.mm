@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMCSSCharsetRuleInternal.h"
+#import "DOMCSSCharsetRule.h"
 
 #import "CSSCharsetRule.h"
 #import "DOMCSSRuleInternal.h"
@@ -47,14 +47,3 @@
 }
 
 @end
-
-WebCore::CSSCharsetRule* core(DOMCSSCharsetRule *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::CSSCharsetRule*>(wrapper->_internal) : 0;
-}
-
-DOMCSSCharsetRule *kit(WebCore::CSSCharsetRule* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCSSCharsetRule*>(kit(static_cast<WebCore::CSSRule*>(value)));
-}

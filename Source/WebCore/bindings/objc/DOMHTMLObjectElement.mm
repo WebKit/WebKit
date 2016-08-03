@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DOMHTMLObjectElementInternal.h"
+#import "DOMHTMLObjectElement.h"
 
 #import "DOMDocumentInternal.h"
 #import "DOMHTMLFormElementInternal.h"
@@ -259,14 +259,3 @@
 }
 
 @end
-
-WebCore::HTMLObjectElement* core(DOMHTMLObjectElement *wrapper)
-{
-    return wrapper ? reinterpret_cast<WebCore::HTMLObjectElement*>(wrapper->_internal) : 0;
-}
-
-DOMHTMLObjectElement *kit(WebCore::HTMLObjectElement* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMHTMLObjectElement*>(kit(static_cast<WebCore::Node*>(value)));
-}

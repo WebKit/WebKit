@@ -29,5 +29,4 @@ namespace WebCore {
 class HTMLFormElement;
 }
 
-WEBCORE_EXPORT WebCore::HTMLFormElement* core(DOMHTMLFormElement *);
 WEBCORE_EXPORT DOMHTMLFormElement *kit(WebCore::HTMLFormElement*);
