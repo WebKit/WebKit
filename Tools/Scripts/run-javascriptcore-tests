@@ -47,7 +47,7 @@ my $configuration = configuration();
 # These variables are intentionally left undefined.
 my $root;
 my $showHelp;
-my $extraTests;
+my @extraTests = ();
 my $jsDriverArgs;
 my $childProcesses;
 my $shellRunner;
@@ -95,7 +95,7 @@ if ($ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD}) {
 }
 
 if ($ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS}) {
-    $extraTests = $ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS};
+    push @extraTests, $ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS};
 }
 
 my $programName = basename($0);
@@ -145,7 +145,7 @@ EOF
 
 GetOptions(
     'root=s' => \$root,
-    'extra-tests=s' => \$extraTests,
+    'extra-tests=s' => \@extraTests,
     'build!' => \$buildJSC,
     'testapi!' => \$runTestAPI,
     'jsc-stress!' => \$runJSCStress,
@@ -345,8 +345,8 @@ sub runJSCStressTests
     # End option processing, the rest of the arguments are tests
     push(@jscStressDriverCmd, "--");
 
-    if (defined($extraTests)) {
-        push(@jscStressDriverCmd, $extraTests);
+    for my $testSuite (@extraTests) {
+        push(@jscStressDriverCmd, $testSuite);
     }
     if (defined($ENV{"EXTRA_JSC_TESTS"})) {
         push(@jscStressDriverCmd, $ENV{"EXTRA_JSC_TESTS"});

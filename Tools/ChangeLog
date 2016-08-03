@@ -1,3 +1,16 @@
+2016-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        run-javascriptcore-tests should accept multiple --extra-tests
+        https://bugs.webkit.org/show_bug.cgi?id=160486
+
+        Reviewed by Saam Barati.
+        
+        We want to be able to pass --extra-tests multiple times, to supply an arbitrary number of extra
+        test suites. This does it by using GetOpt::Long's array support.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2016-08-02  Enrica Casucci  <enrica@apple.com>
 
         Allow building with content filtering disabled.
