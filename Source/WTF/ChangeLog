@@ -1,3 +1,23 @@
+2016-08-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update breaking rules to match ICU 57
+        https://bugs.webkit.org/show_bug.cgi?id=160488
+        <rdar://problem/25856238>
+
+        Reviewed by Darin Adler.
+
+        This patch fixes a typo in the uax14AssignmentsAfter rules which
+        was causing flag emoji to have line breaking opportunities in their
+        middles. It also fixes significant language issues for languages
+        such as Hebrew, and adds correct breaking opportunities around
+        hyphens.
+
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::cursorMovementIterator):
+        (WTF::uax14AssignmentsAfter):
+        (WTF::uax14Forward):
+        (WTF::uax14Reverse):
+
 2016-08-02  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Simplify the initialization of AbstractValue in the AbstractInterpreter

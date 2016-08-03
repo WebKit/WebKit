@@ -1,3 +1,15 @@
+2016-08-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update breaking rules to match ICU 57
+        https://bugs.webkit.org/show_bug.cgi?id=160488
+        <rdar://problem/25856238>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/flag-emoji-line-break-expected.html: Added.
+        * fast/text/flag-emoji-line-break.html: Added.
+        * platform/mac/TestExpectations: Mark the test as failing on Yosemite.
+
 2016-08-02  Chris Dumez  <cdumez@apple.com>
 
         Drop custom bindings code for HTMLOptionsCollection.remove()

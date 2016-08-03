@@ -1439,3 +1439,6 @@ webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-7.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-8.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-9.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender.html [ Pass ]
+
+# ADDITIONAL_EMOJI_SUPPORT is not enabled on Yosemite
+webkit.org/b/160488 [ Yosemite ] fast/text/flag-emoji-line-break.html [ ImageOnlyFailure ]

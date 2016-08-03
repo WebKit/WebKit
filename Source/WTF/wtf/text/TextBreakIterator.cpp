@@ -164,10 +164,9 @@ TextBreakIterator* sentenceBreakIterator(StringView string)
 
 TextBreakIterator* cursorMovementIterator(StringView string)
 {
-    // FIXME: These rules need to be updated for additional gender-based emoji support.
 #if !PLATFORM(IOS)
-    // This rule set is based on character-break iterator rules of ICU 4.0
-    // <http://source.icu-project.org/repos/icu/icu/tags/release-4-0/source/data/brkitr/char.txt>.
+    // This rule set is based on character-break iterator rules of ICU 57
+    // <http://source.icu-project.org/repos/icu/icu/tags/release-57-1/source/data/brkitr/>.
     // The major differences from the original ones are listed below:
     // * Replaced '[\p{Grapheme_Cluster_Break = SpacingMark}]' with '[\p{General_Category = Spacing Mark} - $Extend]' for ICU 3.8 or earlier;
     // * Removed rules that prevent a cursor from moving after prepend characters (Bug 24342);
@@ -480,7 +479,7 @@ static const char* uax14AssignmentsAfter =
     "$POcm = $PO $CM*;"
     "$PRcm = $PR $CM*;"
     "$QUcm = $QU $CM*;"
-    "$RIcm = $QU $CM*;"
+    "$RIcm = $RI $CM*;"
     "$SYcm = $SY $CM*;"
     "$WJcm = $WJ $CM*;";
 
@@ -522,6 +521,7 @@ static const char* uax14Forward =
     "$PO $CM+;"
     "$PR $CM+;"
     "$QU $CM+;"
+    "$RI $CM+;"
     "$SY $CM+;"
     "$WJ $CM+;"
     "$CR $LF {100};"
@@ -572,8 +572,10 @@ static const char* uax14Forward =
     "$BBcm [^$CB];"
     "$BBcm $LB20NonBreaks $CM*;"
     "$HLcm ($HYcm | $BAcm) [^$CB]?;"
+    "$SYcm $HLcm;"
     "($ALcm | $HLcm) $INcm;"
     "$CM+ $INcm;"
+    "$EXcm $INcm;"
     "$IDcm $INcm;"
     "$INcm $INcm;"
     "$NUcm $INcm;"
@@ -680,7 +682,9 @@ static const char* uax14Reverse =
     "$CM* [$LB20NonBreaks-$CM] $CM* $BB;"
     "[^$CB] $CM* $BB;"
     "[^$CB] $CM* ($HY | $BA) $CM* $HL;"
+    "$CM* $HL $CM* $SY;"
     "$CM* $IN $CM* ($ALPlus | $HL);"
+    "$CM* $IN $CM* $EX;"
     "$CM* $IN $CM* $ID;"
     "$CM* $IN $CM* $IN;"
     "$CM* $IN $CM* $NU;"
