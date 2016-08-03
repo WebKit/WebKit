@@ -1,3 +1,44 @@
+2016-08-02  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r203385): Frequent RELEASE_ASSERT in WebKit::RemoteLayerTreeDrawingArea::flushLayers()
+        https://bugs.webkit.org/show_bug.cgi?id=160481
+        <rdar://problem/27534205>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState):
+        If the UI process sends a didUpdate message while the Web process is in
+        the middle of flushing on a background thread, the drawing area will
+        allow another commit to start on the main thread, which then (rightfully)
+        causes the RELEASE_ASSERT.
+
+        This is normally not a problem, because didRefreshDisplay (which sends the didUpdate)
+        bails if m_didUpdateMessageState is anything other than NotSent, and m_didUpdateMessageState
+        is only NotSent if the Web process has sent a commit (and thus will not commit again until
+        it gets a didUpdate). This is the fundamental mechanism that avoids multiple commits being
+        in flight at once.
+
+        In r203385, I added a path where didRefreshDisplay could be called
+        before the first commit arrived (by way of
+        _applicationWillEnterForeground -> viewStateDidChange -> waitForDidUpdateViewState).
+
+        This caused trouble because m_didUpdateMessageState is initialized to NotSent,
+        which means that we could end up sending a didUpdate immediately, before the first
+        commit arrives - even worse, while the first commit is being flushed on a background thread,
+        leading the aforementioned RELEASE_ASSERT to fire.
+
+        Instead, initialize it to Sent (which I've renamed to DoesNotNeedDidUpdate), so that
+        we won't send a didUpdate until after the first commit arrives (at which point
+        the two processes are in agreement about the order of things).
+
+        It's not currently possible to API test this for multiple reasons, though it is fairly
+        easy to write a test app that reproduces reliably (by simulating suspend/resume notifications
+        inside the didFinishNavigation: callback).
+
 2016-08-02  Enrica Casucci  <enrica@apple.com>
 
         Allow building with content filtering disabled.
