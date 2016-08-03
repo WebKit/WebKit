@@ -1,3 +1,13 @@
+2016-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Lacking support on a arm-traditional disassembler.
+        https://bugs.webkit.org/show_bug.cgi?id=123717
+
+        Reviewed by Mark Lam.
+
+        * Source/cmake/FindLLVM.cmake: Added back the r196749 state.
+        * Source/cmake/OptionsCommon.cmake: Added back the r196749 state.
+
 2016-08-01  Keith Miller  <keith_miller@apple.com>
 
         We should not keep the JavaScript tests inside the Source/JavaScriptCore/ directory.

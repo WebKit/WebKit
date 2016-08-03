@@ -1,3 +1,12 @@
+2016-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Lacking support on a arm-traditional disassembler.
+        https://bugs.webkit.org/show_bug.cgi?id=123717
+
+        Reviewed by Mark Lam.
+
+        * wtf/Platform.h:
+
 2016-08-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update breaking rules to match ICU 57

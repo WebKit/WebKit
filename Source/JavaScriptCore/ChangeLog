@@ -1,3 +1,14 @@
+2016-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Lacking support on a arm-traditional disassembler.
+        https://bugs.webkit.org/show_bug.cgi?id=123717
+
+        Reviewed by Mark Lam.
+
+        * CMakeLists.txt:
+        * disassembler/ARMLLVMDisassembler.cpp: Added, based on pre r196729 LLVMDisassembler, but it is ARM traditional only now.
+        (JSC::tryToDisassemble):
+
 2016-08-03  Saam Barati  <sbarati@apple.com>
 
         Implement nested rest destructuring w.r.t the ES7 spec
