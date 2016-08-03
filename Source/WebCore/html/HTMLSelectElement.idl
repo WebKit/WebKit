@@ -60,12 +60,12 @@
     [RaisesException] void add(HTMLElement element, long index);
     [RaisesException] void add(HTMLElement element);
 
-    // In JavaScript, we support both option index and option object parameters.
-    // As of this writing this cannot be auto-generated.
-    [Custom] void remove(/* indexOrOption */);
-#else
-    [ImplementedAs=removeByIndex] void remove(long index);
+    [RaisesException] void remove(); // ChildNode overload
+    // FIXME: This overload is not in the specification and was dropped in Blink.
+    void remove(HTMLOptionElement option);
 #endif
+    [ImplementedAs=removeByIndex] void remove(long index);
+
 
     readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;
