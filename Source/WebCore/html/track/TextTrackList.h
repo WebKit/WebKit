@@ -42,6 +42,8 @@ public:
     }
     virtual ~TextTrackList();
 
+    void clearElement() override;
+
     unsigned length() const override;
     int getTrackIndex(TextTrack&);
     int getTrackIndexRelativeToRenderedTracks(TextTrack&);

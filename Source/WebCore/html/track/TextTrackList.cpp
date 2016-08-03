@@ -46,6 +46,19 @@ TextTrackList::~TextTrackList()
 {
 }
 
+void TextTrackList::clearElement()
+{
+    TrackListBase::clearElement();
+    for (auto& track : m_elementTracks) {
+        track->setMediaElement(nullptr);
+        track->clearClient();
+    }
+    for (auto& track : m_addTrackTracks) {
+        track->setMediaElement(nullptr);
+        track->clearClient();
+    }
+}
+
 unsigned TextTrackList::length() const
 {
     return m_addTrackTracks.size() + m_elementTracks.size() + m_inbandTracks.size();

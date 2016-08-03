@@ -167,7 +167,9 @@ void AudioTrack::languageChanged(TrackPrivateBase* trackPrivate, const AtomicStr
 void AudioTrack::willRemove(TrackPrivateBase* trackPrivate)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    mediaElement()->removeAudioTrack(*this);
+    ASSERT(mediaElement());
+    if (mediaElement())
+        mediaElement()->removeAudioTrack(*this);
 }
 
 void AudioTrack::updateKindFromPrivate()
