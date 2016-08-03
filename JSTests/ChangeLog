@@ -1,5 +1,13 @@
 2016-08-02  Saam Barati  <sbarati@apple.com>
 
+        Rename Changelog to ChangeLog
+
+        Rubber stamped by Keith Miller.
+
+        * Changelog: Removed.
+
+2016-08-02  Saam Barati  <sbarati@apple.com>
+
         update a class extending null w.r.t the ES7 spec
         https://bugs.webkit.org/show_bug.cgi?id=160417
 
