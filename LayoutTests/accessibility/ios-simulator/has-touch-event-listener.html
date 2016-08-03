@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+
+function click() {}
+
+</script>
+</head>
+<body>
+
+<div role="button" id="button" ontouchstart="chick();"">button</div>
+<div role="link" ontouchend="chick();"><div id="link">link</div></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("Makes sure that we can check if an AXObject has touch event listener.");
+
+    if (window.accessibilityController) {
+        var button = accessibilityController.accessibleElementById("button");
+        var link = accessibilityController.accessibleElementById("link");
+        shouldBeTrue("button.boolAttributeValue('AXHasTouchEventListener')");
+        shouldBeTrue("link.boolAttributeValue('AXHasTouchEventListener')");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

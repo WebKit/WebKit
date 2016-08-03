@@ -1040,6 +1040,7 @@ public:
 
 #if PLATFORM(IOS)
     int accessibilityPasswordFieldLength();
+    bool hasTouchEventListener() const;
 #endif
     
     // allows for an AccessibilityObject to update its render tree or perform

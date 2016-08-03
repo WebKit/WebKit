@@ -922,6 +922,7 @@ bool AccessibilityObject::press()
     
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document);
     
+    // FIXME: dispatchTouchEvent() is not dispatching the touch event correctly.
     bool dispatchedTouchEvent = dispatchTouchEvent();
     if (!dispatchedTouchEvent)
         pressElement->accessKeyAction(true);
