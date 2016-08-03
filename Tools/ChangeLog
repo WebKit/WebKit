@@ -1,3 +1,14 @@
+2016-08-03  Aakash Jain  <aakash_jain@apple.com>
+
+        Document instructions for increasing process and file limits
+        https://bugs.webkit.org/show_bug.cgi?id=160528
+        rdar://problem/24777576
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_child_processes):
+
 2016-08-03  Anders Carlsson  <andersca@apple.com>
 
         Remove the Objective-C bindings generator

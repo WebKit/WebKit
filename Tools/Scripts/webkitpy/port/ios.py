@@ -143,10 +143,9 @@ class IOSSimulatorPort(Port):
         # FIXME: We should also take into account the available RAM.
 
         if (maximum_simulator_count_on_this_system < best_child_process_count_for_cpu):
-            _log.warn("This machine could support %s child processes, but only has enough process limit for %s."
+            _log.warn("This machine could support %s simulators, but is only configured for %s."
                 % (best_child_process_count_for_cpu, maximum_simulator_count_on_this_system))
-            _log.warn('Run "launchctl limit" to check these limits')
-            # FIXME: Add url for webpage explaining how to increase these limits.
+            _log.warn('Please see <https://trac.webkit.org/wiki/IncreasingKernelLimits>.')
 
         if maximum_simulator_count_on_this_system == 0:
             maximum_simulator_count_on_this_system = 1
