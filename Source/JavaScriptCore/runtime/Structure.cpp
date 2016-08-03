@@ -652,12 +652,8 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     if (preventsExtensions(transitionKind))
         transition->setDidPreventExtensions(true);
     
-    unsigned additionalPropertyAttributes = 0;
-    if (setsDontDeleteOnAllProperties(transitionKind))
-        additionalPropertyAttributes |= DontDelete;
-    if (setsReadOnlyOnAllProperties(transitionKind))
-        additionalPropertyAttributes |= ReadOnly;
-    if (additionalPropertyAttributes) {
+    if (setsDontDeleteOnAllProperties(transitionKind)
+        || setsReadOnlyOnNonAccessorProperties(transitionKind)) {
         // We pin the property table on transitions that do wholesale editing of the property
         // table, since our logic for walking the property transition chain to rematerialize the
         // table doesn't know how to take into account such wholesale edits.
@@ -668,8 +664,12 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
         transition->pinForCaching();
         
         if (transition->propertyTable()) {
-            for (auto& entry : *transition->propertyTable().get())
-                entry.attributes |= additionalPropertyAttributes;
+            for (auto& entry : *transition->propertyTable().get()) {
+                if (setsDontDeleteOnAllProperties(transitionKind))
+                    entry.attributes |= DontDelete;
+                if (setsReadOnlyOnNonAccessorProperties(transitionKind) && !(entry.attributes & Accessor))
+                    entry.attributes |= ReadOnly;
+            }
         }
     } else {
         transition->propertyTable().set(vm, transition, structure->takePropertyTableOrCloneIfPinned(vm));
@@ -677,7 +677,7 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
         checkOffset(transition->m_offset, transition->inlineCapacity());
     }
     
-    if (setsReadOnlyOnAllProperties(transitionKind)
+    if (setsReadOnlyOnNonAccessorProperties(transitionKind)
         && transition->propertyTable()
         && !transition->propertyTable()->isEmpty())
         transition->setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);

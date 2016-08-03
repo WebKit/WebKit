@@ -1,3 +1,20 @@
+2016-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r203368): broke some test262 tests
+        https://bugs.webkit.org/show_bug.cgi?id=160479
+
+        Reviewed by Mark Lam.
+        
+        The optimization in r203368 overlooked a subtle detail: freezing should not set ReadOnly on
+        Accessor properties.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::nonPropertyTransition):
+        * runtime/StructureTransitionTable.h:
+        (JSC::setsDontDeleteOnAllProperties):
+        (JSC::setsReadOnlyOnNonAccessorProperties):
+        (JSC::setsReadOnlyOnAllProperties): Deleted.
+
 2016-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Lacking support on a arm-traditional disassembler.

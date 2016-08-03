@@ -130,7 +130,7 @@ inline bool setsDontDeleteOnAllProperties(NonPropertyTransition transition)
     }
 }
 
-inline bool setsReadOnlyOnAllProperties(NonPropertyTransition transition)
+inline bool setsReadOnlyOnNonAccessorProperties(NonPropertyTransition transition)
 {
     switch (transition) {
     case NonPropertyTransition::Freeze:
