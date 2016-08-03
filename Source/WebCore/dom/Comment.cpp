@@ -38,7 +38,7 @@ Ref<Comment> Comment::create(Document& document, const String& text)
 
 String Comment::nodeName() const
 {
-    return commentAtom.string();
+    return ASCIILiteral("#comment");
 }
 
 Node::NodeType Comment::nodeType() const

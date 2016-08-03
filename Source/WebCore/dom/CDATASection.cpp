@@ -38,7 +38,7 @@ Ref<CDATASection> CDATASection::create(Document& document, const String& data)
 
 String CDATASection::nodeName() const
 {
-    return "#cdata-section";
+    return ASCIILiteral("#cdata-section");
 }
 
 Node::NodeType CDATASection::nodeType() const

@@ -160,7 +160,7 @@ RefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
 
 String Text::nodeName() const
 {
-    return textAtom.string();
+    return ASCIILiteral("#text");
 }
 
 Node::NodeType Text::nodeType() const

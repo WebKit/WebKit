@@ -69,12 +69,9 @@ unsigned StringImpl::nextHashForSymbol()
 
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, nullAtom)
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, emptyAtom)
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, textAtom)
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, commentAtom)
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, starAtom)
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlAtom)
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlnsAtom)
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xlinkAtom)
 
 NEVER_INLINE unsigned StringImpl::hashSlowCase() const
 {
@@ -95,12 +92,9 @@ void AtomicString::init()
         // Use placement new to initialize the globals.
         new (NotNull, (void*)&nullAtom) AtomicString;
         new (NotNull, (void*)&emptyAtom) AtomicString("");
-        new (NotNull, (void*)&textAtom) AtomicString("#text", AtomicString::ConstructFromLiteral);
-        new (NotNull, (void*)&commentAtom) AtomicString("#comment", AtomicString::ConstructFromLiteral);
         new (NotNull, (void*)&starAtom) AtomicString("*", AtomicString::ConstructFromLiteral);
         new (NotNull, (void*)&xmlAtom) AtomicString("xml", AtomicString::ConstructFromLiteral);
         new (NotNull, (void*)&xmlnsAtom) AtomicString("xmlns", AtomicString::ConstructFromLiteral);
-        new (NotNull, (void*)&xlinkAtom) AtomicString("xlink", AtomicString::ConstructFromLiteral);
 
         initialized = true;
     }
