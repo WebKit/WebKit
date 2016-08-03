@@ -1,5 +1,23 @@
 2016-08-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r204062. rdar://problem/27592936
+
+    2016-08-02  Nan Wang  <n_wang@apple.com>
+
+            AX: Simulated touch events are not working on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=160395
+            <rdar://problem/27633597>
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/ios-simulator/press-fires-touch-events-expected.txt: Added.
+            * accessibility/ios-simulator/press-fires-touch-events.html: Added.
+            * platform/ios-simulator-wk2/TestExpectations:
+            * platform/ios-simulator/ios/accessibility/press-fires-touch-events-expected.txt: Removed.
+            * platform/ios-simulator/ios/accessibility/press-fires-touch-events.html: Removed.
+
+2016-08-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203955. rdar://problem/27629346
 
     2016-07-31  Nan Wang  <n_wang@apple.com>

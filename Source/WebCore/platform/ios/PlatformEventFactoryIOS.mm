@@ -272,6 +272,7 @@ public:
         m_isGesture = 0;
         m_position = location;
         m_globalPosition = location;
+        m_isPotentialTap = true;
         
         unsigned touchCount = 1;
         m_touchPoints.reserveInitialCapacity(touchCount);
