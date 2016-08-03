@@ -65,7 +65,7 @@ MathMLOperatorElement& RenderMathMLOperator::element() const
 
 UChar RenderMathMLOperator::textContent() const
 {
-    return element().operatorText();
+    return element().operatorChar().character;
 }
 
 bool RenderMathMLOperator::isInvisibleOperator() const
@@ -110,24 +110,23 @@ LayoutUnit RenderMathMLOperator::maxSize() const
     return std::max<LayoutUnit>(0, maxSize);
 }
 
-void RenderMathMLOperator::setOperatorProperties()
+bool RenderMathMLOperator::isVertical() const
 {
-    // We determine the stretch direction (default is vertical).
-    m_isVertical = MathMLOperatorDictionary::isVertical(textContent());
+    return element().operatorChar().isVertical;
 }
+
 
 void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
 {
     ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));
-    ASSERT(m_isVertical);
+    ASSERT(isVertical());
 
-    if (!m_isVertical || (heightAboveBaseline == m_stretchHeightAboveBaseline && depthBelowBaseline == m_stretchDepthBelowBaseline))
+    if (!isVertical() || (heightAboveBaseline == m_stretchHeightAboveBaseline && depthBelowBaseline == m_stretchDepthBelowBaseline))
         return;
 
     m_stretchHeightAboveBaseline = heightAboveBaseline;
     m_stretchDepthBelowBaseline = depthBelowBaseline;
 
-    setOperatorProperties();
     if (hasOperatorFlag(MathMLOperatorDictionary::Symmetric)) {
         // We make the operator stretch symmetrically above and below the axis.
         LayoutUnit axis = mathAxisHeight();
@@ -160,22 +159,20 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
 void RenderMathMLOperator::stretchTo(LayoutUnit width)
 {
     ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));
-    ASSERT(!m_isVertical);
+    ASSERT(!isVertical());
 
-    if (m_isVertical || m_stretchWidth == width)
+    if (isVertical() || m_stretchWidth == width)
         return;
 
     m_stretchWidth = width;
     m_mathOperator.stretchTo(style(), width);
-
-    setOperatorProperties();
 
     setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent());
 }
 
 void RenderMathMLOperator::resetStretchSize()
 {
-    if (m_isVertical) {
+    if (isVertical()) {
         m_stretchHeightAboveBaseline = 0;
         m_stretchDepthBelowBaseline = 0;
     } else
@@ -188,7 +185,6 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
 
     LayoutUnit preferredWidth = 0;
 
-    setOperatorProperties();
     if (!useMathOperator()) {
         RenderMathMLToken::computePreferredLogicalWidths();
         preferredWidth = m_maxPreferredLogicalWidth;
@@ -243,40 +239,30 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
     clearNeedsLayout();
 }
 
-void RenderMathMLOperator::rebuildTokenContent()
+void RenderMathMLOperator::updateMathOperator()
 {
-    setOperatorProperties();
-
-    if (useMathOperator()) {
-        MathOperator::Type type;
-        if (!shouldAllowStretching())
-            type = MathOperator::Type::NormalOperator;
-        else if (isLargeOperatorInDisplayStyle())
-            type = MathOperator::Type::DisplayOperator;
-        else
-            type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
-        m_mathOperator.setOperator(style(), textContent(), type);
-    }
-
-    setNeedsLayoutAndPrefWidthsRecalc();
+    ASSERT(useMathOperator());
+    MathOperator::Type type;
+    if (!shouldAllowStretching())
+        type = MathOperator::Type::NormalOperator;
+    else if (isLargeOperatorInDisplayStyle())
+        type = MathOperator::Type::DisplayOperator;
+    else
+        type = isVertical() ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
+    m_mathOperator.setOperator(style(), textContent(), type);
 }
 
 void RenderMathMLOperator::updateTokenContent()
 {
     ASSERT(!isAnonymous());
     RenderMathMLToken::updateTokenContent();
-    rebuildTokenContent();
+    if (useMathOperator())
+        updateMathOperator();
 }
 
 void RenderMathMLOperator::updateFromElement()
 {
     updateTokenContent();
-}
-
-void RenderMathMLOperator::updateOperatorProperties()
-{
-    setOperatorProperties();
-    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 bool RenderMathMLOperator::shouldAllowStretching() const
@@ -296,12 +282,11 @@ void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyl
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     m_mathOperator.reset(style());
-    updateOperatorProperties();
 }
 
 LayoutUnit RenderMathMLOperator::verticalStretchedOperatorShift() const
 {
-    if (!m_isVertical || !stretchSize())
+    if (!isVertical() || !stretchSize())
         return 0;
 
     return (m_stretchDepthBelowBaseline - m_stretchHeightAboveBaseline - m_mathOperator.descent() + m_mathOperator.ascent()) / 2;
@@ -324,7 +309,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     operatorTopLeft.move(style().isLeftToRightDirection() ? leadingSpace() : trailingSpace(), 0);
 
     // Center horizontal operators.
-    if (!m_isVertical)
+    if (!isVertical())
         operatorTopLeft.move(-(m_mathOperator.width() - width()) / 2, 0);
 
     m_mathOperator.paint(style(), info, operatorTopLeft);

@@ -42,46 +42,41 @@ RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, Rende
     , m_operatorFlags(flags)
 {
     updateOperatorContent(operatorString);
-
-    // maxsize always has the default value "infinity" value for mfenced operators.
-    m_maxSize = intMaxForLayoutUnit;
 }
 
 void RenderMathMLFencedOperator::updateOperatorContent(const String& operatorString)
 {
-    m_textContent = MathMLOperatorElement::parseOperatorText(operatorString);
-    rebuildTokenContent();
-}
+    m_operatorChar = MathMLOperatorElement::parseOperatorChar(operatorString);
 
-void RenderMathMLFencedOperator::setOperatorProperties()
-{
-    // We determine the stretch direction (default is vertical).
-    m_isVertical = MathMLOperatorDictionary::isVertical(m_textContent);
-
-    // Resets all but the Fence and Separator properties.
-    m_operatorFlags &= MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator;
-
-    // minsize always has the default value "1em" value for mfenced operators.
-    m_minSize = style().fontCascade().size();
-
-    // Default spacing is thickmathspace.
-    MathMLElement::Length leadingSpace;
-    leadingSpace.type = MathMLElement::LengthType::MathUnit;
-    leadingSpace.value = 5;
-    MathMLElement::Length trailingSpace = leadingSpace;
-
-    if (auto entry = search(m_textContent, m_operatorForm, true)) {
-        // We use the space specified in the operator dictionary.
-        leadingSpace.value = static_cast<float>(entry.value().lspace);
-        trailingSpace.value = static_cast<float>(entry.value().rspace);
-
-        // We use the dictionary but preserve the Fence and Separator properties.
+    // We try and read spacing and boolean properties from the operator dictionary.
+    // However we preserve the Fence and Separator properties specified in the constructor.
+    if (auto entry = search(m_operatorChar.character, m_operatorForm, true)) {
+        m_leadingSpaceInMathUnit = entry.value().lspace;
+        m_trailingSpaceInMathUnit = entry.value().rspace;
         m_operatorFlags = (m_operatorFlags & (MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator)) | entry.value().flags;
+    } else {
+        m_operatorFlags &= MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator; // Flags are disabled by default.
+        m_leadingSpaceInMathUnit = 5; // Default spacing is thickmathspace.
+        m_trailingSpaceInMathUnit = 5; // Default spacing is thickmathspace.
     }
 
-    // Resolve the leading and trailing spaces.
-    m_leadingSpace = toUserUnits(leadingSpace, style(), 0);
-    m_trailingSpace = toUserUnits(trailingSpace, style(), 0);
+    updateMathOperator();
+}
+
+LayoutUnit RenderMathMLFencedOperator::leadingSpace() const
+{
+    MathMLElement::Length leadingSpace;
+    leadingSpace.type = MathMLElement::LengthType::MathUnit;
+    leadingSpace.value = static_cast<float>(m_leadingSpaceInMathUnit);
+    return toUserUnits(leadingSpace, style(), 0);
+}
+
+LayoutUnit RenderMathMLFencedOperator::trailingSpace() const
+{
+    MathMLElement::Length trailingSpace;
+    trailingSpace.type = MathMLElement::LengthType::MathUnit;
+    trailingSpace.value = static_cast<float>(m_trailingSpaceInMathUnit);
+    return toUserUnits(trailingSpace, style(), 0);
 }
 
 }

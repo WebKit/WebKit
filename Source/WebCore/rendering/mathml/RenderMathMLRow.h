@@ -36,8 +36,6 @@ class RenderMathMLRow : public RenderMathMLBlock {
 public:
     RenderMathMLRow(Element&, RenderStyle&&);
 
-    void updateOperatorProperties();
-
 protected:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
     Optional<int> firstLineBaseline() const override;

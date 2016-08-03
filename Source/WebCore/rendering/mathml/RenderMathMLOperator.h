@@ -44,30 +44,26 @@ public:
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
     void stretchTo(LayoutUnit width);
-    LayoutUnit stretchSize() const { return m_isVertical ? m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline : m_stretchWidth; }
+    LayoutUnit stretchSize() const { return isVertical() ? m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline : m_stretchWidth; }
     void resetStretchSize();
 
     virtual bool hasOperatorFlag(MathMLOperatorDictionary::Flag) const;
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp) && mathMLStyle()->displayStyle(); }
     bool shouldMoveLimits() const { return hasOperatorFlag(MathMLOperatorDictionary::MovableLimits) && !mathMLStyle()->displayStyle(); }
-    bool isVertical() const { return m_isVertical; }
+    virtual bool isVertical() const;
     LayoutUnit italicCorrection() const { return m_mathOperator.italicCorrection(); }
 
     void updateTokenContent() final;
-    void updateOperatorProperties();
     void updateFromElement() final;
     virtual UChar textContent() const;
 
 protected:
-    void rebuildTokenContent();
-    virtual void setOperatorProperties();
+    virtual void updateMathOperator();
     virtual LayoutUnit leadingSpace() const;
     virtual LayoutUnit trailingSpace() const;
     virtual LayoutUnit minSize() const;
     virtual LayoutUnit maxSize() const;
     virtual bool useMathOperator() const;
-
-    bool m_isVertical { true };
 
 private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;

@@ -44,18 +44,6 @@ RenderMathMLRow::RenderMathMLRow(Element& element, RenderStyle&& style)
 {
 }
 
-void RenderMathMLRow::updateOperatorProperties()
-{
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (is<RenderMathMLBlock>(*child)) {
-            if (auto* renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator())
-                renderOperator->updateOperatorProperties();
-        }
-    }
-    setNeedsLayoutAndPrefWidthsRecalc();
-}
-
-
 Optional<int> RenderMathMLRow::firstLineBaseline() const
 {
     auto* baselineChild = firstChildBox();

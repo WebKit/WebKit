@@ -34,8 +34,12 @@ namespace WebCore {
 class MathMLOperatorElement final : public MathMLTextElement {
 public:
     static Ref<MathMLOperatorElement> create(const QualifiedName& tagName, Document&);
-    static UChar parseOperatorText(const String&);
-    UChar operatorText();
+    struct OperatorChar {
+        UChar character { 0 };
+        bool isVertical { true };
+    };
+    static OperatorChar parseOperatorChar(const String&);
+    const OperatorChar& operatorChar();
     void setOperatorFormDirty() { m_dictionaryProperty = Nullopt; }
     MathMLOperatorDictionary::Form form() { return dictionaryProperty().form; }
     bool hasProperty(MathMLOperatorDictionary::Flag);
@@ -52,7 +56,7 @@ private:
     void childrenChanged(const ChildChange&) final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    Optional<UChar> m_operatorText;
+    Optional<OperatorChar> m_operatorChar;
 
     struct DictionaryProperty {
         MathMLOperatorDictionary::Form form;

@@ -60,10 +60,6 @@ void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
             static_cast<MathMLOperatorElement*>(child)->setOperatorFormDirty();
     }
 
-    // FIXME: Parsing of operator properties should be done in the element classes rather than in the renderer classes.
-    // See https://webkit.org/b/156537
-    if (renderer() && is<RenderMathMLRow>(*renderer()))
-        downcast<RenderMathMLRow>(*renderer()).updateOperatorProperties();
     MathMLElement::childrenChanged(change);
 }
 

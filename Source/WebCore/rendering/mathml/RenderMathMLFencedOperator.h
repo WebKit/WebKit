@@ -28,6 +28,7 @@
 #if ENABLE(MATHML)
 
 #include "MathMLOperatorDictionary.h"
+#include "MathMLOperatorElement.h"
 #include "RenderMathMLOperator.h"
 
 namespace WebCore {
@@ -39,22 +40,25 @@ public:
 
 private:
     bool isRenderMathMLFencedOperator() const final { return true; }
-    void setOperatorProperties() final;
-    UChar textContent() const final { return m_textContent; }
-    LayoutUnit leadingSpace() const final { return m_leadingSpace; }
-    LayoutUnit trailingSpace() const final { return m_trailingSpace; }
-    LayoutUnit minSize() const final { return m_minSize; }
-    LayoutUnit maxSize() const final { return m_maxSize; }
+    bool isVertical() const final { return m_operatorChar.isVertical; }
+    UChar textContent() const final { return m_operatorChar.character; }
+    LayoutUnit leadingSpace() const final;
+    LayoutUnit trailingSpace() const final;
+
+    // minsize always has the default value "1em".
+    LayoutUnit minSize() const final { return style().fontCascade().size(); }
+
+    // maxsize always has the default value "infinity".
+    LayoutUnit maxSize() const final { return intMaxForLayoutUnit; }
+
     bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const final { return m_operatorFlags & flag; }
 
     // We always use the MathOperator class for anonymous mfenced operators, since they do not have text content in the DOM.
     bool useMathOperator() const final { return true; }
 
-    UChar m_textContent { 0 };
-    LayoutUnit m_leadingSpace;
-    LayoutUnit m_trailingSpace;
-    LayoutUnit m_minSize;
-    LayoutUnit m_maxSize;
+    MathMLOperatorElement::OperatorChar m_operatorChar;
+    unsigned short m_leadingSpaceInMathUnit;
+    unsigned short m_trailingSpaceInMathUnit;
     MathMLOperatorDictionary::Form m_operatorForm;
     unsigned short m_operatorFlags;
 };

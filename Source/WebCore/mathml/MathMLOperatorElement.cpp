@@ -47,8 +47,10 @@ Ref<MathMLOperatorElement> MathMLOperatorElement::create(const QualifiedName& ta
     return adoptRef(*new MathMLOperatorElement(tagName, document));
 }
 
-UChar MathMLOperatorElement::parseOperatorText(const String& string)
+MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(const String& string)
 {
+    OperatorChar operatorChar;
+
     // We collapse the whitespace and replace the hyphens by minus signs.
     AtomicString textContent = string.stripWhiteSpace().simplifyWhiteSpace().replace(hyphenMinus, minusSign).impl();
 
@@ -56,14 +58,16 @@ UChar MathMLOperatorElement::parseOperatorText(const String& string)
     // FIXME: This is a really inefficient way to extract a character from a string (https://webkit.org/b/160241#c7).
     // FIXME: This does not handle surrogate pairs (https://webkit.org/b/122296).
     // FIXME: This does not handle <mo> operators with multiple characters (https://webkit.org/b/124828).
-    return textContent.length() == 1 ? textContent[0] : 0;
+    operatorChar.character = textContent.length() == 1 ? textContent[0] : 0;
+    operatorChar.isVertical = MathMLOperatorDictionary::isVertical(operatorChar.character);
+    return operatorChar;
 }
 
-UChar MathMLOperatorElement::operatorText()
+const MathMLOperatorElement::OperatorChar& MathMLOperatorElement::operatorChar()
 {
-    if (!m_operatorText)
-        m_operatorText = parseOperatorText(textContent());
-    return m_operatorText.value();
+    if (!m_operatorChar)
+        m_operatorChar = parseOperatorChar(textContent());
+    return m_operatorChar.value();
 }
 
 MathMLOperatorElement::DictionaryProperty MathMLOperatorElement::computeDictionaryProperty()
@@ -91,7 +95,7 @@ MathMLOperatorElement::DictionaryProperty MathMLOperatorElement::computeDictiona
     }
 
     // We then try and find an entry in the operator dictionary to override the default values.
-    if (auto entry = search(operatorText(), dictionaryProperty.form, explicitForm)) {
+    if (auto entry = search(operatorChar().character, dictionaryProperty.form, explicitForm)) {
         dictionaryProperty.form = static_cast<MathMLOperatorDictionary::Form>(entry.value().form);
         dictionaryProperty.leadingSpaceInMathUnit = entry.value().lspace;
         dictionaryProperty.trailingSpaceInMathUnit = entry.value().rspace;
@@ -212,7 +216,7 @@ const MathMLElement::Length& MathMLOperatorElement::maxSize()
 
 void MathMLOperatorElement::childrenChanged(const ChildChange& change)
 {
-    m_operatorText = Nullopt;
+    m_operatorChar = Nullopt;
     m_dictionaryProperty = Nullopt;
     m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
     MathMLTextElement::childrenChanged(change);
