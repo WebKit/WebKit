@@ -45,19 +45,7 @@ Alignment 4
     NSKern: 0pt
     NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
     NSStrokeWidth: 0
-[ ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
-    NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
-[small-caps]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
-    NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
-[ outline emboss ]
+[ small-caps outline emboss ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
