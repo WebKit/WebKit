@@ -1,3 +1,14 @@
+2016-08-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Benchmark test content-animation timeouts always
+        https://bugs.webkit.org/show_bug.cgi?id=160057
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/Skipped: Added.
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (start):
+
 2016-08-02  Nan Wang  <n_wang@apple.com>
 
         AX: Simulated touch events are not working on iOS

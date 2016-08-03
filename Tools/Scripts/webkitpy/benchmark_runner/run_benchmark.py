@@ -48,11 +48,18 @@ def start(args):
         return
     if args.allplans:
         failed = []
+        skipped = []
         plandir = os.path.join(os.path.dirname(__file__), 'data/plans')
         planlist = [os.path.splitext(f)[0] for f in os.listdir(plandir) if f.endswith('.plan')]
+        skippedfile = os.path.join(plandir, 'Skipped')
         if not planlist:
             raise Exception('Cant find any .plan file in directory %s' % plandir)
+        if os.path.isfile(skippedfile):
+            skipped = [line.strip() for line in open(skippedfile) if not line.startswith('#') and len(line) > 1]
         for plan in sorted(planlist):
+            if plan in skipped:
+                _log.info('Skipping benchmark plan: %s because is listed on the Skipped file' % plan)
+                continue
             _log.info('Starting benchmark plan: %s' % plan)
             try:
                 runner = BenchmarkRunner(plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.scale_unit, args.device_id)
