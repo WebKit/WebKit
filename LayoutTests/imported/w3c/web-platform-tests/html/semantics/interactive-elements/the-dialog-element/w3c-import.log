@@ -17,4 +17,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal.html

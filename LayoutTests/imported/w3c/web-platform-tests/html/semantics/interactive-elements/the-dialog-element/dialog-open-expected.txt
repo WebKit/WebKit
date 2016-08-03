@@ -1,0 +1,10 @@
+foobar
+
+OK
+foobar
+
+OK
+
+FAIL On getting, the IDL open attribute must return true if the content open attribute is set, and false if it is absent. assert_false: expected false got undefined
+FAIL On setting, the content open attribute must be removed if the IDL open attribute is set to false, and must be present if the IDL open attribute is set to true. assert_true: expected true got false
+

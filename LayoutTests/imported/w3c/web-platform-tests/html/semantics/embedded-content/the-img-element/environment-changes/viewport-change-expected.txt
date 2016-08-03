@@ -4,7 +4,7 @@ Harness Error (TIMEOUT), message = null
 
 PASS img (no src), onload, narrow 
 PASS img (no src), resize to wide 
-FAIL img (empty src), onload, narrow assert_equals: expected "" but got "http://localhost:8800/html/semantics/embedded-content/the-img-element/environment-changes/iframed.sub.html?id=d8d26f64-5aa4-456c-a535-7ac76894546f"
+FAIL img (empty src), onload, narrow assert_equals: expected "" but got "http://localhost:8800/html/semantics/embedded-content/the-img-element/environment-changes/iframed.sub.html?id=d6faadce-3036-450a-9bee-b52b02702197"
 PASS img (empty src), resize to wide 
 PASS img (src only) broken image, onload, narrow 
 PASS img (src only) broken image, resize to wide 
@@ -26,7 +26,7 @@ PASS picture: same URL in source (max-width:500px) and img, onload, narrow
 FAIL picture: same URL in source (max-width:500px) and img, resize to wide assert_unreached: Got unexpected load event Reached unreachable code
 PASS img (no src), onload, wide 
 PASS img (no src), resize to narrow 
-FAIL img (empty src), onload, wide assert_equals: expected "" but got "http://localhost:8800/html/semantics/embedded-content/the-img-element/environment-changes/iframed.sub.html?id=f1cb87a8-4fac-47a8-9808-f8ae48010ebd"
+FAIL img (empty src), onload, wide assert_equals: expected "" but got "http://localhost:8800/html/semantics/embedded-content/the-img-element/environment-changes/iframed.sub.html?id=506be0db-2b43-4f00-a52d-1e4d6e74ac9c"
 PASS img (empty src), resize to narrow 
 PASS img (src only) broken image, onload, wide 
 PASS img (src only) broken image, resize to narrow 
@@ -36,13 +36,13 @@ PASS img (srcset 1 cand) broken image, onload, wide
 PASS img (srcset 1 cand) broken image, resize to narrow 
 PASS img (srcset 1 cand) valid image, onload, wide 
 PASS img (srcset 1 cand) valid image, resize to narrow 
-FAIL picture: source (max-width:500px) broken image, img broken image, onload, wide assert_equals: expected "http://localhost:8800/images/broken.png?71-f1cb87a8-4fac-47a8-9808-f8ae48010ebd" but got "http://localhost:8800/images/broken.png?70-f1cb87a8-4fac-47a8-9808-f8ae48010ebd"
+FAIL picture: source (max-width:500px) broken image, img broken image, onload, wide assert_equals: expected "http://localhost:8800/images/broken.png?71-506be0db-2b43-4f00-a52d-1e4d6e74ac9c" but got "http://localhost:8800/images/broken.png?70-506be0db-2b43-4f00-a52d-1e4d6e74ac9c"
 TIMEOUT picture: source (max-width:500px) broken image, img broken image, resize to narrow Test timed out
-FAIL picture: source (max-width:500px) broken image, img valid image, onload, wide assert_equals: expected "http://localhost:8800/images/green-2x2.png?81-f1cb87a8-4fac-47a8-9808-f8ae48010ebd" but got "http://localhost:8800/images/broken.png?80-f1cb87a8-4fac-47a8-9808-f8ae48010ebd"
+FAIL picture: source (max-width:500px) broken image, img valid image, onload, wide assert_equals: expected "http://localhost:8800/images/green-2x2.png?81-506be0db-2b43-4f00-a52d-1e4d6e74ac9c" but got "http://localhost:8800/images/broken.png?80-506be0db-2b43-4f00-a52d-1e4d6e74ac9c"
 TIMEOUT picture: source (max-width:500px) broken image, img valid image, resize to narrow Test timed out
-FAIL picture: source (max-width:500px) valid image, img broken image, onload, wide assert_equals: expected "http://localhost:8800/images/broken.png?91-f1cb87a8-4fac-47a8-9808-f8ae48010ebd" but got "http://localhost:8800/images/green-1x1.png?90-f1cb87a8-4fac-47a8-9808-f8ae48010ebd"
+FAIL picture: source (max-width:500px) valid image, img broken image, onload, wide assert_equals: expected "http://localhost:8800/images/broken.png?91-506be0db-2b43-4f00-a52d-1e4d6e74ac9c" but got "http://localhost:8800/images/green-1x1.png?90-506be0db-2b43-4f00-a52d-1e4d6e74ac9c"
 TIMEOUT picture: source (max-width:500px) valid image, img broken image, resize to narrow Test timed out
-FAIL picture: source (max-width:500px) valid image, img valid image, onload, wide assert_equals: expected "http://localhost:8800/images/green-2x2.png?101-f1cb87a8-4fac-47a8-9808-f8ae48010ebd" but got "http://localhost:8800/images/green-1x1.png?100-f1cb87a8-4fac-47a8-9808-f8ae48010ebd"
+FAIL picture: source (max-width:500px) valid image, img valid image, onload, wide assert_equals: expected "http://localhost:8800/images/green-2x2.png?101-506be0db-2b43-4f00-a52d-1e4d6e74ac9c" but got "http://localhost:8800/images/green-1x1.png?100-506be0db-2b43-4f00-a52d-1e4d6e74ac9c"
 TIMEOUT picture: source (max-width:500px) valid image, img valid image, resize to narrow Test timed out
 PASS picture: same URL in source (max-width:500px) and img, onload, wide 
 PASS picture: same URL in source (max-width:500px) and img, resize to narrow 

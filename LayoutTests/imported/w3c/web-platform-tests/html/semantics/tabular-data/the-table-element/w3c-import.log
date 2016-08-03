@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-table-element/insertRow-method-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-table-element/insertRow-method-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-table-element/insertRow-method-03.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-table-element/remove-row.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-table-element/tBodies.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-table-element/tFoot.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-table-element/tHead.html

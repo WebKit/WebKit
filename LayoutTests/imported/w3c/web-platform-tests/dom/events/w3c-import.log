@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-once.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-passive.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/CustomEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-constants.html

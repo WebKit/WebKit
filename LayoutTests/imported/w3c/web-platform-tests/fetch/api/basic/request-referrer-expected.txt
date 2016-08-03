@@ -1,0 +1,4 @@
+
+PASS Fetch: fetch() respects Request referrer value 
+PASS Fetch: fetch() respects Request referrer value 1 
+

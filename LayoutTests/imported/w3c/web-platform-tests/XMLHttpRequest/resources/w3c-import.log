@@ -37,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/inspect-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/invalid-utf8-html.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/last-modified.py
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/parse-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/requri.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/shift-jis-html.py

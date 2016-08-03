@@ -5615,9 +5615,7 @@ PASS Navigator interface: attribute cookieEnabled
 FAIL Navigator interface: operation yieldForStorageUpdates() assert_own_property: interface prototype object missing non-static operation expected property "yieldForStorageUpdates" missing
 PASS Navigator interface: attribute plugins 
 PASS Navigator interface: attribute mimeTypes 
-FAIL Navigator interface: attribute javaEnabled assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+PASS Navigator interface: operation javaEnabled() 
 PASS Navigator must be primary interface of window.navigator 
 PASS Stringification of window.navigator 
 PASS Navigator interface: window.navigator must inherit property "appCodeName" with the proper type (0) 
@@ -5646,7 +5644,7 @@ PASS Navigator interface: window.navigator must inherit property "cookieEnabled"
 FAIL Navigator interface: window.navigator must inherit property "yieldForStorageUpdates" with the proper type (17) assert_inherits: property "yieldForStorageUpdates" not found in prototype chain
 PASS Navigator interface: window.navigator must inherit property "plugins" with the proper type (18) 
 PASS Navigator interface: window.navigator must inherit property "mimeTypes" with the proper type (19) 
-FAIL Navigator interface: window.navigator must inherit property "javaEnabled" with the proper type (20) assert_equals: expected "boolean" but got "function"
+PASS Navigator interface: window.navigator must inherit property "javaEnabled" with the proper type (20) 
 PASS PluginArray interface: existence and properties of interface object 
 PASS PluginArray interface object length 
 PASS PluginArray interface object name 

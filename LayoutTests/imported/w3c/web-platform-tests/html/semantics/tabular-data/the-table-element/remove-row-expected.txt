@@ -1,0 +1,7 @@
+First column	Second column
+
+PASS deleteRow function invalid argument 
+PASS deleteRow function invalid argument bis 
+PASS check normal deleteRow 
+PASS check normal deleteRow bis 
+

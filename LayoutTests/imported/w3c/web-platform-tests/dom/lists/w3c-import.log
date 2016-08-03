@@ -16,5 +16,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/lists/DOMTokenList-coverage-for-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/lists/DOMTokenList-iteration.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/lists/DOMTokenList-stringifier.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/lists/DOMTokenList-value.html

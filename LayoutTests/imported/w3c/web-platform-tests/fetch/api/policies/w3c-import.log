@@ -25,6 +25,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.html.headers

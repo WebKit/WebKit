@@ -17,9 +17,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/FormData-append.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/OWNERS
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.html
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.js
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.any.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/abort-after-receive.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/abort-after-send.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/abort-after-timeout.htm
@@ -63,6 +61,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-server-date.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-special-characters.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-unsent-opened-state.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/interfaces.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-after-abort.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-after-setrequestheader.htm

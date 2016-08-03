@@ -37,12 +37,12 @@ PASS RequestCache "only-if-cached" (with "same-origin") does not follow redirect
 PASS RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with date and fresh response 
 PASS RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with Etag and stale response 
 PASS RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with date and stale response 
-FAIL RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with Etag and stale response assert_equals: expected (undefined) undefined but got (string) "\"0.5142751701087829\""
-FAIL RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with date and stale response assert_equals: expected (undefined) undefined but got (string) "Wed, 27 Jul 2016 15:14:16 GMT"
+FAIL RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with Etag and stale response assert_equals: expected (undefined) undefined but got (string) "\"0.9287170582472863\""
+FAIL RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with date and stale response assert_equals: expected (undefined) undefined but got (string) "Tue, 02 Aug 2016 10:05:20 GMT"
 FAIL RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with Etag and fresh response assert_equals: expected 2 but got 1
 FAIL RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with date and fresh response assert_equals: expected 2 but got 1
-FAIL RequestCache "no-store" mode does not store the response in the cache with Etag and stale response assert_equals: expected (undefined) undefined but got (string) "\"0.8439838765231941\""
-FAIL RequestCache "no-store" mode does not store the response in the cache with date and stale response assert_equals: expected (undefined) undefined but got (string) "Wed, 27 Jul 2016 15:14:16 GMT"
+FAIL RequestCache "no-store" mode does not store the response in the cache with Etag and stale response assert_equals: expected (undefined) undefined but got (string) "\"0.08585050505689817\""
+FAIL RequestCache "no-store" mode does not store the response in the cache with date and stale response assert_equals: expected (undefined) undefined but got (string) "Tue, 02 Aug 2016 10:05:20 GMT"
 FAIL RequestCache "no-store" mode does not store the response in the cache with Etag and fresh response assert_equals: expected 2 but got 1
 FAIL RequestCache "no-store" mode does not store the response in the cache with date and fresh response assert_equals: expected 2 but got 1
 PASS RequestCache "default" mode with an If-Modified-Since header is treated similarly to "no-store" with Etag and stale response 
@@ -89,16 +89,16 @@ PASS Responses with the "Cache-Control: no-store" header are not stored in the c
 PASS Responses with the "Cache-Control: no-store" header are not stored in the cache with date and stale response 
 PASS Responses with the "Cache-Control: no-store" header are not stored in the cache with Etag and fresh response 
 PASS Responses with the "Cache-Control: no-store" header are not stored in the cache with date and fresh response 
-FAIL RequestCache "reload" mode does not check the cache for previously cached content and goes to the network regardless with Etag and stale response assert_equals: expected (undefined) undefined but got (string) "\"0.7100561973865757\""
-FAIL RequestCache "reload" mode does not check the cache for previously cached content and goes to the network regardless with date and stale response assert_equals: expected (undefined) undefined but got (string) "Wed, 27 Jul 2016 15:14:16 GMT"
+FAIL RequestCache "reload" mode does not check the cache for previously cached content and goes to the network regardless with Etag and stale response assert_equals: expected (undefined) undefined but got (string) "\"0.6811605903969123\""
+FAIL RequestCache "reload" mode does not check the cache for previously cached content and goes to the network regardless with date and stale response assert_equals: expected (undefined) undefined but got (string) "Tue, 02 Aug 2016 10:05:20 GMT"
 FAIL RequestCache "reload" mode does not check the cache for previously cached content and goes to the network regardless with Etag and fresh response assert_equals: expected 2 but got 1
 FAIL RequestCache "reload" mode does not check the cache for previously cached content and goes to the network regardless with date and fresh response assert_equals: expected 2 but got 1
 PASS RequestCache "reload" mode does store the response in the cache with Etag and stale response 
 PASS RequestCache "reload" mode does store the response in the cache with date and stale response 
 PASS RequestCache "reload" mode does store the response in the cache with Etag and fresh response 
 PASS RequestCache "reload" mode does store the response in the cache with date and fresh response 
-FAIL RequestCache "reload" mode does store the response in the cache even if a previous response is already stored with Etag and stale response assert_equals: expected (undefined) undefined but got (string) "\"0.45824924441966697\""
-FAIL RequestCache "reload" mode does store the response in the cache even if a previous response is already stored with date and stale response assert_equals: expected (undefined) undefined but got (string) "Wed, 27 Jul 2016 15:14:16 GMT"
+FAIL RequestCache "reload" mode does store the response in the cache even if a previous response is already stored with Etag and stale response assert_equals: expected (undefined) undefined but got (string) "\"0.8124005052523855\""
+FAIL RequestCache "reload" mode does store the response in the cache even if a previous response is already stored with date and stale response assert_equals: expected (undefined) undefined but got (string) "Tue, 02 Aug 2016 10:05:20 GMT"
 FAIL RequestCache "reload" mode does store the response in the cache even if a previous response is already stored with Etag and fresh response assert_equals: expected 2 but got 1
 FAIL RequestCache "reload" mode does store the response in the cache even if a previous response is already stored with date and fresh response assert_equals: expected 2 but got 1
 
