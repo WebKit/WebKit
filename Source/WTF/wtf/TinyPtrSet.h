@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -371,9 +371,9 @@ public:
 private:
     friend class JSC::DFG::StructureAbstractValue;
 
-    static const uintptr_t thinFlag = 1;
+    static const uintptr_t fatFlag = 1;
     static const uintptr_t reservedFlag = 2;
-    static const uintptr_t flags = thinFlag | reservedFlag;
+    static const uintptr_t flags = fatFlag | reservedFlag;
     static const uintptr_t reservedValue = 4;
 
     static const unsigned defaultStartingSize = 4;
@@ -463,7 +463,7 @@ private:
             OutOfLineList::destroy(list());
     }
     
-    bool isThin() const { return m_pointer & thinFlag; }
+    bool isThin() const { return !(m_pointer & fatFlag); }
     
     void* pointer() const
     {
@@ -496,7 +496,7 @@ private:
     }
     void set(uintptr_t pointer, bool singleEntry)
     {
-        m_pointer = pointer | (singleEntry ? thinFlag : 0) | (m_pointer & reservedFlag);
+        m_pointer = pointer | (singleEntry ? 0 : fatFlag) | (m_pointer & reservedFlag);
     }
     bool getReservedFlag() const { return m_pointer & reservedFlag; }
     void setReservedFlag(bool value)

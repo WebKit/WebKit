@@ -1,3 +1,53 @@
+2016-08-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Simplify the initialization of AbstractValue in the AbstractInterpreter
+        https://bugs.webkit.org/show_bug.cgi?id=160370
+
+        Reviewed by Saam Barati.
+
+        We use a ton of AbstractValue to run the Abstract Interpreter.
+
+        When we set up the initial values, the compiler sets
+        a zero on a first word, a one on a second word, and a zero
+        again on a third word.
+        Since no vector or double-store can deal with 3 words, unrolling
+        is done by repeating those instructions.
+
+        The reason for the one was TinyPtrSet. It needed a flag for
+        empty value to identify the set as thin. I flipped the flag to "fat"
+        to make sure TinyPtrSet is initialized to zero.
+
+        With that done, I just had to clean some places to make
+        the initialization shorter.
+        It makes the binary easier to follow but this does not help with
+        the bigger problem: the time spent per block on Abstract Interpreter.
+
+        * bytecode/Operands.h:
+        The traits were useless, no client code defines it.
+
+        (JSC::Operands::Operands):
+        (JSC::Operands::ensureLocals):
+        Because of the size of the function, llvm is not inlining it.
+        We were literally loading 3 registers from memory and storing
+        them in the vector.
+        Now that AbstractValue has a VectorTraits, we should just rely
+        on the memset of Vector when possible.
+
+        (JSC::Operands::getLocal):
+        (JSC::Operands::setArgumentFirstTime):
+        (JSC::Operands::setLocalFirstTime):
+        (JSC::Operands::clear):
+        (JSC::OperandValueTraits::defaultValue): Deleted.
+        (JSC::OperandValueTraits::isEmptyForDump): Deleted.
+        * bytecode/OperandsInlines.h:
+        (JSC::Operands<T>::dumpInContext):
+        (JSC::Operands<T>::dump):
+        (JSC::Traits>::dumpInContext): Deleted.
+        (JSC::Traits>::dump): Deleted.
+        * dfg/DFGAbstractValue.cpp:
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::AbstractValue):
+
 2016-08-02  Saam Barati  <sbarati@apple.com>
 
         update a class extending null w.r.t the ES7 spec

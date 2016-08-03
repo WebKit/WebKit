@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,17 @@ struct AbstractValue {
         : m_type(SpecNone)
         , m_arrayModes(0)
     {
+#ifndef NDEBUG
+        // The WTF Traits for AbstractValue allow the initialization of values with bzero().
+        // We verify the correctness of this assumption here.
+        static bool needsDefaultConstructorCheck = true;
+        if (needsDefaultConstructorCheck) {
+            needsDefaultConstructorCheck = false;
+
+            for (unsigned i = 0; i < sizeof(AbstractValue); ++i)
+                ASSERT(!(reinterpret_cast<char*>(this)[i]));
+        }
+#endif
     }
     
     void clear()
@@ -455,6 +466,18 @@ private:
 };
 
 } } // namespace JSC::DFG
+
+namespace WTF {
+template <>
+struct VectorTraits<JSC::DFG::AbstractValue> : VectorTraitsBase<false, JSC::DFG::AbstractValue> {
+    static const bool canInitializeWithMemset = true;
+};
+
+template <>
+struct HashTraits<JSC::DFG::AbstractValue> : GenericHashTraits<JSC::DFG::AbstractValue> {
+    static const bool emptyValueIsZero = true;
+};
+};
 
 #endif // ENABLE(DFG_JIT)
 

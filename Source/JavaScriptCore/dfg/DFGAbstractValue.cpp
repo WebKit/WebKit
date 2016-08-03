@@ -34,6 +34,8 @@
 
 namespace JSC { namespace DFG {
 
+static_assert(sizeof(AbstractValue) == (sizeof(void*) + sizeof(unsigned) * 2 + sizeof(JSValue)), "AbstractValue should be as small as possible.");
+
 void AbstractValue::observeTransitions(const TransitionVector& vector)
 {
     if (m_type & SpecCell) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,32 +37,37 @@ namespace JSC {
 
 template<typename T> struct OperandValueTraits;
 
-template<typename T>
-struct OperandValueTraits {
-    static T defaultValue() { return T(); }
-    static bool isEmptyForDump(const T& value) { return !value; }
-};
-
 enum OperandKind { ArgumentOperand, LocalOperand };
 
 enum OperandsLikeTag { OperandsLike };
 
-template<typename T, typename Traits = OperandValueTraits<T>>
+template<typename T>
 class Operands {
 public:
     Operands() { }
     
-    explicit Operands(size_t numArguments, size_t numLocals, const T& initialValue = Traits::defaultValue())
+    explicit Operands(size_t numArguments, size_t numLocals)
+    {
+        if (WTF::VectorTraits<T>::needsInitialization) {
+            m_arguments.resize(numArguments);
+            m_locals.resize(numLocals);
+        } else {
+            m_arguments.fill(T(), numArguments);
+            m_locals.fill(T(), numLocals);
+        }
+    }
+
+    explicit Operands(size_t numArguments, size_t numLocals, const T& initialValue)
     {
         m_arguments.fill(initialValue, numArguments);
         m_locals.fill(initialValue, numLocals);
     }
     
-    template<typename U, typename OtherTraits>
-    explicit Operands(OperandsLikeTag, const Operands<U, OtherTraits>& other)
+    template<typename U>
+    explicit Operands(OperandsLikeTag, const Operands<U>& other)
     {
-        m_arguments.fill(Traits::defaultValue(), other.numberOfArguments());
-        m_locals.fill(Traits::defaultValue(), other.numberOfLocals());
+        m_arguments.fill(T(), other.numberOfArguments());
+        m_locals.fill(T(), other.numberOfLocals());
     }
     
     size_t numberOfArguments() const { return m_arguments.size(); }
@@ -96,7 +101,20 @@ public:
         return local(idx);
     }
     
-    void ensureLocals(size_t size, const T& ensuredValue = Traits::defaultValue())
+    void ensureLocals(size_t size)
+    {
+        if (size <= m_locals.size())
+            return;
+
+        size_t oldSize = m_locals.size();
+        m_locals.resize(size);
+        if (!WTF::VectorTraits<T>::needsInitialization) {
+            for (size_t i = oldSize; i < m_locals.size(); ++i)
+                m_locals[i] = T();
+        }
+    }
+
+    void ensureLocals(size_t size, const T& ensuredValue)
     {
         if (size <= m_locals.size())
             return;
@@ -117,19 +135,19 @@ public:
     T getLocal(size_t idx)
     {
         if (idx >= m_locals.size())
-            return Traits::defaultValue();
+            return T();
         return m_locals[idx];
     }
     
     void setArgumentFirstTime(size_t idx, const T& value)
     {
-        ASSERT(m_arguments[idx] == Traits::defaultValue());
+        ASSERT(m_arguments[idx] == T());
         argument(idx) = value;
     }
     
     void setLocalFirstTime(size_t idx, const T& value)
     {
-        ASSERT(idx >= m_locals.size() || m_locals[idx] == Traits::defaultValue());
+        ASSERT(idx >= m_locals.size() || m_locals[idx] == T());
         setLocal(idx, value);
     }
     
@@ -245,7 +263,7 @@ public:
     
     void clear()
     {
-        fill(Traits::defaultValue());
+        fill(T());
     }
     
     bool operator==(const Operands& other) const

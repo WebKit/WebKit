@@ -1,3 +1,14 @@
+2016-08-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Simplify the initialization of AbstractValue in the AbstractInterpreter
+        https://bugs.webkit.org/show_bug.cgi?id=160370
+
+        Reviewed by Saam Barati.
+
+        * wtf/TinyPtrSet.h:
+        (WTF::TinyPtrSet::isThin):
+        (WTF::TinyPtrSet::set):
+
 2016-08-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Clean up some useless AtomicString atoms

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,33 +31,33 @@
 
 namespace JSC {
 
-template<typename T, typename Traits>
-void Operands<T, Traits>::dumpInContext(PrintStream& out, DumpContext* context) const
+template<typename T>
+void Operands<T>::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     CommaPrinter comma(" ");
     for (size_t argumentIndex = numberOfArguments(); argumentIndex--;) {
-        if (Traits::isEmptyForDump(argument(argumentIndex)))
+        if (!argument(argumentIndex))
             continue;
         out.print(comma, "arg", argumentIndex, ":", inContext(argument(argumentIndex), context));
     }
     for (size_t localIndex = 0; localIndex < numberOfLocals(); ++localIndex) {
-        if (Traits::isEmptyForDump(local(localIndex)))
+        if (!local(localIndex))
             continue;
         out.print(comma, "loc", localIndex, ":", inContext(local(localIndex), context));
     }
 }
 
-template<typename T, typename Traits>
-void Operands<T, Traits>::dump(PrintStream& out) const
+template<typename T>
+void Operands<T>::dump(PrintStream& out) const
 {
     CommaPrinter comma(" ");
     for (size_t argumentIndex = numberOfArguments(); argumentIndex--;) {
-        if (Traits::isEmptyForDump(argument(argumentIndex)))
+        if (!argument(argumentIndex))
             continue;
         out.print(comma, "arg", argumentIndex, ":", argument(argumentIndex));
     }
     for (size_t localIndex = 0; localIndex < numberOfLocals(); ++localIndex) {
-        if (Traits::isEmptyForDump(local(localIndex)))
+        if (!local(localIndex))
             continue;
         out.print(comma, "loc", localIndex, ":", local(localIndex));
     }
