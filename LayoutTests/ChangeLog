@@ -1,3 +1,12 @@
+2016-08-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip media/track/track-remove-crash.html on ios-simulator-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=160367
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-08-02  Dean Jackson  <dino@apple.com>
 
         Reapply fixes for webkit.org/b/159450 and webkit.org/b/157569
