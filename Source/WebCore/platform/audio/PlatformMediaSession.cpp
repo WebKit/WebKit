@@ -242,14 +242,9 @@ bool PlatformMediaSession::canReceiveRemoteControlCommands() const
     return m_client.canReceiveRemoteControlCommands();
 }
 
-void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
+void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType command)
 {
-    m_client.didReceiveRemoteControlCommand(command, argument);
-}
-
-bool PlatformMediaSession::supportsSeeking() const
-{
-    return m_client.supportsSeeking();
+    m_client.didReceiveRemoteControlCommand(command);
 }
 
 void PlatformMediaSession::visibilityChanged()

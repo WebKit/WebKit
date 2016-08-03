@@ -36,9 +36,6 @@
 SOFT_LINK_FRAMEWORK(MediaPlayer)
 SOFT_LINK_CLASS(MediaPlayer, MPRemoteCommandCenter)
 SOFT_LINK_CLASS(MediaPlayer, MPSeekCommandEvent)
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 90100
-SOFT_LINK_CLASS(MediaPlayer, MPChangePlaybackPositionCommandEvent)
-#endif
 
 namespace WebCore {
 
@@ -58,7 +55,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PauseCommand, nullptr);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PauseCommand);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -68,7 +65,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PlayCommand, nullptr);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PlayCommand);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -78,7 +75,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::TogglePlayPauseCommand, nullptr);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::TogglePlayPauseCommand);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -93,7 +90,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis, command] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(command, nullptr);
+            weakThis->m_client.didReceiveRemoteControlCommand(command);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -108,31 +105,11 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis, command] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(command, nullptr);
+            weakThis->m_client.didReceiveRemoteControlCommand(command);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
     }];
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 90100
-    m_seekToTimeTarget = [[center changePlaybackPositionCommand] addTargetWithHandler:^(MPRemoteCommandEvent *event) {
-        ASSERT([event isKindOfClass:getMPChangePlaybackPositionCommandEventClass()]);
-
-        if (!client.supportsSeeking())
-            return MPRemoteCommandHandlerStatusCommandFailed;
-
-        MPChangePlaybackPositionCommandEvent* seekEvent = static_cast<MPChangePlaybackPositionCommandEvent *>(event);
-        PlatformMediaSession::RemoteCommandArgument argument { [seekEvent positionTime] };
-
-        callOnMainThread([weakThis, argument] {
-            if (!weakThis)
-                return;
-            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::TogglePlayPauseCommand, &argument);
-        });
-
-        return MPRemoteCommandHandlerStatusSuccess;
-    }];
-#endif
 }
 
 RemoteCommandListenerIOS::~RemoteCommandListenerIOS()
@@ -143,16 +120,6 @@ RemoteCommandListenerIOS::~RemoteCommandListenerIOS()
     [[center togglePlayPauseCommand] removeTarget:m_togglePlayPauseTarget.get()];
     [[center seekForwardCommand] removeTarget:m_seekForwardTarget.get()];
     [[center seekBackwardCommand] removeTarget:m_seekBackwardTarget.get()];
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 90100
-    [[center changePlaybackPositionCommand] removeTarget:m_seekToTimeTarget.get()];
-#endif
-}
-
-void RemoteCommandListenerIOS::updateSupportedCommands()
-{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 90100
-    [[[getMPRemoteCommandCenterClass() sharedCommandCenter] changePlaybackPositionCommand] setEnabled:!!client().supportsSeeking()];
-#endif
 }
 
 }

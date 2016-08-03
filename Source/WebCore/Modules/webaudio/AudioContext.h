@@ -314,8 +314,7 @@ private:
     void mayResumePlayback(bool shouldResume) override;
     void suspendPlayback() override;
     bool canReceiveRemoteControlCommands() const override { return false; }
-    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override { }
-    bool supportsSeeking() const override { return false; }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override { }
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
 
     // EventTarget

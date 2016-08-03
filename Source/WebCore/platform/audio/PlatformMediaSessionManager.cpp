@@ -266,13 +266,11 @@ void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& sessio
 
     m_sessions.remove(index);
     m_sessions.insert(0, &session);
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->updateSupportedCommands();
     
     LOG(Media, "PlatformMediaSessionManager::setCurrentSession - session moved from index %zu to 0", index);
 }
     
-PlatformMediaSession* PlatformMediaSessionManager::currentSession() const
+PlatformMediaSession* PlatformMediaSessionManager::currentSession()
 {
     if (!m_sessions.size())
         return nullptr;
@@ -346,20 +344,12 @@ void PlatformMediaSessionManager::updateSessionState()
 }
 #endif
 
-void PlatformMediaSessionManager::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
+void PlatformMediaSessionManager::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
     PlatformMediaSession* activeSession = currentSession();
     if (!activeSession || !activeSession->canReceiveRemoteControlCommands())
         return;
-    activeSession->didReceiveRemoteControlCommand(command, argument);
-}
-
-bool PlatformMediaSessionManager::supportsSeeking() const
-{
-    PlatformMediaSession* activeSession = currentSession();
-    if (!activeSession)
-        return false;
-    return activeSession->supportsSeeking();
+    activeSession->didReceiveRemoteControlCommand(command);
 }
 
 void PlatformMediaSessionManager::systemWillSleep()

@@ -40,7 +40,8 @@ std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteComma
     return std::make_unique<RemoteCommandListenerMac>(client);
 }
 
-void RemoteCommandListenerMac::updateSupportedCommands()
+RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& client)
+    : RemoteCommandListener(client)
 {
 #if USE(MEDIAREMOTE)
     if (!isMediaRemoteFrameworkAvailable())
@@ -65,32 +66,13 @@ void RemoteCommandListenerMac::updateSupportedCommands()
         CFArrayAppendValue(commandInfoArray.get(), commandInfo.get());
     }
 
-    auto seekCommandInfo = adoptCF(MRMediaRemoteCommandInfoCreate(kCFAllocatorDefault));
-    MRMediaRemoteCommandInfoSetCommand(seekCommandInfo.get(), MRMediaRemoteCommandSeekToPlaybackPosition);
-    MRMediaRemoteCommandInfoSetEnabled(seekCommandInfo.get(), client().supportsSeeking());
-    CFArrayAppendValue(commandInfoArray.get(), seekCommandInfo.get());
-
     MRMediaRemoteSetSupportedCommands(commandInfoArray.get(), MRMediaRemoteGetLocalOrigin(), nullptr, nullptr);
-#endif // USE(MEDIAREMOTE)
-}
-
-RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& client)
-    : RemoteCommandListener(client)
-{
-#if USE(MEDIAREMOTE)
-    if (!isMediaRemoteFrameworkAvailable())
-        return;
-
-    updateSupportedCommands();
 
     auto weakThis = createWeakPtr();
     m_commandHandler = MRMediaRemoteAddAsyncCommandHandlerBlock(^(MRMediaRemoteCommand command, CFDictionaryRef options, void(^completion)(CFArrayRef)) {
-
-        LOG(Media, "RemoteCommandListenerMac::RemoteCommandListenerMac - received command %u", command);
+        UNUSED_PARAM(options);
 
         PlatformMediaSession::RemoteControlCommandType platformCommand { PlatformMediaSession::NoCommand };
-        PlatformMediaSession::RemoteCommandArgument argument { 0 };
-        MRMediaRemoteCommandHandlerStatus status = MRMediaRemoteCommandHandlerStatusSuccess;
 
         switch (command) {
         case MRMediaRemoteCommandPlay:
@@ -98,9 +80,6 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
             break;
         case MRMediaRemoteCommandPause:
             platformCommand = PlatformMediaSession::PauseCommand;
-            break;
-        case MRMediaRemoteCommandStop:
-            platformCommand = PlatformMediaSession::StopCommand;
             break;
         case MRMediaRemoteCommandTogglePlayPause:
             platformCommand = PlatformMediaSession::TogglePlayPauseCommand;
@@ -117,32 +96,14 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
         case MRMediaRemoteCommandEndRewind:
             platformCommand = PlatformMediaSession::EndSeekingBackwardCommand;
             break;
-        case MRMediaRemoteCommandSeekToPlaybackPosition: {
-            if (!client.supportsSeeking()) {
-                status = MRMediaRemoteCommandHandlerStatusCommandFailed;
-                break;
-            }
-
-            CFNumberRef positionRef = static_cast<CFNumberRef>(CFDictionaryGetValue(options, kMRMediaRemoteOptionPlaybackPosition));
-            if (!positionRef) {
-                status = MRMediaRemoteCommandHandlerStatusCommandFailed;
-                break;
-            }
-
-            CFNumberGetValue(positionRef, kCFNumberDoubleType, &argument.asDouble);
-            platformCommand = PlatformMediaSession::SeekToPlaybackPositionCommand;
-            break;
-        }
         default:
-            LOG(Media, "RemoteCommandListenerMac::RemoteCommandListenerMac - command %u not supported!", command);
-            status = MRMediaRemoteCommandHandlerStatusCommandFailed;
-            return;
+            ASSERT_NOT_REACHED();
         };
 
         if (!weakThis)
             return;
-        weakThis->m_client.didReceiveRemoteControlCommand(platformCommand, &argument);
-        completion(static_cast<CFArrayRef>(@[@(status)]));
+        weakThis->m_client.didReceiveRemoteControlCommand(platformCommand);
+        completion(static_cast<CFArrayRef>(@[@0]));
     });
 #endif // USE(MEDIAREMOTE)
 }

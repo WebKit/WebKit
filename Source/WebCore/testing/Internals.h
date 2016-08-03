@@ -407,7 +407,7 @@ public:
     void applicationWillEnterBackground() const;
     void setMediaSessionRestrictions(const String& mediaType, const String& restrictions, ExceptionCode&);
     void setMediaElementRestrictions(HTMLMediaElement&, const String& restrictions);
-    void postRemoteControlCommand(const String&, float argument, ExceptionCode&);
+    void postRemoteControlCommand(const String&, ExceptionCode&);
     bool elementIsBlockingDisplaySleep(HTMLMediaElement&) const;
 #endif
 
