@@ -1,3 +1,10 @@
+2016-08-03  Tim Horton  <timothy_horton@apple.com>
+
+        Revise a TestWebKitAPI comment to mention the actual underlying problem
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+        Note that this is because of https://bugs.webkit.org/show_bug.cgi?id=160516
+
 2016-08-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Benchmark test content-animation timeouts always
