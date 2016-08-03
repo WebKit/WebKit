@@ -8284,7 +8284,6 @@
 		1CCA732110ADD43E00FD440D /* DOMHTMLInputElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLInputElementPrivate.h; sourceTree = "<group>"; };
 		1CCDF5BB1990332400BCEBAD /* SVGToOTFFontConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGToOTFFontConversion.cpp; sourceTree = "<group>"; };
 		1CCDF5BC1990332400BCEBAD /* SVGToOTFFontConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGToOTFFontConversion.h; sourceTree = "<group>"; };
-		1CD0B6200AABDB5000D0A3FF /* PublicDOMInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicDOMInterfaces.h; sourceTree = "<group>"; };
 		1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebCore.xcconfig; sourceTree = "<group>"; };
 		1CDD45E60BA9C84600F90147 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -10660,7 +10659,6 @@
 		859A9C440AA5E3BD00B694B2 /* DOMHTMLMetaElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLMetaElement.mm; sourceTree = "<group>"; };
 		859A9C450AA5E3BD00B694B2 /* DOMHTMLStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLStyleElement.h; sourceTree = "<group>"; };
 		859A9C460AA5E3BD00B694B2 /* DOMHTMLStyleElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLStyleElement.mm; sourceTree = "<group>"; };
-		859B7FB90A8D288800A5F1EA /* CodeGeneratorObjC.pm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; name = CodeGeneratorObjC.pm; path = ../scripts/CodeGeneratorObjC.pm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		85ACA9840A9B520300671E90 /* DOMCharacterData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DOMCharacterData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		85ACA9850A9B520300671E90 /* DOMCharacterData.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = DOMCharacterData.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		85ACA99A0A9B575900671E90 /* DOMText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMText.h; sourceTree = "<group>"; };
@@ -22026,7 +22024,6 @@
 				1AD2D15C1D4FD6B200B7DE36 /* HTML */,
 				BCD0FBCE0DBD624100B2F630 /* Views */,
 				1ACF3FB51D5012440063AEFB /* XPath */,
-				859B7FB90A8D288800A5F1EA /* CodeGeneratorObjC.pm */,
 				BC1A3797097C715F0019F3D8 /* DOM.h */,
 				BC1A3798097C715F0019F3D8 /* DOM.mm */,
 				BC1A3799097C715F0019F3D8 /* DOMCore.h */,
@@ -22057,7 +22054,6 @@
 				1CF6BDF90E9BB26A0025E1CD /* ObjCEventListener.mm */,
 				1CF6BE130E9BB4670025E1CD /* ObjCNodeFilterCondition.h */,
 				1CF6BE120E9BB4670025E1CD /* ObjCNodeFilterCondition.mm */,
-				1CD0B6200AABDB5000D0A3FF /* PublicDOMInterfaces.h */,
 				5DFEBAB618592B6D00C75BEB /* WebKitAvailability.h */,
 				1CAF347E0A6C405200ABE06E /* WebScriptObject.h */,
 				1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */,

@@ -51,7 +51,6 @@ VPATH = \
     $(WebCore)/animation \
     $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
-    $(WebCore)/bindings/objc \
     $(WebCore)/crypto \
     $(WebCore)/css \
     $(WebCore)/dom \
@@ -75,9 +74,9 @@ VPATH = \
     $(WebCore)/websockets \
 #
 
-JS_AND_OBJC_BINDING_IDLS = \
+JS_BINDING_IDLS = \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
-	$(WebCore)/Modules/applepay/ApplePayPaymentAuthorizedEvent.idl \
+    $(WebCore)/Modules/applepay/ApplePayPaymentAuthorizedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePaySession.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl \
@@ -122,28 +121,28 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/Modules/mediasession/HTMLMediaElementMediaSession.idl \
     $(WebCore)/Modules/mediasession/MediaRemoteControls.idl \
     $(WebCore)/Modules/mediasession/MediaSession.idl \
-	$(WebCore)/Modules/mediasource/DOMURLMediaSource.idl \
-	$(WebCore)/Modules/mediasource/AudioTrackMediaSource.idl \
-	$(WebCore)/Modules/mediasource/MediaSource.idl \
-	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
-	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
+    $(WebCore)/Modules/mediasource/AudioTrackMediaSource.idl \
+    $(WebCore)/Modules/mediasource/DOMURLMediaSource.idl \
+    $(WebCore)/Modules/mediasource/MediaSource.idl \
+    $(WebCore)/Modules/mediasource/SourceBuffer.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \
-	$(WebCore)/Modules/mediasource/TextTrackMediaSource.idl \
-	$(WebCore)/Modules/mediasource/VideoTrackMediaSource.idl \
-	$(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
-	$(WebCore)/Modules/mediastream/DOMURLMediaStream.idl \
+    $(WebCore)/Modules/mediasource/SourceBufferList.idl \
+    $(WebCore)/Modules/mediasource/TextTrackMediaSource.idl \
+    $(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
+    $(WebCore)/Modules/mediasource/VideoTrackMediaSource.idl \
+    $(WebCore)/Modules/mediastream/DOMURLMediaStream.idl \
     $(WebCore)/Modules/mediastream/HTMLMediaElementMediaStream.idl \
     $(WebCore)/Modules/mediastream/MediaDeviceInfo.idl \
     $(WebCore)/Modules/mediastream/MediaDevices.idl \
-	$(WebCore)/Modules/mediastream/MediaStream.idl \
+    $(WebCore)/Modules/mediastream/MediaStream.idl \
     $(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrackEvent.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrackSourcesCallback.idl \
     $(WebCore)/Modules/mediastream/MediaTrackConstraint.idl \
-    $(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
     $(WebCore)/Modules/mediastream/MediaTrackConstraintSet.idl \
+    $(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
     $(WebCore)/Modules/mediastream/MediaTrackSupportedConstraints.idl \
     $(WebCore)/Modules/mediastream/NavigatorMediaDevices.idl \
     $(WebCore)/Modules/mediastream/NavigatorUserMedia.idl \
@@ -171,8 +170,8 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
     $(WebCore)/Modules/quota/DOMWindowQuota.idl \
     $(WebCore)/Modules/quota/NavigatorStorageQuota.idl \
-    $(WebCore)/Modules/quota/StorageInfo.idl \
     $(WebCore)/Modules/quota/StorageErrorCallback.idl \
+    $(WebCore)/Modules/quota/StorageInfo.idl \
     $(WebCore)/Modules/quota/StorageQuota.idl \
     $(WebCore)/Modules/quota/StorageQuotaCallback.idl \
     $(WebCore)/Modules/quota/StorageUsageCallback.idl \
@@ -189,33 +188,33 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/Modules/streams/ReadableStreamDefaultReader.idl \
     $(WebCore)/Modules/streams/ReadableStreamSource.idl \
     $(WebCore)/Modules/streams/WritableStream.idl \
+    $(WebCore)/Modules/webaudio/AnalyserNode.idl \
     $(WebCore)/Modules/webaudio/AudioBuffer.idl \
     $(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
     $(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
-    $(WebCore)/Modules/webaudio/ChannelMergerNode.idl \
-    $(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
     $(WebCore)/Modules/webaudio/AudioContext.idl \
     $(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
-    $(WebCore)/Modules/webaudio/GainNode.idl \
     $(WebCore)/Modules/webaudio/AudioListener.idl \
     $(WebCore)/Modules/webaudio/AudioNode.idl \
-    $(WebCore)/Modules/webaudio/PannerNode.idl \
     $(WebCore)/Modules/webaudio/AudioParam.idl \
     $(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
     $(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
+    $(WebCore)/Modules/webaudio/ChannelMergerNode.idl \
+    $(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
     $(WebCore)/Modules/webaudio/ConvolverNode.idl \
     $(WebCore)/Modules/webaudio/DelayNode.idl \
     $(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
-    $(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
+    $(WebCore)/Modules/webaudio/GainNode.idl \
     $(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
     $(WebCore)/Modules/webaudio/MediaStreamAudioDestinationNode.idl \
     $(WebCore)/Modules/webaudio/MediaStreamAudioSourceNode.idl \
-    $(WebCore)/Modules/webaudio/OscillatorNode.idl \
-    $(WebCore)/Modules/webaudio/OfflineAudioContext.idl \
     $(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
-    $(WebCore)/Modules/webaudio/AnalyserNode.idl \
-    $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
+    $(WebCore)/Modules/webaudio/OfflineAudioContext.idl \
+    $(WebCore)/Modules/webaudio/OscillatorNode.idl \
+    $(WebCore)/Modules/webaudio/PannerNode.idl \
     $(WebCore)/Modules/webaudio/PeriodicWave.idl \
+    $(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
+    $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
@@ -236,7 +235,45 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/crypto/CryptoKey.idl \
     $(WebCore)/crypto/CryptoKeyPair.idl \
     $(WebCore)/crypto/WebKitSubtleCrypto.idl \
+    $(WebCore)/css/CSSCharsetRule.idl \
+    $(WebCore)/css/CSSFontFaceLoadEvent.idl \
+    $(WebCore)/css/CSSFontFaceRule.idl \
+    $(WebCore)/css/CSSImportRule.idl \
+    $(WebCore)/css/CSSKeyframeRule.idl \
+    $(WebCore)/css/CSSKeyframesRule.idl \
+    $(WebCore)/css/CSSMediaRule.idl \
+    $(WebCore)/css/CSSPageRule.idl \
+    $(WebCore)/css/CSSPrimitiveValue.idl \
+    $(WebCore)/css/CSSRule.idl \
+    $(WebCore)/css/CSSRuleList.idl \
+    $(WebCore)/css/CSSStyleDeclaration.idl \
+    $(WebCore)/css/CSSStyleRule.idl \
+    $(WebCore)/css/CSSStyleSheet.idl \
+    $(WebCore)/css/CSSSupportsRule.idl \
+    $(WebCore)/css/CSSUnknownRule.idl \
+    $(WebCore)/css/CSSValue.idl \
+    $(WebCore)/css/CSSValueList.idl \
+    $(WebCore)/css/Counter.idl \
+    $(WebCore)/css/DOMCSSNamespace.idl \
+    $(WebCore)/css/FontFace.idl \
+    $(WebCore)/css/FontFaceSet.idl \
+    $(WebCore)/css/MediaList.idl \
+    $(WebCore)/css/MediaQueryList.idl \
+    $(WebCore)/css/MediaQueryListListener.idl \
+    $(WebCore)/css/RGBColor.idl \
+    $(WebCore)/css/Rect.idl \
+    $(WebCore)/css/StyleMedia.idl \
+    $(WebCore)/css/StyleSheet.idl \
+    $(WebCore)/css/StyleSheetList.idl \
+    $(WebCore)/css/WebKitCSSFilterValue.idl \
+    $(WebCore)/css/WebKitCSSMatrix.idl \
+    $(WebCore)/css/WebKitCSSRegionRule.idl \
+    $(WebCore)/css/WebKitCSSTransformValue.idl \
+    $(WebCore)/css/WebKitCSSViewportRule.idl \
+    $(WebCore)/dom/AnimationEvent.idl \
     $(WebCore)/dom/Attr.idl \
+    $(WebCore)/dom/AutocompleteErrorEvent.idl \
+    $(WebCore)/dom/BeforeLoadEvent.idl \
     $(WebCore)/dom/BeforeUnloadEvent.idl \
     $(WebCore)/dom/CDATASection.idl \
     $(WebCore)/dom/CharacterData.idl \
@@ -249,6 +286,7 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/DOMCoreException.idl \
     $(WebCore)/dom/DOMError.idl \
     $(WebCore)/dom/DOMImplementation.idl \
+    $(WebCore)/dom/DOMNamedFlowCollection.idl \
     $(WebCore)/dom/DOMStringList.idl \
     $(WebCore)/dom/DOMStringMap.idl \
     $(WebCore)/dom/DataTransfer.idl \
@@ -263,244 +301,76 @@ JS_AND_OBJC_BINDING_IDLS = \
     $(WebCore)/dom/Entity.idl \
     $(WebCore)/dom/EntityReference.idl \
     $(WebCore)/dom/ErrorEvent.idl \
+    $(WebCore)/dom/Event.idl \
+    $(WebCore)/dom/EventListener.idl \
+    $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \
     $(WebCore)/dom/GlobalEventHandlers.idl \
     $(WebCore)/dom/HashChangeEvent.idl \
+    $(WebCore)/dom/KeyboardEvent.idl \
     $(WebCore)/dom/MessageChannel.idl \
+    $(WebCore)/dom/MessageEvent.idl \
+    $(WebCore)/dom/MessagePort.idl \
+    $(WebCore)/dom/MouseEvent.idl \
+    $(WebCore)/dom/MutationEvent.idl \
     $(WebCore)/dom/MutationObserver.idl \
     $(WebCore)/dom/MutationRecord.idl \
     $(WebCore)/dom/NamedNodeMap.idl \
     $(WebCore)/dom/Node.idl \
+    $(WebCore)/dom/NodeFilter.idl \
+    $(WebCore)/dom/NodeIterator.idl \
     $(WebCore)/dom/NodeList.idl \
-    $(WebCore)/dom/NonElementParentNode.idl \
     $(WebCore)/dom/NonDocumentTypeChildNode.idl \
+    $(WebCore)/dom/NonElementParentNode.idl \
+    $(WebCore)/dom/OverflowEvent.idl \
+    $(WebCore)/dom/PageTransitionEvent.idl \
     $(WebCore)/dom/ParentNode.idl \
     $(WebCore)/dom/PopStateEvent.idl \
     $(WebCore)/dom/ProcessingInstruction.idl \
+    $(WebCore)/dom/ProgressEvent.idl \
+    $(WebCore)/dom/ProgressEvent.idl \
+    $(WebCore)/dom/Range.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
     $(WebCore)/dom/SecurityPolicyViolationEvent.idl \
     $(WebCore)/dom/ShadowRoot.idl \
     $(WebCore)/dom/Slotable.idl \
     $(WebCore)/dom/StringCallback.idl \
     $(WebCore)/dom/Text.idl \
+    $(WebCore)/dom/TextEvent.idl \
+    $(WebCore)/dom/TransitionEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
+    $(WebCore)/dom/UIEvent.idl \
+    $(WebCore)/dom/WebKitAnimationEvent.idl \
+    $(WebCore)/dom/WebKitNamedFlow.idl \
+    $(WebCore)/dom/WebKitTransitionEvent.idl \
+    $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \
+    $(WebCore)/fileapi/Blob.idl \
+    $(WebCore)/fileapi/File.idl \
+    $(WebCore)/fileapi/FileError.idl \
     $(WebCore)/fileapi/FileException.idl \
+    $(WebCore)/fileapi/FileList.idl \
     $(WebCore)/fileapi/FileReader.idl \
     $(WebCore)/fileapi/FileReaderSync.idl \
     $(WebCore)/html/DOMFormData.idl \
     $(WebCore)/html/DOMSettableTokenList.idl \
+    $(WebCore)/html/DOMTokenList.idl \
     $(WebCore)/html/DOMURL.idl \
-    $(WebCore)/html/ImageData.idl \
-    $(WebCore)/html/MediaController.idl \
-    $(WebCore)/html/MediaKeyError.idl \
-    $(WebCore)/html/MediaKeyEvent.idl \
-    $(WebCore)/html/RadioNodeList.idl \
-    $(WebCore)/html/TextMetrics.idl \
-    $(WebCore)/html/URLUtils.idl \
-    $(WebCore)/html/VoidCallback.idl \
-    $(WebCore)/html/canvas/ANGLEInstancedArrays.idl \
-    $(WebCore)/html/canvas/CanvasGradient.idl \
-    $(WebCore)/html/canvas/CanvasPattern.idl \
-    $(WebCore)/html/canvas/CanvasProxy.idl \
-    $(WebCore)/html/canvas/CanvasRenderingContext.idl \
-    $(WebCore)/html/canvas/CanvasRenderingContext2D.idl \
-    $(WebCore)/html/canvas/DOMPath.idl \
-    $(WebCore)/html/canvas/EXTShaderTextureLOD.idl \
-    $(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
-    $(WebCore)/html/canvas/EXTsRGB.idl \
-    $(WebCore)/html/canvas/EXTBlendMinMax.idl \
-    $(WebCore)/html/canvas/EXTFragDepth.idl \
-    $(WebCore)/html/canvas/OESElementIndexUint.idl \
-    $(WebCore)/html/canvas/OESStandardDerivatives.idl \
-    $(WebCore)/html/canvas/OESTextureFloat.idl \
-    $(WebCore)/html/canvas/OESTextureFloatLinear.idl \
-    $(WebCore)/html/canvas/OESTextureHalfFloat.idl \
-    $(WebCore)/html/canvas/OESTextureHalfFloatLinear.idl \
-    $(WebCore)/html/canvas/OESVertexArrayObject.idl \
-    $(WebCore)/html/canvas/WebGLActiveInfo.idl \
-    $(WebCore)/html/canvas/WebGLBuffer.idl \
-    $(WebCore)/html/canvas/WebGLCompressedTextureATC.idl \
-    $(WebCore)/html/canvas/WebGLCompressedTexturePVRTC.idl \
-    $(WebCore)/html/canvas/WebGLCompressedTextureS3TC.idl \
-    $(WebCore)/html/canvas/WebGLContextAttributes.idl \
-    $(WebCore)/html/canvas/WebGLContextEvent.idl \
-    $(WebCore)/html/canvas/WebGLDebugRendererInfo.idl \
-    $(WebCore)/html/canvas/WebGLDebugShaders.idl \
-    $(WebCore)/html/canvas/WebGLDepthTexture.idl \
-    $(WebCore)/html/canvas/WebGLDrawBuffers.idl \
-    $(WebCore)/html/canvas/WebGLFramebuffer.idl \
-    $(WebCore)/html/canvas/WebGLLoseContext.idl \
-    $(WebCore)/html/canvas/WebGLProgram.idl \
-    $(WebCore)/html/canvas/WebGLQuery.idl \
-    $(WebCore)/html/canvas/WebGLRenderbuffer.idl \
-    $(WebCore)/html/canvas/WebGLRenderingContextBase.idl \
-    $(WebCore)/html/canvas/WebGLRenderingContext.idl \
-    $(WebCore)/html/canvas/WebGL2RenderingContext.idl \
-    $(WebCore)/html/canvas/WebGLSampler.idl \
-    $(WebCore)/html/canvas/WebGLShader.idl \
-    $(WebCore)/html/canvas/WebGLShaderPrecisionFormat.idl \
-    $(WebCore)/html/canvas/WebGLSync.idl \
-    $(WebCore)/html/canvas/WebGLTexture.idl \
-    $(WebCore)/html/canvas/WebGLTransformFeedback.idl \
-    $(WebCore)/html/canvas/WebGLUniformLocation.idl \
-    $(WebCore)/html/canvas/WebGLVertexArrayObject.idl \
-    $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
-    $(WebCore)/html/track/AudioTrack.idl \
-    $(WebCore)/html/track/AudioTrackList.idl \
-    $(WebCore)/html/track/DataCue.idl \
-    $(WebCore)/html/track/TextTrack.idl \
-    $(WebCore)/html/track/TextTrackCue.idl \
-    $(WebCore)/html/track/TextTrackCueList.idl \
-    $(WebCore)/html/track/TextTrackList.idl \
-    $(WebCore)/html/track/VTTRegion.idl \
-    $(WebCore)/html/track/VTTRegionList.idl \
-    $(WebCore)/html/track/TrackEvent.idl \
-    $(WebCore)/html/track/VideoTrack.idl \
-    $(WebCore)/html/track/VideoTrackList.idl \
-    $(WebCore)/html/track/VTTCue.idl \
-    $(WebCore)/inspector/CommandLineAPIHost.idl \
-    $(WebCore)/inspector/InspectorFrontendHost.idl \
-    $(WebCore)/loader/appcache/DOMApplicationCache.idl \
-    $(WebCore)/page/AbstractView.idl \
-    $(WebCore)/page/BarProp.idl \
-    $(WebCore)/page/Crypto.idl \
-    $(WebCore)/page/DOMSelection.idl \
-    $(WebCore)/page/DOMWindow.idl \
-    $(WebCore)/page/EventSource.idl \
-    $(WebCore)/page/History.idl \
-    $(WebCore)/page/Location.idl \
-    $(WebCore)/page/Navigator.idl \
-    $(WebCore)/page/NavigatorConcurrentHardware.idl \
-    $(WebCore)/page/NavigatorID.idl \
-    $(WebCore)/page/NavigatorLanguage.idl \
-    $(WebCore)/page/NavigatorOnLine.idl \
-    $(WebCore)/page/Performance.idl \
-    $(WebCore)/page/PerformanceEntry.idl \
-    $(WebCore)/page/PerformanceEntryList.idl \
-    $(WebCore)/page/PerformanceNavigation.idl \
-    $(WebCore)/page/PerformanceResourceTiming.idl \
-    $(WebCore)/page/PerformanceTiming.idl \
-    $(WebCore)/page/Screen.idl \
-    $(WebCore)/page/WebKitPoint.idl \
-    $(WebCore)/page/WebKitNamespace.idl \
-    $(WebCore)/page/UserMessageHandlersNamespace.idl \
-    $(WebCore)/page/UserMessageHandler.idl \
-    $(WebCore)/page/WindowEventHandlers.idl \
-    $(WebCore)/page/WorkerNavigator.idl \
-    $(WebCore)/page/WindowOrWorkerGlobalScope.idl \
-    $(WebCore)/plugins/DOMMimeType.idl \
-    $(WebCore)/plugins/DOMMimeTypeArray.idl \
-    $(WebCore)/plugins/DOMPlugin.idl \
-    $(WebCore)/plugins/DOMPluginArray.idl \
-    $(WebCore)/storage/Storage.idl \
-    $(WebCore)/storage/StorageEvent.idl \
-    $(WebCore)/testing/GCObservation.idl \
-    $(WebCore)/testing/Internals.idl \
-    $(WebCore)/testing/InternalSettings.idl \
-    $(WebCore)/testing/MallocStatistics.idl \
-    $(WebCore)/testing/MemoryInfo.idl \
-    $(WebCore)/testing/MockContentFilterSettings.idl \
-	$(WebCore)/testing/MockPageOverlay.idl \
-    $(WebCore)/testing/TypeConversions.idl \
-    $(WebCore)/workers/AbstractWorker.idl \
-    $(WebCore)/workers/DedicatedWorkerGlobalScope.idl \
-    $(WebCore)/workers/Worker.idl \
-    $(WebCore)/workers/WorkerGlobalScope.idl \
-    $(WebCore)/workers/WorkerLocation.idl \
-    $(WebCore)/xml/DOMParser.idl \
-    $(WebCore)/xml/XMLHttpRequest.idl \
-    $(WebCore)/xml/XMLHttpRequestEventTarget.idl \
-    $(WebCore)/xml/XMLHttpRequestProgressEvent.idl \
-    $(WebCore)/xml/XMLHttpRequestUpload.idl \
-    $(WebCore)/xml/XMLSerializer.idl \
-    $(WebCore)/xml/XSLTProcessor.idl \
-    InternalSettingsGenerated.idl
-#
-
-JS_ONLY_BINDING_IDLS = \
-	$(WebCore)/css/CSSCharsetRule.idl \
-	$(WebCore)/css/CSSFontFaceLoadEvent.idl \
-	$(WebCore)/css/CSSFontFaceRule.idl \
-	$(WebCore)/css/CSSImportRule.idl \
-	$(WebCore)/css/CSSKeyframeRule.idl \
-	$(WebCore)/css/CSSKeyframesRule.idl \
-	$(WebCore)/css/CSSMediaRule.idl \
-	$(WebCore)/css/CSSPageRule.idl \
-	$(WebCore)/css/CSSPrimitiveValue.idl \
-	$(WebCore)/css/CSSRule.idl \
-	$(WebCore)/css/CSSRuleList.idl \
-	$(WebCore)/css/CSSStyleDeclaration.idl \
-	$(WebCore)/css/CSSStyleRule.idl \
-	$(WebCore)/css/CSSStyleSheet.idl \
-	$(WebCore)/css/CSSSupportsRule.idl \
-	$(WebCore)/css/CSSUnknownRule.idl \
-	$(WebCore)/css/CSSValue.idl \
-	$(WebCore)/css/CSSValueList.idl \
-	$(WebCore)/css/Counter.idl \
-	$(WebCore)/css/DOMCSSNamespace.idl \
-	$(WebCore)/css/FontFace.idl \
-	$(WebCore)/css/FontFaceSet.idl \
-	$(WebCore)/css/MediaList.idl \
-	$(WebCore)/css/MediaQueryList.idl \
-	$(WebCore)/css/MediaQueryListListener.idl \
-	$(WebCore)/css/RGBColor.idl \
-	$(WebCore)/css/Rect.idl \
-	$(WebCore)/css/StyleMedia.idl \
-	$(WebCore)/css/StyleSheet.idl \
-	$(WebCore)/css/StyleSheetList.idl \
-    $(WebCore)/css/WebKitCSSFilterValue.idl \
-    $(WebCore)/css/WebKitCSSMatrix.idl \
-    $(WebCore)/css/WebKitCSSRegionRule.idl \
-    $(WebCore)/css/WebKitCSSTransformValue.idl \
-    $(WebCore)/css/WebKitCSSViewportRule.idl \
-	$(WebCore)/dom/AnimationEvent.idl \
-	$(WebCore)/dom/AutocompleteErrorEvent.idl \
-	$(WebCore)/dom/BeforeLoadEvent.idl \
-	$(WebCore)/dom/DOMNamedFlowCollection.idl \
-	$(WebCore)/dom/MessageEvent.idl \
-	$(WebCore)/dom/MessagePort.idl \
-	$(WebCore)/dom/NodeFilter.idl \
-	$(WebCore)/dom/NodeIterator.idl \
-	$(WebCore)/dom/PageTransitionEvent.idl \
-	$(WebCore)/dom/Range.idl \
-	$(WebCore)/dom/TransitionEvent.idl \
-	$(WebCore)/dom/WebKitAnimationEvent.idl \
-	$(WebCore)/dom/WebKitNamedFlow.idl \
-	$(WebCore)/dom/WebKitTransitionEvent.idl \
-    $(WebCore)/dom/Event.idl \
-    $(WebCore)/dom/EventListener.idl \
-    $(WebCore)/dom/EventTarget.idl \
-    $(WebCore)/dom/KeyboardEvent.idl \
-    $(WebCore)/dom/MouseEvent.idl \
-    $(WebCore)/dom/MutationEvent.idl \
-    $(WebCore)/dom/OverflowEvent.idl \
-    $(WebCore)/dom/ProgressEvent.idl \
-    $(WebCore)/dom/ProgressEvent.idl \
-    $(WebCore)/dom/TextEvent.idl \
-    $(WebCore)/dom/UIEvent.idl \
-    $(WebCore)/dom/WheelEvent.idl \
-	$(WebCore)/fileapi/Blob.idl \
-	$(WebCore)/fileapi/File.idl \
-	$(WebCore)/fileapi/FileError.idl \
-	$(WebCore)/fileapi/FileList.idl \
-	$(WebCore)/html/DOMTokenList.idl \
-	$(WebCore)/html/HTMLAnchorElement.idl \
-	$(WebCore)/html/HTMLAppletElement.idl \
-	$(WebCore)/html/HTMLAreaElement.idl \
-	$(WebCore)/html/HTMLBRElement.idl \
-	$(WebCore)/html/HTMLBaseElement.idl \
-	$(WebCore)/html/HTMLBaseFontElement.idl \
-	$(WebCore)/html/HTMLBodyElement.idl \
-	$(WebCore)/html/HTMLButtonElement.idl \
-	$(WebCore)/html/HTMLCanvasElement.idl \
-	$(WebCore)/html/HTMLCollection.idl \
-	$(WebCore)/html/HTMLDListElement.idl \
-	$(WebCore)/html/HTMLDataElement.idl \
-	$(WebCore)/html/HTMLPictureElement.idl \
     $(WebCore)/html/HTMLAllCollection.idl \
+    $(WebCore)/html/HTMLAnchorElement.idl \
+    $(WebCore)/html/HTMLAppletElement.idl \
+    $(WebCore)/html/HTMLAreaElement.idl \
     $(WebCore)/html/HTMLAttachmentElement.idl \
     $(WebCore)/html/HTMLAudioElement.idl \
+    $(WebCore)/html/HTMLBRElement.idl \
+    $(WebCore)/html/HTMLBaseElement.idl \
+    $(WebCore)/html/HTMLBaseFontElement.idl \
+    $(WebCore)/html/HTMLBodyElement.idl \
+    $(WebCore)/html/HTMLButtonElement.idl \
+    $(WebCore)/html/HTMLCanvasElement.idl \
+    $(WebCore)/html/HTMLCollection.idl \
+    $(WebCore)/html/HTMLDListElement.idl \
+    $(WebCore)/html/HTMLDataElement.idl \
     $(WebCore)/html/HTMLDataListElement.idl \
     $(WebCore)/html/HTMLDetailsElement.idl \
     $(WebCore)/html/HTMLDirectoryElement.idl \
@@ -542,6 +412,7 @@ JS_ONLY_BINDING_IDLS = \
     $(WebCore)/html/HTMLOutputElement.idl \
     $(WebCore)/html/HTMLParagraphElement.idl \
     $(WebCore)/html/HTMLParamElement.idl \
+    $(WebCore)/html/HTMLPictureElement.idl \
     $(WebCore)/html/HTMLPreElement.idl \
     $(WebCore)/html/HTMLProgressElement.idl \
     $(WebCore)/html/HTMLQuoteElement.idl \
@@ -565,9 +436,113 @@ JS_ONLY_BINDING_IDLS = \
     $(WebCore)/html/HTMLUListElement.idl \
     $(WebCore)/html/HTMLUnknownElement.idl \
     $(WebCore)/html/HTMLVideoElement.idl \
+    $(WebCore)/html/ImageData.idl \
+    $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaError.idl \
+    $(WebCore)/html/MediaKeyError.idl \
+    $(WebCore)/html/MediaKeyEvent.idl \
+    $(WebCore)/html/RadioNodeList.idl \
+    $(WebCore)/html/TextMetrics.idl \
     $(WebCore)/html/TimeRanges.idl \
+    $(WebCore)/html/URLUtils.idl \
     $(WebCore)/html/ValidityState.idl \
+    $(WebCore)/html/VoidCallback.idl \
+    $(WebCore)/html/canvas/ANGLEInstancedArrays.idl \
+    $(WebCore)/html/canvas/CanvasGradient.idl \
+    $(WebCore)/html/canvas/CanvasPattern.idl \
+    $(WebCore)/html/canvas/CanvasProxy.idl \
+    $(WebCore)/html/canvas/CanvasRenderingContext.idl \
+    $(WebCore)/html/canvas/CanvasRenderingContext2D.idl \
+    $(WebCore)/html/canvas/DOMPath.idl \
+    $(WebCore)/html/canvas/EXTBlendMinMax.idl \
+    $(WebCore)/html/canvas/EXTFragDepth.idl \
+    $(WebCore)/html/canvas/EXTShaderTextureLOD.idl \
+    $(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
+    $(WebCore)/html/canvas/EXTsRGB.idl \
+    $(WebCore)/html/canvas/OESElementIndexUint.idl \
+    $(WebCore)/html/canvas/OESStandardDerivatives.idl \
+    $(WebCore)/html/canvas/OESTextureFloat.idl \
+    $(WebCore)/html/canvas/OESTextureFloatLinear.idl \
+    $(WebCore)/html/canvas/OESTextureHalfFloat.idl \
+    $(WebCore)/html/canvas/OESTextureHalfFloatLinear.idl \
+    $(WebCore)/html/canvas/OESVertexArrayObject.idl \
+    $(WebCore)/html/canvas/WebGL2RenderingContext.idl \
+    $(WebCore)/html/canvas/WebGLActiveInfo.idl \
+    $(WebCore)/html/canvas/WebGLBuffer.idl \
+    $(WebCore)/html/canvas/WebGLCompressedTextureATC.idl \
+    $(WebCore)/html/canvas/WebGLCompressedTexturePVRTC.idl \
+    $(WebCore)/html/canvas/WebGLCompressedTextureS3TC.idl \
+    $(WebCore)/html/canvas/WebGLContextAttributes.idl \
+    $(WebCore)/html/canvas/WebGLContextEvent.idl \
+    $(WebCore)/html/canvas/WebGLDebugRendererInfo.idl \
+    $(WebCore)/html/canvas/WebGLDebugShaders.idl \
+    $(WebCore)/html/canvas/WebGLDepthTexture.idl \
+    $(WebCore)/html/canvas/WebGLDrawBuffers.idl \
+    $(WebCore)/html/canvas/WebGLFramebuffer.idl \
+    $(WebCore)/html/canvas/WebGLLoseContext.idl \
+    $(WebCore)/html/canvas/WebGLProgram.idl \
+    $(WebCore)/html/canvas/WebGLQuery.idl \
+    $(WebCore)/html/canvas/WebGLRenderbuffer.idl \
+    $(WebCore)/html/canvas/WebGLRenderingContext.idl \
+    $(WebCore)/html/canvas/WebGLRenderingContextBase.idl \
+    $(WebCore)/html/canvas/WebGLSampler.idl \
+    $(WebCore)/html/canvas/WebGLShader.idl \
+    $(WebCore)/html/canvas/WebGLShaderPrecisionFormat.idl \
+    $(WebCore)/html/canvas/WebGLSync.idl \
+    $(WebCore)/html/canvas/WebGLTexture.idl \
+    $(WebCore)/html/canvas/WebGLTransformFeedback.idl \
+    $(WebCore)/html/canvas/WebGLUniformLocation.idl \
+    $(WebCore)/html/canvas/WebGLVertexArrayObject.idl \
+    $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
+    $(WebCore)/html/track/AudioTrack.idl \
+    $(WebCore)/html/track/AudioTrackList.idl \
+    $(WebCore)/html/track/DataCue.idl \
+    $(WebCore)/html/track/TextTrack.idl \
+    $(WebCore)/html/track/TextTrackCue.idl \
+    $(WebCore)/html/track/TextTrackCueList.idl \
+    $(WebCore)/html/track/TextTrackList.idl \
+    $(WebCore)/html/track/TrackEvent.idl \
+    $(WebCore)/html/track/VTTCue.idl \
+    $(WebCore)/html/track/VTTRegion.idl \
+    $(WebCore)/html/track/VTTRegionList.idl \
+    $(WebCore)/html/track/VideoTrack.idl \
+    $(WebCore)/html/track/VideoTrackList.idl \
+    $(WebCore)/inspector/CommandLineAPIHost.idl \
+    $(WebCore)/inspector/InspectorFrontendHost.idl \
+    $(WebCore)/loader/appcache/DOMApplicationCache.idl \
+    $(WebCore)/page/AbstractView.idl \
+    $(WebCore)/page/BarProp.idl \
+    $(WebCore)/page/Crypto.idl \
+    $(WebCore)/page/DOMSelection.idl \
+    $(WebCore)/page/DOMWindow.idl \
+    $(WebCore)/page/EventSource.idl \
+    $(WebCore)/page/History.idl \
+    $(WebCore)/page/Location.idl \
+    $(WebCore)/page/Navigator.idl \
+    $(WebCore)/page/NavigatorConcurrentHardware.idl \
+    $(WebCore)/page/NavigatorID.idl \
+    $(WebCore)/page/NavigatorLanguage.idl \
+    $(WebCore)/page/NavigatorOnLine.idl \
+    $(WebCore)/page/Performance.idl \
+    $(WebCore)/page/PerformanceEntry.idl \
+    $(WebCore)/page/PerformanceEntryList.idl \
+    $(WebCore)/page/PerformanceNavigation.idl \
+    $(WebCore)/page/PerformanceResourceTiming.idl \
+    $(WebCore)/page/PerformanceTiming.idl \
+    $(WebCore)/page/Screen.idl \
+    $(WebCore)/page/UserMessageHandler.idl \
+    $(WebCore)/page/UserMessageHandlersNamespace.idl \
+    $(WebCore)/page/WebKitNamespace.idl \
+    $(WebCore)/page/WebKitPoint.idl \
+    $(WebCore)/page/WindowEventHandlers.idl \
+    $(WebCore)/page/WindowOrWorkerGlobalScope.idl \
+    $(WebCore)/page/WorkerNavigator.idl \
+    $(WebCore)/plugins/DOMMimeType.idl \
+    $(WebCore)/plugins/DOMMimeTypeArray.idl \
+    $(WebCore)/plugins/DOMPlugin.idl \
+    $(WebCore)/plugins/DOMPluginArray.idl \
+    $(WebCore)/storage/Storage.idl \
+    $(WebCore)/storage/StorageEvent.idl \
     $(WebCore)/svg/SVGAElement.idl \
     $(WebCore)/svg/SVGAltGlyphDefElement.idl \
     $(WebCore)/svg/SVGAltGlyphElement.idl \
@@ -715,11 +690,32 @@ JS_ONLY_BINDING_IDLS = \
     $(WebCore)/svg/SVGViewSpec.idl \
     $(WebCore)/svg/SVGZoomAndPan.idl \
     $(WebCore)/svg/SVGZoomEvent.idl \
+    $(WebCore)/testing/GCObservation.idl \
+    $(WebCore)/testing/InternalSettings.idl \
+    $(WebCore)/testing/Internals.idl \
+    $(WebCore)/testing/MallocStatistics.idl \
+    $(WebCore)/testing/MemoryInfo.idl \
+    $(WebCore)/testing/MockContentFilterSettings.idl \
+    $(WebCore)/testing/MockPageOverlay.idl \
+    $(WebCore)/testing/TypeConversions.idl \
+    $(WebCore)/workers/AbstractWorker.idl \
+    $(WebCore)/workers/DedicatedWorkerGlobalScope.idl \
+    $(WebCore)/workers/Worker.idl \
+    $(WebCore)/workers/WorkerGlobalScope.idl \
+    $(WebCore)/workers/WorkerLocation.idl \
+    $(WebCore)/xml/DOMParser.idl \
+    $(WebCore)/xml/XMLHttpRequest.idl \
+    $(WebCore)/xml/XMLHttpRequestEventTarget.idl \
+    $(WebCore)/xml/XMLHttpRequestProgressEvent.idl \
+    $(WebCore)/xml/XMLHttpRequestUpload.idl \
+    $(WebCore)/xml/XMLSerializer.idl \
     $(WebCore)/xml/XPathEvaluator.idl \
     $(WebCore)/xml/XPathException.idl \
     $(WebCore)/xml/XPathExpression.idl \
     $(WebCore)/xml/XPathNSResolver.idl \
     $(WebCore)/xml/XPathResult.idl \
+    $(WebCore)/xml/XSLTProcessor.idl \
+    InternalSettingsGenerated.idl \
 #
 
 PYTHON = python
@@ -791,7 +787,7 @@ ADDITIONAL_EVENT_TARGET_FACTORY =
 
 -include WebCoreDerivedSourcesAdditions.make
 
-JS_ONLY_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
+JS_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 
 all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
 
@@ -803,15 +799,13 @@ $(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
 endif # MACOS
 
 ifneq ($(WTF_PLATFORM_IOS), 1)
-JS_ONLY_BINDING_IDLS += \
+JS_BINDING_IDLS += \
     $(WebCore)/dom/Touch.idl \
     $(WebCore)/dom/TouchEvent.idl \
     $(WebCore)/dom/TouchList.idl
 endif
 
 .PHONY : all
-
-JS_BINDING_IDLS = $(JS_AND_OBJC_BINDING_IDLS) $(JS_ONLY_BINDING_IDLS)
 
 JS_DOM_CLASSES=$(basename $(notdir $(JS_BINDING_IDLS)))
 
@@ -1352,12 +1346,6 @@ all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(firstword $(WebCo
 
 ifeq ($(OS),MACOS)
 
-OBJC_DOM_CLASSES=$(basename $(notdir $(JS_AND_OBJC_BINDING_IDLS)))
-
-OBJC_DOM_HEADERS=$(filter-out DOMDOMWindow.h DOMDOMMimeType.h DOMDOMPlugin.h,$(OBJC_DOM_CLASSES:%=DOM%.h))
-
-all : $(OBJC_DOM_HEADERS)
-
 all : CharsetData.cpp
 
 # --------
@@ -1372,16 +1360,6 @@ endif # WTF_PLATFORM_IOS
 
 CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/character-sets.txt platform/text/mac/$(ENCODINGS_FILENAME)
 	$(PERL) $^ kTextEncoding > $@
-
-# --------
-
-# Objective-C bindings
-
-DOM_BINDINGS_SCRIPTS = $(COMMON_BINDINGS_SCRIPTS) bindings/scripts/CodeGeneratorObjC.pm
-DOM%.h : %.idl $(DOM_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h $(PLATFORM_FEATURE_DEFINES)
-	$(call generator_script, $(DOM_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
-
--include $(OBJC_DOM_HEADERS:.h=.dep)
 
 # --------
 

@@ -1,3 +1,13 @@
+2016-08-03  Anders Carlsson  <andersca@apple.com>
+
+        Remove the Objective-C bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=160526
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/run-bindings-tests:
+        Update test.
+
 2016-08-03  Tim Horton  <timothy_horton@apple.com>
 
         Revise a TestWebKitAPI comment to mention the actual underlying problem
