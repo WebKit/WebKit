@@ -1,5 +1,23 @@
 2016-08-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [SOUP] Deduplicate WebProcessPool::setIgnoreTLSErrors
+        https://bugs.webkit.org/show_bug.cgi?id=160489
+
+        Reviewed by Alex Christensen.
+
+        WebProcessPool::setIgnoreTLSErrors has identical implementation in WebProcessPoolEfl.cpp
+        and WebProcessPoolGtk.cpp. We have WebProcessPoolSoup.cpp and this function is specific to
+        the soup network backend, so move it there.
+
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::setIgnoreTLSErrors): Deleted.
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::setIgnoreTLSErrors): Deleted.
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::setIgnoreTLSErrors):
+
+2016-08-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Document how to initialize WebKitFaviconDatabase
         https://bugs.webkit.org/show_bug.cgi?id=160391
 
