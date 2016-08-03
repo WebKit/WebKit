@@ -55,7 +55,7 @@ struct AbstractValue {
         : m_type(SpecNone)
         , m_arrayModes(0)
     {
-#ifndef NDEBUG
+#if USE(JSVALUE64) && !defined(NDEBUG)
         // The WTF Traits for AbstractValue allow the initialization of values with bzero().
         // We verify the correctness of this assumption here.
         static bool needsDefaultConstructorCheck = true;
@@ -467,6 +467,7 @@ private:
 
 } } // namespace JSC::DFG
 
+#if USE(JSVALUE64)
 namespace WTF {
 template <>
 struct VectorTraits<JSC::DFG::AbstractValue> : VectorTraitsBase<false, JSC::DFG::AbstractValue> {
@@ -478,6 +479,7 @@ struct HashTraits<JSC::DFG::AbstractValue> : GenericHashTraits<JSC::DFG::Abstrac
     static const bool emptyValueIsZero = true;
 };
 };
+#endif // USE(JSVALUE64)
 
 #endif // ENABLE(DFG_JIT)
 
