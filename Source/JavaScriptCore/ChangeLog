@@ -1,3 +1,44 @@
+2016-08-03  Saam Barati  <sbarati@apple.com>
+
+        Implement nested rest destructuring w.r.t the ES7 spec
+        https://bugs.webkit.org/show_bug.cgi?id=160423
+
+        Reviewed by Filip Pizlo.
+
+        The spec has updated the BindingRestElement grammar production to be:
+        BindingRestElement:
+           BindingIdentifier
+           BindingingPattern.
+
+        It used to only allow BindingIdentifier in the grammar production.
+        I've updated our engine to account for this. The semantics are exactly
+        what you'd expect.  For example:
+        `let [a, ...[b, ...c]] = expr();`
+        means that we create an array for the first rest element `...[b, ...c]`
+        and then perform the binding of `[b, ...c]` to that array. And so on, 
+        applied recursively through the pattern.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RestParameterNode::collectBoundIdentifiers):
+        (JSC::RestParameterNode::toString):
+        (JSC::RestParameterNode::bindValue):
+        (JSC::RestParameterNode::emit):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createBindingLocation):
+        (JSC::ASTBuilder::createRestParameter):
+        (JSC::ASTBuilder::createAssignmentElement):
+        * parser/NodeConstructors.h:
+        (JSC::AssignmentElementNode::AssignmentElementNode):
+        (JSC::RestParameterNode::RestParameterNode):
+        (JSC::DestructuringAssignmentNode::DestructuringAssignmentNode):
+        * parser/Nodes.h:
+        (JSC::RestParameterNode::name): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2016-08-03  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Fix Windows build after r204065

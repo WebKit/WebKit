@@ -2128,23 +2128,19 @@ namespace JSC {
 
     class RestParameterNode : public DestructuringPatternNode {
     public:
-        RestParameterNode(const Identifier& boundProperty, unsigned numParametersToSkip, const JSTextPosition& start, const JSTextPosition& end);
+        RestParameterNode(DestructuringPatternNode*, unsigned numParametersToSkip);
 
         bool isRestParameter() const override { return true; }
 
         void emit(BytecodeGenerator&);
-
-        const Identifier& name() const { return m_name; }
 
     private:
         void collectBoundIdentifiers(Vector<Identifier>&) const override;
         void bindValue(BytecodeGenerator&, RegisterID*) const override;
         void toString(StringBuilder&) const override;
 
-        const Identifier& m_name;
+        DestructuringPatternNode* m_pattern;
         unsigned m_numParametersToSkip;
-        JSTextPosition m_divotStart; // "f" in "...foo"
-        JSTextPosition m_divotEnd;
     };
 
     class AssignmentElementNode : public DestructuringPatternNode {

@@ -913,9 +913,9 @@ public:
         return new (m_parserArena) BindingNode(boundProperty, start, end, context);
     }
 
-    RestParameterNode* createRestParameter(const Identifier& name, size_t numParametersToSkip, const JSTextPosition& start, const JSTextPosition& end)
+    RestParameterNode* createRestParameter(DestructuringPatternNode* pattern, size_t numParametersToSkip)
     {
-        return new (m_parserArena) RestParameterNode(name, numParametersToSkip, start, end);
+        return new (m_parserArena) RestParameterNode(pattern, numParametersToSkip);
     }
 
     AssignmentElement createAssignmentElement(const Expression& assignmentTarget, const JSTextPosition& start, const JSTextPosition& end)

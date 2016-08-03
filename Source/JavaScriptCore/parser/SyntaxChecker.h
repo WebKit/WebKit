@@ -354,7 +354,7 @@ public:
     {
         return BindingDestructuring;
     }
-    RestPattern createRestParameter(const Identifier&, size_t, const JSTextPosition&, const JSTextPosition&)
+    RestPattern createRestParameter(DestructuringPattern, size_t)
     { 
         return RestParameter;
     }

@@ -560,7 +560,7 @@ invalid("for (of of in of){}")
 invalid("for (of in){}")
 invalid("for (var of in){}")
 
-debug("spread operator")
+debug("spread operator and destructuring")
 valid("foo(...bar)")
 valid("o.foo(...bar)")
 valid("o[foo](...bar)")
@@ -664,6 +664,17 @@ invalid('let {w} = ();');
 invalid('let {w} = 1234abc;');
 invalid('const {w} = 1234abc;');
 invalid('var {w} = 1234abc;');
+invalid("var [...x = 20] = 20;");
+invalid("var [...[...x = 20]] = 20;");
+valid("var [...x] = 20;");
+valid("var [...[...x]] = 20;");
+valid("var [...[...{x}]] = 20;");
+valid("var [...[x = 20, ...y]] = 20;");
+valid("var [...[{x} = 20, ...y]] = 20;");
+valid("var {x: [y, ...[...[...{z: [...z]}]]]} = 20");
+valid("var {x: [y, {z: {z: [...z]}}]} = 20");
+invalid("var [...y, ...z] = 20");
+invalid("var [...{...y}] = 20");
 
 debug("Rest parameter");
 valid("function foo(...a) { }");
@@ -672,21 +683,35 @@ valid("function foo(a = 20, ...b) { }");
 valid("function foo(a, b, c, d, e, f, g, ...h) { }");
 invalid("function foo(a, ...b, c) { }")
 invalid("function foo(a, ...b, ) { }")
+invalid("function foo(a, ...[b], ) { }")
+invalid("function foo(a, ...{b}, ) { }")
 invalid("function foo(a, ...a) { }");
 invalid("function foo(...a, ...b) { }");
 invalid("function foo(...b, ...b) { }");
 invalid("function foo(...b  ...b) { }");
 invalid("function foo(a, a, ...b) { }");
-invalid("function foo(...{b}) { }");
-invalid("function foo(...[b]) { }");
+invalid("function foo(a, ...{b} = 20) { }");
+invalid("function foo(a, ...b = 20) { }");
+valid("function foo(...{b}) { }");
+valid("function foo(...[b]) { }");
 invalid("function foo(...123) { }");
 invalid("function foo(...123abc) { }");
 valid("function foo(...abc123) { }");
 valid("function foo(...let) { }");
 invalid("'use strict'; function foo(...let) { }");
+invalid("'use strict'; function foo(...[let]) { }");
 valid("function foo(...yield) { }");
 invalid("'use strict'; function foo(...yield) { }");
 invalid("function foo(...if) { }");
+valid("let x = (...a) => { }");
+valid("let x = (a, ...b) => { }");
+valid("let x = (a = 20, ...b) => { }");
+invalid("let x = (a = 20, ...b, ...c) => { }");
+valid("let x = (a = 20, ...[...b]) => { }");
+valid("let x = (a = 20, ...[...[b = 40]]) => { }");
+valid("let x = (a = 20, ...{b}) => { }");
+invalid("let x = (a = 20, ...{...b}) => { }");
+invalid("let x = (a = 20, ...{124}) => { }");
 
 debug("non-simple parameter list")
 invalid("function foo(...restParam) { 'use strict'; }");

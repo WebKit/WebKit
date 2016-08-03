@@ -1,3 +1,27 @@
+2016-08-03  Saam Barati  <sbarati@apple.com>
+
+        Implement nested rest destructuring w.r.t the ES7 spec
+        https://bugs.webkit.org/show_bug.cgi?id=160423
+
+        Reviewed by Filip Pizlo.
+
+        * stress/destructuring-rest-element.js: Added.
+        (assert):
+        (test):
+        (arr):
+        (eq):
+        (gen):
+        (fakeGen.return.Symbol.iterator):
+        (fakeGen):
+        * stress/rest-elements.js:
+        (testSyntaxError.String.raw):
+        * stress/rest-parameter-is-destructuring.js: Added.
+        (assert):
+        (test):
+        (foo):
+        (bar):
+        * test262.yaml:
+
 2016-08-02  Saam Barati  <sbarati@apple.com>
 
         Rename Changelog to ChangeLog

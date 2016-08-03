@@ -3923,31 +3923,25 @@ void AssignmentElementNode::toString(StringBuilder& builder) const
 
 void RestParameterNode::collectBoundIdentifiers(Vector<Identifier>& identifiers) const
 {
-    identifiers.append(m_name);
+    m_pattern->collectBoundIdentifiers(identifiers);
 }
+
 void RestParameterNode::toString(StringBuilder& builder) const
 {
-    builder.append(m_name.string());
+    builder.append("...");
+    m_pattern->toString(builder);
 }
+
 void RestParameterNode::bindValue(BytecodeGenerator&, RegisterID*) const
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
+
 void RestParameterNode::emit(BytecodeGenerator& generator)
 {
-    Variable var = generator.variable(m_name);
-    if (RegisterID* local = var.local()) {
-        generator.emitRestParameter(local, m_numParametersToSkip);
-        generator.emitProfileType(local, var, m_divotStart, m_divotEnd);
-        return;
-    }
-
-    RefPtr<RegisterID> restParameterArray = generator.newTemporary();
-    generator.emitRestParameter(restParameterArray.get(), m_numParametersToSkip);
-    generator.emitProfileType(restParameterArray.get(), var, m_divotStart, m_divotEnd);
-    RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
-    generator.emitExpressionInfo(m_divotEnd, m_divotStart, m_divotEnd);
-    generator.emitPutToScope(scope.get(), var, restParameterArray.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::Initialization);
+    RefPtr<RegisterID> temp = generator.newTemporary();
+    generator.emitRestParameter(temp.get(), m_numParametersToSkip);
+    m_pattern->bindValue(generator, temp.get());
 }
 
 
