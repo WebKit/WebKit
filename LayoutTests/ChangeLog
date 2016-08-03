@@ -1,3 +1,17 @@
+2016-08-02  Chris Dumez  <cdumez@apple.com>
+
+        Drop custom bindings code for HTMLOptionsCollection.remove()
+        https://bugs.webkit.org/show_bug.cgi?id=160475
+
+        Reviewed by Darin Adler.
+
+        Update existing tests to reflect behavior change.
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+        * js/dom/select-options-remove-expected.txt:
+        * js/resources/select-options-remove.js:
+
 2016-08-02  Nan Wang  <n_wang@apple.com>
 
         AX: Simulated touch events are not working on iOS

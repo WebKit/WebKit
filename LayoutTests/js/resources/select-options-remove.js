@@ -67,7 +67,7 @@ shouldBe("select1.selectedIndex", "-1");
 debug("");
 
 debug("1.10 Remove no args from empty Options");
-shouldBe("select1.options.remove()", "undefined");
+shouldThrowErrorName("select1.options.remove()", "TypeError");
 shouldBe("select1.options.length", "0");
 shouldBe("select1.selectedIndex", "-1");
 debug("");
@@ -193,8 +193,8 @@ shouldBe("select2.selectedIndex", "4");
 shouldBe("select2.options[0].value", "'K'");
 debug("");
 
-debug("2.11 Remove no args from non-empty Options");
-shouldBe("select2.options.remove()", "undefined");
+debug("2.11 Remove index 0 from non-empty Options");
+shouldBe("select2.options.remove(0)", "undefined");
 shouldBe("select2.options.length", "5");
 shouldBe("select2.selectedIndex", "3");
 shouldBe("select2.options[0].value", "'L'");

@@ -1,5 +1,16 @@
 2016-08-02  Chris Dumez  <cdumez@apple.com>
 
+        Drop custom bindings code for HTMLOptionsCollection.remove()
+        https://bugs.webkit.org/show_bug.cgi?id=160475
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-08-02  Chris Dumez  <cdumez@apple.com>
+
         Drop custom bindings for FormData.append()
         https://bugs.webkit.org/show_bug.cgi?id=160466
 

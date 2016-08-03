@@ -42,7 +42,12 @@
 #else
     [RaisesException] void add(HTMLOptionElement option, unsigned long index);
 #endif
-    [Custom] void remove(optional unsigned long index);
+
+    void remove(long index);
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    // FIXME: This overload is not in the specification and has been dropped in Blink.
+    void remove(HTMLOptionElement option);
+#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     Node item(unsigned long index);

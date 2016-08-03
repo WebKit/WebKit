@@ -49,7 +49,7 @@ PASS select1.options.length is 0
 PASS select1.selectedIndex is -1
 
 1.10 Remove no args from empty Options
-PASS select1.options.remove() is undefined
+PASS select1.options.remove() threw exception TypeError: Not enough arguments.
 PASS select1.options.length is 0
 PASS select1.selectedIndex is -1
 
@@ -143,8 +143,8 @@ PASS select2.options.length is 6
 PASS select2.selectedIndex is 4
 PASS select2.options[0].value is 'K'
 
-2.11 Remove no args from non-empty Options
-PASS select2.options.remove() is undefined
+2.11 Remove index 0 from non-empty Options
+PASS select2.options.remove(0) is undefined
 PASS select2.options.length is 5
 PASS select2.selectedIndex is 3
 PASS select2.options[0].value is 'L'

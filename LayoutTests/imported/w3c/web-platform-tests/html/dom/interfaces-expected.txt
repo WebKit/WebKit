@@ -928,7 +928,7 @@ PASS HTMLOptionsCollection interface: existence and properties of interface prot
 PASS HTMLOptionsCollection interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLOptionsCollection interface: attribute length 
 PASS HTMLOptionsCollection interface: operation add([object Object],[object Object],[object Object],[object Object]) 
-FAIL HTMLOptionsCollection interface: operation remove(long) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLOptionsCollection interface: operation remove(long) 
 PASS HTMLOptionsCollection interface: attribute selectedIndex 
 FAIL HTMLOptionsCollection must be primary interface of document.createElement("select").options assert_equals: wrong typeof object expected "function" but got "object"
 FAIL Stringification of document.createElement("select").options assert_equals: wrong typeof object expected "function" but got "object"

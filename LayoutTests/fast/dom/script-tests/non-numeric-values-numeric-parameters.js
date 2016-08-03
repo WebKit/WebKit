@@ -245,7 +245,7 @@ shouldBe("nonNumericPolicy('document.createElement(\"input\").setSelectionRange(
 // HTMLOptionsCollection
 
 shouldBe("nonNumericPolicy('createHTMLOptionsCollection().add(document.createElement(\"option\"), x)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('createHTMLOptionsCollection().remove(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('createHTMLOptionsCollection().remove(x)')", "'any type allowed (but not omitted)'");
 
 // HTMLSelectElement
 

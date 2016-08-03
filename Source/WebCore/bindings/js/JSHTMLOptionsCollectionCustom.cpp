@@ -70,15 +70,4 @@ void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSVal
     selectIndexSetter(&wrapped().selectElement(), exec, index, value);
 }
 
-JSValue JSHTMLOptionsCollection::remove(ExecState& state)
-{
-    // The argument can be an HTMLOptionElement or an index.
-    JSValue argument = state.argument(0);
-    if (HTMLOptionElement* option = JSHTMLOptionElement::toWrapped(argument))
-        wrapped().remove(*option);
-    else
-        wrapped().remove(argument.toInt32(&state));
-    return jsUndefined();
-}
-
 }
