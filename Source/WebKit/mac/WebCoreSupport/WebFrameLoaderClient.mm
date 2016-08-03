@@ -1148,10 +1148,12 @@ ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const Resour
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:request.url()];
 }
 
+#if ENABLE(CONTENT_FILTERING)
 ResourceError WebFrameLoaderClient::blockedByContentFilterError(const ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadBlockedByContentFilter URL:request.url()];
 }
+#endif
 
 ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse& response)
 {

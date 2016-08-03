@@ -57,7 +57,9 @@ public:
     virtual void addData(const char* data, int length) = 0;
     virtual void finishedAddingData() = 0;
     virtual Ref<SharedBuffer> replacementData() const = 0;
+#if ENABLE(CONTENT_FILTERING)
     virtual ContentFilterUnblockHandler unblockHandler() const = 0;
+#endif
     virtual String unblockRequestDeniedScript() const { return emptyString(); }
 
 protected:

@@ -96,6 +96,7 @@ Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
     return SharedBuffer::wrapNSData(m_replacementData.get());
 }
 
+#if ENABLE(CONTENT_FILTERING)
 ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() const
 {
 #if PLATFORM(IOS)
@@ -104,6 +105,7 @@ ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() cons
     return { };
 #endif
 }
+#endif
 
 void ParentalControlsContentFilter::updateFilterState()
 {

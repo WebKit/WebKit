@@ -46,8 +46,9 @@ public:
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
     Ref<SharedBuffer> replacementData() const override;
+#if ENABLE(CONTENT_FILTERING)
     ContentFilterUnblockHandler unblockHandler() const override;
-
+#endif
 private:
     static bool enabled();
 

@@ -196,6 +196,7 @@ Ref<SharedBuffer> NetworkExtensionContentFilter::replacementData() const
     return SharedBuffer::wrapNSData(m_replacementData.get());
 }
 
+#if ENABLE(CONTENT_FILTERING)
 ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() const
 {
 #if HAVE(MODERN_NE_FILTER_SOURCE)
@@ -214,6 +215,7 @@ ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() cons
     return { };
 #endif
 }
+#endif
 
 void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, NSData *replacementData)
 {

@@ -82,10 +82,12 @@ ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
     return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeFrameLoadInterruptedByPolicyChange, request.url(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
 }
 
+#if ENABLE(CONTENT_FILTERING)
 ResourceError blockedByContentFilterError(const ResourceRequest& request)
 {
     return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeFrameLoadBlockedByContentFilter, request.url(), WEB_UI_STRING("The URL was blocked by a content filter", "WebKitErrorBlockedByContentFilter"));
 }
+#endif
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
 {

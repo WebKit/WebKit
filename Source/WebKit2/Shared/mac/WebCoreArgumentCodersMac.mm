@@ -475,6 +475,7 @@ bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder& decoder, KeypressCo
     return true;
 }
 
+#if ENABLE(CONTENT_FILTERING)
 void ArgumentCoder<ContentFilterUnblockHandler>::encode(ArgumentEncoder& encoder, const ContentFilterUnblockHandler& contentFilterUnblockHandler)
 {
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
@@ -499,6 +500,7 @@ bool ArgumentCoder<ContentFilterUnblockHandler>::decode(ArgumentDecoder& decoder
     [unarchiver finishDecoding];
     return true;
 }
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
