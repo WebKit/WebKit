@@ -1,3 +1,13 @@
+2016-08-03  Youenn Fablet  <youenn@apple.com>
+
+        http/tests/fetch/fetch-in-worker-crash.html is sometimes crashing
+        https://bugs.webkit.org/show_bug.cgi?id=160498
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/fetch/fetch-in-worker.js:
+        (onmessage): Reducing flakiness risk by making fetch http load being delayed.
+
 2016-08-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, move LayoutTest out of platform/ios-simulator/ios.
