@@ -1,3 +1,17 @@
+2016-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] SF-Heavy is not accessible from web content
+        https://bugs.webkit.org/show_bug.cgi?id=160522
+        <rdar://problem/27685273>
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-simulator/fast/text/system-font-weight-expected.txt: iOS 9 is not
+        expected to pass this test, but there is no way to specify that currently using
+        TestExpectations. Instead, we can create an iOS 9 specific result.
+        * fast/text/system-font-weight-expected.txt:
+        * fast/text/system-font-weight.html:
+
 2016-08-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline tests for ios-simulator after r204090.
