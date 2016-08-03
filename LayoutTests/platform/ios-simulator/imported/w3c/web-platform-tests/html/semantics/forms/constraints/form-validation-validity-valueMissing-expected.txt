@@ -1,5 +1,4 @@
 
-
 PASS [INPUT in TEXT status] The required attribute is not set 
 PASS [INPUT in TEXT status] The value is not empty and required is true 
 PASS [INPUT in TEXT status] The value is empty and required is true 

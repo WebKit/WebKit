@@ -1,5 +1,4 @@
 
-
 PASS [INPUT in TEXT status] no constraint 
 PASS [INPUT in TEXT status] no constraint (in a form) 
 FAIL [INPUT in TEXT status] suffering from being too long assert_false: The checkValidity method should be false. expected false got true

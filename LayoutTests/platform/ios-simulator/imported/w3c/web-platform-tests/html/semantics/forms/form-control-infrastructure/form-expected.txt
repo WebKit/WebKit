@@ -1,3 +1,32 @@
+
+PASS button.form 
+PASS fieldset.form 
+PASS input.form 
+PASS keygen.form 
+PASS object.form 
+PASS output.form 
+PASS select.form 
+PASS textarea.form 
+FAIL label.form assert_equals: label.form expected null but got Element node <form id="form">
+<p><button id="button">button</button>
+<...
+FAIL label-form.form assert_equals: label.form expected null but got Element node <form id="form">
+<p><button id="button">button</button>
+<...
+FAIL label-form-form2.form assert_equals: label.form expected null but got Element node <form id="form2"></form>
+PASS label-with-control.form 
+PASS label-for.form 
+FAIL label-with-progress.form assert_equals: Sanity check: label.control.form expected (object) null but got (undefined) undefined
+FAIL label-with-meter.form assert_equals: label.form expected null but got Element node <form id="form">
+<p><button id="button">button</button>
+<...
+FAIL label-for-control-form-in-form.form assert_equals: label.form expected Element node <form id="form2"></form> but got Element node <form id="form">
+<p><button id="button">button</button>
+<...
+FAIL label-for-control-form.form assert_equals: label.form expected Element node <form id="form2"></form> but got null
+PASS label-in-table.form 
+FAIL label-in-table-with-control.form assert_equals: label.form expected Element node <form id="form3"></form> but got null
+FAIL label-in-table-for.form assert_equals: label.form expected Element node <form id="form3"></form> but got null
 button
 
 fieldset
@@ -32,33 +61,3 @@ label-with-meter
  label-for-control-form
 
 label-in-table	label-in-table 	label-in-table-for	
-
-PASS button.form 
-PASS fieldset.form 
-PASS input.form 
-PASS keygen.form 
-PASS object.form 
-PASS output.form 
-PASS select.form 
-PASS textarea.form 
-FAIL label.form assert_equals: label.form expected null but got Element node <form id="form">
-<p><button id="button">button</button>
-<...
-FAIL label-form.form assert_equals: label.form expected null but got Element node <form id="form">
-<p><button id="button">button</button>
-<...
-FAIL label-form-form2.form assert_equals: label.form expected null but got Element node <form id="form2"></form>
-PASS label-with-control.form 
-PASS label-for.form 
-FAIL label-with-progress.form assert_equals: Sanity check: label.control.form expected (object) null but got (undefined) undefined
-FAIL label-with-meter.form assert_equals: label.form expected null but got Element node <form id="form">
-<p><button id="button">button</button>
-<...
-FAIL label-for-control-form-in-form.form assert_equals: label.form expected Element node <form id="form2"></form> but got Element node <form id="form">
-<p><button id="button">button</button>
-<...
-FAIL label-for-control-form.form assert_equals: label.form expected Element node <form id="form2"></form> but got null
-PASS label-in-table.form 
-FAIL label-in-table-with-control.form assert_equals: label.form expected Element node <form id="form3"></form> but got null
-FAIL label-in-table-for.form assert_equals: label.form expected Element node <form id="form3"></form> but got null
-

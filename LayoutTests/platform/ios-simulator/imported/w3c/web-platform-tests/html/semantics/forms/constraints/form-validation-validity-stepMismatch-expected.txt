@@ -1,5 +1,4 @@
 
-
 FAIL [INPUT in DATETIME status] The datetime type must be supported. assert_equals: The datetime type should be supported. expected "datetime" but got "text"
 PASS [INPUT in DATE status] The step attribute is not set 
 PASS [INPUT in DATE status] The value attibute is empty string 
