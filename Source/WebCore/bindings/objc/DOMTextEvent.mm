@@ -24,11 +24,14 @@
  */
 
 #import "config.h"
-#import "DOMTextEventInternal.h"
+#import "DOMInternal.h"
+
+#import "DOMTextEvent.h"
 
 #import "DOMAbstractViewInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
+#import "DOMTextEventInternal.h"
 #import "DOMWindow.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
