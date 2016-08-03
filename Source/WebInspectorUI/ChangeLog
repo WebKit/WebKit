@@ -1,3 +1,17 @@
+2016-08-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Cmd-L shortcut for Jump to Line conflicts with selecting URL of inspected page
+        https://bugs.webkit.org/show_bug.cgi?id=158028
+        <rdar://problem/26516663>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove Command-L shortcut for opening the Line Number dialog, since
+        we already support Control-G.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor): Deleted.
+
 2016-08-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Don't set `width:calc(100% - 0px); left:0px` on console messages
