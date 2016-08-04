@@ -41,14 +41,13 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
         this._clearIconElement = fieldElement.appendChild(document.createElement("img"));
 
-        this._inputElement.addEventListener("input", this._handleInputEvent.bind(this));
         this._inputElement.addEventListener("keydown", this._handleKeydownEvent.bind(this));
         this._inputElement.addEventListener("keyup", this._handleKeyupEvent.bind(this));
         this._inputElement.addEventListener("blur", this._handleBlurEvent.bind(this));
         this._clearIconElement.addEventListener("mousedown", this._handleMousedownEvent.bind(this));
         this._clearIconElement.addEventListener("click", this._handleClickEvent.bind(this));
 
-        this._treeOutline = new WebInspector.TreeOutline(document.createElement("ol"));
+        this._treeOutline = new WebInspector.TreeOutline;
         this._treeOutline.allowsRepeatSelection = true;
         this._treeOutline.disclosureButtons = false;
         this._treeOutline.large = true;
@@ -140,12 +139,6 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
     // Private
 
-    _handleInputEvent(event)
-    {
-        let force = this._inputElement.value !== "";
-        this.element.classList.toggle(WebInspector.OpenResourceDialog.NonEmptyClassName, force);
-    }
-
     _handleKeydownEvent(event)
     {
         if (event.keyCode === WebInspector.KeyboardShortcut.Key.Escape.keyCode) {
@@ -211,25 +204,22 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
     _clear()
     {
         this._inputElement.value = "";
-        this.element.classList.remove(WebInspector.OpenResourceDialog.NonEmptyClassName);
         this._updateFilter();
     }
 
     _updateFilter()
     {
         this._filteredResults = [];
-        this._treeOutline.hidden = true;
         this._treeOutline.removeChildren();
 
         let filterText = this._inputElement.value.trim();
-        if (!filterText)
-            return;
+        if (filterText) {
+            this._filteredResults = this._queryController.executeQuery(filterText);
+            this._populateResourceTreeOutline();
+        }
 
-        this._filteredResults = this._queryController.executeQuery(filterText);
-
-        this._populateResourceTreeOutline();
-        if (this._treeOutline.children.length)
-            this._treeOutline.hidden = false;
+        this.element.classList.toggle("non-empty", this._inputElement.value !== "");
+        this.element.classList.toggle("has-results", this._treeOutline.children.length);
     }
 
     _treeSelectionDidChange(event)
@@ -286,5 +276,3 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         this._addResource(event.data.resource);
     }
 };
-
-WebInspector.OpenResourceDialog.NonEmptyClassName = "non-empty";

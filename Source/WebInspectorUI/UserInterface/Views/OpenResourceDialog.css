@@ -48,7 +48,16 @@
 }
 
 .open-resource-dialog > .field {
-    margin: 8px 3px;
+    margin: 8px 3px 8px 32px;
+}
+
+.open-resource-dialog > .field::before {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    width: 30px;
+    opacity: 0.5;
+    content: url(../Images/Search.svg);
 }
 
 .open-resource-dialog > .field > input {
@@ -97,7 +106,12 @@
     border-bottom-right-radius: 4px;
 }
 
+.open-resource-dialog.has-results > .tree-outline {
+    border-top: solid 1px var(--border-color);
+}
+
 .open-resource-dialog > .tree-outline .item {
+    padding-left: 10px;
     border: none;
 }
 

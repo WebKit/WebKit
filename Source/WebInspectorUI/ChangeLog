@@ -1,3 +1,35 @@
+2016-08-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: UI polish for Open Quickly and Goto Line dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=159849
+        <rdar://problem/27383068>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Images/Search.svg: Added.
+        Magnifying glass icon.
+
+        * UserInterface/Views/GoToLineDialog.css:
+        (.go-to-line-dialog):
+        (.go-to-line-dialog > div):
+        (.go-to-line-dialog > div::before):
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .field):
+        (.open-resource-dialog > .field::before):
+        (.open-resource-dialog.has-results > .tree-outline):
+        (.open-resource-dialog > .tree-outline .item):
+        Add search icon to left of the input field in both dialogs,
+        and adjust styles to better match Xcode 8.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog):
+        Remove "input" event listener, as styles are now toggled in _updateFilter.
+        (WebInspector.OpenResourceDialog.prototype._updateFilter):
+        Toggle "has-results" and "non-empty" class names.
+        (WebInspector.OpenResourceDialog.prototype._handleInputEvent): Deleted.
+        (WebInspector.OpenResourceDialog.prototype._clear): Deleted.
+        Moved class toggle to _updateFilter.
+
 2016-08-03  Chris Dumez  <cdumez@apple.com>
 
         Drop DocumentType.internalSubset attribute
