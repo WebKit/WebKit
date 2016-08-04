@@ -1446,7 +1446,6 @@ set(WebCore_SOURCES
     dom/Element.cpp
     dom/ElementData.cpp
     dom/ElementRareData.cpp
-    dom/EntityReference.cpp
     dom/ErrorEvent.cpp
     dom/Event.cpp
     dom/EventContext.cpp

@@ -24,24 +24,8 @@
  */
 
 #import "config.h"
-#import "DOMEntityReferenceInternal.h"
-
-#import "DOMNodeInternal.h"
-#import "EntityReference.h"
-#import "ExceptionHandlers.h"
-#import "JSMainThreadExecState.h"
-#import "ThreadCheck.h"
-#import "WebScriptObjectPrivate.h"
-#import <wtf/GetPtr.h>
-
-#define IMPL static_cast<WebCore::EntityReference*>(reinterpret_cast<WebCore::Node*>(_internal))
+#import "DOMEntityReference.h"
 
 @implementation DOMEntityReference
 
 @end
-
-DOMEntityReference *kit(WebCore::EntityReference* value)
-{
-    WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMEntityReference*>(kit(static_cast<WebCore::Node*>(value)));
-}

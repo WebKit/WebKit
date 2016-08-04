@@ -26,35 +26,21 @@
 #import "config.h"
 #import "DOMEntity.h"
 
-#import "DOMNodeInternal.h"
-#import "Entity.h"
-#import "ExceptionHandlers.h"
-#import "JSMainThreadExecState.h"
-#import "ThreadCheck.h"
-#import "URL.h"
-#import "WebScriptObjectPrivate.h"
-#import <wtf/GetPtr.h>
-
-#define IMPL static_cast<WebCore::Entity*>(reinterpret_cast<WebCore::Node*>(_internal))
-
 @implementation DOMEntity
 
 - (NSString *)publicId
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->publicId();
+    return nil;
 }
 
 - (NSString *)systemId
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->systemId();
+    return nil;
 }
 
 - (NSString *)notationName
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->notationName();
+    return nil;
 }
 
 @end

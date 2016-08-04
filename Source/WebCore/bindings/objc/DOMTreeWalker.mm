@@ -73,8 +73,7 @@
 
 - (BOOL)expandEntityReferences
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->expandEntityReferences();
+    return NO;
 }
 
 - (DOMNode *)currentNode

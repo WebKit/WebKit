@@ -38,7 +38,6 @@ public:
 
     unsigned whatToShow() const { return m_whatToShow; }
     NodeFilter* filter() const { return m_filter.get(); }
-    bool expandEntityReferences() const { return false; }
 
 protected:
     NodeIteratorBase(Node&, unsigned whatToShow, RefPtr<NodeFilter>&&);

@@ -298,8 +298,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DocumentFragment.idl \
     $(WebCore)/dom/DocumentType.idl \
     $(WebCore)/dom/Element.idl \
-    $(WebCore)/dom/Entity.idl \
-    $(WebCore)/dom/EntityReference.idl \
     $(WebCore)/dom/ErrorEvent.idl \
     $(WebCore)/dom/Event.idl \
     $(WebCore)/dom/EventListener.idl \

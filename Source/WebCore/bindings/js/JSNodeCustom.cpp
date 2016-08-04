@@ -32,7 +32,6 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
-#include "Entity.h"
 #include "ExceptionCode.h"
 #include "HTMLAudioElement.h"
 #include "HTMLCanvasElement.h"

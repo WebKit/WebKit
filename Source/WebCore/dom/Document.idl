@@ -62,10 +62,10 @@
 
     [RaisesException] Node adoptNode(Node source);
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     // document.documentURI was writable in DOM3 Core, but is read-only in DOM4
     // (see http://www.w3.org/TR/2011/WD-dom-20110915/#document). We need to keep
-    // the writable version around for Objective C clients, but are moving to
+    // the writable version around for GObject clients, but are moving to
     // read-only for other clients.
     attribute DOMString? documentURI;
 #else
@@ -82,12 +82,12 @@
 
     // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    [ObjCLegacyUnnamedParameters] NodeIterator createNodeIterator(Node root,
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+    NodeIterator createNodeIterator(Node root,
         optional unsigned long whatToShow = 0xFFFFFFFF,
         optional NodeFilter? filter,
         optional boolean expandEntityReferences);
-    [ObjCLegacyUnnamedParameters] TreeWalker createTreeWalker(Node root,
+    TreeWalker createTreeWalker(Node root,
         optional unsigned long whatToShow = 0xFFFFFFFF,
         optional NodeFilter? filter,
         optional boolean expandEntityReferences);

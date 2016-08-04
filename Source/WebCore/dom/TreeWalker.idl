@@ -26,9 +26,6 @@
     readonly attribute Node root;
     readonly attribute unsigned long whatToShow;
     readonly attribute NodeFilter filter;
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    readonly attribute boolean expandEntityReferences;
-#endif
     attribute Node currentNode;
 
     Node parentNode();

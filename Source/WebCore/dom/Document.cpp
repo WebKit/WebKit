@@ -58,7 +58,6 @@
 #include "DocumentType.h"
 #include "Editor.h"
 #include "ElementIterator.h"
-#include "EntityReference.h"
 #include "EventHandler.h"
 #include "ExtensionStyleSheets.h"
 #include "FocusController.h"
