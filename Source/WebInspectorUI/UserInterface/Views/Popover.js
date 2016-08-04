@@ -310,7 +310,8 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         return "arrow-up";
     }
 
-    _setAnchorPoint(anchorPoint) {
+    _setAnchorPoint(anchorPoint)
+    {
         anchorPoint.x = Math.floor(anchorPoint.x);
         anchorPoint.y = Math.floor(anchorPoint.y);
         this._anchorPoint = anchorPoint;
@@ -493,51 +494,58 @@ WebInspector.Popover = class Popover extends WebInspector.Object
 
     _drawFrame(ctx, bounds, anchorEdge)
     {
-        var r = WebInspector.Popover.CornerRadius;
-        var arrowHalfLength = WebInspector.Popover.AnchorSize.width / 2;
-        var anchorPoint = this._anchorPoint;
+        let cornerRadius = WebInspector.Popover.CornerRadius;
+        let arrowHalfLength = WebInspector.Popover.AnchorSize.width * 0.5;
+        let anchorPoint = this._anchorPoint;
+
+        // Prevent the arrow from being positioned against one of the popover's rounded corners.
+        let arrowPadding = cornerRadius + arrowHalfLength;
+        if (anchorEdge === WebInspector.RectEdge.MIN_Y ||anchorEdge === WebInspector.RectEdge.MAX_Y)
+            anchorPoint.x = Number.constrain(anchorPoint.x, bounds.minX() + arrowPadding, bounds.maxX() - arrowPadding);
+        else
+            anchorPoint.y = Number.constrain(anchorPoint.y, bounds.minY() + arrowPadding, bounds.maxY() - arrowPadding);
 
         ctx.beginPath();
         switch (anchorEdge) {
         case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
-            ctx.moveTo(bounds.maxX(), bounds.minY() + r);
+            ctx.moveTo(bounds.maxX(), bounds.minY() + cornerRadius);
             ctx.lineTo(bounds.maxX(), anchorPoint.y - arrowHalfLength);
             ctx.lineTo(anchorPoint.x, anchorPoint.y);
             ctx.lineTo(bounds.maxX(), anchorPoint.y + arrowHalfLength);
-            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), r);
-            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), r);
-            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), r);
-            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), r);
+            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
+            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
+            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
+            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
             break;
         case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
-            ctx.moveTo(bounds.minX(), bounds.maxY() - r);
+            ctx.moveTo(bounds.minX(), bounds.maxY() - cornerRadius);
             ctx.lineTo(bounds.minX(), anchorPoint.y + arrowHalfLength);
             ctx.lineTo(anchorPoint.x, anchorPoint.y);
             ctx.lineTo(bounds.minX(), anchorPoint.y - arrowHalfLength);
-            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), r);
-            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), r);
-            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), r);
-            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), r);
+            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
+            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
+            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
+            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
             break;
         case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
-            ctx.moveTo(bounds.maxX() - r, bounds.maxY());
+            ctx.moveTo(bounds.maxX() - cornerRadius, bounds.maxY());
             ctx.lineTo(anchorPoint.x + arrowHalfLength, bounds.maxY());
             ctx.lineTo(anchorPoint.x, anchorPoint.y);
             ctx.lineTo(anchorPoint.x - arrowHalfLength, bounds.maxY());
-            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), r);
-            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), r);
-            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), r);
-            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), r);
+            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
+            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
+            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
+            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
             break;
         case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
-            ctx.moveTo(bounds.minX() + r, bounds.minY());
+            ctx.moveTo(bounds.minX() + cornerRadius, bounds.minY());
             ctx.lineTo(anchorPoint.x - arrowHalfLength, bounds.minY());
             ctx.lineTo(anchorPoint.x, anchorPoint.y);
             ctx.lineTo(anchorPoint.x + arrowHalfLength, bounds.minY());
-            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), r);
-            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), r);
-            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), r);
-            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), r);
+            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
+            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
+            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
+            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
             break;
         }
         ctx.closePath();

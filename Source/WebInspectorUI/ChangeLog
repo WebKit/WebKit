@@ -1,5 +1,20 @@
 2016-08-04  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Popover's arrow is misplaced
+        https://bugs.webkit.org/show_bug.cgi?id=151236
+        <rdar://problem/23527296>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Popover.js:
+        (WebInspector.Popover.prototype._setAnchorPoint):
+        Drive-by style fix.
+        (WebInspector.Popover.prototype._drawFrame):
+        Position the arrow so that the arrow head doesn't overlap the
+        rounded corners of its edge.
+
+2016-08-04  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Add placeholder graphs to TimelineOverview while editing
         https://bugs.webkit.org/show_bug.cgi?id=160485
         <rdar://problem/27670755>
