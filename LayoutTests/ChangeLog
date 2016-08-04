@@ -1,5 +1,9 @@
 2016-08-04  Babak Shafiei  <bshafiei@apple.com>
 
+        Rollout r204132. rdar://problem/27685273
+
+2016-08-04  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r204107. rdar://problem/27685273
 
     2016-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
