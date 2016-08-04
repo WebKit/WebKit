@@ -1,3 +1,63 @@
+2016-08-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Speed up InPlaceAbstractState::endBasicBlock()
+        https://bugs.webkit.org/show_bug.cgi?id=160539
+
+        Reviewed by Mark Lam.
+
+        This patch does small improvements to our handling
+        of value propagation to the successors.
+
+        One key insight is that using HashMap to map Nodes
+        to Value in valuesAtTail is too inefficient at the scale
+        we use it. Instead, I reuse our existing mapping
+        from every Node to its value, abstracted by forNode().
+
+        Since we are not going to use the mapping after endBasicBlock()
+        I can replace whatever we had there. The next beginBasicBlock()
+        will setup the new value as needed.
+
+        In endBasicBlock(), valuesAtTail is now a vector of all values live
+        at tail. For each node, I merge the previous live at tail with
+        the new value, then replace the value in the mapping.
+        Liveness Analysis guarantees we won't have duplicates there which
+        make the replacement sound.
+
+        Next, when propagating, I take the vector of values lives at head
+        and use the global node->value mapping to find its new abstract value.
+        Again, Liveness Analysis guarantees I won't find a value live at head
+        that was not replaced by the merging at tail of the predecessor.
+
+        All our live lists have become vectors instead of HashTable.
+        The mapping from Node to Value is always done by array indexing.
+        Same big-O, much smaller constant.
+
+        * dfg/DFGAtTailAbstractState.cpp:
+        (JSC::DFG::AtTailAbstractState::AtTailAbstractState):
+        (JSC::DFG::AtTailAbstractState::createValueForNode):
+        (JSC::DFG::AtTailAbstractState::forNode):
+        * dfg/DFGAtTailAbstractState.h:
+        I did not look much into this state, I just made it equivalent
+        to the previous mapping.
+
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail):
+        AbstractValue is big enough that we really don't want to copy it twice.
+
+        (JSC::DFG::InPlaceAbstractState::merge):
+        (JSC::DFG::setLiveValues): Deleted.
+        * dfg/DFGInPlaceAbstractState.h:
+
+        * dfg/DFGPhiChildren.h:
+        This is heap allocated by AbstractInterpreter. It should use fastMalloc().
+
 2016-08-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES7] Update features.json for exponentiation expression

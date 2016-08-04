@@ -127,7 +127,7 @@ public:
     void setFoundConstants(bool foundConstants) { m_foundConstants = foundConstants; }
 
 private:
-    bool mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node*);
+    void mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node*);
 
     static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode);
     

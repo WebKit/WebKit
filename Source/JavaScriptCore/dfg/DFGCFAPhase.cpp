@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -190,7 +190,7 @@ private:
         if (m_verbose) {
             dataLog("      tail vars: ", block->valuesAtTail, "\n");
             if (m_graph.m_form == SSA)
-                dataLog("      head regs: ", mapDump(block->ssa->valuesAtTail), "\n");
+                dataLog("      head regs: ", nodeValuePairListDump(block->ssa->valuesAtTail), "\n");
         }
     }
     

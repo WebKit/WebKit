@@ -257,7 +257,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
             AbstractValue value;
         };
         Vector<NodeAbstractValuePair> valuesAtHead;
-        HashMap<Node*, AbstractValue> valuesAtTail;
+        Vector<NodeAbstractValuePair> valuesAtTail;
         
         SSAData(BasicBlock*);
         ~SSAData();

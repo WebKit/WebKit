@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DFGAtTailAbstractState.h"
+#include "DFGBlockMapInlines.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -34,21 +35,28 @@ namespace JSC { namespace DFG {
 
 AtTailAbstractState::AtTailAbstractState(Graph& graph)
     : m_graph(graph)
-    , m_block(0)
+    , m_valuesAtTailMap(m_graph)
 {
+    for (BasicBlock* block : graph.blocksInNaturalOrder()) {
+        auto& valuesAtTail = m_valuesAtTailMap.at(block);
+        valuesAtTail.clear();
+        for (auto& valueAtTailPair : block->ssa->valuesAtTail)
+            valuesAtTail.add(valueAtTailPair.node, valueAtTailPair.value);
+    }
 }
 
 AtTailAbstractState::~AtTailAbstractState() { }
 
 void AtTailAbstractState::createValueForNode(Node* node)
 {
-    m_block->ssa->valuesAtTail.add(node, AbstractValue());
+    m_valuesAtTailMap.at(m_block).add(node, AbstractValue());
 }
 
 AbstractValue& AtTailAbstractState::forNode(Node* node)
 {
-    HashMap<Node*, AbstractValue>::iterator iter = m_block->ssa->valuesAtTail.find(node);
-    DFG_ASSERT(m_graph, node, iter != m_block->ssa->valuesAtTail.end());
+    auto& valuesAtTail = m_valuesAtTailMap.at(m_block);
+    HashMap<Node*, AbstractValue>::iterator iter = valuesAtTail.find(node);
+    DFG_ASSERT(m_graph, node, iter != valuesAtTail.end());
     return iter->value;
 }
 

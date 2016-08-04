@@ -30,6 +30,7 @@
 
 #include "DFGAbstractValue.h"
 #include "DFGBasicBlock.h"
+#include "DFGBlockMap.h"
 #include "DFGGraph.h"
 
 namespace JSC { namespace DFG { 
@@ -66,7 +67,8 @@ public:
 
 private:
     Graph& m_graph;
-    BasicBlock* m_block;
+    BlockMap<HashMap<Node*, AbstractValue>> m_valuesAtTailMap;
+    BasicBlock* m_block { nullptr };
 };
 
 } } // namespace JSC::DFG

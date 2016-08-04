@@ -37,6 +37,7 @@ namespace JSC { namespace DFG {
 class Graph;
 
 class PhiChildren {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef Vector<Node*, 3> List;
     
