@@ -1,4 +1,9 @@
-CONSOLE MESSAGE: Not allowed to load local resource: blob:djfksfjs?l=blob:djfksfjs&count=1
+CONSOLE MESSAGE: Cross-origin redirection to mailto:a@a.com denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Cross-origin redirection to data:,HI denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Cross-origin redirection to facetime:a@a.org denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Cross-origin redirection to about:blank denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Cross-origin redirection to about:unicorn denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Not allowed to load local resource: blob:djfksfjs
 
 PASS Fetch: handling different schemes in redirects 
 PASS Fetch: handling different schemes in redirects 1 

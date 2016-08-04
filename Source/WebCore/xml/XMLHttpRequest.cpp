@@ -977,6 +977,9 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     if (error.domain() == errorDomainWebKitInternal) {
         String message = makeString("XMLHttpRequest cannot load ", error.failingURL().string(), ". ", error.localizedDescription());
         logConsoleError(scriptExecutionContext(), message);
+    } else if (error.isAccessControl()) {
+        String message = makeString("XMLHttpRequest cannot load ", error.failingURL().string(), " due to access control checks.");
+        logConsoleError(scriptExecutionContext(), message);
     }
 
     m_exceptionCode = NETWORK_ERR;

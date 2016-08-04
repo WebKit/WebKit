@@ -51,6 +51,7 @@ public:
     bool isSubresourceLoader() override;
     CachedResource* cachedResource();
 
+    SecurityOrigin* origin() { return m_origin.get(); }
 #if PLATFORM(IOS)
     bool startLoading() override;
 
@@ -91,7 +92,7 @@ private:
 #endif
 
     bool checkForHTTPStatusCodeError();
-    bool checkRedirectionCrossOriginAccessControl(const ResourceRequest&, const ResourceResponse&, ResourceRequest& newRequest);
+    bool checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest, String&);
 
     void didReceiveDataOrBuffer(const char*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 

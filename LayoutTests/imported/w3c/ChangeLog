@@ -1,3 +1,31 @@
+2016-08-04  Youenn Fablet  <youenn@apple.com>
+
+        DocumentThreadableLoader should pass the fetch mode to underlying loader code
+        https://bugs.webkit.org/show_bug.cgi?id=160399
+
+        Reviewed by Alex Christensen.
+
+        Updated expectations.
+        Added new tests to check specifically for Origin header in case of redirections.
+        Updated server-side redirect.py python script to generate valid Location URLs.
+
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-origin-expected.txt: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-origin-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-origin-worker.html: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-origin.html: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-origin.js: Added.
+        (testOriginAfterRedirection):
+        * web-platform-tests/fetch/api/redirect/redirect-schemes-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-schemes.html: Updated test so that fetches are done in a deterministic order, one after the other is finished.
+        * web-platform-tests/fetch/api/resources/redirect.py:
+        (main):
+
 2016-08-03  Chris Dumez  <cdumez@apple.com>
 
         Object.getOwnPropertyNames() on NamedNodeMap fails to return named properties

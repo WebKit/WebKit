@@ -1,5 +1,22 @@
 2016-08-04  Youenn Fablet  <youenn@apple.com>
 
+        DocumentThreadableLoader should pass the fetch mode to underlying loader code
+        https://bugs.webkit.org/show_bug.cgi?id=160399
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-redirect-expected.txt:
+        * http/tests/workers/worker-redirect-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async.html: Fixed bugs in the test and updated comments.
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+
+2016-08-04  Youenn Fablet  <youenn@apple.com>
+
         LayoutTest imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm failing
         https://bugs.webkit.org/show_bug.cgi?id=159724
 

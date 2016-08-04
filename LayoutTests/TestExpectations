@@ -362,6 +362,7 @@ imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-origin-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/worker.html [ Skip ]
 
 webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Skip ]

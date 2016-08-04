@@ -203,8 +203,12 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
             return;
         }
 
-        if (!checkRedirectionCrossOriginAccessControl(request(), redirectResponse, newRequest)) {
-            cancel();
+        String errorDescription;
+        if (!checkRedirectionCrossOriginAccessControl(request(), redirectResponse, newRequest, errorDescription)) {
+            String errorMessage = "Cross-origin redirection to " + newRequest.url().string() + " denied by Cross-Origin Resource Sharing policy: " + errorDescription;
+            if (m_frame && m_frame->document())
+                m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
+            cancel(ResourceError(String(), 0, request().url(), errorMessage, ResourceError::Type::AccessControl));
             return;
         }
 
@@ -397,35 +401,45 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
     frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceKey(), DiagnosticLoggingKeys::loadedKey(), resourceType, ShouldSample::Yes);
 }
 
-bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
+bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest, String& errorMessage)
 {
     ASSERT(options().mode != FetchOptions::Mode::SameOrigin);
 
-    bool shouldCheckCrossOrigin = options().mode == FetchOptions::Mode::Cors && m_resource->isCrossOrigin();
+    bool crossOriginFlag = m_resource->isCrossOrigin();
+    bool isNextRequestCrossOrigin = m_origin && !m_origin->canRequest(newRequest.url());
 
-    if (!(m_origin && m_origin->canRequest(newRequest.url())))
+    if (isNextRequestCrossOrigin)
         m_resource->setCrossOrigin();
 
-    if (!shouldCheckCrossOrigin)
+    if (options().mode != FetchOptions::Mode::Cors)
         return true;
 
-    ASSERT(m_origin);
-    String errorDescription;
-    bool responsePassesCORS = m_origin->canRequest(previousRequest.url())
-        || passesAccessControlCheck(redirectResponse, options().allowCredentials, *m_origin, errorDescription);
-    if (!responsePassesCORS || !isValidCrossOriginRedirectionURL(newRequest.url())) {
-        if (m_frame && m_frame->document()) {
-            String errorMessage = "Cross-origin redirection denied by Cross-Origin Resource Sharing policy: " +
-                (!responsePassesCORS ? errorDescription : "Redirected to either a non-HTTP URL or a URL that contains credentials.");
-            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
-        }
+    // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 8 & 9.
+    if (m_resource->isCrossOrigin() && !isValidCrossOriginRedirectionURL(newRequest.url())) {
+        errorMessage = ASCIILiteral("URL is either a non-HTTP URL or contains credentials.");
         return false;
     }
 
-    // If the request URL origin is not the same as the original origin, the request origin should be set to a globally unique identifier.
-    m_origin = SecurityOrigin::createUnique();
-    cleanRedirectedRequestForAccessControl(newRequest);
-    updateRequestForAccessControl(newRequest, *m_origin, options().allowCredentials);
+    ASSERT(m_origin);
+    if (crossOriginFlag && !passesAccessControlCheck(redirectResponse, options().allowCredentials, *m_origin, errorMessage))
+        return false;
+
+    bool redirectingToNewOrigin = false;
+    if (m_resource->isCrossOrigin()) {
+        if (!crossOriginFlag && isNextRequestCrossOrigin)
+            redirectingToNewOrigin = true;
+        else
+            redirectingToNewOrigin = !SecurityOrigin::create(previousRequest.url())->canRequest(newRequest.url());
+    }
+
+    // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 10.
+    if (crossOriginFlag && redirectingToNewOrigin)
+        m_origin = SecurityOrigin::createUnique();
+
+    if (redirectingToNewOrigin) {
+        cleanRedirectedRequestForAccessControl(newRequest);
+        updateRequestForAccessControl(newRequest, *m_origin, options().allowCredentials);
+    }
 
     return true;
 }
