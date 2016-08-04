@@ -1,3 +1,45 @@
+2016-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Syncing script's configuration duplicates a lot of boilerplate
+        https://bugs.webkit.org/show_bug.cgi?id=160574
+
+        Rubber-stamped by Chris Dumez.
+
+        This patch makes each configuration accept an array of platforms and types so that we can write:
+
+        {"type": "speedometer", "builder": "mba", "platform": "Trunk El Capitan MacBookAir"},
+        {"type": "speedometer", "builder": "mbp", "platform": "Trunk El Capitan MacBookPro"},
+        {"type": "speedometer", "builder": "mba", "platform": "Trunk Sierra MacBookAir"},
+        {"type": "speedometer", "builder": "mbp", "platform": "Trunk Sierra MacBookPro"},
+        {"type": "jetstream", "builder": "mba", "platform": "Trunk El Capitan MacBookAir"},
+        {"type": "jetstream", "builder": "mbp", "platform": "Trunk El Capitan MacBookPro"},
+        {"type": "jetstream", "builder": "mba", "platform": "Trunk Sierra MacBookAir"},
+        {"type": "jetstream", "builder": "mbp", "platform": "Trunk Sierra MacBookPro"},
+
+        more concisely as:
+
+        {"builder": "mba", "types": ["speedometer", "jetstream"],
+            "platforms": ["Trunk El Capitan MacBookAir", "Trunk Sierra MacBookAir"]},
+        {"builder": "mbp", "types": ["speedometer", "jetstream"],
+            "platforms": ["Trunk El Capitan MacBookPro", "Trunk Sierra MacBookPro"]},
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer._loadConfig):
+        (BuildbotSyncer._expandTypesAndPlatforms): Added. Clones a new configuration entry for each type
+        and platform.
+        (BuildbotSyncer._createTestConfiguration): Extracted from _loadConfig.
+        (BuildbotSyncer._validateAndMergeConfig): Added a new argument that specifies a property that
+        shouldn't be merged into the configuration. Also added the support for 'types' and 'platforms',
+        and merged the code for verify an array of strings. Finally, allow the appearance of 'properties'
+        since this function can now be called on a cloned configuration in which 'arguments' had already
+        been renamed to 'properties'.
+
+        * unit-tests/buildbot-syncer-tests.js: Added a test case to parse a consolidated configuration.
+        (sampleiOSConfigWithExpansions): Added.
+
+        * unit-tests/resources/mock-v3-models.js:
+        (MockModels.inject): Added a few more mock models for the newly added test.
+
 2016-07-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Tooltip for analysis tasks doesn't show up on charts

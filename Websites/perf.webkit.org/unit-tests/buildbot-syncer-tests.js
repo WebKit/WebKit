@@ -58,6 +58,58 @@ function sampleiOSConfig()
     };
 }
 
+function sampleiOSConfigWithExpansions()
+{
+    return {
+        "triggerableName": "build-webkit-ios",
+        "shared":
+            {
+                "arguments": {
+                    "webkit-revision": {"root": "WebKit"},
+                    "os-version": {"root": "iOS"}
+                },
+                "buildRequestArgument": "build-request-id"
+            },
+        "types": {
+            "iphone-plt": {
+                "test": ["PLT-iPhone"],
+                "arguments": {"test_name": "plt"}
+            },
+            "ipad-plt": {
+                "test": ["PLT-iPad"],
+                "arguments": {"test_name": "plt"}
+            },
+            "speedometer": {
+                "test": ["Speedometer"],
+                "arguments": {"tests": "speedometer"}
+            },
+        },
+        "builders": {
+            "iphone": {
+                "builder": "iPhone AB Tests",
+                "arguments": {"forcescheduler": "force-iphone-ab-tests"}
+            },
+            "ipad": {
+                "builder": "iPad AB Tests",
+                "arguments": {"forcescheduler": "force-ipad-ab-tests"}
+            },
+        },
+        "configurations": [
+            {
+                "builder": "iphone",
+                "platforms": ["iPhone", "iOS 10 iPhone"],
+                "types": ["iphone-plt", "speedometer"],
+            },
+            {
+                "builder": "ipad",
+                "platforms": ["iPad"],
+                "types": ["ipad-plt", "speedometer"],
+            },
+        ]
+    }
+    
+}
+
 let sampleRootSetData = {
     'WebKit': {
         'id': '111127',
@@ -481,6 +533,30 @@ describe('BuildbotSyncer', function () {
             assert.equal(configurations[0].test, MockModels.speedometer);
             assert.equal(configurations[1].platform, MockModels.ipad);
             assert.equal(configurations[1].test, MockModels.jetstream);
+        });
+
+        it('should parse test configurations with types and platforms expansions correctly', function () {
+            let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfigWithExpansions());
+
+            assert.equal(syncers.length, 2);
+
+            let configurations = syncers[0].testConfigurations();
+            assert.equal(configurations.length, 4);
+            assert.equal(configurations[0].platform, MockModels.iphone);
+            assert.equal(configurations[0].test, MockModels.iPhonePLT);
+            assert.equal(configurations[1].platform, MockModels.iOS10iPhone);
+            assert.equal(configurations[1].test, MockModels.iPhonePLT);
+            assert.equal(configurations[2].platform, MockModels.iphone);
+            assert.equal(configurations[2].test, MockModels.speedometer);
+            assert.equal(configurations[3].platform, MockModels.iOS10iPhone);
+            assert.equal(configurations[3].test, MockModels.speedometer);
+
+            configurations = syncers[1].testConfigurations();
+            assert.equal(configurations.length, 2);
+            assert.equal(configurations[0].platform, MockModels.ipad);
+            assert.equal(configurations[0].test, MockModels.iPadPLT);
+            assert.equal(configurations[1].platform, MockModels.ipad);
+            assert.equal(configurations[1].test, MockModels.speedometer);
         });
     });
 

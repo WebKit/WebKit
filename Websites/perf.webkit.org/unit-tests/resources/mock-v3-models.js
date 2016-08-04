@@ -31,8 +31,11 @@ var MockModels = {
 
             MockModels.iphone = Platform.ensureSingleton(12, {name: 'iPhone', metrics: []});
             MockModels.ipad = Platform.ensureSingleton(13, {name: 'iPad', metrics: []});
+            MockModels.iOS10iPhone = Platform.ensureSingleton(14, {name: 'iOS 10 iPhone', metrics: []});
 
             MockModels.plt = Test.ensureSingleton(844, {name: 'Page Load Test'});
+            MockModels.iPadPLT = Test.ensureSingleton(1444, {name: 'PLT-iPad'});
+            MockModels.iPhonePLT = Test.ensureSingleton(1500, {name: 'PLT-iPhone'});
             MockModels.pltMean = Metric.ensureSingleton(1158, {name: 'Time', aggregator: 'Arithmetic', test: MockModels.plt});
             MockModels.elCapitan = Platform.ensureSingleton(31, {name: 'El Capitan', metrics: [MockModels.pltMean]});
         });

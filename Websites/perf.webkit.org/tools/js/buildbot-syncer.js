@@ -262,62 +262,92 @@ class BuildbotSyncer {
         for (let entry of config['configurations']) {
             let newConfig = {};
             this._validateAndMergeConfig(newConfig, shared);
-
             this._validateAndMergeConfig(newConfig, entry);
 
-            let type = entry['type'];
-            if (type) {
-                assert(types[type]);
-                this._validateAndMergeConfig(newConfig, types[type]);
+            let expandedConfigurations = this._expandTypesAndPlatforms(newConfig);
+            for (let config of expandedConfigurations) {
+                if ('type' in config) {
+                    let type = config['type'];
+                    assert(type, `${type} is not a valid type in the configuration`);
+                    this._validateAndMergeConfig(config, types[type]);
+                }
+
+                let builder = entry['builder'];
+                if (builders[builder])
+                    this._validateAndMergeConfig(config, builders[builder]);
+
+                this._createTestConfiguration(remote, syncerByBuilder, config);
             }
-
-            let builder = entry['builder'];
-            if (builders[builder])
-                this._validateAndMergeConfig(newConfig, builders[builder]);
-
-            assert('platform' in newConfig, 'configuration must specify a platform');
-            assert('test' in newConfig, 'configuration must specify a test');
-            assert('builder' in newConfig, 'configuration must specify a builder');
-            assert('properties' in newConfig, 'configuration must specify arguments to post on a builder');
-            assert('buildRequestArgument' in newConfig, 'configuration must specify buildRequestArgument');
-
-            let test = Test.findByPath(newConfig.test);
-            assert(test, `${newConfig.test} is not a valid test path`);
-
-            let platform = Platform.findByName(newConfig.platform);
-            assert(platform, `${newConfig.platform} is not a valid platform name`);
-
-            let syncer = syncerByBuilder.get(newConfig.builder);
-            if (!syncer) {
-                syncer = new BuildbotSyncer(remote, newConfig);
-                syncerByBuilder.set(newConfig.builder, syncer);
-            }
-            syncer.addTestConfiguration(test, platform, newConfig.properties);
         }
 
         return Array.from(syncerByBuilder.values());
     }
 
-    static _validateAndMergeConfig(config, valuesToMerge)
+    static _expandTypesAndPlatforms(unresolvedConfig)
+    {
+        let typeExpanded = [];
+        if ('types' in unresolvedConfig) {
+            for (let type of unresolvedConfig['types'])
+                typeExpanded.push(this._validateAndMergeConfig({'type': type}, unresolvedConfig, 'types'));
+        } else
+            typeExpanded.push(unresolvedConfig);
+
+        let configurations = [];
+        for (let config of typeExpanded) {
+            if ('platforms' in config) {
+                for (let platform of config['platforms'])
+                    configurations.push(this._validateAndMergeConfig({'platform': platform}, config, 'platforms'));
+            } else
+                configurations.push(config);
+        }
+
+        return configurations;
+    }
+
+    static _createTestConfiguration(remote, syncerByBuilder, newConfig)
+    {
+        assert('platform' in newConfig, 'configuration must specify a platform');
+        assert('test' in newConfig, 'configuration must specify a test');
+        assert('builder' in newConfig, 'configuration must specify a builder');
+        assert('properties' in newConfig, 'configuration must specify arguments to post on a builder');
+        assert('buildRequestArgument' in newConfig, 'configuration must specify buildRequestArgument');
+
+        let test = Test.findByPath(newConfig.test);
+        assert(test, `${newConfig.test} is not a valid test path`);
+
+        let platform = Platform.findByName(newConfig.platform);
+        assert(platform, `${newConfig.platform} is not a valid platform name`);
+
+        let syncer = syncerByBuilder.get(newConfig.builder);
+        if (!syncer) {
+            syncer = new BuildbotSyncer(remote, newConfig);
+            syncerByBuilder.set(newConfig.builder, syncer);
+        }
+        syncer.addTestConfiguration(test, platform, newConfig.properties);
+    }
+
+    static _validateAndMergeConfig(config, valuesToMerge, excludedProperty)
     {
         for (let name in valuesToMerge) {
             let value = valuesToMerge[name];
+            if (name == excludedProperty)
+                continue;
+
             switch (name) {
+            case 'properties': // fallthrough
             case 'arguments':
                 assert.equal(typeof(value), 'object', 'arguments should be a dictionary');
                 if (!config['properties'])
                     config['properties'] = {};
                 this._validateAndMergeProperties(config['properties'], value);
                 break;
-            case 'test':
-                assert(value instanceof Array, 'test should be an array');
-                assert(value.every(function (part) { return typeof part == 'string'; }), 'test should be an array of strings');
+            case 'test': // fallthrough
+            case 'slaveList': // fallthrough
+            case 'platforms':
+            case 'types':
+                assert(value instanceof Array, `${name} should be an array`);
+                assert(value.every(function (part) { return typeof part == 'string'; }), `${name} should be an array of strings`);
                 config[name] = value.slice();
-                break;
-            case 'slaveList':
-                assert(value instanceof Array, 'slaveList should be an array');
-                assert(value.every(function (part) { return typeof part == 'string'; }), 'slaveList should be an array of strings');
-                config[name] = value;
                 break;
             case 'type': // fallthrough
             case 'builder': // fallthrough
@@ -331,6 +361,7 @@ class BuildbotSyncer {
                 assert(false, `Unrecognized parameter ${name}`);
             }
         }
+        return config;
     }
 
     static _validateAndMergeProperties(properties, configArguments)
