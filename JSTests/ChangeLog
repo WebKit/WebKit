@@ -1,3 +1,15 @@
+2016-08-04  Keith Miller  <keith_miller@apple.com>
+
+        ASSERTION FAILED: !hasInstanceValueNode->isCellConstant() || defaultHasInstanceFunction == hasInstanceValueNode->asCell()
+        https://bugs.webkit.org/show_bug.cgi?id=160562
+
+        Reviewed by Mark Lam.
+
+        * stress/instanceof-late-constant-folding.js: Added.
+        (Constructor):
+        (value):
+        (body):
+
 2016-08-04  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] fix generator-syntax.js JSTest again after yield grammar fix

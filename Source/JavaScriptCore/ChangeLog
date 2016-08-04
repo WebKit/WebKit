@@ -1,5 +1,22 @@
 2016-08-04  Keith Miller  <keith_miller@apple.com>
 
+        ASSERTION FAILED: !hasInstanceValueNode->isCellConstant() || defaultHasInstanceFunction == hasInstanceValueNode->asCell()
+        https://bugs.webkit.org/show_bug.cgi?id=160562
+        <rdar://problem/27704825>
+
+        Reviewed by Mark Lam.
+
+        This patch fixes an issue where we would emit incorrect code in the DFG when constant folding would
+        convert a GetByOffset into a constant late in compilation. Additionally, it removes invalid assertions
+        associated with the assumption that this could not happen.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileOverridesHasInstance): Deleted.
+
+2016-08-04  Keith Miller  <keith_miller@apple.com>
+
         Remove unused intrinsic member of NativeExecutable
         https://bugs.webkit.org/show_bug.cgi?id=160560
 
