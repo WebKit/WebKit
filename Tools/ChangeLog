@@ -1,3 +1,18 @@
+2016-08-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Optimize bot watcher's dashboard a little
+        https://bugs.webkit.org/show_bug.cgi?id=160515
+        rdar://problem/26096900
+
+        Reviewed by Lucas Forschler.
+
+        Made re-sorting after loading an iteration more efficient.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype._updateWithData):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.updateIterationPosition):
+
 2016-08-04  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Unable to reliably run tests in parallel

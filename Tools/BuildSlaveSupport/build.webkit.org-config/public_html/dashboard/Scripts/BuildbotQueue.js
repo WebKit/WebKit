@@ -299,6 +299,28 @@ BuildbotQueue.prototype = {
         return 0;
     },
 
+    // Re-insert the iteration if its sort order changed (which happens once details about it get loaded).
+    updateIterationPosition: function(iteration)
+    {
+        var oldIndex;
+        var inserted = false;
+        for (var i = 0; i < this.iterations.length; ++i) {
+            if (!inserted && this.compareIterations(this.iterations[i], iteration) > 0) {
+                this.iterations.splice(i, 0, iteration);
+                if (oldIndex !== undefined)
+                    break;
+                inserted = true;
+                continue;
+            }
+            if (this.iterations[i] === iteration) {
+                oldIndex = i;
+                if (inserted)
+                    break;
+            }
+        }
+        this.iterations.splice(oldIndex, 1);
+    },
+
     sortIterations: function()
     {
         this.iterations.sort(this.compareIterations.bind(this));

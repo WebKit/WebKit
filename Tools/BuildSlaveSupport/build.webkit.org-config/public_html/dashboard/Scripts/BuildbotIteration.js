@@ -303,7 +303,7 @@ BuildbotIteration.prototype = {
         this._parseData(data);
 
         // Update the sorting since it is based on the revision numbers that just became known.
-        this.queue.sortIterations();
+        this.queue.updateIterationPosition(this);
 
         this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
     },
