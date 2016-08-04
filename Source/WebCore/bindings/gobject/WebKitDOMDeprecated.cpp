@@ -22,6 +22,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "JSMainThreadExecState.h"
+#include "HTMLCollection.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMHTMLTitleElement.h"
