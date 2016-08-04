@@ -75,7 +75,6 @@
 #include "Element.cpp"
 #include "ElementData.cpp"
 #include "ElementRareData.cpp"
-#include "EntityReference.cpp"
 #include "ErrorEvent.cpp"
 #include "Event.cpp"
 #include "EventContext.cpp"
