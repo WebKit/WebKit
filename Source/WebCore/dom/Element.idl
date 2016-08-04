@@ -41,11 +41,7 @@
     [RaisesException, InvokesCustomElementLifecycleCallbacks] Attr? setAttributeNode(Attr newAttr);
     [RaisesException, InvokesCustomElementLifecycleCallbacks] Attr removeAttributeNode(Attr oldAttr);
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName(DOMString name);
-#else
     HTMLCollection getElementsByTagName(DOMString name);
-#endif
 
     readonly attribute NamedNodeMap attributes;
     boolean hasAttributes();
@@ -60,11 +56,7 @@
 
     [ObjCLegacyUnnamedParameters, InvokesCustomElementLifecycleCallbacks] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
-#else
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
-#endif
 
     [ObjCLegacyUnnamedParameters] Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
     [RaisesException, InvokesCustomElementLifecycleCallbacks] Attr? setAttributeNodeNS(Attr newAttr);
@@ -75,22 +67,10 @@
     [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style;
 
     // DOM 4
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [Reflect] attribute DOMString id;
-#endif
 
     // Common extensions
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    readonly attribute long offsetLeft;
-    readonly attribute long offsetTop;
-    readonly attribute long offsetWidth;
-    readonly attribute long offsetHeight;
-    readonly attribute long clientLeft;
-    readonly attribute long clientTop;
-    readonly attribute long clientWidth;
-    readonly attribute long clientHeight;
-#else
     readonly attribute double offsetLeft;
     readonly attribute double offsetTop;
     readonly attribute double offsetWidth;
@@ -99,7 +79,6 @@
     readonly attribute double clientTop;
     readonly attribute double clientWidth;
     readonly attribute double clientHeight;
-#endif
 
     attribute long scrollLeft;
     attribute long scrollTop;
@@ -124,11 +103,7 @@
     void scrollByPages(optional long pages = 0);
 
     // HTML 5
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ImplementedAs=getElementsByClassNameForObjC] NodeList getElementsByClassName(DOMString name);
-#else
     HTMLCollection getElementsByClassName(DOMString name);
-#endif
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerHTML;
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString outerHTML;
 

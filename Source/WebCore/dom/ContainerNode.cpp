@@ -826,14 +826,6 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& loca
     return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, ByTag, localName);
 }
 
-RefPtr<NodeList> ContainerNode::getElementsByTagNameForObjC(const AtomicString& localName)
-{
-    if (localName.isNull())
-        return nullptr;
-
-    return getElementsByTagName(localName);
-}
-
 Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     ASSERT(!localName.isNull());
@@ -844,14 +836,6 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomicString& na
     return ensureRareData().ensureNodeLists().addCachedCollectionWithQualifiedName(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
 }
 
-RefPtr<NodeList> ContainerNode::getElementsByTagNameNSForObjC(const AtomicString& namespaceURI, const AtomicString& localName)
-{
-    if (localName.isNull())
-        return nullptr;
-
-    return getElementsByTagNameNS(namespaceURI, localName);
-}
-
 Ref<NodeList> ContainerNode::getElementsByName(const String& elementName)
 {
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, elementName);
@@ -860,11 +844,6 @@ Ref<NodeList> ContainerNode::getElementsByName(const String& elementName)
 Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomicString& classNames)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, ByClass, classNames);
-}
-
-Ref<NodeList> ContainerNode::getElementsByClassNameForObjC(const AtomicString& classNames)
-{
-    return getElementsByClassName(classNames);
 }
 
 Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)

@@ -968,12 +968,6 @@ RefPtr<ProcessingInstruction> Document::createProcessingInstruction(const String
     return ProcessingInstruction::create(*this, target, data);
 }
 
-RefPtr<EntityReference> Document::createEntityReference(const String&, ExceptionCode& ec)
-{
-    ec = NOT_SUPPORTED_ERR;
-    return nullptr;
-}
-
 Ref<Text> Document::createEditingTextNode(const String& text)
 {
     return Text::createEditingText(*this, text);

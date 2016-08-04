@@ -514,17 +514,19 @@
 
 - (DOMEntityReference *)createEntityReference:(NSString *)name
 {
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMEntityReference *result = kit(WTF::getPtr(IMPL->createEntityReference(name, ec)));
-    WebCore::raiseOnDOMError(ec);
-    return result;
+    UNUSED_PARAM(name);
+
+    WebCore::raiseOnDOMError(WebCore::NOT_SUPPORTED_ERR);
+    return nil;
 }
 
 - (DOMNodeList *)getElementsByTagName:(NSString *)tagname
 {
+    if (!tagname)
+        return nullptr;
+
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementsByTagNameForObjC(tagname)));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagName(tagname))));
 }
 
 - (DOMNode *)importNode:(DOMNode *)importedNode deep:(BOOL)deep
@@ -558,8 +560,11 @@
 
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
+    if (!localName)
+        return nullptr;
+
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementsByTagNameNSForObjC(namespaceURI, localName)));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagNameNS(namespaceURI, localName))));
 }
 
 - (DOMNode *)adoptNode:(DOMNode *)source
@@ -764,7 +769,7 @@
 - (DOMNodeList *)getElementsByClassName:(NSString *)classNames
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementsByClassNameForObjC(classNames)));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByClassName(classNames))));
 }
 
 - (BOOL)hasFocus

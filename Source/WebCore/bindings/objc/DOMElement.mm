@@ -312,8 +312,11 @@
 
 - (DOMNodeList *)getElementsByTagName:(NSString *)name
 {
+    if (!name)
+        return nullptr;
+
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementsByTagNameForObjC(name)));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagName(name))));
 }
 
 - (NSString *)getAttributeNS:(NSString *)namespaceURI localName:(NSString *)localName
@@ -338,8 +341,11 @@
 
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
+    if (!localName)
+        return nullptr;
+
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementsByTagNameNSForObjC(namespaceURI, localName)));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagNameNS(namespaceURI, localName))));
 }
 
 - (DOMAttr *)getAttributeNodeNS:(NSString *)namespaceURI localName:(NSString *)localName
@@ -410,7 +416,7 @@
 - (DOMNodeList *)getElementsByClassName:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementsByClassNameForObjC(name)));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByClassName(name))));
 }
 
 - (BOOL)matches:(NSString *)selectors

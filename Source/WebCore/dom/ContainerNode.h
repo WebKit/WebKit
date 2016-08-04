@@ -89,12 +89,9 @@ public:
     RefPtr<NodeList> querySelectorAll(const String& selectors, ExceptionCode&);
 
     Ref<HTMLCollection> getElementsByTagName(const AtomicString&);
-    RefPtr<NodeList> getElementsByTagNameForObjC(const AtomicString&);
     Ref<HTMLCollection> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
-    RefPtr<NodeList> getElementsByTagNameNSForObjC(const AtomicString& namespaceURI, const AtomicString& localName);
     Ref<NodeList> getElementsByName(const String& elementName);
     Ref<HTMLCollection> getElementsByClassName(const AtomicString& classNames);
-    Ref<NodeList> getElementsByClassNameForObjC(const AtomicString& classNames);
     Ref<RadioNodeList> radioNodeList(const AtomicString&);
 
     // From the ParentNode interface - https://dom.spec.whatwg.org/#interface-parentnode

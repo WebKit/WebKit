@@ -41,15 +41,7 @@
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
     [NewObject, RaisesException] Attr createAttribute(DOMString name);
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [RaisesException] EntityReference createEntityReference(optional DOMString name);
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName(optional DOMString tagname);
-#else
     HTMLCollection getElementsByTagName(DOMString tagname);
-#endif
 
     // Introduced in DOM Level 2:
 
@@ -58,11 +50,7 @@
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(optional DOMString namespaceURI, optional DOMString localName);
-#else
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
-#endif
 
     // DOM Level 3 Core
 
@@ -230,11 +218,7 @@
     CanvasRenderingContext getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
 
     // HTML 5
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ImplementedAs=getElementsByClassNameForObjC] NodeList getElementsByClassName(optional DOMString classNames);
-#else
     HTMLCollection getElementsByClassName(DOMString classNames);
-#endif
 
     readonly attribute Element? activeElement;
     boolean hasFocus();

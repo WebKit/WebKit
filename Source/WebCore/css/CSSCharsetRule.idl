@@ -20,10 +20,6 @@
 
 // Introduced in DOM Level 2:
 interface CSSCharsetRule : CSSRule {
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    readonly attribute DOMString? encoding;
-#else
     [SetterRaisesException] attribute DOMString? encoding;
-#endif
 };
 
