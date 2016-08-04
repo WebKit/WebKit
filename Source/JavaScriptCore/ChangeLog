@@ -1,3 +1,16 @@
+2016-08-04  Keith Miller  <keith_miller@apple.com>
+
+        Remove unused intrinsic member of NativeExecutable
+        https://bugs.webkit.org/show_bug.cgi?id=160560
+
+        Reviewed by Saam Barati.
+
+        NativeExecutable has an Intrinsic member. It appears that this member is never
+        used. Instead we use the Intrinsic member NativeExecutable's super class,
+        ExecutableBase.
+
+        * runtime/Executable.h:
+
 2016-08-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Speed up InPlaceAbstractState::endBasicBlock()

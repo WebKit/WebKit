@@ -287,8 +287,6 @@ public:
         
     DECLARE_INFO;
 
-    Intrinsic intrinsic() const;
-
     const String& name() const { return m_name; }
 
 protected:
@@ -301,8 +299,6 @@ private:
 
     NativeFunction m_function;
     NativeFunction m_constructor;
-        
-    Intrinsic m_intrinsic;
 
     String m_name;
 };
