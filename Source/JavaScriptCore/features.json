@@ -145,6 +145,23 @@
         "specification": "ES6"
     },
     {
+        "name": "Exponentiation Syntax",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://tc39.github.io/ecma262/#prod-ExponentiationExpression",
+        "specification": "ES7",
+        "description": "Exponentiation syntax (like x ** y) provides the syntax suger for exponentiation.",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=159969",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Exponentiation_(**)",
+        "contact": {
+            "name": "Yusuke Suzuki",
+            "twitter": "@Constellation",
+            "email": "utatane.tea@gmail.com"
+        }
+    },
+    {
         "name": "Generators",
         "status": {
             "status": "Done",
