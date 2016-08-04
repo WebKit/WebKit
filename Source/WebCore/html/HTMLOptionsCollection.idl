@@ -33,7 +33,7 @@
     getter HTMLOptionElement? namedItem(DOMString name);
 #endif
 
-#if (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
+#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
     // FIXME: Should be:
     // void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
     [RaisesException] void add(HTMLElement element);

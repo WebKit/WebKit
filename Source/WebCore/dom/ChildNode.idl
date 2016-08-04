@@ -22,10 +22,8 @@
 [
     NoInterfaceObject,
 ] interface ChildNode {
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [Unscopeable, RaisesException, Custom] void before((Node or DOMString)... nodes);
     [Unscopeable, RaisesException, Custom] void after((Node or DOMString)... nodes);
     [Unscopeable, RaisesException, Custom] void replaceWith((Node or DOMString)... nodes);
-#endif
     [Unscopeable, RaisesException] void remove();
 };

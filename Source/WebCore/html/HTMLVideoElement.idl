@@ -44,7 +44,6 @@
     [RaisesException] void webkitEnterFullScreen();
     void webkitExitFullScreen();
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [Conditional=WIRELESS_PLAYBACK_TARGET] attribute boolean webkitWirelessVideoPlaybackDisabled;
 
     // The number of frames that have been decoded and made available for playback.
@@ -52,10 +51,9 @@
 
     // The number of decoded frames that have been dropped by the player for performance reasons during playback.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitDroppedFrameCount;
-#endif
 
     // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
-#if (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT) && (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C)
+#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
     [Conditional=VIDEO_PRESENTATION_MODE] boolean webkitSupportsPresentationMode(VideoPresentationMode mode);
     [Conditional=VIDEO_PRESENTATION_MODE] readonly attribute VideoPresentationMode webkitPresentationMode;
     [Conditional=VIDEO_PRESENTATION_MODE] void webkitSetPresentationMode(VideoPresentationMode mode);

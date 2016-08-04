@@ -47,11 +47,8 @@
     HTMLCollection getElementsByTagName(DOMString name);
 #endif
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
-    // For ObjC this is defined on Node for legacy support.
     readonly attribute NamedNodeMap attributes;
     boolean hasAttributes();
-#endif
 
     // DOM Level 2 Core
 

@@ -353,7 +353,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/fileapi/FileReader.idl \
     $(WebCore)/fileapi/FileReaderSync.idl \
     $(WebCore)/html/DOMFormData.idl \
-    $(WebCore)/html/DOMSettableTokenList.idl \
     $(WebCore)/html/DOMTokenList.idl \
     $(WebCore)/html/DOMURL.idl \
     $(WebCore)/html/HTMLAllCollection.idl \

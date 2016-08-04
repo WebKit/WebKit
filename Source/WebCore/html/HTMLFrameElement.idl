@@ -37,9 +37,7 @@ interface HTMLFrameElement : HTMLElement {
     // Extensions
     readonly attribute DOMWindow contentWindow;
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
-#endif
 
     // FIXME: No other browser has this attribute.
     [CustomSetter] attribute DOMString location;

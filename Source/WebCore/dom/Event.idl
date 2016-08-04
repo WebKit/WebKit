@@ -32,7 +32,6 @@
     const unsigned short AT_TARGET           = 2;
     const unsigned short BUBBLING_PHASE      = 3;
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     // Reverse-engineered from Netscape
     const unsigned short MOUSEDOWN           = 1;
     const unsigned short MOUSEUP             = 2;
@@ -50,7 +49,6 @@
     const unsigned short BLUR                = 8192;
     const unsigned short SELECT              = 16384;
     const unsigned short CHANGE              = 32768;
-#endif
 
     readonly attribute DOMString        type;
     readonly attribute EventTarget      target;

@@ -228,9 +228,7 @@
                                               
 #endif
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     CanvasRenderingContext getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
-#endif
 
     // HTML 5
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

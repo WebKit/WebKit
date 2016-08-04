@@ -33,10 +33,8 @@
     readonly attribute Element lastElementChild;
     readonly attribute unsigned long childElementCount;
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [Unscopeable, RaisesException, Custom] void prepend((Node or DOMString)... nodes);
     [Unscopeable, RaisesException, Custom] void append((Node or DOMString)... nodes);
-#endif
 
     // [Unscopeable] Element? query(DOMString relativeSelectors);
     // [NewObject, Unscopeable] Elements queryAll(DOMString relativeSelectors);

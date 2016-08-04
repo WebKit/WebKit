@@ -30,7 +30,5 @@
     EnabledAtRuntime=WebAnimations,
     Conditional=WEB_ANIMATIONS
 ] partial interface Document {
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     readonly attribute DocumentTimeline timeline;
-#endif
 }; 
