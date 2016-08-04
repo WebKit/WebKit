@@ -1,5 +1,23 @@
 2016-08-04  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Add placeholder graphs to TimelineOverview while editing
+        https://bugs.webkit.org/show_bug.cgi?id=160485
+        <rdar://problem/27670755>
+
+        Reviewed by Brian Burg.
+
+        Insert placeholder elements in TimelineOverview's graph container
+        when editing instruments. This allows alternating overview graph styles
+        to be shown for disabled instruments, and ensures that every tree element
+        has a corresponding element in the overview during dragging/reordering
+        of instruments (see https://webkit.org/b/157957).
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype._startEditingInstruments):
+        (WebInspector.TimelineOverview.prototype._stopEditingInstruments):
+
+2016-08-04  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: UI polish for Open Quickly and Goto Line dialogs
         https://bugs.webkit.org/show_bug.cgi?id=159849
         <rdar://problem/27383068>

@@ -897,6 +897,11 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
                 let insertionIndex = insertionIndexForObjectInListSortedByFunction(treeElement, this._timelinesTreeOutline.children, this._compareTimelineTreeElements.bind(this));
                 this._timelinesTreeOutline.insertChild(treeElement, insertionIndex);
+
+                let placeholderGraph = new WebInspector.View;
+                placeholderGraph.element.classList.add("timeline-overview-graph");
+                treeElement[WebInspector.TimelineOverview.PlaceholderOverviewGraph] = placeholderGraph;
+                this._graphsContainerView.insertSubviewBefore(placeholderGraph, this._graphsContainerView.subviews[insertionIndex]);
             }
 
             treeElement.editing = true;
@@ -928,6 +933,10 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         let placeholderTreeElements = this._timelinesTreeOutline.children.filter((treeElement) => treeElement.placeholder);
         for (let treeElement of placeholderTreeElements) {
             this._timelinesTreeOutline.removeChild(treeElement);
+
+            let placeholderGraph = treeElement[WebInspector.TimelineOverview.PlaceholderOverviewGraph];
+            console.assert(placeholderGraph);
+            this._graphsContainerView.removeSubview(placeholderGraph);
 
             if (treeElement.status.checked) {
                 let instrument = WebInspector.Instrument.createForTimelineType(treeElement.representedObject.type);
@@ -981,6 +990,8 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._editInstrumentsButton.enabled = enabled;
     }
 };
+
+WebInspector.TimelineOverview.PlaceholderOverviewGraph = Symbol("placeholder-overview-graph");
 
 WebInspector.TimelineOverview.ScrollDeltaDenominator = 500;
 WebInspector.TimelineOverview.EditInstrumentsStyleClassName = "edit-instruments";
