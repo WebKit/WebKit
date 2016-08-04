@@ -30,6 +30,7 @@
 
 import atexit
 import os
+import re
 import subprocess
 import sys
 import logging
@@ -50,6 +51,13 @@ def cygpath(path):
         return _CygPath.convert_using_singleton(path)
     return path
 
+
+def cygpathFast(path):
+    """Converts an absolute cygwin path to an absolute Windows path with string replacement."""
+    if sys.platform == 'cygwin':
+        path = re.sub('/cygdrive/c', 'c:', path)
+        path = re.sub('/', r'\\', path)
+    return path
 
 # Note that this object is not threadsafe and must only be called
 # from multiple threads under protection of a lock (as is done in cygpath())

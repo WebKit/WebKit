@@ -1,3 +1,19 @@
+2016-08-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Unable to reliably run tests in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=140914
+
+        Reviewed by Brent Fulgham.
+
+        The cygpath utility function can fail badly when running with multiple DumpRenderTree
+        processes. We can use string replacement to convert the Cygwin path to a Windows path
+        instead.
+ 
+        * Scripts/webkitpy/common/system/path.py:
+        (cygpathFast):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._command_from_driver_input):
+
 2016-08-03  Aakash Jain  <aakash_jain@apple.com>
 
         Document instructions for increasing process and file limits
