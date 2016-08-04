@@ -53,12 +53,11 @@
     HTMLOptionElement? namedItem(DOMString name);
 #endif
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void add(HTMLElement element, HTMLElement? before);
+    [ObjCLegacyUnnamedParameters, RaisesException] void add(HTMLElement element, optional HTMLElement? before = null);
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // FIXME: Should be:
     // void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
     [RaisesException] void add(HTMLElement element, long index);
-    [RaisesException] void add(HTMLElement element);
 
     [RaisesException] void remove(); // ChildNode overload
     // FIXME: This overload is not in the specification and was dropped in Blink.

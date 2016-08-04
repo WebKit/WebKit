@@ -44,7 +44,6 @@ public:
 
     void add(HTMLElement&, HTMLElement* beforeElement, ExceptionCode&);
     void add(HTMLElement&, int beforeIndex, ExceptionCode&);
-    void add(HTMLElement& element, ExceptionCode& ec) { add(element, nullptr, ec); }
     void remove(int index);
     void remove(HTMLOptionElement&);
 

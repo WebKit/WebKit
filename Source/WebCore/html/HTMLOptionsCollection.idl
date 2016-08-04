@@ -36,8 +36,7 @@
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
     // FIXME: Should be:
     // void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-    [RaisesException] void add(HTMLElement element);
-    [RaisesException] void add(HTMLElement element, HTMLElement? before);
+    [RaisesException] void add(HTMLElement element, optional HTMLElement? before = null);
     [RaisesException] void add(HTMLElement element, long index);
 #else
     [RaisesException] void add(HTMLOptionElement option, unsigned long index);
