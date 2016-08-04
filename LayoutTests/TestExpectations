@@ -696,6 +696,7 @@ webkit.org/b/141695 [ Debug ] fast/selectors/nth-last-child-of-register-requirem
 
 # Content extensions are Mac-WK2-only for now
 http/tests/contentextensions [ Skip ]
+http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 
 webkit.org/b/149072 svg/animations/svgboolean-animation-1.html [ Pass Failure ]
 

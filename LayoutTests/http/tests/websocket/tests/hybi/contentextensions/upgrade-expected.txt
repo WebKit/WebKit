@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 14: Content blocker promoted URL from ws://127.0.0.1/websocket/tests/hybi/simple to wss
+CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. Connection refused
+CONSOLE MESSAGE: line 24: onclose
+CONSOLE MESSAGE: line 9: new url: wss://127.0.0.1/websocket/tests/hybi/simple
+

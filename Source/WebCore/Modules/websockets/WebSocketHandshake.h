@@ -41,8 +41,8 @@
 
 namespace WebCore {
 
+class Document;
 class ResourceRequest;
-class ScriptExecutionContext;
 
 class WebSocketHandshake {
     WTF_MAKE_NONCOPYABLE(WebSocketHandshake); WTF_MAKE_FAST_ALLOCATED;
@@ -50,7 +50,7 @@ public:
     enum Mode {
         Incomplete, Normal, Failed, Connected
     };
-    WebSocketHandshake(const URL&, const String& protocol, ScriptExecutionContext*);
+    WebSocketHandshake(const URL&, const String& protocol, Document*, bool allowCookies);
     ~WebSocketHandshake();
 
     const URL& url() const;
@@ -69,7 +69,7 @@ public:
     ResourceRequest clientHandshakeRequest() const;
 
     void reset();
-    void clearScriptExecutionContext();
+    void clearDocument();
 
     int readServerHandshake(const char* header, size_t len);
     Mode mode() const;
@@ -77,7 +77,6 @@ public:
 
     String serverWebSocketProtocol() const;
     String serverSetCookie() const;
-    String serverSetCookie2() const;
     String serverUpgrade() const;
     String serverConnection() const;
     String serverWebSocketAccept() const;
@@ -102,9 +101,10 @@ private:
     URL m_url;
     String m_clientProtocol;
     bool m_secure;
-    ScriptExecutionContext* m_context;
+    Document* m_document;
 
     Mode m_mode;
+    bool m_allowCookies;
 
     ResourceResponse m_serverHandshakeResponse;
 

@@ -331,6 +331,16 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError()
     }, m_taskMode);
 }
 
+void WorkerThreadableWebSocketChannel::Peer::didUpgradeURL()
+{
+    ASSERT(isMainThread());
+    
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper = m_workerClientWrapper.copyRef()](ScriptExecutionContext& context) mutable {
+        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        workerClientWrapper->didUpgradeURL();
+    }, m_taskMode);
+}
+
 WorkerThreadableWebSocketChannel::Bridge::Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, Ref<WorkerGlobalScope>&& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& socketProvider)
     : m_workerClientWrapper(WTFMove(workerClientWrapper))
     , m_workerGlobalScope(WTFMove(workerGlobalScope))

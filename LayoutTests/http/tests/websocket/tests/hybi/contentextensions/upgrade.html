@@ -1,0 +1,37 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function endTest() {
+    console.log("new url: " + ws.url);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var ws = new WebSocket("ws://127.0.0.1/websocket/tests/hybi/simple");
+
+ws.onopen = function() { 
+    console.log("onopen");
+    ws.send("sent"); 
+}
+ws.onmessage = function(message) { 
+    console.log("onmessage " + message.data);
+}
+ws.onclose = function() {
+    console.log("onclose");
+    endTest();
+}
+ws.onerror = function(ev) { 
+    console.log("onerror"); 
+    endTest(); 
+}
+
+setTimeout(function() { 
+    console.log("timeout");
+    endTest();
+}, 3000);
+
+</script>

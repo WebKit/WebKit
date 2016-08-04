@@ -635,6 +635,12 @@ void WebSocket::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompl
         ActiveDOMObject::unsetPendingActivity(this);
 }
 
+void WebSocket::didUpgradeURL()
+{
+    ASSERT(m_url.protocolIs("ws"));
+    m_url.setProtocol("wss");
+}
+
 size_t WebSocket::getFramingOverhead(size_t payloadSize)
 {
     static const size_t hybiBaseFramingOverhead = 2; // Every frame has at least two-byte header.

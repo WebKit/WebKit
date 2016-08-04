@@ -229,6 +229,17 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError()
         processPendingTasks();
 }
 
+void ThreadableWebSocketChannelClientWrapper::didUpgradeURL()
+{
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this, protectedThis = makeRef(*this)] (ScriptExecutionContext&) {
+        if (m_client)
+            m_client->didUpgradeURL();
+    }));
+    
+    if (!m_suspended)
+        processPendingTasks();
+}
+
 void ThreadableWebSocketChannelClientWrapper::suspend()
 {
     m_suspended = true;

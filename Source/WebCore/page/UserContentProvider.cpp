@@ -100,12 +100,12 @@ static bool contentExtensionsEnabled(const DocumentLoader& documentLoader)
     return true;
 }
     
-ContentExtensions::BlockedStatus UserContentProvider::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentExtensions::BlockedStatus UserContentProvider::processContentExtensionRulesForLoad(const URL& url, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (!contentExtensionsEnabled(initiatingDocumentLoader))
-        return ContentExtensions::BlockedStatus::NotBlocked;
+        return { };
 
-    return userContentExtensionBackend().processContentExtensionRulesForLoad(request, resourceType, initiatingDocumentLoader);
+    return userContentExtensionBackend().processContentExtensionRulesForLoad(url, resourceType, initiatingDocumentLoader);
 }
 
 Vector<ContentExtensions::Action> UserContentProvider::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo, DocumentLoader& initiatingDocumentLoader)

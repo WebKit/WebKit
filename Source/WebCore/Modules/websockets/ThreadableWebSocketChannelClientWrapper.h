@@ -83,6 +83,7 @@ public:
     void didStartClosingHandshake();
     void didClose(unsigned unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
     void didReceiveMessageError();
+    void didUpgradeURL();
 
     void suspend();
     void resume();

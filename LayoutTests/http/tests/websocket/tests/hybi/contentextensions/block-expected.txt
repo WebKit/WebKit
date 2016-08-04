@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 13: Content blocker prevented frame displaying http://127.0.0.1:8000/websocket/tests/hybi/contentextensions/block.html from loading a resource from ws://localhost:8880/websocket/tests/hybi/contentextensions/resources/echo
+CONSOLE MESSAGE: line 27: onerror
+

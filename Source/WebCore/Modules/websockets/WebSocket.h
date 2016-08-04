@@ -96,13 +96,14 @@ public:
     using RefCounted<WebSocket>::deref;
 
     // WebSocketChannelClient functions.
-    void didConnect() override;
-    void didReceiveMessage(const String& message) override;
-    void didReceiveBinaryData(Vector<uint8_t>&&) override;
-    void didReceiveMessageError() override;
-    void didUpdateBufferedAmount(unsigned bufferedAmount) override;
-    void didStartClosingHandshake() override;
-    void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;
+    void didConnect() final;
+    void didReceiveMessage(const String& message) final;
+    void didReceiveBinaryData(Vector<uint8_t>&&) final;
+    void didReceiveMessageError() final;
+    void didUpdateBufferedAmount(unsigned bufferedAmount) final;
+    void didStartClosingHandshake() final;
+    void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
+    void didUpgradeURL() final;
 
 private:
     explicit WebSocket(ScriptExecutionContext&);

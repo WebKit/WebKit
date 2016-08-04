@@ -1,3 +1,45 @@
+2016-08-04  Alex Christensen  <achristensen@webkit.org>
+
+        Content Blocker cannot block WebSocket connections
+        https://bugs.webkit.org/show_bug.cgi?id=160159
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/contentextensions/make-https-expected.txt:
+        Rebased to reflect slight change in console logged messages which contain the same information.
+        * http/tests/websocket/tests/hybi/contentextensions: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies.php: Copied from LayoutTests/http/tests/websocket/tests/hybi/httponly-cookie.pl.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies.php.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-worker-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-worker.html: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-worker.html.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block.html: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block.html.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/display-none-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/display-none-worker-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/display-none-worker.html: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/display-none-worker.html.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/display-none.html: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/display-none.html.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/resources: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/resources/block-cookies-worker.js: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/resources/block-worker.js: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/resources/display-none-worker.js: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/resources/echo-cookie_wsh.py: Copied from LayoutTests/http/tests/websocket/tests/hybi/echo-cookie_wsh.py.
+        * http/tests/websocket/tests/hybi/contentextensions/resources/echo_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/resources/upgrade-worker.js: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-worker-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-worker.html: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-worker.html.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade.html: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade.html.json: Added.
+
 2016-08-04  Chris Dumez  <cdumez@apple.com>
 
         [[Prototype]] property of an interface object for a callback interface must be the Object.prototype object

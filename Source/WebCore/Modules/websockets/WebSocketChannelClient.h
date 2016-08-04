@@ -40,17 +40,18 @@ namespace WebCore {
 class WebSocketChannelClient {
 public:
     virtual ~WebSocketChannelClient() { }
-    virtual void didConnect() { }
-    virtual void didReceiveMessage(const String&) { }
-    virtual void didReceiveBinaryData(Vector<uint8_t>&&) { }
-    virtual void didReceiveMessageError() { }
-    virtual void didUpdateBufferedAmount(unsigned /* bufferedAmount */) { }
-    virtual void didStartClosingHandshake() { }
+    virtual void didConnect() = 0;
+    virtual void didReceiveMessage(const String&) = 0;
+    virtual void didReceiveBinaryData(Vector<uint8_t>&&) = 0;
+    virtual void didReceiveMessageError() = 0;
+    virtual void didUpdateBufferedAmount(unsigned bufferedAmount) = 0;
+    virtual void didStartClosingHandshake() = 0;
     enum ClosingHandshakeCompletionStatus {
         ClosingHandshakeIncomplete,
         ClosingHandshakeComplete
     };
-    virtual void didClose(unsigned /* unhandledBufferedAmount */, ClosingHandshakeCompletionStatus, unsigned short /* code */, const String& /* reason */) { }
+    virtual void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) = 0;
+    virtual void didUpgradeURL() = 0;
 
 protected:
     WebSocketChannelClient() { }

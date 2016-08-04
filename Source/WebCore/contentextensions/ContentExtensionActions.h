@@ -23,17 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionActions_h
-#define ContentExtensionActions_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
 namespace WebCore {
-    
+
+class ResourceRequest;
+
 namespace ContentExtensions {
 
 typedef uint8_t SerializedActionByte;
-    
+
 enum class ActionType : uint8_t {
     BlockLoad,
     BlockCookies,
@@ -44,15 +45,16 @@ enum class ActionType : uint8_t {
     InvalidAction,
 };
 
-enum class BlockedStatus {
-    Blocked,
-    NotBlocked,
+struct BlockedStatus {
+    bool blockedLoad { false };
+    bool blockedCookies { false };
+    bool madeHTTPS { false };
 };
-    
+
+void applyBlockedStatusToRequest(const BlockedStatus&, ResourceRequest&);
+
 } // namespace ContentExtensions
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ContentExtensionActions_h

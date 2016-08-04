@@ -51,6 +51,7 @@
 #include "SocketProvider.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandle.h"
+#include "UserContentProvider.h"
 #include "WebSocketChannelClient.h"
 #include "WebSocketHandshake.h"
 #include <runtime/ArrayBuffer.h>
@@ -83,12 +84,39 @@ WebSocketChannel::~WebSocketChannel()
     LOG(Network, "WebSocketChannel %p dtor", this);
 }
 
-void WebSocketChannel::connect(const URL& url, const String& protocol)
+void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
 {
     LOG(Network, "WebSocketChannel %p connect()", this);
+
+    URL url = requestedURL;
+    bool allowCookies = true;
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (auto* page = m_document->page()) {
+        if (auto* documentLoader = m_document->loader()) {
+            auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(url, ResourceType::Raw, *documentLoader);
+            if (blockedStatus.blockedLoad) {
+                Ref<WebSocketChannel> protectedThis(*this);
+                callOnMainThread([protectedThis = WTFMove(protectedThis)] {
+                    if (protectedThis->m_client)
+                        protectedThis->m_client->didReceiveMessageError();
+                });
+                return;
+            }
+            if (blockedStatus.madeHTTPS) {
+                ASSERT(url.protocolIs("ws"));
+                url.setProtocol("wss");
+                if (m_client)
+                    m_client->didUpgradeURL();
+            }
+            if (blockedStatus.blockedCookies)
+                allowCookies = false;
+        }
+    }
+#endif
+    
     ASSERT(!m_handle);
     ASSERT(!m_suspended);
-    m_handshake = std::make_unique<WebSocketHandshake>(url, protocol, m_document);
+    m_handshake = std::make_unique<WebSocketHandshake>(url, protocol, m_document, allowCookies);
     m_handshake->reset();
     if (m_deflateFramer.canDeflate())
         m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
@@ -226,7 +254,7 @@ void WebSocketChannel::disconnect()
     if (m_identifier && m_document)
         InspectorInstrumentation::didCloseWebSocket(m_document, m_identifier);
     if (m_handshake)
-        m_handshake->clearScriptExecutionContext();
+        m_handshake->clearDocument();
     m_client = nullptr;
     m_document = nullptr;
     if (m_handle)

@@ -58,13 +58,13 @@
 namespace WebCore {
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(const Frame& frame, ResourceRequest& request, ResourceType resourceType)
+static ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(const Frame& frame, const URL& url, ResourceType resourceType)
 {
     if (DocumentLoader* documentLoader = frame.loader().documentLoader()) {
         if (Page* page = frame.page())
-            return page->userContentProvider().processContentExtensionRulesForLoad(request, resourceType, *documentLoader);
+            return page->userContentProvider().processContentExtensionRulesForLoad(url, resourceType, *documentLoader);
     }
-    return ContentExtensions::BlockedStatus::NotBlocked;
+    return { };
 }
 #endif
 
@@ -78,7 +78,9 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
     ResourceRequest request(url);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Image) == ContentExtensions::BlockedStatus::Blocked)
+    auto blockedStatus = processContentExtensionRulesForLoad(frame, url, ResourceType::Image);
+    applyBlockedStatusToRequest(blockedStatus, request);
+    if (blockedStatus.blockedLoad)
         return;
 #endif
 
@@ -103,7 +105,9 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     ResourceRequest request(pingURL);
     
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw) == ContentExtensions::BlockedStatus::Blocked)
+    auto blockedStatus = processContentExtensionRulesForLoad(frame, pingURL, ResourceType::Raw);
+    applyBlockedStatusToRequest(blockedStatus, request);
+    if (blockedStatus.blockedLoad)
         return;
 #endif
 
@@ -136,7 +140,9 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, RefPtr<
     ResourceRequest request(reportURL);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw) == ContentExtensions::BlockedStatus::Blocked)
+    auto blockedStatus = processContentExtensionRulesForLoad(frame, reportURL, ResourceType::Raw);
+    applyBlockedStatusToRequest(blockedStatus, request);
+    if (blockedStatus.blockedLoad)
         return;
 #endif
 

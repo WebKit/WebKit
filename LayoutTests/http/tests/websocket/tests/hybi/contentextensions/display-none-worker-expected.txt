@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 23: worker onopen
+CONSOLE MESSAGE: line 23: worker onmessage reply sent
+CONSOLE MESSAGE: line 23: PASS worker onclose
+This should not be hidden.

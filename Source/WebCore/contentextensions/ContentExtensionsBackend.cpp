@@ -146,10 +146,10 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
-BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
+BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(const URL& url, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (m_contentExtensions.isEmpty())
-        return BlockedStatus::NotBlocked;
+        return { };
 
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
@@ -160,22 +160,24 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(Reso
         if (initiatingDocumentLoader.isLoadingMainResource()
             && frame->isMainFrame()
             && resourceType == ResourceType::Document)
-            mainDocumentURL = request.url();
+            mainDocumentURL = url;
         else if (Document* mainDocument = frame->mainFrame().document())
             mainDocumentURL = mainDocument->url();
     }
 
-    ResourceLoadInfo resourceLoadInfo = { request.url(), mainDocumentURL, resourceType };
+    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, resourceType };
     Vector<ContentExtensions::Action> actions = actionsForResourceLoad(resourceLoadInfo);
 
     bool willBlockLoad = false;
+    bool willBlockCookies = false;
+    bool willMakeHTTPS = false;
     for (const auto& action : actions) {
         switch (action.type()) {
         case ContentExtensions::ActionType::BlockLoad:
             willBlockLoad = true;
             break;
         case ContentExtensions::ActionType::BlockCookies:
-            request.setAllowCookies(false);
+            willBlockCookies = true;
             break;
         case ContentExtensions::ActionType::CSSDisplayNoneSelector:
             if (resourceType == ResourceType::Document)
@@ -194,22 +196,9 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(Reso
             break;
         }
         case ContentExtensions::ActionType::MakeHTTPS: {
-            const URL originalURL = request.url();
-            if (originalURL.protocolIs("http") && (!originalURL.hasPort() || isDefaultPortForProtocol(originalURL.port(), originalURL.protocol()))) {
-                URL newURL = originalURL;
-                newURL.setProtocol("https");
-                if (originalURL.hasPort())
-                    newURL.setPort(defaultPortForProtocol("https"));
-                request.setURL(newURL);
-
-                if (resourceType == ResourceType::Document && initiatingDocumentLoader.isLoadingMainResource()) {
-                    // This is to make sure the correct 'new' URL shows in the location bar.
-                    initiatingDocumentLoader.request().setURL(newURL);
-                    initiatingDocumentLoader.frameLoader()->client().dispatchDidChangeProvisionalURL();
-                }
-                if (currentDocument)
-                    currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker promoted URL from ", originalURL.string(), " to ", newURL.string()));
-            }
+            if ((url.protocolIs("http") || url.protocolIs("ws"))
+                && (!url.hasPort() || isDefaultPortForProtocol(url.port(), url.protocol())))
+                willMakeHTTPS = true;
             break;
         }
         case ContentExtensions::ActionType::IgnorePreviousRules:
@@ -218,12 +207,16 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(Reso
         }
     }
 
-    if (willBlockLoad) {
-        if (currentDocument)
-            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", request.url().string()));
-        return BlockedStatus::Blocked;
+    if (currentDocument) {
+        if (willMakeHTTPS) {
+            ASSERT(url.protocolIs("http") || url.protocolIs("ws"));
+            String newProtocol = url.protocolIs("http") ? ASCIILiteral("https") : ASCIILiteral("wss");
+            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker promoted URL from ", url.string(), " to ", newProtocol));
+        }
+        if (willBlockLoad)
+            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", url.string()));
     }
-    return BlockedStatus::NotBlocked;
+    return { willBlockLoad, willBlockCookies, willMakeHTTPS };
 }
 
 const String& ContentExtensionsBackend::displayNoneCSSRule()
@@ -232,6 +225,24 @@ const String& ContentExtensionsBackend::displayNoneCSSRule()
     return rule;
 }
 
+void applyBlockedStatusToRequest(const BlockedStatus& status, ResourceRequest& request)
+{
+    if (status.blockedCookies)
+        request.setAllowCookies(false);
+
+    if (status.madeHTTPS) {
+        const URL& originalURL = request.url();
+        ASSERT(originalURL.protocolIs("http"));
+        ASSERT(!originalURL.hasPort() || isDefaultPortForProtocol(originalURL.port(), originalURL.protocol()));
+
+        URL newURL = originalURL;
+        newURL.setProtocol("https");
+        if (originalURL.hasPort())
+            newURL.setPort(defaultPortForProtocol("https"));
+        request.setURL(newURL);
+    }
+}
+    
 } // namespace ContentExtensions
 
 } // namespace WebCore

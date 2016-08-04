@@ -121,12 +121,13 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
     return base64Encode(hash.data(), SHA1::hashSize);
 }
 
-WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, ScriptExecutionContext* context)
+WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, Document* document, bool allowCookies)
     : m_url(url)
     , m_clientProtocol(protocol)
     , m_secure(m_url.protocolIs("wss"))
-    , m_context(context)
+    , m_document(document)
     , m_mode(Incomplete)
+    , m_allowCookies(allowCookies)
 {
     m_secWebSocketKey = generateSecWebSocketKey();
     m_expectedAccept = getExpectedWebSocketAccept(m_secWebSocketKey);
@@ -169,7 +170,7 @@ bool WebSocketHandshake::secure() const
 
 String WebSocketHandshake::clientOrigin() const
 {
-    return m_context->securityOrigin()->toString();
+    return m_document->securityOrigin()->toString();
 }
 
 String WebSocketHandshake::clientLocation() const
@@ -200,12 +201,10 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         fields.append("Sec-WebSocket-Protocol: " + m_clientProtocol);
 
     URL url = httpURLForAuthenticationAndCookies();
-    if (is<Document>(*m_context)) {
-        Document& document = downcast<Document>(*m_context);
-        String cookie = cookieRequestHeaderFieldValue(&document, url);
+    if (m_allowCookies) {
+        String cookie = cookieRequestHeaderFieldValue(m_document, url);
         if (!cookie.isEmpty())
             fields.append("Cookie: " + cookie);
-        // Set "Cookie2: <cookie>" if cookies 2 exists for url?
     }
 
     // Add no-cache headers to avoid compatibility issue.
@@ -222,7 +221,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         fields.append("Sec-WebSocket-Extensions: " + extensionValue);
 
     // Add a User-Agent header.
-    fields.append("User-Agent: " + m_context->userAgent(m_context->url()));
+    fields.append("User-Agent: " + m_document->userAgent(m_document->url()));
 
     // Fields in the handshake are sent by the client in a random order; the
     // order is not meaningful.  Thus, it's ok to send the order we constructed
@@ -251,12 +250,10 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketProtocol, m_clientProtocol);
 
     URL url = httpURLForAuthenticationAndCookies();
-    if (is<Document>(*m_context)) {
-        Document& document = downcast<Document>(*m_context);
-        String cookie = cookieRequestHeaderFieldValue(&document, url);
+    if (m_allowCookies) {
+        String cookie = cookieRequestHeaderFieldValue(m_document, url);
         if (!cookie.isEmpty())
             request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
-        // Set "Cookie2: <cookie>" if cookies 2 exists for url?
     }
 
     request.setHTTPHeaderField(HTTPHeaderName::Pragma, "no-cache");
@@ -269,7 +266,7 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketExtensions, extensionValue);
 
     // Add a User-Agent header.
-    request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_context->userAgent(m_context->url()));
+    request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_document->userAgent(m_document->url()));
 
     return request;
 }
@@ -280,9 +277,9 @@ void WebSocketHandshake::reset()
     m_extensionDispatcher.reset();
 }
 
-void WebSocketHandshake::clearScriptExecutionContext()
+void WebSocketHandshake::clearDocument()
 {
-    m_context = nullptr;
+    m_document = nullptr;
 }
 
 int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
@@ -348,11 +345,6 @@ String WebSocketHandshake::serverWebSocketProtocol() const
 String WebSocketHandshake::serverSetCookie() const
 {
     return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SetCookie);
-}
-
-String WebSocketHandshake::serverSetCookie2() const
-{
-    return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SetCookie2);
 }
 
 String WebSocketHandshake::serverUpgrade() const
