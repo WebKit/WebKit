@@ -79,8 +79,9 @@ function *gen() {
     function* gen() {
         yield (function(x = yield) { return x; })();
     }
-    if (gen().next() !== "hello!")
-        throw new Error("Expected BindingIdentifier but found YieldExpression");
+    var result = gen().next();
+    if (result.value !== "hello!")
+        throw new Error("Expected BindingIdentifier bound to 'hello!', but found " + JSON.stringify(result));
 })();
 
 testSyntax(`
@@ -99,7 +100,7 @@ function* gen() {
     }
     yield ng();
 }
-`, `SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.`);
+`, `SyntaxError: Unexpected number '1'`);
 
 testSyntax(`
 function gen(val = yield) {

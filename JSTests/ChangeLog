@@ -1,3 +1,13 @@
+2016-08-04  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] fix generator-syntax.js JSTest again after yield grammar fix
+        https://bugs.webkit.org/show_bug.cgi?id=160550
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/generator-syntax.js:
+        (testYieldBindingIdentifier):
+
 2016-08-03  Caitlin Potter  <caitp@igalia.com>
 
         Clarify SyntaxErrors around yield and unskip tests
