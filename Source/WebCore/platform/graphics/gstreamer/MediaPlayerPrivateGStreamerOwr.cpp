@@ -71,7 +71,17 @@ void MediaPlayerPrivateGStreamerOwr::play()
     }
 
     m_paused = false;
-    internalLoad();
+
+    GST_DEBUG("Connecting to live stream, descriptor: %p", m_streamPrivate.get());
+
+    for (auto track : m_streamPrivate->tracks()) {
+        if (!track->enabled()) {
+            GST_DEBUG("Track %s disabled", track->label().ascii().data());
+            continue;
+        }
+
+        maybeHandleChangeMutedState(*track);
+    }
 }
 
 void MediaPlayerPrivateGStreamerOwr::pause()
@@ -132,10 +142,10 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
     if (!initializeGStreamer())
         return;
 
-    if (!m_videoSink)
+    if (streamPrivate.hasVideo() && !m_videoSink)
         createVideoSink();
 
-    if (!m_audioSink)
+    if (streamPrivate.hasAudio() && !m_audioSink)
         createGSTAudioSinkBin();
 
     GST_DEBUG("Loading MediaStreamPrivate %p", &streamPrivate);
@@ -151,14 +161,27 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
     m_player->networkStateChanged();
     m_player->readyStateChanged();
 
-    if (!internalLoad())
-        return;
+    for (auto track : m_streamPrivate->tracks()) {
+        if (!track->enabled()) {
+            GST_DEBUG("Track %s disabled", track->label().ascii().data());
+            continue;
+        }
 
-    // If the stream contains video, wait for first video frame before setting
-    // HaveEnoughData.
-    if (!hasVideo())
-        m_readyState = MediaPlayer::HaveEnoughData;
+        track->addObserver(*this);
 
+        switch (track->type()) {
+        case RealtimeMediaSource::Audio:
+            m_audioTrack = track;
+            break;
+        case RealtimeMediaSource::Video:
+            m_videoTrack = track;
+            break;
+        case RealtimeMediaSource::None:
+            GST_WARNING("Loading a track with None type");
+        }
+    }
+
+    m_readyState = MediaPlayer::HaveEnoughData;
     m_player->readyStateChanged();
 }
 
@@ -180,70 +203,17 @@ bool MediaPlayerPrivateGStreamerOwr::didLoadingProgress() const
     return true;
 }
 
-bool MediaPlayerPrivateGStreamerOwr::internalLoad()
-{
-    if (!m_stopped)
-        return false;
-
-    m_stopped = false;
-    if (!m_streamPrivate || !m_streamPrivate->active()) {
-        loadingFailed(MediaPlayer::NetworkError);
-        return false;
-    }
-
-    GST_DEBUG("Connecting to live stream, descriptor: %p", m_streamPrivate.get());
-
-    for (auto track : m_streamPrivate->tracks()) {
-        if (!track->enabled()) {
-            GST_DEBUG("Track %s disabled", track->label().ascii().data());
-            continue;
-        }
-
-        OwrMediaSource* mediaSource = OWR_MEDIA_SOURCE(reinterpret_cast<RealtimeMediaSourceOwr*>(&track->source())->mediaSource());
-
-        switch (track->type()) {
-        case RealtimeMediaSource::Audio:
-            if (m_audioTrack && (m_audioTrack.get() == track))
-                g_object_set(m_audioRenderer.get(), "disabled", FALSE, nullptr);
-
-            owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_audioRenderer.get()), mediaSource);
-            m_audioTrack = track;
-            track->addObserver(*this);
-            break;
-        case RealtimeMediaSource::Video:
-            if (m_videoTrack && (m_videoTrack.get() == track))
-                g_object_set(m_videoRenderer.get(), "disabled", FALSE, nullptr);
-
-            // FIXME: Remove hardcoded video dimensions when the rendering performance:
-            // https://webkit.org/b/153826.
-            g_object_set(m_videoRenderer.get(), "width", 640, "height", 480, nullptr);
-            owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_videoRenderer.get()), mediaSource);
-            m_videoTrack = track;
-            track->addObserver(*this);
-            break;
-        case RealtimeMediaSource::None:
-            GST_WARNING("Loading a track with None type");
-        }
-    }
-
-    m_readyState = MediaPlayer::HaveEnoughData;
-    m_player->readyStateChanged();
-    return true;
-}
-
 void MediaPlayerPrivateGStreamerOwr::stop()
 {
-    if (m_stopped)
-        return;
-
-    m_stopped = true;
     if (m_audioTrack) {
         GST_DEBUG("Stop: disconnecting audio");
         g_object_set(m_audioRenderer.get(), "disabled", TRUE, nullptr);
+        owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_audioRenderer.get()), nullptr);
     }
     if (m_videoTrack) {
         GST_DEBUG("Stop: disconnecting video");
         g_object_set(m_videoRenderer.get(), "disabled", TRUE, nullptr);
+        owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_videoRenderer.get()), nullptr);
     }
 }
 
@@ -312,9 +282,40 @@ void MediaPlayerPrivateGStreamerOwr::trackEnded(MediaStreamTrackPrivate& track)
         g_object_set(m_videoRenderer.get(), "disabled", TRUE, nullptr);
 }
 
-void MediaPlayerPrivateGStreamerOwr::trackMutedChanged(MediaStreamTrackPrivate&)
+void MediaPlayerPrivateGStreamerOwr::trackMutedChanged(MediaStreamTrackPrivate& track)
 {
     GST_DEBUG("Track muted state changed");
+
+    maybeHandleChangeMutedState(track);
+}
+
+void MediaPlayerPrivateGStreamerOwr::maybeHandleChangeMutedState(MediaStreamTrackPrivate& track)
+{
+    auto realTimeMediaSource = reinterpret_cast<RealtimeMediaSourceOwr*>(&track.source());
+    auto mediaSource = OWR_MEDIA_SOURCE(realTimeMediaSource->mediaSource());
+
+    switch (track.type()) {
+    case RealtimeMediaSource::Audio:
+        if (!realTimeMediaSource->muted()) {
+            g_object_set(m_audioRenderer.get(), "disabled", false, nullptr);
+            owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_audioRenderer.get()), mediaSource);
+        } else {
+            g_object_set(m_audioRenderer.get(), "disabled", true, nullptr);
+            owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_audioRenderer.get()), nullptr);
+        }
+        break;
+    case RealtimeMediaSource::Video:
+        if (!realTimeMediaSource->muted()) {
+            g_object_set(m_videoRenderer.get(), "disabled", false, nullptr);
+            owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_videoRenderer.get()), mediaSource);
+        } else {
+            g_object_set(m_videoRenderer.get(), "disabled", true, nullptr);
+            owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_videoRenderer.get()), nullptr);
+        }
+        break;
+    case RealtimeMediaSource::None:
+        GST_WARNING("Trying to change mute state of a track with None type");
+    }
 }
 
 void MediaPlayerPrivateGStreamerOwr::trackSettingsChanged(MediaStreamTrackPrivate&)
@@ -331,6 +332,11 @@ GstElement* MediaPlayerPrivateGStreamerOwr::createVideoSink()
 {
     GstElement* sink = MediaPlayerPrivateGStreamerBase::createVideoSink();
     m_videoRenderer = adoptGRef(owr_gst_video_renderer_new(sink));
+
+    // FIXME: Remove hardcoded video dimensions when the rendering performance:
+    // https://webkit.org/b/153826.
+    g_object_set(m_videoRenderer.get(), "width", 640, "height", 480, nullptr);
+
     return sink;
 }
 
