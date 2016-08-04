@@ -67,7 +67,7 @@ WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name(WebKitDOMDocumen
 
     WebCore::JSMainThreadNullState state;
     WebCore::Document* document = WebKit::core(self);
-    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByTagNameForObjC(String::fromUTF8(tagName)));
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByTagName(String::fromUTF8(tagName)));
     return WebKit::kit(nodeList.get());
 }
 
@@ -79,7 +79,7 @@ WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name_ns(WebKitDOMDocu
 
     WebCore::JSMainThreadNullState state;
     WebCore::Document* document = WebKit::core(self);
-    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByTagNameNSForObjC(String::fromUTF8(namespaceURI), String::fromUTF8(tagName)));
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByTagNameNS(String::fromUTF8(namespaceURI), String::fromUTF8(tagName)));
     return WebKit::kit(nodeList.get());
 }
 
@@ -90,7 +90,7 @@ WebKitDOMNodeList* webkit_dom_document_get_elements_by_class_name(WebKitDOMDocum
 
     WebCore::JSMainThreadNullState state;
     WebCore::Document* document = WebKit::core(self);
-    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByClassNameForObjC(String::fromUTF8(className)));
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByClassName(String::fromUTF8(className)));
     return WebKit::kit(nodeList.get());
 }
 
@@ -101,7 +101,7 @@ WebKitDOMNodeList* webkit_dom_element_get_elements_by_tag_name(WebKitDOMElement*
 
     WebCore::JSMainThreadNullState state;
     WebCore::Element* element = WebKit::core(self);
-    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByTagNameForObjC(String::fromUTF8(tagName)));
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByTagName(String::fromUTF8(tagName)));
     return WebKit::kit(nodeList.get());
 }
 
@@ -113,7 +113,7 @@ WebKitDOMNodeList* webkit_dom_element_get_elements_by_tag_name_ns(WebKitDOMEleme
 
     WebCore::JSMainThreadNullState state;
     WebCore::Element* element = WebKit::core(self);
-    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByTagNameNSForObjC(String::fromUTF8(namespaceURI), String::fromUTF8(tagName)));
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByTagNameNS(String::fromUTF8(namespaceURI), String::fromUTF8(tagName)));
     return WebKit::kit(nodeList.get());
 }
 
@@ -124,7 +124,7 @@ WebKitDOMNodeList* webkit_dom_element_get_elements_by_class_name(WebKitDOMElemen
 
     WebCore::JSMainThreadNullState state;
     WebCore::Element* element = WebKit::core(self);
-    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByClassNameForObjC(String::fromUTF8(className)));
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByClassName(String::fromUTF8(className)));
     return WebKit::kit(nodeList.get());
 }
 
