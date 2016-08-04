@@ -1,0 +1,11 @@
+Check touch event listener on the document of a template. This should not crash or make ASAN mad.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS I am making a note here: huge success
+Tapped (50, 50)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

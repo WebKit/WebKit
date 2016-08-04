@@ -1,3 +1,23 @@
+2016-08-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add some extra test coverage for active touch event handler on subdocuments
+        https://bugs.webkit.org/show_bug.cgi?id=160276
+
+        Reviewed by Alex Christensen.
+
+        I wrote some tests while chasing a bug.
+        Documents are handled differently than other EventTarget. We had no test coverage
+        for that.
+
+        * fast/events/touch/ios/touch-event-listeners-on-detached-document-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-listeners-on-detached-document.html: Added.
+        * fast/events/touch/ios/touch-event-listeners-on-subdocument-then-detach-from-frame-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-listeners-on-subdocument-then-detach-from-frame.html: Added.
+        * fast/events/touch/ios/touch-event-listeners-on-subdocuments-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-listeners-on-subdocuments.html: Added.
+        * fast/events/touch/ios/touch-event-listeners-on-template-document-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-listeners-on-template-document.html: Added.
+
 2016-08-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline http/tests/security/cross-frame-access-put.html after r204126.
