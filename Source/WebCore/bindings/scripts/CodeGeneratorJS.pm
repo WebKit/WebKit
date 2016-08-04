@@ -5358,6 +5358,11 @@ sub GenerateConstructorHelperMethods
     if ($interface->parent && !$codeGenerator->getInterfaceExtendedAttributesFromName($interface->parent)->{"NoInterfaceObject"}) {
         my $parentClassName = "JS" . $interface->parent;
         push(@$outputArray, "    return ${parentClassName}::getConstructor(vm, &globalObject);\n");
+    } elsif ($interface->isCallback) {
+        # The internal [[Prototype]] property of an interface object for a callback interface must be the Object.prototype object.
+        AddToImplIncludes("<runtime/ObjectPrototype.h>");
+        push(@$outputArray, "    UNUSED_PARAM(vm);\n");
+        push(@$outputArray, "    return globalObject.objectPrototype();\n");
     } else {
         AddToImplIncludes("<runtime/FunctionPrototype.h>");
         push(@$outputArray, "    UNUSED_PARAM(vm);\n");

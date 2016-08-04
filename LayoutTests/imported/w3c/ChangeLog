@@ -1,5 +1,16 @@
 2016-08-04  Chris Dumez  <cdumez@apple.com>
 
+        [[Prototype]] property of an interface object for a callback interface must be the Object.prototype object
+        https://bugs.webkit.org/show_bug.cgi?id=160555
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline W3C trst now that one more check is passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+
+2016-08-04  Chris Dumez  <cdumez@apple.com>
+
         Element.insertAdjacent*() should throw a SYNTAX_ERR for invalid "where" parameter
         https://bugs.webkit.org/show_bug.cgi?id=160514
 

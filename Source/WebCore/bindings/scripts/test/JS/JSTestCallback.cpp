@@ -30,9 +30,9 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "URL.h"
-#include <runtime/FunctionPrototype.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSString.h>
+#include <runtime/ObjectPrototype.h>
 
 using namespace JSC;
 
@@ -75,7 +75,7 @@ static_assert(TestCallback::CONSTANT2 == 2, "CONSTANT2 in TestCallback does not 
 template<> JSValue JSTestCallbackConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
-    return globalObject.functionPrototype();
+    return globalObject.objectPrototype();
 }
 
 template<> void JSTestCallbackConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
