@@ -8,9 +8,9 @@ PASS Afterbegin content again, with next sibling
 PASS BeforeEnd content again, with next sibling 
 PASS afterend content again, with next sibling 
 PASS Should throw when inserting with invalid position string 
-FAIL When the parent node is null, insertAdjacentHTML should throw for beforebegin and afterend (text) assert_throws: function "function () { element.insertAdjacentHTML("afterend", "") }" did not throw
-FAIL When the parent node is null, insertAdjacentHTML should throw for beforebegin and afterend (comments) assert_throws: function "function () { element.insertAdjacentHTML("afterend", "<!-..." did not throw
-FAIL When the parent node is null, insertAdjacentHTML should throw for beforebegin and afterend (elements) assert_throws: function "function () { element.insertAdjacentHTML("afterend", "<di..." did not throw
+PASS When the parent node is null, insertAdjacentHTML should throw for beforebegin and afterend (text) 
+PASS When the parent node is null, insertAdjacentHTML should throw for beforebegin and afterend (comments) 
+PASS When the parent node is null, insertAdjacentHTML should throw for beforebegin and afterend (elements) 
 PASS When the parent node is a document, insertAdjacentHTML should throw for beforebegin and afterend (text) 
 PASS When the parent node is a document, insertAdjacentHTML should throw for beforebegin and afterend (comments) 
 PASS When the parent node is a document, insertAdjacentHTML should throw for beforebegin and afterend (elements) 

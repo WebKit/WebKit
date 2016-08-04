@@ -3481,4 +3481,74 @@ String Element::completeURLsInAttributeValue(const URL& base, const Attribute& a
     return URL(base, attribute.value()).string();
 }
 
+
+Node* Element::insertAdjacent(const String& where, Ref<Node>&& newChild, ExceptionCode& ec)
+{
+    // In Internet Explorer if the element has no parent and where is "beforeBegin" or "afterEnd",
+    // a document fragment is created and the elements appended in the correct order. This document
+    // fragment isn't returned anywhere.
+    //
+    // This is impossible for us to implement as the DOM tree does not allow for such structures,
+    // Opera also appears to disallow such usage.
+
+    if (equalLettersIgnoringASCIICase(where, "beforebegin")) {
+        ContainerNode* parent = this->parentNode();
+        return (parent && parent->insertBefore(newChild, this, ec)) ? newChild.ptr() : nullptr;
+    }
+
+    if (equalLettersIgnoringASCIICase(where, "afterbegin"))
+        return insertBefore(newChild, firstChild(), ec) ? newChild.ptr() : nullptr;
+
+    if (equalLettersIgnoringASCIICase(where, "beforeend"))
+        return appendChild(newChild, ec) ? newChild.ptr() : nullptr;
+
+    if (equalLettersIgnoringASCIICase(where, "afterend")) {
+        ContainerNode* parent = this->parentNode();
+        return (parent && parent->insertBefore(newChild, nextSibling(), ec)) ? newChild.ptr() : nullptr;
+    }
+
+    ec = SYNTAX_ERR;
+    return nullptr;
+}
+
+Element* Element::insertAdjacentElement(const String& where, Element& newChild, ExceptionCode& ec)
+{
+    Node* returnValue = insertAdjacent(where, newChild, ec);
+    ASSERT_WITH_SECURITY_IMPLICATION(!returnValue || is<Element>(*returnValue));
+    return downcast<Element>(returnValue);
+}
+
+// Step 1 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
+static Element* contextElementForInsertion(const String& where, Element* element, ExceptionCode& ec)
+{
+    if (equalLettersIgnoringASCIICase(where, "beforebegin") || equalLettersIgnoringASCIICase(where, "afterend")) {
+        auto* parent = element->parentElement();
+        if (!parent) {
+            ec = NO_MODIFICATION_ALLOWED_ERR;
+            return nullptr;
+        }
+        return parent;
+    }
+    if (equalLettersIgnoringASCIICase(where, "afterbegin") || equalLettersIgnoringASCIICase(where, "beforeend"))
+        return element;
+    ec =  SYNTAX_ERR;
+    return nullptr;
+}
+
+void Element::insertAdjacentHTML(const String& where, const String& markup, ExceptionCode& ec)
+{
+    Element* contextElement = contextElementForInsertion(where, this, ec);
+    if (!contextElement)
+        return;
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(*contextElement, markup, AllowScriptingContent, ec);
+    if (!fragment)
+        return;
+    insertAdjacent(where, fragment.releaseNonNull(), ec);
+}
+
+void Element::insertAdjacentText(const String& where, const String& text, ExceptionCode& ec)
+{
+    insertAdjacent(where, document().createTextNode(text), ec);
+}
+
 } // namespace WebCore

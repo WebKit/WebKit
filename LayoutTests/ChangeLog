@@ -1,3 +1,16 @@
+2016-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Move insertAdjacent*() API from HTMLElement to Element
+        https://bugs.webkit.org/show_bug.cgi?id=160567
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline several tests to reflect behavior change.
+
+        * fast/dom/HTMLElement/insertAdjacentHTML-errors-expected.txt:
+        * fast/dom/HTMLElement/script-tests/insertAdjacentHTML-errors.js:
+        * fast/dynamic/insertAdjacentElement-expected.txt:
+
 2016-08-04  Benjamin Poulain  <benjamin@webkit.org>
 
         Add some extra test coverage for active touch event handler on subdocuments

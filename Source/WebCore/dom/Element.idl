@@ -143,6 +143,10 @@
     [Reflect] attribute DOMString uiactions;
 #endif
 
+    [RaisesException] Element insertAdjacentElement(DOMString where, Element element);
+    [RaisesException] void insertAdjacentHTML(DOMString where, DOMString html);
+    [RaisesException] void insertAdjacentText(DOMString where, DOMString text);
+
     [Conditional=POINTER_LOCK] void requestPointerLock();
 
     // CSS Regions API

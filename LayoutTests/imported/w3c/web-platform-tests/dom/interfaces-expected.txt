@@ -764,8 +764,8 @@ PASS Element interface: operation webkitMatchesSelector(DOMString)
 PASS Element interface: operation getElementsByTagName(DOMString) 
 PASS Element interface: operation getElementsByTagNameNS(DOMString,DOMString) 
 PASS Element interface: operation getElementsByClassName(DOMString) 
-FAIL Element interface: operation insertAdjacentElement(DOMString,Element) assert_own_property: interface prototype object missing non-static operation expected property "insertAdjacentElement" missing
-FAIL Element interface: operation insertAdjacentText(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "insertAdjacentText" missing
+PASS Element interface: operation insertAdjacentElement(DOMString,Element) 
+PASS Element interface: operation insertAdjacentText(DOMString,DOMString) 
 PASS Element interface: attribute children 
 PASS Element interface: attribute firstElementChild 
 PASS Element interface: attribute lastElementChild 
@@ -835,10 +835,10 @@ PASS Element interface: element must inherit property "getElementsByTagNameNS" w
 PASS Element interface: calling getElementsByTagNameNS(DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "getElementsByClassName" with the proper type (31) 
 PASS Element interface: calling getElementsByClassName(DOMString) on element with too few arguments must throw TypeError 
-FAIL Element interface: element must inherit property "insertAdjacentElement" with the proper type (32) assert_inherits: property "insertAdjacentElement" not found in prototype chain
-FAIL Element interface: calling insertAdjacentElement(DOMString,Element) on element with too few arguments must throw TypeError assert_inherits: property "insertAdjacentElement" not found in prototype chain
-FAIL Element interface: element must inherit property "insertAdjacentText" with the proper type (33) assert_inherits: property "insertAdjacentText" not found in prototype chain
-FAIL Element interface: calling insertAdjacentText(DOMString,DOMString) on element with too few arguments must throw TypeError assert_inherits: property "insertAdjacentText" not found in prototype chain
+PASS Element interface: element must inherit property "insertAdjacentElement" with the proper type (32) 
+PASS Element interface: calling insertAdjacentElement(DOMString,Element) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "insertAdjacentText" with the proper type (33) 
+PASS Element interface: calling insertAdjacentText(DOMString,DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "children" with the proper type (34) 
 PASS Element interface: element must inherit property "firstElementChild" with the proper type (35) 
 PASS Element interface: element must inherit property "lastElementChild" with the proper type (36) 

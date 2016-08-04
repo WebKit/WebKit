@@ -1,5 +1,17 @@
 2016-08-04  Chris Dumez  <cdumez@apple.com>
 
+        Move insertAdjacent*() API from HTMLElement to Element
+        https://bugs.webkit.org/show_bug.cgi?id=160567
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/domparsing/insert_adjacent_html-expected.txt:
+
+2016-08-04  Chris Dumez  <cdumez@apple.com>
+
         [[Prototype]] property of an interface object for a callback interface must be the Object.prototype object
         https://bugs.webkit.org/show_bug.cgi?id=160555
 

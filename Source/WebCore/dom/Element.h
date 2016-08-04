@@ -295,6 +295,10 @@ public:
     void setTabIndex(int);
     virtual Element* focusDelegate();
 
+    Element* insertAdjacentElement(const String& where, Element& newChild, ExceptionCode&);
+    void insertAdjacentHTML(const String& where, const String& html, ExceptionCode&);
+    void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
+
     const RenderStyle* computedStyle(PseudoId = NOPSEUDO) override;
 
     bool needsStyleInvalidation() const;
@@ -589,6 +593,8 @@ private:
     enum HTMLDocumentNamedItemMapsUpdatingCondition { AlwaysUpdateHTMLDocumentNamedItemMaps, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute };
     void updateIdForDocument(HTMLDocument&, const AtomicString& oldId, const AtomicString& newId, HTMLDocumentNamedItemMapsUpdatingCondition);
     void updateLabel(TreeScope&, const AtomicString& oldForAttributeValue, const AtomicString& newForAttributeValue);
+
+    Node* insertAdjacent(const String& where, Ref<Node>&& newChild, ExceptionCode&);
 
     void scrollByUnits(int units, ScrollGranularity);
 

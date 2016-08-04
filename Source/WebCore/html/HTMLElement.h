@@ -49,10 +49,6 @@ public:
     void setInnerText(const String&, ExceptionCode&);
     void setOuterText(const String&, ExceptionCode&);
 
-    Element* insertAdjacentElement(const String& where, Element& newChild, ExceptionCode&);
-    void insertAdjacentHTML(const String& where, const String& html, ExceptionCode&);
-    void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
-
     virtual bool hasCustomFocusLogic() const;
     bool supportsFocus() const override;
 
@@ -130,7 +126,6 @@ private:
 
     virtual HTMLFormElement* virtualForm() const;
 
-    Node* insertAdjacent(const String& where, Ref<Node>&& newChild, ExceptionCode&);
     Ref<DocumentFragment> textToFragment(const String&, ExceptionCode&);
 
     void dirAttributeChanged(const AtomicString&);
