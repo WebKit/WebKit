@@ -49,6 +49,9 @@ template<typename T> EnableIfFloatingPointType<T, Optional<T>> convertOptional(J
 template<typename T, typename U> EnableIfIntegralType<T> convertOptional(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration, U&& defaultValue);
 template<typename T, typename U> EnableIfFloatingPointType<T> convertOptional(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite, U&& defaultValue);
 
+enum class IsNullable { No, Yes };
+template<typename T, typename JST> T* convertWrapperType(JSC::ExecState&, JSC::JSValue, IsNullable);
+
 // This is where the implementation of the things declared above begins:
 
 template<typename T> T convert(JSC::ExecState& state, JSC::JSValue value)
@@ -64,6 +67,14 @@ template<typename T> inline EnableIfIntegralType<T> convert(JSC::ExecState& stat
 template<typename T> inline EnableIfFloatingPointType<T> convert(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
 {
     return Converter<T>::convert(state, value, allow);
+}
+
+template<typename T, typename JST> inline T* convertWrapperType(JSC::ExecState& state, JSC::JSValue value, IsNullable isNullable)
+{
+    T* object = JST::toWrapped(value);
+    if (!object && (isNullable == IsNullable::No || !value.isUndefinedOrNull()))
+        throwTypeError(&state);
+    return object;
 }
 
 template<typename T> inline typename Converter<T>::OptionalValue convertOptional(JSC::ExecState& state, JSC::JSValue value)

@@ -683,7 +683,14 @@ sub parseDictionaryMember
             $member->isOptional(0);
         }
         $member->extendedAttributes($extendedAttributeList);
-        $member->type($self->parseType());
+        my $type = $self->parseType();
+        if (typeHasNullableSuffix($type)) {
+            $member->isNullable(1);
+        } else {
+            $member->isNullable(0);
+        }
+        $member->type(typeRemoveNullableSuffix($type));
+
         my $nameToken = $self->getToken();
         $self->assertTokenType($nameToken, IdentifierToken);
         $member->name($nameToken->value);

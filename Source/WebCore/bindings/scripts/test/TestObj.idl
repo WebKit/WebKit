@@ -403,6 +403,7 @@ dictionary TestDictionary {
     long long largeIntegerWithDefault = 0;
     unsigned long long unsignedLargeInteger;
     unsigned long long unsignedLargeIntegerWithDefault = 0;
+    Node? nullableNode = null;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {
