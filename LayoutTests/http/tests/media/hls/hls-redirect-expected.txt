@@ -1,0 +1,4 @@
+
+load metadata OK
+END OF TEST
+
