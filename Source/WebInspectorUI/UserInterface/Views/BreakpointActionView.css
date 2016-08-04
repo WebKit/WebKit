@@ -27,30 +27,28 @@
     margin-bottom: 3px;
 }
 
-.breakpoint-action-append-button,
-.breakpoint-action-remove-button {
-    border: 1px solid hsl(0, 0%, 66%);
-    border-radius: 10px;
-    background-size: 16px 16px;
-    background-origin: border-box;
-    width: 16px;
-    height: 16px;
+.breakpoint-action-button-container {
     float: right;
-    margin-left: 2px;
-    margin-top: 2px;
 }
 
-.breakpoint-action-append-button:active,
-.breakpoint-action-remove-button:active {
-    filter: brightness(50%);
+.breakpoint-action-append-button,
+.breakpoint-action-remove-button {
+    background-origin: border-box;
+    width: 13px;
+    height: 13px;
+    margin-left: 5px;
+    margin-top: 2px;
+    background-color: transparent;
+    border: none;
+    opacity: 0.6;
 }
 
 .breakpoint-action-append-button {
-    background-image: url(../Images/BreakpointActionAdd.svg), linear-gradient(to bottom, hsl(0, 0%, 98%), hsl(0, 0%, 78%));
+    background-image: url(../Images/Plus13.svg);
 }
 
 .breakpoint-action-remove-button {
-    background-image: url(../Images/BreakpointActionRemove.svg), linear-gradient(to bottom, hsl(0, 0%, 98%), hsl(0, 0%, 78%));
+    background-image: url(../Images/Minus.svg);
 }
 
 .breakpoint-action-block-body {

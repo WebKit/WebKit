@@ -70,6 +70,10 @@
     height: auto;
 }
 
+.wide .edit-breakpoint-popover-condition > .CodeMirror {
+    width: 360px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content width. */
+}
+
 #edit-breakpoint-popover-ignore {
     width: 40px;
     margin-right: 4px;

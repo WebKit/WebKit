@@ -54,12 +54,15 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
             picker.add(option);
         }
 
-        var appendActionButton = header.appendChild(document.createElement("button"));
+        let buttonContainerElement = header.appendChild(document.createElement("div"));
+        buttonContainerElement.classList.add("breakpoint-action-button-container");
+
+        let appendActionButton = buttonContainerElement.appendChild(document.createElement("button"));
         appendActionButton.className = "breakpoint-action-append-button";
         appendActionButton.addEventListener("click", this._appendActionButtonClicked.bind(this));
         appendActionButton.title = WebInspector.UIString("Add new breakpoint action after this action");
 
-        var removeActionButton = header.appendChild(document.createElement("button"));
+        let removeActionButton = buttonContainerElement.appendChild(document.createElement("button"));
         removeActionButton.className = "breakpoint-action-remove-button";
         removeActionButton.addEventListener("click", this._removeAction.bind(this));
         removeActionButton.title = WebInspector.UIString("Remove this breakpoint action");
