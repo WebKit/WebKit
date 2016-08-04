@@ -197,6 +197,9 @@ public:
     void deleteNode(Node*);
     unsigned maxNodeCount() const { return m_nodes.size(); }
     Node* nodeAt(unsigned index) const { return m_nodes[index]; }
+    void packNodeIndices();
+
+    Vector<AbstractValue>& abstractValuesCache() { return m_abstractValuesCache; }
 
     void dethread();
     
@@ -954,6 +957,7 @@ private:
     }
 
     B3::SparseCollection<Node> m_nodes;
+    Vector<AbstractValue> m_abstractValuesCache;
 };
 
 } } // namespace JSC::DFG

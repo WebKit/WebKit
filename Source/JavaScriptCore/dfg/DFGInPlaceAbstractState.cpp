@@ -41,6 +41,7 @@ static const bool verbose = false;
 
 InPlaceAbstractState::InPlaceAbstractState(Graph& graph)
     : m_graph(graph)
+    , m_abstractValues(graph.abstractValuesCache())
     , m_variables(m_graph.m_codeBlock->numParameters(), graph.m_localVars)
     , m_block(0)
 {
@@ -55,6 +56,11 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->valuesAtHead.numberOfLocals());
     ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
+
+    // Certain phases insert nodes in a block after running through it.
+    // We cannot reserve the space for AbstractValues when initializing AbstractState because the number of values
+    // can increase as we execute. Instead, we increase the size as needed before processing each block.
+    m_abstractValues.resize(m_graph.maxNodeCount());
     
     for (size_t i = 0; i < basicBlock->size(); i++)
         forNode(basicBlock->at(i)).clear();

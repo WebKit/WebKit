@@ -48,7 +48,7 @@ public:
     
     AbstractValue& forNode(Node* node)
     {
-        return node->value;
+        return m_abstractValues[node->index()];
     }
     
     AbstractValue& forNode(Edge edge)
@@ -132,7 +132,8 @@ private:
     static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode);
     
     Graph& m_graph;
-    
+
+    Vector<AbstractValue>& m_abstractValues;
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
     

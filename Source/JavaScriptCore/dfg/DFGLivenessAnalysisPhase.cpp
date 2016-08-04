@@ -195,6 +195,8 @@ private:
 
 bool performLivenessAnalysis(Graph& graph)
 {
+    graph.packNodeIndices();
+
     return runPhase<LivenessAnalysisPhase>(graph);
 }
 

@@ -2362,10 +2362,6 @@ private:
     uintptr_t m_opInfo;
     uintptr_t m_opInfo2;
 
-public:
-    // Fields used by various analyses.
-    AbstractValue value;
-    
     // Miscellaneous data that is usually meaningless, but can hold some analysis results
     // if you ask right. For example, if you do Graph::initializeNodeOwners(), Node::owner
     // will tell you which basic block a node belongs to. You cannot rely on this persisting

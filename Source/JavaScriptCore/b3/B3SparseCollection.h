@@ -74,6 +74,42 @@ public:
         m_vector[value->m_index] = nullptr;
     }
 
+    void packIndices()
+    {
+        if (m_indexFreeList.isEmpty())
+            return;
+
+        unsigned holeIndex = 0;
+        unsigned endIndex = m_vector.size();
+
+        while (true) {
+            while (holeIndex < endIndex && m_vector[holeIndex])
+                ++holeIndex;
+
+            if (holeIndex == endIndex)
+                break;
+            ASSERT(holeIndex < m_vector.size());
+            ASSERT(!m_vector[holeIndex]);
+
+            do {
+                --endIndex;
+            } while (!m_vector[endIndex] && endIndex > holeIndex);
+
+            if (holeIndex == endIndex)
+                break;
+            ASSERT(endIndex > holeIndex);
+            ASSERT(m_vector[endIndex]);
+
+            auto& value = m_vector[endIndex];
+            value->m_index = holeIndex;
+            m_vector[holeIndex] = WTFMove(value);
+            ++holeIndex;
+        }
+
+        m_indexFreeList.resize(0);
+        m_vector.resize(endIndex);
+    }
+
     unsigned size() const { return m_vector.size(); }
     bool isEmpty() const { return m_vector.isEmpty(); }
     

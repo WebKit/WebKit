@@ -578,6 +578,11 @@ void Graph::deleteNode(Node* node)
     m_nodes.remove(node);
 }
 
+void Graph::packNodeIndices()
+{
+    m_nodes.packIndices();
+}
+
 void Graph::dethread()
 {
     if (m_form == LoadStore || m_form == SSA)

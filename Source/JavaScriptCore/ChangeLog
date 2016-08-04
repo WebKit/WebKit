@@ -1,3 +1,45 @@
+2016-08-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Improve the memory locality of DFG Node's AbstractValues
+        https://bugs.webkit.org/show_bug.cgi?id=160443
+
+        Reviewed by Mark Lam.
+
+        The AbstractInterpreter spends a lot of time on memory operations
+        for AbstractValues. This patch attempts to improve the situation
+        by putting the values closer together in memory.
+
+        First, AbstractValue is moved out of DFG::Node and it kept in
+        a vector addressed by node indices.
+
+        I initially moved them to InPlaceAbstractState but I quickly discovered
+        initializing the values in the vector was costly.
+        I moved the vector to Graph as a cache shared by every instantiation of
+        InPlaceAbstractState. It is mainly there to avoid constructors and destructors
+        of AbstractValue. The patch of https://bugs.webkit.org/show_bug.cgi?id=160370
+        should also help eventually.
+
+        I instrumented CFA to find how packed is SparseCollection.
+        The answer is it can be very sparse, which is bad for CFA.
+        I added packIndices() to repack the collection before running
+        liveness since that's where we start using the memory intensively.
+        This is a measurable improvement but it implies we can no longer
+        keep indices on a side channel between phases since they may change.
+
+        * b3/B3SparseCollection.h:
+        (JSC::B3::SparseCollection::packIndices):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::packNodeIndices):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::abstractValuesCache):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::InPlaceAbstractState):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::forNode):
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::performLivenessAnalysis):
+        * dfg/DFGNode.h:
+
 2016-08-03  Caitlin Potter  <caitp@igalia.com>
 
         Clarify SyntaxErrors around yield and unskip tests
