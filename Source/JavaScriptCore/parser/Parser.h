@@ -667,6 +667,8 @@ public:
             destSet.add(info->usedVariables()[i]);
     }
 
+    class MaybeParseAsGeneratorForScope;
+
 private:
     void setIsFunction()
     {

@@ -1,3 +1,17 @@
+2016-08-03  Caitlin Potter  <caitp@igalia.com>
+
+        Clarify SyntaxErrors around yield and unskip tests
+        https://bugs.webkit.org/show_bug.cgi?id=158460
+
+        Reviewed by Saam Barati.
+
+        Fix and unskip tests which erroneously asserted that `yield` is not a
+        valid BindingIdentifier, and improve error message for YieldExpressions
+        occuring in Arrow formal parameters.
+
+        * stress/generator-syntax.js:
+        * stress/yield-out-of-generator.js:
+
 2016-08-03  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r203368): broke some test262 tests

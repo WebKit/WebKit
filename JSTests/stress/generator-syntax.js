@@ -1,6 +1,3 @@
-// <https://webkit.org/b/158460> Clarify SyntaxErrors around yield and unskip tests
-//@ skip
-
 function testSyntax(script) {
     try {
         eval(script);
@@ -41,40 +38,75 @@ class Hello {
 
 testSyntaxError(`
 function ** gen() { }
-`, `SyntaxError: Unexpected token '*'`);
+`, `SyntaxError: Unexpected token '**'`);
 
-// http://ecma-international.org/ecma-262/6.0/#sec-arrow-function-definitions-static-semantics-early-errors
-testSyntaxError(`
+// "yield" is never a YieldExpression in a ConciseBody (per http://ecma-international.org/ecma-262/6.0/#sec-arrow-function-definitions
+// and https://tc39.github.io/ecma262/#prod-ConciseBody)
+testSyntax(`
 var value = () => {
     yield
 }
-`, `SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.`);
+`);
 
-testSyntaxError(`
+testSyntax(`
 var value = (val = yield) => {
 }
-`, `SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.`);
+`);
 
-testSyntaxError(`
+// Confusingly, FormalParameters[~Yield] does not product a SyntaxError for "yield", even
+// inside of a generator (https://tc39.github.io/ecma262/#prod-FunctionDeclaration),
+// but instead resolves "yield" as a BindingIdentifier
+testSyntax(`
 function *gen() {
     function ng(val = yield) {
     }
 }
-`, `SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.`);
+`);
 
+// Arrow formal parameters within Generators are parameterized with [+Yield], but are
+// still forbidden from including YieldExpressions in ArrowFormalParameters.
+// (https://tc39.github.io/ecma262/#prod-ArrowFormalParameters)
 testSyntaxError(`
+var yield;
 function *gen() {
     var ng = (val = yield) => {
     }
 }
-`, `SyntaxError: Unexpected token '=>'. Expected ';' after variable declaration.`);
+`, `SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.`);
 
-// http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
+(function testYieldBindingIdentifier() {
+    var yield = "hello!";
+    function* gen() {
+        yield (function(x = yield) { return x; })();
+    }
+    if (gen().next() !== "hello!")
+        throw new Error("Expected BindingIdentifier but found YieldExpression");
+})();
+
+testSyntax(`
+function* gen() {
+    var ng = (it = function*() { yield 1; }) => {
+        return it().next();
+    }
+    yield ng();
+}
+`);
+
 testSyntaxError(`
-function gen(val = yield) {
+function* gen() {
+    var ng = (it = function() { yield 1; }) => {
+        return it().next();
+    }
+    yield ng();
 }
 `, `SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.`);
 
+testSyntax(`
+function gen(val = yield) {
+}
+`);
+
+// http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
 testSyntaxError(`
 function *gen(val = yield) {
 }

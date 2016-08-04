@@ -240,6 +240,12 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     next();
 }
 
+class Scope::MaybeParseAsGeneratorForScope : public SetForScope<bool> {
+public:
+    MaybeParseAsGeneratorForScope(ScopeRef& scope, bool shouldParseAsGenerator)
+        : SetForScope<bool>(scope->m_isGenerator, shouldParseAsGenerator) { }
+};
+
 template <typename LexerType>
 Parser<LexerType>::~Parser()
 {
@@ -2026,8 +2032,14 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
 
         if (loadCachedFunction())
             return true;
-        parseFunctionParameters(syntaxChecker, mode, functionInfo);
-        propagateError();
+
+        {
+            // Parse formal parameters with [+Yield] parameterization, in order to ban YieldExpressions
+            // in ArrowFormalParameters, per ES6 #sec-arrow-function-definitions-static-semantics-early-errors.
+            Scope::MaybeParseAsGeneratorForScope parseAsGenerator(functionScope, upperScopeIsGenerator);
+            parseFunctionParameters(syntaxChecker, mode, functionInfo);
+            propagateError();
+        }
 
         matchOrFail(ARROWFUNCTION, "Expected a '=>' after arrow function parameter declaration");
 
@@ -3173,7 +3185,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseYieldExpress
     //     yield [no LineTerminator here] * AssignmentExpression[?In, Yield]
 
     // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions
-    failIfFalse(currentScope()->isGenerator(), "Cannot use yield expression out of generator");
+    failIfFalse(currentScope()->isGenerator() && !currentScope()->isArrowFunctionBoundary(), "Cannot use yield expression out of generator");
 
     // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
     failIfTrue(m_parserState.functionParsePhase == FunctionParsePhase::Parameters, "Cannot use yield expression within parameters");

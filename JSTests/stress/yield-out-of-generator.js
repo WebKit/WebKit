@@ -1,6 +1,3 @@
-// <https://webkit.org/b/158460> Clarify SyntaxErrors around yield and unskip tests
-//@ skip
-
 function testSyntax(script) {
     try {
         eval(script);
@@ -24,53 +21,53 @@ function testSyntaxError(script, message) {
         throw new Error("Bad error: " + String(error));
 }
 
-testSyntaxError(`
+testSyntax(`
 yield;
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`);
 
 testSyntaxError(`
 yield*;
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`, "SyntaxError: Unexpected token ';'");
 
 testSyntaxError(`
 yield 0;
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`, "SyntaxError: Unexpected number '0'");
 
-testSyntaxError(`
+testSyntax(`
 yield* 0;
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`);
 
-testSyntaxError(`
+testSyntax(`
 function hello() {
     yield;
 }
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`);
 
 testSyntaxError(`
 function hello() {
     yield*;
 }
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`, "SyntaxError: Unexpected token ';'");
 
 testSyntaxError(`
 function hello() {
     yield 0;
 }
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`, "SyntaxError: Unexpected number '0'");
 
-testSyntaxError(`
+testSyntax(`
 function hello() {
     yield* 0;
 }
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`);
 
-testSyntaxError(`
+testSyntax(`
 function *gen() {
     function hello() {
         yield;
     }
 }
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`);
 
 testSyntaxError(`
 function *gen() {
@@ -78,7 +75,7 @@ function *gen() {
         yield*;
     }
 }
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`, "SyntaxError: Unexpected token ';'");
 
 testSyntaxError(`
 function *gen() {
@@ -86,15 +83,15 @@ function *gen() {
         yield 0;
     }
 }
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`, "SyntaxError: Unexpected number '0'");
 
-testSyntaxError(`
+testSyntax(`
 function *gen() {
     function hello() {
         yield* 0;
     }
 }
-`, "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.");
+`);
 
 testSyntax(`
 function *gen() {
