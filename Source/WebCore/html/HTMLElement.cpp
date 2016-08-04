@@ -655,8 +655,7 @@ Node* HTMLElement::insertAdjacent(const String& where, Ref<Node>&& newChild, Exc
         return (parent && parent->insertBefore(newChild, nextSibling(), ec)) ? newChild.ptr() : nullptr;
     }
     
-    // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative.
-    ec = NOT_SUPPORTED_ERR;
+    ec = SYNTAX_ERR;
     return nullptr;
 }
 

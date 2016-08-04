@@ -1,4 +1,4 @@
-Caught expected exception: NotSupportedError (DOM Exception 9): The operation is not supported.
+Caught expected exception: SyntaxError (DOM Exception 12): The string did not match the expected pattern.
 Caught expected exception: TypeError: Argument 2 ('element') to HTMLElement.insertAdjacentElement must be an instance of Element
 1 (black) 2 (green) 3 (green) 4 (black) 
 

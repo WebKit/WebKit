@@ -1,6 +1,5 @@
 
-FAIL Inserting to an invalid location should cause a Syntax Error exception assert_throws: function "function () {
-    target.insertAdjacentElement("test", do..." threw object "NotSupportedError (DOM Exception 9): The operation is not..." that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+PASS Inserting to an invalid location should cause a Syntax Error exception 
 PASS Inserted element should be target element's previous sibling for 'beforebegin' case 
 PASS Inserted element should be target element's first child for 'afterbegin' case 
 PASS Inserted element should be target element's last child for 'beforeend' case 

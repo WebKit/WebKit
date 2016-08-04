@@ -1,3 +1,15 @@
+2016-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Element.insertAdjacent*() should throw a SYNTAX_ERR for invalid "where" parameter
+        https://bugs.webkit.org/show_bug.cgi?id=160514
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline existing test now that a different exception is thrown.
+
+        * fast/dynamic/insertAdjacentElement-expected.txt:
+        * fast/dynamic/insertAdjacentText-expected.txt:
+
 2016-08-04  Youenn Fablet  <youenn@apple.com>
 
         DocumentThreadableLoader should pass the fetch mode to underlying loader code
