@@ -1,3 +1,31 @@
+2016-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Crash under NavigationState::NavigationClient::processDidCrash()
+        https://bugs.webkit.org/show_bug.cgi?id=160563
+        <rdar://problem/19814215>
+
+        Reviewed by Sam Weinig.
+
+        When WebPageProxy::close() gets called, make sure we destroy the page's
+        navigationClient. If we don't then the navigationClient can outlive the
+        navigationState, causing crashes when navigationClient tries to use its
+        stale navigationState member reference later on. This happens when the
+        WebPageProxy outlives its WKWebView because:
+        1. WebPageProxy owns the navigationClient
+        2. WKWebView owns the navigationState
+        3. navigationClient has a reference to the navigationState as member.
+
+        WebPageProxy can outlive the WKWebView because it is refCounted. It
+        can happen for example when the client application uses the
+        RelatedPage API as this extend the lifetime of the related WebPage's
+        proxy but the application may not keep the related WKWebView alive.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        Note that it is safe to null out m_navigationClient here instead of
+        creating a fresh one because there is a null check before every use
+        of m_navigationClient in WebPageProxy.
+
 2016-08-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Deduplicate WebProcessPool::setIgnoreTLSErrors
