@@ -1226,8 +1226,6 @@ bool Node::isEqualNode(Node* other) const
             return false;
         if (thisDocType.systemId() != otherDocType.systemId())
             return false;
-        if (thisDocType.internalSubset() != otherDocType.internalSubset())
-            return false;
         break;
         }
     case Node::ELEMENT_NODE: {

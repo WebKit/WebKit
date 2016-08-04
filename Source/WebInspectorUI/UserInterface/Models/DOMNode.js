@@ -122,7 +122,6 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         } else if (this._nodeType === Node.DOCUMENT_TYPE_NODE) {
             this.publicId = payload.publicId;
             this.systemId = payload.systemId;
-            this.internalSubset = payload.internalSubset;
         } else if (this._nodeType === Node.DOCUMENT_NODE) {
             this.documentURL = payload.documentURL;
             this.xmlVersion = payload.xmlVersion;

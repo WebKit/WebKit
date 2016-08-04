@@ -1306,9 +1306,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 } else if (node.systemId)
                     docTypeElement.append(" SYSTEM \"" + node.systemId + "\"");
 
-                if (node.internalSubset)
-                    docTypeElement.append(" [" + node.internalSubset + "]");
-
                 docTypeElement.append(">");
                 break;
 

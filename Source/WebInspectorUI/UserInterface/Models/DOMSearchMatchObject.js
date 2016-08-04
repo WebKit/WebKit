@@ -68,9 +68,6 @@ WebInspector.DOMSearchMatchObject = class DOMSearchMatchObject extends WebInspec
             } else if (domNode.systemId)
                 title += " SYSTEM \"" + domNode.systemId + "\"";
 
-            if (domNode.internalSubset)
-                title += " [" + domNode.internalSubset + "]";
-
             return title + ">";
 
         case Node.CDATA_SECTION_NODE:

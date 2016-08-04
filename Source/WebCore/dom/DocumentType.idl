@@ -29,13 +29,13 @@
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     [ImplementedAs=entitiesForBindings] readonly attribute NamedNodeMap entities;
     [ImplementedAs=notationsForBindings] readonly attribute NamedNodeMap notations;
+    [ImplementedAs=internalSubsetForBindings] readonly attribute DOMString? internalSubset;
 #endif
 
     // DOM Level 2
 
     readonly attribute DOMString publicId;
     readonly attribute DOMString systemId;
-    readonly attribute DOMString? internalSubset;
 };
 
 DocumentType implements ChildNode;

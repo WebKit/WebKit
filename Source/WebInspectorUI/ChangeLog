@@ -1,3 +1,19 @@
+2016-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop DocumentType.internalSubset attribute
+        https://bugs.webkit.org/show_bug.cgi?id=160530
+
+        Reviewed by Alex Christensen.
+
+        Drop DocumentType.internalSubset attribute.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode): Deleted.
+        * UserInterface/Models/DOMSearchMatchObject.js:
+        (WebInspector.DOMSearchMatchObject.titleForDOMNode): Deleted.
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._nodeTitleInfo): Deleted.
+
 2016-08-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cmd-L shortcut for Jump to Line conflicts with selecting URL of inspected page

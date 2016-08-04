@@ -74,7 +74,7 @@
 - (NSString *)internalSubset
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->internalSubset();
+    return IMPL->internalSubsetForBindings();
 }
 
 - (void)remove

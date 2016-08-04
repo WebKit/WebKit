@@ -1401,7 +1401,6 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         DocumentType& docType = downcast<DocumentType>(*node);
         value->setPublicId(docType.publicId());
         value->setSystemId(docType.systemId());
-        value->setInternalSubset(docType.internalSubset());
     } else if (is<Attr>(*node)) {
         Attr& attribute = downcast<Attr>(*node);
         value->setName(attribute.name());

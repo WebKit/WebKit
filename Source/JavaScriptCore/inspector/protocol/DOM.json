@@ -47,7 +47,6 @@
                 { "name": "baseURL", "type": "string", "optional": true, "description": "Base URL that <code>Document</code> or <code>FrameOwner</code> node uses for URL completion." },
                 { "name": "publicId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s publicId." },
                 { "name": "systemId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s systemId." },
-                { "name": "internalSubset", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s internalSubset." },
                 { "name": "xmlVersion", "type": "string", "optional": true, "description": "<code>Document</code>'s XML version in case of XML documents." },
                 { "name": "name", "type": "string", "optional": true, "description": "<code>Attr</code>'s name." },
                 { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value." },
