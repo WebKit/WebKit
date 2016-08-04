@@ -170,25 +170,127 @@ list(APPEND WebCore_SOURCES
 
     bindings/objc/DOM.mm
     bindings/objc/DOMAbstractView.mm
+    bindings/objc/DOMAttr.mm
+    bindings/objc/DOMBlob.mm
+    bindings/objc/DOMCDATASection.mm
+    bindings/objc/DOMCharacterData.mm
+    bindings/objc/DOMComment.mm
+    bindings/objc/DOMCounter.mm
     bindings/objc/DOMCSS.mm
+    bindings/objc/DOMCSSCharsetRule.mm
+    bindings/objc/DOMCSSFontFaceRule.mm
+    bindings/objc/DOMCSSImportRule.mm
+    bindings/objc/DOMCSSMediaRule.mm
+    bindings/objc/DOMCSSPageRule.mm
+    bindings/objc/DOMCSSPrimitiveValue.mm
+    bindings/objc/DOMCSSRule.mm
+    bindings/objc/DOMCSSRuleList.mm
+    bindings/objc/DOMCSSStyleDeclaration.mm
+    bindings/objc/DOMCSSStyleRule.mm
+    bindings/objc/DOMCSSStyleSheet.mm
+    bindings/objc/DOMCSSUnknownRule.mm
+    bindings/objc/DOMCSSValue.mm
+    bindings/objc/DOMCSSValueList.mm
     bindings/objc/DOMCustomXPathNSResolver.mm
+    bindings/objc/DOMDOMImplementation.mm
+    bindings/objc/DOMDOMTokenList.mm
+    bindings/objc/DOMDocument.mm
+    bindings/objc/DOMDocumentFragment.mm
+    bindings/objc/DOMDocumentType.mm
+    bindings/objc/DOMElement.mm
+    bindings/objc/DOMEntityReference.mm
+    bindings/objc/DOMEvent.mm
     bindings/objc/DOMEvents.mm
+    bindings/objc/DOMFile.mm
+    bindings/objc/DOMFileList.mm
     bindings/objc/DOMHTML.mm
     bindings/objc/DOMHTMLAnchorElement.mm
+    bindings/objc/DOMHTMLAppletElement.mm
     bindings/objc/DOMHTMLAreaElement.mm
+    bindings/objc/DOMHTMLBRElement.mm
+    bindings/objc/DOMHTMLBaseElement.mm
+    bindings/objc/DOMHTMLBaseFontElement.mm
+    bindings/objc/DOMHTMLBodyElement.mm
+    bindings/objc/DOMHTMLButtonElement.mm
+    bindings/objc/DOMHTMLCanvasElement.mm
+    bindings/objc/DOMHTMLCollection.mm
+    bindings/objc/DOMHTMLDListElement.mm
+    bindings/objc/DOMHTMLDirectoryElement.mm
+    bindings/objc/DOMHTMLDivElement.mm
+    bindings/objc/DOMHTMLDocument.mm
+    bindings/objc/DOMHTMLElement.mm
+    bindings/objc/DOMHTMLEmbedElement.mm
+    bindings/objc/DOMHTMLFieldSetElement.mm
+    bindings/objc/DOMHTMLFontElement.mm
+    bindings/objc/DOMHTMLFormElement.mm
+    bindings/objc/DOMHTMLFrameElement.mm
+    bindings/objc/DOMHTMLFrameSetElement.mm
+    bindings/objc/DOMHTMLHRElement.mm
+    bindings/objc/DOMHTMLHeadElement.mm
+    bindings/objc/DOMHTMLHeadingElement.mm
+    bindings/objc/DOMHTMLHtmlElement.mm
+    bindings/objc/DOMHTMLIFrameElement.mm
     bindings/objc/DOMHTMLImageElement.mm
     bindings/objc/DOMHTMLInputElement.mm
+    bindings/objc/DOMHTMLLIElement.mm
+    bindings/objc/DOMHTMLLabelElement.mm
+    bindings/objc/DOMHTMLLegendElement.mm
     bindings/objc/DOMHTMLLinkElement.mm
+    bindings/objc/DOMHTMLMapElement.mm
+    bindings/objc/DOMHTMLMarqueeElement.mm
+    bindings/objc/DOMHTMLMediaElement.mm
+    bindings/objc/DOMHTMLMenuElement.mm
+    bindings/objc/DOMHTMLMetaElement.mm
+    bindings/objc/DOMHTMLModElement.mm
+    bindings/objc/DOMHTMLOListElement.mm
     bindings/objc/DOMHTMLObjectElement.mm
+    bindings/objc/DOMHTMLOptGroupElement.mm
+    bindings/objc/DOMHTMLOptionElement.mm
+    bindings/objc/DOMHTMLOptionsCollection.mm
+    bindings/objc/DOMHTMLParagraphElement.mm
+    bindings/objc/DOMHTMLParamElement.mm
+    bindings/objc/DOMHTMLPreElement.mm
+    bindings/objc/DOMHTMLQuoteElement.mm
+    bindings/objc/DOMHTMLScriptElement.mm
+    bindings/objc/DOMHTMLSelectElement.mm
+    bindings/objc/DOMHTMLStyleElement.mm
+    bindings/objc/DOMHTMLTableCaptionElement.mm
+    bindings/objc/DOMHTMLTableCellElement.mm
+    bindings/objc/DOMHTMLTableColElement.mm
+    bindings/objc/DOMHTMLTableElement.mm
+    bindings/objc/DOMHTMLTableRowElement.mm
+    bindings/objc/DOMHTMLTableSectionElement.mm
+    bindings/objc/DOMHTMLTextAreaElement.mm
+    bindings/objc/DOMHTMLTitleElement.mm
+    bindings/objc/DOMHTMLUListElement.mm
+    bindings/objc/DOMHTMLVideoElement.mm
     bindings/objc/DOMInternal.mm
+    bindings/objc/DOMKeyboardEvent.mm
+    bindings/objc/DOMMediaError.mm
     bindings/objc/DOMMediaList.mm
+    bindings/objc/DOMMouseEvent.mm
+    bindings/objc/DOMMutationEvent.mm
+    bindings/objc/DOMNamedNodeMap.mm
+    bindings/objc/DOMNode.mm
     bindings/objc/DOMNodeIterator.mm
+    bindings/objc/DOMNodeList.mm
     bindings/objc/DOMObject.mm
+    bindings/objc/DOMOverflowEvent.mm
+    bindings/objc/DOMProcessingInstruction.mm
+    bindings/objc/DOMProgressEvent.mm
+    bindings/objc/DOMRGBColor.mm
     bindings/objc/DOMRange.mm
+    bindings/objc/DOMRect.mm
     bindings/objc/DOMStyleSheet.mm
+    bindings/objc/DOMStyleSheetList.mm
+    bindings/objc/DOMText.mm
+    bindings/objc/DOMTextEvent.mm
+    bindings/objc/DOMTimeRanges.mm
     bindings/objc/DOMTreeWalker.mm
+    bindings/objc/DOMUIEvent.mm
     bindings/objc/DOMUIKitExtensions.mm
     bindings/objc/DOMUtility.mm
+    bindings/objc/DOMWheelEvent.mm
     bindings/objc/DOMXPath.mm
     bindings/objc/DOMXPathExpression.mm
     bindings/objc/DOMXPathResult.mm
@@ -759,173 +861,6 @@ set(ADDITIONAL_BINDINGS_DEPENDENCIES
     ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
     ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
 )
-
-set(ObjC_Bindings_IDL_FILES
-    css/CSSCharsetRule.idl
-    css/CSSFontFaceRule.idl
-    css/CSSImportRule.idl
-    css/CSSKeyframeRule.idl
-    css/CSSKeyframesRule.idl
-    css/CSSMediaRule.idl
-    css/CSSPageRule.idl
-    css/CSSPrimitiveValue.idl
-    css/CSSRule.idl
-    css/CSSRuleList.idl
-    css/CSSStyleDeclaration.idl
-    css/CSSStyleRule.idl
-    css/CSSStyleSheet.idl
-    css/CSSSupportsRule.idl
-    css/CSSUnknownRule.idl
-    css/CSSValue.idl
-    css/CSSValueList.idl
-    css/Counter.idl
-    css/RGBColor.idl
-    css/Rect.idl
-    css/StyleSheetList.idl
-    css/WebKitCSSFilterValue.idl
-    css/WebKitCSSRegionRule.idl
-    css/WebKitCSSTransformValue.idl
-
-    dom/Attr.idl
-    dom/BeforeLoadEvent.idl
-    dom/CDATASection.idl
-    dom/CharacterData.idl
-    dom/Comment.idl
-    dom/DOMImplementation.idl
-    dom/DOMNamedFlowCollection.idl
-    dom/Document.idl
-    dom/DocumentFragment.idl
-    dom/DocumentType.idl
-    dom/Element.idl
-    dom/Entity.idl
-    dom/EntityReference.idl
-    dom/Event.idl
-    dom/EventListener.idl
-    dom/EventTarget.idl
-    dom/KeyboardEvent.idl
-    dom/MessageEvent.idl
-    dom/MessagePort.idl
-    dom/MouseEvent.idl
-    dom/MutationEvent.idl
-    dom/NamedNodeMap.idl
-    dom/Node.idl
-    dom/NodeList.idl
-    dom/OverflowEvent.idl
-    dom/ProcessingInstruction.idl
-    dom/ProgressEvent.idl
-    dom/Text.idl
-    dom/TextEvent.idl
-    dom/UIEvent.idl
-    dom/WebKitNamedFlow.idl
-    dom/WheelEvent.idl
-
-    fileapi/Blob.idl
-    fileapi/File.idl
-    fileapi/FileList.idl
-
-    html/DOMTokenList.idl
-    html/HTMLAppletElement.idl
-    html/HTMLBRElement.idl
-    html/HTMLBaseElement.idl
-    html/HTMLBaseFontElement.idl
-    html/HTMLBodyElement.idl
-    html/HTMLButtonElement.idl
-    html/HTMLCanvasElement.idl
-    html/HTMLCollection.idl
-    html/HTMLDListElement.idl
-    html/HTMLDirectoryElement.idl
-    html/HTMLDivElement.idl
-    html/HTMLDocument.idl
-    html/HTMLElement.idl
-    html/HTMLEmbedElement.idl
-    html/HTMLFieldSetElement.idl
-    html/HTMLFontElement.idl
-    html/HTMLFormElement.idl
-    html/HTMLFrameElement.idl
-    html/HTMLFrameSetElement.idl
-    html/HTMLHRElement.idl
-    html/HTMLHeadElement.idl
-    html/HTMLHeadingElement.idl
-    html/HTMLHtmlElement.idl
-    html/HTMLIFrameElement.idl
-    html/HTMLLIElement.idl
-    html/HTMLLabelElement.idl
-    html/HTMLLegendElement.idl
-    html/HTMLMapElement.idl
-    html/HTMLMarqueeElement.idl
-    html/HTMLMenuElement.idl
-    html/HTMLMediaElement.idl
-    html/HTMLMetaElement.idl
-    html/HTMLModElement.idl
-    html/HTMLOListElement.idl
-    html/HTMLOptGroupElement.idl
-    html/HTMLOptionElement.idl
-    html/HTMLOptionsCollection.idl
-    html/HTMLParagraphElement.idl
-    html/HTMLParamElement.idl
-    html/HTMLPreElement.idl
-    html/HTMLQuoteElement.idl
-    html/HTMLScriptElement.idl
-    html/HTMLSelectElement.idl
-    html/HTMLStyleElement.idl
-    html/HTMLTableCaptionElement.idl
-    html/HTMLTableCellElement.idl
-    html/HTMLTableColElement.idl
-    html/HTMLTableElement.idl
-    html/HTMLTableRowElement.idl
-    html/HTMLTableSectionElement.idl
-    html/HTMLTextAreaElement.idl
-    html/HTMLTitleElement.idl
-    html/HTMLUListElement.idl
-    html/HTMLVideoElement.idl
-    html/MediaError.idl
-    html/TimeRanges.idl
-    html/ValidityState.idl
-)
-
-set(ObjC_BINDINGS_NO_MM
-    AbstractView
-    AbstractWorker
-    ChildNode
-    DOMURLMediaSource
-    DOMURLMediaStream
-    DOMWindowIndexedDatabase
-    DOMWindowNotifications
-    DOMWindowSpeechSynthesis
-    DOMWindowWebDatabase
-    EventListener
-    EventTarget
-    GlobalEventHandlers
-    HTMLMediaElementMediaSession
-    HTMLMediaElementMediaStream
-    NavigatorBattery
-    NavigatorContentUtils
-    NavigatorGamepad
-    NavigatorGeolocation
-    NavigatorMediaDevices
-    NavigatorUserMedia
-    NavigatorVibration
-    NodeFilter
-    NonDocumentTypeChildNode
-    NonElementParentNode
-    ParentNode
-    URLUtils
-    WindowEventHandlers
-    WindowOrWorkerGlobalScope
-    WorkerGlobalScopeIndexedDatabase
-    WorkerGlobalScopeNotifications
-    XPathNSResolver
-)
-
-GENERATE_BINDINGS(WebCore_DERIVED_SOURCES
-    "${ObjC_Bindings_IDL_FILES}"
-    "${WEBCORE_DIR}"
-    "${IDL_INCLUDES}"
-    "${FEATURE_DEFINES_OBJECTIVE_C}"
-    ${DERIVED_SOURCES_WEBCORE_DIR} DOM ObjC mm
-    ${IDL_ATTRIBUTES_FILE}
-    ${SUPPLEMENTAL_DEPENDENCY_FILE}
-    ${ADDITIONAL_BINDINGS_DEPENDENCIES})
 
 set(WebCoreTestSupport_LIBRARY_TYPE SHARED)
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)

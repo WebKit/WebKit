@@ -260,8 +260,6 @@ set(WebKitLegacy_FORWARDING_HEADERS_FILES
     mac/WebView/WebFrame.h
     mac/WebView/WebView.h
 
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMRange.h
-
     ${WEBCORE_DIR}/bindings/objc/DOMCore.h
     ${WEBCORE_DIR}/bindings/objc/DOMExtensions.h
 

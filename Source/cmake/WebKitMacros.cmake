@@ -79,38 +79,14 @@ macro(GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _fea
     foreach (_file ${_input_files})
         get_filename_component(_name ${_file} NAME_WE)
 
-        # Not all ObjC bindings generate a .mm file, and not all .mm files generated should be compiled.
-        if (${_generator} STREQUAL "ObjC")
-            list(FIND ObjC_BINDINGS_NO_MM ${_name} _no_mm_index)
-            if (${_no_mm_index} EQUAL -1)
-                set(_no_mm 0)
-            else ()
-                set(_no_mm 1)
-            endif ()
-        else ()
-            set(_no_mm 0)
-        endif ()
-
-        if (${_no_mm})
-            add_custom_command(
-                OUTPUT ${_destination}/${_prefix}${_name}.h
-                MAIN_DEPENDENCY ${_file}
-                DEPENDS ${COMMON_GENERATOR_DEPENDENCIES}
-                COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_GENERATOR} --defines "${_features}" --generator ${_generator} ${_idl_includes} --outputDir "${_destination}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --idlAttributesFile ${_idl_attributes_file} ${_supplemental_dependency} ${_file}
-                WORKING_DIRECTORY ${_base_dir}
-                VERBATIM)
-
-            list(APPEND ${_output_source} ${_destination}/${_prefix}${_name}.h)
-        else ()
-            add_custom_command(
-                OUTPUT ${_destination}/${_prefix}${_name}.${_extension} ${_destination}/${_prefix}${_name}.h
-                MAIN_DEPENDENCY ${_file}
-                DEPENDS ${COMMON_GENERATOR_DEPENDENCIES}
-                COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_GENERATOR} --defines "${_features}" --generator ${_generator} ${_idl_includes} --outputDir "${_destination}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --idlAttributesFile ${_idl_attributes_file} ${_supplemental_dependency} ${_file}
-                WORKING_DIRECTORY ${_base_dir}
-                VERBATIM)
-            list(APPEND ${_output_source} ${_destination}/${_prefix}${_name}.${_extension})
-        endif ()
+        add_custom_command(
+            OUTPUT ${_destination}/${_prefix}${_name}.${_extension} ${_destination}/${_prefix}${_name}.h
+            MAIN_DEPENDENCY ${_file}
+            DEPENDS ${COMMON_GENERATOR_DEPENDENCIES}
+            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_GENERATOR} --defines "${_features}" --generator ${_generator} ${_idl_includes} --outputDir "${_destination}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --idlAttributesFile ${_idl_attributes_file} ${_supplemental_dependency} ${_file}
+            WORKING_DIRECTORY ${_base_dir}
+            VERBATIM)
+        list(APPEND ${_output_source} ${_destination}/${_prefix}${_name}.${_extension})
     endforeach ()
 endmacro()
 
