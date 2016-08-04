@@ -1,5 +1,17 @@
 2016-08-03  Chris Dumez  <cdumez@apple.com>
 
+        Object.getOwnPropertyNames() on NamedNodeMap fails to return named properties
+        https://bugs.webkit.org/show_bug.cgi?id=160517
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/collections/namednodemap-supported-property-names-expected.txt:
+        * web-platform-tests/dom/nodes/attributes-expected.txt:
+
+2016-08-03  Chris Dumez  <cdumez@apple.com>
+
         Drop DocumentType.internalSubset attribute
         https://bugs.webkit.org/show_bug.cgi?id=160530
 

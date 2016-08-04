@@ -28,6 +28,8 @@
 #include "Attr.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "HTMLDocument.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
@@ -63,10 +65,15 @@ RefPtr<Attr> NamedNodeMap::removeNamedItem(const AtomicString& name, ExceptionCo
     return m_element.detachAttribute(index);
 }
 
-Vector<AtomicString> NamedNodeMap::supportedPropertyNames()
+Vector<String> NamedNodeMap::supportedPropertyNames()
 {
-    // FIXME: Should be implemented.
-    return Vector<AtomicString>();
+    Vector<String> names = m_element.getAttributeNames();
+    if (is<HTMLElement>(m_element) && is<HTMLDocument>(m_element.document())) {
+        names.removeAllMatching([](String& name) {
+            return name.convertToASCIILowercase() != name;
+        });
+    }
+    return names;
 }
 
 RefPtr<Attr> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode& ec)
