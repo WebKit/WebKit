@@ -60,14 +60,6 @@
     WebCore::raiseOnDOMError(ec);
 }
 
-- (void)setFloatValue:(unsigned short)unitType :(float)floatValue
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setFloatValue(unitType, floatValue, ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
 - (float)getFloatValue:(unsigned short)unitType
 {
     WebCore::JSMainThreadNullState state;
@@ -78,14 +70,6 @@
 }
 
 - (void)setStringValue:(unsigned short)stringType stringValue:(NSString *)stringValue
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setStringValue(stringType, stringValue, ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
-- (void)setStringValue:(unsigned short)stringType :(NSString *)stringValue
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
@@ -127,6 +111,20 @@
     DOMRGBColor *result = kit(WTF::getPtr(IMPL->getRGBColorValue(ec)));
     WebCore::raiseOnDOMError(ec);
     return result;
+}
+
+@end
+
+@implementation DOMCSSPrimitiveValue (DOMCSSPrimitiveValueDeprecated)
+
+- (void)setFloatValue:(unsigned short)unitType :(float)floatValue
+{
+    [self setFloatValue:unitType floatValue:floatValue];
+}
+
+- (void)setStringValue:(unsigned short)stringType :(NSString *)stringValue
+{
+    [self setStringValue:stringType stringValue:stringValue];
 }
 
 @end

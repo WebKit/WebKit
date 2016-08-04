@@ -96,12 +96,6 @@
     return kit(WTF::getPtr(IMPL->getNamedItemNS(namespaceURI, localName)));
 }
 
-- (DOMNode *)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getNamedItemNS(namespaceURI, localName)));
-}
-
 - (DOMNode *)setNamedItemNS:(DOMNode *)node
 {
     WebCore::JSMainThreadNullState state;
@@ -122,13 +116,18 @@
     return result;
 }
 
+@end
+
+@implementation DOMNamedNodeMap (DOMNamedNodeMapDeprecated)
+
+- (DOMNode *)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName
+{
+    return [self getNamedItemNS:namespaceURI localName:localName];
+}
+
 - (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName
 {
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->removeNamedItemNS(namespaceURI, localName, ec)));
-    WebCore::raiseOnDOMError(ec);
-    return result;
+    return [self removeNamedItemNS:namespaceURI localName:localName];
 }
 
 @end

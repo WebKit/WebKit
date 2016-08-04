@@ -65,21 +65,21 @@
     return result;
 }
 
-- (unsigned)insertRule:(NSString *)rule :(unsigned)index
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    unsigned result = IMPL->insertRule(rule, index, ec);
-    WebCore::raiseOnDOMError(ec);
-    return result;
-}
-
 - (void)deleteRule:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     IMPL->deleteRule(index, ec);
     WebCore::raiseOnDOMError(ec);
+}
+
+@end
+
+@implementation DOMCSSMediaRule (DOMCSSMediaRuleDeprecated)
+
+- (unsigned)insertRule:(NSString *)rule :(unsigned)index
+{
+    return [self insertRule:rule index:index];
 }
 
 @end

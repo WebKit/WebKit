@@ -213,33 +213,7 @@
     return nil;
 }
 
-- (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild
-{
-    WebCore::JSMainThreadNullState state;
-    if (!newChild)
-        WebCore::raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    if (IMPL->insertBefore(*core(newChild), core(refChild), ec))
-        return newChild;
-    WebCore::raiseOnDOMError(ec);
-    return nil;
-}
-
 - (DOMNode *)replaceChild:(DOMNode *)newChild oldChild:(DOMNode *)oldChild
-{
-    WebCore::JSMainThreadNullState state;
-    if (!newChild)
-        WebCore::raiseTypeErrorException();
-    if (!oldChild)
-        WebCore::raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    if (IMPL->replaceChild(*core(newChild), *core(oldChild), ec))
-        return oldChild;
-    WebCore::raiseOnDOMError(ec);
-    return nil;
-}
-
-- (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild
 {
     WebCore::JSMainThreadNullState state;
     if (!newChild)
@@ -299,12 +273,6 @@
 }
 
 - (BOOL)isSupported:(NSString *)feature version:(NSString *)version
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->isSupportedForBindings(feature, version);
-}
-
-- (BOOL)isSupported:(NSString *)feature :(NSString *)version
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->isSupportedForBindings(feature, version);
@@ -403,6 +371,25 @@
     BOOL result = IMPL->dispatchEventForBindings(*core(event), ec);
     WebCore::raiseOnDOMError(ec);
     return result;
+}
+
+@end
+
+@implementation DOMNode (DOMNodeDeprecated)
+
+- (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild
+{
+    return [self insertBefore:newChild refChild:refChild];
+}
+
+- (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild
+{
+    return [self replaceChild:newChild oldChild:oldChild];
+}
+
+- (BOOL)isSupported:(NSString *)feature :(NSString *)version
+{
+    return [self isSupported:feature version:version];
 }
 
 @end

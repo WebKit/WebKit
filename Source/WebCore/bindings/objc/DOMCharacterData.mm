@@ -80,15 +80,6 @@
     return result;
 }
 
-- (NSString *)substringData:(unsigned)offset :(unsigned)inLength
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    NSString *result = IMPL->substringData(offset, inLength, ec);
-    WebCore::raiseOnDOMError(ec);
-    return result;
-}
-
 - (void)appendData:(NSString *)inData
 {
     WebCore::JSMainThreadNullState state;
@@ -96,14 +87,6 @@
 }
 
 - (void)insertData:(unsigned)offset data:(NSString *)inData
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->insertData(offset, inData, ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
-- (void)insertData:(unsigned)offset :(NSString *)inData
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
@@ -119,23 +102,7 @@
     WebCore::raiseOnDOMError(ec);
 }
 
-- (void)deleteData:(unsigned)offset :(unsigned)inLength
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->deleteData(offset, inLength, ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
 - (void)replaceData:(unsigned)offset length:(unsigned)inLength data:(NSString *)inData
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->replaceData(offset, inLength, inData, ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
-- (void)replaceData:(unsigned)offset :(unsigned)inLength :(NSString *)inData
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
@@ -149,6 +116,30 @@
     WebCore::ExceptionCode ec = 0;
     IMPL->remove(ec);
     WebCore::raiseOnDOMError(ec);
+}
+
+@end
+
+@implementation DOMCharacterData (DOMCharacterDataDeprecated)
+
+- (NSString *)substringData:(unsigned)offset :(unsigned)inLength
+{
+    return [self substringData:offset length:inLength];
+}
+
+- (void)insertData:(unsigned)offset :(NSString *)inData
+{
+    [self insertData:offset data:inData];
+}
+
+- (void)deleteData:(unsigned)offset :(unsigned)inLength
+{
+    [self deleteData:offset length:inLength];
+}
+
+- (void)replaceData:(unsigned)offset :(unsigned)inLength :(NSString *)inData
+{
+    [self replaceData:offset length:inLength data:inData];
 }
 
 @end

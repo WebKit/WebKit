@@ -102,10 +102,13 @@
     IMPL->initUIEvent(type, canBubble, cancelable, core(inView), inDetail);
 }
 
+@end
+
+@implementation DOMUIEvent (DOMUIEventDeprecated)
+
 - (void)initUIEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)inView :(int)inDetail
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->initUIEvent(type, canBubble, cancelable, core(inView), inDetail);
+    [self initUIEvent:type canBubble:canBubble cancelable:cancelable view:inView detail:inDetail];
 }
 
 @end

@@ -161,16 +161,19 @@
     IMPL->initEvent(eventTypeArg, canBubbleArg, cancelableArg);
 }
 
-- (void)initEvent:(NSString *)eventTypeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->initEvent(eventTypeArg, canBubbleArg, cancelableArg);
-}
-
 - (void)stopImmediatePropagation
 {
     WebCore::JSMainThreadNullState state;
     IMPL->stopImmediatePropagation();
+}
+
+@end
+
+@implementation DOMEvent (DOMEventDeprecated)
+
+- (void)initEvent:(NSString *)eventTypeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg
+{
+    [self initEvent:eventTypeArg canBubbleArg:canBubbleArg cancelableArg:cancelableArg];
 }
 
 @end

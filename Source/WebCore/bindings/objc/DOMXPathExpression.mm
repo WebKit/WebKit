@@ -62,13 +62,13 @@
     return result;
 }
 
+@end
+
+@implementation DOMXPathExpression (DOMXPathExpressionDeprecated)
+
 - (DOMXPathResult *)evaluate:(DOMNode *)contextNode :(unsigned short)type :(DOMXPathResult *)inResult
 {
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMXPathResult *result = kit(WTF::getPtr(IMPL->evaluate(core(contextNode), type, core(inResult), ec)));
-    WebCore::raiseOnDOMError(ec);
-    return result;
+    return [self evaluate:contextNode type:type inResult:inResult];
 }
 
 @end

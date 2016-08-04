@@ -188,20 +188,19 @@
     WebCore::raiseOnDOMError(ec);
 }
 
-- (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before
-{
-    WebCore::JSMainThreadNullState state;
-    if (!element)
-        WebCore::raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->add(*core(element), core(before), ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
 - (void)remove:(int)index
 {
     WebCore::JSMainThreadNullState state;
     IMPL->removeByIndex(index);
+}
+
+@end
+
+@implementation DOMHTMLSelectElement (DOMHTMLSelectElementDeprecated)
+
+- (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before
+{
+    [self add:element before:before];
 }
 
 @end

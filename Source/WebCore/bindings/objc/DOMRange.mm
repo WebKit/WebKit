@@ -106,27 +106,7 @@
     WebCore::raiseOnDOMError(ec);
 }
 
-- (void)setStart:(DOMNode *)refNode :(int)offset
-{
-    WebCore::JSMainThreadNullState state;
-    if (!refNode)
-        WebCore::raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setStart(*core(refNode), offset, ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
 - (void)setEnd:(DOMNode *)refNode offset:(int)offset
-{
-    WebCore::JSMainThreadNullState state;
-    if (!refNode)
-        WebCore::raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setEnd(*core(refNode), offset, ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
-- (void)setEnd:(DOMNode *)refNode :(int)offset
 {
     WebCore::JSMainThreadNullState state;
     if (!refNode)
@@ -203,17 +183,6 @@
 }
 
 - (short)compareBoundaryPoints:(unsigned short)how sourceRange:(DOMRange *)sourceRange
-{
-    WebCore::JSMainThreadNullState state;
-    if (!sourceRange)
-        WebCore::raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    short result = IMPL->compareBoundaryPointsForBindings(how, *core(sourceRange), ec);
-    WebCore::raiseOnDOMError(ec);
-    return result;
-}
-
-- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange
 {
     WebCore::JSMainThreadNullState state;
     if (!sourceRange)
@@ -347,6 +316,25 @@
     WebCore::ExceptionCode ec = 0;
     IMPL->expand(unit, ec);
     WebCore::raiseOnDOMError(ec);
+}
+
+@end
+
+@implementation DOMRange (DOMRangeDeprecated)
+
+- (void)setStart:(DOMNode *)refNode :(int)offset
+{
+    [self setStart:refNode offset:offset];
+}
+
+- (void)setEnd:(DOMNode *)refNode :(int)offset
+{
+    [self setEnd:refNode offset:offset];
+}
+
+- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange
+{
+    return [self compareBoundaryPoints:how sourceRange:sourceRange];
 }
 
 @end

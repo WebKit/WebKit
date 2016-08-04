@@ -117,14 +117,6 @@
     WebCore::raiseOnDOMError(ec);
 }
 
-- (void)setProperty:(NSString *)propertyName :(NSString *)value :(NSString *)priority
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setProperty(propertyName, value, priority, ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
 - (NSString *)item:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
@@ -141,6 +133,15 @@
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->isPropertyImplicit(propertyName);
+}
+
+@end
+
+@implementation DOMCSSStyleDeclaration (DOMCSSStyleDeclarationDeprecated)
+
+- (void)setProperty:(NSString *)propertyName :(NSString *)value :(NSString *)priority
+{
+    [self setProperty:propertyName value:value priority:priority];
 }
 
 @end
