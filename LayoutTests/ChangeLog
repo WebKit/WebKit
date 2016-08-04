@@ -1,3 +1,11 @@
+2016-08-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline http/tests/security/cross-frame-access-put.html after r204126.
+
+        Unreviewed test gardening.
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+
 2016-08-04  Jeremy Jones  <jeremyj@apple.com>
 
         Temporary redirected m3u8 streaming stopped working.
