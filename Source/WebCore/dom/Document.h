@@ -417,7 +417,7 @@ public:
 
     String readyState() const;
 
-    String defaultCharset() const;
+    String defaultCharsetForBindings() const;
 
     String charset() const { return Document::encoding(); }
     String characterSetWithUTF8Fallback() const;

@@ -1340,7 +1340,7 @@ String Document::characterSetWithUTF8Fallback() const
     return UTF8Encoding().domName();
 }
 
-String Document::defaultCharset() const
+String Document::defaultCharsetForBindings() const
 {
     if (Settings* settings = this->settings())
         return settings->defaultTextEncodingName();

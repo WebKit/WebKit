@@ -319,7 +319,7 @@
 - (NSString *)defaultCharset
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->defaultCharset();
+    return IMPL->defaultCharsetForBindings();
 }
 
 - (NSString *)readyState

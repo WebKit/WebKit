@@ -1,3 +1,18 @@
+2016-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy Document.defaultCharset attribute
+        https://bugs.webkit.org/show_bug.cgi?id=160536
+
+        Reviewed by Alex Christensen.
+
+        * fast/dom/Document/document-charset-expected.txt:
+        * fast/dom/Document/document-charset.html:
+        Drop defaultCharset checks.
+
+        * fast/frames/detached-frame-document-defaultCharset-expected.txt: Removed.
+        * fast/frames/detached-frame-document-defaultCharset.html: Removed.
+        Drop test that is no longer useful now that we dropped defaultCharset.
+
 2016-08-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/track/track-in-band-cues-added-once.html as flaky on ios-simulator.

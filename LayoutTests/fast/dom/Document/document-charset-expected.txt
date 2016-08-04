@@ -2,8 +2,6 @@ Initial
 
  document.charset: KOI8-R
 
- document.defaultCharset: defined
-
  document.characterSet: KOI8-R
 
  document.inputEncoding: KOI8-R
@@ -12,8 +10,6 @@ Setting charset to UTF-8 (expected to fail as it is read-only)
 
  document.charset: KOI8-R
 
- document.defaultCharset: defined
-
  document.characterSet: KOI8-R
 
  document.inputEncoding: KOI8-R
@@ -21,8 +17,6 @@ Setting charset to UTF-8 (expected to fail as it is read-only)
 Setting characterSet to UTF-8 (expected to fail as it is read-only)
 
  document.charset: KOI8-R
-
- document.defaultCharset: defined
 
  document.characterSet: KOI8-R
 
