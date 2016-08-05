@@ -1,5 +1,13 @@
 2016-08-05  Enrica Casucci  <enrica@apple.com>
 
+        Fixing tests failing after r204175.
+
+        Unreviewed.
+
+        * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig:
+
+2016-08-05  Enrica Casucci  <enrica@apple.com>
+
         Build fix after 204053.
 
         Unreviewed.
