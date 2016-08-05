@@ -76,6 +76,9 @@ public:
     // Check to see if a MIME type is a plugin implemented by the browser.
     static bool isApplicationPluginMIMEType(const String& mimeType);
 
+    // Check to see if a MIME type is one of the MPEG playlists types.
+    static bool isMPEGPlaylistMIMEType(const String& mimeType);
+
     // Check to see if a MIME type is one of the common PDF/PS types.
     WEBCORE_EXPORT static bool isPDFOrPostScriptMIMEType(const String& mimeType);
     static bool isPDFMIMEType(const String& mimeType);
