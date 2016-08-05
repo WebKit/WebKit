@@ -174,9 +174,6 @@ var Statistics = new (function () {
 
     this.debuggingSegmentation = false;
     this.segmentTimeSeriesByMaximizingSchwarzCriterion = function (values) {
-        if (values.length < 2)
-            return [0];
-
         // Split the time series into grids since splitIntoSegmentsUntilGoodEnough is O(n^2).
         var gridLength = 500;
         var totalSegmentation = [0];
@@ -308,17 +305,26 @@ var Statistics = new (function () {
         return segmentation;
     }
 
-    function findOptimalSegmentation(values, costMatrix, segmentCount) {
+    function allocateCostUpperTriangularForSegmentation(values, segmentCount)
+    {
         // Dynamic programming. cost[i][k] = The cost to segmenting values up to i into k segments.
         var cost = new Array(values.length);
         for (var segmentEnd = 0; segmentEnd < values.length; segmentEnd++)
             cost[segmentEnd] = new Float32Array(segmentCount + 1);
+        return cost;
+    }
 
+    function allocatePreviousNodeForSegmentation(values, segmentCount)
+    {
         // previousNode[i][k] = The start of the last segment in an optimal segmentation that ends at i with k segments.
         var previousNode = new Array(values.length);
         for (var i = 0; i < values.length; i++)
             previousNode[i] = new Array(segmentCount + 1);
+        return previousNode;
+    }
 
+    function findOptimalSegmentationInternal(cost, previousNode, values, costMatrix, segmentCount)
+    {
         cost[0] = [0]; // The cost of segmenting single value is always 0.
         previousNode[0] = [-1];
         for (var segmentStart = 0; segmentStart < values.length; segmentStart++) {
@@ -338,6 +344,13 @@ var Statistics = new (function () {
                 }
             }
         }
+    }
+
+    function findOptimalSegmentation(values, costMatrix, segmentCount) {
+        var cost = allocateCostUpperTriangularForSegmentation(values, segmentCount);
+        var previousNode = allocatePreviousNodeForSegmentation(values, segmentCount);
+
+        findOptimalSegmentationInternal(cost, previousNode, values, costMatrix, segmentCount);
 
         if (Statistics.debuggingSegmentation) {
             console.log('findOptimalSegmentation with', segmentCount, 'segments');
@@ -392,8 +405,6 @@ var Statistics = new (function () {
             return 0; // The cost of the segment that starts at the last data point is 0.
         return this.costMatrix[from][to - from - 1];
     }
-
-    this.debuggingTestingRangeNomination = false;
 
 })();
 

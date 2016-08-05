@@ -355,6 +355,11 @@ describe('Statistics', function () {
     });
 
     describe('segmentTimeSeriesByMaximizingSchwarzCriterion', function () {
+        it('should segment time series of length 0 into a single segment', function () {
+            var values = [];
+            assert.deepEqual(Statistics.segmentTimeSeriesByMaximizingSchwarzCriterion(values), [0, 0]);
+        });
+
         it('should not segment time series of length two into two pieces', function () {
             var values = [1, 2];
             assert.deepEqual(Statistics.segmentTimeSeriesByMaximizingSchwarzCriterion(values), [0, 2]);
