@@ -1,3 +1,14 @@
+2016-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Work around broken <Files> directive in some Apache versions
+        https://bugs.webkit.org/show_bug.cgi?id=160610
+
+        Reviewed by Daniel Bates.
+
+        The problem is tracked as rdar://problem/27725655
+
+        * http/tests/misc/.htaccess:
+
 2016-08-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaselining compositing/masks/compositing-clip-path-change-no-repaint.html for ios-simulator.
