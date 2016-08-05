@@ -1,3 +1,14 @@
+2016-08-05  Brent Fulgham  <bfulgham@apple.com>
+
+        ASSERTION FAILED: observer in WebCore::BitmapImage::drawPattern
+        https://bugs.webkit.org/show_bug.cgi?id=141637
+        <rdar://problem/27709864>
+
+        Reviewed by Tim Horton.
+
+        * fast/images/image-source-assert-expected.txt: Added.
+        * fast/images/image-source-assert.html: Added.
+
 2016-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         marquee with "truespeed" animates at > 60fps, hogging CPU

@@ -611,7 +611,6 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, 
             return;
 
         ImageObserver* observer = imageObserver();
-        ASSERT(observer);
 
         // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
         setImageObserver(nullptr);
