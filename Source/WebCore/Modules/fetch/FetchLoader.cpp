@@ -33,6 +33,7 @@
 
 #include "BlobURL.h"
 #include "CachedResourceRequestInitiators.h"
+#include "ContentSecurityPolicy.h"
 #include "FetchBody.h"
 #include "FetchLoaderClient.h"
 #include "FetchRequest.h"
@@ -73,11 +74,23 @@ void FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
 
 void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
 {
-    ThreadableLoaderOptions options(request.fetchOptions(), ConsiderPreflight, ContentSecurityPolicyEnforcement::DoNotEnforce, String(cachedResourceRequestInitiators().fetch));
+    ThreadableLoaderOptions options(request.fetchOptions(), ConsiderPreflight,
+        context.shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective,
+        String(cachedResourceRequestInitiators().fetch));
     options.sendLoadCallbacks = SendCallbacks;
     options.dataBufferingPolicy = DoNotBufferData;
 
-    m_loader = ThreadableLoader::create(context, *this, request.internalRequest(), options);
+    ResourceRequest fetchRequest = request.internalRequest();
+
+    ASSERT(context.contentSecurityPolicy());
+    context.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(fetchRequest, ContentSecurityPolicy::InsecureRequestType::Load);
+
+    if (!context.contentSecurityPolicy()->allowConnectToSource(fetchRequest.url(), context.shouldBypassMainWorldContentSecurityPolicy())) {
+        m_client.didFail();
+        return;
+    }
+
+    m_loader = ThreadableLoader::create(context, *this, WTFMove(fetchRequest), options);
     m_isStarted = m_loader;
 }
 

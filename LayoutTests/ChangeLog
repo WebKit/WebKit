@@ -1,5 +1,23 @@
 2016-08-05  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Activate CSP checks
+        https://bugs.webkit.org/show_bug.cgi?id=160445
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/insecure-fetch-in-main-frame-window.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/insecure-xhr-in-main-frame-window.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-worker-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-worker.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-xhr-in-main-frame-expected.txt:
+        * platform/mac-wk2/TestExpectations: Marking new worker test as failing at loading https resource from loader.
+        It gets a "The certificate for this server is invalid" error.
+        * platform/wk2/TestExpectations: Marking new frame test as timing out for WK2 as fetch is not activated in the pop-up window.
+
+2016-08-05  Youenn Fablet  <youenn@apple.com>
+
         DocumentThreadableLoader should report an error when getting a null CachedResource
         https://bugs.webkit.org/show_bug.cgi?id=160444
 

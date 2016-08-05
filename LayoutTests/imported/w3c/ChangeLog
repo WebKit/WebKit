@@ -1,5 +1,15 @@
 2016-08-05  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Activate CSP checks
+        https://bugs.webkit.org/show_bug.cgi?id=160445
+
+        Reviewed by Daniel Bates.
+
+        * web-platform-tests/fetch/api/policies/csp-blocked-expected.txt:
+        * web-platform-tests/fetch/api/policies/csp-blocked-worker-expected.txt:
+
+2016-08-05  Youenn Fablet  <youenn@apple.com>
+
         DocumentThreadableLoader should report an error when getting a null CachedResource
         https://bugs.webkit.org/show_bug.cgi?id=160444
 
