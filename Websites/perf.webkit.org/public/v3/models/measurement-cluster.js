@@ -17,17 +17,14 @@ class MeasurementCluster {
             return;
 
         var self = this;
-        rawMeasurements.forEach(function (row) {
-            var id = self._adaptor.extractId(row);
-            if (id in idMap)
-                return;
-            if (self._adaptor.isOutlier(row) && !includeOutliers)
-                return;
-
-            idMap[id] = true;
-
-            series.append(self._adaptor.applyTo(row));
-        });
+        for (var row of rawMeasurements) {
+            var point = this._adaptor.applyTo(row);
+            if (point.id in idMap || (!includeOutliers && point.isOutlier))
+                continue;
+            idMap[point.id] = true;
+            point.cluster = this;
+            series.append(point);
+        }
     }
 }
 

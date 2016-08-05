@@ -47,11 +47,11 @@ class MeasurementAdaptor {
         var mean = row[this._meanIndex];
         var sum = row[this._sumIndex];
         var squareSum = row[this._squareSumIndex];
-        var revisionList = row[this._revisionsIndex];
         var buildId = row[this._buildIndex];
         var builderId = row[this._builderIndex];
-        var buildNumber = row[this._buildNumberIndex];
-        var buildTime = row[this._buildTimeIndex];
+        var cachedBuild = null;
+        var cachedInterval = null;
+
         var self = this;
         return {
             id: id,
@@ -59,14 +59,22 @@ class MeasurementAdaptor {
             buildId: buildId,
             metricId: null,
             configType: null,
-            rootSet: function () { return MeasurementRootSet.ensureSingleton(id, revisionList); },
-            build: function () { return new Build(buildId, Builder.findById(builderId), buildNumber, buildTime); },
+            rootSet: function () { return MeasurementRootSet.ensureSingleton(id, row[self._revisionsIndex]); },
+            build: function () {
+                if (cachedBuild == null)
+                    cachedBuild = new Build(buildId, Builder.findById(builderId), row[self._buildNumberIndex], row[self._buildTimeIndex]);
+                return cachedBuild;
+            },
             time: row[this._commitTimeIndex],
             value: mean,
             sum: sum,
             squareSum: squareSum,
             iterationCount: row[this._countIndex],
-            interval: MeasurementAdaptor.computeConfidenceInterval(row[this._countIndex], mean, sum, squareSum)
+            interval: function () {
+                if (cachedInterval == null)
+                    cachedInterval = MeasurementAdaptor.computeConfidenceInterval(row[self._countIndex], mean, sum, squareSum);
+                return cachedInterval;
+            }
         };
     }
 

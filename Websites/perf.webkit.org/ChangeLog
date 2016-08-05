@@ -1,5 +1,26 @@
 2016-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        MeasurementCluster's addToSeries is slow
+        https://bugs.webkit.org/show_bug.cgi?id=160581
+
+        Rubber-stamped by Chris Dumez.
+
+        The bulk of time was spent in MeasurementAdaptor.prototype.applyTo where we computed the interval.
+
+        Since some of data points are filtered out by TimeSeriesChart component before intervals are used,
+        we can significantly reduce the CPU time by lazily compute them. This patch reduces the runtime of
+        applyTo from ~60ms to ~30ms on my machine.
+
+        * public/v3/models/measurement-adaptor.js:
+        (MeasurementAdaptor.prototype.applyTo): Lazily compute and cache the interval. Also cache the build
+        object instead of always creating a new object.
+        * public/v3/models/measurement-cluster.js:
+        (MeasurementCluster.prototype.addToSeries): Call applyTo first before checking whether the point is
+        an outlier or its id to avoid extracting those values twice since they show up in the profiler. Also
+        use "of" instead "forEach" since "of" seems to be faster here.
+
+2016-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Syncing script's configuration duplicates a lot of boilerplate
         https://bugs.webkit.org/show_bug.cgi?id=160574
 
