@@ -1,3 +1,14 @@
+2016-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Sierra WK1: compositing/masks/compositing-clip-path-change-no-repaint.html failing
+        rdar://problem/26789221
+
+        Make this test less sensitive to platform repaint differences.
+
+        * compositing/masks/compositing-clip-path-change-no-repaint-expected.txt:
+        * compositing/masks/compositing-clip-path-change-no-repaint.html:
+        * platform/mac-wk1/TestExpectations:
+
 2016-08-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r204128.

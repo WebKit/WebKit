@@ -27,21 +27,26 @@
     </style>
     <script>
         if (window.testRunner) {
+            testRunner.waitUntilDone();
             testRunner.dumpAsText();
         }
 
         function doTest()
         {
-            document.body.offsetWidth;
+            window.setTimeout(function() {
+                window.setTimeout(function() {
+                    if (window.internals)
+                        window.internals.startTrackingRepaints();
 
-            if (window.internals)
-                window.internals.startTrackingRepaints();
+                    document.body.classList.add('changed');
 
-            document.body.classList.add('changed');
+                    if (window.internals)
+                        document.getElementById('repaintRects').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
 
-            if (window.internals)
-                document.getElementById('repaintRects').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
-
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 0)
+            }, 0)
         }
         window.addEventListener('load', doTest, false);
     </script>
