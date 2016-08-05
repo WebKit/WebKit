@@ -228,7 +228,6 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 [ Sierra+ ] accessibility/parent-delete.html [ Failure ]
 
 # rdar://problem/26422051
-[ Sierra+ ] fast/html/marquee-scroll.html [ Failure ]
 [ Sierra+ ] fast/inline-block/003.html [ Failure ]
 
 # rdar://problem/26478296

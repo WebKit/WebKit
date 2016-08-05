@@ -56,7 +56,7 @@ int HTMLMarqueeElement::minimumDelay() const
         // WinIE uses 60ms as the minimum delay by default.
         return 60;
     }
-    return 0;
+    return 16; // Don't allow timers at < 16ms intervals to avoid CPU hogging: webkit.org/b/160609
 }
 
 bool HTMLMarqueeElement::isPresentationAttribute(const QualifiedName& name) const

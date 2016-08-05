@@ -1464,7 +1464,6 @@ fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/disconnected-frame-permission-denied.html
 fast/dom/Geolocation/error.html
 fast/events/mouse-cursor-multiframecur.html
-fast/html/marquee-scrollamount.html [ Failure ]
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 http/tests/cache/cache-redirections.html
 js/promises-tests/promises-tests-2-2-6.html

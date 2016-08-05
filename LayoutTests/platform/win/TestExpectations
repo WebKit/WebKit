@@ -2769,8 +2769,6 @@ fast/history/history-subframe-with-name.html [ Skip ]
 fast/history/location-replace-hash.html [ Skip ]
 fast/history/saves-state-after-fragment-nav.html [ Skip ]
 
-fast/html/marquee-scrollamount.html [ Failure ]
-
 fast/images/image-controls-basic.html [ Failure ]
 fast/images/exif-orientation-composited.html [ Failure ]
 webkit.org/b/140516 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]  # Crashing

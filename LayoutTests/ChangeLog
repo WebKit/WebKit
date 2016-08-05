@@ -1,3 +1,38 @@
+2016-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+        marquee with "truespeed" animates at > 60fps, hogging CPU
+        https://bugs.webkit.org/show_bug.cgi?id=160609
+
+        Reviewed by David Hyatt.
+        
+        Convert marquee tests into ref tests, removing all the platform expectations.
+
+        * fast/html/marquee-scroll-expected.html: Copied from LayoutTests/fast/html/marquee-scroll.html.
+        * fast/html/marquee-scroll.html:
+        * fast/html/marquee-scrollamount-expected.html: Added.
+        * fast/html/marquee-set-truespeed.html:
+        * platform/efl/fast/html/marquee-scroll-expected.png: Removed.
+        * platform/efl/fast/html/marquee-scroll-expected.txt: Removed.
+        * platform/efl/fast/html/marquee-scrollamount-expected.png: Removed.
+        * platform/efl/fast/html/marquee-scrollamount-expected.txt: Removed.
+        * platform/gtk/fast/html/marquee-scroll-expected.png: Removed.
+        * platform/gtk/fast/html/marquee-scroll-expected.txt: Removed.
+        * platform/gtk/fast/html/marquee-scrollamount-expected.png: Removed.
+        * platform/gtk/fast/html/marquee-scrollamount-expected.txt: Removed.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator-wk2/fast/html/marquee-scrollamount-expected.txt: Removed.
+        * platform/ios-simulator/fast/html/marquee-scroll-expected.txt: Removed.
+        * platform/ios-simulator/fast/html/marquee-scrollamount-expected.txt: Removed.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/fast/html/marquee-scroll-expected.png: Removed.
+        * platform/mac/fast/html/marquee-scroll-expected.txt: Removed.
+        * platform/mac/fast/html/marquee-scrollamount-expected.png: Removed.
+        * platform/mac/fast/html/marquee-scrollamount-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * platform/win/fast/html/marquee-scroll-expected.txt: Removed.
+        * platform/win/fast/html/marquee-scrollamount-expected.txt: Removed.
+
 2016-08-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r204181.

@@ -41,12 +41,15 @@ public:
     void start();
     void stop() final;
     
+    // Number of pixels to move on each scroll movement. Defaults to 6.
     unsigned scrollAmount() const;
     void setScrollAmount(unsigned);
     
+    // Interval between each scroll movement, in milliseconds. Defaults to 60.
     unsigned scrollDelay() const;
     void setScrollDelay(unsigned);
     
+    // Loop count. -1 means loop indefinitely.
     int loop() const;
     void setLoop(int, ExceptionCode&);
     
