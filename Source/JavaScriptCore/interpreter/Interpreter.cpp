@@ -944,10 +944,13 @@ failedJSONP:
     if (JSObject* error = program->initializeGlobalProperties(vm, callFrame, scope))
         return checkedReturn(callFrame->vm().throwException(callFrame, error));
 
-    if (JSObject* error = program->prepareForExecution(callFrame, nullptr, scope, CodeForCall))
-        return checkedReturn(callFrame->vm().throwException(callFrame, error));
-
-    ProgramCodeBlock* codeBlock = program->codeBlock();
+    ProgramCodeBlock* codeBlock;
+    {
+        CodeBlock* tempCodeBlock;
+        if (JSObject* error = program->prepareForExecution<ProgramExecutable>(callFrame, nullptr, scope, CodeForCall, tempCodeBlock))
+            return checkedReturn(callFrame->vm().throwException(callFrame, error));
+        codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);
+    }
 
     if (UNLIKELY(vm.shouldTriggerTermination(callFrame)))
         return throwTerminatedExecutionException(callFrame);
@@ -995,11 +998,10 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     if (isJSCall) {
         // Compile the callee:
-        JSObject* compileError = callData.js.functionExecutable->prepareForExecution(callFrame, jsCast<JSFunction*>(function), scope, CodeForCall);
-        if (UNLIKELY(!!compileError)) {
+        JSObject* compileError = callData.js.functionExecutable->prepareForExecution<FunctionExecutable>(callFrame, jsCast<JSFunction*>(function), scope, CodeForCall, newCodeBlock);
+        if (UNLIKELY(!!compileError))
             return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
-        }
-        newCodeBlock = callData.js.functionExecutable->codeBlockForCall();
+
         ASSERT(!!newCodeBlock);
         newCodeBlock->m_shouldAlwaysBeInlined = false;
     } else
@@ -1057,11 +1059,10 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     if (isJSConstruct) {
         // Compile the callee:
-        JSObject* compileError = constructData.js.functionExecutable->prepareForExecution(callFrame, jsCast<JSFunction*>(constructor), scope, CodeForConstruct);
-        if (UNLIKELY(!!compileError)) {
+        JSObject* compileError = constructData.js.functionExecutable->prepareForExecution<FunctionExecutable>(callFrame, jsCast<JSFunction*>(constructor), scope, CodeForConstruct, newCodeBlock);
+        if (UNLIKELY(!!compileError))
             return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
-        }
-        newCodeBlock = constructData.js.functionExecutable->codeBlockForConstruct();
+
         ASSERT(!!newCodeBlock);
         newCodeBlock->m_shouldAlwaysBeInlined = false;
     } else
@@ -1101,12 +1102,12 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
         return CallFrameClosure();
 
     // Compile the callee:
-    JSObject* error = functionExecutable->prepareForExecution(callFrame, function, scope, CodeForCall);
+    CodeBlock* newCodeBlock;
+    JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(callFrame, function, scope, CodeForCall, newCodeBlock);
     if (error) {
         callFrame->vm().throwException(callFrame, error);
         return CallFrameClosure();
     }
-    CodeBlock* newCodeBlock = functionExecutable->codeBlockForCall();
     newCodeBlock->m_shouldAlwaysBeInlined = false;
 
     size_t argsCount = argumentCountIncludingThis;
@@ -1176,10 +1177,14 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         }
     }
 
-    JSObject* compileError = eval->prepareForExecution(callFrame, nullptr, scope, CodeForCall);
-    if (UNLIKELY(!!compileError))
-        return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
-    EvalCodeBlock* codeBlock = eval->codeBlock();
+    EvalCodeBlock* codeBlock;
+    {
+        CodeBlock* tempCodeBlock;
+        JSObject* compileError = eval->prepareForExecution<EvalExecutable>(callFrame, nullptr, scope, CodeForCall, tempCodeBlock);
+        if (UNLIKELY(!!compileError))
+            return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
+        codeBlock = jsCast<EvalCodeBlock*>(tempCodeBlock);
+    }
 
     // We can't declare a "var"/"function" that overwrites a global "let"/"const"/"class" in a sloppy-mode eval.
     if (variableObject->isGlobalObject() && !eval->isStrictMode() && (numVariables || numFunctions)) {
@@ -1253,10 +1258,14 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
-    JSObject* compileError = executable->prepareForExecution(callFrame, nullptr, scope, CodeForCall);
-    if (UNLIKELY(!!compileError))
-        return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
-    ModuleProgramCodeBlock* codeBlock = executable->codeBlock();
+    ModuleProgramCodeBlock* codeBlock;
+    {
+        CodeBlock* tempCodeBlock;
+        JSObject* compileError = executable->prepareForExecution<ModuleProgramExecutable>(callFrame, nullptr, scope, CodeForCall, tempCodeBlock);
+        if (UNLIKELY(!!compileError))
+            return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
+        codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);
+    }
 
     if (UNLIKELY(vm.shouldTriggerTermination(callFrame)))
         return throwTerminatedExecutionException(callFrame);

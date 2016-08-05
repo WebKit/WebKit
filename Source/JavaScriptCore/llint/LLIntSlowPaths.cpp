@@ -1266,10 +1266,11 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
             LLINT_CALL_THROW(exec, createNotAConstructorError(exec, callee));
 
-        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, scope, kind);
+        CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
+        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(execCallee, callee, scope, kind, *codeBlockSlot);
         if (error)
             LLINT_CALL_THROW(exec, error);
-        codeBlock = functionExecutable->codeBlockFor(kind);
+        codeBlock = *codeBlockSlot;
         ASSERT(codeBlock);
         ArityCheckMode arity;
         if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))

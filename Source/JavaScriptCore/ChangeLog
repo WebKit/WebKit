@@ -1,3 +1,52 @@
+2016-08-04  Saam Barati  <sbarati@apple.com>
+
+        Restore CodeBlock jettison code to jettison when a CodeBlock has been alive for a long time
+        https://bugs.webkit.org/show_bug.cgi?id=151241
+
+        Reviewed by Benjamin Poulain.
+
+        This patch rolls back in the jettisoning policy from https://bugs.webkit.org/show_bug.cgi?id=149727.
+        We can now jettison a CodeBlock when it has been alive for a long time
+        and is only pointed to by its owner executable. I haven't been able to get this
+        patch to crash on anything it used to crash on, so I suspect we've fixed the bugs that
+        were causing this before. I've also added some stress options for this feature that
+        will cause us to either eagerly old-age jettison or to old-age jettison whenever it's legal.
+        These options helped me find a bug where we would ask an Executable to create a CodeBlock,
+        and then the Executable would do some other allocations, causing a GC, immediately causing
+        the CodeBlock to jettison. There is a small chance that this was the bug we were seeing before,
+        however, it's unlikely given that the previous timing metrics require at least 5 second between
+        compiling to jettisoning.
+
+        This patch also enables the stress options for various modes
+        of JSC stress tests.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shouldJettisonDueToWeakReference):
+        (JSC::timeToLive):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callee):
+        (JSC::ExecState::unsafeCallee):
+        (JSC::ExecState::codeBlock):
+        (JSC::ExecState::addressOfCodeBlock):
+        (JSC::ExecState::unsafeCodeBlock):
+        (JSC::ExecState::scope):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        (JSC::setupJIT):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::prepareForExecution):
+        * runtime/Options.h:
+
 2016-08-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] JSModuleNamespaceObject's Symbol.iterator function should have name

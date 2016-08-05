@@ -367,19 +367,21 @@ public:
     void installCode(VM&, CodeBlock*, CodeType, CodeSpecializationKind);
     CodeBlock* newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*, JSObject*& exception);
     CodeBlock* newReplacementCodeBlockFor(CodeSpecializationKind);
-    
-    JSObject* prepareForExecution(ExecState* exec, JSFunction* function, JSScope* scope, CodeSpecializationKind kind)
-    {
-        if (hasJITCodeFor(kind))
-            return 0;
-        return prepareForExecutionImpl(exec, function, scope, kind);
-    }
+
+    // This function has an interesting GC story. Callers of this function are asking us to create a CodeBlock
+    // that is not jettisoned before this function returns. Callers are essentially asking for a strong reference
+    // to the CodeBlock. Because the Executable may be allocating the CodeBlock, we require callers to pass in
+    // their CodeBlock*& reference because it's safe for CodeBlock to be jettisoned if Executable is the only thing
+    // to point to it. This forces callers to have a CodeBlock* in a register or on the stack that will be marked
+    // by conservative GC if a GC happens after we create the CodeBlock.
+    template <typename ExecutableType>
+    JSObject* prepareForExecution(ExecState*, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*& resultCodeBlock);
 
     template <typename Functor> void forEachCodeBlock(Functor&&);
 
 private:
     friend class ExecutableBase;
-    JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope*, CodeSpecializationKind);
+    JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
 
 protected:
     ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, EvalContextType, Intrinsic);
@@ -738,6 +740,25 @@ private:
     WriteBarrier<WebAssemblyCodeBlock> m_codeBlockForCall;
 };
 #endif
+
+template <typename ExecutableType>
+JSObject* ScriptExecutable::prepareForExecution(ExecState* exec, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+{
+    if (hasJITCodeFor(kind)) {
+        if (std::is_same<ExecutableType, EvalExecutable>::value)
+            resultCodeBlock = jsCast<CodeBlock*>(jsCast<EvalExecutable*>(this)->codeBlock());
+        else if (std::is_same<ExecutableType, ProgramExecutable>::value)
+            resultCodeBlock = jsCast<CodeBlock*>(jsCast<ProgramExecutable*>(this)->codeBlock());
+        else if (std::is_same<ExecutableType, ModuleProgramExecutable>::value)
+            resultCodeBlock = jsCast<CodeBlock*>(jsCast<ModuleProgramExecutable*>(this)->codeBlock());
+        else if (std::is_same<ExecutableType, FunctionExecutable>::value)
+            resultCodeBlock = jsCast<CodeBlock*>(jsCast<FunctionExecutable*>(this)->codeBlockFor(kind));
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    return prepareForExecutionImpl(exec, function, scope, kind, resultCodeBlock);
+}
 
 } // namespace JSC
 

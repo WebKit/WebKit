@@ -900,14 +900,15 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
                 reinterpret_cast<void*>(KeepTheFrame));
         }
 
-        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, scope, kind);
+        CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
+        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(execCallee, callee, scope, kind, *codeBlockSlot);
         if (error) {
             exec->vm().throwException(exec, error);
             return encodeResult(
                 vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
                 reinterpret_cast<void*>(KeepTheFrame));
         }
-        codeBlock = functionExecutable->codeBlockFor(kind);
+        codeBlock = *codeBlockSlot;
         ArityCheckMode arity;
         if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->isVarargs())
             arity = MustCheckArity;
@@ -954,7 +955,8 @@ inline SlowPathReturnType virtualForWithFunction(
                     reinterpret_cast<void*>(KeepTheFrame));
             }
 
-            JSObject* error = functionExecutable->prepareForExecution(execCallee, function, scope, kind);
+            CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
+            JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(execCallee, function, scope, kind, *codeBlockSlot);
             if (error) {
                 exec->vm().throwException(exec, error);
                 return encodeResult(

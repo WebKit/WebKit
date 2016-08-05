@@ -177,7 +177,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
 {
     ASSERT(vm.heap.isDeferred());
     
-    CODEBLOCK_LOG_EVENT(genericCodeBlock, "installCode", ());
+    if (genericCodeBlock)
+        CODEBLOCK_LOG_EVENT(genericCodeBlock, "installCode", ());
     
     CodeBlock* oldCodeBlock = nullptr;
     
@@ -399,16 +400,17 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 }
 
 JSObject* ScriptExecutable::prepareForExecutionImpl(
-    ExecState* exec, JSFunction* function, JSScope* scope, CodeSpecializationKind kind)
+    ExecState* exec, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     VM& vm = exec->vm();
-    DeferGC deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm.heap);
 
     if (vm.getAndClearFailNextNewCodeBlock())
         return createError(exec->callerFrame(), ASCIILiteral("Forced Failure"));
 
     JSObject* exception = 0;
     CodeBlock* codeBlock = newCodeBlockFor(kind, function, scope, exception);
+    resultCodeBlock = codeBlock;
     if (!codeBlock) {
         RELEASE_ASSERT(exception);
         return exception;
@@ -423,7 +425,7 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
         setupJIT(vm, codeBlock);
     
     installCode(*codeBlock->vm(), codeBlock, codeBlock->codeType(), codeBlock->specializationKind());
-    return 0;
+    return nullptr;
 }
 
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(EvalExecutable) };
