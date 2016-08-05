@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
 #include "HTMLOptGroupElement.h"
 
 #include "Document.h"
+#include "ElementAncestorIterator.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
@@ -85,11 +86,10 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const Atomic
 
 void HTMLOptGroupElement::recalcSelectOptions()
 {
-    ContainerNode* select = parentNode();
-    while (select && !is<HTMLSelectElement>(*select))
-        select = select->parentNode();
-    if (select)
-        downcast<HTMLSelectElement>(*select).setRecalcListItems();
+    if (auto* selectElement = ancestorsOfType<HTMLSelectElement>(*this).first()) {
+        selectElement->setRecalcListItems();
+        selectElement->updateValidity();
+    }
 }
 
 String HTMLOptGroupElement::groupLabelText() const

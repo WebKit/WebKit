@@ -305,6 +305,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         if (m_size != oldSize) {
             setNeedsStyleRecalc(ReconstructRenderTree);
             setRecalcListItems();
+            updateValidity();
         }
     } else if (name == multipleAttr)
         parseMultipleAttribute(value);

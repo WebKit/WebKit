@@ -316,6 +316,7 @@ Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode
 {
     if (HTMLSelectElement* select = ownerSelectElement()) {
         select->setRecalcListItems();
+        select->updateValidity();
         // Do not call selected() since calling updateListItemSelectedStates()
         // at this time won't do the right thing. (Why, exactly?)
         // FIXME: Might be better to call this unconditionally, always passing m_isSelected,

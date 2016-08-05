@@ -1,3 +1,17 @@
+2016-08-05  Brent Fulgham  <bfulgham@apple.com>
+
+        validity assertion fails after removing a child of an <optgroup> element
+        https://bugs.webkit.org/show_bug.cgi?id=155720
+        <rdar://problem/27720746>
+
+        Reviewed by Brent Fulgham.
+
+        Add new test case that triggers a debug assertion when the HTMLSelectElement state
+        is not updated properly.
+
+        * fast/dom/HTMLSelectElement/select-remove-from-optgroup-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/select-remove-from-optgroup.html: Added.
+
 2016-08-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r204174.
