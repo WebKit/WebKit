@@ -88,8 +88,6 @@ static RetainPtr<WKWebView> animatedResizeWebView()
     return webView;
 }
 
-// FIXME (160516): This test fails when run in a headless simulator because only the first commit ever happens.
-#if 0
 TEST(WebKit2, ResizeWithHiddenContentDoesNotHang)
 {
     auto webView = animatedResizeWebView();
@@ -109,7 +107,6 @@ TEST(WebKit2, ResizeWithHiddenContentDoesNotHang)
         didEndAnimatedResize = false;
     }
 }
-#endif
 
 TEST(WebKit2, AnimatedResizeDoesNotHang)
 {

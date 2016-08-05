@@ -1,3 +1,20 @@
+2016-08-05  Tim Horton  <timothy_horton@apple.com>
+
+        run-api-tests should use a headed simulator
+        https://bugs.webkit.org/show_bug.cgi?id=160611
+
+        Reviewed by Sam Weinig.
+
+        CADisplayLink doesn't work in a headless simulator, but is
+        vital for the proper functioning of WebKit2 painting on iOS.
+        So, we should not use a headless simulator.
+
+        * Scripts/run-api-tests:
+        Launch a simulator app, don't just boot the simulator.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+        Re-enable a test that works now.
+
 2016-08-05  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WKRemoteObjectCoder doesn’t handle NSRange

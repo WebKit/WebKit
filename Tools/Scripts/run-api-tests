@@ -117,7 +117,7 @@ setPathForRunningWebKitApp(\%ENV);
 my $simulatorDevice;
 if (willUseIOSSimulatorSDK()) {
     $simulatorDevice = findOrCreateSimulatorForIOSDevice(SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT);
-    restartIOSSimulatorDevice($simulatorDevice);
+    relaunchIOSSimulator($simulatorDevice);
 }
 my @testsToRun = listAllTests();
 
