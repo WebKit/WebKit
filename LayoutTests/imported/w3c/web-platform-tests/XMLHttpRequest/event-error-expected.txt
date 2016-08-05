@@ -1,4 +1,5 @@
 Blocked access to external URL http://example.nonexist/
+CONSOLE MESSAGE: line 22: XMLHttpRequest cannot load http://example.nonexist/ due to access control checks.
 
 PASS XMLHttpRequest Test: event - error 
 

@@ -715,15 +715,14 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         // FIXME: Maybe we need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
         m_loader = ThreadableLoader::create(*scriptExecutionContext(), *this, WTFMove(request), options);
 
+        // Either loader is null or some error was synchronously sent to us.
+        ASSERT(m_loader || !m_sendFlag);
+
         // Neither this object nor the JavaScript wrapper should be deleted while
         // a request is in progress because we need to keep the listeners alive,
         // and they are referenced by the JavaScript wrapper.
-        setPendingActivity(this);
-        if (!m_loader) {
-            m_sendFlag = false;
-            m_timeoutTimer.stop();
-            m_networkErrorTimer.startOneShot(0);
-        }
+        if (m_loader)
+            setPendingActivity(this);
     } else {
         InspectorInstrumentation::willLoadXHRSynchronously(scriptExecutionContext());
         ThreadableLoader::loadResourceSynchronously(*scriptExecutionContext(), WTFMove(request), *this, options);
@@ -956,7 +955,6 @@ String XMLHttpRequest::statusText() const
 
 void XMLHttpRequest::didFail(const ResourceError& error)
 {
-
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
         return;
@@ -982,6 +980,14 @@ void XMLHttpRequest::didFail(const ResourceError& error)
         logConsoleError(scriptExecutionContext(), message);
     }
 
+    // In case didFail is called synchronously on an asynchronous XHR call, let's dispatch network error asynchronously
+    if (m_async && m_sendFlag && !m_loader) {
+        m_sendFlag = false;
+        setPendingActivity(this);
+        m_timeoutTimer.stop();
+        m_networkErrorTimer.startOneShot(0);
+        return;
+    }
     m_exceptionCode = NETWORK_ERR;
     networkError();
 }
