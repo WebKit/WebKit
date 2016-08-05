@@ -34,6 +34,7 @@
 - (void)sayHello:(NSString *)hello;
 - (void)sayHello:(NSString *)hello completionHandler:(void (^)(NSString *))completionHandler;
 - (void)selectionAndClickInformationForClickAtPoint:(NSValue *)pointValue completionHandler:(void (^)(NSDictionary *))completionHandler;
+- (void)takeRange:(NSRange)range completionHandler:(void (^)(NSUInteger location, NSUInteger length))completionHandler;
 
 @end
 
@@ -41,7 +42,7 @@ static inline _WKRemoteObjectInterface *remoteObjectInterface()
 {
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RemoteObjectProtocol)];
 
-    [interface setClasses:[NSSet setWithObjects:[NSDictionary class], [NSURL class], nil] forSelector:@selector(selectionAndClickInformationForClickAtPoint:completionHandler:) argumentIndex:0 ofReply:YES];
+    [interface setClasses:[NSSet setWithObjects:[NSDictionary class], [NSString class], [NSURL class], nil] forSelector:@selector(selectionAndClickInformationForClickAtPoint:completionHandler:) argumentIndex:0 ofReply:YES];
 
     return interface;
 }

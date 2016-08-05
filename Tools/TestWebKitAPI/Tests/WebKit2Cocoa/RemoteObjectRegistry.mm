@@ -66,9 +66,19 @@ TEST(WebKit2, RemoteObjectRegistry)
             EXPECT_WK_STREQ(result, @"Your string was 'Hello Again!'");
             isDone = true;
         }];
+        TestWebKitAPI::Util::run(&isDone);
 
         isDone = false;
         [object selectionAndClickInformationForClickAtPoint:[NSValue valueWithPoint:NSMakePoint(12, 34)] completionHandler:^(NSDictionary *result) {
+            EXPECT_TRUE([result isEqual:@{ @"URL": [NSURL URLWithString:@"http://www.webkit.org/"] }]);
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+        [object takeRange:NSMakeRange(345, 123) completionHandler:^(NSUInteger location, NSUInteger length) {
+            EXPECT_EQ(345U, location);
+            EXPECT_EQ(123U, length);
             isDone = true;
         }];
         TestWebKitAPI::Util::run(&isDone);

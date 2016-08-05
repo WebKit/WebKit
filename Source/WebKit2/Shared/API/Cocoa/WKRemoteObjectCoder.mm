@@ -205,6 +205,17 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
             break;
         }
 
+        // struct
+        case '{':
+            if (!strcmp(type, @encode(NSRange))) {
+                NSRange value;
+                [invocation getArgument:&value atIndex:i];
+
+                encodeToObjectStream(encoder, [NSValue valueWithRange:value]);
+                break;
+            }
+            FALLTHROUGH;
+
         default:
             [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s'", type];
         }
@@ -537,6 +548,15 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
             // FIXME: Make sure the invocation doesn't outlive the value.
             break;
         }
+
+        // struct
+        case '{':
+            if (!strcmp(type, @encode(NSRange))) {
+                NSRange value = [decodeObjectFromObjectStream(decoder, { [NSValue class] }) rangeValue];
+                [invocation setArgument:&value atIndex:i];
+                break;
+            }
+            FALLTHROUGH;
 
         default:
             [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s' for argument %zu", type, (unsigned long)i];

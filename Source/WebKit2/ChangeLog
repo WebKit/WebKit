@@ -1,3 +1,14 @@
+2016-08-05  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKRemoteObjectCoder doesn’t handle NSRange
+        https://bugs.webkit.org/show_bug.cgi?id=160589
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocationArguments): Encode NSRange by wrapping in an NSValue.
+        (decodeInvocationArguments): Decode wrapped NSRange.
+
 2016-08-04  Chris Dumez  <cdumez@apple.com>
 
         Crash under NavigationState::NavigationClient::processDidCrash()
