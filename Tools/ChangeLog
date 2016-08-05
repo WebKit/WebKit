@@ -1,3 +1,14 @@
+2016-08-05  Enrica Casucci  <enrica@apple.com>
+
+        Build fix after 204053.
+
+        Unreviewed.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFilteringPlugIn.mm:
+        (-[MockContentFilterEnabler initWithCoder:]):
+        (-[MockContentFilterEnabler dealloc]):
+
 2016-08-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Print test name in "Last character read from DRT..." error message.
