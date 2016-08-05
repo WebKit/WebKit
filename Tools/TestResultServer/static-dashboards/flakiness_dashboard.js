@@ -1328,7 +1328,7 @@ function createBugHTML(test)
     
     var component = encodeURIComponent('Tools / Tests');
     url = 'https://bugs.webkit.org/enter_bug.cgi?assigned_to=webkit-unassigned%40lists.webkit.org&product=WebKit&form_name=enter_bug&component=' + component + '&short_desc=' + title + '&comment=' + description;
-    return '<a href="' + url + '" class="file-bug">FILE BUG</a>';
+    return '<a href="' + url + '" class="file-bug">File</a>';
 }
 
 function isCrossBuilderView()
@@ -1340,15 +1340,15 @@ function tableHeaders(opt_getAll)
 {
     var headers = [];
     if (isCrossBuilderView() || opt_getAll)
-        headers.push('builder');
+        headers.push('Builder');
 
     if (!isCrossBuilderView() || opt_getAll)
-        headers.push('test');
+        headers.push('Test');
 
     if (g_history.isLayoutTestResults() || opt_getAll)
-        headers.push('bugs', 'modifiers', 'expectations');
+        headers.push('Bug(s)', 'Modifiers', 'Expectation(s)');
 
-    headers.push('slowest run', 'flakiness (numbers are runtimes in seconds)');
+    headers.push('Slowest Run', 'Flakiness (Numbers are runtimes in seconds)');
     return headers;
 }
 
@@ -1366,7 +1366,7 @@ function htmlForSingleTestRow(test)
     var html = '';
     for (var i = 0; i < headers.length; i++) {
         var header = headers[i];
-        if (string.startsWith(header, 'test') || string.startsWith(header, 'builder')) {
+        if (string.startsWith(header, 'Test') || string.startsWith(header, 'Builder')) {
             // If isCrossBuilderView() is true, we're just viewing a single test
             // with results for many builders, so the first column is builder names
             // instead of test paths.
@@ -1374,15 +1374,15 @@ function htmlForSingleTestRow(test)
             var testCellHTML = isCrossBuilderView() ? test.builder : '<span class="link" onclick="g_history.setQueryParameter(\'tests\',\'' + test.test +'\');">' + test.test + '</span>';
 
             html += '<tr><td class="' + testCellClassName + '">' + testCellHTML;
-        } else if (string.startsWith(header, 'bugs'))
-            html += '<td class=options-container>' + (test.bugs ? htmlForBugs(test.bugs) : createBugHTML(test));
-        else if (string.startsWith(header, 'modifiers'))
+        } else if (string.startsWith(header, 'Bug(s)'))
+            html += '<td class=options-container bugs>' + (test.bugs ? htmlForBugs(test.bugs) : createBugHTML(test));
+        else if (string.startsWith(header, 'Modifiers'))
             html += '<td class=options-container>' + test.modifiers;
-        else if (string.startsWith(header, 'expectations'))
-            html += '<td class=options-container>' + test.expectations;
-        else if (string.startsWith(header, 'slowest'))
-            html += '<td>' + (test.slowestTime ? test.slowestTime + 's' : '');
-        else if (string.startsWith(header, 'flakiness'))
+        else if (string.startsWith(header, 'Expectation(s)'))
+            html += '<td class=options-container>' + test.expectations.split(' ').join(' | ');
+        else if (string.startsWith(header, 'Slowest'))
+            html += '<td class=options-container>' + (test.slowestTime ? test.slowestTime + 's' : '');
+        else if (string.startsWith(header, 'Flakiness'))
             html += htmlForTestResults(test);
     }
     return html;
@@ -2177,12 +2177,12 @@ function linkHTMLToToggleState(key, linkText)
 
 function headerForTestTableHtml()
 {
-    return '<h2 style="display:inline-block">Failing tests</h2>' +
-        checkBoxToToggleState('showWontFixSkip', 'WONTFIX/SKIP') +
-        checkBoxToToggleState('showCorrectExpectations', 'tests with correct expectations') +
-        checkBoxToToggleState('showWrongExpectations', 'tests with wrong expectations') +
-        checkBoxToToggleState('showFlaky', 'flaky') +
-        checkBoxToToggleState('showSlow', 'slow');
+    return '<h2 style="display:inline-block">Show Tests Flagged As/With: </h2>' +
+        checkBoxToToggleState('showWontFixSkip', "Won't Fix/Skip") +
+        checkBoxToToggleState('showCorrectExpectations', 'Correct Expectations') +
+        checkBoxToToggleState('showWrongExpectations', 'Incorrect Expectations') +
+        checkBoxToToggleState('showFlaky', 'Flaky') +
+        checkBoxToToggleState('showSlow', 'Slow');
 }
 
 function generatePageForBuilder(builderName)

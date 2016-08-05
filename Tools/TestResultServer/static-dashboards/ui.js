@@ -110,17 +110,12 @@ ui.html.testTypeSwitcher = function(opt_noBuilderMenu, opt_extraHtml, opt_includ
         ui.html._dashboardLink('Results', 'flakiness_dashboard.html') +
         ui.html._dashboardLink('Treemap', 'treemap.html');
 
-    html += ui.html.select('Test type', 'testType', TEST_TYPES);
-
     if (!opt_noBuilderMenu) {
         var buildersForMenu = Object.keys(currentBuilders());
         if (opt_includeNoneBuilder)
             buildersForMenu.unshift('--------------');
         html += ui.html.select('Builder', 'builder', buildersForMenu);
     }
-
-    html += ui.html.select('Group', 'group',
-        Object.keys(currentBuilderGroupCategory()));
 
     if (!history.isTreeMap())
         html += ui.html.checkbox('showAllRuns', 'Show all runs', g_history.crossDashboardState.showAllRuns);

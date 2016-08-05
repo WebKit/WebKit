@@ -1,3 +1,20 @@
+2016-08-04  Dean Johnson  <dean_johnson@apple.com>
+
+        UI improvements to Flakiness Dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=153295
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.css:
+        (td.options-container): Center text in most fields.
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (createBugHTML): Text/Grammar updates.
+        (tableHeaders): Ditto.
+        (htmlForSingleTestRow): Ditto.
+        (headerForTestTableHtml): Ditto.
+        * TestResultServer/static-dashboards/ui.js: Removed the "Group: " and "Test type: " headings.
+        (ui.html.testTypeSwitcher): Deleted. Removes the "Group:" heading.
+
 2016-08-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] install-dependencies script misses libxslt as build-dependency and some python libs for the run-benchmark script

@@ -47,6 +47,9 @@ label {
     padding-left: 2em;
     white-space: nowrap;
 }
+td.options-container {
+    text-align: center;
+}
 .forms {
     display: -webkit-box;
     -webkit-box-align: baseline;
