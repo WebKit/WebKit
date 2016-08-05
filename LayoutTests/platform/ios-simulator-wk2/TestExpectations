@@ -1906,3 +1906,5 @@ webkit.org/b/160368 [ Release ] http/tests/xmlhttprequest/workers/methods-async.
 webkit.org/b/160367 media/track/media-element-enqueue-event-crash.html [ Pass Crash ]
 webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Failure ]
 webkit.org/b/160367 media/track/track-remove-crash.html [ Skip ]
+
+webkit.org/b/160591 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-worker.html [ Failure Timeout ]
