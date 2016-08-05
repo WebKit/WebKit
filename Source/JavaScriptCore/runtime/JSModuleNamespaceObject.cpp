@@ -72,7 +72,8 @@ void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject* gl
         m_exports.add(identifier);
 
     m_moduleRecord.set(vm, this, moduleRecord);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, moduleNamespaceObjectSymbolIterator, DontEnum, 0);
+    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("[Symbol.iterator]"), moduleNamespaceObjectSymbolIterator, NoIntrinsic);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, DontEnum);
     putDirect(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Module"), DontEnum | ReadOnly);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getprototypeof

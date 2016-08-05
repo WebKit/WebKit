@@ -1,3 +1,13 @@
+2016-08-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] JSModuleNamespaceObject's Symbol.iterator function should have name
+        https://bugs.webkit.org/show_bug.cgi?id=160549
+
+        Reviewed by Saam Barati.
+
+        * modules/namespace-object-symbol-iterator-name.js: Added.
+        * test262.yaml:
+
 2016-08-04  Keith Miller  <keith_miller@apple.com>
 
         ASSERTION FAILED: !hasInstanceValueNode->isCellConstant() || defaultHasInstanceFunction == hasInstanceValueNode->asCell()
