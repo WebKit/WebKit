@@ -117,7 +117,6 @@ RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::takeAsArrayBuffer()
 
 Ref<Blob> FetchBodyConsumer::takeAsBlob()
 {
-    ASSERT(m_buffer);
     if (!m_buffer)
         return Blob::create();
 

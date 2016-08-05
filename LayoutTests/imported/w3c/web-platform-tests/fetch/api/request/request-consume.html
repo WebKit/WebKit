@@ -91,6 +91,7 @@
     checkBlobResponseBody(blob, textData, "text", checkBodyText);
     checkBlobResponseBody(blob, textData, "json", checkBodyJSON);
     checkBlobResponseBody(blob, textData, "arrayBuffer", checkBodyArrayBuffer);
+    checkBlobResponseBody(new Blob([""]), "", "blob (empty blob as input)", checkBodyBlob);
 
     var goodJSONValues = ["null", "1", "true", "\"string\""];
     goodJSONValues.forEach(function(value) {

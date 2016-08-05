@@ -8,6 +8,7 @@ PASS Consume blob response's body as blob
 PASS Consume blob response's body as text 
 PASS Consume blob response's body as json 
 PASS Consume blob response's body as arrayBuffer 
+PASS Consume blob response's body as blob (empty blob as input) 
 PASS Consume JSON from text: '"null"' 
 PASS Consume JSON from text: '"1"' 
 PASS Consume JSON from text: '"true"' 
