@@ -146,7 +146,6 @@ static HashSet<String, ASCIICaseInsensitiveHash>* supportedImageMIMETypesForEnco
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedJavaScriptMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedNonImageMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedMediaMIMETypes;
-static HashSet<String, ASCIICaseInsensitiveHash>* mpegPlaylistMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* pdfMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* pdfAndPostScriptMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* unsupportedTextMIMETypes;
@@ -300,22 +299,6 @@ static void initializeSupportedJavaScriptMIMETypes()
     };
     for (auto* type : types)
         supportedJavaScriptMIMETypes->add(type);
-}
-
-static void initializeMPEGPlaylistMIMETypes()
-{
-    const char* const types[] = {
-        "application/vnd.apple.mpegurl",
-        "application/mpegurl",
-        "application/x-mpegurl",
-        "audio/mpegurl",
-        "audio/x-mpegurl",
-        "audio/mpegurl",
-        "audio/x-mpegurl"
-    };
-
-    for (auto& type : types)
-        mpegPlaylistMIMETypes->add(type);
 }
 
 static void initializePDFMIMETypes()
@@ -472,9 +455,6 @@ static void initializeMIMETypeRegistry()
     supportedImageMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
     initializeSupportedImageMIMETypes();
 
-    mpegPlaylistMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
-    initializeMPEGPlaylistMIMETypes();
-
     pdfMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
     initializePDFMIMETypes();
 
@@ -571,15 +551,6 @@ bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
     return mimeType.startsWith("application/x-java-applet", false)
         || mimeType.startsWith("application/x-java-bean", false)
         || mimeType.startsWith("application/x-java-vm", false);
-}
-
-bool MIMETypeRegistry::isMPEGPlaylistMIMEType(const String& mimeType)
-{
-    if (mimeType.isEmpty())
-        return false;
-    if (!mpegPlaylistMIMETypes)
-        initializeMIMETypeRegistry();
-    return mpegPlaylistMIMETypes->contains(mimeType);
 }
 
 bool MIMETypeRegistry::isPDFOrPostScriptMIMEType(const String& mimeType)

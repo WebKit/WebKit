@@ -29,7 +29,6 @@
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
 #import "CachedResourceRequest.h"
-#import "MIMETypeRegistry.h"
 #import "PlatformMediaResourceLoader.h"
 #import "SecurityOrigin.h"
 #import "SubresourceLoader.h"
@@ -587,20 +586,9 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         // and use that URL for all future requests for the same piece of media. This breaks
         // certain features of CORS, as well as being against the HTTP spec in the case of
         // non-permanent redirects.
-
-        // Exclude MPEG Playlists since these require the redirected URL as the base URL
-        // for relative paths.
-        String mimeType = response.nsURLResponse().MIMEType;
-        if (mimeType.isEmpty() || mimeType == "application/octet-stream" || mimeType == "text/plain") {
-            String extension = response.nsURLResponse().URL.pathExtension;
-            mimeType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
-
-        }
-        if (!MIMETypeRegistry::isMPEGPlaylistMIMEType(mimeType)) {
-            auto responseData = response.crossThreadData();
-            responseData.url = URL(self.currentRequest.URL);
-            strongResponse = ResourceResponseBase::fromCrossThreadData(WTFMove(responseData)).nsURLResponse();
-        }
+        auto responseData = response.crossThreadData();
+        responseData.url = URL(self.currentRequest.URL);
+        strongResponse = ResourceResponseBase::fromCrossThreadData(WTFMove(responseData)).nsURLResponse();
     }
 
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
@@ -670,18 +658,8 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     // FIXME(<rdar://problem/27000361>):
     // Do not update the current request if the redirect is temporary; use this
     // current request during responseReceieved: to work around a CoreMedia bug.
-
-    // Exclude MPEG Playlists since these require the redirected URL as the base URL
-    // for relative paths.
-    if (response.httpStatusCode() != 302 && response.httpStatusCode() != 307) {
-        String mimeType = response.nsURLResponse().MIMEType;
-        if (mimeType.isEmpty() || mimeType == "application/octet-stream" || mimeType == "text/plain") {
-            String extension = response.nsURLResponse().URL.pathExtension;
-            mimeType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
-        }
-        if (!MIMETypeRegistry::isMPEGPlaylistMIMEType(mimeType))
-            self.currentRequest = [NSURLRequest requestWithURL:request.url()];
-    }
+    if (response.httpStatusCode() != 302 && response.httpStatusCode() != 307)
+        self.currentRequest = [NSURLRequest requestWithURL:request.url()];
 
     [self.session updateHasSingleSecurityOrigin:SecurityOrigin::create(request.url())];
 }
