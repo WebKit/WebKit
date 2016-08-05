@@ -34,6 +34,9 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/gtk"
     "${WEBCORE_DIR}/platform/cairo"
+    "${WEBCORE_DIR}/platform/gamepad"
+    "${WEBCORE_DIR}/platform/gamepad/deprecated"
+    "${WEBCORE_DIR}/platform/gamepad/glib"
     "${WEBCORE_DIR}/platform/geoclue"
     "${WEBCORE_DIR}/platform/gtk"
     "${WEBCORE_DIR}/platform/graphics/cairo"
@@ -85,12 +88,13 @@ list(APPEND WebCore_SOURCES
 
     platform/crypto/gnutls/CryptoDigestGnuTLS.cpp
 
+    platform/gamepad/glib/GamepadsGlib.cpp
+
     platform/geoclue/GeolocationProviderGeoclue1.cpp
     platform/geoclue/GeolocationProviderGeoclue2.cpp
 
     platform/glib/EventLoopGlib.cpp
     platform/glib/FileSystemGlib.cpp
-    platform/glib/GamepadsGlib.cpp
     platform/glib/KeyedDecoderGlib.cpp
     platform/glib/KeyedEncoderGlib.cpp
     platform/glib/MainThreadSharedTimerGLib.cpp

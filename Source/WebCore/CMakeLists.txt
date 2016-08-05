@@ -72,6 +72,9 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/animation"
     "${WEBCORE_DIR}/platform/audio"
     "${WEBCORE_DIR}/platform/crypto"
+    "${WEBCORE_DIR}/platform/gamepad"
+    "${WEBCORE_DIR}/platform/gamepad/deprecated"
+    "${WEBCORE_DIR}/platform/gamepad/linux"
     "${WEBCORE_DIR}/platform/graphics"
     "${WEBCORE_DIR}/platform/graphics/cpu/arm"
     "${WEBCORE_DIR}/platform/graphics/cpu/arm/filters"
@@ -2900,7 +2903,8 @@ if (ENABLE_GAMEPAD)
         Modules/gamepad/GamepadManager.cpp
         Modules/gamepad/NavigatorGamepad.cpp
 
-        platform/GamepadProvider.cpp
+        platform/gamepad/EmptyGamepadProvider.cpp
+        platform/gamepad/GamepadProvider.cpp
     )
 elseif (ENABLE_GAMEPAD_DEPRECATED)
     list(APPEND WebCore_INCLUDE_DIRECTORIES

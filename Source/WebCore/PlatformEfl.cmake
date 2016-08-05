@@ -29,6 +29,9 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page/efl"
     "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/efl"
+    "${WEBCORE_DIR}/platform/gamepad"
+    "${WEBCORE_DIR}/platform/gamepad/deprecated"
+    "${WEBCORE_DIR}/platform/gamepad/efl"
     "${WEBCORE_DIR}/platform/geoclue"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/efl"
@@ -98,7 +101,6 @@ list(APPEND WebCore_SOURCES
     platform/efl/ErrorsEfl.cpp
     platform/efl/EventLoopEfl.cpp
     platform/efl/FileSystemEfl.cpp
-    platform/efl/GamepadsEfl.cpp
     platform/efl/LocalizedStringsEfl.cpp
     platform/efl/MIMETypeRegistryEfl.cpp
     platform/efl/MainThreadSharedTimerEfl.cpp
@@ -112,6 +114,8 @@ list(APPEND WebCore_SOURCES
     platform/efl/TemporaryLinkStubs.cpp
     platform/efl/UserAgentEfl.cpp
     platform/efl/WidgetEfl.cpp
+
+    platform/gamepad/efl/GamepadsEfl.cpp
 
     platform/geoclue/GeolocationProviderGeoclue1.cpp
     platform/geoclue/GeolocationProviderGeoclue2.cpp

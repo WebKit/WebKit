@@ -2091,6 +2091,16 @@
 		514C767D0CE923A1007EF3CD /* ResourceRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76680CE923A1007EF3CD /* ResourceRequestBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */; };
 		514C767F0CE923A1007EF3CD /* ResourceResponseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		515BE18F1D54F5FB00DD7C68 /* EmptyGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1881D54F5F600DD7C68 /* EmptyGamepadProvider.cpp */; };
+		515BE1901D54F5FB00DD7C68 /* EmptyGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1891D54F5F600DD7C68 /* EmptyGamepadProvider.h */; };
+		515BE1911D54F5FB00DD7C68 /* GamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE18A1D54F5F600DD7C68 /* GamepadProvider.cpp */; };
+		515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE18B1D54F5F600DD7C68 /* GamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		515BE1931D54F5FB00DD7C68 /* GamepadProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE18C1D54F5F600DD7C68 /* GamepadProviderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		515BE1951D54F5FB00DD7C68 /* PlatformGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE18E1D54F5F600DD7C68 /* PlatformGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		515BE19B1D54F6C100DD7C68 /* HIDGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1971D54F6BD00DD7C68 /* HIDGamepad.cpp */; };
+		515BE19C1D54F6C100DD7C68 /* HIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1981D54F6BD00DD7C68 /* HIDGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		515BE19D1D54F6C100DD7C68 /* HIDGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1991D54F6BD00DD7C68 /* HIDGamepadProvider.cpp */; };
+		515BE19E1D54F6C100DD7C68 /* HIDGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE19A1D54F6BD00DD7C68 /* HIDGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		515F79531CFCA3D000CCED93 /* WebCoreCrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F79511CFCA3C700CCED93 /* WebCoreCrossThreadCopier.cpp */; };
 		515F79541CFCA3D500CCED93 /* WebCoreCrossThreadCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 515F79521CFCA3C700CCED93 /* WebCoreCrossThreadCopier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */; };
@@ -2136,11 +2146,6 @@
 		5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5174E20810A1F44F00F95E6F /* PopStateEvent.h */; };
 		51771DFE1BDB485000CAE8E4 /* MemoryObjectStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */; };
 		51771DFF1BDB485000CAE8E4 /* MemoryObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */; };
-		5179CE24195C81420019C198 /* GamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE23195C81420019C198 /* GamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5179CE26195C821D0019C198 /* GamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5179CE25195C821D0019C198 /* GamepadProvider.cpp */; };
-		5179CE2A195C91860019C198 /* GamepadProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE29195C91860019C198 /* GamepadProviderClient.h */; };
-		5179CE36195CAC7E0019C198 /* HIDGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5179CE34195CAC7E0019C198 /* HIDGamepadProvider.cpp */; };
-		5179CE37195CAC7E0019C198 /* HIDGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE35195CAC7E0019C198 /* HIDGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */; };
 		517A63C41B74318B00E7DCDC /* KeyedEncoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */; };
 		517A63C51B74318F00E7DCDC /* KeyedDecoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2225,8 +2230,6 @@
 		51A4BB101954D62700FA5C2E /* NavigatorGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4BB0D1954D62700FA5C2E /* NavigatorGamepad.cpp */; };
 		51A9D9E9195B931F001B2B5C /* GamepadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9D9E7195B931F001B2B5C /* GamepadManager.cpp */; };
 		51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9D9E8195B931F001B2B5C /* GamepadManager.h */; };
-		51A9D9F3195B9503001B2B5C /* HIDGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9D9EF195B9503001B2B5C /* HIDGamepad.cpp */; };
-		51A9D9F4195B9503001B2B5C /* HIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9D9F0195B9503001B2B5C /* HIDGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51AA3F6F0BD5AA9E00892971 /* ResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */; };
 		51ABAE1B103C18FF008C5260 /* SocketStreamError.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABAE1A103C18FF008C5260 /* SocketStreamError.h */; };
 		51ABAE1E103C1913008C5260 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABAE1C103C1913008C5260 /* SocketStreamHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2237,7 +2240,6 @@
 		51B454EA1B4DAE7D0085EAA6 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B454E91B4DAE7D0085EAA6 /* PingHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B45D201AB8D1E200117CD2 /* ContentExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B45D1E1AB8D1E200117CD2 /* ContentExtension.cpp */; };
 		51B45D211AB8D1E200117CD2 /* ContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B45D1F1AB8D1E200117CD2 /* ContentExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51B58FD4195A964D002990B0 /* PlatformGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E5FEF195101470086CA5E /* PlatformGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BA4AC31BBB5CD800DF3D6D /* IDBDatabaseInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BA4AC11BBB5CBF00DF3D6D /* IDBDatabaseInfo.cpp */; };
 		51BA4AC41BBB5CD800DF3D6D /* IDBDatabaseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC21BBB5CBF00DF3D6D /* IDBDatabaseInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BA4ACA1BBC5BD900DF3D6D /* MemoryIDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BA4AC81BBC5B9E00DF3D6D /* MemoryIDBBackingStore.cpp */; };
@@ -9419,7 +9421,16 @@
 		514C76680CE923A1007EF3CD /* ResourceRequestBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceRequestBase.h; sourceTree = "<group>"; };
 		514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponseBase.cpp; sourceTree = "<group>"; };
 		514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponseBase.h; sourceTree = "<group>"; };
-		515E5FEF195101470086CA5E /* PlatformGamepad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformGamepad.h; sourceTree = "<group>"; };
+		515BE1881D54F5F600DD7C68 /* EmptyGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmptyGamepadProvider.cpp; sourceTree = "<group>"; };
+		515BE1891D54F5F600DD7C68 /* EmptyGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyGamepadProvider.h; sourceTree = "<group>"; };
+		515BE18A1D54F5F600DD7C68 /* GamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadProvider.cpp; sourceTree = "<group>"; };
+		515BE18B1D54F5F600DD7C68 /* GamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProvider.h; sourceTree = "<group>"; };
+		515BE18C1D54F5F600DD7C68 /* GamepadProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProviderClient.h; sourceTree = "<group>"; };
+		515BE18E1D54F5F600DD7C68 /* PlatformGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformGamepad.h; sourceTree = "<group>"; };
+		515BE1971D54F6BD00DD7C68 /* HIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HIDGamepad.cpp; sourceTree = "<group>"; };
+		515BE1981D54F6BD00DD7C68 /* HIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDGamepad.h; sourceTree = "<group>"; };
+		515BE1991D54F6BD00DD7C68 /* HIDGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HIDGamepadProvider.cpp; sourceTree = "<group>"; };
+		515BE19A1D54F6BD00DD7C68 /* HIDGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDGamepadProvider.h; sourceTree = "<group>"; };
 		515F79511CFCA3C700CCED93 /* WebCoreCrossThreadCopier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreCrossThreadCopier.cpp; sourceTree = "<group>"; };
 		515F79521CFCA3C700CCED93 /* WebCoreCrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreCrossThreadCopier.h; sourceTree = "<group>"; };
 		5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemPOSIX.cpp; sourceTree = "<group>"; };
@@ -9489,11 +9500,6 @@
 		5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PopStateEvent.idl; sourceTree = "<group>"; };
 		51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObjectStore.cpp; sourceTree = "<group>"; };
 		51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectStore.h; sourceTree = "<group>"; };
-		5179CE23195C81420019C198 /* GamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProvider.h; sourceTree = "<group>"; };
-		5179CE25195C821D0019C198 /* GamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadProvider.cpp; sourceTree = "<group>"; };
-		5179CE29195C91860019C198 /* GamepadProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProviderClient.h; sourceTree = "<group>"; };
-		5179CE34195CAC7E0019C198 /* HIDGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HIDGamepadProvider.cpp; sourceTree = "<group>"; };
-		5179CE35195CAC7E0019C198 /* HIDGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDGamepadProvider.h; sourceTree = "<group>"; };
 		517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedDecoderCF.cpp; sourceTree = "<group>"; };
 		517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedDecoderCF.h; sourceTree = "<group>"; };
 		517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedEncoderCF.cpp; sourceTree = "<group>"; };
@@ -9540,8 +9546,6 @@
 		51A4BB0F1954D62700FA5C2E /* NavigatorGamepad.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorGamepad.idl; sourceTree = "<group>"; };
 		51A9D9E7195B931F001B2B5C /* GamepadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadManager.cpp; sourceTree = "<group>"; };
 		51A9D9E8195B931F001B2B5C /* GamepadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadManager.h; sourceTree = "<group>"; };
-		51A9D9EF195B9503001B2B5C /* HIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HIDGamepad.cpp; sourceTree = "<group>"; };
-		51A9D9F0195B9503001B2B5C /* HIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDGamepad.h; sourceTree = "<group>"; };
 		51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoaderMac.mm; sourceTree = "<group>"; };
 		51ABAE1A103C18FF008C5260 /* SocketStreamError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamError.h; sourceTree = "<group>"; };
 		51ABAE1C103C1913008C5260 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
@@ -17485,6 +17489,31 @@
 			path = cf;
 			sourceTree = "<group>";
 		};
+		515BE1871D54F5DB00DD7C68 /* gamepad */ = {
+			isa = PBXGroup;
+			children = (
+				515BE1961D54F64500DD7C68 /* mac */,
+				515BE1881D54F5F600DD7C68 /* EmptyGamepadProvider.cpp */,
+				515BE1891D54F5F600DD7C68 /* EmptyGamepadProvider.h */,
+				515BE18A1D54F5F600DD7C68 /* GamepadProvider.cpp */,
+				515BE18B1D54F5F600DD7C68 /* GamepadProvider.h */,
+				515BE18C1D54F5F600DD7C68 /* GamepadProviderClient.h */,
+				515BE18E1D54F5F600DD7C68 /* PlatformGamepad.h */,
+			);
+			path = gamepad;
+			sourceTree = "<group>";
+		};
+		515BE1961D54F64500DD7C68 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				515BE1971D54F6BD00DD7C68 /* HIDGamepad.cpp */,
+				515BE1981D54F6BD00DD7C68 /* HIDGamepad.h */,
+				515BE1991D54F6BD00DD7C68 /* HIDGamepadProvider.cpp */,
+				515BE19A1D54F6BD00DD7C68 /* HIDGamepadProvider.h */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
 		516030090CC4245400C8AC25 /* posix */ = {
 			isa = PBXGroup;
 			children = (
@@ -17969,10 +17998,6 @@
 				E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */,
 				1CA19E030DC255950065A994 /* EventLoopMac.mm */,
 				514B3F750C722055000530DF /* FileSystemMac.mm */,
-				51A9D9EF195B9503001B2B5C /* HIDGamepad.cpp */,
-				51A9D9F0195B9503001B2B5C /* HIDGamepad.h */,
-				5179CE34195CAC7E0019C198 /* HIDGamepadProvider.cpp */,
-				5179CE35195CAC7E0019C198 /* HIDGamepadProvider.h */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
 				521D46F511AEC98100514613 /* KillRingMac.mm */,
 				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
@@ -22500,6 +22525,7 @@
 				1AE42F670AA4B8CB00C8612D /* cf */,
 				A5C974CE11485FDA0066F2AB /* cocoa */,
 				CE50D8CE1C8932ED0072EA5A /* crypto */,
+				515BE1871D54F5DB00DD7C68 /* gamepad */,
 				B2A015910AF6CD53006BCE0E /* graphics */,
 				A59E3C1B11580F340072928E /* ios */,
 				6582A14809999D6C00BEEB6D /* mac */,
@@ -22555,9 +22581,6 @@
 				C57FEDE01212EE9C0097BE65 /* FileSystem.cpp */,
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
-				5179CE25195C821D0019C198 /* GamepadProvider.cpp */,
-				5179CE23195C81420019C198 /* GamepadProvider.h */,
-				5179CE29195C91860019C198 /* GamepadProviderClient.h */,
 				CD4BE5291CE13425009D87DA /* GenericTaskQueue.cpp */,
 				CD62FB941AF018E70012ED7D /* GenericTaskQueue.h */,
 				A8748BDF12CBF2DC001FBA41 /* HashTools.h */,
@@ -22601,7 +22624,6 @@
 				A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */,
 				BC5C76291497FE1400BC4775 /* PlatformEvent.h */,
 				A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */,
-				515E5FEF195101470086CA5E /* PlatformGamepad.h */,
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */,
@@ -24694,6 +24716,7 @@
 				29A8122C0FBB9C1D00510293 /* AccessibilityList.h in Headers */,
 				29A812430FBB9C1D00510293 /* AccessibilityListBox.h in Headers */,
 				29A812420FBB9C1D00510293 /* AccessibilityListBoxOption.h in Headers */,
+				515BE19C1D54F6C100DD7C68 /* HIDGamepad.h in Headers */,
 				07B0ABCF1032242200FBDC33 /* AccessibilityMathMLElement.h in Headers */,
 				07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */,
 				76CDD2F31103DA6600680521 /* AccessibilityMenuList.h in Headers */,
@@ -24959,6 +24982,7 @@
 				E425A49A18292B840020CFCF /* CollectionIndexCache.h in Headers */,
 				46EBEA021B7D4D6500BE4941 /* CollectionTraversal.h in Headers */,
 				93C442000F813AE100C1A634 /* CollectionType.h in Headers */,
+				515BE1901D54F5FB00DD7C68 /* EmptyGamepadProvider.h in Headers */,
 				B27535670B053814002CE64F /* Color.h in Headers */,
 				C330A22313EC196B0000B45B /* ColorChooser.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
@@ -25661,8 +25685,6 @@
 				FD31600D12B0267600C1A359 /* GainNode.h in Headers */,
 				516C62211950D48700337E75 /* GamepadEvent.h in Headers */,
 				51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */,
-				5179CE24195C81420019C198 /* GamepadProvider.h in Headers */,
-				5179CE2A195C91860019C198 /* GamepadProviderClient.h in Headers */,
 				935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */,
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
@@ -25707,8 +25729,6 @@
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
-				51A9D9F4195B9503001B2B5C /* HIDGamepad.h in Headers */,
-				5179CE37195CAC7E0019C198 /* HIDGamepadProvider.h in Headers */,
 				BC94D1540C275C8B006BC617 /* History.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
 				51741D110B07259A00ED442C /* HistoryItem.h in Headers */,
@@ -26531,6 +26551,7 @@
 				65DF320409D1CC60000BE325 /* JSText.h in Headers */,
 				933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */,
 				BCEF45F60E687B5C001C1287 /* JSTextMetrics.h in Headers */,
+				515BE1951D54F5FB00DD7C68 /* PlatformGamepad.h in Headers */,
 				070756951422668D00414161 /* JSTextTrack.h in Headers */,
 				070756DE14239B4E00414161 /* JSTextTrackCue.h in Headers */,
 				070756E014239B4E00414161 /* JSTextTrackCueList.h in Headers */,
@@ -27035,7 +27056,6 @@
 				26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */,
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
 				A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */,
-				51B58FD4195A964D002990B0 /* PlatformGamepad.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
 				0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */,
 				F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */,
@@ -27061,6 +27081,7 @@
 				072AE1E5183C0741000A5988 /* PluginReplacement.h in Headers */,
 				71E2183A17359FB8006E6E4D /* PlugInsResources.h in Headers */,
 				1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */,
+				515BE1931D54F5FB00DD7C68 /* GamepadProviderClient.h in Headers */,
 				0AFDAC3D10F5448C00E1F3D2 /* PluginViewBase.h in Headers */,
 				BCBB8AB913F1AFB000734DF0 /* PODInterval.h in Headers */,
 				BCBB8ABA13F1AFB000734DF0 /* PODIntervalTree.h in Headers */,
@@ -27806,6 +27827,7 @@
 				83C1D432178D5AB500141E68 /* SVGPathSegLinetoRel.h in Headers */,
 				B2227A7D0D00BF220071B782 /* SVGPathSegLinetoVertical.h in Headers */,
 				83C1D433178D5AB500141E68 /* SVGPathSegLinetoVerticalAbs.h in Headers */,
+				515BE19E1D54F6C100DD7C68 /* HIDGamepadProvider.h in Headers */,
 				83C1D434178D5AB500141E68 /* SVGPathSegLinetoVerticalRel.h in Headers */,
 				B2227A810D00BF220071B782 /* SVGPathSegList.h in Headers */,
 				8476C9E611DF6A0B00555B02 /* SVGPathSegListBuilder.h in Headers */,
@@ -27866,6 +27888,7 @@
 				080E49281255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h in Headers */,
 				08F0BFC61255C53C00075185 /* SVGTextMetrics.h in Headers */,
 				1A67BF731D4FE42300412AC7 /* DOMHTMLParagraphElement.h in Headers */,
+				515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */,
 				7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */,
 				B2227ACE0D00BF220071B782 /* SVGTextPathElement.h in Headers */,
 				B2227AD10D00BF220071B782 /* SVGTextPositioningElement.h in Headers */,
@@ -28661,6 +28684,7 @@
 				512DD8FA0D91E6AF000F89EE /* ArchiveFactory.cpp in Sources */,
 				512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */,
 				512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */,
+				515BE1911D54F5FB00DD7C68 /* GamepadProvider.cpp in Sources */,
 				49B3760C15C6C6840059131D /* ArrayValue.cpp in Sources */,
 				FD5686C913AC180200B69C68 /* AsyncAudioDecoder.cpp in Sources */,
 				E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */,
@@ -29037,6 +29061,7 @@
 				93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */,
 				93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */,
 				A7C9ABF81357A3BF00F5503F /* DetailsMarkerControl.cpp in Sources */,
+				515BE18F1D54F5FB00DD7C68 /* EmptyGamepadProvider.cpp in Sources */,
 				A1ED778C1BE3294000DC1791 /* Device.cpp in Sources */,
 				CCC2B51515F613060048CDD6 /* DeviceController.cpp in Sources */,
 				31EAF97F121435A400E7C1BF /* DeviceMotionClientIOS.mm in Sources */,
@@ -29418,7 +29443,6 @@
 				518F4FF6194CA4E60081BAAE /* GamepadButton.cpp in Sources */,
 				516C62201950D48700337E75 /* GamepadEvent.cpp in Sources */,
 				51A9D9E9195B931F001B2B5C /* GamepadManager.cpp in Sources */,
-				5179CE26195C821D0019C198 /* GamepadProvider.cpp in Sources */,
 				1432E8490C51493F00B1500F /* GCController.cpp in Sources */,
 				4FB390AD15EF61F3007AD51F /* GeneratedImage.cpp in Sources */,
 				830030F51B7D33B500ED3AAC /* GenericCachedHTMLCollection.cpp in Sources */,
@@ -29447,8 +29471,6 @@
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				CDF7483E18FEBCEC0006ECC0 /* GridPositionsResolver.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
-				51A9D9F3195B9503001B2B5C /* HIDGamepad.cpp in Sources */,
-				5179CE36195CAC7E0019C198 /* HIDGamepadProvider.cpp in Sources */,
 				BC94D1530C275C8B006BC617 /* History.cpp in Sources */,
 				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
 				51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */,
@@ -29476,6 +29498,7 @@
 				A8DF3FD1097FA0FC0052981B /* HTMLCollection.cpp in Sources */,
 				977B3864122883E900B81FF8 /* HTMLConstructionSite.cpp in Sources */,
 				7C3E510B18DF8F3500C112F7 /* HTMLConverter.mm in Sources */,
+				515BE19D1D54F6C100DD7C68 /* HIDGamepadProvider.cpp in Sources */,
 				83120C701C56F3F6001CB112 /* HTMLDataElement.cpp in Sources */,
 				F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */,
 				D359D789129CA2710006E5D2 /* HTMLDetailsElement.cpp in Sources */,
@@ -30503,6 +30526,7 @@
 				1A4832B31A953BA6008B4DFE /* LocalizedStringsCocoa.mm in Sources */,
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
+				515BE19B1D54F6C100DD7C68 /* HIDGamepad.cpp in Sources */,
 				1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */,
 				1A0409F31A43675C009E47F3 /* MachSendRight.cpp in Sources */,
 				932AD70517EFA2C30038F8FF /* MainFrame.cpp in Sources */,
