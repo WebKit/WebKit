@@ -200,9 +200,6 @@ webkit.org/b/95959 css3/device-adapt/ [ Skip ]
 fast/dom/Window/slow-unload-handler.html [ Skip ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Skip ]
 
-# Need to add functionality to DumpRenderTree to handle error pages (mac as well)
-fast/history/back-forward-reset-after-error-handling.html [ Skip ]
-
 # These tests require touch support
 fast/events/touch/ [ Skip ]
 

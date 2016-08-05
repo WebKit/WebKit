@@ -49,9 +49,6 @@ fast/history/window-open.html
 # EFL's LayoutTestController does not implement shadowPseudoId
 media/video-volume-slider.html
 
-# Need to add functionality to DumpRenderTree to handle error pages
-fast/history/back-forward-reset-after-error-handling.html
-
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
 

@@ -1,3 +1,23 @@
+2016-08-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Remove testRunner.handleErrorPages()
+        https://bugs.webkit.org/show_bug.cgi?id=160552
+
+        Reviewed by Daniel Bates.
+
+        handleErrorPages() was implemented by the Qt WebKit port, per
+        https://bugs.webkit.org/show_bug.cgi?id=31509#c0, but never implemented
+        on other ports.  Per https://bugs.webkit.org/show_bug.cgi?id=31555, this
+        feature was never implemented on Mac.
+
+        * fast/history/back-forward-reset-after-error-handling-expected.txt: Removed test expectations.
+        * fast/history/back-forward-reset-after-error-handling.html: Removed test.
+        * platform/efl/TestExpectations: Remove reference to back-forward-reset-after-error-handling.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/ios-simulator/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+
 2016-08-05  Brent Fulgham  <bfulgham@apple.com>
 
         validity assertion fails after removing a child of an <optgroup> element
