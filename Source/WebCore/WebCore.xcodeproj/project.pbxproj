@@ -1786,8 +1786,6 @@
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		460BB6151D0A1BF000221812 /* Base64Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460BB6131D0A1BEC00221812 /* Base64Utilities.cpp */; };
 		460BB6161D0A1BF000221812 /* Base64Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 460BB6141D0A1BEC00221812 /* Base64Utilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		460CBF351D4BCD0E0092E88E /* JSDOMWindowProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */; };
-		460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */; };
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
 		463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463EB6201B8789CB0096ED51 /* TagCollection.cpp */; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
@@ -9088,8 +9086,6 @@
 		45FEA5CE156DDE8C00654101 /* Decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decimal.h; sourceTree = "<group>"; };
 		460BB6131D0A1BEC00221812 /* Base64Utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64Utilities.cpp; sourceTree = "<group>"; };
 		460BB6141D0A1BEC00221812 /* Base64Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64Utilities.h; sourceTree = "<group>"; };
-		460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowProperties.cpp; sourceTree = "<group>"; };
-		460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowProperties.h; sourceTree = "<group>"; };
 		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
 		463EB6201B8789CB0096ED51 /* TagCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagCollection.cpp; sourceTree = "<group>"; };
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
@@ -17761,6 +17757,7 @@
 				973DC63E145A9409002842C2 /* ExceptionCodeDescription.h */,
 				9767CE09145ABC12005E64DB /* ExceptionHeaders.h */,
 				9767CE0A145ABC13005E64DB /* ExceptionInterfaces.h */,
+				9908B0FD1BCAD07D00ED0F45 /* FetchInternalsBuiltins.cpp */,
 				9B03D8061BB3110D00B764B9 /* FetchInternalsBuiltins.h */,
 				A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */,
 				A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */,
@@ -21938,8 +21935,6 @@
 				E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */,
 				BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */,
 				BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */,
-				460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */,
-				460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */,
 				BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp */,
 				BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */,
 				65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */,
@@ -26255,7 +26250,6 @@
 				E44614170CD6826900FADA75 /* JSHTMLVideoElement.h in Headers */,
 				81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */,
 				C585A68311D4FB08004C3E4B /* JSIDBDatabase.h in Headers */,
-				460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */,
 				C585A69711D4FB13004C3E4B /* JSIDBFactory.h in Headers */,
 				C572EE1F1201C9BC007D8F82 /* JSIDBIndex.h in Headers */,
 				C585A68D11D4FB08004C3E4B /* JSIDBKeyRange.h in Headers */,
@@ -29098,7 +29092,6 @@
 				14947FFD12F80CD200A0F631 /* DocumentOrderedMap.cpp in Sources */,
 				A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */,
 				4A4F48A916B0DFC000EDBB29 /* DocumentRuleSets.cpp in Sources */,
-				460CBF351D4BCD0E0092E88E /* JSDOMWindowProperties.cpp in Sources */,
 				AD6E71AC1668899D00320C13 /* DocumentSharedObjectPool.cpp in Sources */,
 				0B9056190F2578BE0095FF6A /* DocumentThreadableLoader.cpp in Sources */,
 				1221E04A1BFC3D2C006A1A00 /* DocumentTimeline.cpp in Sources */,

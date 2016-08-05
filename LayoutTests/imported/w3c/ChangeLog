@@ -1,3 +1,18 @@
+2016-08-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r203935.
+        https://bugs.webkit.org/show_bug.cgi?id=160596
+
+        looks like a 1-2% PLUM regression on iPhone 6s (Requested by
+        kling_ on #webkit).
+
+        Reverted changeset:
+
+        "Window's named properties should be exposed on a
+        WindowProperties object in its prototype"
+        https://bugs.webkit.org/show_bug.cgi?id=160354
+        http://trac.webkit.org/changeset/203935
+
 2016-08-05  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Activate CSP checks

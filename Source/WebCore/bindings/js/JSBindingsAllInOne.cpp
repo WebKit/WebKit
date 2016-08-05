@@ -62,7 +62,6 @@
 #include "JSDOMStringMapCustom.cpp"
 #include "JSDOMWindowBase.cpp"
 #include "JSDOMWindowCustom.cpp"
-#include "JSDOMWindowProperties.cpp"
 #include "JSDOMWindowShell.cpp"
 #include "JSDOMWrapper.cpp"
 #include "JSDataCueCustom.cpp"
