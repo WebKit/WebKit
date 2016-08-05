@@ -1281,7 +1281,6 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     } else {
 #if ENABLE(WEBASSEMBLY)
         WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
-        webAssemblyExecutable->prepareForExecution(execCallee);
         codeBlock = webAssemblyExecutable->codeBlockForCall();
         ASSERT(codeBlock);
         ArityCheckMode arity;

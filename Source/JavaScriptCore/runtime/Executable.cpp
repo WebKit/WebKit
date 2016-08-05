@@ -37,7 +37,6 @@
 #include "ProfilerDatabase.h"
 #include "TypeProfiler.h"
 #include "VMInlines.h"
-#include "WASMFunctionParser.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
@@ -765,28 +764,6 @@ void WebAssemblyExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (thisObject->m_codeBlockForCall)
         thisObject->m_codeBlockForCall->visitWeakly(visitor);
     visitor.append(&thisObject->m_module);
-}
-
-void WebAssemblyExecutable::prepareForExecution(ExecState* exec)
-{
-    if (hasJITCodeForCall())
-        return;
-
-    VM& vm = exec->vm();
-    DeferGC deferGC(vm.heap);
-
-    WebAssemblyCodeBlock* codeBlock = WebAssemblyCodeBlock::create(&vm,
-        this, exec->lexicalGlobalObject());
-
-    WASMFunctionParser::compile(vm, codeBlock, m_module.get(), m_source, m_functionIndex);
-
-    m_jitCodeForCall = codeBlock->jitCode();
-    m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
-    m_numParametersForCall = codeBlock->numParameters();
-
-    m_codeBlockForCall.set(vm, this, codeBlock);
-
-    Heap::heap(this)->writeBarrier(this);
 }
 #endif
 

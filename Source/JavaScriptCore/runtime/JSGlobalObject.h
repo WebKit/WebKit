@@ -307,9 +307,6 @@ public:
     WriteBarrier<Structure> m_proxyObjectStructure;
     WriteBarrier<Structure> m_callableProxyObjectStructure;
     WriteBarrier<Structure> m_proxyRevokeStructure;
-#if ENABLE(WEBASSEMBLY)
-    WriteBarrier<Structure> m_wasmModuleStructure;
-#endif
 
 #define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
     WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype; \
@@ -583,9 +580,6 @@ public:
     Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(); }
     Structure* callableProxyObjectStructure() const { return m_callableProxyObjectStructure.get(); }
     Structure* proxyRevokeStructure() const { return m_proxyRevokeStructure.get(); }
-#if ENABLE(WEBASSEMBLY)
-    Structure* wasmModuleStructure() const { return m_wasmModuleStructure.get(); }
-#endif
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;

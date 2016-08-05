@@ -1,3 +1,14 @@
+2016-08-05  Keith Miller  <keith_miller@apple.com>
+
+        Delete out of date WASM code.
+        https://bugs.webkit.org/show_bug.cgi?id=160603
+
+        Reviewed by Saam Barati.
+
+        Add Feature define for WebAssembly on mac.
+
+        * wtf/FeatureDefines.h:
+
 2016-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Lacking support on a arm-traditional disassembler.

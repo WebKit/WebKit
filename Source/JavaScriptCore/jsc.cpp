@@ -61,7 +61,6 @@
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
-#include "WASMModuleParser.h"
 #include <locale.h>
 #include <math.h>
 #include <stdio.h>
@@ -624,9 +623,6 @@ static EncodedJSValue JSC_HOST_CALL functionBasicBlockExecutionCount(ExecState*)
 static EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*);
-#if ENABLE(WEBASSEMBLY)
-static EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState*);
-#endif
 static EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPlatformSupportsSamplingProfiler(ExecState*);
@@ -853,9 +849,6 @@ protected:
 
         addFunction(vm, "is32BitPlatform", functionIs32BitPlatform, 0);
 
-#if ENABLE(WEBASSEMBLY)
-        addFunction(vm, "loadWebAssembly", functionLoadWebAssembly, 3);
-#endif
         addFunction(vm, "loadModule", functionLoadModule, 1);
         addFunction(vm, "checkModuleSyntax", functionCheckModuleSyntax, 1);
 
@@ -1780,28 +1773,6 @@ EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*)
     return JSValue::encode(JSValue(JSC::JSValue::JSTrue));
 #endif
 }
-
-#if ENABLE(WEBASSEMBLY)
-EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState* exec)
-{
-    String fileName = exec->argument(0).toWTFString(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-    Vector<char> buffer;
-    if (!fillBufferWithContentsOfFile(fileName, buffer))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
-    RefPtr<WebAssemblySourceProvider> sourceProvider = WebAssemblySourceProvider::create(reinterpret_cast<Vector<uint8_t>&>(buffer), fileName);
-    SourceCode source(sourceProvider);
-    JSObject* imports = exec->argument(1).getObject();
-    JSArrayBuffer* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(exec->argument(2));
-
-    String errorMessage;
-    JSWASMModule* module = parseWebAssembly(exec, source, imports, arrayBuffer, errorMessage);
-    if (!module)
-        return JSValue::encode(exec->vm().throwException(exec, createSyntaxError(exec, errorMessage)));
-    return JSValue::encode(module);
-}
-#endif
 
 EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
 {

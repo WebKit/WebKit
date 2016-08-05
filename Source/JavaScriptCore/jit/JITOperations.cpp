@@ -880,7 +880,6 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
 #if ENABLE(WEBASSEMBLY)
     } else if (executable->isWebAssemblyExecutable()) {
         WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
-        webAssemblyExecutable->prepareForExecution(execCallee);
         codeBlock = webAssemblyExecutable->codeBlockForCall();
         ASSERT(codeBlock);
         ArityCheckMode arity;
@@ -971,9 +970,6 @@ inline SlowPathReturnType virtualForWithFunction(
                     vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
                     reinterpret_cast<void*>(KeepTheFrame));
             }
-
-            WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
-            webAssemblyExecutable->prepareForExecution(execCallee);
 #endif
         }
     }
