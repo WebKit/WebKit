@@ -403,13 +403,13 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
 
 bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest, String& errorMessage)
 {
-    ASSERT(options().mode != FetchOptions::Mode::SameOrigin);
-
     bool crossOriginFlag = m_resource->isCrossOrigin();
     bool isNextRequestCrossOrigin = m_origin && !m_origin->canRequest(newRequest.url());
 
     if (isNextRequestCrossOrigin)
         m_resource->setCrossOrigin();
+
+    ASSERT(options().mode != FetchOptions::Mode::SameOrigin || !m_resource->isCrossOrigin());
 
     if (options().mode != FetchOptions::Mode::Cors)
         return true;
