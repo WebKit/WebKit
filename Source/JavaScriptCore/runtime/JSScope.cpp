@@ -264,7 +264,7 @@ ResolveOp JSScope::abstractResolve(ExecState* exec, size_t depthOffset, JSScope*
 void JSScope::collectVariablesUnderTDZ(JSScope* scope, VariableEnvironment& result)
 {
     for (; scope; scope = scope->next()) {
-        if (!scope->isLexicalScope() && !scope->isGlobalLexicalEnvironment())
+        if (!scope->isLexicalScope() && !scope->isGlobalLexicalEnvironment() && !scope->isCatchScope())
             continue;
 
         if (scope->isModuleScope()) {
@@ -274,7 +274,7 @@ void JSScope::collectVariablesUnderTDZ(JSScope* scope, VariableEnvironment& resu
         }
 
         SymbolTable* symbolTable = jsCast<JSSymbolTableObject*>(scope)->symbolTable();
-        ASSERT(symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope || symbolTable->scopeType() == SymbolTable::ScopeType::GlobalLexicalScope);
+        ASSERT(symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope || symbolTable->scopeType() == SymbolTable::ScopeType::GlobalLexicalScope || symbolTable->scopeType() == SymbolTable::ScopeType::CatchScope);
         ConcurrentJITLocker locker(symbolTable->m_lock);
         for (auto end = symbolTable->end(locker), iter = symbolTable->begin(locker); iter != end; ++iter)
             result.add(iter->key);

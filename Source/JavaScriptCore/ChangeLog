@@ -1,3 +1,17 @@
+2016-08-05  Saam Barati  <sbarati@apple.com>
+
+        Assertion failure when accessing TDZ variable in catch through eval
+        https://bugs.webkit.org/show_bug.cgi?id=160554
+
+        Reviewed by Mark Lam and Keith Miller.
+
+        When we were calculating the variables under TDZ from a JSScope,
+        the algorithm was not taking into account that a catch scope
+        has variables under TDZ.
+
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::collectVariablesUnderTDZ):
+
 2016-08-05  Keith Miller  <keith_miller@apple.com>
 
         Delete out of date WASM code.

@@ -1,3 +1,13 @@
+2016-08-05  Saam Barati  <sbarati@apple.com>
+
+        Assertion failure when accessing TDZ variable in catch through eval
+        https://bugs.webkit.org/show_bug.cgi?id=160554
+
+        Reviewed by Mark Lam and Keith Miller.
+
+        * stress/catch-variables-under-tdz.js: Added.
+        (test):
+
 2016-08-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] JSModuleNamespaceObject's Symbol.iterator function should have name
