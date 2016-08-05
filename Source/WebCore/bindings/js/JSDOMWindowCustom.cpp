@@ -146,18 +146,6 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
         return true;
     }
 
-    // Do prototype lookup early so that functions and attributes in the prototype can have
-    // precedence over the index and name getters.
-    // FIXME: This seems like a silly idea. It only serves to suppress named property access
-    // to frames that happen to have names corresponding to properties on the prototype.
-    // This seems to only serve to leak some information cross-origin.
-    JSValue proto = thisObject->getPrototypeDirect();
-    if (proto.isObject() && asObject(proto)->getPropertySlot(exec, propertyName, slot)) {
-        thisObject->printErrorMessage(errorMessage);
-        slot.setUndefined();
-        return true;
-    }
-
     // Check for child frames by name before built-in properties to match Mozilla. This does
     // not match IE, but some sites end up naming frames things that conflict with window
     // properties that are in Moz but not IE. Since we have some of these, we have to do it
@@ -170,45 +158,6 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     thisObject->printErrorMessage(errorMessage);
     slot.setUndefined();
     return true;
-}
-
-static bool jsDOMWindowGetOwnPropertySlotNamedItemGetter(JSDOMWindow* thisObject, Frame& frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSValue proto = thisObject->getPrototypeDirect();
-    if (proto.isObject() && asObject(proto)->hasProperty(exec, propertyName))
-        return false;
-
-    // Check for child frames by name before built-in properties to match Mozilla. This does
-    // not match IE, but some sites end up naming frames things that conflict with window
-    // properties that are in Moz but not IE. Since we have some of these, we have to do it
-    // the Moz way.
-    if (auto* scopedChild = frame.tree().scopedChild(propertyNameToAtomicString(propertyName))) {
-        slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, toJS(exec, scopedChild->document()->domWindow()));
-        return true;
-    }
-
-    // FIXME: Search the whole frame hierarchy somewhere around here.
-    // We need to test the correct priority order.
-
-    // Allow shortcuts like 'Image1' instead of document.images.Image1
-    Document* document = frame.document();
-    if (is<HTMLDocument>(*document)) {
-        auto& htmlDocument = downcast<HTMLDocument>(*document);
-        auto* atomicPropertyName = propertyName.publicName();
-        if (atomicPropertyName && htmlDocument.hasWindowNamedItem(*atomicPropertyName)) {
-            JSValue namedItem;
-            if (UNLIKELY(htmlDocument.windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
-                Ref<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
-                ASSERT(collection->length() > 1);
-                namedItem = toJS(exec, thisObject->globalObject(), collection);
-            } else
-                namedItem = toJS(exec, thisObject->globalObject(), htmlDocument.windowNamedItem(*atomicPropertyName));
-            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, namedItem);
-            return true;
-        }
-    }
-
-    return false;
 }
 
 // Property access sequence is:
@@ -254,9 +203,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     }
 #endif
 
-    // (3) Finally, named properties.
-    // Really, this should just be 'return false;' - these should all be on the NPO.
-    return jsDOMWindowGetOwnPropertySlotNamedItemGetter(thisObject, *frame, exec, propertyName, slot);
+    return false;
 }
 
 // Property access sequence is:
@@ -284,12 +231,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
         return jsDOMWindowGetOwnPropertySlotRestrictedAccess(thisObject, frame, exec, Identifier::from(exec, index), slot, errorMessage);
 
     // (2) Regular own properties.
-    if (Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot))
-        return true;
-
-    // (3) Finally, named properties.
-    // Really, this should just be 'return false;' - these should all be on the NPO.
-    return jsDOMWindowGetOwnPropertySlotNamedItemGetter(thisObject, *frame, exec, Identifier::from(exec, index), slot);
+    return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
 bool JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
