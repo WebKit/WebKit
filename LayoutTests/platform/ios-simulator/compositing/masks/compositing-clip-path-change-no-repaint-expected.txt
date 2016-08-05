@@ -27,6 +27,9 @@ Only the second box should have a repaint.
             (GraphicsLayer
               (bounds 300.00 300.00)
               (drawsContent 1)
+              (repaint rects
+                (rect 0.00 0.00 300.00 300.00)
+              )
             )
           (repaint rects
             (rect 0.00 0.00 300.00 300.00)
@@ -36,4 +39,3 @@ Only the second box should have a repaint.
     )
   )
 )
-

@@ -1,3 +1,11 @@
+2016-08-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaselining compositing/masks/compositing-clip-path-change-no-repaint.html for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/compositing/masks/compositing-clip-path-change-no-repaint-expected.txt:
+
 2016-08-05  Brent Fulgham  <bfulgham@apple.com>
 
         ASSERTION FAILED: observer in WebCore::BitmapImage::drawPattern
