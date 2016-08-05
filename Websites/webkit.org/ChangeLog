@@ -1,3 +1,15 @@
+2016-08-04  Daniel Bates  <dabates@apple.com>
+
+        Add some files for a Content Security Policy blog post
+
+        * blog-files/content-security-policy/compass-base.css: Added.
+        (.compass):
+        * blog-files/content-security-policy/csp-style-hash.html: Added.
+        * blog-files/content-security-policy/icons.svg: Added; derived from file
+        Websites/webkit.org/wp-content/themes/webkit/images/icons.svg. I am explicitly
+        not referencing file Websites/webkit.org/wp-content/themes/webkit/images/icons.svg
+        so that csp-style-hash.html is not affected by changes to this file.
+
 2016-07-24  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should support multiple entrypoints
