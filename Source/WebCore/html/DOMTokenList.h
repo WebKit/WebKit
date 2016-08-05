@@ -54,6 +54,7 @@ public:
     void remove(const Vector<String>&, ExceptionCode&);
     void remove(const AtomicString&, ExceptionCode&);
     bool toggle(const AtomicString&, Optional<bool> force, ExceptionCode&);
+    void replace(const AtomicString& token, const AtomicString& newToken, ExceptionCode&);
 
     const AtomicString& toString() const { return value(); }
 

@@ -42,6 +42,11 @@ DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName)
 {
 }
 
+static inline bool tokenContainsHTMLSpace(const String& token)
+{
+    return token.find(isHTMLSpace) != notFound;
+}
+
 bool DOMTokenList::validateToken(const String& token, ExceptionCode& ec)
 {
     if (token.isEmpty()) {
@@ -49,12 +54,9 @@ bool DOMTokenList::validateToken(const String& token, ExceptionCode& ec)
         return false;
     }
 
-    unsigned length = token.length();
-    for (unsigned i = 0; i < length; ++i) {
-        if (isHTMLSpace(token[i])) {
-            ec = INVALID_CHARACTER_ERR;
-            return false;
-        }
+    if (tokenContainsHTMLSpace(token)) {
+        ec = INVALID_CHARACTER_ERR;
+        return false;
     }
 
     return true;
@@ -148,6 +150,31 @@ bool DOMTokenList::toggle(const AtomicString& token, Optional<bool> force, Excep
     tokens.append(token);
     updateAssociatedAttributeFromTokens();
     return true;
+}
+
+void DOMTokenList::replace(const AtomicString& token, const AtomicString& newToken, ExceptionCode& ec)
+{
+    if (token.isEmpty() || newToken.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    if (tokenContainsHTMLSpace(token) || tokenContainsHTMLSpace(newToken)) {
+        ec = INVALID_CHARACTER_ERR;
+        return;
+    }
+
+    auto& tokens = this->tokens();
+    size_t index = tokens.find(token);
+    if (index == notFound)
+        return;
+
+    if (tokens.find(newToken) != notFound)
+        tokens.remove(index);
+    else
+        tokens[index] = newToken;
+
+    updateAssociatedAttributeFromTokens();
 }
 
 const AtomicString& DOMTokenList::value() const

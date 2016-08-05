@@ -1506,7 +1506,7 @@ PASS DOMTokenList interface: operation contains(DOMString)
 PASS DOMTokenList interface: operation add(DOMString) 
 PASS DOMTokenList interface: operation remove(DOMString) 
 PASS DOMTokenList interface: operation toggle(DOMString,boolean) 
-FAIL DOMTokenList interface: operation replace(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "replace" missing
+PASS DOMTokenList interface: operation replace(DOMString,DOMString) 
 FAIL DOMTokenList interface: operation supports(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "supports" missing
 PASS DOMTokenList interface: attribute value 
 PASS DOMTokenList interface: stringifier 
@@ -1523,8 +1523,8 @@ PASS DOMTokenList interface: document.body.classList must inherit property "remo
 PASS DOMTokenList interface: calling remove(DOMString) on document.body.classList with too few arguments must throw TypeError 
 PASS DOMTokenList interface: document.body.classList must inherit property "toggle" with the proper type (5) 
 PASS DOMTokenList interface: calling toggle(DOMString,boolean) on document.body.classList with too few arguments must throw TypeError 
-FAIL DOMTokenList interface: document.body.classList must inherit property "replace" with the proper type (6) assert_inherits: property "replace" not found in prototype chain
-FAIL DOMTokenList interface: calling replace(DOMString,DOMString) on document.body.classList with too few arguments must throw TypeError assert_inherits: property "replace" not found in prototype chain
+PASS DOMTokenList interface: document.body.classList must inherit property "replace" with the proper type (6) 
+PASS DOMTokenList interface: calling replace(DOMString,DOMString) on document.body.classList with too few arguments must throw TypeError 
 FAIL DOMTokenList interface: document.body.classList must inherit property "supports" with the proper type (7) assert_inherits: property "supports" not found in prototype chain
 FAIL DOMTokenList interface: calling supports(DOMString) on document.body.classList with too few arguments must throw TypeError assert_inherits: property "supports" not found in prototype chain
 PASS DOMTokenList interface: document.body.classList must inherit property "value" with the proper type (8) 
