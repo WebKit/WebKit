@@ -9,6 +9,8 @@ my $expiresInFutureIn304 = $query->param('expires-in-future-in-304') || 0;
 my $delay = $query->param('delay') || 0;
 my $body = $query->param('body') || 0;
 my $status = $query->param('Status') || 0;
+my $range = $query->param('Range') || '';
+my $location = $query->param('Location') || '';
 
 if ($body eq "unique") {
     $body = sprintf "%08X\n", rand(0xffffffff)
@@ -17,17 +19,19 @@ if ($body eq "unique") {
 my $hasStatusCode = 0;
 my $hasLocation = 0;
 if ($status == 301 || $status == 302 || $status == 303 || $status == 307) {
-    if ($query->param('Location') eq "unique-cacheable") {
+    if ($location eq "unique-cacheable") {
         my $redirectBody = sprintf "%08X", rand(0xffffffff);
         print "Status: ". $status . "\n";
-        print "Location: generate-response.cgi?body=" . $redirectBody . "&Cache-control=max-age%3D1000&uniqueId=" . $query->param('uniqueId') . "\n";
+        my $uniqueId = $query->param('uniqueId');
+        print "Location: generate-response.cgi?body=" . $redirectBody . "&Cache-control=max-age%3D1000&uniqueId=" . $uniqueId . "\n";
         $hasLocation = 1;
         $hasStatusCode = 1;
     }
 }
 
 my $hasExpiresHeader = 0;
-if ($query->http && $query->http("If-None-Match") eq "match") {
+my $ifNoneMatchHeader = $query->http("If-None-Match");
+if (defined $ifNoneMatchHeader and $ifNoneMatchHeader eq "match") {
     print "Status: 304\n";
     $hasStatusCode = 1;
     if ($expiresInFutureIn304) {
@@ -36,7 +40,7 @@ if ($query->http && $query->http("If-None-Match") eq "match") {
     }
 }
 
-if ($query->http && $query->param("Range") =~ /bytes=(\d+)-(\d+)/) {
+if ($range =~ /bytes=(\d+)-(\d+)/) {
 
     if ($1 < 6 && $2 < 6) {
         print "Status: 206\n";
