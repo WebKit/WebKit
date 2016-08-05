@@ -197,8 +197,8 @@ class Driver(object):
             deadline = test_begin_time + int(driver_input.timeout) / 1000.0 + 5
 
         self._server_process.write(command)
-        text, audio = self._read_first_block(deadline)  # First block is either text or audio
-        image, actual_image_hash = self._read_optional_image_block(deadline)  # The second (optional) block is image data.
+        text, audio = self._read_first_block(deadline, driver_input.test_name)  # First block is either text or audio
+        image, actual_image_hash = self._read_optional_image_block(deadline, driver_input.test_name)  # The second (optional) block is image data.
 
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
@@ -469,9 +469,9 @@ class Driver(object):
             command += "'" + driver_input.image_hash
         return command + "\n"
 
-    def _read_first_block(self, deadline):
+    def _read_first_block(self, deadline, test_name):
         # returns (text_content, audio_content)
-        block = self._read_block(deadline)
+        block = self._read_block(deadline, test_name)
         if block.malloc:
             self._measurements['Malloc'] = float(block.malloc)
         if block.js_heap:
@@ -480,9 +480,9 @@ class Driver(object):
             return (None, block.decoded_content)
         return (block.decoded_content, None)
 
-    def _read_optional_image_block(self, deadline):
+    def _read_optional_image_block(self, deadline, test_name):
         # returns (image, actual_image_hash)
-        block = self._read_block(deadline, wait_for_stderr_eof=True)
+        block = self._read_block(deadline, test_name, wait_for_stderr_eof=True)
         if block.content and block.content_type == 'image/png':
             return (block.decoded_content, block.content_hash)
         return (None, block.content_hash)
@@ -513,7 +513,7 @@ class Driver(object):
             return line[:-5], True
         return line, False
 
-    def _read_block(self, deadline, wait_for_stderr_eof=False):
+    def _read_block(self, deadline, test_name, wait_for_stderr_eof=False):
         block = ContentBlock()
         out_seen_eof = False
         asan_violation_detected = False
@@ -544,7 +544,7 @@ class Driver(object):
             if out_line:
                 self._check_for_driver_timeout(out_line)
                 if out_line[-1] != "\n":
-                    _log.error("Last character read from DRT stdout line was not a newline!  This indicates either a NRWT or DRT bug.")
+                    _log.error("  %s -> Last character read from DRT stdout line was not a newline!  This indicates either a NRWT or DRT bug." % test_name)
                 content_length_before_header_check = block._content_length
                 self._process_stdout_line(block, out_line)
                 # FIXME: Unlike HTTP, DRT dumps the content right after printing a Content-Length header.

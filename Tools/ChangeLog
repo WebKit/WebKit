@@ -1,3 +1,20 @@
+2016-08-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Print test name in "Last character read from DRT..." error message.
+        https://bugs.webkit.org/show_bug.cgi?id=160559
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.run_test):
+        (Driver._read_first_block):
+        (Driver._read_optional_image_block):
+        (Driver._read_block):
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_read_block):
+        (DriverTest.test_read_binary_block):
+        (DriverTest.test_read_base64_block):
+
 2016-08-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r204123.
