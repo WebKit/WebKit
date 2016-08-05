@@ -8,6 +8,9 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
+if (window.internals)
+    window.internals.settings.setTreatIPAddressAsDomain(true);
+
 addEventListener("message", recv, false);
 
 function test() {

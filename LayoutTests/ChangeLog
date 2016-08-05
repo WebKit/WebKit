@@ -1,3 +1,27 @@
+2016-08-05  John Wilander  <wilander@apple.com>
+
+        Don't set document.domain to an IP address fragment
+        https://bugs.webkit.org/show_bug.cgi?id=126045
+        <rdar://problem/27331794>
+
+        Reviewed by Daniel Bates.
+
+        IP address octets should not be treated as subdomains when
+        setting document.domain.
+
+        * http/tests/security/aboutBlank/security-context-alias.html:
+            Now enables the new setting treatIPAddressesAsDomains.
+        * http/tests/security/aboutBlank/security-context-grandchildren-alias.html:
+            Now enables the new setting treatIPAddressesAsDomains.
+        * http/tests/security/postMessage/origin-unaffected-by-document-domain.html:
+            Now enables the new setting treatIPAddressesAsDomains.
+        * http/tests/security/set-domain-remove-subdomain-for-ip-address-expected.txt: Added.
+        * http/tests/security/set-domain-remove-subdomain-for-ip-address.html: Added.
+        * http/tests/workers/worker-document-domain-security.html:
+            Now enables the new setting treatIPAddressesAsDomains.
+        * http/tests/xmlhttprequest/document-domain-set.html:
+            Now enables the new setting treatIPAddressesAsDomains.
+
 2016-08-05  Chris Dumez  <cdumez@apple.com>
 
         Window's named properties should be exposed on a WindowProperties object in its prototype

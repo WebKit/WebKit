@@ -5,6 +5,9 @@
 if (window.testRunner)
   testRunner.dumpAsText();
 
+if (window.internals)
+    window.internals.settings.setTreatIPAddressAsDomain(true);
+
 document.domain = '0.0.1';
 
 document.write('Waiting...\n');

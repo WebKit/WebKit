@@ -271,3 +271,5 @@ selectionPaintingWithoutSelectionGapsEnabled initial=false
 shouldConvertInvalidURLsToBlank initial=true
 
 springTimingFunctionEnabled initial=false
+
+treatIPAddressAsDomain initial=false

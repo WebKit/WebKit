@@ -44,24 +44,34 @@ public:
         DisallowSubdomains
     };
 
+    enum IPAddressSetting {
+        TreatIPAddressAsDomain,
+        TreatIPAddressAsIPAddress
+    };
+
     // If host is empty string and SubdomainSetting is AllowSubdomains, the entry will match all domains in the specified protocol.
-    OriginAccessEntry(const String& protocol, const String& host, SubdomainSetting);
+    OriginAccessEntry(const String& protocol, const String& host, SubdomainSetting, IPAddressSetting);
     bool matchesOrigin(const SecurityOrigin&) const;
 
     const String& protocol() const { return m_protocol; }
     const String& host() const { return m_host; }
     SubdomainSetting subdomainSettings() const { return m_subdomainSettings; }
+    IPAddressSetting ipAddressSettings() const { return m_ipAddressSettings; }
 
 private:
     String m_protocol;
     String m_host;
     SubdomainSetting m_subdomainSettings;
+    IPAddressSetting m_ipAddressSettings;
     bool m_hostIsIPAddress;
 };
 
 inline bool operator==(const OriginAccessEntry& a, const OriginAccessEntry& b)
 {
-    return equalIgnoringASCIICase(a.protocol(), b.protocol()) && equalIgnoringASCIICase(a.host(), b.host()) && a.subdomainSettings() == b.subdomainSettings();
+    return equalIgnoringASCIICase(a.protocol(), b.protocol())
+        && equalIgnoringASCIICase(a.host(), b.host())
+        && a.subdomainSettings() == b.subdomainSettings()
+        && a.ipAddressSettings() == b.ipAddressSettings();
 }
 
 inline bool operator!=(const OriginAccessEntry& a, const OriginAccessEntry& b)

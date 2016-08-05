@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Try to set document.domain and wrongly treat IP address octets as subdomains</title>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test whether a page loaded straight from an IP address can set document.domain and wrongly treat IP address octets as subdomains.");
+
+    if (document.domain != "127.0.0.1") {
+        document.location.hostname = "127.0.0.1";
+    }
+
+    shouldThrow("document.domain = '0.0.1'", "'SecurityError (DOM Exception 18): The operation is insecure.'");
+    shouldBeEqualToString("document.domain", "127.0.0.1");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
