@@ -1,3 +1,15 @@
+2016-08-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r204181.
+
+        This change caused an existing LayoutTest to fail on WK1
+
+        Reverted changeset:
+
+        "Don't set document.domain to an IP address fragment"
+        https://bugs.webkit.org/show_bug.cgi?id=126045
+        http://trac.webkit.org/changeset/204181
+
 2016-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         Sierra WK1: compositing/masks/compositing-clip-path-change-no-repaint.html failing

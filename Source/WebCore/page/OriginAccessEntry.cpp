@@ -35,11 +35,10 @@
 
 namespace WebCore {
     
-OriginAccessEntry::OriginAccessEntry(const String& protocol, const String& host, SubdomainSetting subdomainSetting, IPAddressSetting ipAddressSetting)
+OriginAccessEntry::OriginAccessEntry(const String& protocol, const String& host, SubdomainSetting subdomainSetting)
     : m_protocol(protocol.convertToASCIILowercase())
     , m_host(host.convertToASCIILowercase())
     , m_subdomainSettings(subdomainSetting)
-    , m_ipAddressSettings(ipAddressSetting)
 {
     ASSERT(subdomainSetting == AllowSubdomains || subdomainSetting == DisallowSubdomains);
 
@@ -66,9 +65,9 @@ bool OriginAccessEntry::matchesOrigin(const SecurityOrigin& origin) const
     // Otherwise we can only match if we're matching subdomains.
     if (m_subdomainSettings == DisallowSubdomains)
         return false;
-
+    
     // Don't try to do subdomain matching on IP addresses.
-    if (m_hostIsIPAddress && m_ipAddressSettings == TreatIPAddressAsIPAddress)
+    if (m_hostIsIPAddress)
         return false;
     
     // Match subdomains.

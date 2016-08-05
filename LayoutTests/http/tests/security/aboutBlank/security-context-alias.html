@@ -7,9 +7,6 @@
 if (window.testRunner)
   testRunner.dumpAsText();
 
-if (window.internals)
-    window.internals.settings.setTreatIPAddressAsDomain(true);
-
 document.write('--- Test begins ---\n');
 document.write('* "about:blank"\n');
 document.write('document.domain = ' + frames[0].document.domain + '\n');

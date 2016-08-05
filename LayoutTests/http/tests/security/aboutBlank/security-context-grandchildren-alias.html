@@ -6,9 +6,6 @@ if (window.testRunner) {
   testRunner.waitUntilDone();
 }
 
-if (window.internals)
-    window.internals.settings.setTreatIPAddressAsDomain(true);
-
 function log(msg) {
   var line = document.createElement('div');
   line.appendChild(document.createTextNode(msg));
