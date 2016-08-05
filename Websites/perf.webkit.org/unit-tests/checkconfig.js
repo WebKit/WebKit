@@ -128,7 +128,7 @@ describe('config.json', function () {
 
         it('should be able to connect to the database', function (done) {
             let database = new Database;
-            return database.connect().then(function () {
+            database.connect().then(function () {
                 database.disconnect();
                 done();
             }, function (error) {

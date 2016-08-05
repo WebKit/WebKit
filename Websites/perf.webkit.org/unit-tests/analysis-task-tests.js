@@ -151,7 +151,7 @@ describe('AnalysisTask', function () {
             requests[0].resolve(sampleAnalysisTask());
 
             var anotherCallCount = 0;
-            return promise.then(function () {
+            promise.then(function () {
                 assert.equal(callCount, 1);
                 AnalysisTask.fetchAll().then(function () { anotherCallCount++; });
             }).then(function () {
@@ -166,7 +166,7 @@ describe('AnalysisTask', function () {
             var promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());
 
-            return promise.then(function () {
+            promise.then(function () {
                 assert.equal(AnalysisTask.all().length, 1);
                 var task = AnalysisTask.all()[0];
                 assert.equal(task.id(), 1082);
@@ -189,7 +189,7 @@ describe('AnalysisTask', function () {
             var promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());
 
-            return promise.then(function () {
+            promise.then(function () {
                 assert.equal(AnalysisTask.all().length, 1);
                 var task = AnalysisTask.all()[0];
 
@@ -212,7 +212,7 @@ describe('AnalysisTask', function () {
             var promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());
 
-            return promise.then(function () {
+            promise.then(function () {
                 assert.equal(AnalysisTask.all().length, 1);
                 var task = AnalysisTask.all()[0];
 

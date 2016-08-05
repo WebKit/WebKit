@@ -37,16 +37,11 @@ class MeasurementSet {
         var clusterStart = this._clusterStart;
         var clusterSize = this._clusterSize;
 
-        function computeClusterStart(time) {
-            var diff = time - clusterStart;
-            return clusterStart + Math.floor(diff / clusterSize) * clusterSize;            
-        }
-
         var clusters = [];
-        var clusterEnd = computeClusterStart(startTime);
+        var clusterEnd = clusterStart + Math.floor(Math.max(0, startTime - clusterStart) / clusterSize) * clusterSize;
 
         var lastClusterEndTime = this._primaryClusterEndTime;
-        var firstClusterEndTime = lastClusterEndTime - clusterStart * this._clusterCount;
+        var firstClusterEndTime = lastClusterEndTime - clusterSize * (this._clusterCount - 1);
         do {
             clusterEnd += clusterSize;
             if (firstClusterEndTime <= clusterEnd && clusterEnd <= this._primaryClusterEndTime)
@@ -189,7 +184,7 @@ class MeasurementSet {
         Instrumentation.startMeasuringTime('MeasurementSet', 'fetchedTimeSeries');
 
         // FIXME: Properly construct TimeSeries.
-        var series = new TimeSeries([]);
+        var series = new TimeSeries();
         var idMap = {};
         for (var cluster of this._sortedClusters)
             cluster.addToSeries(series, configType, includeOutliers, idMap);

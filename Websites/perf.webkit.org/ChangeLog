@@ -1,3 +1,31 @@
+2016-08-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard sometimes tries to fetch a non-existent measurement-set JSON
+        https://bugs.webkit.org/show_bug.cgi?id=160577
+
+        Rubber-stamped by Chris Dumez.
+
+        The bug was caused by findClusters computing the first cluster's endTime incorrectly. Namely, we were
+        multiplying the number of clusters by clusterStart instead of clusterSize with an off-by-one error.
+
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet.prototype.findClusters): Folded computeClusterStart into where clusterEnd is computed
+        for clarity. Also fixed a bug that we were not computing the first cluster to fetch correctly when
+        the fetched time range started before clusterStart (i.e. when startTime - clusterStart is negative).
+        Finally, fixed the main bug by multiplying the number of clusters by clusterSize instead of
+        clusterStart to compute the end time of the very first cluster in this measurement set. Because what
+        we're computing here is the end time of the first cluster, not the start time, we also need to subtract
+        one from the number of clusters. e.g. if there was exactly one cluster, then firstClusterEndTime is
+        identically equal to lastClusterEndTime.
+        (MeasurementSet.prototype.fetchedTimeSeries): Removed the unused argument to TimeSeries's constructor.
+
+        * unit-tests/analysis-task-tests.js: Fixed the tests for the latest version of Mocha which complains if
+        we returned a promise in unit tests when "done" function is used.
+        * unit-tests/checkconfig.js: Ditto.
+        * unit-tests/measurement-set-tests.js: Added a test case for findClusters and a test to make sure
+        fetchBetween doesn't try to fetch a cluster before the first cluster in the set. Also fixed other test
+        cases which were relying on the bug this patch fixed.
+
 2016-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         MeasurementCluster's addToSeries is slow

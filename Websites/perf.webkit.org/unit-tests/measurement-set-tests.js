@@ -34,6 +34,38 @@ describe('MeasurementSet', function () {
         });
     });
 
+    describe('findClusters', function () {
+
+        it('should return clusters that exist', function (done) {
+            var set = MeasurementSet.findSet(1, 1, 1467852503940);
+            var callCount = 0;
+            var promise = set.fetchBetween(1465084800000, 1470268800000, function () {
+                callCount++;
+            });
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
+
+            requests[0].resolve({
+                'clusterStart': 946684800000,
+                'clusterSize': 5184000000,
+                'formatMap': [],
+                'configurations': {current: []},
+                'startTime': 1465084800000,
+                'endTime': 1470268800000,
+                'lastModified': 1467852503940,
+                'clusterCount': 5,
+                'status': 'OK'});
+
+            promise.then(function () {
+                assert.deepEqual(set.findClusters(0, Date.now()), [1449532800000, 1454716800000, 1459900800000, 1465084800000, 1470268800000]);
+                done();
+            }).catch(function (error) {
+                done(error);
+            });
+        });
+
+    });
+
     describe('fetchBetween', function () {
         it('should always request the cached primary cluster first', function () {
             var set = MeasurementSet.findSet(1, 1, 3000);
@@ -126,7 +158,7 @@ describe('MeasurementSet', function () {
                 'startTime': 4000,
                 'endTime': 5000,
                 'lastModified': 5000,
-                'clusterCount': 3,
+                'clusterCount': 4,
                 'status': 'OK'});
 
             var callCount = 0;
@@ -194,7 +226,7 @@ describe('MeasurementSet', function () {
                 'startTime': 4000,
                 'endTime': 5000,
                 'lastModified': 5000,
-                'clusterCount': 3,
+                'clusterCount': 4,
                 'status': 'OK'});
 
             var callCount = 0;
@@ -213,6 +245,34 @@ describe('MeasurementSet', function () {
                 assert.equal(callCount, 0);
                 assert.equal(requests.length, 4);
                 assert.equal(requests[3].url, '../data/measurement-set-1-1-3000.json');
+                done();
+            }).catch(function (error) {
+                done(error);
+            });
+        });
+
+        it('should not request a cluster before the very first cluster', function (done) {
+            var set = MeasurementSet.findSet(1, 1, 5000);
+            set.fetchBetween(0, 3000, function () {
+                assert.notReached();
+            });
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
+
+            requests[0].resolve({
+                'clusterStart': 2000,
+                'clusterSize': 1000,
+                'formatMap': [],
+                'configurations': {current: []},
+                'startTime': 2000,
+                'endTime': 3000,
+                'lastModified': 5000,
+                'clusterCount': 1,
+                'status': 'OK'});
+
+            var callCount = 0;
+            waitForMeasurementSet().then(function () {
+                assert.equal(requests.length, 1);
                 done();
             }).catch(function (error) {
                 done(error);
@@ -434,7 +494,7 @@ describe('MeasurementSet', function () {
                 'startTime': 4000,
                 'endTime': 5000,
                 'lastModified': 5000,
-                'clusterCount': 3,
+                'clusterCount': 4,
                 'status': 'OK'});
 
             var callCountFor4000To5000 = 0;
@@ -652,7 +712,7 @@ describe('MeasurementSet', function () {
                 'startTime': 4000,
                 'endTime': 5000,
                 'lastModified': 5000,
-                'clusterCount': 2,
+                'clusterCount': 4,
                 'status': 'OK'});
 
             waitForMeasurementSet().then(function () {
