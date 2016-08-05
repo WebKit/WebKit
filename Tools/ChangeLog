@@ -1,3 +1,14 @@
+2016-08-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] install-dependencies script misses libxslt as build-dependency and some python libs for the run-benchmark script
+        https://bugs.webkit.org/show_bug.cgi?id=160518
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_twisted): Twisted requires zope.interface.
+        * gtk/install-dependencies:
+
 2016-08-04  Alexey Proskuryakov  <ap@apple.com>
 
         Optimize bot watcher's dashboard a little

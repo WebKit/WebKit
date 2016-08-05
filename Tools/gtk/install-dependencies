@@ -122,6 +122,7 @@ function installDependenciesWithApt {
         libxcomposite-dev \
         libxt-dev \
         libxtst-dev \
+        libxslt1-dev \
         libwayland-dev \
         ninja-build \
         patch \
@@ -135,8 +136,10 @@ function installDependenciesWithApt {
         dbus-x11 \
         libapache2-mod-bw \
         libgpg-error-dev \
+        psmisc \
         pulseaudio-utils \
         python-gi \
+        python-psutil \
         ruby \
         ruby-json \
         ruby-highline \
@@ -265,6 +268,7 @@ function installDependenciesWithPacman {
         libwebp \
         libxcomposite \
         libxt \
+        libxslt \
         libxtst \
         ninja \
         ruby \
@@ -281,8 +285,10 @@ function installDependenciesWithPacman {
         hunspell-en \
         php-apache \
         libgpg-error \
+        psmisc \
         pulseaudio \
         python-gobject \
+        python2-psutil \
         ruby \
         ruby-highline \
         weston \
@@ -367,6 +373,7 @@ function installDependenciesWithDnf {
         json-glib-devel \
         libXt-devel \
         libXtst-devel \
+        libxslt-devel \
         libedit-devel \
         libgudev1-devel \
         libjpeg-turbo-devel \
@@ -402,8 +409,10 @@ function installDependenciesWithDnf {
         mod_ssl \
         perl-CGI \
         php \
+        psmisc \
         pulseaudio-utils \
         pygobject3-base \
+        python2-psutil \
         ruby \
         rubygem-json \
         rubygem-highline \

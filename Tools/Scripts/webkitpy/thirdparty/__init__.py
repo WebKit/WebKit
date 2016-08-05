@@ -154,6 +154,7 @@ class AutoinstallImportHook(object):
         twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted")
         installer = AutoInstaller(prepend_to_search_path=True, target_dir=twisted_dir)
         installer.install(url="https://pypi.python.org/packages/source/T/Twisted/Twisted-12.1.0.tar.bz2#md5=f396f1d6f5321e869c2f89b2196a9eb5", url_subpath="Twisted-12.1.0/twisted")
+        installer.install(url="https://pypi.python.org/packages/source/z/zope.interface/zope.interface-4.1.3.tar.gz#md5=9ae3d24c0c7415deb249dd1a132f0f79", url_subpath="zope.interface-4.1.3/src/zope")
 
     def _install(self, url, url_subpath=None, target_name=None):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
