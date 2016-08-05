@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: Blocked script execution in 'http://127.0.0.1:8000/security/resources/page-executing-javascript.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-
