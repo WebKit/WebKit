@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tests that windows created from a sandboxed context inherit the same sandbox</title>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows();
+        testRunner.waitUntilDone();
+        testRunner.setPopupBlockingEnabled(false);
+        testRunner.dumpAsText();
+    }
+
+    function wrapUp () {
+        finishJSTest();
+        if (window.testRunner) {
+            testRunner.notifyDone();
+        }
+    }
+
+    function run() {
+        var iframeContentDocument = document.getElementById("theIframe").contentDocument;
+        if (!iframeContentDocument) {
+            testFailed("Can't get iframeElement.contentDocument");
+            finishJSTest();
+            testRunner.notifyDone();
+        } else {
+            var theLink = iframeContentDocument.getElementById("theLink");
+            if (!theLink) {
+                testFailed("Can't get iframeElement.contentDocument.getElementById('theLink')");
+                finishJSTest();
+                testRunner.notifyDone();
+            } else {
+                var clickEvent = document.createEvent("HTMLEvents");
+                clickEvent.initEvent("click", true, true);
+                theLink.dispatchEvent(clickEvent);
+
+                setTimeout(wrapUp, 500);
+            }
+        }
+    }
+</script>
+<iframe onload="run()" id="theIframe" sandbox="allow-same-origin allow-popups" src="resources/anchor-tag-with-blank-target.html"></iframe>
+</body>
+</html>
