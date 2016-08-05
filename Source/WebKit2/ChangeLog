@@ -1,3 +1,61 @@
+2016-08-05  Brady Eidson  <beidson@apple.com>
+
+        Lay WebProcess/UIProcess groundwork for an IPC GamepadProvider.
+        https://bugs.webkit.org/show_bug.cgi?id=160605
+
+        Reviewed by Alex Christensen.
+
+        This patch:
+          - Introduces the GamepadProvider that the WebProcess will use (WebGamepadProvider)
+          - Has that provider message to the UIProcess notifying interest in gamepad state
+          - Introduces a GamepadProviderClient in the UIProcess (UIGamepadProvider) that will use
+            one of the existing GamepadProviders to pass gamepad state along to WebProcesses.
+          - Adds an empty skeleton for the soon-to-be-used WebGamepad, which will be the 
+            "PlatformGamepad" for WebProcesses.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * UIProcess/Gamepads/UIGamepadProvider.cpp: Added.
+        (WebKit::UIGamepadProvider::singleton):
+        (WebKit::UIGamepadProvider::UIGamepadProvider):
+        (WebKit::UIGamepadProvider::~UIGamepadProvider):
+        (WebKit::UIGamepadProvider::platformGamepadConnected):
+        (WebKit::UIGamepadProvider::platformGamepadDisconnected):
+        (WebKit::UIGamepadProvider::platformGamepadInputActivity):
+        (WebKit::UIGamepadProvider::processPoolStartedUsingGamepads):
+        (WebKit::UIGamepadProvider::processPoolStoppedUsingGamepads):
+        (WebKit::UIGamepadProvider::platformStartMonitoringGamepads):
+        (WebKit::UIGamepadProvider::platformStopMonitoringGamepads):
+        * UIProcess/Gamepads/UIGamepadProvider.h: Added.
+
+        * UIProcess/Gamepads/mac/UIGamepadProviderHID.cpp: Added.
+        (WebKit::UIGamepadProvider::platformStartMonitoringGamepads):
+        (WebKit::UIGamepadProvider::platformStopMonitoringGamepads):
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::startedUsingGamepads):
+        (WebKit::WebProcessPool::stoppedUsingGamepads):
+        (WebKit::WebProcessPool::processStoppedUsingGamepads):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+                
+        * WebProcess/Gamepad/WebGamepad.cpp: Added.
+        * WebProcess/Gamepad/WebGamepad.h: Added.
+        
+        * WebProcess/Gamepad/WebGamepadProvider.cpp: Added.
+        (WebKit::WebGamepadProvider::singleton):
+        (WebKit::WebGamepadProvider::WebGamepadProvider):
+        (WebKit::WebGamepadProvider::~WebGamepadProvider):
+        (WebKit::WebGamepadProvider::startMonitoringGamepads):
+        (WebKit::WebGamepadProvider::stopMonitoringGamepads):
+        (WebKit::WebGamepadProvider::platformGamepads):
+        * WebProcess/Gamepad/WebGamepadProvider.h: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2016-08-05  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WKRemoteObjectCoder doesn’t handle NSRange
