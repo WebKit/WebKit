@@ -27,6 +27,7 @@
 
 #include "ClientRect.h"
 #include "ClientRectList.h"
+#include "Comment.h"
 #include "DocumentFragment.h"
 #include "Event.h"
 #include "Frame.h"
@@ -814,12 +815,20 @@ RefPtr<DocumentFragment> Range::cloneContents(ExceptionCode& ec)
 
 void Range::insertNode(Ref<Node>&& node, ExceptionCode& ec)
 {
-    bool startIsCharacterData = is<CharacterData>(startContainer());
-    if (startIsCharacterData && !startContainer().parentNode()) {
+    if (is<Comment>(startContainer()) || is<ProcessingInstruction>(startContainer())) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-    bool startIsText = startIsCharacterData && startContainer().nodeType() == Node::TEXT_NODE;
+    bool startIsText = startContainer().nodeType() == Node::TEXT_NODE;
+    if (startIsText && !startContainer().parentNode()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return;
+    }
+    if (node.ptr() == &startContainer()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return;
+    }
+
     RefPtr<Node> referenceNode = startIsText ? &startContainer() : startContainer().traverseToChildAt(startOffset());
     Node* parentNode = referenceNode ? referenceNode->parentNode() : &startContainer();
     if (!is<ContainerNode>(parentNode)) {
