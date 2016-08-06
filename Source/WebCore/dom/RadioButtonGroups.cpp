@@ -231,6 +231,9 @@ Vector<HTMLInputElement*> RadioButtonGroups::groupMembers(const HTMLInputElement
     if (!name)
         return { };
 
+    if (!m_nameToGroupMap)
+        return { };
+    
     auto* group = m_nameToGroupMap->get(name);
     if (!group)
         return { };
