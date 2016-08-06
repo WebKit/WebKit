@@ -39,3 +39,4 @@ Only the second box should have a repaint.
     )
   )
 )
+

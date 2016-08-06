@@ -1,3 +1,11 @@
+2016-08-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add back a newline that was accidentally removed from an expected.txt file.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/compositing/masks/compositing-clip-path-change-no-repaint-expected.txt:
+
 2016-08-05  Jeremy Jones  <jeremyj@apple.com>
 
         revert r202466 r202546 this causes regressions in media loading with temporary redirects.
