@@ -1,5 +1,16 @@
 2016-08-06  Youenn Fablet  <youenn@apple.com>
 
+        imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.html and -worker.html are failing after r204224
+        https://bugs.webkit.org/show_bug.cgi?id=160639
+
+        Unreviewed.
+
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt: Rebaased after redirect.py update in
+        https://bugs.webkit.org/show_bug.cgi?id=160593.
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker-expected.txt: Ditto.
+
+2016-08-06  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Fetching with a FormData body should reject until it is implemented
         https://bugs.webkit.org/show_bug.cgi?id=160595
 
