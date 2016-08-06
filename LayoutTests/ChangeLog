@@ -1,3 +1,14 @@
+2016-08-05  Jeremy Jones  <jeremyj@apple.com>
+
+        revert r202466 r202546 this causes regressions in media loading with temporary redirects.
+        https://bugs.webkit.org/show_bug.cgi?id=160613
+
+        Reviewed by Jon Lee.
+
+        Reverting a fix that enabled two tests. These tests now fail and are skipped.
+
+        * platform/mac/TestExpectations:
+
 2016-08-05  Nan Wang  <n_wang@apple.com>
 
         AX: Asking for group members of radio button that has no name attribute will cause crash

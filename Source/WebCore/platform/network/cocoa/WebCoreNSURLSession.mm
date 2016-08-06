@@ -30,7 +30,6 @@
 
 #import "CachedResourceRequest.h"
 #import "PlatformMediaResourceLoader.h"
-#import "SecurityOrigin.h"
 #import "SubresourceLoader.h"
 
 using namespace WebCore;
@@ -45,7 +44,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)taskCompleted:(WebCoreNSURLSessionDataTask *)task;
 - (void)addDelegateOperation:(void (^)(void))operation;
 - (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveCORSAccessCheckResult:(BOOL)result;
-- (void)updateHasSingleSecurityOrigin:(SecurityOrigin&)origin;
 @end
 
 @interface WebCoreNSURLSessionDataTask ()
@@ -85,7 +83,6 @@ NS_ASSUME_NONNULL_END
     self.delegate = inDelegate;
     _queue = inQueue ? inQueue : [NSOperationQueue mainQueue];
     _internalQueue = adoptOSObject(dispatch_queue_create("WebCoreNSURLSession _internalQueue", DISPATCH_QUEUE_SERIAL));
-    _hasSingleSecurityOrigin = YES;
 
     return self;
 }
@@ -150,21 +147,8 @@ NS_ASSUME_NONNULL_END
         _corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Pass;
 }
 
-- (void)updateHasSingleSecurityOrigin:(SecurityOrigin&)origin
-{
-    if (!_requestedOrigin) {
-        _requestedOrigin = &origin;
-        return;
-    }
-
-    if (!origin.isSameSchemeHostPort(_requestedOrigin.get()))
-        _hasSingleSecurityOrigin = false;
-}
-
 #pragma mark - NSURLSession API
 @synthesize sessionDescription=_sessionDescription;
-@synthesize hasSingleSecurityOrigin=_hasSingleSecurityOrigin;
-
 @dynamic delegate;
 - (__nullable id<NSURLSessionDelegate>)delegate
 {
@@ -275,8 +259,6 @@ NS_ASSUME_NONNULL_END
     if (_invalidated)
         return nil;
 
-    [self updateHasSingleSecurityOrigin:SecurityOrigin::create([request URL])];
-
     WebCoreNSURLSessionDataTask *task = [[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ request:request];
     {
         Locker<Lock> locker(_dataTasksLock);
@@ -289,8 +271,6 @@ NS_ASSUME_NONNULL_END
 {
     if (_invalidated)
         return nil;
-
-    [self updateHasSingleSecurityOrigin:SecurityOrigin::create(url)];
 
     WebCoreNSURLSessionDataTask *task = [[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ URL:url];
     {
@@ -575,22 +555,9 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT_UNUSED(resource, &resource == _resource);
     ASSERT(isMainThread());
     [self.session task:self didReceiveCORSAccessCheckResult:resource.didPassAccessControlCheck()];
-    [self.session updateHasSingleSecurityOrigin:SecurityOrigin::create(response.url())];
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     [self _setDefersLoading:YES];
     RetainPtr<NSURLResponse> strongResponse { response.nsURLResponse() };
-
-    if (response.url() != URL(self.currentRequest.URL)) {
-        // FIXME(<rdar://problem/27000361>):
-        // Work around a bug in CoreMedia: CM will pull the URL out of the ResourceResponse
-        // and use that URL for all future requests for the same piece of media. This breaks
-        // certain features of CORS, as well as being against the HTTP spec in the case of
-        // non-permanent redirects.
-        auto responseData = response.crossThreadData();
-        responseData.url = URL(self.currentRequest.URL);
-        strongResponse = ResourceResponseBase::fromCrossThreadData(WTFMove(responseData)).nsURLResponse();
-    }
-
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     [self.session addDelegateOperation:[strongSelf, strongResponse] {
         strongSelf->_response = strongResponse.get();
@@ -654,14 +621,6 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     // delegate handles the callback and responds via a completion handler. If, in
     // the future, the ResourceLoader exposes a callback-based willSendResponse
     // API, this can be implemented.
-
-    // FIXME(<rdar://problem/27000361>):
-    // Do not update the current request if the redirect is temporary; use this
-    // current request during responseReceieved: to work around a CoreMedia bug.
-    if (response.httpStatusCode() != 302 && response.httpStatusCode() != 307)
-        self.currentRequest = [NSURLRequest requestWithURL:request.url()];
-
-    [self.session updateHasSingleSecurityOrigin:SecurityOrigin::create(request.url())];
 }
 
 - (void)_resource:(PlatformMediaResource&)resource loadFinishedWithError:(NSError *)error
