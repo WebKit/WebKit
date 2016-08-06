@@ -1,3 +1,15 @@
+2016-08-06  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest http/tests/fetch/fetch-in-worker-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=160510
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/fetch/fetch-in-worker-crash.html:
+        * http/tests/fetch/fetch-in-worker.js:
+        Adding a new test based on a ReadableStream that is not closed and therefore Response.text promise cannot resolve.
+        Removing the blob resolve message as there is no guarantee that blob load will finish after the test is done.
+
 2016-08-05  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Add support for USVString type
