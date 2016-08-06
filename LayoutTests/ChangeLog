@@ -1,3 +1,32 @@
+2016-08-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Test gardening for rdar://problem/27595142.
+
+        * TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt: Added.
+        * platform/mac/js/dom/constructor-length-expected.txt:
+        * platform/mac/js/dom/dom-static-property-for-in-iteration-expected.txt: Added.
+        * platform/mac/js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Added.
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt: Added.
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt: Added.
+
 2016-08-05  Babak Shafiei  <bshafiei@apple.com>
 
         Rollout r204169. rdar://problem/27592694

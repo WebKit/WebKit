@@ -1772,7 +1772,6 @@ transitions/zero-duration-in-list.html [ Failure Pass ]
 transitions/zero-duration-with-non-zero-delay-end.html [ Failure Pass ]
 
 # Skip flaky/timeout tests
-fast/css-grid-layout/flex-content-sized-columns-resize.html [ Skip ]
 fast/history/page-cache-geolocation-active-oneshot.html [ Skip ]
 
 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]

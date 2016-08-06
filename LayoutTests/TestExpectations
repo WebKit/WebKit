@@ -787,7 +787,6 @@ webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/148925 svg/dom/svg-root-lengths.html [ Pass Failure ]
 
-webkit.org/b/150225 fast/custom-elements [ Failure ]
 webkit.org/b/148695 fast/shadow-dom [ Failure ImageOnlyFailure Timeout ]
 
 # Known failures on CSS Variables Test Suite
@@ -834,9 +833,6 @@ css3/flexbox/multiline-reverse-wrap-baseline.html [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ ImageOnlyFailure ]
 
 webkit.org/b/150598 fast/repaint/table-hover-on-link.html [ Pass Failure ]
-
-webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]
-webkit.org/b/154687 streams/pipe-to.html [ Slow ]
 
 webkit.org/b/52185 fast/css/vertical-align-baseline-rowspan-010.html [ ImageOnlyFailure ]
 
@@ -1061,3 +1057,98 @@ webkit.org/b/159755 fast/text/emoji-gender-fe0f-8.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 
+# Mediastream
+fast/mediastream
+http/tests/media/media-stream
+http/tests/media/media-stream/disconnected-frame-already.html
+webaudio/createMediaStreamSource-null.html
+webaudio/mediastreamaudiodestinationnode.html
+
+# Selectors
+fast/selectors/case-insensitive-attribute-register-requirement-2.html
+fast/selectors/element-closest-descendant-combinator-doubled-child-syntax.html
+fast/selectors/element-matches-attribute-ascii-case-insensitive-html.html
+fast/selectors/element-matches-descendant-combinator-doubled-child-syntax.html
+fast/selectors/nth-child-matching-first.html
+fast/selectors/nth-last-child-matching-first.html
+fast/selectors/querySelector-attribute-ascii-case-insensitive-html.html
+fast/selectors/querySelector-descendant-combinator-doubled-child-syntax.html
+fast/selectors/read-only-read-write-input-basics.html
+imported/w3c/web-platform-tests/html/semantics/selectors
+fast/css/ancestor-of-hovered-element-removed.html
+fast/css/auto-min-size.html
+fast/css/css-selector-text.html
+fast/css/css-set-selector-text.html
+fast/css/currentColor-value-style-update.html
+fast/css/descendant-combinator-doubled-child-syntax-styling.html
+fast/css/getComputedStyle/computed-style-without-renderer.html
+fast/css/getComputedStyle/computed-style.html
+fast/css/parsing-css-attribute-case-insensitive-value-1.html
+fast/css/parsing-css-attribute-case-insensitive-value-4.html
+fast/css/parsing-css-descendant-combinator-doubled-child-syntax.html
+fast/css/read-only-read-write-input-basics.html
+imported/w3c/web-platform-tests/dom/nodes/Element-matches.html
+imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht.xht
+imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All.html
+
+# Streams
+streams
+imported/w3c/web-platform-tests/streams
+
+# Grid Layout
+fast/css-grid-layout
+fast/events/key-events-in-editable-gridbox.html
+fast/repaint/align-items-overflow-change.html
+fast/repaint/align-self-change.html
+fast/repaint/align-self-overflow-change.html
+fast/repaint/justify-items-change.html
+fast/repaint/justify-items-overflow-change.html
+fast/repaint/justify-self-change.html
+fast/repaint/justify-self-overflow-change.html
+ietestcenter/css3/grid/grid-column-001.htm
+ietestcenter/css3/grid/grid-column-003.htm
+ietestcenter/css3/grid/grid-items-002.htm
+ietestcenter/css3/grid/grid-items-003.htm
+
+# Fetch
+imported/w3c/web-platform-tests/fetch/api
+
+# Web Animations
+animations/trigger-computed-style.html
+animations/trigger-container-scroll-boundaries.html
+animations/trigger-container-scroll-empty.html
+animations/trigger-container-scroll-simple.html
+animations/trigger-parsing.html
+
+# WebGL2
+fast/canvas/webgl/webgl2-runtime-flag.html
+webgl/webgl2-rendering-context-defined.html
+webgl/webgl2-rendering-context-obtain.html
+webgl/webgl-vertex-array-object-defined.html
+
+# Custom Elements
+fast/custom-elements
+
+# IndieUI
+indieui/uiactions.html
+
+# Input type color
+accessibility/color-well.html
+fast/css/pseudo-visited-background-color-on-input.html
+fast/forms/color/color-setrangetext.html
+fast/forms/color/input-appearance-color.html
+fast/forms/color/input-color-onchange-event.html
+fast/forms/color/input-value-sanitization-color.html
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html
+
+# Navigator
+fast/dom/navigator-detached-no-crash.html
+fast/dom/navigator-hardwareConcurrency.html
+fast/workers/worker-navigator.html
+imported/blink/fast/cpu/hardware-concurrency.html
+
+# Will Reveal Edge Events
+fast/events/will-reveal-edge-on-div.html
+fast/events/will-reveal-edges-body-attributes.html
+fast/events/will-reveal-edges-event-listeners.html
+fast/events/will-reveal-edges-window-attributes.html
