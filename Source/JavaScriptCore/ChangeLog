@@ -1,3 +1,33 @@
+2016-08-05  Saam Barati  <sbarati@apple.com>
+
+        various math operations don't properly check for an exception after calling toNumber() on the lhs
+        https://bugs.webkit.org/show_bug.cgi?id=160154
+
+        Reviewed by Mark Lam.
+
+        We must check for an exception after calling toNumber() on the lhs
+        because this can throw an exception. If we called toNumber() on
+        the rhs without first checking for an exception after the toNumber()
+        on the lhs, this can lead us to execute effectful code or deviate
+        from the standard in subtle ways. I fixed this bug in various places
+        by always checking for an exception after calling toNumber() on the
+        lhs for the various bit and arithmetic operations.
+
+        This patch also found a commutativity bug inside DFGStrengthReduction.
+        We could end up commuting the lhs and rhs of say an "|" expression
+        even when the lhs/rhs may not be numbers. This is wrong because
+        executing toNumber() on the lhs/rhs has strict ordering guarantees
+        by the specification and is observable by user programs.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleCommutativity):
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+
 2016-08-05  Michael Saboff  <msaboff@apple.com>
 
         compilePutByValForIntTypedArray() has a slow path in the middle of its processing

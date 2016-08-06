@@ -210,6 +210,8 @@ EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValu
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a & b));
 }
@@ -223,6 +225,8 @@ EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState* exec, EncodedJSValue
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a | b));
 }
@@ -236,6 +240,8 @@ EncodedJSValue JIT_OPERATION operationValueBitXor(ExecState* exec, EncodedJSValu
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a ^ b));
 }
@@ -249,6 +255,8 @@ EncodedJSValue JIT_OPERATION operationValueBitLShift(ExecState* exec, EncodedJSV
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(a << (b & 0x1f)));
 }
@@ -262,6 +270,8 @@ EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState* exec, EncodedJSV
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(a >> (b & 0x1f)));
 }
@@ -275,6 +285,8 @@ EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState* exec, EncodedJS
     JSValue op2 = JSValue::decode(encodedOp2);
 
     uint32_t a = op1.toUInt32(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(static_cast<int32_t>(a >> (b & 0x1f))));
 }
@@ -304,6 +316,8 @@ EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue e
     JSValue op2 = JSValue::decode(encodedOp2);
 
     double a = op1.toNumber(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
     double b = op2.toNumber(exec);
     return JSValue::encode(jsNumber(a / b));
 }

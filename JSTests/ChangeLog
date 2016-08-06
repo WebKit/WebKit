@@ -1,5 +1,23 @@
 2016-08-05  Saam Barati  <sbarati@apple.com>
 
+        various math operations don't properly check for an exception after calling toNumber() on the lhs
+        https://bugs.webkit.org/show_bug.cgi?id=160154
+
+        Reviewed by Mark Lam.
+
+        * stress/to-number-throws-correct-exception.js: Added.
+        (test.let.test.runTest.):
+        (test.let.test.runTest.get f):
+        (test.let.test.runTest):
+        (test.let.test):
+        (test):
+        (test2.runTest.):
+        (test2.runTest.get f):
+        (test2.runTest):
+        (test2):
+
+2016-08-05  Saam Barati  <sbarati@apple.com>
+
         Assertion failure when accessing TDZ variable in catch through eval
         https://bugs.webkit.org/show_bug.cgi?id=160554
 
