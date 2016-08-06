@@ -47,7 +47,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
-#include "WebGamepadProvider.h"
 #include "WebGeolocationManager.h"
 #include "WebIconDatabaseProxy.h"
 #include "WebLoaderStrategy.h"
@@ -400,10 +399,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
                 platformStrategies()->pluginStrategy()->setPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(versionIter->value), hostIter->key, bundleIdentifierIter->key, versionIter->key);
         }
     }
-#endif
-
-#if ENABLE(GAMEPAD)
-    GamepadProvider::singleton().setSharedProvider(WebGamepadProvider::singleton());
 #endif
 }
 

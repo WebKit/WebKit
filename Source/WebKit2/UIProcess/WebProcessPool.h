@@ -387,15 +387,6 @@ private:
 
     void didGetStatistics(const StatisticsData&, uint64_t callbackID);
 
-#if ENABLE(GAMEPAD)
-    void startedUsingGamepads(IPC::Connection&);
-    void stoppedUsingGamepads(IPC::Connection&);
-
-    void processStoppedUsingGamepads(WebProcessProxy*);
-
-    HashSet<WebProcessProxy*> m_processesUsingGamepads;
-#endif
-
     // IPC::MessageReceiver.
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;

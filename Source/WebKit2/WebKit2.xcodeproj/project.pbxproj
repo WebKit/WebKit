@@ -936,11 +936,6 @@
 		514D9F5719119D35000063A7 /* ServicesController.h in Headers */ = {isa = PBXBuildFile; fileRef = 514D9F5519119D35000063A7 /* ServicesController.h */; };
 		514D9F5819119D35000063A7 /* ServicesController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514D9F5619119D35000063A7 /* ServicesController.mm */; };
 		51578B831209ECEF00A37C4A /* APIData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* APIData.h */; };
-		515BE1771D53FE8700DD7C68 /* WebGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1731D53FDDC00DD7C68 /* WebGamepadProvider.cpp */; };
-		515BE1791D53FE8F00DD7C68 /* WebGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1741D53FDDC00DD7C68 /* WebGamepadProvider.h */; };
-		515BE1A71D55293400DD7C68 /* UIGamepadProviderHID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1A61D55293000DD7C68 /* UIGamepadProviderHID.cpp */; };
-		515BE1A81D55293400DD7C68 /* UIGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1A41D55292800DD7C68 /* UIGamepadProvider.cpp */; };
-		515BE1A91D55293400DD7C68 /* UIGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1A51D55292800DD7C68 /* UIGamepadProvider.h */; };
 		515E7727183DD6F60007203F /* AsyncRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7725183DD6F60007203F /* AsyncRequest.cpp */; };
 		515E7728183DD6F60007203F /* AsyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E7726183DD6F60007203F /* AsyncRequest.h */; };
 		515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */; };
@@ -2980,13 +2975,6 @@
 		514D9F5519119D35000063A7 /* ServicesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServicesController.h; sourceTree = "<group>"; };
 		514D9F5619119D35000063A7 /* ServicesController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesController.mm; sourceTree = "<group>"; };
 		51578B821209ECEF00A37C4A /* APIData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIData.h; sourceTree = "<group>"; };
-		515BE1731D53FDDC00DD7C68 /* WebGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGamepadProvider.cpp; sourceTree = "<group>"; };
-		515BE1741D53FDDC00DD7C68 /* WebGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGamepadProvider.h; sourceTree = "<group>"; };
-		515BE19F1D550AB000DD7C68 /* WebGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGamepad.cpp; sourceTree = "<group>"; };
-		515BE1A01D550AB000DD7C68 /* WebGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGamepad.h; sourceTree = "<group>"; };
-		515BE1A41D55292800DD7C68 /* UIGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIGamepadProvider.cpp; sourceTree = "<group>"; };
-		515BE1A51D55292800DD7C68 /* UIGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGamepadProvider.h; sourceTree = "<group>"; };
-		515BE1A61D55293000DD7C68 /* UIGamepadProviderHID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIGamepadProviderHID.cpp; path = UIProcess/Gamepad/mac/UIGamepadProviderHID.cpp; sourceTree = SOURCE_ROOT; };
 		515E7725183DD6F60007203F /* AsyncRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncRequest.cpp; sourceTree = "<group>"; };
 		515E7726183DD6F60007203F /* AsyncRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncRequest.h; sourceTree = "<group>"; };
 		515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessCreationParameters.cpp; sourceTree = "<group>"; };
@@ -5481,36 +5469,6 @@
 			path = Authentication;
 			sourceTree = "<group>";
 		};
-		515BE1721D53FDB900DD7C68 /* Gamepad */ = {
-			isa = PBXGroup;
-			children = (
-				515BE19F1D550AB000DD7C68 /* WebGamepad.cpp */,
-				515BE1A01D550AB000DD7C68 /* WebGamepad.h */,
-				515BE1731D53FDDC00DD7C68 /* WebGamepadProvider.cpp */,
-				515BE1741D53FDDC00DD7C68 /* WebGamepadProvider.h */,
-			);
-			path = Gamepad;
-			sourceTree = "<group>";
-		};
-		515BE17B1D54EF5A00DD7C68 /* Gamepad */ = {
-			isa = PBXGroup;
-			children = (
-				515BE1A11D5523B300DD7C68 /* mac */,
-				515BE1A41D55292800DD7C68 /* UIGamepadProvider.cpp */,
-				515BE1A51D55292800DD7C68 /* UIGamepadProvider.h */,
-			);
-			path = Gamepad;
-			sourceTree = "<group>";
-		};
-		515BE1A11D5523B300DD7C68 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				515BE1A61D55293000DD7C68 /* UIGamepadProviderHID.cpp */,
-			);
-			name = mac;
-			path = UIProcess/Gamepad/mac;
-			sourceTree = "<group>";
-		};
 		516319931628980E00E22F00 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -5855,7 +5813,6 @@
 				BCACC43B16B24C5D00B6E092 /* EntryPoint */,
 				E170876D16D6CA7200F99226 /* FileAPI */,
 				CD73BA3D131A2A2100EEDED2 /* FullScreen */,
-				515BE1721D53FDB900DD7C68 /* Gamepad */,
 				BC0E5FCB12D696DD0012A72A /* Geolocation */,
 				51FBB9C1132E079200F327B4 /* IconDatabase */,
 				BC204EDF11C83E72008F3375 /* InjectedBundle */,
@@ -5993,7 +5950,6 @@
 				9955A6E81C79809000EB6A93 /* Automation */,
 				1ABC3DF21899E415004F0626 /* Cocoa */,
 				1AB7D4C71288AA9A00CFD08C /* Downloads */,
-				515BE17B1D54EF5A00DD7C68 /* Gamepad */,
 				2DA944A81884E9AB00ED86DB /* ios */,
 				BC111B18112F5FB400337BAB /* Launcher */,
 				BCCF085C113F3B7500C650C5 /* mac */,
@@ -7562,7 +7518,6 @@
 				2DA944A41884E4F000ED86DB /* GestureTypes.h in Headers */,
 				2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */,
 				C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */,
-				515BE1A91D55293400DD7C68 /* UIGamepadProvider.h in Headers */,
 				1AC75A1B1B3368270056745B /* HangDetectionDisabler.h in Headers */,
 				37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */,
 				51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */,
@@ -8070,7 +8025,6 @@
 				1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */,
 				1AF4592F19464B2000F9D4A2 /* WKError.h in Headers */,
 				BCFD548C132D82680055D816 /* WKErrorCF.h in Headers */,
-				515BE1791D53FE8F00DD7C68 /* WebGamepadProvider.h in Headers */,
 				37B5045219EEF31300CE2CF8 /* WKErrorPrivate.h in Headers */,
 				BC4075FC124FF0270068F20A /* WKErrorRef.h in Headers */,
 				BC40783D1250FADD0068F20A /* WKEvent.h in Headers */,
@@ -9222,7 +9176,6 @@
 				E179088D169BAA62006904C7 /* SecItemShim.cpp in Sources */,
 				E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */,
 				E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */,
-				515BE1A71D55293400DD7C68 /* UIGamepadProviderHID.cpp in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
 				514D9F5819119D35000063A7 /* ServicesController.mm in Sources */,
 				1AFDE6591954A42B00C48FFA /* SessionState.cpp in Sources */,
@@ -9243,7 +9196,6 @@
 				1A44B95B16B73F9F00B7BBD8 /* StorageManager.cpp in Sources */,
 				1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */,
 				1A44B95716B737AA00B7BBD8 /* StorageNamespaceImpl.cpp in Sources */,
-				515BE1771D53FE8700DD7C68 /* WebGamepadProvider.cpp in Sources */,
 				1AE00D6B18327C1200087DD7 /* StringReference.cpp in Sources */,
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 				1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */,
@@ -9292,7 +9244,6 @@
 				7C4ABED01AA8E9F00088AA37 /* WebCompiledContentExtension.cpp in Sources */,
 				7C4ABED41AA8FCB80088AA37 /* WebCompiledContentExtensionData.cpp in Sources */,
 				BC4A628F147312BE006C681A /* WebConnection.cpp in Sources */,
-				515BE1A81D55293400DD7C68 /* UIGamepadProvider.cpp in Sources */,
 				BC4A6291147312BE006C681A /* WebConnectionClient.cpp in Sources */,
 				1A1FEC1C1627B45700700F6D /* WebConnectionMessageReceiver.cpp in Sources */,
 				BCD3675C148C26C000447E87 /* WebConnectionToUIProcess.cpp in Sources */,
