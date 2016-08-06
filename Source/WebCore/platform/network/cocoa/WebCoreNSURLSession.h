@@ -47,7 +47,6 @@ class CachedResourceRequest;
 class PlatformMediaResource;
 class PlatformMediaResourceLoader;
 class WebCoreNSURLSessionDataTaskClient;
-class SecurityOrigin;
 }
 
 enum class WebCoreNSURLSessionCORSAccessCheckResults {
@@ -66,11 +65,9 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks;
     Lock _dataTasksLock;
     BOOL _invalidated;
-    BOOL _hasSingleSecurityOrigin;
     NSUInteger _nextTaskIdentifier;
     OSObjectPtr<dispatch_queue_t> _internalQueue;
     WebCoreNSURLSessionCORSAccessCheckResults _corsResults;
-    RefPtr<WebCore::SecurityOrigin> _requestedOrigin;
 }
 - (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
 @property (readonly, retain) NSOperationQueue *delegateQueue;
@@ -78,7 +75,6 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @property (readonly, copy) NSURLSessionConfiguration *configuration;
 @property (copy) NSString *sessionDescription;
 @property (readonly) BOOL didPassCORSAccessChecks;
-@property (readonly) BOOL hasSingleSecurityOrigin;
 - (void)finishTasksAndInvalidate;
 - (void)invalidateAndCancel;
 
