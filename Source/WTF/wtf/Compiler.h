@@ -53,6 +53,7 @@
 #define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_feature(cxx_reference_qualified_functions)
 #define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS __has_feature(cxx_user_literals)
 #define WTF_COMPILER_SUPPORTS_FALLTHROUGH_WARNINGS __has_feature(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
+#define WTF_COMPILER_SUPPORTS_CXX_EXCEPTIONS __has_feature(cxx_exceptions)
 #endif
 
 /* COMPILER(GCC_OR_CLANG) - GNU Compiler Collection or Clang */

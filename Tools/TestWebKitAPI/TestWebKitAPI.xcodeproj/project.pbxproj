@@ -212,6 +212,7 @@
 		7C83E0C41D0A654200FEBCF3 /* RequiresUserActionForPlayback.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD9E292B1C90A71F000BB800 /* RequiresUserActionForPlayback.mm */; };
 		7C83E0C51D0A654600FEBCF3 /* ShrinkToFit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */; };
 		7C83E0C61D0A654E00FEBCF3 /* VideoControlsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E943F11CD3E87E00AC08C2 /* VideoControlsManager.mm */; };
+		7C83FC711D5535A8001DFBCD /* Variant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0D5AA1D5534DE000CC9E1 /* Variant.cpp */; };
 		7C882E091C80C630006BF731 /* UserContentWorldPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C882E041C80C624006BF731 /* UserContentWorldPlugIn.mm */; };
 		7C882E0A1C80C764006BF731 /* UserContentWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C882E031C80C624006BF731 /* UserContentWorld.mm */; };
 		7C89D2AC1A69B80D003A5FDE /* WKPageConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C89D2AA1A69B80D003A5FDE /* WKPageConfiguration.cpp */; };
@@ -880,6 +881,7 @@
 		7CCB99221D3B44E7003922F6 /* open-multiple-external-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "open-multiple-external-url.html"; sourceTree = "<group>"; };
 		7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTestWebKitAPI.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPILibrary.xcconfig; sourceTree = "<group>"; };
+		7CD0D5AA1D5534DE000CC9E1 /* Variant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Variant.cpp; sourceTree = "<group>"; };
 		7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKUserContentExtensionStore.mm; sourceTree = "<group>"; };
 		7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad.cpp; sourceTree = "<group>"; };
 		7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad_Bundle.cpp; sourceTree = "<group>"; };
@@ -1628,6 +1630,7 @@
 				7C74D42D188228F300E5ED57 /* StringView.cpp */,
 				0BCD85691485C98B00EA2003 /* TemporaryChange.cpp */,
 				BC55F5F814AD78EE00484BE1 /* Vector.cpp */,
+				7CD0D5AA1D5534DE000CC9E1 /* Variant.cpp */,
 				265AF54F15D1E48A00B0CB4A /* WTFString.cpp */,
 				1CB9BC371A67482300FE5678 /* WeakPtr.cpp */,
 				7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */,
@@ -2105,6 +2108,7 @@
 				7C83DF2A1D0A590C00FEBCF3 /* SHA1.cpp in Sources */,
 				7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */,
 				7C83DF361D0A590C00FEBCF3 /* StringHasher.cpp in Sources */,
+				7C83FC711D5535A8001DFBCD /* Variant.cpp in Sources */,
 				7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */,
 				7C83DF381D0A590C00FEBCF3 /* StringOperators.cpp in Sources */,
 				7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */,

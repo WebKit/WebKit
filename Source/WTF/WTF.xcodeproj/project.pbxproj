@@ -124,6 +124,7 @@
 		70ECA60F1B02426800449739 /* UniquedStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA60C1B02426800449739 /* UniquedStringImpl.h */; };
 		79EC70611C99F9BC003A3AE2 /* SmallPtrSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */; };
 		7CBBA07419BB7FDC00BBF025 /* OSObjectPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */; };
+		7CD0D5A91D5534A7000CC9E1 /* Variant.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0D5A71D55322A000CC9E1 /* Variant.h */; };
 		7CDD7FF8186D291E007433CD /* IteratorAdaptors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */; };
 		7CDD7FFA186D2A54007433CD /* IteratorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF9186D2A54007433CD /* IteratorRange.h */; };
 		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
@@ -466,6 +467,7 @@
 		70ECA60C1B02426800449739 /* UniquedStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniquedStringImpl.h; sourceTree = "<group>"; };
 		7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallPtrSet.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
+		7CD0D5A71D55322A000CC9E1 /* Variant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Variant.h; sourceTree = "<group>"; };
 		7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorAdaptors.h; sourceTree = "<group>"; };
 		7CDD7FF9186D2A54007433CD /* IteratorRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorRange.h; sourceTree = "<group>"; };
 		7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcRuntimeExtras.h; sourceTree = "<group>"; };
@@ -1024,6 +1026,7 @@
 				83FBA93119DF459700F30ADB /* TypeCasts.h */,
 				A8A4735C151A825B004123FF /* UnionFind.h */,
 				A8A4736F151A825B004123FF /* ValueCheck.h */,
+				7CD0D5A71D55322A000CC9E1 /* Variant.h */,
 				A8A47370151A825B004123FF /* Vector.h */,
 				A8A47371151A825B004123FF /* VectorTraits.h */,
 				A8A47372151A825B004123FF /* VMTags.h */,
@@ -1380,6 +1383,7 @@
 				A8A47428151A825B004123FF /* StackBounds.h in Headers */,
 				1C181C921D307AB800F5FA16 /* UTextProviderLatin1.h in Headers */,
 				FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */,
+				7CD0D5A91D5534A7000CC9E1 /* Variant.h in Headers */,
 				A8A47429151A825B004123FF /* StaticConstructors.h in Headers */,
 				A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */,
 				C4F8A93719C65EB400B2B15D /* Stopwatch.h in Headers */,

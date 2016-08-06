@@ -1,3 +1,22 @@
+2016-08-06  Sam Weinig  <sam@webkit.org>
+
+        WTF needs a variant implementation
+        https://bugs.webkit.org/show_bug.cgi?id=160618
+
+        Reviewed by Darin Adler.
+
+        Add an implementation of std::experimental::variant matching the C++17 draft http://wg21.link/n4606 
+        taken from https://bitbucket.org/anthonyw/variant/src (5bce47fa788648f79e5ea1d77b0eef2e8f0b2999) and
+        modified to support compiling without exceptions (where it used to throw, we lovingly CRASH()).
+
+        * WTF.xcodeproj/project.pbxproj:
+        Add new file.
+
+        * wtf/Compiler.h:
+        Add COMPILER_SUPPORTS define for C++ exceptions.
+
+        * wtf/Variant.h: Added.
+
 2016-08-05  Keith Miller  <keith_miller@apple.com>
 
         Add LEBDecoder and tests

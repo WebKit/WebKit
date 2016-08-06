@@ -114,6 +114,7 @@ set(WTF_HEADERS
     UniqueRef.h
     VMTags.h
     ValueCheck.h
+    Variant.h
     Vector.h
     VectorTraits.h
     WTFThreadData.h
