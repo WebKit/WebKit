@@ -145,7 +145,7 @@ void ScriptElement::dispatchErrorEvent()
     m_element.dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
-bool ScriptElement::isScriptTypeSupported(LegacyTypeSupport supportLegacyTypes) const
+Optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const
 {
     // FIXME: isLegacySupportedJavaScriptLanguage() is not valid HTML5. It is used here to maintain backwards compatibility with existing layout tests. The specific violations are:
     // - Allowing type=javascript. type= should only support MIME types, such as text/javascript.
@@ -154,18 +154,24 @@ bool ScriptElement::isScriptTypeSupported(LegacyTypeSupport supportLegacyTypes) 
     String language = languageAttributeValue();
     if (type.isEmpty()) {
         if (language.isEmpty())
-            return true; // Assume text/javascript.
+            return ScriptType::Classic; // Assume text/javascript.
         if (MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/" + language))
-            return true;
+            return ScriptType::Classic;
         if (isLegacySupportedJavaScriptLanguage(language))
-            return true;
-        return false;
+            return ScriptType::Classic;
+        return Nullopt;
     }
     if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.stripWhiteSpace()))
-        return true;
+        return ScriptType::Classic;
     if (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type))
-        return true;
-    return false;
+        return ScriptType::Classic;
+#if ENABLE(ES6_MODULES)
+    // https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type
+    // Setting the attribute to an ASCII case-insensitive match for the string "module" means that the script is a module script.
+    if (equalLettersIgnoringASCIICase(type, "module"))
+        return ScriptType::Module;
+#endif
+    return Nullopt;
 }
 
 // http://dev.w3.org/html5/spec/Overview.html#prepare-a-script
@@ -191,7 +197,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (!m_element.inDocument())
         return false;
 
-    if (!isScriptTypeSupported(supportLegacyTypes))
+    if (!determineScriptType(supportLegacyTypes))
         return false;
 
     if (wasParserInserted) {
