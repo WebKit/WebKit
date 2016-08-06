@@ -41,6 +41,14 @@ ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description)
 {
 }
 
+ExceptionBase::ExceptionBase(unsigned short code, const String& name, const String& message, const String& typeName)
+    : m_code(code)
+    , m_name(name)
+    , m_message(message)
+    , m_typeName(typeName)
+{
+}
+
 String ExceptionBase::toString() const
 {
     if (!m_toString.isEmpty())

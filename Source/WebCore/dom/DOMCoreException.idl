@@ -27,6 +27,7 @@
  */
 
 [
+    Constructor(optional DOMString message = "", optional DOMString name = "Error"),
     DoNotCheckConstants,
     Exposed=(Window,Worker),
     InterfaceName=DOMException,

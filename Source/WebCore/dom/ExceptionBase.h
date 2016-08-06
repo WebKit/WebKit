@@ -47,6 +47,7 @@ public:
 
 protected:
     explicit ExceptionBase(const ExceptionCodeDescription&);
+    ExceptionBase(unsigned short code, const String& name, const String& message, const String& typeName);
 
 private:
     unsigned short m_code;

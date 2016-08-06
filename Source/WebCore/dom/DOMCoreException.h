@@ -39,10 +39,12 @@ public:
     {
         return adoptRef(*new DOMCoreException(description));
     }
+    static Ref<DOMCoreException> create(const String& message, const String& name);
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
 protected:
+    DOMCoreException(ExceptionCode, const String& message, const String& name);
     explicit DOMCoreException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
     {

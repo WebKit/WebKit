@@ -1,0 +1,20 @@
+
+PASS Object.getPrototypeOf(exception) === DOMException.prototype 
+PASS exception.hasOwnProperty("name") 
+PASS exception.name === "HierarchyRequestError" 
+FAIL Object.getOwnPropertyDescriptor(exception, "name") assert_true: must be writable expected true got undefined
+FAIL Object.getOwnPropertyDescriptor(exception, "message") assert_true: must be writable expected true got undefined
+PASS typeof exception.message === "string" 
+PASS Object.prototype.toString.call(exception) === "[object DOMException]" 
+PASS exception.code === DOMException.HIERARCHY_REQUEST_ERR 
+FAIL Object.getOwnPropertyDescriptor(exception, "code") assert_true: must be writable expected true got undefined
+PASS In iframe: Object.getPrototypeOf(exception) === DOMException.prototype 
+PASS In iframe: exception.hasOwnProperty("name") 
+PASS In iframe: exception.name === "HierarchyRequestError" 
+FAIL In iframe: Object.getOwnPropertyDescriptor(exception, "name") assert_true: must be writable expected true got undefined
+FAIL In iframe: Object.getOwnPropertyDescriptor(exception, "message") assert_true: must be writable expected true got undefined
+PASS In iframe: typeof exception.message === "string" 
+PASS In iframe: Object.prototype.toString.call(exception) === "[object DOMException]" 
+PASS In iframe: exception.code === DOMException.HIERARCHY_REQUEST_ERR 
+FAIL In iframe: Object.getOwnPropertyDescriptor(exception, "code") assert_true: must be writable expected true got undefined
+

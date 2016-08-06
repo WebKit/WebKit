@@ -1,5 +1,29 @@
 2016-08-05  Chris Dumez  <cdumez@apple.com>
 
+        DOMException should be constructible
+        https://bugs.webkit.org/show_bug.cgi?id=160626
+
+        Reviewed by Darin Adler.
+
+        Import WebIDL tests from W3C web-platform-tests.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.js: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.js: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/exceptions-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/exceptions.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/has-instance-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/has-instance.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object.html: Added.
+
+2016-08-05  Chris Dumez  <cdumez@apple.com>
+
         Align Range.insertNode() input validation with the specification
         https://bugs.webkit.org/show_bug.cgi?id=160624
 
