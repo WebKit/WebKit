@@ -118,43 +118,37 @@ String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
     return value.toString(exec)->value(exec);
 }
 
-static inline bool isUnmatchedSurrogatePair(UChar c)
-{
-    return c >= 0xD800 || c <= 0xDFFF;
-}
-
 String valueToUSVString(ExecState* exec, JSValue value)
 {
-    String s = value.toWTFString(exec);
+    String string = value.toWTFString(exec);
     if (exec->hadException())
-        return String();
+        return { };
+    StringView view { string };
 
-    // Fast path if there is no unmatched surrogate pair.
-    if (s.find(isUnmatchedSurrogatePair) == notFound)
-        return s;
+    // Fast path for 8-bit strings, since they can't have any surrogates.
+    if (view.is8Bit())
+        return string;
+
+    // Fast path for the case where there are no unpaired surrogates.
+    bool foundUnpairedSurrogate = false;
+    for (auto codePoint : view.codePoints()) {
+        if (U_IS_SURROGATE(codePoint)) {
+            foundUnpairedSurrogate = true;
+            break;
+        }
+    }
+    if (!foundUnpairedSurrogate)
+        return string;
 
     // Slow path: http://heycam.github.io/webidl/#dfn-obtain-unicode
-    unsigned n = s.length();
+    // Replaces unpaired surrogates with the replacememnt character.
     StringBuilder result;
-    result.reserveCapacity(n);
-    for (unsigned i = 0; i < n; ++i) {
-        UChar c = s[i];
-        if (c < 0xD800 || c > 0xDFFF)
-            result.append(c);
-        if (c >= 0xDC00 && c <= 0xDFFF)
+    result.reserveCapacity(view.length());
+    for (auto codePoint : view.codePoints()) {
+        if (U_IS_SURROGATE(codePoint))
             result.append(replacementCharacter);
-        if (c >= 0xD800 && c <= 0xDBFF) {
-            if (i == n - 1)
-                result.append(replacementCharacter);
-            else {
-                UChar d = s[i + 1];
-                if (d >= 0xDC00 && d <= 0xDFFF) {
-                    result.append(U16_GET_SUPPLEMENTARY(c, d));
-                    ++i;
-                } else
-                    result.append(replacementCharacter);
-            }
-        }
+        else
+            result.append(codePoint);
     }
     return result.toString();
 }
