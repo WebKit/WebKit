@@ -1,3 +1,17 @@
+2016-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Write API test to cover crash fix in r204135
+        https://bugs.webkit.org/show_bug.cgi?id=160587
+
+        Reviewed by Darin Adler.
+
+        Call didClose() in WebProcessProxy::requestTermination() so that
+        the processDidCrash() delegates get called in API tests whenever
+        a WebContent process is terminated to simulate a crash.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+
 2016-08-06  Brady Eidson  <beidson@apple.com>
 
         Lay WebProcess/UIProcess groundwork for an IPC GamepadProvider.
