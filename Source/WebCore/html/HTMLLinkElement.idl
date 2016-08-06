@@ -25,7 +25,7 @@
 ] interface HTMLLinkElement : HTMLElement {
     [Reflect] attribute boolean disabled;
     [Reflect] attribute DOMString charset;
-    [Reflect, URL] attribute DOMString href;
+    [Reflect, URL] attribute USVString href;
     [Reflect] attribute DOMString hreflang;
     [Reflect] attribute DOMString media;
     [Reflect] attribute DOMString rel;

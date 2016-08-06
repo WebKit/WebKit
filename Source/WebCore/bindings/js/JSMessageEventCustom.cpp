@@ -107,7 +107,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     const String& typeArg = state.argument(0).toString(&state)->value(&state);
     bool canBubbleArg = state.argument(1).toBoolean(&state);
     bool cancelableArg = state.argument(2).toBoolean(&state);
-    const String originArg = state.argument(4).toString(&state)->value(&state);
+    const String originArg = valueToUSVString(&state, state.argument(4));
     const String lastEventIdArg = state.argument(5).toString(&state)->value(&state);
     DOMWindow* sourceArg = JSDOMWindow::toWrapped(state, state.argument(6));
     std::unique_ptr<MessagePortArray> messagePorts;

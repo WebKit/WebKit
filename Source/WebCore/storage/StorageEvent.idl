@@ -29,7 +29,7 @@
     [InitializedByEventConstructor] readonly attribute DOMString key;
     [InitializedByEventConstructor] readonly attribute DOMString? oldValue;
     [InitializedByEventConstructor] readonly attribute DOMString? newValue;
-    [InitializedByEventConstructor] readonly attribute DOMString url;
+    [InitializedByEventConstructor] readonly attribute USVString url;
     [InitializedByEventConstructor] readonly attribute Storage storageArea;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
@@ -39,10 +39,10 @@
                           optional DOMString keyArg = "undefined",
                           optional DOMString? oldValueArg = null,
                           optional DOMString? newValueArg = null,
-                          optional DOMString urlArg = "undefined",
+                          optional USVString urlArg = "undefined",
                           optional Storage? storageAreaArg = null);
 
     // Needed once we support init<blank>EventNS
-    // void initStorageEventNS(DOMString namespaceURI, DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, DOMString keyArg, DOMString oldValueArg, DOMString newValueArg, DOMString urlArg, Storage? storageAreaArg);
+    // void initStorageEventNS(DOMString namespaceURI, DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, DOMString keyArg, DOMString oldValueArg, DOMString newValueArg, USVString urlArg, Storage? storageAreaArg);
 };
 

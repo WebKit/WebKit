@@ -24,7 +24,7 @@
  */
 
 interface HTMLSourceElement : HTMLElement {
-[Reflect, URL] attribute DOMString src;
+[Reflect, URL] attribute USVString src;
 attribute DOMString type;
 attribute DOMString media;
 };

@@ -34,7 +34,7 @@
     Exposed=(Window,Worker),
 ] interface ErrorEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString message;
-    [InitializedByEventConstructor] readonly attribute DOMString filename;
+    [InitializedByEventConstructor] readonly attribute USVString filename;
     [InitializedByEventConstructor] readonly attribute unsigned long lineno;
     [InitializedByEventConstructor] readonly attribute unsigned long colno;
     [InitializedByEventConstructor, CustomGetter] readonly attribute any error;

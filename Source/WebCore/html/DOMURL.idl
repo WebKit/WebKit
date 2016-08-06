@@ -26,9 +26,9 @@
 
 [
     Exposed=(Window,Worker),
-    Constructor(DOMString url),
-    Constructor(DOMString url, DOMString base),
-    Constructor(DOMString url, DOMURL base),
+    Constructor(USVString url),
+    Constructor(USVString url, USVString base),
+    Constructor(USVString url, DOMURL base),
     ConstructorRaisesException,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,

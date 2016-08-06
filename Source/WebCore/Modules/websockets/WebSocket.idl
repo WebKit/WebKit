@@ -32,15 +32,15 @@
 [
     ActiveDOMObject,
     Conditional=WEB_SOCKETS,
-    Constructor(DOMString url, optional sequence<DOMString> protocols = []),
-    Constructor(DOMString url, DOMString protocol),
+    Constructor(USVString url, optional sequence<DOMString> protocols = []),
+    Constructor(USVString url, DOMString protocol),
     ConstructorRaisesException,
     ConstructorCallWith=ScriptExecutionContext,
     EnabledAtRuntime,
     Exposed=(Window,Worker),
 ] interface WebSocket : EventTarget {
-    readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
-    readonly attribute DOMString url;
+    readonly attribute USVString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
+    readonly attribute USVString url;
 
     // ready state
     const unsigned short CONNECTING = 0;
@@ -65,7 +65,7 @@
     [RaisesException] void send(ArrayBuffer data);
     [RaisesException] void send(ArrayBufferView data);
     [RaisesException] void send(Blob data);
-    [RaisesException] void send(DOMString data);
+    [RaisesException] void send(USVString data);
 
     [RaisesException] void close([Clamp] optional unsigned short code, optional DOMString reason);
 };

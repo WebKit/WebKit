@@ -34,8 +34,8 @@
     readonly attribute MediaError error;
 
     // network state
-    [Reflect, URL] attribute DOMString src;
-    [URL] readonly attribute DOMString currentSrc;
+    [Reflect, URL] attribute USVString src;
+    [URL] readonly attribute USVString currentSrc;
     attribute DOMString? crossOrigin;
 
     const unsigned short NETWORK_EMPTY = 0;

@@ -30,18 +30,18 @@
     attribute long height;
     [Reflect] attribute long hspace;
     [Reflect] attribute boolean isMap;
-    [Reflect, URL] attribute DOMString longDesc;
-    [Reflect, URL] attribute DOMString src;
-    [Reflect] attribute DOMString srcset;
+    [Reflect, URL] attribute USVString longDesc;
+    [Reflect, URL] attribute USVString src;
+    [Reflect] attribute USVString srcset;
     [Reflect] attribute DOMString sizes;
-    readonly attribute DOMString currentSrc;
+    readonly attribute USVString currentSrc;
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute long vspace;
     attribute long width;
 
     // Extensions
     readonly attribute boolean complete;
-    [Reflect,URL] attribute DOMString lowsrc;
+    [Reflect,URL] attribute USVString lowsrc;
     readonly attribute long naturalHeight;
     readonly attribute long naturalWidth;
     readonly attribute long x;

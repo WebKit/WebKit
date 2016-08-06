@@ -70,7 +70,7 @@ JSValue JSHistory::pushState(ExecState& state)
 
     String url;
     if (argCount > 2) {
-        url = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
+        url = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
         if (state.hadException())
             return jsUndefined();
     }
@@ -101,7 +101,7 @@ JSValue JSHistory::replaceState(ExecState& state)
 
     String url;
     if (argCount > 2) {
-        url = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
+        url = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
         if (state.hadException())
             return jsUndefined();
     }

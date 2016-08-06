@@ -25,7 +25,7 @@ interface HTMLAreaElement : HTMLElement {
 
     // FIXME: This is supposed to be:
     // [PutForwards=value] readonly attribute DOMTokenList ping;
-    [Reflect] attribute DOMString ping;
+    [Reflect] attribute USVString ping;
 
     [Reflect] attribute DOMString rel;
     [Reflect] attribute DOMString shape;

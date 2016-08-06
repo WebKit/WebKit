@@ -26,7 +26,7 @@
  */
 
 [
-    CustomConstructor(DOMString scriptUrl),
+    CustomConstructor(USVString scriptUrl),
     ActiveDOMObject,
 ] interface Worker : EventTarget {
 

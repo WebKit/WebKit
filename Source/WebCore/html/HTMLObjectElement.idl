@@ -30,7 +30,7 @@
     [Reflect, TreatNullAs=EmptyString] attribute DOMString border;
     [Reflect] attribute DOMString codeBase;
     [Reflect] attribute DOMString codeType;
-    [Reflect, URL] attribute DOMString data;
+    [Reflect, URL] attribute USVString data;
     [Reflect] attribute boolean declare;
     [Reflect] attribute DOMString height;
     [Reflect] attribute long hspace;

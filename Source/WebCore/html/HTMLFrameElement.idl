@@ -21,7 +21,7 @@
 interface HTMLFrameElement : HTMLElement {
 
     [Reflect] attribute DOMString frameBorder;
-    [Reflect] attribute DOMString longDesc;
+    [Reflect] attribute USVString longDesc;
 
     [Reflect, TreatNullAs=EmptyString] attribute DOMString marginHeight;
     [Reflect, TreatNullAs=EmptyString] attribute DOMString marginWidth;
@@ -29,7 +29,7 @@ interface HTMLFrameElement : HTMLElement {
     [Reflect] attribute DOMString name;
     [Reflect] attribute boolean noResize;
     [Reflect] attribute DOMString scrolling;
-    [Reflect, URL] attribute DOMString src;
+    [Reflect, URL] attribute USVString src;
 
     // Introduced in DOM Level 2:
     [CheckSecurityForNode] readonly attribute Document contentDocument;

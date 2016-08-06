@@ -66,7 +66,7 @@ JSValue JSWorkerGlobalScope::importScripts(ExecState& state)
 
     Vector<String> urls;
     for (unsigned i = 0; i < state.argumentCount(); ++i) {
-        urls.append(state.uncheckedArgument(i).toString(&state)->value(&state));
+        urls.append(valueToUSVString(&state, state.uncheckedArgument(i)));
         if (state.hadException())
             return jsUndefined();
     }

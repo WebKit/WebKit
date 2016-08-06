@@ -3719,6 +3719,7 @@ my %automaticallyGeneratedDefaultValues = (
     # toString() will convert undefined to the string "undefined";
     # (note that this optimizes a behavior that is almost never useful)
     "DOMString" => "\"undefined\"",
+    "USVString" => "\"undefined\"",
 
     # Dictionary(state, undefined) will construct an empty Dictionary.
     "Dictionary" => "[]",
@@ -3809,7 +3810,7 @@ sub GenerateParametersCheck
             $parameter->default("undefined") if $type eq "any";
 
             # We use the null string as default value for parameters of type DOMString unless specified otherwise.
-            $parameter->default("null") if $type eq "DOMString";
+            $parameter->default("null") if $codeGenerator->IsStringType($type);
 
             # As per Web IDL, passing undefined for a nullable parameter is treated as null. Therefore, use null as
             # default value for nullable parameters unless otherwise specified.
@@ -3940,7 +3941,7 @@ sub GenerateParametersCheck
                     my $defaultValue = $parameter->default;
     
                     # String-related optimizations.
-                    if ($type eq "DOMString") {
+                    if ($codeGenerator->IsStringType($type)) {
                         my $useAtomicString = $parameter->extendedAttributes->{"AtomicString"};
                         if ($defaultValue eq "null") {
                             $defaultValue = $useAtomicString ? "nullAtom" : "String()";
@@ -4461,6 +4462,7 @@ sub GetNativeTypeFromSignature
 
 my %nativeType = (
     "DOMString" => "String",
+    "USVString" => "String",
     "DOMStringList" => "RefPtr<DOMStringList>",
     "DOMTimeStamp" => "DOMTimeStamp",
     "Date" => "double",
@@ -4526,8 +4528,8 @@ sub GetNativeTypeForCallbacks
     my ($interface, $type) = @_;
 
     return "RefPtr<SerializedScriptValue>&&" if $type eq "SerializedScriptValue";
-    return "RefPtr<PassRefPtr<DOMStringList>>&&" if $type eq "DOMStringList";
-    return "const String&" if $type eq "DOMString";
+    return "RefPtr<DOMStringList>&&" if $type eq "DOMStringList";
+    return "const String&" if $codeGenerator->IsStringType($type);
     return GetNativeType($interface, $type);
 }
 
@@ -4613,7 +4615,13 @@ sub JSValueToNative
         return ("$value.toString(state)->toAtomicString(state)", 1) if $signature->extendedAttributes->{"AtomicString"};
         return ("$value.toWTFString(state)", 1);
     }
-
+    if ($type eq "USVString") {
+        my $treatNullAs = $signature->extendedAttributes->{"TreatNullAs"};
+        return ("valueToUSVStringTreatingNullAsEmptyString(state, $value)", 1) if $treatNullAs && $treatNullAs eq "EmptyString";
+        return ("valueToUSVStringWithUndefinedOrNullCheck(state, $value)", 1) if $signature->isNullable;
+        return ("valueToUSVString(state, $value)", 1);
+    }
+    
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
         return ("SerializedScriptValue::create(state, $value, 0, 0)", 1);
@@ -4694,7 +4702,7 @@ sub NativeToJSValue
         return "jsStringWithCache(state, $value)";
     }
 
-    if ($type eq "DOMString") {
+    if ($codeGenerator->IsStringType($type)) {
         AddToImplIncludes("URL.h", $conditional);
         return "jsStringOrNull(state, $value)" if $signature->isNullable;
         AddToImplIncludes("<runtime/JSString.h>", $conditional);

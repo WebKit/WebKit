@@ -69,7 +69,7 @@
     // read-only for other clients.
     attribute DOMString? documentURI;
 #else
-    [ImplementedAs=urlForBindings] readonly attribute DOMString documentURI;
+    [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
 #endif
 
     // DOM Level 2 Events (DocumentEvents interface)
@@ -148,15 +148,15 @@
     [SetterRaisesException] attribute DOMString title;
     attribute DOMString dir;
 
-    readonly attribute DOMString referrer;
+    readonly attribute USVString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [SetterRaisesException] attribute DOMString domain;
+    [SetterRaisesException] attribute USVString domain;
 #else
     readonly attribute DOMString domain;
 #endif
-    [ImplementedAs=urlForBindings] readonly attribute DOMString URL;
+    [ImplementedAs=urlForBindings] readonly attribute USVString URL;
 
-    [GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
+    [GetterRaisesException, SetterRaisesException] attribute USVString cookie;
 
     [SetterRaisesException, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
 
@@ -275,7 +275,7 @@
     readonly attribute HTMLScriptElement? currentScript;
 
     // http://www.w3.org/TR/2014/WD-dom-20140204/#dom-document-origin
-    readonly attribute DOMString origin;
+    readonly attribute USVString origin;
 
     // http://dev.w3.org/csswg/cssom-view/#dom-document-scrollingelement
     readonly attribute Element? scrollingElement;

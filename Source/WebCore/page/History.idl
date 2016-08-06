@@ -33,6 +33,6 @@
     [CallWith=Document, ForwardDeclareInHeader] void forward();
     [CallWith=Document, ForwardDeclareInHeader] void go(optional long distance = 0);
 
-    [Custom, RaisesException] void pushState(any data, DOMString title, optional DOMString? url = null);
-    [Custom, RaisesException] void replaceState(any data, DOMString title, optional DOMString? url = null);
+    [Custom, RaisesException] void pushState(any data, DOMString title, optional USVString? url = null);
+    [Custom, RaisesException] void replaceState(any data, DOMString title, optional USVString? url = null);
 };

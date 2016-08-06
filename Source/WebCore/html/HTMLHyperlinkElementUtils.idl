@@ -38,14 +38,14 @@
     readonly attribute DOMString search;
     readonly attribute DOMString hash;
 #else
-    attribute DOMString protocol;
-    attribute DOMString username;
-    attribute DOMString password;
-    attribute DOMString host;
-    attribute DOMString hostname;
-    attribute DOMString port;
-    attribute DOMString pathname;
-    attribute DOMString search;
-    attribute DOMString hash;
+    attribute USVString protocol;
+    attribute USVString username;
+    attribute USVString password;
+    attribute USVString host;
+    attribute USVString hostname;
+    attribute USVString port;
+    attribute USVString pathname;
+    attribute USVString search;
+    attribute USVString hash;
 #endif
 };

@@ -67,11 +67,17 @@ enum TestConfidence { "high", "kinda-low" };
     attribute long long                longLongAttr;
     attribute unsigned long long       unsignedLongLongAttr;
     attribute DOMString                stringAttr;
+#if defined(TESTING_JS)
+    attribute USVString                usvstringAttr;
+#endif
     attribute TestObj                  testObjAttr;
     attribute TestObj?                 testNullableObjAttr;
     [LenientThis] attribute TestObj    lenientTestObjAttr;
     [Unforgeable] readonly attribute DOMString unforgeableAttr;
     [TreatNullAs=EmptyString] attribute DOMString stringAttrTreatingNullAsEmptyString;
+#if defined(TESTING_JS)
+    [TreatNullAs=EmptyString] attribute USVString usvstringAttrTreatingNullAsEmptyString;
+#endif
 
     // WK_ucfirst, WK_lcfirst exceptional cases.
     attribute TestObj                  XMLObjAttr;
@@ -79,10 +85,16 @@ enum TestConfidence { "high", "kinda-low" };
 
     // Reflected DOM attributes
     [Reflect] attribute DOMString reflectedStringAttr;
+#if defined(TESTING_JS)
+    [Reflect] attribute USVString reflectedUSVStringAttr;
+#endif
     [Reflect] attribute long reflectedIntegralAttr;
     [Reflect] attribute unsigned long reflectedUnsignedIntegralAttr;
     [Reflect] attribute boolean reflectedBooleanAttr;
     [Reflect, URL] attribute DOMString reflectedURLAttr;
+#if defined(TESTING_JS)
+    [Reflect, URL] attribute USVString reflectedUSVURLAttr;
+#endif
     [Reflect=customContentStringAttr] attribute DOMString reflectedStringAttr;
     [Reflect=customContentIntegralAttr] attribute long reflectedCustomIntegralAttr;
     [Reflect=customContentBooleanAttr] attribute boolean reflectedCustomBooleanAttr;
@@ -122,6 +134,12 @@ enum TestConfidence { "high", "kinda-low" };
     void methodWithOptionalEnumArg(optional TestEnumType enumArg);
     void methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
     [RaisesException] TestObj methodThatRequiresAllArgsAndThrows(DOMString strArg, TestObj objArg);
+
+#if defined(TESTING_JS)
+    void methodWithUSVStringArg(USVString str);
+    void methodWithNullableUSVStringArg(USVString? str);
+    void methodWithUSVStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] USVString str);
+#endif
 
     void serializedValue(SerializedScriptValue serializedArg);
     void optionsObject(Dictionary oo, optional Dictionary ooo);
@@ -186,6 +204,9 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithNonOptionalArgAndOptionalArg(long nonOpt, optional long opt);
     void    methodWithNonOptionalArgAndTwoOptionalArgs(long nonOpt, optional long opt1, optional long opt2);
     void    methodWithOptionalString(optional DOMString str);
+#if defined(TESTING_JS)
+    void    methodWithOptionalUSVString(optional USVString str);
+#endif
     void    methodWithOptionalAtomicString([AtomicString] optional DOMString str);
     void    methodWithOptionalStringAndDefaultValue(optional DOMString str = "foo");
     void    methodWithOptionalAtomicStringAndDefaultValue([AtomicString] optional DOMString str = "foo");
@@ -193,6 +214,9 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithOptionalStringIsUndefined(optional DOMString str = "undefined");
     void    methodWithOptionalAtomicStringIsNull([AtomicString] optional DOMString str = null);
     void    methodWithOptionalStringIsEmptyString(optional DOMString str = "");
+#if defined(TESTING_JS)
+    void    methodWithOptionalUSVStringIsEmptyString(optional USVString str = "");
+#endif
     void    methodWithOptionalAtomicStringIsEmptyString([AtomicString] optional DOMString str = "");
     void    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
     void    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
@@ -341,6 +365,9 @@ enum TestConfidence { "high", "kinda-low" };
 
     attribute long? nullableLongSettableAttribute;
     attribute DOMString? nullableStringSettableAttribute;
+#if defined(TESTING_JS)
+    attribute USVString? nullableUSVStringSettableAttribute;
+#endif
 
     [GetterRaisesException] attribute long? nullableStringValue;
 

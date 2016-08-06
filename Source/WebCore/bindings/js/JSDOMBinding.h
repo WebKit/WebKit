@@ -202,6 +202,10 @@ AtomicString propertyNameToAtomicString(JSC::PropertyName);
 String valueToStringTreatingNullAsEmptyString(JSC::ExecState*, JSC::JSValue);
 String valueToStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null or undefined
 
+WEBCORE_EXPORT String valueToUSVString(JSC::ExecState*, JSC::JSValue);
+String valueToUSVStringTreatingNullAsEmptyString(JSC::ExecState*, JSC::JSValue);
+String valueToUSVStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue);
+
 template<typename T> JSC::JSValue toNullableJSNumber(Optional<T>); // null if the optional is null
 
 int32_t finiteInt32Value(JSC::JSValue, JSC::ExecState*, bool& okay);

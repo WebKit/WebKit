@@ -91,7 +91,7 @@
 
     // Introduced in DOM Level 3:
 
-    readonly attribute DOMString?       baseURI;
+    readonly attribute USVString?       baseURI;
 
     // FIXME: the spec says this can also raise on retrieval.
     [SetterRaisesException] attribute DOMString? textContent;

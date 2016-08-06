@@ -27,7 +27,7 @@
     Conditional=VIDEO_TRACK,
 ] interface HTMLTrackElement : HTMLElement {
     attribute DOMString kind;
-    [Reflect, URL] attribute DOMString src;
+    [Reflect, URL] attribute USVString src;
     [Reflect] attribute DOMString srclang;
     [Reflect] attribute DOMString label;
     [Reflect] attribute boolean default;

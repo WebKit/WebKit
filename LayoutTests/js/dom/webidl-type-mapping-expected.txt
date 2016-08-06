@@ -1007,6 +1007,58 @@ PASS converter.testEnforceRangeUnsignedShort is 0
 PASS converter.testEnforceRangeUnsignedShort = undefined threw exception TypeError: Value NaN is outside the range [0, 65535].
 PASS converter.testEnforceRangeUnsignedShort = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
+converter.testUSVString = '!@#123ABCabc\x00\x80\xFF\r\n\t'
+converter.testString = '!@#123ABCabc\x00\x80\xFF\r\n\t'
+PASS converter.testUSVString is "!@#123ABCabc\u0000ÂÃ¿\r\n\t"
+PASS converter.testString is "!@#123ABCabc\u0000ÂÃ¿\r\n\t"
+converter.testUSVString = '\u0100'
+converter.testString = '\u0100'
+PASS converter.testUSVString is "Ä"
+PASS converter.testString is "Ä"
+PASS converter.testUSVString = {toString: function() { throw Error(); }} threw exception Error.
+PASS converter.testString = {toString: function() { throw Error(); }} threw exception Error.
+PASS converter.testUSVString is "Ä"
+PASS converter.testString is "Ä"
+converter.testUSVString = "í "
+converter.testString = "í "
+PASS converter.testUSVString is "ï¿½"
+PASS converter.testString is "í "
+converter.testUSVString = "í°"
+converter.testString = "í°"
+PASS converter.testUSVString is "ï¿½"
+PASS converter.testString is "í°"
+converter.testUSVString = "í \u0000"
+converter.testString = "í \u0000"
+PASS converter.testUSVString is "ï¿½\u0000"
+PASS converter.testString is "í \u0000"
+converter.testUSVString = "í°\u0000"
+converter.testString = "í°\u0000"
+PASS converter.testUSVString is "ï¿½\u0000"
+PASS converter.testString is "í°\u0000"
+converter.testUSVString = "í°í "
+converter.testString = "í°í "
+PASS converter.testUSVString is "ï¿½ï¿½"
+PASS converter.testString is "í°í "
+converter.testUSVString = "ð"
+converter.testString = "ð"
+PASS converter.testUSVString is "ð"
+PASS converter.testString is "ð"
+converter.testUSVString = true
+converter.testString = true
+PASS converter.testUSVString is "true"
+PASS converter.testString is "true"
+converter.testUSVString = 123
+converter.testString = 123
+PASS converter.testUSVString is "123"
+PASS converter.testString is "123"
+converter.testUSVString = null
+converter.testString = null
+PASS converter.testUSVString is "null"
+PASS converter.testString is "null"
+converter.testUSVString = undefined
+converter.testString = undefined
+PASS converter.testUSVString is "undefined"
+PASS converter.testString is "undefined"
 PASS successfullyParsed is true
 
 TEST COMPLETE

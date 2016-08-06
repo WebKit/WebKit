@@ -1,3 +1,16 @@
+2016-08-05  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Add support for USVString type
+        https://bugs.webkit.org/show_bug.cgi?id=160608
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage for USVString.
+
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/dom/webidl-type-mapping.html:
+        This test is based on the corresponding one from Blink.
+
 2016-08-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add back a newline that was accidentally removed from an expected.txt file.

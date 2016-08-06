@@ -49,6 +49,7 @@
 #include <runtime/JSFunction.h>
 #include <stdarg.h>
 #include <wtf/MathExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace JSC;
 using namespace Inspector;
@@ -115,6 +116,57 @@ String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
     if (value.isUndefinedOrNull())
         return String();
     return value.toString(exec)->value(exec);
+}
+
+static inline bool isUnmatchedSurrogatePair(UChar c)
+{
+    return c >= 0xD800 || c <= 0xDFFF;
+}
+
+String valueToUSVString(ExecState* exec, JSValue value)
+{
+    String s = value.toWTFString(exec);
+    if (exec->hadException())
+        return String();
+
+    // Fast path if there is no unmatched surrogate pair.
+    if (s.find(isUnmatchedSurrogatePair) == notFound)
+        return s;
+
+    // Slow path: http://heycam.github.io/webidl/#dfn-obtain-unicode
+    unsigned n = s.length();
+    StringBuilder result;
+    result.reserveCapacity(n);
+    for (unsigned i = 0; i < n; ++i) {
+        UChar c = s[i];
+        if (c < 0xD800 || c > 0xDFFF)
+            result.append(c);
+        if (c >= 0xDC00 && c <= 0xDFFF)
+            result.append(replacementCharacter);
+        if (c >= 0xD800 && c <= 0xDBFF) {
+            if (i == n - 1)
+                result.append(replacementCharacter);
+            else {
+                UChar d = s[i + 1];
+                if (d >= 0xDC00 && d <= 0xDFFF) {
+                    result.append(U16_GET_SUPPLEMENTARY(c, d));
+                    ++i;
+                } else
+                    result.append(replacementCharacter);
+            }
+        }
+    }
+    return result.toString();
+}
+
+String valueToUSVStringTreatingNullAsEmptyString(ExecState* exec, JSValue value)
+{
+    return value.isNull() ? emptyString() : valueToUSVString(exec, value);
+}
+
+String valueToUSVStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
+{
+    return value.isUndefinedOrNull() ? String() : valueToUSVString(exec, value);
 }
 
 JSValue jsDateOrNaN(ExecState* exec, double value)

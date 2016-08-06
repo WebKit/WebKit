@@ -383,7 +383,7 @@ JSValue JSDOMWindow::image(ExecState& state) const
 
 JSValue JSDOMWindow::open(ExecState& state)
 {
-    String urlString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(0));
+    String urlString = valueToUSVStringWithUndefinedOrNullCheck(&state, state.argument(0));
     if (state.hadException())
         return jsUndefined();
     JSValue targetValue = state.argument(1);
@@ -490,7 +490,7 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
     if (state.hadException())
         return jsUndefined();
 
-    String targetOrigin = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(targetOriginArgIndex));
+    String targetOrigin = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(targetOriginArgIndex));
     if (state.hadException())
         return jsUndefined();
 

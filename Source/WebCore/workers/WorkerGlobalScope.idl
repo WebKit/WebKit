@@ -43,7 +43,7 @@
 
     // WorkerUtils
 
-    [Custom] void importScripts(/*[Variadic] DOMString urls */);
+    [Custom] void importScripts(/*[Variadic] USVString urls */);
     readonly attribute WorkerNavigator navigator;
 
     // Additional constructors

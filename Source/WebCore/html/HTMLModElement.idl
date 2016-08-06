@@ -18,7 +18,7 @@
  */
 
 interface HTMLModElement : HTMLElement {
-    [Reflect, URL] attribute DOMString cite;
+    [Reflect, URL] attribute USVString cite;
     [Reflect] attribute DOMString dateTime;
 };
 

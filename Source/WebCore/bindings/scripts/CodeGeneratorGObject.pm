@@ -391,6 +391,7 @@ sub GetGValueTypeName {
     my $type = shift;
 
     my %types = ("DOMString", "string",
+                 "USVString", "string",
                  "DOMTimeStamp", "uint",
                  "float", "float",
                  "unrestricted float", "float",
@@ -420,6 +421,7 @@ sub GetGlibTypeName {
     my $name = GetClassName($type);
 
     my %types = ("DOMString", "gchar*",
+                 "USVString", "gchar*",
                  "DOMTimeStamp", "guint32",
                  "SerializedScriptValue", "gchar*",
                  "float", "gfloat",
@@ -1119,7 +1121,7 @@ sub GenerateFunction {
                 $implIncludes{"WebKitDOM${paramIDLType}Private.h"} = 1;
             }
         }
-        if ($paramIsGDOMType || ($paramIDLType eq "DOMString") || $param->isVariadic) {
+        if ($paramIsGDOMType || $codeGenerator->IsStringType($paramIDLType) || $param->isVariadic) {
             $paramName = "converted" . $codeGenerator->WK_ucfirst($paramName);
             $paramName = "*$paramName" if $codeGenerator->ShouldPassWrapperByReference($param, $parentNode);
             $paramName = "WTFMove($paramName)" if $param->isVariadic;
@@ -1272,7 +1274,7 @@ sub GenerateFunction {
 
         my $paramCoreType = $paramType;
         my $paramConversionFunction = "";
-        if ($paramIDLType eq "DOMString") {
+        if ($codeGenerator->IsStringType($paramIDLType)) {
             $paramCoreType = "WTF::String";
             $paramConversionFunction = "WTF::String::fromUTF8";
         } elsif ($paramIDLType eq "NodeFilter" || $paramIDLType eq "XPathNSResolver") {
@@ -1370,7 +1372,7 @@ EOF
         push(@cBody, "    return 0;\n");
         push(@cBody, "}\n\n");
         return;
-    } elsif ($functionSigType eq "DOMString") {
+    } elsif ($codeGenerator->IsStringType($functionSigType)) {
         my $getterContentHead;
         if ($prefix) {
             my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $function);

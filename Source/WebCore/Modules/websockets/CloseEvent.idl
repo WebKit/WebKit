@@ -33,6 +33,6 @@
 ] interface CloseEvent : Event {
     [InitializedByEventConstructor] readonly attribute boolean wasClean;
     [InitializedByEventConstructor] readonly attribute unsigned short code;
-    [InitializedByEventConstructor] readonly attribute DOMString reason;
+    [InitializedByEventConstructor] readonly attribute USVString reason;
 };
 

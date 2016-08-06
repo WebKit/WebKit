@@ -33,7 +33,7 @@
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     attribute FileList? files;
-    attribute DOMString formAction;
+    attribute USVString formAction;
 
     attribute DOMString formEnctype;
     attribute DOMString formMethod;
@@ -57,7 +57,7 @@
 #else
     [SetterRaisesException] attribute unsigned long size; // Changed string -> long -> unsigned long
 #endif
-    [Reflect, URL] attribute DOMString src;
+    [Reflect, URL] attribute USVString src;
     [Reflect] attribute DOMString step;
     attribute DOMString type; // readonly dropped as part of DOM level 2
     attribute DOMString defaultValue;

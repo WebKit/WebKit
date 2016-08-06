@@ -47,4 +47,7 @@
     [EnforceRange] attribute short testEnforceRangeShort;
     attribute unsigned short testUnsignedShort;
     [EnforceRange] attribute unsigned short testEnforceRangeUnsignedShort;
+
+    attribute DOMString testString;
+    attribute USVString testUSVString;
 };

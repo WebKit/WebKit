@@ -29,7 +29,7 @@
     Exposed=(Window,Worker),
     ConstructorTemplate=Event,
 ] interface MessageEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString origin;
+    [InitializedByEventConstructor] readonly attribute USVString origin;
     [InitializedByEventConstructor] readonly attribute DOMString lastEventId;
     [InitializedByEventConstructor] readonly attribute EventTarget source; // May be a DOMWindow or a MessagePort.
 
@@ -41,7 +41,7 @@
                                    optional boolean canBubbleArg,
                                    optional boolean cancelableArg,
                                    optional any dataArg,
-                                   optional DOMString originArg,
+                                   optional USVString originArg,
                                    optional DOMString lastEventIdArg,
                                    optional DOMWindow sourceArg,
                                    optional Array messagePorts);
@@ -50,7 +50,7 @@
                                          optional boolean canBubbleArg,
                                          optional boolean cancelableArg,
                                          optional any dataArg,
-                                         optional DOMString originArg,
+                                         optional USVString originArg,
                                          optional DOMString lastEventIdArg,
                                          optional DOMWindow sourceArg,
                                          optional Array transferables);

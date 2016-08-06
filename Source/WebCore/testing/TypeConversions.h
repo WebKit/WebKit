@@ -28,6 +28,7 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -70,6 +71,12 @@ public:
     void setTestUnsignedShort(uint16_t value) { m_UnsignedShort = value; }
     uint16_t testEnforceRangeUnsignedShort() { return m_UnsignedShort; }
     void setTestEnforceRangeUnsignedShort(uint16_t value) { m_UnsignedShort = value; }
+
+    const String& testString() const { return m_string; }
+    void setTestString(const String& string) { m_string = string; }
+    const String& testUSVString() const { return m_usvstring; }
+    void setTestUSVString(const String& usvstring) { m_usvstring = usvstring; }
+
 private:
     TypeConversions()
     {
@@ -83,6 +90,8 @@ private:
     uint8_t m_octet;
     int16_t m_short;
     uint16_t m_UnsignedShort;
+    String m_string;
+    String m_usvstring;
 };
 
 } // namespace WebCore

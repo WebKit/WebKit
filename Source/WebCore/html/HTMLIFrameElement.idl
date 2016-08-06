@@ -22,7 +22,7 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString frameBorder;
     [Reflect] attribute DOMString height;
-    [Reflect] attribute DOMString longDesc;
+    [Reflect] attribute USVString longDesc;
     [Reflect, TreatNullAs=EmptyString] attribute DOMString marginHeight;
     [Reflect, TreatNullAs=EmptyString] attribute DOMString marginWidth;
     [Reflect] attribute DOMString name;
@@ -34,7 +34,7 @@ interface HTMLIFrameElement : HTMLElement {
 #endif
 
     [Reflect] attribute DOMString scrolling;
-    [Reflect, URL] attribute DOMString src;
+    [Reflect, URL] attribute USVString src;
     [Reflect] attribute DOMString srcdoc;
     [Reflect] attribute DOMString width;
 

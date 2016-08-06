@@ -25,20 +25,20 @@
 
 [NoInterfaceObject]
 interface URLUtils {
-    [SetterRaisesException, URL] attribute DOMString href;
+    [SetterRaisesException, URL] attribute USVString href;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();
 #endif
 
-    readonly attribute DOMString origin;
+    readonly attribute USVString origin;
 
-    attribute DOMString protocol;
-    attribute DOMString username;
-    attribute DOMString password;
-    attribute DOMString host;
-    attribute DOMString hostname;
-    attribute DOMString port;
-    attribute DOMString pathname;
-    attribute DOMString hash;
-    attribute DOMString search;
+    attribute USVString protocol;
+    attribute USVString username;
+    attribute USVString password;
+    attribute USVString host;
+    attribute USVString hostname;
+    attribute USVString port;
+    attribute USVString pathname;
+    attribute USVString hash;
+    attribute USVString search;
 };

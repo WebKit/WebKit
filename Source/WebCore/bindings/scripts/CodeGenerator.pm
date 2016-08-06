@@ -332,7 +332,7 @@ sub SkipIncludeHeader
     return 1 if $object->IsPrimitiveType($type);
     return 1 if $object->IsTypedArrayType($type);
     return 1 if $type eq "Array";
-    return 1 if $type eq "DOMString";
+    return 1 if $type eq "DOMString" or $type eq "USVString";
     return 1 if $type eq "DOMTimeStamp";
     return 1 if $type eq "SVGNumber";
     return 1 if $type eq "any";
@@ -362,7 +362,7 @@ sub IsStringOrEnumType
 {
     my ($object, $type) = @_;
     
-    return 1 if $type eq "DOMString";
+    return 1 if $type eq "DOMString" or $type eq "USVString";
     return 1 if $object->IsEnumType($type);
     return 0;
 }
@@ -392,14 +392,15 @@ sub IsPrimitiveType
     return 0;
 }
 
-# Deprecated: Just check for "DOMString" instead.
 # Currently used outside WebKit in an internal Apple project; can be removed soon.
 sub IsStringType
 {
     my $object = shift;
     my $type = shift;
 
-    return $type eq "DOMString";
+    return 1 if $type eq "DOMString";
+    return 1 if $type eq "USVString";
+    return 0;
 }
 
 sub IsEnumType
@@ -471,7 +472,7 @@ sub IsRefPtrType
     return 0 if $object->IsDictionaryType($type);
     return 0 if $object->IsEnumType($type);
     return 0 if $object->GetArrayOrSequenceType($type);
-    return 0 if $type eq "DOMString";
+    return 0 if $type eq "DOMString" or $type eq "USVString";
     return 0 if $type eq "any";
 
     return 1;

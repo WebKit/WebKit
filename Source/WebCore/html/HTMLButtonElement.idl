@@ -22,7 +22,7 @@ interface HTMLButtonElement : HTMLElement {
     [Reflect] attribute boolean autofocus;
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    attribute DOMString formAction;
+    attribute USVString formAction;
 
     attribute DOMString formEnctype;
     attribute DOMString formMethod;

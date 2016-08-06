@@ -555,5 +555,36 @@ testNonNumericToNumericEnforceRange(type);
 convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
 debug("");
 
+evalAndLog("converter.testUSVString = '!@#123ABCabc\\x00\\x80\\xFF\\r\\n\\t'");
+evalAndLog("converter.testString = '!@#123ABCabc\\x00\\x80\\xFF\\r\\n\\t'");
+shouldBeEqualToString("converter.testUSVString", "!@#123ABCabc\x00\x80\xFF\r\n\t");
+shouldBeEqualToString("converter.testString", "!@#123ABCabc\x00\x80\xFF\r\n\t");
+evalAndLog("converter.testUSVString = '\\u0100'");
+evalAndLog("converter.testString = '\\u0100'")
+shouldBeEqualToString("converter.testUSVString", "\u0100");
+shouldBeEqualToString("converter.testString", "\u0100");
+shouldThrow("converter.testUSVString = {toString: function() { throw Error(); }}");
+shouldThrow("converter.testString = {toString: function() { throw Error(); }}");
+shouldBeEqualToString("converter.testUSVString", "\u0100");
+shouldBeEqualToString("converter.testString", "\u0100");
+[{input: "\uD800", expected: "\uFFFD"},
+ {input: "\uDC00", expected: "\uFFFD"},
+ {input: "\uD800\u0000", expected: "\uFFFD\u0000"},
+ {input: "\uDC00\u0000", expected: "\uFFFD\u0000"},
+ {input: "\uDC00\uD800", expected: "\uFFFD\uFFFD"},
+ {input: "\uD834\uDD1E", expected: "\uD834\uDD1E"},
+].forEach(function(test) {
+    evalAndLog("converter.testUSVString = " + JSON.stringify(test.input));
+    evalAndLog("converter.testString = " + JSON.stringify(test.input));
+    shouldBeEqualToString("converter.testUSVString", test.expected);
+    shouldBeEqualToString("converter.testString", test.input);
+});
+["true", "123", "null", "undefined"].forEach(function(value) {
+    evalAndLog("converter.testUSVString = " + value);
+    evalAndLog("converter.testString = " + value);
+    shouldBeEqualToString("converter.testUSVString", value);
+    shouldBeEqualToString("converter.testString", value);
+});
+
 </script>
 <script src="../../resources/js-test-post.js"></script>
