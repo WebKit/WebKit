@@ -44,7 +44,9 @@ class DocumentRuleSets {
 public:
     DocumentRuleSets();
     ~DocumentRuleSets();
-    RuleSet* authorStyle() const { return m_authorStyle.get(); }
+    
+    bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
+    RuleSet& authorStyle() const { return *m_authorStyle.get(); }
     RuleSet* userStyle() const { return m_userStyle.get(); }
     const RuleFeatureSet& features() const;
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
@@ -69,6 +71,7 @@ private:
     void collectFeatures() const;
     void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, StyleResolver&);
 
+    bool m_isAuthorStyleDefined { false };
     std::unique_ptr<RuleSet> m_authorStyle;
     std::unique_ptr<RuleSet> m_userStyle;
 

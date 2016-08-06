@@ -97,7 +97,7 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Element& searchEleme
         return nullptr;
     if (elementHasDirectionAuto(element))
         return nullptr;
-    if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())
+    if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
         return nullptr;
 
     Context context {
@@ -286,7 +286,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.matchesDefaultPseudoClass() != element.matchesDefaultPseudoClass())
         return false;
 
-    if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())
+    if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
         return false;
 
 #if ENABLE(FULLSCREEN_API)

@@ -38,7 +38,7 @@ namespace Style {
 static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, bool isHTML, const QualifiedName& attributeName)
 {
     auto& shadowRuleSets = shadowRoot.styleResolver().ruleSets();
-    if (shadowRuleSets.authorStyle()->hostPseudoClassRules().isEmpty())
+    if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
         return false;
 
     auto& nameSet = isHTML ? shadowRuleSets.features().attributeCanonicalLocalNamesInRules : shadowRuleSets.features().attributeLocalNamesInRules;
@@ -68,7 +68,7 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
         return;
     }
 
-    if (m_element.shadowRoot() && ruleSets.authorStyle()->hasShadowPseudoElementRules()) {
+    if (m_element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules()) {
         m_element.setNeedsStyleRecalc(FullStyleChange);
         return;
     }

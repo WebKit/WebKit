@@ -1061,10 +1061,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
 bool StyleResolver::checkRegionStyle(const Element* regionElement)
 {
-    unsigned rulesSize = m_ruleSets.authorStyle()->regionSelectorsAndRuleSets().size();
+    unsigned rulesSize = m_ruleSets.authorStyle().regionSelectorsAndRuleSets().size();
     for (unsigned i = 0; i < rulesSize; ++i) {
-        ASSERT(m_ruleSets.authorStyle()->regionSelectorsAndRuleSets().at(i).ruleSet.get());
-        if (checkRegionSelector(m_ruleSets.authorStyle()->regionSelectorsAndRuleSets().at(i).selector, regionElement))
+        ASSERT(m_ruleSets.authorStyle().regionSelectorsAndRuleSets().at(i).ruleSet.get());
+        if (checkRegionSelector(m_ruleSets.authorStyle().regionSelectorsAndRuleSets().at(i).selector, regionElement))
             return true;
     }
 

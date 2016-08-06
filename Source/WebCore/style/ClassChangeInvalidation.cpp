@@ -88,7 +88,7 @@ static ClassChangeVector computeClassChange(const SpaceSplitString& oldClasses, 
 static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, AtomicStringImpl* changedClass)
 {
     auto& shadowRuleSets = shadowRoot.styleResolver().ruleSets();
-    if (shadowRuleSets.authorStyle()->hostPseudoClassRules().isEmpty())
+    if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
         return false;
     return shadowRuleSets.features().classesInRules.contains(changedClass);
 }
@@ -114,7 +114,7 @@ void ClassChangeInvalidation::invalidateStyle(const SpaceSplitString& oldClasses
     if (changedClassesAffectingStyle.isEmpty())
         return;
 
-    if (shadowRoot && ruleSets.authorStyle()->hasShadowPseudoElementRules()) {
+    if (shadowRoot && ruleSets.authorStyle().hasShadowPseudoElementRules()) {
         m_element.setNeedsStyleRecalc(FullStyleChange);
         return;
     }

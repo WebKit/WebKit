@@ -37,7 +37,7 @@ namespace Style {
 static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, const AtomicString& changedId)
 {
     auto& shadowRuleSets = shadowRoot.styleResolver().ruleSets();
-    if (shadowRuleSets.authorStyle()->hostPseudoClassRules().isEmpty())
+    if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
         return false;
 
     return shadowRuleSets.features().idsInRules.contains(changedId.impl());
@@ -59,7 +59,7 @@ void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
     if (!mayAffectStyle)
         return;
 
-    if (m_element.shadowRoot() && ruleSets.authorStyle()->hasShadowPseudoElementRules()) {
+    if (m_element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules()) {
         m_element.setNeedsStyleRecalc(FullStyleChange);
         return;
     }

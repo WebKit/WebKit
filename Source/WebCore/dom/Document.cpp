@@ -2205,9 +2205,9 @@ StyleResolver& Document::userAgentShadowTreeStyleResolver()
         m_userAgentShadowTreeStyleResolver = std::make_unique<StyleResolver>(*this);
 
         // FIXME: Filter out shadow pseudo elements we don't want to expose to authors.
-        auto& documentAuthorStyle = *ensureStyleResolver().ruleSets().authorStyle();
+        auto& documentAuthorStyle = ensureStyleResolver().ruleSets().authorStyle();
         if (documentAuthorStyle.hasShadowPseudoElementRules())
-            m_userAgentShadowTreeStyleResolver->ruleSets().authorStyle()->copyShadowPseudoElementRulesFrom(documentAuthorStyle);
+            m_userAgentShadowTreeStyleResolver->ruleSets().authorStyle().copyShadowPseudoElementRulesFrom(documentAuthorStyle);
     }
 
     return *m_userAgentShadowTreeStyleResolver;
