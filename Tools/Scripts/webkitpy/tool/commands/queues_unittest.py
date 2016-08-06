@@ -534,3 +534,14 @@ MOCK: release_work_item: style-queue 10000
         }
         tool = MockTool(executive_throws_when_run=set(['apply-watchlist-local']))
         self.assert_queue_outputs(StyleQueue(host=MockHost()), expected_logs=expected_logs, tool=tool)
+
+    def test_non_valid_patch(self):
+        tool = MockTool()
+        patch = tool.bugs.fetch_attachment(10007)  # _patch8, resolved bug, without review flag, not marked obsolete (maybe already landed)
+        expected_logs = {
+            "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
+            "process_work_item": """MOCK: update_status: style-queue Error: style-queue did not process patch. Reason: Bug is already closed.
+MOCK: release_work_item: style-queue 10007
+""",
+        }
+        self.assert_queue_outputs(StyleQueue(host=MockHost()), tool=tool, work_item=patch, expected_logs=expected_logs)

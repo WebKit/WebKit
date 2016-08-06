@@ -1,3 +1,16 @@
+2016-08-06  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS Style Queue fails to process patches which fails validation
+        https://bugs.webkit.org/show_bug.cgi?id=160632
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py:
+        (StyleQueueTask.validate): Add more information about validation failure.
+        (StyleQueueTask.run): Pass the error details in the PatchIsNotValid exception.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (test_non_valid_patch): Add a unit test to test the above code path.
+
 2016-08-06  Sam Weinig  <sam@webkit.org>
 
         WTF needs a variant implementation
