@@ -76,6 +76,7 @@ FetchBody FetchBody::extract(JSC::ExecState& state, JSC::JSValue value)
         return FetchBody(value.toWTFString(&state));
     if (value.inherits(JSReadableStream::info()))
         return { Type::ReadableStream };
+    // FIXME: Implement BufferSource extraction.
     return { };
 }
 

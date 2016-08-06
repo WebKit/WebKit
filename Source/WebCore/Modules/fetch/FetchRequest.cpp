@@ -256,8 +256,13 @@ FetchHeaders* FetchRequest::initializeWith(FetchRequest& input, const Dictionary
 
 void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRequest* request, ExceptionCode& ec)
 {
-    if (!body.isNull())
+    if (!body.isNull()) {
         m_body = FetchBody::extract(execState, body);
+        if (m_body.type() == FetchBody::Type::None) {
+            ec = TypeError;
+            return;
+        }
+    }
     else if (request && !request->m_body.isEmpty()) {
         m_body = FetchBody::extractFromBody(&request->m_body);
         request->setDisturbed();

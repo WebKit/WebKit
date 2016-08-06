@@ -1,5 +1,22 @@
 2016-08-06  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Fetching with a FormData body should reject until it is implemented
+        https://bugs.webkit.org/show_bug.cgi?id=160595
+
+        Reviewed by Alex Christensen.
+
+        Adding new tests to cover changes.
+        Removing HEAD with body test as it throws as expected and is redundant with
+        web-platform-tests/fetch/api/request/request-init-002.html.
+
+        * web-platform-tests/fetch/api/basic/request-headers-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers.js:
+        (checkContentType):
+        (requestHeaders):
+
+2016-08-06  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Fetch API should strip fragment and credentials from URLs used as referrer
         https://bugs.webkit.org/show_bug.cgi?id=160593
 

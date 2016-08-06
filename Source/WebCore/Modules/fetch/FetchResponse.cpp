@@ -105,6 +105,11 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
 {
     auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
+    // FIXME: Implement form data upload.
+    if (request.bodyType() == FetchBody::Type::FormData) {
+        promise.reject(TypeError, "Uploading FormData is not yet implemented");
+        return;
+    }
     // Setting pending activity until BodyLoader didFail or didSucceed callback is called.
     response->setPendingActivity(response.ptr());
 

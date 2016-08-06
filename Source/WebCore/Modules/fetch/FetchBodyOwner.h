@@ -56,6 +56,8 @@ public:
 
     bool isActive() const { return !!m_blobLoader; }
 
+    FetchBody::Type bodyType() const { return m_body.type(); }
+
 protected:
     const FetchBody& body() const { return m_body; }
     FetchBody& body() { return m_body; }
