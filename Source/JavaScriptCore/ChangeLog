@@ -1,5 +1,24 @@
 2016-08-05  Keith Miller  <keith_miller@apple.com>
 
+        Add LEBDecoder and tests
+        https://bugs.webkit.org/show_bug.cgi?id=160625
+
+        Reviewed by Benjamin Poulain.
+
+        Adds a new target testWASM that is currently used to test the LEB decoder.
+        In the future, if we add more support for WASM we will put more tests
+        here.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * testWASM.cpp: Added.
+        (CommandLine::CommandLine):
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (runLEBTests):
+        (main):
+
+2016-08-05  Keith Miller  <keith_miller@apple.com>
+
         32-bit JSC test failure: stress/instanceof-late-constant-folding.js
         https://bugs.webkit.org/show_bug.cgi?id=160620
 

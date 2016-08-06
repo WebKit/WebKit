@@ -1,5 +1,20 @@
 2016-08-05  Keith Miller  <keith_miller@apple.com>
 
+        Add LEBDecoder and tests
+        https://bugs.webkit.org/show_bug.cgi?id=160625
+
+        Reviewed by Benjamin Poulain.
+
+        Adds some LEB decoder functions to WTF. These are used in the
+        WASM spec to encode numbers in a semi-compressed format.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/LEBDecoder.h: Added.
+        (decodeUInt32):
+        (decodeInt32):
+
+2016-08-05  Keith Miller  <keith_miller@apple.com>
+
         Delete out of date WASM code.
         https://bugs.webkit.org/show_bug.cgi?id=160603
 
