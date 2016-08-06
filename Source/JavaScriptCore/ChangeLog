@@ -1,3 +1,13 @@
+2016-08-05  Keith Miller  <keith_miller@apple.com>
+
+        32-bit JSC test failure: stress/instanceof-late-constant-folding.js
+        https://bugs.webkit.org/show_bug.cgi?id=160620
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2016-08-05  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove the first LocalCSE
