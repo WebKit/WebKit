@@ -310,7 +310,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         validate(dfg);
         
     performStrengthReduction(dfg);
-    performLocalCSE(dfg);
     performCPSRethreading(dfg);
     performCFA(dfg);
     performConstantFolding(dfg);
