@@ -385,10 +385,14 @@ NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, float presentationSc
         return nullptr;
 
     SubsamplingLevel subsamplingLevel = m_source.subsamplingLevelForScale(presentationScaleHint);
+    
+    LOG(Images, "BitmapImage %p frameImageAtIndex - subsamplingLevel %d at scale %.4f", this, subsamplingLevel, presentationScaleHint);
 
     // We may have cached a frame with a higher subsampling level, in which case we need to
     // re-decode with a lower level.
     if (index < m_frames.size() && m_frames[index].m_image && subsamplingLevel < m_frames[index].m_subsamplingLevel) {
+        LOG(Images, "  subsamplingLevel was %d, resampling", m_frames[index].m_subsamplingLevel);
+
         // If the image is already cached, but at too small a size, re-decode a larger version.
         int sizeChange = -m_frames[index].m_frameBytes;
         m_frames[index].clear(true);
