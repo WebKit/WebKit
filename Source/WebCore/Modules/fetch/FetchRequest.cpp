@@ -297,7 +297,7 @@ ResourceRequest FetchRequest::internalRequest() const
 
     // FIXME: Support no-referrer and client. Ensure this case-sensitive comparison is ok.
     if (m_internalRequest.referrer != "no-referrer" && m_internalRequest.referrer != "client")
-        request.setHTTPReferrer(m_internalRequest.referrer);
+        request.setHTTPReferrer(URL(URL(), m_internalRequest.referrer).strippedForUseAsReferrer());
 
     return request;
 }

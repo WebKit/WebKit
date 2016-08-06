@@ -111,7 +111,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(*securityOrigin);
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
 
-    auto optionsCopy = std::make_unique<LoaderTaskOptions>(options, outgoingReferrer, *securityOrigin);
+    auto optionsCopy = std::make_unique<LoaderTaskOptions>(options, request.httpReferrer().isNull() ? outgoingReferrer : request.httpReferrer(), *securityOrigin);
 
     // Can we benefit from request being an r-value to create more efficiently its isolated copy?
     m_loaderProxy.postTaskToLoader([this, request = request.isolatedCopy(), options = WTFMove(optionsCopy), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy)](ScriptExecutionContext& context) mutable {

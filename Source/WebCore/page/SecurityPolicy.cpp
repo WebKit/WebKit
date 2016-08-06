@@ -68,6 +68,8 @@ bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
 
 String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const String& referrer)
 {
+    ASSERT(referrer == URL(URL(), referrer).strippedForUseAsReferrer());
+
     if (referrer.isEmpty())
         return String();
 

@@ -1,3 +1,21 @@
+2016-08-06  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Fetch API should strip fragment and credentials from URLs used as referrer
+        https://bugs.webkit.org/show_bug.cgi?id=160593
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/basic/referrer-expected.txt:
+        * web-platform-tests/fetch/api/basic/referrer-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/referrer.js:
+        (runTest): Adding more tests.
+        One test is failing as the redirection from same-origin to cross-origin is stripping the referer header.
+        But none is added afterwards. Hence cross-origin redirected request is sent without any referer header.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt: Rebasing according redirect.py script changes.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker-expected.txt: Ditto.
+        * web-platform-tests/fetch/api/resources/redirect.py:
+        (main): Fixing rediret.py script.
+
 2016-08-05  Chris Dumez  <cdumez@apple.com>
 
         DOMException should be constructible
