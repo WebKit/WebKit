@@ -42,6 +42,7 @@
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
+#include "UIGamepadProvider.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
 #include "WebCertificateInfo.h"
@@ -259,6 +260,11 @@ WebProcessPool::~WebProcessPool()
 
     if (m_networkProcess)
         m_networkProcess->shutDownProcess();
+
+#if ENABLE(GAMEPAD)
+    if (!m_processesUsingGamepads.isEmpty())
+        UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
+#endif
 }
 
 void WebProcessPool::initializeClient(const WKContextClientBase* client)
@@ -752,6 +758,11 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(process);
 
     m_processes.removeFirst(process);
+
+#if ENABLE(GAMEPAD)
+    if (m_processesUsingGamepads.contains(process))
+        processStoppedUsingGamepads(process);
+#endif
 }
 
 WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit()
@@ -1230,6 +1241,42 @@ void WebProcessPool::didGetStatistics(const StatisticsData& statisticsData, uint
 
     request->completedRequest(requestID, statisticsData);
 }
+
+#if ENABLE(GAMEPAD)
+
+void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
+{
+    auto* webProcessProxy = WebProcessProxy::fromConnection(&connection);
+    if (!webProcessProxy)
+        return;
+
+    ASSERT(!m_processesUsingGamepads.contains(webProcessProxy));
+    m_processesUsingGamepads.add(webProcessProxy);
+
+    if (m_processesUsingGamepads.size() == 1)
+        UIGamepadProvider::singleton().processPoolStartedUsingGamepads(*this);
+}
+
+void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection)
+{
+    auto* webProcessProxy = WebProcessProxy::fromConnection(&connection);
+    if (!webProcessProxy)
+        return;
+
+    ASSERT(m_processesUsingGamepads.contains(webProcessProxy));
+    processStoppedUsingGamepads(webProcessProxy);
+}
+
+void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy* webProcessProxy)
+{
+    ASSERT(m_processesUsingGamepads.contains(webProcessProxy));
+    m_processesUsingGamepads.remove(webProcessProxy);
+
+    if (m_processesUsingGamepads.isEmpty())
+        UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
+}
+
+#endif // ENABLE(GAMEPAD)
 
 void WebProcessPool::garbageCollectJavaScriptObjects()
 {
