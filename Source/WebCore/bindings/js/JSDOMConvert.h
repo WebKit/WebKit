@@ -129,6 +129,14 @@ template<> struct Converter<String> : DefaultConverter<String> {
     }
 };
 
+template<> struct Converter<JSC::JSValue> : DefaultConverter<JSC::JSValue> {
+    using OptionalValue = JSC::JSValue; // Use jsUndefined() to mean an optional value was not present.
+    static JSC::JSValue convert(JSC::ExecState&, JSC::JSValue value)
+    {
+        return value;
+    }
+};
+
 template<typename T> struct Converter<Vector<T>> : DefaultConverter<Vector<T>> {
     static Vector<T> convert(JSC::ExecState& state, JSC::JSValue value)
     {

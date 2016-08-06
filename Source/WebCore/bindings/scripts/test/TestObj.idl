@@ -431,6 +431,7 @@ dictionary TestDictionary {
     unsigned long long unsignedLargeInteger;
     unsigned long long unsignedLargeIntegerWithDefault = 0;
     Node? nullableNode = null;
+    any anyValue;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {

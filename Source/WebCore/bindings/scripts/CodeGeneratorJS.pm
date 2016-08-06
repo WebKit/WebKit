@@ -924,6 +924,7 @@ sub GenerateDefaultValue
         $value = $className . "::" . $enumerationValueName;
     }
     $value = "nullptr" if $value eq "null";
+    $value = "jsUndefined()" if $value eq "undefined";
 
     return $value;
 }
@@ -978,6 +979,7 @@ sub GenerateDictionaryImplementationContent
                 $defaultValues = "";
                 last;
             }
+            $member->default("undefined") if $member->type eq "any"; # Use undefined as default value for member of type 'any'.
             $defaultValues .= $comma . (defined $member->default ? GenerateDefaultValue($interface, $member) : "{ }");
             $comma = ", ";
         }
