@@ -1,3 +1,30 @@
+2016-08-05  Michael Saboff  <msaboff@apple.com>
+
+        compilePutByValForIntTypedArray() has a slow path in the middle of its processing
+        https://bugs.webkit.org/show_bug.cgi?id=160614
+
+        Reviewed by Keith Miller.
+
+        In compilePutByValForIntTypedArray() we were calling out to the slow path
+        operationToInt32() and then returning back to the middle of code to finish
+        the processing of writing the value to the array.  When we make the slow
+        path call, we trash any temporary registers that have been allocated.
+        In general slow path calls should finish the operation in progress and
+        continue processing at the beginning of the next node.
+
+        This was discovered while working on the register argument changes, when
+        we SpeculateStrictInt32Operand on the value child node.  That child node's
+        value was live in register with a spill format of DataFormatJSInt32.  In that
+        case we allocate a new temporary register and copy just the lower 32 bits from
+        the child register to the new temp register.  That temp register gets trashed
+        when we make the operationToInt32() slow path call.
+
+        I spent some time trying to devise a test with the current code base and wasn't
+        successful.  This case is tested with the register argument changes in progress.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+
 2016-08-05  Saam Barati  <sbarati@apple.com>
 
         Assertion failure when accessing TDZ variable in catch through eval

@@ -2726,8 +2726,19 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     Edge valueUse = m_jit.graph().varArgChild(node, 2);
     
     GPRTemporary value;
+#if USE(JSVALUE32_64)
+    GPRTemporary propertyTag;
+    GPRTemporary valueTag;
+#endif
+
     GPRReg valueGPR = InvalidGPRReg;
-    
+#if USE(JSVALUE32_64)
+    GPRReg propertyTagGPR = InvalidGPRReg;
+    GPRReg valueTagGPR = InvalidGPRReg;
+#endif
+
+    JITCompiler::JumpList slowPathCases;
+
     if (valueUse->isConstant()) {
         JSValue jsValue = valueUse->asJSValue();
         if (!jsValue.isNumber()) {
@@ -2798,20 +2809,36 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
                 value.adopt(result);
                 valueGPR = gpr;
             } else {
+#if USE(JSVALUE32_64)
+                GPRTemporary realPropertyTag(this);
+                propertyTag.adopt(realPropertyTag);
+                propertyTagGPR = propertyTag.gpr();
+
+                GPRTemporary realValueTag(this);
+                valueTag.adopt(realValueTag);
+                valueTagGPR = valueTag.gpr();
+#endif
                 SpeculateDoubleOperand valueOp(this, valueUse);
                 GPRTemporary result(this);
                 FPRReg fpr = valueOp.fpr();
                 GPRReg gpr = result.gpr();
                 MacroAssembler::Jump notNaN = m_jit.branchDouble(MacroAssembler::DoubleEqual, fpr, fpr);
                 m_jit.xorPtr(gpr, gpr);
-                MacroAssembler::Jump fixed = m_jit.jump();
+                MacroAssembler::JumpList fixed(m_jit.jump());
                 notNaN.link(&m_jit);
-                
-                MacroAssembler::Jump failed = m_jit.branchTruncateDoubleToInt32(
-                    fpr, gpr, MacroAssembler::BranchIfTruncateFailed);
-                
-                addSlowPathGenerator(slowPathCall(failed, this, operationToInt32, gpr, fpr, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded));
-                
+
+                fixed.append(m_jit.branchTruncateDoubleToInt32(
+                    fpr, gpr, MacroAssembler::BranchIfTruncateSuccessful));
+
+#if USE(JSVALUE64)
+                m_jit.or64(GPRInfo::tagTypeNumberRegister, property);
+                boxDouble(fpr, gpr);
+#else
+                m_jit.move(TrustedImm32(JSValue::Int32Tag), propertyTagGPR);
+                boxDouble(fpr, valueTagGPR, gpr);
+#endif
+                slowPathCases.append(m_jit.jump());
+
                 fixed.link(&m_jit);
                 value.adopt(result);
                 valueGPR = gpr;
@@ -2847,6 +2874,34 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     JITCompiler::Jump done = jumpForTypedArrayIsNeuteredIfOutOfBounds(node, base, outOfBounds);
     if (done.isSet())
         done.link(&m_jit);
+
+    if (!slowPathCases.empty()) {
+#if USE(JSVALUE64)
+        if (node->op() == PutByValDirect) {
+            addSlowPathGenerator(slowPathCall(
+                slowPathCases, this,
+                m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValDirectStrict : operationPutByValDirectNonStrict,
+                NoResult, base, property, valueGPR));
+        } else {
+            addSlowPathGenerator(slowPathCall(
+                slowPathCases, this,
+                m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValStrict : operationPutByValNonStrict,
+                NoResult, base, property, valueGPR));
+        }
+#else // not USE(JSVALUE64)
+        if (node->op() == PutByValDirect) {
+            addSlowPathGenerator(slowPathCall(
+                slowPathCases, this,
+                m_jit.codeBlock()->isStrictMode() ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict,
+                NoResult, base, JSValueRegs(propertyTagGPR, property), JSValueRegs(valueTagGPR, valueGPR)));
+        } else {
+            addSlowPathGenerator(slowPathCall(
+                slowPathCases, this,
+                m_jit.codeBlock()->isStrictMode() ? operationPutByValCellStrict : operationPutByValCellNonStrict,
+                NoResult, base, JSValueRegs(propertyTagGPR, property), JSValueRegs(valueTagGPR, valueGPR)));
+        }
+#endif
+    }
     noResult(node);
 }
 
