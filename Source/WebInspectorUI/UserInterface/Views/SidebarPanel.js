@@ -129,7 +129,7 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
         this._contentView.element.scrollTop = this._savedScrollPosition;
 
         // FIXME: remove once <https://webkit.org/b/150741> is fixed.
-        this.updateLayout();
+        this.updateLayoutIfNeeded();
 
         // Implemented by subclasses.
     }

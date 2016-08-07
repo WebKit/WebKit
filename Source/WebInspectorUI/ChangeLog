@@ -1,3 +1,25 @@
+2016-08-06  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION (r203253): Node details sidebar flickers while resizing
+        https://bugs.webkit.org/show_bug.cgi?id=160631
+        <rdar://problem/27733024>
+
+        Reviewed by Timothy Hatcher.
+
+        Sidebar panel layouts can be expensive, and should be performed only
+        when necessary (i.e., when the panel is shown for the first time, or
+        model data changed while the panel was hidden).
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype._recalculateWidth):
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel.prototype.shown):
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View.prototype.updateLayoutIfNeeded):
+        Update the layout if an initial layout was never performed.
+
 2016-08-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: UI polish for Edit Breakpoint dialog

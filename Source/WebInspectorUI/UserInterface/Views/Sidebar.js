@@ -271,7 +271,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
             this._navigationBar.needsLayout();
 
         if (!this.collapsed && this._selectedSidebarPanel)
-            this._selectedSidebarPanel.updateLayout(WebInspector.View.LayoutReason.Resize);
+            this._selectedSidebarPanel.updateLayoutIfNeeded(WebInspector.View.LayoutReason.Resize);
 
         this.dispatchEventToListeners(WebInspector.Sidebar.Event.WidthDidChange, {newWidth});
     }
