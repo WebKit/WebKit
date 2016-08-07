@@ -804,10 +804,7 @@ void WebProcessProxy::requestTermination()
 
     ChildProcessProxy::terminate();
 
-    if (webConnection())
-        webConnection()->didClose();
-
-    shutDown();
+    didClose(*connection());
 }
 
 void WebProcessProxy::enableSuddenTermination()

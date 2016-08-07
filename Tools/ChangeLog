@@ -1,3 +1,18 @@
+2016-08-07  Chris Dumez  <cdumez@apple.com>
+
+        Write API test to cover crash fix in r204135
+        https://bugs.webkit.org/show_bug.cgi?id=160587
+
+        Reviewed by Darin Adler.
+
+        Add API test to cover crash fix in r204135. This reproduces the crash
+        by destroying a related WKWebView in the webViewWebContentProcessDidTerminate
+        callback.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+        (-[NavigationDelegate webViewWebContentProcessDidTerminate:]):
+        (TEST):
+
 2016-08-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r204226.
