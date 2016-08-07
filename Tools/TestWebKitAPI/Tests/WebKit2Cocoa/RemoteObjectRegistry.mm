@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
+#import <wtf/RefCounted.h>
 #import <wtf/RetainPtr.h>
 
 static bool isDone;
@@ -81,6 +82,21 @@ TEST(WebKit2, RemoteObjectRegistry)
             EXPECT_EQ(123U, length);
             isDone = true;
         }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+
+        class DoneWhenDestroyed : public RefCounted<DoneWhenDestroyed> {
+        public:
+            ~DoneWhenDestroyed() { isDone = true; }
+        };
+
+        {
+            RefPtr<DoneWhenDestroyed> doneWhenDestroyed = adoptRef(*new DoneWhenDestroyed);
+            [object doNotCallCompletionHandler:[doneWhenDestroyed]() {
+            }];
+        }
+
         TestWebKitAPI::Util::run(&isDone);
     }
 }

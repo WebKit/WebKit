@@ -35,6 +35,7 @@
 - (void)sayHello:(NSString *)hello completionHandler:(void (^)(NSString *))completionHandler;
 - (void)selectionAndClickInformationForClickAtPoint:(NSValue *)pointValue completionHandler:(void (^)(NSDictionary *))completionHandler;
 - (void)takeRange:(NSRange)range completionHandler:(void (^)(NSUInteger location, NSUInteger length))completionHandler;
+- (void)doNotCallCompletionHandler:(void (^)())completionHandler;
 
 @end
 

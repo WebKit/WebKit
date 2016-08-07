@@ -1,3 +1,27 @@
+2016-08-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Reply block leaks if the remote object doesn’t call it
+        https://bugs.webkit.org/show_bug.cgi?id=160642
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.h: Declared new member functions.
+        * Shared/API/Cocoa/RemoteObjectRegistry.messages.in: Added ReleaseUnusedReplyBlock message.
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm:
+        (WebKit::RemoteObjectRegistry::sendUnusedReply): Send the ReleaseUnusedReplyBlock message.
+        (WebKit::RemoteObjectRegistry::releaseUnusedReplyBlock): Message receiver that call through
+          to -_releaseReplyWithID:.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _invokeMethod:]): Define a ReplyBlockCallChecker object and
+          capture an instance of it in the reply block we pass to the exported object. Have that
+          block set a flag on the checker when it’s called. If the checker gets destroyed without
+          the block having been called, which means that the block got destroyed without being
+          called, call sendUnusedReply to let the other side know that the block will not be invoked.
+        (-[_WKRemoteObjectRegistry _releaseReplyWithID:]): Added. Removed the pending reply from the
+          map, which release the block.
+        * Shared/API/Cocoa/_WKRemoteObjectRegistryInternal.h:
+
 2016-08-07  Chris Dumez  <cdumez@apple.com>
 
         Write API test to cover crash fix in r204135

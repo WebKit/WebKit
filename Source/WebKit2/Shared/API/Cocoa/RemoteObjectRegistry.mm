@@ -54,6 +54,11 @@ void RemoteObjectRegistry::sendReplyBlock(uint64_t replyID, const UserData& bloc
     m_messageSender.send(Messages::RemoteObjectRegistry::CallReplyBlock(replyID, blockInvocation));
 }
 
+void RemoteObjectRegistry::sendUnusedReply(uint64_t replyID)
+{
+    m_messageSender.send(Messages::RemoteObjectRegistry::ReleaseUnusedReplyBlock(replyID));
+}
+
 void RemoteObjectRegistry::invokeMethod(const RemoteObjectInvocation& invocation)
 {
 #if WK_API_ENABLED
@@ -68,4 +73,10 @@ void RemoteObjectRegistry::callReplyBlock(uint64_t replyID, const UserData& bloc
 #endif
 }
 
+void RemoteObjectRegistry::releaseUnusedReplyBlock(uint64_t replyID)
+{
+#if WK_API_ENABLED
+    [m_remoteObjectRegistry _releaseReplyWithID:replyID];
+#endif
+}
 } // namespace WebKit

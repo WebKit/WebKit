@@ -1,3 +1,18 @@
+2016-08-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Reply block leaks if the remote object doesn’t call it
+        https://bugs.webkit.org/show_bug.cgi?id=160642
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistry.h: Declared a new method.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistry.mm:
+        (TEST): Added a test case that checks that the reply block is released even when it’s not
+          called.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistryPlugIn.mm:
+        (-[RemoteObjectRegistryPlugIn doNotCallCompletionHandler:]): Implement new method by not
+          calling the completion handler.
+
 2016-08-07  Chris Dumez  <cdumez@apple.com>
 
         Write API test to cover crash fix in r204135

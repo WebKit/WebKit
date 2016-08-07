@@ -23,4 +23,5 @@
 messages -> RemoteObjectRegistry {
     InvokeMethod(WebKit::RemoteObjectInvocation invocation)
     CallReplyBlock(uint64_t replyID, WebKit::UserData blockInvocation);
+    ReleaseUnusedReplyBlock(uint64_t replyID);
 }

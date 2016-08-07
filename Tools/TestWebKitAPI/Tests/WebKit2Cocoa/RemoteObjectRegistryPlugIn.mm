@@ -81,6 +81,10 @@
     completionHandler(range.location, range.length);
 }
 
+- (void)doNotCallCompletionHandler:(void (^)())completionHandler
+{
+}
+
 @end
 
 #endif // WK_API_ENABLED
