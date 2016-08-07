@@ -120,6 +120,8 @@ void DocumentRuleSets::collectFeatures() const
 
     m_ancestorClassRuleSets.clear();
     m_ancestorAttributeRuleSetsForHTML.clear();
+
+    m_features.shrinkToFit();
 }
 
 RuleSet* DocumentRuleSets::ancestorClassRules(AtomicStringImpl* className) const
