@@ -62,7 +62,7 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Vi
         this._refreshNodeStyles();
 
         // FIXME: remove once <https://webkit.org/b/150741> is fixed.
-        this.needsLayout();
+        this.updateLayoutIfNeeded();
     }
 
     hidden()

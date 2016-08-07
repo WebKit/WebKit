@@ -1,3 +1,16 @@
+2016-08-07  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION (r201245): switching between Computed and Visual Styles panels causes internal error
+        https://bugs.webkit.org/show_bug.cgi?id=160604
+        <rdar://problem/27723416>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WebInspector.StyleDetailsPanel.prototype.shown):
+        Only perform a layout if needed. Subclasses access node style
+        data during layout, which may not exist yet.
+
 2016-08-06  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION (r203253): Node details sidebar flickers while resizing
