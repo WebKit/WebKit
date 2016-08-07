@@ -1,0 +1,11 @@
+Node.replaceChild() should throw a NotFoundError if child if not a child of parent
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS div1.replaceChild(newNode, div2) threw exception NotFoundError (DOM Exception 8): The object can not be found here..
+PASS div1.replaceChild(div2, div2) threw exception NotFoundError (DOM Exception 8): The object can not be found here..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -2,9 +2,7 @@
 PASS Passing null to replaceChild should throw a TypeError. 
 PASS If child's parent is not the context node, a NotFoundError exception should be thrown 
 PASS If the context node is not a node that can contain children, a NotFoundError exception should be thrown 
-FAIL If node is an inclusive ancestor of the context node, a HierarchyRequestError should be thrown. assert_throws: function "function () {
-    a.replaceChild(a, a);
-  }" did not throw
+PASS If node is an inclusive ancestor of the context node, a HierarchyRequestError should be thrown. 
 PASS If the context node is a document, inserting a document or text node should throw a HierarchyRequestError. 
 PASS If the context node is a document, inserting a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. 
 PASS If the context node is a document (without element children), inserting a DocumentFragment that contains multiple elements should throw a HierarchyRequestError. 

@@ -393,9 +393,6 @@ bool ContainerNode::replaceChild(Node& newChild, Node& oldChild, ExceptionCode& 
 
     ec = 0;
 
-    if (&oldChild == &newChild) // nothing to do
-        return true;
-
     // Make sure replacing the old child with the new is ok
     if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
         return false;
@@ -405,6 +402,9 @@ bool ContainerNode::replaceChild(Node& newChild, Node& oldChild, ExceptionCode& 
         ec = NOT_FOUND_ERR;
         return false;
     }
+
+    if (&oldChild == &newChild) // nothing to do
+        return true;
 
     ChildListMutationScope mutation(*this);
 
