@@ -3,7 +3,7 @@ Tests that the HTMLLinkElement.sizes setter updates the associated sizes attribu
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS link.sizes.__proto__ is DOMSettableTokenList.prototype
+PASS link.sizes.__proto__ is DOMTokenList.prototype
 link.sizes = '10x10  20x20'
 PASS String(link.sizes) is "10x10 20x20"
 PASS link.getAttribute('sizes') is "10x10 20x20"

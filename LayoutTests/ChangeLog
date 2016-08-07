@@ -1,3 +1,25 @@
+2016-08-07  Chris Dumez  <cdumez@apple.com>
+
+        Un-expose DOMSettableTokenList
+        https://bugs.webkit.org/show_bug.cgi?id=160643
+
+        Reviewed by Darin Adler.
+
+        Update / rebaseline existing tests.
+
+        * fast/dom/HTMLLinkElement/sizes-setter-expected.txt:
+        * fast/dom/HTMLLinkElement/sizes-setter.html:
+        * fast/dom/HTMLOutputElement/dom-settable-token-list-expected.txt:
+        * fast/dom/HTMLOutputElement/script-tests/dom-settable-token-list.js:
+        * fast/frames/sandbox-attribute-expected.txt:
+        * fast/frames/sandbox-attribute.html:
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2016-08-07  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest http/tests/fetch/fetch-in-worker-crash.html is flaky

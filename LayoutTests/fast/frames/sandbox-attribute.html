@@ -3,10 +3,10 @@
 <body>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-description("Checks that HTMLIframeElement.sandbox is a DOMSettableTokenList.");
+description("Checks that HTMLIframeElement.sandbox is a DOMTokenList.");
 
 var iframe = document.createElement("iframe");
-shouldBe("iframe.sandbox.__proto__", "DOMSettableTokenList.prototype");
+shouldBe("iframe.sandbox.__proto__", "DOMTokenList.prototype");
 
 debug("");
 evalAndLog("iframe.sandbox = 'allow-popups   allow-scripts  allow-scripts  allow-same-origin'");

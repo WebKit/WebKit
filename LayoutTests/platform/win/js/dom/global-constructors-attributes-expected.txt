@@ -218,11 +218,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').hasOwnProperty('get') 
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'DOMSettableTokenList').value is DOMSettableTokenList
-PASS Object.getOwnPropertyDescriptor(global, 'DOMSettableTokenList').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'DOMSettableTokenList').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'DOMSettableTokenList').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'DOMSettableTokenList').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'DOMStringList').value is DOMStringList
 PASS Object.getOwnPropertyDescriptor(global, 'DOMStringList').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMStringList').hasOwnProperty('set') is false

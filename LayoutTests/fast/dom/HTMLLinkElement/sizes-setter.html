@@ -6,7 +6,7 @@
 description("Tests that the HTMLLinkElement.sizes setter updates the associated sizes attribute");
 
 var link = document.createElement("link");
-shouldBe("link.sizes.__proto__", "DOMSettableTokenList.prototype");
+shouldBe("link.sizes.__proto__", "DOMTokenList.prototype");
 evalAndLog("link.sizes = '10x10  20x20'");
 shouldBeEqualToString("String(link.sizes)", "10x10 20x20");
 shouldBeEqualToString("link.getAttribute('sizes')", "10x10 20x20");
