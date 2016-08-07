@@ -217,7 +217,6 @@ static uint64_t generateReplyIdentifier()
             RetainPtr<_WKRemoteObjectRegistry> remoteObjectRegistry = self;
             uint64_t replyID = replyInfo->replyID;
             id replyBlock = __NSMakeSpecialForwardingCaptureBlock(wireBlockSignature._typeString.UTF8String, [interface, remoteObjectRegistry, replyID](NSInvocation *invocation) {
-
                 auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
                 [encoder encodeObject:invocation forKey:invocationKey];
 
@@ -228,6 +227,8 @@ static uint64_t generateReplyIdentifier()
 
             // Make sure that the block won't be destroyed before the invocation.
             objc_setAssociatedObject(invocation, replyBlockKey, replyBlock, OBJC_ASSOCIATION_RETAIN);
+            [replyBlock release];
+
             break;
         }
     }

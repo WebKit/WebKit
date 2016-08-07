@@ -1,3 +1,14 @@
+2016-08-06  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] -[_WKRemoteObjectRegistry() _invokeMethod:] leaks a block
+        https://bugs.webkit.org/show_bug.cgi?id=160636
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _invokeMethod:]): Release the block returned from
+          __NSMakeSpecialForwardingCaptureBlock.
+
 2016-08-06  Chris Dumez  <cdumez@apple.com>
 
         Write API test to cover crash fix in r204135
