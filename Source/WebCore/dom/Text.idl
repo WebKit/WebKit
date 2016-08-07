@@ -27,10 +27,7 @@
     [RaisesException] Text splitText(unsigned long offset);
 
     // Introduced in DOM Level 3:
-    readonly attribute DOMString       wholeText;
-
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] Text               replaceWholeText(optional DOMString content = "undefined");
+    readonly attribute DOMString wholeText;
 };
 
 Text implements Slotable;

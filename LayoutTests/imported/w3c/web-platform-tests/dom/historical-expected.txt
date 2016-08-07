@@ -44,9 +44,7 @@ PASS DocumentType member must be nuked: entities
 PASS DocumentType member must be nuked: notations 
 PASS DocumentType member must be nuked: internalSubset 
 PASS Text member must be nuked: isElementContentWhitespace 
-FAIL Text member must be nuked: replaceWholeText assert_equals: expected (undefined) undefined but got (function) function "function replaceWholeText() {
-    [native code]
-}"
+PASS Text member must be nuked: replaceWholeText 
 PASS Node member must be nuked: hasAttributes 
 PASS Node member must be nuked: attributes 
 FAIL Node member must be nuked: namespaceURI assert_equals: expected (undefined) undefined but got (object) null

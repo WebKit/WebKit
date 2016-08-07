@@ -134,16 +134,6 @@ shouldBe('document.body.getAttribute("id")', '"hi"');
 shouldBe('document.body.getAttributeNode("id").textContent', '"hi"');
 shouldBe('document.body.getAttributeNode("id").childNodes.length', '1');
 
-debug("\n15. Changing Attr.nodeValue.");
-attrNode.nodeValue = "foo";
-attrNode.firstChild.replaceWholeText("j");
-shouldBe('document.getElementById("hi")', 'null');
-shouldBe('document.getElementById("j")', 'document.body');
-shouldBe('document.body.id', '"j"');
-shouldBe('document.body.getAttribute("id")', '"j"');
-shouldBe('attrNode.textContent', '"j"');
-shouldBe('attrNode.childNodes.length', '1');
-
 debug("\n16. Changing Text.data.");
 attrNode.firstChild.data = "k";
 shouldBe('document.getElementById("j")', 'null');

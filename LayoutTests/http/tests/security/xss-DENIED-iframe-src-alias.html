@@ -20,7 +20,6 @@ window.onload = function()
         function(iFrame) { iFrame.attributes['src'].nodeValue = alertMsg("nodeValue");},
         
         // Text Node Manipulation
-        function(iFrame) { iFrame.attributes['src'].firstChild.replaceWholeText(alertMsg("nodeValue"));},
         function(iFrame) { iFrame.attributes['src'].firstChild.data = alertMsg("nodeValue");},
 
         // Node attribute manipulation functions

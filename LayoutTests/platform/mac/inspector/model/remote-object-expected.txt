@@ -1974,15 +1974,15 @@ EXPRESSION: text = document.createTextNode('text content'); text
       },
       {
         "_listeners": null,
-        "_name": "replaceWholeText",
-        "_type": "function",
-        "_value": ""
-      },
-      {
-        "_listeners": null,
         "_name": "data",
         "_type": "string",
         "_value": "text content"
+      },
+      {
+        "_listeners": null,
+        "_name": "length",
+        "_type": "number",
+        "_value": "12"
       }
     ],
     "_entries": null

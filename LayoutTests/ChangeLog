@@ -1,3 +1,37 @@
+2016-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy Text.replaceWholeText() API
+        https://bugs.webkit.org/show_bug.cgi?id=160641
+
+        Reviewed by Darin Adler.
+
+        Drop outdated tests / checks.
+
+        * dom/xhtml/level3/core/textreplacewholetext01-expected.txt: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext01.js: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext01.xhtml: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext02-expected.txt: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext02.js: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext02.xhtml: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext03-expected.txt: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext03.js: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext03.xhtml: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext04-expected.txt: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext04.js: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext04.xhtml: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext05-expected.txt: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext05.js: Removed.
+        * dom/xhtml/level3/core/textreplacewholetext05.xhtml: Removed.
+        * fast/dom/Attr/change-id-via-attr-node-value-expected.txt:
+        * fast/dom/Attr/change-id-via-attr-node-value.html:
+        * fast/dom/Text/replaceWholeText-expected.txt: Removed.
+        * fast/dom/Text/replaceWholeText.html: Removed.
+        * fast/storage/storage-detached-iframe-expected.txt:
+        * fast/storage/storage-detached-iframe.html:
+        * http/tests/security/xss-DENIED-iframe-src-alias-expected.txt:
+        * http/tests/security/xss-DENIED-iframe-src-alias.html:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+
 2016-08-06  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest http/tests/fetch/fetch-in-worker-crash.html is flaky

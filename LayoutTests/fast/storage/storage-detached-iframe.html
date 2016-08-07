@@ -9,23 +9,6 @@
           }
       }
 
-      function runTestReplaceWholeText()
-      {
-          t1 = openIframe();
-          var a = t1.contentWindow.frames;
-          var b = t1.contentDocument.defaultView.localStorage;
-          t1.outerText = "";
-          t1.src = undefined;
-          first_attr = t1.attributes.item(undefined, undefined, undefined, undefined);
-          first_attr_value_replaced = first_attr.firstChild.replaceWholeText(undefined, undefined, undefined, undefined);
-          first_attr_value_replaced.DOCUMENT_FRAGMENT_NODE = a;
-          try {
-              first_attr.firstChild.DOCUMENT_FRAGMENT_NODE.localStorage.fuzz3_visited="test";
-          } catch (e) {
-              console.log("Expected exception caught.");
-          }
-      }
-
       function runTestOuterText() {
           t1 = openIframe();
           var a = t1.contentWindow.frames;
@@ -41,7 +24,6 @@
       }
 
       function runTests() {
-          runTestReplaceWholeText();
           runTestOuterText();
           document.getElementById("result").innerHTML = "passed";
       }

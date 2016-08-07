@@ -100,14 +100,6 @@ PASS document.body.getAttribute("id") is "hi"
 PASS document.body.getAttributeNode("id").textContent is "hi"
 PASS document.body.getAttributeNode("id").childNodes.length is 1
 
-15. Changing Attr.nodeValue.
-PASS document.getElementById("hi") is null
-PASS document.getElementById("j") is document.body
-PASS document.body.id is "j"
-PASS document.body.getAttribute("id") is "j"
-PASS attrNode.textContent is "j"
-PASS attrNode.childNodes.length is 1
-
 16. Changing Text.data.
 PASS document.getElementById("j") is null
 PASS document.getElementById("k") is document.body

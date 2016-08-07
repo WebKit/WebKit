@@ -1,22 +1,20 @@
-CONSOLE MESSAGE: line 86: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 86: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 86: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 86: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 23: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 86: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 85: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 85: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 85: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 85: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 85: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 26: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 27: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 28: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 32: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 37: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 43: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 47: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 53: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 61: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 65: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 71: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 76: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 31: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 36: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 42: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 46: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 52: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 60: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 64: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 70: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 75: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
 This script tests if iframe.src can be set to a JavaScript URL via alternate DOM interfaces (such as Node.textContent or NamedNode.setNamedItem). The test is successful if no alerts appear and the page finishes loading.
-
 
 
 
