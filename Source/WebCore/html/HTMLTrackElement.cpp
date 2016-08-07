@@ -306,13 +306,13 @@ void HTMLTrackElement::textTrackRemoveCues(TextTrack* track, const TextTrackCueL
         return parent->textTrackRemoveCues(track, cues);
 }
     
-void HTMLTrackElement::textTrackAddCue(TextTrack* track, PassRefPtr<TextTrackCue> cue)
+void HTMLTrackElement::textTrackAddCue(TextTrack* track, TextTrackCue& cue)
 {
     if (HTMLMediaElement* parent = mediaElement())
         return parent->textTrackAddCue(track, cue);
 }
     
-void HTMLTrackElement::textTrackRemoveCue(TextTrack* track, PassRefPtr<TextTrackCue> cue)
+void HTMLTrackElement::textTrackRemoveCue(TextTrack* track, TextTrackCue& cue)
 {
     if (HTMLMediaElement* parent = mediaElement())
         return parent->textTrackRemoveCue(track, cue);

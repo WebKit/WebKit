@@ -54,7 +54,6 @@
 #include "SecurityOrigin.h"
 #include "VoidCallback.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -246,7 +245,7 @@ Database::~Database()
     if (!m_scriptExecutionContext->isContextThread()) {
         // Grab a pointer to the script execution here because we're releasing it when we pass it to
         // DerefContextTask::create.
-        PassRefPtr<ScriptExecutionContext> passedContext = m_scriptExecutionContext.release();
+        RefPtr<ScriptExecutionContext> passedContext = WTFMove(m_scriptExecutionContext);
         passedContext->postTask({ScriptExecutionContext::Task::CleanupTask, [passedContext] (ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, &context == passedContext);
             RefPtr<ScriptExecutionContext> scriptExecutionContext(passedContext);

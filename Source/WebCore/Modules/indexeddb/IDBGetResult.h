@@ -59,8 +59,8 @@ public:
     {
     }
 
-    IDBGetResult(PassRefPtr<IDBKey> key)
-        : m_keyData(key.get())
+    IDBGetResult(IDBKey& key)
+        : m_keyData(&key)
     {
     }
 
@@ -69,8 +69,8 @@ public:
     {
     }
 
-    IDBGetResult(PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey> key, const IDBKeyPath& path)
-        : m_keyData(key.get())
+    IDBGetResult(SharedBuffer* buffer, IDBKey& key, const IDBKeyPath& path)
+        : m_keyData(&key)
         , m_keyPath(path)
     {
         if (buffer)

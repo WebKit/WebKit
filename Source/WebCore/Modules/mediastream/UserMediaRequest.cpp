@@ -92,10 +92,10 @@ void UserMediaRequest::start(Document* document, const Dictionary& options, Medi
     request->start();
 }
 
-UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::Promise&& promise)
+UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, RefPtr<MediaConstraints>&& audioConstraints, RefPtr<MediaConstraints>&& videoConstraints, MediaDevices::Promise&& promise)
     : ContextDestructionObserver(context)
-    , m_audioConstraints(audioConstraints)
-    , m_videoConstraints(videoConstraints)
+    , m_audioConstraints(WTFMove(audioConstraints))
+    , m_videoConstraints(WTFMove(videoConstraints))
     , m_controller(controller)
     , m_promise(WTFMove(promise))
 {
@@ -163,13 +163,13 @@ void UserMediaRequest::constraintsInvalid(const String& constraintName)
     failedToCreateStreamWithConstraintsError(constraintName);
 }
 
-void UserMediaRequest::didCreateStream(PassRefPtr<MediaStreamPrivate> privateStream)
+void UserMediaRequest::didCreateStream(RefPtr<MediaStreamPrivate>&& privateStream)
 {
     if (!m_scriptExecutionContext)
         return;
 
     // 4 - Create the MediaStream and pass it to the success callback.
-    Ref<MediaStream> stream = MediaStream::create(*m_scriptExecutionContext, privateStream);
+    Ref<MediaStream> stream = MediaStream::create(*m_scriptExecutionContext, WTFMove(privateStream));
     if (m_audioConstraints) {
         for (auto& track : stream->getAudioTracks()) {
             track->applyConstraints(*m_audioConstraints);

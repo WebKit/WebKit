@@ -42,15 +42,15 @@ class MediaTrackConstraints : public RefCounted<MediaTrackConstraints>, public S
 public:
     virtual ~MediaTrackConstraints() { }
 
-    static Ref<MediaTrackConstraints> create(PassRefPtr<MediaConstraintsImpl>);
+    static Ref<MediaTrackConstraints> create(MediaConstraintsImpl&);
 
-    Vector<PassRefPtr<MediaTrackConstraint>> optional() const;
+    Vector<RefPtr<MediaTrackConstraint>> optional() const;
     MediaTrackConstraintSet* mandatory() const;
 
 private:
-    explicit MediaTrackConstraints(PassRefPtr<MediaConstraintsImpl>);
+    explicit MediaTrackConstraints(MediaConstraintsImpl&);
     
-    RefPtr<MediaConstraintsImpl> m_constraints;
+    Ref<MediaConstraintsImpl> m_constraints;
 };
 
 } // namespace WebCore

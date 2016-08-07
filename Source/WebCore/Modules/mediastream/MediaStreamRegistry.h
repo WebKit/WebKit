@@ -30,7 +30,6 @@
 
 #include "URLRegistry.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

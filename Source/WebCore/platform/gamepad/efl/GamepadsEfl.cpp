@@ -224,7 +224,7 @@ void GamepadsEfl::updateGamepadList(GamepadList* into)
             gamepad->axes(gamepadDevice->axesCount(), gamepadDevice->axesData());
             gamepad->buttons(gamepadDevice->buttonsCount(), gamepadDevice->buttonsData());
 
-            into->set(i, gamepad);
+            into->set(i, WTFMove(gamepad));
         } else
             into->set(i, 0);
     }

@@ -44,23 +44,22 @@ static const long maxToneDurationMs = 6000;
 static const long minInterToneGapMs = 30;
 static const long defaultInterToneGapMs = 70;
 
-RefPtr<RTCDTMFSender> RTCDTMFSender::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
+RefPtr<RTCDTMFSender> RTCDTMFSender::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, RefPtr<MediaStreamTrack>&& track, ExceptionCode& ec)
 {
-    RefPtr<MediaStreamTrack> track = prpTrack;
     std::unique_ptr<RTCDTMFSenderHandler> handler = peerConnectionHandler->createDTMFSender(&track->source());
     if (!handler) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
 
-    RefPtr<RTCDTMFSender> dtmfSender = adoptRef(new RTCDTMFSender(context, track, WTFMove(handler)));
+    RefPtr<RTCDTMFSender> dtmfSender = adoptRef(new RTCDTMFSender(context, WTFMove(track), WTFMove(handler)));
     dtmfSender->suspendIfNeeded();
     return dtmfSender;
 }
 
-RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrack> track, std::unique_ptr<RTCDTMFSenderHandler> handler)
+RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext* context, RefPtr<MediaStreamTrack>&& track, std::unique_ptr<RTCDTMFSenderHandler> handler)
     : ActiveDOMObject(context)
-    , m_track(track)
+    , m_track(WTFMove(track))
     , m_duration(defaultToneDurationMs)
     , m_interToneGap(defaultInterToneGapMs)
     , m_handler(WTFMove(handler))

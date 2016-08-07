@@ -40,16 +40,16 @@ namespace WebCore {
 
 class SourceInfo : public RefCounted<SourceInfo>, public ScriptWrappable {
 public:
-    static Ref<SourceInfo> create(PassRefPtr<TrackSourceInfo>);
+    static Ref<SourceInfo> create(Ref<TrackSourceInfo>&&);
 
     const AtomicString& sourceId() const { return m_trackSourceInfo->id(); }
     const AtomicString& label() const { return m_trackSourceInfo->label(); }
     const AtomicString& kind() const;
 
 private:
-    SourceInfo(PassRefPtr<TrackSourceInfo>);
+    SourceInfo(Ref<TrackSourceInfo>&&);
 
-    RefPtr<TrackSourceInfo> m_trackSourceInfo;
+    Ref<TrackSourceInfo> m_trackSourceInfo;
 };
 
 } // namespace WebCore

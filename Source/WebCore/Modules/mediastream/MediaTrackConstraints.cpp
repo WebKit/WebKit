@@ -38,21 +38,21 @@ using namespace JSC;
 
 namespace WebCore {
 
-Ref<MediaTrackConstraints> MediaTrackConstraints::create(PassRefPtr<MediaConstraintsImpl> constraints)
+Ref<MediaTrackConstraints> MediaTrackConstraints::create(MediaConstraintsImpl& constraints)
 {
     return adoptRef(*new MediaTrackConstraints(constraints));
 }
 
-MediaTrackConstraints::MediaTrackConstraints(PassRefPtr<MediaConstraintsImpl> constraints)
+MediaTrackConstraints::MediaTrackConstraints(MediaConstraintsImpl& constraints)
     : m_constraints(constraints)
 {
 }
 
-Vector<PassRefPtr<MediaTrackConstraint>> MediaTrackConstraints::optional() const
+Vector<RefPtr<MediaTrackConstraint>> MediaTrackConstraints::optional() const
 {
     // https://bugs.webkit.org/show_bug.cgi?id=121954
     notImplemented();
-    return Vector<PassRefPtr<MediaTrackConstraint>>();
+    return { };
 }
 
 MediaTrackConstraintSet* MediaTrackConstraints::mandatory() const

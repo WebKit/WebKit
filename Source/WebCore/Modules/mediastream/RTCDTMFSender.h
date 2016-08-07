@@ -43,7 +43,7 @@ class RTCDTMFSenderHandler;
 
 class RTCDTMFSender final : public RefCounted<RTCDTMFSender>, public EventTargetWithInlineData, public RTCDTMFSenderHandlerClient, public ActiveDOMObject {
 public:
-    static RefPtr<RTCDTMFSender> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, PassRefPtr<MediaStreamTrack>, ExceptionCode&);
+    static RefPtr<RTCDTMFSender> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, RefPtr<MediaStreamTrack>&&, ExceptionCode&);
     ~RTCDTMFSender();
 
     bool canInsertDTMF() const;
@@ -62,7 +62,7 @@ public:
     using RefCounted<RTCDTMFSender>::deref;
 
 private:
-    RTCDTMFSender(ScriptExecutionContext*, PassRefPtr<MediaStreamTrack>, std::unique_ptr<RTCDTMFSenderHandler>);
+    RTCDTMFSender(ScriptExecutionContext*, RefPtr<MediaStreamTrack>&&, std::unique_ptr<RTCDTMFSenderHandler>);
 
     // ActiveDOMObject
     void stop() override;

@@ -38,7 +38,6 @@
 #include "ActiveDOMObject.h"
 #include "MediaDevices.h"
 #include "MediaStreamCreationClient.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -74,12 +73,12 @@ public:
     const String& allowedVideoDeviceUID() const { return m_allowedVideoDeviceUID; }
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::Promise&&);
+    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, RefPtr<MediaConstraints>&& audioConstraints, RefPtr<MediaConstraints>&& videoConstraints, MediaDevices::Promise&&);
 
     // MediaStreamCreationClient
     void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>& videoTracks) final;
     void constraintsInvalid(const String& constraintName) final;
-    void didCreateStream(PassRefPtr<MediaStreamPrivate>) final;
+    void didCreateStream(RefPtr<MediaStreamPrivate>&&) final;
     void failedToCreateStreamWithConstraintsError(const String& constraintName) final;
     void failedToCreateStreamWithPermissionError() final;
 

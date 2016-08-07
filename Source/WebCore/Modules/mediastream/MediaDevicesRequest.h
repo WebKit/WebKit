@@ -34,7 +34,6 @@
 #include "MediaStreamCreationClient.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "UserMediaPermissionCheck.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

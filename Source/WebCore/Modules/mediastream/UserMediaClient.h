@@ -33,8 +33,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/PassRefPtr.h>
-
 namespace WebCore {
 
 class Page;

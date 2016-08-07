@@ -37,16 +37,16 @@ class RTCDataChannelEvent : public Event {
 public:
     virtual ~RTCDataChannelEvent();
 
-    static Ref<RTCDataChannelEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<RTCDataChannel>);
+    static Ref<RTCDataChannelEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RTCDataChannel&);
 
-    RTCDataChannel* channel() const;
+    RTCDataChannel* channel();
 
     virtual EventInterface eventInterface() const;
 
 private:
-    RTCDataChannelEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<RTCDataChannel>);
+    RTCDataChannelEvent(const AtomicString& type, bool canBubble, bool cancelable, RTCDataChannel&);
 
-    RefPtr<RTCDataChannel> m_channel;
+    Ref<RTCDataChannel> m_channel;
 };
 
 } // namespace WebCore

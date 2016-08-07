@@ -49,8 +49,8 @@ public:
     virtual void textTrackModeChanged(TextTrack*) = 0;
     virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*) = 0;
     virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) = 0;
-    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
-    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
+    virtual void textTrackAddCue(TextTrack*, TextTrackCue&) = 0;
+    virtual void textTrackRemoveCue(TextTrack*, TextTrackCue&) = 0;
 };
 
 class TextTrack : public TrackBase, public EventTargetWithInlineData {

@@ -40,7 +40,7 @@ public:
     virtual Vector<CaptureDeviceInfo>& captureDeviceList() = 0;
     virtual void refreshCaptureDeviceList() { }
     virtual TrackSourceInfoVector getSourcesInfo(const String&);
-    virtual Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>);
+    virtual Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, MediaConstraints&);
     virtual RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*);
 
     virtual bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, MediaConstraints*, const CaptureSessionInfo*, String&);

@@ -82,7 +82,7 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreatio
             return;
         }
 
-        audioSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Audio, audioConstraints);
+        audioSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Audio, *audioConstraints);
     }
 
     if (videoConstraints) {
@@ -93,7 +93,7 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreatio
             return;
         }
 
-        videoSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, videoConstraints);
+        videoSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, *videoConstraints);
     }
     client->constraintsValidated(audioSources, videoSources);
 }
@@ -116,7 +116,7 @@ void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreat
         }
         // FIXME: Consider the constraints when choosing among multiple devices. For now just select the first available
         // device of the appropriate type.
-        auto audioSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Audio, audioConstraints.get()).at(0);
+        auto audioSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Audio, *audioConstraints).at(0);
         ASSERT(audioSource);
         
         audioSources.append(WTFMove(audioSource));
@@ -131,7 +131,7 @@ void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreat
         }
         // FIXME: Consider the constraints when choosing among multiple devices. For now just select the first available
         // device of the appropriate type.
-        auto videoSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Video, videoConstraints.get()).at(0);
+        auto videoSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Video, *videoConstraints).at(0);
         ASSERT(videoSource);
         
         videoSources.append(WTFMove(videoSource));

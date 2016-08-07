@@ -326,7 +326,7 @@ void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue, ExceptionCode& ec)
     ensureTextTrackCueList().add(cue);
     
     if (m_client)
-        m_client->textTrackAddCue(this, cue.get());
+        m_client->textTrackAddCue(this, *cue);
 }
 
 void TextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
@@ -353,7 +353,7 @@ void TextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
 
     cue->setTrack(0);
     if (m_client)
-        m_client->textTrackRemoveCue(this, cue);
+        m_client->textTrackRemoveCue(this, *cue);
 }
 
 VTTRegionList& TextTrack::ensureVTTRegionList()
@@ -434,7 +434,7 @@ void TextTrack::cueWillChange(TextTrackCue* cue)
 
     // The cue may need to be repositioned in the media element's interval tree, may need to
     // be re-rendered, etc, so remove it before the modification...
-    m_client->textTrackRemoveCue(this, cue);
+    m_client->textTrackRemoveCue(this, *cue);
 }
 
 void TextTrack::cueDidChange(TextTrackCue* cue)
@@ -446,7 +446,7 @@ void TextTrack::cueDidChange(TextTrackCue* cue)
     ensureTextTrackCueList().updateCueIndex(cue);
 
     // ... and add it back again.
-    m_client->textTrackAddCue(this, cue);
+    m_client->textTrackAddCue(this, *cue);
 }
 
 int TextTrack::trackIndex()

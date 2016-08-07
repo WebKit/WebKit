@@ -88,7 +88,7 @@ bool CaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::Ty
     return true;
 }
 
-Vector<RefPtr<RealtimeMediaSource>> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type type, PassRefPtr<MediaConstraints> constraints)
+Vector<RefPtr<RealtimeMediaSource>> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type type, MediaConstraints& constraints)
 {
     Vector<RefPtr<RealtimeMediaSource>> bestSourcesList;
 
@@ -103,7 +103,7 @@ Vector<RefPtr<RealtimeMediaSource>> CaptureDeviceManager::bestSourcesForTypeAndC
         if (!captureDevice.m_enabled || captureDevice.m_sourceId.isEmpty() || captureDevice.m_sourceType == RealtimeMediaSource::None)
             continue;
 
-        if (RefPtr<RealtimeMediaSource> captureSource = sourceWithUID(captureDevice.m_persistentDeviceID, type, constraints.get()))
+        if (RefPtr<RealtimeMediaSource> captureSource = sourceWithUID(captureDevice.m_persistentDeviceID, type, &constraints))
             bestSourcesList.append(captureSource.leakRef());
     }
     std::sort(bestSourcesList.begin(), bestSourcesList.end(), sortBasedOnFitnessScore);

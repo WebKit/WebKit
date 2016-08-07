@@ -39,7 +39,7 @@ struct UIRequestEventInit : public UIEventInit {
 
 class UIRequestEvent : public UIEvent {
 public:
-    static Ref<UIRequestEvent> create(const AtomicString& type, bool bubbles, bool cancelable, AbstractView*, int detail, PassRefPtr<EventTarget> receiver);
+    static Ref<UIRequestEvent> create(const AtomicString& type, bool bubbles, bool cancelable, AbstractView*, int detail, RefPtr<EventTarget>&& receiver);
     static Ref<UIRequestEvent> createForBindings(const AtomicString& eventType, const UIRequestEventInit&);
     
     virtual ~UIRequestEvent();
@@ -47,7 +47,7 @@ public:
     EventTarget* receiver() const { return m_receiver.get(); }
 
 protected:
-    UIRequestEvent(const AtomicString& type, bool bubbles, bool cancelable, AbstractView*, int detail, PassRefPtr<EventTarget> receiver);
+    UIRequestEvent(const AtomicString& type, bool bubbles, bool cancelable, AbstractView*, int detail, RefPtr<EventTarget>&& receiver);
     
     UIRequestEvent(const AtomicString& type, const UIRequestEventInit&);
     

@@ -42,7 +42,7 @@ public:
     virtual void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>& videoTracks) = 0;
     virtual void constraintsInvalid(const String& constraintName) = 0;
 
-    virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) = 0;
+    virtual void didCreateStream(RefPtr<MediaStreamPrivate>&&) = 0;
     virtual void failedToCreateStreamWithConstraintsError(const String& constraintName) = 0;
     virtual void failedToCreateStreamWithPermissionError() = 0;
 };

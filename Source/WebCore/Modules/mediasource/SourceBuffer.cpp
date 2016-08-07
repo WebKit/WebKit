@@ -1301,7 +1301,7 @@ void SourceBuffer::appendError(bool decodeErrorParam)
         m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
 }
 
-void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample> prpSample)
+void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, MediaSample& sample)
 {
     if (isRemoved())
         return;
@@ -1316,8 +1316,6 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         appendError(true);
         return;
     }
-
-    RefPtr<MediaSample> sample = prpSample;
 
     // 3.5.8 Coded Frame Processing
     // http://www.w3.org/TR/media-source/#sourcebuffer-coded-frame-processing
@@ -1341,16 +1339,16 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             // ↳ Otherwise:
             // 1. Let presentation timestamp be a double precision floating point representation of
             // the coded frame's presentation timestamp in seconds.
-            presentationTimestamp = sample->presentationTime();
+            presentationTimestamp = sample.presentationTime();
 
             // 2. Let decode timestamp be a double precision floating point representation of the coded frame's
             // decode timestamp in seconds.
-            decodeTimestamp = sample->decodeTime();
+            decodeTimestamp = sample.decodeTime();
         }
 
         // 1.2 Let frame duration be a double precision floating point representation of the coded frame's
         // duration in seconds.
-        MediaTime frameDuration = sample->duration();
+        MediaTime frameDuration = sample.duration();
 
         // 1.3 If mode equals "sequence" and group start timestamp is set, then run the following steps:
         if (m_mode == AppendMode::Sequence && m_groupStartTimestamp.isValid()) {
@@ -1378,7 +1376,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         }
 
         // 1.5 Let track buffer equal the track buffer that the coded frame will be added to.
-        AtomicString trackID = sample->trackID();
+        AtomicString trackID = sample.trackID();
         auto it = m_trackBufferMap.find(trackID);
         if (it == m_trackBufferMap.end())
             it = m_trackBufferMap.add(trackID, TrackBuffer()).iterator;
@@ -1420,10 +1418,10 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
         if (m_mode == AppendMode::Sequence) {
             // Use the generated timestamps instead of the sample's timestamps.
-            sample->setTimestamps(presentationTimestamp, decodeTimestamp);
+            sample.setTimestamps(presentationTimestamp, decodeTimestamp);
         } else if (m_timestampOffset) {
             // Reflect the timestamp offset into the sample.
-            sample->offsetTimestampsBy(m_timestampOffset);
+            sample.offsetTimestampsBy(m_timestampOffset);
         }
 
         // 1.7 Let frame end timestamp equal the sum of presentation timestamp and frame duration.
@@ -1457,7 +1455,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         if (trackBuffer.needRandomAccessFlag) {
             // 1.11.1 If the coded frame is not a random access point, then drop the coded frame and jump
             // to the top of the loop to start processing the next coded frame.
-            if (!sample->isSync()) {
+            if (!sample.isSync()) {
                 didDropSample();
                 return;
             }
@@ -1500,7 +1498,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
                     // 1.14.2.3 If the presentation timestamp is less than the remove window timestamp,
                     // then remove overlapped frame and any coded frames that depend on it from track buffer.
                     if (presentationTimestamp < removeWindowTimestamp)
-                        erasedSamples.addSample(iter->second);
+                        erasedSamples.addSample(*iter->second);
                 }
 
                 // If track buffer contains timed text coded frames:
@@ -1589,7 +1587,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
         if (trackBuffer.lastEnqueuedDecodeEndTime.isInvalid() || decodeTimestamp >= trackBuffer.lastEnqueuedDecodeEndTime) {
             DecodeOrderSampleMap::KeyType decodeKey(decodeTimestamp, presentationTimestamp);
-            trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
+            trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, &sample));
         }
 
         // 1.18 Set last decode timestamp for track buffer to decode timestamp.
@@ -1732,7 +1730,7 @@ void SourceBuffer::textTrackModeChanged(TextTrack* track)
         m_source->mediaElement()->textTrackModeChanged(track);
 }
 
-void SourceBuffer::textTrackAddCue(TextTrack* track, WTF::PassRefPtr<TextTrackCue> cue)
+void SourceBuffer::textTrackAddCue(TextTrack* track, TextTrackCue& cue)
 {
     if (!isRemoved())
         m_source->mediaElement()->textTrackAddCue(track, cue);
@@ -1744,7 +1742,7 @@ void SourceBuffer::textTrackAddCues(TextTrack* track, TextTrackCueList const* cu
         m_source->mediaElement()->textTrackAddCues(track, cueList);
 }
 
-void SourceBuffer::textTrackRemoveCue(TextTrack* track, WTF::PassRefPtr<TextTrackCue> cue)
+void SourceBuffer::textTrackRemoveCue(TextTrack* track, TextTrackCue& cue)
 {
     if (!isRemoved())
         m_source->mediaElement()->textTrackRemoveCue(track, cue);

@@ -29,7 +29,6 @@
 #if ENABLE(GAMEPAD_DEPRECATED)
 
 #include "Gamepad.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -42,7 +41,7 @@ public:
     static Ref<GamepadList> create() { return adoptRef(*new GamepadList); }
     ~GamepadList();
 
-    void set(unsigned index, PassRefPtr<Gamepad>);
+    void set(unsigned index, RefPtr<Gamepad>&&);
     Gamepad* item(unsigned index);
     unsigned length() const;
 

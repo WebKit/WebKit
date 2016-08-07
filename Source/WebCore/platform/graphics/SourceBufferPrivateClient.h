@@ -66,7 +66,7 @@ public:
         Vector<TextTrackInformation> textTracks;
     };
     virtual void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment&) = 0;
-    virtual void sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample>) = 0;
+    virtual void sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, MediaSample&) = 0;
     virtual bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const = 0;
     virtual bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const = 0;
 

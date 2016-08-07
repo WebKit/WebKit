@@ -36,11 +36,11 @@ GamepadList::~GamepadList()
 {
 }
 
-void GamepadList::set(unsigned index, PassRefPtr<Gamepad> gamepad)
+void GamepadList::set(unsigned index, RefPtr<Gamepad>&& gamepad)
 {
     if (index >= kMaximumGamepads)
         return;
-    m_items[index] = gamepad;
+    m_items[index] = WTFMove(gamepad);
 }
 
 unsigned GamepadList::length() const

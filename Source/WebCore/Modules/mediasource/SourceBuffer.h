@@ -44,7 +44,6 @@
 #include "Timer.h"
 #include "VideoTrack.h"
 #include <runtime/ArrayBufferView.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -143,7 +142,7 @@ private:
 
     // SourceBufferPrivateClient
     void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment&) override;
-    void sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample>) override;
+    void sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, MediaSample&) override;
     bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const override;
     bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const override;
     void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID) override;
@@ -162,8 +161,8 @@ private:
     void textTrackModeChanged(TextTrack*) override;
     void textTrackAddCues(TextTrack*, const TextTrackCueList*) override;
     void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) override;
-    void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
-    void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
+    void textTrackAddCue(TextTrack*, TextTrackCue&) override;
+    void textTrackRemoveCue(TextTrack*, TextTrackCue&) override;
 
     bool isRemoved() const;
     void scheduleEvent(const AtomicString& eventName);

@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-Ref<SourceInfo> SourceInfo::create(PassRefPtr<TrackSourceInfo> trackSourceInfo)
+Ref<SourceInfo> SourceInfo::create(Ref<TrackSourceInfo>&& trackSourceInfo)
 {
-    return adoptRef(*new SourceInfo(trackSourceInfo));
+    return adoptRef(*new SourceInfo(WTFMove(trackSourceInfo)));
 }
 
-SourceInfo::SourceInfo(PassRefPtr<TrackSourceInfo> trackSourceInfo)
-    : m_trackSourceInfo(trackSourceInfo)
+SourceInfo::SourceInfo(Ref<TrackSourceInfo>&& trackSourceInfo)
+    : m_trackSourceInfo(WTFMove(trackSourceInfo))
 {
 }
 
