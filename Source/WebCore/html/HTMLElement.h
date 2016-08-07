@@ -70,8 +70,6 @@ public:
 
     void accessKeyAction(bool sendMouseEvents) override;
 
-    bool ieForbidsInsertHTML() const;
-
     bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 

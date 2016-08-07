@@ -916,12 +916,8 @@ RefPtr<DocumentFragment> Range::createContextualFragment(const String& markup, E
 
     if (!element || (is<HTMLDocument>(element->document()) && is<HTMLHtmlElement>(*element)))
         element = HTMLBodyElement::create(node.document());
-    else if (!is<HTMLElement>(*element)) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
 
-    return WebCore::createContextualFragment(downcast<HTMLElement>(*element), markup, AllowScriptingContentAndDoNotMarkAlreadyStarted, ec);
+    return WebCore::createContextualFragment(*element, markup, AllowScriptingContentAndDoNotMarkAlreadyStarted, ec);
 }
 
 

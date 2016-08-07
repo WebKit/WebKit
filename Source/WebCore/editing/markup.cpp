@@ -951,7 +951,7 @@ static void removeElementFromFragmentPreservingChildren(DocumentFragment& fragme
     fragment.removeChild(element, ASSERT_NO_EXCEPTION);
 }
 
-RefPtr<DocumentFragment> createContextualFragment(HTMLElement& element, const String& markup, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
+RefPtr<DocumentFragment> createContextualFragment(Element& element, const String& markup, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
 {
     if (element.ieForbidsInsertHTML()) {
         ec = NOT_SUPPORTED_ERR;

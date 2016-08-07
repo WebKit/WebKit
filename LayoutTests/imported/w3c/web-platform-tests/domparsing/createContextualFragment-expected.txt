@@ -7,8 +7,8 @@ PASS <script>s should be run when appended to the document (but not before)
 PASS <html> and <body> must work the same, 1 
 PASS <html> and <body> must work the same, 2 
 PASS Implicit <body> creation 
-FAIL Namespace generally shouldn't matter The operation is not supported.
-FAIL <html> in a different namespace shouldn't be special The operation is not supported.
+PASS Namespace generally shouldn't matter 
+PASS <html> in a different namespace shouldn't be special 
 PASS null should be stringified 
 PASS undefined should be stringified 
 

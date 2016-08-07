@@ -53,7 +53,7 @@ WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromText(Range& context, cons
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
 RefPtr<DocumentFragment> createFragmentForInnerOuterHTML(Element&, const String& markup, ParserContentPolicy, ExceptionCode&);
 RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document&, const String& sourceString, const String& sourceMIMEType);
-RefPtr<DocumentFragment> createContextualFragment(HTMLElement&, const String& markup, ParserContentPolicy, ExceptionCode&);
+RefPtr<DocumentFragment> createContextualFragment(Element&, const String& markup, ParserContentPolicy, ExceptionCode&);
 
 bool isPlainTextMarkup(Node*);
 

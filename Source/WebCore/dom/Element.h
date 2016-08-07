@@ -299,6 +299,8 @@ public:
     void insertAdjacentHTML(const String& where, const String& html, ExceptionCode&);
     void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
 
+    bool ieForbidsInsertHTML() const;
+
     const RenderStyle* computedStyle(PseudoId = NOPSEUDO) override;
 
     bool needsStyleInvalidation() const;
