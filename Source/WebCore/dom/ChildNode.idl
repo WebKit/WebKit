@@ -22,8 +22,8 @@
 [
     NoInterfaceObject,
 ] interface ChildNode {
-    [Unscopeable, RaisesException, Custom] void before((Node or DOMString)... nodes);
-    [Unscopeable, RaisesException, Custom] void after((Node or DOMString)... nodes);
-    [Unscopeable, RaisesException, Custom] void replaceWith((Node or DOMString)... nodes);
-    [Unscopeable, RaisesException] void remove();
+    [Unscopable, RaisesException, Custom] void before((Node or DOMString)... nodes);
+    [Unscopable, RaisesException, Custom] void after((Node or DOMString)... nodes);
+    [Unscopable, RaisesException, Custom] void replaceWith((Node or DOMString)... nodes);
+    [Unscopable, RaisesException] void remove();
 };

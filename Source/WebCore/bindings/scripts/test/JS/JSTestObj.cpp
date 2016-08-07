@@ -65,6 +65,7 @@
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSString.h>
+#include <runtime/ObjectConstructor.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/GetPtr.h>
 
@@ -1349,6 +1350,10 @@ void JSTestObjPrototype::finishCreation(VM& vm)
     if (RuntimeEnabledFeatures::sharedFeatures().domIteratorEnabled()) {
         addValueIterableMethods(*globalObject(), *this);
     }
+    JSObject& unscopables = *constructEmptyObject(globalObject()->globalExec(), globalObject()->nullPrototypeObjectStructure());
+    unscopables.putDirect(vm, Identifier::fromString(&vm, "voidMethod"), jsBoolean(true));
+    unscopables.putDirect(vm, Identifier::fromString(&vm, "shortAttr"), jsBoolean(true));
+    putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, DontEnum | ReadOnly);
 }
 
 const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, CREATE_METHOD_TABLE(JSTestObj) };

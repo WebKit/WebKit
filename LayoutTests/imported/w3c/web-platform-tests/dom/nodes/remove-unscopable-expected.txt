@@ -1,8 +1,8 @@
 
-FAIL before() should be unscopable undefined is not an object (evaluating 'name')
-FAIL after() should be unscopable undefined is not an object (evaluating 'name')
-FAIL replaceWith() should be unscopable undefined is not an object (evaluating 'name')
-FAIL remove() should be unscopable undefined is not an object (evaluating 'name')
-FAIL prepend() should be unscopable undefined is not an object (evaluating 'name')
-FAIL append() should be unscopable undefined is not an object (evaluating 'name')
+PASS before() should be unscopable 
+PASS after() should be unscopable 
+PASS replaceWith() should be unscopable 
+PASS remove() should be unscopable 
+PASS prepend() should be unscopable 
+PASS append() should be unscopable 
 

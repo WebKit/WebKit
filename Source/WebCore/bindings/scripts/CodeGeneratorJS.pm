@@ -2171,6 +2171,25 @@ sub GetIndexedGetterExpression
     return "toJS(state, thisObject->globalObject(), thisObject->wrapped().item(index))";
 }
 
+# http://heycam.github.io/webidl/#Unscopable
+sub addUnscopableProperties
+{
+    my $interface = shift;
+
+    my @unscopables;
+    foreach my $functionOrAttribute (@{$interface->functions}, @{$interface->attributes}) {
+        push(@unscopables, $functionOrAttribute->signature->name) if $functionOrAttribute->signature->extendedAttributes->{"Unscopable"};
+    }
+    return if scalar(@unscopables) == 0;
+
+    AddToImplIncludes("<runtime/ObjectConstructor.h>");
+    push(@implContent, "    JSObject& unscopables = *constructEmptyObject(globalObject()->globalExec(), globalObject()->nullPrototypeObjectStructure());\n");
+    foreach my $unscopable (@unscopables) {
+        push(@implContent, "    unscopables.putDirect(vm, Identifier::fromString(&vm, \"$unscopable\"), jsBoolean(true));\n");
+    }
+    push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, DontEnum | ReadOnly);\n");
+}
+
 sub GenerateImplementation
 {
     my ($object, $interface, $enumerations, $dictionaries) = @_;
@@ -2478,6 +2497,8 @@ sub GenerateImplementation
         if ($interface->iterable) {
             addIterableProperties($interface, $className);
         }
+
+        addUnscopableProperties($interface);
 
         push(@implContent, "}\n\n");
     }

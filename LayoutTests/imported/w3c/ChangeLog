@@ -1,3 +1,14 @@
+2016-08-06  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Add support for [Unscopable] extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=160637
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/remove-unscopable-expected.txt:
+
 2016-08-06  Youenn Fablet  <youenn@apple.com>
 
         imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.html and -worker.html are failing after r204224

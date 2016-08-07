@@ -59,7 +59,7 @@ enum TestConfidence { "high", "kinda-low" };
     attribute TestEnumType             enumAttr;
     attribute byte                     byteAttr;
     attribute octet                    octetAttr;
-    attribute short                    shortAttr;
+    [Unscopable] attribute short                    shortAttr;
     [Clamp] attribute short            clampedShortAttr;
     [EnforceRange] attribute short     enforceRangeShortAttr;
     attribute unsigned short           unsignedShortAttr;
@@ -111,7 +111,7 @@ enum TestConfidence { "high", "kinda-low" };
     [EnabledAtRuntime=DOMIterator] iterable<DOMString>;
 
     // Methods
-    void    voidMethod();
+    [Unscopable] void    voidMethod();
     void    voidMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     byte    byteMethod();
     byte    byteMethodWithArgs(byte byteArg, DOMString strArg, TestObj objArg);

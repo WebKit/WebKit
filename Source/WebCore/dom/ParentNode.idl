@@ -33,11 +33,11 @@
     readonly attribute Element lastElementChild;
     readonly attribute unsigned long childElementCount;
 
-    [Unscopeable, RaisesException, Custom] void prepend((Node or DOMString)... nodes);
-    [Unscopeable, RaisesException, Custom] void append((Node or DOMString)... nodes);
+    [Unscopable, RaisesException, Custom] void prepend((Node or DOMString)... nodes);
+    [Unscopable, RaisesException, Custom] void append((Node or DOMString)... nodes);
 
-    // [Unscopeable] Element? query(DOMString relativeSelectors);
-    // [NewObject, Unscopeable] Elements queryAll(DOMString relativeSelectors);
+    // [Unscopable] Element? query(DOMString relativeSelectors);
+    // [NewObject, Unscopable] Elements queryAll(DOMString relativeSelectors);
     [RaisesException] Element querySelector(DOMString selectors);
     [RaisesException, NewObject] NodeList querySelectorAll(DOMString selectors);
 };
