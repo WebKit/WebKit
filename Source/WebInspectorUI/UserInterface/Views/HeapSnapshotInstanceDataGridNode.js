@@ -318,10 +318,11 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
         if (!targetFrame.size.width && !targetFrame.size.height)
             return;
 
-        if (this._tree.popoverNode === this._node)
+        if (this._tree.popoverGridNode === this._node)
             return;
 
-        this._tree.popoverNode = this._node;
+        this._tree.popoverGridNode = this._node;
+        this._tree.popoverTargetElement = event.target;
 
         let popoverContentElement = document.createElement("div");
         popoverContentElement.classList.add("heap-snapshot", "heap-snapshot-instance-popover-content");

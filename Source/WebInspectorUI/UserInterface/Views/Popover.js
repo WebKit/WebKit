@@ -36,6 +36,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         this._targetFrame = new WebInspector.Rect;
         this._anchorPoint = new WebInspector.Point;
         this._preferredEdges = null;
+        this._resizeHandler = null;
 
         this._contentNeedsUpdate = false;
         this._dismissing = false;
@@ -90,6 +91,12 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             this._update(true);
     }
 
+    set windowResizeHandler(resizeHandler)
+    {
+        console.assert(typeof resizeHandler === "function");
+        this._resizeHandler = resizeHandler;
+    }
+
     update(shouldAnimate = true)
     {
         if (!this.visible)
@@ -142,6 +149,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         this._isListeningForPopoverEvents = false;
         window.removeEventListener("mousedown", this, true);
         window.removeEventListener("scroll", this, true);
+        window.removeEventListener("resize", this, true);
 
         this._element.classList.add(WebInspector.Popover.FadeOutClassName);
 
@@ -157,6 +165,10 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             if (!this._element.contains(event.target) && !event.target.enclosingNodeOrSelfWithClass(WebInspector.Popover.IgnoreAutoDismissClassName))
                 this.dismiss();
             break;
+        case "resize":
+            if (this._resizeHandler)
+                this._resizeHandler();
+            break;
         case "transitionend":
             if (event.target === this._element) {
                 document.body.removeChild(this._element);
@@ -168,6 +180,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
                 this._dismissing = false;
                 break;
             }
+            break;
         }
     }
 
@@ -557,6 +570,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             this._isListeningForPopoverEvents = true;
             window.addEventListener("mousedown", this, true);
             window.addEventListener("scroll", this, true);
+            window.addEventListener("resize", this, true);
         }
     }
 };

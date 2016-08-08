@@ -57,8 +57,6 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         this.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridSelectedNodeChanged, this);
         this.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sort, this);
 
-        window.addEventListener("resize", this);
-
         this.columnChooserEnabled = true;
     }
 
@@ -124,11 +122,6 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         this._hidePopover();
     }
 
-    closed()
-    {
-        window.removeEventListener("resize", this);
-    }
-
     treeElementForDataGridNode(dataGridNode)
     {
         if (!this._treeOutlineDataGridSynchronizer)
@@ -192,13 +185,6 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
     }
 
     // Protected
-
-    handleEvent(event)
-    {
-        console.assert(event.type === "resize");
-
-        this._windowResized(event);
-    }
 
     dataGridNodeNeedsRefresh(dataGridNode)
     {
@@ -441,20 +427,16 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         this._showPopoverForSelectedNodeSoon();
     }
 
-    _windowResized(event)
-    {
-        if (this._popover && this._popover.visible)
-            this._updatePopoverForSelectedNode(false);
-    }
-
     _showPopoverForSelectedNodeSoon()
     {
         if (this._showPopoverTimeout)
             return;
 
         this._showPopoverTimeout = setTimeout(() => {
-            if (!this._popover)
+            if (!this._popover) {
                 this._popover = new WebInspector.Popover;
+                this._popover.windowResizeHandler = () => { this._updatePopoverForSelectedNode(false); };
+            }
             this._updatePopoverForSelectedNode(true);
             this._showPopoverTimeout = undefined;
         }, WebInspector.TimelineDataGrid.DelayedPopoverShowTimeout);

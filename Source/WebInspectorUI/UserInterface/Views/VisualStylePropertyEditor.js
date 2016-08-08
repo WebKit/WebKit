@@ -601,6 +601,10 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         let popover = new WebInspector.Popover(this);
         popover.content = propertyInfoElement;
         popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_Y]);
+        popover.windowResizeHandler = () => {
+            let bounds = WebInspector.Rect.rectFromClientRect(this._titleElement.getBoundingClientRect());
+            popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_Y]);
+        };
     }
 
     _toggleTabbingOfSelectableElements(disabled)

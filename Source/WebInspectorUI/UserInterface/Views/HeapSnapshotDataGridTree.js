@@ -39,7 +39,8 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
 
         this._visible = false;
         this._popover = null;
-        this._popoverNode = null;
+        this._popoverGridNode = null;
+        this._popoverTargetElement = null;
 
         this.populateTopLevel();
     }
@@ -69,27 +70,23 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
 
     get heapSnapshot() { return this._heapSnapshot; }
 
-    get visible()
-    {
-        return this._visible;
-    }
+    get visible() { return this._visible; }
+    get popoverGridNode() { return this._popoverGridNode; }
+    set popoverGridNode(x) { this._popoverGridNode = x; }
+    get popoverTargetElement() { return this._popoverTargetElement; }
+    set popoverTargetElement(x) { this._popoverTargetElement = x; }
 
     get popover()
     {
-        if (!this._popover)
+        if (!this._popover) {
             this._popover = new WebInspector.Popover(this);
+            this._popover.windowResizeHandler = () => {
+                let bounds = WebInspector.Rect.rectFromClientRect(this._popoverTargetElement.getBoundingClientRect());
+                this._popover.present(bounds.pad(2), [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
+            };
+        }
 
         return this._popover;
-    }
-
-    get popoverNode()
-    {
-        return this._popoverNode;
-    }
-
-    set popoverNode(x)
-    {
-        this._popoverNode = x;
     }
 
     get children()
@@ -151,7 +148,8 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
 
     willDismissPopover(popover)
     {
-        this._popoverNode = null;
+        this._popoverGridNode = null;
+        this._popoverTargetElement = null;
     }
 
     // Protected

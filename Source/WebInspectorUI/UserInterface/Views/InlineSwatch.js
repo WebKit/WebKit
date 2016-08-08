@@ -134,6 +134,11 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
         let bounds = WebInspector.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
         let popover = new WebInspector.Popover(this);
 
+        popover.windowResizeHandler = () => {
+            let bounds = WebInspector.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
+            popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_X]);
+        };
+
         this._valueEditor = null;
         if (this._type === WebInspector.InlineSwatch.Type.Bezier) {
             this._valueEditor = new WebInspector.BezierEditor;

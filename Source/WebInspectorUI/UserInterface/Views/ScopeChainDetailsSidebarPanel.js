@@ -368,11 +368,9 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
             }
         });
 
-        // Reposition the popover when the window resizes.
-        this._windowResizeListener = presentPopoverOverTargetElement;
-        window.addEventListener("resize", this._windowResizeListener);
-
         popover.content = content;
+
+        popover.windowResizeHandler = presentPopoverOverTargetElement;
         presentPopoverOverTargetElement();
 
         // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
@@ -391,8 +389,6 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                 this._addWatchExpression(expression);
         }
 
-        window.removeEventListener("resize", this._windowResizeListener);
-        this._windowResizeListener = null;
         this._codeMirror = null;
     }
 

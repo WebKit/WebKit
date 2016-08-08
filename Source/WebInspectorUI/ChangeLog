@@ -1,3 +1,60 @@
+2016-08-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Popover for Color Picker should update position when window resizes
+        https://bugs.webkit.org/show_bug.cgi?id=160321
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype.set windowResizeHandler):
+        (WebInspector.Popover.prototype.dismiss):
+        (WebInspector.Popover.prototype.handleEvent):
+        (WebInspector.Popover.prototype._addListenersIfNeeded):
+        The popover already has a set of window listeners, add "resize" to
+        the list. If there is a resize, invoke a resize handler. The resize
+        handler will only be called while the popover is visible.
+
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+        (WebInspector.HeapSnapshotDataGridTree):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get visible):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get popoverNode):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.set popoverNode):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get popoverTargetElement):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.set popoverTargetElement):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get popover):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.willDismissPopover):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        Update heap snapshot popovers to reposition on window resize.
+        Set a target to reposition around, since the popover is shared.
+
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WebInspector.ProbeSetDetailsSection.prototype._addProbeButtonClicked):
+        Update probe expression popover to respect window resizes.
+
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor.prototype._showPropertyInfoPopover):
+        Though not yet visible, update this to respect window resizes.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch.prototype._swatchElementClicked):
+        Add a window resize handler to reposition over the swatch element.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._updatePopoverForSelectedNode):
+        (WebInspector.LayerTreeDetailsSidebarPanel): Deleted.
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._windowResized): Deleted.
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._showPopoverForSelectedNodeSoon):
+        (WebInspector.TimelineDataGrid): Deleted.
+        (WebInspector.TimelineDataGrid.prototype.closed): Deleted.
+        (WebInspector.TimelineDataGrid.prototype.handleEvent): Deleted.
+        (WebInspector.TimelineDataGrid.prototype._windowResized): Deleted.
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._addWatchExpressionButtonClicked):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype.willDismissPopover): Deleted.
+        Replace custom popover repositioning with standard Popover handling.
+
 2016-08-07  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION (r201245): switching between Computed and Visual Styles panels causes internal error

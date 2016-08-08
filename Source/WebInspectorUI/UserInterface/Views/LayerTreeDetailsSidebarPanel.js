@@ -35,8 +35,6 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 
         WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
 
-        window.addEventListener("resize", this._windowResized.bind(this));
-
         this._buildLayerInfoSection();
         this._buildDataGridSection();
         this._buildBottomBar();
@@ -91,12 +89,6 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
     {
         if (this.selected)
             this._updateDisplayWithLayers(this._layerForNode, this._unfilteredChildLayers);
-    }
-
-    _windowResized(event)
-    {
-        if (this._popover && this._popover.visible)
-            this._updatePopoverForSelectedNode();
     }
 
     _buildLayerInfoSection()
@@ -332,8 +324,10 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
             return;
 
         var popover = this._popover;
-        if (!popover)
+        if (!popover) {
             popover = this._popover = new WebInspector.Popover;
+            popover.windowResizeHandler = () => { this._updatePopoverForSelectedNode(); };
+        }
 
         var targetFrame = WebInspector.Rect.rectFromClientRect(dataGridNode.element.getBoundingClientRect());
 
