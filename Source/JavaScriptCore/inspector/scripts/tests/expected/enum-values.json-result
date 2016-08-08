@@ -1185,25 +1185,37 @@ inline TestProtocolEventDomainEventWithEnumParameterParameter fromProtocolString
 #import "config.h"
 #import "TestProtocolTypeConversions.h"
 
-#import "ProtocolTypeConversions.h"
 #import "TestProtocol.h"
+#import "TestProtocolTypeParser.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
 
 using namespace Inspector;
 
-@interface ProtocolTypeConversions (TestProtocol)
+@interface TestProtocolTypeConversions (TypeDomainDomain)
 
 + (void)_parseTypeDomainEnum:(NSNumber **)outValue fromPayload:(id)payload;
 
 @end
+@interface TestProtocolTypeConversions (CommandDomainDomain)
 
-@implementation ProtocolTypeConversions (TestProtocol)
+@end
+@interface TestProtocolTypeConversions (EventDomainDomain)
+
+@end
+
+@implementation TestProtocolTypeConversions (TypeDomainDomain)
 
 + (void)_parseTypeDomainEnum:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
     *outValue = @(Inspector::fromProtocolString<TestProtocolTypeDomainEnum>(payload));
 }
+
+@end
+@implementation TestProtocolTypeConversions (CommandDomainDomain)
+
+@end
+@implementation TestProtocolTypeConversions (EventDomainDomain)
 
 @end
 

@@ -956,19 +956,19 @@ inline TestProtocolRuntimeKeyPathType fromProtocolString(const String& value)
 #import "config.h"
 #import "TestProtocolTypeConversions.h"
 
-#import "ProtocolTypeConversions.h"
 #import "TestProtocol.h"
+#import "TestProtocolTypeParser.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
 
 using namespace Inspector;
 
-@interface ProtocolTypeConversions (TestProtocol)
+@interface TestProtocolTypeConversions (RuntimeDomain)
 
 + (void)_parseKeyPath:(TestProtocolRuntimeKeyPath **)outValue fromPayload:(id)payload;
 
 @end
 
-@implementation ProtocolTypeConversions (TestProtocol)
+@implementation TestProtocolTypeConversions (RuntimeDomain)
 
 + (void)_parseKeyPath:(TestProtocolRuntimeKeyPath **)outValue fromPayload:(id)payload
 {

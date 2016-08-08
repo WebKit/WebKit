@@ -94,7 +94,7 @@ class ObjCGenerator(Generator):
 
     # The 'protocol name' is used to prefix filenames for a protocol group (a set of domains generated together).
     def protocol_name(self):
-        protocol_group = self.model().framework.setting('protocol_group', '')
+        protocol_group = self.model().framework.setting('objc_protocol_group', '')
         return '%s%s' % (protocol_group, ObjCGenerator.OBJC_SHARED_PREFIX)
 
     # The 'ObjC prefix' is used to prefix Objective-C class names and enums with a

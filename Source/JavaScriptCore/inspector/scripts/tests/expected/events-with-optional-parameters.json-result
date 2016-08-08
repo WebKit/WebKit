@@ -1033,13 +1033,13 @@ ObjCEnumType fromProtocolString(const String& value);
 #import "config.h"
 #import "TestProtocolTypeConversions.h"
 
-#import "ProtocolTypeConversions.h"
 #import "TestProtocol.h"
+#import "TestProtocolTypeParser.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
 
 using namespace Inspector;
 
-@interface ProtocolTypeConversions (TestProtocol)
+@interface TestProtocolTypeConversions (DatabaseDomain)
 
 + (void)_parseDatabaseId:(NSString **)outValue fromPayload:(id)payload;
 + (void)_parsePrimaryColors:(NSString **)outValue fromPayload:(id)payload;
@@ -1048,7 +1048,7 @@ using namespace Inspector;
 
 @end
 
-@implementation ProtocolTypeConversions (TestProtocol)
+@implementation TestProtocolTypeConversions (DatabaseDomain)
 
 + (void)_parseDatabaseId:(NSString **)outValue fromPayload:(id)payload
 {

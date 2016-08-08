@@ -1,3 +1,43 @@
+2016-08-08  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: clean up prefixing of Automation protocol generated files
+        https://bugs.webkit.org/show_bug.cgi?id=160635
+        <rdar://problem/27735327>
+
+        Reviewed by Timothy Hatcher.
+
+        Introduce different settings for the 'protocol group' name for C++ vs. Objective-C.
+
+        Use 'WD' as the prefix for generated Objective-C frontend dispatchers and helpers.
+        Continue using 'Automation' as the prefix for generated C++ backend dispatchers.
+
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.protocol_name):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        (ObjCProtocolTypeConversionsImplementationGenerator.generate_output):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_category_interface):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_category_implementation):
+        Adjust the class name. Generate one category per protocol domain to keep it easy to read.
+
+        * inspector/scripts/codegen/models.py:
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.protocol_name):
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        Rebaseline test results.
+
 2016-08-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Module namespace object should not allow unset IC

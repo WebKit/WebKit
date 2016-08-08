@@ -1086,25 +1086,37 @@ ObjCEnumType fromProtocolString(const String& value);
 #import "config.h"
 #import "TestProtocolTypeConversions.h"
 
-#import "ProtocolTypeConversions.h"
 #import "TestProtocol.h"
+#import "TestProtocolTypeParser.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
 
 using namespace Inspector;
 
-@interface ProtocolTypeConversions (TestProtocol)
+@interface TestProtocolTypeConversions (Network1Domain)
+
+@end
+@interface TestProtocolTypeConversions (Network2Domain)
 
 + (void)_parseNetworkError:(TestProtocolNetwork2NetworkError **)outValue fromPayload:(id)payload;
 
 @end
+@interface TestProtocolTypeConversions (Network3Domain)
 
-@implementation ProtocolTypeConversions (TestProtocol)
+@end
+
+@implementation TestProtocolTypeConversions (Network1Domain)
+
+@end
+@implementation TestProtocolTypeConversions (Network2Domain)
 
 + (void)_parseNetworkError:(TestProtocolNetwork2NetworkError **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSDictionary class]);
     *outValue = [[TestProtocolNetwork2NetworkError alloc] initWithPayload:payload];
 }
+
+@end
+@implementation TestProtocolTypeConversions (Network3Domain)
 
 @end
 

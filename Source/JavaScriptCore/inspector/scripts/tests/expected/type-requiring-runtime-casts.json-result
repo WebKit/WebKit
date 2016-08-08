@@ -1312,13 +1312,13 @@ inline TestProtocolTestCastedAnimals fromProtocolString(const String& value)
 #import "config.h"
 #import "TestProtocolTypeConversions.h"
 
-#import "ProtocolTypeConversions.h"
 #import "TestProtocol.h"
+#import "TestProtocolTypeParser.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
 
 using namespace Inspector;
 
-@interface ProtocolTypeConversions (TestProtocol)
+@interface TestProtocolTypeConversions (TestDomain)
 
 + (void)_parseTypeNeedingCast:(TestProtocolTestTypeNeedingCast **)outValue fromPayload:(id)payload;
 + (void)_parseCastedObjectId:(NSNumber **)outValue fromPayload:(id)payload;
@@ -1330,7 +1330,7 @@ using namespace Inspector;
 
 @end
 
-@implementation ProtocolTypeConversions (TestProtocol)
+@implementation TestProtocolTypeConversions (TestDomain)
 
 + (void)_parseTypeNeedingCast:(TestProtocolTestTypeNeedingCast **)outValue fromPayload:(id)payload
 {

@@ -958,20 +958,20 @@ inline TestProtocolRuntimeTwoLeggedAnimals fromProtocolString(const String& valu
 #import "config.h"
 #import "TestProtocolTypeConversions.h"
 
-#import "ProtocolTypeConversions.h"
 #import "TestProtocol.h"
+#import "TestProtocolTypeParser.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
 
 using namespace Inspector;
 
-@interface ProtocolTypeConversions (TestProtocol)
+@interface TestProtocolTypeConversions (RuntimeDomain)
 
 + (void)_parseFarmAnimals:(NSNumber **)outValue fromPayload:(id)payload;
 + (void)_parseTwoLeggedAnimals:(NSNumber **)outValue fromPayload:(id)payload;
 
 @end
 
-@implementation ProtocolTypeConversions (TestProtocol)
+@implementation TestProtocolTypeConversions (RuntimeDomain)
 
 + (void)_parseFarmAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {

@@ -55,7 +55,7 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
     def generate_output(self):
         secondary_headers = [
             '"%s.h"' % self.protocol_name(),
-            '"%sTypeConversions.h"' % ObjCGenerator.OBJC_SHARED_PREFIX,
+            '"%sTypeParser.h"' % self.protocol_name(),
             Generator.string_for_file_include('%sJSONObjectPrivate.h' % ObjCGenerator.OBJC_STATIC_PREFIX, Frameworks.WebInspector, self.model().framework),
         ]
         secondary_headers.sort()
@@ -76,13 +76,16 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
 
     def _generate_type_factory_category_interface(self, domains):
         lines = []
-        lines.append('@interface ProtocolTypeConversions (%s)' % self.protocol_name())
-        lines.append('')
         for domain in domains:
+            lines.append('@interface %sTypeConversions (%sDomain)' % (self.protocol_name(), domain.domain_name))
+            lines.append('')
+
             for declaration in domain.type_declarations:
                 lines.append(self._generate_type_factory_method_declaration(domain, declaration))
+
             add_newline(lines)
-        lines.append('@end')
+            lines.append('@end')
+
         return '\n'.join(lines)
 
     def _generate_type_factory_method_declaration(self, domain, declaration):
@@ -97,13 +100,14 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
 
     def _generate_type_factory_category_implementation(self, domains):
         lines = []
-        lines.append('@implementation ProtocolTypeConversions (%s)' % self.protocol_name())
-        lines.append('')
         for domain in domains:
+            lines.append('@implementation %sTypeConversions (%sDomain)' % (self.protocol_name(), domain.domain_name))
+            lines.append('')
+
             for declaration in domain.type_declarations:
                 lines.append(self._generate_type_factory_method_implementation(domain, declaration))
                 add_newline(lines)
-        lines.append('@end')
+            lines.append('@end')
         return '\n'.join(lines)
 
     def _generate_type_factory_method_implementation(self, domain, declaration):

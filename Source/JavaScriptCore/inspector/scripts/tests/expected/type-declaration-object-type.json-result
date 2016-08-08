@@ -1334,13 +1334,13 @@ ObjCEnumType fromProtocolString(const String& value);
 #import "config.h"
 #import "TestProtocolTypeConversions.h"
 
-#import "ProtocolTypeConversions.h"
 #import "TestProtocol.h"
+#import "TestProtocolTypeParser.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
 
 using namespace Inspector;
 
-@interface ProtocolTypeConversions (TestProtocol)
+@interface TestProtocolTypeConversions (DatabaseDomain)
 
 + (void)_parseError:(TestProtocolDatabaseError **)outValue fromPayload:(id)payload;
 + (void)_parseErrorList:(NSArray/*<TestProtocolDatabaseError>*/ **)outValue fromPayload:(id)payload;
@@ -1349,11 +1349,14 @@ using namespace Inspector;
 + (void)_parseObjectWithPropertyNameConflicts:(TestProtocolDatabaseObjectWithPropertyNameConflicts **)outValue fromPayload:(id)payload;
 + (void)_parseDummyObject:(TestProtocolDatabaseDummyObject **)outValue fromPayload:(id)payload;
 
+@end
+@interface TestProtocolTypeConversions (TestDomain)
+
 + (void)_parseParameterBundle:(TestProtocolTestParameterBundle **)outValue fromPayload:(id)payload;
 
 @end
 
-@implementation ProtocolTypeConversions (TestProtocol)
+@implementation TestProtocolTypeConversions (DatabaseDomain)
 
 + (void)_parseError:(TestProtocolDatabaseError **)outValue fromPayload:(id)payload
 {
@@ -1390,6 +1393,9 @@ using namespace Inspector;
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSDictionary class]);
     *outValue = [[TestProtocolDatabaseDummyObject alloc] initWithPayload:payload];
 }
+
+@end
+@implementation TestProtocolTypeConversions (TestDomain)
 
 + (void)_parseParameterBundle:(TestProtocolTestParameterBundle **)outValue fromPayload:(id)payload
 {

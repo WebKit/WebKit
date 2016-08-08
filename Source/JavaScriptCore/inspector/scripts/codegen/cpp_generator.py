@@ -48,7 +48,7 @@ class CppGenerator(Generator):
         Generator.__init__(self, model, input_filepath)
 
     def protocol_name(self):
-        return self.model().framework.setting('protocol_group', '')
+        return self.model().framework.setting('cpp_protocol_group', '')
 
     def helpers_namespace(self):
         return '%sHelpers' % self.protocol_name()

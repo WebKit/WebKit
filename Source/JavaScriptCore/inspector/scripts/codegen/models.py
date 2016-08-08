@@ -42,21 +42,24 @@ _FRAMEWORK_CONFIG_MAP = {
     "Global": {
     },
     "JavaScriptCore": {
-        "protocol_group": "Inspector",
+        "cpp_protocol_group": "Inspector",
         "export_macro": "JS_EXPORT_PRIVATE",
         "alternate_dispatchers": True,
     },
     "WebKit": {
-        "protocol_group": "Automation",
+        "cpp_protocol_group": "Automation",
+        "objc_protocol_group": "WD",
+        "objc_prefix": "WD",
     },
     "WebInspector": {
-        "protocol_group": "RWI",
+        "objc_protocol_group": "RWI",
         "objc_prefix": "RWI",
     },
     # Used for code generator tests.
     "Test": {
         "alternate_dispatchers": True,
-        "protocol_group": "Test",
+        "cpp_protocol_group": "Test",
+        "objc_protocol_group": "Test",
         "objc_prefix": "Test",
     }
 }
