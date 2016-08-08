@@ -293,7 +293,8 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         thisObject->visitButterfly(visitor, butterfly, structure);
 
     size_t storageSize = structure->inlineSize();
-    visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
+    if (storageSize)
+        visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
 
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;

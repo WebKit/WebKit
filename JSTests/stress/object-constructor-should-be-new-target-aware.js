@@ -14,3 +14,5 @@ var hello = new Hello();
 shouldBe(hello.__proto__, Hello.prototype);
 
 shouldBe(Reflect.construct(Object, [], Hello).__proto__, Hello.prototype);
+
+gc(); // Regression test for https:/webkit.org/b/160666.

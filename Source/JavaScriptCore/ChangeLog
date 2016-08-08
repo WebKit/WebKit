@@ -1,3 +1,23 @@
+2016-08-08  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: hasInlineStorage() in JSFinalObject::visitChildren().
+        https://bugs.webkit.org/show_bug.cgi?id=160666
+
+        Reviewed by Keith Miller.
+
+        This assertion is benign.  JSFinalObject::visitChildren() calls
+        JSObject::inlineStorage() to get a pointer to the object's inline storage, and
+        later passes it to visitor.appendValuesHidden() with a previously computed
+        storageSize.  When storageSize is 0, appendValuesHidden() ends up doing nothing.
+        However, before we get there, JSObject::inlineStorage() will be asserting
+        hasInlineStorage() and this assertion will fail when storageSize is 0.
+
+        We can fix this assertion failure by simply adding a storageSize check before
+        calling hasInlineStorage() and visitor.appendValuesHidden().
+
+        * runtime/JSObject.cpp:
+        (JSC::JSFinalObject::visitChildren):
+
 2016-08-08  Brian Burg  <bburg@apple.com>
 
         Web Inspector: clean up prefixing of Automation protocol generated files

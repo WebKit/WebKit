@@ -1,3 +1,12 @@
+2016-08-08  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: hasInlineStorage() in JSFinalObject::visitChildren().
+        https://bugs.webkit.org/show_bug.cgi?id=160666
+
+        Reviewed by Keith Miller.
+
+        * stress/object-constructor-should-be-new-target-aware.js:
+
 2016-08-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Module namespace object should not allow unset IC
