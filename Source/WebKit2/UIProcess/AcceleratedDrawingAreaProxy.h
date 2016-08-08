@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,91 +25,84 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CoordinatedDrawingAreaProxy_h
-#define CoordinatedDrawingAreaProxy_h
+#pragma once
 
-#if USE(COORDINATED_GRAPHICS)
-
-#include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
-#include <wtf/RunLoop.h>
-
-namespace WebCore {
-class Region;
-}
 
 namespace WebKit {
 
 class CoordinatedLayerTreeHostProxy;
 
-class CoordinatedDrawingAreaProxy : public DrawingAreaProxy {
+class AcceleratedDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    explicit CoordinatedDrawingAreaProxy(WebPageProxy&);
-    virtual ~CoordinatedDrawingAreaProxy();
+    explicit AcceleratedDrawingAreaProxy(WebPageProxy&);
+    virtual ~AcceleratedDrawingAreaProxy();
 
-    bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
+    bool isInAcceleratedCompositingMode() const { return alwaysUseCompositing() || !m_layerTreeContext.isEmpty(); }
     void visibilityDidChange();
 
-    void setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, const WebCore::FloatPoint& trajectory);
-
-    bool hasReceivedFirstUpdate() const { return m_hasReceivedFirstUpdate; }
-
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     CoordinatedLayerTreeHostProxy& coordinatedLayerTreeHostProxy() const { return *m_coordinatedLayerTreeHostProxy.get(); }
+#endif
 
-    WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }
-    WebCore::IntRect contentsRect() const;
-    void updateViewport();
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    void setNativeSurfaceHandleForCompositing(uint64_t);
+    void destroyNativeSurfaceHandleForCompositing();
+#endif
 
-    WebPageProxy& page() { return m_webPageProxy; }
-    
     void dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)>) override;
 
-private:
+protected:
     // DrawingAreaProxy
-    virtual void sizeDidChange();
-    virtual void deviceScaleFactorDidChange();
-
-    virtual void waitForBackingStoreUpdateOnNextPaint();
+    void sizeDidChange() override;
+    void deviceScaleFactorDidChange() override;
+    void waitForBackingStoreUpdateOnNextPaint() override;
 
     // IPC message handlers
-    virtual void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&);
-    virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&);
-    virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&);
-    virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&);
+    void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&) override;
+    void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+    void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
+    void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
 
     enum RespondImmediatelyOrNot { DoNotRespondImmediately, RespondImmediately };
     void backingStoreStateDidChange(RespondImmediatelyOrNot);
     void sendUpdateBackingStoreState(RespondImmediatelyOrNot);
     void waitForAndDispatchDidUpdateBackingStoreState();
 
-    void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
     void updateAcceleratedCompositingMode(const LayerTreeContext&);
 
+    bool alwaysUseCompositing() const;
+
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     std::unique_ptr<CoordinatedLayerTreeHostProxy> m_coordinatedLayerTreeHostProxy;
+#endif
 
     // The state ID corresponding to our current backing store. Updated whenever we allocate
     // a new backing store. Any messages received that correspond to an earlier state are ignored,
     // as they don't apply to our current backing store.
-    uint64_t m_currentBackingStoreStateID;
+    uint64_t m_currentBackingStoreStateID { 0 };
 
     // The next backing store state ID we will request the web process update to. Incremented
     // whenever our state changes in a way that will require a new backing store to be allocated.
-    uint64_t m_nextBackingStoreStateID;
+    uint64_t m_nextBackingStoreStateID { 0 };
 
     // The current layer tree context.
     LayerTreeContext m_layerTreeContext;
 
     // Whether we've sent a UpdateBackingStoreState message and are now waiting for a DidUpdateBackingStoreState message.
     // Used to throttle UpdateBackingStoreState messages so we don't send them faster than the Web process can handle.
-    bool m_isWaitingForDidUpdateBackingStoreState;
+    bool m_isWaitingForDidUpdateBackingStoreState { false };
 
     // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
-    bool m_hasReceivedFirstUpdate;
+    bool m_hasReceivedFirstUpdate { false };
+
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    uint64_t m_pendingNativeSurfaceHandleForCompositing { 0 };
+#endif
 };
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS)
-#endif // CoordinatedDrawingAreaProxy_h

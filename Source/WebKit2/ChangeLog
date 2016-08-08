@@ -1,3 +1,72 @@
+2016-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Duplicated code in DrawingAreaProxyImpl and CoordinatedDrawingAreaProxy
+        https://bugs.webkit.org/show_bug.cgi?id=160506
+
+        Reviewed by Michael Catanzaro.
+
+        Same logic as in r202855 but in the UI process. CoordinatedDrawingAreaProxy is just a copy paste of
+        DrawingAreaProxyImpl with non-accelerated code path removed. There's actually nothing (or very little) specific
+        to coordinated graphics in the CoordinatedDrawingAreaProxy implementation. This patch renames
+        CoordinatedDrawingAreaProxy as AcceleratedDrawingAreaProxy and makes DrawingAreaProxyImpl inherit from it, so
+        that in case of accelerated compositing the parent class is used, and DrawingAreaProxyImpl only adds the non
+        accelerated code path.
+        To simplify the common API of AcceleratedDrawingAreaProxy, I have changed CoordinatedLayerTreeHostProxy to
+        receive a WebPageProxy in the constructor instead of a drawing area, since the drawing area was used just to get
+        the page proxy.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp.
+        (WebKit::AcceleratedDrawingAreaProxy::AcceleratedDrawingAreaProxy):
+        (WebKit::AcceleratedDrawingAreaProxy::~AcceleratedDrawingAreaProxy):
+        (WebKit::AcceleratedDrawingAreaProxy::alwaysUseCompositing):
+        (WebKit::AcceleratedDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        (WebKit::AcceleratedDrawingAreaProxy::sizeDidChange):
+        (WebKit::AcceleratedDrawingAreaProxy::deviceScaleFactorDidChange):
+        (WebKit::AcceleratedDrawingAreaProxy::visibilityDidChange):
+        (WebKit::AcceleratedDrawingAreaProxy::waitForBackingStoreUpdateOnNextPaint):
+        (WebKit::AcceleratedDrawingAreaProxy::didUpdateBackingStoreState):
+        (WebKit::AcceleratedDrawingAreaProxy::enterAcceleratedCompositingMode):
+        (WebKit::AcceleratedDrawingAreaProxy::exitAcceleratedCompositingMode):
+        (WebKit::AcceleratedDrawingAreaProxy::updateAcceleratedCompositingMode):
+        (WebKit::AcceleratedDrawingAreaProxy::backingStoreStateDidChange):
+        (WebKit::AcceleratedDrawingAreaProxy::sendUpdateBackingStoreState):
+        (WebKit::AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState):
+        (WebKit::AcceleratedDrawingAreaProxy::setNativeSurfaceHandleForCompositing):
+        (WebKit::AcceleratedDrawingAreaProxy::destroyNativeSurfaceHandleForCompositing):
+        * UIProcess/AcceleratedDrawingAreaProxy.h: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h.
+        (WebKit::AcceleratedDrawingAreaProxy::isInAcceleratedCompositingMode):
+        (WebKit::AcceleratedDrawingAreaProxy::coordinatedLayerTreeHostProxy):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::~CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::updateViewport):
+        (WebKit::CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState):
+        (WebKit::CoordinatedLayerTreeHostProxy::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHostProxy::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHostProxy::commitScrollOffset):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::syncVisibleContents):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::paint):
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::~DrawingAreaProxyImpl): Deleted.
+        (WebKit::DrawingAreaProxyImpl::update): Deleted.
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate): Deleted.
+        (WebKit::DrawingAreaProxyImpl::discardBackingStoreSoon): Deleted.
+        (WebKit::DrawingAreaProxyImpl::discardBackingStore): Deleted.
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::setVisible):
+        (WebKit::WebView::coordinatedGraphicsScene):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::createDrawingAreaProxy):
+
 2016-08-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Reply block leaks if the remote object doesn’t call it

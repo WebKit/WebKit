@@ -20,10 +20,9 @@
 
 #include "config.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 #include "CoordinatedLayerTreeHostProxy.h"
 
-#include "CoordinatedDrawingAreaProxy.h"
 #include "CoordinatedLayerTreeHostMessages.h"
 #include "CoordinatedLayerTreeHostProxyMessages.h"
 #include "WebPageProxy.h"
@@ -34,22 +33,22 @@ namespace WebKit {
 
 using namespace WebCore;
 
-CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy(CoordinatedDrawingAreaProxy* drawingAreaProxy)
-    : m_drawingAreaProxy(drawingAreaProxy)
+CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy(WebPageProxy& webPageProxy)
+    : m_webPageProxy(webPageProxy)
     , m_scene(adoptRef(new CoordinatedGraphicsScene(this)))
 {
-    m_drawingAreaProxy->page().process().addMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page().pageID(), *this);
+    m_webPageProxy.process().addMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }
 
 CoordinatedLayerTreeHostProxy::~CoordinatedLayerTreeHostProxy()
 {
-    m_drawingAreaProxy->page().process().removeMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page().pageID());
+    m_webPageProxy.process().removeMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_webPageProxy.pageID());
     m_scene->detach();
 }
 
 void CoordinatedLayerTreeHostProxy::updateViewport()
 {
-    m_drawingAreaProxy->updateViewport();
+    m_webPageProxy.setViewNeedsDisplay(IntRect(IntPoint::zero(), m_webPageProxy.viewSize()));
 }
 
 void CoordinatedLayerTreeHostProxy::dispatchUpdate(std::function<void()> function)
@@ -65,9 +64,7 @@ void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const Coordin
     });
 
     updateViewport();
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    m_drawingAreaProxy->page().didRenderFrame(graphicsState.contentsSize, graphicsState.coveredRect);
-#endif
+    m_webPageProxy.didRenderFrame(graphicsState.contentsSize, graphicsState.coveredRect);
 }
 
 void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector)
@@ -75,20 +72,20 @@ void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect
     if (rect == m_lastSentVisibleRect && trajectoryVector == m_lastSentTrajectoryVector)
         return;
 
-    m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::SetVisibleContentsRect(rect, trajectoryVector), m_drawingAreaProxy->page().pageID());
+    m_webPageProxy.process().send(Messages::CoordinatedLayerTreeHost::SetVisibleContentsRect(rect, trajectoryVector), m_webPageProxy.pageID());
     m_lastSentVisibleRect = rect;
     m_lastSentTrajectoryVector = trajectoryVector;
 }
 
 void CoordinatedLayerTreeHostProxy::renderNextFrame()
 {
-    m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page().pageID());
+    m_webPageProxy.process().send(Messages::CoordinatedLayerTreeHost::RenderNextFrame(), m_webPageProxy.pageID());
 }
 
 void CoordinatedLayerTreeHostProxy::commitScrollOffset(uint32_t layerID, const IntSize& offset)
 {
-    m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::CommitScrollOffset(layerID, offset), m_drawingAreaProxy->page().pageID());
+    m_webPageProxy.process().send(Messages::CoordinatedLayerTreeHost::CommitScrollOffset(layerID, offset), m_webPageProxy.pageID());
 }
 
 }
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS_MULTIPROCESS)

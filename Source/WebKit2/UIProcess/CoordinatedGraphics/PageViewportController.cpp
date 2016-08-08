@@ -22,7 +22,8 @@
 #include "config.h"
 #include "PageViewportController.h"
 
-#include "CoordinatedDrawingAreaProxy.h"
+#include "AcceleratedDrawingAreaProxy.h"
+#include "CoordinatedLayerTreeHostProxy.h"
 #include "PageViewportControllerClient.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
@@ -263,13 +264,13 @@ void PageViewportController::didChangeContentsVisibility(const FloatPoint& posit
 
 bool PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVector)
 {
-    CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(m_webPageProxy->drawingArea());
+    auto* drawingArea = static_cast<AcceleratedDrawingAreaProxy*>(m_webPageProxy->drawingArea());
     if (!drawingArea || m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return false;
 
     FloatRect visibleContentsRect(boundContentsPosition(m_contentsPosition), visibleContentsSize());
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
-    drawingArea->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
+    drawingArea->coordinatedLayerTreeHostProxy().setVisibleContentsRect(visibleContentsRect, trajectoryVector);
 
     if (!m_layerTreeStateIsFrozen)
         m_client.didChangeVisibleContents();
