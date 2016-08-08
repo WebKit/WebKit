@@ -1,3 +1,13 @@
+2016-08-08  Chris Dumez  <cdumez@apple.com>
+
+        Update API tests in mac/SetDocumentURI.mm after r204247
+        https://bugs.webkit.org/show_bug.cgi?id=160660
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/mac/SetDocumentURI.mm:
+        (TestWebKitAPI::TEST):
+
 2016-08-08  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests should trigger a spindump when WebContent process is unresponsive

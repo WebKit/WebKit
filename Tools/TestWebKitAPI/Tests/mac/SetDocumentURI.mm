@@ -97,8 +97,7 @@ TEST(WebKit1, SetDocumentURITestString)
     [document setDocumentURI:@"A non-URL string."];
     // documentURI accepts random strings.
     EXPECT_WK_STREQ(@"A non-URL string.", [document documentURI]);
-    // baseURI is empty for non-URL strings.
-    EXPECT_WK_STREQ(@"", [document baseURI]);
+    EXPECT_WK_STREQ(@"about:blank", [document baseURI]);
 }
 
 TEST(WebKit1, SetDocumentURITestNull)
@@ -114,8 +113,7 @@ TEST(WebKit1, SetDocumentURITestNull)
     [document setDocumentURI:nil];
     // documenturi is empty.
     EXPECT_WK_STREQ(@"", [document documentURI]);
-    // baseURI is null as well.
-    EXPECT_WK_STREQ(@"", [document baseURI]);
+    EXPECT_WK_STREQ(@"about:blank", [document baseURI]);
 }
 
 } // namespace TestWebKitAPI
