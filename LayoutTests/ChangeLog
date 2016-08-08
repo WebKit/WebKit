@@ -1,3 +1,9 @@
+2016-08-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/27711048.
+
+        * platform/mac/TestExpectations:
+
 2016-08-08  Chris Dumez  <cdumez@apple.com>
 
         It should be possible to re-initialize an Event after it's been dispatched
