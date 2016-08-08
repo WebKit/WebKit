@@ -1,3 +1,15 @@
+2016-08-08  Chris Dumez  <cdumez@apple.com>
+
+        It should be possible to re-initialize an Event after it's been dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=160651
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/events/initEvent-after-dispatch-expected.txt: Added.
+        * fast/events/initEvent-after-dispatch.html: Added.
+
 2016-08-07  Chris Dumez  <cdumez@apple.com>
 
         Node.baseURI should not be nullable

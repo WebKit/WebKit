@@ -72,7 +72,7 @@ Event::~Event()
 
 void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool cancelableArg)
 {
-    if (dispatched())
+    if (isBeingDispatched())
         return;
 
     m_isInitialized = true;
@@ -80,6 +80,7 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_immediatePropagationStopped = false;
     m_defaultPrevented = false;
     m_isTrusted = false;
+    m_target = nullptr;
 
     m_type = eventTypeArg;
     m_canBubble = canBubbleArg;
