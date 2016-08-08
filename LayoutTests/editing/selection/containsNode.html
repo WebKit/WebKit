@@ -33,8 +33,6 @@ r.setStart(span1, 1);
 r.setEnd(span1, 2);
 s.addRange(r);
 
-shouldBe('s.containsNode(null, false)', false);
-shouldBe('s.containsNode(null, true)', false);
 shouldBe('s.containsNode(testDiv, false)', false);
 shouldBe('s.containsNode(testDiv, true)', true);
 shouldBe('s.containsNode(span1, false)', false);

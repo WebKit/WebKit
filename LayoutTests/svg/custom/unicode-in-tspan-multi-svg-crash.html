@@ -14,7 +14,7 @@
       document.designMode='on';
       filterInFirstRoot = document.getElementById('filterInFirstRoot');
       useElement = document.getElementById('useElement');
-      window.getSelection().setBaseAndExtent(filterInFirstRoot, 0);
+      window.getSelection().setBaseAndExtent(filterInFirstRoot, 0, filterInFirstRoot, 0);
       document.execCommand('ForwardDelete');
       document.designMode='off';
     }

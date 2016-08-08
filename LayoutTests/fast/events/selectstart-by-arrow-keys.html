@@ -39,7 +39,7 @@ if (window.testRunner) {
 
     // On Mac, home/end doesn't move caret so manually select " World".
     if (navigator.platform.indexOf('Mac') == 0)
-        window.getSelection().setBaseAndExtent(div.firstChild, div.textContent.indexOf('World'));
+        window.getSelection().setBaseAndExtent(div.firstChild, div.textContent.indexOf('World'), div.firstChild, div.textContent.indexOf('World') + 5);
 
     eventSender.keyDown("leftArrow");
     logResult('Check (Left arrow)', 1);

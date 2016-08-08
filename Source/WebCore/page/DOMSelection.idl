@@ -27,55 +27,55 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This is based off of Mozilla's Selection interface
-// https://developer.mozilla.org/En/DOM/Selection
+// https://www.w3.org/TR/selection-api/#idl-def-Selection
 [
     GenerateIsReachable=ImplFrame,
     InterfaceName=Selection,
 ] interface DOMSelection {
-    readonly attribute Node anchorNode;
-    readonly attribute long anchorOffset;
-    readonly attribute Node focusNode;
-    readonly attribute long focusOffset;
+    readonly attribute Node? anchorNode;
+    readonly attribute unsigned long anchorOffset;
+    readonly attribute Node? focusNode;
+    readonly attribute unsigned long focusOffset;
 
     readonly attribute boolean isCollapsed;
-    readonly attribute long rangeCount;
+    readonly attribute unsigned long rangeCount;
 
-    [RaisesException] void collapse(optional Node? node = null, optional long index = 0);
+    void collapse(Node? node, optional unsigned long offset = 0);
     [RaisesException] void collapseToEnd();
     [RaisesException] void collapseToStart();
 
     void deleteFromDocument();
-    boolean containsNode(optional Node? node = null, optional boolean allowPartial = false);
-    [RaisesException] void selectAllChildren(optional Node? node = null);
+    boolean containsNode(Node node, optional boolean allowPartial = false);
+    void selectAllChildren(Node node);
 
-    [RaisesException] void extend(Node node, optional long offset = 0);
+    [RaisesException] void extend(Node node, optional unsigned long offset = 0);
 
-    [RaisesException] Range getRangeAt(optional long index = 0);
+    [RaisesException] Range getRangeAt(unsigned long index);
     void removeAllRanges();
-    void addRange(optional Range? range = null);
+    void addRange(Range range);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();
 #endif
 
-    // WebKit extensions
-    readonly attribute Node baseNode;
-    readonly attribute long baseOffset;
-    readonly attribute Node extentNode;
-    readonly attribute long extentOffset;
-
-    // WebKit's "type" accessor returns "None", "Range" and "Caret"
-    // IE's type accessor returns "none", "text" and "control"
     readonly attribute DOMString type;
+
+    void setBaseAndExtent(Node? baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
+    void setPosition(Node? node, optional unsigned long offset = 0);
+
+    void empty();
+
+    // FIXME: The following operation should be implemented.
+    // void removeRange(Range range);
+
+    // WebKit extensions.
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     void modify(optional DOMString alter = "undefined", optional DOMString direction = "undefined", optional DOMString granularity = "undefined");
-    [RaisesException] void setBaseAndExtent(optional Node? baseNode = null, optional long baseOffset = 0, optional Node? extentNode = null, optional long extentOffset = 0);
-    [RaisesException] void setPosition(optional Node? node = null, optional long offset = 0);
 
-    // IE extension
-    // http://msdn.microsoft.com/en-us/library/ms535869(VS.85).aspx
-    void empty();
+    readonly attribute Node baseNode;
+    readonly attribute unsigned long baseOffset;
+    readonly attribute Node extentNode;
+    readonly attribute unsigned long extentOffset;
 };
 

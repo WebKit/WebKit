@@ -72,14 +72,16 @@ public:
     // For creating legacy editing positions: (Anchor type will be determined from editingIgnoresContent(node))
     class LegacyEditingOffset {
     public:
-        int value() const { return m_offset; }
+        unsigned value() const { return m_offset; }
 
     private:
-        explicit LegacyEditingOffset(int offset) : m_offset(offset) { }
+        explicit LegacyEditingOffset(unsigned offset)
+            : m_offset(offset)
+        { }
 
-        friend Position createLegacyEditingPosition(PassRefPtr<Node>, int offset);
+        friend Position createLegacyEditingPosition(PassRefPtr<Node>, unsigned offset);
 
-        int m_offset;
+        unsigned m_offset;
     };
     WEBCORE_EXPORT Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset);
 
@@ -228,7 +230,7 @@ private:
     bool m_isLegacyEditingPosition : 1;
 };
 
-inline Position createLegacyEditingPosition(PassRefPtr<Node> node, int offset)
+inline Position createLegacyEditingPosition(PassRefPtr<Node> node, unsigned offset)
 {
     return Position(node, Position::LegacyEditingOffset(offset));
 }

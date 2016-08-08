@@ -312,10 +312,10 @@ shouldBe("nonNumericPolicy('document.createRange().isPointInRange(document, x)')
 
 shouldBe("nonNumericPolicy('getSelection().collapse(document, x)')", "'any type allowed'");
 shouldBe("nonNumericPolicy('getSelection().setBaseAndExtent(document, x, document, 0)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('getSelection().setBaseAndExtent(document, 0, document, x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('getSelection().setBaseAndExtent(document, 0, document, x)')", "'any type allowed (but not omitted)'");
 shouldBe("nonNumericPolicy('getSelection().setPosition(document, x)')", "'any type allowed'");
 shouldBe("nonNumericPolicy('getSelection().extend(document, x)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('getSelection().getRangeAt(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('getSelection().getRangeAt(x)')", "'any type allowed (but not omitted)'");
 
 // SQLResultSetRowList
 

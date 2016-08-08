@@ -102,7 +102,7 @@ function setSelection(node)
     var textNode = node.firstChild;
     if (textNode.nodeType != Node.TEXT_NODE)
         throw "Wrong node type: " + textNode;
-    execSetSelectionCommand(textNode, 0, null);
+    execSetSelectionCommand(textNode, 0, textNode);
 }
 
 function verifyTextSelection(startNode, startOffset, endNode, endOffset)

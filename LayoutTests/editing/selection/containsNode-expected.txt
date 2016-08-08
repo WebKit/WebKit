@@ -1,6 +1,4 @@
 foobarbaz
-Success: s.containsNode(null, false) is false.
-Success: s.containsNode(null, true) is false.
 Success: s.containsNode(testDiv, false) is false.
 Success: s.containsNode(testDiv, true) is true.
 Success: s.containsNode(span1, false) is false.

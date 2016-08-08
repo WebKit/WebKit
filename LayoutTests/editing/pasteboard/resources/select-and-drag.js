@@ -24,5 +24,5 @@ function dragSelectionToTarget(startSelectionElement, targetElement) {
     eventSender.mouseMoveTo(targetx, targety);
     eventSender.mouseUp();
 
-    window.getSelection().collapse();
+    window.getSelection().collapse(null);
 }

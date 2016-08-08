@@ -14,7 +14,7 @@
     var s = window.getSelection();
     var p1 = document.getElementById("item1");
     var p2 = document.getElementById("item2");
-    s.setBaseAndExtent(p1, 0, p2);
+    s.setBaseAndExtent(p1, 0, p2, 0);
     document.execCommand("Indent");
 
     // This code doesn't do anything initially, but the code below creates an iframe

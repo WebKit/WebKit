@@ -50,7 +50,7 @@ var ed = document.getElementById("editable");
 var selection = window.getSelection();
 selection.selectAllChildren(ed);
 document.execCommand("FormatBlock", false, "nav");
-selection.collapse();
+selection.collapse(null);
 ed.blur();
 
 var tests = document.getElementById("testArea");

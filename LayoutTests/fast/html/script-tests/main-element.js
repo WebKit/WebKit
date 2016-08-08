@@ -35,7 +35,7 @@ editable.contentEditable = true;
 var selection = window.getSelection();
 selection.selectAllChildren(editable);
 document.execCommand('FormatBlock', false, 'main');
-selection.collapse();
+selection.collapse(null);
 shouldBe('document.getElementById("span2").parentNode.nodeName', '"MAIN"');
 document.body.removeChild(editable);
 

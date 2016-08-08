@@ -57,11 +57,11 @@ namespace WebCore {
         // These methods return the valid equivalents of internal editing positions.
         Node* baseNode() const;
         Node* extentNode() const;
-        int baseOffset() const;
-        int extentOffset() const;
+        unsigned baseOffset() const;
+        unsigned extentOffset() const;
         String type() const;
-        void setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset, ExceptionCode&);
-        void setPosition(Node*, int offset, ExceptionCode&);
+        void setBaseAndExtent(Node* baseNode, unsigned baseOffset, Node* extentNode, unsigned extentOffset);
+        void setPosition(Node*, unsigned offset);
         void modify(const String& alter, const String& direction, const String& granularity);
 
         // Mozilla Selection Object API
@@ -71,21 +71,21 @@ namespace WebCore {
         // expansion.
         // These methods return the valid equivalents of internal editing positions.
         Node* anchorNode() const;
-        int anchorOffset() const;
+        unsigned anchorOffset() const;
         Node* focusNode() const;
-        int focusOffset() const;
+        unsigned focusOffset() const;
         bool isCollapsed() const;
-        int rangeCount() const;
-        void collapse(Node*, int offset, ExceptionCode&);
+        unsigned rangeCount() const;
+        void collapse(Node*, unsigned offset);
         void collapseToEnd(ExceptionCode&);
         void collapseToStart(ExceptionCode&);
-        void extend(Node&, int offset, ExceptionCode&);
-        RefPtr<Range> getRangeAt(int, ExceptionCode&);
+        void extend(Node&, unsigned offset, ExceptionCode&);
+        RefPtr<Range> getRangeAt(unsigned, ExceptionCode&);
         void removeAllRanges();
-        void addRange(Range*);
+        void addRange(Range&);
         void deleteFromDocument();
-        bool containsNode(Node*, bool partlyContained) const;
-        void selectAllChildren(Node*, ExceptionCode&);
+        bool containsNode(Node&, bool partlyContained) const;
+        void selectAllChildren(Node&);
 
         String toString();
 
@@ -101,7 +101,7 @@ namespace WebCore {
         const VisibleSelection& visibleSelection() const;
 
         Node* shadowAdjustedNode(const Position&) const;
-        int shadowAdjustedOffset(const Position&) const;
+        unsigned shadowAdjustedOffset(const Position&) const;
 
         bool isValidForPosition(Node*) const;
     };

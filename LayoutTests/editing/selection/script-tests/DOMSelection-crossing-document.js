@@ -22,8 +22,8 @@ var mainSel = window.getSelection();
 
 function clear()
 {
-    foreignSel.setBaseAndExtent(null, 0, null, 0);
-    mainSel.setBaseAndExtent(null, 0, null, 0);
+    foreignSel.removeAllRanges();
+    mainSel.removeAllRanges();
 }
 
 mainSel.setBaseAndExtent(foreignElement, 0, foreignElement, 0);
