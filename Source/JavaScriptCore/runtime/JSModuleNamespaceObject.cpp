@@ -98,31 +98,6 @@ void JSModuleNamespaceObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_moduleRecord);
 }
 
-static EncodedJSValue callbackGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
-{
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(JSValue::decode(thisValue));
-    JSModuleRecord* moduleRecord = thisObject->moduleRecord();
-
-    JSModuleRecord::Resolution resolution = moduleRecord->resolveExport(exec, Identifier::fromUid(exec, propertyName.uid()));
-    ASSERT(resolution.type != JSModuleRecord::Resolution::Type::NotFound && resolution.type != JSModuleRecord::Resolution::Type::Ambiguous);
-
-    JSModuleRecord* targetModule = resolution.moduleRecord;
-    JSModuleEnvironment* targetEnvironment = targetModule->moduleEnvironment();
-
-    PropertySlot trampolineSlot(targetEnvironment, PropertySlot::InternalMethodType::Get);
-    if (!targetEnvironment->methodTable(exec->vm())->getOwnPropertySlot(targetEnvironment, exec, resolution.localName, trampolineSlot))
-        return JSValue::encode(jsUndefined());
-
-    JSValue value = trampolineSlot.getValue(exec, propertyName);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    // If the value is filled with TDZ value, throw a reference error.
-    if (!value)
-        return throwVMError(exec, createTDZError(exec));
-    return JSValue::encode(value);
-}
-
 bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getownproperty-p
@@ -135,21 +110,54 @@ bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec
     if (propertyName.isSymbol())
         return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
+    // FIXME: Add IC for module namespace object.
+    // https://bugs.webkit.org/show_bug.cgi?id=160590
+    slot.disableCaching();
+    slot.setIsTaintedByOpaqueObject();
     if (!thisObject->m_exports.contains(propertyName.uid()))
         return false;
 
-    // https://esdiscuss.org/topic/march-24-meeting-notes
-    // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getownproperty-p
-    // section 9.4.6.5, step 6.
-    // This property will be seen as writable: true, enumerable:true, configurable: false.
-    // But this does not mean that this property is writable by users.
-    //
-    // In JSC, getOwnPropertySlot is not designed to throw any errors. But looking up the value from the module
-    // environment may throw error if the loaded variable is the TDZ value. To workaround, we set the custom
-    // getter function. When it is called, it looks up the variable and throws an error if the variable is not
-    // initialized.
-    slot.setCustom(thisObject, DontDelete, callbackGetter);
-    return true;
+    switch (slot.internalMethodType()) {
+    case PropertySlot::InternalMethodType::Get:
+    case PropertySlot::InternalMethodType::GetOwnProperty: {
+        JSModuleRecord* moduleRecord = thisObject->moduleRecord();
+
+        JSModuleRecord::Resolution resolution = moduleRecord->resolveExport(exec, Identifier::fromUid(exec, propertyName.uid()));
+        ASSERT(resolution.type != JSModuleRecord::Resolution::Type::NotFound && resolution.type != JSModuleRecord::Resolution::Type::Ambiguous);
+
+        JSModuleRecord* targetModule = resolution.moduleRecord;
+        JSModuleEnvironment* targetEnvironment = targetModule->moduleEnvironment();
+
+        PropertySlot trampolineSlot(targetEnvironment, PropertySlot::InternalMethodType::Get);
+        bool found = targetEnvironment->methodTable(exec->vm())->getOwnPropertySlot(targetEnvironment, exec, resolution.localName, trampolineSlot);
+        ASSERT_UNUSED(found, found);
+
+        JSValue value = trampolineSlot.getValue(exec, propertyName);
+        ASSERT(!exec->hadException());
+
+        // If the value is filled with TDZ value, throw a reference error.
+        if (!value) {
+            throwVMError(exec, createTDZError(exec));
+            return false;
+        }
+
+        slot.setValue(thisObject, DontDelete, value);
+        return true;
+    }
+    case PropertySlot::InternalMethodType::HasProperty: {
+        // Do not perform [[Get]] for [[HasProperty]].
+        // [[Get]] / [[GetOwnProperty]] onto namespace object could throw an error while [[HasProperty]] just returns true here.
+        // https://tc39.github.io/ecma262/#sec-module-namespace-exotic-objects-hasproperty-p
+        slot.setValue(thisObject, DontDelete, jsUndefined());
+        return true;
+    }
+
+    case PropertySlot::InternalMethodType::VMInquiry:
+        return false;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool JSModuleNamespaceObject::put(JSCell*, ExecState* exec, PropertyName, JSValue, PutPropertySlot& slot)

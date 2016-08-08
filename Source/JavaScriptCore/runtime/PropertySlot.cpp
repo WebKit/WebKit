@@ -44,7 +44,7 @@ JSValue PropertySlot::customGetter(ExecState* exec, PropertyName propertyName) c
 JSValue PropertySlot::getPureResult() const
 {
     JSValue result;
-    if (isTaintedByProxy())
+    if (isTaintedByOpaqueObject())
         result = jsNull();
     else if (isCacheableValue())
         result = JSValue::decode(m_data.value);

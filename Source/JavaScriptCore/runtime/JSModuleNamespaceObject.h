@@ -36,7 +36,7 @@ class JSModuleRecord;
 class JSModuleNamespaceObject : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | GetOwnPropertySlotIsImpureForPropertyAbsence;
 
     static JSModuleNamespaceObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSModuleRecord* moduleRecord, const IdentifierSet& exports)
     {

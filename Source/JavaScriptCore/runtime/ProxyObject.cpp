@@ -344,7 +344,7 @@ bool ProxyObject::getOwnPropertySlotCommon(ExecState* exec, PropertyName propert
         return false;
     }
     slot.disableCaching();
-    slot.setIsTaintedByProxy();
+    slot.setIsTaintedByOpaqueObject();
     switch (slot.internalMethodType()) {
     case PropertySlot::InternalMethodType::Get:
         return performGet(exec, propertyName, slot);

@@ -152,7 +152,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
             length = jsCast<JSArrayBufferView*>(object)->length();
         else {
             // This getPropertySlot operation should not be observed by the Proxy.
-            // So we use VMInquiry. And purge the proxy case by isTaintedByProxy() guard.
+            // So we use VMInquiry. And purge the opaque object cases (proxy and namespace object) by isTaintedByOpaqueObject() guard.
             PropertySlot lengthSlot(object, PropertySlot::InternalMethodType::VMInquiry);
             object->getPropertySlot(exec, vm.propertyNames->length, lengthSlot);
 
@@ -168,7 +168,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
 
             if (!iteratorFunc.isUndefined()
                 && (iteratorFunc != object->globalObject()->arrayProtoValuesFunction()
-                    || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByProxy()
+                    || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
                     || hasAnyArrayStorage(object->indexingType()))) {
 
                     CallData callData;

@@ -194,7 +194,7 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState* exec, Struct
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
 
     baseValue.getPropertySlot(exec, ident, slot);
-    if (stubInfo->considerCaching(baseValue.structureOrNull()) && !slot.isTaintedByProxy() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
+    if (stubInfo->considerCaching(baseValue.structureOrNull()) && !slot.isTaintedByOpaqueObject() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
         repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Pure);
 
     return JSValue::encode(slot.getPureResult());

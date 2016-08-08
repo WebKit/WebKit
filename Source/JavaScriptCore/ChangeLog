@@ -1,3 +1,49 @@
+2016-08-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Module namespace object should not allow unset IC
+        https://bugs.webkit.org/show_bug.cgi?id=160553
+
+        Reviewed by Saam Barati.
+
+        Previously, module namespace object accidentally allow "unset IC". But this "unsetness" does not rely on
+        the structure. We should disable inline caching onto the namespace object. Once it is needed, we should
+        create the special caching for namespace object like the following: it should be similar to monomorphic IC,
+        but it caches the object itself instead of the structure. It checks the object itself (And in DFG, it should be
+        CheckCell) and loads the value from the target module environment directly[1].
+
+        And this patch also set setIsTaintedByProxy for the module namespace object to notify to the caller that
+        this object has impure ::getOwnPropertySlot. Then this function is now renamed to setIsTaintedByOpaqueObject.
+
+        We drop the hack in JSModuleNamespaceObject::getOwnPropertySlot since we already introduced InternalMethodType
+        for ProxyObject. Previously we cannot distinguish ::HasProperty and ::GetOwnProperty. So not to throw any
+        errors for ::HasProperty case, we used slot.setCustom to delay the observable operation.
+        But, this hack lacks the support for hasOwnProperty: hasOwnProperty uses [[GetOwnProperty]], so it should throw an error.
+        However the previous implementation does not throw an error since the delayed observable part (custom function part) is
+        skipped in hasOwnProperty implementation. We now remove this custom property hack and fix the corresponding failure
+        in test262.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=160590
+
+        * jit/JITOperations.cpp:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlot):
+        (JSC::callbackGetter): Deleted.
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::getPureResult):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::setIsTaintedByOpaqueObject):
+        (JSC::PropertySlot::isTaintedByOpaqueObject):
+        (JSC::PropertySlot::setIsTaintedByProxy): Deleted.
+        (JSC::PropertySlot::isTaintedByProxy): Deleted.
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+
 2016-08-05  Keith Miller  <keith_miller@apple.com>
 
         Add LEBDecoder and tests
