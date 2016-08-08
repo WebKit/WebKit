@@ -1,5 +1,18 @@
 2016-08-07  Chris Dumez  <cdumez@apple.com>
 
+        Node.baseURI should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=160649
+
+        Reviewed by Darin Adler.
+
+        Drop outdated DOM test.
+
+        * dom/xhtml/level3/core/nodegetbaseuri02-expected.txt: Removed.
+        * dom/xhtml/level3/core/nodegetbaseuri02.js: Removed.
+        * dom/xhtml/level3/core/nodegetbaseuri02.xhtml: Removed.
+
+2016-08-07  Chris Dumez  <cdumez@apple.com>
+
         Drop SVGDocument as per the SVG2 specification
         https://bugs.webkit.org/show_bug.cgi?id=160361
 

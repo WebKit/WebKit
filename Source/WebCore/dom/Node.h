@@ -161,7 +161,7 @@ public:
     Node* pseudoAwareFirstChild() const;
     Node* pseudoAwareLastChild() const;
 
-    URL baseURI() const;
+    const URL& baseURI() const;
     
     void getSubresourceURLs(ListHashSet<URL>&) const;
 

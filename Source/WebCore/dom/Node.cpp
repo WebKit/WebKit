@@ -1202,9 +1202,10 @@ Document* Node::ownerDocument() const
     return document == this ? nullptr : document;
 }
 
-URL Node::baseURI() const
+const URL& Node::baseURI() const
 {
-    return document().baseURL();
+    auto& url = document().baseURL();
+    return url.isNull() ? blankURL() : url;
 }
 
 bool Node::isEqualNode(Node* other) const

@@ -51,7 +51,7 @@ void SVGImageLoader::dispatchLoadEvent()
 String SVGImageLoader::sourceURI(const AtomicString& attribute) const
 {
     URL base = element().baseURI();
-    if (base.isValid())
+    if (base != blankURL())
         return URL(base, stripLeadingAndTrailingHTMLSpaces(attribute)).string();
     return element().document().completeURL(stripLeadingAndTrailingHTMLSpaces(attribute));
 }

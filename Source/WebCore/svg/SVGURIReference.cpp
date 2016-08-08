@@ -45,7 +45,7 @@ String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const
     if (start == notFound)
         return emptyString();
 
-    URL base = start ? URL(document.baseURI(), url.substring(0, start)) : document.baseURI();
+    URL base = start ? URL(document.baseURL(), url.substring(0, start)) : document.baseURL();
     String fragmentIdentifier = url.substring(start);
     URL kurl(base, fragmentIdentifier);
     if (equalIgnoringFragmentIdentifier(kurl, document.url()))
@@ -64,11 +64,11 @@ static inline URL urlFromIRIStringWithFragmentIdentifier(const String& url, cons
     // Exclude the '#' character when determining the fragmentIdentifier.
     fragmentIdentifier = url.substring(startOfFragmentIdentifier + 1);
     if (startOfFragmentIdentifier) {
-        URL base(document.baseURI(), url.substring(0, startOfFragmentIdentifier));
+        URL base(document.baseURL(), url.substring(0, startOfFragmentIdentifier));
         return URL(base, url.substring(startOfFragmentIdentifier));
     }
 
-    return URL(document.baseURI(), url.substring(startOfFragmentIdentifier));
+    return URL(document.baseURL(), url.substring(startOfFragmentIdentifier));
 }
 
 Element* SVGURIReference::targetElementFromIRIString(const String& iri, const Document& document, String* fragmentIdentifier, const Document* externalDocument)

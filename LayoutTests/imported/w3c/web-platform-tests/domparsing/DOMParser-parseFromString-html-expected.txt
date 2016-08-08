@@ -5,7 +5,7 @@ PASS characterSet
 PASS inputEncoding 
 PASS charset 
 FAIL URL value assert_equals: The document must have a URL value equal to the URL of the active document. expected "http://localhost:8800/domparsing/DOMParser-parseFromString-html.html" but got "about:blank"
-FAIL baseURI value assert_equals: expected (string) "http://localhost:8800/domparsing/DOMParser-parseFromString-html.html" but got (object) null
+FAIL baseURI value assert_equals: expected "http://localhost:8800/domparsing/DOMParser-parseFromString-html.html" but got "about:blank"
 PASS Location value 
 PASS DOMParser parses HTML tag soup with no problems 
 PASS DOMParser throws on an invalid enum value 

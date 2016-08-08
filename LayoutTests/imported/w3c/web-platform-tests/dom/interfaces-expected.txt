@@ -342,7 +342,7 @@ PASS Node interface: new Document() must inherit property "DOCUMENT_FRAGMENT_NOD
 PASS Node interface: new Document() must inherit property "NOTATION_NODE" with the proper type (11) 
 PASS Node interface: new Document() must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: new Document() must inherit property "nodeName" with the proper type (13) 
-FAIL Node interface: new Document() must inherit property "baseURI" with the proper type (14) assert_equals: expected "string" but got "object"
+PASS Node interface: new Document() must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: new Document() must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: new Document() must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: new Document() must inherit property "parentNode" with the proper type (17) 
@@ -470,7 +470,7 @@ PASS Node interface: xmlDoc must inherit property "DOCUMENT_FRAGMENT_NODE" with 
 PASS Node interface: xmlDoc must inherit property "NOTATION_NODE" with the proper type (11) 
 PASS Node interface: xmlDoc must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: xmlDoc must inherit property "nodeName" with the proper type (13) 
-FAIL Node interface: xmlDoc must inherit property "baseURI" with the proper type (14) assert_equals: expected "string" but got "object"
+PASS Node interface: xmlDoc must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: xmlDoc must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: xmlDoc must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: xmlDoc must inherit property "parentNode" with the proper type (17) 
@@ -875,7 +875,7 @@ PASS Node interface: element must inherit property "DOCUMENT_FRAGMENT_NODE" with
 PASS Node interface: element must inherit property "NOTATION_NODE" with the proper type (11) 
 PASS Node interface: element must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: element must inherit property "nodeName" with the proper type (13) 
-FAIL Node interface: element must inherit property "baseURI" with the proper type (14) assert_equals: expected "string" but got "object"
+PASS Node interface: element must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: element must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: element must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: element must inherit property "parentNode" with the proper type (17) 
@@ -1130,7 +1130,7 @@ PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inher
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "NOTATION_NODE" with the proper type (11) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeName" with the proper type (13) 
-FAIL Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "baseURI" with the proper type (14) assert_equals: expected "string" but got "object"
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentNode" with the proper type (17) 
