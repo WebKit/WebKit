@@ -2000,11 +2000,6 @@
             "marywu"
          ]
       },
-      "Matt Baker" : {
-         "emails" : [
-            "mattbaker@apple.com"
-         ]
-      },
       "Matt Daiter" : {
          "emails" : [
             "mdaiter@apple.com"
@@ -4653,6 +4648,15 @@
          "expertise" : "The WebKitGTK+ Port, Cairo graphics backend, soup HTTP backend",
          "nicks" : [
             "mrobinson"
+         ]
+      },
+      "Matt Baker" : {
+         "emails" : [
+            "mattbaker@apple.com"
+         ],
+         "expertise" : "Web Inspector",
+         "nicks" : [
+            "mattbaker"
          ]
       },
       "Michael Catanzaro" : {
