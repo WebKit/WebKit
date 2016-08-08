@@ -22,12 +22,15 @@
 #include "ConvertToUTF8String.h"
 #include "Document.h"
 #include "Element.h"
+#include "ExceptionCode.h"
+#include "ExceptionCodeDescription.h"
 #include "JSMainThreadExecState.h"
 #include "HTMLCollection.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMHTMLTitleElement.h"
 #include "WebKitDOMNodeListPrivate.h"
+#include "WebKitDOMTextPrivate.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -152,6 +155,23 @@ gchar* webkit_dom_document_get_default_charset(WebKitDOMDocument* self)
     WebCore::JSMainThreadNullState state;
     return convertToUTF8String(WebKit::core(self)->defaultCharsetForBindings());
 }
+
+WebKitDOMText* webkit_dom_text_replace_whole_text(WebKitDOMText* self, const gchar* content, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEXT(self), nullptr);
+    g_return_val_if_fail(content, nullptr);
+    g_return_val_if_fail(!error || !*error, nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    RefPtr<WebCore::Text> gobjectResult = WTF::getPtr(WebKit::core(self)->replaceWholeText(WTF::String::fromUTF8(content), ec));
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc(ec);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    return WebKit::kit(gobjectResult.get());
+}
+
 
 G_DEFINE_TYPE(WebKitDOMEntityReference, webkit_dom_entity_reference, WEBKIT_DOM_TYPE_NODE)
 
