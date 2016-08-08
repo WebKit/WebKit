@@ -761,7 +761,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 
 #if ENABLE(GAMEPAD)
     if (m_processesUsingGamepads.contains(process))
-        processStoppedUsingGamepads(process);
+        processStoppedUsingGamepads(*process);
 #endif
 }
 
@@ -1246,33 +1246,37 @@ void WebProcessPool::didGetStatistics(const StatisticsData& statisticsData, uint
 
 void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
 {
-    auto* webProcessProxy = WebProcessProxy::fromConnection(&connection);
-    if (!webProcessProxy)
+    auto* proxy = WebProcessProxy::fromConnection(&connection);
+    if (!proxy)
         return;
 
-    ASSERT(!m_processesUsingGamepads.contains(webProcessProxy));
-    m_processesUsingGamepads.add(webProcessProxy);
+    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.isEmpty();
 
-    if (m_processesUsingGamepads.size() == 1)
+    ASSERT(!m_processesUsingGamepads.contains(proxy));
+    m_processesUsingGamepads.add(proxy);
+
+    if (!wereAnyProcessesUsingGamepads)
         UIGamepadProvider::singleton().processPoolStartedUsingGamepads(*this);
 }
 
 void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection)
 {
-    auto* webProcessProxy = WebProcessProxy::fromConnection(&connection);
-    if (!webProcessProxy)
+    auto* proxy = WebProcessProxy::fromConnection(&connection);
+    if (!proxy)
         return;
 
-    ASSERT(m_processesUsingGamepads.contains(webProcessProxy));
-    processStoppedUsingGamepads(webProcessProxy);
+    ASSERT(m_processesUsingGamepads.contains(proxy));
+    processStoppedUsingGamepads(*proxy);
 }
 
-void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy* webProcessProxy)
+void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy& process)
 {
-    ASSERT(m_processesUsingGamepads.contains(webProcessProxy));
-    m_processesUsingGamepads.remove(webProcessProxy);
+    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.isEmpty();
 
-    if (m_processesUsingGamepads.isEmpty())
+    ASSERT(m_processesUsingGamepads.contains(&process));
+    m_processesUsingGamepads.remove(&process);
+
+    if (wereAnyProcessesUsingGamepads && m_processesUsingGamepads.isEmpty())
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 }
 

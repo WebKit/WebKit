@@ -65,19 +65,23 @@ void UIGamepadProvider::platformGamepadInputActivity()
 
 void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
 {
+    bool wereAnyProcessPoolsUsingGamepads = !m_processPoolsUsingGamepads.isEmpty();
+
     ASSERT(!m_processPoolsUsingGamepads.contains(&pool));
     m_processPoolsUsingGamepads.add(&pool);
 
-    if (m_processPoolsUsingGamepads.size() == 1)
+    if (!wereAnyProcessPoolsUsingGamepads)
         platformStartMonitoringGamepads();
 }
 
 void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 {
+    bool wereAnyProcessPoolsUsingGamepads = !m_processPoolsUsingGamepads.isEmpty();
+
     ASSERT(m_processPoolsUsingGamepads.contains(&pool));
     m_processPoolsUsingGamepads.remove(&pool);
 
-    if (m_processPoolsUsingGamepads.isEmpty())
+    if (wereAnyProcessPoolsUsingGamepads && m_processPoolsUsingGamepads.isEmpty())
         platformStopMonitoringGamepads();
 }
 

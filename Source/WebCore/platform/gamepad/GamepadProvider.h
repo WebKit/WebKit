@@ -41,8 +41,8 @@ public:
     WEBCORE_EXPORT static GamepadProvider& singleton();
     WEBCORE_EXPORT static void setSharedProvider(GamepadProvider&);
 
-    virtual void startMonitoringGamepads(GamepadProviderClient*) = 0;
-    virtual void stopMonitoringGamepads(GamepadProviderClient*) = 0;
+    virtual void startMonitoringGamepads(GamepadProviderClient&) = 0;
+    virtual void stopMonitoringGamepads(GamepadProviderClient&) = 0;
     virtual const Vector<PlatformGamepad*>& platformGamepads() = 0;
 };
 

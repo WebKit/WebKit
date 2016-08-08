@@ -143,21 +143,21 @@ void HIDGamepadProvider::closeAndUnscheduleManager()
     m_connectionDelayTimer.stop();
 }
 
-void HIDGamepadProvider::startMonitoringGamepads(GamepadProviderClient* client)
+void HIDGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {
     bool shouldOpenAndScheduleManager = m_clients.isEmpty();
 
-    ASSERT(!m_clients.contains(client));
-    m_clients.add(client);
+    ASSERT(!m_clients.contains(&client));
+    m_clients.add(&client);
 
     if (shouldOpenAndScheduleManager)
         openAndScheduleManager();
 }
-void HIDGamepadProvider::stopMonitoringGamepads(GamepadProviderClient* client)
+void HIDGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
-    ASSERT(m_clients.contains(client));
+    ASSERT(m_clients.contains(&client));
 
-    bool shouldCloseAndUnscheduleManager = m_clients.remove(client) && m_clients.isEmpty();
+    bool shouldCloseAndUnscheduleManager = m_clients.remove(&client) && m_clients.isEmpty();
 
     if (shouldCloseAndUnscheduleManager)
         closeAndUnscheduleManager();

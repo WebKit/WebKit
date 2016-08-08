@@ -29,21 +29,23 @@
 
 #include <WebCore/GamepadProvider.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
 class WebGamepadProvider : public WebCore::GamepadProvider {
 public:
-    WebGamepadProvider();
-    ~WebGamepadProvider() final;
-
     static WebGamepadProvider& singleton();
 
-    void startMonitoringGamepads(WebCore::GamepadProviderClient*) final;
-    void stopMonitoringGamepads(WebCore::GamepadProviderClient*) final;
+private:
+    friend NeverDestroyed<WebGamepadProvider>;
+    WebGamepadProvider();
+    ~WebGamepadProvider() final;
+    
+    void startMonitoringGamepads(WebCore::GamepadProviderClient&) final;
+    void stopMonitoringGamepads(WebCore::GamepadProviderClient&) final;
     const Vector<WebCore::PlatformGamepad*>& platformGamepads() final;
 
-private:
     HashSet<WebCore::GamepadProviderClient*> m_clients;
 };
 

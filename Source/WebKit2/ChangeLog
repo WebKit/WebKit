@@ -1,3 +1,31 @@
+2016-08-08  Brady Eidson  <beidson@apple.com>
+
+        Addressing late review feedback in bug 160605
+        https://bugs.webkit.org/show_bug.cgi?id=160605
+
+        Reviewed by Darin's suggestions.
+
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::processPoolStartedUsingGamepads):
+        (WebKit::UIGamepadProvider::processPoolStoppedUsingGamepads):
+        * UIProcess/Gamepad/UIGamepadProvider.h:
+        
+        * UIProcess/Gamepad/mac/UIGamepadProviderHID.cpp:
+        (WebKit::UIGamepadProvider::platformStartMonitoringGamepads):
+        (WebKit::UIGamepadProvider::platformStopMonitoringGamepads):
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::startedUsingGamepads):
+        (WebKit::WebProcessPool::stoppedUsingGamepads):
+        (WebKit::WebProcessPool::processStoppedUsingGamepads):
+        * UIProcess/WebProcessPool.h:
+        
+        * WebProcess/Gamepad/WebGamepadProvider.cpp:
+        (WebKit::WebGamepadProvider::startMonitoringGamepads):
+        (WebKit::WebGamepadProvider::stopMonitoringGamepads):
+        * WebProcess/Gamepad/WebGamepadProvider.h:
+
 2016-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bad performance in accelerated compositing mode with the modesetting intel driver and DRI3 enabled

@@ -37,13 +37,13 @@ namespace WebKit {
 void UIGamepadProvider::platformStartMonitoringGamepads()
 {
     ASSERT(!m_processPoolsUsingGamepads.isEmpty());
-    HIDGamepadProvider::singleton().startMonitoringGamepads(this);
+    HIDGamepadProvider::singleton().startMonitoringGamepads(*this);
 }
 
 void UIGamepadProvider::platformStopMonitoringGamepads()
 {
     ASSERT(m_processPoolsUsingGamepads.isEmpty());
-    HIDGamepadProvider::singleton().stopMonitoringGamepads(this);
+    HIDGamepadProvider::singleton().stopMonitoringGamepads(*this);
 }
 
 }

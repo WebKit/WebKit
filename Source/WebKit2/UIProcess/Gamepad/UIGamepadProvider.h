@@ -27,9 +27,9 @@
 
 #if ENABLE(GAMEPAD)
 
-#include <WebCore/GamepadProvider.h>
 #include <WebCore/GamepadProviderClient.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -37,21 +37,22 @@ class WebProcessPool;
 
 class UIGamepadProvider : public WebCore::GamepadProviderClient {
 public:
-    UIGamepadProvider();
-    ~UIGamepadProvider() final;
-
     static UIGamepadProvider& singleton();
-
-    void platformGamepadConnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadInputActivity() final;
 
     void processPoolStartedUsingGamepads(WebProcessPool&);
     void processPoolStoppedUsingGamepads(WebProcessPool&);
 
 private:
+    friend NeverDestroyed<UIGamepadProvider>;
+    UIGamepadProvider();
+    ~UIGamepadProvider() final;
+
     void platformStartMonitoringGamepads();
     void platformStopMonitoringGamepads();
+
+    void platformGamepadConnected(WebCore::PlatformGamepad&) final;
+    void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
+    void platformGamepadInputActivity() final;
 
     HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
 };

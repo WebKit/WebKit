@@ -50,21 +50,25 @@ WebGamepadProvider::~WebGamepadProvider()
 {
 }
 
-void WebGamepadProvider::startMonitoringGamepads(GamepadProviderClient* client)
+void WebGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {
-    ASSERT(!m_clients.contains(client));
-    m_clients.add(client);
+    bool processHadGamepadClients = !m_clients.isEmpty();
 
-    if (m_clients.size() == 1)
+    ASSERT(!m_clients.contains(&client));
+    m_clients.add(&client);
+
+    if (!processHadGamepadClients)
         WebProcess::singleton().send(Messages::WebProcessPool::StartedUsingGamepads(), 0);
 }
 
-void WebGamepadProvider::stopMonitoringGamepads(GamepadProviderClient* client)
+void WebGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
-    ASSERT(m_clients.contains(client));
-    m_clients.remove(client);
+    bool processHadGamepadClients = !m_clients.isEmpty();
 
-    if (m_clients.isEmpty())
+    ASSERT(m_clients.contains(&client));
+    m_clients.remove(&client);
+
+    if (processHadGamepadClients && m_clients.isEmpty())
         WebProcess::singleton().send(Messages::WebProcessPool::StoppedUsingGamepads(), 0);
 }
 

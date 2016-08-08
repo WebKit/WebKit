@@ -391,9 +391,7 @@ private:
     void startedUsingGamepads(IPC::Connection&);
     void stoppedUsingGamepads(IPC::Connection&);
 
-    void processStoppedUsingGamepads(WebProcessProxy*);
-
-    HashSet<WebProcessProxy*> m_processesUsingGamepads;
+    void processStoppedUsingGamepads(WebProcessProxy&);
 #endif
 
     // IPC::MessageReceiver.
@@ -547,6 +545,10 @@ private:
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     HashMap<String, HashMap<String, HashMap<String, uint8_t>>> m_pluginLoadClientPolicies;
+#endif
+
+#if ENABLE(GAMEPAD)
+    HashSet<WebProcessProxy*> m_processesUsingGamepads;
 #endif
 };
 

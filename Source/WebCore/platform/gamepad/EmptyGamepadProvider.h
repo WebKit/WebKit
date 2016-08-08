@@ -35,8 +35,9 @@ class EmptyGamepadProvider : public GamepadProvider {
 public:
     ~EmptyGamepadProvider() final { }
 
-    void startMonitoringGamepads(GamepadProviderClient*) final;
-    void stopMonitoringGamepads(GamepadProviderClient*) final;
+private:
+    void startMonitoringGamepads(GamepadProviderClient&) final;
+    void stopMonitoringGamepads(GamepadProviderClient&) final;
     const Vector<PlatformGamepad*>& platformGamepads() final;
 };
 

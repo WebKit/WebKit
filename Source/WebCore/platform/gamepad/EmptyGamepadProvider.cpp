@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-void EmptyGamepadProvider::startMonitoringGamepads(GamepadProviderClient*)
+void EmptyGamepadProvider::startMonitoringGamepads(GamepadProviderClient&)
 {
 }
 
-void EmptyGamepadProvider::stopMonitoringGamepads(GamepadProviderClient* )
+void EmptyGamepadProvider::stopMonitoringGamepads(GamepadProviderClient&)
 {
 }
 
