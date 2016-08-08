@@ -87,7 +87,7 @@
 
     [ImplementedAs=bindingsOffsetParent] readonly attribute Element offsetParent;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     void focus();
     void blur();
 #endif
@@ -123,11 +123,6 @@
     // CSSOM View Module API
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // Objective-C extensions
-    readonly attribute DOMString innerText;
 #endif
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API

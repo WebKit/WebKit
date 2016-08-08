@@ -25,13 +25,7 @@
     JSCustomHeader,
     JSCustomMarkFunction,
     JSCustomPushEventHandlerScope,
-    ObjCPolymorphic,
-] interface Node
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    : Object, EventTarget
-#else
-    : EventTarget
-#endif
+] interface Node : EventTarget
  {
     // NodeType
     const unsigned short      ELEMENT_NODE                   = 1;
@@ -76,18 +70,12 @@
     // Introduced in DOM Level 2:
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-    [ObjCLegacyUnnamedParameters, ImplementedAs=isSupportedForBindings] boolean isSupported(optional DOMString feature, optional DOMString version);
+    [ImplementedAs=isSupportedForBindings] boolean isSupported(optional DOMString feature, optional DOMString version);
 #endif
 
     readonly attribute DOMString?        namespaceURI;
     [SetterRaisesException] attribute DOMString? prefix;
     readonly attribute DOMString?        localName;
-
-#if defined(LANGUAGE_OBJECTIVE_C)
-    readonly attribute NamedNodeMap     attributes;
-    boolean            hasAttributes();
-#endif
-
 
     // Introduced in DOM Level 3:
 
@@ -120,12 +108,5 @@
 
     // IE extensions
     readonly attribute Element          parentElement;
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // Objective-C extensions
-    readonly attribute boolean          isContentEditable;
-
-    void inspect();
-#endif
 };
 

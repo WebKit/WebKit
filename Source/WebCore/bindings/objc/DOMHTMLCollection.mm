@@ -75,8 +75,11 @@
 
 - (DOMNodeList *)tags:(NSString *)name
 {
+    if (!name)
+        return nullptr;
+
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->tags(name)));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->ownerNode().getElementsByTagName(name))));
 }
 
 @end

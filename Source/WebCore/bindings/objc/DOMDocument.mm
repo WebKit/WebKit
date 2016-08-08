@@ -671,14 +671,12 @@
 
 - (BOOL)execCommand:(NSString *)command userInterface:(BOOL)userInterface
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->execCommand(command, userInterface);
+    return [self execCommand:command userInterface:userInterface value:nullptr];
 }
 
 - (BOOL)execCommand:(NSString *)command
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->execCommand(command);
+    return [self execCommand:command userInterface:NO value:nullptr];
 }
 
 - (BOOL)queryCommandEnabled:(NSString *)command
@@ -748,11 +746,7 @@
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
 {
-    WebCore::JSMainThreadNullState state;
-    WebCore::DOMWindow* dv = IMPL->defaultView();
-    if (!dv)
-        return nil;
-    return kit(WTF::getPtr(dv->getMatchedCSSRules(core(element), pseudoElement)));
+    return [self getMatchedCSSRules:element pseudoElement:pseudoElement authorOnly:YES];
 }
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement authorOnly:(BOOL)authorOnly

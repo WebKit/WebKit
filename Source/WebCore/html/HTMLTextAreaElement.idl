@@ -29,7 +29,7 @@ interface HTMLTextAreaElement : HTMLElement {
     [Reflect] attribute DOMString placeholder;
     [Reflect] attribute boolean readOnly;
     [Reflect] attribute boolean required;
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     attribute long rows;
     attribute long cols;
 #else
@@ -62,21 +62,13 @@ interface HTMLTextAreaElement : HTMLElement {
                         unsigned long end,
                         optional DOMString selectionMode);
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    void setSelectionRange(long start, long end);
-#else
     void setSelectionRange(optional long start = 0,
                            optional long end = 0,
                            optional DOMString direction);
-#endif
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [Reflect] attribute DOMString accessKey;
-#endif
 
     attribute DOMString autocomplete;
 };

@@ -27,7 +27,7 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect, TreatNullAs=EmptyString] attribute DOMString marginWidth;
     [Reflect] attribute DOMString name;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     [Reflect] attribute DOMString sandbox;
 #else
     [PutForwards=value] readonly attribute DOMTokenList sandbox;

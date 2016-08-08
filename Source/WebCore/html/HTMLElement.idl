@@ -55,12 +55,6 @@
     void focus();
     void blur();
 #endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [Reflect] attribute DOMString id;
-    readonly attribute HTMLCollection children;
-    readonly attribute DOMString titleDisplayString;
-#endif
 };
 
 HTMLElement implements GlobalEventHandlers;

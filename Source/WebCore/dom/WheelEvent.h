@@ -87,8 +87,6 @@ public:
     unsigned deltaMode() const { return m_deltaMode; }
 
     bool webkitDirectionInvertedFromDevice() const { return m_wheelEvent.directionInvertedFromDevice(); }
-    // Needed for Objective-C legacy support
-    bool isHorizontal() const { return m_wheelDelta.x(); }
 
     EventInterface eventInterface() const override;
 

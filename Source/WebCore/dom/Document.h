@@ -98,7 +98,6 @@ class DocumentMarkerController;
 class DocumentParser;
 class DocumentSharedObjectPool;
 class DocumentType;
-class EntityReference;
 class ExtensionStyleSheets;
 class FloatRect;
 class FloatQuad;

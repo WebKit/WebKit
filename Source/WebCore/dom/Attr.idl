@@ -39,10 +39,5 @@
     // DOM Level 3
 
     readonly attribute boolean isId;
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // This extension is no longer needed, but it has to remain available in Objective C, as it's public API.
-    readonly attribute CSSStyleDeclaration style;
-#endif
 };
 

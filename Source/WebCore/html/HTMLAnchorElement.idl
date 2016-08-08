@@ -35,23 +35,10 @@ interface HTMLAnchorElement : HTMLElement {
     [Reflect] attribute DOMString target;
     [Reflect] attribute DOMString type;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [Reflect] attribute DOMString accessKey;
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    readonly attribute DOMString text;
-#else
     [SetterRaisesException]  attribute DOMString text;
-#endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // Objective-C extension:
-    readonly attribute URL absoluteLinkURL;
 #endif
 
     [PutForwards=value] readonly attribute DOMTokenList relList;

@@ -244,8 +244,6 @@ namespace WebCore {
         String crossDomainAccessErrorMessage(const DOMWindow& activeWindow);
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
-        // Needed for Objective-C bindings (see bug 28774).
-        void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
         void postMessageTimerFired(PostMessageTimer&);
         void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event&, PassRefPtr<Inspector::ScriptCallStack>);
 

@@ -131,12 +131,6 @@
     // FIXME: The default value for the last parameter should be the empty string.
     boolean execCommand(DOMString command, optional boolean userInterface = false, optional DOMString? value = null);
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // FIXME: remove the these two versions once optional is implemented for Objective-C.
-    boolean execCommand(DOMString command, boolean userInterface);
-    boolean execCommand(DOMString command);
-#endif
-
     boolean queryCommandEnabled(DOMString command);
     boolean queryCommandIndeterm(DOMString command);
     boolean queryCommandState(DOMString command);
@@ -176,7 +170,7 @@
 
     // IE extensions
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     attribute DOMString charset;
 #else
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString charset;
@@ -199,20 +193,6 @@
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     CSSStyleDeclaration createCSSStyleDeclaration();
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // DOM Level 2 Style Interface
-    [ObjCLegacyUnnamedParameters, ObjCUseDefaultView] CSSStyleDeclaration getComputedStyle(Element element, DOMString pseudoElement);
-
-    // WebKit extension
-    // FIXME: remove the first version once optional is implemented for Objective-C.
-    [ObjCUseDefaultView] CSSRuleList getMatchedCSSRules(Element? element,
-                                              DOMString pseudoElement);
-    [ObjCUseDefaultView] CSSRuleList getMatchedCSSRules(Element? element,
-                                              DOMString pseudoElement,
-                                              optional boolean authorOnly);
-                                              
 #endif
 
     CanvasRenderingContext getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);

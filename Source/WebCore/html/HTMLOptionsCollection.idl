@@ -26,7 +26,7 @@
     attribute long selectedIndex;
     [CustomSetter, SetterRaisesException] attribute unsigned long length;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     getter Node namedItem(DOMString name);
 #else
     getter HTMLOptionElement? item(unsigned long index);
@@ -46,10 +46,6 @@
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // FIXME: This overload is not in the specification and has been dropped in Blink.
     void remove(HTMLOptionElement option);
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    Node item(unsigned long index);
 #endif
 };
 

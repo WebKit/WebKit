@@ -361,7 +361,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/HTMLAudioElement.idl \
     $(WebCore)/html/HTMLBRElement.idl \
     $(WebCore)/html/HTMLBaseElement.idl \
-    $(WebCore)/html/HTMLBaseFontElement.idl \
     $(WebCore)/html/HTMLBodyElement.idl \
     $(WebCore)/html/HTMLButtonElement.idl \
     $(WebCore)/html/HTMLCanvasElement.idl \

@@ -228,12 +228,4 @@ Vector<Ref<Element>> HTMLCollection::namedItems(const AtomicString& name) const
     return elements;
 }
 
-RefPtr<NodeList> HTMLCollection::tags(const String& name)
-{
-    if (name.isNull())
-        return nullptr;
-
-    return ownerNode().getElementsByTagName(name);
-}
-
 } // namespace WebCore

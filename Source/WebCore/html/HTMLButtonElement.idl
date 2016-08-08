@@ -41,11 +41,5 @@ interface HTMLButtonElement : HTMLElement {
 
     readonly attribute NodeList labels;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [Reflect] attribute DOMString accessKey;
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     void click();
-#endif
 };

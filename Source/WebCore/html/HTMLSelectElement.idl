@@ -30,7 +30,7 @@
     [Reflect] attribute DOMString name;
     [Reflect] attribute boolean required;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     attribute long size;
 #else
     attribute unsigned long size;
@@ -39,13 +39,9 @@
     readonly attribute DOMString type;
 
     readonly attribute HTMLOptionsCollection options;
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    readonly attribute long length;
-#else
     [SetterRaisesException] attribute unsigned long length;
-#endif
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     getter Node item(unsigned long index);
     Node namedItem(DOMString name);
 #else

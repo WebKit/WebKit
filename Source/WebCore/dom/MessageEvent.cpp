@@ -192,24 +192,6 @@ SerializedScriptValue* MessageEvent::data() const
     return m_dataAsSerializedScriptValue.get();
 }
 
-MessagePort* MessageEvent::messagePort()
-{
-    if (!m_ports)
-        return 0;
-    ASSERT(m_ports->size() == 1);
-    return (*m_ports)[0].get();
-}
-
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, MessagePort* port)
-{
-    std::unique_ptr<MessagePortArray> ports;
-    if (port) {
-        ports = std::make_unique<MessagePortArray>();
-        ports->append(port);
-    }
-    initMessageEvent(type, canBubble, cancelable, data, origin, lastEventId, source, WTFMove(ports));
-}
-
 EventInterface MessageEvent::eventInterface() const
 {
     return MessageEventInterfaceType;

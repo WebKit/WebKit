@@ -52,11 +52,7 @@
     [Reflect] attribute DOMString placeholder;
     [Reflect] attribute boolean readOnly;
     [Reflect] attribute boolean required;
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ObjCImplementedAsUnsignedLong] attribute DOMString size; // DOM level 2 changed this to a long, but ObjC API is a string
-#else
     [SetterRaisesException] attribute unsigned long size; // Changed string -> long -> unsigned long
-#endif
     [Reflect, URL] attribute USVString src;
     [Reflect] attribute DOMString step;
     attribute DOMString type; // readonly dropped as part of DOM level 2
@@ -93,33 +89,15 @@
                         unsigned long end,
                         optional DOMString selectionMode);
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [Custom] void setSelectionRange(long start, long end);
-#else
     [Custom] void setSelectionRange(long start, long end, optional DOMString direction);
-#endif
 
     // Non-standard attributes
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute boolean incremental;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [Reflect] attribute DOMString accessKey;
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    void click();
-#endif
-
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     void setValueForUser(DOMString value);
-#endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // Objective-C extension:
-    readonly attribute DOMString altDisplayString;
-    readonly attribute URL absoluteImageURL;
 #endif
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;

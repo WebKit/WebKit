@@ -50,10 +50,5 @@
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
     [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // Objective-C extension:
-    readonly attribute URL absoluteImageURL;
-#endif
 };
 

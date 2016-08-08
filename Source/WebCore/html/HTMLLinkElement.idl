@@ -30,9 +30,7 @@
     [Reflect] attribute DOMString media;
     [Reflect] attribute DOMString rel;
     [Reflect] attribute DOMString rev;
-#if (defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT) || (defined(LANGUAGE_GOBJECT) || LANGUAGE_GOBJECT)
     [PutForwards=value] readonly attribute DOMTokenList sizes;
-#endif
     [Reflect] attribute DOMString target;
     [Reflect] attribute DOMString type;
     [Reflect] attribute DOMString as;
@@ -40,11 +38,6 @@
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // Objective-C extension:
-    readonly attribute URL absoluteLinkURL;
-#endif
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
 };

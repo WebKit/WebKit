@@ -91,8 +91,7 @@
 
 - (BOOL)isHorizontal
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->isHorizontal();
+    return !!self.wheelDeltaX;
 }
 
 - (void)initWheelEvent:(int)inWheelDeltaX wheelDeltaY:(int)inWheelDeltaY view:(DOMAbstractView *)view screenX:(int)screenX screenY:(int)screenY clientX:(int)clientX clientY:(int)clientY ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey

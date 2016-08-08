@@ -43,10 +43,6 @@
     const unsigned long       SHOW_DOCUMENT_FRAGMENT         = 0x00000400;
     const unsigned long       SHOW_NOTATION                  = 0x00000800;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    short acceptNode(optional Node n);
-#else
     [Custom] unsigned short acceptNode(optional Node node);
-#endif
 };
 

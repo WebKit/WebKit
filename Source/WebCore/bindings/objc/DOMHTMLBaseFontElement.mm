@@ -28,15 +28,15 @@
 
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
-#import "HTMLBaseFontElement.h"
 #import "HTMLNames.h"
+#import "HTMLUnknownElement.h"
 #import "JSMainThreadExecState.h"
 #import "ThreadCheck.h"
 #import "URL.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::HTMLBaseFontElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL static_cast<WebCore::HTMLUnknownElement*>(reinterpret_cast<WebCore::Node*>(_internal))
 
 @implementation DOMHTMLBaseFontElement
 

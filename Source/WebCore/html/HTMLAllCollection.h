@@ -35,6 +35,7 @@ public:
     static Ref<HTMLAllCollection> create(Document&, CollectionType);
 
     Element* namedItemWithIndex(const AtomicString& name, unsigned index) const;
+    RefPtr<NodeList> tags(const String&);
 
     // For CachedHTMLCollection.
     bool elementMatches(Element&) const { return true; }

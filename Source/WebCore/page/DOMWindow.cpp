@@ -880,14 +880,6 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     return m_localStorage.get();
 }
 
-void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, const String& targetOrigin, DOMWindow& source, ExceptionCode& ec)
-{
-    MessagePortArray ports;
-    if (port)
-        ports.append(port);
-    postMessage(message, &ports, targetOrigin, source, ec);
-}
-
 void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray* ports, const String& targetOrigin, DOMWindow& source, ExceptionCode& ec)
 {
     if (!isCurrentlyDisplayedInFrame())

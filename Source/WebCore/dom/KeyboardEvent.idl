@@ -86,32 +86,5 @@
                            optional boolean shiftKey = false,
                            optional boolean metaKey = false);
 #endif
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // For backward compatibility.
-    void initKeyboardEvent(optional DOMString type,
-                           optional boolean canBubble,
-                           optional boolean cancelable,
-                           optional DOMWindow? view,
-                           optional DOMString keyIdentifier,
-                           optional unsigned long keyLocation,
-                           optional boolean ctrlKey,
-                           optional boolean altKey,
-                           optional boolean shiftKey,
-                           optional boolean metaKey,
-                           optional boolean altGraphKey);
-
-    void initKeyboardEvent(optional DOMString type,
-                           optional boolean canBubble,
-                           optional boolean cancelable,
-                           optional DOMWindow? view,
-                           optional DOMString keyIdentifier,
-                           optional unsigned long keyLocation,
-                           optional boolean ctrlKey,
-                           optional boolean altKey,
-                           optional boolean shiftKey,
-                           optional boolean metaKey);
-#endif
-
 };
 

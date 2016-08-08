@@ -41,7 +41,6 @@
 #include "HTMLAudioElement.cpp"
 #include "HTMLBRElement.cpp"
 #include "HTMLBaseElement.cpp"
-#include "HTMLBaseFontElement.cpp"
 #include "HTMLBodyElement.cpp"
 #include "HTMLButtonElement.cpp"
 #include "HTMLDataElement.cpp"

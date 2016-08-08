@@ -29,15 +29,6 @@
     [Reflect, URL] attribute DOMString href;
     readonly attribute DOMString origin;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    readonly attribute DOMString protocol;
-    readonly attribute DOMString host;
-    readonly attribute DOMString hostname;
-    readonly attribute DOMString port;
-    readonly attribute DOMString pathname;
-    readonly attribute DOMString search;
-    readonly attribute DOMString hash;
-#else
     attribute USVString protocol;
     attribute USVString username;
     attribute USVString password;
@@ -47,5 +38,4 @@
     attribute USVString pathname;
     attribute USVString search;
     attribute USVString hash;
-#endif
 };

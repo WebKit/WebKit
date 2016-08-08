@@ -70,7 +70,6 @@ public:
     Element* item(unsigned index) const override = 0; // Tighten return type from NodeList::item().
     virtual Element* namedItem(const AtomicString& name) const = 0;
     const Vector<AtomicString>& supportedPropertyNames();
-    RefPtr<NodeList> tags(const String&);
 
     // Non-DOM API
     Vector<Ref<Element>> namedItems(const AtomicString& name) const;

@@ -42,10 +42,6 @@
     // WebKit Extension
     readonly attribute boolean webkitDirectionInvertedFromDevice;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    readonly attribute boolean isHorizontal;
-#endif /* defined(LANGUAGE_OBJECTIVE_C) */
-
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     void initWheelEvent(optional long wheelDeltaX,
                         optional long wheelDeltaY,

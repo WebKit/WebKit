@@ -26,7 +26,7 @@ interface HTMLTableCellElement : HTMLElement {
     [Reflect=char] attribute DOMString ch;
     [Reflect=charoff] attribute DOMString chOff;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     [ImplementedAs=colSpanForBindings] attribute long colSpan;
     [ImplementedAs=rowSpanForBindings] attribute long rowSpan;
 #else

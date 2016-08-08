@@ -63,14 +63,6 @@ EventTargetInterface DedicatedWorkerGlobalScope::eventTargetInterface() const
     return DedicatedWorkerGlobalScopeEventTargetInterfaceType;
 }
 
-void DedicatedWorkerGlobalScope::postMessage(RefPtr<SerializedScriptValue>&& message, MessagePort* port, ExceptionCode& ec)
-{
-    MessagePortArray ports;
-    if (port)
-        ports.append(port);
-    postMessage(WTFMove(message), &ports, ec);
-}
-
 void DedicatedWorkerGlobalScope::postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray* ports, ExceptionCode& ec)
 {
     // Disentangle the port in preparation for sending it to the remote context.

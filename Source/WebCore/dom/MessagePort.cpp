@@ -53,14 +53,6 @@ MessagePort::~MessagePort()
         m_scriptExecutionContext->destroyedMessagePort(*this);
 }
 
-void MessagePort::postMessage(RefPtr<SerializedScriptValue>&& message, MessagePort* port, ExceptionCode& ec)
-{
-    MessagePortArray ports;
-    if (port)
-        ports.append(port);
-    postMessage(WTFMove(message), &ports, ec);
-}
-
 void MessagePort::postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray* ports, ExceptionCode& ec)
 {
     if (!isEntangled())
