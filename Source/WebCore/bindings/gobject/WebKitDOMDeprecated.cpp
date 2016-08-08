@@ -19,6 +19,7 @@
 #include "config.h"
 #include "WebKitDOMDeprecated.h"
 
+#include "ConvertToUTF8String.h"
 #include "Document.h"
 #include "Element.h"
 #include "JSMainThreadExecState.h"
@@ -142,6 +143,14 @@ void webkit_dom_document_set_title(WebKitDOMDocument* self, const gchar* title)
 void webkit_dom_html_title_element_set_text(WebKitDOMHTMLTitleElement* self, const gchar* text)
 {
     webkit_dom_html_title_element_set_text_with_error(self, text, nullptr);
+}
+
+gchar* webkit_dom_document_get_default_charset(WebKitDOMDocument* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    return convertToUTF8String(WebKit::core(self)->defaultCharsetForBindings());
 }
 
 G_DEFINE_TYPE(WebKitDOMEntityReference, webkit_dom_entity_reference, WEBKIT_DOM_TYPE_NODE)

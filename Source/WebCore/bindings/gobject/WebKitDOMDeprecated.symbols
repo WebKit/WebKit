@@ -23,3 +23,4 @@ void webkit_dom_html_base_font_element_set_size(WebKitDOMHTMLBaseFontElement*, g
 WebKitDOMNode* webkit_dom_node_clone_node(WebKitDOMNode*, gboolean)
 void webkit_dom_document_set_title(WebKitDOMDocument*, const gchar*)
 void webkit_dom_html_title_element_set_text(WebKitDOMHTMLTitleElement*, const gchar*)
+gchar* webkit_dom_document_get_default_charset(WebKitDOMDocument*)
