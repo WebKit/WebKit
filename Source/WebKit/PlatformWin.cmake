@@ -246,6 +246,8 @@ list(APPEND WebKit_SOURCES_WebCoreSupport
     win/WebCoreSupport/WebInspectorDelegate.h
     win/WebCoreSupport/WebPlatformStrategies.cpp
     win/WebCoreSupport/WebPlatformStrategies.h
+    win/WebCoreSupport/WebPluginInfoProvider.cpp
+    win/WebCoreSupport/WebPluginInfoProvider.h
     win/WebCoreSupport/WebVisitedLinkStore.cpp
     win/WebCoreSupport/WebVisitedLinkStore.h
 )

@@ -134,6 +134,7 @@
 		1A07D2F91919B3A900ECDA16 /* messages.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC0856F187CE0A900780D86 /* messages.py */; };
 		1A07D2FA1919B3A900ECDA16 /* model.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC08570187CE0A900780D86 /* model.py */; };
 		1A07D2FB1919B3A900ECDA16 /* parser.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC08571187CE0A900780D86 /* parser.py */; };
+		1A08FEE41D593E2A008BA8CB /* WebPluginInfoProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A08FEE21D593CF1008BA8CB /* WebPluginInfoProvider.cpp */; };
 		1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */; };
 		1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */; };
 		1A0EC6C0124BBD9B007EF4A5 /* PluginProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC6BE124BBD9B007EF4A5 /* PluginProcessMessages.h */; };
@@ -2092,6 +2093,8 @@
 		1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A043F6812514D8B00FFBFB5 /* WebProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessConnectionMessages.h; sourceTree = "<group>"; };
 		1A04F6171A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyCocoa.mm; sourceTree = "<group>"; };
+		1A08FEE21D593CF1008BA8CB /* WebPluginInfoProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPluginInfoProvider.cpp; sourceTree = "<group>"; };
+		1A08FEE31D593CF1008BA8CB /* WebPluginInfoProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginInfoProvider.h; sourceTree = "<group>"; };
 		1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessManager.h; sourceTree = "<group>"; };
 		1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessManager.cpp; sourceTree = "<group>"; };
 		1A0EC6B1124BBD36007EF4A5 /* PluginProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginProcess.messages.in; sourceTree = "<group>"; };
@@ -4372,6 +4375,8 @@
 				1A8EFA5B1252B7CE00F7067F /* PluginProxy.messages.in */,
 				1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */,
 				1A6FB7AD11E64B6800DB1371 /* PluginView.h */,
+				1A08FEE21D593CF1008BA8CB /* WebPluginInfoProvider.cpp */,
+				1A08FEE31D593CF1008BA8CB /* WebPluginInfoProvider.h */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -9132,6 +9137,7 @@
 				1A2D82A6127F4EAB001EB962 /* NPObjectProxy.cpp in Sources */,
 				1A2D82A8127F4EAB001EB962 /* NPRemoteObjectMap.cpp in Sources */,
 				1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */,
+				1A08FEE41D593E2A008BA8CB /* WebPluginInfoProvider.cpp in Sources */,
 				1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */,
 				1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */,
 				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,

@@ -1,3 +1,15 @@
+2016-08-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a new PluginInfoProvider class, to replace PluginStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=160670
+
+        Reviewed by Sam Weinig.
+
+        Add new files.
+
+        * PlatformWin.cmake:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2016-08-04  Alex Christensen  <achristensen@webkit.org>
 
         [Mac][cmake] Fix the build after Objective-C bindings generator removal

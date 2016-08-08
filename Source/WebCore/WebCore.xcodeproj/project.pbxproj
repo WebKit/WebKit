@@ -666,6 +666,8 @@
 		19BFF64F11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64A11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h */; };
 		1A0409DC1A4360B5009E47F3 /* MachSendRight.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0409DB1A4360B5009E47F3 /* MachSendRight.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A0409F31A43675C009E47F3 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0409F21A43675C009E47F3 /* MachSendRight.cpp */; };
+		1A08FEDC1D592B8B008BA8CB /* PluginInfoProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A08FEDA1D592B8B008BA8CB /* PluginInfoProvider.cpp */; };
+		1A08FEDD1D592B8B008BA8CB /* PluginInfoProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A08FEDB1D592B8B008BA8CB /* PluginInfoProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */; };
 		1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */; };
 		1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */; };
@@ -7886,6 +7888,8 @@
 		19BFF64A11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		1A0409DB1A4360B5009E47F3 /* MachSendRight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachSendRight.h; sourceTree = "<group>"; };
 		1A0409F21A43675C009E47F3 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
+		1A08FEDA1D592B8B008BA8CB /* PluginInfoProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInfoProvider.cpp; sourceTree = "<group>"; };
+		1A08FEDB1D592B8B008BA8CB /* PluginInfoProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoProvider.h; sourceTree = "<group>"; };
 		1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OverflowEvent.cpp; sourceTree = "<group>"; };
 		1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OverflowEvent.h; sourceTree = "<group>"; };
 		1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = OverflowEvent.idl; sourceTree = "<group>"; };
@@ -17690,6 +17694,8 @@
 				1A927FD11416A15B003A83C8 /* nptypes.h */,
 				A9C6E4F10D745E48006442E9 /* PluginData.cpp */,
 				A9C6E4F20D745E48006442E9 /* PluginData.h */,
+				1A08FEDA1D592B8B008BA8CB /* PluginInfoProvider.cpp */,
+				1A08FEDB1D592B8B008BA8CB /* PluginInfoProvider.h */,
 				1AA8798F11CBE846003C664F /* PluginStrategy.h */,
 				0AFDAC3C10F5448C00E1F3D2 /* PluginViewBase.h */,
 			);
@@ -27762,6 +27768,7 @@
 				B2227A2D0D00BF220071B782 /* SVGImageElement.h in Headers */,
 				08F859D51463F9CD0067D934 /* SVGImageForContainer.h in Headers */,
 				B28C6A2A0D00C44800334AA4 /* SVGImageLoader.h in Headers */,
+				1A08FEDD1D592B8B008BA8CB /* PluginInfoProvider.h in Headers */,
 				0854B01F1255E4E600B9CDD0 /* SVGInlineFlowBox.h in Headers */,
 				0854B0211255E4E600B9CDD0 /* SVGInlineTextBox.h in Headers */,
 				B2227A300D00BF220071B782 /* SVGLangSpace.h in Headers */,
@@ -30320,6 +30327,7 @@
 				B2FA3DDC0AB75A6F000E5AC4 /* JSSVGPathSegMovetoAbs.cpp in Sources */,
 				B2FA3DDE0AB75A6F000E5AC4 /* JSSVGPathSegMovetoRel.cpp in Sources */,
 				B2FA3DE00AB75A6F000E5AC4 /* JSSVGPatternElement.cpp in Sources */,
+				1A08FEDC1D592B8B008BA8CB /* PluginInfoProvider.cpp in Sources */,
 				8542A7960AE5C94200DF58DF /* JSSVGPoint.cpp in Sources */,
 				B2FA3DE20AB75A6F000E5AC4 /* JSSVGPointList.cpp in Sources */,
 				B2FA3DE50AB75A6F000E5AC4 /* JSSVGPolygonElement.cpp in Sources */,

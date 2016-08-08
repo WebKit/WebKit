@@ -448,20 +448,10 @@ EncodedValue EncodingTraits<PluginData>::encodeValue(RefPtr<PluginData> input)
     return encodedData;
 }
 
-class DeserializedPluginData : public PluginData {
-public:
-    DeserializedPluginData(Vector<PluginInfo> plugins)
-        : PluginData(plugins)
-    {
-    }
-};
-
-bool EncodingTraits<PluginData>::decodeValue(EncodedValue& encodedData, RefPtr<PluginData>& input)
+bool EncodingTraits<PluginData>::decodeValue(EncodedValue& encodedData, RefPtr<PluginData>&)
 {
-    DECODE_TYPE_WITH_KEY(encodedData, Vector<PluginInfo>, plugins);
-
     // FIXME: This needs to work in terms of web-visible plug-ins.
-    input = adoptRef(new DeserializedPluginData(plugins));
+    DECODE_TYPE_WITH_KEY(encodedData, Vector<PluginInfo>, plugins);
 
     return true;
 }

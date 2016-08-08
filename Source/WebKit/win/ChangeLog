@@ -1,3 +1,21 @@
+2016-08-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a new PluginInfoProvider class, to replace PluginStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=160670
+
+        Reviewed by Sam Weinig.
+
+        Add a new WebPluginInfoProvider - it just calls through to the plug-in strategy for now.
+
+        * WebCoreSupport/WebPluginInfoProvider.cpp: Added.
+        (WebPluginInfoProvider::singleton):
+        (WebPluginInfoProvider::WebPluginInfoProvider):
+        (WebPluginInfoProvider::~WebPluginInfoProvider):
+        (WebPluginInfoProvider::refreshPlugins):
+        (WebPluginInfoProvider::getPluginInfo):
+        (WebPluginInfoProvider::getWebVisiblePluginInfo):
+        * WebCoreSupport/WebPluginInfoProvider.h: Added.
+
 2016-07-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove PassRef.h after r177259

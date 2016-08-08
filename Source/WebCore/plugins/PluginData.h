@@ -86,7 +86,7 @@ inline bool operator==(PluginInfo& a, PluginInfo& b)
 // FIXME: merge with PluginDatabase in the future
 class PluginData : public RefCounted<PluginData> {
 public:
-    static Ref<PluginData> create(const Page* page) { return adoptRef(*new PluginData(page)); }
+    static Ref<PluginData> create(Page& page) { return adoptRef(*new PluginData(page)); }
 
     const Vector<PluginInfo>& plugins() const { return m_plugins; }
     Vector<PluginInfo> webVisiblePlugins() const;
@@ -104,24 +104,15 @@ public:
 
     WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
 
-    static void refresh();
-
 private:
-    explicit PluginData(const Page*);
+    explicit PluginData(Page&);
     void initPlugins();
     bool getPluginInfoForWebVisibleMimeType(const String& mimeType, PluginInfo&) const;
     void getMimesAndPluginIndices(Vector<MimeClassInfo>&, Vector<size_t>&) const;
     void getMimesAndPluginIndiciesForPlugins(const Vector<PluginInfo>&, Vector<MimeClassInfo>&, Vector<size_t>&) const;
 
 protected:
-#if defined ENABLE_WEB_REPLAY && ENABLE_WEB_REPLAY
-    PluginData(Vector<PluginInfo> plugins)
-        : m_plugins(plugins)
-    {
-    }
-#endif
-
-    const Page* m_page;
+    Page& m_page;
     Vector<PluginInfo> m_plugins;
 };
 

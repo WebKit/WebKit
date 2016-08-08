@@ -41,7 +41,7 @@ public:
     RefPtr<DOMPlugin> namedItem(const AtomicString& propertyName);
     Vector<AtomicString> supportedPropertyNames();
 
-    void refresh(bool reload);
+    void refresh(bool reloadPages);
 
 private:
     explicit DOMPluginArray(Frame*);

@@ -92,6 +92,7 @@
 #import "WebPaymentCoordinatorClient.h"
 #import "WebPlatformStrategies.h"
 #import "WebPluginDatabase.h"
+#import "WebPluginInfoProvider.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
@@ -1018,6 +1019,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
+    pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
     pageConfiguration.userContentProvider = &_private->group->userContentController();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();

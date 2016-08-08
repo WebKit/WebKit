@@ -26,23 +26,20 @@
 
 #include "LocalizedStrings.h"
 #include "Page.h"
-#include "PlatformStrategies.h"
-#include "PluginStrategy.h"
+#include "PluginInfoProvider.h"
 
 namespace WebCore {
 
-PluginData::PluginData(const Page* page)
+PluginData::PluginData(Page& page)
+    : m_page(page)
 {
-    ASSERT_ARG(page, page);
-
-    m_page = page;
     initPlugins();
 }
 
 Vector<PluginInfo> PluginData::webVisiblePlugins() const
 {
     Vector<PluginInfo> plugins;
-    platformStrategies()->pluginStrategy()->getWebVisiblePluginInfo(m_page, plugins);
+    m_page.pluginInfoProvider().getWebVisiblePluginInfo(m_page, plugins);
     return plugins;
 }
 
@@ -76,11 +73,11 @@ static bool shouldBePubliclyVisible(const PluginInfo& plugin)
 
 Vector<PluginInfo> PluginData::publiclyVisiblePlugins() const
 {
-    if (m_page->showAllPlugins())
+    if (m_page.showAllPlugins())
         return webVisiblePlugins();
     
     Vector<PluginInfo> allPlugins;
-    platformStrategies()->pluginStrategy()->getWebVisiblePluginInfo(m_page, allPlugins);
+    m_page.pluginInfoProvider().getWebVisiblePluginInfo(m_page, allPlugins);
 
     Vector<PluginInfo> plugins;
     for (auto&& plugin : allPlugins) {
@@ -181,16 +178,11 @@ bool PluginData::supportsMimeType(const String& mimeType, const AllowedPluginTyp
     return false;
 }
 
-void PluginData::refresh()
-{
-    platformStrategies()->pluginStrategy()->refreshPlugins();
-}
-
 void PluginData::initPlugins()
 {
     ASSERT(m_plugins.isEmpty());
 
-    platformStrategies()->pluginStrategy()->getPluginInfo(m_page, m_plugins);
+    m_page.pluginInfoProvider().getPluginInfo(m_page, m_plugins);
 }
 
 } // namespace WebCore

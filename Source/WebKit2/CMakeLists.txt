@@ -590,6 +590,7 @@ set(WebKit2_SOURCES
     WebProcess/Plugins/PluginProcessConnectionManager.cpp
     WebProcess/Plugins/PluginProxy.cpp
     WebProcess/Plugins/PluginView.cpp
+    WebProcess/Plugins/WebPluginInfoProvider.cpp
 
     WebProcess/Plugins/Netscape/JSNPMethod.cpp
     WebProcess/Plugins/Netscape/JSNPObject.cpp

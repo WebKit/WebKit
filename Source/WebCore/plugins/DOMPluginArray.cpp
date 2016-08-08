@@ -83,9 +83,15 @@ Vector<AtomicString> DOMPluginArray::supportedPropertyNames()
     return Vector<AtomicString>();
 }
 
-void DOMPluginArray::refresh(bool reload)
+void DOMPluginArray::refresh(bool reloadPages)
 {
-    Page::refreshPlugins(reload);
+    if (!m_frame)
+        return;
+
+    if (!m_frame->page())
+        return;
+
+    Page::refreshPlugins(reloadPages);
 }
 
 PluginData* DOMPluginArray::pluginData() const

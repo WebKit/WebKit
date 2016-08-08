@@ -31,6 +31,7 @@
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
 #include "EditorClient.h"
+#include "PluginInfoProvider.h"
 #include "SocketProvider.h"
 #include "StorageNamespaceProvider.h"
 #include "UserContentController.h"

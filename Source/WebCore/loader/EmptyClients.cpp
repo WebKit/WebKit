@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "PaymentCoordinatorClient.h"
+#include "PluginInfoProvider.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
@@ -75,6 +76,16 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         static NeverDestroyed<Ref<InProcessIDBServer>> sharedConnection(InProcessIDBServer::create());
         return sharedConnection.get()->connectionToServer();
     }
+#endif
+};
+
+class EmptyPluginInfoProvider final : public PluginInfoProvider {
+    void refreshPlugins() override { };
+    void getPluginInfo(Page&, Vector<PluginInfo>&) override { }
+    void getWebVisiblePluginInfo(Page&, Vector<PluginInfo>&) override { }
+#if PLATFORM(MAC)
+    void setPluginLoadClientPolicy(PluginLoadClientPolicy, const String&, const String&, const String&) override { }
+    void clearPluginClientPolicies() override { }
 #endif
 };
 
@@ -163,6 +174,7 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
 
     pageConfiguration.applicationCacheStorage = ApplicationCacheStorage::create(String(), String());
     pageConfiguration.databaseProvider = adoptRef(new EmptyDatabaseProvider);
+    pageConfiguration.pluginInfoProvider = adoptRef(new EmptyPluginInfoProvider);
     pageConfiguration.storageNamespaceProvider = adoptRef(new EmptyStorageNamespaceProvider);
     pageConfiguration.userContentProvider = adoptRef(new EmptyUserContentProvider);
     pageConfiguration.visitedLinkStore = adoptRef(new EmptyVisitedLinkStore);

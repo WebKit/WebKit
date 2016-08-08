@@ -1,3 +1,26 @@
+2016-08-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a new PluginInfoProvider class, to replace PluginStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=160670
+
+        Reviewed by Sam Weinig.
+
+        Add a new WebPluginInfoProvider - it just calls through to the plug-in strategy for now.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp: Added.
+        (WebKit::WebPluginInfoProvider::singleton):
+        (WebKit::WebPluginInfoProvider::WebPluginInfoProvider):
+        (WebKit::WebPluginInfoProvider::~WebPluginInfoProvider):
+        (WebKit::WebPluginInfoProvider::refreshPlugins):
+        (WebKit::WebPluginInfoProvider::getPluginInfo):
+        (WebKit::WebPluginInfoProvider::getWebVisiblePluginInfo):
+        (WebKit::WebPluginInfoProvider::setPluginLoadClientPolicy):
+        (WebKit::WebPluginInfoProvider::clearPluginClientPolicies):
+        * WebProcess/Plugins/WebPluginInfoProvider.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+
 2016-08-08  Brady Eidson  <beidson@apple.com>
 
         Addressing late review feedback in bug 160605

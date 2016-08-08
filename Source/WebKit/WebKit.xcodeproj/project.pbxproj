@@ -19,6 +19,8 @@
 		1430C12D1B2C5DF700DEA01D /* WebViewGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1430C12B1B2C5DF700DEA01D /* WebViewGroup.h */; };
 		14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D8252D0AF955090004F057 /* WebChromeClient.h */; };
 		14D825300AF955090004F057 /* WebChromeClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14D8252E0AF955090004F057 /* WebChromeClient.mm */; };
+		1A08FEE01D59376E008BA8CB /* WebPluginInfoProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A08FEDE1D59376E008BA8CB /* WebPluginInfoProvider.mm */; };
+		1A08FEE11D59376E008BA8CB /* WebPluginInfoProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A08FEDF1D59376E008BA8CB /* WebPluginInfoProvider.h */; };
 		1A2DBE9F0F251E3A0036F8A6 /* ProxyInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2DBE9D0F251E3A0036F8A6 /* ProxyInstance.h */; };
 		1A2DBEA00F251E3A0036F8A6 /* ProxyInstance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DBE9E0F251E3A0036F8A6 /* ProxyInstance.mm */; };
 		1A4DF5220EC8C74D006BD4B4 /* WebNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */; };
@@ -476,6 +478,8 @@
 		1430C12B1B2C5DF700DEA01D /* WebViewGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewGroup.h; path = WebCoreSupport/WebViewGroup.h; sourceTree = SOURCE_ROOT; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
+		1A08FEDE1D59376E008BA8CB /* WebPluginInfoProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginInfoProvider.mm; sourceTree = "<group>"; };
+		1A08FEDF1D59376E008BA8CB /* WebPluginInfoProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginInfoProvider.h; sourceTree = "<group>"; };
 		1A2DBE9D0F251E3A0036F8A6 /* ProxyInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyInstance.h; sourceTree = "<group>"; };
 		1A2DBE9E0F251E3A0036F8A6 /* ProxyInstance.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProxyInstance.mm; sourceTree = "<group>"; };
 		1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginView.h; sourceTree = "<group>"; };
@@ -1597,6 +1601,8 @@
 				1AB1F76D1D1B260B007C9BD1 /* WebPaymentCoordinatorClient.mm */,
 				1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */,
 				1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */,
+				1A08FEDE1D59376E008BA8CB /* WebPluginInfoProvider.mm */,
+				1A08FEDF1D59376E008BA8CB /* WebPluginInfoProvider.h */,
 				1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */,
 				1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */,
 				E4AEF9791C0DF4BC00B01727 /* WebResourceLoadScheduler.cpp */,
@@ -1794,6 +1800,7 @@
 				1C8CB07A0AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h in Headers */,
 				4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */,
 				DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */,
+				1A08FEE11D59376E008BA8CB /* WebPluginInfoProvider.h in Headers */,
 				A10C1D681820300E0036883A /* WebFixedPositionContent.h in Headers */,
 				A10C1D6A1820300E0036883A /* WebFixedPositionContentInternal.h in Headers */,
 				939810520824BF01008DF038 /* WebFormDelegate.h in Headers */,
@@ -2269,6 +2276,7 @@
 				1AAF5CF10EDDE586008D883D /* WebKitPluginHost.defs in Sources */,
 				939810C50824BF01008DF038 /* WebKitStatistics.m in Sources */,
 				1C0D40880AC1C8F40009C113 /* WebKitVersionChecks.m in Sources */,
+				1A08FEE01D59376E008BA8CB /* WebPluginInfoProvider.mm in Sources */,
 				ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */,
 				BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */,
 				072E5F461ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm in Sources */,

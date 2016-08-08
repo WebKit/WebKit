@@ -43,6 +43,7 @@ class FrameLoaderClient;
 class InspectorClient;
 class PaymentCoordinatorClient;
 class PlugInClient;
+class PluginInfoProvider;
 class ProgressTrackerClient;
 class SocketProvider;
 class StorageNamespaceProvider;
@@ -82,6 +83,7 @@ public:
 
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;
     RefPtr<DatabaseProvider> databaseProvider;
+    RefPtr<PluginInfoProvider> pluginInfoProvider;
     RefPtr<StorageNamespaceProvider> storageNamespaceProvider;
     RefPtr<UserContentProvider> userContentProvider;
     RefPtr<VisitedLinkStore> visitedLinkStore;

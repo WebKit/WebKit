@@ -1,3 +1,25 @@
+2016-08-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a new PluginInfoProvider class, to replace PluginStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=160670
+
+        Reviewed by Sam Weinig.
+
+        Add a new WebPluginInfoProvider - it just calls through to the plug-in strategy for now.
+
+        * WebCoreSupport/WebPluginInfoProvider.h: Added.
+        * WebCoreSupport/WebPluginInfoProvider.mm: Added.
+        (WebPluginInfoProvider::singleton):
+        (WebPluginInfoProvider::WebPluginInfoProvider):
+        (WebPluginInfoProvider::~WebPluginInfoProvider):
+        (WebPluginInfoProvider::refreshPlugins):
+        (WebPluginInfoProvider::getPluginInfo):
+        (WebPluginInfoProvider::getWebVisiblePluginInfo):
+        (WebPluginInfoProvider::setPluginLoadClientPolicy):
+        (WebPluginInfoProvider::clearPluginClientPolicies):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2016-08-02  Enrica Casucci  <enrica@apple.com>
 
         Allow building with content filtering disabled.
