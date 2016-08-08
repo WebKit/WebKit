@@ -48,7 +48,6 @@ FAIL SVGURIReference.toString() should be function SVGURIReference() {
 FAIL SVGCSSRule.toString() should be function SVGCSSRule() {
     [native code]
 }. Threw exception ReferenceError: Can't find variable: SVGCSSRule
-PASS SVGDocument.toString() is "function SVGDocument() {\n    [native code]\n}"
 PASS SVGSVGElement.toString() is "function SVGSVGElement() {\n    [native code]\n}"
 PASS SVGGElement.toString() is "function SVGGElement() {\n    [native code]\n}"
 PASS SVGDefsElement.toString() is "function SVGDefsElement() {\n    [native code]\n}"

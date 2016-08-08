@@ -37,16 +37,9 @@ using namespace JSC;
 
 JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<XMLDocument>&& passedDocument)
 {
-    auto& document = passedDocument.get();
-    JSObject* wrapper;
-    if (document.isSVGDocument())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGDocument, WTFMove(passedDocument));
-    else
-        wrapper = CREATE_DOM_WRAPPER(globalObject, XMLDocument, WTFMove(passedDocument));
+    reportMemoryForDocumentIfFrameless(*state, passedDocument.get());
 
-    reportMemoryForDocumentIfFrameless(*state, document);
-
-    return wrapper;
+    return CREATE_DOM_WRAPPER(globalObject, XMLDocument, WTFMove(passedDocument));
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, XMLDocument& document)

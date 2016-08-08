@@ -159,6 +159,7 @@ class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
 class SVGDocumentExtensions;
+class SVGSVGElement;
 class Text;
 class TextResourceDecoder;
 class TreeWalker;

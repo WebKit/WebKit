@@ -1,5 +1,22 @@
 2016-08-07  Chris Dumez  <cdumez@apple.com>
 
+        Drop SVGDocument as per the SVG2 specification
+        https://bugs.webkit.org/show_bug.cgi?id=160361
+
+        Reviewed by Darin Adler.
+
+        Update / rebaseline existing tests to reflect behavior change.
+
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.txt:
+        * svg/custom/clone-node-expected.txt:
+        * svg/custom/clone-node.html:
+        * svg/custom/frame-getSVGDocument.html:
+        * svg/custom/global-constructors-expected.txt:
+        * svg/custom/manually-parsed-svg-allowed-in-dashboard-expected.txt:
+        * svg/custom/script-tests/global-constructors.js:
+
+2016-08-07  Chris Dumez  <cdumez@apple.com>
+
         Un-expose DOMSettableTokenList
         https://bugs.webkit.org/show_bug.cgi?id=160643
 

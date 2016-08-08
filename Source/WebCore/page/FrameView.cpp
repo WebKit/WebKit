@@ -2115,7 +2115,7 @@ bool FrameView::scrollToAnchor(const String& name)
     document.setCSSTarget(anchorElement);
 
     if (is<SVGDocument>(document)) {
-        if (auto* rootElement = downcast<SVGDocument>(document).rootElement()) {
+        if (auto* rootElement = SVGDocument::rootElement(document)) {
             rootElement->scrollToAnchor(name, anchorElement);
             if (!anchorElement)
                 return true;

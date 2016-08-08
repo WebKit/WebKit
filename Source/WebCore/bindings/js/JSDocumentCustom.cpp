@@ -30,7 +30,7 @@
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
 #include "JSNodeOrString.h"
-#include "JSSVGDocument.h"
+#include "JSXMLDocument.h"
 #include "Location.h"
 #include "NodeTraversal.h"
 #include "SVGDocument.h"
@@ -58,8 +58,6 @@ static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObje
     JSObject* wrapper;
     if (document.isHTMLDocument())
         wrapper = CREATE_DOM_WRAPPER(&globalObject, HTMLDocument, WTFMove(passedDocument));
-    else if (document.isSVGDocument())
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, SVGDocument, WTFMove(passedDocument));
     else if (document.isXMLDocument())
         wrapper = CREATE_DOM_WRAPPER(&globalObject, XMLDocument, WTFMove(passedDocument));
     else

@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 541x18
               text run at (0,0) width 541: "This tests assures dynamic SVGDocument creation via DOMParser interface works."
           RenderBlock {div} at (0,18) size 800x18
-            RenderText {#text} at (0,0) size 633x18
-              text run at (0,0) width 633: "DOMParser.parseFromString returned: [object SVGDocument] should be: [object SVGDocument]"
+            RenderText {#text} at (0,0) size 637x18
+              text run at (0,0) width 637: "DOMParser.parseFromString returned: [object XMLDocument] should be: [object SVGDocument]"
           RenderBlock {div} at (0,36) size 800x18
             RenderText {#text} at (0,0) size 616x18
               text run at (0,0) width 616: "SVGDocument's rootElement: [object SVGSVGElement] should be: [object SVGSVGElement]"

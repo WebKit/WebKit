@@ -340,7 +340,7 @@ PASS createDocument test 178: characterSet aliases for "foo","bar",DocumentType 
 PASS createDocument test 179: "http://www.w3.org/1999/xhtml","",null,null 
 PASS createDocument test 179: metadata for "http://www.w3.org/1999/xhtml","",null 
 PASS createDocument test 179: characterSet aliases for "http://www.w3.org/1999/xhtml","",null 
-FAIL createDocument test 180: "http://www.w3.org/2000/svg","",null,null assert_equals: expected object "[object XMLDocumentPrototype]" but got object "[object SVGDocumentPrototype]"
+PASS createDocument test 180: "http://www.w3.org/2000/svg","",null,null 
 PASS createDocument test 180: metadata for "http://www.w3.org/2000/svg","",null 
 PASS createDocument test 180: characterSet aliases for "http://www.w3.org/2000/svg","",null 
 PASS createDocument test 181: "http://www.w3.org/1998/Math/MathML","",null,null 

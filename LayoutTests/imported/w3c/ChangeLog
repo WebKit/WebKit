@@ -1,5 +1,16 @@
 2016-08-07  Chris Dumez  <cdumez@apple.com>
 
+        Drop SVGDocument as per the SVG2 specification
+        https://bugs.webkit.org/show_bug.cgi?id=160361
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C test now that one more check is passing.
+
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+
+2016-08-07  Chris Dumez  <cdumez@apple.com>
+
         Un-expose DOMSettableTokenList
         https://bugs.webkit.org/show_bug.cgi?id=160643
 

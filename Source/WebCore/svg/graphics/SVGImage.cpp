@@ -78,7 +78,7 @@ inline SVGSVGElement* SVGImage::rootElement() const
 {
     if (!m_page)
         return nullptr;
-    return downcast<SVGDocument>(*m_page->mainFrame().document()).rootElement();
+    return SVGDocument::rootElement(*m_page->mainFrame().document());
 }
 
 bool SVGImage::hasSingleSecurityOrigin() const

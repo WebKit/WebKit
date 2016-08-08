@@ -32,9 +32,9 @@ SVGDocument::SVGDocument(Frame* frame, const URL& url)
 {
 }
 
-SVGSVGElement* SVGDocument::rootElement() const
+SVGSVGElement* SVGDocument::rootElement(const Document& document)
 {
-    Element* element = documentElement();
+    auto* element = document.documentElement();
     if (!is<SVGSVGElement>(element))
         return nullptr;
     return downcast<SVGSVGElement>(element);
@@ -42,7 +42,7 @@ SVGSVGElement* SVGDocument::rootElement() const
 
 bool SVGDocument::zoomAndPanEnabled() const
 {
-    auto* element = rootElement();
+    auto* element = rootElement(*this);
     if (!element)
         return false;
     return (element->useCurrentView() ? element->currentView().zoomAndPan() : element->zoomAndPan()) == SVGZoomAndPanMagnify;
@@ -50,7 +50,7 @@ bool SVGDocument::zoomAndPanEnabled() const
 
 void SVGDocument::startPan(const FloatPoint& start)
 {
-    auto* element = rootElement();
+    auto* element = rootElement(*this);
     if (!element)
         return;
     m_panningOffset = start - element->currentTranslate();
@@ -58,7 +58,7 @@ void SVGDocument::startPan(const FloatPoint& start)
 
 void SVGDocument::updatePan(const FloatPoint& position) const
 {
-    auto* element = rootElement();
+    auto* element = rootElement(*this);
     if (!element)
         return;
     element->setCurrentTranslate(position - m_panningOffset);
