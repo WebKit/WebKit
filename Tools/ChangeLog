@@ -1,3 +1,31 @@
+2016-08-08  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests should trigger a spindump when WebContent process is unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=159827
+
+        Reviewed by Daniel Bates.
+
+        This change was spurred by a process hang which occurred between tests and did
+        not produce a meaningful crashlog.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._check_for_driver_crash_or_unresponsiveness): Notify test controller when finished through stdin.
+
+         * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.sample_process): Attempt spindump, but use sample if spindump fails.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        (MacPort.sample_process): Attempt spindump, but use sample if spindump fails.
+
+        * Scripts/webkitpy/port/mac_unittest.py: Changed expected values to match spindump calls, added specific spindump test.
+        * Scripts/webkitpy/port/driver_unittest.py: Added dummy write function.
+
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::usingServerMode): Added accessor for m_usingServerMode.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpWebProcessUnresponsiveness): Wait for stdin before continuing when in server mode.
+
 2016-08-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Reply block leaks if the remote object doesn’t call it

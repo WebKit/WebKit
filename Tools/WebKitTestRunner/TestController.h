@@ -81,7 +81,7 @@ public:
     void notifyDone();
 
     bool shouldShowWebView() const { return m_shouldShowWebView; }
-
+    bool usingServerMode() const { return m_usingServerMode; }
     void configureViewForTest(const TestInvocation&);
     
     bool beforeUnloadReturnValue() const { return m_beforeUnloadReturnValue; }

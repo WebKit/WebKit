@@ -290,18 +290,29 @@ class MacPort(ApplePort):
         return sample_files
 
     def sample_process(self, name, pid):
-        try:
-            hang_report = self.sample_file_path(name, pid)
-            self._executive.run_command([
-                "/usr/bin/sample",
-                pid,
-                10,
-                10,
-                "-file",
-                hang_report,
-            ])
-        except ScriptError as e:
-            _log.warning('Unable to sample process:' + str(e))
+        hang_report = self.sample_file_path(name, pid)
+        exit_status = self._executive.run_command([
+            "/usr/bin/sudo",
+            "-n",
+            "/usr/sbin/spindump",
+            pid,
+            10,
+            10,
+            "-file",
+            hang_report,
+        ], return_exit_code=True)
+        if exit_status:
+            try:
+                self._executive.run_command([
+                    "/usr/bin/sample",
+                    pid,
+                    10,
+                    10,
+                    "-file",
+                    hang_report,
+                ])
+            except ScriptError as e:
+                _log.warning('Unable to sample process:' + str(e))
 
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper'

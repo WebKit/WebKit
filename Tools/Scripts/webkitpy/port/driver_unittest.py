@@ -206,6 +206,9 @@ class DriverTest(unittest.TestCase):
             def stop(self, timeout):
                 pass
 
+            def write(self, str):
+                pass
+
         def assert_crash(driver, error_line, crashed, name, pid, unresponsive=False):
             self.assertEqual(driver._check_for_driver_crash_or_unresponsiveness(error_line), crashed)
             self.assertEqual(driver._crashed_process_name, name)

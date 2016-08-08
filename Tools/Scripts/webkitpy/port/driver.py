@@ -444,6 +444,7 @@ class Driver(object):
             if child_process_pid:
                 self._port.sample_process(child_process_name, child_process_pid)
             self.error_from_test += error_line
+            self._server_process.write('#SAMPLE FINISHED\n')
             return True
         return self.has_crashed()
 

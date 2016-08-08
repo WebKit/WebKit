@@ -41,6 +41,7 @@
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <climits>
 #include <cstdio>
+#include <unistd.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
@@ -189,15 +190,24 @@ void TestInvocation::dumpWebProcessUnresponsiveness()
 void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
 {
     fprintf(stderr, "%s", errorMessage);
-    char errorMessageToStderr[1024];
+    char buffer[1024] = { };
 #if PLATFORM(COCOA)
     pid_t pid = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
-    sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName(), static_cast<long>(pid));
+    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName(), static_cast<long>(pid));
 #else
-    sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName());
+    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName());
 #endif
 
-    dump(errorMessage, errorMessageToStderr, true);
+    dump(errorMessage, buffer, true);
+    
+    if (!TestController::singleton().usingServerMode())
+        return;
+    
+    if (isatty(fileno(stdin)) || isatty(fileno(stderr)))
+        fputs("Grab an image of the stack, then hit enter...\n", stderr);
+    
+    if (!fgets(buffer, sizeof(buffer), stdin) || strcmp(buffer, "#SAMPLE FINISHED\n"))
+        fprintf(stderr, "Failed receive expected sample response, got:\n\t\"%s\"\nContinuing...\n", buffer);
 }
 
 void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bool seenError)

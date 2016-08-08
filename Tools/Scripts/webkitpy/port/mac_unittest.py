@@ -203,19 +203,33 @@ class MacTest(port_testcase.PortTestCase):
         port.stop_helper()
         oc.restore_output()
 
-    def test_sample_process(self):
+    def test_spindump(self):
 
         def logging_run_command(args):
             print args
 
         port = self.make_port()
         port._executive = MockExecutive2(run_command_fn=logging_run_command)
+        expected_stdout = "['/usr/bin/sudo', '-n', '/usr/sbin/spindump', 42, 10, 10, '-file', '/mock-build/layout-test-results/test-42-sample.txt']\n"
+        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+
+    def test_sample_process(self):
+
+        def logging_run_command(args):
+            if args[0] == '/usr/bin/sudo':
+                return 1
+            print args
+            return 0
+
+        port = self.make_port()
+        port._executive = MockExecutive2(run_command_fn=logging_run_command)
         expected_stdout = "['/usr/bin/sample', 42, 10, 10, '-file', '/mock-build/layout-test-results/test-42-sample.txt']\n"
         OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
 
-    def test_sample_process_throws_exception(self):
-
+    def test_sample_process_exception(self):
         def throwing_run_command(args):
+            if args[0] == '/usr/bin/sudo':
+                return 1
             raise ScriptError("MOCK script error")
 
         port = self.make_port()
