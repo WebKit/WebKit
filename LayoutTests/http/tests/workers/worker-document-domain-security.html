@@ -5,6 +5,9 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
+if (window.internals)
+    window.internals.settings.setTreatIPAddressAsDomain(true);
+
 function log(message)
 {
     document.getElementById("result").innerHTML += message + "<br>";

@@ -1,0 +1,10 @@
+Test whether a page loaded straight from an IP address can set document.domain and wrongly treat IP address octets as subdomains.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Was not able to set document.domain to a fragment/part of the IP address. document.domain == 127.0.0.1. Got error: The operation is insecure.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

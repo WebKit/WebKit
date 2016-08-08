@@ -10,6 +10,9 @@
 
     <pre id=log></pre>
     <script>
+        if (window.internals)
+            window.internals.settings.setTreatIPAddressAsDomain(true);
+
         function log(msg)
         {
             document.getElementById("log").appendChild(document.createTextNode(msg + "\n"));

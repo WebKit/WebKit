@@ -121,6 +121,7 @@
 #include "NodeIterator.h"
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"
+#include "OriginAccessEntry.h"
 #include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -4493,6 +4494,13 @@ void Document::setDomain(const String& newDomain, ExceptionCode& ec)
     int newLength = newDomain.length();
     // e.g. newDomain = webkit.org (10) and domain() = www.webkit.org (14)
     if (newLength >= oldLength) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    OriginAccessEntry::IPAddressSetting ipAddressSetting = settings() && settings()->treatIPAddressAsDomain() ? OriginAccessEntry::TreatIPAddressAsDomain : OriginAccessEntry::TreatIPAddressAsIPAddress;
+    OriginAccessEntry accessEntry(securityOrigin()->protocol(), newDomain, OriginAccessEntry::AllowSubdomains, ipAddressSetting);
+    if (!accessEntry.matchesOrigin(*securityOrigin())) {
         ec = SECURITY_ERR;
         return;
     }

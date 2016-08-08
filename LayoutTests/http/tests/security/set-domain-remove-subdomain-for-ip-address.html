@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Try to set document.domain and wrongly treat IP address octets as subdomains</title>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test whether a page loaded straight from an IP address can set document.domain and wrongly treat IP address octets as subdomains.");
+
+    if (document.domain != "127.0.0.1") {
+        document.location.hostname = "127.0.0.1";
+    }
+
+    try {
+        document.domain = "0.0.1";
+        testFailed("Did not get a security error.");
+    } catch (e) {
+        if (document.domain === "0.0.1") {
+            testFailed("Was able to set document.domain to a fragment/part of the IP address as if the octets were subdomains. Got error: " + e.message);
+        } else {
+            testPassed("Was not able to set document.domain to a fragment/part of the IP address. document.domain == " + document.domain + ". Got error: " + e.message);
+        }
+    }
+    finishJSTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
