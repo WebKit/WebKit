@@ -72,7 +72,7 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(WebPage& webPage)
 
     m_parentWindow = XCreateWindow(m_display,
         RootWindowOfScreen(screen),
-        WidthOfScreen(screen) + 1, 0, 1, 1,
+        -1, -1, 1, 1,
         0,
         gdk_visual_get_depth(visual),
         InputOutput,
