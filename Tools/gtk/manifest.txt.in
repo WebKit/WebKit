@@ -43,7 +43,7 @@ exclude \.xcconfig$
 exclude \.xcodeproj$
 
 # Exclude directories from other ports
-exclude .*\/(Configurations|mac|ios|spi|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win)\/.*$
+exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win)\/.*$
 
 directory Source
 exclude Source/JavaScriptCore/tests

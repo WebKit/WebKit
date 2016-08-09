@@ -1,3 +1,12 @@
+2016-08-09  Konstantin Tokarev  <annulen@yandex.ru>
+
+        webkit-gtk tarball fails to build due to missing files
+        https://bugs.webkit.org/show_bug.cgi?id=160684
+
+        Reviewed by Alex Christensen.
+
+        * gtk/manifest.txt.in: Added back spi directories.
+
 2016-08-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Build the jhbuild with -O2 optimization level by default
