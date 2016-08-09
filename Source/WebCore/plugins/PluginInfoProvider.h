@@ -32,7 +32,7 @@ namespace WebCore {
 
 class WEBCORE_EXPORT PluginInfoProvider : public RefCounted<PluginInfoProvider> {
 public:
-    WEBCORE_EXPORT virtual ~PluginInfoProvider();
+    virtual ~PluginInfoProvider();
 
     void refreshPlugins(bool reloadPages);
 
