@@ -63,9 +63,9 @@ PASS detachedTextNode.splitText(1), with unselected range collapsed at (detached
 FAIL detachedTextNode.splitText(1), with selected range collapsed at (detachedTextNode, 1) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedTextNode.splitText(detachedTextNode.length), with unselected range collapsed at (detachedTextNode, detachedTextNode.length) 
 FAIL detachedTextNode.splitText(detachedTextNode.length), with selected range collapsed at (detachedTextNode, detachedTextNode.length) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedTextNode.splitText(1), with unselected range on detachedTextNode from 1 to 3 assert_equals: Wrong end offset expected 1 but got 3
+PASS detachedTextNode.splitText(1), with unselected range on detachedTextNode from 1 to 3 
 FAIL detachedTextNode.splitText(1), with selected range on detachedTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedTextNode.splitText(2), with unselected range on detachedTextNode from 1 to 3 assert_equals: Wrong end offset expected 2 but got 3
+PASS detachedTextNode.splitText(2), with unselected range on detachedTextNode from 1 to 3 
 FAIL detachedTextNode.splitText(2), with selected range on detachedTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedTextNode.splitText(3), with unselected range on detachedTextNode from 1 to 3 
 FAIL detachedTextNode.splitText(3), with selected range on detachedTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
@@ -77,9 +77,9 @@ PASS detachedForeignTextNode.splitText(1), with unselected range collapsed at (d
 FAIL detachedForeignTextNode.splitText(1), with selected range collapsed at (detachedForeignTextNode, 1) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedForeignTextNode.splitText(detachedForeignTextNode.length), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length) 
 FAIL detachedForeignTextNode.splitText(detachedForeignTextNode.length), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedForeignTextNode.splitText(1), with unselected range on detachedForeignTextNode from 1 to 3 assert_equals: Wrong end offset expected 1 but got 3
+PASS detachedForeignTextNode.splitText(1), with unselected range on detachedForeignTextNode from 1 to 3 
 FAIL detachedForeignTextNode.splitText(1), with selected range on detachedForeignTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedForeignTextNode.splitText(2), with unselected range on detachedForeignTextNode from 1 to 3 assert_equals: Wrong end offset expected 2 but got 3
+PASS detachedForeignTextNode.splitText(2), with unselected range on detachedForeignTextNode from 1 to 3 
 FAIL detachedForeignTextNode.splitText(2), with selected range on detachedForeignTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedForeignTextNode.splitText(3), with unselected range on detachedForeignTextNode from 1 to 3 
 FAIL detachedForeignTextNode.splitText(3), with selected range on detachedForeignTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
@@ -91,9 +91,9 @@ PASS detachedXmlTextNode.splitText(1), with unselected range collapsed at (detac
 FAIL detachedXmlTextNode.splitText(1), with selected range collapsed at (detachedXmlTextNode, 1) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedXmlTextNode.splitText(detachedXmlTextNode.length), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length) 
 FAIL detachedXmlTextNode.splitText(detachedXmlTextNode.length), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedXmlTextNode.splitText(1), with unselected range on detachedXmlTextNode from 1 to 3 assert_equals: Wrong end offset expected 1 but got 3
+PASS detachedXmlTextNode.splitText(1), with unselected range on detachedXmlTextNode from 1 to 3 
 FAIL detachedXmlTextNode.splitText(1), with selected range on detachedXmlTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedXmlTextNode.splitText(2), with unselected range on detachedXmlTextNode from 1 to 3 assert_equals: Wrong end offset expected 2 but got 3
+PASS detachedXmlTextNode.splitText(2), with unselected range on detachedXmlTextNode from 1 to 3 
 FAIL detachedXmlTextNode.splitText(2), with selected range on detachedXmlTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedXmlTextNode.splitText(3), with unselected range on detachedXmlTextNode from 1 to 3 
 FAIL detachedXmlTextNode.splitText(3), with selected range on detachedXmlTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0

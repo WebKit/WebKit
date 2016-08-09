@@ -79,8 +79,7 @@ RefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
     if (ec)
         return 0;
 
-    if (parentNode())
-        document().textNodeSplit(this);
+    document().textNodeSplit(this);
 
     if (renderer())
         renderer()->setTextWithOffset(data(), 0, oldStr.length());
