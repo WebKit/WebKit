@@ -1,5 +1,41 @@
 2016-08-08  Anders Carlsson  <andersca@apple.com>
 
+        Move plug-in code from WebPlatformStrategies to WebPluginInfoProvider
+        https://bugs.webkit.org/show_bug.cgi?id=160679
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::setPluginLoadClientPolicy):
+        (WebKit::WebPluginInfoProvider::clearPluginClientPolicies):
+        (WebKit::WebPluginInfoProvider::refreshPlugins):
+        (WebKit::WebPluginInfoProvider::getPluginInfo):
+        (WebKit::WebPluginInfoProvider::getWebVisiblePluginInfo):
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+        (WebKit::WebPluginInfoProvider::pluginLoadClientPolicyForHost):
+        (WebKit::WebPluginInfoProvider::longestMatchedWildcardHostForHost):
+        (WebKit::WebPluginInfoProvider::replaceHostWithMatchedWildcardHost):
+        * WebProcess/Plugins/WebPluginInfoProvider.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createPluginStrategy):
+        (WebKit::WebPlatformStrategies::WebPlatformStrategies): Deleted.
+        (WebKit::WebPlatformStrategies::refreshPlugins): Deleted.
+        (WebKit::WebPlatformStrategies::getPluginInfo): Deleted.
+        (WebKit::WebPlatformStrategies::getWebVisiblePluginInfo): Deleted.
+        (WebKit::WebPlatformStrategies::setPluginLoadClientPolicy): Deleted.
+        (WebKit::WebPlatformStrategies::clearPluginClientPolicies): Deleted.
+        (WebKit::WebPlatformStrategies::longestMatchedWildcardHostForHost): Deleted.
+        (WebKit::WebPlatformStrategies::replaceHostWithMatchedWildcardHost): Deleted.
+        (WebKit::WebPlatformStrategies::pluginLoadClientPolicyForHost): Deleted.
+        (WebKit::WebPlatformStrategies::populatePluginCache): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setPluginLoadClientPolicy):
+        (WebKit::WebProcess::clearPluginClientPolicies):
+
+2016-08-08  Anders Carlsson  <andersca@apple.com>
+
         Add a new PluginInfoProvider class, to replace PluginStrategy
         https://bugs.webkit.org/show_bug.cgi?id=160670
 

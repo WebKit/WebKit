@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/PluginInfoProvider.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
@@ -36,16 +37,38 @@ public:
     static WebPluginInfoProvider& singleton();
     virtual ~WebPluginInfoProvider();
 
-private:
-    void refreshPlugins() override;
-    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
-    void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
 #if PLATFORM(MAC)
     void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) override;
     void clearPluginClientPolicies() override;
 #endif
 
+private:
     WebPluginInfoProvider();
+
+    void refreshPlugins() override;
+    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
+    void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    void populatePluginCache(const WebCore::Page&);
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
+#if PLATFORM(MAC)
+    Optional<WebCore::PluginLoadClientPolicy> pluginLoadClientPolicyForHost(const String&, const WebCore::PluginInfo&) const;
+    String longestMatchedWildcardHostForHost(const String& host) const;
+    bool replaceHostWithMatchedWildcardHost(String& host, const String& identifier) const;
+
+    typedef HashMap<String, WebCore::PluginLoadClientPolicy> PluginLoadClientPoliciesByBundleVersion;
+    typedef HashMap<String, PluginLoadClientPoliciesByBundleVersion> PluginPolicyMapsByIdentifier;
+    HashMap<String, PluginPolicyMapsByIdentifier> m_hostsToPluginIdentifierData;
+#endif
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    bool m_pluginCacheIsPopulated { false };
+    bool m_shouldRefreshPlugins { false };
+    Vector<WebCore::PluginInfo> m_cachedPlugins;
+    Vector<WebCore::PluginInfo> m_cachedApplicationPlugins;
+#endif
 };
 
 }
