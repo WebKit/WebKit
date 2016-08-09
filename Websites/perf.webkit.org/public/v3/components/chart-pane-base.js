@@ -42,11 +42,9 @@ class ChartPaneBase extends ComponentBase {
         var formatter = result.metric.makeFormatter(4);
         var self = this;
 
-        var sourceList = ChartStyles.createSourceList(this._platform, this._metric, this._disableSampling, this._showOutliers);
-
         var overviewOptions = ChartStyles.overviewChartOptions(formatter);
         overviewOptions.selection.onchange = this._overviewSelectionDidChange.bind(this);
-        this._overviewChart = new InteractiveTimeSeriesChart(sourceList, overviewOptions);
+        this._overviewChart = new InteractiveTimeSeriesChart(this._createSourceList(false), overviewOptions);
         this.renderReplace(this.content().querySelector('.chart-pane-overview'), this._overviewChart);
 
         var mainOptions = ChartStyles.mainChartOptions(formatter);
@@ -55,7 +53,7 @@ class ChartPaneBase extends ComponentBase {
         mainOptions.selection.onzoom = this._mainSelectionDidZoom.bind(this);
         mainOptions.annotations.onclick = this._openAnalysisTask.bind(this);
         mainOptions.ondata = this._didFetchData.bind(this);
-        this._mainChart = new InteractiveTimeSeriesChart(sourceList, mainOptions);
+        this._mainChart = new InteractiveTimeSeriesChart(this._createSourceList(true), mainOptions);
         this.renderReplace(this.content().querySelector('.chart-pane-main'), this._mainChart);
 
         this._mainChartStatus = new ChartPaneStatusView(result.metric, this._mainChart, this._requestOpeningCommitViewer.bind(this));
@@ -80,11 +78,15 @@ class ChartPaneBase extends ComponentBase {
         this._updateSourceList();
     }
 
+    _createSourceList(isMainChart)
+    {
+        return ChartStyles.createSourceList(this._platform, this._metric, this._disableSampling, this._showOutliers, isMainChart);
+    }
+
     _updateSourceList()
     {
-        var sourceList = ChartStyles.createSourceList(this._platform, this._metric, this._disableSampling, this._showOutliers);
-        this._mainChart.setSourceList(sourceList);
-        this._overviewChart.setSourceList(sourceList);
+        this._mainChart.setSourceList(this._createSourceList(true));
+        this._overviewChart.setSourceList(this._createSourceList(false));
     }
 
     fetchAnalysisTasks(noCache)

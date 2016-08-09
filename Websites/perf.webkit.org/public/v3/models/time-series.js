@@ -1,11 +1,14 @@
+'use strict';
 
 // v3 UI still relies on RunsData for associating metrics with units.
 // Use declartive syntax once that dependency has been removed.
-TimeSeries = class {
+var TimeSeries = class {
     constructor()
     {
         this._data = [];
     }
+
+    length() { return this._data.length; }
 
     append(item)
     {
@@ -27,6 +30,17 @@ TimeSeries = class {
             value: lastPoint.value,
             interval: lastPoint.interval,
         });
+    }
+
+    valuesBetweenRange(startingIndex, endingIndex)
+    {
+        startingIndex = Math.max(startingIndex, 0);
+        endingIndex = Math.min(endingIndex, this._data.length);
+        var length = endingIndex - startingIndex;
+        var values = new Array(length);
+        for (var i = 0; i < length; i++)
+            values[i] = this._data[startingIndex + i].value;
+        return values;
     }
 
     firstPoint() { return this._data.length ? this._data[0] : null; }
@@ -67,3 +81,6 @@ TimeSeries = class {
     }
 
 };
+
+if (typeof module != 'undefined')
+    module.exports.TimeSeries = TimeSeries;

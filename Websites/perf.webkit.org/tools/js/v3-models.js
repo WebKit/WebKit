@@ -26,6 +26,7 @@ importFromV3('models/root-set.js', 'MeasurementRootSet');
 importFromV3('models/root-set.js', 'RootSet');
 importFromV3('models/test.js', 'Test');
 importFromV3('models/test-group.js', 'TestGroup');
+importFromV3('models/time-series.js', 'TimeSeries');
 
 importFromV3('privileged-api.js', 'PrivilegedAPI');
 importFromV3('instrumentation.js', 'Instrumentation');

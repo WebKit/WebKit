@@ -21,9 +21,9 @@ class MeasurementCluster {
             var point = this._adaptor.applyTo(row);
             if (point.id in idMap || (!includeOutliers && point.isOutlier))
                 continue;
-            idMap[point.id] = true;
-            point.cluster = this;
             series.append(point);
+            idMap[point.id] = point.seriesIndex;
+            point.cluster = this;
         }
     }
 }

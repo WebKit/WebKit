@@ -7,9 +7,11 @@ class TimeSeriesChart extends ComponentBase {
         this.element().style.position = 'relative';
         this._canvas = null;
         this._sourceList = sourceList;
+        this._trendLines = null;
         this._options = options;
         this._fetchedTimeSeries = null;
         this._sampledTimeSeriesData = null;
+        this._renderedTrendLines = false;
         this._valueRangeCache = null;
         this._annotations = null;
         this._annotationRows = null;
@@ -76,14 +78,35 @@ class TimeSeriesChart extends ComponentBase {
         console.assert(startTime < endTime, 'startTime must be before endTime');
         this._startTime = startTime;
         this._endTime = endTime;
+        this._fetchedTimeSeries = null;
         this.fetchMeasurementSets(false);
     }
 
     setSourceList(sourceList)
     {
         this._sourceList = sourceList;
-        this.fetchMeasurementSets(false);
         this._fetchedTimeSeries = null;
+        this.fetchMeasurementSets(false);
+    }
+
+    sourceList() { return this._sourceList; }
+
+    clearTrendLines()
+    {
+        this._trendLines = null;
+        this._renderedTrendLines = false;
+        this.enqueueToRender();
+    }
+
+    setTrendLine(sourceIndex, trendLine)
+    {
+        if (this._trendLines)
+            this._trendLines = this._trendLines.slice(0);
+        else
+            this._trendLines = [];
+        this._trendLines[sourceIndex] = trendLine;
+        this._renderedTrendLines = false;
+        this.enqueueToRender();
     }
 
     fetchMeasurementSets(noCache)
@@ -198,6 +221,7 @@ class TimeSeriesChart extends ComponentBase {
         var doneWork = this._updateCanvasSizeIfClientSizeChanged();
         var metrics = this._computeHorizontalRenderingMetrics();
         doneWork |= this._ensureSampledTimeSeries(metrics);
+        doneWork |= this._ensureTrendLines();
         doneWork |= this._ensureValueRangeCache();
         this._computeVerticalRenderingMetrics(metrics);
         doneWork |= this._layoutAnnotationBars(metrics);
@@ -386,7 +410,14 @@ class TimeSeriesChart extends ComponentBase {
             var source = this._sourceList[i];
             var series = this._sampledTimeSeriesData[i];
             if (series)
-                this._renderTimeSeries(context, metrics, source, series);
+                this._renderTimeSeries(context, metrics, source, series, this._trendLines && this._trendLines[i] ? 'background' : '');
+        }
+
+        for (var i = 0; i < this._sourceList.length; i++) {
+            var source = this._sourceList[i];
+            var trendLine = this._trendLines ? this._trendLines[i] : null;
+            if (series && trendLine)
+                this._renderTimeSeries(context, metrics, source, trendLine, 'foreground');
         }
 
         if (!this._annotationRows)
@@ -402,7 +433,7 @@ class TimeSeriesChart extends ComponentBase {
         }
     }
 
-    _renderTimeSeries(context, metrics, source, series)
+    _renderTimeSeries(context, metrics, source, series, layerName)
     {
         for (var point of series) {
             point.x = metrics.timeToX(point.time);
@@ -412,27 +443,43 @@ class TimeSeriesChart extends ComponentBase {
         context.strokeStyle = source.intervalStyle;
         context.fillStyle = source.intervalStyle;
         context.lineWidth = source.intervalWidth;
+
+        context.beginPath();
+        var width = 1;
         for (var i = 0; i < series.length; i++) {
             var point = series[i];
-            if (!point.interval)
-                continue;
-            context.beginPath();
-            context.moveTo(point.x, metrics.valueToY(point.interval[0]))
-            context.lineTo(point.x, metrics.valueToY(point.interval[1]));
-            context.stroke();
+            var interval = point.interval();
+            var value = interval ? interval[0] : point.value;
+            context.lineTo(point.x - width, metrics.valueToY(value));
+            context.lineTo(point.x + width, metrics.valueToY(value));
         }
+        for (var i = series.length - 1; i >= 0; i--) {
+            var point = series[i];
+            var interval = point.interval();
+            var value = interval ? interval[1] : point.value;
+            context.lineTo(point.x + width, metrics.valueToY(value));
+            context.lineTo(point.x - width, metrics.valueToY(value));
+        }
+        context.fill();
 
-        context.strokeStyle = source.lineStyle;
-        context.lineWidth = source.lineWidth;
+        context.strokeStyle = this._sourceOptionWithFallback(source, layerName + 'LineStyle', 'lineStyle');
+        context.lineWidth = this._sourceOptionWithFallback(source, layerName + 'LineWidth', 'lineWidth');
         context.beginPath();
         for (var point of series)
             context.lineTo(point.x, point.y);
         context.stroke();
 
-        context.fillStyle = source.pointStyle;
-        var radius = source.pointRadius;
-        for (var point of series)
-            this._fillCircle(context, point.x, point.y, radius);
+        context.fillStyle = this._sourceOptionWithFallback(source, layerName + 'PointStyle', 'pointStyle');
+        var radius = this._sourceOptionWithFallback(source, layerName + 'PointRadius', 'pointRadius');
+        if (radius) {
+            for (var point of series)
+                this._fillCircle(context, point.x, point.y, radius);
+        }
+    }
+
+    _sourceOptionWithFallback(option, preferred, fallback)
+    {
+        return preferred in option ? option[preferred] : option[fallback];
     }
 
     _fillCircle(context, cx, cy, radius)
@@ -476,7 +523,7 @@ class TimeSeriesChart extends ComponentBase {
                 return null;
 
             // A chart with X px width shouldn't have more than 2X / <radius-of-points> data points.
-            var maximumNumberOfPoints = 2 * metrics.chartWidth / source.pointRadius;
+            var maximumNumberOfPoints = 2 * metrics.chartWidth / (source.pointRadius || 2);
 
             var pointAfterStart = timeSeries.findPointAfterTime(startTime);
             var pointBeforeStart = (pointAfterStart ? timeSeries.previousPoint(pointAfterStart) : null) || timeSeries.firstPoint();
@@ -545,6 +592,14 @@ class TimeSeriesChart extends ComponentBase {
         Instrumentation.reportMeasurement('TimeSeriesChart', 'samplingRatio', '%', sampledData.length / data.length * 100);
 
         return sampledData;
+    }
+
+    _ensureTrendLines()
+    {
+        if (this._renderedTrendLines)
+            return false;
+        this._renderedTrendLines = true;
+        return true;
     }
 
     _ensureValueRangeCache()

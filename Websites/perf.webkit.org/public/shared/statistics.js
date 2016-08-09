@@ -173,13 +173,13 @@ var Statistics = new (function () {
     }
 
     this.debuggingSegmentation = false;
-    this.segmentTimeSeriesByMaximizingSchwarzCriterion = function (values) {
+    this.segmentTimeSeriesByMaximizingSchwarzCriterion = function (values, segmentCountWeight, gridSize) {
         // Split the time series into grids since splitIntoSegmentsUntilGoodEnough is O(n^2).
-        var gridLength = 500;
+        var gridLength = gridSize || 500;
         var totalSegmentation = [0];
         for (var gridCount = 0; gridCount < Math.ceil(values.length / gridLength); gridCount++) {
             var gridValues = values.slice(gridCount * gridLength, (gridCount + 1) * gridLength);
-            var segmentation = splitIntoSegmentsUntilGoodEnough(gridValues);
+            var segmentation = splitIntoSegmentsUntilGoodEnough(gridValues, segmentCountWeight);
 
             if (Statistics.debuggingSegmentation)
                 console.log('grid=' + gridCount, segmentation);
@@ -271,7 +271,7 @@ var Statistics = new (function () {
     function oneSidedToTwoSidedProbability(probability) { return 2 * probability - 1; }
     function twoSidedToOneSidedProbability(probability) { return (1 - (1 - probability) / 2); }
 
-    function splitIntoSegmentsUntilGoodEnough(values) {
+    function splitIntoSegmentsUntilGoodEnough(values, BirgeAndMassartC) {
         if (values.length < 2)
             return [0, values.length];
 
@@ -279,7 +279,7 @@ var Statistics = new (function () {
 
         var SchwarzCriterionBeta = Math.log1p(values.length - 1) / values.length;
 
-        var BirgeAndMassartC = 2.5; // Suggested by the authors.
+        BirgeAndMassartC = BirgeAndMassartC || 2.5; // Suggested by the authors.
         var BirgeAndMassartPenalization = function (segmentCount) {
             return segmentCount * (1 + BirgeAndMassartC * Math.log1p(values.length / segmentCount - 1));
         }

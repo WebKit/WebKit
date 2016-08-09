@@ -1,3 +1,143 @@
+2016-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Always show segmentation on v3 charts page
+        https://bugs.webkit.org/show_bug.cgi?id=160576
+
+        Rubber-stamped by Chris Dumez.
+
+        Added "Trend Lines" popover to select and customize a moving average or a segmentation to show on charts page
+        and made Schwarz criterion segmentation the default trend line for all charts.
+
+        Because computing the segmentation is expensive, we use WebWorker to parallelize the computation via AsyncTask.
+        We also compute and cache the segmentation for each cluster separately to avoid processing the entire measurement
+        set as that could take 10-20s total, which was a huge problem in v2 UI. v3 UI's approach is more incremental and
+        even opens up an opportunity to cache the results in the server side.
+
+        Also brought back "shading" for the confidence interval drawing as done in v1 and v2 UI.
+
+        * public/shared/statistics.js:
+        (Statistics.segmentTimeSeriesByMaximizingSchwarzCriterion): Added segmentCountWeight and gridSize as arguments
+        to customize the algorithm.
+        (Statistics.splitIntoSegmentsUntilGoodEnough): Takes segmentCountWeight as BirgeAndMassartC.
+
+        * public/v3/async-task.js: Added.
+        (AsyncTask): Added. This class represents a task such as computing segmentation to be executed in a worker.
+        (AsyncTask.prototype.execute): Added. Returns a promise that gets resolved when the specified task completes.
+        (AsyncTaskWorker.waitForAvailableWorker): Added. Calls the given callback with the first available worker. When
+        all workers are processing some tasks, it waits until one becomes available by putting the callback into a queue.
+        _didRecieveMessage pops an item out of this queue when a worker completes a task. We don't use a promise here
+        because calling this function multiple times synchronously could result in all the returned promises getting
+        resolved with the same worker as none of the callers get to lock away the first available worker until the end
+        of the current micro-task.
+        (AsyncTaskWorker._makeWorkerEventuallyAvailable): Added. A helper function for waitForAvailableWorker. Start
+        a new worker if the number of workers we've started is less than the number of extra cores (e.g. 7 if there are
+        8 cores on the machine). Avoid starting a new worker if we've started a new worker within the last 50 ms since
+        starting a new worker takes some time.
+        (AsyncTaskWorker._findAvailableWorker): Added. Finds a worker that's available right now if there is any.
+        (AsyncTaskWorker): Added. An instance of AsyncTaskWorker represents a Web worker.
+        (AsyncTaskWorker.prototype.id): Added.
+        (AsyncTaskWorker.prototype.sendTask): Added. Sends a task represented by AsyncTask to the worker.
+        (AsyncTaskWorker.prototype._didRecieveMessage): Added. This function gets called when the current task completes
+        in the worker. Pop the next callback if some caller of waitForAvailableWorker is still waiting. Otherwise stop
+        the worker after one second of waiting to avoid worker churning.
+        (AsyncTaskWorker.workerDidRecieveMessage): Added. Called by onmessage on the worker. Executes the specified task
+        and sends back a message upon completion with the appropriate timing data.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.configure): Uses _createSourceList.
+        (ChartPaneBase.prototype._createSourceList): Added. Extracted from configure to customize the source list for
+        the main chart and the overview chart.
+        (ChartPaneBase.prototype._updateSourceList): Uses _createSourceList.
+
+        * public/v3/components/chart-styles.js:
+        (ChartStyles.createSourceList): Added a boolean showPoint as an extra argument. This specifies whether circles
+        are drawn for each data point.
+        (ChartStyles.baselineStyle): Added styles for foreground lines and background lines. They're used for trend lines
+        and underlying raw data respectively when trend lines are shown.
+        (ChartStyles.targetStyle): Ditto.
+        (ChartStyles.currentStyle): Ditto.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart): Added _trendLines, _renderedTrendLines, and _fetchedTimeSeries as instance variables.
+        (TimeSeriesChart.prototype.setSourceList): Clear _fetchedTimeSeries before calling setSourceList for consistency.
+        (TimeSeriesChart.prototype.sourceList): Added.
+        (TimeSeriesChart.prototype.clearTrendLines): Added.
+        (TimeSeriesChart.prototype.setTrendLine): Added. Preserves the existing trend lines for other sources. This is
+        necessary because segmentation for "current" and "baseline" lines may become available at different times, and we
+        don't want to clear one or the other when setting one.
+        (TimeSeriesChart.prototype._layout): Added a call to _ensureTrendLines.
+        (TimeSeriesChart.prototype._renderChartContent): Call _renderTimeSeries for trend lines. Trend lines are always
+        foreground lines and "regular" raw data points are drawn as background if there are trend lines.
+        (TimeSeriesChart.prototype._renderTimeSeries): Added layerName as an argument. It could be an empty string,
+        "foreground", or "background". Draw a "shade" just like v1 and v2 UI instead of vertical lines for the confidence
+        intervals. Pick "foreground", "background", or "regular" chart style based on layerName. Also avoid drawing data
+        points when *PointRadius is set to zero to reduce the runtime of this function.
+        (TimeSeriesChart.prototype._sourceOptionWithFallback): Added.
+        (TimeSeriesChart.prototype._ensureSampledTimeSeries): When *PointRadius is 0, show as many points as there are x
+        coordinates as a fallback instead of showing every point.
+        (TimeSeriesChart.prototype._ensureTrendLines): Added. Returns true if the chart contents haven't been re-rendered
+        since the last update to trend lines. This flag is unset by setTrendLine.
+
+        * public/v3/index.html:
+
+        * public/v3/models/measurement-cluster.js:
+        (MeasurementCluster.prototype.addToSeries): Store the data points' index to idMap to help aid MeasurementSet's
+        _cachedClusterSegmentation efficiently re-create the segmentation from the cache.
+
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet): Added _segmentationCache as an instance variable.
+        (MeasurementSet.prototype.fetchSegmentation): Added. Calls _cachedClusterSegmentation on each cluster, and
+        constructs the time series representation of the segmentation from the results.
+        (MeasurementSet.prototype._cachedClusterSegmentation): Computes and caches the segmentation for each cluster.
+        The cache of segmentation stores ID of each measurement set at which segment changes instead of its index since
+        the latter could change in any moment when a new test result is reported, or an existing test result is removed
+        from the time series; e.g. when it's marked as an outlier.
+        (MeasurementSet.prototype._validateSegmentationCache): Added. Checks whether the cached segmentation's name and
+        its parameters match that of the requested one.
+        (MeasurementSet.prototype._invokeSegmentationAlgorithm): Added. Invokes the segmentation algorithm either in the
+        main thread or in a Web worker via AsyncTask API based on the size of the time series. While parallelizing the
+        work is beneficial when the data set is large, the overhead can add up if we keep processing a very small data
+        set in a worker.
+
+        * public/v3/models/time-series.js: Made the file compatible with Node.
+        (TimeSeries.prototype.length): Added.
+        (TimeSeries.prototype.valuesBetweenRange): Added.
+
+        * public/v3/pages/chart-pane.js:
+        (createTrendLineExecutableFromAveragingFunction): Added.
+        (ChartTrendLineTypes): Added. Similar to StatisticsStrategies (statistics-strategies.js) in v2 UI.
+        (ChartPane): Added _trendLineType, _trendLineParameters, _trendLineVersion, and _renderedTrendLineOptions as
+        instance variables.
+        (ChartPane.prototype.serializeState): Serialize the trend line option. This format is compatible with v2 UI.
+        (ChartPane.prototype.updateFromSerializedState): Ditto. Parsing is compatible with v2 UI except that we now have
+        the default trend line set when the specified ID doesn't match an existing type ID.
+        (ChartPane.prototype._renderActionToolbar): Added a call to _renderTrendLinePopover. This is the popover that
+        specifies the type of a trend line to show as well as its parameters.
+        (ChartPane.prototype._renderTrendLinePopover): Added. A popover for specifying and customizing a trend line.
+        (ChartPane.prototype._trendLineTypeDidChange): Added. Called when a new trend line is selected.
+        (ChartPane.prototype._defaultParametersForTrendLine): Added.
+        (ChartPane.prototype._trendLineParameterDidChange): Added. Called when the trend lines' parameters are changed.
+        (ChartPane.prototype._didFetchData): Added. Overrides the one in ChartPaneBase to trigger a trend line update.
+        (ChartPane.prototype._updateTrendLine): Added. Update the trend line. Since segmentation can take an arbitrary
+        long time, avoid updating trend lines if this function had been called again (possibly for a different trend line
+        type or with different parameters) before the results become available; hence the versioning.
+        (ChartPane.paneHeaderTemplate): Added the trend line popover.
+        (ChartPane.cssTemplate): Added styles for the trend line popover. Also use a more opaque background color behind
+        popovers when the -webkit-backdrop-filter property is not supported.
+
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype._createChartForCell): Call createSourceList with showPoints set to true to preserve the
+        existing behavior.
+
+        * tools/js/v3-models.js: Include TimeSeries object.
+
+        * unit-tests/measurement-set-tests.js: Added two test cases for MeasurementSet's fetchSegmentation.
+
+        * unit-tests/resources/almost-equal.js: Added.
+        (almostEqual): Extracted out of statistics-tests.js.
+
+        * unit-tests/statistics-tests.js:
+
 2016-08-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         segmentTimeSeriesByMaximizingSchwarzCriterion returns a bogus result on empty charts

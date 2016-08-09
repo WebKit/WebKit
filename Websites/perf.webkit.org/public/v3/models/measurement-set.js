@@ -18,6 +18,7 @@ class MeasurementSet {
         this._allFetches = {};
         this._callbackMap = new Map;
         this._primaryClusterPromise = null;
+        this._segmentationCache = new Map;
     }
 
     platformId() { return this._platformId; }
@@ -196,6 +197,113 @@ class MeasurementSet {
 
         return series;
     }
+
+    fetchSegmentation(segmentationName, parameters, configType, includeOutliers, extendToFuture)
+    {
+        var cacheMap = this._segmentationCache.get(configType);
+        if (!cacheMap) {
+            cacheMap = new WeakMap;
+            this._segmentationCache.set(configType, cacheMap);
+        }
+
+        var timeSeries = new TimeSeries;
+        var idMap = {};
+        var promises = [];
+        for (var cluster of this._sortedClusters) {
+            var clusterStart = timeSeries.length();
+            cluster.addToSeries(timeSeries, configType, includeOutliers, idMap);
+            var clusterEnd = timeSeries.length();
+            promises.push(this._cachedClusterSegmentation(segmentationName, parameters, cacheMap,
+                cluster, timeSeries, clusterStart, clusterEnd, idMap));
+        }
+        if (!timeSeries.length())
+            return Promise.resolve(null);
+
+        var self = this;
+        return Promise.all(promises).then(function (clusterSegmentations) {
+            var segmentationSeries = [];
+            var addSegment = function (startingPoint, endingPoint) {
+                var value = Statistics.mean(timeSeries.valuesBetweenRange(startingPoint.seriesIndex, endingPoint.seriesIndex));
+                segmentationSeries.push({value: value, time: startingPoint.time, interval: function () { return null; }});
+                segmentationSeries.push({value: value, time: endingPoint.time, interval: function () { return null; }});
+            };
+
+            var startingIndex = 0;
+            for (var segmentation of clusterSegmentations) {
+                for (var endingIndex of segmentation) {
+                    addSegment(timeSeries.findPointByIndex(startingIndex), timeSeries.findPointByIndex(endingIndex));
+                    startingIndex = endingIndex;
+                }
+            }
+            if (extendToFuture)
+                timeSeries.extendToFuture();
+            addSegment(timeSeries.findPointByIndex(startingIndex), timeSeries.lastPoint());
+            return segmentationSeries;
+        });
+    }
+
+    _cachedClusterSegmentation(segmentationName, parameters, cacheMap, cluster, timeSeries, clusterStart, clusterEnd, idMap)
+    {
+        var cache = cacheMap.get(cluster);
+        if (cache && this._validateSegmentationCache(cache, segmentationName, parameters)) {
+            var segmentationByIndex = new Array(cache.segmentation.length);
+            for (var i = 0; i < cache.segmentation.length; i++) {
+                var id = cache.segmentation[i];
+                if (!(id in idMap))
+                    return null;
+                segmentationByIndex[i] = idMap[id];
+            }
+            return Promise.resolve(segmentationByIndex);
+        }
+
+        var clusterValues = timeSeries.valuesBetweenRange(clusterStart, clusterEnd);
+        return this._invokeSegmentationAlgorithm(segmentationName, parameters, clusterValues).then(function (segmentationInClusterIndex) {
+            // Remove cluster start/end as segmentation points. Otherwise each cluster will be placed into its own segment. 
+            var segmentation = segmentationInClusterIndex.slice(1, -1).map(function (index) { return clusterStart + index; });
+            var cache = segmentation.map(function (index) { return timeSeries.findPointByIndex(index).id; });
+            cacheMap.set(cluster, {segmentationName: segmentationName, segmentationParameters: parameters.slice(), segmentation: cache});
+            return segmentation;
+        });
+    }
+
+    _validateSegmentationCache(cache, segmentationName, parameters)
+    {
+        if (cache.segmentationName != segmentationName)
+            return false;
+        if (!!cache.segmentationParameters != !!parameters)
+            return false;
+        if (parameters) {
+            if (parameters.length != cache.segmentationParameters.length)
+                return false;
+            for (var i = 0; i < parameters.length; i++) {
+                if (parameters[i] != cache.segmentationParameters[i])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    _invokeSegmentationAlgorithm(segmentationName, parameters, timeSeriesValues)
+    {
+        var args = [timeSeriesValues].concat(parameters || []);
+
+        var timeSeriesIsShortEnoughForSyncComputation = timeSeriesValues.length < 100;
+        if (timeSeriesIsShortEnoughForSyncComputation) {
+            Instrumentation.startMeasuringTime('_invokeSegmentationAlgorithm', 'syncSegmentation');
+            var segmentation = Statistics[segmentationName].apply(timeSeriesValues, args);
+            Instrumentation.endMeasuringTime('_invokeSegmentationAlgorithm', 'syncSegmentation');
+            return Promise.resolve(segmentation);
+        }
+
+        var task = new AsyncTask(segmentationName, args);
+        return task.execute().then(function (response) {
+            Instrumentation.reportMeasurement('_invokeSegmentationAlgorithm', 'workerStartLatency', 'ms', response.startLatency);
+            Instrumentation.reportMeasurement('_invokeSegmentationAlgorithm', 'workerTime', 'ms', response.workerTime);
+            Instrumentation.reportMeasurement('_invokeSegmentationAlgorithm', 'totalTime', 'ms', response.totalTime);
+            return response.result;
+        });
+    }
+
 }
 
 if (typeof module != 'undefined')

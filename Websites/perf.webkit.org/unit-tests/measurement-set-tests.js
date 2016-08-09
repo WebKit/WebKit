@@ -1,6 +1,8 @@
 'use strict';
 
 var assert = require('assert');
+if (!assert.almostEqual)
+    assert.almostEqual = require('./resources/almost-equal.js');
 
 let MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 require('../tools/js/v3-models.js');
@@ -741,4 +743,143 @@ describe('MeasurementSet', function () {
 
     });
 
+    describe('fetchSegmentation', function () {
+
+        var simpleSegmentableValues = [
+            1546.5603, 1548.1536, 1563.5452, 1539.7823, 1546.4184, 1548.9299, 1532.5444, 1546.2800, 1547.1760, 1551.3507,
+            1548.3277, 1544.7673, 1542.7157, 1538.1700, 1538.0948, 1543.0364, 1537.9737, 1542.2611, 1543.9685, 1546.4901,
+            1544.4080, 1540.8671, 1537.3353, 1549.4331, 1541.4436, 1544.1299, 1550.1770, 1553.1872, 1549.3417, 1542.3788,
+            1543.5094, 1541.7905, 1537.6625, 1547.3840, 1538.5185, 1549.6764, 1556.6138, 1552.0476, 1541.7629, 1544.7006,
+            /* segments changes here */
+            1587.1390, 1594.5451, 1586.2430, 1596.7310, 1548.1423
+        ];
+
+        function makeSampleRuns(values, startRunId, startTime, timeIncrement)
+        {
+            var runId = startRunId;
+            var buildId = 3400;
+            var buildNumber = 1;
+            var makeRun = function (value, commitTime) {
+                return [runId++, value, 1, value, value, false, [], commitTime, commitTime + 10, buildId++, buildNumber++, MockModels.builder.id()];
+            }
+
+            timeIncrement = Math.floor(timeIncrement);
+            var runs = values.map(function (value, index) { return makeRun(value, startTime + index * timeIncrement); })
+            
+            return runs;
+        }
+
+        it('should be able to segment a single cluster', function (done) {
+            var set = MeasurementSet.findSet(1, 1, 5000);
+            var promise = set.fetchBetween(4000, 5000);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
+
+            requests[0].resolve({
+                'clusterStart': 1000,
+                'clusterSize': 1000,
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'configurations': {current: makeSampleRuns(simpleSegmentableValues, 6400, 4000, 1000 / 50)},
+                'startTime': 4000,
+                'endTime': 5000,
+                'lastModified': 5000,
+                'clusterCount': 4,
+                'status': 'OK'});
+
+            var timeSeries;
+            assert.equal(set.fetchedTimeSeries('current', false, false).length(), 0);
+            waitForMeasurementSet().then(function () {
+                timeSeries = set.fetchedTimeSeries('current', false, false);
+                assert.equal(timeSeries.length(), 45);
+                assert.equal(timeSeries.firstPoint().time, 4000);
+                assert.equal(timeSeries.lastPoint().time, 4880);
+                return set.fetchSegmentation('segmentTimeSeriesByMaximizingSchwarzCriterion', [], 'current', false);
+            }).then(function (segmentation) {
+                assert.equal(segmentation.length, 4);
+
+                assert.equal(segmentation[0].time, 4000);
+                assert.almostEqual(segmentation[0].value, 1545.082);
+                assert.equal(segmentation[0].value, segmentation[1].value);
+                assert.equal(segmentation[1].time, timeSeries.findPointByIndex(39).time);
+
+                assert.equal(segmentation[2].time, timeSeries.findPointByIndex(39).time);
+                assert.almostEqual(segmentation[2].value, 1581.872);
+                assert.equal(segmentation[2].value, segmentation[3].value);
+                assert.equal(segmentation[3].time, 4880);
+                done();
+            }).catch(done);
+        });
+
+        it('should be able to segment two clusters', function (done) {
+            var set = MeasurementSet.findSet(1, 1, 5000);
+            var promise = set.fetchBetween(3000, 5000);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
+
+            requests[0].resolve({
+                'clusterStart': 1000,
+                'clusterSize': 1000,
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'configurations': {current: makeSampleRuns(simpleSegmentableValues.slice(30), 6400, 4000, 1000 / 30)},
+                'startTime': 4000,
+                'endTime': 5000,
+                'lastModified': 5000,
+                'clusterCount': 4,
+                'status': 'OK'});
+
+            waitForMeasurementSet().then(function () {
+                assert.equal(requests.length, 2);
+                assert.equal(requests[1].url, '../data/measurement-set-1-1-4000.json');
+                return set.fetchSegmentation('segmentTimeSeriesByMaximizingSchwarzCriterion', [], 'current', false);
+            }).then(function (segmentation) {
+                var timeSeries = set.fetchedTimeSeries('current', false, false);
+                assert.equal(timeSeries.length(), 15);
+                assert.equal(timeSeries.firstPoint().time, 4000);
+                assert.equal(timeSeries.lastPoint().time, 4462);
+
+                assert.equal(segmentation.length, 4);
+                assert.equal(segmentation[0].time, timeSeries.firstPoint().time);
+                assert.almostEqual(segmentation[0].value, 1545.441);
+                assert.equal(segmentation[0].value, segmentation[1].value);
+                assert.equal(segmentation[1].time, timeSeries.findPointByIndex(9).time);
+
+                assert.equal(segmentation[2].time, timeSeries.findPointByIndex(9).time);
+                assert.almostEqual(segmentation[2].value, 1581.872);
+                assert.equal(segmentation[2].value, segmentation[3].value);
+                assert.equal(segmentation[3].time, timeSeries.lastPoint().time);
+
+                requests[1].resolve({
+                    'clusterStart': 1000,
+                    'clusterSize': 1000,
+                    'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                    'configurations': {current: makeSampleRuns(simpleSegmentableValues.slice(0, 30), 6500, 3000, 1000 / 30)},
+                    'startTime': 3000,
+                    'endTime': 4000,
+                    'lastModified': 5000,
+                    'clusterCount': 4,
+                    'status': 'OK'});
+                return waitForMeasurementSet();
+            }).then(function () {
+                return set.fetchSegmentation('segmentTimeSeriesByMaximizingSchwarzCriterion', [], 'current', false);
+            }).then(function (segmentation) {
+                var timeSeries = set.fetchedTimeSeries('current', false, false);
+                assert.equal(timeSeries.length(), 45);
+                assert.equal(timeSeries.firstPoint().time, 3000);
+                assert.equal(timeSeries.lastPoint().time, 4462);
+                assert.equal(segmentation.length, 4);
+
+                assert.equal(segmentation[0].time, timeSeries.firstPoint().time);
+                assert.almostEqual(segmentation[0].value, 1545.082);
+                assert.equal(segmentation[0].value, segmentation[1].value);
+                assert.equal(segmentation[1].time, timeSeries.findPointByIndex(39).time);
+
+                assert.equal(segmentation[2].time, timeSeries.findPointByIndex(39).time);
+                assert.almostEqual(segmentation[2].value, 1581.872);
+                assert.equal(segmentation[2].value, segmentation[3].value);
+                assert.equal(segmentation[3].time, timeSeries.lastPoint().time);
+                done();
+            }).catch(done);
+        });
+
+    });
 });
