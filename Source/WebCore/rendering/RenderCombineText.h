@@ -36,7 +36,7 @@ public:
 
     void combineText();
     Optional<FloatPoint> computeTextOrigin(const FloatRect& boxRect) const;
-    void getStringToRender(int, String&, int& length) const;
+    String combinedStringForRendering() const;
     bool isCombined() const { return m_isCombined; }
     float combinedTextWidth(const FontCascade& font) const { return font.size(); }
     const FontCascade& originalFont() const { return parent()->style().fontCascade(); }

@@ -204,9 +204,11 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
     const RenderStyle& lineStyle = this->lineStyle();
     const FontCascade& font = fontToUse(lineStyle, renderer());
 
-    String hyphenatedStringBuffer;
+    String hyphenatedString;
     bool respectHyphen = ePos == m_len && hasHyphen();
-    TextRun textRun = constructTextRun(lineStyle, respectHyphen ? &hyphenatedStringBuffer : 0);
+    if (respectHyphen)
+        hyphenatedString = hyphenatedStringForTextRun(lineStyle);
+    TextRun textRun = constructTextRun(lineStyle, hyphenatedString);
 
     LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
     // Avoid computing the font width when the entire line box is selected as an optimization.
@@ -497,25 +499,14 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
-    int length = m_len;
-    int maximumLength;
-    String string;
-    if (!combinedText) {
-        string = renderer().text();
-        if (static_cast<unsigned>(length) != string.length() || m_start) {
-            ASSERT_WITH_SECURITY_IMPLICATION(static_cast<unsigned>(m_start + length) <= string.length());
-            string = string.substringSharingImpl(m_start, length);
-        }
-        maximumLength = renderer().textLength() - m_start;
-    } else {
-        combinedText->getStringToRender(m_start, string, length);
-        maximumLength = length;
-    }
+    String alternateStringToRender;
+    if (combinedText)
+        alternateStringToRender = combinedText->combinedStringForRendering();
+    else if (hasHyphen())
+        alternateStringToRender = hyphenatedStringForTextRun(lineStyle);
 
-    String hyphenatedStringBuffer;
-    TextRun textRun = constructTextRun(lineStyle, string, maximumLength, hasHyphen() ? &hyphenatedStringBuffer : nullptr);
-    if (hasHyphen())
-        length = textRun.length();
+    TextRun textRun = constructTextRun(lineStyle, alternateStringToRender);
+    unsigned length = textRun.length();
 
     int selectionStart = 0;
     int selectionEnd = 0;
@@ -600,7 +591,7 @@ std::pair<int, int> InlineTextBox::selectionStartEnd() const
 {
     auto selectionState = renderer().selectionState();
     if (selectionState == RenderObject::SelectionInside)
-        return {0, m_len};
+        return { 0, m_len };
     
     int start;
     int end;
@@ -636,20 +627,17 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 
     GraphicsContextStateSaver stateSaver(context);
     updateGraphicsContext(context, TextPaintStyle(c)); // Don't draw text at all!
-    
+
     // If the text is truncated, let the thing being painted in the truncation
     // draw its own highlight.
-    int length = m_truncation != cNoTruncation ? m_truncation : m_len;
-    String string = renderer().text();
 
-    if (string.length() != static_cast<unsigned>(length) || m_start) {
-        ASSERT_WITH_SECURITY_IMPLICATION(static_cast<unsigned>(m_start + length) <= string.length());
-        string = string.substringSharingImpl(m_start, length);
-    }
+    unsigned length = m_truncation != cNoTruncation ? m_truncation : len();
 
-    String hyphenatedStringBuffer;
-    bool respectHyphen = selectionEnd == length && hasHyphen();
-    TextRun textRun = constructTextRun(style, string, renderer().textLength() - m_start, respectHyphen ? &hyphenatedStringBuffer : nullptr);
+    String hyphenatedString;
+    bool respectHyphen = selectionEnd == static_cast<int>(length) && hasHyphen();
+    if (respectHyphen)
+        hyphenatedString = hyphenatedStringForTextRun(style, length);
+    TextRun textRun = constructTextRun(style, hyphenatedString, Optional<unsigned>(length));
     if (respectHyphen)
         selectionEnd = textRun.length();
 
@@ -1016,32 +1004,27 @@ float InlineTextBox::positionForOffset(int offset) const
     return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()).maxX();
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, String* hyphenatedStringBuffer) const
+StringView InlineTextBox::substringToRender(Optional<unsigned> overridingLength) const
 {
-    ASSERT(renderer().text());
-
-    String string = renderer().text();
-    unsigned startPos = start();
-    unsigned length = len();
-
-    if (string.length() != length || startPos)
-        string = string.substringSharingImpl(startPos, length);
-
-    return constructTextRun(style, string, renderer().textLength() - startPos, hyphenatedStringBuffer);
+    return StringView(renderer().text()).substring(start(), overridingLength.valueOr(len()));
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, String string, unsigned maximumLength, String* hyphenatedStringBuffer) const
+String InlineTextBox::hyphenatedStringForTextRun(const RenderStyle& style, Optional<unsigned> alternateLength) const
 {
-    unsigned length = string.length();
+    ASSERT(hasHyphen());
+    return makeString(substringToRender(alternateLength), style.hyphenString());
+}
 
-    if (hyphenatedStringBuffer) {
-        const AtomicString& hyphenString = style.hyphenString();
-        *hyphenatedStringBuffer = string + hyphenString;
-        string = *hyphenatedStringBuffer;
-        maximumLength = length + hyphenString.length();
-    }
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView alternateStringToRender, Optional<unsigned> alternateLength) const
+{
+    if (alternateStringToRender.isNull())
+        return constructTextRun(style, substringToRender(alternateLength), renderer().textLength() - start());
+    return constructTextRun(style, alternateStringToRender, alternateStringToRender.length());
+}
 
-    ASSERT(maximumLength >= length);
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView string, unsigned maximumLength) const
+{
+    ASSERT(maximumLength >= string.length());
 
     TextRun run(string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath());
     run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());

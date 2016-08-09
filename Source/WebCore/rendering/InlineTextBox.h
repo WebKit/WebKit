@@ -112,8 +112,10 @@ private:
     LayoutUnit selectionBottom() const;
     LayoutUnit selectionHeight() const;
 
-    TextRun constructTextRun(const RenderStyle&, String* hyphenatedStringBuffer = nullptr) const;
-    TextRun constructTextRun(const RenderStyle&, String, unsigned maximumLength, String* hyphenatedStringBuffer = nullptr) const;
+    StringView substringToRender(Optional<unsigned> overridingLength = { }) const;
+    String hyphenatedStringForTextRun(const RenderStyle&, Optional<unsigned> alternateLength = { }) const;
+    TextRun constructTextRun(const RenderStyle&, StringView alternateStringToRender = { }, Optional<unsigned> alternateLength = { }) const;
+    TextRun constructTextRun(const RenderStyle&, StringView, unsigned maximumLength) const;
 
 public:
     FloatRect calculateBoundaries() const override { return FloatRect(x(), y(), width(), height()); }

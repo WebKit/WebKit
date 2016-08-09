@@ -84,17 +84,15 @@ Optional<FloatPoint> RenderCombineText::computeTextOrigin(const FloatRect& boxRe
     return result;
 }
 
-void RenderCombineText::getStringToRender(int start, String& string, int& length) const
+String RenderCombineText::combinedStringForRendering() const
 {
-    ASSERT(start >= 0);
     if (m_isCombined) {
-        string = originalText();
-        length = string.length();
-        return;
+        auto originalText = this->originalText();
+        ASSERT(!originalText.isNull());
+        return originalText;
     }
  
-    string = text();
-    string = string.substringSharingImpl(static_cast<unsigned>(start), length);
+    return { };
 }
 
 void RenderCombineText::combineText()
