@@ -1257,7 +1257,7 @@ sub iOSSimulatorDevices
     my $devicesPath = iOSSimulatorDevicesPath();
     opendir(DEVICES, $devicesPath);
     my @udids = grep {
-        $_ =~ m/[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}/;
+        $_ =~ m/^[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}$/;
     } readdir(DEVICES);
     close(DEVICES);
 
