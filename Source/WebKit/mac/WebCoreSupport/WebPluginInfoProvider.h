@@ -36,10 +36,6 @@ private:
     void refreshPlugins() override;
     void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
     void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
-#if PLATFORM(MAC)
-    void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) override;
-    void clearPluginClientPolicies() override;
-#endif
 
     WebPluginInfoProvider();
 };

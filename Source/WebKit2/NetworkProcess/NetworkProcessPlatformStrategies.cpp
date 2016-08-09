@@ -54,11 +54,6 @@ PasteboardStrategy* NetworkProcessPlatformStrategies::createPasteboardStrategy()
     return nullptr;
 }
 
-PluginStrategy* NetworkProcessPlatformStrategies::createPluginStrategy()
-{
-    return nullptr;
-}
-
 BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
 {
     return new BlobRegistryImpl;

@@ -30,7 +30,6 @@
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
-#include <WebCore/PluginStrategy.h>
 
 struct PasteboardImage;
 struct PasteboardWebContent;
@@ -46,7 +45,6 @@ private:
     WebCore::CookiesStrategy* createCookiesStrategy() override;
     WebCore::LoaderStrategy* createLoaderStrategy() override;
     WebCore::PasteboardStrategy* createPasteboardStrategy() override;
-    WebCore::PluginStrategy* createPluginStrategy() override;
     WebCore::BlobRegistry* createBlobRegistry() override;
 
     // WebCore::CookiesStrategy

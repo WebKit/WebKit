@@ -83,10 +83,6 @@ class EmptyPluginInfoProvider final : public PluginInfoProvider {
     void refreshPlugins() override { };
     void getPluginInfo(Page&, Vector<PluginInfo>&) override { }
     void getWebVisiblePluginInfo(Page&, Vector<PluginInfo>&) override { }
-#if PLATFORM(MAC)
-    void setPluginLoadClientPolicy(PluginLoadClientPolicy, const String&, const String&, const String&) override { }
-    void clearPluginClientPolicies() override { }
-#endif
 };
 
 class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {

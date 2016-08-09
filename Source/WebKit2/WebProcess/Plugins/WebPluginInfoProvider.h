@@ -38,8 +38,8 @@ public:
     virtual ~WebPluginInfoProvider();
 
 #if PLATFORM(MAC)
-    void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) override;
-    void clearPluginClientPolicies() override;
+    void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString);
+    void clearPluginClientPolicies();
 #endif
 
 private:

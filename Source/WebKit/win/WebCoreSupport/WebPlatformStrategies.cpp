@@ -63,11 +63,6 @@ PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
     return 0;
 }
 
-PluginStrategy* WebPlatformStrategies::createPluginStrategy()
-{
-    return nullptr;
-}
-
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()
 {
     return new BlobRegistryImpl;

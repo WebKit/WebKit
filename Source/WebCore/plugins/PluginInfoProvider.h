@@ -42,10 +42,6 @@ public:
     virtual void refreshPlugins() = 0;
     virtual void getPluginInfo(Page&, Vector<PluginInfo>&) = 0;
     virtual void getWebVisiblePluginInfo(Page&, Vector<PluginInfo>&) = 0;
-#if PLATFORM(MAC)
-    virtual void setPluginLoadClientPolicy(PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) = 0;
-    virtual void clearPluginClientPolicies() = 0;
-#endif
 
 private:
     HashSet<Page*> m_pages;

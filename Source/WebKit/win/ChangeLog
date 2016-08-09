@@ -1,5 +1,15 @@
 2016-08-09  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of PluginStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=160696
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::createPluginStrategy): Deleted.
+
+2016-08-09  Anders Carlsson  <andersca@apple.com>
+
         Move plug-in enumeration from WebPlatformStrategies to WebPluginInfoProvider
         https://bugs.webkit.org/show_bug.cgi?id=160694
 

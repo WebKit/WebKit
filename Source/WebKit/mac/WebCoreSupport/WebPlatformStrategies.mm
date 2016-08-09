@@ -71,11 +71,6 @@ PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
     return this;
 }
 
-PluginStrategy* WebPlatformStrategies::createPluginStrategy()
-{
-    return nullptr;
-}
-
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()
 {
     return new WebCore::BlobRegistryImpl;

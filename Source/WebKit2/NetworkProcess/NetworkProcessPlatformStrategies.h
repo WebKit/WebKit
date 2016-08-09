@@ -40,7 +40,6 @@ private:
     WebCore::CookiesStrategy* createCookiesStrategy() override;
     WebCore::LoaderStrategy* createLoaderStrategy() override;
     WebCore::PasteboardStrategy* createPasteboardStrategy() override;
-    WebCore::PluginStrategy* createPluginStrategy() override;
     WebCore::BlobRegistry* createBlobRegistry() override;
 };
 

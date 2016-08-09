@@ -72,14 +72,3 @@ void WebPluginInfoProvider::getWebVisiblePluginInfo(WebCore::Page& page, Vector<
 {
     getPluginInfo(page, plugins);
 }
-
-#if PLATFORM(MAC)
-void WebPluginInfoProvider::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString)
-{
-}
-
-void WebPluginInfoProvider::clearPluginClientPolicies()
-{
-}
-#endif
-
