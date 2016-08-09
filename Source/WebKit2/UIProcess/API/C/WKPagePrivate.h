@@ -101,6 +101,8 @@ WK_EXPORT void WKPageIsWebProcessResponsive(WKPageRef page, void* context, WKPag
     
 WK_EXPORT WKArrayRef WKPageCopyRelatedPages(WKPageRef page);
 
+WK_EXPORT WKFrameRef WKPageLookUpFrameFromHandle(WKPageRef page, WKFrameHandleRef handle);
+
 enum {
     kWKScrollPinningBehaviorDoNotPin,
     kWKScrollPinningBehaviorPinToTop,

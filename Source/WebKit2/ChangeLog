@@ -1,3 +1,15 @@
+2016-08-09  Dan Bernstein  <mitz@apple.com>
+
+        Add WKPage SPI for looking up a WKFrame given a WKFrameHandle
+        https://bugs.webkit.org/show_bug.cgi?id=160695
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLookUpFrameFromHandle): Added. Gets the frame from the map in the page’s process and
+          returns it if it belongs to the page.
+        * UIProcess/API/C/WKPagePrivate.h:
+
 2016-08-08  Anders Carlsson  <andersca@apple.com>
 
         Move plug-in code from WebPlatformStrategies to WebPluginInfoProvider

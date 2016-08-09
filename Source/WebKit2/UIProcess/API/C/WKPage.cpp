@@ -33,6 +33,7 @@
 #include "APIDictionary.h"
 #include "APIFindClient.h"
 #include "APIFindMatchesClient.h"
+#include "APIFrameHandle.h"
 #include "APIFrameInfo.h"
 #include "APIGeometry.h"
 #include "APIHitTestResult.h"
@@ -2637,6 +2638,16 @@ WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
     }
 
     return toAPI(&API::Array::create(WTFMove(relatedPages)).leakRef());
+}
+
+WKFrameRef WKPageLookUpFrameFromHandle(WKPageRef pageRef, WKFrameHandleRef handleRef)
+{
+    auto page = toImpl(pageRef);
+    auto frame = page->process().webFrame(toImpl(handleRef)->frameID());
+    if (!frame || frame->page() != page)
+        return nullptr;
+
+    return toAPI(frame);
 }
 
 void WKPageSetMayStartMediaWhenInWindow(WKPageRef pageRef, bool mayStartMedia)
