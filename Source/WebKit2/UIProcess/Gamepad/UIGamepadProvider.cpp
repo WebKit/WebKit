@@ -28,12 +28,17 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadData.h"
+#include "UIGamepad.h"
+#include "WebProcessPool.h"
 #include <WebCore/HIDGamepadProvider.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+static const double gamepadUpdateInterval = 1 / 60.0;
 
 UIGamepadProvider& UIGamepadProvider::singleton()
 {
@@ -42,6 +47,7 @@ UIGamepadProvider& UIGamepadProvider::singleton()
 }
 
 UIGamepadProvider::UIGamepadProvider()
+    : m_timer(*this, &UIGamepadProvider::updateTimerFired)
 {
 }
 
@@ -51,16 +57,86 @@ UIGamepadProvider::~UIGamepadProvider()
         platformStopMonitoringGamepads();
 }
 
-void UIGamepadProvider::platformGamepadConnected(PlatformGamepad&)
+void UIGamepadProvider::updateTimerFired()
 {
+    if (!m_hadActivitySinceLastSynch)
+        return;
+
+    Vector<GamepadData> gamepadDatas;
+    gamepadDatas.reserveInitialCapacity(m_gamepads.size());
+
+    for (auto& gamepad : m_gamepads) {
+        if (gamepad)
+            gamepadDatas.uncheckedAppend(gamepad->gamepadData());
+        else
+            gamepadDatas.uncheckedAppend({ });
+    }
+
+    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=160699)
+    // Only send updates to the process pool that contains the currently focused web page.
+    for (auto& pool : m_processPoolsUsingGamepads)
+        pool->gamepadActivity(gamepadDatas);
+
+    m_hadActivitySinceLastSynch = false;
 }
 
-void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad&)
+void UIGamepadProvider::startOrStopSynchingGamepadState()
 {
+    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=160699)
+    // Only start synching updates if the currently focused WKWebView is also listening for gamepads.
+
+    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=160673)
+    // Instead of refreshing gamepad data on a 60hz timer, actually sync with the display.
+    if (m_gamepads.isEmpty() || m_processPoolsUsingGamepads.isEmpty())
+        m_timer.stop();
+    else
+        m_timer.startRepeating(gamepadUpdateInterval);
+}
+
+void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad)
+{
+    if (m_gamepads.size() <= gamepad.index())
+        m_gamepads.resize(gamepad.index() + 1);
+
+    ASSERT(!m_gamepads[gamepad.index()]);
+    m_gamepads[gamepad.index()] = std::make_unique<UIGamepad>(gamepad);
+
+    m_hadActivitySinceLastSynch = true;
+    startOrStopSynchingGamepadState();
+
+    for (auto& pool : m_processPoolsUsingGamepads)
+        pool->gamepadConnected(*m_gamepads[gamepad.index()]);
+}
+
+void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
+{
+    ASSERT(gamepad.index() < m_gamepads.size());
+    ASSERT(m_gamepads[gamepad.index()]);
+
+    std::unique_ptr<UIGamepad> disconnectedGamepad = WTFMove(m_gamepads[gamepad.index()]);
+
+    startOrStopSynchingGamepadState();
+
+    for (auto& pool : m_processPoolsUsingGamepads)
+        pool->gamepadDisconnected(*disconnectedGamepad);
 }
 
 void UIGamepadProvider::platformGamepadInputActivity()
 {
+    auto platformGamepads = this->platformGamepads();
+    ASSERT(platformGamepads.size() == m_gamepads.size());
+
+    for (size_t i = 0; i < platformGamepads.size(); ++i) {
+        if (!platformGamepads[i]) {
+            ASSERT(!m_gamepads[i]);
+            continue;
+        }
+
+        ASSERT(m_gamepads[i]);
+        m_gamepads[i]->updateFromPlatformGamepad(*platformGamepads[i]);
+    }
+
+    m_hadActivitySinceLastSynch = true;
 }
 
 void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
@@ -72,6 +148,8 @@ void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
 
     if (!wereAnyProcessPoolsUsingGamepads)
         platformStartMonitoringGamepads();
+
+    startOrStopSynchingGamepadState();
 }
 
 void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
@@ -83,9 +161,12 @@ void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 
     if (wereAnyProcessPoolsUsingGamepads && m_processPoolsUsingGamepads.isEmpty())
         platformStopMonitoringGamepads();
+
+    startOrStopSynchingGamepadState();
 }
 
 #if !PLATFORM(MAC)
+
 void UIGamepadProvider::platformStartMonitoringGamepads()
 {
     // FIXME: Implement for other platforms
@@ -95,6 +176,15 @@ void UIGamepadProvider::platformStopMonitoringGamepads()
 {
     // FIXME: Implement for other platforms
 }
+
+const Vector<PlatformGamepad*>& UIGamepadProvider::platformGamepads()
+{
+    static NeverDestroyed<Vector<PlatformGamepad*>> emptyGamepads;
+    return emptyGamepads;
+
+    // FIXME: Implement for other platforms
+}
+
 #endif // !PLATFORM(MAC)
 
 }

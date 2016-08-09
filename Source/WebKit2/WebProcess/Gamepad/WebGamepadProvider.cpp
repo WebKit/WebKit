@@ -28,8 +28,11 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadData.h"
+#include "WebGamepad.h"
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"
+#include <WebCore/GamepadProviderClient.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -48,6 +51,47 @@ WebGamepadProvider::WebGamepadProvider()
 
 WebGamepadProvider::~WebGamepadProvider()
 {
+}
+
+void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData)
+{
+    if (m_gamepads.size() <= gamepadData.index) {
+        m_gamepads.resize(gamepadData.index + 1);
+        m_rawGamepads.resize(gamepadData.index + 1);
+    }
+
+    ASSERT(!m_gamepads[gamepadData.index]);
+
+    m_gamepads[gamepadData.index] = std::make_unique<WebGamepad>(gamepadData);
+    m_rawGamepads[gamepadData.index] = m_gamepads[gamepadData.index].get();
+
+    for (auto* client : m_clients)
+        client->platformGamepadConnected(*m_gamepads[gamepadData.index]);
+}
+
+
+void WebGamepadProvider::gamepadDisconnected(unsigned index)
+{
+    ASSERT(m_gamepads.size() > index);
+
+    std::unique_ptr<WebGamepad> disconnectedGamepad = WTFMove(m_gamepads[index]);
+    m_rawGamepads[index] = nullptr;
+
+    for (auto* client : m_clients)
+        client->platformGamepadDisconnected(*disconnectedGamepad);
+}
+
+void WebGamepadProvider::gamepadActivity(const Vector<GamepadData>& gamepadDatas)
+{
+    ASSERT(m_gamepads.size() == gamepadDatas.size());
+
+    for (size_t i = 0; i < m_gamepads.size(); ++i) {
+        if (m_gamepads[i])
+            m_gamepads[i]->updateValues(gamepadDatas[i]);
+    }
+
+    for (auto* client : m_clients)
+        client->platformGamepadInputActivity();
 }
 
 void WebGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
@@ -74,8 +118,7 @@ void WebGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 
 const Vector<PlatformGamepad*>& WebGamepadProvider::platformGamepads()
 {
-    static NeverDestroyed<Vector<PlatformGamepad*>> gamepads;
-    return gamepads;
+    return m_rawGamepads;
 }
 
 }

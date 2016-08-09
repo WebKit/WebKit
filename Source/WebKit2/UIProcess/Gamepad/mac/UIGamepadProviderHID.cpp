@@ -46,6 +46,11 @@ void UIGamepadProvider::platformStopMonitoringGamepads()
     HIDGamepadProvider::singleton().stopMonitoringGamepads(*this);
 }
 
+const Vector<PlatformGamepad*>& UIGamepadProvider::platformGamepads()
+{
+    return HIDGamepadProvider::singleton().platformGamepads();
+}
+
 }
 
 #endif // ENABLE(GAMEPAD)

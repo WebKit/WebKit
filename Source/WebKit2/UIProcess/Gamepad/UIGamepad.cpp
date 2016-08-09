@@ -23,54 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "UIGamepad.h"
 
 #if ENABLE(GAMEPAD)
 
-#include <WebCore/GamepadProviderClient.h>
-#include <WebCore/Timer.h>
-#include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
+#include "GamepadData.h"
+#include <WebCore/PlatformGamepad.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class UIGamepad;
-class WebProcessPool;
-struct GamepadData;
+UIGamepad::UIGamepad(WebCore::PlatformGamepad& platformGamepad)
+    : m_index(platformGamepad.index())
+{
+    m_axisValues.resize(platformGamepad.axisValues().size());
+    m_buttonValues.resize(platformGamepad.buttonValues().size());
 
-class UIGamepadProvider : public WebCore::GamepadProviderClient {
-public:
-    static UIGamepadProvider& singleton();
+    updateFromPlatformGamepad(platformGamepad);
+}
 
-    void processPoolStartedUsingGamepads(WebProcessPool&);
-    void processPoolStoppedUsingGamepads(WebProcessPool&);
+void UIGamepad::updateFromPlatformGamepad(WebCore::PlatformGamepad& platformGamepad)
+{
+    ASSERT(m_index == platformGamepad.index());
+    ASSERT(m_axisValues.size() == platformGamepad.axisValues().size());
+    ASSERT(m_buttonValues.size() == platformGamepad.buttonValues().size());
 
-    Vector<GamepadData> gamepadStates() const;
+    m_axisValues = platformGamepad.axisValues();
+    m_buttonValues = platformGamepad.buttonValues();
+}
 
-private:
-    friend NeverDestroyed<UIGamepadProvider>;
-    UIGamepadProvider();
-    ~UIGamepadProvider() final;
-
-    void platformStartMonitoringGamepads();
-    void platformStopMonitoringGamepads();
-    const Vector<WebCore::PlatformGamepad*>& platformGamepads();
-
-    void platformGamepadConnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadInputActivity() final;
-
-    void startOrStopSynchingGamepadState();
-    void updateTimerFired();
-
-    HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
-
-    Vector<std::unique_ptr<UIGamepad>> m_gamepads;
-
-    WebCore::Timer m_timer;
-    bool m_hadActivitySinceLastSynch { false };
-};
+GamepadData UIGamepad::gamepadData() const
+{
+    return { m_index, m_axisValues, m_buttonValues };
+}
 
 }
 

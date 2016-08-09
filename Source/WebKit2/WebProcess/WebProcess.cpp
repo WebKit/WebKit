@@ -1030,6 +1030,25 @@ void WebProcess::mainThreadPing()
     parentProcessConnection()->send(Messages::WebProcessProxy::DidReceiveMainThreadPing(), 0);
 }
 
+#if ENABLE(GAMEPAD)
+
+void WebProcess::gamepadConnected(const GamepadData& gamepadData)
+{
+    WebGamepadProvider::singleton().gamepadConnected(gamepadData);
+}
+
+void WebProcess::gamepadDisconnected(unsigned index)
+{
+    WebGamepadProvider::singleton().gamepadDisconnected(index);
+}
+
+void WebProcess::gamepadActivity(const Vector<GamepadData>& gamepadDatas)
+{
+    WebGamepadProvider::singleton().gamepadActivity(gamepadDatas);
+}
+
+#endif
+
 void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 {
     GCController::singleton().setJavaScriptGarbageCollectorTimerEnabled(flag);

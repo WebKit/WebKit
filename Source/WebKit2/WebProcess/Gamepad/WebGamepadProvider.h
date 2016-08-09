@@ -33,9 +33,18 @@
 
 namespace WebKit {
 
+class SharedMemory;
+class WebGamepad;
+
+struct GamepadData;
+
 class WebGamepadProvider : public WebCore::GamepadProvider {
 public:
     static WebGamepadProvider& singleton();
+
+    void gamepadConnected(const GamepadData&);
+    void gamepadDisconnected(unsigned index);
+    void gamepadActivity(const Vector<GamepadData>&);
 
 private:
     friend NeverDestroyed<WebGamepadProvider>;
@@ -47,8 +56,11 @@ private:
     const Vector<WebCore::PlatformGamepad*>& platformGamepads() final;
 
     HashSet<WebCore::GamepadProviderClient*> m_clients;
+
+    Vector<std::unique_ptr<WebGamepad>> m_gamepads;
+    Vector<WebCore::PlatformGamepad*> m_rawGamepads;
 };
 
-}
+} // namespace WebKit
 
 #endif // ENABLE(GAMEPAD)

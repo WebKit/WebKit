@@ -23,55 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GamepadData.h"
 
 #if ENABLE(GAMEPAD)
 
-#include <WebCore/GamepadProviderClient.h>
-#include <WebCore/Timer.h>
-#include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
+#include "ArgumentCoders.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 
-class UIGamepad;
-class WebProcessPool;
-struct GamepadData;
-
-class UIGamepadProvider : public WebCore::GamepadProviderClient {
-public:
-    static UIGamepadProvider& singleton();
-
-    void processPoolStartedUsingGamepads(WebProcessPool&);
-    void processPoolStoppedUsingGamepads(WebProcessPool&);
-
-    Vector<GamepadData> gamepadStates() const;
-
-private:
-    friend NeverDestroyed<UIGamepadProvider>;
-    UIGamepadProvider();
-    ~UIGamepadProvider() final;
-
-    void platformStartMonitoringGamepads();
-    void platformStopMonitoringGamepads();
-    const Vector<WebCore::PlatformGamepad*>& platformGamepads();
-
-    void platformGamepadConnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadInputActivity() final;
-
-    void startOrStopSynchingGamepadState();
-    void updateTimerFired();
-
-    HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
-
-    Vector<std::unique_ptr<UIGamepad>> m_gamepads;
-
-    WebCore::Timer m_timer;
-    bool m_hadActivitySinceLastSynch { false };
-};
-
+void GamepadData::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << index << axisValues << buttonValues;
 }
+
+bool GamepadData::decode(IPC::ArgumentDecoder& decoder, GamepadData& data)
+{
+    if (!decoder.decode(data.index))
+        return false;
+
+    if (!decoder.decode(data.axisValues))
+        return false;
+
+    if (!decoder.decode(data.buttonValues))
+        return false;
+
+    return true;
+}
+
+bool GamepadData::isNull() const
+{
+    return !index && axisValues.isEmpty() && buttonValues.isEmpty();
+}
+
+String GamepadData::loggingString() const
+{
+    StringBuilder builder;
+
+    builder.append(makeString(String::number(axisValues.size()), " axes, ", String::number(buttonValues.size()), " buttons\n"));
+
+    for (size_t i = 0; i < axisValues.size(); ++i)
+        builder.append(makeString(" Axis ", String::number(i), ": ", String::number(axisValues[i])));
+
+    builder.append("\n");
+    for (size_t i = 0; i < buttonValues.size(); ++i)
+        builder.append(makeString(" Button ", String::number(i), ": ", String::number(buttonValues[i])));
+
+    return builder.toString();
+}
+
+} // namespace WebKit
 
 #endif // ENABLE(GAMEPAD)

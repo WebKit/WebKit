@@ -35,6 +35,7 @@
 #include "CustomProtocolManagerMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
+#include "GamepadData.h"
 #include "LogInitialization.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
@@ -42,6 +43,7 @@
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
+#include "UIGamepad.h"
 #include "UIGamepadProvider.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
@@ -1278,6 +1280,26 @@ void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy& process)
 
     if (wereAnyProcessesUsingGamepads && m_processesUsingGamepads.isEmpty())
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
+}
+
+void WebProcessPool::gamepadConnected(const UIGamepad& gamepad)
+{
+    for (auto& process : m_processesUsingGamepads)
+        process->send(Messages::WebProcess::GamepadConnected(gamepad.gamepadData()), 0);
+}
+
+void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
+{
+    for (auto& process : m_processesUsingGamepads)
+        process->send(Messages::WebProcess::GamepadDisconnected(gamepad.index()), 0);
+}
+
+void WebProcessPool::gamepadActivity(const Vector<GamepadData>& gamepadDatas)
+{
+    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=160699)
+    // Only send updates to the process that contains the currently focused web page.
+    for (auto& process : m_processesUsingGamepads)
+        process->send(Messages::WebProcess::GamepadActivity(gamepadDatas), 0);
 }
 
 #endif // ENABLE(GAMEPAD)

@@ -27,51 +27,29 @@
 
 #if ENABLE(GAMEPAD)
 
-#include <WebCore/GamepadProviderClient.h>
-#include <WebCore/Timer.h>
-#include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-class UIGamepad;
-class WebProcessPool;
-struct GamepadData;
+struct GamepadData {
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, GamepadData&);
 
-class UIGamepadProvider : public WebCore::GamepadProviderClient {
-public:
-    static UIGamepadProvider& singleton();
+    bool isNull() const;
 
-    void processPoolStartedUsingGamepads(WebProcessPool&);
-    void processPoolStoppedUsingGamepads(WebProcessPool&);
+    unsigned index;
+    Vector<double> axisValues;
+    Vector<double> buttonValues;
 
-    Vector<GamepadData> gamepadStates() const;
-
-private:
-    friend NeverDestroyed<UIGamepadProvider>;
-    UIGamepadProvider();
-    ~UIGamepadProvider() final;
-
-    void platformStartMonitoringGamepads();
-    void platformStopMonitoringGamepads();
-    const Vector<WebCore::PlatformGamepad*>& platformGamepads();
-
-    void platformGamepadConnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadInputActivity() final;
-
-    void startOrStopSynchingGamepadState();
-    void updateTimerFired();
-
-    HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
-
-    Vector<std::unique_ptr<UIGamepad>> m_gamepads;
-
-    WebCore::Timer m_timer;
-    bool m_hadActivitySinceLastSynch { false };
+    String loggingString() const;
 };
 
-}
+} // namespace WebKit
 
 #endif // ENABLE(GAMEPAD)

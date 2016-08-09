@@ -1,3 +1,74 @@
+2016-08-09  Brady Eidson  <beidson@apple.com>
+
+        Implement "dumb" WK2 support for gamepads.
+        https://bugs.webkit.org/show_bug.cgi?id=160700
+
+        Reviewed by Alex Christensen.
+        
+        With this patch, gamepads work in WK2.
+
+        Things known to be missing to make this mechanism more "smart":
+          - Refresh values along with display sync instead of on a 60hz timer (bug 160673)
+          - Only send updated values to the current focused web page (bug 160699)
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+        
+        * Shared/Gamepad/GamepadData.cpp: Copied from Source/WebKit2/UIProcess/Gamepad/mac/UIGamepadProviderHID.cpp.
+        (WebKit::GamepadData::encode):
+        (WebKit::GamepadData::decode):
+        (WebKit::GamepadData::isNull):
+        (WebKit::GamepadData::loggingString):
+        * Shared/Gamepad/GamepadData.h: Copied from Source/WebKit2/WebProcess/Gamepad/WebGamepad.h.
+        
+        * UIProcess/Gamepad/UIGamepad.cpp: Copied from Source/WebKit2/UIProcess/Gamepad/mac/UIGamepadProviderHID.cpp.
+        (WebKit::UIGamepad::UIGamepad):
+        (WebKit::UIGamepad::updateFromPlatformGamepad):
+        (WebKit::UIGamepad::gamepadData):
+        * UIProcess/Gamepad/UIGamepad.h: Copied from Source/WebKit2/WebProcess/Gamepad/WebGamepad.h.
+        (WebKit::UIGamepad::index):
+        
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::UIGamepadProvider):
+        (WebKit::UIGamepadProvider::updateTimerFired):
+        (WebKit::UIGamepadProvider::startOrStopSynchingGamepadState):
+        (WebKit::UIGamepadProvider::platformGamepadConnected):
+        (WebKit::UIGamepadProvider::platformGamepadDisconnected):
+        (WebKit::UIGamepadProvider::platformGamepadInputActivity):
+        (WebKit::UIGamepadProvider::processPoolStartedUsingGamepads):
+        (WebKit::UIGamepadProvider::processPoolStoppedUsingGamepads):
+        (WebKit::UIGamepadProvider::platformGamepads):
+        * UIProcess/Gamepad/UIGamepadProvider.h:
+        * UIProcess/Gamepad/mac/UIGamepadProviderHID.cpp:
+        (WebKit::UIGamepadProvider::platformGamepads):
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gamepadConnected):
+        (WebKit::WebProcessPool::gamepadDisconnected):
+        (WebKit::WebProcessPool::gamepadActivity):
+        * UIProcess/WebProcessPool.h:
+        
+        * WebProcess/Gamepad/WebGamepad.cpp:
+        (WebKit::WebGamepad::WebGamepad):
+        (WebKit::WebGamepad::axisValues):
+        (WebKit::WebGamepad::buttonValues):
+        (WebKit::WebGamepad::updateValues):
+        * WebProcess/Gamepad/WebGamepad.h:
+        
+        * WebProcess/Gamepad/WebGamepadProvider.cpp:
+        (WebKit::WebGamepadProvider::gamepadConnected):
+        (WebKit::WebGamepadProvider::gamepadDisconnected):
+        (WebKit::WebGamepadProvider::gamepadActivity):
+        (WebKit::WebGamepadProvider::platformGamepads):
+        * WebProcess/Gamepad/WebGamepadProvider.h:
+        
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::gamepadConnected):
+        (WebKit::WebProcess::gamepadDisconnected):
+        (WebKit::WebProcess::gamepadActivity):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2016-08-09  Anders Carlsson  <andersca@apple.com>
 
         Get rid of PluginStrategy

@@ -942,6 +942,12 @@
 		515BE1A71D55293400DD7C68 /* UIGamepadProviderHID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1A61D55293000DD7C68 /* UIGamepadProviderHID.cpp */; };
 		515BE1A81D55293400DD7C68 /* UIGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1A41D55292800DD7C68 /* UIGamepadProvider.cpp */; };
 		515BE1A91D55293400DD7C68 /* UIGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1A51D55292800DD7C68 /* UIGamepadProvider.h */; };
+		515BE1AA1D555A9B00DD7C68 /* WebGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE19F1D550AB000DD7C68 /* WebGamepad.cpp */; };
+		515BE1AB1D555AA000DD7C68 /* WebGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1A01D550AB000DD7C68 /* WebGamepad.h */; };
+		515BE1B21D5902DD00DD7C68 /* GamepadData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1B11D5902B600DD7C68 /* GamepadData.cpp */; };
+		515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1B01D59006900DD7C68 /* GamepadData.h */; };
+		515BE1B41D5917FF00DD7C68 /* UIGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1AC1D555C5100DD7C68 /* UIGamepad.cpp */; };
+		515BE1B51D5917FF00DD7C68 /* UIGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1AD1D555C5100DD7C68 /* UIGamepad.h */; };
 		515E7727183DD6F60007203F /* AsyncRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7725183DD6F60007203F /* AsyncRequest.cpp */; };
 		515E7728183DD6F60007203F /* AsyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E7726183DD6F60007203F /* AsyncRequest.h */; };
 		515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */; };
@@ -2990,6 +2996,10 @@
 		515BE1A41D55292800DD7C68 /* UIGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIGamepadProvider.cpp; sourceTree = "<group>"; };
 		515BE1A51D55292800DD7C68 /* UIGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGamepadProvider.h; sourceTree = "<group>"; };
 		515BE1A61D55293000DD7C68 /* UIGamepadProviderHID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIGamepadProviderHID.cpp; path = UIProcess/Gamepad/mac/UIGamepadProviderHID.cpp; sourceTree = SOURCE_ROOT; };
+		515BE1AC1D555C5100DD7C68 /* UIGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIGamepad.cpp; sourceTree = "<group>"; };
+		515BE1AD1D555C5100DD7C68 /* UIGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGamepad.h; sourceTree = "<group>"; };
+		515BE1B01D59006900DD7C68 /* GamepadData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadData.h; sourceTree = "<group>"; };
+		515BE1B11D5902B600DD7C68 /* GamepadData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadData.cpp; sourceTree = "<group>"; };
 		515E7725183DD6F60007203F /* AsyncRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncRequest.cpp; sourceTree = "<group>"; };
 		515E7726183DD6F60007203F /* AsyncRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncRequest.h; sourceTree = "<group>"; };
 		515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessCreationParameters.cpp; sourceTree = "<group>"; };
@@ -4476,6 +4486,7 @@
 				51E351C2180F2C8500E53BE9 /* Databases */,
 				BC82836816B3587900A278FE /* EntryPointUtilities */,
 				E170877216D6CFEC00F99226 /* FileAPI */,
+				515BE1AE1D59003400DD7C68 /* Gamepad */,
 				2DA944961884E4DA00ED86DB /* ios */,
 				BC111B5A112F628200337BAB /* mac */,
 				1AAE058C1279DCD400852418 /* Plugins */,
@@ -5501,6 +5512,8 @@
 			isa = PBXGroup;
 			children = (
 				515BE1A11D5523B300DD7C68 /* mac */,
+				515BE1AC1D555C5100DD7C68 /* UIGamepad.cpp */,
+				515BE1AD1D555C5100DD7C68 /* UIGamepad.h */,
 				515BE1A41D55292800DD7C68 /* UIGamepadProvider.cpp */,
 				515BE1A51D55292800DD7C68 /* UIGamepadProvider.h */,
 			);
@@ -5514,6 +5527,15 @@
 			);
 			name = mac;
 			path = UIProcess/Gamepad/mac;
+			sourceTree = "<group>";
+		};
+		515BE1AE1D59003400DD7C68 /* Gamepad */ = {
+			isa = PBXGroup;
+			children = (
+				515BE1B11D5902B600DD7C68 /* GamepadData.cpp */,
+				515BE1B01D59006900DD7C68 /* GamepadData.h */,
+			);
+			path = Gamepad;
 			sourceTree = "<group>";
 		};
 		516319931628980E00E22F00 /* mac */ = {
@@ -7427,6 +7449,7 @@
 				1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */,
 				1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */,
 				1AFB4C721ADF155D00B33339 /* _WKWebsiteDataStore.h in Headers */,
+				515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */,
 				1A4A93B71AEB08EA00150E9C /* _WKWebsiteDataStoreInternal.h in Headers */,
 				A115DC72191D82DA00DA8072 /* _WKWebViewPrintFormatter.h in Headers */,
 				A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */,
@@ -7753,6 +7776,7 @@
 				E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */,
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
+				515BE1B51D5917FF00DD7C68 /* UIGamepad.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
@@ -7893,6 +7917,7 @@
 				2D3EF4431917646300034184 /* WebMemoryPressureHandlerIOS.h in Headers */,
 				909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */,
 				BCF69F9A1176CED600471A52 /* WebNavigationDataStore.h in Headers */,
+				515BE1AB1D555AA000DD7C68 /* WebGamepad.h in Headers */,
 				7CCCC8FB1A5F50FD008FB0DA /* WebNavigationState.h in Headers */,
 				31A2EC49148997C200810D71 /* WebNotification.h in Headers */,
 				310999C7146C9E3D0029DEB9 /* WebNotificationClient.h in Headers */,
@@ -9181,6 +9206,7 @@
 				1A043CEB124FE38F00FFBFB5 /* PluginProcessMessageReceiver.cpp in Sources */,
 				1A0EC75F124BC7B2007EF4A5 /* PluginProcessProxy.cpp in Sources */,
 				1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */,
+				515BE1B41D5917FF00DD7C68 /* UIGamepad.cpp in Sources */,
 				1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */,
 				1A043DC2124FF87500FFBFB5 /* PluginProxy.cpp in Sources */,
 				1A2D92211281DC1B001EB962 /* PluginProxyMac.mm in Sources */,
@@ -9199,6 +9225,7 @@
 				2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */,
 				2DDF731618E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm in Sources */,
 				1AB16AE9164B3A8800290D62 /* RemoteLayerTreeContext.mm in Sources */,
+				515BE1B21D5902DD00DD7C68 /* GamepadData.cpp in Sources */,
 				2D29ECD1192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm in Sources */,
 				1AB16ADD1648598400290D62 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				1AB16AE11648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm in Sources */,
@@ -9494,6 +9521,7 @@
 				7C361D78192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp in Sources */,
 				15739BBE1B42046600D258C1 /* WebUserMediaClient.cpp in Sources */,
 				52D5A1B71C574A0200DE34A3 /* WebVideoFullscreenManager.mm in Sources */,
+				515BE1AA1D555A9B00DD7C68 /* WebGamepad.cpp in Sources */,
 				3F418EF91887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp in Sources */,
 				52D5A1B11C57496200DE34A3 /* WebVideoFullscreenManagerProxy.mm in Sources */,
 				3F418EFB1887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp in Sources */,

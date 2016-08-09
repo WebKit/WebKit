@@ -27,7 +27,27 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <WebCore/PlatformGamepad.h>
+
 namespace WebKit {
+
+class SharedMemory;
+
+struct GamepadData;
+
+class WebGamepad : public WebCore::PlatformGamepad {
+public:
+    WebGamepad(const GamepadData&);
+
+    const Vector<double>& axisValues() const override;
+    const Vector<double>& buttonValues() const override;
+
+    void updateValues(const GamepadData&);
+
+private:
+    Vector<double> m_axisValues;
+    Vector<double> m_buttonValues;
+};
 
 }
 

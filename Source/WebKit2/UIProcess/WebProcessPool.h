@@ -79,11 +79,13 @@ class PageConfiguration;
 namespace WebKit {
 
 class DownloadProxy;
+class UIGamepad;
 class WebAutomationSession;
 class WebContextSupplement;
 class WebIconDatabase;
 class WebPageGroup;
 class WebPageProxy;
+struct GamepadData;
 struct NetworkProcessCreationParameters;
 struct StatisticsData;
 struct WebProcessCreationParameters;
@@ -368,6 +370,12 @@ public:
 
     bool resourceLoadStatisticsEnabled() { return m_resourceLoadStatisticsEnabled; }
     void setResourceLoadStatisticsEnabled(bool enabled) { m_resourceLoadStatisticsEnabled = enabled; }
+
+#if ENABLE(GAMEPAD)
+    void gamepadConnected(const UIGamepad&);
+    void gamepadDisconnected(const UIGamepad&);
+    void gamepadActivity(const Vector<GamepadData>&);
+#endif
 
 private:
     void platformInitialize();
