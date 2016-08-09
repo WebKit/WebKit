@@ -383,10 +383,11 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         return metrics;
     }
 
-    _sampleTimeSeries(data, maximumNumberOfPoints, exclusionPointID)
+    _sampleTimeSeries(data, maximumNumberOfPoints, excludedPoints)
     {
-        console.assert(!exclusionPointID);
-        return super._sampleTimeSeries(data, maximumNumberOfPoints, this._indicatorID);
+        if (this._indicatorID)
+            excludedPoints.push(this._indicatorID);
+        return super._sampleTimeSeries(data, maximumNumberOfPoints, excludedPoints);
     }
 
     _renderChartContent(context, metrics)

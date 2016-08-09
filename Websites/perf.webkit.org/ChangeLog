@@ -1,5 +1,25 @@
 2016-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Don't filter out the latest data point in chart data sampling
+        https://bugs.webkit.org/show_bug.cgi?id=160714
+
+        Reviewed by Chris Dumez.
+
+        Exclude the last data point from sampling so that it's always included in the "sampled" charts data.
+        Without this, the last data point can change as we zoom out the time domain.
+
+        Luckily, we already had a mechanism to exclude the user selected point from sampling. Extend this
+        feature by supporting an array of point IDs instead of a single ID to exclude from filering.
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype._sampleTimeSeries): Replaced exclusionPointID by excludedPoints. 
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype._ensureSampledTimeSeries): Put the last data point in excludedPoints.
+        (TimeSeriesChart.prototype._sampleTimeSeries): Check point's id against the list of IDs.
+
+2016-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r204187. interval has to be a getter, not a method.
 
         * public/v3/components/time-series-chart.js:

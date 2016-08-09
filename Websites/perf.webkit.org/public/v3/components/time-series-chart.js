@@ -536,7 +536,7 @@ class TimeSeriesChart extends ComponentBase {
             if (!source.sampleData)
                 return filteredData;
             else
-                return self._sampleTimeSeries(filteredData, maximumNumberOfPoints);
+                return self._sampleTimeSeries(filteredData, maximumNumberOfPoints, filteredData.slice(-1).map(function (point) { return point.id; }));
         });
 
         Instrumentation.endMeasuringTime('TimeSeriesChart', 'ensureSampledTimeSeries');
@@ -547,7 +547,7 @@ class TimeSeriesChart extends ComponentBase {
         return true;
     }
 
-    _sampleTimeSeries(data, maximumNumberOfPoints, exclusionPointID)
+    _sampleTimeSeries(data, maximumNumberOfPoints, excludedPoints)
     {
         Instrumentation.startMeasuringTime('TimeSeriesChart', 'sampleTimeSeries');
 
@@ -571,7 +571,7 @@ class TimeSeriesChart extends ComponentBase {
             var j;
             for (j = i; j <= lastIndex; j++) {
                 var endPoint = data[j];
-                if (endPoint.id == exclusionPointID) {
+                if (excludedPoints.includes(endPoint.id)) {
                     j--;
                     break;
                 }
