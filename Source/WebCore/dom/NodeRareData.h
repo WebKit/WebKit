@@ -197,10 +197,6 @@ public:
     }
 
     void invalidateCaches(const QualifiedName* attrName = nullptr);
-    bool isEmpty() const
-    {
-        return m_atomicNameCaches.isEmpty() && m_cachedCollections.isEmpty() && m_tagCollectionCacheNS.isEmpty();
-    }
 
     void adoptTreeScope()
     {
