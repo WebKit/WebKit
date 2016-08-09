@@ -1,3 +1,13 @@
+2016-08-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Merge r203458. rdar://problem/27434307
+
+    2016-07-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Land test expectations for rdar://problem/27434307.
+
+            * platform/mac/TestExpectations:
+
 2016-08-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Merge r204201. rdar://problem/27710755
