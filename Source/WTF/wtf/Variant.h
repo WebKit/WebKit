@@ -1931,16 +1931,9 @@ struct __visit_helper2{
     template<typename _Visitor,typename ... _Variants>
     static constexpr typename __multi_visitor_return_type<_Visitor,_Variants...>::__type
     __visit(_Visitor& __visitor,_Variants&& ... __v){
-        if(__arg_selector<_VariantIndex-1>(__v...).index()==_Index){
-            return __visit_helper<
-                _VariantIndex-1,__index_sequence<_Index,_Indices...>>::
-                __visit(__visitor,std::forward<_Variants>(__v)...);
-        }
-        else{
-            return __visit_helper2<_Index-1,_VariantIndex,_Indices...>::__visit(
-                __visitor,std::forward<_Variants>(__v)...);
-        }
-        
+        return (__arg_selector<_VariantIndex-1>(__v...).index()==_Index)
+            ? __visit_helper<_VariantIndex-1,__index_sequence<_Index,_Indices...>>::__visit(__visitor,std::forward<_Variants>(__v)...)
+            : __visit_helper2<_Index-1,_VariantIndex,_Indices...>::__visit(__visitor,std::forward<_Variants>(__v)...);
     }
 };
 

@@ -1,3 +1,11 @@
+2016-08-09  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * wtf/Variant.h:
+        (std::experimental::__visit_helper2::__visit):
+        MSVC does not support extended constexpr. Use a ternary operator instead of an if statement.
+
 2016-08-06  Sam Weinig  <sam@webkit.org>
 
         Replace NodeOrString with std::variant<RefPtr<Node>, String>
