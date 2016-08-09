@@ -75,7 +75,7 @@ class ChartPane extends ChartPaneBase {
         this._trendLineType = null;
         this._trendLineParameters = [];
         this._trendLineVersion = 0;
-        this._renderedTrandLineOptions = false;
+        this._renderedTrendLineOptions = false;
 
         this.content().querySelector('close-button').component().setCallback(chartsPage.closePane.bind(chartsPage, this));
 
@@ -144,7 +144,7 @@ class ChartPane extends ChartPaneBase {
             return !isNaN(specifiedValue) ? specifiedValue : parameter.value;
         });
         this._updateTrendLine();
-        this._renderedTrandLineOptions = false;
+        this._renderedTrendLineOptions = false;
 
         // FIXME: state[5] specifies envelope in v2 UI
         // FIXME: state[6] specifies change detection algorithm in v2 UI
@@ -209,7 +209,6 @@ class ChartPane extends ChartPaneBase {
         AnalysisTask.create(name, pointsRangeForAnalysis.startPointId, pointsRangeForAnalysis.endPointId).then(function (data) {
             newWindow.location.href = router.url('analysis/task/' + data['taskId']);
             self.fetchAnalysisTasks(true);
-            // FIXME: Refetch the list of analysis tasks.
         }, function (error) {
             newWindow.location.href = router.url('analysis/task/create', {error: error});
         });
@@ -413,9 +412,9 @@ class ChartPane extends ChartPaneBase {
         } else
             this.content().querySelector('.trend-line-types select').value = this._trendLineType.id;
 
-        if (this._renderedTrandLineOptions)
+        if (this._renderedTrendLineOptions)
             return;
-        this._renderedTrandLineOptions = true;
+        this._renderedTrendLineOptions = true;
 
         if (this._trendLineParameters.length) {
             var configuredParameters = this._trendLineParameters;
@@ -445,7 +444,7 @@ class ChartPane extends ChartPaneBase {
 
         this._trendLineType = newType;
         this._trendLineParameters = this._defaultParametersForTrendLine(newType);
-        this._renderedTrandLineOptions = false;
+        this._renderedTrendLineOptions = false;
 
         this._updateTrendLine();
         this._chartsPage.graphOptionsDidChange();
