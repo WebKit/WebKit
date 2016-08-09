@@ -151,12 +151,6 @@ class MacTest(port_testcase.PortTestCase):
         child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
         self.assertEqual(child_processes, 1)
 
-        # SnowLeopard has a CFNetwork bug which causes crashes if we execute more than one copy of DRT at once.
-        port = self.make_port(port_name='mac-snowleopard')
-        expected_logs = "Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525.\n"
-        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
-        self.assertEqual(child_processes, 1)
-
     def test_get_crash_log(self):
         # Mac crash logs are tested elsewhere, so here we just make sure we don't crash.
         def fake_time_cb():

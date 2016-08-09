@@ -1,3 +1,89 @@
+2016-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Have the iOS platform interit from the Apple platform in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=160672
+
+        Reviewed by Dan Bates.
+        
+        The IOSSimulatorPort used to inherit from Port, rather than ApplePort.
+        Fix this, and move duplicated code from IOSSimulatorPort and MacPort into
+        ApplePort.
+        
+        Since WinPort also inherits from ApplePort, it needs to stub out some things
+        that are unavailable on Windows (leaks, sampling).
+        
+        Some SnowLeopard-related code and the associated test were removed.
+
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort.__init__):
+        (ApplePort):
+        (ApplePort._make_leak_detector):
+        (ApplePort.default_timeout_ms):
+        (ApplePort.supports_per_test_timeout):
+        (ApplePort.should_retry_crashes):
+        (ApplePort._generate_all_test_configurations):
+        (ApplePort.check_for_leaks):
+        (ApplePort.print_leaks_summary):
+        (ApplePort._path_to_webcore_library):
+        (ApplePort.show_results_html_file):
+        (ApplePort._merge_crash_logs):
+        (ApplePort._look_for_all_crash_logs_in_log_dir):
+        (ApplePort._get_crash_log):
+        (ApplePort.look_for_new_crash_logs):
+        (ApplePort.sample_process):
+        (ApplePort.sample_file_path):
+        (ApplePort.look_for_new_samples):
+        (ApplePort._path_to_helper):
+        (ApplePort.determine_full_port_name): Deleted.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.__init__):
+        (IOSSimulatorPort.default_timeout_ms): Deleted.
+        (IOSSimulatorPort.supports_per_test_timeout): Deleted.
+        (IOSSimulatorPort.should_retry_crashes): Deleted.
+        (IOSSimulatorPort.check_for_leaks): Deleted.
+        (IOSSimulatorPort.print_leaks_summary): Deleted.
+        (IOSSimulatorPort._path_to_webcore_library): Deleted.
+        (IOSSimulatorPort.show_results_html_file): Deleted.
+        (IOSSimulatorPort.sample_file_path): Deleted.
+        (IOSSimulatorPort._merge_crash_logs): Deleted.
+        (IOSSimulatorPort._look_for_all_crash_logs_in_log_dir): Deleted.
+        (IOSSimulatorPort.look_for_new_crash_logs): Deleted.
+        (IOSSimulatorPort.look_for_new_samples): Deleted.
+        (IOSSimulatorPort.sample_process): Deleted.
+        (IOSSimulatorPort._path_to_helper): Deleted.
+        (IOSSimulatorPort.make_command): Deleted.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.__init__):
+        (MacPort.make_command):
+        (MacPort._build_java_test_support):
+        (MacPort): Deleted.
+        (MacPort.default_timeout_ms): Deleted.
+        (MacPort.supports_per_test_timeout): Deleted.
+        (MacPort.should_retry_crashes): Deleted.
+        (MacPort.default_child_processes): Deleted.
+        (MacPort.check_for_leaks): Deleted.
+        (MacPort.print_leaks_summary): Deleted.
+        (MacPort._path_to_webcore_library): Deleted.
+        (MacPort.show_results_html_file): Deleted.
+        (MacPort.sample_file_path): Deleted.
+        (MacPort._merge_crash_logs): Deleted.
+        (MacPort._look_for_all_crash_logs_in_log_dir): Deleted.
+        (MacPort.look_for_new_crash_logs): Deleted.
+        (MacPort.look_for_new_samples): Deleted.
+        (MacPort.sample_process): Deleted.
+        (MacPort._path_to_helper): Deleted.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_default_child_processes): Deleted.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.look_for_new_samples):
+        (WinPort):
+        (WinPort.sample_process):
+        (WinPort._make_leak_detector):
+        (WinPort.check_for_leaks):
+        (WinPort.print_leaks_summary):
+        (WinPort._path_to_webcore_library):
+
 2016-08-08  Matt Baker  <mattbaker@apple.com>
 
         Unreviewed: moved myself to the reviewers list.
