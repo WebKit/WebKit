@@ -780,6 +780,7 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(const WebCore::IntRect& fi
     } else if (isMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture | HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
         RefPtr<WebVideoFullscreenInterfaceAVKit> protectedThis(this);
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:[protectedThis, this] (BOOL, NSError*) {
+            clearMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
             [m_window setHidden:NO];
             [m_playerViewController stopPictureInPicture];
         }];
