@@ -1,3 +1,44 @@
+2016-08-09  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS logging should ensure the logging to file is stopped on queue termination
+        https://bugs.webkit.org/show_bug.cgi?id=160698
+        rdar://problem/24464570
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        (QueueEngine._stopping): Stop logging to file on queue termination.
+        (QueueEngine._begin_logging): Configure the Python logger to log to file.
+        * Scripts/webkitpy/common/system/logutils.py:
+        (configure_logger_to_log_to_file): Return the handler so as to enable caller to remove it later.
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        (QueueEngineTest._run_engine): Removed extra newline character to improve log readability.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue._log_directory): Reverting to os.path.join as we don't have host object.
+        (AbstractQueue.queue_log_path): Same.
+        (AbstractQueue.begin_work_queue): Removed logging initialization, it is now being done in QueueEngine.
+        (AbstractQueue.__init__): Removed host parameter, not required anymore, it was required by logging initialization
+        which moved to QueueEngine now.
+        (PatchProcessingQueue.__init__): Same.
+        (CommitQueue.__init__): Same.
+        (AbstractReviewQueue.__init__): Same.
+        (StyleQueue.__init__): Same.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (TestCommitQueue): Removed host parameter.
+        (TestCommitQueue.__init__): Same.
+        (AbstractPatchQueueTest.test_next_patch): Same.
+        (PatchProcessingQueueTest.test_upload_results_archive_for_patch): Same.
+        (test_commit_queue_failure): Same.
+        (mock_run_webkit_patch):
+        (MockCommitQueueTask.results_from_patch_test_run): Same.
+        (test_rollout_lands): Same.
+        (test_non_valid_patch): Same.
+        (test_auto_retry): Same.
+        (test_style_queue_with_watch_list_exception): Same.
+        (TestQueue.__init__): Deleted.
+        (TestReviewQueue.__init__): Deleted.
+        (TestFeederQueue.__init__): Deleted.
+
 2016-08-09  Konstantin Tokarev  <annulen@yandex.ru>
 
         webkit-gtk tarball fails to build due to missing files

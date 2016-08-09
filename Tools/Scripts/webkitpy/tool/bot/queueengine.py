@@ -33,6 +33,8 @@ import traceback
 
 from datetime import datetime, timedelta
 
+from webkitpy.common.host import Host
+from webkitpy.common.system import logutils
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.outputtee import OutputTee
 
@@ -124,14 +126,18 @@ class QueueEngine:
         return 0
 
     def _stopping(self, message):
-        _log.info("\n%s" % message)
+        _log.info(message)
         self._delegate.stop_work_queue(message)
+        logging.getLogger("webkitpy").removeHandler(self._log_handler)
         # Be careful to shut down our OutputTee or the unit tests will be unhappy.
         self._ensure_work_log_closed()
         self._output_tee.remove_log(self._queue_log)
 
     def _begin_logging(self):
-        self._queue_log = self._output_tee.add_log(self._delegate.queue_log_path())
+        _queue_log_path = self._delegate.queue_log_path()
+        # We are using logging.getLogger("webkitpy") instead of _log since we want to capture all messages logged from webkitpy modules.
+        self._log_handler = logutils.configure_logger_to_log_to_file(logging.getLogger("webkitpy"), _queue_log_path, Host().filesystem)
+        self._queue_log = self._output_tee.add_log(_queue_log_path)
         self._work_log = None
 
     def _open_work_log(self, work_item):

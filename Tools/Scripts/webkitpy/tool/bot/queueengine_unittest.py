@@ -146,7 +146,7 @@ class QueueEngineTest(unittest.TestCase):
             engine = QueueEngine("test-queue", delegate, threading.Event())
         if not termination_message:
             termination_message = "Delegate terminated queue."
-        expected_logs = "\n%s\n" % termination_message
+        expected_logs = "%s\n" % termination_message
         OutputCapture().assert_outputs(self, engine.run, expected_logs=expected_logs)
 
     def _test_terminating_queue(self, exception, termination_message):

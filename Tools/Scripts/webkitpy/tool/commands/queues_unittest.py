@@ -31,7 +31,6 @@ import StringIO
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.checkout.scm.scm_mock import MockSCM
-from webkitpy.common.host_mock import MockHost
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -48,7 +47,7 @@ from webkitpy.tool.mocktool import MockTool, MockOptions
 
 class TestCommitQueue(CommitQueue):
     def __init__(self, tool=None):
-        CommitQueue.__init__(self, host=MockHost())
+        CommitQueue.__init__(self)
         if tool:
             self.bind_to_tool(tool)
         self._options = MockOptions(confirm=False, parent_command="commit-queue", port=None)
@@ -63,22 +62,13 @@ class TestCommitQueue(CommitQueue):
 class TestQueue(AbstractPatchQueue):
     name = "test-queue"
 
-    def __init__(self):
-        AbstractPatchQueue.__init__(self, host=MockHost())
-
 
 class TestReviewQueue(AbstractReviewQueue):
     name = "test-review-queue"
 
-    def __init__(self):
-        AbstractReviewQueue.__init__(self, host=MockHost())
-
 
 class TestFeederQueue(FeederQueue):
     _sleep_duration = 0
-
-    def __init__(self):
-        FeederQueue.__init__(self, host=MockHost())
 
 
 class AbstractQueueTest(CommandsTest):
@@ -163,7 +153,7 @@ MOCK: submit_to_ews: 10002
 
 class AbstractPatchQueueTest(CommandsTest):
     def test_next_patch(self):
-        queue = AbstractPatchQueue(host=MockHost())
+        queue = AbstractPatchQueue()
         tool = MockTool()
         queue.bind_to_tool(tool)
         queue._options = Mock()
@@ -181,7 +171,7 @@ class AbstractPatchQueueTest(CommandsTest):
 
 class PatchProcessingQueueTest(CommandsTest):
     def test_upload_results_archive_for_patch(self):
-        queue = PatchProcessingQueue(host=MockHost())
+        queue = PatchProcessingQueue()
         queue.name = "mock-queue"
         tool = MockTool()
         queue.bind_to_tool(tool)
@@ -270,7 +260,7 @@ MOCK: release_work_item: commit-queue 10000
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
-        self.assert_queue_outputs(CommitQueue(host=MockHost()), tool=tool, expected_logs=expected_logs)
+        self.assert_queue_outputs(CommitQueue(), tool=tool, expected_logs=expected_logs)
 
     def test_commit_queue_failure(self):
         expected_logs = {
@@ -286,7 +276,7 @@ MOCK: release_work_item: commit-queue 10000
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
-        queue = CommitQueue(host=MockHost())
+        queue = CommitQueue()
 
         def mock_run_webkit_patch(command):
             if command[0] == 'clean' or command[0] == 'update':
@@ -318,7 +308,7 @@ MOCK: release_work_item: commit-queue 10000
             def results_from_patch_test_run(self, patch):
                 return LayoutTestResults([test_results.TestResult("mock_test_name.html", failures=[test_failures.FailureTextMismatch()])], did_exceed_test_failure_limit=False)
 
-        queue = CommitQueue(MockCommitQueueTask, host=MockHost())
+        queue = CommitQueue(MockCommitQueueTask)
 
         def mock_run_webkit_patch(command):
             if command[0] == 'clean' or command[0] == 'update':
@@ -357,7 +347,7 @@ MOCK: release_work_item: commit-queue 10000
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
-        self.assert_queue_outputs(CommitQueue(host=MockHost()), tool=tool, expected_logs=expected_logs)
+        self.assert_queue_outputs(CommitQueue(), tool=tool, expected_logs=expected_logs)
 
     def test_rollout_lands(self):
         tool = MockTool()
@@ -382,7 +372,7 @@ MOCK: release_work_item: commit-queue 10005
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10005' with comment 'Rejecting attachment 10005 from commit-queue.\n\nMock error message'\n",
         }
-        self.assert_queue_outputs(CommitQueue(host=MockHost()), tool=tool, work_item=rollout_patch, expected_logs=expected_logs)
+        self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_logs=expected_logs)
 
     def test_non_valid_patch(self):
         tool = MockTool()
@@ -393,10 +383,10 @@ MOCK: release_work_item: commit-queue 10005
 MOCK: release_work_item: commit-queue 10007
 """,
         }
-        self.assert_queue_outputs(CommitQueue(host=MockHost()), tool=tool, work_item=patch, expected_logs=expected_logs)
+        self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=patch, expected_logs=expected_logs)
 
     def test_auto_retry(self):
-        queue = CommitQueue(host=MockHost())
+        queue = CommitQueue()
         options = Mock()
         options.parent_command = "commit-queue"
         tool = AlwaysCommitQueueTool()
@@ -508,7 +498,7 @@ MOCK: release_work_item: style-queue 10000
             "handle_script_error": "MOCK output\n",
         }
         tool = MockTool(executive_throws_when_run=set(['check-style']))
-        self.assert_queue_outputs(StyleQueue(host=MockHost()), expected_logs=expected_logs, tool=tool)
+        self.assert_queue_outputs(StyleQueue(), expected_logs=expected_logs, tool=tool)
 
     def test_style_queue_with_watch_list_exception(self):
         expected_logs = {
@@ -533,7 +523,7 @@ MOCK: release_work_item: style-queue 10000
             "handle_script_error": "MOCK output\n",
         }
         tool = MockTool(executive_throws_when_run=set(['apply-watchlist-local']))
-        self.assert_queue_outputs(StyleQueue(host=MockHost()), expected_logs=expected_logs, tool=tool)
+        self.assert_queue_outputs(StyleQueue(), expected_logs=expected_logs, tool=tool)
 
     def test_non_valid_patch(self):
         tool = MockTool()
@@ -544,4 +534,4 @@ MOCK: release_work_item: style-queue 10000
 MOCK: release_work_item: style-queue 10007
 """,
         }
-        self.assert_queue_outputs(StyleQueue(host=MockHost()), tool=tool, work_item=patch, expected_logs=expected_logs)
+        self.assert_queue_outputs(StyleQueue(), tool=tool, work_item=patch, expected_logs=expected_logs)
