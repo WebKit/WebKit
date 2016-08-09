@@ -455,7 +455,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::Confidence>()
 template<> TestObj::Dictionary convert<TestObj::Dictionary>(ExecState& state, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { }, { }, { }, 0, 0, { }, { }, 0, 0, { }, { }, { }, 0, { }, 0, { }, 0, { }, 0, { }, 0, nullptr, jsUndefined() };
+        return { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { }, { }, { }, 0, 0, { }, { }, 0, 0, { }, { }, { }, 0, { }, 0, { }, 0, { }, 0, { }, 0, nullptr, jsUndefined(), jsUndefined() };
     auto* object = value.getObject();
     if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
         throwTypeError(&state);
@@ -549,7 +549,10 @@ template<> TestObj::Dictionary convert<TestObj::Dictionary>(ExecState& state, JS
     if (UNLIKELY(state.hadException()))
         return { };
     auto anyValue = convertOptional<JSC::JSValue>(state, object->get(&state, Identifier::fromString(&state, "anyValue")), jsUndefined());
-    return { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault), WTFMove(smallIntegerClamped), WTFMove(smallIntegerWithDefault), WTFMove(smallUnsignedIntegerEnforcedRange), WTFMove(smallUnsignedIntegerWithDefault), WTFMove(integer), WTFMove(integerWithDefault), WTFMove(unsignedInteger), WTFMove(unsignedIntegerWithDefault), WTFMove(largeInteger), WTFMove(largeIntegerWithDefault), WTFMove(unsignedLargeInteger), WTFMove(unsignedLargeIntegerWithDefault), WTFMove(nullableNode), WTFMove(anyValue) };
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto anyTypedefValue = convertOptional<JSC::JSValue>(state, object->get(&state, Identifier::fromString(&state, "anyTypedefValue")), jsUndefined());
+    return { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault), WTFMove(smallIntegerClamped), WTFMove(smallIntegerWithDefault), WTFMove(smallUnsignedIntegerEnforcedRange), WTFMove(smallUnsignedIntegerWithDefault), WTFMove(integer), WTFMove(integerWithDefault), WTFMove(unsignedInteger), WTFMove(unsignedIntegerWithDefault), WTFMove(largeInteger), WTFMove(largeIntegerWithDefault), WTFMove(unsignedLargeInteger), WTFMove(unsignedLargeIntegerWithDefault), WTFMove(nullableNode), WTFMove(anyValue), WTFMove(anyTypedefValue) };
 }
 
 template<> TestObj::DictionaryThatShouldNotTolerateNull convert<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)

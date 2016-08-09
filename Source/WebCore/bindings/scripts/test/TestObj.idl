@@ -401,6 +401,8 @@ enum TestConfidence { "high", "kinda-low" };
 // The following comment should not generate any code.
 // TestObj implements TestImplements;
 
+typedef any AnyTypedef;
+
 dictionary TestDictionary {
     TestEnumType enumerationValueWithoutDefault;
     TestEnumType enumerationValueWithDefault = "enumValue1";
@@ -432,6 +434,7 @@ dictionary TestDictionary {
     unsigned long long unsignedLargeIntegerWithDefault = 0;
     Node? nullableNode = null;
     any anyValue;
+    AnyTypedef anyTypedefValue;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {

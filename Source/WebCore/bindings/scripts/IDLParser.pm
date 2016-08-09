@@ -415,6 +415,10 @@ sub applyTypedefs
                     $self->applyTypedefsForSignature($signature);
                 }
             }
+        } elsif (ref($definition) eq "domDictionary") {
+            foreach my $member (@{$definition->members}) {
+                $self->applyTypedefsForSignature($member);
+            }
         }
     }
 }
