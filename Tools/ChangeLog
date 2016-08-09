@@ -1,3 +1,14 @@
+2016-08-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Build the jhbuild with -O2 optimization level by default
+        https://bugs.webkit.org/show_bug.cgi?id=160544
+
+        Reviewed by Michael Catanzaro.
+
+        * gtk/jhbuildrc: Pass -O2 when building the JHBuild, as also -g1
+        which don't increases the required disk space significatively and
+        provides better debug information than no passing it.
+
 2016-08-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Allow more --cmakeargs option in build-jsc and build-webkit
