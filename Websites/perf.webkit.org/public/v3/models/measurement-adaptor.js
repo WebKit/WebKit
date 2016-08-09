@@ -70,7 +70,7 @@ class MeasurementAdaptor {
             sum: sum,
             squareSum: squareSum,
             iterationCount: row[this._countIndex],
-            interval: function () {
+            get interval () {
                 if (cachedInterval == null)
                     cachedInterval = MeasurementAdaptor.computeConfidenceInterval(row[self._countIndex], mean, sum, squareSum);
                 return cachedInterval;

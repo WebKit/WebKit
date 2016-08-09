@@ -448,14 +448,14 @@ class TimeSeriesChart extends ComponentBase {
         var width = 1;
         for (var i = 0; i < series.length; i++) {
             var point = series[i];
-            var interval = point.interval();
+            var interval = point.interval;
             var value = interval ? interval[0] : point.value;
             context.lineTo(point.x - width, metrics.valueToY(value));
             context.lineTo(point.x + width, metrics.valueToY(value));
         }
         for (var i = series.length - 1; i >= 0; i--) {
             var point = series[i];
-            var interval = point.interval();
+            var interval = point.interval;
             var value = interval ? interval[1] : point.value;
             context.lineTo(point.x + width, metrics.valueToY(value));
             context.lineTo(point.x - width, metrics.valueToY(value));

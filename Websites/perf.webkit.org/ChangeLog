@@ -1,5 +1,14 @@
 2016-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r204187. interval has to be a getter, not a method.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype._renderTimeSeries):
+        * public/v3/models/measurement-adaptor.js:
+        (MeasurementAdaptor.prototype.applyTo):
+
+2016-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo that was supposed to be fixed in r204296 before landing.
 
         * public/v3/pages/chart-pane.js:
