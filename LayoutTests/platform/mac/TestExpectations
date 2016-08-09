@@ -1444,6 +1444,3 @@ webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender.html [ Pass ]
 
 # ADDITIONAL_EMOJI_SUPPORT is not enabled on Yosemite
 webkit.org/b/160488 [ Yosemite ] fast/text/flag-emoji-line-break.html [ ImageOnlyFailure ]
-
-# rdar://27711048
-[ Sierra+ ] compositing/video/video-poster.html [ Failure ]

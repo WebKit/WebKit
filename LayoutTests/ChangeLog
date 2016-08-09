@@ -1,3 +1,9 @@
+2016-08-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update test expectations for rdar://problem/27711048.
+
+        * platform/mac/TestExpectations:
+
 2016-08-08  John Wilander  <wilander@apple.com>
 
         Popups opened from a sandboxed iframe should themselves be sandboxed
