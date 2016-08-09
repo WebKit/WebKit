@@ -296,7 +296,7 @@ public:
     String defaultToolTip() const;
 
 #if ENABLE(MEDIA_CAPTURE)
-    bool shouldUseMediaCapture() const;
+    MediaCaptureType mediaCaptureType() const;
 #endif
 
     static const unsigned maxEffectiveLength;

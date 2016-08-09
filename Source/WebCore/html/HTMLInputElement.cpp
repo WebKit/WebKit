@@ -1796,9 +1796,19 @@ bool HTMLInputElement::shouldAppearIndeterminate() const
 }
 
 #if ENABLE(MEDIA_CAPTURE)
-bool HTMLInputElement::shouldUseMediaCapture() const
+MediaCaptureType HTMLInputElement::mediaCaptureType() const
 {
-    return isFileUpload() && hasAttributeWithoutSynchronization(captureAttr);
+    if (!isFileUpload())
+        return MediaCaptureTypeNone;
+    
+    auto& captureAttribute = attributeWithoutSynchronization(captureAttr);
+    if (captureAttribute.isNull())
+        return MediaCaptureTypeNone;
+    
+    if (equalLettersIgnoringASCIICase(captureAttribute, "user"))
+        return MediaCaptureTypeUser;
+    
+    return MediaCaptureTypeEnvironment;
 }
 #endif
 

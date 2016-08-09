@@ -36,6 +36,12 @@
 
 namespace WebCore {
 
+enum MediaCaptureType {
+    MediaCaptureTypeNone,
+    MediaCaptureTypeUser,
+    MediaCaptureTypeEnvironment
+};
+    
 class FileChooser;
 class Icon;
 
@@ -56,7 +62,7 @@ struct FileChooserSettings {
     Vector<String> acceptFileExtensions;
     Vector<String> selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
-    bool capture;
+    MediaCaptureType mediaCaptureType;
 #endif
 
     // Returns a combined vector of acceptMIMETypes and acceptFileExtensions.

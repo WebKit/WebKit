@@ -39,10 +39,10 @@
 #import "WebOpenPanelResultListener.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
+#import "WebUIKitDelegate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
-#import "WebUIKitDelegate.h"
 
 #import <wtf/HashMap.h>
 #import <wtf/RefPtr.h>
@@ -62,7 +62,28 @@
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>
 
+NSString * const WebOpenPanelConfigurationAllowMultipleFilesKey = @"WebOpenPanelConfigurationAllowMultipleFilesKey";
+NSString * const WebOpenPanelConfigurationMediaCaptureTypeKey = @"WebOpenPanelConfigurationMediaCaptureTypeKey";
+NSString * const WebOpenPanelConfigurationMimeTypesKey = @"WebOpenPanelConfigurationMimeTypesKey";
+
 using namespace WebCore;
+
+#if ENABLE(MEDIA_CAPTURE)
+static WebMediaCaptureType webMediaCaptureType(MediaCaptureType mediaCaptureType)
+{
+    switch (mediaCaptureType) {
+    case MediaCaptureTypeNone:
+        return WebMediaCaptureTypeNone;
+    case MediaCaptureTypeUser:
+        return WebMediaCaptureTypeUser;
+    case MediaCaptureTypeEnvironment:
+        return WebMediaCaptureTypeEnvironment;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebMediaCaptureTypeNone;
+}
+#endif
 
 void WebChromeClientIOS::setWindowRect(const WebCore::FloatRect& r)
 {
@@ -116,12 +137,22 @@ void WebChromeClientIOS::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
     for (size_t i = 0; i < numMIMETypes; ++i)
         [mimeTypes addObject:acceptMIMETypes[i]];
 
+    WebMediaCaptureType captureType = WebMediaCaptureTypeNone;
+#if ENABLE(MEDIA_CAPTURE)
+    captureType = webMediaCaptureType(settings.mediaCaptureType);
+#endif
+    NSDictionary *configuration = @{
+        WebOpenPanelConfigurationAllowMultipleFilesKey: @(allowMultipleFiles),
+        WebOpenPanelConfigurationMimeTypesKey: mimeTypes,
+        WebOpenPanelConfigurationMediaCaptureTypeKey: @(captureType)
+    };
+
     if (WebThreadIsCurrent()) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener allowMultipleFiles:allowMultipleFiles acceptMIMETypes:mimeTypes];
+            [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener configuration:configuration];
         });
     } else
-        [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener allowMultipleFiles:allowMultipleFiles acceptMIMETypes:mimeTypes];
+        [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener configuration:configuration];
 
     [listener release];
 }

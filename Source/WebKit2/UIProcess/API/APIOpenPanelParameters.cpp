@@ -55,9 +55,9 @@ Ref<API::Array> OpenPanelParameters::acceptMIMETypes() const
 }
 
 #if ENABLE(MEDIA_CAPTURE)
-bool OpenPanelParameters::capture() const
+WebCore::MediaCaptureType OpenPanelParameters::mediaCaptureType() const
 {
-    return m_settings.capture;
+    return m_settings.mediaCaptureType;
 }
 #endif
 

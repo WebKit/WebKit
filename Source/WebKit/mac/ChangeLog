@@ -1,3 +1,14 @@
+2016-08-09  George Ruan  <gruan@apple.com>
+
+        Implement functionality of media capture on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=158945
+        <rdar://problem/26893343>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig: Enable Media Capture feature
+        for iOS.
+
 2016-08-09  Anders Carlsson  <andersca@apple.com>
 
         Get rid of PluginStrategy

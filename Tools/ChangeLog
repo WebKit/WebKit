@@ -1,3 +1,14 @@
+2016-08-09  George Ruan  <gruan@apple.com>
+
+        Implement functionality of media capture on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=158945
+        <rdar://problem/26893343>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: Enable Media
+        Capture feature on iOS.
+
 2016-08-09  Saam Barati  <sbarati@apple.com>
 
         Parser<LexerType>::parseFunctionInfo() has the wrong info about captured vars when a function is not cached.

@@ -69,6 +69,11 @@ SOFT_LINK_CONSTANT(Photos, PHImageRequestOptionsVersionCurrent, NSString *);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
+static inline UIImagePickerControllerCameraDevice cameraDeviceForMediaCaptureType(WebCore::MediaCaptureType mediaCaptureType)
+{
+    return mediaCaptureType == WebCore::MediaCaptureTypeUser ? UIImagePickerControllerCameraDeviceFront : UIImagePickerControllerCameraDeviceRear;
+}
+
 #pragma mark - Document picker icons
 
 static inline UIImage *photoLibraryIcon()
@@ -292,6 +297,7 @@ static UIImage* iconForFile(NSURL *file)
 #pragma clang diagnostic pop
     RetainPtr<UIDocumentMenuViewController> _documentMenuController;
     RetainPtr<UIAlertController> _actionSheetController;
+    WebCore::MediaCaptureType _mediaCaptureType;
 }
 
 - (instancetype)initWithView:(WKContentView *)view
@@ -360,6 +366,20 @@ static UIImage* iconForFile(NSURL *file)
     for (const auto& mimeType : acceptMimeTypes->elementsOfType<API::String>())
         [mimeTypes addObject:mimeType->string()];
     _mimeTypes = adoptNS([mimeTypes copy]);
+
+    _mediaCaptureType = WebCore::MediaCaptureTypeNone;
+#if ENABLE(MEDIA_CAPTURE)
+    _mediaCaptureType = parameters->mediaCaptureType();
+#endif
+
+    if ([self _shouldMediaCaptureOpenMediaDevice]) {
+        [self _adjustMediaCaptureType];
+
+        _usingCamera = YES;
+        [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
+
+        return;
+    }
 
     [self _showDocumentPickerMenu];
 }
@@ -467,11 +487,13 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
     }];
 
-    if (NSString *cameraString = [self _cameraButtonLabel]) {
-        [_documentMenuController addOptionWithTitle:cameraString image:cameraIcon() order:UIDocumentMenuOrderFirst handler:^{
-            _usingCamera = YES;
-            [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
-        }];
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        if (NSString *cameraString = [self _cameraButtonLabel]) {
+            [_documentMenuController addOptionWithTitle:cameraString image:cameraIcon() order:UIDocumentMenuOrderFirst handler:^{
+                _usingCamera = YES;
+                [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
+            }];
+        }
     }
 
     [self _presentForCurrentInterfaceIdiom:_documentMenuController.get()];
@@ -479,8 +501,33 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
 #pragma mark - Image Picker
 
+- (void)_adjustMediaCaptureType
+{
+    if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront] || [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
+        if (![UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
+            _mediaCaptureType = WebCore::MediaCaptureTypeEnvironment;
+        
+        if (![UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear])
+            _mediaCaptureType = WebCore::MediaCaptureTypeUser;
+        
+        return;
+    }
+    
+    _mediaCaptureType = WebCore::MediaCaptureTypeNone;
+}
+
+- (BOOL)_shouldMediaCaptureOpenMediaDevice
+{
+    if (_mediaCaptureType == WebCore::MediaCaptureTypeNone || ![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+        return NO;
+    
+    return YES;
+}
+
 - (void)_showPhotoPickerWithSourceType:(UIImagePickerControllerSourceType)sourceType
 {
+    ASSERT([UIImagePickerController isSourceTypeAvailable:sourceType]);
+    
     _imagePicker = adoptNS([[UIImagePickerController alloc] init]);
     [_imagePicker setDelegate:self];
     [_imagePicker setSourceType:sourceType];
@@ -489,6 +536,9 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     [_imagePicker _setAllowsMultipleSelection:_allowMultipleFiles];
     [_imagePicker setMediaTypes:[self _mediaTypesForPickerSourceType:sourceType]];
 
+    if (_mediaCaptureType != WebCore::MediaCaptureTypeNone)
+        [_imagePicker setCameraDevice:cameraDeviceForMediaCaptureType(_mediaCaptureType)];
+    
     // Use a popover on the iPad if the source type is not the camera.
     // The camera will use a fullscreen, modal view controller.
     BOOL usePopover = UICurrentUserInterfaceIdiomIsPad() && sourceType != UIImagePickerControllerSourceTypeCamera;

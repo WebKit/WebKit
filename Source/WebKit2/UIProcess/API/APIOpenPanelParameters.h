@@ -42,7 +42,7 @@ public:
     Ref<API::Array> acceptMIMETypes() const;
     Ref<API::Array> selectedFileNames() const;
 #if ENABLE(MEDIA_CAPTURE)
-    bool capture() const;
+    WebCore::MediaCaptureType mediaCaptureType() const;
 #endif
 
 private:

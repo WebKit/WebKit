@@ -105,5 +105,5 @@
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
 
     // See http://www.w3.org/TR/html-media-capture/
-    [Conditional=MEDIA_CAPTURE, Reflect] attribute boolean capture;
+    [Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;
 };

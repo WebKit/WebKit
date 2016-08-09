@@ -1376,7 +1376,7 @@ void ArgumentCoder<FileChooserSettings>::encode(ArgumentEncoder& encoder, const 
     encoder << settings.acceptMIMETypes;
     encoder << settings.selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
-    encoder << settings.capture;
+    encoder.encodeEnum(settings.mediaCaptureType);
 #endif
 }
 
@@ -1389,7 +1389,7 @@ bool ArgumentCoder<FileChooserSettings>::decode(ArgumentDecoder& decoder, FileCh
     if (!decoder.decode(settings.selectedFiles))
         return false;
 #if ENABLE(MEDIA_CAPTURE)
-    if (!decoder.decode(settings.capture))
+    if (!decoder.decodeEnum(settings.mediaCaptureType))
         return false;
 #endif
 

@@ -54,10 +54,10 @@ WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef)
     return 0;
 }
 
-bool WKOpenPanelParametersGetCaptureEnabled(WKOpenPanelParametersRef parametersRef)
+bool WKOpenPanelParametersGetMediaCaptureType(WKOpenPanelParametersRef parametersRef)
 {
 #if ENABLE(MEDIA_CAPTURE)
-    return toImpl(parametersRef)->capture();
+    return toImpl(parametersRef)->mediaCaptureType();
 #else
     UNUSED_PARAM(parametersRef);
     return false;

@@ -1,3 +1,26 @@
+2016-08-09  George Ruan  <gruan@apple.com>
+
+        Implement functionality of media capture on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=158945
+        <rdar://problem/26893343>
+
+        Reviewed by Tim Horton.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate
+        webView:runOpenPanelForFileButtonWithResultListener:configuration:]):
+        Use a dictionary instead of passing each parameter in separately.
+        (-[WebDefaultUIKitDelegate webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:acceptMIMETypes:]): Deleted.
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (webMediaCaptureType): Converts from WebCore::MediaCaptureType to
+        WebMediaCaptureType.
+        (WebChromeClientIOS::runOpenPanel):
+        * WebKit.iOS.exp: Expose NSDictionary keys for
+        runOpenPanelForFileButtonWithResultListener.
+        * WebView/WebUIKitDelegate.h: Add WebMediaCaptureType enum and
+        NSDictionary keys for
+        runOpenPanelForFileButtonWithResultListener.
+
 2016-07-11  Enrica Casucci  <enrica@apple.com>
 
         Add synthetic click origin to WKNavigationAction.

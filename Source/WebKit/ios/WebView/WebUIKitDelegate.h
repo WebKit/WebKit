@@ -39,6 +39,17 @@
 @class WebPluginPackage;
 @class WebSecurityOrigin;
 @class UIWebPlugInView;
+
+extern NSString * const WebOpenPanelConfigurationAllowMultipleFilesKey;
+extern NSString * const WebOpenPanelConfigurationMimeTypesKey;
+extern NSString * const WebOpenPanelConfigurationMediaCaptureTypeKey;
+
+typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
+    WebMediaCaptureTypeNone,
+    WebMediaCaptureTypeUser,
+    WebMediaCaptureTypeEnvironment
+};
+
 @protocol WebOpenPanelResultListener;
 
 @interface NSObject (WebUIKitDelegate)
@@ -59,7 +70,7 @@
 - (void)webViewDidEndOverflowScroll:(WebView *)webView;
 
 // File Upload support
-- (void)webView:(WebView *)webView runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener allowMultipleFiles:(BOOL)allowMultipleFiles acceptMIMETypes:(NSArray *)mimeTypes;
+- (void)webView:(WebView *)webView runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener configuration:(NSDictionary *)configuration;
 
 // AutoFill support
 - (void)webView:(WebView *)webView willCloseFrame:(WebFrame *)frame;
@@ -111,7 +122,7 @@
 - (CGPoint)interactionLocation;
 - (void)showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(CGRect)elementRect;
 
-#if ENABLE(ORIENTATION_EVENTS)
+#if ENABLE_ORIENTATION_EVENTS
 - (int)deviceOrientation;
 #endif
 

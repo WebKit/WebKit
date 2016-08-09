@@ -1,3 +1,50 @@
+2016-08-09  George Ruan  <gruan@apple.com>
+
+        Implement functionality of media capture on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=158945
+        <rdar://problem/26893343>
+
+        Reviewed by Tim Horton.
+
+        For a input type file element on iOS, the media capture attribute can
+        now be used to specify which camera to pull up immediately, as opposed
+        to having to select the camera from a file picker menu. If the
+        specified capture type camera device is unavailable, the other
+        built-in camera will be pulled up instead. If no camera is available,
+        then the file picker menu will be presented to the user.
+
+        * Configurations/FeatureDefines.xcconfig: Enable Media Capture feature
+        on iOS.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FileChooserSettings>::encode): Encode enum
+        MediaCaptureType.
+        (IPC::ArgumentCoder<FileChooserSettings>::decode): Decode enum
+        MediaCaptureType.
+        * UIProcess/API/APIOpenPanelParameters.cpp:
+        (API::OpenPanelParameters::mediaCaptureType):
+        (API::OpenPanelParameters::capture): Deleted.
+        * UIProcess/API/APIOpenPanelParameters.h: Capture attribute is now
+        represented with MediaCaptureType instead of boolean.
+        * UIProcess/API/C/WKOpenPanelParametersRef.cpp:
+        (WKOpenPanelParametersGetMediaCaptureType): Change function name to
+        better represent function.
+        (WKOpenPanelParametersGetCaptureEnabled): Deleted.
+        * UIProcess/API/C/WKOpenPanelParametersRef.h:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (cameraDeviceForMediaCaptureType): Translate MediaCaptureType to media
+        device.
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        Immediately pull up media capture device if devices are available and
+        capture attribute is present.
+        (-[WKFileUploadPanel _showDocumentPickerMenu]): Only show option to
+        use media capture device if it is available for the source type.
+        (-[WKFileUploadPanel _adjustMediaCaptureType]): Determines correct
+        fallback option for the media capture device.
+        (-[WKFileUploadPanel _shouldMediaCaptureOpenMediaDevice]): Checks if
+        the media capture device should be immediately pulled up.
+        (-[WKFileUploadPanel _showPhotoPickerWithSourceType:]): Specified the
+        media capture device to use.
+
 2016-08-09  Brady Eidson  <beidson@apple.com>
 
         Implement "dumb" WK2 support for gamepads.
