@@ -1,3 +1,23 @@
+2016-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Move plug-in enumeration from WebPlatformStrategies to WebPluginInfoProvider
+        https://bugs.webkit.org/show_bug.cgi?id=160694
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::createPluginStrategy):
+        (WebPlatformStrategies::refreshPlugins): Deleted.
+        (WebPlatformStrategies::getPluginInfo): Deleted.
+        (WebPlatformStrategies::getWebVisiblePluginInfo): Deleted.
+        (WebPlatformStrategies::setPluginLoadClientPolicy): Deleted.
+        (WebPlatformStrategies::clearPluginClientPolicies): Deleted.
+        * WebCoreSupport/WebPluginInfoProvider.mm:
+        (WebPluginInfoProvider::refreshPlugins):
+        (WebPluginInfoProvider::getPluginInfo):
+        (WebPluginInfoProvider::getWebVisiblePluginInfo):
+
 2016-08-08  Anders Carlsson  <andersca@apple.com>
 
         Add a new PluginInfoProvider class, to replace PluginStrategy

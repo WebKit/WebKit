@@ -26,7 +26,6 @@
 #import "WebPlatformStrategies.h"
 
 #import "WebFrameNetworkingContext.h"
-#import "WebPluginDatabase.h"
 #import "WebPluginPackage.h"
 #import "WebResourceLoadScheduler.h"
 #import <WebCore/BlobRegistryImpl.h>
@@ -74,7 +73,7 @@ PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
 
 PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 {
-    return this;
+    return nullptr;
 }
 
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()
@@ -122,44 +121,6 @@ void WebPlatformStrategies::addCookie(const NetworkStorageSession& session, cons
 {
     WebCore::addCookie(session, url, cookie);
 }
-
-void WebPlatformStrategies::refreshPlugins()
-{
-    [[WebPluginDatabase sharedDatabaseIfExists] refresh];
-}
-
-void WebPlatformStrategies::getPluginInfo(const Page* page, Vector<PluginInfo>& plugins)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    // WebKit1 has no application plug-ins, so we don't need to add them here.
-    if (!page->mainFrame().loader().subframeLoader().allowPlugins())
-        return;
-
-    NSArray* pluginsArray = [[WebPluginDatabase sharedDatabase] plugins];
-    for (unsigned int i = 0; i < [pluginsArray count]; ++i) {
-        WebPluginPackage *plugin = [pluginsArray objectAtIndex:i];
-
-        plugins.append([plugin pluginInfo]);
-    }
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void WebPlatformStrategies::getWebVisiblePluginInfo(const Page* page, Vector<PluginInfo>& plugins)
-{
-    getPluginInfo(page, plugins);
-}
-
-#if PLATFORM(MAC)
-void WebPlatformStrategies::setPluginLoadClientPolicy(PluginLoadClientPolicy, const String&, const String&, const String&)
-{
-}
-
-void WebPlatformStrategies::clearPluginClientPolicies()
-{
-}
-#endif
 
 void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)
 {

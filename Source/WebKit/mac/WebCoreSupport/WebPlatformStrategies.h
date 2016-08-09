@@ -35,7 +35,7 @@
 struct PasteboardImage;
 struct PasteboardWebContent;
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PasteboardStrategy {
 public:
     static void initializeIfNecessary();
     
@@ -58,15 +58,6 @@ private:
     bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&) override;
     void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&) override;
     void addCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const WebCore::Cookie&) override;
-
-    // WebCore::PluginStrategy
-    void refreshPlugins() override;
-    void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) override;
-    void getWebVisiblePluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) override;
-#if PLATFORM(MAC)
-    void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String&, const String&, const String&) override;
-    void clearPluginClientPolicies() override;
-#endif
 
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS)
