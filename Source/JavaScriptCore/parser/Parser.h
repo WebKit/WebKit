@@ -539,6 +539,11 @@ public:
         if (usedVariablesContains(m_vm->propertyNames->arguments.impl()))
             setInnerArrowFunctionUsesArguments();
     }
+
+    void addClosedVariableCandidateUnconditionally(UniquedStringImpl* impl)
+    {
+        m_closedVariableCandidates.add(impl);
+    }
     
     void collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
     {

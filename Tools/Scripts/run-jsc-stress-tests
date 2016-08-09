@@ -800,7 +800,7 @@ def runNoCJITValidate
 end
 
 def runNoCJITValidatePhases
-    run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *NO_CJIT_OPTIONS)
+    run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", "--useSourceProviderCache=false", *NO_CJIT_OPTIONS)
 end
 
 def runDefault

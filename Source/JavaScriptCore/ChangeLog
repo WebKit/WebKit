@@ -1,3 +1,26 @@
+2016-08-09  Saam Barati  <sbarati@apple.com>
+
+        Parser<LexerType>::parseFunctionInfo() has the wrong info about captured vars when a function is not cached.
+        https://bugs.webkit.org/show_bug.cgi?id=160671
+        <rdar://problem/27756112>
+
+        Reviewed by Mark Lam.
+
+        There was a bug in our captured variable analysis when a function has a default
+        parameter expression that is a function that captures something from the parent scope.
+        The bug was that we were relying on the SourceProviderCache to succeed for the
+        analysis to work. This is obviously wrong. I've fixed this to work regardless
+        of getting a cache hit. To prevent future bugs that rely on the success of the
+        SourceProviderCache, I've made the validate testing mode disable the SourceProviderCache
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::setInnerArrowFunctionUsesEvalAndUseArgumentsIfNeeded):
+        (JSC::Scope::addClosedVariableCandidateUnconditionally):
+        (JSC::Scope::collectFreeVariables):
+        * runtime/Options.h:
+
 2016-08-08  Mark Lam  <mark.lam@apple.com>
 
         ASSERTION FAILED: hasInlineStorage() in JSFinalObject::visitChildren().

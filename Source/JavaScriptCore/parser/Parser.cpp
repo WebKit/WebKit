@@ -1939,6 +1939,8 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
 {
     RELEASE_ASSERT(isFunctionParseMode(mode));
 
+    ScopeRef parentScope = currentScope();
+
     bool upperScopeIsGenerator = currentScope()->isGenerator();
     AutoPopScopeRef functionScope(this, pushScope());
     functionScope->setSourceParseMode(mode);
@@ -1954,6 +1956,9 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     FunctionBodyType functionBodyType;
 
     auto loadCachedFunction = [&] () -> bool {
+        if (UNLIKELY(!Options::useSourceProviderCache()))
+            return false;
+
         ASSERT(parametersStart != -1);
         ASSERT(startColumn != -1);
 
@@ -2133,8 +2138,11 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     // as their own scope).
     UniquedStringImplPtrSet nonLocalCapturesFromParameterExpressions;
     functionScope->forEachUsedVariable([&] (UniquedStringImpl* impl) {
-        if (!functionScope->hasDeclaredParameter(impl))
+        if (!functionScope->hasDeclaredParameter(impl)) {
             nonLocalCapturesFromParameterExpressions.add(impl);
+            if (TreeBuilder::NeedsFreeVariableInfo)
+                parentScope->addClosedVariableCandidateUnconditionally(impl);
+        }
     });
 
     auto performParsingFunctionBody = [&] {
