@@ -1,3 +1,15 @@
+2016-08-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Do not check if WebKitLibraries folder exists on EFL and GTK
+        https://bugs.webkit.org/show_bug.cgi?id=160659
+
+        Reviewed by Csaba Osztrogonác.
+
+        Though WebKitLibraries is only needed by mac and win ports,
+        EFL and GTK ports have checked whether it exists.
+
+        * Scripts/build-webkit:
+
 2016-08-08  Aakash Jain  <aakash_jain@apple.com>
 
         Some EWS console logs doesn't go to log file
