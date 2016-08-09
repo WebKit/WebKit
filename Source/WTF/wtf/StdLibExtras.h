@@ -32,6 +32,7 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/Variant.h>
 
 // This was used to declare and define a static local variable (static T;) so that
 //  it was leaked so that its destructors were not called at exit.
@@ -309,6 +310,36 @@ bool checkAndSet(T& left, U right)
     return true;
 }
 
+// Visitor adapted from http://stackoverflow.com/questions/25338795/is-there-a-name-for-this-tuple-creation-idiom
+
+template <class A, class... B>
+struct Visitor : Visitor<A>, Visitor<B...> {
+    Visitor(A a, B... b)
+        : Visitor<A>(a)
+        , Visitor<B...>(b...)
+    {
+    }
+
+    using Visitor<A>::operator ();
+    using Visitor<B...>::operator ();
+};
+  
+template <class A>
+struct Visitor<A> : A {
+    Visitor(A a)
+        : A(a)
+    {
+    }
+
+    using A::operator();
+};
+ 
+template <class... F>
+auto makeVisitor(F... f)
+{
+    return Visitor<F...>(f...);
+}
+
 } // namespace WTF
 
 // This version of placement new omits a 0 check.
@@ -371,6 +402,14 @@ ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 
     return move(forward<T>(value));
 }
+
+template<typename... Types>
+using variant = std::experimental::variant<Types...>;
+
+using std::experimental::get;
+using std::experimental::get_if;
+using std::experimental::holds_alternative;
+using std::experimental::visit;
 
 } // namespace std
 

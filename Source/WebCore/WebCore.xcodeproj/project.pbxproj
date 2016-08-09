@@ -2844,8 +2844,6 @@
 		7CE683471921821500F4D928 /* UserMessageHandlerDescriptorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE683461921821500F4D928 /* UserMessageHandlerDescriptorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CE6CBFB187F370700D46BF5 /* FormatConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE6CBFA187F370700D46BF5 /* FormatConverter.h */; };
 		7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */; };
-		7CEAC1071B483D1D00334482 /* NodeOrString.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CEAC1061B483D1D00334482 /* NodeOrString.h */; };
-		7CEAC1091B483D7F00334482 /* NodeOrString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEAC1081B483D7F00334482 /* NodeOrString.cpp */; };
 		7CFDC57C1AC1D80500E24A57 /* ContentExtensionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFDC57A1AC1D80500E24A57 /* ContentExtensionError.cpp */; };
 		7CFDC57D1AC1D80500E24A57 /* ContentExtensionError.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CFDC57B1AC1D80500E24A57 /* ContentExtensionError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7D4C96DC1AD4483500365A50 /* JSFetchHeaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D4C96D81AD4483500365A50 /* JSFetchHeaders.cpp */; };
@@ -10263,8 +10261,6 @@
 		7CE683461921821500F4D928 /* UserMessageHandlerDescriptorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageHandlerDescriptorTypes.h; sourceTree = "<group>"; };
 		7CE6CBFA187F370700D46BF5 /* FormatConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatConverter.h; sourceTree = "<group>"; };
 		7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormatConverter.cpp; sourceTree = "<group>"; };
-		7CEAC1061B483D1D00334482 /* NodeOrString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeOrString.h; sourceTree = "<group>"; };
-		7CEAC1081B483D7F00334482 /* NodeOrString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeOrString.cpp; sourceTree = "<group>"; };
 		7CFDC57A1AC1D80500E24A57 /* ContentExtensionError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionError.cpp; sourceTree = "<group>"; };
 		7CFDC57B1AC1D80500E24A57 /* ContentExtensionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionError.h; sourceTree = "<group>"; };
 		7D4C96D81AD4483500365A50 /* JSFetchHeaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchHeaders.cpp; sourceTree = "<group>"; };
@@ -24132,8 +24128,6 @@
 				1A750D870A90E394000FF215 /* NodeIterator.idl */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
 				85ACA9FA0A9B631000671E90 /* NodeList.idl */,
-				7CEAC1081B483D7F00334482 /* NodeOrString.cpp */,
-				7CEAC1061B483D1D00334482 /* NodeOrString.h */,
 				4FAB48661643A67E00F70C07 /* NodeRareData.cpp */,
 				63189AE20E83A33300012E41 /* NodeRareData.h */,
 				63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */,
@@ -26892,7 +26886,6 @@
 				854FE7330A2297BE0058D7AD /* NodeFilterCondition.h in Headers */,
 				854FE7350A2297BE0058D7AD /* NodeIterator.h in Headers */,
 				A818721B0977D3C0005826D9 /* NodeList.h in Headers */,
-				7CEAC1071B483D1D00334482 /* NodeOrString.h in Headers */,
 				63189AE30E83A33300012E41 /* NodeRareData.h in Headers */,
 				63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */,
 				E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */,
@@ -30694,7 +30687,6 @@
 				A8C4A80009D563270003AC8D /* Node.cpp in Sources */,
 				854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */,
 				854FE7340A2297BE0058D7AD /* NodeIterator.cpp in Sources */,
-				7CEAC1091B483D7F00334482 /* NodeOrString.cpp in Sources */,
 				4FFC022B1643B710004E1638 /* NodeRareData.cpp in Sources */,
 				E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */,
 				33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */,

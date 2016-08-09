@@ -1,3 +1,15 @@
+2016-08-06  Sam Weinig  <sam@webkit.org>
+
+        Replace NodeOrString with std::variant<RefPtr<Node>, String>
+        https://bugs.webkit.org/show_bug.cgi?id=160638
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WTF/Variant.cpp:
+        Add additional tests for the initial state of std::variant and using
+        makeVisitor for visiting.
+
 2016-08-09  Aakash Jain  <aakash_jain@apple.com>
 
         EWS logging should ensure the logging to file is stopped on queue termination

@@ -44,7 +44,6 @@
 #include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NoEventDispatchAssertion.h"
-#include "NodeOrString.h"
 #include "NodeRareData.h"
 #include "NodeRenderStyle.h"
 #include "RadioNodeList.h"
@@ -873,18 +872,18 @@ unsigned ContainerNode::childElementCount() const
     return std::distance(children.begin(), children.end());
 }
 
-void ContainerNode::append(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+void ContainerNode::append(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
-    RefPtr<Node> node = convertNodesOrStringsIntoNode(*this, WTFMove(nodeOrStringVector), ec);
+    RefPtr<Node> node = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector), ec);
     if (ec || !node)
         return;
 
     appendChild(*node, ec);
 }
 
-void ContainerNode::prepend(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+void ContainerNode::prepend(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
-    RefPtr<Node> node = convertNodesOrStringsIntoNode(*this, WTFMove(nodeOrStringVector), ec);
+    RefPtr<Node> node = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector), ec);
     if (ec || !node)
         return;
 

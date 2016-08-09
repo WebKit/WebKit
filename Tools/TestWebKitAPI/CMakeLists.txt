@@ -76,6 +76,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringView.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/TemporaryChange.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/UniqueRef.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Variant.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Vector.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WeakPtr.cpp

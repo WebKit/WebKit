@@ -99,8 +99,8 @@ public:
     Element* firstElementChild() const;
     Element* lastElementChild() const;
     unsigned childElementCount() const;
-    void append(Vector<NodeOrString>&&, ExceptionCode&);
-    void prepend(Vector<NodeOrString>&&, ExceptionCode&);
+    void append(Vector<std::variant<Ref<Node>, String>>&&, ExceptionCode&);
+    void prepend(Vector<std::variant<Ref<Node>, String>>&&, ExceptionCode&);
 
     bool ensurePreInsertionValidity(Node& newChild, Node* refChild, ExceptionCode&);
 

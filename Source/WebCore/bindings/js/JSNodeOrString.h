@@ -26,7 +26,8 @@
 #ifndef JSNodeOrString_h
 #define JSNodeOrString_h
 
-#include "NodeOrString.h"
+#include <wtf/Forward.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -35,7 +36,9 @@ class ExecState;
 
 namespace WebCore {
 
-Vector<NodeOrString> toNodeOrStringVector(JSC::ExecState&);
+class Node;
+
+Vector<std::variant<Ref<Node>, String>> toNodeOrStringVector(JSC::ExecState&);
 
 } // namespace WebCore
 

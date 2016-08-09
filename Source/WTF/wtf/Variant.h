@@ -39,6 +39,7 @@
 
 #pragma once
 
+#include <functional>
 #include <limits.h>
 #include <new>
 #include <stddef.h>
@@ -48,30 +49,25 @@
 #include <utility>
 #include <wtf/Compiler.h>
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable:4245)
+#pragma warning(disable:4521)
+#pragma warning(disable:4522)
+#pragma warning(disable:4814)
+#endif
+
 namespace std {
 namespace experimental {
 
 #if COMPILER_SUPPORTS(EXCEPTIONS)
-
 #define __THROW_EXCEPTION(__exception) throw __exception;
-#define __CONST_EXPR_THROW_EXCPETION_IF(__predicate, __exception) \
-    do { \
-        if ((__predicate)) { \
-            throw __exception; \
-        } \
-    while (0); \
-
+#define __NOEXCEPT noexcept
+#define __NOEXCEPT_(__exception) noexcept(__exception)
 #else
-
-static inline void __crash_helper(bool){
-    CRASH();
-}
-static inline constexpr bool __constexpr_crash_if(bool test){
-    return !test ? true : (__crash_helper(test), false);
-}
-
-#define __THROW_EXCEPTION(...) CRASH();
-#define __CONST_EXPR_THROW_EXCPETION_IF(__predicate, __exception) __constexpr_crash_if((__predicate));
+#define __THROW_EXCEPTION(__exception) do { (void)__exception; CRASH(); } while (0);
+#define __NOEXCEPT
+#define __NOEXCEPT_(...)
 #endif
 
 struct __in_place_private{
@@ -116,6 +112,11 @@ public:
         std::logic_error(what_arg)
     {}
 };
+
+template<typename T>
+NO_RETURN_DUE_TO_CRASH inline T __throw_bad_variant_access(const char* what_arg){
+    __THROW_EXCEPTION(bad_variant_access(what_arg))
+}
 
 template<ptrdiff_t _Offset,typename _Type,typename ... _Types>
 struct __type_index_helper;
@@ -306,7 +307,7 @@ struct __all_trivially_destructible<_Head,_Rest...> {
 template<typename _Target,typename ... _Args>
 struct __storage_nothrow_constructible{
     static const bool __value=
-        noexcept(_Target(std::declval<_Args>()...));
+        std::is_nothrow_constructible<_Target, _Args...>::value;
 };
 
 template<typename ... _Types>
@@ -535,7 +536,7 @@ union __variant_data<_Type>{
     _Type& __get(in_place_index_t<0>){
         return __variant_storage<_Type>::__get(__val);
     }
-    constexpr _Type&& __get_rref(in_place_index_t<0>){
+    /*constexpr*/ _Type&& __get_rref(in_place_index_t<0>){
         return __variant_storage<_Type>::__get_rref(__val);
     }
     constexpr const _Type& __get(in_place_index_t<0>) const{
@@ -626,7 +627,7 @@ union __variant_data<_Head,_Rest...>{
         return __head.__get(in_place<0>);
     }
 
-    constexpr _Head&& __get_rref(in_place_index_t<0>){
+    /*constexpr*/ _Head&& __get_rref(in_place_index_t<0>){
         return __head.__get_rref(in_place<0>);
     }
     
@@ -645,7 +646,7 @@ union __variant_data<_Head,_Rest...>{
     }
 
     template<size_t _Index>
-    constexpr typename __indexed_type<_Index-1,_Rest...>::__type&& __get_rref(
+    /*constexpr*/ typename __indexed_type<_Index-1,_Rest...>::__type&& __get_rref(
         in_place_index_t<_Index>){
         return __rest.__get_rref(in_place<_Index-1>);
     }
@@ -1169,10 +1170,10 @@ struct __backup_storage_ops{
 
 template<ptrdiff_t _Index,typename _Storage>
 struct __backup_storage_ops<_Index,_Index,_Storage>{
-    static void __move_construct_func(_Storage * __dest,_Storage& __source){
+    static void __move_construct_func(_Storage *,_Storage&){
         __THROW_EXCEPTION(std::bad_alloc());
     };
-    static void __destroy_func(_Storage * __obj){
+    static void __destroy_func(_Storage *){
         __THROW_EXCEPTION(std::bad_alloc());
     };
 };
@@ -1529,27 +1530,27 @@ class variant:
 
 public:
     constexpr variant()
-        noexcept(noexcept(typename __indexed_type<0,_Types...>::__type())):
+        __NOEXCEPT_(noexcept(typename __indexed_type<0,_Types...>::__type())):
         __storage(in_place<0>),
         __index(0)
     {}
 
     constexpr variant(typename std::conditional<__all_move_constructible<_Types...>::value,variant,__private_type>::type&& __other)
-    noexcept(__noexcept_variant_move_construct<_Types...>::value):
+    __NOEXCEPT_(__noexcept_variant_move_construct<_Types...>::value):
         __index(__move_construct(__other))
     {}
 
     constexpr variant(typename std::conditional<!__all_move_constructible<_Types...>::value,variant,__private_type>::type&& __other)=delete;
     
     constexpr variant(typename std::conditional<__all_copy_constructible<_Types...>::value,variant,__private_type>::type& __other)
-    noexcept(__noexcept_variant_non_const_copy_construct<_Types...>::value):
+    __NOEXCEPT_(__noexcept_variant_non_const_copy_construct<_Types...>::value):
         __index(__copy_construct(__other))
     {}
 
     constexpr variant(typename std::conditional<!__all_copy_constructible<_Types...>::value,variant,__private_type>::type& __other)=delete;
 
     constexpr variant(typename std::conditional<__all_copy_constructible<_Types...>::value,variant,__private_type>::type const& __other)
-    noexcept(__noexcept_variant_const_copy_construct<_Types...>::value):
+    __NOEXCEPT_(__noexcept_variant_const_copy_construct<_Types...>::value):
         __index(__copy_construct(__other))
     {}
 
@@ -1668,7 +1669,7 @@ public:
         typename std::conditional<__all_move_constructible<_Types...>::value &&
                                       __all_move_assignable<_Types...>::value,
                                   variant, __private_type>::type &&
-            __other) noexcept(__noexcept_variant_move_assign<_Types...>::value) {
+            __other) __NOEXCEPT_(__noexcept_variant_move_assign<_Types...>::value) {
         if (__other.valueless_by_exception()) {
             __destroy_self();
         }
@@ -1694,10 +1695,10 @@ public:
         __direct_replace<_Index>(std::forward<_Args>(__args)...);
     }
     
-    constexpr bool valueless_by_exception() const noexcept{
+    constexpr bool valueless_by_exception() const __NOEXCEPT{
         return __index==-1;
     }
-    constexpr ptrdiff_t index() const noexcept{
+    constexpr ptrdiff_t index() const __NOEXCEPT{
         return __index;
     }
 
@@ -1706,7 +1707,7 @@ public:
             __all_swappable<_Types...>::value &&
                 __all_move_constructible<_Types...>::value,
             variant, __private_type>::type
-            &__other) noexcept(__noexcept_variant_swap<_Types...>::value) {
+            &__other) __NOEXCEPT_(__noexcept_variant_swap<_Types...>::value) {
         if (__other.index() == index()) {
             if(!valueless_by_exception())
                 __swap_op_table<variant>::__apply[index()](*this,__other);
@@ -1724,10 +1725,10 @@ class variant<>{
 public:
     variant()=delete;
     
-    constexpr bool valueless_by_exception() const noexcept{
+    constexpr bool valueless_by_exception() const __NOEXCEPT{
         return true;
     }
-    constexpr ptrdiff_t index() const noexcept{
+    constexpr ptrdiff_t index() const __NOEXCEPT{
         return -1;
     }
 
@@ -1738,7 +1739,7 @@ template <typename... _Types>
 typename std::enable_if<__all_swappable<_Types...>::value &&
                             __all_move_constructible<_Types...>::value,
                         void>::type
-swap(variant<_Types...> &__lhs, variant<_Types...> &__rhs) noexcept(
+swap(variant<_Types...> &__lhs, variant<_Types...> &__rhs) __NOEXCEPT_(
     __noexcept_variant_swap<_Types...>::value) {
     __lhs.swap(__rhs);
 }
@@ -1783,26 +1784,34 @@ constexpr const _Type&& get(variant<_Types...> const&& __v){
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr typename __indexed_type<_Index,_Types...>::__type const& get(variant<_Types...> const& __v){
-    __CONST_EXPR_THROW_EXCPETION_IF(_Index!=__v.index(), bad_variant_access("Bad variant index in get"));
-    return *(&__variant_accessor<_Index,_Types...>::get(__v));
+    return *(
+        (_Index!=__v.index())
+            ? &__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type const&>("Bad variant index in get")
+            : &__variant_accessor<_Index,_Types...>::get(__v)
+    );
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr typename __indexed_type<_Index,_Types...>::__type& get(variant<_Types...>& __v){
-    __CONST_EXPR_THROW_EXCPETION_IF(_Index!=__v.index(), bad_variant_access("Bad variant index in get"));
-    return *(&__variant_accessor<_Index,_Types...>::get(__v));
+    return *(
+        (_Index!=__v.index())
+            ? &__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type&>("Bad variant index in get")
+            : &__variant_accessor<_Index,_Types...>::get(__v)
+    );
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr typename __indexed_type<_Index,_Types...>::__type&& get(variant<_Types...>&& __v){
-    __CONST_EXPR_THROW_EXCPETION_IF(_Index!=__v.index(), bad_variant_access("Bad variant index in get"));
-    return __variant_accessor<_Index,_Types...>::get(std::move(__v));
+    return __variant_accessor<_Index,_Types...>::get(
+        (((_Index!=__v.index()) ? __throw_bad_variant_access<int>("Bad variant index in get") : 0), std::move(__v))
+    );
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr const typename __indexed_type<_Index,_Types...>::__type&& get(variant<_Types...> const&& __v){
-    __CONST_EXPR_THROW_EXCPETION_IF(_Index!=__v.index(), bad_variant_access("Bad variant index in get"));
-    return __variant_accessor<_Index,_Types...>::get(std::move(__v));
+    return __variant_accessor<_Index,_Types...>::get(
+        (((_Index!=__v.index()) ? __throw_bad_variant_access<int>("Bad variant index in get") : 0), std::move(__v))
+    );
 }
 
 template<typename _Type,typename ... _Types>
@@ -1829,7 +1838,7 @@ constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type c
 }
 
 template<typename _Type,typename ... _Types>
-constexpr bool holds_alternative(variant<_Types...> const& __v) noexcept{
+constexpr bool holds_alternative(variant<_Types...> const& __v) __NOEXCEPT{
     return __v.index()==__type_index<_Type,_Types...>::__value;
 }
 
@@ -1868,8 +1877,9 @@ const typename __visitor_table<_Visitor,_Types...>::__func_type __visitor_table<
 template<typename _Visitor,typename ... _Types>
 constexpr typename __visitor_return_type<_Visitor,_Types...>::__type
 visit(_Visitor&& __visitor,variant<_Types...>& __v){
-    __CONST_EXPR_THROW_EXCPETION_IF(__v.valueless_by_exception(), bad_variant_access("Visiting of empty variant"));
-    return __visitor_table<_Visitor,_Types...>::__trampoline[__v.index()](__visitor,__v);
+    return (__v.valueless_by_exception())
+        ? __throw_bad_variant_access<typename __visitor_return_type<_Visitor,_Types...>::__type>("Visiting of empty variant")
+        : __visitor_table<_Visitor,_Types...>::__trampoline[__v.index()](__visitor,__v);
 }
 
 template<typename _Visitor,typename ... _Variants>
@@ -1938,8 +1948,8 @@ template<size_t _VariantIndex,ptrdiff_t ... _Indices>
 struct __visit_helper2<-1,_VariantIndex,_Indices...>{
     template<typename _Visitor,typename ... _Variants>
     static constexpr typename __multi_visitor_return_type<_Visitor,_Variants...>::__type
-    __visit(_Visitor& __visitor,_Variants&& ... __v){
-        __CONST_EXPR_THROW_EXCPETION_IF(true, bad_variant_access("Visiting of empty variant"));
+    __visit(_Visitor&,_Variants&& ...){
+        __throw_bad_variant_access<typename __multi_visitor_return_type<_Visitor,_Variants...>::__type>("Visiting of empty variant");
     }
 };
 
@@ -2040,17 +2050,21 @@ struct __hash_visitor{
 
 template<>
 struct hash<experimental::monostate>{
-    size_t operator()(experimental::monostate) noexcept{
+    size_t operator()(experimental::monostate) __NOEXCEPT{
         return 42;
     }
 };
 
 template<typename ... _Types>
 struct hash<experimental::variant<_Types...>>{
-    size_t operator()(experimental::variant<_Types...> const &v) noexcept {
+    size_t operator()(experimental::variant<_Types...> const &v) __NOEXCEPT {
         return std::hash<ptrdiff_t>()(v.index()) ^
                experimental::visit(experimental::__hash_visitor(), v);
     }
 };
 
 } // namespace std
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif

@@ -1,5 +1,24 @@
 2016-08-06  Sam Weinig  <sam@webkit.org>
 
+        Replace NodeOrString with std::variant<RefPtr<Node>, String>
+        https://bugs.webkit.org/show_bug.cgi?id=160638
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/StdLibExtras.h:
+        (WTF::Visitor::Visitor):
+        (WTF::makeVisitor):
+        Add WTF::makeVisitor() which takes a list of lambdas to use
+        an an overload set for a visitor object.
+
+        Also, re-export std::experimental::variant (and helpers) in the std
+        namespace using type aliasing.
+
+        * wtf/Variant.h:
+        Make std::experimental::variant work in WebCore.
+
+2016-08-06  Sam Weinig  <sam@webkit.org>
+
         WTF needs a variant implementation
         https://bugs.webkit.org/show_bug.cgi?id=160618
 

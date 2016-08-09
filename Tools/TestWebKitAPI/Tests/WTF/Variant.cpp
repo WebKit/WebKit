@@ -26,33 +26,58 @@
 #include "config.h"
 
 #include "Counters.h"
-#include "MoveOnly.h"
 #include "RefLogger.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
 
+TEST(WTF_Variant, Initial)
+{
+    std::variant<int, double> v1;
+    EXPECT_TRUE(v1.index() == 0);
+    EXPECT_TRUE(std::get<int>(v1) == 0);
+
+    struct T {
+        T() : value(15) { }
+        int value;
+    };
+
+    std::variant<T, int> v2;
+    EXPECT_TRUE(v2.index() == 0);
+    EXPECT_TRUE(std::get<T>(v2).value == 15);
+}
+
 TEST(WTF_Variant, Basic)
 {
-    std::experimental::variant<int, double> variant = 1;
+    std::variant<int, double> variant = 1;
     EXPECT_TRUE(variant.index() == 0);
-    EXPECT_TRUE(std::experimental::get<int>(variant) == 1);
+    EXPECT_TRUE(std::get<int>(variant) == 1);
+    EXPECT_TRUE(*std::get_if<int>(variant) == 1);
+    EXPECT_TRUE(std::get_if<double>(variant) == nullptr);
+    EXPECT_TRUE(std::holds_alternative<int>(variant));
+    EXPECT_FALSE(std::holds_alternative<double>(variant));
+
+    variant = 1.0;
+    EXPECT_TRUE(variant.index() == 1);
+    EXPECT_TRUE(std::get<double>(variant) == 1);
+    EXPECT_TRUE(*std::get_if<double>(variant) == 1.0);
+    EXPECT_TRUE(std::get_if<int>(variant) == nullptr);
+    EXPECT_TRUE(std::holds_alternative<double>(variant));
+    EXPECT_FALSE(std::holds_alternative<int>(variant));
 }
 
 TEST(WTF_Variant, BasicVisitor)
 {
-    typedef std::experimental::variant<int, float, String> Variant;
-
     enum class Type {
         None,
         Int,
         Float,
         String,
     };
-
 
     struct Visitor {
         Visitor(Type& t)
@@ -69,30 +94,60 @@ TEST(WTF_Variant, BasicVisitor)
 
     Type type = Type::None;
 
-    Variant variant = 8;
-    std::experimental::visit(Visitor(type), variant);
+    std::variant<int, float, String> variant = 8;
+    std::visit(Visitor(type), variant);
     EXPECT_TRUE(Type::Int == type);
 
 
     variant = 1.0f;
-    std::experimental::visit(Visitor(type), variant);
+    std::visit(Visitor(type), variant);
     EXPECT_TRUE(Type::Float == type);
 
 
     variant = "hello";
-    std::experimental::visit(Visitor(type), variant);
+    std::visit(Visitor(type), variant);
+    EXPECT_TRUE(Type::String == type);
+}
+
+TEST(WTF_Variant, VisitorUsingMakeVisitor)
+{
+    enum class Type {
+        None,
+        Int,
+        Float,
+        String,
+    };
+
+    Type type = Type::None;
+
+    auto visitor = WTF::makeVisitor(
+        [&](int) { type = Type::Int; },
+        [&](float) { type = Type::Float; },
+        [&](String) { type = Type::String; }
+    );
+
+    std::variant<int, float, String> variant = 8;
+    std::visit(visitor, variant);
+    EXPECT_TRUE(Type::Int == type);
+
+
+    variant = 1.0f;
+    std::visit(visitor, variant);
+    EXPECT_TRUE(Type::Float == type);
+
+
+    variant = "hello";
+    std::visit(visitor, variant);
     EXPECT_TRUE(Type::String == type);
 }
 
 TEST(WTF_Variant, ConstructorDestructor)
 {
-    typedef std::experimental::variant<std::unique_ptr<ConstructorDestructorCounter>, int> Variant;
- 
     ConstructorDestructorCounter::TestingScope scope;
 
     {
         auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
-        Variant v = WTFMove(uniquePtr);
+        std::variant<std::unique_ptr<ConstructorDestructorCounter>, int> v = WTFMove(uniquePtr);
 
         EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
         EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -102,14 +157,12 @@ TEST(WTF_Variant, ConstructorDestructor)
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
-TEST(WTF_Variant, RefCounting)
+TEST(WTF_Variant, RefPtr)
 {
-    typedef std::experimental::variant<RefPtr<RefLogger>, int> Variant;
-
     {
         RefLogger a("a");
         RefPtr<RefLogger> ref(&a);
-        Variant v = ref;
+        std::variant<RefPtr<RefLogger>, int> v = ref;
     }
 
     ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
@@ -117,7 +170,18 @@ TEST(WTF_Variant, RefCounting)
     {
         RefLogger a("a");
         RefPtr<RefLogger> ref(&a);
-        Variant v = WTFMove(ref);
+        std::variant<RefPtr<RefLogger>, int> v = WTFMove(ref);
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
+
+TEST(WTF_Variant, Ref)
+{
+    {
+        RefLogger a("a");
+        Ref<RefLogger> ref(a);
+        std::variant<Ref<RefLogger>, int> v = WTFMove(ref);
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());

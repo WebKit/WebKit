@@ -112,7 +112,6 @@
 #include "Node.cpp"
 #include "NodeFilterCondition.cpp"
 #include "NodeIterator.cpp"
-#include "NodeOrString.cpp"
 #include "NodeRareData.cpp"
 #include "NodeTraversal.cpp"
 #include "OverflowEvent.cpp"
