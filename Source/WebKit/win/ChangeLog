@@ -1,3 +1,15 @@
+2016-08-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Crash in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=160686
+
+        Reviewed by Sam Weinig.
+
+        We need to specify a plugin info provider object in the page configuration.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2016-08-09  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
