@@ -232,4 +232,4 @@ class FileSystemHandler(FileHandler):
         FileHandler.__init__(self, filename)
 
     def _open(self):
-        return self.filesystem.open_text_file_for_writing(self.filename)
+        return self.filesystem.open_text_file_for_writing(self.filename, should_append=True)

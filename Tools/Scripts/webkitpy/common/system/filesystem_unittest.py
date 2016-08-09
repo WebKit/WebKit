@@ -187,7 +187,6 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
         text_path = None
 
         unicode_text_string = u'\u016An\u012Dc\u014Dde\u033D'
-        hex_equivalent = '\xC5\xAA\x6E\xC4\xAD\x63\xC5\x8D\x64\x65\xCC\xBD'
         try:
             text_path = tempfile.mktemp(prefix='tree_unittest_')
             file = fs.open_text_file_for_writing(text_path)
@@ -199,6 +198,31 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
             file.close()
 
             self.assertEqual(read_text, unicode_text_string)
+        finally:
+            if text_path and fs.isfile(text_path):
+                os.remove(text_path)
+
+    def test_append_to_text_file(self):
+        fs = FileSystem()
+        text_path = None
+
+        unicode_text_string1 = u'\u016An\u012Dc\u014Dde\u033D'
+        unicode_text_string2 = 'Hello'
+        try:
+            text_path = tempfile.mktemp(prefix='tree_unittest_')
+            file = fs.open_text_file_for_writing(text_path)
+            file.write(unicode_text_string1)
+            file.close()
+
+            file = fs.open_text_file_for_writing(text_path, should_append=True)
+            file.write(unicode_text_string2)
+            file.close()
+
+            file = fs.open_text_file_for_reading(text_path)
+            read_text = file.read()
+            file.close()
+
+            self.assertEqual(read_text, unicode_text_string1 + unicode_text_string2)
         finally:
             if text_path and fs.isfile(text_path):
                 os.remove(text_path)

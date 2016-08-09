@@ -235,7 +235,9 @@ class FileSystem(object):
         # not being seekable. See http://stackoverflow.com/questions/1510188/can-seek-and-tell-work-with-utf-8-encoded-documents-in-python .
         return codecs.open(path, 'r', 'utf8', errors)
 
-    def open_text_file_for_writing(self, path):
+    def open_text_file_for_writing(self, path, should_append=False):
+        if should_append:
+            return codecs.open(path, 'a', 'utf8')
         return codecs.open(path, 'w', 'utf8')
 
     def open_stdin(self):

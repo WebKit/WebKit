@@ -123,7 +123,9 @@ class AbstractQueue(Command, QueueEngineDelegate):
         raise NotImplementedError, "subclasses must implement"
 
     def begin_work_queue(self):
-        logutils.configure_logger_to_log_to_file(_log, self.queue_log_path(), self.host.filesystem)
+        # FIXME: We should stop the logging as well when the queue stops.
+        # We are using logging.getLogger("webkitpy") instead of _log since we want to capture all messages logged from webkitpy modules.
+        logutils.configure_logger_to_log_to_file(logging.getLogger("webkitpy"), self.queue_log_path(), self.host.filesystem)
         _log.info("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self._tool.scm().checkout_root))
         if self._options.confirm:
             response = self._tool.user.prompt("Are you sure?  Type \"yes\" to continue: ")

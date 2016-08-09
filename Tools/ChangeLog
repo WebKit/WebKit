@@ -1,3 +1,25 @@
+2016-08-08  Aakash Jain  <aakash_jain@apple.com>
+
+        Some EWS console logs doesn't go to log file
+        https://bugs.webkit.org/show_bug.cgi?id=160585
+        rdar://problem/24464570
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/common/system/logutils.py:
+        (FileSystemHandler._open): Ensure that we open logfile in append mode in order to avoid
+        any possible overwriting.
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.open_text_file_for_writing): Add should_append parameter to append to file.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.open_text_file_for_writing): Same.
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (RealFileSystemTest.test_read_and_write_text_file): Removed unused variable 'hex_equivalent'.
+        (RealFileSystemTest.test_append_to_text_file): Added new unit test for testing append functionality.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue.begin_work_queue): Configure the logger for overall webkitpy to log to file.
+        This will ensure that all the sub-modules inside webkitpy will log to file.
+
 2016-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         Have the iOS platform interit from the Apple platform in webkitpy
