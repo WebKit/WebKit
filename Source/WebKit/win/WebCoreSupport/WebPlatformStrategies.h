@@ -41,7 +41,6 @@ private:
     virtual WebCore::CookiesStrategy* createCookiesStrategy();
     virtual WebCore::LoaderStrategy* createLoaderStrategy();
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy();
-    virtual WebCore::PluginStrategy* createPluginStrategy();
     virtual WebCore::BlobRegistry* createBlobRegistry();
 
     // WebCore::CookiesStrategy
