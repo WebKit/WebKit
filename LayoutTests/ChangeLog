@@ -1,3 +1,14 @@
+2016-08-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r204267. rdar://problem/27595142
+
+    2016-08-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Test gardening for rdar://problem/27595142.
+
+            * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+            * platform/mac/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt: Removed.
+
 2016-08-05  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204210. rdar://problem/27592694
