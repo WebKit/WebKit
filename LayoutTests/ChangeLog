@@ -1,3 +1,22 @@
+2016-08-09  Ada Chan  <adachan@apple.com>
+
+        [macOS Sierra] Fix flaky test: media/controls/picture-in-picture.html
+        https://bugs.webkit.org/show_bug.cgi?id=160707
+
+        Reviewed by Eric Carlson.
+
+        This test became flaky after r201474 when we started to delay showing
+        the inline placeholder until we are sure the video layer has been moved
+        into the video fullscreen layer. This means we can't guarantee that the
+        placeholder is visible right away after the video's presentation mode
+        changes to "picture-in-picture".
+
+        To fix this, we'll update the test so that we'll wait until the placeholder
+        becomes visible before testing its visibility without the "controls" attribute.
+
+        * media/controls/picture-in-picture.html:
+        * platform/mac-wk2/TestExpectations:
+
 2016-08-09  Chris Dumez  <cdumez@apple.com>
 
         It should be possible to re-initialize a CustomEvent after it's been dispatched

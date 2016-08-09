@@ -4,6 +4,9 @@
         <script src="../media-file.js"></script>
         <script src="controls-test-helpers.js"></script>
         <script>
+            var maxAttemptsToTestPlaceholderVisibility = 10;
+            var attemptsToTestPlaceholderVisibility = 0;
+
             if (window.internals)
                 window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
 
@@ -62,7 +65,25 @@
                     .value(tester.media.webkitPresentationMode)
                     .isEqualTo("picture-in-picture");
 
+                pollPIPPlaceholderVisibilityChange();
+            }
+
+            function pollPIPPlaceholderVisibilityChange()
+            {
                 const stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
+                if (stateForPlaceholder.className.indexOf("hidden") >= 0) {
+                    if (attemptsToTestPlaceholderVisibility > maxAttemptsToTestPlaceholderVisibility) {
+                        tester.logFailure("Inline placeholder did not become visible after video enters picture-in-picture.");
+                        tester.end();
+                        return;
+                    }
+
+                    // Use 33 to match PlaceholderPollingDelay in mediaControlsApple.js.
+                    setTimeout(pollPIPPlaceholderVisibilityChange, 33);
+                    attemptsToTestPlaceholderVisibility++;
+                    return;
+                }
+
                 tester.test("Inline placeholder should be visible at this point")
                     .value(stateForPlaceholder.className)
                     .doesNotContain("hidden");
