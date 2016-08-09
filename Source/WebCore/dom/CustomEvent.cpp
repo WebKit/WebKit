@@ -47,7 +47,7 @@ CustomEvent::~CustomEvent()
 
 void CustomEvent::initCustomEvent(JSC::ExecState& state, const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue detail)
 {
-    if (dispatched())
+    if (isBeingDispatched())
         return;
 
     initEvent(type, canBubble, cancelable);

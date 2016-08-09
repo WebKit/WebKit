@@ -1,3 +1,18 @@
+2016-08-09  Chris Dumez  <cdumez@apple.com>
+
+        It should be possible to re-initialize a CustomEvent after it's been dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=160664
+
+        Reviewed by Darin Adler.
+
+        * fast/events/initCustomEvent-after-dispatch-expected.txt: Copied from LayoutTests/fast/events/initEvent-after-dispatch-expected.txt.
+        * fast/events/initCustomEvent-after-dispatch.html: Copied from LayoutTests/fast/events/initEvent-after-dispatch.html.
+        Add layout test coverage.
+
+        * fast/events/initEvent-after-dispatch-expected.txt:
+        * fast/events/initEvent-after-dispatch.html:
+        Fix related layout test.
+
 2016-08-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update test expectations for rdar://problem/27711048.

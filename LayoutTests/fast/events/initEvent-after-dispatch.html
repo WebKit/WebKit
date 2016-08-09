@@ -18,7 +18,7 @@ function eventHandler(ev) {
 
     debug("");
     // It should not be possible to re-initialize an event being dispatched.
-    shouldNotThrow('testEvent.initEvent("bar", false, true)');
+    shouldNotThrow('event.initEvent("bar", false, true)');
     shouldBeEqualToString("event.type", "foo");
     shouldBeTrue("event.bubbles");
     shouldBeFalse("event.cancelable");
@@ -51,12 +51,12 @@ shouldBe("testEvent.eventPhase", "Event.NONE");
 // It should now be possible to re-initialize the event.
 debug("");
 shouldNotThrow('testEvent.initEvent("bar", false, true)');
-shouldBeEqualToString("event.type", "bar");
-shouldBeFalse("event.bubbles");
-shouldBeTrue("event.cancelable");
-shouldBeNull("event.target");
-shouldBeNull("event.currentTarget");
-shouldBe("event.eventPhase", "Event.NONE");
+shouldBeEqualToString("testEvent.type", "bar");
+shouldBeFalse("testEvent.bubbles");
+shouldBeTrue("testEvent.cancelable");
+shouldBeNull("testEvent.target");
+shouldBeNull("testEvent.currentTarget");
+shouldBe("testEvent.eventPhase", "Event.NONE");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

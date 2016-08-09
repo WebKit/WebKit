@@ -19,7 +19,7 @@ PASS event.target is document.body
 PASS event.currentTarget is document.body
 PASS event.eventPhase is Event.AT_TARGET
 
-PASS testEvent.initEvent("bar", false, true) did not throw exception.
+PASS event.initEvent("bar", false, true) did not throw exception.
 PASS event.type is "foo"
 PASS event.bubbles is true
 PASS event.cancelable is false
@@ -37,12 +37,12 @@ PASS testEvent.currentTarget is null
 PASS testEvent.eventPhase is Event.NONE
 
 PASS testEvent.initEvent("bar", false, true) did not throw exception.
-PASS event.type is "bar"
-PASS event.bubbles is false
-PASS event.cancelable is true
-PASS event.target is null
-PASS event.currentTarget is null
-PASS event.eventPhase is Event.NONE
+PASS testEvent.type is "bar"
+PASS testEvent.bubbles is false
+PASS testEvent.cancelable is true
+PASS testEvent.target is null
+PASS testEvent.currentTarget is null
+PASS testEvent.eventPhase is Event.NONE
 PASS successfullyParsed is true
 
 TEST COMPLETE
