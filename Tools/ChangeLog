@@ -1,3 +1,13 @@
+2016-08-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Allow more --cmakeargs option in build-jsc and build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=160340
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+
 2016-08-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Do not check if WebKitLibraries folder exists on EFL and GTK

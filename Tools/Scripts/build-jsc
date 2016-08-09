@@ -46,7 +46,7 @@ my $ftlJIT = int(isAppleMacWebKit() && !willUseIOSSimulatorSDK() || isX86_64() &
 my $forceCLoop = 0;
 my $cli = 0;
 my $makeArgs = "";
-my $cmakeArgs = "";
+my @cmakeArgs;
 my $copyLibraries = 1;
 my $startTime = time();
 
@@ -64,7 +64,7 @@ Usage: $programName [options] [options to pass to build system]
   --cloop                       Use C Loop interpreter (default: $forceCLoop)
   --cli                         Build the new jsc command line interface (default: $cli)
   --makeargs=<arguments>        Optional Makefile flags
-  --cmakeargs=<arguments>       Optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
+  --cmakeargs=<arguments>       One or more optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
 EOF
 
 GetOptions(
@@ -76,7 +76,7 @@ GetOptions(
     'cli!' => \$cli,
     'copy-libraries!' => \$copyLibraries,
     'makeargs=s' => \$makeArgs,
-    'cmakeargs=s' => \$cmakeArgs
+    'cmakeargs=s' => \@cmakeArgs
 );
 
 if ($showHelp) {
@@ -101,8 +101,8 @@ if ($forceCLoop) {
 }
 
 if (isCMakeBuild()) {
-    $cmakeArgs .= $forceCLoop ? " -DENABLE_JIT=OFF" : " -DENABLE_JIT=ON";
-    $cmakeArgs .= $ftlJIT ? " -DENABLE_FTL_JIT=ON" : " -DENABLE_FTL_JIT=OFF";
+    push @cmakeArgs, $forceCLoop ? " -DENABLE_JIT=OFF" : " -DENABLE_JIT=ON";
+    push @cmakeArgs, $ftlJIT ? " -DENABLE_FTL_JIT=ON" : " -DENABLE_FTL_JIT=OFF";
 
     my $buildTarget = "";
     unless (isAnyWindows()) {
@@ -114,7 +114,7 @@ if (isCMakeBuild()) {
     }
 
     # This call only returns if nothing wrong happened
-    buildCMakeProjectOrExit(0, undef, $buildTarget, (cmakeBasedPortArguments(), $cmakeArgs));
+    buildCMakeProjectOrExit(0, undef, $buildTarget, (cmakeBasedPortArguments(), @cmakeArgs));
     writeCongrats();
     exit exitStatus(0);
 }
