@@ -67,7 +67,7 @@ protected:
 private:
     JSBoundFunction(VM&, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs);
     
-    void finishCreation(VM&, NativeExecutable*, int length, const String& name);
+    void finishCreation(VM&, NativeExecutable*, int length);
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<Unknown> m_boundThis;

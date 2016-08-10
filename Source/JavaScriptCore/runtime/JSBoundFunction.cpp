@@ -174,7 +174,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, ExecState* exec, JSGlobalObject
         return nullptr;
     JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, structure, targetFunction, boundThis, boundArgs);
 
-    function->finishCreation(vm, executable, length, makeString("bound ", name));
+    function->finishCreation(vm, executable, length);
     return function;
 }
 
@@ -191,8 +191,9 @@ JSBoundFunction::JSBoundFunction(VM& vm, JSGlobalObject* globalObject, Structure
 {
 }
 
-void JSBoundFunction::finishCreation(VM& vm, NativeExecutable* executable, int length, const String& name)
+void JSBoundFunction::finishCreation(VM& vm, NativeExecutable* executable, int length)
 {
+    String name; // We lazily create our 'name' string property.
     Base::finishCreation(vm, executable, length, name);
     ASSERT(inherits(info()));
 

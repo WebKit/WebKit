@@ -1012,6 +1012,9 @@ webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Sk
 
 [ Debug ] js/regress/misc-bugs-847389-jpeg2000.html [ Skip ]
 
+# This runs slowly in debug.
+[ Debug ] js/regress/bound-function-construction-performance.html [ Skip ]
+
 webkit.org/b/159678 http/tests/preload/single_download_preload_runner.html [ Timeout ]
 
 # This test is way too slow for debug.

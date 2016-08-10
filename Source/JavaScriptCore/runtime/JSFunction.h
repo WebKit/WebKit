@@ -191,6 +191,7 @@ private:
     bool hasReifiedName() const;
     void reifyLength(ExecState*);
     void reifyName(ExecState*);
+    void reifyBoundNameIfNeeded(ExecState*, PropertyName);
     void reifyName(ExecState*, String name);
     void reifyLazyPropertyIfNeeded(ExecState*, PropertyName propertyName);
 
