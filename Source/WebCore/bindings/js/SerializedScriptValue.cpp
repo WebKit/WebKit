@@ -60,6 +60,7 @@
 #include <runtime/Error.h>
 #include <runtime/Exception.h>
 #include <runtime/ExceptionHelpers.h>
+#include <runtime/IterationKind.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/JSArrayBufferView.h>
 #include <runtime/JSCInlines.h>
@@ -1354,7 +1355,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 JSMap* inMap = jsCast<JSMap*>(inValue);
                 if (!startMap(inMap))
                     break;
-                JSMapIterator* iterator = JSMapIterator::create(m_exec->vm(), m_exec->lexicalGlobalObject()->mapIteratorStructure(), inMap, MapIterateKeyValue);
+                JSMapIterator* iterator = JSMapIterator::create(m_exec->vm(), m_exec->lexicalGlobalObject()->mapIteratorStructure(), inMap, IterateKeyValue);
                 m_gcBuffer.append(inMap);
                 m_gcBuffer.append(iterator);
                 mapIteratorStack.append(iterator);
@@ -1398,7 +1399,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 JSSet* inSet = jsCast<JSSet*>(inValue);
                 if (!startSet(inSet))
                     break;
-                JSSetIterator* iterator = JSSetIterator::create(m_exec->vm(), m_exec->lexicalGlobalObject()->setIteratorStructure(), inSet, SetIterateKey);
+                JSSetIterator* iterator = JSSetIterator::create(m_exec->vm(), m_exec->lexicalGlobalObject()->setIteratorStructure(), inSet, IterateKey);
                 m_gcBuffer.append(inSet);
                 m_gcBuffer.append(iterator);
                 setIteratorStack.append(iterator);

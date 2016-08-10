@@ -50,9 +50,9 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
 
     m_undefined.set(m_vm, jsUndefined());
     m_Infinity.set(m_vm, jsDoubleNumber(std::numeric_limits<double>::infinity()));
-    m_arrayIterationKindKey.set(m_vm, jsNumber(ArrayIterateKey));
-    m_arrayIterationKindValue.set(m_vm, jsNumber(ArrayIterateValue));
-    m_arrayIterationKindKeyValue.set(m_vm, jsNumber(ArrayIterateKeyValue));
+    m_iterationKindKey.set(m_vm, jsNumber(IterateKey));
+    m_iterationKindValue.set(m_vm, jsNumber(IterateValue));
+    m_iterationKindKeyValue.set(m_vm, jsNumber(IterateKeyValue));
     m_MAX_STRING_LENGTH.set(m_vm, jsNumber(JSString::MaxLength));
     m_MAX_SAFE_INTEGER.set(m_vm, jsDoubleNumber(maxSafeInteger()));
     m_ModuleFetch.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Fetch)));

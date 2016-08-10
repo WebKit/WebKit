@@ -1,3 +1,13 @@
+2016-08-09  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES2016] Implement Object.values
+        https://bugs.webkit.org/show_bug.cgi?id=160410
+
+        Reviewed by Saam Barati, Yusuke Suzuki.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-08-10  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: rebase inspector/model/remote-object-get-properties.html and unskip

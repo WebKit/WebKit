@@ -26,16 +26,12 @@
 #ifndef JSMapIterator_h
 #define JSMapIterator_h
 
+#include "IterationKind.h"
 #include "JSMap.h"
 #include "JSObject.h"
 #include "MapData.h"
 
 namespace JSC {
-enum MapIterationKind : uint32_t {
-    MapIterateKey,
-    MapIterateValue,
-    MapIterateKeyValue,
-};
 
 class JSMapIterator : public JSNonFinalObject {
 public:
@@ -48,7 +44,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSMapIterator* create(VM& vm, Structure* structure, JSMap* iteratedObject, MapIterationKind kind)
+    static JSMapIterator* create(VM& vm, Structure* structure, JSMap* iteratedObject, IterationKind kind)
     {
         JSMapIterator* instance = new (NotNull, allocateCell<JSMapIterator>(vm.heap)) JSMapIterator(vm, structure, iteratedObject, kind);
         instance->finishCreation(vm, iteratedObject);
@@ -61,9 +57,9 @@ public:
         if (!m_iterator.next(pair))
             return false;
 
-        if (m_kind == MapIterateValue)
+        if (m_kind == IterateValue)
             value = pair.value;
-        else if (m_kind == MapIterateKey)
+        else if (m_kind == IterateKey)
             value = pair.key;
         else
             value = createPair(callFrame, pair.key, pair.value);
@@ -86,7 +82,7 @@ public:
         m_iterator.finish();
     }
 
-    MapIterationKind kind() const { return m_kind; }
+    IterationKind kind() const { return m_kind; }
     JSValue iteratedValue() const { return m_map.get(); }
     JSMapIterator* clone(ExecState*);
 
@@ -96,7 +92,7 @@ public:
     }
 
 private:
-    JSMapIterator(VM& vm, Structure* structure, JSMap* iteratedObject, MapIterationKind kind)
+    JSMapIterator(VM& vm, Structure* structure, JSMap* iteratedObject, IterationKind kind)
         : Base(vm, structure)
         , m_iterator(iteratedObject->m_mapData.createIteratorData(this))
         , m_kind(kind)
@@ -109,7 +105,7 @@ private:
 
     WriteBarrier<JSMap> m_map;
     JSMap::MapData::IteratorData m_iterator;
-    MapIterationKind m_kind;
+    IterationKind m_kind;
 };
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSMapIterator);
 

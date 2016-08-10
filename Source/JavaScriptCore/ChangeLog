@@ -1,3 +1,52 @@
+2016-08-09  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES2016] Implement Object.values
+        https://bugs.webkit.org/show_bug.cgi?id=160410
+
+        Reviewed by Saam Barati, Yusuke Suzuki.
+
+        This patch adds values function to Object that return list of 
+        own values of the object. Patch did according to the point of 
+        spec http://tc39.github.io/ecma262/#sec-object.values
+        
+        Also patch adds generic builtin intrinsic constants: 
+        @IterationKindKey/@IterationKindValue/@IterationKindKeyValue 
+        that is used in  EnumerableOwnProperties to set Kind of operation  
+        and replace own IterationKind enums in following iterators: 
+        ArrayIterator, MapIterator, and SetIterator 
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ObjectConstructor.js:
+        (globalPrivate.enumerableOwnProperties):
+        (values):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/IterationKind.h: Copied from Source/JavaScriptCore/builtins/ObjectConstructor.js.
+        * runtime/JSMapIterator.h:
+        (JSC::JSMapIterator::create):
+        (JSC::JSMapIterator::next):
+        (JSC::JSMapIterator::kind):
+        (JSC::JSMapIterator::JSMapIterator):
+        * runtime/JSSetIterator.h:
+        (JSC::JSSetIterator::create):
+        (JSC::JSSetIterator::next):
+        (JSC::JSSetIterator::kind):
+        (JSC::JSSetIterator::JSSetIterator):
+        * runtime/MapPrototype.cpp:
+        (JSC::mapProtoFuncValues):
+        (JSC::mapProtoFuncEntries):
+        (JSC::mapProtoFuncKeys):
+        (JSC::privateFuncMapIterator):
+        * runtime/ObjectConstructor.cpp:
+        * runtime/SetPrototype.cpp:
+        (JSC::setProtoFuncValues):
+        (JSC::setProtoFuncEntries):
+        (JSC::privateFuncSetIterator):
+
 2016-08-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Speed up SparseCollection & related maps

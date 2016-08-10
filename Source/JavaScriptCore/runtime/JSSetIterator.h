@@ -26,17 +26,13 @@
 #ifndef JSSetIterator_h
 #define JSSetIterator_h
 
+#include "IterationKind.h"
 #include "JSObject.h"
 #include "JSSet.h"
 
 #include "MapData.h"
 
 namespace JSC {
-enum SetIterationKind : uint32_t {
-    SetIterateKey,
-    SetIterateValue,
-    SetIterateKeyValue,
-};
 
 class JSSetIterator : public JSNonFinalObject {
 public:
@@ -49,7 +45,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSSetIterator* create(VM& vm, Structure* structure, JSSet* iteratedObject, SetIterationKind kind)
+    static JSSetIterator* create(VM& vm, Structure* structure, JSSet* iteratedObject, IterationKind kind)
     {
         JSSetIterator* instance = new (NotNull, allocateCell<JSSetIterator>(vm.heap)) JSSetIterator(vm, structure, iteratedObject, kind);
         instance->finishCreation(vm, iteratedObject);
@@ -61,7 +57,7 @@ public:
         WTF::KeyValuePair<JSValue, JSValue> pair;
         if (!m_iterator.next(pair))
             return false;
-        if (m_kind == SetIterateValue || m_kind == SetIterateKey)
+        if (m_kind == IterateValue || m_kind == IterateKey)
             value = pair.key;
         else
             value = createPair(callFrame, pair.key, pair.key);
@@ -73,7 +69,7 @@ public:
         m_iterator.finish();
     }
 
-    SetIterationKind kind() const { return m_kind; }
+    IterationKind kind() const { return m_kind; }
     JSValue iteratedValue() const { return m_set.get(); }
     JSSetIterator* clone(ExecState*);
 
@@ -83,7 +79,7 @@ public:
     }
 
 private:
-    JSSetIterator(VM& vm, Structure* structure, JSSet* iteratedObject, SetIterationKind kind)
+    JSSetIterator(VM& vm, Structure* structure, JSSet* iteratedObject, IterationKind kind)
         : Base(vm, structure)
         , m_iterator(iteratedObject->m_setData.createIteratorData(this))
         , m_kind(kind)
@@ -96,7 +92,7 @@ private:
 
     WriteBarrier<JSSet> m_set;
     JSSet::SetData::IteratorData m_iterator;
-    SetIterationKind m_kind;
+    IterationKind m_kind;
 };
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSSetIterator);
 

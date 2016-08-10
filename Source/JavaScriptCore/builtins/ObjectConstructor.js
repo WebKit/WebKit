@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2016 Oleksandr Skachkov <gskachkov@gmail.com>.
  * Copyright (C) 2015 Jordan Harband. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,6 +23,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+@globalPrivate
+function enumerableOwnProperties(object, kind)
+{
+    "use strict";
+
+    const obj = @Object(object);
+    const ownKeys = @Reflect.@ownKeys(obj);
+    const properties = [];
+    for (let i = 0, keysLength = ownKeys.length; i < keysLength; ++i) {
+        let nextKey = ownKeys[i];
+        if (typeof nextKey === 'string') {
+            let descriptor = @Reflect.@getOwnPropertyDescriptor(obj, nextKey);
+            if (descriptor !== @undefined && descriptor.enumerable) {
+                if (kind === @iterationKindValue)
+                    properties.@push(obj[nextKey]);
+            // FIXME: Implement 'key+value' and 'key' cases
+            }
+        }
+    }
+    
+    return properties;
+}
+
+function values(object)
+{
+    "use strict";
+    
+    if (object == null)
+        throw new @TypeError("Object.values requires that input parameter not be null or undefined");
+
+    return @enumerableOwnProperties(object, @iterationKindValue);
+}
 
 function assign(target/*[*/, /*...*/sources/*] */)
 {
