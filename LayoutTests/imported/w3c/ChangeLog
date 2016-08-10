@@ -1,5 +1,17 @@
 2016-08-09  Chris Dumez  <cdumez@apple.com>
 
+        Optimization in Node.replaceChild() is not spec-compliant
+        https://bugs.webkit.org/show_bug.cgi?id=160730
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/MutationObserver-childList-expected.txt:
+        * web-platform-tests/dom/ranges/Range-mutations-expected.txt:
+
+2016-08-09  Chris Dumez  <cdumez@apple.com>
+
         Optimization in Node::appendChild() is not spec-compliant
         https://bugs.webkit.org/show_bug.cgi?id=160728
 

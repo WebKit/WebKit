@@ -402,19 +402,17 @@ bool ContainerNode::replaceChild(Node& newChild, Node& oldChild, ExceptionCode& 
         return false;
     }
 
-    if (&oldChild == &newChild) // nothing to do
-        return true;
-
-    ChildListMutationScope mutation(*this);
-
     RefPtr<Node> refChild = oldChild.nextSibling();
     if (refChild.get() == &newChild)
         refChild = refChild->nextSibling();
 
     NodeVector targets;
-    collectChildrenAndRemoveFromOldParent(newChild, targets, ec);
-    if (ec)
-        return false;
+    {
+        ChildListMutationScope mutation(*this);
+        collectChildrenAndRemoveFromOldParent(newChild, targets, ec);
+        if (ec)
+            return false;
+    }
 
     // Does this one more time because collectChildrenAndRemoveFromOldParent() fires a MutationEvent.
     if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
@@ -422,13 +420,19 @@ bool ContainerNode::replaceChild(Node& newChild, Node& oldChild, ExceptionCode& 
 
     // Remove the node we're replacing.
     Ref<Node> protectOldChild(oldChild);
-    removeChild(oldChild, ec);
-    if (ec)
-        return false;
 
-    // Does this one more time because removeChild() fires a MutationEvent.
-    if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
-        return false;
+    ChildListMutationScope mutation(*this);
+
+    // If oldChild == newChild then oldChild no longer has a parent at this point.
+    if (oldChild.parentNode()) {
+        removeChild(oldChild, ec);
+        if (ec)
+            return false;
+
+        // Does this one more time because removeChild() fires a MutationEvent.
+        if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
+            return false;
+    }
 
     InspectorInstrumentation::willInsertDOMNode(document(), *this);
 
