@@ -1,3 +1,15 @@
+2016-08-10  Chris Dumez  <cdumez@apple.com>
+
+        It should be possible to re-initialize a MutationEvent after it's been dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=160703
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/events/initMutationEvent-after-dispatch-expected.txt: Added.
+        * fast/events/initMutationEvent-after-dispatch.html: Added.
+
 2016-08-09  Chris Dumez  <cdumez@apple.com>
 
         Optimization in Node::appendChild() is not spec-compliant

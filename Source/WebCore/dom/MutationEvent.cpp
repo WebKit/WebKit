@@ -51,7 +51,7 @@ void MutationEvent::initMutationEvent(const AtomicString& type, bool canBubble, 
                                       const String& prevValue, const String& newValue,
                                       const String& attrName, unsigned short attrChange)
 {
-    if (dispatched())
+    if (isBeingDispatched())
         return;
 
     initEvent(type, canBubble, cancelable);
