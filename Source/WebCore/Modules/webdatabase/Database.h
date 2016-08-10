@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-class ChangeVersionData;
 class DatabaseCallback;
 class DatabaseDetails;
 class DatabaseContext;
@@ -50,6 +49,7 @@ class SQLTransactionCallback;
 class SQLTransactionClient;
 class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
+class SQLTransactionWrapper;
 class VoidCallback;
 
 class Database final : public ThreadSafeRefCounted<Database> {
@@ -66,8 +66,7 @@ public:
 
     unsigned long long maximumSize() const;
 
-    RefPtr<SQLTransactionBackend> runTransaction(Ref<SQLTransaction>&&, bool readOnly, const ChangeVersionData*);
-    void scheduleTransactionStep(SQLTransactionBackend*);
+    void scheduleTransactionStep(SQLTransactionBackend&);
     void inProgressTransactionCompleted();
 
     bool hasPendingTransaction();
@@ -139,7 +138,7 @@ private:
 
     void scheduleTransaction();
 
-    void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* = nullptr);
+    void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
 #if !LOG_DISABLED || !ERROR_DISABLED
     String databaseDebugName() const;

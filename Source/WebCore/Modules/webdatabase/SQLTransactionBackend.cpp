@@ -546,7 +546,7 @@ void SQLTransactionBackend::lockAcquired()
 
     m_requestedState = SQLTransactionState::OpenTransactionAndPreflight;
     ASSERT(m_requestedState != SQLTransactionState::End);
-    m_database->scheduleTransactionStep(this);
+    m_database->scheduleTransactionStep(*this);
 }
 
 void SQLTransactionBackend::openTransactionAndPreflight()
@@ -830,7 +830,7 @@ void SQLTransactionBackend::requestTransitToState(SQLTransactionState nextState)
     LOG(StorageAPI, "Scheduling %s for transaction %p\n", nameForSQLTransactionState(nextState), this);
     m_requestedState = nextState;
     ASSERT(m_requestedState != SQLTransactionState::End);
-    m_database->scheduleTransactionStep(this);
+    m_database->scheduleTransactionStep(*this);
 }
 
 // This state function is used as a stub function to plug unimplemented states

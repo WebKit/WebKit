@@ -48,12 +48,12 @@
 
 namespace WebCore {
 
-Ref<SQLTransaction> SQLTransaction::create(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, bool readOnly)
+Ref<SQLTransaction> SQLTransaction::create(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
 {
-    return adoptRef(*new SQLTransaction(WTFMove(database), WTFMove(callback), WTFMove(successCallback), WTFMove(errorCallback), readOnly));
+    return adoptRef(*new SQLTransaction(WTFMove(database), WTFMove(callback), WTFMove(successCallback), WTFMove(errorCallback), WTFMove(wrapper), readOnly));
 }
 
-SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, bool readOnly)
+SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
     : m_database(WTFMove(database))
     , m_callbackWrapper(WTFMove(callback), m_database->scriptExecutionContext())
     , m_successCallbackWrapper(WTFMove(successCallback), m_database->scriptExecutionContext())
@@ -61,6 +61,8 @@ SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCa
     , m_executeSqlAllowed(false)
     , m_readOnly(readOnly)
 {
+    // This will end up assigning to m_frontend.
+    SQLTransactionBackend::create(m_database.ptr(), this, WTFMove(wrapper), readOnly);
 }
 
 SQLTransaction::~SQLTransaction()

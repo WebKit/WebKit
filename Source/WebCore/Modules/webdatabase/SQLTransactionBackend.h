@@ -44,17 +44,8 @@ class SQLError;
 class SQLiteTransaction;
 class SQLStatement;
 class SQLTransaction;
-class SQLTransactionBackend;
+class SQLTransactionWrapper;
 class SQLValue;
-
-class SQLTransactionWrapper : public ThreadSafeRefCounted<SQLTransactionWrapper> {
-public:
-    virtual ~SQLTransactionWrapper() { }
-    virtual bool performPreflight(SQLTransactionBackend*) = 0;
-    virtual bool performPostflight(SQLTransactionBackend*) = 0;
-    virtual SQLError* sqlError() const = 0;
-    virtual void handleCommitFailedAfterPostflight(SQLTransactionBackend*) = 0;
-};
 
 class SQLTransactionBackend : public ThreadSafeRefCounted<SQLTransactionBackend>, public SQLTransactionStateMachine<SQLTransactionBackend> {
 public:

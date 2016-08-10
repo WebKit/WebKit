@@ -30,6 +30,7 @@
 
 #include "Database.h"
 #include "Logging.h"
+#include "SQLTransaction.h"
 
 namespace WebCore {
 

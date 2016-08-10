@@ -47,16 +47,26 @@ class SQLTransactionErrorCallback;
 class SQLValue;
 class VoidCallback;
 
+class SQLTransactionWrapper : public ThreadSafeRefCounted<SQLTransactionWrapper> {
+public:
+    virtual ~SQLTransactionWrapper() { }
+    virtual bool performPreflight(SQLTransactionBackend*) = 0;
+    virtual bool performPostflight(SQLTransactionBackend*) = 0;
+    virtual SQLError* sqlError() const = 0;
+    virtual void handleCommitFailedAfterPostflight(SQLTransactionBackend*) = 0;
+};
+
 class SQLTransaction : public ThreadSafeRefCounted<SQLTransaction>, public SQLTransactionStateMachine<SQLTransaction> {
 public:
-    static Ref<SQLTransaction> create(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, bool readOnly);
+    static Ref<SQLTransaction> create(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
     ~SQLTransaction();
-
-    void performPendingCallback();
 
     void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, ExceptionCode&);
 
+    void performPendingCallback();
+
     Database& database() { return m_database; }
+    SQLTransactionBackend& backend() { return *m_backend; }
 
     // APIs called from the backend published via SQLTransaction:
     void requestTransitToState(SQLTransactionState);
@@ -66,7 +76,7 @@ public:
     void setBackend(SQLTransactionBackend*);
 
 private:
-    SQLTransaction(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, bool readOnly);
+    SQLTransaction(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
     void clearCallbackWrappers();
 
