@@ -1338,9 +1338,9 @@ void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
     sendToNetworkingProcess(Messages::CustomProtocolManager::UnregisterScheme(scheme));
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
     HashMap<String, HashMap<String, uint8_t>> policiesByIdentifier;
     if (m_pluginLoadClientPolicies.contains(host))
         policiesByIdentifier = m_pluginLoadClientPolicies.get(host);
@@ -1352,18 +1352,16 @@ void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy p
     versionsToPolicies.set(versionString, policy);
     policiesByIdentifier.set(bundleIdentifier, versionsToPolicies);
     m_pluginLoadClientPolicies.set(host, policiesByIdentifier);
-#endif
 
     sendToAllProcesses(Messages::WebProcess::SetPluginLoadClientPolicy(policy, host, bundleIdentifier, versionString));
 }
 
 void WebProcessPool::clearPluginClientPolicies()
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginLoadClientPolicies.clear();
-#endif
     sendToAllProcesses(Messages::WebProcess::ClearPluginClientPolicies());
 }
+#endif
 
 void WebProcessPool::setMemoryCacheDisabled(bool disabled)
 {

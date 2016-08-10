@@ -1,5 +1,13 @@
 2016-08-09  Anders Carlsson  <andersca@apple.com>
 
+        Fix iOS build.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setPluginLoadClientPolicy): Deleted.
+        (WebKit::WebProcessPool::clearPluginClientPolicies): Deleted.
+
+2016-08-09  Anders Carlsson  <andersca@apple.com>
+
         Instantiate WebKit plug-ins at layout time, instead of at style resolution time
         https://bugs.webkit.org/show_bug.cgi?id=160715
 
