@@ -1,3 +1,17 @@
+2016-08-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Can't click on the lower half of "S" icon in JavaScript Allocations timeline
+        https://bugs.webkit.org/show_bug.cgi?id=160743
+        <rdar://problem/27790098>
+
+        Reviewed by Timothy Hatcher.
+
+        "S" icons are covered by .scroll-container, which has `z-index: calc(var(--z-index-resizer) + 1)`.
+        Set larger z-index on the "S" icons.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.css:
+        (.timeline-overview-graph.heap-allocations > img.snapshot):
+
 2016-08-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Popover for Color Picker should update position when window resizes
