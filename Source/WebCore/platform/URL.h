@@ -219,16 +219,16 @@ private:
     bool m_isValid : 1;
     bool m_protocolIsInHTTPFamily : 1;
 
-    int m_schemeEnd;
-    int m_userStart;
-    int m_userEnd;
-    int m_passwordEnd;
-    int m_hostEnd;
-    int m_portEnd;
-    int m_pathAfterLastSlash;
-    int m_pathEnd;
-    int m_queryEnd;
-    int m_fragmentEnd;
+    unsigned m_schemeEnd;
+    unsigned m_userStart;
+    unsigned m_userEnd;
+    unsigned m_passwordEnd;
+    unsigned m_hostEnd;
+    unsigned m_portEnd;
+    unsigned m_pathAfterLastSlash;
+    unsigned m_pathEnd;
+    unsigned m_queryEnd;
+    unsigned m_fragmentEnd;
 };
 
 template <class Encoder>
