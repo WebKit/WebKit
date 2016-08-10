@@ -31,7 +31,7 @@
     readonly attribute DOMString id;
     readonly attribute unsigned long index;
     readonly attribute unsigned long long timestamp;
-    readonly attribute unrestricted float[] axes;
-    readonly attribute unrestricted float[] buttons;
+    readonly attribute sequence<unrestricted float> axes;
+    readonly attribute sequence<unrestricted float> buttons;
 };
 

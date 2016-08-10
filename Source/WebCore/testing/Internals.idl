@@ -128,7 +128,7 @@ enum UserInterfaceLayoutDirection {
 
     DOMString visiblePlaceholder(Element element);
     void selectColorInColorChooser(HTMLInputElement element, DOMString colorValue);
-    [RaisesException] DOMString[] formControlStateOfPreviousHistoryItem();
+    [RaisesException] sequence<DOMString> formControlStateOfPreviousHistoryItem();
     [RaisesException] void setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 
     [RaisesException] ClientRect absoluteCaretBounds();
@@ -278,7 +278,7 @@ enum UserInterfaceLayoutDirection {
 
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
-    DOMString[] shortcutIconURLs();
+    sequence<DOMString> shortcutIconURLs();
     long numberOfPages(optional unrestricted double pageWidthInPixels = 800, optional unrestricted double pageHeightInPixels = 600);
     [RaisesException] DOMString pageProperty(DOMString propertyName, long pageNumber);
     [RaisesException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
@@ -313,7 +313,7 @@ enum UserInterfaceLayoutDirection {
     TypeConversions typeConversions();
     MemoryInfo memoryInfo();
 
-    DOMString[] getReferencedFilePaths();
+    sequence<DOMString> getReferencedFilePaths();
 
     // These functions both reset the tracked repaint rects. They are intended to be used in the following order:
     //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
@@ -391,7 +391,7 @@ enum UserInterfaceLayoutDirection {
     [RaisesException] ClientRect selectionBounds();
 
     [Conditional=MEDIA_SOURCE] void initializeMockMediaSource();
-    [Conditional=MEDIA_SOURCE] DOMString[] bufferedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
+    [Conditional=MEDIA_SOURCE] sequence<DOMString> bufferedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] void setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
 
     [Conditional=VIDEO, RaisesException] void beginMediaSessionInterruption(DOMString interruptionType);

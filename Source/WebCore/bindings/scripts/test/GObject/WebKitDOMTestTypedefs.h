@@ -48,16 +48,6 @@ WEBKIT_API GType
 webkit_dom_test_typedefs_get_type(void);
 
 /**
- * webkit_dom_test_typedefs_func:
- * @self: A #WebKitDOMTestTypedefs
- * @x: A #glong
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, glong x);
-
-/**
  * webkit_dom_test_typedefs_set_shadow:
  * @self: A #WebKitDOMTestTypedefs
  * @width: A #gfloat
@@ -70,16 +60,6 @@ webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, glong x);
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat width, gfloat height, gfloat blur, const gchar* color, gfloat alpha);
-
-/**
- * webkit_dom_test_typedefs_nullable_array_arg:
- * @self: A #WebKitDOMTestTypedefs
- * @arrayArg: A #gchar
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, const gchar* arrayArg);
 
 /**
  * webkit_dom_test_typedefs_immutable_point_function:

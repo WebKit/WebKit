@@ -35,7 +35,7 @@
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any data;
-    [InitializedByEventConstructor] readonly attribute MessagePort[] ports;
+    [InitializedByEventConstructor] readonly attribute sequence<MessagePort> ports;
 
     [Custom] void initMessageEvent(optional DOMString typeArg,
                                    optional boolean canBubbleArg,

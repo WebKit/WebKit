@@ -34,8 +34,8 @@ enum DeviceType {
     ImplementationLacksVTable,
     NoInterfaceObject,
 ] interface MediaControlsHost {
-    TextTrack[] sortedTrackListForMenu(TextTrackList? trackList);
-    AudioTrack[] sortedTrackListForMenu(AudioTrackList? trackList);
+    sequence<TextTrack> sortedTrackListForMenu(TextTrackList? trackList);
+    sequence<AudioTrack> sortedTrackListForMenu(AudioTrackList? trackList);
     DOMString displayNameForTrack(TextTrack? track);
     DOMString displayNameForTrack(AudioTrack? track);
     readonly attribute TextTrack captionMenuOffItem;

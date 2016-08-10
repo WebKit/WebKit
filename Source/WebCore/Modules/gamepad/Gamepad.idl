@@ -33,7 +33,7 @@
     readonly attribute boolean connected;
     readonly attribute double timestamp;
     readonly attribute DOMString mapping;
-    readonly attribute double[] axes;
-    readonly attribute GamepadButton[] buttons;
+    readonly attribute sequence<double> axes;
+    readonly attribute sequence<GamepadButton> buttons;
 };
 

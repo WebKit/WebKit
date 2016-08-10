@@ -30,7 +30,7 @@ enum RTCBundlePolicy { "balanced", "max-compat", "max-bundle" };
     Conditional=WEB_RTC,
     NoInterfaceObject,
 ] interface RTCConfiguration {
-    readonly attribute RTCIceServer[] iceServers;
+    readonly attribute sequence<RTCIceServer> iceServers;
     readonly attribute RTCIceTransportPolicy iceTransportPolicy;
     readonly attribute RTCBundlePolicy bundlePolicy;
 };

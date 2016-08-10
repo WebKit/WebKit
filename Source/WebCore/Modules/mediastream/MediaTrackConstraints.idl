@@ -28,6 +28,6 @@
     NoInterfaceObject,
 ] interface MediaTrackConstraints {
     readonly attribute MediaTrackConstraintSet? mandatory;
-    readonly attribute MediaTrackConstraint[]? optional;
+    readonly attribute sequence<MediaTrackConstraint>? optional;
 };
 

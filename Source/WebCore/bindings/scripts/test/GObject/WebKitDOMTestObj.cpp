@@ -1755,26 +1755,6 @@ void webkit_dom_test_obj_method_with_optional_unsigned_long_long_is_zero(WebKitD
     item->methodWithOptionalUnsignedLongLongIsZero(number);
 }
 
-void webkit_dom_test_obj_method_with_optional_array(WebKitDOMTestObj* self, const gchar* array)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_STRING[](array));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::DOMString[]* convertedArray = WebKit::core(array);
-    item->methodWithOptionalArray(convertedArray);
-}
-
-void webkit_dom_test_obj_method_with_optional_array_is_empty(WebKitDOMTestObj* self, const gchar* array)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_STRING[](array));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::DOMString[]* convertedArray = WebKit::core(array);
-    item->methodWithOptionalArrayIsEmpty(convertedArray);
-}
-
 void webkit_dom_test_obj_method_with_optional_boolean(WebKitDOMTestObj* self, gboolean b)
 {
     WebCore::JSMainThreadNullState state;

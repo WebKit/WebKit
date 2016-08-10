@@ -31,6 +31,6 @@
     attribute SerializedScriptValue value;
     readonly attribute SerializedScriptValue readonlyValue;
     [CachedAttribute] attribute SerializedScriptValue cachedValue;
-    readonly attribute MessagePort[] ports;
+    readonly attribute sequence<MessagePort> ports;
     [CachedAttribute] readonly attribute SerializedScriptValue cachedReadonlyValue;
 };

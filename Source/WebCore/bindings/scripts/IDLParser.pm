@@ -1537,7 +1537,7 @@ sub parseOptionalOrRequiredArgument
         } else {
             $paramDataNode->isNullable(0);
         }
-        # Remove all "?" if exists, e.g. "object?[]?" -> "object[]".
+        # Remove "?" if exists, e.g. "object?" -> "object".
         $paramDataNode->type(identifierRemoveNullablePrefix(typeRemoveNullableSuffix($type)));
         $paramDataNode->isOptional(1);
         $paramDataNode->name($self->parseArgumentName());
@@ -1552,7 +1552,7 @@ sub parseOptionalOrRequiredArgument
         } else {
             $paramDataNode->isNullable(0);
         }
-        # Remove all "?" if exists, e.g. "object?[]?" -> "object[]".
+        # Remove "?" if exists, e.g. "object?" -> "object".
         $paramDataNode->type(typeRemoveNullableSuffix($type));
         $paramDataNode->isOptional(0);
         $paramDataNode->isVariadic($self->parseEllipsis());
@@ -1904,7 +1904,7 @@ sub parseSingleType
     my $next = $self->nextToken();
     if ($next->value() eq "any") {
         $self->assertTokenValue($self->getToken(), "any", __LINE__);
-        return "any" . $self->parseTypeSuffixStartingWithArray();
+        return "any";
     }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextSingleType_1/) {
         return $self->parseNonAnyType();
@@ -2123,26 +2123,9 @@ sub parseTypeSuffix
 {
     my $self = shift;
     my $next = $self->nextToken();
-    if ($next->value() eq "[") {
-        $self->assertTokenValue($self->getToken(), "[", __LINE__);
-        $self->assertTokenValue($self->getToken(), "]", __LINE__);
-        return "[]" . $self->parseTypeSuffix();
-    }
     if ($next->value() eq "?") {
         $self->assertTokenValue($self->getToken(), "?", __LINE__);
-        return "?" . $self->parseTypeSuffixStartingWithArray();
-    }
-    return "";
-}
-
-sub parseTypeSuffixStartingWithArray
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "[") {
-        $self->assertTokenValue($self->getToken(), "[", __LINE__);
-        $self->assertTokenValue($self->getToken(), "]", __LINE__);
-        return "[]" . $self->parseTypeSuffix();
+        return "?";
     }
     return "";
 }

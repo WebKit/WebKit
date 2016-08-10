@@ -220,13 +220,12 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithOptionalAtomicStringIsEmptyString([AtomicString] optional DOMString str = "");
     void    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
     void    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
-    void    methodWithOptionalSequence(optional sequence<DOMString> sequence = []);
     void    methodWithOptionalLongLong(optional long long number);
     void    methodWithOptionalLongLongIsZero(optional long long number = 0);
     void    methodWithOptionalUnsignedLongLong(optional unsigned long long number);
     void    methodWithOptionalUnsignedLongLongIsZero(optional unsigned long long number = 0);
-    void    methodWithOptionalArray(optional DOMString[] array);
-    void    methodWithOptionalArrayIsEmpty(optional DOMString[] array = []);
+    void    methodWithOptionalSequence(optional sequence<DOMString> array);
+    void    methodWithOptionalSequenceIsEmpty(optional sequence<DOMString> array = []);
     void    methodWithOptionalBoolean(optional boolean b);
     void    methodWithOptionalBooleanIsFalse(optional boolean b = false);
     void    methodWithOptionalAny(optional any a);
@@ -281,9 +280,9 @@ enum TestConfidence { "high", "kinda-low" };
     void    overloadedMethod(long longArg);
     void    overloadedMethod(TestCallback callback);
     void    overloadedMethod(DOMStringList? listArg);
-    void    overloadedMethod(DOMString[]? arrayArg);
+    void    overloadedMethod(sequence<DOMString>? arrayArg);
     void    overloadedMethod(TestObj objArg);
-    void    overloadedMethod(DOMString[] arrayArg);
+    void    overloadedMethod(sequence<DOMString> arrayArg);
     void    overloadedMethod(sequence<unsigned long> arrayArg);
     void    overloadedMethod(DOMString strArg);
 
@@ -308,11 +307,10 @@ enum TestConfidence { "high", "kinda-low" };
 
 #if defined(TESTING_JS)
     void methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);
-    [RaisesException] DOMString[] stringArrayFunction(DOMString[] values);
+    [RaisesException] sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
     [RaisesException] DOMStringList domStringListFunction(DOMStringList values);
 
     void methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
-    void methodWithAndWithoutNullableSequence2(unsigned long[] arrayArg, unsigned long[]? nullableArrayArg);
 
     Element? getElementById([RequiresExistingAtomicString] DOMString elementId);
 #endif

@@ -50,5 +50,5 @@ enum KeyUsage {
     readonly attribute KeyType type;
     readonly attribute boolean extractable;
     [Custom] readonly attribute Algorithm algorithm;
-    readonly attribute KeyUsage[] usages;
+    readonly attribute sequence<KeyUsage> usages;
 };

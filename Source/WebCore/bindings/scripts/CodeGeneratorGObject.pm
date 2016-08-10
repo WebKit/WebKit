@@ -244,12 +244,7 @@ sub SkipAttribute {
 
     return 1 if $attribute->isStatic;
     return 1 if $codeGenerator->IsTypedArrayType($propType);
-
-    $codeGenerator->AssertNotSequenceType($propType);
-
-    if ($codeGenerator->GetArrayType($propType)) {
-        return 1;
-    }
+    return 1 if $codeGenerator->GetSequenceType($propType);
 
     if ($codeGenerator->IsEnumType($propType)) {
         return 1;
@@ -338,7 +333,7 @@ sub SkipFunction {
         return 1;
     }
 
-    if ($codeGenerator->IsTypedArrayType($function->signature->type) || $codeGenerator->GetArrayType($function->signature->type)) {
+    if ($codeGenerator->IsTypedArrayType($function->signature->type)) {
         return 1;
     }
 
@@ -1102,8 +1097,8 @@ sub GenerateFunction {
     my @callImplParams;
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;
-        my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($paramIDLType);
-        $paramIDLType = $arrayOrSequenceType if $arrayOrSequenceType ne "";
+        my $sequenceType = $codeGenerator->GetSequenceType($paramIDLType);
+        $paramIDLType = $sequenceType if $sequenceType ne "";
         my $paramType = GetGlibTypeName($paramIDLType);
         my $const = $paramType eq "gchar*" ? "const " : "";
         my $paramName = $param->name;
@@ -1174,8 +1169,8 @@ sub GenerateFunction {
             last;
         }
         my $paramIDLType = $param->type;
-        my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($paramIDLType);
-        $paramIDLType = $arrayOrSequenceType if $arrayOrSequenceType ne "";
+        my $sequenceType = $codeGenerator->GetSequenceType($paramIDLType);
+        $paramIDLType = $sequenceType if $sequenceType ne "";
         my $paramType = GetGlibTypeName($paramIDLType);
         # $paramType can have a trailing * in some cases
         $paramType =~ s/\*$//;

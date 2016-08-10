@@ -202,15 +202,11 @@ sub AddIncludesForType
     # When we're finished with the one-file-per-class reorganization, we won't need these special cases.
     if ($isCallback && $codeGenerator->IsWrapperType($type)) {
         $includesRef->{"JS${type}.h"} = 1;
-    } elsif ($codeGenerator->GetArrayOrSequenceType($type)) {
-        my $arrayType = $codeGenerator->GetArrayType($type);
-        my $arrayOrSequenceType = $arrayType || $codeGenerator->GetSequenceType($type);
-        if ($arrayType eq "DOMString") {
-            $includesRef->{"JSDOMStringList.h"} = 1;
-            $includesRef->{"DOMStringList.h"} = 1;
-        } elsif ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
-            $includesRef->{"JS${arrayOrSequenceType}.h"} = 1;
-            $includesRef->{"${arrayOrSequenceType}.h"} = 1;
+    } elsif ($codeGenerator->GetSequenceType($type)) {
+        my $sequenceType = $codeGenerator->GetSequenceType($type);
+        if ($codeGenerator->IsRefPtrType($sequenceType)) {
+            $includesRef->{"JS${sequenceType}.h"} = 1;
+            $includesRef->{"${sequenceType}.h"} = 1;
         }
         $includesRef->{"<runtime/JSArray.h>"} = 1;
     } else {
@@ -1757,7 +1753,7 @@ sub AreTypesDistinguishableForOverloadResolution
     return 0 if &$isDictionary($typeA) && &$isDictionary($typeB);
     return 0 if $codeGenerator->IsCallbackInterface($typeA) && $codeGenerator->IsCallbackInterface($typeB);
     return 0 if &$isCallbackFunctionOrDictionary($typeA) && &$isCallbackFunctionOrDictionary($typeB);
-    return 0 if $codeGenerator->GetArrayOrSequenceType($typeA) && $codeGenerator->GetArrayOrSequenceType($typeB);
+    return 0 if $codeGenerator->GetSequenceType($typeA) && $codeGenerator->GetSequenceType($typeB);
     # FIXME: return 0 if typeA and typeB are both exception types.
     return 1;
 }
@@ -1846,9 +1842,9 @@ sub GenerateOverloadedFunctionOrConstructor
         my ($type, $optionality, $isNullable) = @_;
         return $type eq "object" || $codeGenerator->IsFunctionOnlyCallbackInterface($type);
     };
-    my $isArrayOrSequenceParameter = sub {
+    my $isSequenceParameter = sub {
         my ($type, $optionality, $isNullable) = @_;
-        return $codeGenerator->GetArrayOrSequenceType($type);
+        return $codeGenerator->GetSequenceType($type);
     };
     my $isDictionaryOrObjectOrCallbackInterfaceParameter = sub {
         my ($type, $optionality, $isNullable) = @_;
@@ -1921,7 +1917,7 @@ END
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrCallbackFunctionParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isFunction()");
 
-            $overload = GetOverloadThatMatches($S, $d, \&$isArrayOrSequenceParameter);
+            $overload = GetOverloadThatMatches($S, $d, \&$isSequenceParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && isJSArray(distinguishingArg)");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isDictionaryOrObjectOrCallbackInterfaceParameter);
@@ -2733,7 +2729,6 @@ sub GenerateImplementation
 
             my $name = $attribute->signature->name;
             my $type = $attribute->signature->type;
-            $codeGenerator->AssertNotSequenceType($type);
             my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
             my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
             my $getterExceptionsWithMessage = $attribute->signature->extendedAttributes->{"GetterRaisesExceptionWithMessage"};
@@ -3776,7 +3771,7 @@ sub WillConvertUndefinedToDefaultParameterValue
     return 1 if defined $automaticallyGeneratedDefaultValue && $automaticallyGeneratedDefaultValue eq $defaultValue;
 
     # toRefPtrNativeArray() will convert undefined to an empty Vector.
-    return 1 if $defaultValue eq "[]" && $codeGenerator->GetArrayOrSequenceType($parameterType);
+    return 1 if $defaultValue eq "[]" && $codeGenerator->GetSequenceType($parameterType);
 
     return 1 if $defaultValue eq "null" && $codeGenerator->IsWrapperType($parameterType);
 
@@ -4523,8 +4518,8 @@ sub GetNativeType
 
     return "RefPtr<${type}>" if $codeGenerator->IsTypedArrayType($type) and $type ne "ArrayBuffer";
 
-    my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($type);
-    return "Vector<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">" if $arrayOrSequenceType;
+    my $sequenceType = $codeGenerator->GetSequenceType($type);
+    return "Vector<" . GetNativeVectorInnerType($sequenceType) . ">" if $sequenceType;
 
     return "${type}*";
 }
@@ -4540,10 +4535,10 @@ sub ShouldPassWrapperByReference
 
 sub GetNativeVectorInnerType
 {
-    my $arrayOrSequenceType = shift;
+    my $sequenceType = shift;
 
-    return $nativeType{$arrayOrSequenceType} if exists $nativeType{$arrayOrSequenceType};
-    return "RefPtr<${arrayOrSequenceType}>";
+    return $nativeType{$sequenceType} if exists $nativeType{$sequenceType};
+    return "RefPtr<${sequenceType}>";
 }
 
 sub GetNativeTypeForCallbacks
@@ -4655,13 +4650,13 @@ sub JSValueToNative
         return ("Dictionary(state, $value)", 0);
     }
 
-    my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($type);
-    if ($arrayOrSequenceType) {
-        if ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
-            AddToImplIncludes("JS${arrayOrSequenceType}.h");
-            return ("(toRefPtrNativeArray<${arrayOrSequenceType}, JS${arrayOrSequenceType}>(state, $value, &JS${arrayOrSequenceType}::toWrapped))", 1);
+    my $sequenceType = $codeGenerator->GetSequenceType($type);
+    if ($sequenceType) {
+        if ($codeGenerator->IsRefPtrType($sequenceType)) {
+            AddToImplIncludes("JS${sequenceType}.h");
+            return ("(toRefPtrNativeArray<${sequenceType}, JS${sequenceType}>(state, $value, &JS${sequenceType}::toWrapped))", 1);
         }
-        return ("toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(*state, $value)", 1);
+        return ("toNativeArray<" . GetNativeVectorInnerType($sequenceType) . ">(*state, $value)", 1);
     }
 
     return ($value, 0) if $type eq "any";
@@ -4732,14 +4727,10 @@ sub NativeToJSValue
         return "jsStringWithCache(state, $value)";
     }
     
-    my $arrayType = $codeGenerator->GetArrayType($type);
-    my $arrayOrSequenceType = $arrayType || $codeGenerator->GetSequenceType($type);
-
-    if ($arrayOrSequenceType) {
-        if ($arrayType eq "DOMString") {
-            AddToImplIncludes("JSDOMStringList.h", $conditional);
-        } elsif ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
-            AddToImplIncludes("JS${arrayOrSequenceType}.h", $conditional);
+    my $sequenceType = $codeGenerator->GetSequenceType($type);
+    if ($sequenceType) {
+        if ($codeGenerator->IsRefPtrType($sequenceType)) {
+            AddToImplIncludes("JS${sequenceType}.h", $conditional);
         }
         AddToImplIncludes("<runtime/JSArray.h>", $conditional);
         return "jsArray(state, $globalObject, $value)";

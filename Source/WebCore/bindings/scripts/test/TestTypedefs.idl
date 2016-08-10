@@ -40,20 +40,20 @@
     
     static readonly attribute T TestSubObj;
 
-    void func(optional ARRAY_OF_LONGS x = []);
+    void func(optional SEQUENCE_OF_LONGS x = []);
 
     void setShadow(DOUBLE width, DOUBLE height, unrestricted float blur, optional STRING color, optional DOUBLE alpha);
 
     ULONGLONG methodWithSequenceArg(sequence<SCRIPT_VALUE> sequenceArg);
 
-    void nullableArrayArg(ARRAY_OF_STRINGS? arrayArg);
+    void nullableSequenceArg(SEQUENCE_OF_STRINGS? sequenceArg);
 
     void funcWithClamp(ULONGLONG_CLAMP arg1, optional ULONGLONG_CLAMP arg2);
 
     [Immutable] SVGPOINT immutablePointFunction();
 
-    [RaisesException] ARRAY_OF_STRINGS stringArrayFunction(ARRAY_OF_STRINGS values);
-    [RaisesException] STRING[] stringArrayFunction2(STRING[] values);
+    [RaisesException] SEQUENCE_OF_STRINGS stringSequenceFunction(SEQUENCE_OF_STRINGS values);
+    [RaisesException] sequence<STRING> stringSequenceFunction2(sequence<STRING> values);
 
     boolean callWithSequenceThatRequiresInclude(sequence<TestEventTarget> sequenceArg);
 
@@ -69,10 +69,10 @@ typedef unrestricted float         DOUBLE;
 typedef unsigned long long         ULONGLONG;
 typedef [Clamp] unsigned long long ULONGLONG_CLAMP;
 typedef SerializedScriptValue      SCRIPT_VALUE;
-typedef long[]                     ARRAY_OF_LONGS;
+typedef sequence<long>             SEQUENCE_OF_LONGS;
 typedef SVGPoint                   SVGPOINT;
 typedef DOMString                  STRING;
-typedef DOMString[]                ARRAY_OF_STRINGS;
+typedef sequence<DOMString>        SEQUENCE_OF_STRINGS;
 typedef TestCallback               TEST_CALLBACK;
 typedef TestSubObjConstructor      T;
 typedef Int32Array                 ARRAY;

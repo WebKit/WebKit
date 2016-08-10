@@ -232,16 +232,6 @@ static void webkit_dom_test_typedefs_init(WebKitDOMTestTypedefs* request)
     new (priv) WebKitDOMTestTypedefsPrivate();
 }
 
-void webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, glong x)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_TYPEDEFS(self));
-    g_return_if_fail(WEBKIT_DOM_IS_LONG[](x));
-    WebCore::TestTypedefs* item = WebKit::core(self);
-    WebCore::long[]* convertedX = WebKit::core(x);
-    item->func(x);
-}
-
 void webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat width, gfloat height, gfloat blur, const gchar* color, gfloat alpha)
 {
     WebCore::JSMainThreadNullState state;
@@ -250,16 +240,6 @@ void webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat wid
     WebCore::TestTypedefs* item = WebKit::core(self);
     WTF::String convertedColor = WTF::String::fromUTF8(color);
     item->setShadow(width, height, blur, convertedColor, alpha);
-}
-
-void webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, const gchar* arrayArg)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_TYPEDEFS(self));
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_STRING[](arrayArg));
-    WebCore::TestTypedefs* item = WebKit::core(self);
-    WebCore::DOMString[]* convertedArrayArg = WebKit::core(arrayArg);
-    item->nullableArrayArg(convertedArrayArg);
 }
 
 WebKitDOMSVGPoint* webkit_dom_test_typedefs_immutable_point_function(WebKitDOMTestTypedefs* self)

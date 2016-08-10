@@ -471,7 +471,7 @@ sub IsRefPtrType
     return 0 if $object->IsPrimitiveType($type);
     return 0 if $object->IsDictionaryType($type);
     return 0 if $object->IsEnumType($type);
-    return 0 if $object->GetArrayOrSequenceType($type);
+    return 0 if $object->GetSequenceType($type);
     return 0 if $type eq "DOMString" or $type eq "USVString";
     return 0 if $type eq "any";
 
@@ -524,30 +524,6 @@ sub GetSequenceType
 
     return $1 if $type =~ /^sequence<([\w\d_\s]+)>.*/;
     return "";
-}
-
-sub GetArrayType
-{
-    my $object = shift;
-    my $type = shift;
-
-    return $1 if $type =~ /^([\w\d_\s]+)\[\]/;
-    return "";
-}
-
-sub GetArrayOrSequenceType
-{
-    my $object = shift;
-    my $type = shift;
-
-    return $object->GetArrayType($type) || $object->GetSequenceType($type);
-}
-
-sub AssertNotSequenceType
-{
-    my $object = shift;
-    my $type = shift;
-    die "Sequences must not be used as the type of an attribute, constant or exception field." if $object->GetSequenceType($type);
 }
 
 # These match WK_lcfirst and WK_ucfirst defined in builtins_generator.py.
