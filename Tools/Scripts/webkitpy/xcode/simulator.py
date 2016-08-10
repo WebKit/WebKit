@@ -213,6 +213,7 @@ class Device(object):
         :rtype: Device
         """
         device_udid = subprocess.check_output(['xcrun', 'simctl', 'create', name, device_type.identifier, runtime.identifier]).rstrip()
+        _log.debug('"xcrun simctl create %s %s %s" returned %s', name, device_type.identifier, runtime.identifier, device_udid)
         Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.SHUTDOWN)
         return Simulator().find_device_by_udid(device_udid)
 
@@ -223,7 +224,28 @@ class Device(object):
         :param udid: The udid of the device.
         :type udid: str
         """
-        subprocess.call(['xcrun', 'simctl', 'delete', udid])
+        _log.debug('deleting device %s', udid)
+        Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.SHUTDOWN)
+        try:
+            _log.debug('xcrun simctl delete %s', udid)
+            subprocess.check_call(['xcrun', 'simctl', 'delete', udid])
+        except subprocess.CalledProcessError:
+            raise RuntimeError('"xcrun simctl delete" failed: device state is {}'.format(Simulator.device_state(udid)))
+
+    @classmethod
+    def reset(cls, udid):
+        """
+        Reset the given CoreSimulator device.
+        :param udid: The udid of the device.
+        :type udid: str
+        """
+        _log.debug('resetting device %s', udid)
+        Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.SHUTDOWN)
+        try:
+            _log.debug('xcrun simctl erase %s', udid)
+            subprocess.check_call(['xcrun', 'simctl', 'erase', udid])
+        except subprocess.CalledProcessError:
+            raise RuntimeError('"xcrun simctl erase" failed: device state is {}'.format(Simulator.device_state(udid)))
 
     def __eq__(self, other):
         return self.udid == other.udid
@@ -281,6 +303,8 @@ class Simulator(object):
             while True:
                 try:
                     state = subprocess.check_output(['xcrun', 'simctl', 'spawn', udid, 'launchctl', 'print', 'system']).strip()
+                    _log.debug('xcrun simctl spawn %s', udid)
+
                     if re.search("A[\s]+com.apple.springboard.services", state):
                         return
                 except subprocess.CalledProcessError:
@@ -291,9 +315,17 @@ class Simulator(object):
 
     @staticmethod
     def wait_until_device_is_in_state(udid, wait_until_state, timeout_seconds=60 * 5):
+        _log.debug('waiting for device %s to enter state %s with timeout %s', udid, wait_until_state, timeout_seconds)
         with timeout(seconds=timeout_seconds):
-            while (Simulator.device_state(udid) != wait_until_state):
+            device_state = Simulator.device_state(udid)
+            while (device_state != wait_until_state):
+                device_state = Simulator.device_state(udid)
+                _log.debug(' device state %s', device_state)
                 time.sleep(0.5)
+
+        end_state = Simulator.device_state(udid)
+        if (end_state != wait_until_state):
+            raise RuntimeError('Timed out waiting for simulator device to enter state {0}; current state is {1}'.format(wait_until_state, end_state))
 
     @staticmethod
     def device_state(udid):
@@ -306,9 +338,13 @@ class Simulator(object):
     def device_directory(udid):
         return os.path.realpath(os.path.expanduser(os.path.join('~/Library/Developer/CoreSimulator/Devices', udid)))
 
-    def delete_device(self, udid):
-        Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.SHUTDOWN)
+    @staticmethod
+    def delete_device(udid):
         Device.delete(udid)
+
+    @staticmethod
+    def reset_device(udid):
+        Device.reset(udid)
 
     def refresh(self):
         """
@@ -512,8 +548,10 @@ class Simulator(object):
         assert(runtime.available)
         testing_device = self.device(name=name, runtime=runtime, should_ignore_unavailable_devices=True)
         if testing_device:
+            _log.debug('lookup_or_create_device %s %s %s found %s', name, device_type, runtime, testing_device.name)
             return testing_device
         testing_device = Device.create(name, device_type, runtime)
+        _log.debug('lookup_or_create_device %s %s %s created %s', name, device_type, runtime, testing_device.name)
         assert(testing_device.available)
         return testing_device
 

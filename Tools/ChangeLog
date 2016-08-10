@@ -1,3 +1,38 @@
+2016-08-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Logging and other minor improvements to iOS webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=160722
+
+        Reviewed by Dan Bates.
+
+        Fix --debug-rwt-logging to log all the calls to simctl as well as device state information,
+        to make it easier to debug launching issues.
+
+        Have reset_preferences() reset the device, rather than just nuking the data
+        directory (which broke some versions of the simulator).
+
+        Make the Simulator.app launch in the background with open -g.
+
+        Wait for the simulator device to be in a known state in some more places.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_test_run):
+        (IOSSimulatorPort._quit_ios_simulator):
+        (IOSSimulatorPort.clean_up_test_run):
+        (IOSSimulatorPort.setup_environ_for_server):
+        (IOSSimulatorPort.reset_preferences):
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.create):
+        (Device.delete):
+        (Device):
+        (Device.reset):
+        (Simulator.wait_until_device_is_booted):
+        (Simulator.wait_until_device_is_in_state):
+        (Simulator):
+        (Simulator.delete_device):
+        (Simulator.reset_device):
+        (Simulator.lookup_or_create_device):
+
 2016-08-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][EFL] ALSA_CARD environment variable is not passed for layout tests.

@@ -210,8 +210,9 @@ class IOSSimulatorPort(ApplePort):
         for i in xrange(self.child_processes()):
             device_udid = self.testing_device(i).udid
             # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
+
             self._executive.run_command([
-                'open', '-b', self.SIMULATOR_BUNDLE_ID + str(i),
+                'open', '-g', '-b', self.SIMULATOR_BUNDLE_ID + str(i),
                 '--args', '-CurrentDeviceUDID', device_udid])
 
             if mac_os_version in ['elcapitan', 'yosemite', 'mavericks']:
@@ -222,11 +223,13 @@ class IOSSimulatorPort(ApplePort):
             Simulator.wait_until_device_is_booted(self.testing_device(i).udid)
 
     def _quit_ios_simulator(self):
+        _log.debug("_quit_ios_simulator")
         # FIXME: We should kill only the Simulators we started.
         subprocess.call(["killall", "-9", "-m", "Simulator"])
 
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
+        _log.debug("clean_up_test_run")
         self._quit_ios_simulator()
         fifos = [path for path in os.listdir('/tmp') if re.search('org.webkit.(DumpRenderTree|WebKitTestRunner).*_(IN|OUT|ERROR)', path)]
         for fifo in fifos:
@@ -237,20 +240,30 @@ class IOSSimulatorPort(ApplePort):
                 pass
 
         for i in xrange(self.child_processes()):
-            if not os.path.exists(self.get_simulator_path(i)):
+            simulator_path = self.get_simulator_path(i)
+            device_udid = self.testing_device(i).udid
+            if not os.path.exists(simulator_path):
                 continue
             try:
-                subprocess.call([self.LSREGISTER_PATH, "-u", self.get_simulator_path(i)])
-                shutil.rmtree(self.get_simulator_path(i), ignore_errors=True)
-                shutil.rmtree(os.path.join(os.path.expanduser("~"), "Library/Logs/CoreSimulator/",
-                    self.testing_device(i).udid), ignore_errors=True)
-                shutil.rmtree(os.path.join(os.path.expanduser("~"), "Library/Saved Application State/",
-                    self.SIMULATOR_BUNDLE_ID + str(i) + ".savedState"), ignore_errors=True)
-                Simulator().delete_device(self.testing_device(i).udid)
+                self._executive.run_command([self.LSREGISTER_PATH, "-u", simulator_path])
+
+                _log.debug('rmtree %s', simulator_path)
+                self._filesystem.rmtree(simulator_path)
+
+                logs_path = self._filesystem.join(self._filesystem.expanduser("~"), "Library/Logs/CoreSimulator/", device_udid)
+                _log.debug('rmtree %s', logs_path)
+                self._filesystem.rmtree(logs_path)
+
+                saved_state_path = self._filesystem.join(self._filesystem.expanduser("~"), "Library/Saved Application State/", self.SIMULATOR_BUNDLE_ID + str(i) + ".savedState")
+                _log.debug('rmtree %s', saved_state_path)
+                self._filesystem.rmtree(saved_state_path)
+
+                Simulator().delete_device(device_udid)
             except:
                 _log.warning('Unable to remove Simulator' + str(i))
 
     def setup_environ_for_server(self, server_name=None):
+        _log.debug("setup_environ_for_server")
         env = super(IOSSimulatorPort, self).setup_environ_for_server(server_name)
         if server_name == self.driver_name():
             if self.get_option('leaks'):
@@ -336,6 +349,7 @@ class IOSSimulatorPort(ApplePort):
         return self._image_differ.diff_image(expected_contents, actual_contents, tolerance)
 
     def reset_preferences(self):
+        _log.debug("reset_preferences")
         if (self.default_child_processes() < self.child_processes()):
                 _log.warn("You have specified very high value({0}) for --child-processes".format(self.child_processes()))
                 _log.warn("maximum child-processes which can be supported on this system are: {0}".format(self.default_child_processes()))
@@ -346,10 +360,7 @@ class IOSSimulatorPort(ApplePort):
 
         for i in xrange(self.child_processes()):
             Simulator.wait_until_device_is_in_state(self.testing_device(i).udid, Simulator.DeviceState.SHUTDOWN)
-
-            data_path = os.path.join(self.testing_device(i).path, 'data')
-            if os.path.isdir(data_path):
-                shutil.rmtree(data_path)
+            Simulator.reset_device(self.testing_device(i).udid)
 
     def nm_command(self):
         return self.xcrun_find('nm')
