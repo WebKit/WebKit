@@ -163,12 +163,12 @@ DatabaseTransactionTask::~DatabaseTransactionTask()
     // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
 
     if (!m_didPerformTask)
-        m_transaction->backend().notifyDatabaseThreadIsShuttingDown();
+        m_transaction->notifyDatabaseThreadIsShuttingDown();
 }
 
 void DatabaseTransactionTask::doPerformTask()
 {
-    m_transaction->backend().performNextStep();
+    m_transaction->performNextStep();
     m_didPerformTask = true;
 }
 

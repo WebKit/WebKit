@@ -314,7 +314,7 @@ void Database::performClose()
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
         while (!m_transactionQueue.isEmpty()) {
             auto transaction = m_transactionQueue.takeFirst();
-            transaction->backend().notifyDatabaseThreadIsShuttingDown();
+            transaction->notifyDatabaseThreadIsShuttingDown();
         }
 
         m_isTransactionQueueEnabled = false;

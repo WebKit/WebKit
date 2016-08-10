@@ -52,20 +52,15 @@ public:
     explicit SQLTransactionBackend(SQLTransaction&);
     ~SQLTransactionBackend();
 
-    void lockAcquired();
-    void performNextStep();
-
     void notifyDatabaseThreadIsShuttingDown();
 
-    // APIs called from the frontend published via SQLTransactionBackend:
+    // API called from the frontend published via SQLTransactionBackend:
     void requestTransitToState(SQLTransactionState);
-    void executeSQL(std::unique_ptr<SQLStatement>);
-    
+
 private:
+    friend class SQLTransaction;
 
     void doCleanup();
-
-    void enqueueStatement(std::unique_ptr<SQLStatement>);
 
     // State Machine functions:
     StateFunction stateFunctionFor(SQLTransactionState) override;
@@ -79,15 +74,6 @@ private:
     void cleanupAfterTransactionErrorCallback();
 
     NO_RETURN_DUE_TO_ASSERT void unreachableState();
-
-    void getNextStatement();
-    bool runCurrentStatement();
-    void handleCurrentStatementError();
-    void handleTransactionError();
-    void postflightAndCommit();
-
-    void acquireOriginLock();
-    void releaseOriginLockIfNeeded();
 
     SQLTransaction& m_frontend;
 };

@@ -64,11 +64,13 @@ public:
 
     void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, ExceptionCode&);
 
+    void lockAcquired();
+    void performNextStep();
     void performPendingCallback();
 
     Database& database() { return m_database; }
     bool isReadOnly() const { return m_readOnly; }
-    SQLTransactionBackend& backend() { return m_backend; }
+    void notifyDatabaseThreadIsShuttingDown();
 
     // APIs called from the backend published via SQLTransaction:
     void requestTransitToState(SQLTransactionState);
@@ -77,6 +79,8 @@ private:
     friend class SQLTransactionBackend;
 
     SQLTransaction(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
+
+    void enqueueStatement(std::unique_ptr<SQLStatement>);
 
     void clearCallbackWrappers();
 
@@ -92,6 +96,15 @@ private:
     void deliverSuccessCallback();
 
     NO_RETURN_DUE_TO_ASSERT void unreachableState();
+
+    void getNextStatement();
+    bool runCurrentStatement();
+    void handleCurrentStatementError();
+    void handleTransactionError();
+    void postflightAndCommit();
+
+    void acquireOriginLock();
+    void releaseOriginLockIfNeeded();
 
     Ref<Database> m_database;
     SQLCallbackWrapper<SQLTransactionCallback> m_callbackWrapper;

@@ -62,12 +62,12 @@ void SQLTransactionCoordinator::processPendingTransactions(CoordinationInfo& inf
         do {
             firstPendingTransaction = info.pendingTransactions.takeFirst();
             info.activeReadTransactions.add(firstPendingTransaction);
-            firstPendingTransaction->backend().lockAcquired();
+            firstPendingTransaction->lockAcquired();
         } while (!info.pendingTransactions.isEmpty() && info.pendingTransactions.first()->isReadOnly());
     } else if (info.activeReadTransactions.isEmpty()) {
         info.pendingTransactions.removeFirst();
         info.activeWriteTransaction = firstPendingTransaction;
-        firstPendingTransaction->backend().lockAcquired();
+        firstPendingTransaction->lockAcquired();
     }
 }
 
@@ -122,16 +122,16 @@ void SQLTransactionCoordinator::shutdown()
         // Transaction phase 4 cleanup. See comment on "What happens if a
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
         if (info.activeWriteTransaction)
-            info.activeWriteTransaction->backend().notifyDatabaseThreadIsShuttingDown();
+            info.activeWriteTransaction->notifyDatabaseThreadIsShuttingDown();
         for (auto& transaction : info.activeReadTransactions)
-            transaction->backend().notifyDatabaseThreadIsShuttingDown();
+            transaction->notifyDatabaseThreadIsShuttingDown();
 
         // Clean up transactions that have NOT reached "lockAcquired":
         // Transaction phase 3 cleanup. See comment on "What happens if a
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
         while (!info.pendingTransactions.isEmpty()) {
             RefPtr<SQLTransaction> transaction = info.pendingTransactions.first();
-            transaction->backend().notifyDatabaseThreadIsShuttingDown();
+            transaction->notifyDatabaseThreadIsShuttingDown();
         }
     }
 
