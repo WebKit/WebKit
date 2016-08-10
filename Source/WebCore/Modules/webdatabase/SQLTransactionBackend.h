@@ -47,11 +47,10 @@ class SQLTransaction;
 class SQLTransactionWrapper;
 class SQLValue;
 
-class SQLTransactionBackend : public ThreadSafeRefCounted<SQLTransactionBackend>, public SQLTransactionStateMachine<SQLTransactionBackend> {
+class SQLTransactionBackend : public SQLTransactionStateMachine<SQLTransactionBackend> {
 public:
-    static Ref<SQLTransactionBackend> create(Database*, RefPtr<SQLTransaction>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
-
-    virtual ~SQLTransactionBackend();
+    SQLTransactionBackend(Database*, SQLTransaction&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
+    ~SQLTransactionBackend();
 
     void lockAcquired();
     void performNextStep();
@@ -68,7 +67,6 @@ public:
     void executeSQL(std::unique_ptr<SQLStatement>);
     
 private:
-    SQLTransactionBackend(Database*, RefPtr<SQLTransaction>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
     void doCleanup();
 
@@ -96,7 +94,7 @@ private:
     void acquireOriginLock();
     void releaseOriginLockIfNeeded();
 
-    RefPtr<SQLTransaction> m_frontend; // Has a reference cycle, and will break in doCleanup().
+    SQLTransaction& m_frontend;
     std::unique_ptr<SQLStatement> m_currentStatementBackend;
 
     RefPtr<Database> m_database;

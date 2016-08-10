@@ -32,6 +32,7 @@
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "Logging.h"
+#include "SQLTransaction.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 #include <wtf/AutodrainedPool.h>

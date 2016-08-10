@@ -314,7 +314,7 @@ void Database::performClose()
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
         while (!m_transactionQueue.isEmpty()) {
             auto transaction = m_transactionQueue.takeFirst();
-            transaction->notifyDatabaseThreadIsShuttingDown();
+            transaction->backend().notifyDatabaseThreadIsShuttingDown();
         }
 
         m_isTransactionQueueEnabled = false;
@@ -561,7 +561,7 @@ bool Database::getActualVersionForTransaction(String &actualVersion)
 void Database::scheduleTransaction()
 {
     ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
-    RefPtr<SQLTransactionBackend> transaction;
+    RefPtr<SQLTransaction> transaction;
 
     if (m_isTransactionQueueEnabled && !m_transactionQueue.isEmpty())
         transaction = m_transactionQueue.takeFirst();
@@ -575,7 +575,7 @@ void Database::scheduleTransaction()
         m_transactionInProgress = false;
 }
 
-void Database::scheduleTransactionStep(SQLTransactionBackend& transaction)
+void Database::scheduleTransactionStep(SQLTransaction& transaction)
 {
     if (!databaseContext()->databaseThread())
         return;
@@ -736,7 +736,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
     }
 
     auto transaction = SQLTransaction::create(*this, WTFMove(callback), WTFMove(successCallback), errorCallback.copyRef(), WTFMove(wrapper), readOnly);
-    m_transactionQueue.append(&transaction->backend());
+    m_transactionQueue.append(transaction.ptr());
     if (!m_transactionInProgress)
         scheduleTransaction();
 }

@@ -122,10 +122,10 @@ private:
 
 class DatabaseTransactionTask : public DatabaseTask {
 public:
-    explicit DatabaseTransactionTask(RefPtr<SQLTransactionBackend>&&);
+    explicit DatabaseTransactionTask(RefPtr<SQLTransaction>&&);
     virtual ~DatabaseTransactionTask();
 
-    SQLTransactionBackend* transaction() const { return m_transaction.get(); }
+    SQLTransaction* transaction() const { return m_transaction.get(); }
 
 private:
     void doPerformTask() override;
@@ -133,7 +133,7 @@ private:
     const char* debugTaskName() const override;
 #endif
 
-    RefPtr<SQLTransactionBackend> m_transaction;
+    RefPtr<SQLTransaction> m_transaction;
     bool m_didPerformTask;
 };
 

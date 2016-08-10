@@ -145,8 +145,8 @@ const char* DatabaseCloseTask::debugTaskName() const
 // *** DatabaseTransactionTask ***
 // Starts a transaction that will report its results via a callback.
 
-DatabaseTransactionTask::DatabaseTransactionTask(RefPtr<SQLTransactionBackend>&& transaction)
-    : DatabaseTask(*transaction->database(), 0)
+DatabaseTransactionTask::DatabaseTransactionTask(RefPtr<SQLTransaction>&& transaction)
+    : DatabaseTask(transaction->database(), 0)
     , m_transaction(WTFMove(transaction))
     , m_didPerformTask(false)
 {
@@ -163,12 +163,12 @@ DatabaseTransactionTask::~DatabaseTransactionTask()
     // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
 
     if (!m_didPerformTask)
-        m_transaction->notifyDatabaseThreadIsShuttingDown();
+        m_transaction->backend().notifyDatabaseThreadIsShuttingDown();
 }
 
 void DatabaseTransactionTask::doPerformTask()
 {
-    m_transaction->performNextStep();
+    m_transaction->backend().performNextStep();
     m_didPerformTask = true;
 }
 

@@ -343,18 +343,13 @@
 
 namespace WebCore {
 
-Ref<SQLTransactionBackend> SQLTransactionBackend::create(Database* db, RefPtr<SQLTransaction>&& frontend, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
-{
-    return adoptRef(*new SQLTransactionBackend(db, WTFMove(frontend), WTFMove(wrapper), readOnly));
-}
-
-SQLTransactionBackend::SQLTransactionBackend(Database* db, RefPtr<SQLTransaction>&& frontend, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
-    : m_frontend(WTFMove(frontend))
+SQLTransactionBackend::SQLTransactionBackend(Database* db, SQLTransaction& frontend, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
+    : m_frontend(frontend)
     , m_database(db)
     , m_wrapper(WTFMove(wrapper))
-    , m_hasCallback(m_frontend->hasCallback())
-    , m_hasSuccessCallback(m_frontend->hasSuccessCallback())
-    , m_hasErrorCallback(m_frontend->hasErrorCallback())
+    , m_hasCallback(m_frontend.hasCallback())
+    , m_hasSuccessCallback(m_frontend.hasSuccessCallback())
+    , m_hasErrorCallback(m_frontend.hasErrorCallback())
     , m_shouldRetryCurrentStatement(false)
     , m_modifiedDatabase(false)
     , m_lockAcquired(false)
@@ -362,7 +357,6 @@ SQLTransactionBackend::SQLTransactionBackend(Database* db, RefPtr<SQLTransaction
     , m_hasVersionMismatch(false)
 {
     ASSERT(m_database);
-    m_frontend->setBackend(this);
     m_requestedState = SQLTransactionState::AcquireLock;
 }
 
@@ -373,10 +367,6 @@ SQLTransactionBackend::~SQLTransactionBackend()
 
 void SQLTransactionBackend::doCleanup()
 {
-    if (!m_frontend)
-        return;
-    m_frontend = nullptr; // Break the reference cycle. See comment about the life-cycle above.
-
     ASSERT(currentThread() == database()->databaseContext()->databaseThread()->getThreadID());
 
     releaseOriginLockIfNeeded();
@@ -395,7 +385,7 @@ void SQLTransactionBackend::doCleanup()
 
     // Release the lock on this database
     if (m_lockAcquired)
-        m_database->transactionCoordinator()->releaseLock(this);
+        m_database->transactionCoordinator()->releaseLock(m_frontend);
 
     // Do some aggresive clean up here except for m_database.
     //
@@ -503,7 +493,7 @@ void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
     // Terminate the frontend state machine. This also gets the frontend to
     // call computeNextStateAndCleanupIfNeeded() and clear its wrappers
     // if needed.
-    m_frontend->requestTransitToState(SQLTransactionState::End);
+    m_frontend.requestTransitToState(SQLTransactionState::End);
 
     // Redirect to the end state to abort, clean up, and end the transaction.
     doCleanup();
@@ -537,7 +527,7 @@ void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()
 
 void SQLTransactionBackend::acquireLock()
 {
-    m_database->transactionCoordinator()->acquireLock(this);
+    m_database->transactionCoordinator()->acquireLock(m_frontend);
 }
 
 void SQLTransactionBackend::lockAcquired()
@@ -546,7 +536,7 @@ void SQLTransactionBackend::lockAcquired()
 
     m_requestedState = SQLTransactionState::OpenTransactionAndPreflight;
     ASSERT(m_requestedState != SQLTransactionState::End);
-    m_database->scheduleTransactionStep(*this);
+    m_database->scheduleTransactionStep(m_frontend);
 }
 
 void SQLTransactionBackend::openTransactionAndPreflight()
@@ -621,7 +611,7 @@ void SQLTransactionBackend::openTransactionAndPreflight()
 
     // Spec 4.3.2.4: Invoke the transaction callback with the new SQLTransaction object
     if (m_hasCallback) {
-        m_frontend->requestTransitToState(SQLTransactionState::DeliverTransactionCallback);
+        m_frontend.requestTransitToState(SQLTransactionState::DeliverTransactionCallback);
         return;
     }
 
@@ -694,7 +684,7 @@ bool SQLTransactionBackend::runCurrentStatement()
         }
 
         if (m_currentStatementBackend->hasStatementCallback()) {
-            m_frontend->requestTransitToState(SQLTransactionState::DeliverStatementCallback);
+            m_frontend.requestTransitToState(SQLTransactionState::DeliverStatementCallback);
             return false;
         }
 
@@ -704,7 +694,7 @@ bool SQLTransactionBackend::runCurrentStatement()
     }
 
     if (m_currentStatementBackend->lastExecutionFailedDueToQuota()) {
-        m_frontend->requestTransitToState(SQLTransactionState::DeliverQuotaIncreaseCallback);
+        m_frontend.requestTransitToState(SQLTransactionState::DeliverQuotaIncreaseCallback);
         return false;
     }
 
@@ -717,7 +707,7 @@ void SQLTransactionBackend::handleCurrentStatementError()
     // Spec 4.3.2.6.6: error - Call the statement's error callback, but if there was no error callback,
     // or the transaction was rolled back, jump to the transaction error callback
     if (m_currentStatementBackend->hasStatementErrorCallback() && !m_sqliteTransaction->wasRolledBackBySqlite()) {
-        m_frontend->requestTransitToState(SQLTransactionState::DeliverStatementCallback);
+        m_frontend.requestTransitToState(SQLTransactionState::DeliverStatementCallback);
         return;
     }
 
@@ -732,7 +722,7 @@ void SQLTransactionBackend::handleTransactionError()
 {
     ASSERT(m_transactionError);
     if (m_hasErrorCallback) {
-        m_frontend->requestTransitToState(SQLTransactionState::DeliverTransactionErrorCallback);
+        m_frontend.requestTransitToState(SQLTransactionState::DeliverTransactionErrorCallback);
         return;
     }
 
@@ -784,7 +774,7 @@ void SQLTransactionBackend::postflightAndCommit()
         m_database->transactionClient()->didCommitWriteTransaction(database());
 
     // Spec 4.3.2.8: Deliver success callback, if there is one.
-    m_frontend->requestTransitToState(SQLTransactionState::DeliverSuccessCallback);
+    m_frontend.requestTransitToState(SQLTransactionState::DeliverSuccessCallback);
 }
 
 void SQLTransactionBackend::cleanupAndTerminate()
@@ -830,7 +820,7 @@ void SQLTransactionBackend::requestTransitToState(SQLTransactionState nextState)
     LOG(StorageAPI, "Scheduling %s for transaction %p\n", nameForSQLTransactionState(nextState), this);
     m_requestedState = nextState;
     ASSERT(m_requestedState != SQLTransactionState::End);
-    m_database->scheduleTransactionStep(*this);
+    m_database->scheduleTransactionStep(m_frontend);
 }
 
 // This state function is used as a stub function to plug unimplemented states

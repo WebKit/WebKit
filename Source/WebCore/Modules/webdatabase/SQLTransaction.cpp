@@ -60,9 +60,8 @@ SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCa
     , m_errorCallbackWrapper(WTFMove(errorCallback), m_database->scriptExecutionContext())
     , m_executeSqlAllowed(false)
     , m_readOnly(readOnly)
+    , m_backend(m_database.ptr(), *this, WTFMove(wrapper), readOnly)
 {
-    // This will end up assigning to m_frontend.
-    SQLTransactionBackend::create(m_database.ptr(), this, WTFMove(wrapper), readOnly);
 }
 
 SQLTransaction::~SQLTransaction()
@@ -82,12 +81,6 @@ bool SQLTransaction::hasSuccessCallback() const
 bool SQLTransaction::hasErrorCallback() const
 {
     return m_errorCallbackWrapper.hasCallback();
-}
-
-void SQLTransaction::setBackend(SQLTransactionBackend* backend)
-{
-    ASSERT(!m_backend);
-    m_backend = backend;
 }
 
 SQLTransaction::StateFunction SQLTransaction::stateFunctionFor(SQLTransactionState state)
@@ -142,7 +135,7 @@ void SQLTransaction::deliverTransactionCallback()
         return deliverTransactionErrorCallback();
     }
 
-    m_backend->requestTransitToState(SQLTransactionState::RunStatements);
+    m_backend.requestTransitToState(SQLTransactionState::RunStatements);
 }
 
 void SQLTransaction::deliverTransactionErrorCallback()
@@ -156,7 +149,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
         // Hence, it's thread safe to fetch the backend transactionError without
         // a lock.
         if (!m_transactionError)
-            m_transactionError = m_backend->transactionError();
+            m_transactionError = m_backend.transactionError();
 
         ASSERT(m_transactionError);
         errorCallback->handleEvent(m_transactionError.get());
@@ -167,7 +160,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
     clearCallbackWrappers();
 
     // Spec 4.3.2.10: Rollback the transaction.
-    m_backend->requestTransitToState(SQLTransactionState::CleanupAfterTransactionErrorCallback);
+    m_backend.requestTransitToState(SQLTransactionState::CleanupAfterTransactionErrorCallback);
 }
 
 void SQLTransaction::deliverStatementCallback()
@@ -176,7 +169,7 @@ void SQLTransaction::deliverStatementCallback()
     // Otherwise, continue to loop through the statement queue
     m_executeSqlAllowed = true;
 
-    SQLStatement* currentStatement = m_backend->currentStatement();
+    SQLStatement* currentStatement = m_backend.currentStatement();
     ASSERT(currentStatement);
 
     bool result = currentStatement->performCallback(this);
@@ -191,21 +184,21 @@ void SQLTransaction::deliverStatementCallback()
 
         // No error callback, so fast-forward to:
         // Transaction Step 11 - Rollback the transaction.
-        m_backend->requestTransitToState(SQLTransactionState::CleanupAfterTransactionErrorCallback);
+        m_backend.requestTransitToState(SQLTransactionState::CleanupAfterTransactionErrorCallback);
         return;
     }
 
-    m_backend->requestTransitToState(SQLTransactionState::RunStatements);
+    m_backend.requestTransitToState(SQLTransactionState::RunStatements);
 }
 
 void SQLTransaction::deliverQuotaIncreaseCallback()
 {
-    ASSERT(m_backend->currentStatement());
+    ASSERT(m_backend.currentStatement());
 
     bool shouldRetryCurrentStatement = m_database->transactionClient()->didExceedQuota(&database());
-    m_backend->setShouldRetryCurrentStatement(shouldRetryCurrentStatement);
+    m_backend.setShouldRetryCurrentStatement(shouldRetryCurrentStatement);
 
-    m_backend->requestTransitToState(SQLTransactionState::RunStatements);
+    m_backend.requestTransitToState(SQLTransactionState::RunStatements);
 }
 
 void SQLTransaction::deliverSuccessCallback()
@@ -219,7 +212,7 @@ void SQLTransaction::deliverSuccessCallback()
 
     // Schedule a "post-success callback" step to return control to the database thread in case there
     // are further transactions queued up for this Database
-    m_backend->requestTransitToState(SQLTransactionState::CleanupAndTerminate);
+    m_backend.requestTransitToState(SQLTransactionState::CleanupAndTerminate);
 }
 
 // This state function is used as a stub function to plug unimplemented states
@@ -250,7 +243,7 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
     auto statement = std::make_unique<SQLStatement>(m_database, sqlStatement, arguments, WTFMove(callback), WTFMove(callbackError), permissions);
-    m_backend->executeSQL(WTFMove(statement));
+    m_backend.executeSQL(WTFMove(statement));
 }
 
 void SQLTransaction::computeNextStateAndCleanupIfNeeded()
@@ -271,7 +264,7 @@ void SQLTransaction::computeNextStateAndCleanupIfNeeded()
     }
 
     clearCallbackWrappers();
-    m_backend->requestTransitToState(SQLTransactionState::CleanupAndTerminate);
+    m_backend.requestTransitToState(SQLTransactionState::CleanupAndTerminate);
 }
 
 void SQLTransaction::clearCallbackWrappers()

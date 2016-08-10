@@ -31,6 +31,7 @@
 
 #include "EventTarget.h"
 #include "SQLCallbackWrapper.h"
+#include "SQLTransactionBackend.h"
 #include "SQLTransactionStateMachine.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -66,14 +67,13 @@ public:
     void performPendingCallback();
 
     Database& database() { return m_database; }
-    SQLTransactionBackend& backend() { return *m_backend; }
+    SQLTransactionBackend& backend() { return m_backend; }
 
     // APIs called from the backend published via SQLTransaction:
     void requestTransitToState(SQLTransactionState);
     bool hasCallback() const;
     bool hasSuccessCallback() const;
     bool hasErrorCallback() const;
-    void setBackend(SQLTransactionBackend*);
 
 private:
     SQLTransaction(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
@@ -94,7 +94,6 @@ private:
     NO_RETURN_DUE_TO_ASSERT void unreachableState();
 
     Ref<Database> m_database;
-    RefPtr<SQLTransactionBackend> m_backend;
     SQLCallbackWrapper<SQLTransactionCallback> m_callbackWrapper;
     SQLCallbackWrapper<VoidCallback> m_successCallbackWrapper;
     SQLCallbackWrapper<SQLTransactionErrorCallback> m_errorCallbackWrapper;
@@ -103,6 +102,8 @@ private:
     RefPtr<SQLError> m_transactionError;
 
     bool m_readOnly;
+
+    SQLTransactionBackend m_backend;
 };
 
 } // namespace WebCore

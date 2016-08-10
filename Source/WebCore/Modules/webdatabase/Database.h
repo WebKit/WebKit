@@ -66,7 +66,7 @@ public:
 
     unsigned long long maximumSize() const;
 
-    void scheduleTransactionStep(SQLTransactionBackend&);
+    void scheduleTransactionStep(SQLTransaction&);
     void inProgressTransactionCompleted();
 
     bool hasPendingTransaction();
@@ -166,7 +166,7 @@ private:
 
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
 
-    Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
+    Deque<RefPtr<SQLTransaction>> m_transactionQueue;
     Lock m_transactionInProgressMutex;
     bool m_transactionInProgress;
     bool m_isTransactionQueueEnabled;
