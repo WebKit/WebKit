@@ -1070,20 +1070,20 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     }
 
     if (mimeType.isEmpty())
-        return ObjectContentFrame; // Go ahead and hope that we can display the content.
+        return ObjectContentType::Frame; // Go ahead and hope that we can display the content.
 
     bool plugInSupportsMIMEType = PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType);
 
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return WebCore::ObjectContentImage;
+        return WebCore::ObjectContentType::Image;
 
     if (plugInSupportsMIMEType)
-        return WebCore::ObjectContentNetscapePlugin;
+        return WebCore::ObjectContentType::PlugIn;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
-        return WebCore::ObjectContentFrame;
+        return WebCore::ObjectContentType::Frame;
 
-    return WebCore::ObjectContentNone;
+    return WebCore::ObjectContentType::None;
 }
 
 void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* pluginView) const

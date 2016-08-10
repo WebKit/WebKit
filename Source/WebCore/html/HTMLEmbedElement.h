@@ -45,7 +45,7 @@ private:
 
     RenderWidget* renderWidgetLoadingPlugin() const final;
 
-    void updateWidget(PluginCreationOption) final;
+    void updateWidget(CreatePlugins) final;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 

@@ -40,7 +40,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     RenderWidget* renderWidgetLoadingPlugin() const final;
-    void updateWidget(PluginCreationOption) final;
+    void updateWidget(CreatePlugins) final;
 
     bool canEmbedJava() const;
 };

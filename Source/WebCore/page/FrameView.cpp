@@ -3126,7 +3126,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
             return;
         }
         if (pluginElement.needsWidgetUpdate())
-            pluginElement.updateWidget(CreateAnyWidgetType);
+            pluginElement.updateWidget(CreatePlugins::Yes);
     } else
         ASSERT_NOT_REACHED();
 

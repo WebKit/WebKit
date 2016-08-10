@@ -95,7 +95,7 @@ RenderWidget* HTMLAppletElement::renderWidgetLoadingPlugin() const
     return renderWidget();
 }
 
-void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
+void HTMLAppletElement::updateWidget(CreatePlugins createPlugins)
 {
     setNeedsWidgetUpdate(false);
     // FIXME: This should ASSERT isFinishedParsingChildren() instead.
@@ -103,13 +103,13 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
         return;
 
 #if PLATFORM(IOS)
-    UNUSED_PARAM(pluginCreationOption);
+    UNUSED_PARAM(createPlugins);
 #else
     // FIXME: It's sadness that we have this special case here.
     //        See http://trac.webkit.org/changeset/25128 and
     //        plugins/netscape-plugin-setwindow-size.html
-    if (pluginCreationOption == CreateOnlyNonNetscapePlugins) {
-        // Ensure updateWidget() is called again during layout to create the Netscape plug-in.
+    if (createPlugins == CreatePlugins::No) {
+        // Ensure updateWidget() is called again during layout to create the plug-in.
         setNeedsWidgetUpdate(true);
         return;
     }

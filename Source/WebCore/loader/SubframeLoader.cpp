@@ -375,9 +375,9 @@ bool SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, boo
     ObjectContentType objectType = m_frame.loader().client().objectContentType(url, mimeType);
     // If an object's content can't be handled and it has no fallback, let
     // it be handled as a plugin to show the broken plugin icon.
-    useFallback = objectType == ObjectContentNone && hasFallback;
+    useFallback = objectType == ObjectContentType::None && hasFallback;
 
-    return objectType == ObjectContentNone || objectType == ObjectContentNetscapePlugin || objectType == ObjectContentOtherPlugin;
+    return objectType == ObjectContentType::None || objectType == ObjectContentType::PlugIn;
 }
 
 Document* SubframeLoader::document() const

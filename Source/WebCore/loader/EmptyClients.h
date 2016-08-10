@@ -390,7 +390,7 @@ public:
     void recreatePlugin(Widget*) override;
     PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&) override;
 
-    ObjectContentType objectContentType(const URL&, const String&) override { return ObjectContentType(); }
+    ObjectContentType objectContentType(const URL&, const String&) override { return ObjectContentType::None; }
     String overrideMediaType() const override { return String(); }
 
     void redirectDataToPlugin(Widget*) override { }

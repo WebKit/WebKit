@@ -162,7 +162,7 @@ bool HTMLPlugInImageElement::isImageType()
 
     if (Frame* frame = document().frame()) {
         URL completedURL = document().completeURL(m_url);
-        return frame->loader().client().objectContentType(completedURL, m_serviceType) == ObjectContentImage;
+        return frame->loader().client().objectContentType(completedURL, m_serviceType) == ObjectContentType::Image;
     }
 
     return Image::supportsType(m_serviceType);
@@ -183,7 +183,7 @@ bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
 
 // We don't use m_url, or m_serviceType as they may not be the final values
 // that <object> uses depending on <param> values.
-bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const String& serviceType)
+bool HTMLPlugInImageElement::wouldLoadAsPlugIn(const String& url, const String& serviceType)
 {
     ASSERT(document().frame());
     URL completedURL;
@@ -191,7 +191,7 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
         completedURL = document().completeURL(url);
 
     FrameLoader& frameLoader = document().frame()->loader();
-    if (frameLoader.client().objectContentType(completedURL, serviceType) == ObjectContentNetscapePlugin)
+    if (frameLoader.client().objectContentType(completedURL, serviceType) == ObjectContentType::PlugIn)
         return true;
     return false;
 }
@@ -295,7 +295,7 @@ void HTMLPlugInImageElement::updateWidgetIfNecessary()
     if (!renderEmbeddedObject() || renderEmbeddedObject()->isPluginUnavailable())
         return;
 
-    updateWidget(CreateOnlyNonNetscapePlugins);
+    updateWidget(CreatePlugins::No);
 }
 
 void HTMLPlugInImageElement::finishParsingChildren()

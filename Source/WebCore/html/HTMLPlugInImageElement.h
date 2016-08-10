@@ -32,9 +32,9 @@ class MouseEvent;
 class RenderStyle;
 class Widget;
 
-enum PluginCreationOption {
-    CreateAnyWidgetType,
-    CreateOnlyNonNetscapePlugins,
+enum class CreatePlugins {
+    No,
+    Yes,
 };
 
 // Base class for HTMLAppletElement, HTMLEmbedElement, and HTMLObjectElement.
@@ -47,7 +47,7 @@ public:
 
     void setDisplayState(DisplayState) override;
 
-    virtual void updateWidget(PluginCreationOption) = 0;
+    virtual void updateWidget(CreatePlugins) = 0;
 
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
@@ -100,7 +100,7 @@ protected:
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
 
     bool allowedToLoadFrameURL(const String& url);
-    bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);
+    bool wouldLoadAsPlugIn(const String& url, const String& serviceType);
 
     String m_serviceType;
     String m_url;

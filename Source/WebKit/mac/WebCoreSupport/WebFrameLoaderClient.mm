@@ -1662,51 +1662,33 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
             type = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
             if (type.isEmpty()) {
                 // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
-                if (WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForExtension:extension]) {
-                    if ([package isKindOfClass:[WebPluginPackage class]]) 
-                        return ObjectContentOtherPlugin;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-                    else {
-                        ASSERT([package isKindOfClass:[WebNetscapePluginPackage class]]);
-                        return ObjectContentNetscapePlugin;
-                    }
-#endif
-                }
+                if ([getWebView(m_webFrame.get()) _pluginForExtension:extension])
+                    return ObjectContentType::PlugIn;
             }
         }
     }
 
     if (type.isEmpty())
-        return ObjectContentFrame; // Go ahead and hope that we can display the content.
+        return ObjectContentType::Frame; // Go ahead and hope that we can display the content.
 
-    WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForMIMEType:type];
-    ObjectContentType plugInType = ObjectContentNone;
-    if (package) {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        if ([package isKindOfClass:[WebNetscapePluginPackage class]])
-            plugInType = ObjectContentNetscapePlugin;
-        else
-#endif
-        {
-            ASSERT([package isKindOfClass:[WebPluginPackage class]]);
-            plugInType = ObjectContentOtherPlugin;
-        }
-    }
-    
+    ObjectContentType plugInType = ObjectContentType::None;
+    if ([getWebView(m_webFrame.get()) _pluginForMIMEType:type])
+        plugInType = ObjectContentType::PlugIn;
+
     if (MIMETypeRegistry::isSupportedImageMIMEType(type))
-        return ObjectContentImage;
+        return ObjectContentType::Image;
 
-    if (plugInType != ObjectContentNone)
+    if (plugInType != ObjectContentType::None)
         return plugInType;
 
     if ([m_webFrame->_private->webFrameView _viewClassForMIMEType:type])
-        return ObjectContentFrame;
+        return ObjectContentType::Frame;
     
-    return ObjectContentNone;
+    return ObjectContentType::None;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return ObjectContentNone;
+    return ObjectContentType::None;
 }
 
 static NSMutableArray* kit(const Vector<String>& vector)

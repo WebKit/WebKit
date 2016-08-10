@@ -81,12 +81,11 @@ enum ClearProvisionalItemPolicy {
     ShouldNotClearProvisionalItem
 };
 
-enum ObjectContentType {
-    ObjectContentNone,
-    ObjectContentImage,
-    ObjectContentFrame,
-    ObjectContentNetscapePlugin,
-    ObjectContentOtherPlugin
+enum class ObjectContentType {
+    None,
+    Image,
+    Frame,
+    PlugIn,
 };
 
 enum UnloadEventPolicy {

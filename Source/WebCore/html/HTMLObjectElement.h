@@ -77,7 +77,7 @@ private:
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
-    void updateWidget(PluginCreationOption) final;
+    void updateWidget(CreatePlugins) final;
     void updateDocNamedItem();
 
     // FIXME: This function should not deal with url or serviceType

@@ -1,3 +1,13 @@
+2016-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Instantiate WebKit plug-ins at layout time, instead of at style resolution time
+        https://bugs.webkit.org/show_bug.cgi?id=160715
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::objectContentType):
+
 2016-08-09  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Crash in MiniBrowser.

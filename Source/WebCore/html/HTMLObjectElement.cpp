@@ -284,7 +284,7 @@ bool HTMLObjectElement::hasValidClassId()
 
 // FIXME: This should be unified with HTMLEmbedElement::updateWidget and
 // moved down into HTMLPluginImageElement.cpp
-void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
+void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 {
     ASSERT(!renderEmbeddedObject()->isPluginUnavailable());
     ASSERT(needsWidgetUpdate());
@@ -314,7 +314,7 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     // FIXME: It's sadness that we have this special case here.
     //        See http://trac.webkit.org/changeset/25128 and
     //        plugins/netscape-plugin-setwindow-size.html
-    if (pluginCreationOption == CreateOnlyNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType)) {
+    if (createPlugins == CreatePlugins::No && wouldLoadAsPlugIn(url, serviceType)) {
         // Ensure updateWidget() is called again during layout to create the Netscape plug-in.
         setNeedsWidgetUpdate(true);
         return;
