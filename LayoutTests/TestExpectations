@@ -132,8 +132,6 @@ webkit.org/b/148036 http/tests/inspector/replay/ [ Skip ]
 
 webkit.org/b/129639 inspector/dom/dom-search-crash.html [ Skip ]
 
-webkit.org/b/160738 inspector/model/remote-object-get-properties.html [ Skip ]
-
 webkit.org/b/128736 inspector/debugger/setBreakpoint-dfg.html [ Failure Pass ]
 webkit.org/b/134982 inspector/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure Pass ]
 
