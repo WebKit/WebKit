@@ -108,9 +108,9 @@ public:
 
     ImpureMap(ImpureMap&& other)
     {
-        m_heapMap.swap(other.m_heapMap);
         m_abstractHeapStackMap.swap(other.m_abstractHeapStackMap);
         m_fallbackStackMap.swap(other.m_fallbackStackMap);
+        m_heapMap.swap(other.m_heapMap);
 #if !defined(NDEBUG)
         m_debugImpureData.swap(other.m_debugImpureData);
 #endif
@@ -175,9 +175,9 @@ public:
 
     void clear()
     {
-        m_heapMap.clear();
         m_abstractHeapStackMap.clear();
         m_fallbackStackMap.clear();
+        m_heapMap.clear();
 #if !defined(NDEBUG)
         m_debugImpureData.clear();
 #endif
@@ -257,10 +257,6 @@ private:
         });
     }
 
-    Map m_worldMap;
-    Map m_heapMap;
-    Map m_sideStateMap;
-
     // The majority of Impure Stack Slotsare unique per value.
     // This is very useful for fast clobber(), we can just remove the slot addressed by AbstractHeap
     // in O(1).
@@ -274,6 +270,8 @@ private:
     // Obviously, TOP always goes into m_fallbackStackMap since it does not have a unique value.
     HashMap<int32_t, std::unique_ptr<ImpureDataSlot>, DefaultHash<int32_t>::Hash, WTF::SignedWithZeroKeyHashTraits<int32_t>> m_abstractHeapStackMap;
     Map m_fallbackStackMap;
+
+    Map m_heapMap;
 
 #if !defined(NDEBUG)
     HashMap<HeapLocation, LazyNode> m_debugImpureData;

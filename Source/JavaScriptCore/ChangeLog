@@ -1,5 +1,19 @@
 2016-08-10  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Remove some useless code I left when rewriting CSE's large maps
+        https://bugs.webkit.org/show_bug.cgi?id=160720
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGCSEPhase.cpp:
+        The maps m_worldMap && m_sideStateMap are useless. They come from the previous
+        iteration that had weaker constraints.
+
+        Also move m_heapMap after m_fallbackStackMap since that is the order
+        in which they are used in the algorithm.
+
+2016-08-10  Benjamin Poulain  <bpoulain@apple.com>
+
         Remove AbstractInterpreter::executeEdges(unsigned), it is no longer used anywhere
         https://bugs.webkit.org/show_bug.cgi?id=160708
 
