@@ -1,3 +1,13 @@
+2016-08-10  Mark Lam  <mark.lam@apple.com>
+
+        DFG's flushForTerminal() needs to add PhantomLocals for bytecode live locals.
+        https://bugs.webkit.org/show_bug.cgi?id=160755
+        <rdar://problem/27488507>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/need-bytecode-liveness-for-unreachable-blocks-at-dfg-time.js: Added.
+
 2016-08-09  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES2016] Implement Object.values

@@ -1,3 +1,24 @@
+2016-08-10  Mark Lam  <mark.lam@apple.com>
+
+        DFG's flushForTerminal() needs to add PhantomLocals for bytecode live locals.
+        https://bugs.webkit.org/show_bug.cgi?id=160755
+        <rdar://problem/27488507>
+
+        Reviewed by Filip Pizlo.
+
+        If the DFG sees that an inlined function will result in an OSR exit every time,
+        it will treat all downstream blocks as dead.  However, it still needs to keep
+        locals that are alive in the bytecode alive for the compiled function so that
+        those locals are properly written to the stack by the OSR exit ramp.
+
+        The existing code neglected to do this.  This patch remedies this issue.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushDirect):
+        (JSC::DFG::ByteCodeParser::addFlushOrPhantomLocal):
+        (JSC::DFG::ByteCodeParser::phantomLocalDirect):
+        (JSC::DFG::ByteCodeParser::flushForTerminal):
+
 2016-08-09  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES2016] Implement Object.values
