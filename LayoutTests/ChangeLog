@@ -1,3 +1,12 @@
+2016-08-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/fetch/fetch-in-worker-crash.html as a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=160510
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2016-08-10  Brent Fulgham  <bfulgham@apple.com>
 
         Add JS array sort test case

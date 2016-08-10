@@ -338,7 +338,7 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ S
 # Failing assertion with dynamic message
 imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
 
-webkit.org/b/160510 http/tests/fetch/fetch-in-worker-crash.html [ Failure Pass ]
+webkit.org/b/160510 http/tests/fetch/fetch-in-worker-crash.html [ Failure Crash Pass ]
 imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Skip ]
 [ Release ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-worker.html [ Failure Pass ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-worker.html [ Skip ]
