@@ -1,3 +1,14 @@
+2016-08-10  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: rebase inspector/model/remote-object-get-properties.html and unskip
+        https://bugs.webkit.org/show_bug.cgi?id=160738
+        <rdar://problem/27788116>
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestExpectations:
+        * inspector/model/remote-object-get-properties-expected.txt:
+
 2016-08-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/fetch/fetch-in-worker-crash.html as a flaky crash.

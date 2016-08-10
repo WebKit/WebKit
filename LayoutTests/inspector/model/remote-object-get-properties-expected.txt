@@ -238,20 +238,20 @@ OWN PROPERTIES:
     boundArgs
 
 DISPLAYABLE PROPERTIES:
-    name
     length
     arguments
     caller
+    name
     __proto__
     targetFunction
     boundThis
     boundArgs
 
 ALL PROPERTIES:
-    name
     length
     arguments
     caller
+    name
     toString
     apply
     call
