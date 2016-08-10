@@ -9,6 +9,8 @@
       (children 1
         (GraphicsLayer
           (position 108.00 108.00)
+          (anchor 0.00 0.00)
+          (bounds 1.00 1.00)
           (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [-0.25 -0.25 1.00 -0.01] [0.00 0.00 0.00 1.00])
           (children 1
             (GraphicsLayer
@@ -67,6 +69,8 @@ After:
       (children 5
         (GraphicsLayer
           (position 108.00 108.00)
+          (anchor 0.00 0.00)
+          (bounds 1.00 1.00)
           (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [-0.25 -0.25 1.00 -0.01] [0.00 0.00 0.00 1.00])
           (children 1
             (GraphicsLayer
