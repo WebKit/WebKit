@@ -1,3 +1,16 @@
+2016-08-09  Chris Dumez  <cdumez@apple.com>
+
+        CharacterData.data setter optimization is not spec-compliant and is observable
+        https://bugs.webkit.org/show_bug.cgi?id=160712
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test coverage to make sure that DOM Mutation observers get notified
+        when CharacterData.data is set to the same data.
+
+        * fast/dom/Text/setData-no-op-mutation-expected.txt: Added.
+        * fast/dom/Text/setData-no-op-mutation.html: Added.
+
 2016-08-09  Ada Chan  <adachan@apple.com>
 
         [macOS Sierra] Fix flaky test: media/controls/picture-in-picture.html

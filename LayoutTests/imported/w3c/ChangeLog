@@ -1,5 +1,16 @@
 2016-08-09  Chris Dumez  <cdumez@apple.com>
 
+        CharacterData.data setter optimization is not spec-compliant and is observable
+        https://bugs.webkit.org/show_bug.cgi?id=160712
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/ranges/Range-mutations-expected.txt:
+
+2016-08-09  Chris Dumez  <cdumez@apple.com>
+
         Calling splitText() on a parent-less Text node should update associated ranges
         https://bugs.webkit.org/show_bug.cgi?id=160710
 
