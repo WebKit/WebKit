@@ -2397,6 +2397,7 @@
 		5B30695E18B3D3450099D5E8 /* WebGLDrawBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B30695B18B3D3450099D5E8 /* WebGLDrawBuffers.h */; };
 		5B7A208D2E12979B4AE19DE6 /* RenderMathMLSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBFCB0EBFF5CD77EBEB35395 /* RenderMathMLSpace.cpp */; };
 		5B7A208D2E12979B4AE19E6F /* RenderMathMLPadded.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBFCB0EBFF5CD77EBEB3595F /* RenderMathMLPadded.cpp */; };
+		5C3C856D1D5A7ADE0088B9EC /* NetworkStorageSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C856C1D5A7AD30088B9EC /* NetworkStorageSession.cpp */; };
 		5C4304B0191AC908000E2BC0 /* EXTShaderTextureLOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4304AD191AC908000E2BC0 /* EXTShaderTextureLOD.cpp */; };
 		5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */; };
 		5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */; };
@@ -9754,6 +9755,7 @@
 		5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFABytecodeCompiler.h; sourceTree = "<group>"; };
 		5C3930601AA0F6A90029C816 /* DFABytecodeInterpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFABytecodeInterpreter.cpp; sourceTree = "<group>"; };
 		5C3930611AA0F6A90029C816 /* DFABytecodeInterpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFABytecodeInterpreter.h; sourceTree = "<group>"; };
+		5C3C856C1D5A7AD30088B9EC /* NetworkStorageSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStorageSession.cpp; sourceTree = "<group>"; };
 		5C4304AD191AC908000E2BC0 /* EXTShaderTextureLOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTShaderTextureLOD.cpp; sourceTree = "<group>"; };
 		5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTShaderTextureLOD.h; sourceTree = "<group>"; };
 		5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTShaderTextureLOD.idl; sourceTree = "<group>"; };
@@ -17871,6 +17873,7 @@
 		656B84D70AEA1CE900A095B4 /* network */ = {
 			isa = PBXGroup;
 			children = (
+				5C3C856C1D5A7AD30088B9EC /* NetworkStorageSession.cpp */,
 				B2F34FE70E82F81700F627CD /* cf */,
 				7E7DE1FE195CEF2D0035363B /* cocoa */,
 				4497D58C0EBA854F00A10552 /* ios */,
@@ -28898,6 +28901,7 @@
 				514C766D0CE923A1007EF3CD /* CredentialBase.cpp in Sources */,
 				3792917D1987678F00F4B661 /* CredentialCocoa.mm in Sources */,
 				51A052341058774F00CC9E95 /* CredentialStorage.cpp in Sources */,
+				5C3C856D1D5A7ADE0088B9EC /* NetworkStorageSession.cpp in Sources */,
 				7EE6846512D26E3800E79415 /* CredentialStorageCFNet.cpp in Sources */,
 				E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */,
 				2D481F00146B5C4C00AA7834 /* CrossfadeGeneratedImage.cpp in Sources */,

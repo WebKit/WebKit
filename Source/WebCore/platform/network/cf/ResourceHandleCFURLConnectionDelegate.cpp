@@ -28,6 +28,7 @@
 
 #if USE(CFNETWORK)
 
+#include "CFNetworkSPI.h"
 #include "FormDataStreamCFNet.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"

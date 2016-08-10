@@ -31,6 +31,7 @@
 #import "NetworkSession.h"
 #import "SessionTracker.h"
 #import "WebErrors.h"
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceError.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/MainThread.h>
@@ -57,8 +58,7 @@ bool RemoteNetworkingContext::localFileContentSniffingEnabled() const
 
 NetworkStorageSession& RemoteNetworkingContext::storageSession() const
 {
-    NetworkStorageSession* session = SessionTracker::storageSession(m_sessionID);
-    if (session)
+    if (auto session = NetworkStorageSession::storageSession(m_sessionID))
         return *session;
     // Some requests may still be coming shortly after NetworkProcess was told to destroy its session.
     LOG_ERROR("Invalid session ID. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
@@ -84,7 +84,7 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
 {
     ASSERT(sessionID.isEphemeral());
 
-    if (SessionTracker::storageSession(sessionID))
+    if (NetworkStorageSession::storageSession(sessionID))
         return;
 
     String base;
@@ -93,13 +93,11 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
     else
         base = SessionTracker::getIdentifierBase();
 
-    auto networkStorageSession = NetworkStorageSession::createPrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
+    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
 
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, NetworkProcess::singleton().supplement<CustomProtocolManager>(), WTFMove(networkStorageSession));
+    auto networkSession = NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, NetworkProcess::singleton().supplement<CustomProtocolManager>());
     SessionTracker::setSession(sessionID, WTFMove(networkSession));
-#else
-    SessionTracker::setSession(sessionID, WTFMove(networkStorageSession));
 #endif
 }
 

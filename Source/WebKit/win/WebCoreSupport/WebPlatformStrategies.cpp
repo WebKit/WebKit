@@ -29,6 +29,7 @@
 #include "WebFrameNetworkingContext.h"
 #include "WebResourceLoadScheduler.h"
 #include <WebCore/BlobRegistryImpl.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PlatformCookieJar.h>
@@ -60,7 +61,7 @@ LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
 
 PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
 {
-    return 0;
+    return nullptr;
 }
 
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()

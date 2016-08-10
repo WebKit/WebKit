@@ -37,6 +37,7 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderNames.h"
 #include "Logging.h"
+#include "NetworkStorageSession.h"
 #include "NetworkingContext.h"
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"

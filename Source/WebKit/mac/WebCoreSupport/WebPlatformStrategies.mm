@@ -31,6 +31,7 @@
 #import <WebCore/BlobRegistryImpl.h>
 #import <WebCore/Color.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformCookieJar.h>

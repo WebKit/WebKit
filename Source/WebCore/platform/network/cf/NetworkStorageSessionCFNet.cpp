@@ -72,8 +72,10 @@ NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
     return *defaultNetworkStorageSession();
 }
 
-std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(SessionID sessionID, const String& identifierBase)
+void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, const String& identifierBase)
 {
+    if (globalSessionMap().contains(sessionID))
+        return;
     RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();
 
 #if PLATFORM(COCOA)
@@ -82,7 +84,7 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
     auto session = std::make_unique<NetworkStorageSession>(sessionID, adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession())));
 #endif
 
-    return session;
+    globalSessionMap().add(sessionID, WTFMove(session));
 }
 
 RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const

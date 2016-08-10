@@ -41,12 +41,6 @@
 
 using namespace WebCore;
 
-static std::unique_ptr<NetworkStorageSession>& privateSession()
-{
-    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
-    return session;
-}
-
 static String& identifierBase()
 {
     static NeverDestroyed<String> base;
@@ -59,8 +53,8 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(WebKitCookie
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
         CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 
-    if (privateSession())
-        CFHTTPCookieStorageSetCookieAcceptPolicy(privateSession()->cookieStorage().get(), policy);
+    if (auto privateSession = NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID()))
+        CFHTTPCookieStorageSetCookieAcceptPolicy(privateSession->cookieStorage().get(), policy);
 }
 #endif
 
@@ -76,8 +70,8 @@ NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 #if USE(CFNETWORK)
     ASSERT(isMainThread());
 
-    if (privateSession())
-        return *privateSession();
+    if (auto privateSession = NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID()))
+        return *privateSession;
 
     String base;
     if (identifierBase().isNull()) {
@@ -87,17 +81,17 @@ NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
     } else
         base = identifierBase();
 
-    privateSession() = NetworkStorageSession::createPrivateBrowsingSession(SessionID::legacyPrivateSessionID(), base);
+    NetworkStorageSession::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID(), base);
 
 #endif
-    return *privateSession();
+    return *NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID());
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
 {
     ASSERT(isMainThread());
 
-    privateSession() = nullptr;
+    NetworkStorageSession::destroySession(SessionID::legacyPrivateSessionID());
 }
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
@@ -110,7 +104,7 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
     ASSERT(isMainThread());
 
     if (frame() && frame()->page()->usesEphemeralSession())
-        return *privateSession();
+        return *NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID());
 
     return NetworkStorageSession::defaultStorageSession();
 }

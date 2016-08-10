@@ -158,6 +158,7 @@
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/Notification.h>
 #import <WebCore/NotificationController.h>

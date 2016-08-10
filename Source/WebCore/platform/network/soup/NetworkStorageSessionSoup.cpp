@@ -60,10 +60,12 @@ NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
     return *defaultSession();
 }
 
-std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(SessionID sessionID, const String&)
+void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, const String&)
 {
     auto session = std::make_unique<NetworkStorageSession>(sessionID, SoupNetworkSession::createPrivateBrowsingSession());
-    return session;
+    ASSERT(sessionID != SessionID::defaultSessionID());
+    ASSERT(!globalSessionMap().contains(sessionID));
+    globalSessionMap().add(sessionID, WTFMove(session));
 }
 
 void NetworkStorageSession::switchToNewTestingSession()

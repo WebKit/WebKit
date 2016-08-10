@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkStorageSession_h
-#define NetworkStorageSession_h
+#pragma once
 
 #include "CredentialStorage.h"
 #include "SessionID.h"
@@ -45,7 +44,10 @@ class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static NetworkStorageSession& defaultStorageSession();
-    WEBCORE_EXPORT static std::unique_ptr<NetworkStorageSession> createPrivateBrowsingSession(SessionID, const String& identifierBase = String());
+    WEBCORE_EXPORT static NetworkStorageSession* storageSession(SessionID);
+    WEBCORE_EXPORT static void ensurePrivateBrowsingSession(SessionID, const String& identifierBase = String());
+    WEBCORE_EXPORT static void destroySession(SessionID);
+    WEBCORE_EXPORT static void forEach(std::function<void(const WebCore::NetworkStorageSession&)>);
 
     WEBCORE_EXPORT static void switchToNewTestingSession();
 
@@ -72,6 +74,7 @@ public:
 #endif
 
 private:
+    static HashMap<SessionID, std::unique_ptr<NetworkStorageSession>>& globalSessionMap();
     SessionID m_sessionID;
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
@@ -89,5 +92,3 @@ WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&);
 String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource);
 
 }
-
-#endif // NetworkStorageSession_h

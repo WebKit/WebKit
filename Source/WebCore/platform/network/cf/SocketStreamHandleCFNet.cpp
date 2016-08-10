@@ -35,6 +35,7 @@
 #include "Credential.h"
 #include "CredentialStorage.h"
 #include "Logging.h"
+#include "NetworkStorageSession.h"
 #include "NetworkingContext.h"
 #include "ProtectionSpace.h"
 #include "Settings.h"

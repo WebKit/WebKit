@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "NetworkStorageSession.h"
 #include "NetworkingContext.h"
 #include "PlatformCookieJar.h"
 #include "PlatformStrategies.h"

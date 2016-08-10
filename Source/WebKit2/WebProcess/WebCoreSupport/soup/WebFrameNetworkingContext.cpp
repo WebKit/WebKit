@@ -45,10 +45,10 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
 {
     ASSERT(isMainThread());
 
-    if (SessionTracker::storageSession(sessionID))
+    if (NetworkStorageSession::storageSession(sessionID))
         return;
 
-    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(sessionID, String::number(sessionID.sessionID())));
+    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
 }
 
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)
@@ -69,10 +69,7 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAc
     SoupCookieJar* cookieJar = WebCore::soupCookieJar();
     soup_cookie_jar_set_accept_policy(cookieJar, soupPolicy);
 
-    SoupNetworkSession& soupSession = NetworkStorageSession::defaultStorageSession().soupNetworkSession();
-    soup_cookie_jar_set_accept_policy(soupSession.cookieJar(), soupPolicy);
-
-    SessionTracker::forEachNetworkStorageSession([&] (const NetworkStorageSession& session) {
+    NetworkStorageSession::forEach([&] (const NetworkStorageSession& session) {
         soup_cookie_jar_set_accept_policy(session.soupNetworkSession().cookieJar(), soupPolicy);
     });
 }
@@ -85,7 +82,7 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     if (frame() && frame()->page()->usesEphemeralSession())
-        return *SessionTracker::storageSession(SessionID::legacyPrivateSessionID());
+        return *NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID());
 
     return NetworkStorageSession::defaultStorageSession();
 }

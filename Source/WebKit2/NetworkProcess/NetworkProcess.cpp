@@ -52,6 +52,7 @@
 #include <WebCore/DNS.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/LogInitialization.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
@@ -380,7 +381,7 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteData
     }));
 
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
-        if (auto* networkStorageSession = SessionTracker::storageSession(sessionID))
+        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
             getHostnamesWithCookies(*networkStorageSession, callbackAggregator->m_websiteData.hostNamesWithCookies);
     }
 
@@ -395,13 +396,13 @@ void NetworkProcess::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
 {
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = SessionTracker::storageSession(sessionID))
+        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
             clearHSTSCache(*networkStorageSession, modifiedSince);
     }
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
-        if (auto* networkStorageSession = SessionTracker::storageSession(sessionID))
+        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
             deleteAllCookiesModifiedSince(*networkStorageSession, modifiedSince);
     }
 
@@ -454,7 +455,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Fun
 void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
 {
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
-        if (auto* networkStorageSession = SessionTracker::storageSession(sessionID))
+        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
             deleteCookiesForHostnames(*networkStorageSession, cookieHostNames);
     }
 

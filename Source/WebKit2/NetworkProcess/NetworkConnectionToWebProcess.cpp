@@ -38,7 +38,7 @@
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/NotImplemented.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PingHandle.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -179,8 +179,7 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 static NetworkStorageSession& storageSession(SessionID sessionID)
 {
     if (sessionID.isEphemeral()) {
-        NetworkStorageSession* privateStorageSession = SessionTracker::storageSession(sessionID);
-        if (privateStorageSession)
+        if (auto* privateStorageSession = NetworkStorageSession::storageSession(sessionID))
             return *privateStorageSession;
         // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.
         // FIXME: Find a way to track private browsing sessions more rigorously.
