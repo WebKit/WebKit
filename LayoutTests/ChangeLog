@@ -1,3 +1,11 @@
+2016-08-10  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Skip a JSC test that's timing out and an inspector test that needs to be rebased after r204321
+
+        * TestExpectations:
+        * js/regress/script-tests/bound-function-construction-performance.js:
+        (makeBoundFunc):
+
 2016-08-10  Chris Dumez  <cdumez@apple.com>
 
         It should be possible to re-initialize a MutationEvent after it's been dispatched

@@ -1,3 +1,5 @@
+//@ skip
+
 function makeBoundFunc(f) {
     return f.bind(f);
 }
