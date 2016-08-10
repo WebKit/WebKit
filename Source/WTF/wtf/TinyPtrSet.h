@@ -459,8 +459,10 @@ private:
     
     ALWAYS_INLINE void deleteListIfNecessary()
     {
-        if (!isThin() && m_pointer != reservedValue)
+        if (!isThin()) {
+            ASSERT(m_pointer != reservedValue);
             OutOfLineList::destroy(list());
+        }
     }
     
     bool isThin() const { return !(m_pointer & fatFlag); }

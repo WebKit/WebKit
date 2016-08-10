@@ -1,3 +1,23 @@
+2016-08-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] TinyPtrSet::deleteListIfNecessary() no longer needs to test for reservedValue
+        https://bugs.webkit.org/show_bug.cgi?id=160721
+
+        Reviewed by Sam Weinig.
+
+        Previously, TinyPtrSet was using a ThinFlag if there was no OutOfLineList.
+        A side effect is that isThin() was false for reservedValue. When deleting
+        the list, we had to consider both cases: isThin() and reservedValue.
+
+        In r204065, I changed the flag to a FatFlag to ensure TinyPtrSet can be initialized
+        with bzero().
+        This changes the value of isThin() of reservedValue to true since reservedValue
+        does not have the FatFlag bit set.
+        This patch removes the useless condition from deleteListIfNecessary().
+
+        * wtf/TinyPtrSet.h:
+        (WTF::TinyPtrSet::deleteListIfNecessary):
+
 2016-08-09  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.
