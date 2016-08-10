@@ -1693,8 +1693,8 @@ void Range::textNodeSplit(Text* oldNode)
     ASSERT(oldNode);
     ASSERT(&oldNode->document() == &ownerDocument());
     ASSERT(oldNode->isTextNode());
-    ASSERT(oldNode->nextSibling());
-    ASSERT(oldNode->nextSibling()->isTextNode());
+    ASSERT(!oldNode->parentNode() || oldNode->nextSibling());
+    ASSERT(!oldNode->parentNode() || oldNode->nextSibling()->isTextNode());
     boundaryTextNodesSplit(m_start, oldNode);
     boundaryTextNodesSplit(m_end, oldNode);
 }
