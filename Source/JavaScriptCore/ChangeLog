@@ -1,5 +1,36 @@
 2016-08-10  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Speed up SparseCollection & related maps
+        https://bugs.webkit.org/show_bug.cgi?id=160733
+
+        Reviewed by Saam Barati.
+
+        On MBA, Graph::addNode() shows up in profiles due to SparseCollection::add().
+        This is unfortunate.
+
+        The first improvement is to build the new unique_ptr in the empty slot
+        instead of moving a new value into it.
+
+        Previously, the code would load the previous value, test if it is null
+        then invoke the destructor and finally fastFree(). The initial test
+        obviously fails so that's a whole bunch of code that is never executed.
+
+        With the new code, we just have a store.
+
+        I also removed the bounds checking on our maps based on node index.
+        Those bounds checks are never eliminated by clang because the index
+        is always loaded from memory instead of being computed.
+        There are unfortunately too many nodes processed and the bounds checks
+        get costly.
+
+        * b3/B3SparseCollection.h:
+        (JSC::B3::SparseCollection::add):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::abstractValuesCache):
+        * dfg/DFGInPlaceAbstractState.h:
+
+2016-08-10  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Remove some useless code I left when rewriting CSE's large maps
         https://bugs.webkit.org/show_bug.cgi?id=160720
 

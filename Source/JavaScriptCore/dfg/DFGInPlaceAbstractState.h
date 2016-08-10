@@ -133,7 +133,7 @@ private:
     
     Graph& m_graph;
 
-    Vector<AbstractValue>& m_abstractValues;
+    Vector<AbstractValue, 0, UnsafeVectorOverflow>& m_abstractValues;
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
     
