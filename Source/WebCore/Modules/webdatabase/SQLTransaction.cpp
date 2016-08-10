@@ -34,6 +34,7 @@
 #include "DatabaseContext.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
+#include "OriginLock.h"
 #include "SQLError.h"
 #include "SQLStatement.h"
 #include "SQLStatementCallback.h"
@@ -42,6 +43,7 @@
 #include "SQLTransactionCallback.h"
 #include "SQLTransactionClient.h" // FIXME: Should be used in the backend only.
 #include "SQLTransactionErrorCallback.h"
+#include "SQLiteTransaction.h"
 #include "VoidCallback.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -58,29 +60,19 @@ SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCa
     , m_callbackWrapper(WTFMove(callback), m_database->scriptExecutionContext())
     , m_successCallbackWrapper(WTFMove(successCallback), m_database->scriptExecutionContext())
     , m_errorCallbackWrapper(WTFMove(errorCallback), m_database->scriptExecutionContext())
+    , m_wrapper(WTFMove(wrapper))
     , m_executeSqlAllowed(false)
+    , m_shouldRetryCurrentStatement(false)
+    , m_modifiedDatabase(false)
+    , m_lockAcquired(false)
     , m_readOnly(readOnly)
-    , m_backend(m_database.ptr(), *this, WTFMove(wrapper), readOnly)
+    , m_hasVersionMismatch(false)
+    , m_backend(*this)
 {
 }
 
 SQLTransaction::~SQLTransaction()
 {
-}
-
-bool SQLTransaction::hasCallback() const
-{
-    return m_callbackWrapper.hasCallback();
-}
-
-bool SQLTransaction::hasSuccessCallback() const
-{
-    return m_successCallbackWrapper.hasCallback();
-}
-
-bool SQLTransaction::hasErrorCallback() const
-{
-    return m_errorCallbackWrapper.hasCallback();
 }
 
 SQLTransaction::StateFunction SQLTransaction::stateFunctionFor(SQLTransactionState state)
@@ -140,22 +132,13 @@ void SQLTransaction::deliverTransactionCallback()
 
 void SQLTransaction::deliverTransactionErrorCallback()
 {
+    ASSERT(m_transactionError);
+
     // Spec 4.3.2.10: If exists, invoke error callback with the last
     // error to have occurred in this transaction.
     RefPtr<SQLTransactionErrorCallback> errorCallback = m_errorCallbackWrapper.unwrap();
-    if (errorCallback) {
-        // If we get here with an empty m_transactionError, then the backend
-        // must be waiting in the idle state waiting for this state to finish.
-        // Hence, it's thread safe to fetch the backend transactionError without
-        // a lock.
-        if (!m_transactionError)
-            m_transactionError = m_backend.transactionError();
-
-        ASSERT(m_transactionError);
+    if (errorCallback)
         errorCallback->handleEvent(m_transactionError.get());
-
-        m_transactionError = nullptr;
-    }
 
     clearCallbackWrappers();
 
@@ -165,15 +148,12 @@ void SQLTransaction::deliverTransactionErrorCallback()
 
 void SQLTransaction::deliverStatementCallback()
 {
+    ASSERT(m_currentStatement);
+
     // Spec 4.3.2.6.6 and 4.3.2.6.3: If the statement callback went wrong, jump to the transaction error callback
     // Otherwise, continue to loop through the statement queue
     m_executeSqlAllowed = true;
-
-    SQLStatement* currentStatement = m_backend.currentStatement();
-    ASSERT(currentStatement);
-
-    bool result = currentStatement->performCallback(this);
-
+    bool result = m_currentStatement->performCallback(this);
     m_executeSqlAllowed = false;
 
     if (result) {
@@ -193,10 +173,10 @@ void SQLTransaction::deliverStatementCallback()
 
 void SQLTransaction::deliverQuotaIncreaseCallback()
 {
-    ASSERT(m_backend.currentStatement());
+    ASSERT(m_currentStatement);
+    ASSERT(!m_shouldRetryCurrentStatement);
 
-    bool shouldRetryCurrentStatement = m_database->transactionClient()->didExceedQuota(&database());
-    m_backend.setShouldRetryCurrentStatement(shouldRetryCurrentStatement);
+    m_shouldRetryCurrentStatement = m_database->transactionClient()->didExceedQuota(&database());
 
     m_backend.requestTransitToState(SQLTransactionState::RunStatements);
 }

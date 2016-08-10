@@ -39,10 +39,10 @@ class ChangeVersionWrapper : public SQLTransactionWrapper {
 public:
     static Ref<ChangeVersionWrapper> create(const String& oldVersion, const String& newVersion) { return adoptRef(*new ChangeVersionWrapper(oldVersion, newVersion)); }
 
-    virtual bool performPreflight(SQLTransactionBackend*);
-    virtual bool performPostflight(SQLTransactionBackend*);
-    virtual SQLError* sqlError() const { return m_sqlError.get(); }
-    virtual void handleCommitFailedAfterPostflight(SQLTransactionBackend*);
+    bool performPreflight(SQLTransaction&) override;
+    bool performPostflight(SQLTransaction&) override;
+    SQLError* sqlError() const override { return m_sqlError.get(); };
+    void handleCommitFailedAfterPostflight(SQLTransaction&) override;
 
 private:
     ChangeVersionWrapper(const String& oldVersion, const String& newVersion);

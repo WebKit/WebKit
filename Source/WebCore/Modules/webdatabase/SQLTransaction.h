@@ -51,10 +51,10 @@ class VoidCallback;
 class SQLTransactionWrapper : public ThreadSafeRefCounted<SQLTransactionWrapper> {
 public:
     virtual ~SQLTransactionWrapper() { }
-    virtual bool performPreflight(SQLTransactionBackend*) = 0;
-    virtual bool performPostflight(SQLTransactionBackend*) = 0;
+    virtual bool performPreflight(SQLTransaction&) = 0;
+    virtual bool performPostflight(SQLTransaction&) = 0;
     virtual SQLError* sqlError() const = 0;
-    virtual void handleCommitFailedAfterPostflight(SQLTransactionBackend*) = 0;
+    virtual void handleCommitFailedAfterPostflight(SQLTransaction&) = 0;
 };
 
 class SQLTransaction : public ThreadSafeRefCounted<SQLTransaction>, public SQLTransactionStateMachine<SQLTransaction> {
@@ -67,15 +67,15 @@ public:
     void performPendingCallback();
 
     Database& database() { return m_database; }
+    bool isReadOnly() const { return m_readOnly; }
     SQLTransactionBackend& backend() { return m_backend; }
 
     // APIs called from the backend published via SQLTransaction:
     void requestTransitToState(SQLTransactionState);
-    bool hasCallback() const;
-    bool hasSuccessCallback() const;
-    bool hasErrorCallback() const;
 
 private:
+    friend class SQLTransactionBackend;
+
     SQLTransaction(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
     void clearCallbackWrappers();
@@ -98,10 +98,24 @@ private:
     SQLCallbackWrapper<VoidCallback> m_successCallbackWrapper;
     SQLCallbackWrapper<SQLTransactionErrorCallback> m_errorCallbackWrapper;
 
+    RefPtr<SQLTransactionWrapper> m_wrapper;
+
     bool m_executeSqlAllowed;
     RefPtr<SQLError> m_transactionError;
 
+    bool m_shouldRetryCurrentStatement;
+    bool m_modifiedDatabase;
+    bool m_lockAcquired;
     bool m_readOnly;
+    bool m_hasVersionMismatch;
+
+    Lock m_statementMutex;
+    Deque<std::unique_ptr<SQLStatement>> m_statementQueue;
+
+    std::unique_ptr<SQLStatement> m_currentStatement;
+
+    std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
+    RefPtr<OriginLock> m_originLock;
 
     SQLTransactionBackend m_backend;
 };

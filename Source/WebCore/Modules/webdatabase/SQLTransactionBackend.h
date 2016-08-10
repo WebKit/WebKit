@@ -49,28 +49,23 @@ class SQLValue;
 
 class SQLTransactionBackend : public SQLTransactionStateMachine<SQLTransactionBackend> {
 public:
-    SQLTransactionBackend(Database*, SQLTransaction&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
+    explicit SQLTransactionBackend(SQLTransaction&);
     ~SQLTransactionBackend();
 
     void lockAcquired();
     void performNextStep();
 
-    Database* database() { return m_database.get(); }
-    bool isReadOnly() { return m_readOnly; }
     void notifyDatabaseThreadIsShuttingDown();
 
     // APIs called from the frontend published via SQLTransactionBackend:
     void requestTransitToState(SQLTransactionState);
-    SQLError* transactionError();
-    SQLStatement* currentStatement();
-    void setShouldRetryCurrentStatement(bool);
     void executeSQL(std::unique_ptr<SQLStatement>);
     
 private:
 
     void doCleanup();
 
-    void enqueueStatementBackend(std::unique_ptr<SQLStatement>);
+    void enqueueStatement(std::unique_ptr<SQLStatement>);
 
     // State Machine functions:
     StateFunction stateFunctionFor(SQLTransactionState) override;
@@ -95,26 +90,6 @@ private:
     void releaseOriginLockIfNeeded();
 
     SQLTransaction& m_frontend;
-    std::unique_ptr<SQLStatement> m_currentStatementBackend;
-
-    RefPtr<Database> m_database;
-    RefPtr<SQLTransactionWrapper> m_wrapper;
-    RefPtr<SQLError> m_transactionError;
-
-    bool m_hasCallback;
-    bool m_hasSuccessCallback;
-    bool m_hasErrorCallback;
-    bool m_shouldRetryCurrentStatement;
-    bool m_modifiedDatabase;
-    bool m_lockAcquired;
-    bool m_readOnly;
-    bool m_hasVersionMismatch;
-
-    Lock m_statementMutex;
-    Deque<std::unique_ptr<SQLStatement>> m_statementQueue;
-
-    std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
-    RefPtr<OriginLock> m_originLock;
 };
 
 } // namespace WebCore

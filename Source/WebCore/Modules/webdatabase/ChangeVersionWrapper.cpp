@@ -41,17 +41,14 @@ ChangeVersionWrapper::ChangeVersionWrapper(const String& oldVersion, const Strin
 {
 }
 
-bool ChangeVersionWrapper::performPreflight(SQLTransactionBackend* transaction)
+bool ChangeVersionWrapper::performPreflight(SQLTransaction& transaction)
 {
-    ASSERT(transaction && transaction->database());
-
-    Database* database = transaction->database();
+    Database& database = transaction.database();
 
     String actualVersion;
-    if (!database->getVersionFromDatabase(actualVersion)) {
-        int sqliteError = database->sqliteDatabase().lastError();
-        m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to read the current version",
-                                      sqliteError, database->sqliteDatabase().lastErrorMsg());
+    if (!database.getVersionFromDatabase(actualVersion)) {
+        int sqliteError = database.sqliteDatabase().lastError();
+        m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to read the current version", sqliteError, database.sqliteDatabase().lastErrorMsg());
         return false;
     }
 
@@ -63,26 +60,23 @@ bool ChangeVersionWrapper::performPreflight(SQLTransactionBackend* transaction)
     return true;
 }
 
-bool ChangeVersionWrapper::performPostflight(SQLTransactionBackend* transaction)
+bool ChangeVersionWrapper::performPostflight(SQLTransaction& transaction)
 {
-    ASSERT(transaction && transaction->database());
+    Database& database = transaction.database();
 
-    Database* database = transaction->database();
-
-    if (!database->setVersionInDatabase(m_newVersion)) {
-        int sqliteError = database->sqliteDatabase().lastError();
-        m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to set new version in database",
-                                      sqliteError, database->sqliteDatabase().lastErrorMsg());
+    if (!database.setVersionInDatabase(m_newVersion)) {
+        int sqliteError = database.sqliteDatabase().lastError();
+        m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to set new version in database", sqliteError, database.sqliteDatabase().lastErrorMsg());
         return false;
     }
 
-    database->setExpectedVersion(m_newVersion);
+    database.setExpectedVersion(m_newVersion);
     return true;
 }
 
-void ChangeVersionWrapper::handleCommitFailedAfterPostflight(SQLTransactionBackend* transaction)
+void ChangeVersionWrapper::handleCommitFailedAfterPostflight(SQLTransaction& transaction)
 {
-    transaction->database()->setCachedVersion(m_oldVersion);
+    transaction.database().setCachedVersion(m_oldVersion);
 }
 
 } // namespace WebCore
