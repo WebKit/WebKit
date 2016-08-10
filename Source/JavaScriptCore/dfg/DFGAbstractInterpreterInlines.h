@@ -105,12 +105,6 @@ void AbstractInterpreter<AbstractStateType>::executeEdges(Node* node)
 }
 
 template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::executeEdges(unsigned indexInBlock)
-{
-    executeEdges(m_state.block()->at(indexInBlock));
-}
-
-template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::executeKnownEdgeTypes(Node* node)
 {
     // Some use kinds are required to not have checks, because we know somehow that the incoming

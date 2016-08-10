@@ -1,3 +1,14 @@
+2016-08-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove AbstractInterpreter::executeEdges(unsigned), it is no longer used anywhere
+        https://bugs.webkit.org/show_bug.cgi?id=160708
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEdges): Deleted.
+
 2016-08-10  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the feature flags in the FEATURE_DEFINES lines
