@@ -89,6 +89,11 @@ private:
     void computeNextStateAndCleanupIfNeeded();
 
     // State functions:
+    void acquireLock();
+    void openTransactionAndPreflight();
+    void runStatements();
+    void cleanupAndTerminate();
+    void cleanupAfterTransactionErrorCallback();
     void deliverTransactionCallback();
     void deliverTransactionErrorCallback();
     void deliverStatementCallback();
