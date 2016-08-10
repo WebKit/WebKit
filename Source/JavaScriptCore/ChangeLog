@@ -1,3 +1,40 @@
+2016-08-10  Michael Saboff  <msaboff@apple.com>
+
+        Baseline GetByVal and PutByVal for cache ID stubs need to handle exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=160749
+
+        Reviewed by Filip Pizlo.
+
+        We were emitting "callOperation()" calls in emitGetByValWithCachedId() and
+        emitPutByValWithCachedId() without linking the exception checks created by the
+        code emitted.  This manifested itself in various ways depending on the processor.
+        This is due to what the destination is for an unlinked branch.  On X86, an unlinked
+        branch goes tot he next instructions.  On ARM64, we end up with an infinite loop
+        as we branch to the same instruction.  On ARM we branch to 0 as the branch is to
+        an absolute address of 0.
+
+        Now we save the exception handler address for the original generated function and
+        link the exception cases for these by-val stubs to this handler.
+
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo): Added the address of the exception handler we should
+        link to.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::link): Compute the linked exception handler address and pass it to
+        the ByValInfo constructor.
+        (JSC::JIT::privateCompileExceptionHandlers): Make sure that we generate the
+        exception handler if we have any by-val handlers.
+
+        * jit/JIT.h:
+        Added a label for the exception handler.  We'll link this later for the
+        by value handlers.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        Link exception branches to the exception handler for the main function.
+
 2016-08-10  Mark Lam  <mark.lam@apple.com>
 
         DFG's flushForTerminal() needs to add PhantomLocals for bytecode live locals.

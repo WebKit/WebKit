@@ -1,3 +1,22 @@
+2016-08-10  Michael Saboff  <msaboff@apple.com>
+
+        Baseline GetByVal and PutByVal for cache ID stubs need to handle exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=160749
+
+        Reviewed by Filip Pizlo.
+
+        New test that causes baseline GetByValWithCachedId and PutByValWithCachedId
+        stubs to be generated and then throws exceptions for those stub to handle
+        to verify that they are properly handled.
+
+        * stress/regress-160749.js: Added.
+        (testCachedGetByVal.):
+        (testCachedGetByVal.get for):
+        (testCachedGetByVal):
+        (testCachedPutByVal.):
+        (testCachedPutByVal.set for):
+        (testCachedPutByVal):
+
 2016-08-10  Mark Lam  <mark.lam@apple.com>
 
         DFG's flushForTerminal() needs to add PhantomLocals for bytecode live locals.
