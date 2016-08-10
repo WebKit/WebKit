@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSModuleLoader_h
-#define JSModuleLoader_h
+#pragma once
 
 #include <runtime/JSCJSValue.h>
 #include <wtf/Noncopyable.h>
@@ -34,6 +33,7 @@ namespace JSC {
 class ExecState;
 class JSGlobalObject;
 class JSInternalPromise;
+class JSModuleLoader;
 
 }
 
@@ -48,14 +48,12 @@ public:
 
     Document& document() { return m_document; }
 
-    JSC::JSInternalPromise* resolve(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSValue moduleName, JSC::JSValue importerModuleKey);
-    JSC::JSInternalPromise* fetch(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSValue moduleKey);
-    JSC::JSValue evaluate(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSValue moduleKey, JSC::JSValue moduleRecord);
+    JSC::JSInternalPromise* resolve(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue moduleName, JSC::JSValue importerModuleKey);
+    JSC::JSInternalPromise* fetch(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue moduleKey);
+    JSC::JSValue evaluate(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, JSC::JSValue moduleRecord);
 
 private:
     Document& m_document;
 };
 
 } // namespace WebCore
-
-#endif // JSModuleLoader_h

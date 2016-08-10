@@ -34,10 +34,10 @@
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseDeferred.h"
 #include "JSLock.h"
+#include "JSModuleLoader.h"
 #include "JSModuleRecord.h"
 #include "JSWithScope.h"
 #include "ModuleAnalyzer.h"
-#include "ModuleLoaderObject.h"
 #include "Parser.h"
 #include "ScriptProfilingScope.h"
 #include <wtf/WTFThreadData.h>
@@ -186,7 +186,7 @@ JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const SourceCode& sour
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
-    globalObject->moduleLoader()->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.view().toString());
+    globalObject->moduleLoader()->provide(exec, key, JSModuleLoader::Status::Fetch, source.view().toString());
     if (exec->hadException())
         return rejectPromise(exec, globalObject);
 
@@ -223,7 +223,7 @@ JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source)
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
-    globalObject->moduleLoader()->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.view().toString());
+    globalObject->moduleLoader()->provide(exec, key, JSModuleLoader::Status::Fetch, source.view().toString());
     if (exec->hadException())
         return rejectPromise(exec, globalObject);
 

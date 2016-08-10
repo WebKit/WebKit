@@ -206,7 +206,7 @@ private:
     WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
 
-    // We assume that all the JSModuleRecord are retained by ModuleLoaderObject's registry.
+    // We assume that all the JSModuleRecord are retained by JSModuleLoader's registry.
     // So here, we don't visit each object for GC. The resolution cache map caches the once
     // looked up correctly resolved resolution, since (1) we rarely looked up the non-resolved one,
     // and (2) if we cache all the attempts the size of the map becomes infinitely large.

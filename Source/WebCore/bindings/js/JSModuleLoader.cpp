@@ -42,7 +42,7 @@ JSModuleLoader::JSModuleLoader(Document& document)
 {
 }
 
-JSC::JSInternalPromise* JSModuleLoader::resolve(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey)
+JSC::JSInternalPromise* JSModuleLoader::resolve(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey)
 {
     JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
 
@@ -82,7 +82,7 @@ JSC::JSInternalPromise* JSModuleLoader::resolve(JSC::JSGlobalObject* globalObjec
     return deferred->resolve(exec, jsString(exec, completedUrl.string()));
 }
 
-JSC::JSInternalPromise* JSModuleLoader::fetch(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSValue moduleKeyValue)
+JSC::JSInternalPromise* JSModuleLoader::fetch(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue)
 {
     JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
 
@@ -101,7 +101,7 @@ JSC::JSInternalPromise* JSModuleLoader::fetch(JSC::JSGlobalObject* globalObject,
     return deferred->promise();
 }
 
-JSC::JSValue JSModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue)
+JSC::JSValue JSModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue)
 {
     // FIXME: Currently, we only support JSModuleRecord.
     // Once the reflective part of the module loader is supported, we will handle arbitrary values.

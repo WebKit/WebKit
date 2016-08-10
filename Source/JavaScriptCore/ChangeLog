@@ -1,3 +1,136 @@
+2016-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Add ModuleLoaderPrototype and move methods to it
+        https://bugs.webkit.org/show_bug.cgi?id=160633
+
+        Reviewed by Saam Barati.
+
+        In the future, we need to add the ability to create the new Loader object (by users).
+        So rather than holding all the methods in the ModuleLoaderObject instance, moving them
+        to ModuleLoaderPrototype and create the default JSModuleLoader instance is better.
+
+        No behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ModuleLoaderObject.js:
+        (setStateToMax): Deleted.
+        (newRegistryEntry): Deleted.
+        (ensureRegistered): Deleted.
+        (forceFulfillPromise): Deleted.
+        (fulfillFetch): Deleted.
+        (fulfillTranslate): Deleted.
+        (fulfillInstantiate): Deleted.
+        (commitInstantiated): Deleted.
+        (instantiation): Deleted.
+        (requestFetch): Deleted.
+        (requestTranslate): Deleted.
+        (requestInstantiate): Deleted.
+        (requestResolveDependencies.): Deleted.
+        (requestResolveDependencies): Deleted.
+        (requestInstantiateAll): Deleted.
+        (requestLink): Deleted.
+        (requestReady): Deleted.
+        (link): Deleted.
+        (moduleEvaluation): Deleted.
+        (provide): Deleted.
+        (loadAndEvaluateModule): Deleted.
+        (loadModule): Deleted.
+        (linkAndEvaluateModule): Deleted.
+        * builtins/ModuleLoaderPrototype.js: Renamed from Source/JavaScriptCore/builtins/ModuleLoaderObject.js.
+        (setStateToMax):
+        (newRegistryEntry):
+        (ensureRegistered):
+        (forceFulfillPromise):
+        (fulfillFetch):
+        (fulfillTranslate):
+        (fulfillInstantiate):
+        (commitInstantiated):
+        (instantiation):
+        (requestFetch):
+        (requestTranslate):
+        (requestInstantiate):
+        (requestResolveDependencies.):
+        (requestResolveDependencies):
+        (requestInstantiateAll):
+        (requestLink):
+        (requestReady):
+        (link):
+        (moduleEvaluation):
+        (provide):
+        (loadAndEvaluateModule):
+        (loadModule):
+        (linkAndEvaluateModule):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderResolve):
+        (GlobalObject::moduleLoaderFetch):
+        * runtime/Completion.cpp:
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::moduleLoader):
+        (JSC::JSGlobalObject::moduleLoaderStructure):
+        * runtime/JSModuleLoader.cpp: Added.
+        (JSC::JSModuleLoader::JSModuleLoader):
+        (JSC::JSModuleLoader::finishCreation):
+        (JSC::printableModuleKey):
+        (JSC::JSModuleLoader::provide):
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::JSModuleLoader::translate):
+        (JSC::JSModuleLoader::instantiate):
+        (JSC::JSModuleLoader::evaluate):
+        * runtime/JSModuleLoader.h: Copied from Source/JavaScriptCore/runtime/ModuleLoaderObject.h.
+        (JSC::JSModuleLoader::create):
+        (JSC::JSModuleLoader::createStructure):
+        * runtime/JSModuleRecord.h:
+        * runtime/ModuleLoaderObject.cpp: Removed.
+        (JSC::ModuleLoaderObject::ModuleLoaderObject): Deleted.
+        (JSC::ModuleLoaderObject::finishCreation): Deleted.
+        (JSC::printableModuleKey): Deleted.
+        (JSC::ModuleLoaderObject::provide): Deleted.
+        (JSC::ModuleLoaderObject::loadAndEvaluateModule): Deleted.
+        (JSC::ModuleLoaderObject::loadModule): Deleted.
+        (JSC::ModuleLoaderObject::linkAndEvaluateModule): Deleted.
+        (JSC::ModuleLoaderObject::resolve): Deleted.
+        (JSC::ModuleLoaderObject::fetch): Deleted.
+        (JSC::ModuleLoaderObject::translate): Deleted.
+        (JSC::ModuleLoaderObject::instantiate): Deleted.
+        (JSC::ModuleLoaderObject::evaluate): Deleted.
+        (JSC::moduleLoaderObjectParseModule): Deleted.
+        (JSC::moduleLoaderObjectRequestedModules): Deleted.
+        (JSC::moduleLoaderObjectModuleDeclarationInstantiation): Deleted.
+        (JSC::moduleLoaderObjectResolve): Deleted.
+        (JSC::moduleLoaderObjectFetch): Deleted.
+        (JSC::moduleLoaderObjectTranslate): Deleted.
+        (JSC::moduleLoaderObjectInstantiate): Deleted.
+        (JSC::moduleLoaderObjectEvaluate): Deleted.
+        * runtime/ModuleLoaderObject.h:
+        (JSC::ModuleLoaderObject::create): Deleted.
+        (JSC::ModuleLoaderObject::createStructure): Deleted.
+        * runtime/ModuleLoaderPrototype.cpp: Added.
+        (JSC::ModuleLoaderPrototype::ModuleLoaderPrototype):
+        (JSC::moduleLoaderPrototypeParseModule):
+        (JSC::moduleLoaderPrototypeRequestedModules):
+        (JSC::moduleLoaderPrototypeModuleDeclarationInstantiation):
+        (JSC::moduleLoaderPrototypeResolve):
+        (JSC::moduleLoaderPrototypeFetch):
+        (JSC::moduleLoaderPrototypeTranslate):
+        (JSC::moduleLoaderPrototypeInstantiate):
+        (JSC::moduleLoaderPrototypeEvaluate):
+        * runtime/ModuleLoaderPrototype.h: Renamed from Source/JavaScriptCore/runtime/ModuleLoaderObject.h.
+        (JSC::ModuleLoaderPrototype::create):
+        (JSC::ModuleLoaderPrototype::createStructure):
+
 2016-08-09  Saam Barati  <sbarati@apple.com>
 
         JSBoundFunction should lazily generate its name string
