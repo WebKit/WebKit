@@ -279,7 +279,6 @@ private:
 #if ENABLE(GAMEPAD)
     void gamepadConnected(const GamepadData&);
     void gamepadDisconnected(unsigned index);
-    void gamepadActivity(const Vector<GamepadData>&);
 #endif
 
     void releasePageCache();

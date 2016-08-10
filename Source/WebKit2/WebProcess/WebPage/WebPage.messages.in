@@ -433,4 +433,8 @@ messages -> WebPage LegacyReceiver {
     SetResourceCachingDisabled(bool disabled)
 
     SetUserInterfaceLayoutDirection(uint32_t direction)
+
+#if ENABLE(GAMEPAD)
+    GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas)
+#endif
 }

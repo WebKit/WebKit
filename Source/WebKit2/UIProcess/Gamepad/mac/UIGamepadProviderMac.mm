@@ -23,56 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "UIGamepadProvider.h"
 
 #if ENABLE(GAMEPAD)
 
-#include <WebCore/GamepadProviderClient.h>
-#include <WebCore/Timer.h>
-#include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
+#import "WebPageProxy.h"
+#import "WKAPICast.h"
+#import "WKViewInternal.h"
+#import "WKWebViewInternal.h"
 
 namespace WebKit {
 
-class UIGamepad;
-class WebPageProxy;
-class WebProcessPool;
-struct GamepadData;
+WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
+{
+    auto responder = [[NSApp keyWindow] firstResponder];
 
-class UIGamepadProvider : public WebCore::GamepadProviderClient {
-public:
-    static UIGamepadProvider& singleton();
+#if WK_API_ENABLED
+    if ([responder isKindOfClass:[WKWebView class]])
+        return ((WKWebView *)responder)->_page.get();
+#endif
 
-    void processPoolStartedUsingGamepads(WebProcessPool&);
-    void processPoolStoppedUsingGamepads(WebProcessPool&);
+    if ([responder isKindOfClass:[WKView class]])
+        return toImpl(((WKView *)responder).pageRef);
 
-    Vector<GamepadData> gamepadStates() const;
-
-private:
-    friend NeverDestroyed<UIGamepadProvider>;
-    UIGamepadProvider();
-    ~UIGamepadProvider() final;
-
-    void platformStartMonitoringGamepads();
-    void platformStopMonitoringGamepads();
-    const Vector<WebCore::PlatformGamepad*>& platformGamepads();
-    WebPageProxy* platformWebPageProxyForGamepadInput();
-
-    void platformGamepadConnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadInputActivity() final;
-
-    void startOrStopSynchingGamepadState();
-    void updateTimerFired();
-
-    HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
-
-    Vector<std::unique_ptr<UIGamepad>> m_gamepads;
-
-    WebCore::Timer m_timer;
-    bool m_hadActivitySinceLastSynch { false };
-};
+    return nullptr;
+}
 
 }
 

@@ -5470,6 +5470,15 @@ void WebPageProxy::backForwardClear()
     m_backForwardList->clear();
 }
 
+#if ENABLE(GAMEPAD)
+
+void WebPageProxy::gamepadActivity(const Vector<GamepadData>& gamepadDatas)
+{
+    m_process->send(Messages::WebPage::GamepadActivity(gamepadDatas), m_pageID);
+}
+
+#endif
+
 void WebPageProxy::canAuthenticateAgainstProtectionSpace(uint64_t loaderID, uint64_t frameID, const ProtectionSpace& coreProtectionSpace)
 {
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

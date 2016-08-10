@@ -371,7 +371,6 @@ public:
 #if ENABLE(GAMEPAD)
     void gamepadConnected(const UIGamepad&);
     void gamepadDisconnected(const UIGamepad&);
-    void gamepadActivity(const Vector<GamepadData>&);
 #endif
 
 private:

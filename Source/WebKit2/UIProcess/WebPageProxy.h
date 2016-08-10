@@ -205,6 +205,7 @@ struct AttributedString;
 struct ColorSpaceData;
 struct EditingRange;
 struct EditorState;
+struct GamepadData;
 struct LoadParameters;
 struct PlatformPopupMenuData;
 struct PrintInfo;
@@ -1118,6 +1119,10 @@ public:
     bool isAlwaysOnLoggingAllowed() const;
 
     void canAuthenticateAgainstProtectionSpace(uint64_t loaderID, uint64_t frameID, const WebCore::ProtectionSpace&);
+
+#if ENABLE(GAMEPAD)
+    void gamepadActivity(const Vector<GamepadData>&);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);

@@ -1286,14 +1286,6 @@ void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
         process->send(Messages::WebProcess::GamepadDisconnected(gamepad.index()), 0);
 }
 
-void WebProcessPool::gamepadActivity(const Vector<GamepadData>& gamepadDatas)
-{
-    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=160699)
-    // Only send updates to the process that contains the currently focused web page.
-    for (auto& process : m_processesUsingGamepads)
-        process->send(Messages::WebProcess::GamepadActivity(gamepadDatas), 0);
-}
-
 #endif // ENABLE(GAMEPAD)
 
 void WebProcessPool::garbageCollectJavaScriptObjects()

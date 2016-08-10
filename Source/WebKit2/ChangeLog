@@ -1,3 +1,37 @@
+2016-08-09  Brady Eidson  <beidson@apple.com>
+
+        [WK2] Only send gamepad input events to the currently focused page.
+        https://bugs.webkit.org/show_bug.cgi?id=160699
+
+        Reviewed by Tim Horton.
+        
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::updateTimerFired):
+        (WebKit::UIGamepadProvider::platformWebProcessProxyForGamepadInput):
+        * UIProcess/Gamepad/UIGamepadProvider.h:
+        * UIProcess/Gamepad/mac/UIGamepadProviderMac.mm: Copied from Source/WebKit2/UIProcess/API/mac/WKViewInternal.h.
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput):
+        
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::gamepadActivity):
+        * UIProcess/WebPageProxy.h:
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gamepadActivity): Deleted.
+        * UIProcess/WebProcessPool.h:
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::gamepadActivity):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::gamepadActivity): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2016-08-09  Anders Carlsson  <andersca@apple.com>
 
         Remove code that would tell clients whenever the list of installed plug-ins changes

@@ -72,10 +72,9 @@ void UIGamepadProvider::updateTimerFired()
             gamepadDatas.uncheckedAppend({ });
     }
 
-    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=160699)
-    // Only send updates to the process pool that contains the currently focused web page.
-    for (auto& pool : m_processPoolsUsingGamepads)
-        pool->gamepadActivity(gamepadDatas);
+    auto webPageProxy = platformWebPageProxyForGamepadInput();
+    if (webPageProxy && m_processPoolsUsingGamepads.contains(&webPageProxy->process().processPool()))
+        webPageProxy->gamepadActivity(gamepadDatas);
 
     m_hadActivitySinceLastSynch = false;
 }
@@ -182,6 +181,11 @@ const Vector<PlatformGamepad*>& UIGamepadProvider::platformGamepads()
     static NeverDestroyed<Vector<PlatformGamepad*>> emptyGamepads;
     return emptyGamepads;
 
+    // FIXME: Implement for other platforms
+}
+
+WebProcessProxy* UIGamepadProvider::platformWebProcessProxyForGamepadInput()
+{
     // FIXME: Implement for other platforms
 }
 

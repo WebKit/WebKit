@@ -1042,11 +1042,6 @@ void WebProcess::gamepadDisconnected(unsigned index)
     WebGamepadProvider::singleton().gamepadDisconnected(index);
 }
 
-void WebProcess::gamepadActivity(const Vector<GamepadData>& gamepadDatas)
-{
-    WebGamepadProvider::singleton().gamepadActivity(gamepadDatas);
-}
-
 #endif
 
 void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
