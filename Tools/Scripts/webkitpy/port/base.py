@@ -829,11 +829,12 @@ class Port(object):
         clean_env = {}
         variables_to_copy = [
             # For Linux:
-            'XAUTHORITY',
+            'ALSA_CARD',
+            'DBUS_SESSION_BUS_ADDRESS',
             'HOME',
             'LANG',
             'LD_LIBRARY_PATH',
-            'DBUS_SESSION_BUS_ADDRESS',
+            'XAUTHORITY',
             'XDG_DATA_DIRS',
             'XDG_RUNTIME_DIR',
 
