@@ -1568,6 +1568,25 @@ Controller.prototype = {
 
         ctx.restore();
     },
+    
+    formatTimeDescription: function(time)
+    {
+        if (isNaN(time))
+            time = 0;
+        var absTime = Math.abs(time);
+        var intSeconds = Math.floor(absTime % 60).toFixed(0);
+        var intMinutes = Math.floor((absTime / 60) % 60).toFixed(0);
+        var intHours = Math.floor(absTime / (60 * 60)).toFixed(0);
+        
+        var secondString = intSeconds == 1 ? 'Second' : 'Seconds';
+        var minuteString = intMinutes == 1 ? 'Minute' : 'Minutes';
+        var hourString = intHours == 1 ? 'Hour' : 'Hours';
+        if (intHours > 0)
+            return `${intHours} ${this.UIString(hourString)}, ${intMinutes} ${this.UIString(minuteString)}, ${intSeconds} ${this.UIString(secondString)}`;
+        if (intMinutes > 0)
+            return `${intMinutes} ${this.UIString(minuteString)}, ${intSeconds} ${this.UIString(secondString)}`;
+        return `${intSeconds} ${this.UIString(secondString)}`;
+    },
 
     formatTime: function(time)
     {
@@ -1769,10 +1788,15 @@ Controller.prototype = {
         var currentTime = this.video.currentTime;
         var timeRemaining = currentTime - this.video.duration;
         this.currentTimeClone.innerText = this.controls.currentTime.innerText = this.formatTime(currentTime);
-        this.controls.currentTime.setAttribute('aria-label', `${this.UIString('Elapsed')} ${this.formatTime(currentTime)}`);
+        this.controls.currentTime.setAttribute('aria-label', `${this.UIString('Elapsed')} ${this.formatTimeDescription(currentTime)}`);
         this.controls.timeline.value = this.video.currentTime;
         this.remainingTimeClone.innerText = this.controls.remainingTime.innerText = this.formatTime(timeRemaining);
-        this.controls.remainingTime.setAttribute('aria-label', `${this.UIString('Remaining')} ${this.formatTime(timeRemaining)}`);
+        this.controls.remainingTime.setAttribute('aria-label', `${this.UIString('Remaining')} ${this.formatTimeDescription(timeRemaining)}`);
+        
+        // Mark the timeline value in percentage format in accessibility.
+        var timeElapsedPercent = currentTime / this.video.duration;
+        timeElapsedPercent = Math.max(Math.min(1, timeElapsedPercent), 0);
+        this.controls.timeline.setAttribute('aria-valuetext', `${parseInt(timeElapsedPercent * 100)}%`);
     },
     
     updateControlsWhileScrubbing: function()

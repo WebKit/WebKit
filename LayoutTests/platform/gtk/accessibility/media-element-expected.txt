@@ -21,7 +21,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXSlider
 
 
-            title: AXTitle: Remaining -00:06
+            title: AXTitle: Remaining 6 Seconds
             role: AXRole: AXTimer
 
 

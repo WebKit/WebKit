@@ -34,7 +34,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXButton
 
 
-            description: AXDescription: Elapsed 00:00
+            description: AXDescription: Elapsed 0 Seconds
             role: AXRole: AXGroup
             subrole: AXSubrole: AXApplicationTimer
 
@@ -55,7 +55,7 @@ State at 'canplaythrough' event:
                 role: AXRole: AXValueIndicator
 
 
-            description: AXDescription: Remaining -00:06
+            description: AXDescription: Remaining 6 Seconds
             role: AXRole: AXGroup
             subrole: AXSubrole: AXApplicationTimer
 

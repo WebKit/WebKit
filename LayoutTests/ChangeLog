@@ -1,3 +1,18 @@
+2016-08-10  Nan Wang  <n_wang@apple.com>
+
+        AX: Media controls timeline should have percentage value description
+        https://bugs.webkit.org/show_bug.cgi?id=160619
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/hls/video-duration-accessibility-expected.txt: Added.
+        * http/tests/media/hls/video-duration-accessibility.html: Added.
+        * http/tests/media/resources/hls/generate-vod.php: Added.
+        * media/media-controls-accessibility-expected.txt:
+        * platform/efl/accessibility/media-element-expected.txt:
+        * platform/gtk/accessibility/media-element-expected.txt:
+        * platform/mac/accessibility/media-element-expected.txt:
+
 2016-08-09  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES2016] Implement Object.values

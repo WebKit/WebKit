@@ -7,8 +7,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS successfullyParsed is true
 
 TEST COMPLETE
-elapsedTimer.description: AXDescription: Elapsed 00:00
-remainingTimer.description: AXDescription: Remaining -00:06
+elapsedTimer.description: AXDescription: Elapsed 0 Seconds
+remainingTimer.description: AXDescription: Remaining 6 Seconds
 
 muteButton.description: AXDescription: Mute
 muteButton.role: AXRole: AXCheckBox

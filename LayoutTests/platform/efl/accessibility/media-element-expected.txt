@@ -21,7 +21,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXButton
 
 
-            title: AXTitle: Elapsed 00:00
+            title: AXTitle: Elapsed 0 Seconds
             role: AXRole: AXTimer
 
 
@@ -33,7 +33,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXSlider
 
 
-            title: AXTitle: Remaining -00:06
+            title: AXTitle: Remaining 6 Seconds
             role: AXRole: AXTimer
 
 
