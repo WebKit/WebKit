@@ -5706,40 +5706,37 @@ FAIL paras[0].replaceChild(foreignDoc, paras[0].firstChild), with selected range
 PASS paras[0].replaceChild(document.doctype, paras[0].firstChild), with unselected range on paras[0] from 0 to 1 
 FAIL paras[0].replaceChild(document.doctype, paras[0].firstChild), with selected range on paras[0] from 0 to 1 assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "Äb̈c̈d̈ëf̈g̈ḧ
 " but got object "Äb̈c̈d̈ëf̈g̈ḧ"
-FAIL testDiv.appendChild(testDiv.lastChild), with unselected range collapsed at (testDiv.lastChild, 0) assert_equals: Wrong start container expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p><p id="b" s... but got Comment node <!--Alphabet soup?-->
+PASS testDiv.appendChild(testDiv.lastChild), with unselected range collapsed at (testDiv.lastChild, 0) 
 FAIL testDiv.appendChild(testDiv.lastChild), with selected range collapsed at (testDiv.lastChild, 0) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL testDiv.appendChild(testDiv.lastChild), with unselected range on testDiv.lastChild from 0 to 1 assert_equals: Wrong start container expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p><p id="b" s... but got Comment node <!--Alphabet soup?-->
+PASS testDiv.appendChild(testDiv.lastChild), with unselected range on testDiv.lastChild from 0 to 1 
 FAIL testDiv.appendChild(testDiv.lastChild), with selected range on testDiv.lastChild from 0 to 1 assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL testDiv.appendChild(testDiv.lastChild), with unselected range collapsed at (testDiv.lastChild, 1) assert_equals: Wrong start container expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p><p id="b" s... but got Comment node <!--Alphabet soup?-->
+PASS testDiv.appendChild(testDiv.lastChild), with unselected range collapsed at (testDiv.lastChild, 1) 
 FAIL testDiv.appendChild(testDiv.lastChild), with selected range collapsed at (testDiv.lastChild, 1) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL testDiv.appendChild(testDiv.lastChild), with unselected range on testDiv from testDiv.childNodes.length - 2 to testDiv.childNodes.length assert_equals: Wrong end offset expected 5 but got 6
+PASS testDiv.appendChild(testDiv.lastChild), with unselected range on testDiv from testDiv.childNodes.length - 2 to testDiv.childNodes.length 
 FAIL testDiv.appendChild(testDiv.lastChild), with selected range on testDiv from testDiv.childNodes.length - 2 to testDiv.childNodes.length assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "Ghijklmn" but got object ""
 PASS testDiv.appendChild(testDiv.lastChild), with unselected range on testDiv from testDiv.childNodes.length - 2 to testDiv.childNodes.length - 1 
 FAIL testDiv.appendChild(testDiv.lastChild), with selected range on testDiv from testDiv.childNodes.length - 2 to testDiv.childNodes.length - 1 assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "Ghijklmn" but got object ""
-FAIL testDiv.appendChild(testDiv.lastChild), with unselected range on testDiv from testDiv.childNodes.length - 1 to testDiv.childNodes.length assert_equals: Wrong end offset expected 5 but got 6
+PASS testDiv.appendChild(testDiv.lastChild), with unselected range on testDiv from testDiv.childNodes.length - 1 to testDiv.childNodes.length 
 FAIL testDiv.appendChild(testDiv.lastChild), with selected range on testDiv from testDiv.childNodes.length - 1 to testDiv.childNodes.length assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
 PASS testDiv.appendChild(testDiv.lastChild), with unselected range collapsed at (testDiv, testDiv.childNodes.length - 1) 
 FAIL testDiv.appendChild(testDiv.lastChild), with selected range collapsed at (testDiv, testDiv.childNodes.length - 1) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL testDiv.appendChild(testDiv.lastChild), with unselected range collapsed at (testDiv, testDiv.childNodes.length) assert_equals: Wrong start offset expected 5 but got 6
+PASS testDiv.appendChild(testDiv.lastChild), with unselected range collapsed at (testDiv, testDiv.childNodes.length) 
 FAIL testDiv.appendChild(testDiv.lastChild), with selected range collapsed at (testDiv, testDiv.childNodes.length) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL detachedDiv.appendChild(detachedDiv.lastChild), with unselected range collapsed at (detachedDiv.lastChild, 0) assert_equals: Wrong start container expected Element node <div><p>Opqrstuv</p><p>Wxyzabcd</p></div> but got Element node <p>Wxyzabcd</p>
+PASS detachedDiv.appendChild(detachedDiv.lastChild), with unselected range collapsed at (detachedDiv.lastChild, 0) 
 FAIL detachedDiv.appendChild(detachedDiv.lastChild), with selected range collapsed at (detachedDiv.lastChild, 0) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedDiv.appendChild(detachedDiv.lastChild), with unselected range on detachedDiv.lastChild from 0 to 1 assert_equals: Wrong start container expected Element node <div><p>Opqrstuv</p><p>Wxyzabcd</p></div> but got Element node <p>Wxyzabcd</p>
+PASS detachedDiv.appendChild(detachedDiv.lastChild), with unselected range on detachedDiv.lastChild from 0 to 1 
 FAIL detachedDiv.appendChild(detachedDiv.lastChild), with selected range on detachedDiv.lastChild from 0 to 1 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedDiv.appendChild(detachedDiv.lastChild), with unselected range collapsed at (detachedDiv.lastChild, 1) assert_equals: Wrong start container expected Element node <div><p>Opqrstuv</p><p>Wxyzabcd</p></div> but got Element node <p>Wxyzabcd</p>
+PASS detachedDiv.appendChild(detachedDiv.lastChild), with unselected range collapsed at (detachedDiv.lastChild, 1) 
 FAIL detachedDiv.appendChild(detachedDiv.lastChild), with selected range collapsed at (detachedDiv.lastChild, 1) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedDiv.appendChild(detachedDiv.lastChild), with unselected range on detachedDiv from detachedDiv.childNodes.length - 2 to detachedDiv.childNodes.length assert_equals: Wrong end offset expected 1 but got 2
+PASS detachedDiv.appendChild(detachedDiv.lastChild), with unselected range on detachedDiv from detachedDiv.childNodes.length - 2 to detachedDiv.childNodes.length 
 FAIL detachedDiv.appendChild(detachedDiv.lastChild), with selected range on detachedDiv from detachedDiv.childNodes.length - 2 to detachedDiv.childNodes.length assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedDiv.appendChild(detachedDiv.lastChild), with unselected range on detachedDiv from detachedDiv.childNodes.length - 2 to detachedDiv.childNodes.length - 1 
 FAIL detachedDiv.appendChild(detachedDiv.lastChild), with selected range on detachedDiv from detachedDiv.childNodes.length - 2 to detachedDiv.childNodes.length - 1 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedDiv.appendChild(detachedDiv.lastChild), with unselected range on detachedDiv from detachedDiv.childNodes.length - 1 to detachedDiv.childNodes.length assert_equals: Wrong end offset expected 1 but got 2
+PASS detachedDiv.appendChild(detachedDiv.lastChild), with unselected range on detachedDiv from detachedDiv.childNodes.length - 1 to detachedDiv.childNodes.length 
 FAIL detachedDiv.appendChild(detachedDiv.lastChild), with selected range on detachedDiv from detachedDiv.childNodes.length - 1 to detachedDiv.childNodes.length assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedDiv.appendChild(detachedDiv.lastChild), with unselected range collapsed at (detachedDiv, detachedDiv.childNodes.length - 1) 
 FAIL detachedDiv.appendChild(detachedDiv.lastChild), with selected range collapsed at (detachedDiv, detachedDiv.childNodes.length - 1) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL detachedDiv.appendChild(detachedDiv.lastChild), with unselected range collapsed at (detachedDiv, detachedDiv.childNodes.length) assert_equals: Wrong start offset expected 1 but got 2
+PASS detachedDiv.appendChild(detachedDiv.lastChild), with unselected range collapsed at (detachedDiv, detachedDiv.childNodes.length) 
 FAIL detachedDiv.appendChild(detachedDiv.lastChild), with selected range collapsed at (detachedDiv, detachedDiv.childNodes.length) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS paras[0].appendChild(paras[1]), with unselected range collapsed at (paras[0], 0) 
 FAIL paras[0].appendChild(paras[1]), with selected range collapsed at (paras[0], 0) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""

@@ -648,9 +648,6 @@ bool ContainerNode::appendChild(Node& newChild, ExceptionCode& ec)
     if (!ensurePreInsertionValidity(newChild, nullptr, ec))
         return false;
 
-    if (&newChild == m_lastChild) // nothing to do
-        return true;
-
     NodeVector targets;
     collectChildrenAndRemoveFromOldParent(newChild, targets, ec);
     if (ec)
