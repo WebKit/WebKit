@@ -82,7 +82,11 @@ private:
 
     void enqueueStatement(std::unique_ptr<SQLStatement>);
 
+    void checkAndHandleClosedDatabase();
+
     void clearCallbackWrappers();
+
+    void scheduleCallback(void (SQLTransaction::*)());
 
     // State Machine functions:
     StateFunction stateFunctionFor(SQLTransactionState) override;
@@ -111,12 +115,18 @@ private:
     void acquireOriginLock();
     void releaseOriginLockIfNeeded();
 
+#if !LOG_DISABLED
+    static const char* debugStepName(void (SQLTransaction::*)());
+#endif
+
     Ref<Database> m_database;
     SQLCallbackWrapper<SQLTransactionCallback> m_callbackWrapper;
     SQLCallbackWrapper<VoidCallback> m_successCallbackWrapper;
     SQLCallbackWrapper<SQLTransactionErrorCallback> m_errorCallbackWrapper;
 
     RefPtr<SQLTransactionWrapper> m_wrapper;
+
+    void (SQLTransaction::*m_nextStep)();
 
     bool m_executeSqlAllowed;
     RefPtr<SQLError> m_transactionError;
