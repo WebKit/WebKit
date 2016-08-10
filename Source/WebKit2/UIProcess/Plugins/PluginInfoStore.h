@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,15 +40,6 @@ namespace WebKit {
 
 class PluginInfoStore;
 
-class PluginInfoStoreClient {
-    WTF_MAKE_NONCOPYABLE(PluginInfoStoreClient);
-public:
-    virtual ~PluginInfoStoreClient() { }
-    virtual void pluginInfoStoreDidLoadPlugins(PluginInfoStore*) = 0;
-protected:
-    PluginInfoStoreClient() { }
-};
-
 class PluginInfoStore {
     WTF_MAKE_NONCOPYABLE(PluginInfoStore);
 
@@ -72,9 +63,6 @@ public:
     PluginModuleInfo infoForPluginWithPath(const String& pluginPath) const;
 
     static PluginModuleLoadPolicy defaultLoadPolicyForPlugin(const PluginModuleInfo&);
-
-    void setClient(PluginInfoStoreClient* client) { m_client = client; }
-    PluginInfoStoreClient* client() const { return m_client; }
 
 private:
     PluginModuleInfo findPluginForMIMEType(const String& mimeType, WebCore::PluginData::AllowedPluginTypes) const;
@@ -103,7 +91,6 @@ private:
     Vector<String> m_additionalPluginsDirectories;
     Vector<PluginModuleInfo> m_plugins;
     bool m_pluginListIsUpToDate;
-    PluginInfoStoreClient* m_client;
 };
     
 } // namespace WebKit

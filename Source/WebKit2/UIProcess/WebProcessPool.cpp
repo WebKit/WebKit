@@ -212,10 +212,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginInfoStore.setClient(this);
-#endif
-
 #ifndef NDEBUG
     processPoolCounter.increment();
 #endif
@@ -251,10 +247,6 @@ WebProcessPool::~WebProcessPool()
     invalidateCallbackMap(m_dictionaryCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 
     platformInvalidateContext();
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginInfoStore.setClient(0);
-#endif
 
 #ifndef NDEBUG
     processPoolCounter.decrement();
@@ -1354,43 +1346,6 @@ void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
     sendToNetworkingProcess(Messages::CustomProtocolManager::UnregisterScheme(scheme));
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebProcessPool::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
-{
-#ifdef NDEBUG
-    UNUSED_PARAM(store);
-#endif
-    ASSERT(store == &m_pluginInfoStore);
-
-    Vector<PluginModuleInfo> pluginModules = m_pluginInfoStore.plugins();
-
-    Vector<RefPtr<API::Object>> plugins;
-    plugins.reserveInitialCapacity(pluginModules.size());
-
-    for (const auto& pluginModule : pluginModules) {
-        API::Dictionary::MapType map;
-        map.set(ASCIILiteral("path"), API::String::create(pluginModule.path));
-        map.set(ASCIILiteral("name"), API::String::create(pluginModule.info.name));
-        map.set(ASCIILiteral("file"), API::String::create(pluginModule.info.file));
-        map.set(ASCIILiteral("desc"), API::String::create(pluginModule.info.desc));
-
-        Vector<RefPtr<API::Object>> mimeTypes;
-        mimeTypes.reserveInitialCapacity(pluginModule.info.mimes.size());
-        for (const auto& mimeClassInfo : pluginModule.info.mimes)
-            mimeTypes.uncheckedAppend(API::String::create(mimeClassInfo.type));
-        map.set(ASCIILiteral("mimes"), API::Array::create(WTFMove(mimeTypes)));
-
-#if PLATFORM(COCOA)
-        map.set(ASCIILiteral("bundleId"), API::String::create(pluginModule.bundleIdentifier));
-        map.set(ASCIILiteral("version"), API::String::create(pluginModule.versionString));
-#endif
-
-        plugins.uncheckedAppend(API::Dictionary::create(WTFMove(map)));
-    }
-
-    m_client.plugInInformationBecameAvailable(this, API::Array::create(WTFMove(plugins)).ptr());
-}
-
 void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -1417,8 +1372,7 @@ void WebProcessPool::clearPluginClientPolicies()
 #endif
     sendToAllProcesses(Messages::WebProcess::ClearPluginClientPolicies());
 }
-#endif
-    
+
 void WebProcessPool::setMemoryCacheDisabled(bool disabled)
 {
     m_memoryCacheDisabled = disabled;

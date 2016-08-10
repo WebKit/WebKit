@@ -1,3 +1,26 @@
+2016-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove code that would tell clients whenever the list of installed plug-ins changes
+        https://bugs.webkit.org/show_bug.cgi?id=160719
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::PluginInfoStore): Deleted.
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary): Deleted.
+        * UIProcess/Plugins/PluginInfoStore.h:
+        (WebKit::PluginInfoStoreClient::~PluginInfoStoreClient): Deleted.
+        (WebKit::PluginInfoStoreClient::PluginInfoStoreClient): Deleted.
+        (WebKit::PluginInfoStore::setClient): Deleted.
+        (WebKit::PluginInfoStore::client): Deleted.
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::plugInInformationBecameAvailable): Deleted.
+        * UIProcess/WebContextClient.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_hiddenPageThrottlingTimer): Deleted.
+        (WebKit::WebProcessPool::pluginInfoStoreDidLoadPlugins): Deleted.
+        * UIProcess/WebProcessPool.h:
+
 2016-08-09  George Ruan  <gruan@apple.com>
 
         Implement functionality of media capture on iOS

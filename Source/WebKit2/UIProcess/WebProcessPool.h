@@ -100,9 +100,6 @@ int webProcessThroughputQOS();
 #endif
 
 class WebProcessPool final : public API::ObjectImpl<API::Object::Type::ProcessPool>, private IPC::MessageReceiver
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    , private PluginInfoStoreClient
-#endif
     {
 public:
     static Ref<WebProcessPool> create(API::ProcessPoolConfiguration&);
@@ -432,11 +429,6 @@ private:
     void plugInDidReceiveUserInteraction(unsigned plugInOriginHash, WebCore::SessionID);
 
     void setAnyPageGroupMightHavePrivateBrowsingEnabled(bool);
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // PluginInfoStoreClient:
-    void pluginInfoStoreDidLoadPlugins(PluginInfoStore*) override;
-#endif
 
     Ref<API::ProcessPoolConfiguration> m_configuration;
 

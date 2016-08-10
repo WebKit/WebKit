@@ -48,7 +48,6 @@ public:
     void plugInAutoStartOriginHashesChanged(WebProcessPool*);
     void networkProcessDidCrash(WebProcessPool*);
     void databaseProcessDidCrash(WebProcessPool*);
-    void plugInInformationBecameAvailable(WebProcessPool*, API::Array*);
     PassRefPtr<API::Data> copyWebCryptoMasterKey(WebProcessPool*);
 };
 
