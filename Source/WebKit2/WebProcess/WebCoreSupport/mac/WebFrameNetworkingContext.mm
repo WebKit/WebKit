@@ -70,7 +70,8 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAc
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
 
     NetworkStorageSession::forEach([&] (const NetworkStorageSession& networkStorageSession) {
-        CFHTTPCookieStorageSetCookieAcceptPolicy(networkStorageSession.cookieStorage().get(), policy);
+        if (auto cookieStorage = networkStorageSession.cookieStorage())
+            CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
     });
 }
     

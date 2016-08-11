@@ -119,6 +119,8 @@
 		5714ECBD1CA8C22A00051AC8 /* DownloadRequestOriginalURL2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */; };
 		57901FB11CAF142D00ED64F9 /* LoadInvalidURLRequest.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57901FB01CAF141C00ED64F9 /* LoadInvalidURLRequest.html */; };
 		57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */; };
+		5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */; };
+		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
 		5C726D6F1D3EE06E00C5E1A1 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */; };
 		5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */; };
 		5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */; };
@@ -508,6 +510,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				F4F405BC1D4C0D1C007A9707 /* full-size-autoplaying-video-with-audio.html in Copy Resources */,
+				5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */,
 				F4F405BD1D4C0D1C007A9707 /* skinny-autoplaying-video-with-audio.html in Copy Resources */,
 				515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */,
 				2E1DFDF11D42E1E400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html in Copy Resources */,
@@ -828,6 +831,8 @@
 		5798E2AF1CAF5C2800C5CBA0 /* ProvisionalURLNotChange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProvisionalURLNotChange.mm; sourceTree = "<group>"; };
 		57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IsNavigationActionTrusted.mm; sourceTree = "<group>"; };
 		57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IsNavigationActionTrusted.html; sourceTree = "<group>"; };
+		5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieAcceptPolicy.mm; sourceTree = "<group>"; };
+		5C2936941D5BFD1900DEAB1E /* CookieMessage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CookieMessage.html; sourceTree = "<group>"; };
 		5C5E633D1D0B67940085A025 /* UniqueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRef.cpp; sourceTree = "<group>"; };
 		5C726D6D1D3EE06800C5E1A1 /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InstanceMethodSwizzler.mm; path = cocoa/InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
@@ -1236,6 +1241,7 @@
 		1ABC3DEC1899BE55004F0626 /* WebKit2 Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */,
 				A16F66B81C40E9E100BD4D24 /* Resources */,
 				7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */,
 				A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */,
@@ -1364,6 +1370,7 @@
 		A16F66B81C40E9E100BD4D24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5C2936941D5BFD1900DEAB1E /* CookieMessage.html */,
 				F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */,
 				F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */,
 				2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */,
@@ -2196,6 +2203,7 @@
 				7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */,
 				7CCE7EE11A411A9A00447C4C /* GetBackingScaleFactor.mm in Sources */,
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,
+				5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */,
 				7C83E0B61D0A64B300FEBCF3 /* ModalAlertsSPI.cpp in Sources */,
 				7C83E04E1D0A641800FEBCF3 /* DFAMinimizer.cpp in Sources */,
 				7C83E0B81D0A64BD00FEBCF3 /* InjectedBundleMakeAllShadowRootsOpen.cpp in Sources */,
