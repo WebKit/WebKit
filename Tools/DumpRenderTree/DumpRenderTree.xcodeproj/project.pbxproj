@@ -28,6 +28,7 @@
 		00F048541A0C3C9A000244DB /* URLRedirect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00F048531A0C3C9A000244DB /* URLRedirect.cpp */; };
 		0F37A4A711E6628700275F54 /* PluginObjectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F37A4A611E6628700275F54 /* PluginObjectMac.mm */; };
 		0F37A4AA11E6629100275F54 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
+		0F4E43E31D5C2BAF008EBA5C /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F4E43E11D5C037A008EBA5C /* Launch.storyboard */; };
 		141BF435096A455900E0753C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		141BF436096A455900E0753C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
 		141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
@@ -214,6 +215,7 @@
 /* Begin PBXFileReference section */
 		00F048531A0C3C9A000244DB /* URLRedirect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLRedirect.cpp; sourceTree = "<group>"; };
 		0F37A4A611E6628700275F54 /* PluginObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginObjectMac.mm; sourceTree = "<group>"; };
+		0F4E43E11D5C037A008EBA5C /* Launch.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Launch.storyboard; path = ios/Launch.storyboard; sourceTree = "<group>"; };
 		141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestNetscapePlugIn.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
 		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
@@ -645,6 +647,7 @@
 		A1158D6A18927CE10088C17B /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				0F4E43E11D5C037A008EBA5C /* Launch.storyboard */,
 				4464CABD1C20A07000E5BB55 /* DumpRenderTreeAppMain.mm */,
 				A1158D55189273EB0088C17B /* DumpRenderTreeBrowserView.h */,
 				A1158D56189273EB0088C17B /* DumpRenderTreeBrowserView.mm */,
@@ -902,6 +905,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F4E43E31D5C2BAF008EBA5C /* Launch.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1198,6 +1202,7 @@
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1206,6 +1211,7 @@
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1214,6 +1220,7 @@
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Production;
 		};

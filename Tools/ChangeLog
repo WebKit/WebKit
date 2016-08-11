@@ -1,3 +1,29 @@
+2016-08-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS DRT] Allow DRT to be iPad-sized in the iPad simulator
+        https://bugs.webkit.org/show_bug.cgi?id=160761
+
+        Reviewed by Tim Horton.
+
+        Give iOS DRT a Launch storyboard.
+
+        Have it use a UIViewController so future forms testing works correctly.
+
+        Add TARGETED_DEVICE_FAMILY = "1,2" to the build settings for the .app, so that it
+        can run in iPad mode.
+
+        Remove empty InfoPlist.strings files.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/ios/Info.plist:
+        * DumpRenderTree/ios/Launch.storyboard: Added.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunnerApp/en.lproj/InfoPlist.strings: Removed.
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::PlatformWebView): Drive-by leak fix.
+
 2016-08-11  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Unable to reliably run tests in parallel

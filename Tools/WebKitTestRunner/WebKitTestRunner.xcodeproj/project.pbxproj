@@ -74,7 +74,6 @@
 		2E63EDA11891B291002A7AFC /* AccessibilityUIElementIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED781891ACE9002A7AFC /* AccessibilityUIElementIOS.mm */; };
 		2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */; };
 		2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED7A1891ACE9002A7AFC /* EventSenderProxyIOS.mm */; };
-		2EE52CED1890A9A80010ED21 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2EE52CEB1890A9A80010ED21 /* InfoPlist.strings */; };
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
 		5664A49A14326384008881BE /* TextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5664A49814326384008881BE /* TextInputController.cpp */; };
 		5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5670B8271386FCA5002EB355 /* EventSenderProxy.mm */; };
@@ -247,7 +246,6 @@
 		2EE52CE21890A9A80010ED21 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2EE52CE41890A9A80010ED21 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2EE52CEA1890A9A80010ED21 /* WebKitTestRunnerApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WebKitTestRunnerApp-Info.plist"; path = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist"; sourceTree = "<group>"; };
-		2EE52CEC1890A9A80010ED21 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2EE52CF11890A9A80010ED21 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		2EE52CF21890A9A80010ED21 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewIOS.mm; sourceTree = "<group>"; };
@@ -562,7 +560,6 @@
 			children = (
 				2EE52CF11890A9A80010ED21 /* AppDelegate.h */,
 				2EE52CF21890A9A80010ED21 /* AppDelegate.m */,
-				2EE52CEB1890A9A80010ED21 /* InfoPlist.strings */,
 				0F4B08721D5BE88D00EC1B78 /* Launch.storyboard */,
 				2EE52D161890A9FB0010ED21 /* mainIOS.mm */,
 			);
@@ -889,7 +886,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2EE52CED1890A9A80010ED21 /* InfoPlist.strings in Resources */,
 				0F4B08731D5BE88D00EC1B78 /* Launch.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1067,17 +1063,6 @@
 			targetProxy = BC952ED611F3C38B003398B4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		2EE52CEB1890A9A80010ED21 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				2EE52CEC1890A9A80010ED21 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB927508733DD40010E9CD /* Debug */ = {

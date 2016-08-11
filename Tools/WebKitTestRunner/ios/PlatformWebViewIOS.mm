@@ -116,6 +116,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
 
     UIViewController *viewController = [[UIViewController alloc] init];
     [m_window setRootViewController:viewController];
+    [viewController release];
 
     m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect) configuration:configuration];
 

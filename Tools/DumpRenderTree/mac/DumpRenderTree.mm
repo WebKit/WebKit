@@ -820,6 +820,10 @@ WebView *createWebViewAndOffscreenWindow()
     uiWindowRect.origin.y += [UIApp statusBarHeight];
     UIWindow *uiWindow = [[[UIWindow alloc] initWithFrame:uiWindowRect] autorelease];
 
+    UIViewController *viewController = [[UIViewController alloc] init];
+    [uiWindow setRootViewController:viewController];
+    [viewController release];
+
     // The UIWindow and UIWebBrowserView are released when the DumpRenderTreeWindow is closed.
     drtWindow.uiWindow = uiWindow;
     drtWindow.browserView = webBrowserView;
@@ -827,7 +831,7 @@ WebView *createWebViewAndOffscreenWindow()
     UIWebScrollView *scrollView = [[UIWebScrollView alloc] initWithFrame:layoutTestViewportRect];
     [scrollView addSubview:webBrowserView];
 
-    [uiWindow addSubview:scrollView];
+    [viewController.view addSubview:scrollView];
     [scrollView release];
 
     adjustWebDocumentForStandardViewport(webBrowserView, scrollView);
