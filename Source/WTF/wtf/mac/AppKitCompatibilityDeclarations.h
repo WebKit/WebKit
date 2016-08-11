@@ -36,6 +36,17 @@ static const NSAlertStyle NSAlertStyleCritical = NSCriticalAlertStyle;
 static const NSAlertStyle NSAlertStyleInformational = NSInformationalAlertStyle;
 static const NSAlertStyle NSAlertStyleWarning = NSWarningAlertStyle;
 
+static const NSButtonType NSButtonTypeMomentaryLight = NSMomentaryLightButton;
+static const NSButtonType NSButtonTypePushOnPushOff = NSPushOnPushOffButton;
+static const NSButtonType NSButtonTypeToggle = NSToggleButton;
+static const NSButtonType NSButtonTypeSwitch = NSSwitchButton;
+static const NSButtonType NSButtonTypeRadio = NSRadioButton;
+static const NSButtonType NSButtonTypeMomentaryChange = NSMomentaryChangeButton;
+static const NSButtonType NSButtonTypeOnOff = NSOnOffButton;
+static const NSButtonType NSButtonTypeMomentaryPushIn = NSMomentaryPushInButton;
+static const NSButtonType NSButtonTypeAccelerator = NSAcceleratorButton;
+static const NSButtonType NSButtonTypeMultiLevelAccelerator = NSMultiLevelAcceleratorButton;
+
 static const NSCompositingOperation NSCompositingOperationCopy = NSCompositeCopy;
 static const NSCompositingOperation NSCompositingOperationDestinationIn = NSCompositeDestinationIn;
 static const NSCompositingOperation NSCompositingOperationDestinationOut =  NSCompositeDestinationOut;
