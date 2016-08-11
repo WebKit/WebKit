@@ -129,7 +129,7 @@ void JSDollarVMPrototype::edenGC(ExecState* exec)
 {
     if (!ensureCurrentThreadOwnsJSLock(exec))
         return;
-    exec->heap()->collectAndSweep(EdenCollection);
+    exec->heap()->collect(EdenCollection);
 }
 
 static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState* exec)

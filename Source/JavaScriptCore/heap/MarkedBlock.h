@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2011, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -182,6 +182,16 @@ namespace JSC {
 
     private:
         static const size_t atomAlignmentMask = atomSize - 1;
+
+        // During allocation, we look for available space in free lists in blocks.
+        // If a block's utilization is sufficiently high (i.e. it's almost full),
+        // we want to remove that block as a candidate for allocating to reduce
+        // the likelihood of allocation having to take a slow path. When the
+        // block is in this state, we say that it is "Retired".
+        //
+        // A full GC can take a Retired blocks out of retirement. An eden GC
+        // will simply ignore Retired blocks (i.e. they will not be swept even
+        // if they no longer have live objects).
 
         enum BlockState { New, FreeListed, Allocated, Marked, Retired };
         template<bool callDestructors> FreeList sweepHelper(SweepMode = SweepOnly);

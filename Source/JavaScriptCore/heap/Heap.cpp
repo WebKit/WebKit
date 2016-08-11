@@ -1071,16 +1071,17 @@ void Heap::addToRememberedSet(const JSCell* cell)
     m_slotVisitor.appendToMarkStack(const_cast<JSCell*>(cell));
 }
 
-void Heap::collectAndSweep(HeapOperation collectionType)
+void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
         return;
 
-    collect(collectionType);
+    collect(FullCollection);
 
     DeferGCForAWhile deferGC(*this);
     m_objectSpace.sweep();
     m_objectSpace.shrink();
+    m_blockSnapshot.clear();
 
     sweepAllLogicallyEmptyWeakBlocks();
 }

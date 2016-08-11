@@ -165,8 +165,8 @@ public:
     JS_EXPORT_PRIVATE bool isHeapSnapshotting() const;
 
     JS_EXPORT_PRIVATE void collectAllGarbageIfNotDoneRecently();
-    void collectAllGarbage() { collectAndSweep(FullCollection); }
-    JS_EXPORT_PRIVATE void collectAndSweep(HeapOperation collectionType = AnyCollection);
+    JS_EXPORT_PRIVATE void collectAllGarbage();
+
     bool shouldCollect();
     JS_EXPORT_PRIVATE void collect(HeapOperation collectionType = AnyCollection);
     bool collectIfNecessaryOrDefer(); // Returns true if it did collect.

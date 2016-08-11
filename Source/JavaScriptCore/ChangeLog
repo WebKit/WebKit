@@ -1,3 +1,30 @@
+2016-08-10  Mark Lam  <mark.lam@apple.com>
+
+        Disallow synchronous sweeping for eden GCs.
+        https://bugs.webkit.org/show_bug.cgi?id=160716
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collectAndSweep): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::collectAllGarbage): Deleted.
+        - No need for a separate collectAndSweep() anymore since we only call it for
+          FullCollections.
+        - Since we've already swept all the blocks, I cleared m_blockSnapshot so that the
+          IncrementalSweeper can bail earlier when it runs later.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweepHelper):
+        - Removed the unreachable return statement.
+
+        * heap/MarkedBlock.h:
+        - Document what "Retired" means.
+
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::edenGC):
+
 2016-08-11  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Warning fix.
