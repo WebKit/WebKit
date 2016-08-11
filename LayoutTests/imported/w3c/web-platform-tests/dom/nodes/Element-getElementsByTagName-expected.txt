@@ -16,8 +16,8 @@ FAIL Element in non-HTML namespace, prefix, lowercase name assert_array_equals: 
 FAIL Element in non-HTML namespace, prefix, uppercase name assert_array_equals: lengths differ, expected 0 got 1
 PASS Element in HTML namespace, no prefix, non-ascii characters in name 
 PASS Element in non-HTML namespace, non-ascii characters in name 
-PASS Element in HTML namespace, prefix, non-ascii characters in name 
-PASS Element in non-HTML namespace, prefix, non-ascii characters in name 
+FAIL Element in HTML namespace, prefix, non-ascii characters in name assert_array_equals: All uppercase input lengths differ, expected 1 got 0
+FAIL Element in non-HTML namespace, prefix, non-ascii characters in name assert_array_equals: All uppercase input lengths differ, expected 1 got 0
 PASS getElementsByTagName('*') 
 PASS Matching the context object 
 
