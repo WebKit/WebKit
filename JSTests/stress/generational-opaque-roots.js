@@ -1,5 +1,11 @@
 // Tests that opaque roots behave correctly during young generation collections
 
+try {
+    // regression test for bug 160773.  This should not crash.
+    new (Element.bind());
+} catch(e) {
+}
+
 // Create the primary Root.
 var root = new Root();
 // This secondary root is for allocating a second Element without overriding 

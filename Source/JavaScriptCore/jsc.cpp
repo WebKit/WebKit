@@ -1231,7 +1231,7 @@ EncodedJSValue JSC_HOST_CALL functionCreateElement(ExecState* exec)
     JSLockHolder lock(exec);
     Root* root = jsDynamicCast<Root*>(exec->argument(0));
     if (!root)
-        return JSValue::encode(jsUndefined());
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Cannot create Element without a Root."))));
     return JSValue::encode(Element::create(exec->vm(), exec->lexicalGlobalObject(), root));
 }
 

@@ -1,4 +1,24 @@
-2016-08-10  Mark Lam  <mark.lam@apple.com>
+2016-08-11  Mark Lam  <mark.lam@apple.com>
+
+        The jsc shell's Element host constructor should throw if it fails to construct an object.
+        https://bugs.webkit.org/show_bug.cgi?id=160773
+        <rdar://problem/27328608>
+
+        Reviewed by Saam Barati.
+
+        The Element object is a test object provided in the jsc shell for testing use only.
+        JavaScriptCore expects host constructors to either throw an error or return a
+        constructed object.  Element has a host constructor that did not obey this contract.
+        As a result, the following statement will fail a RELEASE_ASSERT:
+
+            new (Element.bind())
+
+        This is now fixed.
+
+        * jsc.cpp:
+        (functionCreateElement):
+
+2016-08-11  Mark Lam  <mark.lam@apple.com>
 
         Disallow synchronous sweeping for eden GCs.
         https://bugs.webkit.org/show_bug.cgi?id=160716
