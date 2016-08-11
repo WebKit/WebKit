@@ -1022,12 +1022,12 @@ void Range::selectNodeContents(Node& refNode, ExceptionCode& ec)
     m_end.setToEndOfNode(refNode);
 }
 
-void Range::surroundContents(Node& passNewParent, ExceptionCode& ec)
+// https://dom.spec.whatwg.org/#dom-range-surroundcontents
+void Range::surroundContents(Node& newParent, ExceptionCode& ec)
 {
-    Ref<Node> newParent = passNewParent;
+    Ref<Node> protectedNewParent(newParent);
 
-    // INVALID_STATE_ERR: Raised if the Range partially selects a non-Text node.
-    // https://dom.spec.whatwg.org/#dom-range-surroundcontents (step 1).
+    // Step 1: If a non-Text node is partially contained in the context object, then throw an InvalidStateError.
     Node* startNonTextContainer = &startContainer();
     if (startNonTextContainer->nodeType() == Node::TEXT_NODE)
         startNonTextContainer = startNonTextContainer->parentNode();
@@ -1039,9 +1039,8 @@ void Range::surroundContents(Node& passNewParent, ExceptionCode& ec)
         return;
     }
 
-    // INVALID_NODE_TYPE_ERR: Raised if node is an Attr, Entity, DocumentType,
-    // Document, or DocumentFragment node.
-    switch (newParent->nodeType()) {
+    // Step 2: If newParent is a Document, DocumentType, or DocumentFragment node, then throw an InvalidNodeTypeError.
+    switch (newParent.nodeType()) {
         case Node::ATTRIBUTE_NODE:
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
@@ -1056,42 +1055,31 @@ void Range::surroundContents(Node& passNewParent, ExceptionCode& ec)
             break;
     }
 
-    // Raise a HIERARCHY_REQUEST_ERR if startContainer() doesn't accept children like newParent.
-    Node* parentOfNewParent = &startContainer();
-
-    // If startContainer() is a character data node, it will be split and it will be its parent that will
-    // need to accept newParent (or in the case of a comment, it logically "would" be inserted into the parent,
-    // although this will fail below for another reason).
-    if (parentOfNewParent->isCharacterDataNode())
-        parentOfNewParent = parentOfNewParent->parentNode();
-    if (!parentOfNewParent || !parentOfNewParent->childTypeAllowed(newParent->nodeType())) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return;
-    }
-    
-    if (newParent->contains(&startContainer())) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return;
-    }
-
-    // FIXME: Do we need a check if the node would end up with a child node of a type not
-    // allowed by the type of node?
-
     ec = 0;
-    while (Node* n = newParent->firstChild()) {
-        downcast<ContainerNode>(newParent.get()).removeChild(*n, ec);
-        if (ec)
-            return;
-    }
+
+    // Step 3: Let fragment be the result of extracting context object.
     RefPtr<DocumentFragment> fragment = extractContents(ec);
     if (ec)
         return;
-    insertNode(newParent.copyRef(), ec);
+
+    // Step 4: If newParent has children, replace all with null within newParent.
+    while (Node* n = newParent.firstChild()) {
+        downcast<ContainerNode>(newParent).removeChild(*n, ec);
+        if (ec)
+            return;
+    }
+
+    // Step 5: Insert newParent into context object.
+    insertNode(newParent, ec);
     if (ec)
         return;
-    newParent->appendChild(*fragment, ec);
+
+    // Step 6: Append fragment to newParent.
+    newParent.appendChild(*fragment, ec);
     if (ec)
         return;
+
+    // Step 7: Select newParent within context object.
     selectNode(newParent, ec);
 }
 

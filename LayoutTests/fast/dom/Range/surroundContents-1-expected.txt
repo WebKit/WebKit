@@ -1,0 +1,11 @@
+This tests for HIERARCHY_REQUEST_ERRs when calling Range.surroundContents().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS range.surroundContents(select) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+PASS range.surroundContents(insert) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,5 +1,16 @@
 2016-08-11  Chris Dumez  <cdumez@apple.com>
 
+        Align Range.surroundContents() with the latest DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=160777
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that all checks are passing.
+
+        * web-platform-tests/dom/ranges/Range-surroundContents-expected.txt:
+
+2016-08-11  Chris Dumez  <cdumez@apple.com>
+
         Move dataset attribute from Element to HTMLElement / SVGElement
         https://bugs.webkit.org/show_bug.cgi?id=160766
 
