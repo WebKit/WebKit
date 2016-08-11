@@ -411,16 +411,6 @@ MOCK: update_status: commit-queue Tests passed, but commit failed (checkout out 
         queue._options.port = None
         expected_logs = """Running: webkit-patch --status-host=example.com clean --port=mac
 MOCK: update_status: commit-queue Cleaned working directory
-Running: webkit-patch --status-host=example.com update --port=mac
-MOCK: update_status: commit-queue Updated working directory
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=mac
-MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --check-oops --non-interactive 10000 --port=mac
-MOCK: update_status: commit-queue ChangeLog validated
-Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=mac
-MOCK: update_status: commit-queue Built patch
-Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=mac
-MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Error: commit-queue did not process patch. Reason: Patch is obsolete.
 MOCK: release_work_item: commit-queue 10000
 """

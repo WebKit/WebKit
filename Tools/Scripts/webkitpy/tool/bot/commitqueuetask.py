@@ -72,8 +72,6 @@ class CommitQueueTask(PatchAnalysisTask):
         return self._test_patch()
 
     def run(self):
-        if not self.validate():
-            raise PatchIsNotValid(self._patch, self.error)
         if not self._clean():
             return False
         if not self._update():
@@ -89,10 +87,6 @@ class CommitQueueTask(PatchAnalysisTask):
                 return self.report_failure()
             if not self._did_pass_tests_recently():
                 return False
-        # Make sure the patch is still valid before landing (e.g., make sure
-        # no one has set commit-queue- since we started working on the patch.)
-        if not self.validate():
-            raise PatchIsNotValid(self._patch, self.error)
         # FIXME: We should understand why the land failure occurred and retry if possible.
         if not self._land():
             return self.report_failure()

@@ -66,8 +66,6 @@ class StyleQueueTask(PatchAnalysisTask):
         "Unabled to apply watchlist")
 
     def run(self):
-        if not self.validate():
-            raise PatchIsNotValid(self._patch, self.error)
         if not self._clean():
             return False
         if not self._update():

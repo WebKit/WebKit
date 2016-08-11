@@ -62,6 +62,9 @@ class PerfalizerTask(PatchAnalysisTask):
         except:
             return False
 
+    def validate(self):
+        return True
+
     def run(self):
         if not self._patch.committer() and not self._patch.attacher().can_commit:
             self._logger('The patch %d is not authorized by a commmitter' % self._patch.id())

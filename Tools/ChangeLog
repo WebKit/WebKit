@@ -1,3 +1,25 @@
+2016-08-11  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should check if the patch is still valid before executing every major step
+        https://bugs.webkit.org/show_bug.cgi?id=160739
+        rdar://problem/27768813
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        (CommitQueueTask.run): validate method is now executed in base class.
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        (EarlyWarningSystemTask.run): validate method is now executed in base class.
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py:
+        (StyleQueueTask.validate): Raise an PatchIsNotValid exception instead of returning False.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTask._run_command): validate the patch before executing any command. This is to ensure
+        that we do not waste time on any patch which has become invalid (e.g.: obsolete, r-).
+        * Scripts/webkitpy/tool/commands/perfalizer.py:
+        (PerfalizerTask.validate): Added.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (test_manual_reject_during_processing): Updated test case.
+
 2016-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Add URLParser stub
