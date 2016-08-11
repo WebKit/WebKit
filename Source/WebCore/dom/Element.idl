@@ -111,10 +111,6 @@
     [Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    readonly attribute DOMStringMap dataset;
-#endif
-
     [RaisesException] boolean matches(DOMString selectors);
     [RaisesException] Element closest(DOMString selectors);    
     [ImplementedAs=matches, RaisesException] boolean webkitMatchesSelector(DOMString selectors);

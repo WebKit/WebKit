@@ -966,7 +966,7 @@ PASS HTMLElement interface: attribute title
 PASS HTMLElement interface: attribute lang 
 PASS HTMLElement interface: attribute translate 
 PASS HTMLElement interface: attribute dir 
-FAIL HTMLElement interface: attribute dataset assert_own_property: expected property "dataset" missing
+PASS HTMLElement interface: attribute dataset 
 PASS HTMLElement interface: attribute hidden 
 PASS HTMLElement interface: operation click() 
 PASS HTMLElement interface: attribute tabIndex 

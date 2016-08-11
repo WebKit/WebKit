@@ -1,3 +1,15 @@
+2016-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Move dataset attribute from Element to HTMLElement / SVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=160766
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline existing tests now that properties are in different order
+        when iterating.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2016-08-11  Antoine Quint  <graouts@apple.com>
 
         Unskip 2d.gradient.interpolate.colouralpha on macOS Sierra
