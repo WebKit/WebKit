@@ -49,10 +49,9 @@ NetworkingContext* NetworkStorageSession::context() const
     return m_context.get();
 }
 
-std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(SessionID sessionID, const String&)
+void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, const String&)
 {
     ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 static std::unique_ptr<NetworkStorageSession>& defaultSession()
