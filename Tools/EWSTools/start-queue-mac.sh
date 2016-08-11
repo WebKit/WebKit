@@ -51,9 +51,9 @@ fi
 TIME_TO_REBOOT=$(( $(date +%s) + 3600 * 12))
 
 while [ $TIME_TO_REBOOT -gt $(date +%s) ] || [ $(date +%H) -lt 1 ] || [ $(date +%H) -ge 6 ]; do
-    # Delete log files older than 14 days, move aside the main $QUEUE_NAME-ews.log file to prevent it from growing extra large.
+    # Delete log files older than 30 days, move aside the main $QUEUE_NAME-ews.log file to prevent it from growing extra large.
     cd $EWS_HOME/$QUEUE_NAME-logs
-    find . -mtime +14 -delete
+    find . -mtime +30 -delete
     if [ -s $QUEUE_NAME.log ]; then
         mv -f $QUEUE_NAME.log ${QUEUE_NAME}_$(date +%Y-%m-%d_%H-%m).log
     fi

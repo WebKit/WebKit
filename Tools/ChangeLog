@@ -1,3 +1,12 @@
+2016-08-11  Aakash Jain  <aakash_jain@apple.com>
+
+        Keep EWS logs for longer
+        https://bugs.webkit.org/show_bug.cgi?id=160776
+
+        Reviewed by Daniel Bates.
+
+        * EWSTools/start-queue-mac.sh: Keep logs for 30 days instead of 14 days.
+
 2016-08-11  Simon Fraser  <simon.fraser@apple.com>
 
         iOS DRT/WTR project cleanup
