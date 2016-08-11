@@ -1,3 +1,18 @@
+2016-08-11  Antoine Quint  <graouts@apple.com>
+
+        Test 2d.gradient.interpolate.colouralpha.html is broken on macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=160689
+        <rdar://problem/24025664>
+
+        Reviewed by Dean Jackson.
+
+        When the test samples 25th pixel it expect the value to be exactly 25% interpolation of the color values.
+        However, the sampling location is the center of the pixel, i.e. it should correspond to 25.5% interpolation,
+        which would expect the color of (189.975, 189.75, 65.25, 65.25). The new values are a rounded values of
+        interpolation “by hand” at steps of 25.5%, 50.5% and 75.5%.
+
+        * canvas/2d.gradient.interpolate.colouralpha.html:
+
 2016-08-10  Chris Dumez  <cdumez@apple.com>
 
         Pull in recent upstream web-platform-tests changes for dom/ and html/
