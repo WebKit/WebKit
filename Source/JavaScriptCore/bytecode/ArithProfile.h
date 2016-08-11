@@ -75,8 +75,8 @@ private:
     static const uint32_t lhsObservedTypeShift = rhsObservedTypeShift + ObservedType::numBitsNeeded;
 
     static_assert(ObservedType::numBitsNeeded == 3, "We make a hard assumption about that here.");
-    static const uint32_t clearRhsObservedTypeBitMask = ~((1 << rhsObservedTypeShift) | (1 << (rhsObservedTypeShift + 1)) | (1 << (rhsObservedTypeShift + 2)));
-    static const uint32_t clearLhsObservedTypeBitMask = ~((1 << lhsObservedTypeShift) | (1 << (lhsObservedTypeShift + 1)) | (1 << (lhsObservedTypeShift + 2)));
+    static const uint32_t clearRhsObservedTypeBitMask = static_cast<uint32_t>(~((1 << rhsObservedTypeShift) | (1 << (rhsObservedTypeShift + 1)) | (1 << (rhsObservedTypeShift + 2))));
+    static const uint32_t clearLhsObservedTypeBitMask = static_cast<uint32_t>(~((1 << lhsObservedTypeShift) | (1 << (lhsObservedTypeShift + 1)) | (1 << (lhsObservedTypeShift + 2))));
 
     static const uint32_t resultTypeMask = (1 << ResultType::numBitsNeeded) - 1;
     static const uint32_t observedTypeMask = (1 << ObservedType::numBitsNeeded) - 1;
