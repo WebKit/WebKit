@@ -259,7 +259,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
 
     _addNewRule(event)
     {
-        if (!this._nodeStyles || this._nodeStyles.node.isInShadowTree())
+        if (!this._nodeStyles || this._nodeStyles.node.isInUserAgentShadowTree())
             return;
 
         let selector = this.currentStyle().selectorText;

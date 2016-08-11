@@ -523,7 +523,8 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         if (!this._excludeRevealElementContextMenu)
             contextMenu.appendItem(WebInspector.UIString("Reveal in DOM Tree"), revealElement);
 
-        contextMenu.appendItem(WebInspector.UIString("Log Element"), logElement);
+        if (!domNode.isInUserAgentShadowTree())
+            contextMenu.appendItem(WebInspector.UIString("Log Element"), logElement);
     }
 
     _showShadowDOMSettingChanged(event)

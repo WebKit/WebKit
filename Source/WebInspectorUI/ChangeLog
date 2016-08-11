@@ -1,3 +1,36 @@
+2016-08-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to Edit Node Attributes and Styles for non-UserAgent Shadow DOM nodes
+        https://bugs.webkit.org/show_bug.cgi?id=160762
+        <rdar://problem/27798271>
+
+        Reviewed by Ryosuke Niwa.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode.prototype.isInUserAgentShadowTree):
+        (WebInspector.DOMNode.prototype.isShadowRoot):
+        (WebInspector.DOMNode.prototype.isUserAgentShadowRoot):
+        (WebInspector.DOMNode.prototype.ancestorShadowRoot):
+        (WebInspector.DOMNode.prototype.ancestorShadowHost):
+        Add methods for determining the shadow root, host, and easily
+        checking the type of shadow tree a node is in.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WebInspector.CSSStyleDeclaration.prototype.get editable):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.get editable):
+        (WebInspector.DOMTreeElement.prototype._startEditingTarget):
+        (WebInspector.DOMTreeElement.prototype._populateTagContextMenu):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.newRuleButtonClicked):
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection.prototype._addNewRule):
+        Allow editing shadow DOM nodes as long as they are not in a UserAgent shadow tree.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu):
+        Disallow "Log Element" on UserAgent shadow tree nodes.
+
 2016-08-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Can't click on the lower half of "S" icon in JavaScript Allocations timeline

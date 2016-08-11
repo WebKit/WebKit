@@ -380,7 +380,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 
     newRuleButtonClicked()
     {
-        if (this.nodeStyles.node.isInShadowTree())
+        if (this.nodeStyles.node.isInUserAgentShadowTree())
             return;
 
         for (let existingRule of this.nodeStyles.rulesForSelector()) {

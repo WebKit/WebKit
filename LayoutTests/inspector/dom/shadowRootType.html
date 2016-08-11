@@ -17,6 +17,7 @@ function test()
                 InspectorTest.assert(domNode, "Got DOMNode for #host-user-agent");
                 InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
                 InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WebInspector.DOMNode.ShadowRootType.UserAgent, "DOMNode has UserAgent shadow root type.");
+                InspectorTest.expectThat(domNode.shadowRoots()[0].isInUserAgentShadowTree(), "DOMNode is in a UserAgent shadow tree.");
                 resolve();
             });
         }
@@ -30,6 +31,7 @@ function test()
                 InspectorTest.assert(domNode, "Got DOMNode for #host-closed");
                 InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
                 InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WebInspector.DOMNode.ShadowRootType.Closed, "DOMNode has Closed shadow root type.");
+                InspectorTest.expectThat(!domNode.shadowRoots()[0].isInUserAgentShadowTree(), "DOMNode is not in a UserAgent shadow tree.");
                 resolve();
             });
         }
@@ -43,6 +45,7 @@ function test()
                 InspectorTest.assert(domNode, "Got DOMNode for #host-open");
                 InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
                 InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WebInspector.DOMNode.ShadowRootType.Open, "DOMNode has Open shadow root type.");
+                InspectorTest.expectThat(!domNode.shadowRoots()[0].isInUserAgentShadowTree(), "DOMNode is not in a UserAgent shadow tree.");
                 resolve();
             });
         }

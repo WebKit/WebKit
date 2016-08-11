@@ -258,6 +258,38 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         return this._isInShadowTree;
     }
 
+    isInUserAgentShadowTree()
+    {
+        return this._isInShadowTree && this.ancestorShadowRoot().isUserAgentShadowRoot();
+    }
+
+    isShadowRoot()
+    {
+        return !!this._shadowRootType;
+    }
+
+    isUserAgentShadowRoot()
+    {
+        return this._shadowRootType === WebInspector.DOMNode.ShadowRootType.UserAgent;
+    }
+
+    ancestorShadowRoot()
+    {
+        if (!this._isInShadowTree)
+            return null;
+
+        let node = this;
+        while (node && !node.isShadowRoot())
+            node = node.parentNode;
+        return node;
+    }
+
+    ancestorShadowHost()
+    {
+        let shadowRoot = this.ancestorShadowRoot();
+        return shadowRoot ? shadowRoot.parentNode : null;
+    }
+
     isPseudoElement()
     {
         return this._pseudoType !== undefined;

@@ -175,9 +175,11 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     get editable()
     {
-        var node = this.representedObject;
-        if (node.isInShadowTree())
+        let node = this.representedObject;
+
+        if (node.isShadowRoot() || node.isInUserAgentShadowTree())
             return false;
+
         if (node.isPseudoElement())
             return false;
 
@@ -615,7 +617,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
             return false;
 
-        if (this.representedObject.isInShadowTree() || this.representedObject.isPseudoElement())
+        if (this.representedObject.isShadowRoot() || this.representedObject.isInUserAgentShadowTree())
+            return false;
+
+        if (this.representedObject.isPseudoElement())
             return false;
 
         if (this.representedObject.nodeType() !== Node.ELEMENT_NODE && this.representedObject.nodeType() !== Node.TEXT_NODE)
@@ -639,7 +644,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
     _populateTagContextMenu(contextMenu, event)
     {
         var node = this.representedObject;
-        if (!node.isInShadowTree()) {
+        if (!node.isInUserAgentShadowTree()) {
             var attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
 
             // Add attribute-related actions.

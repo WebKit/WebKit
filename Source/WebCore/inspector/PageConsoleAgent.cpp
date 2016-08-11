@@ -68,7 +68,7 @@ private:
 void PageConsoleAgent::addInspectedNode(ErrorString& errorString, int nodeId)
 {
     Node* node = m_inspectorDOMAgent->nodeForId(nodeId);
-    if (!node || node->isInShadowTree()) {
+    if (!node || node->isInUserAgentShadowTree()) {
         errorString = ASCIILiteral("nodeId is not valid");
         return;
     }

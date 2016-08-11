@@ -395,8 +395,8 @@ Node* InspectorDOMAgent::assertEditableNode(ErrorString& errorString, int nodeId
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
-    if (node->isInShadowTree()) {
-        errorString = ASCIILiteral("Cannot edit nodes from shadow trees");
+    if (node->isInUserAgentShadowTree()) {
+        errorString = ASCIILiteral("Cannot edit nodes in user agent shadow trees");
         return nullptr;
     }
     if (node->isPseudoElement()) {
@@ -411,8 +411,8 @@ Element* InspectorDOMAgent::assertEditableElement(ErrorString& errorString, int 
     Element* element = assertElement(errorString, nodeId);
     if (!element)
         return nullptr;
-    if (element->isInShadowTree()) {
-        errorString = ASCIILiteral("Cannot edit elements from shadow trees");
+    if (element->isInUserAgentShadowTree()) {
+        errorString = ASCIILiteral("Cannot edit elements in user agent shadow trees");
         return nullptr;
     }
     if (element->isPseudoElement()) {

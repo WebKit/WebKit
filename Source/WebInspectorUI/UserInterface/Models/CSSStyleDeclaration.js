@@ -85,7 +85,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
             return this._ownerRule && this._ownerRule.editable;
 
         if (this._type === WebInspector.CSSStyleDeclaration.Type.Inline)
-            return !this._node.isInShadowTree();
+            return !this._node.isInUserAgentShadowTree();
 
         return false;
     }

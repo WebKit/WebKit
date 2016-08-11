@@ -1,3 +1,15 @@
+2016-08-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to Edit Node Attributes and Styles for non-UserAgent Shadow DOM nodes
+        https://bugs.webkit.org/show_bug.cgi?id=160762
+        <rdar://problem/27798271>
+
+        Reviewed by Ryosuke Niwa.
+
+        * inspector/dom/shadowRootType-expected.txt:
+        * inspector/dom/shadowRootType.html:
+        Add tests for DOMNode.prototype.isInUserAgentShadowTree.
+
 2016-08-10  Chris Dumez  <cdumez@apple.com>
 
         Optimization in Node.insertBefore() is not spec-compliant
