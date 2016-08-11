@@ -1,3 +1,16 @@
+2016-08-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add URLParser stub
+        https://bugs.webkit.org/show_bug.cgi?id=160770
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp: Added.
+        (TestWebKitAPI::TEST_F):
+
 2016-08-10  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS DRT] Allow DRT to be iPad-sized in the iPad simulator

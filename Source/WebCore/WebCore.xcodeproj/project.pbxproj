@@ -2404,6 +2404,8 @@
 		5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */; };
 		5C688AA11D380BF8000B54FA /* ThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */; };
 		5C688AA31D3814BF000B54FA /* SocketProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C688AA21D38126F000B54FA /* SocketProvider.cpp */; };
+		5C6E65421D5CEFB900F7862E /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E653F1D5CEDC900F7862E /* URLParser.cpp */; };
+		5C6E65431D5CEFBF00F7862E /* URLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C6E65401D5CEDC900F7862E /* URLParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C7C88D81D0F1F4A009D2F6D /* SocketProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7C88D71D0F1F2B009D2F6D /* SocketProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C9A7A751AA0F6EA00958ACF /* DFABytecodeCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C39305E1AA0F6A90029C816 /* DFABytecodeCompiler.cpp */; };
 		5C9A7A761AA0F6ED00958ACF /* DFABytecodeInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C3930601AA0F6A90029C816 /* DFABytecodeInterpreter.cpp */; };
@@ -9766,6 +9768,8 @@
 		5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTShaderTextureLOD.h; sourceTree = "<group>"; };
 		5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		5C688AA21D38126F000B54FA /* SocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketProvider.cpp; sourceTree = "<group>"; };
+		5C6E653F1D5CEDC900F7862E /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
+		5C6E65401D5CEDC900F7862E /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLParser.h; sourceTree = "<group>"; };
 		5C7C88D71D0F1F2B009D2F6D /* SocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketProvider.h; sourceTree = "<group>"; };
 		5C9B860B1C21E3C600110F36 /* ResourceLoadTiming.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoadTiming.mm; sourceTree = "<group>"; };
 		5CB37FFC1C62D27800F20188 /* ScrollAnimatorMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimatorMock.cpp; sourceTree = "<group>"; };
@@ -22526,6 +22530,8 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				5C6E653F1D5CEDC900F7862E /* URLParser.cpp */,
+				5C6E65401D5CEDC900F7862E /* URLParser.h */,
 				49E912A40EFAC8E6009D0CAF /* animation */,
 				FD31604012B026A300C1A359 /* audio */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
@@ -25377,6 +25383,7 @@
 				BC00F0090E0A185500FD04E3 /* DOMFileListInternal.h in Headers */,
 				2ED609BD1145B07100C8684E /* DOMFormData.h in Headers */,
 				BC1A37B6097C715F0019F3D8 /* DOMHTML.h in Headers */,
+				5C6E65431D5CEFBF00F7862E /* URLParser.h in Headers */,
 				85DF81270AA7787200486AD7 /* DOMHTMLAnchorElement.h in Headers */,
 				854075690AD6CBF900620C57 /* DOMHTMLAppletElement.h in Headers */,
 				85ECBEEB0AA7626900544F0B /* DOMHTMLAreaElement.h in Headers */,
@@ -29328,6 +29335,7 @@
 				724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
 				44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */,
+				5C6E65421D5CEFB900F7862E /* URLParser.cpp in Sources */,
 				E47E276816036EDC00EE2AFB /* ExtensionStyleSheets.cpp in Sources */,
 				72F1ADA21A3904DC00014E18 /* EXTFragDepth.cpp in Sources */,
 				5C4304B0191AC908000E2BC0 /* EXTShaderTextureLOD.cpp in Sources */,

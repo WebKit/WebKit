@@ -48,6 +48,7 @@ set(TestWebCoreLib_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/TimeRanges.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/DIBPixelData.cpp
 )
 

@@ -135,6 +135,7 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/HTMLParserIdioms.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileSystem.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp

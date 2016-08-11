@@ -2162,6 +2162,7 @@ set(WebCore_SOURCES
     platform/ThreadTimers.cpp
     platform/Timer.cpp
     platform/URL.cpp
+    platform/URLParser.cpp
     platform/UUID.cpp
     platform/UserActivity.cpp
     platform/WebCoreCrossThreadCopier.cpp

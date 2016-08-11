@@ -121,6 +121,7 @@
 		57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */; };
 		5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */; };
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
+		5C6E65441D5CEFD400F7862E /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E65411D5CEF8500F7862E /* URLParser.cpp */; };
 		5C726D6F1D3EE06E00C5E1A1 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */; };
 		5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */; };
 		5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */; };
@@ -834,6 +835,7 @@
 		5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieAcceptPolicy.mm; sourceTree = "<group>"; };
 		5C2936941D5BFD1900DEAB1E /* CookieMessage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CookieMessage.html; sourceTree = "<group>"; };
 		5C5E633D1D0B67940085A025 /* UniqueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRef.cpp; sourceTree = "<group>"; };
+		5C6E65411D5CEF8500F7862E /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
 		5C726D6D1D3EE06800C5E1A1 /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InstanceMethodSwizzler.mm; path = cocoa/InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
 		5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = ApplicationCache.db; sourceTree = "<group>"; };
@@ -1312,6 +1314,7 @@
 		440A1D3614A01000008A66F2 /* WebCore */ = {
 			isa = PBXGroup;
 			children = (
+				5C6E65411D5CEF8500F7862E /* URLParser.cpp */,
 				CD89D0371C4EDB1300040A04 /* cocoa */,
 				93A720E518F1A0E800A848E1 /* CalculationValue.cpp */,
 				7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */,
@@ -2209,6 +2212,7 @@
 				7C83E0B81D0A64BD00FEBCF3 /* InjectedBundleMakeAllShadowRootsOpen.cpp in Sources */,
 				A1146A8D1D2D7115000FE710 /* ContentFiltering.mm in Sources */,
 				7CCE7EF91A411AE600447C4C /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
+				5C6E65441D5CEFD400F7862E /* URLParser.cpp in Sources */,
 				536770341CC8022800D425B1 /* WebScriptObjectDescription.mm in Sources */,
 				7CCE7EE21A411A9A00447C4C /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,
 				51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */,

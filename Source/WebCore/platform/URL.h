@@ -202,6 +202,7 @@ public:
     String serialize(bool omitFragment = false) const;
 
 private:
+    friend class URLParser;
     WEBCORE_EXPORT void invalidate();
     static bool protocolIs(const String&, const char*);
     void init(const URL&, const String&, const TextEncoding&);
