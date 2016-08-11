@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="testDiv"><p></p><p></p></div>
+<script>
+description("Tests that calls of insertBefore() lead to mutation events even if they are no-ops.");
+jsTestIsAsync = true;
+
+var testDiv = document.getElementById("testDiv");
+var p1 = testDiv.firstChild;
+var p2 = testDiv.lastChild;
+
+var operations = [
+    function() { testDiv.insertBefore(p1, p1); },
+    function() { testDiv.insertBefore(p1, p2); }
+];
+var currentOperation = 0;
+
+function testMutationObserver()
+{
+    var config = { childList: true };
+    var observer = new MutationObserver(function(mutations) {
+        testPassed("Mutation observer was notified");
+        observer.disconnect();
+        testMutationEventListener();
+    });
+
+    observer.observe(testDiv, config);
+    operations[currentOperation]();
+}
+
+function subtreeModifiedHandler()
+{
+    wasMutationEventListenerCalled = true;
+}
+
+function testMutationEventListener()
+{
+    wasMutationEventListenerCalled = false;
+    testDiv.addEventListener("DOMSubtreeModified", subtreeModifiedHandler);
+    operations[currentOperation]();
+    shouldBeTrue("wasMutationEventListenerCalled");
+    testDiv.removeEventListener("DOMSubtreeModified", subtreeModifiedHandler);
+
+    currentOperation++;
+    if (currentOperation < operations.length)
+        testMutationObserver();
+    else
+        finishJSTest();
+}
+
+testMutationObserver();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

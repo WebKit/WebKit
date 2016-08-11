@@ -117,6 +117,7 @@ protected:
 
 private:
     void removeBetween(Node* previousChild, Node* nextChild, Node& oldChild);
+    bool appendChildWithoutPreInsertionValidityCheck(Node&, ExceptionCode&);
     void insertBeforeCommon(Node& nextChild, Node& oldChild);
     void appendChildCommon(Node&);
 

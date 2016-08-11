@@ -1,3 +1,16 @@
+2016-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Optimization in Node.insertBefore() is not spec-compliant
+        https://bugs.webkit.org/show_bug.cgi?id=160746
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test to make sure mutation observers / listeners are always
+        notified when Node.insertBefore() is called.
+
+        * fast/dom/Node/insertBefore-no-op-mutationobserver-expected.txt: Added.
+        * fast/dom/Node/insertBefore-no-op-mutationobserver.html: Added.
+
 2016-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move document.defineElement to customElements.define

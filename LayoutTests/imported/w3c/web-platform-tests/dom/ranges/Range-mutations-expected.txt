@@ -5507,18 +5507,12 @@ PASS detachedXmlComment.nodeValue += "foo", with unselected range collapsed at (
 FAIL detachedXmlComment.nodeValue += "foo", with selected range collapsed at (detachedXmlComment, detachedXmlComment.length) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS detachedXmlComment.nodeValue += detachedXmlComment.nodeValue, with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length) 
 FAIL detachedXmlComment.nodeValue += detachedXmlComment.nodeValue, with selected range collapsed at (detachedXmlComment, detachedXmlComment.length) assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
-FAIL testDiv.insertBefore(paras[0], paras[1]), with unselected range collapsed at (paras[0], 0) assert_equals: Wrong start container expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p><p id="b" s... but got Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p>
+PASS testDiv.insertBefore(paras[0], paras[1]), with unselected range collapsed at (paras[0], 0) 
 FAIL testDiv.insertBefore(paras[0], paras[1]), with selected range collapsed at (paras[0], 0) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL testDiv.insertBefore(paras[0], paras[1]), with unselected range on paras[0] from 0 to 1 assert_equals: Wrong start container expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p><p id="b" s... but got Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p>
+PASS testDiv.insertBefore(paras[0], paras[1]), with unselected range on paras[0] from 0 to 1 
 FAIL testDiv.insertBefore(paras[0], paras[1]), with selected range on paras[0] from 0 to 1 assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "Äb̈c̈d̈ëf̈g̈ḧ
 " but got object "Äb̈c̈d̈ëf̈g̈ḧ"
-FAIL testDiv.insertBefore(paras[0], paras[1]), with unselected range collapsed at (paras[0], 1) assert_equals: Wrong start container expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p><p id="b" s... but got Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
-</p>
+PASS testDiv.insertBefore(paras[0], paras[1]), with unselected range collapsed at (paras[0], 1) 
 FAIL testDiv.insertBefore(paras[0], paras[1]), with selected range collapsed at (paras[0], 1) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
 PASS testDiv.insertBefore(paras[0], paras[1]), with unselected range on testDiv from 0 to 2 
 FAIL testDiv.insertBefore(paras[0], paras[1]), with selected range on testDiv from 0 to 2 assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "Äb̈c̈d̈ëf̈g̈ḧ
@@ -5526,9 +5520,9 @@ Ijklmnop
 " but got object "Äb̈c̈d̈ëf̈g̈ḧ
 Ijklmnop
 "
-FAIL testDiv.insertBefore(paras[0], paras[1]), with unselected range collapsed at (testDiv, 1) assert_equals: Wrong start offset expected 0 but got 1
+PASS testDiv.insertBefore(paras[0], paras[1]), with unselected range collapsed at (testDiv, 1) 
 FAIL testDiv.insertBefore(paras[0], paras[1]), with selected range collapsed at (testDiv, 1) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL testDiv.insertBefore(paras[0], paras[1]), with unselected range on testDiv from 1 to 2 assert_equals: Wrong start offset expected 0 but got 1
+PASS testDiv.insertBefore(paras[0], paras[1]), with unselected range on testDiv from 1 to 2 
 FAIL testDiv.insertBefore(paras[0], paras[1]), with selected range on testDiv from 1 to 2 assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "Ijklmnop
 " but got object ""
 PASS testDiv.insertBefore(paras[0], paras[1]), with unselected range collapsed at (testDiv, 2) 

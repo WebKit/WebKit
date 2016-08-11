@@ -183,6 +183,8 @@ static inline ExceptionCode checkAcceptChild(ContainerNode& newParent, Node& new
         ASSERT(isChildTypeAllowed(newParent, newChild));
         if (containsConsideringHostElements(newChild, newParent))
             return HIERARCHY_REQUEST_ERR;
+        if (operation == Document::AcceptChildOperation::InsertOrAdd && refChild && refChild->parentNode() != &newParent)
+            return NOT_FOUND_ERR;
         return 0;
     }
 
@@ -193,6 +195,9 @@ static inline ExceptionCode checkAcceptChild(ContainerNode& newParent, Node& new
 
     if (containsConsideringHostElements(newChild, newParent))
         return HIERARCHY_REQUEST_ERR;
+
+    if (operation == Document::AcceptChildOperation::InsertOrAdd && refChild && refChild->parentNode() != &newParent)
+        return NOT_FOUND_ERR;
 
     if (is<Document>(newParent)) {
         if (!downcast<Document>(newParent).canAcceptChild(newChild, refChild, operation))
@@ -235,27 +240,20 @@ bool ContainerNode::insertBefore(Node& newChild, Node* refChild, ExceptionCode& 
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    Ref<ContainerNode> protectedThis(*this);
-
     ec = 0;
-
-    // insertBefore(node, 0) is equivalent to appendChild(node)
-    if (!refChild)
-        return appendChild(newChild, ec);
 
     // Make sure adding the new child is OK.
     if (!ensurePreInsertionValidity(newChild, refChild, ec))
         return false;
 
-    // NOT_FOUND_ERR: Raised if refChild is not a child of this node
-    if (refChild->parentNode() != this) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
+    if (refChild == &newChild)
+        refChild = newChild.nextSibling();
 
-    if (refChild->previousSibling() == &newChild || refChild == &newChild) // nothing to do
-        return true;
+    // insertBefore(node, null) is equivalent to appendChild(node)
+    if (!refChild)
+        return appendChildWithoutPreInsertionValidityCheck(newChild, ec);
 
+    Ref<ContainerNode> protectedThis(*this);
     Ref<Node> next(*refChild);
 
     NodeVector targets;
@@ -640,8 +638,6 @@ void ContainerNode::removeChildren()
 
 bool ContainerNode::appendChild(Node& newChild, ExceptionCode& ec)
 {
-    Ref<ContainerNode> protectedThis(*this);
-
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
@@ -651,6 +647,13 @@ bool ContainerNode::appendChild(Node& newChild, ExceptionCode& ec)
     // Make sure adding the new child is ok
     if (!ensurePreInsertionValidity(newChild, nullptr, ec))
         return false;
+
+    return appendChildWithoutPreInsertionValidityCheck(newChild, ec);
+}
+
+bool ContainerNode::appendChildWithoutPreInsertionValidityCheck(Node& newChild, ExceptionCode& ec)
+{
+    Ref<ContainerNode> protectedThis(*this);
 
     NodeVector targets;
     collectChildrenAndRemoveFromOldParent(newChild, targets, ec);
