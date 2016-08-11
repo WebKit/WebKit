@@ -1,3 +1,21 @@
+2016-08-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline more iOS tests after r204363.
+
+        Unreviewed test gardening.
+
+        * fast/events/ios/keyboard-scrolling-distance-expected.txt:
+        * fast/events/ios/keyboard-should-not-trigger-resize-expected.txt:
+        * fast/forms/ios/accessory-bar-navigation-expected.txt:
+        * fast/forms/ios/focus-input-in-fixed-expected.txt:
+        * fast/forms/ios/focus-input-in-iframe-expected.txt:
+        * fast/forms/ios/focus-input-via-button-expected.txt:
+        * fast/forms/ios/focus-input-via-button-ipad-expected.txt:
+        * fast/forms/ios/focus-input-via-button-no-scaling-expected.txt:
+        * fast/forms/ios/focus-long-textarea-expected.txt:
+        * fast/forms/ios/zoom-after-input-tap-expected.txt:
+        * fast/forms/ios/zoom-after-input-tap-wide-input-expected.txt:
+
 2016-08-11  Chris Dumez  <cdumez@apple.com>
 
         Move dataset attribute from Element to HTMLElement / SVGElement
