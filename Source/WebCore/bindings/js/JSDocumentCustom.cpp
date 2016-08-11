@@ -20,7 +20,6 @@
 #include "config.h"
 #include "JSDocument.h"
 
-#include "CustomElementDefinitions.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -139,65 +138,6 @@ JSValue JSDocument::createTouchList(ExecState& state)
         touchList->append(*item);
     }
     return toJSNewlyCreated(&state, globalObject(), WTFMove(touchList));
-}
-#endif
-
-#if ENABLE(CUSTOM_ELEMENTS)
-JSValue JSDocument::defineElement(ExecState& state)
-{
-    AtomicString tagName(state.argument(0).toString(&state)->toAtomicString(&state));
-    if (UNLIKELY(state.hadException()))
-        return jsUndefined();
-
-    JSObject* object = state.argument(1).getObject();
-    ConstructData callData;
-    if (!object || object->methodTable()->getConstructData(object, callData) == ConstructType::None)
-        return throwTypeError(&state, ASCIILiteral("The second argument must be a constructor"));
-
-    Document& document = wrapped();
-    if (!document.domWindow()) {
-        throwNotSupportedError(state, "Cannot define a custom element in a docuemnt without a browsing context");
-        return jsUndefined();
-    }
-
-    switch (Document::validateCustomElementName(tagName)) {
-    case CustomElementNameValidationStatus::Valid:
-        break;
-    case CustomElementNameValidationStatus::ConflictsWithBuiltinNames:
-        return throwSyntaxError(&state, "Custom element name cannot be same as one of the builtin elements");
-    case CustomElementNameValidationStatus::NoHyphen:
-        return throwSyntaxError(&state, "Custom element name must contain a hyphen");
-    case CustomElementNameValidationStatus::ContainsUpperCase:
-        return throwSyntaxError(&state, "Custom element name cannot contain an upper case letter");
-    }
-
-    auto& definitions = document.ensureCustomElementDefinitions();
-    if (definitions.findInterface(tagName)) {
-        throwNotSupportedError(state, "Cannot define multiple custom elements with the same tag name");
-        return jsUndefined();
-    }
-
-    if (definitions.containsConstructor(object)) {
-        throwNotSupportedError(state, "Cannot define multiple custom elements with the same class");
-        return jsUndefined();
-    }
-
-    // FIXME: 10. Let prototype be Get(constructor, "prototype"). Rethrow any exceptions.
-    // FIXME: 11. If Type(prototype) is not Object, throw a TypeError exception.
-    // FIXME: 12. Let attachedCallback be Get(prototype, "attachedCallback"). Rethrow any exceptions.
-    // FIXME: 13. Let detachedCallback be Get(prototype, "detachedCallback"). Rethrow any exceptions.
-    // FIXME: 14. Let attributeChangedCallback be Get(prototype, "attributeChangedCallback"). Rethrow any exceptions.
-
-    PrivateName uniquePrivateName;
-    globalObject()->putDirect(globalObject()->vm(), uniquePrivateName, object);
-
-    QualifiedName name(nullAtom, tagName, HTMLNames::xhtmlNamespaceURI);
-    definitions.addElementDefinition(JSCustomElementInterface::create(name, object, globalObject()));
-
-    // FIXME: 17. Let map be registry's upgrade candidates map.
-    // FIXME: 18. Upgrade a newly-defined element given map and definition.
-
-    return jsUndefined();
 }
 #endif
 

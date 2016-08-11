@@ -49,6 +49,7 @@ namespace WebCore {
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Crypto;
+    class CustomElementsRegistry;
     class DOMApplicationCache;
     class DOMSelection;
     class DOMURL;
@@ -304,6 +305,11 @@ namespace WebCore {
         DOMApplicationCache* applicationCache() const;
         DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 
+#if ENABLE(CUSTOM_ELEMENTS)
+        CustomElementsRegistry* customElementsRegistry() { return m_customElementsRegistry.get(); }
+        CustomElementsRegistry& ensureCustomElementsRegistry();
+#endif
+
 #if ENABLE(ORIENTATION_EVENTS)
         // This is the interface orientation in degrees. Some examples are:
         //  0 is straight up; -90 is when the device is rotated 90 clockwise;
@@ -415,6 +421,10 @@ namespace WebCore {
         mutable RefPtr<Storage> m_sessionStorage;
         mutable RefPtr<Storage> m_localStorage;
         mutable RefPtr<DOMApplicationCache> m_applicationCache;
+
+#if ENABLE(CUSTOM_ELEMENTS)
+        RefPtr<CustomElementsRegistry> m_customElementsRegistry;
+#endif
 
 #if ENABLE(WEB_TIMING)
         mutable RefPtr<Performance> m_performance;

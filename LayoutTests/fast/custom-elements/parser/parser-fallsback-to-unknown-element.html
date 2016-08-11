@@ -18,7 +18,7 @@ class ReturnsTextNode extends HTMLElement {
         return document.createTextNode('some text');
     }
 };
-document.defineElement('returns-text', ReturnsTextNode);
+customElements.define('returns-text', ReturnsTextNode);
 
 class ReturnsNonElementObject extends HTMLElement {
     constructor() {
@@ -26,19 +26,19 @@ class ReturnsNonElementObject extends HTMLElement {
         return {};
     }
 };
-document.defineElement('returns-non-element-object', ReturnsNonElementObject);
+customElements.define('returns-non-element-object', ReturnsNonElementObject);
 
 class LacksSuperCall extends HTMLElement {
     constructor() { }
 };
-document.defineElement('lacks-super-call', LacksSuperCall);
+customElements.define('lacks-super-call', LacksSuperCall);
 
 class ThrowsException extends HTMLElement {
     constructor() {
         throw 'Bad';
     }
 };
-document.defineElement('throws-exception', ThrowsException);
+customElements.define('throws-exception', ThrowsException);
 
 </script>
 <returns-text></returns-text>

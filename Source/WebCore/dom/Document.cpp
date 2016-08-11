@@ -44,7 +44,7 @@
 #include "CompositionEvent.h"
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
-#include "CustomElementDefinitions.h"
+#include "CustomElementsRegistry.h"
 #include "CustomEvent.h"
 #include "DOMImplementation.h"
 #include "DOMNamedFlowCollection.h"
@@ -100,6 +100,7 @@
 #include "IconController.h"
 #include "ImageLoader.h"
 #include "InspectorInstrumentation.h"
+#include "JSCustomElementInterface.h"
 #include "JSLazyEventListener.h"
 #include "JSModuleLoader.h"
 #include "KeyboardEvent.h"
@@ -879,6 +880,22 @@ void Document::childrenChanged(const ChildChange& change)
     clearStyleResolver();
 }
 
+#if ENABLE(CUSTOM_ELEMENTS)
+static ALWAYS_INLINE RefPtr<HTMLElement> createUpgradeCandidateElement(Document& document, DOMWindow* window, const QualifiedName& name)
+{
+    if (!window || !RuntimeEnabledFeatures::sharedFeatures().customElementsEnabled())
+        return nullptr;
+
+    if (Document::validateCustomElementName(name.localName()) != CustomElementNameValidationStatus::Valid)
+        return nullptr;
+
+    auto element = HTMLElement::create(name, document);
+    element->setIsUnresolvedCustomElement();
+    window->ensureCustomElementsRegistry().addUpgradeCandidate(element.get());
+    return WTFMove(element);
+}
+#endif
+
 static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, const AtomicString& localName, ExceptionCode& ec)
 {
     RefPtr<HTMLElement> element = HTMLElementFactory::createKnownElement(localName, document);
@@ -886,10 +903,13 @@ static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, c
         return element;
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    auto* definitions = document.customElementDefinitions();
-    if (UNLIKELY(definitions)) {
-        if (auto* elementInterface = definitions->findInterface(localName))
-            return elementInterface->constructElement(localName, JSCustomElementInterface::ShouldClearException::DoNotClear);
+    auto* window = document.domWindow();
+    if (window) {
+        auto* registry = window->customElementsRegistry();
+        if (UNLIKELY(registry)) {
+            if (auto* elementInterface = registry->findInterface(localName))
+                return elementInterface->constructElement(localName, JSCustomElementInterface::ShouldClearException::DoNotClear);
+        }
     }
 #endif
 
@@ -901,13 +921,8 @@ static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, c
     QualifiedName qualifiedName(nullAtom, localName, xhtmlNamespaceURI);
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (RuntimeEnabledFeatures::sharedFeatures().customElementsEnabled()
-        && Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
-        Ref<HTMLElement> element = HTMLElement::create(qualifiedName, document);
-        element->setIsUnresolvedCustomElement();
-        document.ensureCustomElementDefinitions().addUpgradeCandidate(element.get());
+    if (auto element = createUpgradeCandidateElement(document, window, qualifiedName))
         return WTFMove(element);
-    }
 #endif
 
     return HTMLUnknownElement::create(qualifiedName, document);
@@ -1071,22 +1086,21 @@ bool Document::hasValidNamespaceForAttributes(const QualifiedName& qName)
 static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const QualifiedName& name)
 {
 #if ENABLE(CUSTOM_ELEMENTS)
-    auto* definitions = document.customElementDefinitions();
-    if (UNLIKELY(definitions)) {
-        if (auto* elementInterface = definitions->findInterface(name)) {
-            Ref<HTMLElement> element = HTMLElement::create(name, document);
-            element->setIsUnresolvedCustomElement();
-            LifecycleCallbackQueue::enqueueElementUpgrade(element.get(), *elementInterface);
-            return element;
+    auto* window = document.domWindow();
+    if (window) {
+        auto* registry = window->customElementsRegistry();
+        if (UNLIKELY(registry)) {
+            if (auto* elementInterface = registry->findInterface(name)) {
+                auto element = HTMLElement::create(name, document);
+                element->setIsUnresolvedCustomElement();
+                LifecycleCallbackQueue::enqueueElementUpgrade(element.get(), *elementInterface);
+                return element;
+            }
         }
     }
     // FIXME: Should we also check the equality of prefix between the custom element and name?
-    if (Document::validateCustomElementName(name.localName()) == CustomElementNameValidationStatus::Valid) {
-        Ref<HTMLElement> element = HTMLElement::create(name, document);
-        element->setIsUnresolvedCustomElement();
-        document.ensureCustomElementDefinitions().addUpgradeCandidate(element.get());
-        return element;
-    }
+    if (auto element = createUpgradeCandidateElement(document, window, name))
+        return element.releaseNonNull();
 #endif
     return HTMLUnknownElement::create(name, document);
 }
@@ -6495,15 +6509,6 @@ unsigned Document::touchEventHandlerCount() const
     return 0;
 #endif
 }
-
-#if ENABLE(CUSTOM_ELEMENTS)
-CustomElementDefinitions& Document::ensureCustomElementDefinitions()
-{
-    if (!m_customElementDefinitions)
-        m_customElementDefinitions = std::make_unique<CustomElementDefinitions>();
-    return *m_customElementDefinitions;
-}
-#endif
 
 LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionElements)
 {

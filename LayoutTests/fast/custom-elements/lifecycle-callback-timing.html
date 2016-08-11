@@ -20,7 +20,7 @@ class MyCustomElement extends HTMLElement {
 
     handler() { }
 }
-document.defineElement('my-custom-element', MyCustomElement);
+customElements.define('my-custom-element', MyCustomElement);
 
 test(function () {
     var instance = document.createElement('my-custom-element');
@@ -63,7 +63,7 @@ test(function () {
             log.push([this, 'end']);
         }
     }
-    document.defineElement('self-cloning-element', SelfCloningElement);
+    customElements.define('self-cloning-element', SelfCloningElement);
 
     var instance = document.createElement('self-cloning-element');
     var anotherInstance = document.createElement('self-cloning-element');

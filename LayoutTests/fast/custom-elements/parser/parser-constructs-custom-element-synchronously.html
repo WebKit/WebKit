@@ -24,7 +24,7 @@ class MyCustomElement extends HTMLElement {
         containerNextSilbingInConstructor = container.nextSibling;
     }
 };
-document.defineElement('my-custom-element', MyCustomElement);
+customElements.define('my-custom-element', MyCustomElement);
 
 </script>
 <div id="custom-element-container">

@@ -25,7 +25,7 @@ class MyElement extends HTMLElement {
         matchInsideConstructor = this.matches(':defined');
     }
 }
-document.defineElement('my-element', MyElement);
+customElements.define('my-element', MyElement);
 
 test(function () {
     assert_true(upgradeCandidate.matches(':defined'));
@@ -59,7 +59,7 @@ class ReturnsAnotherNode extends HTMLElement {
         return document.createTextNode('');
     }
 }
-document.defineElement('returns-another-node', ReturnsAnotherNode);
+customElements.define('returns-another-node', ReturnsAnotherNode);
 
 document.write('<returns-another-node></returns-another-node>');
 
@@ -72,7 +72,7 @@ test(function () {
 test(function () {
     var instance = document.createElement('returns-another-node-2');
     try {
-        document.defineElement('returns-another-node-2', class extends ReturnsAnotherNode {});
+        customElements.define('returns-another-node-2', class extends ReturnsAnotherNode {});
     } catch (e) { }
     assert_false(instance.matches(':defined'));
     assert_false(matchInsideConstructor,

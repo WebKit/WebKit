@@ -26,9 +26,11 @@
 #include "config.h"
 #include "JSHTMLElement.h"
 
-#include "CustomElementDefinitions.h"
+#include "CustomElementsRegistry.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "HTMLFormElement.h"
+#include "JSCustomElementInterface.h"
 #include "JSNodeCustom.h"
 #include <runtime/InternalFunction.h>
 #include <runtime/JSWithScope.h>
@@ -47,16 +49,20 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
         return throwConstructorDocumentUnavailableError(exec, "HTMLElement");
     auto& document = downcast<Document>(*context);
 
-    auto* definitions = document.customElementDefinitions();
-    if (!definitions)
-        return throwVMTypeError(&exec, "new.target is not a valid custom element constructor");
+    auto* window = document.domWindow();
+    if (!window)
+        return throwVMTypeError(&exec, ASCIILiteral("new.target is not a valid custom element constructor"));
+
+    auto* registry = window->customElementsRegistry();
+    if (!registry)
+        return throwVMTypeError(&exec, ASCIILiteral("new.target is not a valid custom element constructor"));
 
     VM& vm = exec.vm();
     JSValue newTargetValue = exec.thisValue();
     JSObject* newTarget = newTargetValue.getObject();
-    auto* elementInterface = definitions->findInterface(newTarget);
+    auto* elementInterface = registry->findInterface(newTarget);
     if (!elementInterface)
-        return throwVMTypeError(&exec, "new.target does not define a custom element");
+        return throwVMTypeError(&exec, ASCIILiteral("new.target does not define a custom element"));
 
     if (!elementInterface->isUpgradingElement()) {
         auto* globalObject = jsConstructor->globalObject();
@@ -74,7 +80,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
 
     Element* elementToUpgrade = elementInterface->lastElementInConstructionStack();
     if (!elementToUpgrade) {
-        throwInvalidStateError(exec, "Cannot instantiate a custom element inside its own constrcutor during upgrades");
+        throwInvalidStateError(exec, ASCIILiteral("Cannot instantiate a custom element inside its own constrcutor during upgrades"));
         return JSValue::encode(jsUndefined());
     }
 

@@ -178,10 +178,6 @@ using PlatformDisplayID = uint32_t;
 class TransformSource;
 #endif
 
-#if ENABLE(CUSTOM_ELEMENTS)
-class CustomElementDefinitions;
-#endif
-
 #if ENABLE(DASHBOARD_SUPPORT)
 struct AnnotatedRegionValue;
 #endif
@@ -1219,11 +1215,6 @@ public:
 #endif
     }
 
-#if ENABLE(CUSTOM_ELEMENTS)
-    CustomElementDefinitions* customElementDefinitions() { return m_customElementDefinitions.get(); }
-    CustomElementDefinitions& ensureCustomElementDefinitions();
-#endif
-
     const EventTargetSet* wheelEventTargets() const { return m_wheelEventTargets.get(); }
 
     typedef std::pair<Region, bool> RegionFixedPair;
@@ -1752,10 +1743,6 @@ private:
 
     RefPtr<Document> m_templateDocument;
     Document* m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
-
-#if ENABLE(CUSTOM_ELEMENTS)
-    std::unique_ptr<CustomElementDefinitions> m_customElementDefinitions;
-#endif
 
     Ref<CSSFontSelector> m_fontSelector;
 

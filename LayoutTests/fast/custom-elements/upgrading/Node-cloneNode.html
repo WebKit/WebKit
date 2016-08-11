@@ -25,7 +25,7 @@ function withNewDocumentWithABrowsingContext(callback) {
 
 test(function () {
     class MyCustomElement extends HTMLElement {}
-    document.defineElement('my-custom-element', MyCustomElement);
+    customElements.define('my-custom-element', MyCustomElement);
 
     var instance = document.createElement('my-custom-element');
     assert_true(instance instanceof HTMLElement);
@@ -42,7 +42,7 @@ test(function () {
 test(function () {
     withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
         class MyCustomElement extends contentWindow.HTMLElement {}
-        contentDocument.defineElement('my-custom-element', MyCustomElement);
+        contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
         var instance = contentDocument.createElement('my-custom-element');
         assert_true(instance instanceof contentWindow.HTMLElement);
@@ -60,7 +60,7 @@ test(function () {
 test(function () {
     withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
         class MyCustomElement extends contentWindow.HTMLElement { }
-        contentDocument.defineElement('my-custom-element', MyCustomElement);
+        contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
         var instance = contentDocument.createElement('my-custom-element');
         var container = contentDocument.createElement('div');
@@ -91,7 +91,7 @@ test(function () {
                 nextSiblingInConstructor = this.nextSibling;
             }
         }
-        contentDocument.defineElement('my-custom-element', MyCustomElement);
+        contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
         var instance = contentDocument.createElement('my-custom-element');
         var siblingBeforeInstance = contentDocument.createElement('b');
@@ -121,7 +121,7 @@ test(function () {
                     new MyCustomElement(true);
             }
         }
-        contentDocument.defineElement('my-custom-element', MyCustomElement);
+        contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
         var instance = contentDocument.createElement('my-custom-element');
         assert_throws({'name': 'InvalidStateError'}, function () { instance.cloneNode(false); });
@@ -138,7 +138,7 @@ test(function () {
                 super();
             }
         }
-        contentDocument.defineElement('my-custom-element', MyCustomElement);
+        contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
         var instance = contentDocument.createElement('my-custom-element');
         assert_throws({'name': 'InvalidStateError'}, function () { instance.cloneNode(false); });
@@ -156,7 +156,7 @@ test(function () {
                     return contentDocument.createElement('span');
             }
         }
-        contentDocument.defineElement('my-custom-element', MyCustomElement);
+        contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
         var instance = contentDocument.createElement('my-custom-element');
         cloning = true;

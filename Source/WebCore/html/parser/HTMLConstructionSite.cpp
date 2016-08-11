@@ -28,7 +28,8 @@
 #include "HTMLTreeBuilder.h"
 
 #include "Comment.h"
-#include "CustomElementDefinitions.h"
+#include "CustomElementsRegistry.h"
+#include "DOMWindow.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Frame.h"
@@ -658,10 +659,11 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
     RefPtr<Element> element = HTMLElementFactory::createKnownElement(localName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
 #if ENABLE(CUSTOM_ELEMENTS)
-        if (customElementInterface) {
-            auto* definitions = ownerDocument.customElementDefinitions();
-            if (UNLIKELY(definitions)) {
-                if (auto* elementInterface = definitions->findInterface(localName)) {
+        auto* window = ownerDocument.domWindow();
+        if (customElementInterface && window) {
+            auto* registry = window->customElementsRegistry();
+            if (UNLIKELY(registry)) {
+                if (auto* elementInterface = registry->findInterface(localName)) {
                     *customElementInterface = elementInterface;
                     return nullptr;
                 }
@@ -673,10 +675,10 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
 
         QualifiedName qualifiedName(nullAtom, localName, xhtmlNamespaceURI);
 #if ENABLE(CUSTOM_ELEMENTS)
-        if (Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
+        if (window && Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
             element = HTMLElement::create(qualifiedName, ownerDocument);
             element->setIsUnresolvedCustomElement();
-            ownerDocument.ensureCustomElementDefinitions().addUpgradeCandidate(*element);
+            window->ensureCustomElementsRegistry().addUpgradeCandidate(*element);
         } else
 #endif
             element = HTMLUnknownElement::create(qualifiedName, ownerDocument);

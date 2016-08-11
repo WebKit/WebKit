@@ -201,6 +201,10 @@
     attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Add metrics to determine when we can remove this.
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    [Conditional=CUSTOM_ELEMENTS, ImplementedAs=ensureCustomElementsRegistry] readonly attribute CustomElementsRegistry customElements;
+#endif
+
 
     // Event Handlers
 

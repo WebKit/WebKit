@@ -27,11 +27,11 @@ test(function () {
         'an unresolved custom element should not be an instance of HTMLUnknownElement');
     assert_false(instance instanceof MyCustomElement);
 
-    document.defineElement('my-custom-element', MyCustomElement);
+    customElements.define('my-custom-element', MyCustomElement);
 
     assert_true(instance instanceof HTMLElement);
     assert_true(instance instanceof MyCustomElement,
-        'Calling defineElement must upgrade existing custom elements');
+        'Calling customElements.define must upgrade existing custom elements');
 
 }, 'Element.prototype.createElement must add an unresolved custom element to the upgrade candidates map');
 
@@ -46,7 +46,7 @@ test(function () {
     }
 
     assert_throws({'name': 'InvalidStateError'}, function () {
-        document.defineElement('instantiates-itself-after-super', InstantiatesItselfAfterSuper);
+        customElements.define('instantiates-itself-after-super', InstantiatesItselfAfterSuper);
     });
 }, 'HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed'
     + ' due to a custom element constructor constructing itself after super() call');
@@ -61,7 +61,7 @@ test(function () {
     }
 
     assert_throws({'name': 'InvalidStateError'}, function () {
-        document.defineElement('instantiates-itself-before-super', InstantiatesItselfBeforeSuper);
+        customElements.define('instantiates-itself-before-super', InstantiatesItselfBeforeSuper);
     });
 }, 'HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed'
     + ' due to a custom element constructor constructing itself before super() call');
@@ -81,7 +81,7 @@ test(function () {
     assert_false(otherInstance instanceof MyOtherElement);
 
     assert_throws({'name': 'InvalidStateError'}, function () {
-        document.defineElement('my-other-element', MyOtherElement);
+        customElements.define('my-other-element', MyOtherElement);
     });
 
     assert_true(document.createElement('my-other-element') instanceof MyOtherElement,

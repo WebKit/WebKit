@@ -243,8 +243,6 @@
     [NewObject, Custom] TouchList createTouchList(Touch... touches);
 #endif
 
-    [Custom, RaisesException, Conditional=CUSTOM_ELEMENTS, EnabledAtRuntime=CustomElements]
-    void defineElement(DOMString localName, Function constructor);
 #endif
 
     // Page visibility API.

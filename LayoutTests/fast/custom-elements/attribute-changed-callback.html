@@ -19,7 +19,7 @@ class MyCustomElement extends HTMLElement {
         argumentList.push({arguments: arguments, value: this.getAttributeNS(namespace, name)});
     }
 }
-document.defineElement('my-custom-element', MyCustomElement);
+customElements.define('my-custom-element', MyCustomElement);
 
 test(function () {
     var instance = document.createElement('my-custom-element');

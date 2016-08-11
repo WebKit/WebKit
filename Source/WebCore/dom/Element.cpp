@@ -37,7 +37,7 @@
 #include "ClientRectList.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
-#include "CustomElementDefinitions.h"
+#include "CustomElementsRegistry.h"
 #include "DOMTokenList.h"
 #include "Dictionary.h"
 #include "DocumentSharedObjectPool.h"
@@ -1292,10 +1292,13 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
 
 #if ENABLE(CUSTOM_ELEMENTS)
     if (UNLIKELY(isCustomElement())) {
-        auto* definitions = document().customElementDefinitions();
-        auto* elementInterface = definitions->findInterface(tagQName());
-        RELEASE_ASSERT(elementInterface);
-        LifecycleCallbackQueue::enqueueAttributeChangedCallback(*this, *elementInterface, name, oldValue, newValue);
+        if (auto* window = document().domWindow()) {
+            if (auto* registry = window->customElementsRegistry()) {
+                auto* elementInterface = registry->findInterface(tagQName());
+                RELEASE_ASSERT(elementInterface);
+                LifecycleCallbackQueue::enqueueAttributeChangedCallback(*this, *elementInterface, name, oldValue, newValue);
+            }
+        }
     }
 #endif
 

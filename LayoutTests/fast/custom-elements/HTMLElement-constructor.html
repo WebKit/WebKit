@@ -14,19 +14,19 @@
 
 test(function () {
     class SomeDefinedElement extends HTMLElement {};
-    document.defineElement('defined-element', SomeDefinedElement);
+    customElements.define('defined-element', SomeDefinedElement);
     assert_throws({'name': 'TypeError'}, function () { new HTMLElement('defined-element'); });
 }, 'HTMLElement constructor must throw a TypeError when there is no derived class');
 
 test(function () {
     class SomeCustomElement extends HTMLElement {};
     assert_throws({'name': 'TypeError'}, function () { new SomeCustomElement; },
-        'Instantiating a custom element without calling defineElement must throw TypeError');
+        'Instantiating a custom element without calling customElements.define must throw TypeError');
 }, 'HTMLElement constructor must throw TypeError when custom element is not well defined');
 
 test(function () {
     class CustomElementWithInferredTagName extends HTMLElement {};
-    document.defineElement('inferred-name', CustomElementWithInferredTagName);
+    customElements.define('inferred-name', CustomElementWithInferredTagName);
 
     var instance = new CustomElementWithInferredTagName;
     assert_true(instance instanceof Element, 'A custom element must inherit from Element');
@@ -46,8 +46,8 @@ test(function () {
 test(function () {
     class ConcreteCustomElement extends HTMLElement { };
     class SubCustomElement extends ConcreteCustomElement { };
-    document.defineElement('concrete-custom-element', ConcreteCustomElement);
-    document.defineElement('sub-custom-element', SubCustomElement);
+    customElements.define('concrete-custom-element', ConcreteCustomElement);
+    customElements.define('sub-custom-element', SubCustomElement);
 
     var instance = new ConcreteCustomElement();
     assert_true(instance instanceof ConcreteCustomElement);
@@ -66,7 +66,7 @@ test(function () {
 test(function () {
     class AbstractCustomElement extends HTMLElement { };
     class ConcreteSubCustomElement extends AbstractCustomElement { };
-    document.defineElement('concrete-sub-custom-element', ConcreteSubCustomElement);
+    customElements.define('concrete-sub-custom-element', ConcreteSubCustomElement);
 
     var instance = new ConcreteSubCustomElement();
     assert_true(instance instanceof AbstractCustomElement);
