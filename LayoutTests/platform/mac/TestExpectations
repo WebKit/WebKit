@@ -1370,10 +1370,6 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 [ Sierra+ ] css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 [ Sierra+ ] css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 
-# <rdar://problem/24025664> 2d.gradient.interpolate.colouralpha.html LayoutTests failing
-[ Sierra+ ] imported/w3c/canvas/2d.gradient.interpolate.colouralpha.html [ Skip ]
-[ Sierra+ ] canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Skip ]
-
 # <rdar://problem/25279189> LayoutTest http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html is flaky
 [ Sierra+ ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Pass Failure ]
 

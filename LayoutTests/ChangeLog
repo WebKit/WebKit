@@ -1,5 +1,17 @@
 2016-08-11  Antoine Quint  <graouts@apple.com>
 
+        Unskip 2d.gradient.interpolate.colouralpha on macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=160765
+        <rdar://problem/24025664>
+
+        Reviewed by Eric Carlson.
+
+        We fixed the tests in https://bugs.webkit.org/show_bug.cgi?id=160689 but forgot to unskip them.
+
+        * platform/mac/TestExpectations:
+
+2016-08-11  Antoine Quint  <graouts@apple.com>
+
         Test 2d.gradient.interpolate.colouralpha.html is broken on macOS Sierra
         https://bugs.webkit.org/show_bug.cgi?id=160689
         <rdar://problem/24025664>
