@@ -1202,7 +1202,6 @@
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1211,7 +1210,6 @@
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1220,7 +1218,6 @@
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Production;
 		};

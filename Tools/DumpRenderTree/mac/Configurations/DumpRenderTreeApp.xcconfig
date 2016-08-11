@@ -34,6 +34,9 @@ PLATFORM_OTHER_LDFLAGS[sdk=macosx*] = -framework JavaScriptCore;
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/*;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = ios/Launch.storyboard;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=watch*] = ios/Launch.storyboard;
 
 PRODUCT_NAME = DumpRenderTree;
 
+TARGETED_DEVICE_FAMILY = 1,2;

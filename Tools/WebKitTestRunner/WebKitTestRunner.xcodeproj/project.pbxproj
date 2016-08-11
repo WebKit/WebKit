@@ -69,7 +69,6 @@
 		2E63ED911891ADAD002A7AFC /* PlatformWebViewIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */; };
 		2E63ED921891ADAD002A7AFC /* TestControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */; };
 		2E63ED941891ADAD002A7AFC /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52D161890A9FB0010ED21 /* mainIOS.mm */; };
-		2E63ED9C1891ADC7002A7AFC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52CF21890A9A80010ED21 /* AppDelegate.m */; };
 		2E63ED9E1891AEC1002A7AFC /* WebArchiveDumpSupportIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52D151890A9FB0010ED21 /* WebArchiveDumpSupportIOS.mm */; };
 		2E63EDA11891B291002A7AFC /* AccessibilityUIElementIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED781891ACE9002A7AFC /* AccessibilityUIElementIOS.mm */; };
 		2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */; };
@@ -246,8 +245,6 @@
 		2EE52CE21890A9A80010ED21 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2EE52CE41890A9A80010ED21 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2EE52CEA1890A9A80010ED21 /* WebKitTestRunnerApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WebKitTestRunnerApp-Info.plist"; path = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist"; sourceTree = "<group>"; };
-		2EE52CF11890A9A80010ED21 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		2EE52CF21890A9A80010ED21 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewIOS.mm; sourceTree = "<group>"; };
 		2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerIOS.mm; sourceTree = "<group>"; };
 		2EE52D151890A9FB0010ED21 /* WebArchiveDumpSupportIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveDumpSupportIOS.mm; sourceTree = "<group>"; };
@@ -558,8 +555,6 @@
 		2EE52CE81890A9A80010ED21 /* WebKitTestRunnerApp */ = {
 			isa = PBXGroup;
 			children = (
-				2EE52CF11890A9A80010ED21 /* AppDelegate.h */,
-				2EE52CF21890A9A80010ED21 /* AppDelegate.m */,
 				0F4B08721D5BE88D00EC1B78 /* Launch.storyboard */,
 				2EE52D161890A9FB0010ED21 /* mainIOS.mm */,
 			);
@@ -933,7 +928,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E63ED9C1891ADC7002A7AFC /* AppDelegate.m in Sources */,
 				2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */,
 				0FEBF85A1BB61DF20028722D /* HIDEventGenerator.mm in Sources */,
 				2E63ED941891ADAD002A7AFC /* mainIOS.mm in Sources */,
@@ -1105,7 +1099,6 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1118,7 +1111,6 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1131,7 +1123,6 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Production;

@@ -1,3 +1,24 @@
+2016-08-11  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS DRT/WTR project cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=160778
+
+        Reviewed by Tim Horton.
+
+        Move TARGETED_DEVICE_FAMILY from the project to an xcconfig file.
+
+        Remove AppDelegate.* which were unused.
+
+        Exclude ios/Launch.storyboard on more platforms.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunnerApp/AppDelegate.h: Removed.
+        * WebKitTestRunner/WebKitTestRunnerApp/AppDelegate.m: Removed.
+        (-[AppDelegate application:didFinishLaunchingWithOptions:]): Deleted.
+
 2016-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix Yosemite bots' cookie accept policies after r204365.
