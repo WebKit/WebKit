@@ -33,6 +33,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0F4B08731D5BE88D00EC1B78 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F4B08721D5BE88D00EC1B78 /* Launch.storyboard */; };
 		0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
 		0F622CE91BBB3A1A00838AD3 /* TestOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F622CE81BBB3A1A00838AD3 /* TestOptions.cpp */; };
 		0F73B5511BA78968004B3EF4 /* JSUIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F73B54F1BA78968004B3EF4 /* JSUIScriptController.cpp */; };
@@ -41,7 +42,6 @@
 		0F73B55C1BA89042004B3EF4 /* UIScriptControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F73B55B1BA89042004B3EF4 /* UIScriptControllerIOS.mm */; };
 		0F87B6131BACAD82004EC572 /* UIScriptControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F87B6111BACAD6F004EC572 /* UIScriptControllerMac.mm */; };
 		0F87B6171BACC4C0004EC572 /* TestRunnerWKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F87B6151BACC4B9004EC572 /* TestRunnerWKWebView.mm */; };
-		0F87B6191BACC558004EC572 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F87B6181BACC558004EC572 /* Launch.storyboard */; };
 		0F87B61E1BACDA93004EC572 /* UIScriptContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F87B61A1BACDA93004EC572 /* UIScriptContext.cpp */; };
 		0F87B6201BACDA93004EC572 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F87B61C1BACDA93004EC572 /* UIScriptController.cpp */; };
 		0FEB90A01905A834000FDBF3 /* InjectedBundlePageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */; };
@@ -187,17 +187,16 @@
 
 /* Begin PBXFileReference section */
 		0F2109C7189C650D00F879A3 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		0F4B08721D5BE88D00EC1B78 /* Launch.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Launch.storyboard; path = ios/Launch.storyboard; sourceTree = SOURCE_ROOT; };
 		0F5169CA1445222D00E0A9D7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F622CE81BBB3A1A00838AD3 /* TestOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestOptions.cpp; sourceTree = "<group>"; };
 		0F73B54F1BA78968004B3EF4 /* JSUIScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSUIScriptController.cpp; path = DerivedSources/WebKitTestRunner/JSUIScriptController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F73B5501BA78968004B3EF4 /* JSUIScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSUIScriptController.h; path = DerivedSources/WebKitTestRunner/JSUIScriptController.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F73B5571BA7929E004B3EF4 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		0F73B55B1BA89042004B3EF4 /* UIScriptControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIScriptControllerIOS.mm; sourceTree = "<group>"; };
-		0F831AE71BAB72D000F96CD8 /* Launch.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		0F87B6111BACAD6F004EC572 /* UIScriptControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIScriptControllerMac.mm; sourceTree = "<group>"; };
 		0F87B6141BACC4B9004EC572 /* TestRunnerWKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestRunnerWKWebView.h; path = cocoa/TestRunnerWKWebView.h; sourceTree = "<group>"; };
 		0F87B6151BACC4B9004EC572 /* TestRunnerWKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerWKWebView.mm; path = cocoa/TestRunnerWKWebView.mm; sourceTree = "<group>"; };
-		0F87B6181BACC558004EC572 /* Launch.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		0F87B61A1BACDA93004EC572 /* UIScriptContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptContext.cpp; path = UIScriptContext/UIScriptContext.cpp; sourceTree = "<group>"; };
 		0F87B61B1BACDA93004EC572 /* UIScriptContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScriptContext.h; path = UIScriptContext/UIScriptContext.h; sourceTree = "<group>"; };
 		0F87B61C1BACDA93004EC572 /* UIScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptController.cpp; path = UIScriptContext/UIScriptController.cpp; sourceTree = "<group>"; };
@@ -247,7 +246,6 @@
 		2EE52CE01890A9A80010ED21 /* WebKitTestRunnerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebKitTestRunnerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EE52CE21890A9A80010ED21 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2EE52CE41890A9A80010ED21 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		2EE52CE61890A9A80010ED21 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		2EE52CEA1890A9A80010ED21 /* WebKitTestRunnerApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WebKitTestRunnerApp-Info.plist"; path = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist"; sourceTree = "<group>"; };
 		2EE52CEC1890A9A80010ED21 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2EE52CF11890A9A80010ED21 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -255,7 +253,7 @@
 		2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewIOS.mm; sourceTree = "<group>"; };
 		2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerIOS.mm; sourceTree = "<group>"; };
 		2EE52D151890A9FB0010ED21 /* WebArchiveDumpSupportIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveDumpSupportIOS.mm; sourceTree = "<group>"; };
-		2EE52D161890A9FB0010ED21 /* mainIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainIOS.mm; sourceTree = "<group>"; };
+		2EE52D161890A9FB0010ED21 /* mainIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = mainIOS.mm; path = ../ios/mainIOS.mm; sourceTree = "<group>"; };
 		3110BE0F15BA011400D216AC /* WebNotificationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebNotificationProvider.h; sourceTree = "<group>"; };
 		3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationProvider.cpp; sourceTree = "<group>"; };
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
@@ -413,17 +411,18 @@
 		08FB7795FE84155DC02AAC07 /* TestRunner */ = {
 			isa = PBXGroup;
 			children = (
+				BC9192021333E4CD003011DC /* cg */,
 				0FEB90A11905BC4A000FDBF3 /* cocoa */,
 				2EE52D121890A9FB0010ED21 /* ios */,
-				841CC00D181185BF0042E9B6 /* Options.cpp */,
-				841CC00E181185BF0042E9B6 /* Options.h */,
-				BC9192021333E4CD003011DC /* cg */,
 				BC7933FE118F7C74005EA8E2 /* mac */,
+				0F73B5471BA782FE004B3EF4 /* UIScriptContext */,
 				5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */,
 				5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */,
 				5670B8261386FC13002EB355 /* EventSenderProxy.h */,
 				26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */,
 				26D758E6160BECDD00268472 /* GeolocationProviderMock.h */,
+				841CC00D181185BF0042E9B6 /* Options.cpp */,
+				841CC00E181185BF0042E9B6 /* Options.h */,
 				5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */,
 				5322FB4513FDA0EA0041ABCC /* PixelDumpSupport.h */,
 				BC7934DD119066EC005EA8E2 /* PlatformWebView.h */,
@@ -438,7 +437,6 @@
 				3110BE0F15BA011400D216AC /* WebNotificationProvider.h */,
 				4429FC5E1627089600F66D8B /* WorkQueueManager.cpp */,
 				4429FC611627089600F66D8B /* WorkQueueManager.h */,
-				0F73B5471BA782FE004B3EF4 /* UIScriptContext */,
 			);
 			name = TestRunner;
 			sourceTree = "<group>";
@@ -459,8 +457,8 @@
 		0F73B5471BA782FE004B3EF4 /* UIScriptContext */ = {
 			isa = PBXGroup;
 			children = (
-				0F73B54E1BA78954004B3EF4 /* Derived Sources */,
 				0F73B54B1BA78350004B3EF4 /* Bindings */,
+				0F73B54E1BA78954004B3EF4 /* Derived Sources */,
 				0F87B61A1BACDA93004EC572 /* UIScriptContext.cpp */,
 				0F87B61B1BACDA93004EC572 /* UIScriptContext.h */,
 				0F87B61C1BACDA93004EC572 /* UIScriptController.cpp */,
@@ -511,9 +509,9 @@
 			isa = PBXGroup;
 			children = (
 				8DD76FA10486AA7600D96B5E /* WebKitTestRunner */,
-				BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */,
-				2EE52CE01890A9A80010ED21 /* WebKitTestRunnerApp.app */,
 				A18510271B9ADE4800744AEB /* libWebKitTestRunner.a */,
+				2EE52CE01890A9A80010ED21 /* WebKitTestRunnerApp.app */,
+				BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -552,10 +550,9 @@
 		2EE52CE11890A9A80010ED21 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0F73B5571BA7929E004B3EF4 /* JavaScriptCore.framework */,
-				2EE52CE21890A9A80010ED21 /* Foundation.framework */,
 				2EE52CE41890A9A80010ED21 /* CoreGraphics.framework */,
-				2EE52CE61890A9A80010ED21 /* UIKit.framework */,
+				2EE52CE21890A9A80010ED21 /* Foundation.framework */,
+				0F73B5571BA7929E004B3EF4 /* JavaScriptCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -565,6 +562,9 @@
 			children = (
 				2EE52CF11890A9A80010ED21 /* AppDelegate.h */,
 				2EE52CF21890A9A80010ED21 /* AppDelegate.m */,
+				2EE52CEB1890A9A80010ED21 /* InfoPlist.strings */,
+				0F4B08721D5BE88D00EC1B78 /* Launch.storyboard */,
+				2EE52D161890A9FB0010ED21 /* mainIOS.mm */,
 			);
 			path = WebKitTestRunnerApp;
 			sourceTree = "<group>";
@@ -572,18 +572,14 @@
 		2EE52D121890A9FB0010ED21 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				0F87B6181BACC558004EC572 /* Launch.storyboard */,
-				2EE52CEB1890A9A80010ED21 /* InfoPlist.strings */,
-				0FEBF85B1BB62A370028722D /* IOKitSPI.h */,
-				0FEBF85C1BB62D460028722D /* UIKitSPI.h */,
 				0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */,
 				0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */,
+				0FEBF85B1BB62A370028722D /* IOKitSPI.h */,
 				2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */,
 				2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */,
+				0FEBF85C1BB62D460028722D /* UIKitSPI.h */,
 				0F73B55B1BA89042004B3EF4 /* UIScriptControllerIOS.mm */,
 				2EE52D151890A9FB0010ED21 /* WebArchiveDumpSupportIOS.mm */,
-				2EE52D161890A9FB0010ED21 /* mainIOS.mm */,
-				0F831AE71BAB72D000F96CD8 /* Launch.storyboard */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -604,8 +600,8 @@
 				8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */,
 				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */,
 				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
-				5C45C30E17398E290079714E /* WebArchiveDumpSupportMac.mm */,
 				BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */,
+				5C45C30E17398E290079714E /* WebArchiveDumpSupportMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -630,12 +626,12 @@
 		BC25183511D1571D002EBC01 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
-				2E63ED741891ACE9002A7AFC /* ios */,
-				0FEB909D1905A75D000FDBF3 /* cocoa */,
-				5C45C31017398E370079714E /* cf */,
 				BC952C0A11F3B939003398B4 /* Bindings */,
+				5C45C31017398E370079714E /* cf */,
+				0FEB909D1905A75D000FDBF3 /* cocoa */,
 				BC14E4E0120E02F900826C0C /* Controllers */,
 				BC952D3A11F3BF1F003398B4 /* Derived Sources */,
+				2E63ED741891ACE9002A7AFC /* ios */,
 				65EB859E11EC67CC0034D300 /* mac */,
 				65EB859D11EC67CC0034D300 /* ActivateFonts.h */,
 				BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */,
@@ -651,6 +647,8 @@
 			isa = PBXGroup;
 			children = (
 				6510A77711EC643800410867 /* AHEM____.TTF */,
+				1CA211C71BCA107300B2101F /* FontWithFeatures.otf */,
+				1CA211C81BCA107300B2101F /* FontWithFeatures.ttf */,
 				BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */,
 				6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */,
 				6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */,
@@ -661,8 +659,6 @@
 				6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */,
 				6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */,
 				6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */,
-				1CA211C71BCA107300B2101F /* FontWithFeatures.otf */,
-				1CA211C81BCA107300B2101F /* FontWithFeatures.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -894,7 +890,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2EE52CED1890A9A80010ED21 /* InfoPlist.strings in Resources */,
-				0F87B6191BACC558004EC572 /* Launch.storyboard in Resources */,
+				0F4B08731D5BE88D00EC1B78 /* Launch.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -903,8 +899,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6510A78211EC643800410867 /* AHEM____.TTF in Resources */,
-				6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */,
+				1CA211C91BCA107300B2101F /* FontWithFeatures.otf in Resources */,
 				1CA211CA1BCA107300B2101F /* FontWithFeatures.ttf in Resources */,
+				6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */,
 				6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */,
 				6510A78611EC643800410867 /* WebKitWeightWatcher300.ttf in Resources */,
 				6510A78711EC643800410867 /* WebKitWeightWatcher400.ttf in Resources */,
@@ -912,7 +909,6 @@
 				6510A78911EC643800410867 /* WebKitWeightWatcher600.ttf in Resources */,
 				6510A78A11EC643800410867 /* WebKitWeightWatcher700.ttf in Resources */,
 				6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */,
-				1CA211C91BCA107300B2101F /* FontWithFeatures.otf in Resources */,
 				6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -941,12 +937,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */,
-				2E63ED941891ADAD002A7AFC /* mainIOS.mm in Sources */,
-				2E63ED921891ADAD002A7AFC /* TestControllerIOS.mm in Sources */,
 				2E63ED9C1891ADC7002A7AFC /* AppDelegate.m in Sources */,
+				2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */,
 				0FEBF85A1BB61DF20028722D /* HIDEventGenerator.mm in Sources */,
+				2E63ED941891ADAD002A7AFC /* mainIOS.mm in Sources */,
 				2E63ED911891ADAD002A7AFC /* PlatformWebViewIOS.mm in Sources */,
+				2E63ED921891ADAD002A7AFC /* TestControllerIOS.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -954,15 +950,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */,
-				E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */,
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
-				E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */,
-				0F87B6131BACAD82004EC572 /* UIScriptControllerMac.mm in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
+				E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
+				0F87B6131BACAD82004EC572 /* UIScriptControllerMac.mm in Sources */,
 				E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */,
+				E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */,
+				E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -970,24 +966,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F622CE91BBB3A1A00838AD3 /* TestOptions.cpp in Sources */,
-				0F73B55A1BA792FF004B3EF4 /* JSWrapper.cpp in Sources */,
-				A18510441B9AE14A00744AEB /* WorkQueueManager.cpp in Sources */,
-				A185103F1B9AE12900744AEB /* GeolocationProviderMock.cpp in Sources */,
-				0F73B55C1BA89042004B3EF4 /* UIScriptControllerIOS.mm in Sources */,
-				A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */,
-				A18510431B9AE14500744AEB /* WebNotificationProvider.cpp in Sources */,
-				A18510411B9AE13800744AEB /* TestController.cpp in Sources */,
-				0F87B6201BACDA93004EC572 /* UIScriptController.cpp in Sources */,
-				A18510421B9AE13E00744AEB /* TestInvocation.cpp in Sources */,
-				A18510401B9AE13100744AEB /* PixelDumpSupport.cpp in Sources */,
-				A185103D1B9AE10600744AEB /* TestInvocationCG.cpp in Sources */,
 				A185103A1B9AE0DA00744AEB /* CrashReporterInfo.mm in Sources */,
-				0F73B5511BA78968004B3EF4 /* JSUIScriptController.cpp in Sources */,
-				0F87B61E1BACDA93004EC572 /* UIScriptContext.cpp in Sources */,
 				A185103E1B9AE12200744AEB /* CyclicRedundancyCheck.cpp in Sources */,
-				0F87B6171BACC4C0004EC572 /* TestRunnerWKWebView.mm in Sources */,
+				A185103F1B9AE12900744AEB /* GeolocationProviderMock.cpp in Sources */,
+				0F73B5511BA78968004B3EF4 /* JSUIScriptController.cpp in Sources */,
+				0F73B55A1BA792FF004B3EF4 /* JSWrapper.cpp in Sources */,
+				A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */,
+				A18510401B9AE13100744AEB /* PixelDumpSupport.cpp in Sources */,
+				A18510411B9AE13800744AEB /* TestController.cpp in Sources */,
 				A185103B1B9AE0E200744AEB /* TestControllerCocoa.mm in Sources */,
+				A18510421B9AE13E00744AEB /* TestInvocation.cpp in Sources */,
+				A185103D1B9AE10600744AEB /* TestInvocationCG.cpp in Sources */,
+				0F622CE91BBB3A1A00838AD3 /* TestOptions.cpp in Sources */,
+				0F87B6171BACC4C0004EC572 /* TestRunnerWKWebView.mm in Sources */,
+				0F87B61E1BACDA93004EC572 /* UIScriptContext.cpp in Sources */,
+				0F87B6201BACDA93004EC572 /* UIScriptController.cpp in Sources */,
+				0F73B55C1BA89042004B3EF4 /* UIScriptControllerIOS.mm in Sources */,
+				A18510431B9AE14500744AEB /* WebNotificationProvider.cpp in Sources */,
+				A18510441B9AE14A00744AEB /* WorkQueueManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -995,34 +991,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */,
-				2E63EDA11891B291002A7AFC /* AccessibilityUIElementIOS.mm in Sources */,
-				2E63ED9E1891AEC1002A7AFC /* WebArchiveDumpSupportIOS.mm in Sources */,
-				2E63ED8A1891AD7E002A7AFC /* AccessibilityControllerIOS.mm in Sources */,
-				2E63ED8B1891AD7E002A7AFC /* AccessibilityTextMarkerIOS.mm in Sources */,
-				2E63ED8E1891AD7E002A7AFC /* EventSenderProxyIOS.mm in Sources */,
-				2E63ED8F1891AD7E002A7AFC /* InjectedBundleIOS.mm in Sources */,
 				29210EDA144CC3EA00835BB6 /* AccessibilityCommonMac.mm in Sources */,
 				29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */,
+				2E63ED8A1891AD7E002A7AFC /* AccessibilityControllerIOS.mm in Sources */,
 				8034C6621487636400AC32E9 /* AccessibilityControllerMac.mm in Sources */,
 				8097338A14874A5A008156D9 /* AccessibilityNotificationHandler.mm in Sources */,
-				0FEB90A51905C016000FDBF3 /* CrashReporterInfo.mm in Sources */,
 				29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */,
+				2E63ED8B1891AD7E002A7AFC /* AccessibilityTextMarkerIOS.mm in Sources */,
 				29210EB5144CACD500835BB5 /* AccessibilityTextMarkerMac.mm in Sources */,
 				29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */,
 				29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */,
 				29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */,
+				2E63EDA11891B291002A7AFC /* AccessibilityUIElementIOS.mm in Sources */,
 				29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */,
 				65EB85A011EC67CC0034D300 /* ActivateFontsCocoa.mm in Sources */,
+				0FEB90A51905C016000FDBF3 /* CrashReporterInfo.mm in Sources */,
+				2E63ED8E1891AD7E002A7AFC /* EventSenderProxyIOS.mm in Sources */,
 				BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */,
 				BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */,
 				BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */,
+				2E63ED8F1891AD7E002A7AFC /* InjectedBundleIOS.mm in Sources */,
 				BC8DAD7B1316D91000EC96FC /* InjectedBundleMac.mm in Sources */,
 				BC251A3E11D16831002EBC01 /* InjectedBundleMain.cpp in Sources */,
 				BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */,
+				0FEB90A01905A834000FDBF3 /* InjectedBundlePageCocoa.mm in Sources */,
 				29210EDB144CD47900835BB5 /* JSAccessibilityController.cpp in Sources */,
 				29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */,
-				0FEB90A01905A834000FDBF3 /* InjectedBundlePageCocoa.mm in Sources */,
 				29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */,
 				29210EE1144CDB2600835BB5 /* JSAccessibilityUIElement.cpp in Sources */,
 				BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */,
@@ -1030,10 +1024,12 @@
 				BC952F1F11F3C652003398B4 /* JSTestRunner.cpp in Sources */,
 				5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */,
 				BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */,
-				5C45C30F17398E290079714E /* WebArchiveDumpSupportMac.mm in Sources */,
-				5C45C31317398E480079714E /* WebArchiveDumpSupport.cpp in Sources */,
+				2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */,
 				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
+				5C45C31317398E480079714E /* WebArchiveDumpSupport.cpp in Sources */,
+				2E63ED9E1891AEC1002A7AFC /* WebArchiveDumpSupportIOS.mm in Sources */,
+				5C45C30F17398E290079714E /* WebArchiveDumpSupportMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1079,7 +1075,6 @@
 				2EE52CEC1890A9A80010ED21 /* en */,
 			);
 			name = InfoPlist.strings;
-			path = ../WebKitTestRunnerApp;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

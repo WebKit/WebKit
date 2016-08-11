@@ -98,17 +98,28 @@
 
 namespace WTR {
 
+static CGRect viewRectForWindowRect(CGRect windowRect)
+{
+    CGFloat statusBarBottom = CGRectGetMaxY([[UIApplication sharedApplication] statusBarFrame]);
+    return CGRectMake(windowRect.origin.x, windowRect.origin.y + statusBarBottom, windowRect.size.width, windowRect.size.height);
+}
+
 PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const TestOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
     CGRect rect = CGRectMake(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[TestRunnerWKWebView alloc] initWithFrame:rect configuration:configuration];
 
     m_window = [[WebKitTestRunnerWindow alloc] initWithFrame:rect];
+    m_window.backgroundColor = [UIColor lightGrayColor];
     m_window.platformWebView = this;
 
-    [m_window addSubview:m_view];
+    UIViewController *viewController = [[UIViewController alloc] init];
+    [m_window setRootViewController:viewController];
+
+    m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect) configuration:configuration];
+
+    [m_window.rootViewController.view addSubview:m_view];
     [m_window makeKeyAndVisible];
 }
 
@@ -160,7 +171,7 @@ WKRect PlatformWebView::windowFrame()
 void PlatformWebView::setWindowFrame(WKRect frame)
 {
     [m_window setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
-    [platformView() setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    [platformView() setFrame:viewRectForWindowRect(CGRectMake(0, 0, frame.size.width, frame.size.height))];
 }
 
 void PlatformWebView::didInitializeClients()
