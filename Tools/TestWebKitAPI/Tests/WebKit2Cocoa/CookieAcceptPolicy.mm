@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
@@ -52,6 +53,8 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 TEST(WebKit2, CookieAcceptPolicy)
 {
+    auto originalCookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
+    
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     
     RetainPtr<WKProcessPool> processPool = adoptNS([[WKProcessPool alloc] init]);
@@ -67,6 +70,11 @@ TEST(WebKit2, CookieAcceptPolicy)
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "COOKIE:");
+    
+    // FIXME: Set back to originalCookieAcceptPolicy.
+    UNUSED_PARAM(originalCookieAcceptPolicy);
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies];
 }
 
 #endif

@@ -1,3 +1,18 @@
+2016-08-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Yosemite bots' cookie accept policies after r204365.
+        https://bugs.webkit.org/show_bug.cgi?id=160758
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/CookieAcceptPolicy.mm:
+        (TEST):
+        I didn't restore the cookieAcceptPolicy of the sharedHTTPCookieStorage after changing it with this API test.
+        On Yosemite, this is changing the cookieAcceptPolicy that DumpRenderTree uses.
+        On more recent Cocoa platforms, it is only changing the cookieAcceptPolicy that TestWebKitAPI uses, which isn't
+        causing any problems because there are no other API tests that do anything with cookies.
+        My solution will be to restore the original cookieAcceptPolicy after running this API test to clean up,
+        but first I am committing this patch setting the cookieAcceptPolicy to NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain
+        to reset any bots that have run tests since r204365.  I will commit a followup that sets it to originalCookieAcceptPolicy.
+
 2016-08-11  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should check if the patch is still valid before executing every major step
