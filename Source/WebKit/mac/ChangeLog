@@ -1,3 +1,17 @@
+2016-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r204268): Mail crashes when trying to compose an email
+        https://bugs.webkit.org/show_bug.cgi?id=160775
+
+        Reviewed by Anders Carlsson.
+
+        Properly initialize PageConfiguration.pluginInfoProvider in
+        [WebView initSimpleHTMLDocumentWithStyle] to avoid a null
+        dereference in Mail when trying to compose an email.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2016-08-10  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the feature flags in the FEATURE_DEFINES lines
