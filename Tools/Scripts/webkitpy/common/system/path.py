@@ -30,6 +30,7 @@
 
 import atexit
 import os
+import re
 import subprocess
 import sys
 import logging
@@ -78,10 +79,11 @@ class _CygPath(object):
                 # Make sure the cygpath subprocess always gets shutdown cleanly.
                 atexit.register(_CygPath.stop_cygpath_subprocess)
 
-            return _CygPath._singleton.convert(path)
+            return _CygPath._singleton.convertFast(path)
 
     def __init__(self):
         self._child_process = None
+        self._rootDict = {}
 
     def start(self):
         assert(self._child_process is None)
@@ -118,6 +120,24 @@ class _CygPath(object):
         windows_path = '%s%s' % (windows_path[0].upper(), windows_path[1:])
         return windows_path
 
+    def convertFast(self, path):
+        # Use a dictionary to store previously converted file system roots.
+        match = re.match('(^/cygdrive/./)(.+)', path)
+        if not match:
+            match = re.match('(^/)(.+)', path)
+        if match:
+            try:
+                root = self._rootDict[match.group(1)]
+            except:
+                self._rootDict[match.group(1)] = self.convert(match.group(1))
+                root = self._rootDict[match.group(1)]
+            if not root.endswith('\\'):
+                root += '\\'
+            path = root + match.group(2)
+            path = re.sub('/', r'\\', path)
+            return path
+        else:
+            self.convert(path)
 
 def _escape(path):
     """Handle any characters in the path that should be escaped."""
