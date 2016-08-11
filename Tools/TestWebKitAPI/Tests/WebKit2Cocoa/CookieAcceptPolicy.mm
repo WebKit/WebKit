@@ -71,9 +71,7 @@ TEST(WebKit2, CookieAcceptPolicy)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "COOKIE:");
     
-    // FIXME: Set back to originalCookieAcceptPolicy.
-    UNUSED_PARAM(originalCookieAcceptPolicy);
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:originalCookieAcceptPolicy];
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies];
 }
 
