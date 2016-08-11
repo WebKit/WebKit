@@ -1,5 +1,18 @@
 2016-08-10  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Use the simulated device's screen size, rather than a harcoded size
+        https://bugs.webkit.org/show_bug.cgi?id=160748
+
+        Reviewed by Tim Horton.
+        
+        Use the main UIScreen's bounds for the window size if we're using a flexible viewport. This
+        opens the door for tests using other device sizes.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+
+2016-08-10  Simon Fraser  <simon.fraser@apple.com>
+
         Sort the feature flags in the FEATURE_DEFINES lines
         https://bugs.webkit.org/show_bug.cgi?id=160742
 

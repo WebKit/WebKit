@@ -1,3 +1,24 @@
+2016-08-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Use the simulated device's screen size, rather than a harcoded size
+        https://bugs.webkit.org/show_bug.cgi?id=160748
+
+        Reviewed by Tim Horton.
+        
+        Move fast/viewport/ios skipping to ios-simulator-wk2/TestExpectations since the tests
+        are WK2-only.
+
+        * fast/viewport/ios/width-is-device-width-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit-expected.txt:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/scrolling-content-clip-to-viewport-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/touch-stacking-expected.txt:
+        * platform/ios-simulator/fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit-expected.txt: Removed.
+
 2016-08-10  Nan Wang  <n_wang@apple.com>
 
         AX: Media controls timeline should have percentage value description
