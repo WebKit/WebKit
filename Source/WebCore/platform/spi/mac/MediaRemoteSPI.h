@@ -75,6 +75,15 @@ enum {
 };
 typedef uint32_t MRPlaybackState;
 
+enum {
+    MRMediaRemoteCommandHandlerStatusSuccess = 0,
+    MRMediaRemoteCommandHandlerStatusNoSuchContent = 1,
+    MRMediaRemoteCommandHandlerStatusCommandFailed = 2,
+    MRMediaRemoteCommandHandlerStatusNoActionableNowPlayingItem = 10,
+    MRMediaRemoteCommandHandlerStatusUIKitLegacy = 3
+};
+typedef uint32_t MRMediaRemoteCommandHandlerStatus;
+
 typedef uint32_t MRMediaRemoteError;
 typedef struct _MROrigin *MROriginRef;
 typedef struct _MRMediaRemoteCommandInfo *MRMediaRemoteCommandInfoRef;
