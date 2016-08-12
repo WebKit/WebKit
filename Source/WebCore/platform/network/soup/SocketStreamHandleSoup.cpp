@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-Ref<SocketStreamHandle> SocketStreamHandle::create(const URL& url, SocketStreamHandleClient& client, NetworkingContext&, SessionID)
+Ref<SocketStreamHandle> SocketStreamHandle::create(const URL& url, SocketStreamHandleClient& client, SessionID)
 {
     Ref<SocketStreamHandle> socket = adoptRef(*new SocketStreamHandle(url, client));
 

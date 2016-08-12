@@ -1,5 +1,16 @@
 2016-08-11  Alex Christensen  <achristensen@webkit.org>
 
+        Don't use a NetworkingContext when creating SocketStreamHandles
+        https://bugs.webkit.org/show_bug.cgi?id=160732
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/Network/WebSocketProvider.cpp:
+        (WebKit::WebSocketProvider::createSocketStreamHandle):
+        * WebProcess/Network/WebSocketProvider.h:
+
+2016-08-11  Alex Christensen  <achristensen@webkit.org>
+
         Use StringBuilder::appendLiteral when possible don't append result of makeString
         https://bugs.webkit.org/show_bug.cgi?id=160772
 

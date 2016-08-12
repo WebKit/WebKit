@@ -30,8 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SocketStreamHandle_h
-#define SocketStreamHandle_h
+#pragma once
 
 #include "SocketStreamHandleBase.h"
 
@@ -43,13 +42,12 @@
 
 namespace WebCore {
 
-class NetworkingContext;
 class SocketStreamError;
 class SocketStreamHandleClient;
 
 class SocketStreamHandle final : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
 public:
-    static Ref<SocketStreamHandle> create(const URL&, SocketStreamHandleClient&, NetworkingContext&, SessionID);
+    static Ref<SocketStreamHandle> create(const URL&, SocketStreamHandleClient&, SessionID);
     static Ref<SocketStreamHandle> create(GSocketConnection*, SocketStreamHandleClient&);
 
     virtual ~SocketStreamHandle();
@@ -83,5 +81,3 @@ private:
 }  // namespace WebCore
 
 #endif
-
-#endif  // SocketStreamHandle_h

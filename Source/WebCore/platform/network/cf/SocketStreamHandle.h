@@ -40,15 +40,13 @@ typedef struct __CFHTTPMessage* CFHTTPMessageRef;
 
 namespace WebCore {
 
-class AuthenticationChallenge;
 class Credential;
-class NetworkingContext;
 class ProtectionSpace;
 class SocketStreamHandleClient;
 
 class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
 public:
-    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, NetworkingContext& networkingContext, SessionID sessionID) { return adoptRef(*new SocketStreamHandle(url, client, networkingContext, sessionID)); }
+    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID) { return adoptRef(*new SocketStreamHandle(url, client, sessionID)); }
 
     virtual ~SocketStreamHandle();
 
@@ -56,7 +54,7 @@ private:
     virtual int platformSend(const char* data, int length);
     virtual void platformClose();
 
-    WEBCORE_EXPORT SocketStreamHandle(const URL&, SocketStreamHandleClient&, NetworkingContext&, SessionID);
+    WEBCORE_EXPORT SocketStreamHandle(const URL&, SocketStreamHandleClient&, SessionID);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
@@ -98,8 +96,7 @@ private:
     RetainPtr<CFWriteStreamRef> m_writeStream;
 
     RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
-
-    Ref<NetworkingContext> m_networkingContext;
+    SessionID m_sessionID;
 };
 
 }  // namespace WebCore

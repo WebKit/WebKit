@@ -36,7 +36,6 @@
 #include "CredentialStorage.h"
 #include "Logging.h"
 #include "NetworkStorageSession.h"
-#include "NetworkingContext.h"
 #include "ProtectionSpace.h"
 #include "Settings.h"
 #include "SocketStreamError.h"
@@ -68,12 +67,12 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 
 namespace WebCore {
 
-SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client, NetworkingContext& networkingContext, SessionID sessionID)
+SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client, SessionID sessionID)
     : SocketStreamHandleBase(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
     , m_sentStoredCredentials(false)
-    , m_networkingContext(networkingContext)
+    , m_sessionID(sessionID)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
 
@@ -356,9 +355,12 @@ bool SocketStreamHandle::getStoredCONNECTProxyCredentials(const ProtectionSpace&
     // FIXME (<rdar://problem/10416495>): Proxy credentials should be retrieved from AuthBrokerAgent.
 
     // Try system credential storage first, matching HTTP behavior (CFNetwork only asks the client for password if it couldn't find it in Keychain).
-    Credential storedCredential = m_networkingContext->storageSession().credentialStorage().getFromPersistentStorage(protectionSpace);
-    if (storedCredential.isEmpty())
-        storedCredential = m_networkingContext->storageSession().credentialStorage().get(protectionSpace);
+    Credential storedCredential;
+    if (auto* storageSession = NetworkStorageSession::storageSession(m_sessionID)) {
+        storedCredential = storageSession->credentialStorage().getFromPersistentStorage(protectionSpace);
+        if (storedCredential.isEmpty())
+            storedCredential = storageSession->credentialStorage().get(protectionSpace);
+    }
 
     if (storedCredential.isEmpty())
         return false;

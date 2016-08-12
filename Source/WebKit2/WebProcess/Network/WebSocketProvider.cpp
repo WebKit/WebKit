@@ -49,10 +49,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<SocketStreamHandle> WebSocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, NetworkingContext& context, SessionID sessionID)
+Ref<SocketStreamHandle> WebSocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, SessionID sessionID)
 {
     // FIXME: This should return a proxy so we can do the actual network interactions in the NetworkProcess.
-    return SocketStreamHandle::create(url, client, context, sessionID);
+    return SocketStreamHandle::create(url, client, sessionID);
 }
 
 } // namespace WebKit

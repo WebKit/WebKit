@@ -124,12 +124,10 @@ void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
         InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url);
 
     if (Frame* frame = m_document->frame()) {
-        if (NetworkingContext* networkingContext = frame->loader().networkingContext()) {
-            ref();
-            Page* page = frame->page();
-            SessionID sessionID = page ? page->sessionID() : SessionID::defaultSessionID();
-            m_handle = m_socketProvider->createSocketStreamHandle(m_handshake->url(), *this, *networkingContext, sessionID);
-        }
+        ref();
+        Page* page = frame->page();
+        SessionID sessionID = page ? page->sessionID() : SessionID::defaultSessionID();
+        m_handle = m_socketProvider->createSocketStreamHandle(m_handshake->url(), *this, sessionID);
     }
 }
 

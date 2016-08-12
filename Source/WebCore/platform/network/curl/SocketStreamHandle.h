@@ -46,12 +46,11 @@
 
 namespace WebCore {
 
-class NetworkingContext;
 class SocketStreamHandleClient;
 
 class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
 public:
-    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, NetworkingContext&, SessionID) { return adoptRef(*new SocketStreamHandle(url, client)); }
+    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, SessionID) { return adoptRef(*new SocketStreamHandle(url, client)); }
 
     virtual ~SocketStreamHandle();
 
