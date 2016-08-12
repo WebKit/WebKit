@@ -137,7 +137,8 @@ class _CygPath(object):
             path = re.sub('/', r'\\', path)
             return path
         else:
-            self.convert(path)
+            return self.convert(path)
+
 
 def _escape(path):
     """Handle any characters in the path that should be escaped."""

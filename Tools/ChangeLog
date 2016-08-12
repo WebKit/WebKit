@@ -1,3 +1,12 @@
+2016-08-12  Per Arne Vollan  <pvollan@apple.com>
+
+        Add missing return statement in convertFast function added in r204376.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/system/path.py:
+        (_CygPath.convertFast):
+
 2016-08-11  Brady Eidson  <beidson@apple.com>
 
         Add WK2 ExperimentalFeature support to MiniBrowser.
