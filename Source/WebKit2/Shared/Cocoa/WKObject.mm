@@ -30,6 +30,10 @@
 
 #import "APIObject.h"
 
+@interface NSObject ()
+- (CFTypeID)_cfTypeID;
+@end
+
 @implementation WKObject {
     BOOL _hasInitializedTarget;
     NSObject *_target;
@@ -126,6 +130,11 @@ static inline void initializeTargetIfNeeded(WKObject *self)
     initializeTargetIfNeeded(self);
 
     return [_target classForKeyedArchiver];
+}
+
+- (CFTypeID)_cfTypeID
+{
+    return _target ? [_target _cfTypeID] : [super _cfTypeID];
 }
 
 - (NSObject *)_web_createTarget

@@ -1,3 +1,14 @@
+2016-08-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Instances of WKObject subclasses don’t work correctly with CFGetTypeID()
+        https://bugs.webkit.org/show_bug.cgi?id=160820
+        <rdar://problem/27825875>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/WKObject.mm:
+        (-[WKObject _cfTypeID]): Override this internal method and forward to the target object.
+
 2016-08-12  Johan K. Jensen  <johan_jensen@apple.com>
 
         Rename DocumentLoadTiming and ResourceLoadTiming
