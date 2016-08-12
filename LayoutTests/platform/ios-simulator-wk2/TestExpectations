@@ -1912,3 +1912,6 @@ webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Failur
 webkit.org/b/160367 media/track/track-remove-crash.html [ Skip ]
 
 webkit.org/b/160591 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-worker.html [ Failure Timeout ]
+
+webkit.org/b/153809 transitions/clip-path-transitions.html [ Pass Failure ]
+webkit.org/b/153809 transitions/clip-path-path-transitions.html [ Pass Failure ]
