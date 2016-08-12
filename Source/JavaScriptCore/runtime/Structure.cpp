@@ -40,7 +40,6 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 

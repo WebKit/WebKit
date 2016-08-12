@@ -46,7 +46,6 @@
 #include "SimpleLineLayoutFunctions.h"
 #include "TrailingFloatsRootInlineBox.h"
 #include "VerticalPositionCache.h"
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

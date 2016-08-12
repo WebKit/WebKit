@@ -39,7 +39,6 @@
 #include "PropertyNameArray.h"
 #include "RegExpObject.h"
 #include <wtf/Assertions.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
 
 using namespace WTF;
