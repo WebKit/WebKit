@@ -613,9 +613,10 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     m_processPool->processDidFinishLaunching(this);
 
 #if PLATFORM(IOS)
-    xpc_connection_t xpcConnection = connection()->xpcConnection();
-    ASSERT(xpcConnection);
-    m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
+    if (connection()) {
+        if (xpc_connection_t xpcConnection = connection()->xpcConnection())
+            m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
+    }
 #endif
 }
 
