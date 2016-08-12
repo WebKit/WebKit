@@ -1507,9 +1507,9 @@ private:
     {
         // setOffset clears lexer errors.
         m_lexer->setOffset(lexerState.startOffset, lexerState.oldLineStartOffset);
+        m_lexer->setLineNumber(lexerState.oldLineNumber);
         next();
         m_lexer->setLastLineNumber(lexerState.oldLastLineNumber);
-        m_lexer->setLineNumber(lexerState.oldLineNumber);
     }
 
     struct SavePoint {

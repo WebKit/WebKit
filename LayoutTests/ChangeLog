@@ -1,3 +1,17 @@
+2016-08-12  Pranjal Jumde  <pjumde@apple.com>
+
+        ASSERTION FAILED: : line >= firstLine in BytecodeGenerator::emitExpressionInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=160535
+        <rdar://problem/27328151>
+
+        Reviewed by Saam Barati.
+
+        lineNumber from the savePoint was not being restored before calling next() causing discrepancy in the offset and line for the token
+
+        * js/multiline-function-crash-expected.txt: Added.
+        * js/multiline-function-crash.html: Added.
+        * js/script-tests/multiline-function-crash.js: Added.
+
 2016-08-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r204416.
