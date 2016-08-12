@@ -1,3 +1,12 @@
+2016-08-12  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][OWR] Video rendering fixes
+        https://bugs.webkit.org/show_bug.cgi?id=160764
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * gtk/jhbuild.modules: Bump to current OpenWebRTC master.
+
 2016-08-12  Per Arne Vollan  <pvollan@apple.com>
 
         Add missing return statement in convertFast function added in r204376.
