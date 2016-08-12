@@ -163,6 +163,8 @@ MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
             ? specializedSweep<Marked, SweepToFreeList, callDestructors>()
             : specializedSweep<Marked, SweepOnly, callDestructors>();
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return FreeList();
 }
 
 class SetNewlyAllocatedFunctor : public MarkedBlock::VoidFunctor {

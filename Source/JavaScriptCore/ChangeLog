@@ -1,3 +1,17 @@
+2016-08-11  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix gcc builds after r204387. 
+
+        Not reviewed.
+
+        Apparently, gcc is not sophisticated enough to realize that the end of the
+        function is unreachable, and is wrongly complaining about "control reaches end of
+        non-void function".  I'm restoring the RELEASE_ASSERT_NOT_REACHED() and return
+        statement at the end of MarkedBlock::sweepHelper() to appease gcc.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweepHelper):
+
 2016-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Use StringBuilder::appendLiteral when possible don't append result of makeString
