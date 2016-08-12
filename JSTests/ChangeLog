@@ -1,3 +1,21 @@
+2016-08-12  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES2016] Implement Object.entries
+        https://bugs.webkit.org/show_bug.cgi?id=160412
+
+        Reviewed by Saam Barati.
+
+        Patch contains tests for Object.entries function and 
+        fix of wrong tests for Object.values function.
+
+        * stress/object-entries.js: 
+        (compare):
+        (string_appeared_here.forEach):
+        (const.getInvokedFunctions.):
+        (const.getInvokedFunctions):
+        (Array.prototype.push):
+        * stress/object-values.js:
+
 2016-08-11  Mark Lam  <mark.lam@apple.com>
 
         OverridesHasInstance should not branch across register allocations.

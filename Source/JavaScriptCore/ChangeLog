@@ -1,3 +1,19 @@
+2016-08-12  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES2016] Implement Object.entries
+        https://bugs.webkit.org/show_bug.cgi?id=160412
+
+        Reviewed by Saam Barati.
+
+        This patch adds entries function to Object that returns list of 
+        key+values pairs. Patch did according to the point of
+        spec https://tc39.github.io/ecma262/#sec-object.entries
+
+        * builtins/ObjectConstructor.js:
+        (globalPrivate.enumerableOwnProperties):
+        (entries):
+        * runtime/ObjectConstructor.cpp:
+
 2016-08-11  Mark Lam  <mark.lam@apple.com>
 
         OverridesHasInstance should not branch across register allocations.

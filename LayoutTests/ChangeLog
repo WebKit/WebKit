@@ -1,3 +1,13 @@
+2016-08-12  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES2016] Implement Object.entries
+        https://bugs.webkit.org/show_bug.cgi?id=160412
+
+        Reviewed by Saam Barati.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-08-12  Pranjal Jumde  <pjumde@apple.com>
 
         ASSERTION FAILED: : line >= firstLine in BytecodeGenerator::emitExpressionInfo.

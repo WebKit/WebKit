@@ -39,7 +39,8 @@ function enumerableOwnProperties(object, kind)
             if (descriptor !== @undefined && descriptor.enumerable) {
                 if (kind === @iterationKindValue)
                     properties.@push(obj[nextKey]);
-            // FIXME: Implement 'key+value' and 'key' cases
+                else if (kind === @iterationKindKeyValue)
+                    properties.@push([nextKey, obj[nextKey]]);
             }
         }
     }
@@ -55,6 +56,16 @@ function values(object)
         throw new @TypeError("Object.values requires that input parameter not be null or undefined");
 
     return @enumerableOwnProperties(object, @iterationKindValue);
+}
+
+function entries(object)
+{
+    "use strict";
+    
+    if (object == null)
+        throw new @TypeError("Object.entries requires that input parameter not be null or undefined");
+    
+    return @enumerableOwnProperties(object, @iterationKindKeyValue);
 }
 
 function assign(target/*[*/, /*...*/sources/*] */)
