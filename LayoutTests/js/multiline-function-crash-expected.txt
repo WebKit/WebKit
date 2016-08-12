@@ -1,9 +1,0 @@
-Offset and lineNumber of the savePoint needs to restored before calling next(). Test passes if there is no crash in debug builds.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
