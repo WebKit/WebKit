@@ -1,3 +1,14 @@
+2016-08-12  Sam Weinig  <sam@webkit.org>
+
+        Make variant only available when compiling for C++14 or greater
+        https://bugs.webkit.org/show_bug.cgi?id=160813
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Compiler.h:
+        * wtf/StdLibExtras.h:
+        * wtf/Variant.h:
+
 2016-08-11  Maureen Daum  <mdaum@apple.com>
 
         Add NSButtonType to AppKitCompatibilityDeclarations.h.

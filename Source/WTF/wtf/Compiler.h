@@ -54,6 +54,15 @@
 #define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS __has_feature(cxx_user_literals)
 #define WTF_COMPILER_SUPPORTS_FALLTHROUGH_WARNINGS __has_feature(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
 #define WTF_COMPILER_SUPPORTS_CXX_EXCEPTIONS __has_feature(cxx_exceptions)
+
+#ifdef __cplusplus
+#if __cplusplus <= 201103L
+#define WTF_CPP_STD_VER 11
+#elif __cplusplus <= 201402L
+#define WTF_CPP_STD_VER 14
+#endif
+#endif
+
 #endif
 
 /* COMPILER(GCC_OR_CLANG) - GNU Compiler Collection or Clang */

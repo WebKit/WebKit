@@ -57,6 +57,8 @@
 #pragma warning(disable:4814)
 #endif
 
+#if !COMPILER(CLANG) || WTF_CPP_STD_VER >= 14
+
 namespace std {
 namespace experimental {
 
@@ -2057,6 +2059,8 @@ struct hash<experimental::variant<_Types...>>{
 };
 
 } // namespace std
+
+#endif // !COMPILER(CLANG) || WTF_CPP_STD_VER >= 14
 
 #if COMPILER(MSVC)
 #pragma warning(pop)
