@@ -34,6 +34,7 @@ namespace WebCore {
 class URLParser {
 public:
     WEBCORE_EXPORT static Optional<URL> parse(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
+    WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
 };
 
 }

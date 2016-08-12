@@ -47,25 +47,45 @@ struct ExpectedParts {
     String path;
     String query;
     String fragment;
+    String string;
 };
-    
-static void eq(const String& s1, const String& s2) { EXPECT_STREQ(s1.utf8().data(), s2.utf8().data()); }
-static void checkURL(const URL& url, const ExpectedParts& parts)
+
+static const char* s(const String& s) { return s.utf8().data(); }
+static void checkURL(const String& urlString, const ExpectedParts& parts)
 {
-    eq(url.protocol(), parts.protocol);
-    eq(url.user(), parts.user);
-    eq(url.pass(), parts.password);
-    eq(url.host(), parts.host);
-    EXPECT_EQ(url.port(), parts.port);
-    eq(url.path(), parts.path);
-    eq(url.query(), parts.query);
-    eq(url.fragmentIdentifier(), parts.fragment);
+    auto url = URLParser::parse(urlString);
+    EXPECT_STREQ(s(parts.protocol), s(url->protocol()));
+    EXPECT_STREQ(s(parts.user), s(url->user()));
+    EXPECT_STREQ(s(parts.password), s(url->pass()));
+    EXPECT_STREQ(s(parts.host), s(url->host()));
+    EXPECT_EQ(parts.port, url->port());
+    EXPECT_STREQ(s(parts.path), s(url->path()));
+    EXPECT_STREQ(s(parts.query), s(url->query()));
+    EXPECT_STREQ(s(parts.fragment), s(url->fragmentIdentifier()));
+    EXPECT_STREQ(s(parts.string), s(url->string()));
+    
+    auto oldURL = URL(URL(), urlString);
+    EXPECT_STREQ(s(parts.protocol), s(oldURL.protocol()));
+    EXPECT_STREQ(s(parts.user), s(oldURL.user()));
+    EXPECT_STREQ(s(parts.password), s(oldURL.pass()));
+    EXPECT_STREQ(s(parts.host), s(oldURL.host()));
+    EXPECT_EQ(parts.port, oldURL.port());
+    EXPECT_STREQ(s(parts.path), s(oldURL.path()));
+    EXPECT_STREQ(s(parts.query), s(oldURL.query()));
+    EXPECT_STREQ(s(parts.fragment), s(oldURL.fragmentIdentifier()));
+    EXPECT_STREQ(s(parts.string), s(oldURL.string()));
+    
+    EXPECT_TRUE(URLParser::allValuesEqual(url.value(), oldURL));
 }
 
 TEST_F(URLParserTest, Parse)
 {
-    auto url = URLParser::parse("http://user:pass@webkit.org:123/path?query#fragment");
-    checkURL(url.value(), {"http", "user", "pass", "webkit.org", 123, "/path", "query", "fragment"});
+    checkURL("http://user:pass@webkit.org:123/path?query#fragment", {"http", "user", "pass", "webkit.org", 123, "/path", "query", "fragment", "http://user:pass@webkit.org:123/path?query#fragment"});
+    checkURL("http://user:pass@webkit.org:123/path?query", {"http", "user", "pass", "webkit.org", 123, "/path", "query", "", "http://user:pass@webkit.org:123/path?query"});
+    checkURL("http://user:pass@webkit.org:123/path", {"http", "user", "pass", "webkit.org", 123, "/path", "", "", "http://user:pass@webkit.org:123/path"});
+    checkURL("http://user:pass@webkit.org:123/", {"http", "user", "pass", "webkit.org", 123, "/", "", "", "http://user:pass@webkit.org:123/"});
+    checkURL("http://user:pass@webkit.org:123", {"http", "user", "pass", "webkit.org", 123, "/", "", "", "http://user:pass@webkit.org:123/"});
+    checkURL("http://user:pass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
 }
 
 } // namespace TestWebKitAPI

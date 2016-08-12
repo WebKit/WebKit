@@ -1,3 +1,16 @@
+2016-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Make URLParser work with URLs missing URL parts
+        https://bugs.webkit.org/show_bug.cgi?id=160824
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::s):
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::eq): Deleted.
+
 2016-08-12  John Wilander  <wilander@apple.com>
 
         Add HashCountedSet API tests to TestWTFLibrary target

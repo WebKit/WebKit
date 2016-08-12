@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-// 1. Infrastructure
 static bool isC0Control(const StringView::CodePoints::Iterator& c) { return *c <= 0x001F; }
 static bool isC0ControlOrSpace(const StringView::CodePoints::Iterator& c) { return isC0Control(c) || *c == 0x0020; }
 static bool isTabOrNewline(const StringView::CodePoints::Iterator& c) { return *c == 0x0009 || *c == 0x000A || *c == 0x000D; }
@@ -39,7 +38,6 @@ static bool isASCIIDigit(const StringView::CodePoints::Iterator& c) { return *c 
 static bool isASCIIAlpha(const StringView::CodePoints::Iterator& c) { return (*c >= 0x0041 && *c <= 0x005A) || (*c >= 0x0061 && *c <= 0x007A); }
 static bool isASCIIAlphanumeric(const StringView::CodePoints::Iterator& c) { return isASCIIDigit(c) || isASCIIAlpha(c); }
     
-// 4. URLs
 static bool isSpecialScheme(const String& scheme)
 {
     return scheme == "ftp"
@@ -65,7 +63,7 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
     enum class State : uint8_t {
         SchemeStart,
         Scheme,
-        SchemeEndCheckForSlashes, // Scheme state steps 2. 8.
+        SchemeEndCheckForSlashes,
         NoScheme,
         SpecialRelativeOrAuthority,
         PathOrAuthority,
@@ -113,6 +111,7 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
             else if (*c == ':') {
                 url.m_schemeEnd = buffer.length();
                 String urlScheme = buffer.toString(); // FIXME: Find a way to do this without shrinking the buffer.
+                url.m_protocolIsInHTTPFamily = urlScheme == "http" || urlScheme == "https";
                 if (urlScheme == "file")
                     state = State::File;
                 else if (isSpecialScheme(urlScheme)) {
@@ -271,9 +270,11 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
         case State::Path:
             LOG_STATE("Path");
             if (*c == '/') {
+                buffer.append('/');
+                url.m_pathAfterLastSlash = buffer.length();
                 ++c;
                 if (c == end)
-                    return Nullopt;
+                    break;
                 if (*c == '.') {
                     ++c;
                     if (c == end)
@@ -282,7 +283,6 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
                         notImplemented();
                     notImplemented();
                 }
-                buffer.append('/');
             } else if (*c == '?') {
                 url.m_pathEnd = buffer.length();
                 state = State::Query;
@@ -318,8 +318,78 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
             break;
         }
     }
+    
+    switch (state) {
+    case State::SchemeStart:
+    case State::Scheme:
+    case State::SchemeEndCheckForSlashes:
+    case State::NoScheme:
+    case State::SpecialRelativeOrAuthority:
+    case State::PathOrAuthority:
+    case State::Relative:
+    case State::RelativeSlash:
+    case State::SpecialAuthoritySlashes:
+    case State::SpecialAuthorityIgnoreSlashes:
+    case State::Authority:
+        break;
+    case State::Host:
+    case State::Hostname:
+        url.m_hostEnd = buffer.length();
+        url.m_portEnd = url.m_hostEnd;
+        buffer.append('/');
+        url.m_pathEnd = url.m_hostEnd + 1;
+        url.m_pathAfterLastSlash = url.m_pathEnd;
+        url.m_queryEnd = url.m_pathEnd;
+        url.m_fragmentEnd = url.m_pathEnd;
+        break;
+    case State::Port:
+        url.m_portEnd = buffer.length();
+        buffer.append('/');
+        url.m_pathEnd = url.m_portEnd + 1;
+        url.m_pathAfterLastSlash = url.m_pathEnd;
+        url.m_queryEnd = url.m_pathEnd;
+        url.m_fragmentEnd = url.m_pathEnd;
+        break;
+    case State::File:
+    case State::FileSlash:
+    case State::FileHost:
+    case State::PathStart:
+    case State::Path:
+        url.m_pathEnd = buffer.length();
+        url.m_queryEnd = url.m_pathEnd;
+        url.m_fragmentEnd = url.m_pathEnd;
+        break;
+    case State::CannotBeABaseURLPath:
+        break;
+    case State::Query:
+        url.m_queryEnd = buffer.length();
+        url.m_fragmentEnd = url.m_queryEnd;
+        break;
+    case State::Fragment:
+        url.m_fragmentEnd = buffer.length();
+        break;
+    }
+
     url.m_string = buffer.toString();
+    url.m_isValid = true;
     return url;
 }
-    
+
+bool URLParser::allValuesEqual(const URL& a, const URL& b)
+{
+    return a.m_string == b.m_string
+        && a.m_isValid == b.m_isValid
+        && a.m_protocolIsInHTTPFamily == b.m_protocolIsInHTTPFamily
+        && a.m_schemeEnd == b.m_schemeEnd
+        && a.m_userStart == b.m_userStart
+        && a.m_userEnd == b.m_userEnd
+        && a.m_passwordEnd == b.m_passwordEnd
+        && a.m_hostEnd == b.m_hostEnd
+        && a.m_portEnd == b.m_portEnd
+        && a.m_pathAfterLastSlash == b.m_pathAfterLastSlash
+        && a.m_pathEnd == b.m_pathEnd
+        && a.m_queryEnd == b.m_queryEnd
+        && a.m_fragmentEnd == b.m_fragmentEnd;
+}
+
 } // namespace WebCore
