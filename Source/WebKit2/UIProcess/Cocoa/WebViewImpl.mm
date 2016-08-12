@@ -46,6 +46,7 @@
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
+#import "UIGamepadProvider.h"
 #import "ViewGestureController.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKFullScreenWindowController.h"
@@ -1056,6 +1057,9 @@ void WebViewImpl::windowDidOrderOnScreen()
 void WebViewImpl::windowDidBecomeKey(NSWindow *keyWindow)
 {
     if (keyWindow == m_view.window || keyWindow == m_view.window.attachedSheet) {
+#if ENABLE(GAMEPAD)
+        UIGamepadProvider::singleton().viewBecameActive(m_page.get());
+#endif
         updateSecureInputState();
         m_page->viewStateDidChange(WebCore::ViewState::WindowIsActive);
     }
@@ -1064,6 +1068,9 @@ void WebViewImpl::windowDidBecomeKey(NSWindow *keyWindow)
 void WebViewImpl::windowDidResignKey(NSWindow *formerKeyWindow)
 {
     if (formerKeyWindow == m_view.window || formerKeyWindow == m_view.window.attachedSheet) {
+#if ENABLE(GAMEPAD)
+        UIGamepadProvider::singleton().viewBecameInactive(m_page.get());
+#endif
         updateSecureInputState();
         m_page->viewStateDidChange(WebCore::ViewState::WindowIsActive);
     }

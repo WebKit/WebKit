@@ -28,9 +28,9 @@
 #if ENABLE(GAMEPAD)
 
 #include <WebCore/GamepadProviderClient.h>
-#include <WebCore/Timer.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -47,12 +47,18 @@ public:
     void processPoolStartedUsingGamepads(WebProcessPool&);
     void processPoolStoppedUsingGamepads(WebProcessPool&);
 
+    void viewBecameActive(WebPageProxy&);
+    void viewBecameInactive(WebPageProxy&);
+
     Vector<GamepadData> gamepadStates() const;
 
 private:
     friend NeverDestroyed<UIGamepadProvider>;
     UIGamepadProvider();
     ~UIGamepadProvider() final;
+
+    void startMonitoringGamepads();
+    void stopMonitoringGamepads();
 
     void platformStartMonitoringGamepads();
     void platformStopMonitoringGamepads();
@@ -63,15 +69,20 @@ private:
     void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
     void platformGamepadInputActivity() final;
 
-    void startOrStopSynchingGamepadState();
-    void updateTimerFired();
+    void scheduleGamepadStateSync();
+    void gamepadSyncTimerFired();
+
+    void scheduleDisableGamepadMonitoring();
+    void disableMonitoringTimerFired();
 
     HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
 
     Vector<std::unique_ptr<UIGamepad>> m_gamepads;
 
-    WebCore::Timer m_timer;
-    bool m_hadActivitySinceLastSynch { false };
+    RunLoop::Timer<UIGamepadProvider> m_gamepadSyncTimer;
+    RunLoop::Timer<UIGamepadProvider> m_disableMonitoringTimer;
+
+    bool m_isMonitoringGamepads { false };
 };
 
 }

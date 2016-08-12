@@ -1,5 +1,38 @@
 2016-08-11  Brady Eidson  <beidson@apple.com>
 
+        [WK2] Don't monitor gamepads at all unless an interested WebPageProxy is in the active window.
+        https://bugs.webkit.org/show_bug.cgi?id=160760
+
+        Reviewed by Tim Horton.
+        
+        This patch makes it such that the UIProcess will only listen to the platform gamepad mechanism
+        if a WebPageProxy that is interested in gamepads is in the active window.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::windowDidBecomeKey):
+        (WebKit::WebViewImpl::windowDidResignKey):
+
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::UIGamepadProvider):
+        (WebKit::UIGamepadProvider::gamepadSyncTimerFired):
+        (WebKit::UIGamepadProvider::scheduleGamepadStateSync):
+        (WebKit::UIGamepadProvider::platformGamepadConnected):
+        (WebKit::UIGamepadProvider::platformGamepadDisconnected):
+        (WebKit::UIGamepadProvider::platformGamepadInputActivity):
+        (WebKit::UIGamepadProvider::processPoolStartedUsingGamepads):
+        (WebKit::UIGamepadProvider::processPoolStoppedUsingGamepads):
+        (WebKit::UIGamepadProvider::viewBecameActive):
+        (WebKit::UIGamepadProvider::viewBecameInactive):
+        (WebKit::UIGamepadProvider::scheduleDisableGamepadMonitoring):
+        (WebKit::UIGamepadProvider::disableMonitoringTimerFired):
+        (WebKit::UIGamepadProvider::startMonitoringGamepads):
+        (WebKit::UIGamepadProvider::stopMonitoringGamepads):
+        (WebKit::UIGamepadProvider::updateTimerFired): Deleted.
+        (WebKit::UIGamepadProvider::startOrStopSynchingGamepadState): Deleted.
+        * UIProcess/Gamepad/UIGamepadProvider.h:
+
+2016-08-11  Brady Eidson  <beidson@apple.com>
+
         Make Gamepads be a WK2 ExperimentalFeature.
         https://bugs.webkit.org/show_bug.cgi?id=160788
 

@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const double gamepadUpdateInterval = 1 / 60.0;
+static const double maximumGamepadUpdateInterval = 1 / 120.0;
 
 UIGamepadProvider& UIGamepadProvider::singleton()
 {
@@ -47,7 +47,8 @@ UIGamepadProvider& UIGamepadProvider::singleton()
 }
 
 UIGamepadProvider::UIGamepadProvider()
-    : m_timer(*this, &UIGamepadProvider::updateTimerFired)
+    : m_gamepadSyncTimer(RunLoop::main(), this, &UIGamepadProvider::gamepadSyncTimerFired)
+    , m_disableMonitoringTimer(RunLoop::main(), this, &UIGamepadProvider::disableMonitoringTimerFired)
 {
 }
 
@@ -57,9 +58,10 @@ UIGamepadProvider::~UIGamepadProvider()
         platformStopMonitoringGamepads();
 }
 
-void UIGamepadProvider::updateTimerFired()
+void UIGamepadProvider::gamepadSyncTimerFired()
 {
-    if (!m_hadActivitySinceLastSynch)
+    auto webPageProxy = platformWebPageProxyForGamepadInput();
+    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(&webPageProxy->process().processPool()))
         return;
 
     Vector<GamepadData> gamepadDatas;
@@ -72,24 +74,20 @@ void UIGamepadProvider::updateTimerFired()
             gamepadDatas.uncheckedAppend({ });
     }
 
-    auto webPageProxy = platformWebPageProxyForGamepadInput();
-    if (webPageProxy && m_processPoolsUsingGamepads.contains(&webPageProxy->process().processPool()))
-        webPageProxy->gamepadActivity(gamepadDatas);
-
-    m_hadActivitySinceLastSynch = false;
+    webPageProxy->gamepadActivity(gamepadDatas);
 }
 
-void UIGamepadProvider::startOrStopSynchingGamepadState()
+void UIGamepadProvider::scheduleGamepadStateSync()
 {
-    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=160699)
-    // Only start synching updates if the currently focused WKWebView is also listening for gamepads.
+    if (!m_isMonitoringGamepads || m_gamepadSyncTimer.isActive())
+        return;
 
-    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=160673)
-    // Instead of refreshing gamepad data on a 60hz timer, actually sync with the display.
-    if (m_gamepads.isEmpty() || m_processPoolsUsingGamepads.isEmpty())
-        m_timer.stop();
-    else
-        m_timer.startRepeating(gamepadUpdateInterval);
+    if (m_gamepads.isEmpty() || m_processPoolsUsingGamepads.isEmpty()) {
+        m_gamepadSyncTimer.stop();
+        return;
+    }
+
+    m_gamepadSyncTimer.startOneShot(maximumGamepadUpdateInterval);
 }
 
 void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad)
@@ -100,8 +98,7 @@ void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad)
     ASSERT(!m_gamepads[gamepad.index()]);
     m_gamepads[gamepad.index()] = std::make_unique<UIGamepad>(gamepad);
 
-    m_hadActivitySinceLastSynch = true;
-    startOrStopSynchingGamepadState();
+    scheduleGamepadStateSync();
 
     for (auto& pool : m_processPoolsUsingGamepads)
         pool->gamepadConnected(*m_gamepads[gamepad.index()]);
@@ -114,7 +111,7 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
 
     std::unique_ptr<UIGamepad> disconnectedGamepad = WTFMove(m_gamepads[gamepad.index()]);
 
-    startOrStopSynchingGamepadState();
+    scheduleGamepadStateSync();
 
     for (auto& pool : m_processPoolsUsingGamepads)
         pool->gamepadDisconnected(*disconnectedGamepad);
@@ -135,33 +132,74 @@ void UIGamepadProvider::platformGamepadInputActivity()
         m_gamepads[i]->updateFromPlatformGamepad(*platformGamepads[i]);
     }
 
-    m_hadActivitySinceLastSynch = true;
+    scheduleGamepadStateSync();
 }
 
 void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
 {
-    bool wereAnyProcessPoolsUsingGamepads = !m_processPoolsUsingGamepads.isEmpty();
-
     ASSERT(!m_processPoolsUsingGamepads.contains(&pool));
     m_processPoolsUsingGamepads.add(&pool);
 
-    if (!wereAnyProcessPoolsUsingGamepads)
-        platformStartMonitoringGamepads();
+    if (!m_isMonitoringGamepads && platformWebPageProxyForGamepadInput())
+        startMonitoringGamepads();
 
-    startOrStopSynchingGamepadState();
+    scheduleGamepadStateSync();
 }
 
 void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 {
-    bool wereAnyProcessPoolsUsingGamepads = !m_processPoolsUsingGamepads.isEmpty();
-
     ASSERT(m_processPoolsUsingGamepads.contains(&pool));
     m_processPoolsUsingGamepads.remove(&pool);
 
-    if (wereAnyProcessPoolsUsingGamepads && m_processPoolsUsingGamepads.isEmpty())
-        platformStopMonitoringGamepads();
+    if (m_isMonitoringGamepads && !platformWebPageProxyForGamepadInput())
+        scheduleDisableGamepadMonitoring();
 
-    startOrStopSynchingGamepadState();
+    scheduleGamepadStateSync();
+}
+
+void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
+{
+    if (!m_processPoolsUsingGamepads.contains(&page.process().processPool()))
+        return;
+
+    m_disableMonitoringTimer.stop();
+    startMonitoringGamepads();
+}
+
+void UIGamepadProvider::viewBecameInactive(WebPageProxy& page)
+{
+    auto pageForGamepadInput = platformWebPageProxyForGamepadInput();
+    if (pageForGamepadInput == &page)
+        scheduleDisableGamepadMonitoring();
+}
+
+void UIGamepadProvider::scheduleDisableGamepadMonitoring()
+{
+    if (!m_disableMonitoringTimer.isActive())
+        m_disableMonitoringTimer.startOneShot(0);
+}
+
+void UIGamepadProvider::disableMonitoringTimerFired()
+{
+    stopMonitoringGamepads();
+}
+
+void UIGamepadProvider::startMonitoringGamepads()
+{
+    if (m_isMonitoringGamepads)
+        return;
+
+    m_isMonitoringGamepads = true;
+    platformStartMonitoringGamepads();
+}
+
+void UIGamepadProvider::stopMonitoringGamepads()
+{
+    if (!m_isMonitoringGamepads)
+        return;
+
+    m_isMonitoringGamepads = false;
+    platformStopMonitoringGamepads();
 }
 
 #if !PLATFORM(MAC)
