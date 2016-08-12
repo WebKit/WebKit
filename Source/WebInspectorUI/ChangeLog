@@ -1,3 +1,17 @@
+2016-08-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r204264): Web Inspector: Uncaught Exception in Network tab when reloading a web page
+        https://bugs.webkit.org/show_bug.cgi?id=160781
+        <rdar://problem/27810452>
+
+        Reviewed by Matt Baker.
+
+        WebInspector.TimelineDataGrid.prototype.closed was removed in r204264.
+        Define a stub method on DataGrid so it's available to all its subclasses.
+
+        * UserInterface/Views/DataGrid.js:
+        this._dataGrid.closed()
+
 2016-08-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should be able to Edit Node Attributes and Styles for non-UserAgent Shadow DOM nodes

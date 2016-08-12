@@ -1415,6 +1415,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         }
     }
 
+    closed()
+    {
+        // Implemented by subclasses.
+    }
+
     expand()
     {
         // This is the root, do nothing.
