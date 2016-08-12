@@ -1,3 +1,52 @@
+2016-08-12  Anders Carlsson  <andersca@apple.com>
+
+        message loading never finishes in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=160806
+        rdar://problem/27624095
+
+        Reviewed by Dan Bernstein.
+
+        Add more checks for when a process goes away before we've established a proper connection to it.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::receiveSourceEventHandler):
+        Handle the MACH_NOTIFY_NO_SENDERS and MACH_NOTIFY_SEND_ONCE messages here. Also, once we receive a send
+        right from the other side, stop listening for the MACH_NOTIFY_NO_SENDERS notification.
+
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        Null check the connection identifier.
+
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::ProcessLauncher):
+        (WebKit::processLauncherWorkQueue): Deleted.
+        Get rid of the process launcher queue - we're not doing any blocking work here.
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        Add a weak factory.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::systemDirectoryPath):
+        Move this before launchProcess().
+
+        (WebKit::ProcessLauncher::launchProcess):
+        Merge createService and connectToService into launchProcess. Also make the following changes:
+        - Use mach_port_request_notification to get a notification for when our receive right loses all its senders.
+        This lets us listen for the other process going away before we have a send right for it.
+        - Use xpc_connection_set_event_handler to listen for errors, so we can detect the process going away before
+        we've sent a message to it.
+        
+        (WebKit::connectToService): Deleted.
+        (WebKit::createService): Deleted.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        If we failed to launch, call networkProcessCrashedOrFailedToLaunch so we'll unblock any waiting web processes.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        Null check the connection and XPC connection before trying to get its pid.
+
 2016-08-11  Brady Eidson  <beidson@apple.com>
 
         [WK2] Don't monitor gamepads at all unless an interested WebPageProxy is in the active window.

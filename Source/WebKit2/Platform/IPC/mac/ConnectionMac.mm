@@ -479,6 +479,20 @@ void Connection::receiveSourceEventHandler()
     if (!header)
         return;
 
+    switch (header->msgh_id) {
+    case MACH_NOTIFY_NO_SENDERS:
+        ASSERT(m_isServer);
+        if (!m_sendPort)
+            connectionDidClose();
+        return;
+
+    case MACH_NOTIFY_SEND_ONCE:
+        return;
+
+    default:
+        break;
+    }
+
     std::unique_ptr<MessageDecoder> decoder = createMessageDecoder(header);
     ASSERT(decoder);
 
@@ -500,6 +514,12 @@ void Connection::receiveSourceEventHandler()
         m_sendPort = port.port();
         
         if (m_sendPort) {
+            mach_port_t previousNotificationPort;
+            mach_port_request_notification(mach_task_self(), m_receivePort, MACH_NOTIFY_NO_SENDERS, 0, MACH_PORT_NULL, MACH_MSG_TYPE_MOVE_SEND_ONCE, &previousNotificationPort);
+
+            if (previousNotificationPort != MACH_PORT_NULL)
+                mach_port_deallocate(mach_task_self(), previousNotificationPort);
+
             initializeDeadNameSource();
             dispatch_resume(m_deadNameSource);
         }
