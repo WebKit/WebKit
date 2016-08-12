@@ -1,3 +1,14 @@
+2016-08-12  John Wilander  <wilander@apple.com>
+
+        Add HashCountedSet API tests to TestWTFLibrary target
+        https://bugs.webkit.org/show_bug.cgi?id=160815
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            Added HashCountedSet.cpp and sorted the file reference section
+            according to UNIX sort.
+
 2016-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-benchmark should run JetStream 1.1 instead of 1.0.1
