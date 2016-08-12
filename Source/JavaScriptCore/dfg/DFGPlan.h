@@ -48,6 +48,7 @@ class SlotVisitor;
 
 namespace DFG {
 
+class LongLivedState;
 class ThreadData;
 
 #if ENABLE(DFG_JIT)
@@ -59,7 +60,7 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
         const Operands<JSValue>& mustHandleValues);
     ~Plan();
 
-    void compileInThread(ThreadData*);
+    void compileInThread(LongLivedState&, ThreadData*);
     
     CompilationResult finalizeWithoutNotifyingCallback();
     void finalizeAndNotifyCallback();
@@ -120,7 +121,7 @@ private:
     bool reportCompileTimes() const;
     
     enum CompilationPath { FailPath, DFGPath, FTLPath, CancelPath };
-    CompilationPath compileInThreadImpl();
+    CompilationPath compileInThreadImpl(LongLivedState&);
     
     bool isStillValid();
     void reallyAdd(CommonData*);

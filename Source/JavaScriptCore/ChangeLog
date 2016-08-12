@@ -1,3 +1,72 @@
+2016-08-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Revert most of r203808
+        https://bugs.webkit.org/show_bug.cgi?id=160784
+
+        Reviewed by Geoffrey Garen.
+
+        Switching to fastMalloc() caused regressions on Jetstream and Octane
+        on MacBook Air. I was able to get back some of it in the following
+        patches but the tests that never go to FTL are still regressed.
+
+        This patch revert r203808 except of the node index.
+        Nodes are allocated with the custom allocator like before but they are
+        now also kept in a table, addressed by the node index.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3SparseCollection.h:
+        (JSC::B3::SparseCollection::packIndices): Deleted.
+        * dfg/DFGAllocator.h: Added.
+        (JSC::DFG::Allocator::Region::size):
+        (JSC::DFG::Allocator::Region::headerSize):
+        (JSC::DFG::Allocator::Region::numberOfThingsPerRegion):
+        (JSC::DFG::Allocator::Region::data):
+        (JSC::DFG::Allocator::Region::isInThisRegion):
+        (JSC::DFG::Allocator::Region::regionFor):
+        (JSC::DFG::Allocator<T>::Allocator):
+        (JSC::DFG::Allocator<T>::~Allocator):
+        (JSC::DFG::Allocator<T>::allocate):
+        (JSC::DFG::Allocator<T>::free):
+        (JSC::DFG::Allocator<T>::freeAll):
+        (JSC::DFG::Allocator<T>::reset):
+        (JSC::DFG::Allocator<T>::indexOf):
+        (JSC::DFG::Allocator<T>::allocatorOf):
+        (JSC::DFG::Allocator<T>::bumpAllocate):
+        (JSC::DFG::Allocator<T>::freeListAllocate):
+        (JSC::DFG::Allocator<T>::allocateSlow):
+        (JSC::DFG::Allocator<T>::freeRegionsStartingAt):
+        (JSC::DFG::Allocator<T>::startBumpingIn):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::~Graph):
+        (JSC::DFG::Graph::addNodeToMapByIndex):
+        (JSC::DFG::Graph::deleteNode):
+        (JSC::DFG::Graph::packNodeIndices):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addNode):
+        (JSC::DFG::Graph::maxNodeCount):
+        (JSC::DFG::Graph::nodeAt):
+        * dfg/DFGLongLivedState.cpp: Added.
+        (JSC::DFG::LongLivedState::LongLivedState):
+        (JSC::DFG::LongLivedState::~LongLivedState):
+        (JSC::DFG::LongLivedState::shrinkToFit):
+        * dfg/DFGLongLivedState.h: Added.
+        * dfg/DFGNode.h:
+        * dfg/DFGNodeAllocator.h: Added.
+        (operator new ):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPlan.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::runThread):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2016-08-11  Mark Lam  <mark.lam@apple.com>
 
         The jsc shell's Element host constructor should throw if it fails to construct an object.

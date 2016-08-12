@@ -29,8 +29,9 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "DeferGC.h"
+#include "DFGLongLivedState.h"
 #include "DFGSafepoint.h"
+#include "DeferGC.h"
 #include "JSCInlines.h"
 #include <mutex>
 
@@ -361,6 +362,8 @@ void Worklist::runThread(ThreadData* data)
     if (Options::verboseCompilationQueue())
         dataLog(*this, ": Thread started\n");
     
+    LongLivedState longLivedState;
+    
     for (;;) {
         RefPtr<Plan> plan;
         {
@@ -396,7 +399,7 @@ void Worklist::runThread(ThreadData* data)
                 dataLog(*this, ": Compiling ", plan->key(), " asynchronously\n");
         
             RELEASE_ASSERT(!plan->vm->heap.isCollecting());
-            plan->compileInThread(data);
+            plan->compileInThread(longLivedState, data);
             RELEASE_ASSERT(plan->stage == Plan::Cancelled || !plan->vm->heap.isCollecting());
             
             {

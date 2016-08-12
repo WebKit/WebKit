@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "B3SparseCollection.h"
 #include "BasicBlockLocation.h"
 #include "CodeBlock.h"
 #include "DFGAbstractValue.h"
@@ -231,7 +230,6 @@ struct StackAccessData {
 //
 // Node represents a single operation in the data flow graph.
 struct Node {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum VarArgTag { VarArg };
     
@@ -2346,7 +2344,7 @@ public:
     AdjacencyList children;
 
 private:
-    friend class B3::SparseCollection<Node>;
+    friend class Graph;
 
     unsigned m_index { std::numeric_limits<unsigned>::max() };
     unsigned m_op : 10; // real type is NodeType

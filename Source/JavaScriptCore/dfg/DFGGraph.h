@@ -29,13 +29,14 @@
 #if ENABLE(DFG_JIT)
 
 #include "AssemblyHelpers.h"
-#include "B3SparseCollection.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "CodeBlock.h"
 #include "DFGArgumentPosition.h"
 #include "DFGBasicBlock.h"
 #include "DFGFrozenValue.h"
+#include "DFGLongLivedState.h"
 #include "DFGNode.h"
+#include "DFGNodeAllocator.h"
 #include "DFGPlan.h"
 #include "DFGPropertyTypeKey.h"
 #include "DFGScannable.h"
@@ -123,7 +124,7 @@ enum AddSpeculationMode {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public virtual Scannable {
 public:
-    Graph(VM&, Plan&);
+    Graph(VM&, Plan&, LongLivedState&);
     ~Graph();
     
     void changeChild(Edge& edge, Node* newNode)
@@ -183,20 +184,22 @@ public:
     template<typename... Params>
     Node* addNode(Params... params)
     {
-        Node* node = new Node(params...);
-        m_nodes.add(std::unique_ptr<Node>(node));
+        Node* node = new (m_allocator) Node(params...);
+        addNodeToMapByIndex(node);
         return node;
     }
     template<typename... Params>
     Node* addNode(SpeculatedType type, Params... params)
     {
-        Node* node = addNode(params...);
+        Node* node = new (m_allocator) Node(params...);
         node->predict(type);
+        addNodeToMapByIndex(node);
         return node;
     }
+
     void deleteNode(Node*);
-    unsigned maxNodeCount() const { return m_nodes.size(); }
-    Node* nodeAt(unsigned index) const { return m_nodes[index]; }
+    unsigned maxNodeCount() const { return m_nodesByIndex.size(); }
+    Node* nodeAt(unsigned index) const { return m_nodesByIndex[index]; }
     void packNodeIndices();
 
     Vector<AbstractValue, 0, UnsafeVectorOverflow>& abstractValuesCache() { return m_abstractValuesCache; }
@@ -834,6 +837,8 @@ public:
     Plan& m_plan;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
+    
+    NodeAllocator& m_allocator;
 
     Vector< RefPtr<BasicBlock> , 8> m_blocks;
     Vector<Edge, 16> m_varArgChildren;
@@ -922,7 +927,7 @@ public:
     bool m_hasDebuggerEnabled;
     bool m_hasExceptionHandlers { false };
 private:
-    void adoptNodeOutOfLine(Node&);
+    void addNodeToMapByIndex(Node*);
 
     bool isStringPrototypeMethodSane(JSGlobalObject*, UniquedStringImpl*);
 
@@ -956,7 +961,8 @@ private:
         return bytecodeCanTruncateInteger(add->arithNodeFlags()) ? SpeculateInt32AndTruncateConstants : DontSpeculateInt32;
     }
 
-    B3::SparseCollection<Node> m_nodes;
+    Vector<Node*, 0, UnsafeVectorOverflow> m_nodesByIndex;
+    Vector<unsigned, 0, UnsafeVectorOverflow> m_nodeIndexFreeList;
     Vector<AbstractValue, 0, UnsafeVectorOverflow> m_abstractValuesCache;
 };
 
