@@ -38,9 +38,34 @@ public:
     }
 };
 
+struct ExpectedParts {
+    String protocol;
+    String user;
+    String password;
+    String host;
+    unsigned short port;
+    String path;
+    String query;
+    String fragment;
+};
+    
+static void eq(const String& s1, const String& s2) { EXPECT_STREQ(s1.utf8().data(), s2.utf8().data()); }
+static void checkURL(const URL& url, const ExpectedParts& parts)
+{
+    eq(url.protocol(), parts.protocol);
+    eq(url.user(), parts.user);
+    eq(url.pass(), parts.password);
+    eq(url.host(), parts.host);
+    EXPECT_EQ(url.port(), parts.port);
+    eq(url.path(), parts.path);
+    eq(url.query(), parts.query);
+    eq(url.fragmentIdentifier(), parts.fragment);
+}
+
 TEST_F(URLParserTest, Parse)
 {
-    EXPECT_TRUE(WebCore::URLParser::parse("invalid") == Nullopt);
+    auto url = URLParser::parse("http://user:pass@webkit.org:123/path?query#fragment");
+    checkURL(url.value(), {"http", "user", "pass", "webkit.org", 123, "/path", "query", "fragment"});
 }
 
 } // namespace TestWebKitAPI

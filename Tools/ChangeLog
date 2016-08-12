@@ -1,3 +1,15 @@
+2016-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Initial URLParser implementation
+        https://bugs.webkit.org/show_bug.cgi?id=160811
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::eq):
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::TEST_F):
+
 2016-08-12  Brady Eidson  <beidson@apple.com>
 
         Fix the 32-bit Mac build after:
