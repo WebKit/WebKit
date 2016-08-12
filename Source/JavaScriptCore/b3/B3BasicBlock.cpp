@@ -166,7 +166,7 @@ void BasicBlock::deepDump(const Procedure& proc, PrintStream& out) const
 
 Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin)
 {
-    RELEASE_ASSERT(opcode == Oops);
+    RELEASE_ASSERT(opcode == Oops || opcode == Return);
     clearSuccessors();
     return appendNew<Value>(proc, opcode, origin);
 }

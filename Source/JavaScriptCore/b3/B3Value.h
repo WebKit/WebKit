@@ -287,6 +287,10 @@ private:
             if (UNLIKELY(numArgs))
                 badOpcode(opcode, numArgs);
             break;
+        case Return:
+            if (UNLIKELY(numArgs > 1))
+                badOpcode(opcode, numArgs);
+            break;
         case Identity:
         case Neg:
         case Clz:
@@ -305,7 +309,6 @@ private:
         case IToF:
         case BitwiseCast:
         case Branch:
-        case Return:
             if (UNLIKELY(numArgs != 1))
                 badOpcode(opcode, numArgs);
             break;

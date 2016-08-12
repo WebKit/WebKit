@@ -388,7 +388,7 @@ public:
                 VALIDATE(!valueOwner.get(value)->numSuccessors(), ("At ", *value));
                 break;
             case Return:
-                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->numChildren() <= 1, ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
                 VALIDATE(!valueOwner.get(value)->numSuccessors(), ("At ", *value));
                 break;

@@ -836,6 +836,8 @@ MoveDoubleConditionallyFloat U:G:32, U:F:32, U:F:32, U:F:64, U:F:64, D:F:64
 
 Jump /branch
 
+RetVoid /return
+
 Ret32 U:G:32 /return
     Tmp
 

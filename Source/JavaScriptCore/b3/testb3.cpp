@@ -351,6 +351,14 @@ void testReturnConst64(int64_t value)
     CHECK(compileAndRun<int64_t>(proc) == value);
 }
 
+void testReturnVoid()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(proc, Return, Origin());
+    compileAndRun<void>(proc);
+}
+
 void testAddArg(int a)
 {
     Procedure proc;
@@ -12944,6 +12952,7 @@ void run(const char* filter)
     RUN(testArg(43));
     RUN(testReturnConst64(5));
     RUN(testReturnConst64(-42));
+    RUN(testReturnVoid());
 
     RUN(testAddArg(111));
     RUN(testAddArgs(1, 1));

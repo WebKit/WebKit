@@ -2431,6 +2431,10 @@ private:
         }
 
         case Return: {
+            if (!m_value->numChildren()) {
+                append(RetVoid);
+                return;
+            }
             Value* value = m_value->child(0);
             Tmp returnValueGPR = Tmp(GPRInfo::returnValueGPR);
             Tmp returnValueFPR = Tmp(FPRInfo::returnValueFPR);
