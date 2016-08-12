@@ -118,19 +118,7 @@ private:
 RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_frameView(*document.view())
-    , m_selectionUnsplitStart(nullptr)
-    , m_selectionUnsplitEnd(nullptr)
-    , m_selectionUnsplitStartPos(-1)
-    , m_selectionUnsplitEndPos(-1)
     , m_lazyRepaintTimer(*this, &RenderView::lazyRepaintTimerFired)
-    , m_pageLogicalHeight(0)
-    , m_pageLogicalHeightChanged(false)
-    , m_layoutState(nullptr)
-    , m_layoutStateDisableCount(0)
-    , m_renderQuoteHead(nullptr)
-    , m_renderCounterCount(0)
-    , m_selectionWasCaret(false)
-    , m_hasSoftwareFilters(false)
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionRectGatherer(*this)
 #endif
@@ -772,7 +760,10 @@ LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, 
     SelectionMap selectedObjects;
 
     RenderObject* os = root.selectionData().selectionStart();
-    RenderObject* stop = rendererAfterPosition(root.selectionData().selectionEnd(), root.selectionData().selectionEndPos());
+    auto* selectionEnd = root.selectionData().selectionEnd();
+    RenderObject* stop = nullptr;
+    if (selectionEnd)
+        stop = rendererAfterPosition(selectionEnd, root.selectionData().selectionEndPos().value());
     SelectionIterator selectionIterator(os);
     while (os && os != stop) {
         if ((os->canBeSelectionLeaf() || os == root.selectionData().selectionStart() || os == root.selectionData().selectionEnd()) && os->selectionState() != SelectionNone) {
@@ -821,7 +812,10 @@ void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
 {
     HashSet<RenderBlock*> processedBlocks;
 
-    RenderObject* end = rendererAfterPosition(root.selectionData().selectionEnd(), root.selectionData().selectionEndPos());
+    auto* selectionEnd = root.selectionData().selectionEnd();
+    RenderObject* end = nullptr;
+    if (selectionEnd)
+        end = rendererAfterPosition(selectionEnd, root.selectionData().selectionEndPos().value());
     SelectionIterator selectionIterator(root.selectionData().selectionStart());
     for (RenderObject* o = selectionIterator.current(); o && o != end; o = selectionIterator.next()) {
         if (!o->canBeSelectionLeaf() && o != root.selectionData().selectionStart() && o != root.selectionData().selectionEnd())
@@ -840,7 +834,7 @@ void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
     }
 }
 
-void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode)
+void RenderView::setSelection(RenderObject* start, Optional<unsigned> startPos, RenderObject* end, Optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode)
 {
     // Make sure both our start and end objects are defined.
     // Check www.msnbc.com and try clicking around to find the case where this happened.
@@ -877,7 +871,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     splitSelectionBetweenSubtrees(start, startPos, end, endPos, blockRepaintMode);
 }
 
-void RenderView::splitSelectionBetweenSubtrees(const RenderObject* start, int startPos, const RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode)
+void RenderView::splitSelectionBetweenSubtrees(const RenderObject* start, Optional<unsigned> startPos, const RenderObject* end, Optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode)
 {
     // Compute the visible selection end points for each of the subtrees.
     RenderSubtreesMap renderSubtreesMap;
@@ -902,14 +896,16 @@ void RenderView::splitSelectionBetweenSubtrees(const RenderObject* start, int st
             SelectionSubtreeData selectionData = renderSubtreesMap.get(&root);
             if (selectionData.selectionClear()) {
                 selectionData.setSelectionStart(node->renderer());
-                selectionData.setSelectionStartPos(node == startNode ? startPos : 0);
+                selectionData.setSelectionStartPos(node == startNode ? startPos : Optional<unsigned>(0));
             }
 
             selectionData.setSelectionEnd(node->renderer());
             if (node == endNode)
                 selectionData.setSelectionEndPos(endPos);
-            else
-                selectionData.setSelectionEndPos(node->offsetInCharacters() ? node->maxCharacterOffset() : node->countChildNodes());
+            else {
+                unsigned newEndPos = node->offsetInCharacters() ? node->maxCharacterOffset() : node->countChildNodes();
+                selectionData.setSelectionEndPos(newEndPos);
+            }
 
             renderSubtreesMap.set(&root, selectionData);
         }
@@ -960,7 +956,10 @@ void RenderView::clearSubtreeSelection(const SelectionSubtreeRoot& root, Selecti
     // the union of those rects might remain the same even when changes have occurred.
 
     RenderObject* os = root.selectionData().selectionStart();
-    RenderObject* stop = rendererAfterPosition(root.selectionData().selectionEnd(), root.selectionData().selectionEndPos());
+    auto* selectionEnd = root.selectionData().selectionEnd();
+    RenderObject* stop = nullptr;
+    if (selectionEnd)
+        stop = rendererAfterPosition(selectionEnd, root.selectionData().selectionEndPos().value());
     SelectionIterator selectionIterator(os);
     while (os && os != stop) {
         if (isValidObjectForNewSelection(root, *os)) {
@@ -998,7 +997,10 @@ void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, Selecti
     }
 
     RenderObject* selectionStart = root.selectionData().selectionStart();
-    RenderObject* selectionEnd = rendererAfterPosition(root.selectionData().selectionEnd(), root.selectionData().selectionEndPos());
+    auto* selectionDataEnd = root.selectionData().selectionEnd();
+    RenderObject* selectionEnd = nullptr;
+    if (selectionDataEnd)
+        selectionEnd = rendererAfterPosition(selectionDataEnd, root.selectionData().selectionEndPos().value());
     SelectionIterator selectionIterator(selectionStart);
     for (RenderObject* currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
         if (currentRenderer == root.selectionData().selectionStart() || currentRenderer == root.selectionData().selectionEnd())
@@ -1089,7 +1091,7 @@ void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, Selecti
         selectedBlockInfo.value->repaint();
 }
 
-void RenderView::getSelection(RenderObject*& startRenderer, int& startOffset, RenderObject*& endRenderer, int& endOffset) const
+void RenderView::getSelection(RenderObject*& startRenderer, Optional<unsigned>& startOffset, RenderObject*& endRenderer, Optional<unsigned>& endOffset) const
 {
     startRenderer = m_selectionUnsplitStart;
     startOffset = m_selectionUnsplitStartPos;
@@ -1100,7 +1102,7 @@ void RenderView::getSelection(RenderObject*& startRenderer, int& startOffset, Re
 void RenderView::clearSelection()
 {
     layer()->repaintBlockSelectionGaps();
-    setSelection(nullptr, -1, nullptr, -1, RepaintNewMinusOld);
+    setSelection(nullptr, Nullopt, nullptr, Nullopt, RepaintNewMinusOld);
 }
 
 bool RenderView::printing() const

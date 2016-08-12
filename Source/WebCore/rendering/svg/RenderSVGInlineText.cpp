@@ -116,17 +116,17 @@ std::unique_ptr<InlineTextBox> RenderSVGInlineText::createTextBox()
     return WTFMove(box);
 }
 
-LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit*)
+LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, unsigned caretOffset, LayoutUnit*)
 {
     if (!is<InlineTextBox>(box))
         return LayoutRect();
 
     auto& textBox = downcast<InlineTextBox>(*box);
-    if (static_cast<unsigned>(caretOffset) < textBox.start() || static_cast<unsigned>(caretOffset) > textBox.start() + textBox.len())
+    if (caretOffset < textBox.start() || caretOffset > textBox.start() + textBox.len())
         return LayoutRect();
 
     // Use the edge of the selection rect to determine the caret rect.
-    if (static_cast<unsigned>(caretOffset) < textBox.start() + textBox.len()) {
+    if (caretOffset < textBox.start() + textBox.len()) {
         LayoutRect rect = textBox.localSelectionRect(caretOffset, caretOffset + 1);
         LayoutUnit x = textBox.isLeftToRightDirection() ? rect.x() : rect.maxX();
         return LayoutRect(x, rect.y(), caretWidth, rect.height());

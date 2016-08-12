@@ -128,7 +128,7 @@ static CGPathRef createPathForGlyph(HDC hdc, Glyph glyph)
 }
 
 void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font, const GlyphBuffer& glyphBuffer,
-    int from, int numGlyphs, const FloatPoint& point, FontSmoothingMode smoothingMode)
+    unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode smoothingMode)
 {
     CGContextRef cgContext = graphicsContext.platformContext();
     bool shouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();

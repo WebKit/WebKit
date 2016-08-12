@@ -749,7 +749,7 @@ public:
      * @param extraWidthToEndOfLine optional out arg to give extra width to end of line -
      * useful for character range rect computations
      */
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = nullptr);
+    virtual LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine = nullptr);
 
     // When performing a global document tear-down, the renderer of the document is cleared.  We use this
     // as a hook to detect the case of document destruction and don't waste time doing unnecessary work.
@@ -782,7 +782,7 @@ public:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
     SelectionSubtreeRoot& selectionRoot() const;
-    void selectionStartEnd(int& spos, int& epos) const;
+    void selectionStartEnd(unsigned& spos, unsigned& epos) const;
     
     void removeFromParent();
 

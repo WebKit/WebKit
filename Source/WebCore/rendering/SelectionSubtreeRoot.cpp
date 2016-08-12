@@ -42,19 +42,16 @@ SelectionSubtreeRoot::SelectionSubtreeRoot()
 {
 }
 
-SelectionSubtreeRoot::SelectionSubtreeRoot(RenderObject* selectionStart, int selectionStartPos, RenderObject* selectionEnd, int selectionEndPos)
-    : m_selectionSubtreeData(selectionStart, selectionStartPos, selectionEnd, selectionEndPos)
-{
-}
-
 void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
 {
     if (m_selectionSubtreeData.selectionClear())
         return;
 
     // Create a range based on the cached end points
-    Position startPosition = createLegacyEditingPosition(m_selectionSubtreeData.selectionStart()->node(), m_selectionSubtreeData.selectionStartPos());
-    Position endPosition = createLegacyEditingPosition(m_selectionSubtreeData.selectionEnd()->node(), m_selectionSubtreeData.selectionEndPos());
+    auto selectionStart = m_selectionSubtreeData.selectionStartPos().value();
+    auto selectionEnd = m_selectionSubtreeData.selectionEndPos().value();
+    Position startPosition = createLegacyEditingPosition(m_selectionSubtreeData.selectionStart()->node(), selectionStart);
+    Position endPosition = createLegacyEditingPosition(m_selectionSubtreeData.selectionEnd()->node(), selectionEnd);
 
     RefPtr<Range> range = Range::create(document, startPosition.parentAnchoredEquivalent(), endPosition.parentAnchoredEquivalent());
     VisibleSelection selection(*range);
@@ -82,10 +79,13 @@ void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
     if (&startPos.deprecatedNode()->renderer()->selectionRoot() != this)
         return;
 
+    auto newStartPos = startPos.deprecatedEditingOffset();
+    auto newEndPos = endPos.deprecatedEditingOffset();
+    ASSERT(newStartPos >= 0 && newEndPos >= 0);
     m_selectionSubtreeData.setSelectionStart(startPos.deprecatedNode()->renderer());
-    m_selectionSubtreeData.setSelectionStartPos(startPos.deprecatedEditingOffset());
+    m_selectionSubtreeData.setSelectionStartPos(newStartPos);
     m_selectionSubtreeData.setSelectionEnd(endPos.deprecatedNode()->renderer());
-    m_selectionSubtreeData.setSelectionEndPos(endPos.deprecatedEditingOffset());
+    m_selectionSubtreeData.setSelectionEndPos(newEndPos);
 }
 
 } // namespace WebCore

@@ -2088,8 +2088,11 @@ void FrameSelection::updateAppearance()
     // because we don't yet notify the FrameSelection of text removal.
     if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
         RenderObject* startRenderer = startPos.deprecatedNode()->renderer();
+        int startOffset = startPos.deprecatedEditingOffset();
         RenderObject* endRenderer = endPos.deprecatedNode()->renderer();
-        view->setSelection(startRenderer, startPos.deprecatedEditingOffset(), endRenderer, endPos.deprecatedEditingOffset());
+        int endOffset = endPos.deprecatedEditingOffset();
+        ASSERT(startOffset >= 0 && endOffset >= 0);
+        view->setSelection(startRenderer, startOffset, endRenderer, endOffset);
     }
 }
 
@@ -2098,7 +2101,7 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility)
     if (caretVisibility() == visibility)
         return;
 
-    // FIXME: We shouldn't trigger a synchrnously layout here.
+    // FIXME: We shouldn't trigger a synchronous layout here.
     if (m_frame)
         updateSelectionByUpdatingLayoutOrStyle(*m_frame);
 

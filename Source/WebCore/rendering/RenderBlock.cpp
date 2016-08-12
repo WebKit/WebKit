@@ -3489,7 +3489,7 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const LayoutPoint& 
     }
 }
 
-LayoutRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderBlock::localCaretRect(InlineBox* inlineBox, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)
 {
     // Do the normal calculation in most cases.
     if (firstChild())

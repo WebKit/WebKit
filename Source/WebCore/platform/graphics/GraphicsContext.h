@@ -381,9 +381,9 @@ public:
     void setTextDrawingMode(TextDrawingModeFlags);
     TextDrawingModeFlags textDrawingMode() const { return m_state.textDrawingMode; }
 
-    float drawText(const FontCascade&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
-    void drawGlyphs(const FontCascade&, const Font&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
-    void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
+    float drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = Nullopt);
+    void drawGlyphs(const FontCascade&, const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint&);
+    void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = Nullopt);
     void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
 
     void applyState(const GraphicsContextState&);

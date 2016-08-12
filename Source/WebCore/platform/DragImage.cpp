@@ -141,8 +141,8 @@ struct ScopedFrameSelectionState {
     const Frame& frame;
     RenderObject* startRenderer;
     RenderObject* endRenderer;
-    int startOffset;
-    int endOffset;
+    Optional<unsigned> startOffset;
+    Optional<unsigned> endOffset;
 };
 
 DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlackText)
@@ -174,7 +174,10 @@ DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlack
         return nullptr;
 
     SnapshotOptions options = SnapshotOptionsPaintSelectionOnly | (forceBlackText ? SnapshotOptionsForceBlackText : SnapshotOptionsNone);
-    view->setSelection(startRenderer, start.deprecatedEditingOffset(), endRenderer, end.deprecatedEditingOffset(), RenderView::RepaintNothing);
+    int startOffset = start.deprecatedEditingOffset();
+    int endOffset = end.deprecatedEditingOffset();
+    ASSERT(startOffset >= 0 && endOffset >= 0);
+    view->setSelection(startRenderer, startOffset, endRenderer, endOffset, RenderView::RepaintNothing);
     // We capture using snapshotFrameRect() because we fake up the selection using
     // FrameView but snapshotSelection() uses the selection from the Frame itself.
     return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selectionBounds(), options), nullptr);

@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int, int, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
+float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned, unsigned, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
 {
     HarfBuzzShaper shaper(this, run);
     if (!shaper.shape(&glyphBuffer)) {
@@ -52,7 +52,7 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int, i
     return 0;
 }
 
-void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
+void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, unsigned /* from */, unsigned /* to */) const
 {
     notImplemented();
 }
@@ -85,7 +85,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
     return 0;
 }
 
-void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
+void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
     HarfBuzzShaper shaper(this, run);
     if (shaper.shape()) {

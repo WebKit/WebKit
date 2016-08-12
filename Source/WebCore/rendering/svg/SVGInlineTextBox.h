@@ -43,13 +43,13 @@ public:
     int selectionTop() { return top(); }
     int selectionHeight() { return static_cast<int>(ceilf(m_logicalHeight)); }
     int offsetForPosition(float x, bool includePartialGlyphs = true) const override;
-    float positionForOffset(int offset) const override;
+    float positionForOffset(unsigned offset) const override;
 
     void paintSelectionBackground(PaintInfo&);
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    LayoutRect localSelectionRect(int startPosition, int endPosition) const override;
+    LayoutRect localSelectionRect(unsigned startPosition, unsigned endPosition) const override;
 
-    bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;
+    bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
     FloatRect calculateBoundaries() const override;
 
@@ -64,7 +64,7 @@ public:
     void setStartsNewTextChunk(bool newTextChunk) { m_startsNewTextChunk = newTextChunk; }
 
     int offsetForPositionInFragment(const SVGTextFragment&, float position, bool includePartialGlyphs) const;
-    FloatRect selectionRectForTextFragment(const SVGTextFragment&, int fragmentStartPosition, int fragmentEndPosition, const RenderStyle*) const;
+    FloatRect selectionRectForTextFragment(const SVGTextFragment&, unsigned fragmentStartPosition, unsigned fragmentEndPosition, const RenderStyle*) const;
 
 private:
     bool isSVGInlineTextBox() const override { return true; }
@@ -79,7 +79,7 @@ private:
 
     void paintDecoration(GraphicsContext&, TextDecoration, const SVGTextFragment&);
     void paintDecorationWithStyle(GraphicsContext&, TextDecoration, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);
-    void paintTextWithShadows(GraphicsContext&, const RenderStyle*, TextRun&, const SVGTextFragment&, int startPosition, int endPosition);
+    void paintTextWithShadows(GraphicsContext&, const RenderStyle*, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
     void paintText(GraphicsContext&, const RenderStyle*, const RenderStyle* selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;

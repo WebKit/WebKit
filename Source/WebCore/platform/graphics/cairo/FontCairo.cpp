@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-static void drawGlyphsToContext(cairo_t* context, const Font& font, GlyphBufferGlyph* glyphs, int numGlyphs)
+static void drawGlyphsToContext(cairo_t* context, const Font& font, GlyphBufferGlyph* glyphs, unsigned numGlyphs)
 {
     cairo_matrix_t originalTransform;
     float syntheticBoldOffset = font.syntheticBoldOffset();
@@ -66,7 +66,7 @@ static void drawGlyphsToContext(cairo_t* context, const Font& font, GlyphBufferG
         cairo_set_matrix(context, &originalTransform);
 }
 
-static void drawGlyphsShadow(GraphicsContext& graphicsContext, const FloatPoint& point, const Font& font, GlyphBufferGlyph* glyphs, int numGlyphs)
+static void drawGlyphsShadow(GraphicsContext& graphicsContext, const FloatPoint& point, const Font& font, GlyphBufferGlyph* glyphs, unsigned numGlyphs)
 {
     ShadowBlur& shadow = graphicsContext.platformContext()->shadowBlur();
 
@@ -98,7 +98,7 @@ static void drawGlyphsShadow(GraphicsContext& graphicsContext, const FloatPoint&
 }
 
 void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer,
-    int from, int numGlyphs, const FloatPoint& point, FontSmoothingMode)
+    unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode)
 {
     if (!font.platformData().size())
         return;
@@ -106,7 +106,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     GlyphBufferGlyph* glyphs = const_cast<GlyphBufferGlyph*>(glyphBuffer.glyphs(from));
 
     float offset = point.x();
-    for (int i = 0; i < numGlyphs; i++) {
+    for (unsigned i = 0; i < numGlyphs; i++) {
         glyphs[i].x = offset;
         glyphs[i].y = point.y();
         offset += glyphBuffer.advanceAt(from + i).width();
@@ -229,7 +229,7 @@ public:
     void advance() final;
 
 private:
-    int m_index;
+    unsigned m_index;
     const TextRun& m_textRun;
     const GlyphBuffer& m_glyphBuffer;
     const Font* m_fontData;

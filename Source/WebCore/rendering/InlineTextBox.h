@@ -42,11 +42,6 @@ class InlineTextBox : public InlineBox {
 public:
     explicit InlineTextBox(RenderText& renderer)
         : InlineBox(renderer)
-        , m_prevTextBox(nullptr)
-        , m_nextTextBox(nullptr)
-        , m_start(0)
-        , m_len(0)
-        , m_truncation(cNoTruncation)
     {
         setBehavesLikeText(true);
     }
@@ -69,7 +64,7 @@ public:
     void setStart(unsigned start) { m_start = start; }
     void setLen(unsigned len) { m_len = len; }
 
-    void offsetRun(int d) { ASSERT(!isDirty()); m_start += d; }
+    void offsetRun(int d) { ASSERT(!isDirty()); ASSERT(d > 0 || m_start >= static_cast<unsigned>(-d)); m_start += d; }
 
     unsigned short truncation() const { return m_truncation; }
 
@@ -120,9 +115,9 @@ private:
 public:
     FloatRect calculateBoundaries() const override { return FloatRect(x(), y(), width(), height()); }
 
-    virtual LayoutRect localSelectionRect(int startPos, int endPos) const;
-    bool isSelected(int startPos, int endPos) const;
-    std::pair<int, int> selectionStartEnd() const;
+    virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
+    bool isSelected(unsigned startPos, unsigned endPos) const;
+    std::pair<unsigned, unsigned> selectionStartEnd() const;
 
 protected:
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
@@ -155,12 +150,13 @@ private:
 
 public:
     virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
-    virtual float positionForOffset(int offset) const;
+    virtual float positionForOffset(unsigned offset) const;
 
 protected:
-    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, int startPos, int endPos);
+    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, unsigned startPos, unsigned endPos);
     void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, bool background);
     void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&);
+    unsigned clampedOffset(unsigned) const;
 
 private:
     void paintDecoration(GraphicsContext&, const FontCascade&, RenderCombineText*, const TextRun&, const FloatPoint& textOrigin, const FloatRect& boxRect,
@@ -173,15 +169,15 @@ private:
 
     void behavesLikeText() const = delete;
 
-    InlineTextBox* m_prevTextBox; // The previous box that also uses our RenderObject
-    InlineTextBox* m_nextTextBox; // The next box that also uses our RenderObject
+    InlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
+    InlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject
 
-    int m_start;
-    unsigned short m_len;
+    unsigned m_start { 0 };
+    unsigned short m_len { 0 };
 
     // Where to truncate when text overflow is applied. We use special constants to
     // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
-    unsigned short m_truncation;
+    unsigned short m_truncation { cNoTruncation };
 };
 
 } // namespace WebCore

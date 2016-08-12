@@ -100,14 +100,14 @@ int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragmen
     return fragment.characterOffset - start() + renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
-float SVGInlineTextBox::positionForOffset(int) const
+float SVGInlineTextBox::positionForOffset(unsigned) const
 {
     // SVG doesn't use the offset <-> position selection system. 
     ASSERT_NOT_REACHED();
     return 0;
 }
 
-FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& fragment, int startPosition, int endPosition, const RenderStyle* style) const
+FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition, const RenderStyle* style) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(startPosition < endPosition);
     ASSERT(style);
@@ -134,11 +134,10 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     return snappedSelectionRect;
 }
 
-LayoutRect SVGInlineTextBox::localSelectionRect(int startPosition, int endPosition) const
+LayoutRect SVGInlineTextBox::localSelectionRect(unsigned startPosition, unsigned endPosition) const
 {
-    int boxStart = start();
-    startPosition = std::max(startPosition - boxStart, 0);
-    endPosition = std::min(endPosition - boxStart, static_cast<int>(len()));
+    startPosition = clampedOffset(startPosition);
+    endPosition = clampedOffset(endPosition);
     if (startPosition >= endPosition)
         return LayoutRect();
 
@@ -146,8 +145,8 @@ LayoutRect SVGInlineTextBox::localSelectionRect(int startPosition, int endPositi
 
     AffineTransform fragmentTransform;
     FloatRect selectionRect;
-    int fragmentStartPosition = 0;
-    int fragmentEndPosition = 0;
+    unsigned fragmentStartPosition = 0;
+    unsigned fragmentEndPosition = 0;
 
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
@@ -203,12 +202,12 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 
     auto& style = parentRenderer.style();
 
-    int startPosition;
-    int endPosition;
+    unsigned startPosition;
+    unsigned endPosition;
     std::tie(startPosition, endPosition) = selectionStartEnd();
 
-    int fragmentStartPosition = 0;
-    int fragmentEndPosition = 0;
+    unsigned fragmentStartPosition = 0;
+    unsigned fragmentEndPosition = 0;
     AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
@@ -407,21 +406,24 @@ TextRun SVGInlineTextBox::constructTextRun(const RenderStyle* style, const SVGTe
     return run;
 }
 
-bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment& fragment, int& startPosition, int& endPosition) const
+bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment& fragment, unsigned& startPosition, unsigned& endPosition) const
 {
     if (startPosition >= endPosition)
         return false;
 
-    int offset = static_cast<int>(fragment.characterOffset) - start();
-    int length = static_cast<int>(fragment.length);
+    ASSERT(fragment.characterOffset >= start());
+    unsigned offset = fragment.characterOffset - start();
+    unsigned length = fragment.length;
 
     if (startPosition >= offset + length || endPosition <= offset)
         return false;
 
     if (startPosition < offset)
         startPosition = 0;
-    else
+    else {
+        ASSERT(startPosition >= offset);
         startPosition -= offset;
+    }
 
     if (endPosition > offset + length)
         endPosition = length;
@@ -540,7 +542,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, TextDe
         releasePaintingResource(contextPtr, &path);
 }
 
-void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const RenderStyle* style, TextRun& textRun, const SVGTextFragment& fragment, int startPosition, int endPosition)
+void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const RenderStyle* style, TextRun& textRun, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition)
 {
     float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);
@@ -590,8 +592,8 @@ void SVGInlineTextBox::paintText(GraphicsContext& context, const RenderStyle* st
     ASSERT(style);
     ASSERT(selectionStyle);
 
-    int startPosition = 0;
-    int endPosition = 0;
+    unsigned startPosition = 0;
+    unsigned endPosition = 0;
     if (hasSelection) {
         std::tie(startPosition, endPosition) = selectionStartEnd();
         hasSelection = mapStartEndPositionsIntoFragmentCoordinates(fragment, startPosition, endPosition);
@@ -618,7 +620,7 @@ void SVGInlineTextBox::paintText(GraphicsContext& context, const RenderStyle* st
         SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifferenceRepaint, *style);
 
     // Eventually draw text using regular style from the end position of the selection to the end of the current chunk part
-    if (endPosition < static_cast<int>(fragment.length) && !paintSelectedTextOnly)
+    if (endPosition < fragment.length && !paintSelectedTextOnly)
         paintTextWithShadows(context, style, textRun, fragment, endPosition, fragment.length);
 }
 

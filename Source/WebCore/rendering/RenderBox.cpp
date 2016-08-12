@@ -4383,7 +4383,7 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
     computedValues.m_position = logicalTopPos;
 }
 
-LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderBox::localCaretRect(InlineBox* box, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)
 {
     // VisiblePositions at offsets inside containers either a) refer to the positions before/after
     // those containers (tables and select elements) or b) refer to the position inside an empty block.

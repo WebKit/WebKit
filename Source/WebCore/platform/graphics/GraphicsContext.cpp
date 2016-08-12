@@ -636,7 +636,7 @@ void GraphicsContext::endTransparencyLayer()
     --m_transparencyCount;
 }
 
-float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, const FloatPoint& point, int from, int to)
+float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, const FloatPoint& point, unsigned from, Optional<unsigned> to)
 {
     if (paintingDisabled())
         return 0;
@@ -645,7 +645,7 @@ float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, con
     return font.drawText(*this, run, point, from, to);
 }
 
-void GraphicsContext::drawGlyphs(const FontCascade& fontCascade, const Font& font, const GlyphBuffer& buffer, int from, int numGlyphs, const FloatPoint& point)
+void GraphicsContext::drawGlyphs(const FontCascade& fontCascade, const Font& font, const GlyphBuffer& buffer, unsigned from, unsigned numGlyphs, const FloatPoint& point)
 {
     if (paintingDisabled())
         return;
@@ -658,7 +658,7 @@ void GraphicsContext::drawGlyphs(const FontCascade& fontCascade, const Font& fon
     fontCascade.drawGlyphs(*this, font, buffer, from, numGlyphs, point, fontCascade.fontDescription().fontSmoothing());
 }
 
-void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)
+void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, Optional<unsigned> to)
 {
     if (paintingDisabled())
         return;

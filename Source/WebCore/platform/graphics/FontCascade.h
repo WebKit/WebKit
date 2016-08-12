@@ -105,7 +105,7 @@ public:
     virtual void advance() = 0;
     virtual ~GlyphToPathTranslator() { }
 };
-GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun&, const GlyphBuffer&, int index);
+GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun&, const GlyphBuffer&, unsigned index);
 
 class TextLayoutDeleter {
 public:
@@ -133,9 +133,9 @@ public:
     void update(RefPtr<FontSelector>&&) const;
 
     enum CustomFontNotReadyAction { DoNotPaintIfFontNotReady, UseFallbackIfFontNotReady };
-    WEBCORE_EXPORT float drawText(GraphicsContext&, const TextRun&, const FloatPoint&, int from = 0, int to = -1, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;
-    static void drawGlyphs(GraphicsContext&, const Font&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&, FontSmoothingMode);
-    void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1) const;
+    WEBCORE_EXPORT float drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = Nullopt, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;
+    static void drawGlyphs(GraphicsContext&, const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode);
+    void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = Nullopt) const;
 
     DashArray dashesForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
 
@@ -145,7 +145,7 @@ public:
     static float width(TextLayout&, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts = 0);
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
-    void adjustSelectionRectForText(const TextRun&, LayoutRect& selectionRect, int from = 0, int to = -1) const;
+    void adjustSelectionRectForText(const TextRun&, LayoutRect& selectionRect, unsigned from = 0, Optional<unsigned> to = Nullopt) const;
 
     bool isSmallCaps() const { return m_fontDescription.variantCaps() == FontVariantCaps::Small; }
 
@@ -218,15 +218,15 @@ public:
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
 
-    float glyphBufferForTextRun(CodePath, const TextRun&, int from, int to, GlyphBuffer&) const;
+    float glyphBufferForTextRun(CodePath, const TextRun&, unsigned from, unsigned to, GlyphBuffer&) const;
     // Returns the initial in-stream advance.
-    float getGlyphsAndAdvancesForSimpleText(const TextRun&, int from, int to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    void drawEmphasisMarksForSimpleText(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, int from, int to) const;
+    float getGlyphsAndAdvancesForSimpleText(const TextRun&, unsigned from, unsigned to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
+    void drawEmphasisMarksForSimpleText(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, unsigned from, unsigned to) const;
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomicString&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
-    void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, int from, int to) const;
+    void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
     Optional<GlyphData> getEmphasisMarkGlyphData(const AtomicString&) const;
 
@@ -234,11 +234,11 @@ private:
     static bool canExpandAroundIdeographsInComplexText();
 
     // Returns the initial in-stream advance.
-    float getGlyphsAndAdvancesForComplexText(const TextRun&, int from, int to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    void drawEmphasisMarksForComplexText(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, int from, int to) const;
+    float getGlyphsAndAdvancesForComplexText(const TextRun&, unsigned from, unsigned to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
+    void drawEmphasisMarksForComplexText(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, unsigned from, unsigned to) const;
     float floatWidthForComplexText(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
-    void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, int from, int to) const;
+    void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(const LChar*, size_t length, TextDirection, ExpansionBehavior);
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(const UChar*, size_t length, TextDirection, ExpansionBehavior);

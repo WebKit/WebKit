@@ -77,7 +77,7 @@ typedef FloatSize GlyphBufferAdvance;
 class GlyphBuffer {
 public:
     bool isEmpty() const { return m_font.isEmpty(); }
-    int size() const { return m_font.size(); }
+    unsigned size() const { return m_font.size(); }
     
     void clear()
     {
@@ -91,12 +91,12 @@ public:
 #endif
     }
 
-    GlyphBufferGlyph* glyphs(int from) { return m_glyphs.data() + from; }
-    GlyphBufferAdvance* advances(int from) { return m_advances.data() + from; }
-    const GlyphBufferGlyph* glyphs(int from) const { return m_glyphs.data() + from; }
-    const GlyphBufferAdvance* advances(int from) const { return m_advances.data() + from; }
+    GlyphBufferGlyph* glyphs(unsigned from) { return m_glyphs.data() + from; }
+    GlyphBufferAdvance* advances(unsigned from) { return m_advances.data() + from; }
+    const GlyphBufferGlyph* glyphs(unsigned from) const { return m_glyphs.data() + from; }
+    const GlyphBufferAdvance* advances(unsigned from) const { return m_advances.data() + from; }
 
-    const Font* fontAt(int index) const { return m_font[index]; }
+    const Font* fontAt(unsigned index) const { return m_font[index]; }
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
@@ -104,7 +104,7 @@ public:
     void setLeadingExpansion(float leadingExpansion) { m_leadingExpansion = leadingExpansion; }
     float leadingExpansion() const { return m_leadingExpansion; }
     
-    Glyph glyphAt(int index) const
+    Glyph glyphAt(unsigned index) const
     {
 #if USE(CAIRO)
         return m_glyphs[index].index;
@@ -113,12 +113,12 @@ public:
 #endif
     }
 
-    GlyphBufferAdvance advanceAt(int index) const
+    GlyphBufferAdvance advanceAt(unsigned index) const
     {
         return m_advances[index];
     }
 
-    FloatSize offsetAt(int index) const
+    FloatSize offsetAt(unsigned index) const
     {
 #if PLATFORM(WIN)
         return m_offsets[index];
@@ -180,9 +180,9 @@ public:
     }
 #endif
 
-    void reverse(int from, int length)
+    void reverse(unsigned from, unsigned length)
     {
-        for (int i = from, end = from + length - 1; i < end; ++i, --end)
+        for (unsigned i = from, end = from + length - 1; i < end; ++i, --end)
             swap(i, end);
     }
 
@@ -198,14 +198,13 @@ public:
         m_offsetsInString.reset(new Vector<unsigned, 2048>());
     }
 
-    // FIXME: This converts from an unsigned to an int
-    int offsetInString(int index) const
+    int offsetInString(unsigned index) const
     {
         ASSERT(m_offsetsInString);
         return (*m_offsetsInString)[index];
     }
 
-    void shrink(int truncationPoint)
+    void shrink(unsigned truncationPoint)
     {
         m_font.shrink(truncationPoint);
         m_glyphs.shrink(truncationPoint);
@@ -218,7 +217,7 @@ public:
     }
 
 private:
-    void swap(int index1, int index2)
+    void swap(unsigned index1, unsigned index2)
     {
         const Font* f = m_font[index1];
         m_font[index1] = m_font[index2];

@@ -52,8 +52,8 @@ private:
     bool executeQuery(Data*, ProcessTextFragmentCallback) const;
 
     void collectTextBoxesInFlowBox(InlineFlowBox*);
-    bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, int& startPosition, int& endPosition) const;
-    void modifyStartEndPositionsRespectingLigatures(Data*, int& startPosition, int& endPosition) const;
+    bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
+    void modifyStartEndPositionsRespectingLigatures(Data*, unsigned& startPosition, unsigned& endPosition) const;
 
 private:
     bool numberOfCharactersCallback(Data*, const SVGTextFragment&) const;

@@ -166,7 +166,7 @@ void RenderLineBreak::setSelectionState(SelectionState state)
     m_inlineBoxWrapper->root().setHasSelectedChildren(state != SelectionNone);
 }
 
-LayoutRect RenderLineBreak::localCaretRect(InlineBox* inlineBox, int caretOffset, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderLineBreak::localCaretRect(InlineBox* inlineBox, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)
 {
     ASSERT_UNUSED(caretOffset, !caretOffset);
     ASSERT_UNUSED(inlineBox, inlineBox == m_inlineBoxWrapper);

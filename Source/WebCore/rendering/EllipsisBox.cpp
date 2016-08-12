@@ -136,7 +136,7 @@ void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& pa
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     LayoutRect selectionRect = LayoutRect(x() + paintOffset.x(), y() + paintOffset.y() + rootBox.selectionTop(), 0, rootBox.selectionHeight());
     TextRun run = RenderBlock::constructTextRun(m_str, style, AllowTrailingExpansion);
-    font.adjustSelectionRectForText(run, selectionRect, 0, -1);
+    font.adjustSelectionRectForText(run, selectionRect);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);
 }
 

@@ -66,7 +66,7 @@ private:
     int caretMinOffset() const override;
     int caretMaxOffset() const override;
     bool canBeSelectionLeaf() const override;
-    LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine) override;
+    LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine) override;
     void setSelectionState(SelectionState) override;
 
     LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode) const override;

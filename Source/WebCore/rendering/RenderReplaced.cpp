@@ -616,18 +616,18 @@ bool RenderReplaced::isSelected() const
     if (s == SelectionInside)
         return true;
 
-    int selectionStart, selectionEnd;
+    unsigned selectionStart, selectionEnd;
     selectionStartEnd(selectionStart, selectionEnd);
     if (s == SelectionStart)
         return selectionStart == 0;
         
-    int end = element()->hasChildNodes() ? element()->countChildNodes() : 1;
+    unsigned end = element()->hasChildNodes() ? element()->countChildNodes() : 1;
     if (s == SelectionEnd)
         return selectionEnd == end;
     if (s == SelectionBoth)
         return selectionStart == 0 && selectionEnd == end;
         
-    ASSERT(0);
+    ASSERT_NOT_REACHED();
     return false;
 }
 

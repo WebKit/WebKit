@@ -80,7 +80,7 @@ public:
     void applyFillPattern();
 #endif
 
-    void drawGlyphs(const Font&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
+    void drawGlyphs(const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
 
     void drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&);
     void drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions&);

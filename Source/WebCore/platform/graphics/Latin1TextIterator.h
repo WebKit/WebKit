@@ -28,18 +28,18 @@ namespace WebCore {
 
 class Latin1TextIterator {
 public:
-    // The passed in LChar pointer starts at 'currentCharacter'. The iterator operates on the range [currentCharacter, lastCharacter].
-    // 'endCharacter' denotes the maximum length of the UChar array, which might exceed 'lastCharacter'.
-    Latin1TextIterator(const LChar* characters, int currentCharacter, int lastCharacter, int /*endCharacter*/)
+    // The passed in LChar pointer starts at 'currentIndex'. The iterator operates on the range [currentIndex, lastIndex].
+    // 'endCharacter' denotes the maximum length of the UChar array, which might exceed 'lastIndex'.
+    Latin1TextIterator(const LChar* characters, unsigned currentIndex, unsigned lastIndex, unsigned /*endCharacter*/)
         : m_characters(characters)
-        , m_currentCharacter(currentCharacter)
-        , m_lastCharacter(lastCharacter)
+        , m_currentIndex(currentIndex)
+        , m_lastIndex(lastIndex)
     {
     }
 
     bool consume(UChar32& character, unsigned& clusterLength)
     {
-        if (m_currentCharacter >= m_lastCharacter)
+        if (m_currentIndex >= m_lastIndex)
             return false;
 
         character = *m_characters;
@@ -50,16 +50,16 @@ public:
     void advance(unsigned advanceLength)
     {
         m_characters += advanceLength;
-        m_currentCharacter += advanceLength;
+        m_currentIndex += advanceLength;
     }
 
-    int currentCharacter() const { return m_currentCharacter; }
+    unsigned currentIndex() const { return m_currentIndex; }
     const LChar* characters() const { return m_characters; }
 
 private:
     const LChar* m_characters;
-    int m_currentCharacter;
-    int m_lastCharacter;
+    unsigned m_currentIndex;
+    unsigned m_lastIndex;
 };
 
 }

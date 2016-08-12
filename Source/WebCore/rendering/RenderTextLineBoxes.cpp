@@ -445,7 +445,7 @@ void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::
         return;
     }
 
-    int start, end;
+    unsigned start, end;
     renderer.selectionStartEnd(start, end);
     if (state == RenderObject::SelectionStart) {
         end = renderer.textLength();

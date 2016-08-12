@@ -85,8 +85,8 @@ public:
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override;
 
     enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld, RepaintNothing };
-    void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode = RepaintNewXOROld);
-    void getSelection(RenderObject*& startRenderer, int& startOffset, RenderObject*& endRenderer, int& endOffset) const;
+    void setSelection(RenderObject* start, Optional<unsigned> startPos, RenderObject* endObject, Optional<unsigned> endPos, SelectionRepaintMode = RepaintNewXOROld);
+    void getSelection(RenderObject*& startRenderer, Optional<unsigned>& startOffset, RenderObject*& endRenderer, Optional<unsigned>& endOffset) const;
     void clearSelection();
     RenderObject* selectionUnsplitStart() const { return m_selectionUnsplitStart; }
     RenderObject* selectionUnsplitEnd() const { return m_selectionUnsplitEnd; }
@@ -307,7 +307,7 @@ private:
 
     bool isScrollableOrRubberbandableBox() const override;
 
-    void splitSelectionBetweenSubtrees(const RenderObject* startRenderer, int startPos, const RenderObject* endRenderer, int endPos, SelectionRepaintMode blockRepaintMode);
+    void splitSelectionBetweenSubtrees(const RenderObject* startRenderer, Optional<unsigned> startPos, const RenderObject* endRenderer, Optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode);
     void clearSubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, OldSelectionData&) const;
     void updateSelectionForSubtrees(RenderSubtreesMap&, SelectionRepaintMode);
     void applySubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, const OldSelectionData&);
@@ -317,10 +317,10 @@ private:
 private:
     FrameView& m_frameView;
 
-    RenderObject* m_selectionUnsplitStart;
-    RenderObject* m_selectionUnsplitEnd;
-    int m_selectionUnsplitStartPos;
-    int m_selectionUnsplitEndPos;
+    RenderObject* m_selectionUnsplitStart { nullptr };
+    RenderObject* m_selectionUnsplitEnd { nullptr };
+    Optional<unsigned> m_selectionUnsplitStartPos;
+    Optional<unsigned> m_selectionUnsplitEndPos;
 
     // Include this RenderView.
     uint64_t m_rendererCount { 1 };
@@ -329,18 +329,11 @@ private:
 
     // FIXME: Only used by embedded WebViews inside AppKit NSViews.  Find a way to remove.
     struct LegacyPrinting {
-        LegacyPrinting()
-            : m_bestTruncatedAt(0)
-            , m_truncatedAt(0)
-            , m_truncatorWidth(0)
-            , m_forcedPageBreak(false)
-        { }
-
-        int m_bestTruncatedAt;
-        int m_truncatedAt;
-        int m_truncatorWidth;
+        int m_bestTruncatedAt { 0 };
+        int m_truncatedAt { 0 };
+        int m_truncatorWidth { 0 };
         IntRect m_printRect;
-        bool m_forcedPageBreak;
+        bool m_forcedPageBreak { false };
     };
     LegacyPrinting m_legacyPrinting;
     // End deprecated members.
@@ -354,17 +347,17 @@ private:
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;
     LayoutUnit m_pageLogicalHeight;
-    bool m_pageLogicalHeightChanged;
+    bool m_pageLogicalHeightChanged { false };
     std::unique_ptr<LayoutState> m_layoutState;
-    unsigned m_layoutStateDisableCount;
+    unsigned m_layoutStateDisableCount { 0 };
     std::unique_ptr<RenderLayerCompositor> m_compositor;
     std::unique_ptr<FlowThreadController> m_flowThreadController;
 
-    RenderQuote* m_renderQuoteHead;
-    unsigned m_renderCounterCount;
+    RenderQuote* m_renderQuoteHead { nullptr };
+    unsigned m_renderCounterCount { 0 };
 
-    bool m_selectionWasCaret;
-    bool m_hasSoftwareFilters;
+    bool m_selectionWasCaret { false };
+    bool m_hasSoftwareFilters { false };
     bool m_usesFirstLineRules { false };
     bool m_usesFirstLetterRules { false };
 

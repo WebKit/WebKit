@@ -442,7 +442,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
     return m_lineBoxes.positionForPoint(*this, point);
 }
 
-LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)
 {
     if (!inlineBox)
         return LayoutRect();
@@ -1372,13 +1372,12 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
 
     if (selectionState() == SelectionNone)
         return LayoutRect();
-    RenderBlock* cb = containingBlock();
-    if (!cb)
+    if (!containingBlock())
         return LayoutRect();
 
     // Now calculate startPos and endPos for painting selection.
     // We include a selection while endPos > 0
-    int startPos, endPos;
+    unsigned startPos, endPos;
     if (selectionState() == SelectionInside) {
         // We are fully selected.
         startPos = 0;

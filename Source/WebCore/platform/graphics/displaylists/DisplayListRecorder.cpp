@@ -100,7 +100,7 @@ void Recorder::setMiterLimit(float miterLimit)
     appendItem(SetMiterLimit::create(miterLimit));
 }
 
-void Recorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
+void Recorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawGlyphs::create(font, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, FloatPoint(), toFloatSize(startPoint), smoothingMode)));
     updateItemExtent(newItem);

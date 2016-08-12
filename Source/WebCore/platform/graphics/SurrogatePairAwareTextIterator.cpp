@@ -27,11 +27,11 @@
 
 namespace WebCore {
 
-SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator(const UChar* characters, int currentCharacter, int lastCharacter, int endCharacter)
+SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator(const UChar* characters, unsigned currentIndex, unsigned lastIndex, unsigned endIndex)
     : m_characters(characters)
-    , m_currentCharacter(currentCharacter)
-    , m_lastCharacter(lastCharacter)
-    , m_endCharacter(endCharacter)
+    , m_currentIndex(currentIndex)
+    , m_lastIndex(lastIndex)
+    , m_endIndex(endIndex)
 {
 }
 
@@ -57,7 +57,7 @@ bool SurrogatePairAwareTextIterator::consumeSlowCase(UChar32& character, unsigne
 
     // Do we have a surrogate pair? If so, determine the full Unicode (32 bit) code point before glyph lookup.
     // Make sure we have another character and it's a low surrogate.
-    if (m_currentCharacter + 1 >= m_endCharacter)
+    if (m_currentIndex + 1 >= m_endIndex)
         return false;
 
     UChar low = m_characters[1];
@@ -74,7 +74,7 @@ UChar32 SurrogatePairAwareTextIterator::normalizeVoicingMarks()
     // According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
     static const uint8_t hiraganaKatakanaVoicingMarksCombiningClass = 8;
 
-    if (m_currentCharacter + 1 >= m_endCharacter)
+    if (m_currentIndex + 1 >= m_endIndex)
         return 0;
 
     if (u_getCombiningClass(m_characters[1]) == hiraganaKatakanaVoicingMarksCombiningClass) {

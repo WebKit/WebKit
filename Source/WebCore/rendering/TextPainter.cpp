@@ -84,17 +84,17 @@ TextPainter::TextPainter(GraphicsContext& context)
 }
 
 void TextPainter::drawTextOrEmphasisMarks(const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
-    int emphasisMarkOffset, const FloatPoint& textOrigin, int startOffset, int endOffset)
+    float emphasisMarkOffset, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset)
 {
     ASSERT(startOffset < endOffset);
     if (emphasisMark.isEmpty())
         m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
     else
-        m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + IntSize(0, emphasisMarkOffset), startOffset, endOffset);
+        m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + FloatSize(0, emphasisMarkOffset), startOffset, endOffset);
 }
 
 void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin,
-    int startOffset, int endOffset, const AtomicString& emphasisMark, int emphasisMarkOffset, bool stroked)
+    unsigned startOffset, unsigned endOffset, const AtomicString& emphasisMark, float emphasisMarkOffset, bool stroked)
 {
     if (!shadow) {
         drawTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin, startOffset, endOffset);
@@ -120,7 +120,7 @@ void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FontCasca
     }
 }
 
-void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, int startOffset, int endOffset,
+void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
     const TextPaintStyle& paintStyle, const ShadowData* shadow)
 {
     // FIXME: Truncate right-to-left text correctly.
@@ -145,7 +145,7 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
         m_context.concatCTM(rotation(boxRect, Counterclockwise));
 }
     
-void TextPainter::paintText(const TextRun& textRun, int length, const FloatRect& boxRect, const FloatPoint& textOrigin, int selectionStart, int selectionEnd,
+void TextPainter::paintText(const TextRun& textRun, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart, unsigned selectionEnd,
     bool paintSelectedTextOnly, bool paintSelectedTextSeparately)
 {
     ASSERT(m_font);

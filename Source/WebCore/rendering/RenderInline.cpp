@@ -249,7 +249,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
     }
 }
 
-LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, int, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, unsigned, LayoutUnit* extraWidthToEndOfLine)
 {
     if (firstChild()) {
         // This condition is possible if the RenderInline is at an editing boundary,

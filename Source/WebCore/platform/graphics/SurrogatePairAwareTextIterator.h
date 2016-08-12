@@ -28,13 +28,13 @@ namespace WebCore {
 
 class SurrogatePairAwareTextIterator {
 public:
-    // The passed in UChar pointer starts at 'currentCharacter'. The iterator operatoes on the range [currentCharacter, lastCharacter].
-    // 'endCharacter' denotes the maximum length of the UChar array, which might exceed 'lastCharacter'.
-    SurrogatePairAwareTextIterator(const UChar*, int currentCharacter, int lastCharacter, int endCharacter);
+    // The passed in UChar pointer starts at 'currentIndex'. The iterator operatoes on the range [currentIndex, lastIndex].
+    // 'endIndex' denotes the maximum length of the UChar array, which might exceed 'lastIndex'.
+    SurrogatePairAwareTextIterator(const UChar*, unsigned currentIndex, unsigned lastIndex, unsigned endIndex);
 
     inline bool consume(UChar32& character, unsigned& clusterLength)
     {
-        if (m_currentCharacter >= m_lastCharacter)
+        if (m_currentIndex >= m_lastIndex)
             return false;
 
         character = *m_characters;
@@ -49,10 +49,10 @@ public:
     void advance(unsigned advanceLength)
     {
         m_characters += advanceLength;
-        m_currentCharacter += advanceLength;
+        m_currentIndex += advanceLength;
     }
 
-    int currentCharacter() const { return m_currentCharacter; }
+    unsigned currentIndex() const { return m_currentIndex; }
     const UChar* characters() const { return m_characters; }
 
 private:
@@ -60,9 +60,9 @@ private:
     UChar32 normalizeVoicingMarks();
 
     const UChar* m_characters;
-    int m_currentCharacter;
-    int m_lastCharacter;
-    int m_endCharacter;
+    unsigned m_currentIndex;
+    unsigned m_lastIndex;
+    unsigned m_endIndex;
 };
 
 }

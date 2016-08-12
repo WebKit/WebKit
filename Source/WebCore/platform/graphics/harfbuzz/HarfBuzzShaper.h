@@ -59,7 +59,7 @@ public:
     FloatPoint adjustStartPoint(const FloatPoint&);
     float totalWidth() { return m_totalWidth; }
     int offsetForPosition(float targetX);
-    FloatRect selectionRect(const FloatPoint&, int height, int from, int to);
+    FloatRect selectionRect(const FloatPoint&, int height, unsigned from, unsigned to);
 
 private:
     class HarfBuzzRun {
@@ -70,7 +70,7 @@ private:
         void setGlyphAndPositions(unsigned index, uint16_t glyphId, float advance, float offsetX, float offsetY);
         void setWidth(float width) { m_width = width; }
 
-        int characterIndexForXPosition(float targetX);
+        unsigned characterIndexForXPosition(float targetX);
         float xPositionForOffset(unsigned offset);
 
         const Font* fontData() { return m_fontData; }
@@ -88,7 +88,7 @@ private:
     private:
         const Font* m_fontData;
         unsigned m_startIndex;
-        size_t m_numCharacters;
+        unsigned m_numCharacters;
         unsigned m_numGlyphs;
         TextDirection m_direction;
         hb_script_t m_script;
