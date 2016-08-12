@@ -1,3 +1,31 @@
+2016-08-11  Mark Lam  <mark.lam@apple.com>
+
+        OverridesHasInstance should not branch across register allocations.
+        https://bugs.webkit.org/show_bug.cgi?id=160792
+        <rdar://problem/27361778>
+
+        Reviewed by Benjamin Poulain.
+
+        The OverrideHasInstance node has a branch test that is emitted conditionally.
+        It also has a bug where it allocated a register after this branch, which is not
+        allowed and would fail an assertion introduced in https://trac.webkit.org/r145931.
+        From the ChangeLog for r145931:
+
+        "This [assertion that register allocations are not branched around] protects
+        against the case where an allocation could have spilled register contents to free
+        up a register and that spill only occurs on one path of many through the code.
+        A subsequent fill of the spilled register may load garbage."
+
+        Because the branch isn't always emitted, this bug has gone unnoticed until now.
+        This patch fixes this issue by pre-allocating the registers before emitting the
+        branch in OverrideHasInstance.
+
+        Note: this issue is only present in DFGSpeculativeJIT64.cpp.  The 32-bit version
+        is doing it right.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2016-08-11  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make B3 Return opcode work without arguments

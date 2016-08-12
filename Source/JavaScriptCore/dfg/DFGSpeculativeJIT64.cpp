@@ -4575,15 +4575,18 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary result(this);
 
         GPRReg resultGPR = result.gpr();
+        GPRReg baseGPR = base.gpr();
 
         // It would be great if constant folding handled automatically the case where we knew the hasInstance function
         // was a constant. Unfortunately, the folding rule for OverridesHasInstance is in the strength reduction phase
         // since it relies on OSR information. https://bugs.webkit.org/show_bug.cgi?id=154832
-        if (!hasInstanceValueNode->isCellConstant() || defaultHasInstanceFunction != hasInstanceValueNode->asCell())
-            notDefault = m_jit.branchPtr(MacroAssembler::NotEqual, hasInstanceValue.gpr(), TrustedImmPtr(defaultHasInstanceFunction));
+        if (!hasInstanceValueNode->isCellConstant() || defaultHasInstanceFunction != hasInstanceValueNode->asCell()) {
+            GPRReg hasInstanceValueGPR = hasInstanceValue.gpr();
+            notDefault = m_jit.branchPtr(MacroAssembler::NotEqual, hasInstanceValueGPR, TrustedImmPtr(defaultHasInstanceFunction));
+        }
 
         // Check that base 'ImplementsDefaultHasInstance'.
-        m_jit.test8(MacroAssembler::Zero, MacroAssembler::Address(base.gpr(), JSCell::typeInfoFlagsOffset()), MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance), resultGPR);
+        m_jit.test8(MacroAssembler::Zero, MacroAssembler::Address(baseGPR, JSCell::typeInfoFlagsOffset()), MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance), resultGPR);
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
         MacroAssembler::Jump done = m_jit.jump();
 
