@@ -40,6 +40,8 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
+    void setSize(const IntSize&) override;
+
 private:
     GstElement* createVideoSink() override;
     GstElement* audioSink() const override { return m_audioSink.get(); }

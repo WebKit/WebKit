@@ -347,11 +347,16 @@ GstElement* MediaPlayerPrivateGStreamerOwr::createVideoSink()
 #endif
     m_videoRenderer = adoptGRef(owr_gst_video_renderer_new(sink));
 
-    // FIXME: Remove hardcoded video dimensions when the rendering performance:
-    // https://webkit.org/b/153826.
-    g_object_set(m_videoRenderer.get(), "width", 640, "height", 480, nullptr);
-
     return sink;
+}
+
+void MediaPlayerPrivateGStreamerOwr::setSize(const IntSize& size)
+{
+    if (size == m_size)
+        return;
+
+    MediaPlayerPrivateGStreamerBase::setSize(size);
+    g_object_set(m_videoRenderer.get(), "width", size.width(), "height", size.height(), nullptr);
 }
 
 } // namespace WebCore
