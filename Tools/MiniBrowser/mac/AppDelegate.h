@@ -44,3 +44,7 @@
 #endif
 
 @end
+
+#if WK_API_ENABLED
+WKPreferences *defaultPreferences();
+#endif

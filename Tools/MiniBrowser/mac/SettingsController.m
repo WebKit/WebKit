@@ -27,6 +27,8 @@
 
 #import "AppDelegate.h"
 #import "BrowserWindowController.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/_WKExperimentalFeature.h>
 
 static NSString * const defaultURL = @"http://www.webkit.org/";
 static NSString * const DefaultURLPreferenceKey = @"DefaultURL";
@@ -55,7 +57,8 @@ static NSString * const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcess
 
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
-    WheelEventHandlerRegionOverlayTag
+    WheelEventHandlerRegionOverlayTag,
+    ExperimentalFeatureTag,
 };
 
 @implementation SettingsController
@@ -140,6 +143,24 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [_menu addItem:debugOverlaysSubmenuItem];
     [debugOverlaysSubmenuItem release];
 
+    NSMenuItem *experimentalFeaturesSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Experimental Features" action:nil keyEquivalent:@""];
+    NSMenu *experimentalFeaturesMenu = [[NSMenu alloc] initWithTitle:@"Experimental Features"];
+    [experimentalFeaturesSubmenuItem setSubmenu:experimentalFeaturesMenu];
+
+    NSArray<_WKExperimentalFeature *> *features = [WKPreferences _experimentalFeatures];
+
+    for (_WKExperimentalFeature *feature in features) {
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:feature.name action:@selector(toggleExperimentalFeature:) keyEquivalent:@""];
+        item.representedObject = feature;
+
+        [item setTag:ExperimentalFeatureTag];
+        [item setTarget:self];
+        [experimentalFeaturesMenu addItem:[item autorelease]];
+    }
+
+    [_menu addItem:experimentalFeaturesSubmenuItem];
+    [experimentalFeaturesSubmenuItem release];
+
     [self _addHeaderWithTitle:@"WebKit1-only Settings"];
     [self _addItemWithTitle:@"Enable Subpixel CSSOM Metrics" action:@selector(toggleEnableSubPixelCSSOMMetrics:) indented:YES];
 }
@@ -178,6 +199,11 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self subPixelCSSOMMetricsEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleDebugOverlay:))
         [menuItem setState:[self debugOverlayVisible:menuItem] ? NSOnState : NSOffState];
+
+    if (menuItem.tag == ExperimentalFeatureTag) {
+        _WKExperimentalFeature *feature = menuItem.representedObject;
+        [menuItem setState:[defaultPreferences() _isEnabledForFeature:feature] ? NSOnState : NSOffState];
+    }
 
     return YES;
 }
@@ -367,6 +393,17 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NSString *preferenceKey = [self preferenceKeyForRegionOverlayTag:[sender tag]];
     if (preferenceKey)
         [self _toggleBooleanDefault:preferenceKey];
+}
+
+- (void)toggleExperimentalFeature:(id)sender
+{
+    _WKExperimentalFeature *feature = ((NSMenuItem *)sender).representedObject;
+    WKPreferences *preferences = defaultPreferences();
+
+    BOOL currentlyEnabled = [preferences _isEnabledForFeature:feature];
+    [preferences _setEnabled:!currentlyEnabled forFeature:feature];
+
+    [[NSUserDefaults standardUserDefaults] setBool:!currentlyEnabled forKey:feature.key];
 }
 
 - (BOOL)debugOverlayVisible:(NSMenuItem *)menuItem

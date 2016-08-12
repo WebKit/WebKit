@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 
@@ -81,12 +82,24 @@ static WKWebViewConfiguration *defaultConfiguration()
             configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:singleProcessConfiguration] autorelease];
             [singleProcessConfiguration release];
         }
+
+        NSArray<_WKExperimentalFeature *> *features = [WKPreferences _experimentalFeatures];
+        for (_WKExperimentalFeature *feature in features) {
+            BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+            [configuration.preferences _setEnabled:enabled forFeature:feature];
+        }
     }
 
     configuration.suppressesIncrementalRendering = [SettingsController shared].incrementalRenderingSuppressed;
     configuration.websiteDataStore._resourceLoadStatisticsEnabled = [SettingsController shared].resourceLoadStatisticsEnabled;
     return configuration;
 }
+
+WKPreferences *defaultPreferences()
+{
+    return defaultConfiguration().preferences;
+}
+
 #endif
 
 

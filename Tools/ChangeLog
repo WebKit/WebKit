@@ -1,3 +1,20 @@
+2016-08-11  Brady Eidson  <beidson@apple.com>
+
+        Add WK2 ExperimentalFeature support to MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=160788
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+        (defaultPreferences):
+        
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleExperimentalFeature:]):
+
 2016-08-11  Aakash Jain  <aakash_jain@apple.com>
 
         Keep EWS logs for longer
