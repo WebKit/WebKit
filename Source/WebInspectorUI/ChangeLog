@@ -1,3 +1,14 @@
+2016-08-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Command-Shift-O causes infinite loop if web page has frames
+        https://bugs.webkit.org/show_bug.cgi?id=160810
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog.prototype._addResourcesForFrame):
+        "frame" doesn't change inside the loop.
+
 2016-08-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Support for :lineNumber syntax in Open Resource Dialog
