@@ -1,7 +1,7 @@
 diff --git a/JetStream-1.0.1/JetStreamDriver.js b/JetStream-1.0.1/JetStreamDriver.js
 index 73ee420..60f587c 100644
---- a/JetStream-1.0.1/JetStreamDriver.js
-+++ b/JetStream-1.0.1/JetStreamDriver.js
+--- a/JetStream-1.1/JetStreamDriver.js
++++ b/JetStream-1.1/JetStreamDriver.js
 @@ -448,6 +448,14 @@ var JetStream = (function() {
  
          return rawResults;
@@ -43,8 +43,8 @@ index 73ee420..60f587c 100644
      function iterate()
 diff --git a/JetStream-1.0.1/index.html b/JetStream-1.0.1/index.html
 index e27535c..001087d 100644
---- a/JetStream-1.0.1/index.html
-+++ b/JetStream-1.0.1/index.html
+--- a/JetStream-1.1/index.html
++++ b/JetStream-1.1/index.html
 @@ -34,8 +34,10 @@
      window.onerror = function() { allIsGood = false; }
  

@@ -1,3 +1,18 @@
+2016-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-benchmark should run JetStream 1.1 instead of 1.0.1
+        https://bugs.webkit.org/show_bug.cgi?id=160816
+
+        Reviewed by Filip Pizlo.
+
+        Use the latest JetStream 1.1 in run-benchmark.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder.py:
+        (BenchmarkBuilder.__exit__):
+        * Scripts/webkitpy/benchmark_runner/data/patches/JetStream.patch: Updated to apply against 1.1 directory.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan: Updated to use r190897, which is the last
+        change to JetStream directory.
+
 2016-08-12  Alex Christensen  <achristensen@webkit.org>
 
         Initial URLParser implementation
