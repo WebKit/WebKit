@@ -1,3 +1,11 @@
+2016-08-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add mac-wk1 baseline for js/dom/global-constructors-attributes.html after r204396.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt: Added.
+
 2016-08-12  Pranjal Jumde  <pjumde@apple.com>
 
         ASSERTION FAILED: : line >= firstLine in BytecodeGenerator::emitExpressionInfo.
