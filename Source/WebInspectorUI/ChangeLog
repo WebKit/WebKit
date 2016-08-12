@@ -1,3 +1,52 @@
+2016-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Support for :lineNumber syntax in Open Resource Dialog
+        https://bugs.webkit.org/show_bug.cgi?id=159732
+        <rdar://problem/27684491>
+
+        Reviewed by Matt Baker.
+
+        Allow the Open Resource Dialog to support line/column syntax.
+        Other tools allow "<name>:<line>:<column>" syntax, where the
+        location data at the end is optional. If the <name> portion
+        is missing, the location can be used for the active content
+        view, assuming it has text data and has lines.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.focusedOrVisibleContentView):
+        Expose a function to access the current focused / visible content view.
+
+        (WebInspector.dialogWasDismissed):
+        Include passing on cookie data when showing a represented object.
+
+        * UserInterface/Views/Dialog.js:
+        (WebInspector.Dialog):
+        (WebInspector.Dialog.prototype.get visible):
+        (WebInspector.Dialog.prototype.get delegate):
+        (WebInspector.Dialog.prototype.get representedObject):
+        (WebInspector.Dialog.prototype.get cookie):
+        (WebInspector.Dialog.prototype.dismiss):
+        * UserInterface/Models/ResourceQueryResult.js:
+        (WebInspector.ResourceQueryResult):
+        (WebInspector.ResourceQueryResult.prototype.get cookie):
+        Include cookie data along with the represented object in matches
+        and dialog results.
+
+        * UserInterface/Controllers/ResourceQueryController.js:
+        (WebInspector.ResourceQueryController.prototype.executeQuery):
+        Cut off location data from a query, and stash it on the query result.
+        A query can be "<name>:<line>:<column>", and the line/column data
+        becomes cookie data for the resource.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        If the query is just ":<line>:<column>" have it jump to a location
+        in the current content view if applicable.
+
+        (WebInspector.OpenResourceDialog.prototype._handleKeydownEvent):
+        (WebInspector.OpenResourceDialog.prototype._treeSelectionDidChange):
+        When dismissing, include cookie data.
+
 2016-08-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r204264): Web Inspector: Uncaught Exception in Network tab when reloading a web page

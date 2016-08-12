@@ -32,25 +32,16 @@ WebInspector.Dialog = class Dialog extends WebInspector.View
         this._delegate = delegate;
         this._dismissing = false;
         this._representedObject = null;
+        this._cookie = null;
         this._visible = false;
     }
 
     // Public
 
-    get visible()
-    {
-        return this._visible;
-    }
-
-    get delegate()
-    {
-        return this._delegate;
-    }
-
-    get representedObject()
-    {
-        return this._representedObject;
-    }
+    get visible() { return this._visible; }
+    get delegate() { return this._delegate; }
+    get representedObject() { return this._representedObject; }
+    get cookie() { return this._cookie; }
 
     present(parentElement)
     {
@@ -63,7 +54,7 @@ WebInspector.Dialog = class Dialog extends WebInspector.View
         this.didPresentDialog();
     }
 
-    dismiss(representedObject)
+    dismiss(representedObject, cookie)
     {
         if (this._dismissing)
             return;
@@ -74,6 +65,7 @@ WebInspector.Dialog = class Dialog extends WebInspector.View
 
         this._dismissing = true;
         this._representedObject = representedObject || null;
+        this._cookie = cookie || null;
         this._visible = false;
 
         this.element.remove();

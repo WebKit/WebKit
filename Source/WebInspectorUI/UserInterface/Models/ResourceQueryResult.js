@@ -25,7 +25,7 @@
 
 WebInspector.ResourceQueryResult = class QueryResult extends WebInspector.Object
 {
-    constructor(resource, matches)
+    constructor(resource, matches, cookie)
     {
         console.assert(matches.length, "Query matches list can't be empty.");
 
@@ -33,11 +33,13 @@ WebInspector.ResourceQueryResult = class QueryResult extends WebInspector.Object
 
         this._resource = resource;
         this._matches = matches;
+        this._cookie = cookie || null;
     }
 
     // Public
 
     get resource() { return this._resource; }
+    get cookie() { return this._cookie; }
 
     get rank()
     {

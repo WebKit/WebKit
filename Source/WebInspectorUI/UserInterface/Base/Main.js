@@ -1867,7 +1867,7 @@ WebInspector._focusedOrVisibleContentBrowser = function()
     return null;
 };
 
-WebInspector._focusedOrVisibleContentView = function()
+WebInspector.focusedOrVisibleContentView = function()
 {
     let focusedContentView = this._focusedContentView();
     if (focusedContentView)
@@ -1919,7 +1919,7 @@ WebInspector._find = function(event)
 
 WebInspector._save = function(event)
 {
-    var contentView = this._focusedOrVisibleContentView();
+    var contentView = this.focusedOrVisibleContentView();
     if (!contentView || !contentView.supportsSave)
         return;
 
@@ -1928,7 +1928,7 @@ WebInspector._save = function(event)
 
 WebInspector._saveAs = function(event)
 {
-    var contentView = this._focusedOrVisibleContentView();
+    var contentView = this.focusedOrVisibleContentView();
     if (!contentView || !contentView.supportsSave)
         return;
 
@@ -2464,5 +2464,5 @@ WebInspector.dialogWasDismissed = function(dialog)
     if (!representedObject)
         return;
 
-    WebInspector.showRepresentedObject(representedObject);
+    WebInspector.showRepresentedObject(representedObject, dialog.cookie);
 };

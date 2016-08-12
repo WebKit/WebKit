@@ -56,6 +56,15 @@ WebInspector.ResourceQueryController = class ResourceQueryController extends Web
 
         query = query.removeWhitespace().toLowerCase();
 
+        let cookie = null;
+        if (query.includes(":")) {
+            let [newQuery, lineNumber, columnNumber] = query.split(":");
+            query = newQuery;
+            lineNumber = lineNumber ? parseInt(lineNumber, 10) - 1 : 0;
+            columnNumber = columnNumber ? parseInt(columnNumber, 10) - 1 : 0;
+            cookie = {lineNumber, columnNumber};
+        }
+
         let results = [];
         for (let [resource, cachedData] of this._resourceDataMap) {
             if (!cachedData.searchString) {
@@ -66,7 +75,7 @@ WebInspector.ResourceQueryController = class ResourceQueryController extends Web
 
             let matches = this._findQueryMatches(query, cachedData.searchString, cachedData.specialCharacterIndices);
             if (matches.length)
-                results.push(new WebInspector.ResourceQueryResult(resource, matches));
+                results.push(new WebInspector.ResourceQueryResult(resource, matches, cookie));
         }
 
         // Resources are sorted in descending order by rank. Resources of equal
