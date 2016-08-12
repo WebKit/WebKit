@@ -26,6 +26,8 @@
 #include "config.h"
 #include "IDBDatabaseInfo.h"
 
+#include <wtf/text/StringBuilder.h>
+
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
@@ -147,11 +149,18 @@ void IDBDatabaseInfo::deleteObjectStore(uint64_t objectStoreIdentifier)
 #if !LOG_DISABLED
 String IDBDatabaseInfo::loggingString() const
 {
-    String top = makeString("Database: ", m_name, " version ", String::number(m_version), "\n");
-    for (auto objectStore : m_objectStoreMap.values())
-        top.append(makeString(objectStore.loggingString(1), "\n"));
+    StringBuilder builder;
+    builder.appendLiteral("Database:");
+    builder.append(m_name);
+    builder.appendLiteral(" version ");
+    builder.appendNumber(m_version);
+    builder.append('\n');
+    for (auto objectStore : m_objectStoreMap.values()) {
+        builder.append(objectStore.loggingString(1));
+        builder.append('\n');
+    }
 
-    return top; 
+    return builder.toString();
 }
 #endif
 

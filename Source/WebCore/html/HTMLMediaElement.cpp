@@ -195,7 +195,7 @@ static String actionName(HTMLMediaElementEnums::DelayedActionType action)
 #define ACTION(_actionType) \
     if (action & (HTMLMediaElementEnums::_actionType)) { \
         if (!actionBuilder.isEmpty()) \
-        actionBuilder.append(", "); \
+        actionBuilder.appendLiteral(", "); \
         actionBuilder.append(#_actionType); \
     } \
 

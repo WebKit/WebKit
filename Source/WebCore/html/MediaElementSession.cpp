@@ -68,7 +68,7 @@ static String restrictionName(MediaElementSession::BehaviorRestrictions restrict
 #define CASE(restrictionType) \
     if (restriction & MediaElementSession::restrictionType) { \
         if (!restrictionBuilder.isEmpty()) \
-            restrictionBuilder.append(", "); \
+            restrictionBuilder.appendLiteral(", "); \
         restrictionBuilder.append(#restrictionType); \
     } \
 

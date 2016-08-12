@@ -47,7 +47,9 @@ struct GamepadData {
     Vector<double> axisValues;
     Vector<double> buttonValues;
 
+#if !LOG_DISABLED
     String loggingString() const;
+#endif
 };
 
 } // namespace WebKit

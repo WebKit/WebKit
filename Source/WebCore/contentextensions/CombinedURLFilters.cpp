@@ -96,8 +96,8 @@ static String prefixTreeVertexToString(const PrefixTreeVertex& vertex, const Has
 {
     StringBuilder builder;
     while (depth--)
-        builder.append("  ");
-    builder.append("vertex actions: ");
+        builder.appendLiteral("  ");
+    builder.appendLiteral("vertex actions: ");
 
     auto actionsSlot = actions.find(&vertex);
     if (actionsSlot != actions.end()) {
@@ -117,7 +117,7 @@ static void recursivePrint(const PrefixTreeVertex& vertex, const HashMap<const P
         StringBuilder builder;
         for (unsigned i = 0; i < depth * 2; ++i)
             builder.append(' ');
-        builder.append("vertex edge: ");
+        builder.appendLiteral("vertex edge: ");
         builder.append(edge.term->toString());
         builder.append('\n');
         dataLogF("%s", builder.toString().utf8().data());

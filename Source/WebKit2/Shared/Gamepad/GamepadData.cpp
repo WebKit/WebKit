@@ -57,21 +57,34 @@ bool GamepadData::isNull() const
     return !index && axisValues.isEmpty() && buttonValues.isEmpty();
 }
 
+#if !LOG_DISABLED
 String GamepadData::loggingString() const
 {
     StringBuilder builder;
 
-    builder.append(makeString(String::number(axisValues.size()), " axes, ", String::number(buttonValues.size()), " buttons\n"));
+    builder.appendNumber(axisValues.size());
+    builder.appendLiteral(" axes, ");
+    builder.appendNumber(buttonValues.size());
+    builder.appendLiteral(" buttons\n");
 
-    for (size_t i = 0; i < axisValues.size(); ++i)
-        builder.append(makeString(" Axis ", String::number(i), ": ", String::number(axisValues[i])));
+    for (size_t i = 0; i < axisValues.size(); ++i) {
+        builder.appendLiteral(" Axis ");
+        builder.appendNumber(i);
+        builder.appendLiteral(": ");
+        builder.appendNumber(axisValues[i]);
+    }
 
-    builder.append("\n");
-    for (size_t i = 0; i < buttonValues.size(); ++i)
-        builder.append(makeString(" Button ", String::number(i), ": ", String::number(buttonValues[i])));
+    builder.append('\n');
+    for (size_t i = 0; i < buttonValues.size(); ++i) {
+        builder.appendLiteral(" Button ");
+        builder.appendNumber(i);
+        builder.appendLiteral(": ");
+        builder.appendNumber(buttonValues[i]);
+    }
 
     return builder.toString();
 }
+#endif
 
 } // namespace WebKit
 

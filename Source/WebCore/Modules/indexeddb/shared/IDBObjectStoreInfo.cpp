@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "IDBObjectStoreInfo.h"
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -126,15 +127,19 @@ void IDBObjectStoreInfo::deleteIndex(uint64_t indexIdentifier)
 #if !LOG_DISABLED
 String IDBObjectStoreInfo::loggingString(int indent) const
 {
-    String indentString;
+    StringBuilder builder;
     for (int i = 0; i < indent; ++i)
-        indentString.append(" ");
+        builder.append(' ');
 
-    String top = makeString(indentString, "Object store: ", m_name, String::format(" (%" PRIu64 ") \n", m_identifier));
-    for (auto index : m_indexMap.values())
-        top.append(makeString(index.loggingString(indent + 1), "\n"));
+    builder.appendLiteral("Object store: ");
+    builder.append(m_name);
+    builder.appendNumber(m_identifier);
+    for (auto index : m_indexMap.values()) {
+        builder.append(index.loggingString(indent + 1));
+        builder.append('\n');
+    }
 
-    return top; 
+    return builder.toString();
 }
 #endif
 

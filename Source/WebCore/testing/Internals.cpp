@@ -3130,16 +3130,16 @@ static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snap
 {
     bool justStarting = true;
 
-    builder.append("{ ");
+    builder.appendLiteral("{ ");
     for (auto& coordinate : snapOffsets) {
         if (!justStarting)
-            builder.append(", ");
+            builder.appendLiteral(", ");
         else
             justStarting = false;
         
         builder.append(String::number(coordinate.toUnsigned()));
     }
-    builder.append(" }");
+    builder.appendLiteral(" }");
 }
     
 String Internals::scrollSnapOffsets(Element& element, ExceptionCode& ec)

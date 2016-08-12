@@ -212,7 +212,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
 
     StringBuilder builder;
     builder.append(nameString);
-    builder.append(": ");
+    builder.appendLiteral(": ");
     builder.append(messageString);
     return builder.toString();
 }

@@ -56,13 +56,13 @@ static bool PingPongStackOverflowObject_hasInstance(JSContextRef context, JSObje
         result = JSObjectCallAsFunction(context, function, constructor, 1, &possibleValue, exception);
     } else {
         StringBuilder builder;
-        builder.append("dummy.valueOf([0]");
+        builder.appendLiteral("dummy.valueOf([0]");
         for (int i = 1; i < 35000; i++) {
-            builder.append(", [");
+            builder.appendLiteral(", [");
             builder.appendNumber(i);
-            builder.append("]");
+            builder.appendLiteral("]");
         }
-        builder.append(");");
+        builder.appendLiteral(");");
 
         JSStringRef script = JSStringCreateWithUTF8CString(builder.toString().utf8().data());
         result = JSEvaluateScript(context, script, NULL, NULL, 1, exception);

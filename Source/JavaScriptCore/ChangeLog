@@ -1,3 +1,22 @@
+2016-08-11  Alex Christensen  <achristensen@webkit.org>
+
+        Use StringBuilder::appendLiteral when possible don't append result of makeString
+        https://bugs.webkit.org/show_bug.cgi?id=160772
+
+        Reviewed by Sam Weinig.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (PingPongStackOverflowObject_hasInstance):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::toString):
+        (JSC::RestParameterNode::toString):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedToString):
+        * runtime/Options.cpp:
+        (JSC::Options::dumpOption):
+
 2016-08-11  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Revert most of r203808

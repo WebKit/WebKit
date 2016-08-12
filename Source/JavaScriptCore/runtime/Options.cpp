@@ -730,13 +730,13 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
     option.dump(builder);
 
     if (wasOverridden && (dumpDefaultsOption == DumpDefaults)) {
-        builder.append(" (default: ");
+        builder.appendLiteral(" (default: ");
         option.defaultOption().dump(builder);
-        builder.append(")");
+        builder.appendLiteral(")");
     }
 
     if (needsDescription) {
-        builder.append("   ... ");
+        builder.appendLiteral("   ... ");
         builder.append(option.description());
     }
 

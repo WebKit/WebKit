@@ -896,7 +896,7 @@ void URL::setHost(const String& s)
     StringBuilder builder;
     builder.append(m_string.left(hostStart()));
     if (slashSlashNeeded)
-        builder.append("//");
+        builder.appendLiteral("//");
     builder.append(StringView(encodedHostName.data(), encodedHostName.size()));
     builder.append(m_string.substring(m_hostEnd));
     
@@ -951,10 +951,10 @@ void URL::setHostAndPort(const String& hostAndPort)
     StringBuilder builder;
     builder.append(m_string.left(hostStart()));
     if (slashSlashNeeded)
-        builder.append("//");
+        builder.appendLiteral("//");
     builder.append(StringView(encodedHostName.data(), encodedHostName.size()));
     if (!port.isEmpty()) {
-        builder.append(":");
+        builder.appendLiteral(":");
         builder.append(port);
     }
     builder.append(m_string.substring(m_portEnd));
@@ -1212,42 +1212,42 @@ String URL::serialize(bool omitFragment) const
 
     StringBuilder urlBuilder;
     urlBuilder.append(m_string, 0, m_schemeEnd);
-    urlBuilder.append(":");
+    urlBuilder.appendLiteral(":");
     unsigned start = hostStart();
     if (start < m_hostEnd) {
-        urlBuilder.append("//");
+        urlBuilder.appendLiteral("//");
         if (hasUsername()) {
             urlBuilder.append(m_string, m_userStart, m_userEnd - m_userStart);
             unsigned passwordStart = m_userEnd + 1;
             if (hasPassword()) {
-                urlBuilder.append(":");
+                urlBuilder.appendLiteral(":");
                 urlBuilder.append(m_string, passwordStart, m_passwordEnd - passwordStart);
             }
-            urlBuilder.append("@");
+            urlBuilder.appendLiteral("@");
         }
         // FIXME: Serialize host according https://url.spec.whatwg.org/#concept-host-serializer for IPv4 and IPv6 addresses.
         urlBuilder.append(m_string, start, m_hostEnd - start);
         if (hasPort()) {
-            urlBuilder.append(":");
+            urlBuilder.appendLiteral(":");
             urlBuilder.appendNumber(port());
         }
     } else if (protocolIs("file"))
-        urlBuilder.append("//");
+        urlBuilder.appendLiteral("//");
     if (cannotBeABaseURL(*this))
         urlBuilder.append(m_string, m_portEnd, m_pathEnd - m_portEnd);
     else {
-        urlBuilder.append("/");
+        urlBuilder.appendLiteral("/");
         if (m_pathEnd > m_portEnd) {
             unsigned pathStart = m_portEnd + 1;
             urlBuilder.append(m_string, pathStart, m_pathEnd - pathStart);
         }
     }
     if (hasQuery()) {
-        urlBuilder.append("?");
+        urlBuilder.appendLiteral("?");
         urlBuilder.append(m_string, m_pathEnd + 1, m_queryEnd - (m_pathEnd + 1));
     }
     if (!omitFragment && hasFragment()) {
-        urlBuilder.append("#");
+        urlBuilder.appendLiteral("#");
         urlBuilder.append(m_string, m_queryEnd + 1, m_fragmentEnd - (m_queryEnd + 1));
     }
     return urlBuilder.toString();

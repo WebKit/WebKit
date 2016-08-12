@@ -85,7 +85,6 @@ class WebContextSupplement;
 class WebIconDatabase;
 class WebPageGroup;
 class WebPageProxy;
-struct GamepadData;
 struct NetworkProcessCreationParameters;
 struct StatisticsData;
 struct WebProcessCreationParameters;

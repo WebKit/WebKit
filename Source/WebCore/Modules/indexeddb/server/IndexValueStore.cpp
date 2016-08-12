@@ -32,6 +32,7 @@
 #include "IDBKeyRangeData.h"
 #include "Logging.h"
 #include "MemoryIndex.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -387,12 +388,15 @@ const IDBKeyData& IndexValueStore::Iterator::primaryKey()
 #if !LOG_DISABLED
 String IndexValueStore::loggingString() const
 {
-    String result;
+    StringBuilder builder;
     for (auto& key : m_orderedKeys) {
-        result.append(makeString("Key: ", key.loggingString()));
-        result.append(makeString("  Entry has ", String::number(m_records.get(key)->getCount()), " entries"));
+        builder.appendLiteral("Key: ");
+        builder.append(key.loggingString());
+        builder.appendLiteral("  Entry has ");
+        builder.appendNumber(m_records.get(key)->getCount());
+        builder.appendLiteral(" entries");
     }
-    return result;
+    return builder.toString();
 }
 #endif
 
