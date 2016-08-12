@@ -297,7 +297,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (IPC::Connection::identifierIsNull(connectionIdentifier)) {
-        // FIXME: Do better cleanup here.
+        networkProcessCrashedOrFailedToLaunch();
         return;
     }
 
