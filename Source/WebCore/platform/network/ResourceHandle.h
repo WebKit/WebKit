@@ -86,7 +86,7 @@ class ProtectionSpace;
 class ResourceError;
 class ResourceHandleClient;
 class ResourceHandleInternal;
-class ResourceLoadTiming;
+class NetworkLoadTiming;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
@@ -134,9 +134,9 @@ public:
         
 #if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
 #if USE(CFNETWORK)
-    static void getConnectionTimingData(CFURLConnectionRef, ResourceLoadTiming&);
+    static void getConnectionTimingData(CFURLConnectionRef, NetworkLoadTiming&);
 #else
-    static void getConnectionTimingData(NSURLConnection *, ResourceLoadTiming&);
+    static void getConnectionTimingData(NSURLConnection *, NetworkLoadTiming&);
 #endif
 #endif
         

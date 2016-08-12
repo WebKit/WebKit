@@ -1912,7 +1912,6 @@ set(WebCore_SOURCES
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightChecker.cpp
     loader/CrossOriginPreflightResultCache.cpp
-    loader/DocumentLoadTiming.cpp
     loader/DocumentLoader.cpp
     loader/DocumentThreadableLoader.cpp
     loader/DocumentWriter.cpp
@@ -1926,6 +1925,7 @@ set(WebCore_SOURCES
     loader/HistoryController.cpp
     loader/ImageLoader.cpp
     loader/LinkLoader.cpp
+    loader/LoadTiming.cpp
     loader/LoaderStrategy.cpp
     loader/MediaResourceLoader.cpp
     loader/MixedContentChecker.cpp

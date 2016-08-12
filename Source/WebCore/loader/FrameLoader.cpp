@@ -51,7 +51,6 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
-#include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -82,6 +81,7 @@
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
+#include "LoadTiming.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -2933,12 +2933,12 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
 
             if (!m_frame.document()->inPageCache()) {
                 Ref<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
-                // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed
+                // The DocumentLoader (and thus its LoadTiming) might get destroyed
                 // while dispatching the event, so protect it to prevent writing the end
                 // time into freed memory.
                 RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader;
                 m_pageDismissalEventBeingDispatched = PageDismissalType::Unload;
-                if (documentLoader && documentLoader->timing().navigationStart() && !documentLoader->timing().unloadEventStart() && !documentLoader->timing().unloadEventEnd()) {
+                if (documentLoader && documentLoader->timing().startTime() && !documentLoader->timing().unloadEventStart() && !documentLoader->timing().unloadEventEnd()) {
                     auto& timing = documentLoader->timing();
                     timing.markUnloadEventStart();
                     m_frame.document()->domWindow()->dispatchEvent(unloadEvent, m_frame.document());
@@ -3241,9 +3241,9 @@ void FrameLoader::loadProvisionalItemFromCachedPage()
     m_loadingFromCachedPage = true;
 
     // Should have timing data from previous time(s) the page was shown.
-    ASSERT(provisionalLoader->timing().navigationStart());
+    ASSERT(provisionalLoader->timing().startTime());
     provisionalLoader->resetTiming();
-    provisionalLoader->timing().markNavigationStart();
+    provisionalLoader->timing().markStartTime();
 
     provisionalLoader->setCommitted(true);
     commitProvisionalLoad();

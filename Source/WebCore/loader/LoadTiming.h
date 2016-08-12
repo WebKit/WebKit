@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DocumentLoadTiming_h
-#define DocumentLoadTiming_h
+#pragma once
 
 #include <wtf/CurrentTime.h>
 
@@ -33,14 +32,14 @@ namespace WebCore {
 class Frame;
 class URL;
 
-class DocumentLoadTiming {
+class LoadTiming {
 public:
-    DocumentLoadTiming();
+    LoadTiming();
 
     double monotonicTimeToZeroBasedDocumentTime(double) const;
     double monotonicTimeToPseudoWallTime(double) const;
 
-    void markNavigationStart();
+    void markStartTime();
     void addRedirect(const URL& redirectingUrl, const URL& redirectedUrl);
 
     void markUnloadEventStart() { m_unloadEventStart = monotonicallyIncreasingTime(); }
@@ -54,7 +53,7 @@ public:
 
     void setHasSameOriginAsPreviousDocument(bool value) { m_hasSameOriginAsPreviousDocument = value; }
 
-    double navigationStart() const { return m_navigationStart; }
+    double startTime() const { return m_startTime; }
     double unloadEventStart() const { return m_unloadEventStart; }
     double unloadEventEnd() const { return m_unloadEventEnd; }
     double redirectStart() const { return m_redirectStart; }
@@ -73,7 +72,7 @@ public:
 private:
     double m_referenceMonotonicTime;
     double m_referenceWallTime;
-    double m_navigationStart;
+    double m_startTime;
     double m_unloadEventStart;
     double m_unloadEventEnd;
     double m_redirectStart;
@@ -88,5 +87,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

@@ -184,10 +184,10 @@ static Ref<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
     return headersObject;
 }
 
-static Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const ResourceLoadTiming& timing, DocumentLoader* loader)
+static Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadTiming& timing, DocumentLoader* loader)
 {
     return Inspector::Protocol::Network::ResourceTiming::create()
-        .setNavigationStart(loader->timing().navigationStart())
+        .setNavigationStart(loader->timing().startTime())
         .setDomainLookupStart(timing.domainLookupStart)
         .setDomainLookupEnd(timing.domainLookupEnd)
         .setConnectStart(timing.connectStart)
@@ -230,7 +230,7 @@ static RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResp
         .release();
 
     responseObject->setFromDiskCache(response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation);
-    responseObject->setTiming(buildObjectForTiming(response.resourceLoadTiming(), loader));
+    responseObject->setTiming(buildObjectForTiming(response.networkLoadTiming(), loader));
 
     return WTFMove(responseObject);
 }

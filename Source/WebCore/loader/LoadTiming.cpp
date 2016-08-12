@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DocumentLoadTiming.h"
+#include "LoadTiming.h"
 
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-DocumentLoadTiming::DocumentLoadTiming()
+LoadTiming::LoadTiming()
     : m_referenceMonotonicTime(0.0)
     , m_referenceWallTime(0.0)
-    , m_navigationStart(0.0)
+    , m_startTime(0.0)
     , m_unloadEventStart(0.0)
     , m_unloadEventEnd(0.0)
     , m_redirectStart(0.0)
@@ -54,29 +54,29 @@ DocumentLoadTiming::DocumentLoadTiming()
 {
 }
 
-double DocumentLoadTiming::monotonicTimeToZeroBasedDocumentTime(double monotonicTime) const
+double LoadTiming::monotonicTimeToZeroBasedDocumentTime(double monotonicTime) const
 {
     if (!monotonicTime)
         return 0.0;
     return monotonicTime - m_referenceMonotonicTime;
 }
 
-double DocumentLoadTiming::monotonicTimeToPseudoWallTime(double monotonicTime) const
+double LoadTiming::monotonicTimeToPseudoWallTime(double monotonicTime) const
 {
     if (!monotonicTime)
         return 0.0;
     return m_referenceWallTime + monotonicTime - m_referenceMonotonicTime;
 }
 
-void DocumentLoadTiming::markNavigationStart()
+void LoadTiming::markStartTime()
 {
-    ASSERT(!m_navigationStart && !m_referenceMonotonicTime && !m_referenceWallTime);
+    ASSERT(!m_startTime && !m_referenceMonotonicTime && !m_referenceWallTime);
 
-    m_navigationStart = m_referenceMonotonicTime = monotonicallyIncreasingTime();
+    m_startTime = m_referenceMonotonicTime = monotonicallyIncreasingTime();
     m_referenceWallTime = currentTime();
 }
 
-void DocumentLoadTiming::addRedirect(const URL& redirectingUrl, const URL& redirectedUrl)
+void LoadTiming::addRedirect(const URL& redirectingUrl, const URL& redirectedUrl)
 {
     m_redirectCount++;
     if (!m_redirectStart)

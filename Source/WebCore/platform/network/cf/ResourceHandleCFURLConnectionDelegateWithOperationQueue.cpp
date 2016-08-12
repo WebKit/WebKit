@@ -156,7 +156,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
         
         ResourceResponse resourceResponse(cfResponse);
 #if ENABLE(WEB_TIMING)
-        ResourceHandle::getConnectionTimingData(connection, resourceResponse.resourceLoadTiming());
+        ResourceHandle::getConnectionTimingData(connection, resourceResponse.networkLoadTiming());
 #else
         UNUSED_PARAM(connection);
 #endif

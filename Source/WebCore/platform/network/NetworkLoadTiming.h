@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoadTiming_h
-#define ResourceLoadTiming_h
+#pragma once
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSDictionary;
@@ -33,9 +32,9 @@ OBJC_CLASS NSDictionary;
 
 namespace WebCore {
     
-class ResourceLoadTiming {
+class NetworkLoadTiming {
 public:
-    ResourceLoadTiming()
+    NetworkLoadTiming()
         : domainLookupStart(-1)
         , domainLookupEnd(-1)
         , connectStart(-1)
@@ -46,7 +45,7 @@ public:
     {
     }
     
-    ResourceLoadTiming(const ResourceLoadTiming& other)
+    NetworkLoadTiming(const NetworkLoadTiming& other)
         : domainLookupStart(other.domainLookupStart)
         , domainLookupEnd(other.domainLookupEnd)
         , connectStart(other.connectStart)
@@ -57,7 +56,7 @@ public:
     {
     }
     
-    ResourceLoadTiming& operator=(const ResourceLoadTiming& other)
+    NetworkLoadTiming& operator=(const NetworkLoadTiming& other)
     {
         domainLookupStart = other.domainLookupStart;
         domainLookupEnd = other.domainLookupEnd;
@@ -69,13 +68,13 @@ public:
         return *this;
     }
 
-    ResourceLoadTiming isolatedCopy() const
+    NetworkLoadTiming isolatedCopy() const
     {
         // There are currently no members that need isolated copies, so we can use the copy constructor.
         return *this;
     }
     
-    bool operator==(const ResourceLoadTiming& other) const
+    bool operator==(const NetworkLoadTiming& other) const
     {
         return domainLookupStart == other.domainLookupStart
             && domainLookupEnd == other.domainLookupEnd
@@ -86,13 +85,13 @@ public:
             && secureConnectionStart == other.secureConnectionStart;
     }
 
-    bool operator!=(const ResourceLoadTiming& other) const
+    bool operator!=(const NetworkLoadTiming& other) const
     {
         return !(*this == other);
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, ResourceLoadTiming&);
+    template<class Decoder> static bool decode(Decoder&, NetworkLoadTiming&);
 
     // These are millisecond deltas from the navigation start.
     int domainLookupStart;
@@ -105,7 +104,7 @@ public:
 };
 
 #if PLATFORM(COCOA)
-WEBCORE_EXPORT void copyTimingData(NSDictionary *timingData, ResourceLoadTiming&);
+WEBCORE_EXPORT void copyTimingData(NSDictionary *timingData, NetworkLoadTiming&);
 #endif
 
 #if PLATFORM(COCOA) && !HAVE(TIMINGDATAOPTIONS)
@@ -113,7 +112,7 @@ WEBCORE_EXPORT void setCollectsTimingData();
 #endif
     
 template<class Encoder>
-void ResourceLoadTiming::encode(Encoder& encoder) const
+void NetworkLoadTiming::encode(Encoder& encoder) const
 {
     encoder << domainLookupStart;
     encoder << domainLookupEnd;
@@ -125,7 +124,7 @@ void ResourceLoadTiming::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-bool ResourceLoadTiming::decode(Decoder& decoder, ResourceLoadTiming& timing)
+bool NetworkLoadTiming::decode(Decoder& decoder, NetworkLoadTiming& timing)
 {
     return decoder.decode(timing.domainLookupStart)
         && decoder.decode(timing.domainLookupEnd)
@@ -137,5 +136,3 @@ bool ResourceLoadTiming::decode(Decoder& decoder, ResourceLoadTiming& timing)
 }
 
 }
-
-#endif

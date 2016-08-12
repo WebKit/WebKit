@@ -66,7 +66,7 @@ NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
 
         if (Frame* frame = navigator->frame()) {
             if (DocumentLoader* documentLoader = frame->loader().documentLoader())
-                supplement->m_navigationStart = documentLoader->timing().navigationStart();
+                supplement->m_navigationStart = documentLoader->timing().startTime();
         }
     }
     return supplement;

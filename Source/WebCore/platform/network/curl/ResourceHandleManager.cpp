@@ -188,17 +188,17 @@ static void calculateWebTimingInformations(ResourceHandleInternal* d)
     curl_easy_getinfo(d->m_handle, CURLINFO_STARTTRANSFER_TIME, &startTransfertTime);
     curl_easy_getinfo(d->m_handle, CURLINFO_PRETRANSFER_TIME, &preTransferTime);
 
-    d->m_response.resourceLoadTiming().domainLookupStart = 0;
-    d->m_response.resourceLoadTiming().domainLookupEnd = static_cast<int>(dnslookupTime * 1000);
+    d->m_response.networkLoadTiming().domainLookupStart = 0;
+    d->m_response.networkLoadTiming().domainLookupEnd = static_cast<int>(dnslookupTime * 1000);
 
-    d->m_response.resourceLoadTiming().connectStart = static_cast<int>(dnslookupTime * 1000);
-    d->m_response.resourceLoadTiming().connectEnd = static_cast<int>(connectTime * 1000);
+    d->m_response.networkLoadTiming().connectStart = static_cast<int>(dnslookupTime * 1000);
+    d->m_response.networkLoadTiming().connectEnd = static_cast<int>(connectTime * 1000);
 
-    d->m_response.resourceLoadTiming().requestStart = static_cast<int>(connectTime *1000);
-    d->m_response.resourceLoadTiming().responseStart =static_cast<int>(preTransferTime * 1000);
+    d->m_response.networkLoadTiming().requestStart = static_cast<int>(connectTime *1000);
+    d->m_response.networkLoadTiming().responseStart =static_cast<int>(preTransferTime * 1000);
 
     if (appConnectTime)
-        d->m_response.resourceLoadTiming().secureConnectionStart = static_cast<int>(connectTime * 1000);
+        d->m_response.networkLoadTiming().secureConnectionStart = static_cast<int>(connectTime * 1000);
 }
 #endif
 

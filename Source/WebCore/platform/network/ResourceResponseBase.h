@@ -29,8 +29,8 @@
 #include "CacheValidation.h"
 #include "CertificateInfo.h"
 #include "HTTPHeaderMap.h"
+#include "NetworkLoadTiming.h"
 #include "ParsedContentRange.h"
-#include "ResourceLoadTiming.h"
 #include "URL.h"
 
 namespace WebCore {
@@ -57,7 +57,7 @@ public:
         String httpStatusText;
         String httpVersion;
         HTTPHeaderMap httpHeaderFields;
-        ResourceLoadTiming resourceLoadTiming;
+        NetworkLoadTiming networkLoadTiming;
         Type type;
         bool isRedirected;
     };
@@ -135,7 +135,7 @@ public:
     WEBCORE_EXPORT Source source() const;
     WEBCORE_EXPORT void setSource(Source);
 
-    ResourceLoadTiming& resourceLoadTiming() const { return m_resourceLoadTiming; }
+    NetworkLoadTiming& networkLoadTiming() const { return m_networkLoadTiming; }
 
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
     unsigned memoryUsage() const
@@ -187,7 +187,7 @@ protected:
     AtomicString m_httpStatusText;
     AtomicString m_httpVersion;
     HTTPHeaderMap m_httpHeaderFields;
-    mutable ResourceLoadTiming m_resourceLoadTiming;
+    mutable NetworkLoadTiming m_networkLoadTiming;
 
     mutable Optional<CertificateInfo> m_certificateInfo;
 
@@ -232,7 +232,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_httpStatusText;
     encoder << m_httpVersion;
     encoder << m_httpHeaderFields;
-    encoder << m_resourceLoadTiming;
+    encoder << m_networkLoadTiming;
     encoder << m_httpStatusCode;
     encoder << m_certificateInfo;
     encoder.encodeEnum(m_source);
@@ -266,7 +266,7 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         return false;
     if (!decoder.decode(response.m_httpHeaderFields))
         return false;
-    if (!decoder.decode(response.m_resourceLoadTiming))
+    if (!decoder.decode(response.m_networkLoadTiming))
         return false;
     if (!decoder.decode(response.m_httpStatusCode))
         return false;

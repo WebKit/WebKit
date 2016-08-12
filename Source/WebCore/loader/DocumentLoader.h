@@ -31,9 +31,9 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
-#include "DocumentLoadTiming.h"
 #include "DocumentWriter.h"
 #include "IconDatabaseBase.h"
+#include "LoadTiming.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
 #include "ResourceLoaderOptions.h"
@@ -255,8 +255,8 @@ namespace WebCore {
         void recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest&);
         void takeMemoryCacheLoadsForClientNotification(Vector<ResourceRequest>& loads);
 
-        DocumentLoadTiming& timing() { return m_documentLoadTiming; }
-        void resetTiming() { m_documentLoadTiming = DocumentLoadTiming(); }
+        LoadTiming& timing() { return m_loadTiming; }
+        void resetTiming() { m_loadTiming = LoadTiming(); }
 
         // The WebKit layer calls this function when it's ready for the data to
         // actually be added to the document.
@@ -426,7 +426,7 @@ namespace WebCore {
         bool m_didCreateGlobalHistoryEntry;
 
         bool m_loadingMainResource;
-        DocumentLoadTiming m_documentLoadTiming;
+        LoadTiming m_loadTiming;
 
         double m_timeOfLastDataReceived;
         unsigned long m_identifierForLoadWithoutResourceLoader;

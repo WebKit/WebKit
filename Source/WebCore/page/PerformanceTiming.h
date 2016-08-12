@@ -39,11 +39,11 @@
 
 namespace WebCore {
 
-class DocumentLoadTiming;
+class LoadTiming;
 class DocumentLoader;
 struct DocumentTiming;
 class Frame;
-class ResourceLoadTiming;
+class NetworkLoadTiming;
 
 class PerformanceTiming : public RefCounted<PerformanceTiming>, public DOMWindowProperty {
 public:
@@ -76,7 +76,7 @@ private:
 
     const DocumentTiming* documentTiming() const;
     DocumentLoader* documentLoader() const;
-    DocumentLoadTiming* documentLoadTiming() const;
+    LoadTiming* loadTiming() const;
     unsigned long long resourceLoadTimeRelativeToFetchStart(int) const;
     unsigned long long monotonicTimeToIntegerMilliseconds(double) const;
 };

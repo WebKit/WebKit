@@ -709,7 +709,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     }
 
 #if ENABLE(WEB_TIMING)
-    d->m_response.resourceLoadTiming().responseStart = milisecondsSinceRequest(handle->m_requestTime);
+    d->m_response.networkLoadTiming().responseStart = milisecondsSinceRequest(handle->m_requestTime);
 #endif
 
     if (soupMessage && d->m_response.isMultipart())
@@ -843,7 +843,7 @@ static int milisecondsSinceRequest(double requestTime)
 
 void ResourceHandle::didStartRequest()
 {
-    getInternal()->m_response.resourceLoadTiming().requestStart = milisecondsSinceRequest(m_requestTime);
+    getInternal()->m_response.networkLoadTiming().requestStart = milisecondsSinceRequest(m_requestTime);
 }
 
 #if SOUP_CHECK_VERSION(2, 49, 91)
@@ -866,21 +866,21 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
     int deltaTime = milisecondsSinceRequest(handle->m_requestTime);
     switch (event) {
     case G_SOCKET_CLIENT_RESOLVING:
-        d->m_response.resourceLoadTiming().domainLookupStart = deltaTime;
+        d->m_response.networkLoadTiming().domainLookupStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_RESOLVED:
-        d->m_response.resourceLoadTiming().domainLookupEnd = deltaTime;
+        d->m_response.networkLoadTiming().domainLookupEnd = deltaTime;
         break;
     case G_SOCKET_CLIENT_CONNECTING:
-        d->m_response.resourceLoadTiming().connectStart = deltaTime;
-        if (d->m_response.resourceLoadTiming().domainLookupStart != -1) {
+        d->m_response.networkLoadTiming().connectStart = deltaTime;
+        if (d->m_response.networkLoadTiming().domainLookupStart != -1) {
             // WebCore/inspector/front-end/RequestTimingView.js assumes
             // that DNS time is included in connection time so must
             // substract here the DNS delta that will be added later (see
             // WebInspector.RequestTimingView.createTimingTable in the
             // file above for more details).
-            d->m_response.resourceLoadTiming().connectStart -=
-                d->m_response.resourceLoadTiming().domainLookupEnd - d->m_response.resourceLoadTiming().domainLookupStart;
+            d->m_response.networkLoadTiming().connectStart -=
+                d->m_response.networkLoadTiming().domainLookupEnd - d->m_response.networkLoadTiming().domainLookupStart;
         }
         break;
     case G_SOCKET_CLIENT_CONNECTED:
@@ -892,12 +892,12 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
     case G_SOCKET_CLIENT_PROXY_NEGOTIATED:
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKING:
-        d->m_response.resourceLoadTiming().secureConnectionStart = deltaTime;
+        d->m_response.networkLoadTiming().secureConnectionStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKED:
         break;
     case G_SOCKET_CLIENT_COMPLETE:
-        d->m_response.resourceLoadTiming().connectEnd = deltaTime;
+        d->m_response.networkLoadTiming().connectEnd = deltaTime;
         break;
     default:
         ASSERT_NOT_REACHED();

@@ -151,7 +151,7 @@ using namespace WebCore;
     ResourceResponse resourceResponse(r);
     resourceResponse.setSource(ResourceResponse::Source::Network);
 #if ENABLE(WEB_TIMING)
-    ResourceHandle::getConnectionTimingData(connection, resourceResponse.resourceLoadTiming());
+    ResourceHandle::getConnectionTimingData(connection, resourceResponse.networkLoadTiming());
 #else
     UNUSED_PARAM(connection);
 #endif

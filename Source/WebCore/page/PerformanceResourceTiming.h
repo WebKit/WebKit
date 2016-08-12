@@ -34,8 +34,8 @@
 
 #if ENABLE(WEB_TIMING)
 
+#include "NetworkLoadTiming.h"
 #include "PerformanceEntry.h"
-#include "ResourceLoadTiming.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -44,7 +44,7 @@ namespace WebCore {
 
 class Document;
 class URL;
-class ResourceLoadTiming;
+class NetworkLoadTiming;
 class ResourceRequest;
 class ResourceResponse;
 
@@ -77,7 +77,7 @@ private:
     double resourceTimeToDocumentMilliseconds(int deltaMilliseconds) const;
 
     AtomicString m_initiatorType;
-    ResourceLoadTiming m_timing;
+    NetworkLoadTiming m_timing;
     double m_finishTime;
     bool m_shouldReportDetails;
     RefPtr<Document> m_requestingDocument;

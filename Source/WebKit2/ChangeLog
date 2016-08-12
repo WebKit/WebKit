@@ -1,3 +1,15 @@
+2016-08-12  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Rename DocumentLoadTiming and ResourceLoadTiming
+        https://bugs.webkit.org/show_bug.cgi?id=160821
+
+        Reviewed by Alex Christensen.
+
+        Rename ResourceLoadTiming to NetworkLoadTiming.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+
 2016-08-12  Anders Carlsson  <andersca@apple.com>
 
         message loading never finishes in Mail

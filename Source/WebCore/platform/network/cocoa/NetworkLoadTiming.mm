@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "ResourceLoadTiming.h"
+#import "NetworkLoadTiming.h"
 
 #import <WebCore/NSURLConnectionSPI.h>
 
@@ -37,7 +37,7 @@ static double timingValue(NSDictionary *timingData, NSString *key)
     return 0.0;
 }
     
-void copyTimingData(NSDictionary *timingData, ResourceLoadTiming& timing)
+void copyTimingData(NSDictionary *timingData, NetworkLoadTiming& timing)
 {
     if (!timingData)
         return;

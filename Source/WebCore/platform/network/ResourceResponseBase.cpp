@@ -71,7 +71,7 @@ ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() co
     data.httpVersion = httpVersion().isolatedCopy();
 
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
-    data.resourceLoadTiming = m_resourceLoadTiming.isolatedCopy();
+    data.networkLoadTiming = m_networkLoadTiming.isolatedCopy();
     data.type = m_type;
     data.isRedirected = m_isRedirected;
 
@@ -92,7 +92,7 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.setHTTPVersion(data.httpVersion);
 
     response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
-    response.m_resourceLoadTiming = data.resourceLoadTiming;
+    response.m_networkLoadTiming = data.networkLoadTiming;
     response.m_type = data.type;
     response.m_isRedirected = data.isRedirected;
 
@@ -575,7 +575,7 @@ bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResp
         return false;
     if (a.httpHeaderFields() != b.httpHeaderFields())
         return false;
-    if (a.resourceLoadTiming() != b.resourceLoadTiming())
+    if (a.networkLoadTiming() != b.networkLoadTiming())
         return false;
     return ResourceResponse::platformCompare(a, b);
 }
