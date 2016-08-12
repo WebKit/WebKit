@@ -31,23 +31,14 @@
 
 namespace WebKit {
 
-static WorkQueue& processLauncherWorkQueue()
-{
-
-    static WorkQueue& processLauncherWorkQueue = WorkQueue::create("com.apple.WebKit.ProcessLauncher").leakRef();
-    return processLauncherWorkQueue;
-}
-
 ProcessLauncher::ProcessLauncher(Client* client, const LaunchOptions& launchOptions)
     : m_client(client)
+    , m_weakPtrFactory(this)
     , m_launchOptions(launchOptions)
     , m_processIdentifier(0)
 {
     m_isLaunching = true;
-
-    processLauncherWorkQueue().dispatch([processLauncher = makeRef(*this)]() mutable {
-        processLauncher->launchProcess();
-    });
+    launchProcess();
 }
 
 void ProcessLauncher::didFinishLaunchingProcess(pid_t processIdentifier, IPC::Connection::Identifier identifier)

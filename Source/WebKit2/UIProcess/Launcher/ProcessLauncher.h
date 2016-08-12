@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessLauncher_h
-#define WebProcessLauncher_h
+#pragma once
 
 #include "Connection.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -86,11 +86,10 @@ private:
 
     Client* m_client;
 
+    WeakPtrFactory<ProcessLauncher> m_weakPtrFactory;
     const LaunchOptions m_launchOptions;
     bool m_isLaunching;
     pid_t m_processIdentifier;
 };
 
 } // namespace WebKit
-
-#endif // WebProcessLauncher_h
