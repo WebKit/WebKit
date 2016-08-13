@@ -46,6 +46,7 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
     case DocumentNamedItems:
     case FormControls:
         return HTMLCollection::IsRootedAtDocument;
+    case AllDescendants:
     case ByClass:
     case ByTag:
     case ByHTMLTag:
@@ -69,6 +70,7 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     switch (type) {
     case ByTag:
     case ByHTMLTag:
+    case AllDescendants:
     case DocImages:
     case DocEmbeds:
     case DocForms:

@@ -24,6 +24,7 @@
 #include "ContainerNode.h"
 
 #include "AXObjectCache.h"
+#include "AllDescendantsCollection.h"
 #include "ChildListMutationScope.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -820,23 +821,22 @@ RefPtr<NodeList> ContainerNode::querySelectorAll(const String& selectors, Except
     return nullptr;
 }
 
-Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& localName)
+Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& qualifiedName)
 {
-    ASSERT(!localName.isNull());
+    ASSERT(!qualifiedName.isNull());
+
+    if (qualifiedName == starAtom)
+        return ensureRareData().ensureNodeLists().addCachedCollection<AllDescendantsCollection>(*this, AllDescendants);
 
     if (document().isHTMLDocument())
-        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTagCollection>(*this, ByHTMLTag, localName);
-    return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, ByTag, localName);
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTagCollection>(*this, ByHTMLTag, qualifiedName);
+    return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, ByTag, qualifiedName);
 }
 
 Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     ASSERT(!localName.isNull());
-
-    if (namespaceURI == starAtom)
-        return getElementsByTagName(localName);
-
-    return ensureRareData().ensureNodeLists().addCachedCollectionWithQualifiedName(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
+    return ensureRareData().ensureNodeLists().addCachedTagCollectionNS(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
 }
 
 Ref<NodeList> ContainerNode::getElementsByName(const String& elementName)

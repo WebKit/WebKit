@@ -2,27 +2,27 @@
 PASS createElement abc 
 PASS setAttribute abc 
 PASS getAttribute abc 
-FAIL getElementsByTagName a:abc assert_array_equals: lengths differ, expected 0 got 3
+PASS getElementsByTagName a:abc 
 PASS getElementsByTagName abc 
 PASS createElement Abc 
 PASS setAttribute Abc 
 PASS getAttribute Abc 
-FAIL getElementsByTagName a:Abc assert_array_equals: lengths differ, expected 0 got 3
+PASS getElementsByTagName a:Abc 
 PASS getElementsByTagName Abc 
 PASS createElement ABC 
 PASS setAttribute ABC 
 PASS getAttribute ABC 
-FAIL getElementsByTagName a:ABC assert_array_equals: lengths differ, expected 0 got 3
+PASS getElementsByTagName a:ABC 
 PASS getElementsByTagName ABC 
 PASS createElement ä 
 PASS setAttribute ä 
 PASS getAttribute ä 
-FAIL getElementsByTagName a:ä assert_array_equals: lengths differ, expected 0 got 3
+PASS getElementsByTagName a:ä 
 PASS getElementsByTagName ä 
 PASS createElement Ä 
 PASS setAttribute Ä 
 PASS getAttribute Ä 
-FAIL getElementsByTagName a:Ä assert_array_equals: lengths differ, expected 0 got 3
+PASS getElementsByTagName a:Ä 
 PASS getElementsByTagName Ä 
 PASS createElementNS http://www.w3.org/1999/xhtml,abc,abc 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,abc,abc 

@@ -54,6 +54,7 @@ enum CollectionType {
     ByClass,
     ByTag,
     ByHTMLTag,
+    AllDescendants
 };
 
 enum class CollectionTraversalType { Descendants, ChildrenOnly, CustomForwardOnly };

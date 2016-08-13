@@ -1876,7 +1876,7 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
     if (attrName)
         return;
 
-    for (auto& tagCollection : m_tagCollectionCacheNS)
+    for (auto& tagCollection : m_tagCollectionNSCache)
         tagCollection.value->invalidateCacheForAttribute(nullptr);
 }
 
