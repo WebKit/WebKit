@@ -1,5 +1,16 @@
 2016-08-13  Chris Dumez  <cdumez@apple.com>
 
+        Move 'embeds' / 'plugins'/ 'scripts' attributes from HTMLDocument to Document
+        https://bugs.webkit.org/show_bug.cgi?id=160829
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-08-13  Chris Dumez  <cdumez@apple.com>
+
         Move designMode attribute from HTMLDocument to Document
         https://bugs.webkit.org/show_bug.cgi?id=160838
 

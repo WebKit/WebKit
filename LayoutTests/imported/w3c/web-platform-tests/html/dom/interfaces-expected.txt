@@ -23,11 +23,11 @@ PASS Document interface: attribute dir
 PASS Document interface: attribute body 
 PASS Document interface: attribute head 
 PASS Document interface: attribute images 
-FAIL Document interface: attribute embeds assert_true: The prototype object must have a property "embeds" expected true got false
-FAIL Document interface: attribute plugins assert_true: The prototype object must have a property "plugins" expected true got false
+PASS Document interface: attribute embeds 
+PASS Document interface: attribute plugins 
 PASS Document interface: attribute links 
 PASS Document interface: attribute forms 
-FAIL Document interface: attribute scripts assert_true: The prototype object must have a property "scripts" expected true got false
+PASS Document interface: attribute scripts 
 PASS Document interface: operation getElementsByName(DOMString) 
 FAIL Document interface: attribute cssElementMap assert_true: The prototype object must have a property "cssElementMap" expected true got false
 PASS Document interface: attribute currentScript 
@@ -436,11 +436,11 @@ PASS Document interface: new Document() must inherit property "dir" with the pro
 PASS Document interface: new Document() must inherit property "body" with the proper type (43) 
 PASS Document interface: new Document() must inherit property "head" with the proper type (44) 
 PASS Document interface: new Document() must inherit property "images" with the proper type (45) 
-FAIL Document interface: new Document() must inherit property "embeds" with the proper type (46) assert_inherits: property "embeds" not found in prototype chain
-FAIL Document interface: new Document() must inherit property "plugins" with the proper type (47) assert_inherits: property "plugins" not found in prototype chain
+PASS Document interface: new Document() must inherit property "embeds" with the proper type (46) 
+PASS Document interface: new Document() must inherit property "plugins" with the proper type (47) 
 PASS Document interface: new Document() must inherit property "links" with the proper type (48) 
 PASS Document interface: new Document() must inherit property "forms" with the proper type (49) 
-FAIL Document interface: new Document() must inherit property "scripts" with the proper type (50) assert_inherits: property "scripts" not found in prototype chain
+PASS Document interface: new Document() must inherit property "scripts" with the proper type (50) 
 PASS Document interface: new Document() must inherit property "getElementsByName" with the proper type (51) 
 PASS Document interface: calling getElementsByName(DOMString) on new Document() with too few arguments must throw TypeError 
 FAIL Document interface: new Document() must inherit property "cssElementMap" with the proper type (52) assert_inherits: property "cssElementMap" not found in prototype chain
@@ -691,11 +691,11 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "body" with the proper type (43) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "head" with the proper type (44) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "images" with the proper type (45) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "embeds" with the proper type (46) assert_inherits: property "embeds" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "plugins" with the proper type (47) assert_inherits: property "plugins" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "embeds" with the proper type (46) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "plugins" with the proper type (47) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "links" with the proper type (48) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "forms" with the proper type (49) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "scripts" with the proper type (50) assert_inherits: property "scripts" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "scripts" with the proper type (50) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByName" with the proper type (51) 
 PASS Document interface: calling getElementsByName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "cssElementMap" with the proper type (52) assert_inherits: property "cssElementMap" not found in prototype chain

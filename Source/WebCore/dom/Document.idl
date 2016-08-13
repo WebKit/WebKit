@@ -161,6 +161,9 @@
     readonly attribute HTMLCollection links;
     readonly attribute HTMLCollection forms;
     readonly attribute HTMLCollection anchors;
+    readonly attribute HTMLCollection embeds;
+    readonly attribute HTMLCollection plugins;
+    readonly attribute HTMLCollection scripts;
     readonly attribute DOMString lastModified;
 
     NodeList getElementsByName([AtomicString] DOMString elementName);
