@@ -146,13 +146,16 @@ my $productDir = productDir();
 my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit");
 
 # Build WTF as a separate static library on ports which support it.
-splice @projects, 0, 0, "Source/WTF" if isAppleMacWebKit() or isAppleWinWebKit() or isWinCairo();
+splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo();
 
 splice @projects, 0, 0, "Source/bmalloc" if isAppleMacWebKit();
 
-for my $dir (@projects) {
-    if (! -d $dir) {
-        die "Error: No $dir directory found. Please do a fresh checkout.\n";
+# Ports using CMake will check if directories exist in the CMake configuration.
+if (!isCMakeBuild()) {
+    for my $dir (@projects) {
+        if (! -d $dir) {
+            die "Error: No $dir directory found. Please do a fresh checkout.\n";
+        }
     }
 }
 
