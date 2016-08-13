@@ -192,6 +192,8 @@ class Manifest(object):
             self.add_rule(Rule(Rule.Result.EXCLUDE, parts[1]))
         elif parts[0] == "include" and len(parts) > 1:
             self.add_rule(Rule(Rule.Result.INCLUDE, parts[1]))
+        else:
+            raise Exception('Line does not begin with a correct rule:\n\t' + line)
 
     def should_skip_file(self, directory, filename):
         # Only allow files that are not in version control when they are explicitly included in the manifest from the build dir.

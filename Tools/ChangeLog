@@ -1,3 +1,13 @@
+2016-08-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        make-dist.py should not allow unknown rules in manifest
+        https://bugs.webkit.org/show_bug.cgi?id=160841
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/make-dist.py:
+        (Manifest.process_line):
+
 2016-08-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EFL][GTK] Install script not working on Debian 9 (testing) and Ubuntu 16.10
