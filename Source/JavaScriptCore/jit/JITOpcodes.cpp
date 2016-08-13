@@ -1458,9 +1458,9 @@ void JIT::emit_op_argument_count(Instruction* currentInstruction)
     emitPutVirtualRegister(dst, result);
 }
 
-void JIT::emit_op_copy_rest(Instruction* currentInstruction)
+void JIT::emit_op_create_rest(Instruction* currentInstruction)
 {
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_copy_rest);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_rest);
     slowPathCall.call();
 }
 

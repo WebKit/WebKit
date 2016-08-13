@@ -84,7 +84,7 @@ public:
         , m_function(function)
         , m_resultGPR(resultGPR)
         , m_contiguousStructure(contiguousStructure)
-        , m_arrayStorageStructure(arrayStorageStructure)
+        , m_arrayStorageOrContiguousStructure(arrayStorageStructure)
         , m_sizeGPR(sizeGPR)
     {
         jit->silentSpillAllRegistersImpl(false, m_plans, resultGPR);
@@ -97,12 +97,15 @@ protected:
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
         GPRReg scratchGPR = AssemblyHelpers::selectScratchGPR(m_sizeGPR);
-        MacroAssembler::Jump bigLength = jit->m_jit.branch32(MacroAssembler::AboveOrEqual, m_sizeGPR, MacroAssembler::TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
-        jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_contiguousStructure), scratchGPR);
-        MacroAssembler::Jump done = jit->m_jit.jump();
-        bigLength.link(&jit->m_jit);
-        jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_arrayStorageStructure), scratchGPR);
-        done.link(&jit->m_jit);
+        if (m_contiguousStructure != m_arrayStorageOrContiguousStructure) {
+            MacroAssembler::Jump bigLength = jit->m_jit.branch32(MacroAssembler::AboveOrEqual, m_sizeGPR, MacroAssembler::TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
+            jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_contiguousStructure), scratchGPR);
+            MacroAssembler::Jump done = jit->m_jit.jump();
+            bigLength.link(&jit->m_jit);
+            jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_arrayStorageOrContiguousStructure), scratchGPR);
+            done.link(&jit->m_jit);
+        } else
+            jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_contiguousStructure), scratchGPR);
         jit->callOperation(m_function, m_resultGPR, scratchGPR, m_sizeGPR);
         GPRReg canTrample = SpeculativeJIT::pickCanTrample(m_resultGPR);
         for (unsigned i = m_plans.size(); i--;)
@@ -115,7 +118,7 @@ private:
     P_JITOperation_EStZ m_function;
     GPRReg m_resultGPR;
     Structure* m_contiguousStructure;
-    Structure* m_arrayStorageStructure;
+    Structure* m_arrayStorageOrContiguousStructure;
     GPRReg m_sizeGPR;
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };

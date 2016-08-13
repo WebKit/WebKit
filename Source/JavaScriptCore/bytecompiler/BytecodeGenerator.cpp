@@ -4435,9 +4435,7 @@ RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned nu
     instructions().append(restArrayLength->index());
     instructions().append(numParametersToSkip);
 
-    emitNewArrayWithSize(result, restArrayLength.get());
-
-    emitOpcode(op_copy_rest);
+    emitOpcode(op_create_rest);
     instructions().append(result->index());
     instructions().append(restArrayLength->index());
     instructions().append(numParametersToSkip);

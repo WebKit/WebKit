@@ -262,7 +262,7 @@ typedef void (JIT_OPERATION *V_JITOperation_EZJZZZ)(ExecState*, int32_t, Encoded
 typedef void (JIT_OPERATION *V_JITOperation_EVm)(ExecState*, VM*);
 typedef void (JIT_OPERATION *V_JITOperation_J)(EncodedJSValue);
 typedef void (JIT_OPERATION *V_JITOperation_Z)(int32_t);
-typedef void (JIT_OPERATION *V_JITOperation_ECRUiUi)(ExecState*, JSCell*, Register*, uint32_t, uint32_t);
+typedef JSCell* (JIT_OPERATION *C_JITOperation_ERUiUi)(ExecState*, Register*, uint32_t, uint32_t);
 typedef void (JIT_OPERATION *V_JITOperation_EOJIUi)(ExecState*, JSObject*, EncodedJSValue, UniquedStringImpl*, uint32_t);
 typedef char* (JIT_OPERATION *P_JITOperation_E)(ExecState*);
 typedef char* (JIT_OPERATION *P_JITOperation_EC)(ExecState*, JSCell*);

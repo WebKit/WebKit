@@ -1102,17 +1102,16 @@ JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, 
     return result;
 }
 
-void JIT_OPERATION operationCopyRest(ExecState* exec, JSCell* arrayAsCell, Register* argumentStart, unsigned numberOfParamsToSkip, unsigned arraySize)
+JSCell* JIT_OPERATION operationCreateRest(ExecState* exec, Register* argumentStart, unsigned numberOfParamsToSkip, unsigned arraySize)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    ASSERT(arraySize);
-    JSArray* array = jsCast<JSArray*>(arrayAsCell);
-    ASSERT(arraySize == array->length());
-    array->setLength(exec, arraySize);
-    for (unsigned i = 0; i < arraySize; i++)
-        array->putDirectIndex(exec, i, argumentStart[i + numberOfParamsToSkip].jsValue());
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+    static_assert(sizeof(Register) == sizeof(JSValue), "This is a strong assumption here.");
+    JSValue* argumentsToCopyRegion = bitwise_cast<JSValue*>(argumentStart) + numberOfParamsToSkip;
+    return constructArray(exec, structure, argumentsToCopyRegion, arraySize);
 }
 
 size_t JIT_OPERATION operationObjectIsObject(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)

@@ -211,6 +211,7 @@ namespace JSC  {
         // arguments(0) will not fetch the 'this' value. To get/set 'this',
         // use thisValue() and setThisValue() below.
 
+        JSValue* addressOfArgumentsStart() const { return bitwise_cast<JSValue*>(this + argumentOffset(0)); }
         JSValue argument(size_t argument)
         {
             if (argument >= argumentCount())

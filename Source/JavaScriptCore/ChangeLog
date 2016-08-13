@@ -1,3 +1,97 @@
+2016-08-12  Saam Barati  <sbarati@apple.com>
+
+        Inline store loop for CopyRest in DFG and FTL for certain array modes
+        https://bugs.webkit.org/show_bug.cgi?id=159612
+
+        Reviewed by Filip Pizlo.
+
+        This patch changes the old copy_rest bytecode to actually allocate the rest array itself.
+        The bytecode is now called create_rest with an analogous CreateRest node in the DFG/FTL.
+        This allows the bytecode to be in control of what type of indexingType the array is allocated
+        with. We always allocate using ArrayWithContiguous storage unless we're havingABadTime().
+        This also makes allocating and writing into the array fast. On the fast path, the DFG/FTL
+        JIT will fast allocate the array and its storage, and we will do a memmove from the rest
+        region of arguments into the array's storage.
+
+        I'm seeing a 1-2% speedup on ES6SampleBench, and about a 2x speedup
+        on micro benchmarks that just test rest creation speed.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitRestParameter):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        (JSC::DFG::CallArrayAllocatorWithVariableSizeSlowPathGenerator::CallArrayAllocatorWithVariableSizeSlowPathGenerator):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::uses):
+        (JSC::DFG::Graph::isWatchingHavingABadTimeWatchpoint):
+        (JSC::DFG::Graph::compilation):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::numberOfArgumentsToSkip):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateClonedArguments):
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        (JSC::DFG::SpeculativeJIT::compileGetRestLength):
+        (JSC::DFG::SpeculativeJIT::compileCopyRest): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileArithRandom):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileArithRandom):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateClonedArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateRest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetRestLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAllocateArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCopyRest): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::addressOfArgumentsStart):
+        (JSC::ExecState::argument):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_argument_count):
+        (JSC::JIT::emit_op_create_rest):
+        (JSC::JIT::emit_op_copy_rest): Deleted.
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+
 2016-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a helper class for enumerating elements in an iterable object

@@ -1762,9 +1762,9 @@ _llint_op_to_index_string:
     callOpcodeSlowPath(_slow_path_to_index_string)
     dispatch(3)
 
-_llint_op_copy_rest:
+_llint_op_create_rest:
     traceExecution()
-    callOpcodeSlowPath(_slow_path_copy_rest)
+    callOpcodeSlowPath(_slow_path_create_rest)
     dispatch(4)
 
 _llint_op_instanceof:

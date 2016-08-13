@@ -141,7 +141,7 @@
             { "name" : "op_enumerator_generic_pname", "length" : 4 },
             { "name" : "op_to_index_string", "length" : 3 },
             { "name" : "op_assert", "length" : 3 },
-            { "name" : "op_copy_rest", "length": 4 },
+            { "name" : "op_create_rest", "length": 4 },
             { "name" : "op_get_rest_length", "length": 3 },
             { "name" : "op_save", "length" : 4 },
             { "name" : "op_resume", "length" : 3 },

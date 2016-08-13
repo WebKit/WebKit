@@ -972,8 +972,8 @@ private:
         case CheckWatchdogTimer:
             compileCheckWatchdogTimer();
             break;
-        case CopyRest:
-            compileCopyRest();
+        case CreateRest:
+            compileCreateRest();
             break;
         case GetRestLength:
             compileGetRestLength();
@@ -3863,26 +3863,40 @@ private:
         setJSValue(result);
     }
 
-    void compileCopyRest()
-    {            
-        LBasicBlock doCopyRest = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
+    void compileCreateRest()
+    {
+        if (m_graph.isWatchingHavingABadTimeWatchpoint(m_node)) {
+            LBasicBlock continuation = m_out.newBlock();
+            LValue arrayLength = lowInt32(m_node->child1());
+            LBasicBlock loopStart = m_out.newBlock();
+            bool shouldLargeArraySizeCreateArrayStorage = false;
+            LValue array = compileAllocateArrayWithSize(arrayLength, ArrayWithContiguous, shouldLargeArraySizeCreateArrayStorage);
 
-        LValue arrayLength = lowInt32(m_node->child2());
+            LValue butterfly = m_out.loadPtr(array, m_heaps.JSObject_butterfly);
+            ValueFromBlock startLength = m_out.anchor(arrayLength);
+            LValue argumentRegion = m_out.add(getArgumentsStart(), m_out.constInt64(sizeof(Register) * m_node->numberOfArgumentsToSkip()));
+            m_out.branch(m_out.equal(arrayLength, m_out.constInt32(0)),
+                unsure(continuation), unsure(loopStart));
 
-        m_out.branch(
-            m_out.equal(arrayLength, m_out.constInt32(0)),
-            unsure(continuation), unsure(doCopyRest));
-            
-        LBasicBlock lastNext = m_out.appendTo(doCopyRest, continuation);
-        // Arguments: 0:exec, 1:JSCell* array, 2:arguments start, 3:number of arguments to skip, 4:array length
+            LBasicBlock lastNext = m_out.appendTo(loopStart, continuation);
+            LValue phiOffset = m_out.phi(Int32, startLength);
+            LValue currentOffset = m_out.sub(phiOffset, m_out.int32One);
+            m_out.addIncomingToPhi(phiOffset, m_out.anchor(currentOffset));
+            LValue loadedValue = m_out.load64(m_out.baseIndex(m_heaps.variables, argumentRegion, m_out.zeroExtPtr(currentOffset)));
+            IndexedAbstractHeap& heap = m_heaps.indexedContiguousProperties;
+            m_out.store(loadedValue, m_out.baseIndex(heap, butterfly, m_out.zeroExtPtr(currentOffset)), Output::Store64);
+            m_out.branch(m_out.equal(currentOffset, m_out.constInt32(0)), unsure(continuation), unsure(loopStart));
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(array);
+            return;
+        }
+
+        LValue arrayLength = lowInt32(m_node->child1());
+        LValue argumentStart = getArgumentsStart();
         LValue numberOfArgumentsToSkip = m_out.constInt32(m_node->numberOfArgumentsToSkip());
-        vmCall(
-            Void,m_out.operation(operationCopyRest), m_callFrame, lowCell(m_node->child1()),
-            getArgumentsStart(), numberOfArgumentsToSkip, arrayLength);
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
+        setJSValue(vmCall(
+            Int64, m_out.operation(operationCreateRest), m_callFrame, argumentStart, numberOfArgumentsToSkip, arrayLength));
     }
 
     void compileGetRestLength()
@@ -4028,6 +4042,88 @@ private:
             m_out.constIntPtr(structure), m_out.constIntPtr(m_node->startConstant()),
             m_out.constIntPtr(m_node->numConstants())));
     }
+
+    LValue compileAllocateArrayWithSize(LValue publicLength, IndexingType indexingType, bool shouldLargeArraySizeCreateArrayStorage = true)
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+        ASSERT(
+            hasUndecided(structure->indexingType())
+            || hasInt32(structure->indexingType())
+            || hasDouble(structure->indexingType())
+            || hasContiguous(structure->indexingType()));
+
+        LBasicBlock fastCase = m_out.newBlock();
+        LBasicBlock largeCase = shouldLargeArraySizeCreateArrayStorage ? m_out.newBlock() : nullptr;
+        LBasicBlock failCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock lastNext = nullptr;
+        if (shouldLargeArraySizeCreateArrayStorage) {
+            m_out.branch(
+                m_out.aboveOrEqual(publicLength, m_out.constInt32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)),
+                rarely(largeCase), usually(fastCase));
+            lastNext = m_out.appendTo(fastCase, largeCase);
+        }
+
+        
+        // We don't round up to BASE_VECTOR_LEN for new Array(blah).
+        LValue vectorLength = publicLength;
+        
+        LValue payloadSize =
+            m_out.shl(m_out.zeroExt(vectorLength, pointerType()), m_out.constIntPtr(3));
+        
+        LValue butterflySize = m_out.add(
+            payloadSize, m_out.constIntPtr(sizeof(IndexingHeader)));
+        
+        LValue endOfStorage = allocateBasicStorageAndGetEnd(butterflySize, failCase);
+        
+        LValue butterfly = m_out.sub(endOfStorage, payloadSize);
+        
+        LValue object = allocateObject<JSArray>(structure, butterfly, failCase);
+        
+        m_out.store32(publicLength, butterfly, m_heaps.Butterfly_publicLength);
+        m_out.store32(vectorLength, butterfly, m_heaps.Butterfly_vectorLength);
+
+        initializeArrayElements(indexingType, vectorLength, butterfly);
+        
+        ValueFromBlock fastResult = m_out.anchor(object);
+        m_out.jump(continuation);
+        
+        LValue structureValue;
+        if (shouldLargeArraySizeCreateArrayStorage) {
+            LBasicBlock slowCase = m_out.newBlock();
+
+            m_out.appendTo(largeCase, failCase);
+            ValueFromBlock largeStructure = m_out.anchor(m_out.constIntPtr(
+                globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage)));
+            m_out.jump(slowCase);
+
+            m_out.appendTo(failCase, slowCase);
+            ValueFromBlock failStructure = m_out.anchor(m_out.constIntPtr(structure));
+            m_out.jump(slowCase);
+
+            m_out.appendTo(slowCase, continuation);
+            structureValue = m_out.phi(
+                pointerType(), largeStructure, failStructure);
+        } else {
+            ASSERT(!lastNext);
+            lastNext = m_out.appendTo(failCase, continuation);
+            structureValue = m_out.constIntPtr(structure);
+        }
+
+        LValue slowResultValue = lazySlowPath(
+            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(
+                    operationNewArrayWithSize, locations[0].directGPR(),
+                    locations[1].directGPR(), locations[2].directGPR());
+            },
+            structureValue, publicLength);
+        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(pointerType(), fastResult, slowResult);
+    }
     
     void compileNewArrayWithSize()
     {
@@ -4038,71 +4134,7 @@ private:
             m_node->indexingType());
         
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(m_node->indexingType())) {
-            ASSERT(
-                hasUndecided(structure->indexingType())
-                || hasInt32(structure->indexingType())
-                || hasDouble(structure->indexingType())
-                || hasContiguous(structure->indexingType()));
-
-            LBasicBlock fastCase = m_out.newBlock();
-            LBasicBlock largeCase = m_out.newBlock();
-            LBasicBlock failCase = m_out.newBlock();
-            LBasicBlock slowCase = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
-            
-            m_out.branch(
-                m_out.aboveOrEqual(publicLength, m_out.constInt32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)),
-                rarely(largeCase), usually(fastCase));
-
-            LBasicBlock lastNext = m_out.appendTo(fastCase, largeCase);
-            
-            // We don't round up to BASE_VECTOR_LEN for new Array(blah).
-            LValue vectorLength = publicLength;
-            
-            LValue payloadSize =
-                m_out.shl(m_out.zeroExt(vectorLength, pointerType()), m_out.constIntPtr(3));
-            
-            LValue butterflySize = m_out.add(
-                payloadSize, m_out.constIntPtr(sizeof(IndexingHeader)));
-            
-            LValue endOfStorage = allocateBasicStorageAndGetEnd(butterflySize, failCase);
-            
-            LValue butterfly = m_out.sub(endOfStorage, payloadSize);
-            
-            LValue object = allocateObject<JSArray>(structure, butterfly, failCase);
-            
-            m_out.store32(publicLength, butterfly, m_heaps.Butterfly_publicLength);
-            m_out.store32(vectorLength, butterfly, m_heaps.Butterfly_vectorLength);
-
-            initializeArrayElements(m_node->indexingType(), vectorLength, butterfly);
-            
-            ValueFromBlock fastResult = m_out.anchor(object);
-            m_out.jump(continuation);
-            
-            m_out.appendTo(largeCase, failCase);
-            ValueFromBlock largeStructure = m_out.anchor(m_out.constIntPtr(
-                globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage)));
-            m_out.jump(slowCase);
-            
-            m_out.appendTo(failCase, slowCase);
-            ValueFromBlock failStructure = m_out.anchor(m_out.constIntPtr(structure));
-            m_out.jump(slowCase);
-            
-            m_out.appendTo(slowCase, continuation);
-            LValue structureValue = m_out.phi(
-                pointerType(), largeStructure, failStructure);
-            LValue slowResultValue = lazySlowPath(
-                [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                    return createLazyCallGenerator(
-                        operationNewArrayWithSize, locations[0].directGPR(),
-                        locations[1].directGPR(), locations[2].directGPR());
-                },
-                structureValue, publicLength);
-            ValueFromBlock slowResult = m_out.anchor(slowResultValue);
-            m_out.jump(continuation);
-            
-            m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+            setJSValue(compileAllocateArrayWithSize(publicLength, m_node->indexingType()));
             return;
         }
         

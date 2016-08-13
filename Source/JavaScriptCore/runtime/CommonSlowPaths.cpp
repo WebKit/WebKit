@@ -848,20 +848,15 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     RETURN(resolvedScope);
 }
 
-SLOW_PATH_DECL(slow_path_copy_rest)
+SLOW_PATH_DECL(slow_path_create_rest)
 {
     BEGIN();
     unsigned arraySize = OP_C(2).jsValue().asUInt32();
-    if (!arraySize) {
-        ASSERT(!jsCast<JSArray*>(OP(1).jsValue())->length());
-        END();
-    }
-    JSArray* array = jsCast<JSArray*>(OP(1).jsValue());
-    ASSERT(arraySize == array->length());
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
     unsigned numParamsToSkip = pc[3].u.unsignedValue;
-    for (unsigned i = 0; i < arraySize; i++)
-        array->putDirectIndex(exec, i, exec->uncheckedArgument(i + numParamsToSkip));
-    END();
+    JSValue* argumentsToCopyRegion = exec->addressOfArgumentsStart() + numParamsToSkip;
+    RETURN(constructArray(exec, structure, argumentsToCopyRegion, arraySize));
 }
 
 SLOW_PATH_DECL(slow_path_get_by_id_with_this)

@@ -1500,9 +1500,9 @@ private:
             break;
         }
 
-        case CopyRest: {
-            fixEdge<KnownCellUse>(node->child1());
-            fixEdge<KnownInt32Use>(node->child2());
+        case CreateRest: {
+            watchHavingABadTime(node);
+            fixEdge<KnownInt32Use>(node->child1());
             break;
         }
 

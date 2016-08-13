@@ -3734,13 +3734,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_rest_length);
         }
 
-        case op_copy_rest: {
+        case op_create_rest: {
             noticeArgumentsUse();
-            Node* array = get(VirtualRegister(currentInstruction[1].u.operand));
             Node* arrayLength = get(VirtualRegister(currentInstruction[2].u.operand));
-            addToGraph(CopyRest, OpInfo(currentInstruction[3].u.unsignedValue),
-                array, arrayLength);
-            NEXT_OPCODE(op_copy_rest);
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(CreateRest, OpInfo(currentInstruction[3].u.unsignedValue), arrayLength));
+            NEXT_OPCODE(op_create_rest);
         }
             
         // === Bitwise operations ===

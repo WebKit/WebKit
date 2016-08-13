@@ -229,7 +229,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutGetterSetterById:
     case PutGetterByVal:
     case PutSetterByVal:
-    case CopyRest:
+    case CreateRest:
     case GetRestLength:
     case RegExpExec:
     case RegExpTest:

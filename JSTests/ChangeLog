@@ -1,3 +1,14 @@
+2016-08-12  Saam Barati  <sbarati@apple.com>
+
+        Inline store loop for CopyRest in DFG and FTL for certain array modes
+        https://bugs.webkit.org/show_bug.cgi?id=159612
+
+        Reviewed by Filip Pizlo.
+
+        * stress/rest-parameter-having-a-bad-time.js: Added.
+        * stress/rest-parameter-many-arguments.js: Added.
+        * stress/rest-parameter-various-types.js: Added.
+
 2016-08-12  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES2016] Implement Object.entries
