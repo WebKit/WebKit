@@ -629,10 +629,6 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     if (m_suppressAllPauses)
         return;
 
-    JSGlobalObject* vmEntryGlobalObject = callFrame->vmEntryGlobalObject();
-    if (!needPauseHandling(vmEntryGlobalObject))
-        return;
-
     Breakpoint breakpoint;
     bool didHitBreakpoint = false;
     bool pauseNow = m_pauseOnNextStatement;
@@ -650,8 +646,9 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     // Make sure we are not going to pause again on breakpoint actions by
     // reseting the pause state before executing any breakpoint actions.
     TemporaryPausedState pausedState(*this);
-    m_pauseOnCallFrame = 0;
+    m_pauseOnCallFrame = nullptr;
     m_pauseOnNextStatement = false;
+    JSGlobalObject* vmEntryGlobalObject = callFrame->vmEntryGlobalObject();
 
     if (didHitBreakpoint) {
         handleBreakpointHit(vmEntryGlobalObject, breakpoint);

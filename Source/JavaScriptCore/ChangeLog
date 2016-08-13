@@ -1,3 +1,16 @@
+2016-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove always true JSC::Debugger::needPauseHandling virtual method
+        https://bugs.webkit.org/show_bug.cgi?id=160822
+
+        Reviewed by Mark Lam.
+
+        All subclasses return true for this method. Just remove the method.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        * inspector/ScriptDebugServer.h:
+
 2016-08-12  Saam Barati  <sbarati@apple.com>
 
         Inline store loop for CopyRest in DFG and FTL for certain array modes

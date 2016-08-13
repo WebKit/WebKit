@@ -144,7 +144,6 @@ public:
     void didEvaluateScript(double startTime, ProfilingReason);
 
 protected:
-    virtual bool needPauseHandling(JSGlobalObject*) { return false; }
     virtual void handleBreakpointHit(JSGlobalObject*, const Breakpoint&) { }
     virtual void handleExceptionInBreakpointCondition(ExecState*, Exception*) const { }
     virtual void handlePause(JSGlobalObject*, ReasonForPause) { }
