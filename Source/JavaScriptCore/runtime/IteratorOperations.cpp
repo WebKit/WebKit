@@ -153,4 +153,30 @@ JSObject* createIteratorResultObject(ExecState* exec, JSValue value, bool done)
     return resultObject;
 }
 
+JSValue iteratorForIterable(ExecState* state, JSValue iterable)
+{
+    JSValue iteratorFunction = iterable.get(state, state->propertyNames().iteratorSymbol);
+    if (state->hadException())
+        return JSValue();
+    
+    CallData iteratorFunctionCallData;
+    CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
+    if (iteratorFunctionCallType == CallType::None) {
+        throwTypeError(state);
+        return JSValue();
+    }
+
+    ArgList iteratorFunctionArguments;
+    JSValue iterator = call(state, iteratorFunction, iteratorFunctionCallType, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
+    if (state->hadException())
+        return JSValue();
+
+    if (!iterator.isObject()) {
+        throwTypeError(state);
+        return JSValue();
+    }
+
+    return iterator;
+}
+
 } // namespace JSC

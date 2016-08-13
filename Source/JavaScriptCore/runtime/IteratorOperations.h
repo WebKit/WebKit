@@ -41,6 +41,32 @@ JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(ExecState*, JSValue, bool
 
 Structure* createIteratorResultObjectStructure(VM&, JSGlobalObject&);
 
+JSValue iteratorForIterable(ExecState*, JSValue iterable);
+
+template <typename CallBackType>
+void forEachInIterable(ExecState* state, JSValue iterable, const CallBackType& callback)
+{
+    auto& vm = state->vm();
+    JSValue iterator = iteratorForIterable(state, iterable);
+    if (vm.exception())
+        return;
+    while (true) {
+        JSValue next = iteratorStep(state, iterator);
+        if (next.isFalse() || vm.exception())
+            return;
+
+        JSValue nextValue = iteratorValue(state, next);
+        if (vm.exception())
+            return;
+
+        callback(vm, state, nextValue);
+        if (vm.exception()) {
+            iteratorClose(state, iterator);
+            return;
+        }
+    }
+}
+
 }
 
 #endif // !defined(IteratorOperations_h)

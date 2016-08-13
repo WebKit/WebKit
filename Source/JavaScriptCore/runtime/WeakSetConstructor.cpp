@@ -71,44 +71,12 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
     if (adderFunctionCallType == CallType::None)
         return JSValue::encode(throwTypeError(exec));
 
-    JSValue iteratorFunction = iterable.get(exec, exec->propertyNames().iteratorSymbol);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    CallData iteratorFunctionCallData;
-    CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
-    if (iteratorFunctionCallType == CallType::None)
-        return JSValue::encode(throwTypeError(exec));
-
-    ArgList iteratorFunctionArguments;
-    JSValue iterator = call(exec, iteratorFunction, iteratorFunctionCallType, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    if (!iterator.isObject())
-        return JSValue::encode(throwTypeError(exec));
-
-    while (true) {
-        JSValue next = iteratorStep(exec, iterator);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-
-        if (next.isFalse())
-            return JSValue::encode(weakSet);
-
-        JSValue nextValue = iteratorValue(exec, next);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-
+    forEachInIterable(exec, iterable, [&](VM&, ExecState* exec, JSValue nextValue) {
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
         call(exec, adderFunction, adderFunctionCallType, adderFunctionCallData, weakSet, arguments);
-        if (exec->hadException()) {
-            iteratorClose(exec, iterator);
-            return JSValue::encode(jsUndefined());
-        }
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+    });
+
     return JSValue::encode(weakSet);
 }
 

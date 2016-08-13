@@ -1,3 +1,28 @@
+2016-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a helper class for enumerating elements in an iterable object
+        https://bugs.webkit.org/show_bug.cgi?id=160800
+
+        Reviewed by Benjamin Poulain.
+
+        Added iteratorForIterable which provides an abstraction for iterating over an iterable object,
+        and deployed it in the constructors of Set, WeakSet, Map, and WeakMap.
+
+        Also added a helper function iteratorForIterable, which retrieves the iterator out of an iterable object.
+
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorForIterable): Added.
+        * runtime/IteratorOperations.h:
+        (JSC::forEachInIterable): Added.
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+
 2016-08-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused includes of RefCountedLeakCounter.h
