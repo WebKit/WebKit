@@ -941,6 +941,8 @@ public:
     void setDesignMode(InheritedBool value);
     InheritedBool getDesignMode() const;
     bool inDesignMode() const;
+    String designMode() const;
+    void setDesignMode(const String&);
 
     Document* parentDocument() const;
     Document& topDocument() const;

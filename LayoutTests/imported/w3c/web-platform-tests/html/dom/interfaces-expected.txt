@@ -39,7 +39,7 @@ FAIL Document interface: operation writeln(DOMString) assert_own_property: inter
 PASS Document interface: attribute defaultView 
 PASS Document interface: attribute activeElement 
 PASS Document interface: operation hasFocus() 
-FAIL Document interface: attribute designMode assert_true: The prototype object must have a property "designMode" expected true got false
+PASS Document interface: attribute designMode 
 PASS Document interface: operation execCommand(DOMString,boolean,DOMString) 
 PASS Document interface: operation queryCommandEnabled(DOMString) 
 PASS Document interface: operation queryCommandIndeterm(DOMString) 
@@ -457,7 +457,7 @@ FAIL Document interface: calling writeln(DOMString) on new Document() with too f
 PASS Document interface: new Document() must inherit property "defaultView" with the proper type (59) 
 PASS Document interface: new Document() must inherit property "activeElement" with the proper type (60) 
 PASS Document interface: new Document() must inherit property "hasFocus" with the proper type (61) 
-FAIL Document interface: new Document() must inherit property "designMode" with the proper type (62) assert_inherits: property "designMode" not found in prototype chain
+PASS Document interface: new Document() must inherit property "designMode" with the proper type (62) 
 PASS Document interface: new Document() must inherit property "execCommand" with the proper type (63) 
 PASS Document interface: calling execCommand(DOMString,boolean,DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "queryCommandEnabled" with the proper type (64) 
@@ -712,7 +712,7 @@ FAIL Document interface: calling writeln(DOMString) on document.implementation.c
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "defaultView" with the proper type (59) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "activeElement" with the proper type (60) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "hasFocus" with the proper type (61) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "designMode" with the proper type (62) assert_inherits: property "designMode" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "designMode" with the proper type (62) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "execCommand" with the proper type (63) 
 PASS Document interface: calling execCommand(DOMString,boolean,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandEnabled" with the proper type (64) 

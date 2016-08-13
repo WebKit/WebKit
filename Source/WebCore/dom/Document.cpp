@@ -5031,7 +5031,24 @@ void Document::setDesignMode(InheritedBool value)
         frame->document()->scheduleForcedStyleRecalc();
 }
 
-Document::InheritedBool Document::getDesignMode() const
+String Document::designMode() const
+{
+    return inDesignMode() ? ASCIILiteral("on") : ASCIILiteral("off");
+}
+
+void Document::setDesignMode(const String& value)
+{
+    InheritedBool mode;
+    if (equalLettersIgnoringASCIICase(value, "on"))
+        mode = on;
+    else if (equalLettersIgnoringASCIICase(value, "off"))
+        mode = off;
+    else
+        mode = inherit;
+    setDesignMode(mode);
+}
+
+auto Document::getDesignMode() const -> InheritedBool
 {
     return m_designMode;
 }

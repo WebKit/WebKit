@@ -52,7 +52,6 @@
     attribute DOMString dir;
 #endif
 
-    attribute DOMString designMode;
     readonly attribute DOMString compatMode;
 
     // Deprecated attributes.

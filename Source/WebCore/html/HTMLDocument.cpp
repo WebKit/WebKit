@@ -107,23 +107,6 @@ int HTMLDocument::height()
     return frameView ? frameView->contentsHeight() : 0;
 }
 
-String HTMLDocument::designMode() const
-{
-    return inDesignMode() ? ASCIILiteral("on") : ASCIILiteral("off");
-}
-
-void HTMLDocument::setDesignMode(const String& value)
-{
-    InheritedBool mode;
-    if (equalLettersIgnoringASCIICase(value, "on"))
-        mode = on;
-    else if (equalLettersIgnoringASCIICase(value, "off"))
-        mode = off;
-    else
-        mode = inherit;
-    Document::setDesignMode(mode);
-}
-
 const AtomicString& HTMLDocument::bgColor() const
 {
     auto* bodyElement = body();

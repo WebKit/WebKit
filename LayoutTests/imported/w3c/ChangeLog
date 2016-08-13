@@ -1,3 +1,14 @@
+2016-08-13  Chris Dumez  <cdumez@apple.com>
+
+        Move designMode attribute from HTMLDocument to Document
+        https://bugs.webkit.org/show_bug.cgi?id=160838
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-08-12  Chris Dumez  <cdumez@apple.com>
 
         getElementsByTagName() should take a qualifiedName in parameter

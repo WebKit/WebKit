@@ -141,6 +141,7 @@
 
     [SetterRaisesException] attribute DOMString title;
     attribute DOMString dir;
+    attribute DOMString designMode;
 
     readonly attribute USVString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
