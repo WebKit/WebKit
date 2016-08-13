@@ -661,7 +661,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
 
     m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*m_vm, *this, m_codeBlock, effort));
 
-    double after;
+    double after = 0;
     if (UNLIKELY(computeCompileTimes())) {
         after = monotonicallyIncreasingTimeMS();
 
