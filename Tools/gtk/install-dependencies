@@ -112,6 +112,8 @@ function installDependenciesWithApt {
         libgnutls28-dev \
         libgtk2.0-dev \
         libgtk-3-dev \
+        libgstreamer1.0-dev \
+        libgstreamer-plugins-base1.0-dev \
         libgudev-1.0-dev \
         libhyphen-dev \
         libjpeg-dev \
@@ -230,6 +232,8 @@ function installDependenciesWithPacman {
         gperf \
         grep \
         groff \
+        gstreamer \
+        gst-plugins-base-libs \
         gzip \
         hyphen \
         libtool \
