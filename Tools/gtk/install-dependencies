@@ -75,6 +75,16 @@ function installDependenciesWithBrew {
          xz
 }
 
+# If the package $1 is available, prints it. Otherwise prints $2.
+# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
+function aptIfElse {
+    if apt-cache show $1 &>/dev/null; then
+        echo $1
+    else
+        echo $2
+    fi
+}
+
 function installDependenciesWithApt {
     # These are dependencies necessary for building WebKitGTK+.
     packages=" \
@@ -95,7 +105,7 @@ function installDependenciesWithApt {
         libedit-dev \
         libenchant-dev \
         libfaad-dev \
-        libgeoclue-dev \
+        $(aptIfElse libgeoclue-2-dev libgeoclue-dev) \
         libgirepository1.0-dev \
         libgl1-mesa-dev \
         libgl1-mesa-glx \
@@ -109,7 +119,7 @@ function installDependenciesWithApt {
         libnotify-dev \
         libopus-dev \
         libpango1.0-dev \
-        libpng12-dev \
+        $(aptIfElse libpng-dev libpng12-dev) \
         libpulse-dev \
         librsvg2-dev \
         libsecret-1-dev \
@@ -135,6 +145,7 @@ function installDependenciesWithApt {
         curl \
         dbus-x11 \
         libapache2-mod-bw \
+        $(aptIfElse libapache2-mod-php7.0 libapache2-mod-php5) \
         libgpg-error-dev \
         psmisc \
         pulseaudio-utils \
@@ -198,14 +209,7 @@ function installDependenciesWithApt {
         git-svn \
         subversion"
 
-    if apt-cache show libapache2-mod-php7.0 &>/dev/null; then
-        packages="$packages libapache2-mod-php7.0"
-    else
-        packages="$packages libapache2-mod-php5"
-    fi
-
     apt-get install $packages
-
 }
 
 function installDependenciesWithPacman {

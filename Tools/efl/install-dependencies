@@ -48,6 +48,16 @@ function checkInstaller {
     printNotSupportedMessageAndExit
 }
 
+# If the package $1 is available, prints it. Otherwise prints $2.
+# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
+function aptIfElse {
+    if apt-cache show $1 &>/dev/null; then
+        echo $1
+    else
+        echo $2
+    fi
+}
+
 function installDependenciesWithApt {
     # These are dependencies necessary for building WebKitEFL.
     apt-get install \
@@ -67,7 +77,7 @@ function installDependenciesWithApt {
         libffi-dev \
         libfreetype6-dev \
         libgcrypt11-dev \
-        libgeoclue-dev \
+        $(aptIfElse libgeoclue-2-dev libgeoclue-dev) \
         libgif-dev \
         libgl1-mesa-dev \
         libgnutls28-dev \
@@ -80,7 +90,7 @@ function installDependenciesWithApt {
         libmpg123-dev \
         liborc-0.4-dev \
         libp11-kit-dev \
-        libpng12-dev \
+        $(aptIfElse libpng-dev libpng12-dev) \
         libpulse-dev \
         libsqlite3-dev \
         libssl-dev \
@@ -110,14 +120,9 @@ function installDependenciesWithApt {
     # These are dependencies necessary for running tests.
     apt-get install \
         apache2 \
+        $(aptIfElse libapache2-mod-php7.0 libapache2-mod-php5) \
         libruby \
         xvfb
-
-    if apt-cache show libapache2-mod-php7.0 &>/dev/null; then
-        apt-get install libapache2-mod-php7.0
-    else
-        apt-get install libapache2-mod-php5
-    fi
 }
 
 checkInstaller

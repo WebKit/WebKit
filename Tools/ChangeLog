@@ -1,3 +1,14 @@
+2016-08-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EFL][GTK] Install script not working on Debian 9 (testing) and Ubuntu 16.10
+        https://bugs.webkit.org/show_bug.cgi?id=160809
+
+        Reviewed by Carlos Garcia Campos.
+
+        * efl/install-dependencies: Factorize the previous logic for handling the php5/7
+        case, and use it also for the new package names of libpng and libgeoclue.
+        * gtk/install-dependencies: Ditto.
+
 2016-08-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Skip to check directories existence in build-webkit
