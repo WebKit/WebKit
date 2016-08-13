@@ -1,3 +1,13 @@
+2016-08-12  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add application/vnd.api+json as a valid JSON MIME-type
+        https://bugs.webkit.org/show_bug.cgi?id=160834
+        rdar://problem/27608536
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CodeMirrorAdditions.js: Add Add application/vnd.api+json to extraJSONTypes.
+
 2016-08-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Command-Shift-O causes infinite loop if web page has frames

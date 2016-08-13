@@ -611,11 +611,10 @@
         CodeMirror.defineMIME(type, "javascript");
     });
 
-    var extraJSONTypes = ["application/x-json", "text/x-json"];
+    var extraJSONTypes = ["application/x-json", "text/x-json", "application/vnd.api+json"];
     extraJSONTypes.forEach(function(type) {
         CodeMirror.defineMIME(type, {name: "javascript", json: true});
     });
-
 })();
 
 WebInspector.compareCodeMirrorPositions = function(a, b)
