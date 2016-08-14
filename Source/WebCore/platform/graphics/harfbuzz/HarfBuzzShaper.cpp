@@ -648,26 +648,33 @@ FloatRect HarfBuzzShaper::selectionRect(const FloatPoint& point, int height, uns
     bool foundFromX = false;
     bool foundToX = false;
 
+    Optional<unsigned> fromIndex = from;
+    Optional<unsigned> toIndex = to;
+
     if (m_run.rtl())
         currentX = m_totalWidth;
     for (unsigned i = 0; i < m_harfBuzzRuns.size(); ++i) {
         if (m_run.rtl())
             currentX -= m_harfBuzzRuns[i]->width();
         unsigned numCharacters = m_harfBuzzRuns[i]->numCharacters();
-        if (!foundFromX && from < numCharacters) {
-            fromX = m_harfBuzzRuns[i]->xPositionForOffset(from) + currentX;
+        if (!foundFromX && fromIndex.value() < numCharacters) {
+            fromX = m_harfBuzzRuns[i]->xPositionForOffset(fromIndex.value()) + currentX;
             foundFromX = true;
         } else {
-            ASSERT(from >= numCharacters);
-            from -= numCharacters;
+            if (fromIndex && fromIndex.value() >= numCharacters)
+                fromIndex.value() -= numCharacters;
+            else
+                fromIndex = Nullopt;
         }
 
-        if (!foundToX && to < numCharacters) {
-            toX = m_harfBuzzRuns[i]->xPositionForOffset(to) + currentX;
+        if (!foundToX && toIndex.value() < numCharacters) {
+            toX = m_harfBuzzRuns[i]->xPositionForOffset(toIndex.value()) + currentX;
             foundToX = true;
         } else {
-            ASSERT(to >= numCharacters);
-            to -= numCharacters;
+            if (toIndex && toIndex.value() >= numCharacters)
+                toIndex.value() -= numCharacters;
+            else
+                toIndex = Nullopt;
         }
 
         if (foundFromX && foundToX)
