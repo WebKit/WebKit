@@ -48,8 +48,6 @@
     attribute DOMString dir;
 #endif
 
-    readonly attribute DOMString compatMode;
-
     // Deprecated attributes.
     [TreatNullAs=EmptyString] attribute DOMString bgColor;
     [TreatNullAs=EmptyString] attribute DOMString fgColor;

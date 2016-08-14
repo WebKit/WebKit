@@ -1,3 +1,15 @@
+2016-08-13  Chris Dumez  <cdumez@apple.com>
+
+        'compatMode' property should be on Document, not HTMLDocument
+        https://bugs.webkit.org/show_bug.cgi?id=160819
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/dom/Document/compatMode-location-expected.txt: Added.
+        * fast/dom/Document/compatMode-location.html: Added.
+
 2016-08-12  Chris Dumez  <cdumez@apple.com>
 
         getElementsByTagName() should take a qualifiedName in parameter
