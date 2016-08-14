@@ -27,13 +27,16 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <PassKit/PKPaymentAuthorizationViewController.h>
-#import <PassKit/PKPaymentAuthorizationViewController_Private.h>
 #import <PassKit/PassKit.h>
+#import <PassKit/PKPaymentAuthorizationViewController_Private.h>
 
 #else
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+
+#import <PassKit/PassKit.h>
+
+#elif PLATFORM(MAC)
 
 #import <Contacts/Contacts.h>
 #import <Foundation/Foundation.h>

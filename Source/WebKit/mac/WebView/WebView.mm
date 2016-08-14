@@ -1625,8 +1625,11 @@ static NSMutableSet *knownPluginMIMETypes()
         return;
     }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (!OSAtomicCompareAndSwap32(0, 1, &_private->didDrawTiles))
         return;
+#pragma clang diagnostic pop
 
     WebThreadLock();
 

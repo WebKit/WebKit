@@ -1,3 +1,13 @@
+2016-08-14  Daniel Bates  <dabates@apple.com>
+
+        Fix compiler errors when building iOS WebKit using the iOS 10 beta SDK
+        https://bugs.webkit.org/show_bug.cgi?id=160725
+
+        Reviewed by Sam Weinig.
+
+        * Platform/spi/ios/UIKitSPI.h: Add SPI for UITextInputSuggestionDelegate.
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm: Remove unnecessary include of PKPaymentMerchantSession.h.
+
 2016-08-14  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove deprecated _WKVisitedLinkProvider declarations that aren’t needed

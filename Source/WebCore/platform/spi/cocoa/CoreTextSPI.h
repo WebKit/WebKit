@@ -111,6 +111,16 @@ extern const CFStringRef kCTUIFontTextStyleCaption1;
 extern const CFStringRef kCTUIFontTextStyleCaption2;
 
 extern const CFStringRef kCTFontDescriptorTextStyleEmphasized;
+
+extern const CGFloat kCTFontWeightUltraLight;
+extern const CGFloat kCTFontWeightThin;
+extern const CGFloat kCTFontWeightLight;
+extern const CGFloat kCTFontWeightRegular;
+extern const CGFloat kCTFontWeightMedium;
+extern const CGFloat kCTFontWeightSemibold;
+extern const CGFloat kCTFontWeightBold;
+extern const CGFloat kCTFontWeightHeavy;
+extern const CGFloat kCTFontWeightBlack;
 #endif
 
 #if PLATFORM(IOS)

@@ -27,10 +27,7 @@
 #import "ThemeCocoa.h"
 
 #import "GraphicsContext.h"
-
-#if USE(APPLE_INTERNAL_SDK)
 #import <dlfcn.h>
-#endif
 
 namespace WebCore {
 

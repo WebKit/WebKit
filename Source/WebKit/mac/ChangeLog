@@ -1,3 +1,16 @@
+2016-08-14  Daniel Bates  <dabates@apple.com>
+
+        Fix compiler errors when building iOS WebKit using the iOS 10 beta SDK
+        https://bugs.webkit.org/show_bug.cgi?id=160725
+
+        Reviewed by Sam Weinig.
+
+        OSAtomicCompareAndSwap32() has been deprecated as of the iOS 10 beta SDK. For now,
+        silence the complier warning.
+
+        * WebView/WebView.mm:
+        (-[WebView _dispatchTileDidDraw:]):
+
 2016-08-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove always true JSC::Debugger::needPauseHandling virtual method
