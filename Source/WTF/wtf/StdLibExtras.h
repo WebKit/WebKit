@@ -335,7 +335,7 @@ struct Visitor<A> : A {
 };
  
 template <class... F>
-auto makeVisitor(F... f)
+Visitor<F...> makeVisitor(F... f)
 {
     return Visitor<F...>(f...);
 }

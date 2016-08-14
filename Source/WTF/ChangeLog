@@ -1,3 +1,10 @@
+2016-08-13  Dan Bernstein  <mitz@apple.com>
+
+        Build fix follow-up to r204433.
+
+        * wtf/StdLibExtras.h:
+        (WTF::makeVisitor): Don’t use an auto return type.
+
 2016-08-12  Sam Weinig  <sam@webkit.org>
 
         Make variant only available when compiling for C++14 or greater
