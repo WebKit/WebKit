@@ -114,7 +114,7 @@ if (!passed)
     throw new Error("Object.entries should get property descriptor.");
 
 Array.prototype.push = function () { throw new Error("Array.prototype.push should not be used during invoking of Object.entries.")};
-Array.prototype.getOwnPropertyDescriptor = function () { throw new Error("Array.prototype.getOwnPropertyDescriptor should not be used during invoking of Object.entries.")};
+Object.getOwnPropertyDescriptor = function () { throw new Error("Array.prototype.getOwnPropertyDescriptor should not be used during invoking of Object.entries.")};
 
 entries = Object.entries({a:'1-2', b:'3-4'});
 passed = Array.isArray(entries) && String(entries[0]) === "a,1-2" && String(entries[1]) === "b,3-4";
