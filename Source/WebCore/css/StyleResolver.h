@@ -301,7 +301,7 @@ public:
         
     private:
         void addMatch(const MatchResult&, unsigned index, bool isImportant, bool inheritedOnly);
-        void addStyleProperties(const StyleProperties&, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType, CascadeLevel);
+        void addStyleProperties(const StyleProperties&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType, CascadeLevel);
         static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel);
 
         Property m_properties[numCSSProperties + 2];
