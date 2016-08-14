@@ -24,9 +24,14 @@
  */
 
 #include "config.h"
-#include "_WKVisitedLinkProvider.h"
+#include "_WKVisitedLinkStore.h"
 
 #if WK_API_ENABLED
+
+// Defined for binary compatibility with Safari in iOS 10.
+
+@interface _WKVisitedLinkProvider : _WKVisitedLinkStore
+@end
 
 @implementation _WKVisitedLinkProvider
 @end

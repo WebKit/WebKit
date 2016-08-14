@@ -28,7 +28,6 @@
 #if WK_API_ENABLED
 
 @class WKWebView;
-@class _WKVisitedLinkProvider;
 @class _WKVisitedLinkStore;
 @class _WKWebsiteDataStore;
 
@@ -67,8 +66,6 @@
 @property (nonatomic, setter=_setImageControlsEnabled:) BOOL _imageControlsEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, readwrite, setter=_setRequiresUserActionForEditingControlsManager:) BOOL _requiresUserActionForEditingControlsManager WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
-
-@property (nonatomic, strong, setter=_setVisitedLinkProvider:) _WKVisitedLinkProvider *_visitedLinkProvider WK_API_DEPRECATED_WITH_REPLACEMENT("_visitedLinkStore", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 @property (nonatomic, strong, setter=_setWebsiteDataStore:) _WKWebsiteDataStore *_websiteDataStore WK_API_DEPRECATED_WITH_REPLACEMENT("websiteDataStore", macosx(10.10, 10.11), ios(8.0, 9.0));
 @property (nonatomic, setter=_setRequiresUserActionForAudioPlayback:) BOOL _requiresUserActionForAudioPlayback WK_API_DEPRECATED_WITH_REPLACEMENT("mediaTypesRequiringUserActionForPlayback", macosx(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));

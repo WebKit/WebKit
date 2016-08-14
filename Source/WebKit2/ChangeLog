@@ -1,3 +1,21 @@
+2016-08-14  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove deprecated _WKVisitedLinkProvider declarations that aren’t needed
+        https://bugs.webkit.org/show_bug.cgi?id=160846
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _visitedLinkProvider]): Moved into WKBinaryCompatibilityIOS10
+          cateogry implementation, changed type to _WKVisitedLinkStore.
+        (-[WKWebViewConfiguration _setVisitedLinkProvider:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Removed property declaration.
+
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.h: Removed.
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm: Moved declaration in here.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated for header removal.
+
 2016-08-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Instances of WKObject subclasses don’t work correctly with CFGetTypeID()
