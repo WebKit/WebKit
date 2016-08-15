@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(REMOTE_INSPECTOR)
+#pragma once
 
-#ifndef RemoteAutomationTarget_h
-#define RemoteAutomationTarget_h
+#if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteControllableTarget.h"
 #include <wtf/text/WTFString.h>
@@ -53,7 +52,5 @@ private:
 } // namespace Inspector
 
 SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(Inspector::RemoteAutomationTarget, Automation)
-
-#endif // RemoteAutomationTarget_h
 
 #endif // ENABLE(REMOTE_INSPECTOR)

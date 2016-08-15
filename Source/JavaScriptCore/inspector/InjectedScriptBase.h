@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScriptBase_h
-#define InjectedScriptBase_h
+#pragma once
 
 #include "InspectorEnvironment.h"
 #include "InspectorProtocolObjects.h"
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // InjectedScriptBase_h

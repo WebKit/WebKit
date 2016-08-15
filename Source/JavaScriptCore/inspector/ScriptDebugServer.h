@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptDebugServer_h
-#define ScriptDebugServer_h
+#pragma once
 
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
@@ -110,5 +109,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ScriptDebugServer_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventLoop_h
-#define EventLoop_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // EventLoop_h

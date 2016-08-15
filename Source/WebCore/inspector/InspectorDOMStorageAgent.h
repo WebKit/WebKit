@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorDOMStorageAgent_h
-#define InspectorDOMStorageAgent_h
+#pragma once
 
 #include "InspectorWebAgentBase.h"
 #include "StorageArea.h"
@@ -84,5 +83,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(InspectorDOMStorageAgent_h)

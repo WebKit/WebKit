@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorFrontendRouter_h
-#define InspectorFrontendRouter_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InspectorFrontendRouter_h)

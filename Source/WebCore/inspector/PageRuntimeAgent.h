@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageRuntimeAgent_h
-#define PageRuntimeAgent_h
+#pragma once
 
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorFrontendDispatchers.h>
@@ -83,5 +82,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(InspectorPagerAgent_h)

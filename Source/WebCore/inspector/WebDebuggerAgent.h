@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDebuggerAgent_h
-#define WebDebuggerAgent_h
+#pragma once
 
 #include "InspectorWebAgentBase.h"
 #include <inspector/agents/InspectorDebuggerAgent.h>
@@ -49,5 +48,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // !defined(WebDebuggerAgent_h)

@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSearchUtilities_h
-#define ContentSearchUtilities_h
+#pragma once
 
 #include "InspectorProtocolObjects.h"
 #include <wtf/Vector.h>
@@ -53,5 +52,3 @@ JS_EXPORT_PRIVATE String findStylesheetSourceMapURL(const String& content);
 } // namespace ContentSearchUtilities
 
 } // namespace Inspector
-
-#endif // !defined(ContentSearchUtilities_h)

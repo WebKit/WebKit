@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommandLineAPIHost_h
-#define CommandLineAPIHost_h
+#pragma once
 
 #include <inspector/PerGlobalObjectWrapperWorld.h>
 #include <wtf/RefCounted.h>
@@ -114,5 +113,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(CommandLineAPIHost_h)

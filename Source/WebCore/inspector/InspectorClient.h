@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorClient_h
-#define InspectorClient_h
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -68,5 +67,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // !defined(InspectorClient_h)

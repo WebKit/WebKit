@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptDebugListener_h
-#define ScriptDebugListener_h
+#pragma once
 
 #include "debugger/Debugger.h"
 #include <wtf/text/WTFString.h>
@@ -64,5 +63,3 @@ public:
 };
 
 } // namespace Inspector
-
-#endif // ScriptDebugListener_h

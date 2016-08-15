@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptCallFrame_h
-#define ScriptCallFrame_h
+#pragma once
 
 #include "DebuggerPrimitives.h"
 #include "InspectorProtocolObjects.h"
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ScriptCallFrame_h

@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorValues_h
-#define InspectorValues_h
+#pragma once
 
 #include "JSExportMacros.h"
 #include <wtf/Assertions.h>
@@ -409,5 +408,3 @@ inline void InspectorArrayBase::pushArray(RefPtr<InspectorArrayBase>&& value)
 }
 
 } // namespace Inspector
-
-#endif // !defined(InspectorValues_h)

@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptBreakpoint_h
-#define ScriptBreakpoint_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -90,5 +89,3 @@ struct ScriptBreakpoint {
 };
 
 } // namespace Inspector
-
-#endif // !defined(ScriptBreakpoint_h)

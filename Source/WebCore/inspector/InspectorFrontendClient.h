@@ -28,15 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorFrontendClient_h
-#define InspectorFrontendClient_h
+#pragma once
 
 #include <wtf/Forward.h>
 
 namespace WebCore {
-
-class ContextMenuItem;
-class Event;
 
 class InspectorFrontendClient {
 public:
@@ -81,5 +77,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

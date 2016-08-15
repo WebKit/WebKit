@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorScriptProfilerAgent_h
-#define InspectorScriptProfilerAgent_h
+#pragma once
 
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
@@ -82,5 +81,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // InspectorScriptProfilerAgent_h

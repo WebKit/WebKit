@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InstrumentingAgents_h
-#define InstrumentingAgents_h
+#pragma once
 
 #include <inspector/InspectorEnvironment.h>
 #include <wtf/FastMalloc.h>
@@ -169,5 +168,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(InstrumentingAgents_h)

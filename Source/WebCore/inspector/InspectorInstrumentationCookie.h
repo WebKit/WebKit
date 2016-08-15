@@ -28,14 +28,12 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef InspectorInstrumentationCookie_h
-#define InspectorInstrumentationCookie_h
+#pragma once
 
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class InspectorInstrumentation;
 class InstrumentingAgents;
 
 class InspectorInstrumentationCookie {
@@ -56,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // InspectorInstrumentationCookie_h

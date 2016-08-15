@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScriptHost_h
-#define InjectedScriptHost_h
+#pragma once
 
 #include "JSCJSValueInlines.h"
 #include "inspector/PerGlobalObjectWrapperWorld.h"
@@ -49,5 +48,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InjectedScriptHost_h)

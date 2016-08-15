@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScriptModule_h
-#define InjectedScriptModule_h
+#pragma once
 
 #include "InjectedScriptBase.h"
 #include <wtf/text/WTFString.h>
@@ -60,5 +59,3 @@ protected:
 };
 
 } // namespace Inspector
-
-#endif // InjectedScriptModule_h

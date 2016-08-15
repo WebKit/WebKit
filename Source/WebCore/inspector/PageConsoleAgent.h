@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageConsoleAgent_h
-#define PageConsoleAgent_h
+#pragma once
 
 #include "InspectorWebAgentBase.h"
 #include "WebConsoleAgent.h"
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(PageConsoleAgent_h)

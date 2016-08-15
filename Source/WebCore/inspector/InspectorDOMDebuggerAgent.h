@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorDOMDebuggerAgent_h
-#define InspectorDOMDebuggerAgent_h
+#pragma once
 
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorBackendDispatchers.h>
@@ -110,5 +109,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(InspectorDOMDebuggerAgent_h)

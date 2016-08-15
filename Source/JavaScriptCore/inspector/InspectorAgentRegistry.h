@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorAgentRegistry_h
-#define InspectorAgentRegistry_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InspectorAgentRegistry_h)

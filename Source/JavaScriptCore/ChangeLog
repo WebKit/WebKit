@@ -1,3 +1,12 @@
+2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use #pragma once in inspector headers
+        https://bugs.webkit.org/show_bug.cgi?id=160861
+
+        Reviewed by Mark Lam.
+
+        * inspector/*.h:
+
 2016-08-15  Daniel Bates  <dabates@apple.com>
 
         Cannot build WebKit for iOS device using Xcode 7.3/iOS 9.3 public SDK due to missing

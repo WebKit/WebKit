@@ -28,8 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ConsoleMessage_h
-#define ConsoleMessage_h
+#pragma once
 
 #include "ConsoleTypes.h"
 #include "InspectorFrontendDispatchers.h"
@@ -93,5 +92,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ConsoleMessage_h

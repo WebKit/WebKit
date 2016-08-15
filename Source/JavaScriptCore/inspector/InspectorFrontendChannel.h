@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorFrontendChannel_h
-#define InspectorFrontendChannel_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -47,5 +46,3 @@ public:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InspectorFrontendChannel_h)

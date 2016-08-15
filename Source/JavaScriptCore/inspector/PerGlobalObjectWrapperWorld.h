@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerGlobalObjectWrapperWorld_h
-#define PerGlobalObjectWrapperWorld_h
+#pragma once
 
 #include "JSCJSValueInlines.h"
 #include "Strong.h"
@@ -44,5 +43,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(PerGlobalObjectWrapperWorld_h)

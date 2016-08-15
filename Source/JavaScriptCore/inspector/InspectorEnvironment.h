@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorEnvironment_h
-#define InspectorEnvironment_h
+#pragma once
 
 #include "CallData.h"
 
@@ -58,5 +57,3 @@ public:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InspectorEnvironment_h)

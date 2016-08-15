@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorIndexedDBAgent_h
-#define InspectorIndexedDBAgent_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -74,4 +73,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // !defined(InspectorIndexedDBAgent_h)

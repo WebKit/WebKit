@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMEditor_h
-#define DOMEditor_h
+#pragma once
 
 #include "ExceptionCode.h"
 
@@ -81,5 +80,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(DOMEditor_h)

@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScriptManager_h
-#define InjectedScriptManager_h
+#pragma once
 
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
@@ -82,5 +81,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InjectedScriptManager_h)

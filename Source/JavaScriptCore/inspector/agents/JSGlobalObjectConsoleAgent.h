@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSGlobalObjectConsoleAgent_h
-#define JSGlobalObjectConsoleAgent_h
+#pragma once
 
 #include "InspectorConsoleAgent.h"
 #include "JSGlobalObjectScriptDebugServer.h"
@@ -44,5 +43,3 @@ public:
 };
 
 } // namespace Inspector
-
-#endif // !defined(JSGlobalObjectConsoleAgent_h)

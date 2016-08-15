@@ -28,8 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorDatabaseResource_h
-#define InspectorDatabaseResource_h
+#pragma once
 
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/RefCounted.h>
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // InspectorDatabaseResource_h

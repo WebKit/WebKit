@@ -750,5 +750,4 @@ void InspectorIndexedDBAgent::clearObjectStore(ErrorString& errorString, const S
 }
 
 } // namespace WebCore
-
 #endif // ENABLE(INDEXED_DATABASE)

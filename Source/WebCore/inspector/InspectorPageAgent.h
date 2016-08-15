@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorPageAgent_h
-#define InspectorPageAgent_h
+#pragma once
 
 #include "InspectorWebAgentBase.h"
 #include "IntSize.h"
@@ -188,7 +187,4 @@ private:
     RefPtr<Inspector::InspectorObject> m_scriptsToEvaluateOnLoad;
 };
 
-
 } // namespace WebCore
-
-#endif // !defined(InspectorPagerAgent_h)

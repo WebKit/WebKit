@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorFrontendClientLocal_h
-#define InspectorFrontendClientLocal_h
+#pragma once
 
 #include "InspectorFrontendClient.h"
 #include <wtf/Forward.h>
@@ -130,5 +129,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

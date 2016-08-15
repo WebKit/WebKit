@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScript_h
-#define InjectedScript_h
+#pragma once
 
 #include "InjectedScriptBase.h"
 #include <wtf/Forward.h>
@@ -81,5 +80,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // InjectedScript_h

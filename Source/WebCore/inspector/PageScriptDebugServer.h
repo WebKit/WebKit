@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageScriptDebugServer_h
-#define PageScriptDebugServer_h
+#pragma once
 
 #include <inspector/ScriptDebugServer.h>
 
@@ -65,5 +64,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PageScriptDebugServer_h

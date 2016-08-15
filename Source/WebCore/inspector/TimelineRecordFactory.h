@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef TimelineRecordFactory_h
-#define TimelineRecordFactory_h
+#pragma once
 
 #include <inspector/InspectorValues.h>
 #include <wtf/Forward.h>
@@ -67,5 +66,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(TimelineRecordFactory_h)

@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptCallStackFactory_h
-#define ScriptCallStackFactory_h
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -52,5 +51,3 @@ JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackFromException(JSC::E
 JS_EXPORT_PRIVATE Ref<ScriptArguments> createScriptArguments(JSC::ExecState*, unsigned skipArgumentCount);
 
 } // namespace Inspector
-
-#endif // ScriptCallStackFactory_h

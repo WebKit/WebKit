@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInjectedScriptManager_h
-#define WebInjectedScriptManager_h
+#pragma once
 
 #include "CommandLineAPIHost.h"
 #include <inspector/InjectedScriptManager.h>
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(WebInjectedScriptManager_h)

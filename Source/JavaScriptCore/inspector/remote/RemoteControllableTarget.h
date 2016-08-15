@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(REMOTE_INSPECTOR)
+#pragma once
 
-#ifndef RemoteControllableTarget_h
-#define RemoteControllableTarget_h
+#if ENABLE(REMOTE_INSPECTOR)
 
 #include <CoreFoundation/CFRunLoop.h>
 #include <wtf/TypeCasts.h>
@@ -66,7 +65,5 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(ToClassName) \
     static bool isType(const Inspector::RemoteControllableTarget& target) { return target.type() == Inspector::RemoteControllableTarget::Type::ToClassType; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // RemoteControllableTarget_h
 
 #endif // ENABLE(REMOTE_INSPECTOR)

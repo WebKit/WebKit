@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorAgentBase_h
-#define InspectorAgentBase_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -83,5 +82,3 @@ protected:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InspectorAgentBase_h)

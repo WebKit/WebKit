@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(REMOTE_INSPECTOR)
+#pragma once
 
-#ifndef RemoteInspector_h
-#define RemoteInspector_h
+#if ENABLE(REMOTE_INSPECTOR)
 
 #import "RemoteInspectorXPCConnection.h"
 #import <wtf/Forward.h>
@@ -150,7 +149,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // RemoteInspector_h
 
 #endif // ENABLE(REMOTE_INSPECTOR)

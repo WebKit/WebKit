@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IdentifiersFactory_h
-#define IdentifiersFactory_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -43,5 +42,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(IdentifiersFactory_h)

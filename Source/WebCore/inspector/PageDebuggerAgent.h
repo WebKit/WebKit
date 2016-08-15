@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageDebuggerAgent_h
-#define PageDebuggerAgent_h
+#pragma once
 
 #include "WebDebuggerAgent.h"
 
@@ -75,5 +74,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(PageDebuggerAgent_h)

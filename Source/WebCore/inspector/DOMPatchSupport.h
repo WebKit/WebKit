@@ -28,11 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMPatchSupport_h
-#define DOMPatchSupport_h
+#pragma once
 
 #include "ExceptionCode.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -78,5 +76,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(DOMPatchSupport_h)

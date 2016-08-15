@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptCallStack_h
-#define ScriptCallStack_h
+#pragma once
 
 #include "InspectorProtocolObjects.h"
 #include "ScriptCallFrame.h"
@@ -68,5 +67,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ScriptCallStack_h

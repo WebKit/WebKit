@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommandLineAPIModule_h
-#define CommandLineAPIModule_h
+#pragma once
 
 #include <inspector/InjectedScriptModule.h>
 
@@ -41,5 +40,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // !defined(CommandLineAPIModule_h)

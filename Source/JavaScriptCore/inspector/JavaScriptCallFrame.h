@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaScriptCallFrame_h
-#define JavaScriptCallFrame_h
+#pragma once
 
 #include "JSCJSValueInlines.h"
 #include "debugger/DebuggerCallFrame.h"
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // JavaScriptCallFrame_h

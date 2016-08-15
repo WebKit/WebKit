@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorWebAgentBase_h
-#define InspectorWebAgentBase_h
+#pragma once
 
 #include <inspector/InspectorAgentBase.h>
 #include <wtf/text/WTFString.h>
@@ -70,5 +69,3 @@ protected:
 };
     
 } // namespace WebCore
-
-#endif // !defined(InspectorWebAgentBase_h)

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSGlobalObjectRuntimeAgent_h
-#define JSGlobalObjectRuntimeAgent_h
+#pragma once
 
 #include "InspectorRuntimeAgent.h"
 
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(JSGlobalObjectRuntimeAgent_h)

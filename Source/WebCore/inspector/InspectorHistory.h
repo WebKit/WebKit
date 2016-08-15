@@ -28,19 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorHistory_h
-#define InspectorHistory_h
+#pragma once
 
 #include "ExceptionCode.h"
-
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class ContainerNode;
-class Element;
-class Node;
 
 class InspectorHistory final {
     WTF_MAKE_NONCOPYABLE(InspectorHistory); WTF_MAKE_FAST_ALLOCATED;
@@ -81,5 +75,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(InspectorHistory_h)

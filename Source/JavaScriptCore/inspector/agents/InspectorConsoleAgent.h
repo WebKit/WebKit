@@ -23,8 +23,7 @@
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef InspectorConsoleAgent_h
-#define InspectorConsoleAgent_h
+#pragma once
 
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
@@ -92,5 +91,3 @@ protected:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InspectorConsoleAgent_h)

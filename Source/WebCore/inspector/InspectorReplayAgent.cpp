@@ -510,5 +510,4 @@ void InspectorReplayAgent::getSegmentData(ErrorString& errorString, Inspector::P
 }
 
 } // namespace WebCore
-
 #endif // ENABLE(WEB_REPLAY)

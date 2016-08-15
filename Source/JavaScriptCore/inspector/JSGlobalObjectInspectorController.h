@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSGlobalObjectInspectorController_h
-#define JSGlobalObjectInspectorController_h
+#pragma once
 
 #include "InspectorAgentRegistry.h"
 #include "InspectorEnvironment.h"
@@ -131,5 +130,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(JSGlobalObjectInspectorController_h)

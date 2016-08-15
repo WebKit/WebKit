@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorController_h
-#define InspectorController_h
+#pragma once
 
 #include "InspectorOverlay.h"
 #include "PageScriptDebugServer.h"
@@ -150,5 +149,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(InspectorController_h)

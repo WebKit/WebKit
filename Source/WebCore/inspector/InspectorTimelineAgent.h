@@ -30,8 +30,7 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef InspectorTimelineAgent_h
-#define InspectorTimelineAgent_h
+#pragma once
 
 #include "InspectorWebAgentBase.h"
 #include "LayoutRect.h"
@@ -236,5 +235,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // !defined(InspectorTimelineAgent_h)

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteInspectorConstants_h
-#define RemoteInspectorConstants_h
+#pragma once
 
 // WIRConstants are "Web Inspector Relay" constants shared between
 // the WebInspector framework on the OS X side, webinspectord, and
@@ -101,5 +100,3 @@
 #define WIRProxyApplicationParentAuditDataKey   @"WIRProxyApplicationParentAuditData"
 #define WIRProxyApplicationSetupMessage         @"WIRProxyApplicationSetupMessage"
 #define WIRProxyApplicationSetupResponseMessage @"WIRProxyApplicationSetupResponseMessage"
-
-#endif

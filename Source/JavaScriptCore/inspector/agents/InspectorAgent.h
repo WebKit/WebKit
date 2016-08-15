@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorAgent_h
-#define InspectorAgent_h
+#pragma once
 
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
@@ -80,5 +79,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // !defined(InspectorAgent_h)

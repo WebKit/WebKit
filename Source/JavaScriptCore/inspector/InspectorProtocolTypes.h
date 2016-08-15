@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorProtocolTypes_h
-#define InspectorProtocolTypes_h
+#pragma once
 
 #include "InspectorValues.h"
 #include <wtf/Assertions.h>
@@ -179,5 +178,3 @@ template<> struct BindingTraits<int> : public PrimitiveBindingTraits<InspectorVa
 using Protocol::BindingTraits;
 
 } // namespace Inspector
-
-#endif // !defined(InspectorProtocolTypes_h)

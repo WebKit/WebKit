@@ -23,8 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebConsoleAgent_h
-#define WebConsoleAgent_h
+#pragma once
 
 #include <inspector/agents/InspectorConsoleAgent.h>
 
@@ -55,5 +54,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // !defined(WebConsoleAgent_h)

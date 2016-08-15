@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(REMOTE_INSPECTOR)
+#pragma once
 
-#ifndef RemoteConnectionToTarget_h
-#define RemoteConnectionToTarget_h
+#if ENABLE(REMOTE_INSPECTOR)
 
 #import "InspectorFrontendChannel.h"
 #import "RemoteConnectionToTarget.h"
@@ -92,7 +91,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // RemoteConnectionToTarget_h
 
 #endif // ENABLE(REMOTE_INSPECTOR)

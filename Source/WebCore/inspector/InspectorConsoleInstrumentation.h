@@ -29,8 +29,7 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef InspectorConsoleInstrumentation_h
-#define InspectorConsoleInstrumentation_h
+#pragma once
 
 #include "InspectorInstrumentation.h"
 #include <inspector/ScriptArguments.h>
@@ -91,4 +90,3 @@ inline void InspectorInstrumentation::stopProfiling(Page& page, JSC::ExecState* 
 
 } // namespace WebCore
 
-#endif // !defined(InspectorConsoleInstrumentation_h)

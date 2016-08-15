@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSGlobalObjectScriptDebugServer_h
-#define JSGlobalObjectScriptDebugServer_h
+#pragma once
 
 #include "ScriptDebugServer.h"
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // JSGlobalObjectScriptDebugServer_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSJavaScriptCallFrame_h
-#define JSJavaScriptCallFrame_h
+#pragma once
 
 #include "JSDestructibleObject.h"
 #include "JavaScriptCallFrame.h"
@@ -94,5 +93,3 @@ JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JavaScriptCallFrame*);
 JSJavaScriptCallFrame* toJSJavaScriptCallFrame(JSC::JSValue);
 
 } // namespace Inspector
-
-#endif // !defined(JSJavaScriptCallFrame_h)
