@@ -23,10 +23,8 @@
 #ifndef Parser_h
 #define Parser_h
 
-#include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "Executable.h"
-#include "JSGlobalObject.h"
 #include "Lexer.h"
 #include "ModuleScopeData.h"
 #include "Nodes.h"

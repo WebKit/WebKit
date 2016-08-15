@@ -36,7 +36,6 @@
 #include "JSDataView.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSTypedArrays.h"
-
 #include <wtf/RefPtr.h>
 
 using namespace JSC;

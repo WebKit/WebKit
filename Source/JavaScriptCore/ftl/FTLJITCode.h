@@ -33,7 +33,6 @@
 #include "FTLLazySlowPath.h"
 #include "FTLOSRExit.h"
 #include "JITCode.h"
-#include <wtf/RefCountedArray.h>
 
 namespace JSC {
 

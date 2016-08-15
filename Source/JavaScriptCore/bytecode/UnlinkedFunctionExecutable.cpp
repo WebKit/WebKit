@@ -29,17 +29,14 @@
 #include "BytecodeGenerator.h"
 #include "ClassInfo.h"
 #include "CodeCache.h"
+#include "Debugger.h"
 #include "Executable.h"
 #include "ExecutableInfo.h"
 #include "FunctionOverrides.h"
 #include "JSCInlines.h"
-#include "JSString.h"
 #include "Parser.h"
 #include "SourceProvider.h"
 #include "Structure.h"
-#include "SymbolTable.h"
-#include "UnlinkedInstructionStream.h"
-#include <wtf/DataLog.h>
 
 namespace JSC {
 

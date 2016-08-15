@@ -30,7 +30,6 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
-#include "Debugger.h"
 #include "Executable.h"
 #include "HeapInlines.h"
 #include "HeapIterationScope.h"
@@ -46,7 +45,6 @@
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 #include "VM.h"
-#include "VMEntryScope.h"
 #include <wtf/HashSet.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RefPtr.h>

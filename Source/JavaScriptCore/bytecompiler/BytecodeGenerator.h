@@ -32,27 +32,23 @@
 #define BytecodeGenerator_h
 
 #include "CodeBlock.h"
-#include <wtf/HashTraits.h>
 #include "Instruction.h"
+#include "Interpreter.h"
 #include "Label.h"
 #include "LabelScope.h"
-#include "Interpreter.h"
+#include "Nodes.h"
 #include "ParserError.h"
 #include "RegisterID.h"
 #include "SetForScope.h"
-#include "SymbolTable.h"
-#include "Debugger.h"
-#include "Nodes.h"
 #include "StaticPropertyAnalyzer.h"
+#include "SymbolTable.h"
 #include "TemplateRegistryKey.h"
 #include "UnlinkedCodeBlock.h"
-
 #include <functional>
-
+#include <wtf/HashTraits.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
-
 
 namespace JSC {
 

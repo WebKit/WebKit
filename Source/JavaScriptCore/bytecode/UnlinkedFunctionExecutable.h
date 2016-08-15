@@ -41,7 +41,6 @@
 #include "SpecialPointer.h"
 #include "VariableEnvironment.h"
 #include "VirtualRegister.h"
-#include <wtf/RefCountedArray.h>
 
 namespace JSC {
 

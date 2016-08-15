@@ -36,7 +36,6 @@
 #include <wtf/Lock.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/Vector.h>
-#include <wtf/WorkQueue.h>
 
 namespace JSC {
 

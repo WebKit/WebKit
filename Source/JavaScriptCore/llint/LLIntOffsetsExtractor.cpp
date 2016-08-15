@@ -28,7 +28,6 @@
 #include "ArrayProfile.h"
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
-#include "Debugger.h"
 #include "DirectArguments.h"
 #include "Exception.h"
 #include "Executable.h"

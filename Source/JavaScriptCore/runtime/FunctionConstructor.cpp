@@ -21,16 +21,11 @@
 #include "config.h"
 #include "FunctionConstructor.h"
 
-#include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSString.h"
-#include "Lexer.h"
-#include "Nodes.h"
 #include "JSCInlines.h"
-#include "Parser.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {

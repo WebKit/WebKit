@@ -40,13 +40,11 @@
 #include "UnlinkedFunctionExecutable.h"
 #include "VariableEnvironment.h"
 #include "VirtualRegister.h"
-#include <wtf/RefCountedArray.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
-class Debugger;
 class FunctionMetadataNode;
 class FunctionExecutable;
 class JSScope;

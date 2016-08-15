@@ -52,7 +52,6 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
-#include "JSWithScope.h"
 #include "ObjectConstructor.h"
 #include "PolymorphicAccess.h"
 #include "PropertyName.h"

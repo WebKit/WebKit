@@ -30,7 +30,6 @@
 
 #include "BasicBlockLocation.h"
 #include "CopiedSpaceInlines.h"
-#include "Debugger.h"
 #include "Exception.h"
 #include "Heap.h"
 #include "JITInlines.h"

@@ -31,12 +31,10 @@
 #include "JIT.h"
 
 #include "CCallHelpers.h"
-#include "Debugger.h"
 #include "Exception.h"
 #include "JITInlines.h"
 #include "JSArray.h"
 #include "JSCell.h"
-#include "JSEnvironmentRecord.h"
 #include "JSFunction.h"
 #include "JSPropertyNameEnumerator.h"
 #include "LinkBuffer.h"

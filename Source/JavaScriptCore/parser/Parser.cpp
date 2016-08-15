@@ -24,18 +24,12 @@
 #include "Parser.h"
 
 #include "ASTBuilder.h"
-#include "CodeBlock.h"
-#include "Debugger.h"
-#include "JSCJSValueInlines.h"
-#include "Lexer.h"
 #include "JSCInlines.h"
 #include "SetForScope.h"
 #include "SourceProvider.h"
 #include "VM.h"
 #include <utility>
-#include <wtf/HashFunctions.h>
 #include <wtf/StringPrintStream.h>
-#include <wtf/WTFThreadData.h>
 
 
 #define updateErrorMessage(shouldPrintToken, ...) do {\

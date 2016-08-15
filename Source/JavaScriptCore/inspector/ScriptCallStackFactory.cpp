@@ -43,7 +43,6 @@
 #include "ScriptCallStack.h"
 #include "ScriptValue.h"
 #include "StackVisitor.h"
-#include <wtf/RefCountedArray.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;

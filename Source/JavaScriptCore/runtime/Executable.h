@@ -44,7 +44,6 @@
 namespace JSC {
 
 class CodeBlock;
-class Debugger;
 class EvalCodeBlock;
 class FunctionCodeBlock;
 class JSScope;

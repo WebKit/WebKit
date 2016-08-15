@@ -74,7 +74,6 @@
 #include "DFGVarargsForwardingPhase.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
 #include "DFGWatchpointCollectionPhase.h"
-#include "Debugger.h"
 #include "JSCInlines.h"
 #include "OperandsInlines.h"
 #include "ProfilerDatabase.h"

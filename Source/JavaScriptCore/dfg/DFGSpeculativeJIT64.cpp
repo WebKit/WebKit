@@ -34,7 +34,6 @@
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
-#include "Debugger.h"
 #include "DirectArguments.h"
 #include "GetterSetter.h"
 #include "JSCInlines.h"

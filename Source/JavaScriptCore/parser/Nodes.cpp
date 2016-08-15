@@ -27,24 +27,12 @@
 #include "Nodes.h"
 #include "NodeConstructors.h"
 
-#include "CallFrame.h"
-#include "Debugger.h"
-#include "JIT.h"
-#include "JSFunction.h"
-#include "JSGlobalObject.h"
-#include "LabelScope.h"
-#include "Lexer.h"
 #include "JSCInlines.h"
-#include "Parser.h"
-#include "PropertyNameArray.h"
-#include "RegExpObject.h"
 #include <wtf/Assertions.h>
-#include <wtf/Threading.h>
 
 using namespace WTF;
 
 namespace JSC {
-
 
 // ------------------------------ StatementNode --------------------------------
 

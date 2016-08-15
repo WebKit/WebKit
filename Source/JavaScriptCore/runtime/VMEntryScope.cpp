@@ -26,7 +26,6 @@
 #include "config.h"
 #include "VMEntryScope.h"
 
-#include "Debugger.h"
 #include "Options.h"
 #include "SamplingProfiler.h"
 #include "VM.h"

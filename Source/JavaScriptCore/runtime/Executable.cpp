@@ -28,18 +28,15 @@
 
 #include "BatchedTransitionOptimizer.h"
 #include "CodeBlock.h"
-#include "DFGDriver.h"
+#include "Debugger.h"
 #include "JIT.h"
 #include "JSCInlines.h"
 #include "JSWASMModule.h"
 #include "LLIntEntrypoint.h"
 #include "Parser.h"
-#include "ProfilerDatabase.h"
 #include "TypeProfiler.h"
 #include "VMInlines.h"
 #include <wtf/CommaPrinter.h>
-#include <wtf/Vector.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

@@ -25,7 +25,6 @@
 
 #include "CallFrame.h"
 #include "CodeProfiling.h"
-#include "Debugger.h"
 #include "Exception.h"
 #include "IdentifierInlines.h"
 #include "Interpreter.h"

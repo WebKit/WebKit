@@ -1,5 +1,39 @@
 2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Reduce includes of Debugger.h
+        https://bugs.webkit.org/show_bug.cgi?id=160827
+
+        Reviewed by Mark Lam.
+
+        * API/JSTypedArray.cpp:
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        * dfg/DFGPlan.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * ftl/FTLJITCode.h:
+        * inspector/ScriptCallStackFactory.cpp:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITOperations.cpp:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * parser/Nodes.cpp:
+        * parser/Parser.cpp:
+        * parser/Parser.h:
+        * runtime/Completion.cpp:
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/SamplingProfiler.cpp:
+        * runtime/SamplingProfiler.h:
+        * runtime/VMEntryScope.cpp:
+
+2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Remove unused includes of wtf headers
         https://bugs.webkit.org/show_bug.cgi?id=160839
 

@@ -31,12 +31,10 @@
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
 #include "CallFrame.h"
-#include "Debugger.h"
 #include "JIT.h"
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObject.h"
-#include "JSONObject.h"
 #include "LabelScope.h"
 #include "Lexer.h"
 #include "JSCInlines.h"
@@ -48,7 +46,6 @@
 #include "StackAlignment.h"
 #include "TemplateRegistryKey.h"
 #include <wtf/Assertions.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
 
 using namespace WTF;
