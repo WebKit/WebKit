@@ -40,7 +40,6 @@ class SocketStreamHandleClient {
 public:
     virtual ~SocketStreamHandleClient() { }
 
-    virtual void willOpenSocketStream(SocketStreamHandle&) { }
     virtual void didOpenSocketStream(SocketStreamHandle&) { }
     virtual void didCloseSocketStream(SocketStreamHandle&) { }
     virtual void didReceiveSocketStreamData(SocketStreamHandle&, const char* /*data*/, int /*length*/) { }

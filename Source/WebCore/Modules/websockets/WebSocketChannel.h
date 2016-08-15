@@ -80,7 +80,6 @@ public:
     void resume() override;
 
     // SocketStreamHandleClient functions.
-    void willOpenSocketStream(SocketStreamHandle&) override;
     void didOpenSocketStream(SocketStreamHandle&) override;
     void didCloseSocketStream(SocketStreamHandle&) override;
     void didReceiveSocketStreamData(SocketStreamHandle&, const char*, int) override;

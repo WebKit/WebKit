@@ -271,11 +271,6 @@ void WebSocketChannel::resume()
         m_resumeTimer.startOneShot(0);
 }
 
-void WebSocketChannel::willOpenSocketStream(SocketStreamHandle&)
-{
-    LOG(Network, "WebSocketChannel %p willOpenSocketStream()", this);
-}
-
 void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
 {
     LOG(Network, "WebSocketChannel %p didOpenSocketStream()", this);
