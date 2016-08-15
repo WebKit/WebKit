@@ -29,10 +29,8 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "SourceBufferPrivate.h"
-#include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

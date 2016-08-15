@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE)
 
 #include <runtime/JSCInlines.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

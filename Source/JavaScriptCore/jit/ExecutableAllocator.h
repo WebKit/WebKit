@@ -33,8 +33,6 @@
 #include <wtf/MetaAllocatorHandle.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageAllocation.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 #if OS(IOS)
 #include <libkern/OSCacheControl.h>

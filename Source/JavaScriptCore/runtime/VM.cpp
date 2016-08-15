@@ -99,7 +99,6 @@
 #include "WeakMapData.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>

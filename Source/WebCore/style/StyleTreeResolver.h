@@ -33,7 +33,6 @@
 #include "StyleSharingResolver.h"
 #include "StyleUpdate.h"
 #include <wtf/Function.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

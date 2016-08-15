@@ -30,7 +30,6 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/HashSet.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/StringHash.h>
 

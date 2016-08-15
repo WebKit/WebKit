@@ -30,7 +30,6 @@
 #include "CodeBlockHash.h"
 #include "CodeSpecializationKind.h"
 #include "WriteBarrier.h"
-#include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>

@@ -34,7 +34,6 @@
 #include "IntRect.h"
 #include "MediaSourceSettings.h"
 #include "UUID.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

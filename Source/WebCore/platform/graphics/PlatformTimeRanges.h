@@ -28,7 +28,6 @@
 
 #include <algorithm>
 #include <wtf/MediaTime.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

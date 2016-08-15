@@ -29,8 +29,6 @@
 #include "FloatSize.h"
 #include "Image.h"
 
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
 class GeneratedImage : public Image {

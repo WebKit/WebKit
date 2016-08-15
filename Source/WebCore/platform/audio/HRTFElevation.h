@@ -32,7 +32,6 @@
 #include "HRTFKernel.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>

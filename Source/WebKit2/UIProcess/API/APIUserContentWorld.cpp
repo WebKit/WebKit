@@ -26,8 +26,6 @@
 #include "config.h"
 #include "APIUserContentWorld.h"
 
-#include <wtf/NeverDestroyed.h>
-
 namespace API {
 
 static const uint64_t normalWorldIdentifer = 1;

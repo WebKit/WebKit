@@ -29,7 +29,6 @@
 #import "WebBackForwardList.h"
 #import "WebHistoryItemPrivate.h"
 #import <wtf/RefPtr.h>
-#import <wtf/Vector.h>
 
 namespace WebCore {
     class HistoryItem;

@@ -34,7 +34,6 @@
 #include "ShadowChicken.h"
 #include "Strong.h"
 #include <wtf/NakedPtr.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
 

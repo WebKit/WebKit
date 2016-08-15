@@ -33,7 +33,6 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/Timer.h>
-#include <wtf/HashMap.h>
 
 namespace IPC {
 class ArgumentDecoder;

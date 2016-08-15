@@ -40,7 +40,6 @@
 #include "ScrollingTreeStickyNode.h"
 #include "ScrollingTreeIOS.h"
 #include <wtf/MainThread.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

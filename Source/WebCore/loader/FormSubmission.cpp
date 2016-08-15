@@ -49,7 +49,6 @@
 #include "HTMLParserIdioms.h"
 #include "TextEncoding.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/RandomNumber.h>
 
 namespace WebCore {
 

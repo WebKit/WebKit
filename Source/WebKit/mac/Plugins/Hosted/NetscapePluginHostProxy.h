@@ -31,7 +31,6 @@
 #include <dispatch/dispatch.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/PassRefPtr.h>
 
 @class WebPlaceholderModalWindow;
 

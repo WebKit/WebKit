@@ -37,7 +37,6 @@
 #import "SoftLinking.h"
 #import <objc/runtime.h>
 #import <wtf/text/AtomicString.h>
-#import <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

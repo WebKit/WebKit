@@ -33,7 +33,6 @@
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
-#include <wtf/HashMap.h>
 
 namespace JSC { namespace DFG {
 

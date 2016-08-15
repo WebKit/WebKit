@@ -31,8 +31,8 @@
 #include <WebCore/StorageArea.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 class SecurityOrigin;

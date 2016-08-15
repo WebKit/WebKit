@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "WebEvent.h"
-#include <wtf/PassRefPtr.h>
 
 #if PLATFORM(MAC)
 OBJC_CLASS CALayer;

@@ -32,8 +32,8 @@
 
 #include "DOMWindowProperty.h"
 #include "ScriptWrappable.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

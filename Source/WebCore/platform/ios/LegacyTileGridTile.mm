@@ -38,7 +38,6 @@
 #include "WAKWindow.h"
 #include <algorithm>
 #include <functional>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

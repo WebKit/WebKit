@@ -55,7 +55,6 @@
 #include <WebCore/Page.h>
 
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

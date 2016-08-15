@@ -103,7 +103,6 @@
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include "markup.h"
-#include <wtf/BitVector.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>

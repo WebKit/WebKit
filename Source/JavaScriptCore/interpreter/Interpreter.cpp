@@ -75,7 +75,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
-#include <wtf/WTFThreadData.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(JIT)

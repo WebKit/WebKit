@@ -35,7 +35,6 @@
 #include <wtf/CrossThreadTask.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/MessageQueue.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

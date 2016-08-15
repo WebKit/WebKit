@@ -30,7 +30,6 @@
 #include "FloatPoint.h"
 #include "IntRect.h"
 #include "Timer.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

@@ -39,7 +39,6 @@
 #import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/TiledBacking.h>
 #import <wtf/CurrentTime.h>
-#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
 

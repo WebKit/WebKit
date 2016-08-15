@@ -27,7 +27,7 @@
 #define StyleFilterData_h
 
 #include "FilterOperations.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

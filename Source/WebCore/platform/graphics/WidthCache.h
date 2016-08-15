@@ -31,7 +31,6 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Hasher.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

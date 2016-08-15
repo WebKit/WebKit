@@ -30,7 +30,6 @@
 #include "StringHash.h"
 #include <wtf/ProcessID.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/WTFThreadData.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/SymbolImpl.h>

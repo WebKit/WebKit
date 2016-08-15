@@ -31,7 +31,6 @@
 #include "DFGBasicBlock.h"
 #include "DFGBlockSet.h"
 #include <wtf/GraphNodeWorklist.h>
-#include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 

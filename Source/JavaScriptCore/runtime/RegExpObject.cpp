@@ -34,7 +34,6 @@
 #include "RegExpMatchesArray.h"
 #include "RegExpObjectInlines.h"
 #include "RegExpPrototype.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

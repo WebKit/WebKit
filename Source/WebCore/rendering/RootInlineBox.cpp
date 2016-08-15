@@ -39,7 +39,6 @@
 #include "RenderRubyText.h"
 #include "RenderView.h"
 #include "VerticalPositionCache.h"
-#include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS)
 #include "Settings.h"

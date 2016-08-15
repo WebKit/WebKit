@@ -31,7 +31,6 @@
 #if USE(AUDIO_SESSION)
 
 #include <memory>
-#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 

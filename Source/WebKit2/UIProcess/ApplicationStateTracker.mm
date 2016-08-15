@@ -31,7 +31,6 @@
 #import "AssertionServicesSPI.h"
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
-#import <wtf/NeverDestroyed.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 

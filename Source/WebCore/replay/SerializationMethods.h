@@ -32,7 +32,6 @@
 
 #include <replay/EncodedValue.h>
 #include <replay/NondeterministicInput.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

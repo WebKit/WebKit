@@ -27,9 +27,6 @@
 #define FontFeatureSettings_h
 
 #include <array>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 

@@ -40,7 +40,7 @@
 #include "JSVoidCallback.h"
 #include "SerializedScriptValue.h"
 #include <runtime/JSTypedArrays.h>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/AtomicString.h>
 

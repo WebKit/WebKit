@@ -34,7 +34,6 @@
 #include "ActiveDOMObject.h"
 #include "EventListener.h"
 #include "EventTarget.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>

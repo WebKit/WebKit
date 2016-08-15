@@ -35,6 +35,7 @@
 #include "FileStream.h"
 #include "FileStreamClient.h"
 #include "URL.h"
+#include <mutex>
 #include <wtf/AutodrainedPool.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>

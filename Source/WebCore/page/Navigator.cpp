@@ -37,7 +37,6 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WTF;

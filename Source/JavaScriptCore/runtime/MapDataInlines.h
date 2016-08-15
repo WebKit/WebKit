@@ -31,10 +31,6 @@
 #include "MapData.h"
 #include "SlotVisitorInlines.h"
 
-#include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/MathExtras.h>
-
-
 namespace JSC {
 
 template<typename Entry, typename JSIterator>

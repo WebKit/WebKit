@@ -29,7 +29,6 @@
 #include "APIObject.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include <wtf/PassRefPtr.h>
 
 namespace API {
 

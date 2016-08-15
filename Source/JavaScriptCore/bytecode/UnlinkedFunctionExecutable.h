@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UnlinkedFunctionExecutable_h
-#define UnlinkedFunctionExecutable_h
+#pragma once
 
 #include "BytecodeConventions.h"
 #include "CodeSpecializationKind.h"
@@ -43,7 +42,6 @@
 #include "VariableEnvironment.h"
 #include "VirtualRegister.h"
 #include <wtf/RefCountedArray.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -194,5 +192,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // UnlinkedFunctionExecutable_h

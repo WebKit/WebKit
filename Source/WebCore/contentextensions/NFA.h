@@ -31,7 +31,6 @@
 #include "ContentExtensionsDebugging.h"
 #include "ImmutableNFANodeBuilder.h"
 #include "NFANode.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

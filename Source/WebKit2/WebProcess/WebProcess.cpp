@@ -104,7 +104,6 @@
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashCountedSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
 

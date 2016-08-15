@@ -39,7 +39,6 @@
 #include "Page.h"
 #include "RealtimeMediaSource.h"
 #include "URL.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

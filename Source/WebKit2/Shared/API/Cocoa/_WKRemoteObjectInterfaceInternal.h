@@ -29,7 +29,6 @@
 
 #import <wtf/Forward.h>
 #import <wtf/HashSet.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
 @interface _WKRemoteObjectInterface ()

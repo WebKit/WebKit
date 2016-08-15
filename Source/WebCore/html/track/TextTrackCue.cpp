@@ -49,7 +49,6 @@
 #include "VTTCue.h"
 #include "VTTRegionList.h"
 #include <wtf/MathExtras.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

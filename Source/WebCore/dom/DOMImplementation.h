@@ -29,7 +29,6 @@
 #include "XMLDocument.h"
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

@@ -37,7 +37,6 @@
 #import "JavaScriptCore.h"
 #import "ObjcRuntimeExtras.h"
 #import "StrongInlines.h"
-#import <wtf/HashSet.h>
 
 #if JSC_OBJC_API_ENABLED
 

@@ -24,7 +24,6 @@
 
 #include "DocumentRuleSets.h"
 #include "StyleResolver.h"
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

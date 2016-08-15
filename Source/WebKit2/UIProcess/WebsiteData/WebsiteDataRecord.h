@@ -28,6 +28,7 @@
 
 #include "WebsiteDataType.h"
 #include <WebCore/SecurityOriginHash.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>

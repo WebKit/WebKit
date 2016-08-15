@@ -27,7 +27,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSource.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

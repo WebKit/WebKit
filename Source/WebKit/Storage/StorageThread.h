@@ -27,7 +27,6 @@
 #define StorageThread_h
 
 #include <wtf/Function.h>
-#include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/Threading.h>
 

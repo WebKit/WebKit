@@ -29,7 +29,6 @@
 #include "ArrayBufferNeuteringWatchpoint.h"
 #include "JSArrayBufferView.h"
 #include "JSCInlines.h"
-#include <wtf/RefPtr.h>
 
 namespace JSC {
 

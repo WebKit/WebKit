@@ -58,7 +58,6 @@
 #include <runtime/ArrayBufferView.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>

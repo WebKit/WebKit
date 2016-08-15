@@ -27,7 +27,6 @@
 #ifndef CanvasProxy_h
 #define CanvasProxy_h
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

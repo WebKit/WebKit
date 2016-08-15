@@ -35,7 +35,6 @@
 
 #include "FontCascade.h"
 #include "MockRealtimeVideoSource.h"
-#include <wtf/RunLoop.h>
 
 typedef struct __CVBuffer *CVBufferRef;
 typedef CVBufferRef CVImageBufferRef;

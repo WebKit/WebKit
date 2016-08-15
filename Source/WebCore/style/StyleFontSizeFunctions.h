@@ -27,7 +27,6 @@
 #define StyleFontSizeFunctions_h
 
 #include "TextFlags.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

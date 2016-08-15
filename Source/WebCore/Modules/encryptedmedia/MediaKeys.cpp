@@ -34,7 +34,6 @@
 #include "MediaKeyMessageEvent.h"
 #include "MediaKeySession.h"
 #include "UUID.h"
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 

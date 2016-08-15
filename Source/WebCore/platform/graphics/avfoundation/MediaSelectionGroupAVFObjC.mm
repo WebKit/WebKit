@@ -34,8 +34,6 @@
 #import <AVFoundation/AVMediaSelectionGroup.h>
 #import <AVFoundation/AVPlayerItem.h>
 #import <objc/runtime.h>
-#import <wtf/HashMap.h>
-#import <wtf/HashSet.h>
 #import <wtf/text/WTFString.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)

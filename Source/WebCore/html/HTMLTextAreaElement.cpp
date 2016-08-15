@@ -51,7 +51,6 @@
 #include "TextNodeTraversal.h"
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

@@ -33,7 +33,6 @@
 
 #if ENABLE(CSS_GRID_LAYOUT)
 #include "CSSValueList.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

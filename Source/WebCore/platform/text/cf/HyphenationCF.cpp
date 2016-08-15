@@ -27,7 +27,6 @@
 #include "Hyphenation.h"
 
 #include "Language.h"
-#include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/text/StringView.h>

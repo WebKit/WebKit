@@ -29,7 +29,6 @@
 #include "JSDOMBinding.h"
 #include <heap/StrongInlines.h>
 #include <runtime/JSPromiseDeferred.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

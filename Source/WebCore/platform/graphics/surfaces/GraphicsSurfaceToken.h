@@ -22,8 +22,6 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 #if USE(GRAPHICS_SURFACE)
 

@@ -29,7 +29,6 @@
 #include "AudioNode.h"
 #include "AudioSummingJunction.h"
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

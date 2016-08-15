@@ -37,7 +37,6 @@
 #include "WebKitCSSFilterValue.h"
 #include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/TextPosition.h>

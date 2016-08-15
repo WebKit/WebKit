@@ -22,7 +22,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include <WebCore/UserMediaClient.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 

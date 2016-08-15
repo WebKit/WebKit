@@ -27,7 +27,6 @@
 #define EditingRange_h
 
 #include "ArgumentCoders.h"
-#include <wtf/Vector.h>
 
 namespace WebKit {
 

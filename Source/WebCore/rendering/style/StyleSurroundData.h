@@ -27,8 +27,8 @@
 
 #include "BorderData.h"
 #include "LengthBox.h"
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

@@ -37,7 +37,6 @@
 #include "MIMEHeader.h"
 #include "MIMETypeRegistry.h"
 #include "QuotedPrintable.h"
-#include <wtf/HashMap.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {

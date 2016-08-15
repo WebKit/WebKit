@@ -29,7 +29,6 @@
 
 #import "APIUserInitiatedAction.h"
 #import "WKObject.h"
-#import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
 namespace API {

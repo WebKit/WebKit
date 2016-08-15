@@ -29,7 +29,6 @@
 
 #if PLATFORM(MAC)
 
-#include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

@@ -32,9 +32,6 @@
 #include "MarkedBlock.h"
 #include "JSCInlines.h"
 
-#include <wtf/HashSet.h>
-#include <wtf/WTFThreadData.h>
-
 #if PLATFORM(EFL)
 #include <Ecore.h>
 #include <wtf/CurrentTime.h>

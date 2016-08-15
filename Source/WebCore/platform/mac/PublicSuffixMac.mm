@@ -28,7 +28,6 @@
 
 #import "WebCoreSystemInterface.h"
 #import "WebCoreNSURLExtras.h"
-#import <wtf/RetainPtr.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 

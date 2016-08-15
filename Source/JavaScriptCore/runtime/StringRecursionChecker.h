@@ -23,7 +23,6 @@
 #include "Interpreter.h"
 #include "VMInlines.h"
 #include <wtf/StackStats.h>
-#include <wtf/WTFThreadData.h>
 
 namespace JSC {
 

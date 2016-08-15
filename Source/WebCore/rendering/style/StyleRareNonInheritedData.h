@@ -40,7 +40,6 @@
 #include "StyleSelfAlignmentData.h"
 #include "WillChangeData.h"
 #include <memory>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

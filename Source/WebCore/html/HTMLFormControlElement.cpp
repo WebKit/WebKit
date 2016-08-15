@@ -42,7 +42,6 @@
 #include "RenderTheme.h"
 #include "StyleTreeResolver.h"
 #include "ValidationMessage.h"
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 

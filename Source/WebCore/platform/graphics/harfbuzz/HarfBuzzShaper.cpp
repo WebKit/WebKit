@@ -39,7 +39,6 @@
 #include <unicode/uchar.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {

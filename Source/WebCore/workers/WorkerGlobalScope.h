@@ -35,11 +35,10 @@
 #include "WorkerScriptController.h"
 #include <memory>
 #include <wtf/Assertions.h>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
-#include <wtf/text/AtomicStringHash.h>
 
 namespace Inspector {
 class ConsoleMessage;

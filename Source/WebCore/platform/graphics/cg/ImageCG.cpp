@@ -33,7 +33,6 @@
 #include "GraphicsContextCG.h"
 #include "ImageObserver.h"
 #include <CoreGraphics/CoreGraphics.h>
-#include <wtf/RetainPtr.h>
 
 #if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"

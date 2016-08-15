@@ -32,8 +32,6 @@
 #include "Animation.h"
 #include "CSSPropertyNames.h"
 #include "RenderStyleConstants.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 

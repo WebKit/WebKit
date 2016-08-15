@@ -33,7 +33,6 @@
 #include "DFABytecode.h"
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
     

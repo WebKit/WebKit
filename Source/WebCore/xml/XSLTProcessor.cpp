@@ -42,9 +42,7 @@
 #include "TextResourceDecoder.h"
 #include "XMLDocument.h"
 #include "markup.h"
-
 #include <wtf/Assertions.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

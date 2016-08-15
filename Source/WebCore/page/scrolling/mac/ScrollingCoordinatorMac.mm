@@ -42,7 +42,6 @@
 #include "ScrollingTreeStickyNode.h"
 #include "TiledBacking.h"
 #include <wtf/MainThread.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

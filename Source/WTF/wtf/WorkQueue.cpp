@@ -27,7 +27,9 @@
 #include "WorkQueue.h"
 
 #include <mutex>
-#include <wtf/MessageQueue.h>
+#include <wtf/Condition.h>
+#include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Ref.h>

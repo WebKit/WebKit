@@ -30,7 +30,6 @@
 #include "RenderBlockFlow.h"
 #include "SimpleLineLayoutFlowContents.h"
 #include "SimpleLineLayoutFunctions.h"
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

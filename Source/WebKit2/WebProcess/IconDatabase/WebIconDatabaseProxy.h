@@ -32,7 +32,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebKit {
 

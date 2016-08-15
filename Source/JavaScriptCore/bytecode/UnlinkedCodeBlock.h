@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UnlinkedCodeBlock_h
-#define UnlinkedCodeBlock_h
+#pragma once
 
 #include "BytecodeConventions.h"
 #include "CodeSpecializationKind.h"
@@ -41,7 +40,6 @@
 #include "UnlinkedFunctionExecutable.h"
 #include "VariableEnvironment.h"
 #include "VirtualRegister.h"
-#include <wtf/FastBitVector.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
@@ -674,5 +672,3 @@ public:
 };
 
 }
-
-#endif // UnlinkedCodeBlock_h

@@ -31,7 +31,6 @@
 
 #include "APIArray.h"
 #include <WebCore/ContextMenuItem.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 

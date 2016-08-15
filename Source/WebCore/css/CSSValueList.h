@@ -22,7 +22,6 @@
 #define CSSValueList_h
 
 #include "CSSValue.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

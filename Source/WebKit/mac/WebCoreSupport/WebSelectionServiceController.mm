@@ -32,7 +32,6 @@
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/Range.h>
-#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 

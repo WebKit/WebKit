@@ -28,8 +28,7 @@
 
 #include "SMILTime.h"
 #include "SVGElement.h"
-
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 

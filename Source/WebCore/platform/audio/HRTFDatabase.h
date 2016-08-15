@@ -33,7 +33,6 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

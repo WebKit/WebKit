@@ -27,7 +27,6 @@
 #define CachedCSSStyleSheet_h
 
 #include "CachedResource.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

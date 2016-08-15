@@ -31,7 +31,6 @@
 #include <runtime/IdentifierInlines.h>
 #include <runtime/JSObject.h>
 #include <runtime/ObjectConstructor.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

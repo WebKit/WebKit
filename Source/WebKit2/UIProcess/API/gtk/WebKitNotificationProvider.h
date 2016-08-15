@@ -23,7 +23,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitNotification.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace API {

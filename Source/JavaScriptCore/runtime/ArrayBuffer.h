@@ -30,7 +30,6 @@
 #include "Weak.h"
 #include <functional>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 

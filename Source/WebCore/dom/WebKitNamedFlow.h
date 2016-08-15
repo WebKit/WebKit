@@ -32,7 +32,6 @@
 
 #include "EventTarget.h"
 
-#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>

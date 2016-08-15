@@ -34,7 +34,6 @@
 #include "DFGMayExit.h"
 #include "JSCInlines.h"
 #include <wtf/Assertions.h>
-#include <wtf/BitVector.h>
 
 namespace JSC { namespace DFG {
 

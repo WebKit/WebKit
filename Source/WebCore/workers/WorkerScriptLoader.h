@@ -34,8 +34,8 @@
 #include "ThreadableLoaderClient.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

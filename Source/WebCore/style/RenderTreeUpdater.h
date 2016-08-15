@@ -31,7 +31,6 @@
 #include "StyleUpdate.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

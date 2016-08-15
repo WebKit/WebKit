@@ -37,15 +37,15 @@
 #include "PositionOptions.h"
 #include "ScriptWrappable.h"
 #include "Timer.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
 class Document;
 class Frame;
 class GeoNotifier;
-class GeolocationController;
 class GeolocationError;
-class GeolocationPosition;
 class Page;
 class ScriptExecutionContext;
 class SecurityOrigin;

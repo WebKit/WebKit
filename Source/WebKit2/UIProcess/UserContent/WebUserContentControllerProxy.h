@@ -32,10 +32,8 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
 namespace API {

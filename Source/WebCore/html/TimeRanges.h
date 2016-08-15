@@ -28,9 +28,7 @@
 
 #include "PlatformTimeRanges.h"
 #include <algorithm>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

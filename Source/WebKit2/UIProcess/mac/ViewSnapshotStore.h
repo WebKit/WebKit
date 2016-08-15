@@ -32,7 +32,6 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if !defined(__OBJC__)

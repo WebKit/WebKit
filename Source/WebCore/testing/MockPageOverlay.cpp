@@ -32,8 +32,6 @@
 #include "MainFrame.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

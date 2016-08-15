@@ -34,7 +34,6 @@
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
 #import <wtf/ObjcRuntimeExtras.h>
-#import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/FileSystemIOS.h>

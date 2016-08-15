@@ -35,8 +35,6 @@
 #import <spawn.h>
 #import <sys/param.h>
 #import <sys/stat.h>
-#import <wtf/PassRefPtr.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
 #import <wtf/spi/darwin/XPCSPI.h>

@@ -26,9 +26,6 @@
 #ifndef UserContentTypes_h
 #define UserContentTypes_h
 
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
-
 namespace WebCore {
 
 enum UserContentInjectedFrames { InjectInAllFrames, InjectInTopFrameOnly };

@@ -36,7 +36,6 @@
 #include "Event.h"
 #include "EventTarget.h"
 #include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 

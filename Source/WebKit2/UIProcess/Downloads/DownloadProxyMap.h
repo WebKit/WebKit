@@ -29,7 +29,6 @@
 #include "DownloadID.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 class ResourceRequest;

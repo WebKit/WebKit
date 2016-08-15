@@ -32,7 +32,6 @@
 #include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

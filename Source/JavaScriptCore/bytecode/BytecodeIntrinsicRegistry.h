@@ -28,7 +28,6 @@
 #define BytecodeIntrinsicRegistry_h
 
 #include "Identifier.h"
-#include <wtf/HashTable.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

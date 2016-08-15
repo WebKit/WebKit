@@ -33,7 +33,6 @@
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS AVAssetTrack;

@@ -37,7 +37,6 @@
 #include "EventTarget.h"
 #include "HTMLElement.h"
 #include "TextTrackCue.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

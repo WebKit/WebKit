@@ -34,7 +34,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSource.h"
-#include <wtf/RunLoop.h>
 
 namespace WebCore {
 

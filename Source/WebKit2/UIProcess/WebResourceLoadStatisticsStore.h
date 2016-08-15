@@ -29,7 +29,6 @@
 #include "APIObject.h"
 #include "Connection.h"
 #include <WebCore/ResourceLoadStatisticsStore.h>
-#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

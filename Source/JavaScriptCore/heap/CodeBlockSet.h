@@ -31,7 +31,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 

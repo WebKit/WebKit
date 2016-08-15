@@ -29,7 +29,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #import <AVFoundation/AVAsset.h>
-#import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
 #import <wtf/Locker.h>
 #import <wtf/NeverDestroyed.h>
 

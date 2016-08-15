@@ -32,7 +32,6 @@
 #include "JSCInlines.h"
 #include "Repatch.h"
 #include <wtf/ListDump.h>
-#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(JIT)
 namespace JSC {

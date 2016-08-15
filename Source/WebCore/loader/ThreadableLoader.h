@@ -34,7 +34,6 @@
 #include "ResourceLoaderOptions.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

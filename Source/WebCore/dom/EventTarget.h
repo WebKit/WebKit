@@ -36,7 +36,6 @@
 #include "ScriptWrappable.h"
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 
 namespace WTF {
 class AtomicString;

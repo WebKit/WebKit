@@ -34,7 +34,6 @@
 #if PLATFORM(WIN)
 typedef struct HICON__* HICON;
 typedef HICON HCURSOR;
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #elif PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>

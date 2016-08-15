@@ -36,7 +36,6 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSCInlines.h"
-#include <wtf/Vector.h>
 
 namespace JSC {
 

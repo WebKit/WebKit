@@ -29,7 +29,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

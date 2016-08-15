@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CGUtilities.h"
 
-#include <wtf/RetainPtr.h>
-
 namespace WebKit {
 
 void paintImage(CGContextRef context, CGImageRef image, CGFloat scaleFactor, CGPoint destination, CGRect source)

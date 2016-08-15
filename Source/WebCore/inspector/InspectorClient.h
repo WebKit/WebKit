@@ -28,8 +28,6 @@
 #define InspectorClient_h
 
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 
 namespace Inspector {
 class FrontendChannel;

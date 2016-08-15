@@ -31,7 +31,6 @@
 
 #include "Element.h"
 #include "NodeList.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

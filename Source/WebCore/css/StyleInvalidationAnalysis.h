@@ -26,7 +26,6 @@
 #ifndef StyleInvalidationAnalysis_h
 #define StyleInvalidationAnalysis_h
 
-#include <wtf/HashSet.h>
 #include <wtf/text/AtomicStringImpl.h>
 
 namespace WebCore {

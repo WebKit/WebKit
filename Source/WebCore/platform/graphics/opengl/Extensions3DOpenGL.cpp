@@ -30,7 +30,6 @@
 #include "Extensions3DOpenGL.h"
 
 #include "GraphicsContext3D.h"
-#include <wtf/Vector.h>
 
 #if PLATFORM(IOS)
 #include <OpenGLES/ES2/glext.h>

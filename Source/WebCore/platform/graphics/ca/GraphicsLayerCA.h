@@ -31,7 +31,6 @@
 #include "PlatformCALayer.h"
 #include "PlatformCALayerClient.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringHash.h>
 

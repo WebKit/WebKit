@@ -37,7 +37,6 @@
 #include "JSDOMBinding.h"
 #include "JSDataTransfer.h"
 #include <runtime/JSLock.h>
-#include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
 
 using namespace JSC;

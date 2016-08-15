@@ -23,7 +23,6 @@
 
 #include "CSSParserMode.h"
 #include <wtf/Forward.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

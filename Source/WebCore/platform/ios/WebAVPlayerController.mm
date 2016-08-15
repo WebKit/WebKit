@@ -35,7 +35,6 @@
 #import "WebPlaybackSessionInterfaceAVKit.h"
 #import "WebPlaybackSessionModel.h"
 #import <AVFoundation/AVTime.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 

@@ -32,7 +32,6 @@
 #include <uuid/uuid.h>
 #include <wtf/Forward.h>
 #include <wtf/MallocPtr.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

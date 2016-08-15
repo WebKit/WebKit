@@ -33,7 +33,6 @@
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
 typedef struct AudioBufferList AudioBufferList;
 typedef struct OpaqueAudioConverter* AudioConverterRef;

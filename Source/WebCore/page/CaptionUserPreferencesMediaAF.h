@@ -31,7 +31,6 @@
 #include "CSSPropertyNames.h"
 #include "CaptionUserPreferences.h"
 #include "Color.h"
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 

@@ -24,6 +24,7 @@
 #define SpotLightSource_h
 
 #include "LightSource.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

@@ -32,7 +32,6 @@
 #include "Frame.h"
 #include "ParsingUtilities.h"
 #include "SecurityContext.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

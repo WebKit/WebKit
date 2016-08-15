@@ -38,7 +38,6 @@
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 namespace NetworkCache {

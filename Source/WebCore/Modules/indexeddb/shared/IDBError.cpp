@@ -28,8 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <wtf/NeverDestroyed.h>
-
 namespace WebCore {
 
 IDBError::IDBError(ExceptionCode code)

@@ -24,7 +24,6 @@
 #define HTMLDocument_h
 
 #include "Document.h"
-#include <wtf/HashCountedSet.h>
 
 namespace WebCore {
 

@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLMediaElementEnums.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

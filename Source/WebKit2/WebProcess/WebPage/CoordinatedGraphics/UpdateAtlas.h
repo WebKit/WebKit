@@ -24,7 +24,6 @@
 #include "AreaAllocator.h"
 #include <WebCore/CoordinatedSurface.h>
 #include <WebCore/IntSize.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 #if USE(COORDINATED_GRAPHICS)

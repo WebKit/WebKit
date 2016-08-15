@@ -29,11 +29,8 @@
 #if ENABLE(SHAREABLE_RESOURCE)
 
 #include "SharedMemory.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-
 
 namespace WebCore {
 class SharedBuffer;

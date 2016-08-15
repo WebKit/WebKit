@@ -40,7 +40,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 

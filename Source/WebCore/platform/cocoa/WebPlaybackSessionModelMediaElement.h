@@ -31,7 +31,6 @@
 #include "HTMLMediaElementEnums.h"
 #include "WebPlaybackSessionModel.h"
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

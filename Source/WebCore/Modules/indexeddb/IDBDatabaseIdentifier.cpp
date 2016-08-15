@@ -31,7 +31,6 @@
 #include "FileSystem.h"
 #include "SecurityOrigin.h"
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -35,7 +35,7 @@
 #include "LengthFunctions.h"
 #include <memory>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

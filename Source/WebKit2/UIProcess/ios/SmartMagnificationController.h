@@ -31,7 +31,6 @@
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
 
 OBJC_CLASS WKContentView;
 OBJC_CLASS UIScrollView;

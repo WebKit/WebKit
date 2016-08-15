@@ -1,3 +1,14 @@
+2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused includes of wtf headers
+        https://bugs.webkit.org/show_bug.cgi?id=160839
+
+        Reviewed by Alex Christensen.
+
+        * Misc/WebGeolocationCoreLocationProvider.h:
+        * WebView/WebPDFViewIOS.mm:
+        * WebView/WebPlainWhiteView.mm:
+
 2016-08-09  George Ruan  <gruan@apple.com>
 
         Implement functionality of media capture on iOS

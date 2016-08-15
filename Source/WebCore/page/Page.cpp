@@ -97,7 +97,6 @@
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
 #include "Widget.h"
-#include <wtf/HashMap.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>

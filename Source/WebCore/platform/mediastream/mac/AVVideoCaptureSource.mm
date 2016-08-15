@@ -41,7 +41,6 @@
 #import "RealtimeMediaSourceSettings.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
-#import <wtf/BlockObjCExceptions.h>
 
 #import "CoreMediaSoftLink.h"
 #import "CoreVideoSoftLink.h"

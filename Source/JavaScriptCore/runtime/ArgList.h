@@ -25,7 +25,6 @@
 #include "CallFrame.h"
 #include "Register.h"
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 

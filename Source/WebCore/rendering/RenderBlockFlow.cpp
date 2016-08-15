@@ -53,7 +53,6 @@
 #include "SimpleLineLayoutFunctions.h"
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

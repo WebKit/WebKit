@@ -28,8 +28,6 @@
 
 #include "WebGLSharedObject.h"
 
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
 class WebGLSampler final : public WebGLSharedObject {

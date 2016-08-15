@@ -37,7 +37,6 @@
 #import <WebCore/TextStream.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
-#import <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 

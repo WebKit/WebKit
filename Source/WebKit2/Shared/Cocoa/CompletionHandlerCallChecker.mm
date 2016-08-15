@@ -28,8 +28,8 @@
 
 #if WK_API_ENABLED
 
-#import <wtf/PassRefPtr.h>
 #import <objc/runtime.h>
+#import <wtf/Ref.h>
 
 namespace WebKit {
 

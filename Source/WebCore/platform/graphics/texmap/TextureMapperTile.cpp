@@ -22,7 +22,6 @@
 
 #include "Image.h"
 #include "TextureMapper.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

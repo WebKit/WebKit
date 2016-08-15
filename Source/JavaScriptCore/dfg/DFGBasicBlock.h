@@ -37,8 +37,6 @@
 #include "DFGNodeOrigin.h"
 #include "DFGStructureClobberState.h"
 #include "Operands.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {

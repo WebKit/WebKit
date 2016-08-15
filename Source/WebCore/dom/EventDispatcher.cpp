@@ -37,7 +37,6 @@
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 #include "TouchEvent.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

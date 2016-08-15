@@ -32,7 +32,6 @@
 #include "Options.h"
 #include <stdio.h>
 #include <string.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

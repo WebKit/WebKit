@@ -36,7 +36,6 @@
 
 #include "NetworkLoadTiming.h"
 #include "PerformanceEntry.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

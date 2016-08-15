@@ -37,7 +37,6 @@
 #include "Opcode.h"
 #include "SourceProvider.h"
 #include "StackAlignment.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
 

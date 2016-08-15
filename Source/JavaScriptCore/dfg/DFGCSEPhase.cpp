@@ -38,7 +38,6 @@
 #include "DFGPhase.h"
 #include "JSCInlines.h"
 #include <array>
-#include <wtf/FastBitVector.h>
 
 namespace JSC { namespace DFG {
 

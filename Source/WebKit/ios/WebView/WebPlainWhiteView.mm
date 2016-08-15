@@ -33,7 +33,6 @@
 #import <WebCore/Color.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/WKGraphics.h>
-#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
 

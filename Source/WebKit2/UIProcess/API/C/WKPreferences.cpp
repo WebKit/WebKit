@@ -30,7 +30,6 @@
 #include "WKAPICast.h"
 #include "WebPreferences.h"
 #include <WebCore/Settings.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 using namespace WebKit;

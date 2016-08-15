@@ -35,7 +35,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StaticConstructors.h>
-#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(MATHML)
 #include "MathMLNames.h"

@@ -26,7 +26,6 @@
 #include "JSScope.h"
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
-#include <wtf/Vector.h>
 
 namespace JSC {
 

@@ -29,7 +29,6 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "URL.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

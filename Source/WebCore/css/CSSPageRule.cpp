@@ -29,7 +29,6 @@
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
-#include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

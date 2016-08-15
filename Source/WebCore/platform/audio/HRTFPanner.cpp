@@ -34,7 +34,6 @@
 #include "HRTFDatabaseLoader.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

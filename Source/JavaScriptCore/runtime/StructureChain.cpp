@@ -29,7 +29,6 @@
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include "Structure.h"
-#include <wtf/RefPtr.h>
 
 namespace JSC {
     

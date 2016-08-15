@@ -28,7 +28,6 @@
 #include <stdarg.h>
 #include <string.h>
 #include <wtf/FilePrintStream.h>
-#include <wtf/WTFThreadData.h>
 #include <wtf/Threading.h>
 
 #if OS(UNIX) || OS(DARWIN)

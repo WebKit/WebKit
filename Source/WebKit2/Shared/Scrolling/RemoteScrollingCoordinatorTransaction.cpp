@@ -37,10 +37,8 @@
 #include <WebCore/ScrollingStateStickyNode.h>
 #include <WebCore/ScrollingStateTree.h>
 #include <WebCore/TextStream.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
-
 #include <wtf/HashMap.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 

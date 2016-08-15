@@ -27,7 +27,6 @@
 #define WindowFocusAllowedIndicator_h
 
 #include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

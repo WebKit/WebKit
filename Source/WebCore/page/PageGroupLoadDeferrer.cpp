@@ -27,7 +27,6 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "ScriptRunner.h"
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 

@@ -32,7 +32,6 @@
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <runtime/JSGlobalObject.h>
-#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>

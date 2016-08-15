@@ -35,7 +35,6 @@
 #include "FloatSize.h"
 #include "Shape.h"
 #include <wtf/Assertions.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

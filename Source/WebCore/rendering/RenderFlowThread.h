@@ -34,7 +34,6 @@
 #include "RenderBlockFlow.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

@@ -37,7 +37,6 @@
 #include "StyleSheetContents.h"
 #include "TextResourceDecoder.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

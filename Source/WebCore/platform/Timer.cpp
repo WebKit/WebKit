@@ -34,7 +34,6 @@
 #include <limits>
 #include <math.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 

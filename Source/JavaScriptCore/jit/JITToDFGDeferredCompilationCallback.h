@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DeferredCompilationCallback.h"
-#include <wtf/PassRefPtr.h>
 
 namespace JSC {
 

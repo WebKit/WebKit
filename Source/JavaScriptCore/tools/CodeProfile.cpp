@@ -30,7 +30,6 @@
 #include "CodeProfiling.h"
 #include "LinkBuffer.h"
 #include "ProfileTreeNode.h"
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(DARWIN)

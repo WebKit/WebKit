@@ -26,7 +26,6 @@
 #pragma once
 
 #include "SessionID.h"
-#include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {

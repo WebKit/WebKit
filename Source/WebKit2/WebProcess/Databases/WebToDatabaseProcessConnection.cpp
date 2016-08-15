@@ -30,7 +30,6 @@
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebProcess.h"
-#include <wtf/RunLoop.h>
 
 #if ENABLE(DATABASE_PROCESS)
 

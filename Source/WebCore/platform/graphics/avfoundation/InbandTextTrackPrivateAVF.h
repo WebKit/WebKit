@@ -30,7 +30,6 @@
 
 #include "InbandTextTrackPrivate.h"
 #include "InbandTextTrackPrivateClient.h"
-#include <wtf/text/StringBuilder.h>
 
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 

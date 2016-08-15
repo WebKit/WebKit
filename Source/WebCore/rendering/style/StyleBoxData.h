@@ -28,7 +28,7 @@
 #include "Length.h"
 #include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

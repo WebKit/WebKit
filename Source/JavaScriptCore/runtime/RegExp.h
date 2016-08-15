@@ -29,7 +29,6 @@
 #include "Structure.h"
 #include "yarr/Yarr.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(YARR_JIT)

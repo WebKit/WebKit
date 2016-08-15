@@ -32,10 +32,8 @@
 #include "Archive.h"
 #include "ArchiveResource.h"
 #include "URL.h"
-#include <wtf/text/WTFString.h>
-
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

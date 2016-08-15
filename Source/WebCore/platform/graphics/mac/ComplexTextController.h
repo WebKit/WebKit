@@ -27,7 +27,6 @@
 
 #include "GlyphBuffer.h"
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>

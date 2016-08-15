@@ -36,7 +36,6 @@
 #include <sys/stat.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SHA1.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 namespace NetworkCache {

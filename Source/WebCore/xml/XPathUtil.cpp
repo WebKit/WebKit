@@ -29,7 +29,6 @@
 
 #include "ContainerNode.h"
 #include "TextNodeTraversal.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace XPath {

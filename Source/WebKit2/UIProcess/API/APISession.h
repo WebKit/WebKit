@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include <WebCore/SessionID.h>
-#include <wtf/PassRefPtr.h>
 
 namespace API {
 

@@ -34,8 +34,7 @@
 #include <shlwapi.h>
 #include <wininet.h>
 #include <wtf/Forward.h>
-#include <wtf/Hashmap.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

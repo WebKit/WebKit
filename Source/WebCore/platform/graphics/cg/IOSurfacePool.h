@@ -35,7 +35,6 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 

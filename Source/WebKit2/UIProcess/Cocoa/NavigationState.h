@@ -35,7 +35,6 @@
 #import "PageLoadState.h"
 #import "ProcessThrottler.h"
 #import "WeakObjCPtr.h"
-#import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
 @class WKWebView;

@@ -39,7 +39,6 @@
 #include "PluginProxyMessages.h"
 #include "WebProcessConnectionMessages.h"
 #include <unistd.h>
-#include <wtf/RunLoop.h>
 #include <wtf/TemporaryChange.h>
 
 using namespace WebCore;

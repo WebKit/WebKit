@@ -33,7 +33,6 @@
 #import <wtf/HashMap.h>
 #import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/Vector.h>
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;

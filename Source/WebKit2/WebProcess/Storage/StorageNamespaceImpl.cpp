@@ -34,7 +34,6 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
-#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 

@@ -44,7 +44,6 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
-#include <wtf/RunLoop.h>
 
 #if USE(NETWORK_SESSION)
 #include "PingLoad.h"

@@ -29,7 +29,6 @@
 #include "Connection.h"
 #include "MessageSender.h"
 #include "ShareableResource.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

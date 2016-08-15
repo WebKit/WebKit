@@ -35,7 +35,6 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 #ifdef __OBJC__ 

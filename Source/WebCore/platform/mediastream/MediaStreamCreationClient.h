@@ -30,7 +30,6 @@
 
 #include "MediaDevices.h"
 #include "RealtimeMediaSource.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

@@ -35,7 +35,6 @@
 #include "MutationObserver.h"
 #include "Node.h"
 #include <memory>
-#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 

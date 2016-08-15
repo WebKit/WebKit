@@ -36,7 +36,6 @@
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/URL.h>
 #include <sal.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

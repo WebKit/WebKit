@@ -34,7 +34,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 namespace NetworkCache {

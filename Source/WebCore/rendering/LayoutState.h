@@ -27,7 +27,6 @@
 #define LayoutState_h
 
 #include "LayoutRect.h"
-#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

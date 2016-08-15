@@ -26,10 +26,7 @@
 #include "config.h"
 #include "CookieStorage.h"
 
-#import "ResourceHandle.h"
-
 #import "WebCoreSystemInterface.h"
-#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
 

@@ -37,8 +37,6 @@
 #include "JSCInlines.h"
 #include "SourceCode.h"
 
-#include <wtf/text/StringBuilder.h>
-
 namespace JSC {
 
 static const char* linePropertyName = "line";

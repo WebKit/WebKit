@@ -39,8 +39,6 @@
 #import <float.h>
 #import <unicode/uchar.h>
 #import <wtf/Assertions.h>
-#import <wtf/BlockObjCExceptions.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 

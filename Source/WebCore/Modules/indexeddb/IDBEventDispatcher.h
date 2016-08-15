@@ -31,7 +31,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -31,7 +31,6 @@
 #include <inspector/InspectorProtocolObjects.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

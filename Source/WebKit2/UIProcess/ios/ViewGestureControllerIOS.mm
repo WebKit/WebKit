@@ -42,7 +42,6 @@
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/QuartzCoreSPI.h>
-#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 

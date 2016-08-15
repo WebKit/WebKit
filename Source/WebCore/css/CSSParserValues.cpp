@@ -28,7 +28,6 @@
 #include "CSSSelectorList.h"
 #include "CSSVariableValue.h"
 #include "SelectorPseudoTypeMap.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

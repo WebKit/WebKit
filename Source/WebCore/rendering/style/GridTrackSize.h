@@ -35,7 +35,6 @@
 #if ENABLE(CSS_GRID_LAYOUT)
 
 #include "GridLength.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

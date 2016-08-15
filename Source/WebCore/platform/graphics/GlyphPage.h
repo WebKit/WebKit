@@ -33,9 +33,8 @@
 #include "Glyph.h"
 #include <string.h>
 #include <unicode/utypes.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

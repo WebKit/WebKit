@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "WebNavigationDataStore.h"
-#include <wtf/PassRefPtr.h>
 
 namespace API {
 

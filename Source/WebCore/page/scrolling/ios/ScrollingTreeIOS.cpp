@@ -37,7 +37,6 @@
 #include "ScrollingTreeScrollingNode.h"
 #include "ScrollingTreeStickyNode.h"
 #include <wtf/MainThread.h>
-#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 

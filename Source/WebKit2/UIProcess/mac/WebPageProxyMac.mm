@@ -55,7 +55,6 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/UserAgent.h>
 #import <mach-o/dyld.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringConcatenate.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())

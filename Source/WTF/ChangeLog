@@ -1,3 +1,16 @@
+2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused includes of wtf headers
+        https://bugs.webkit.org/show_bug.cgi?id=160839
+
+        Reviewed by Alex Christensen.
+
+        * wtf/BackwardsGraph.h:
+        * wtf/DataLog.cpp:
+        * wtf/WorkQueue.cpp:
+        * wtf/text/StringImpl.cpp:
+        * wtf/unicode/icu/CollatorICU.cpp:
+
 2016-08-14  Daniel Bates  <dabates@apple.com>
 
         Fix compiler errors when building iOS WebKit using the iOS 10 beta SDK

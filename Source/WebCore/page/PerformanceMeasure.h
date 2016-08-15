@@ -29,7 +29,6 @@
 #if ENABLE(USER_TIMING)
 
 #include "PerformanceEntry.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

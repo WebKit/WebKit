@@ -30,7 +30,6 @@
 #include "DownloadID.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include <WebCore/ResourceLoadPriority.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

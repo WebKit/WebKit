@@ -32,7 +32,6 @@
 #include "NetworkResourceLoadParameters.h"
 #include "ShareableResource.h"
 #include <WebCore/Timer.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 class BlobDataFileReference;

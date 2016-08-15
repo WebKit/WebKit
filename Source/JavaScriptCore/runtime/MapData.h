@@ -32,9 +32,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 

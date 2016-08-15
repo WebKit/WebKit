@@ -23,7 +23,6 @@
 #include "APIObject.h"
 #include "WebContextSupplement.h"
 #include "WebSoupCustomProtocolRequestManagerClient.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

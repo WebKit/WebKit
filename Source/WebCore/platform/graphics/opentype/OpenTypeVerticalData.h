@@ -29,7 +29,6 @@
 
 #include "Glyph.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

@@ -29,8 +29,6 @@
 #include "config.h"
 #include "CSSAspectRatioValue.h"
 
-#include <wtf/text/StringBuilder.h>
-
 namespace WebCore {
 
 String CSSAspectRatioValue::customCSSText() const

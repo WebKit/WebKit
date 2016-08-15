@@ -33,7 +33,6 @@
 #include <runtime/ArrayBuffer.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/MediaTime.h>
-#include <wtf/RefCounted.h>
 
 #if ENABLE(DATACUE_VALUE)
 #include "SerializedPlatformRepresentation.h"

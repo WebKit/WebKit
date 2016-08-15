@@ -27,7 +27,6 @@
 #define GeolocationPermissionRequestProxy_h
 
 #include "APIObject.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 

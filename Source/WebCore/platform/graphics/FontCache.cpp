@@ -36,10 +36,8 @@
 #include "MemoryPressureHandler.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TemporaryChange.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringHash.h>
 

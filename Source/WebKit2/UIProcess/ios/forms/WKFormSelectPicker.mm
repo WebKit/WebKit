@@ -33,7 +33,6 @@
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
 #import "WebPageProxy.h"
-#import <wtf/RetainPtr.h>
 
 using namespace WebKit;
 

@@ -28,7 +28,6 @@
 #define DeviceOrientationController_h
 
 #include "DeviceController.h"
-#include <wtf/HashCountedSet.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

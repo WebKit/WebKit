@@ -28,7 +28,6 @@
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

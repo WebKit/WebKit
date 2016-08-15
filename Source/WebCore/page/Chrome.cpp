@@ -53,7 +53,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
-#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"

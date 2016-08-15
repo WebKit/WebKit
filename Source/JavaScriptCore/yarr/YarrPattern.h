@@ -29,7 +29,6 @@
 
 #include "RegExpKey.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

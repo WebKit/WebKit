@@ -100,7 +100,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TemporaryChange.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(CSS_IMAGE_SET)

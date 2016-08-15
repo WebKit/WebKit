@@ -31,7 +31,6 @@
 #include "MessageSender.h"
 #include <WebCore/UserActivity.h>
 #include <wtf/HashMap.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

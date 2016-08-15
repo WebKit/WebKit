@@ -27,8 +27,6 @@
 #define CookiesStrategy_h
 
 #include "SessionID.h"
-#include <wtf/HashSet.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

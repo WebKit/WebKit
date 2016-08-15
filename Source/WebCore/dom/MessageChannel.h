@@ -27,7 +27,6 @@
 #ifndef MessageChannel_h
 #define MessageChannel_h
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

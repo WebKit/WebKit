@@ -33,8 +33,6 @@
 #include "JSCInlines.h"
 #include "Weak.h"
 #include "WeakGCMapInlines.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
 
 using namespace WTF;
 using namespace JSC;

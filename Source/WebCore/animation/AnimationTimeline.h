@@ -31,7 +31,6 @@
 
 #if ENABLE(WEB_ANIMATIONS)
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 

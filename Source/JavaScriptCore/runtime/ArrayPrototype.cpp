@@ -45,7 +45,6 @@
 #include "StringRecursionChecker.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
-#include <wtf/HashSet.h>
 
 namespace JSC {
 

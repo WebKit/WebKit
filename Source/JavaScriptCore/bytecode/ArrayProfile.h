@@ -29,7 +29,6 @@
 #include "ConcurrentJITLock.h"
 #include "JSArray.h"
 #include "Structure.h"
-#include <wtf/HashMap.h>
 #include <wtf/SegmentedVector.h>
 
 namespace JSC {

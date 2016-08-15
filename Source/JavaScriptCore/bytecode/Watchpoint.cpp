@@ -29,7 +29,6 @@
 #include "HeapInlines.h"
 #include "VM.h"
 #include <wtf/CompilationThread.h>
-#include <wtf/PassRefPtr.h>
 
 namespace JSC {
 

@@ -33,7 +33,6 @@
 #include "MediaStreamPrivate.h"
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>
-#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVSampleBufferAudioRenderer;

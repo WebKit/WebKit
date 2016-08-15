@@ -105,7 +105,6 @@
 #include "htmlediting.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

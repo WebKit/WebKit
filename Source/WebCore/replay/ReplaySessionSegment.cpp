@@ -35,7 +35,6 @@
 #include "ReplayingInputCursor.h"
 #include "SegmentedInputStorage.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

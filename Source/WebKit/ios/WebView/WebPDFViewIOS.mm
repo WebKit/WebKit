@@ -50,7 +50,6 @@
 #import <WebKitLegacy/WebNSViewExtras.h>
 #import <WebKitLegacy/WebViewPrivate.h>
 #import <wtf/Assertions.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 
 using namespace WebCore;

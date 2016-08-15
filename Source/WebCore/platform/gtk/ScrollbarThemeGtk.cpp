@@ -34,7 +34,6 @@
 #include "ScrollView.h"
 #include "Scrollbar.h"
 #include <gtk/gtk.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

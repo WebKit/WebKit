@@ -35,7 +35,6 @@
 #include "JSCJSValue.h"
 #include "JSString.h"
 #include "MacroAssembler.h"
-#include <wtf/Vector.h>
 
 #if ENABLE(JIT)
 

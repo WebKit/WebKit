@@ -29,8 +29,6 @@
 #include "WebGLBuffer.h"
 #include "WebGLContextObject.h"
 
-#include <wtf/PassRefPtr.h>
-
 namespace WebCore {
 
 class WebGLVertexArrayObjectBase : public WebGLContextObject {

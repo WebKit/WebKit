@@ -24,7 +24,6 @@
  */
 
 #import <Foundation/NSObject.h>
-#import <wtf/PassRefPtr.h>
 
 @class CLLocationManager;
 @class NSString;

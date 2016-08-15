@@ -32,7 +32,6 @@
 #include <unicode/uscript.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedArray.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

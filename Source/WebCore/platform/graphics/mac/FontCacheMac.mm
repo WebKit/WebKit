@@ -43,7 +43,6 @@
 #import <AppKit/AppKit.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/Optional.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 #import <wtf/text/AtomicStringHash.h>

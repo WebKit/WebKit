@@ -36,7 +36,6 @@
 #include "FontCascade.h"
 #include "ImageBuffer.h"
 #include "MockRealtimeMediaSource.h"
-#include <wtf/RunLoop.h>
 
 namespace WebCore {
 

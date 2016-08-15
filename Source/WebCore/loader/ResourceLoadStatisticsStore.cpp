@@ -35,7 +35,6 @@
 #include "SharedBuffer.h"
 #include "URL.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringBuilder.h>
 
 #define LOG_STATISTICS_TO_FILE 0
 

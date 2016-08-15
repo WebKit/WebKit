@@ -42,7 +42,6 @@
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;

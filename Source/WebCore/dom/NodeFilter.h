@@ -26,7 +26,6 @@
 #define NodeFilter_h
 
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

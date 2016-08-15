@@ -32,7 +32,6 @@
 #include "Performance.h"
 #include "PerformanceTiming.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

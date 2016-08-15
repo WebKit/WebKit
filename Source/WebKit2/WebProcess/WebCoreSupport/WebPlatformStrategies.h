@@ -30,7 +30,6 @@
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
-#include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {

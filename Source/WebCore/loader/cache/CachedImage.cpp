@@ -45,7 +45,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Vector.h>
 
 #if PLATFORM(IOS)
 #include "SystemMemory.h"

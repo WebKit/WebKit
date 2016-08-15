@@ -30,7 +30,6 @@
 
 #include "MediaPlaybackTarget.h"
 #include "MediaPlaybackTargetContext.h"
-#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

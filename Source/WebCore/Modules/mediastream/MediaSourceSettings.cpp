@@ -28,8 +28,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/NeverDestroyed.h>
-
 namespace WebCore {
 
 Ref<MediaSourceSettings> MediaSourceSettings::create(const RealtimeMediaSourceSettings& settings)

@@ -31,7 +31,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/Range.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS DDActionContext;

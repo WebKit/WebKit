@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "SharedBuffer.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

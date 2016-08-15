@@ -32,8 +32,6 @@
 #include "Element.h"
 #include "SpaceSplitString.h"
 #include "StyleRelations.h"
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

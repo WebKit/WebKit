@@ -31,7 +31,6 @@
 #include "TextTrack.h"
 #include "TextTrackLoader.h"
 #include <wtf/TypeCasts.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

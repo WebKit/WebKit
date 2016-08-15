@@ -31,7 +31,6 @@
 #ifndef MIMEHeader_h
 #define MIMEHeader_h
 
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

@@ -27,7 +27,6 @@
 #define CookieJar_h
 
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

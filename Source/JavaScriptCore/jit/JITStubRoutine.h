@@ -30,8 +30,6 @@
 
 #include "ExecutableAllocator.h"
 #include "MacroAssemblerCodeRef.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 

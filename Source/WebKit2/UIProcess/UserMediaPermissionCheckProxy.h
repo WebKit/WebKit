@@ -27,7 +27,6 @@
 #define UserMediaPermissionCheckProxy_h
 
 #include "APIObject.h"
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

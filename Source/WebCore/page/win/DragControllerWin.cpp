@@ -33,7 +33,6 @@
 #include "Pasteboard.h"
 #include "markup.h"
 #include "windows.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

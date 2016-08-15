@@ -35,7 +35,6 @@
 #include <wtf/Lock.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {

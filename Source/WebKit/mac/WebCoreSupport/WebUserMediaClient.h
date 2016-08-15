@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #import <WebCore/UserMediaClient.h>
-#import <wtf/PassRefPtr.h>
 
 namespace WebCore {
 class UserMediaClient;

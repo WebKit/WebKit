@@ -28,7 +28,6 @@
 
 #include "XMLHttpRequest.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

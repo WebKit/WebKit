@@ -33,7 +33,6 @@
 #include "JSRadioNodeList.h"
 #include "Node.h"
 #include "RadioNodeList.h"
-#include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 using namespace JSC;

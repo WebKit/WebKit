@@ -63,7 +63,6 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TiledBacking.h"
-#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
 #include "GraphicsContext3D.h"

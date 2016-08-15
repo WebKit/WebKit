@@ -30,7 +30,6 @@
 #if USE(CFNETWORK) && !PLATFORM(COCOA)
 #include "AuthenticationCF.h"
 #include <CFNetwork/CFURLProtectionSpacePriv.h>
-#include <wtf/RetainPtr.h>
 #endif
 
 namespace WebCore {

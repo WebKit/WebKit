@@ -24,7 +24,6 @@
 #include "Interpreter.h"
 #include "RuntimeType.h"
 #include "SourceProvider.h"
-#include <wtf/Vector.h>
 
 namespace JSC {
 

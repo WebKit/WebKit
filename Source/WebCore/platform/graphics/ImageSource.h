@@ -31,11 +31,9 @@
 #include "IntPoint.h"
 #include "NativeImagePtr.h"
 #include "TextStream.h"
-
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

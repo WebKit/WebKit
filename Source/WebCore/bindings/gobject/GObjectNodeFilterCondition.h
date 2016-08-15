@@ -22,7 +22,6 @@
 #include "NodeFilterCondition.h"
 
 #include "WebKitDOMNodeFilter.h"
-#include <wtf/RetainPtr.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {

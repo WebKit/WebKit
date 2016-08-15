@@ -32,7 +32,6 @@
 #include <set>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

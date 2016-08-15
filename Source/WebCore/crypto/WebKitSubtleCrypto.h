@@ -27,7 +27,7 @@
 
 #include "ContextDestructionObserver.h" 
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 

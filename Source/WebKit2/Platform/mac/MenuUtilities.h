@@ -26,7 +26,6 @@
 #ifndef MenuUtilities_h
 #define MenuUtilities_h
 
-#import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {

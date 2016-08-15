@@ -27,7 +27,6 @@
 #define WebPopupMenuProxy_h
 
 #include <WebCore/WritingMode.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

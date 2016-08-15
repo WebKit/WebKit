@@ -24,6 +24,7 @@
 #define PointLightSource_h
 
 #include "LightSource.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

@@ -31,7 +31,6 @@
 #include "FontDescription.h"
 #include "Path.h"
 #include "TextFlags.h"
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>

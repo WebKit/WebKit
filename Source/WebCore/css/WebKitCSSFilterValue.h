@@ -27,7 +27,6 @@
 #define WebKitCSSFilterValue_h
 
 #include "CSSValueList.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

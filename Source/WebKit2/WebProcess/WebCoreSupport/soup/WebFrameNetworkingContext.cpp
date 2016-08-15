@@ -35,7 +35,6 @@
 #include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SoupNetworkSession.h>
-#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 

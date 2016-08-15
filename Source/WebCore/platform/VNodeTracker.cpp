@@ -28,7 +28,6 @@
 
 #include "Logging.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
 
 namespace WebCore {
 

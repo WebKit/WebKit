@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/RetainPtr.h>
-
 OBJC_CLASS NSData;
 OBJC_CLASS NSUUID;
 

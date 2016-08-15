@@ -39,7 +39,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
-#import <wtf/NeverDestroyed.h>
 
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceTypedef;

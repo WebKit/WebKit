@@ -29,7 +29,6 @@
 #include "EventTarget.h"
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 #define DEBUG_AUDIONODE_REFERENCES 0

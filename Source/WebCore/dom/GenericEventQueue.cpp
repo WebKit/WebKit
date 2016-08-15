@@ -31,7 +31,6 @@
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

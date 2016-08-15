@@ -35,7 +35,6 @@
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {

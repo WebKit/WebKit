@@ -75,7 +75,6 @@
 #include "ValueToString.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
 #ifndef NDEBUG
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

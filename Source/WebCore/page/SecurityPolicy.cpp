@@ -29,11 +29,12 @@
 #include "config.h"
 #include "SecurityPolicy.h"
 
-#include "URL.h"
-#include <wtf/MainThread.h>
 #include "OriginAccessEntry.h"
 #include "SecurityOrigin.h"
+#include "URL.h"
 #include <memory>
+#include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
 

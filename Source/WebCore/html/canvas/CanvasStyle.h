@@ -29,7 +29,6 @@
 
 #include "Color.h"
 #include <wtf/Assertions.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

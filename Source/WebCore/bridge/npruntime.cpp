@@ -35,7 +35,6 @@
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
 #include <wtf/Assertions.h>
-#include <wtf/HashMap.h>
 
 #pragma GCC visibility push(default)
 #include "npruntime_impl.h"

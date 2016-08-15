@@ -28,7 +28,6 @@
 #if PLATFORM(MAC)
 
 #include "PlatformMediaSessionManager.h"
-#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 

@@ -30,7 +30,6 @@
 
 #include "QuickLookDocumentData.h"
 #include <WebCore/QuickLookHandleClient.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -49,7 +49,6 @@
 #include <wtf/CompilationThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/PrintStream.h>
-#include <wtf/RefCounted.h>
 
 namespace WTF {
 

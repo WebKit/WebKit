@@ -40,7 +40,6 @@
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/RetainPtr.h>
 
 @interface NSView (WebSetSelectedMethods)
 - (void)setIsSelected:(BOOL)isSelected;

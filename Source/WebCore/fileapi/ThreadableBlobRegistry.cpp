@@ -42,7 +42,6 @@
 #include <wtf/CrossThreadTask.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
-#include <wtf/MessageQueue.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/StringHash.h>

@@ -29,7 +29,6 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArg.h"
-#include <wtf/HashSet.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

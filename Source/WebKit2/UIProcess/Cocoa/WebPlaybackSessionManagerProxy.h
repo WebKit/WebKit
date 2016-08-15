@@ -33,7 +33,6 @@
 #include <WebCore/TimeRanges.h>
 #include <WebCore/WebPlaybackSessionModel.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

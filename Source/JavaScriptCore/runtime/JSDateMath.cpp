@@ -87,7 +87,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
-#include <wtf/text/StringBuilder.h>
 
 #if HAVE(ERRNO_H)
 #include <errno.h>

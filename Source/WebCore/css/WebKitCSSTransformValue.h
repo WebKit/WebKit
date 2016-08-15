@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CSSValueList.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

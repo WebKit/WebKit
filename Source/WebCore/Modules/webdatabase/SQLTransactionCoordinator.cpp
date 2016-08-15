@@ -36,8 +36,6 @@
 #include "SQLTransaction.h"
 #include "SecurityOrigin.h"
 #include <wtf/Deque.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

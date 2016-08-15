@@ -33,7 +33,6 @@
 #include "B3Origin.h"
 #include "B3Type.h"
 #include <wtf/HashTable.h>
-#include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
 

@@ -31,7 +31,6 @@
 #include "ContentExtensionRule.h"
 #include "DFABytecode.h"
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 namespace ContentExtensions {

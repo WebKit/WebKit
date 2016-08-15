@@ -28,7 +28,6 @@
 
 #include <WebCore/BackForwardClient.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 

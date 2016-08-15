@@ -32,6 +32,7 @@
 #if ENABLE(WEB_ANIMATIONS)
 
 #include "AnimationTimeline.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

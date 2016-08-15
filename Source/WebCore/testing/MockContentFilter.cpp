@@ -36,7 +36,6 @@
 #include "SharedBuffer.h"
 #include <mutex>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

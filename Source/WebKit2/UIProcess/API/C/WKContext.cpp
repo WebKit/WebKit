@@ -40,7 +40,6 @@
 #include "WebCertificateInfo.h"
 #include "WebIconDatabase.h"
 #include "WebProcessPool.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

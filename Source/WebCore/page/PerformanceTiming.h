@@ -34,8 +34,8 @@
 #if ENABLE(WEB_TIMING)
 
 #include "DOMWindowProperty.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

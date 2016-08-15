@@ -43,7 +43,6 @@
 #include <WebCore/WorkerRunLoop.h>
 #include <WebCore/WorkerThread.h>
 #include <WebCore/WorkerThreadableWebSocketChannel.h>
-#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 

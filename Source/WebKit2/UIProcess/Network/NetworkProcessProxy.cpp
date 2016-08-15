@@ -36,7 +36,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebsiteData.h"
-#include <wtf/RunLoop.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShimProxy.h"

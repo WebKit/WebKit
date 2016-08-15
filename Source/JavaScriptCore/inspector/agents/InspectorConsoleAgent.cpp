@@ -36,7 +36,6 @@
 #include "ScriptCallStackFactory.h"
 #include "ScriptObject.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

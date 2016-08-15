@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "APISecurityOrigin.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

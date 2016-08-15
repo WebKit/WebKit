@@ -32,7 +32,6 @@
 #include "HTMLNames.h"
 #include "NodeList.h"
 #include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

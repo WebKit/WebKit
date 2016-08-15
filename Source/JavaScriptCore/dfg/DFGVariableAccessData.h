@@ -37,7 +37,6 @@
 #include "SpeculatedType.h"
 #include "VirtualRegister.h"
 #include <wtf/UnionFind.h>
-#include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 

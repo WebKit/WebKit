@@ -32,7 +32,6 @@
 #include "DFANode.h"
 #include "MutableRangeList.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 

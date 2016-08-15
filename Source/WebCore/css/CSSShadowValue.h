@@ -22,7 +22,6 @@
 #define CSSShadowValue_h
 
 #include "CSSValue.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

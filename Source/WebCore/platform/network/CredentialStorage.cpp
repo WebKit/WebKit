@@ -28,7 +28,6 @@
 
 #include "NetworkStorageSession.h"
 #include "URL.h"
-#include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS)
 #include "WebCoreThread.h"

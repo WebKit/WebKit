@@ -30,7 +30,6 @@
 
 #include "MediaSourcePrivate.h"
 #include <wtf/Deque.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>

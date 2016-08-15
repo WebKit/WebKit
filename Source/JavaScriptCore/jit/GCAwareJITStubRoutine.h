@@ -32,7 +32,6 @@
 #include "JSObject.h"
 #include "JSString.h"
 #include "WriteBarrier.h"
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

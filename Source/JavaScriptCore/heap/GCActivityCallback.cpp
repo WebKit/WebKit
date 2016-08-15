@@ -34,9 +34,6 @@
 #include "JSObject.h"
 #include "VM.h"
 
-#include <wtf/RetainPtr.h>
-#include <wtf/WTFThreadData.h>
-
 #if PLATFORM(EFL)
 #include <wtf/MainThread.h>
 #elif USE(GLIB)

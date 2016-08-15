@@ -33,7 +33,6 @@
 #import "RemoteInspectionTarget.h"
 #import <dispatch/dispatch.h>
 #import <wtf/Optional.h>
-#import <wtf/Vector.h>
 
 #if PLATFORM(IOS)
 #import <wtf/ios/WebCoreThread.h>

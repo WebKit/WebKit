@@ -31,7 +31,6 @@
 #include "GraphicsLayerFactory.h"
 #include "ScrollableArea.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/HashMap.h>
 #ifndef NDEBUG
 #include <wtf/TemporaryChange.h>
 #endif

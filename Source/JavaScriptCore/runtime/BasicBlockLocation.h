@@ -28,7 +28,6 @@
 #define BasicBlockLocation_h
 
 #include "MacroAssembler.h"
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

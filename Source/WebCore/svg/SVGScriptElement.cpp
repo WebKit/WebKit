@@ -27,7 +27,6 @@
 #include "HTMLNames.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "XLinkNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

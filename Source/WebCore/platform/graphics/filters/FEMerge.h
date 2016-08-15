@@ -24,7 +24,6 @@
 
 #include "FilterEffect.h"
 #include "Filter.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

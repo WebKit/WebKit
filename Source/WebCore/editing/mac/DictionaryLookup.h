@@ -30,7 +30,6 @@
 
 #include "DictionaryPopupInfo.h"
 #include <functional>
-#include <wtf/PassRefPtr.h>
 
 OBJC_CLASS NSString;
 OBJC_CLASS NSView;

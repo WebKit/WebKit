@@ -35,7 +35,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/TemporaryChange.h>
 
 #if USE(CAIRO)
 #include "CairoUtilities.h"

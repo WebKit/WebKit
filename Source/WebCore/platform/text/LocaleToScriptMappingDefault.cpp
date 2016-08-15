@@ -32,7 +32,6 @@
 #include "LocaleToScriptMapping.h"
 
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
 

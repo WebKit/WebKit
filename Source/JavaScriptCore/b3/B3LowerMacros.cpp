@@ -46,6 +46,7 @@
 #include "CCallHelpers.h"
 #include "LinkBuffer.h"
 #include <cmath>
+#include <wtf/BitVector.h>
 
 namespace JSC { namespace B3 {
 

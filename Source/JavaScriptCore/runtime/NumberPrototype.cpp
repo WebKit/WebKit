@@ -33,7 +33,6 @@
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Vector.h>
 #include <wtf/dtoa/double-conversion.h>
 
 using namespace WTF::double_conversion;

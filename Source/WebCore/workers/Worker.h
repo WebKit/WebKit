@@ -36,7 +36,6 @@
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 

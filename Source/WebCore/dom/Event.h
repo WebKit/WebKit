@@ -27,8 +27,6 @@
 #include "DOMTimeStamp.h"
 #include "EventInterfaces.h"
 #include "ScriptWrappable.h"
-#include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicString.h>

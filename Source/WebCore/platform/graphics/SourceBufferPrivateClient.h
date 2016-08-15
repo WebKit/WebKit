@@ -28,7 +28,6 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include <wtf/MediaTime.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

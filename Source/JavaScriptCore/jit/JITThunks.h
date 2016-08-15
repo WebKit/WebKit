@@ -38,7 +38,6 @@
 #include "WeakInlines.h"
 #include <tuple>
 #include <wtf/HashMap.h>
-#include <wtf/RefPtr.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {

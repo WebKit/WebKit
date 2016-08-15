@@ -38,7 +38,6 @@
 #include "Operands.h"
 #include "ValueProfile.h"
 #include "ValueRecovery.h"
-#include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 

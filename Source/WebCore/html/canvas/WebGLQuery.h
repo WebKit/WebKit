@@ -28,8 +28,6 @@
 
 #include "WebGLSharedObject.h"
 
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
 class WebGLQuery final : public WebGLSharedObject {

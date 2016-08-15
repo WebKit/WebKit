@@ -30,7 +30,6 @@
 
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 

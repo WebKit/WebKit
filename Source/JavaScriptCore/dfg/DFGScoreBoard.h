@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"
-#include <wtf/BitVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {

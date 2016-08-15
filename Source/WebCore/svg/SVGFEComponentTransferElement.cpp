@@ -29,7 +29,6 @@
 #include "SVGFEFuncRElement.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

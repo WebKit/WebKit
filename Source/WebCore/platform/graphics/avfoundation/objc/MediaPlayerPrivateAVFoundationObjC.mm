@@ -84,7 +84,6 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/text/CString.h>
-#import <wtf/text/StringBuilder.h>
 
 #if ENABLE(AVF_CAPTIONS)
 #include "TextTrack.h"

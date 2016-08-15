@@ -32,9 +32,6 @@
 #include "WebGLContextObject.h"
 #include "WebGLVertexArrayObjectBase.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
 class WebGL2RenderingContext;

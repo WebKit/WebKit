@@ -63,7 +63,6 @@
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
 #include <inspector/ScriptCallStack.h>
-#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"

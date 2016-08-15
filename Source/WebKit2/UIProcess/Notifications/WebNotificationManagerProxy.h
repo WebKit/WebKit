@@ -32,7 +32,6 @@
 #include "WebNotificationProvider.h"
 #include <WebCore/NotificationClient.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace API {

@@ -42,7 +42,6 @@
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListDump.h>
 

@@ -33,9 +33,6 @@
 
 #include "Blob.h"
 #include "BlobURL.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

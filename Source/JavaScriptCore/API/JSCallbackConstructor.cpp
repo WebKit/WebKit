@@ -33,7 +33,6 @@
 #include "JSLock.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
-#include <wtf/Vector.h>
 
 namespace JSC {
 

@@ -27,7 +27,6 @@
 
 #include <limits>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
 static const size_t headerSize = 8;
