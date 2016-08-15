@@ -302,6 +302,7 @@ private:
                 case Abs:
                 case Ceil:
                 case Floor:
+                case Neg:
                 case Sqrt: {
                     Value* child = value->child(0);
                     if (canBeTransformedToFloat(child)) {

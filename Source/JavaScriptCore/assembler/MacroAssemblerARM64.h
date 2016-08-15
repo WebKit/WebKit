@@ -1856,6 +1856,11 @@ public:
         m_assembler.fneg<64>(dest, src);
     }
 
+    void negateFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fneg<32>(dest, src);
+    }
+
     void sqrtDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.fsqrt<64>(dest, src);

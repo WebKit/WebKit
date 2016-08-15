@@ -2170,6 +2170,48 @@ void testSubArgsFloatWithEffectfulDoubleConversion(float a, float b)
     CHECK(isIdentical(effect, static_cast<double>(a) - static_cast<double>(b)));
 }
 
+void testNegDouble(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Neg, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0)));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), -a));
+}
+
+void testNegFloat(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Neg, Origin(), floatValue));
+
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), -a));
+}
+
+void testNegFloatWithUselessDoubleConversion(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argumentInt32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argumentInt32);
+    Value* asDouble = root->appendNew<Value>(proc, FloatToDouble, Origin(), floatValue);
+    Value* result = root->appendNew<Value>(proc, Neg, Origin(), asDouble);
+    Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), result);
+    root->appendNewControlValue(proc, Return, Origin(), floatResult);
+
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), -a));
+}
+
 void testBitAndArgs(int64_t a, int64_t b)
 {
     Procedure proc;
@@ -13165,6 +13207,10 @@ void run(const char* filter)
     RUN_UNARY(testSubArgFloatWithUselessDoubleConversion, floatingPointOperands<float>());
     RUN_BINARY(testSubArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testSubArgsFloatWithEffectfulDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+
+    RUN_UNARY(testNegDouble, floatingPointOperands<double>());
+    RUN_UNARY(testNegFloat, floatingPointOperands<float>());
+    RUN_UNARY(testNegFloatWithUselessDoubleConversion, floatingPointOperands<float>());
 
     RUN(testBitAndArgs(43, 43));
     RUN(testBitAndArgs(43, 0));

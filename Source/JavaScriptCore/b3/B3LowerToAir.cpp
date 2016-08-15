@@ -1835,7 +1835,7 @@ private:
                 }
             }
 
-            appendUnOp<Neg32, Neg64, NegateDouble, Air::Oops>(m_value->child(0));
+            appendUnOp<Neg32, Neg64, NegateDouble, NegateFloat>(m_value->child(0));
             return;
         }
 

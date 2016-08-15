@@ -205,6 +205,9 @@ Neg32 UZD:G:32
 arm64: NegateDouble U:F:64, D:F:64
     Tmp, Tmp
 
+arm64: NegateFloat U:F:32, D:F:32
+    Tmp, Tmp
+
 Mul32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Addr, Tmp

@@ -1,3 +1,24 @@
+2016-08-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] B3 Neg opcode should support float
+        https://bugs.webkit.org/show_bug.cgi?id=160795
+
+        Reviewed by Geoffrey Garen.
+
+        This is required to implement WASM f32.neg opcode.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::negateFloat):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testNegDouble):
+        (JSC::B3::testNegFloat):
+        (JSC::B3::testNegFloatWithUselessDoubleConversion):
+        (JSC::B3::run):
+
 2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use #pragma once in inspector headers
