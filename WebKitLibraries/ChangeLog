@@ -1,3 +1,39 @@
+2016-08-15  Daniel Bates  <dabates@apple.com>
+
+        Cannot build WebKit for iOS device using Xcode 7.3/iOS 9.3 public SDK due to missing
+        private frameworks and libraries
+        https://bugs.webkit.org/show_bug.cgi?id=155931
+        <rdar://problem/25807989>
+
+        Reviewed by Dan Bernstein.
+
+        Add text-based stubs for private frameworks in iOS 9 and iOS 10 beta.
+
+        * WebKitPrivateFrameworkStubs: Added.
+        * WebKitPrivateFrameworkStubs/iOS: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/AppSupport.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/AssertionServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/AssertionServices.framework/AssertionServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/CorePDF.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/CorePDF.framework/CorePDF.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/GraphicsServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/IOSurface.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/10/IOSurface.framework/IOSurface.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/AppSupport.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/AssertionServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/AssertionServices.framework/AssertionServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/CorePDF.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/CorePDF.framework/CorePDF.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/GraphicsServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/IOSurface.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/9/IOSurface.framework/IOSurface.tbd: Added.
+
 2016-07-13  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] DLLs are missing version information.

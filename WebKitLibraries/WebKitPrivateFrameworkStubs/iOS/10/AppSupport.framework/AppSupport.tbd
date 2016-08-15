@@ -1,0 +1,17 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - arm64
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - arm64
+    symbols:
+      - _CPCopyBundleIdentifierFromAuditToken
+install-name: /System/Library/PrivateFrameworks/AppSupport.framework/AppSupport
+objc-constraint: none
+platform: ios
+...

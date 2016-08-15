@@ -1,0 +1,19 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - arm64
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - arm64
+    symbols:
+      - _GSCurrentEventTimestamp
+      - _GSInitialize
+      - _GSSystemRootDirectory
+install-name: /System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices
+objc-constraint: none
+platform: ios
+...
