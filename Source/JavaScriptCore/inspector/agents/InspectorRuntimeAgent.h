@@ -70,6 +70,8 @@ public:
     void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const Inspector::InspectorArray& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
     void enableTypeProfiler(ErrorString&) override;
     void disableTypeProfiler(ErrorString&) override;
+    void enableControlFlowProfiler(ErrorString&) override;
+    void disableControlFlowProfiler(ErrorString&) override;
     void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
 
     bool enabled() const { return m_enabled; }
@@ -86,12 +88,14 @@ protected:
 
 private:
     void setTypeProfilerEnabledState(bool);
+    void setControlFlowProfilerEnabledState(bool);
 
     InjectedScriptManager& m_injectedScriptManager;
     ScriptDebugServer& m_scriptDebugServer;
     JSC::VM& m_vm;
     bool m_enabled {false};
     bool m_isTypeProfilingEnabled {false};
+    bool m_isControlFlowProfilingEnabled {false};
 };
 
 } // namespace Inspector

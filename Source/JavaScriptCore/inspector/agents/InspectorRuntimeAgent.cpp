@@ -317,6 +317,16 @@ void InspectorRuntimeAgent::disableTypeProfiler(ErrorString&)
     setTypeProfilerEnabledState(false);
 }
 
+void InspectorRuntimeAgent::enableControlFlowProfiler(ErrorString&)
+{
+    setControlFlowProfilerEnabledState(true);
+}
+
+void InspectorRuntimeAgent::disableControlFlowProfiler(ErrorString&)
+{
+    setControlFlowProfilerEnabledState(false);
+}
+
 void InspectorRuntimeAgent::setTypeProfilerEnabledState(bool isTypeProfilingEnabled)
 {
     if (m_isTypeProfilingEnabled == isTypeProfilingEnabled)
@@ -326,10 +336,22 @@ void InspectorRuntimeAgent::setTypeProfilerEnabledState(bool isTypeProfilingEnab
     VM& vm = m_vm;
     vm.whenIdle([&vm, isTypeProfilingEnabled] () {
         bool shouldRecompileFromTypeProfiler = (isTypeProfilingEnabled ? vm.enableTypeProfiler() : vm.disableTypeProfiler());
-        bool shouldRecompileFromControlFlowProfiler = (isTypeProfilingEnabled ? vm.enableControlFlowProfiler() : vm.disableControlFlowProfiler());
-        bool needsToRecompile = shouldRecompileFromTypeProfiler || shouldRecompileFromControlFlowProfiler;
+        if (shouldRecompileFromTypeProfiler)
+            vm.deleteAllCode();
+    });
+}
 
-        if (needsToRecompile)
+void InspectorRuntimeAgent::setControlFlowProfilerEnabledState(bool isControlFlowProfilingEnabled)
+{
+    if (m_isControlFlowProfilingEnabled == isControlFlowProfilingEnabled)
+        return;
+    m_isControlFlowProfilingEnabled = isControlFlowProfilingEnabled;
+
+    VM& vm = m_vm;
+    vm.whenIdle([&vm, isControlFlowProfilingEnabled] () {
+        bool shouldRecompileFromControlFlowProfiler = (isControlFlowProfilingEnabled ? vm.enableControlFlowProfiler() : vm.disableControlFlowProfiler());
+
+        if (shouldRecompileFromControlFlowProfiler)
             vm.deleteAllCode();
     });
 }

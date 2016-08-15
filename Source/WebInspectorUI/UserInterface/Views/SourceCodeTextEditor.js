@@ -1692,6 +1692,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             console.assert(this.visible, "Annotators should not be enabled if the TextEditor is not visible");
 
             RuntimeAgent.enableTypeProfiler();
+            if (RuntimeAgent.enableControlFlowProfiler)
+                RuntimeAgent.enableControlFlowProfiler();
 
             this._typeTokenAnnotator.reset();
             if (this._basicBlockAnnotator) {

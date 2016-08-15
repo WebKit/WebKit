@@ -1,3 +1,16 @@
+2016-08-15  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: Introduce a method to enable code coverage profiler without enabling type profiler
+        https://bugs.webkit.org/show_bug.cgi?id=160750
+        <rdar://problem/27793469>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+
 2016-08-12  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add application/vnd.api+json as a valid JSON MIME-type

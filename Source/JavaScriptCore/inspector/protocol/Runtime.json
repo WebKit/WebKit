@@ -331,6 +331,14 @@
             "description": "Disables type profiling on the VM."
         },
         {
+            "name": "enableControlFlowProfiler",
+            "description": "Enables control flow profiling on the VM."
+        },
+        {
+            "name": "disableControlFlowProfiler",
+            "description": "Disables control flow profiling on the VM."
+        },
+        {
             "name": "getBasicBlocks",
             "parameters": [
                 { "name": "sourceID", "type": "string", "description": "Indicates which sourceID information is requested for." }

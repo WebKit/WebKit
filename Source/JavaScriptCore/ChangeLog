@@ -1,5 +1,22 @@
 2016-08-15  Saam Barati  <sbarati@apple.com>
 
+        Web Inspector: Introduce a method to enable code coverage profiler without enabling type profiler
+        https://bugs.webkit.org/show_bug.cgi?id=160750
+        <rdar://problem/27793469>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::disableTypeProfiler):
+        (Inspector::InspectorRuntimeAgent::enableControlFlowProfiler):
+        (Inspector::InspectorRuntimeAgent::disableControlFlowProfiler):
+        (Inspector::InspectorRuntimeAgent::setTypeProfilerEnabledState):
+        (Inspector::InspectorRuntimeAgent::setControlFlowProfilerEnabledState):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/protocol/Runtime.json:
+
+2016-08-15  Saam Barati  <sbarati@apple.com>
+
         Array.prototype.map builtin should go on the fast path when constructor===@Array
         https://bugs.webkit.org/show_bug.cgi?id=160836
 
