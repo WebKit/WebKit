@@ -1,0 +1,1234 @@
+# Copyright (C) 2015 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+- path: es6/__proto___in_object_literals_basic_support.js
+  cmd: runES6 :normal
+- path: es6/__proto___in_object_literals_multiple___proto___is_an_error.js
+  cmd: runES6 :normal
+- path: es6/__proto___in_object_literals_not_a_computed_property.js
+  cmd: runES6 :normal
+- path: es6/__proto___in_object_literals_not_a_shorthand_method.js
+  cmd: runES6 :normal
+- path: es6/__proto___in_object_literals_not_a_shorthand_property.js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype.copyWithin.js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype.entries.js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype.fill.js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype.find.js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype.findIndex.js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype.keys.js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype.values.js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype[Symbol.iterator].js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array.prototype[Symbol.unscopables].js
+  cmd: runES6 :normal
+- path: es6/Array.prototype_methods_Array_iterator_prototype_chain.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_Array.isArray_support.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_length_property_accessing.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_length_property_setting.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_array-like_objects.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_map_function_array-like_objects.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.of.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_0_parameters.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_1_parameter_no_brackets.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_cant_be_bound_can_be_curried.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_correct_precedence.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_lexical_this_binding.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_multiple_parameters.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_no_line_break_between_params_and_code_=_code.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_this_unchanged_by_call_or_apply.js
+  cmd: runES6 :normal
+- path: es6/class_accessor_properties.js
+  cmd: runES6 :normal
+- path: es6/class_anonymous_class.js
+  cmd: runES6 :normal
+- path: es6/class_class_expression.js
+  cmd: runES6 :normal
+- path: es6/class_class_name_is_lexically_scoped.js
+  cmd: runES6 :normal
+- path: es6/class_class_statement.js
+  cmd: runES6 :normal
+- path: es6/class_computed_accessor_properties.js
+  cmd: runES6 :normal
+- path: es6/class_computed_names_temporal_dead_zone.js
+  cmd: runES6 :normal
+- path: es6/class_computed_prototype_methods.js
+  cmd: runES6 :normal
+- path: es6/class_computed_static_accessor_properties.js
+  cmd: runES6 :normal
+- path: es6/class_computed_static_methods.js
+  cmd: runES6 :normal
+- path: es6/class_constructor.js
+  cmd: runES6 :normal
+- path: es6/class_constructor_requires_new.js
+  cmd: runES6 :normal
+- path: es6/class_extends.js
+  cmd: runES6 :normal
+- path: es6/class_extends_expressions.js
+  cmd: runES6 :normal
+- path: es6/class_extends_null.js
+  cmd: runES6 :normal
+- path: es6/class_implicit_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/class_is_block-scoped.js
+  cmd: runES6 :normal
+- path: es6/class_methods_arent_enumerable.js
+  cmd: runES6 :normal
+- path: es6/class_new.target.js
+  cmd: runES6 :normal
+- path: es6/class_prototype_methods.js
+  cmd: runES6 :normal
+- path: es6/class_static_accessor_properties.js
+  cmd: runES6 :normal
+- path: es6/class_static_methods.js
+  cmd: runES6 :normal
+- path: es6/class_string-keyed_methods.js
+  cmd: runES6 :normal
+- path: es6/const_basic_support.js
+  cmd: runES6 :normal
+- path: es6/const_basic_support_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/const_is_block-scoped.js
+  cmd: runES6 :normal
+- path: es6/const_is_block-scoped_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/const_redefining_a_const_is_an_error.js
+  cmd: runES6 :normal
+- path: es6/const_redefining_a_const_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/const_temporal_dead_zone.js
+  cmd: runES6 :normal
+- path: es6/const_temporal_dead_zone_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/default_function_parameters_arguments_object_interaction.js
+  cmd: runES6 :normal
+- path: es6/default_function_parameters_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/default_function_parameters_defaults_can_refer_to_previous_params.js
+  cmd: runES6 :normal
+- path: es6/default_function_parameters_explicit_undefined_defers_to_the_default.js
+  cmd: runES6 :normal
+- path: es6/default_function_parameters_new_Function_support.js
+  cmd: runES6 :normal
+- path: es6/default_function_parameters_separate_scope.js
+  cmd: runES6 :normal
+- path: es6/default_function_parameters_temporal_dead_zone.js
+  cmd: runES6 :normal
+- path: es6/destructuring_chained_iterable_destructuring.js
+  cmd: runES6 :normal
+- path: es6/destructuring_chained_object_destructuring.js
+  cmd: runES6 :normal
+- path: es6/destructuring_defaults.js
+  cmd: runES6 :normal
+- path: es6/destructuring_defaults_in_parameters.js
+  cmd: runES6 :normal
+- path: es6/destructuring_defaults_in_parameters_new_Function_support.js
+  cmd: runES6 :normal
+- path: es6/destructuring_defaults_let_temporal_dead_zone.js
+  cmd: runES6 :normal
+- path: es6/destructuring_empty_patterns.js
+  cmd: runES6 :normal
+- path: es6/destructuring_empty_patterns_in_parameters.js
+  cmd: runES6 :normal
+- path: es6/destructuring_in_catch_heads.js
+  cmd: runES6 :normal
+- path: es6/destructuring_in_for-in_loop_heads.js
+  cmd: runES6 :normal
+- path: es6/destructuring_in_for-of_loop_heads.js
+  cmd: runES6 :normal
+- path: es6/destructuring_in_parameters.js
+  cmd: runES6 :normal
+- path: es6/destructuring_in_parameters_arguments_interaction.js
+  cmd: runES6 :normal
+- path: es6/destructuring_in_parameters_function_length_property.js
+  cmd: runES6 :normal
+- path: es6/destructuring_in_parameters_new_Function_support.js
+  cmd: runES6 :normal
+- path: es6/destructuring_iterable_destructuring_expression.js
+  cmd: runES6 :normal
+- path: es6/destructuring_multiples_in_a_single_var_statement.js
+  cmd: runES6 :normal
+- path: es6/destructuring_nested.js
+  cmd: runES6 :normal
+- path: es6/destructuring_object_destructuring_expression.js
+  cmd: runES6 :normal
+- path: es6/destructuring_object_destructuring_with_primitives.js
+  cmd: runES6 :normal
+- path: es6/destructuring_parenthesised_left-hand-side_is_a_syntax_error.js
+  cmd: runES6 :normal
+- path: es6/destructuring_rest.js
+  cmd: runES6 :normal
+- path: es6/destructuring_throws_on_null_and_undefined.js
+  cmd: runES6 :normal
+- path: es6/destructuring_trailing_commas_in_iterable_patterns.js
+  cmd: runES6 :normal
+- path: es6/destructuring_trailing_commas_in_object_patterns.js
+  cmd: runES6 :normal
+- path: es6/destructuring_with_arrays.js
+  cmd: runES6 :normal
+- path: es6/destructuring_with_astral_plane_strings.js
+  cmd: runES6 :normal
+- path: es6/destructuring_with_objects.js
+  cmd: runES6 :normal
+- path: es6/destructuring_with_sparse_arrays.js
+  cmd: runES6 :normal
+- path: es6/destructuring_with_strings.js
+  cmd: runES6 :normal
+- path: es6/destructuring_assignment_non_simple_target.js
+  cmd: runES6 :normal
+- path: es6/destructuring_assignment_computed_properties.js
+  cmd: runES6 :normal
+- path: es6/destructuring_assignment_computed_property_simple.js
+  cmd: runES6 :normal
+- path: es6/destructuring_assignment_computed_property_default.js
+  cmd: runES6 :normal
+- path: es6/destructuring_assignment_nested_cover_initialized_name.js
+  cmd: runES6 :normal
+- path: es6/destructuring_initializer_scoping.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_with_arrays.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_with_astral_plane_strings.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_with_sparse_arrays.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_with_strings.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_class_prototype_methods.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_class_static_methods.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_function_expressions.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_function_statements.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_new_Function.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_shorthand_methods.js
+  cmd: runES6 :normal
+- path: es6/HTML-style_comments.js
+  cmd: runES6 :normal
+- path: es6/let_basic_support.js
+  cmd: runES6 :normal
+- path: es6/let_basic_support_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/let_for-loop_iteration_scope.js
+  cmd: runES6 :normal
+- path: es6/let_for-loop_iteration_scope_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/let_for-loop_statement_scope.js
+  cmd: runES6 :normal
+- path: es6/let_for-loop_statement_scope_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/let_is_block-scoped.js
+  cmd: runES6 :normal
+- path: es6/let_is_block-scoped_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/let_temporal_dead_zone.js
+  cmd: runES6 :normal
+- path: es6/let_temporal_dead_zone_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/Map_-0_key_converts_to_+0.js
+  cmd: runES6 :normal
+- path: es6/Map_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/Map_constructor_accepts_null.js
+  cmd: runES6 :normal
+- path: es6/Map_constructor_arguments.js
+  cmd: runES6 :normal
+- path: es6/Map_constructor_invokes_set.js
+  cmd: runES6 :normal
+- path: es6/Map_constructor_requires_new.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype.clear.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype.delete.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype.entries.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype.forEach.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype.keys.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype.set_returns_this.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype.size.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype.values.js
+  cmd: runES6 :normal
+- path: es6/Map_Map.prototype[Symbol.iterator].js
+  cmd: runES6 :normal
+- path: es6/Map_Map_iterator_prototype_chain.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.acosh.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.asinh.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.atanh.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.cbrt.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.clz32.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.cosh.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.expm1.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.fround.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.hypot.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.imul.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.log10.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.log1p.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.log2.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.sign.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.sinh.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.tanh.js
+  cmd: runES6 :normal
+- path: es6/Math_methods_Math.trunc.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_accessors_arent_constructors.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_duplicate_property_names_in_strict_mode.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_Invalid_Date.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_no_escaped_reserved_words_as_identifiers.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_no_semicolon_needed_after_do-while.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_String.prototype_case_methods_Unicode_support.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_subclassables_Boolean_is_subclassable.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_subclassables_Map_is_subclassable.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_subclassables_Number_is_subclassable.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_subclassables_Set_is_subclassable.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_subclassables_String_is_subclassable.js
+  cmd: runES6 :normal
+- path: es6/new.target_in_constructors.js
+  cmd: runES6 :normal
+- path: es6/non-strict_function_semantics_function_statements_in_if-statement_clauses.js
+  cmd: runES6 :normal
+- path: es6/non-strict_function_semantics_labeled_function_statements.js
+  cmd: runES6 :normal
+- path: es6/Number_properties_Number.EPSILON.js
+  cmd: runES6 :normal
+- path: es6/Number_properties_Number.isFinite.js
+  cmd: runES6 :normal
+- path: es6/Number_properties_Number.isInteger.js
+  cmd: runES6 :normal
+- path: es6/Number_properties_Number.isNaN.js
+  cmd: runES6 :normal
+- path: es6/Number_properties_Number.isSafeInteger.js
+  cmd: runES6 :normal
+- path: es6/Number_properties_Number.MAX_SAFE_INTEGER.js
+  cmd: runES6 :normal
+- path: es6/Number_properties_Number.MIN_SAFE_INTEGER.js
+  cmd: runES6 :normal
+- path: es6/Object.prototype.__proto___absent_from_Object.createnull.js
+  cmd: runES6 :normal
+- path: es6/Object.prototype.__proto___correct_property_descriptor.js
+  cmd: runES6 :normal
+- path: es6/Object.prototype.__proto___get_prototype.js
+  cmd: runES6 :normal
+- path: es6/Object.prototype.__proto___present_in_hasOwnProperty.js
+  cmd: runES6 :normal
+- path: es6/Object.prototype.__proto___present_in_Object.getOwnPropertyNames.js
+  cmd: runES6 :normal
+- path: es6/Object.prototype.__proto___set_prototype.js
+  cmd: runES6 :normal
+- path: es6/object_literal_extensions_computed_accessors.js
+  cmd: runES6 :normal
+- path: es6/object_literal_extensions_computed_properties.js
+  cmd: runES6 :normal
+- path: es6/object_literal_extensions_computed_shorthand_methods.js
+  cmd: runES6 :normal
+- path: es6/object_literal_extensions_shorthand_methods.js
+  cmd: runES6 :normal
+- path: es6/object_literal_extensions_shorthand_properties.js
+  cmd: runES6 :normal
+- path: es6/object_literal_extensions_string-keyed_shorthand_methods.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.freeze.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.getOwnPropertyDescriptor.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.getOwnPropertyNames.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.getPrototypeOf.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.isExtensible.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.isFrozen.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.isSealed.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.keys.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.preventExtensions.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_accept_primitives_Object.seal.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_Object.assign.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_Object.getOwnPropertySymbols.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_Object.is.js
+  cmd: runES6 :normal
+- path: es6/Object_static_methods_Object.setPrototypeOf.js
+  cmd: runES6 :normal
+- path: es6/octal_and_binary_literals_binary_literals.js
+  cmd: runES6 :normal
+- path: es6/octal_and_binary_literals_binary_supported_by_Number.js
+  cmd: runES6 :normal
+- path: es6/octal_and_binary_literals_octal_literals.js
+  cmd: runES6 :normal
+- path: es6/octal_and_binary_literals_octal_supported_by_Number.js
+  cmd: runES6 :normal
+- path: es6/own_property_order_for..in.js
+  cmd: runES6 :normal
+- path: es6/own_property_order_JSON.parse.js
+  cmd: runES6 :normal
+- path: es6/own_property_order_JSON.stringify.js
+  cmd: runES6 :normal
+- path: es6/own_property_order_Object.assign.js
+  cmd: runES6 :normal
+- path: es6/own_property_order_Object.getOwnPropertyNames.js
+  cmd: runES6 :normal
+- path: es6/own_property_order_Object.keys.js
+  cmd: runES6 :normal
+- path: es6/own_property_order_Reflect.ownKeys_string_key_order.js
+  cmd: runES6 :normal
+- path: es6/own_property_order_Reflect.ownKeys_symbol_key_order.js
+  cmd: runES6 :normal
+- path: es6/Promise_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/Promise_is_subclassable_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/Promise_constructor_requires_new.js
+  cmd: runES6 :normal
+- path: es6/Promise_is_subclassable_correct_prototype_chain.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.apply.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.defineProperty.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.deleteProperty.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.enumerate.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.get.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.getOwnPropertyDescriptor.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.getPrototypeOf.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.has.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.isExtensible.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.ownKeys_string_keys.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.ownKeys_symbol_keys.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.preventExtensions.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.setPrototypeOf.js
+  cmd: runES6 :normal
+- path: es6/RegExp.prototype.compile.js
+  cmd: runES6 :normal
+- path: es6/RegExp.prototype_properties_RegExp.prototype.flags.js
+  cmd: runES6 :normal
+- path: es6/RegExp_is_subclassable_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/RegExp_is_subclassable_RegExp.prototype.exec.js
+  cmd: runES6 :normal
+- path: es6/RegExp_is_subclassable_RegExp.prototype.test.js
+  cmd: runES6 :normal
+- path: es6/RegExp_syntax_extensions_hyphens_in_character_sets.js
+  cmd: runES6 :normal
+- path: es6/RegExp_syntax_extensions_incomplete_patterns_and_quantifiers.js
+  cmd: runES6 :normal
+- path: es6/RegExp_syntax_extensions_invalid_backreferences_become_octal_escapes.js
+  cmd: runES6 :normal
+- path: es6/RegExp_syntax_extensions_invalid_character_escapes.js
+  cmd: runES6 :normal
+- path: es6/RegExp_syntax_extensions_invalid_control-character_escapes.js
+  cmd: runES6 :normal
+- path: es6/RegExp_syntax_extensions_invalid_hexadecimal_escapes.js
+  cmd: runES6 :normal
+- path: es6/RegExp_syntax_extensions_invalid_Unicode_escapes.js
+  cmd: runES6 :normal
+- path: es6/RegExp_syntax_extensions_octal_escape_sequences.js
+  cmd: runES6 :normal
+- path: es6/Set_-0_key_converts_to_+0.js
+  cmd: runES6 :normal
+- path: es6/Set_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/Set_constructor_accepts_null.js
+  cmd: runES6 :normal
+- path: es6/Set_constructor_arguments.js
+  cmd: runES6 :normal
+- path: es6/Set_constructor_invokes_add.js
+  cmd: runES6 :normal
+- path: es6/Set_constructor_requires_new.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype.add_returns_this.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype.clear.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype.delete.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype.entries.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype.forEach.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype.keys.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype.size.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype.values.js
+  cmd: runES6 :normal
+- path: es6/Set_Set.prototype[Symbol.iterator].js
+  cmd: runES6 :normal
+- path: es6/Set_Set_iterator_prototype_chain.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_spreading_non-iterables_is_a_runtime_error.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_arrays_in_array_literals.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_arrays_in_function_calls.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_astral_plane_strings_in_array_literals.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_sparse_arrays_in_array_literals.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_sparse_arrays_in_function_calls.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_strings_in_array_literals.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_HTML_methods_existence.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_HTML_methods_quotes_in_arguments_are_escaped.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_HTML_methods_tags_names_are_lowercase.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.codePointAt.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.endsWith.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.includes.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.normalize.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.padEnd.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.padStart.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.repeat.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.startsWith.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype[Symbol.iterator].js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String_iterator_prototype_chain.js
+  cmd: runES6 :normal
+- path: es6/String_static_methods_String.fromCodePoint.js
+  cmd: runES6 :normal
+- path: es6/String_static_methods_String.raw.js
+  cmd: runES6 :normal
+- path: es6/super_constructor_calls_use_correct_new.target_binding.js
+  cmd: runES6 :normal
+- path: es6/super_expression_in_constructors.js
+  cmd: runES6 :normal
+- path: es6/super_in_methods_method_calls.js
+  cmd: runES6 :normal
+- path: es6/super_in_methods_property_access.js
+  cmd: runES6 :normal
+- path: es6/super_is_statically_bound.js
+  cmd: runES6 :normal
+- path: es6/super_method_calls_use_correct_this_binding.js
+  cmd: runES6 :normal
+- path: es6/super_statement_in_constructors.js
+  cmd: runES6 :normal
+- path: es6/Symbol_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/Symbol_can_convert_with_String.js
+  cmd: runES6 :normal
+- path: es6/Symbol_cannot_coerce_to_string_or_number.js
+  cmd: runES6 :normal
+- path: es6/Symbol_global_symbol_registry.js
+  cmd: runES6 :normal
+- path: es6/Symbol_JSON.stringify_ignores_symbols.js
+  cmd: runES6 :normal
+- path: es6/Symbol_new_Symbol_throws.js
+  cmd: runES6 :normal
+- path: es6/Symbol_Object.defineProperty_support.js
+  cmd: runES6 :normal
+- path: es6/Symbol_Objectsymbol.js
+  cmd: runES6 :normal
+- path: es6/Symbol_symbol_keys_are_hidden_to_pre-ES6_code.js
+  cmd: runES6 :normal
+- path: es6/Symbol_typeof_support.js
+  cmd: runES6 :normal
+- path: es6/template_strings_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/template_strings_line_break_normalisation.js
+  cmd: runES6 :normal
+- path: es6/template_strings_passed_array_is_frozen.js
+  cmd: runES6 :normal
+- path: es6/template_strings_tagged_template_strings.js
+  cmd: runES6 :normal
+- path: es6/template_strings_toString_conversion.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.subarray.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_constructors_require_new.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_DataView_Float32.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_DataView_Float64.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_DataView_Int16.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_DataView_Int32.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_DataView_Int8.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_DataView_Uint16.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_DataView_Uint32.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_DataView_Uint8.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Float32Array.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Float64Array.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Int16Array.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Int32Array.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Int8Array.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Uint16Array.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Uint32Array.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Uint8Array.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_Uint8ClampedArray.js
+  cmd: runES6 :normal
+- path: es6/Unicode_code_point_escapes_in_identifiers.js
+  cmd: runES6 :normal
+- path: es6/Unicode_code_point_escapes_in_strings.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_constructor_accepts_null.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_constructor_arguments.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_constructor_invokes_set.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_constructor_requires_new.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_frozen_objects_as_keys.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_no_WeakMap.prototype.clear_method.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_WeakMap.prototype.delete.js
+  cmd: runES6 :normal
+- path: es6/WeakMap_WeakMap.prototype.set_returns_this.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_constructor_accepts_null.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_constructor_arguments.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_constructor_invokes_add.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_constructor_requires_new.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_no_WeakSet.prototype.clear_method.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_WeakSet.prototype.add_returns_this.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_WeakSet.prototype.delete.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.iterator_arguments_object.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.iterator_existence.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.unscopables.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_Array.from.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_Array.of.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_Array.prototype.concat.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_Array.prototype.filter.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_Array.prototype.map.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_Array.prototype.slice.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_Array.prototype.splice.js
+  cmd: runES6 :normal
+- path: es6/Array_is_subclassable_correct_prototype_chain.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_generator_instances.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_generic_iterables.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_instances_of_generic_iterables.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_iterator_closing.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_map_function_generator_instances.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_map_function_generic_iterables.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array.from_map_function_instances_of_iterables.js
+  cmd: runES6 :normal
+- path: es6/Array_static_methods_Array[Symbol.species].js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_lexical_arguments_binding.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_lexical_new.target_binding.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_lexical_super_binding.js
+  cmd: runES6 :normal
+- path: es6/arrow_functions_no_prototype_property.js
+  cmd: runES6 :normal
+- path: es6/block-level_function_declaration.js
+  cmd: runES6 :normal
+- path: es6/destructuring_computed_properties.js
+  cmd: runES6 :normal
+- path: es6/destructuring_defaults_in_parameters_separate_scope.js
+  cmd: runES6 :normal
+- path: es6/destructuring_iterator_closing.js
+  cmd: runES6 :normal
+- path: es6/destructuring_nested_rest.js
+  cmd: runES6 :normal
+- path: es6/destructuring_with_generator_instances.js
+  cmd: runES6 :normal
+- path: es6/destructuring_with_generic_iterables.js
+  cmd: runES6 :normal
+- path: es6/destructuring_with_instances_of_generic_iterables.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_iterator_closing_break.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_iterator_closing_throw.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_with_generator_instances.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_with_generic_iterables.js
+  cmd: runES6 :normal
+- path: es6/for..of_loops_with_instances_of_generic_iterables.js
+  cmd: runES6 :normal
+- path: es6/Function_is_subclassable_can_be_called.js
+  cmd: runES6 :normal
+- path: es6/Function_is_subclassable_can_be_used_with_new.js
+  cmd: runES6 :normal
+- path: es6/Function_is_subclassable_correct_prototype_chain.js
+  cmd: runES6 :normal
+- path: es6/Function_is_subclassable_Function.prototype.apply.js
+  cmd: runES6 :normal
+- path: es6/Function_is_subclassable_Function.prototype.bind.js
+  cmd: runES6 :normal
+- path: es6/Function_is_subclassable_Function.prototype.call.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_accessor_properties.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_bound_functions.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_class_expressions.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_class_statements.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_isnt_writable_is_configurable.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_object_methods_class.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_object_methods_function.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_shorthand_methods_no_lexical_binding.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_symbol-keyed_methods.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_variables_class.js
+  cmd: runES6 :normal
+- path: es6/function_name_property_variables_function.js
+  cmd: runES6 :normal
+- path: es6/generators_%GeneratorPrototype%.constructor.js
+  cmd: runES6 :normal
+- path: es6/generators_%GeneratorPrototype%.js
+  cmd: runES6 :normal
+- path: es6/generators_%GeneratorPrototype%.return.js
+  cmd: runES6 :normal
+- path: es6/generators_%GeneratorPrototype%.throw.js
+  cmd: runES6 :normal
+- path: es6/generators_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/generators_cant_use_this_with_new.js
+  cmd: runES6 :normal
+- path: es6/generators_computed_shorthand_generators.js
+  cmd: runES6 :normal
+- path: es6/generators_computed_shorthand_generators_classes.js
+  cmd: runES6 :normal
+- path: es6/generators_correct_this_binding.js
+  cmd: runES6 :normal
+- path: es6/generators_generator_function_expressions.js
+  cmd: runES6 :normal
+- path: es6/generators_sending.js
+  cmd: runES6 :normal
+- path: es6/generators_shorthand_generator_methods.js
+  cmd: runES6 :normal
+- path: es6/generators_shorthand_generator_methods_classes.js
+  cmd: runES6 :normal
+- path: es6/generators_string-keyed_shorthand_generator_methods.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_arrays.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_astral_plane_strings.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_generator_instances.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_generic_iterables.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_instances_of_iterables.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_iterator_closing.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_iterator_closing_via_throw.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_on_non-iterables_is_a_runtime_error.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_sparse_arrays.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_star_strings.js
+  cmd: runES6 :normal
+- path: es6/generators_yield_operator_precedence.js
+  cmd: runES6 :normal
+- path: es6/Map_iterator_closing.js
+  cmd: runES6 :normal
+- path: es6/Map_Map[Symbol.species].js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_built-in_prototypes_are_not_instances.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_function_length_is_configurable.js
+  cmd: runES6 :normal
+- path: es6/miscellaneous_no_assignments_allowed_in_for-in_head.js
+  cmd: runES6 :fail
+- path: es6/miscellaneous_RegExp_constructor_can_alter_flags.js
+  cmd: runES6 :normal
+- path: es6/new.target_assignment_is_an_early_error.js
+  cmd: runES6 :normal
+- path: es6/non-strict_function_semantics_hoisted_block-level_function_declaration.js
+  cmd: runES6 :normal
+- path: es6/Promise_is_subclassable_Promise.all.js
+  cmd: runES6 :fail
+- path: es6/Promise_is_subclassable_Promise.race.js
+  cmd: runES6 :fail
+- path: es6/Promise_Promise.all.js
+  cmd: runES6 :fail
+- path: es6/Promise_Promise.all_generic_iterables.js
+  cmd: runES6 :fail
+- path: es6/Promise_Promise.race.js
+  cmd: runES6 :fail
+- path: es6/Promise_Promise.race_generic_iterables.js
+  cmd: runES6 :fail
+- path: es6/Promise_Promise[Symbol.species].js
+  cmd: runES6 :normal
+- path: es6/proper_tail_calls_tail_call_optimisation_direct_recursion.js
+  cmd: runES6 :normal
+- path: es6/proper_tail_calls_tail_call_optimisation_mutual_recursion.js
+  cmd: runES6 :normal
+- path: es6/prototype_of_bound_functions_arrow_functions.js
+  cmd: runES6 :normal
+- path: es6/prototype_of_bound_functions_basic_functions.js
+  cmd: runES6 :normal
+- path: es6/prototype_of_bound_functions_classes.js
+  cmd: runES6 :normal
+- path: es6/prototype_of_bound_functions_generator_functions.js
+  cmd: runES6 :normal
+- path: es6/prototype_of_bound_functions_subclasses.js
+  cmd: runES6 :normal
+- path: es6/Proxy_apply_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_Array.isArray_support.js
+  cmd: runES6 :normal
+- path: es6/Proxy_construct_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_constructor_requires_new.js
+  cmd: runES6 :normal
+- path: es6/Proxy_defineProperty_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_deleteProperty_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_enumerate_handler.js
+  cmd: runES6 :fail
+- path: es6/Proxy_get_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_get_handler_instances_of_proxies.js
+  cmd: runES6 :normal
+- path: es6/Proxy_getOwnPropertyDescriptor_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_getPrototypeOf_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_has_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_has_handler_instances_of_proxies.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_defineProperty_calls_[[Set]].js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_defineProperty_calls_SetIntegrityLevel.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.copyWithin.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.pop.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.reverse.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.shift.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.splice.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.unshift.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Array.from.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Array.prototype.concat.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Array.prototype.pop.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Array.prototype.reverse.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Array.prototype.shift.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Array.prototype.splice.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Array.prototype.toString.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Array.prototype_iteration_methods.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_ClassDefinitionEvaluation.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_CreateDynamicFunction.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_CreateListFromArrayLike.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Date.prototype.toJSON.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Error.prototype.toString.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Function.prototype.bind.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_HasBinding.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_instanceof_operator.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_IteratorComplete_IteratorValue.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_JSON.stringify.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Object.assign.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Object.defineProperties.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_Promise_resolve_functions.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_RegExp.prototype.flags.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_RegExp.prototype.test.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_RegExp.prototype.toString.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.match].js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.replace].js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.search].js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.split].js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_RegExp_constructor.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_String.prototype.match.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_String.prototype.replace.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_String.prototype.search.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_String.prototype.split.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_String.raw.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_ToPrimitive.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_get_calls_ToPropertyDescriptor.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_[[Set]].js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_Function.prototype.bind.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_Object.assign.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_Object.prototype.hasOwnProperty.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_ownKeys_calls_SerializeJSONObject.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_ownKeys_calls_SetIntegrityLevel.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_ownKeys_calls_TestIntegrityLevel.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.from.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.of.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.prototype.copyWithin.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.prototype.fill.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.prototype.pop.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.prototype.push.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.prototype.reverse.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.prototype.shift.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.prototype.splice.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Array.prototype.unshift.js
+  cmd: runES6 :normal
+- path: es6/Proxy_internal_set_calls_Object.assign.js
+  cmd: runES6 :normal
+- path: es6/Proxy_isExtensible_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_JSON.stringify_support.js
+  cmd: runES6 :normal
+- path: es6/Proxy_ownKeys_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_ownKeys_duplicates.js
+  cmd: runES6 :normal
+- path: es6/Proxy_preventExtensions_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_Proxy.revocable.js
+  cmd: runES6 :normal
+- path: es6/Proxy_set_handler.js
+  cmd: runES6 :normal
+- path: es6/Proxy_set_handler_instances_of_proxies.js
+  cmd: runES6 :normal
+- path: es6/Proxy_setPrototypeOf_handler.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.construct.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.construct_creates_instance_from_newTarget_argument.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.construct_sets_new.target_meta_property.js
+  cmd: runES6 :normal
+- path: es6/Reflect_Reflect.set.js
+  cmd: runES6 :normal
+- path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.match].js
+  cmd: runES6 :normal
+- path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.replace].js
+  cmd: runES6 :normal
+- path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.search].js
+  cmd: runES6 :normal
+- path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.split].js
+  cmd: runES6 :normal
+- path: es6/RegExp.prototype_properties_RegExp[Symbol.species].js
+  cmd: runES6 :normal
+- path: es6/RegExp_is_subclassable_correct_prototype_chain.js
+  cmd: runES6 :normal
+- path: es6/RegExp_y_and_u_flags_u_flag.js
+  cmd: runES6 :normal
+- path: es6/RegExp_y_and_u_flags_u_flag_Unicode_code_point_escapes.js
+  cmd: runES6 :normal
+- path: es6/RegExp_y_and_u_flags_y_flag.js
+  cmd: runES6 :normal
+- path: es6/RegExp_y_and_u_flags_y_flag_lastIndex.js
+  cmd: runES6 :normal
+- path: es6/rest_parameters_arguments_object_interaction.js
+  cmd: runES6 :normal
+- path: es6/rest_parameters_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/rest_parameters_cant_be_used_in_setters.js
+  cmd: runES6 :normal
+- path: es6/rest_parameters_function_length_property.js
+  cmd: runES6 :normal
+- path: es6/rest_parameters_new_Function_support.js
+  cmd: runES6 :normal
+- path: es6/Set_iterator_closing.js
+  cmd: runES6 :normal
+- path: es6/Set_Set[Symbol.species].js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_astral_plane_strings_in_function_calls.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_generator_instances_in_arrays.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_generator_instances_in_calls.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_generic_iterables_in_arrays.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_generic_iterables_in_calls.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_instances_of_iterables_in_arrays.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_instances_of_iterables_in_calls.js
+  cmd: runES6 :normal
+- path: es6/spread_..._operator_with_strings_in_function_calls.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.from.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.of.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.copyWithin.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.entries.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.every.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.fill.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.filter.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.find.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.findIndex.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.forEach.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.indexOf.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.join.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.keys.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.lastIndexOf.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.map.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.reduce.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.reduceRight.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.reverse.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.slice.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.some.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.sort.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype.values.js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%.prototype[Symbol.iterator].js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_%TypedArray%[Symbol.species].js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_ArrayBuffer[Symbol.species].js
+  cmd: runES6 :normal
+- path: es6/typed_arrays_correct_prototype_chains.js
+  cmd: runES6 :fail
+- path: es6/WeakMap_iterator_closing.js
+  cmd: runES6 :normal
+- path: es6/WeakSet_iterator_closing.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.hasInstance.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.isConcatSpreadable.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.match.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.replace.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.search.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.species_Array.prototype.concat.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.species_Array.prototype.filter.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.species_Array.prototype.map.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.species_Array.prototype.slice.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.species_Array.prototype.splice.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.species_existence.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.species_RegExp.prototype[Symbol.split].js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.split.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.toPrimitive.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.toStringTag.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.toStringTag_misc._built-ins.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.toStringTag_new_built-ins.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.match_String.prototype.startsWith.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.match_String.prototype.endsWith.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.match_String.prototype.includes.js
+  cmd: runES6 :normal
