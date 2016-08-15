@@ -1076,6 +1076,7 @@
 		75A8D2E1187DEC1A00C39C9E /* APISession.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2DE187DE87400C39C9E /* APISession.h */; };
 		75A8D2E2187DEC1E00C39C9E /* APISession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75A8D2DD187DE87400C39C9E /* APISession.cpp */; };
 		762B748D120BC75C00819339 /* WKPreferencesRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A5E394A1D5BD8BE00B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb in Resources */ = {isa = PBXBuildFile; fileRef = 7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */; };
 		7A791EFA1C7CFCF100C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A791EF91C7CFB3700C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp */; };
 		7A791EFB1C7CFD0100C4C52B /* WebResourceLoadStatisticsStoreMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A791EF81C7CFB1000C4C52B /* WebResourceLoadStatisticsStoreMessages.h */; };
 		7A791EFC1C7D08C500C4C52B /* WebResourceLoadStatisticsStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A9CD8C01C77984900D9F6C7 /* WebResourceLoadStatisticsStore.cpp */; };
@@ -3147,6 +3148,7 @@
 		75A8D2DE187DE87400C39C9E /* APISession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APISession.h; path = UIProcess/API/APISession.h; sourceTree = SOURCE_ROOT; };
 		762B7481120BBA0100819339 /* FontSmoothingLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSmoothingLevel.h; sourceTree = "<group>"; };
 		762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesRefPrivate.h; sourceTree = "<group>"; };
+		7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.macromedia.Flash Player ESR.plugin.sb"; sourceTree = "<group>"; };
 		7A791EF81C7CFB1000C4C52B /* WebResourceLoadStatisticsStoreMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadStatisticsStoreMessages.h; sourceTree = "<group>"; };
 		7A791EF91C7CFB3700C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadStatisticsStoreMessageReceiver.cpp; sourceTree = "<group>"; };
 		7A9CD8C01C77984900D9F6C7 /* WebResourceLoadStatisticsStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadStatisticsStore.cpp; sourceTree = "<group>"; };
@@ -5778,6 +5780,7 @@
 				7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */,
 				7CB16FE41724B9B5007A0A95 /* com.apple.WebKit.plugin-common.sb */,
 				7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */,
+				7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */,
 				7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */,
 				7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */,
 			);
@@ -8568,6 +8571,7 @@
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				93A2A3461D246125002B59D3 /* mediaIcon.pdf in Resources */,
+				7A5E394A1D5BD8BE00B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
