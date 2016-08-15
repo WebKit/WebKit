@@ -1,3 +1,11 @@
+2016-08-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix iOS build.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::webGLPolicyForURL):
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+
 2016-08-15  Keith Rollin  <krollin@apple.com>
 
         Rename LOG_ALWAYS

@@ -3060,12 +3060,12 @@ void WebPage::willStartUserTriggeredZooming()
 #if ENABLE(WEBGL)
 WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const String&)
 {
-    return WKShouldBlockWebGL() ? WebGLBlockCreation : WebGLAllowCreation;
+    return WebGLAllowCreation;
 }
 
 WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const String&)
 {
-    return WKShouldBlockWebGL() ? WebGLBlockCreation : WebGLAllowCreation;
+    return WebGLAllowCreation;
 }
 #endif
 
