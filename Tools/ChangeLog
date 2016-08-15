@@ -1,3 +1,18 @@
+2016-08-15  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Allow using make-dist with non-GTK ports
+        https://bugs.webkit.org/show_bug.cgi?id=160842
+
+        Reviewed by Michael Catanzaro.
+
+        This patch adds support for setting base name of tarball and argument
+        passed to cmake's -DPORT= via command line arguments.
+
+        * gtk/make-dist.py:
+        (Distcheck.configure):
+        (Distcheck.check):
+        (get_tarball_root_and_output_filename_from_arguments):
+
 2016-08-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Install script lacks gstreamer related dependencies

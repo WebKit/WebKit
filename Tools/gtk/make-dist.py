@@ -233,7 +233,7 @@ class Distcheck(object):
         with closing(tarfile.open(tarball_path, 'r')) as tarball:
             tarball.extractall(self.build_root)
 
-    def configure(self, dist_dir, build_dir, install_dir):
+    def configure(self, dist_dir, build_dir, install_dir, port):
         def create_dir(directory, directory_type):
             try:
                 os.mkdir(directory)
@@ -244,7 +244,7 @@ class Distcheck(object):
         create_dir(build_dir, "build")
         create_dir(install_dir, "install")
 
-        command = ['cmake', '-DPORT=GTK', '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', dist_dir]
+        command = ['cmake', '-DPORT=%s' % port, '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', dist_dir]
         subprocess.check_call(command, cwd=build_dir)
 
     def build(self, build_dir):
@@ -262,14 +262,14 @@ class Distcheck(object):
     def clean(self, dist_dir):
         shutil.rmtree(dist_dir)
 
-    def check(self, tarball):
+    def check(self, tarball, port):
         tarball_name, ext = os.path.splitext(os.path.basename(tarball))
         dist_dir = os.path.join(self.build_root, tarball_name)
         build_dir = os.path.join(dist_dir, self.BUILD_DIRECTORY_NAME)
         install_dir = os.path.join(dist_dir, self.INSTALL_DIRECTORY_NAME)
 
         self.extract_tarball(tarball)
-        self.configure(dist_dir, build_dir, install_dir)
+        self.configure(dist_dir, build_dir, install_dir, port)
         self.build(build_dir)
         self.install(build_dir)
         self.clean(dist_dir)
@@ -292,7 +292,7 @@ if __name__ == "__main__":
 
 
     def get_tarball_root_and_output_filename_from_arguments(arguments):
-        tarball_root = "webkitgtk"
+        tarball_root = arguments.tarball_name
         if arguments.version is not None:
             tarball_root += '-' + arguments.version
 
@@ -310,6 +310,10 @@ if __name__ == "__main__":
     parser.add_argument('-b', '--build-dir', type=str, action=FilePathAction, default=os.getcwd(),
                         help='The top-level path of directory of the build root. ' + \
                               'By default is the current directory.')
+    parser.add_argument('-t', '--tarball-name', type=str, default='webkitgtk',
+                        help='Base name of tarball. Defaults to "webkitgtk".')
+    parser.add_argument('-p', '--port', type=str, default='GTK',
+                        help='Port to be built in tarball check. Defaults to "GTK".')
     parser.add_argument('manifest_filename', metavar="manifest", type=str, action=FilePathAction, help='The path to the manifest file.')
 
     arguments = parser.parse_args()
@@ -326,4 +330,4 @@ if __name__ == "__main__":
     manifest.create_tarfile(output_filename)
 
     if arguments.check:
-        Distcheck(arguments.source_dir, arguments.build_dir).check(output_filename)
+        Distcheck(arguments.source_dir, arguments.build_dir).check(output_filename, arguments.port)
