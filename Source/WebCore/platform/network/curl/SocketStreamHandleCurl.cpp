@@ -37,6 +37,8 @@
 #include "Logging.h"
 #include "SocketStreamHandleClient.h"
 #include "URL.h"
+#include <mutex>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
