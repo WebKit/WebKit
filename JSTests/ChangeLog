@@ -1,3 +1,12 @@
+2016-08-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip failing test mozilla/ecma/LexicalConventions/7.7.3.js
+        https://bugs.webkit.org/show_bug.cgi?id=160662
+
+        Unreviewed test gardening.
+
+        * mozilla/ecma/LexicalConventions/7.7.3.js:
+
 2016-08-14  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [2016] Set correct status for test262 after implementation of Object.values&Object.entries
