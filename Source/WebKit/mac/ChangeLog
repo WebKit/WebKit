@@ -1,3 +1,19 @@
+2016-08-15  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebKeyGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=160854
+
+        Reviewed by Dan Bernstein.
+
+        This SPI class is no longer used by Safari.
+
+        * WebCoreSupport/WebKeyGenerator.h: Removed.
+        * WebCoreSupport/WebKeyGenerator.mm: Removed.
+        (+[WebKeyGenerator sharedGenerator]): Deleted.
+        (toWebCertificateParseResult): Deleted.
+        (-[WebKeyGenerator addCertificatesToKeychainFromData:]): Deleted.
+        * WebView/WebFrameView.mm:
+
 2016-08-15  Daniel Bates  <dabates@apple.com>
 
         Cannot build WebKit for iOS device using Xcode 7.3/iOS 9.3 public SDK due to missing
