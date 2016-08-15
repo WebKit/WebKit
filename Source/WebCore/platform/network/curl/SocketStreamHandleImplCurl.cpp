@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "SocketStreamHandle.h"
+#include "SocketStreamHandleImpl.h"
 
 #if USE(CURL)
 
@@ -44,21 +44,21 @@
 
 namespace WebCore {
 
-SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client)
-    : SocketStreamHandleBase(url, client)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client)
+    : SocketStreamHandle(url, client)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
     ASSERT(isMainThread());
     startThread();
 }
 
-SocketStreamHandle::~SocketStreamHandle()
+SocketStreamHandleImpl::~SocketStreamHandleImpl()
 {
     LOG(Network, "SocketStreamHandle %p delete", this);
     ASSERT(!m_workerThread);
 }
 
-int SocketStreamHandle::platformSend(const char* data, int length)
+int SocketStreamHandleImpl::platformSend(const char* data, int length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
 
@@ -74,7 +74,7 @@ int SocketStreamHandle::platformSend(const char* data, int length)
     return length;
 }
 
-void SocketStreamHandle::platformClose()
+void SocketStreamHandleImpl::platformClose()
 {
     LOG(Network, "SocketStreamHandle %p platformClose", this);
 
@@ -85,7 +85,7 @@ void SocketStreamHandle::platformClose()
     m_client.didCloseSocketStream(*this);
 }
 
-bool SocketStreamHandle::readData(CURL* curlHandle)
+bool SocketStreamHandleImpl::readData(CURL* curlHandle)
 {
     ASSERT(!isMainThread());
 
@@ -116,7 +116,7 @@ bool SocketStreamHandle::readData(CURL* curlHandle)
     return false;
 }
 
-bool SocketStreamHandle::sendData(CURL* curlHandle)
+bool SocketStreamHandleImpl::sendData(CURL* curlHandle)
 {
     ASSERT(!isMainThread());
 
@@ -156,7 +156,7 @@ bool SocketStreamHandle::sendData(CURL* curlHandle)
     return true;
 }
 
-bool SocketStreamHandle::waitForAvailableData(CURL* curlHandle, std::chrono::milliseconds selectTimeout)
+bool SocketStreamHandleImpl::waitForAvailableData(CURL* curlHandle, std::chrono::milliseconds selectTimeout)
 {
     ASSERT(!isMainThread());
 
@@ -182,7 +182,7 @@ bool SocketStreamHandle::waitForAvailableData(CURL* curlHandle, std::chrono::mil
     return rc == 1;
 }
 
-void SocketStreamHandle::startThread()
+void SocketStreamHandleImpl::startThread()
 {
     ASSERT(isMainThread());
 
@@ -232,7 +232,7 @@ void SocketStreamHandle::startThread()
     });
 }
 
-void SocketStreamHandle::stopThread()
+void SocketStreamHandleImpl::stopThread()
 {
     ASSERT(isMainThread());
 
@@ -245,7 +245,7 @@ void SocketStreamHandle::stopThread()
     deref();
 }
 
-void SocketStreamHandle::didReceiveData()
+void SocketStreamHandleImpl::didReceiveData()
 {
     ASSERT(isMainThread());
 
@@ -264,7 +264,7 @@ void SocketStreamHandle::didReceiveData()
     }
 }
 
-void SocketStreamHandle::didOpenSocket()
+void SocketStreamHandleImpl::didOpenSocket()
 {
     ASSERT(isMainThread());
 
@@ -273,7 +273,7 @@ void SocketStreamHandle::didOpenSocket()
     m_client.didOpenSocketStream(*this);
 }
 
-std::unique_ptr<char[]> SocketStreamHandle::createCopy(const char* data, int length)
+std::unique_ptr<char[]> SocketStreamHandleImpl::createCopy(const char* data, int length)
 {
     std::unique_ptr<char[]> copy(new char[length]);
     memcpy(copy.get(), data, length);

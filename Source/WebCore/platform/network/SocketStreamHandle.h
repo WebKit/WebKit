@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc.  All rights reserved.
- * Copyright (C) 2012 Samsung Electronics Ltd. All Rights Reserved.
+ * Copyright (C) 2009, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,52 +31,38 @@
 
 #pragma once
 
-#include "SocketStreamHandleBase.h"
-
-#if USE(SOUP)
-
-#include "SessionID.h"
-#include <wtf/RefCounted.h>
-#include <wtf/glib/GRefPtr.h>
+#include "URL.h"
+#include <wtf/StreamBuffer.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class SocketStreamError;
 class SocketStreamHandleClient;
 
-class SocketStreamHandle final : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
+class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle> {
 public:
-    static Ref<SocketStreamHandle> create(const URL&, SocketStreamHandleClient&, SessionID);
-    static Ref<SocketStreamHandle> create(GSocketConnection*, SocketStreamHandleClient&);
+    enum SocketStreamState { Connecting, Open, Closing, Closed };
+    virtual ~SocketStreamHandle() { }
+    SocketStreamState state() const;
 
-    virtual ~SocketStreamHandle();
+    bool send(const char* data, int length);
+    void close(); // Disconnect after all data in buffer are sent.
+    void disconnect();
+    size_t bufferedAmount() const { return m_buffer.size(); }
 
-private:
+    SocketStreamHandleClient& client() const { return m_client; }
+
+protected:
     SocketStreamHandle(const URL&, SocketStreamHandleClient&);
 
-    int platformSend(const char* data, int length) override;
-    void platformClose() override;
+    bool sendPendingData();
+    virtual int platformSend(const char* data, int length) = 0;
+    virtual void platformClose() = 0;
 
-    void beginWaitingForSocketWritability();
-    void stopWaitingForSocketWritability();
-
-    static void connectedCallback(GSocketClient*, GAsyncResult*, SocketStreamHandle*);
-    static void readReadyCallback(GInputStream*, GAsyncResult*, SocketStreamHandle*);
-    static gboolean writeReadyCallback(GPollableOutputStream*, SocketStreamHandle*);
-
-    void connected(GRefPtr<GSocketConnection>&&);
-    void readBytes(gssize);
-    void didFail(SocketStreamError&&);
-    void writeReady();
-
-    GRefPtr<GSocketConnection> m_socketConnection;
-    GRefPtr<GInputStream> m_inputStream;
-    GRefPtr<GPollableOutputStream> m_outputStream;
-    GRefPtr<GSource> m_writeReadySource;
-    GRefPtr<GCancellable> m_cancellable;
-    std::unique_ptr<char[]> m_readBuffer;
+    URL m_url;
+    SocketStreamHandleClient& m_client;
+    StreamBuffer<char, 1024 * 1024> m_buffer;
+    SocketStreamState m_state;
 };
 
-}  // namespace WebCore
-
-#endif
+} // namespace WebCore

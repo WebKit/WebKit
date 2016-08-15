@@ -30,14 +30,14 @@
  */
 
 #include "config.h"
-#include "SocketStreamHandle.h"
+#include "SocketStreamHandleImpl.h"
 
 #if USE(SOUP)
 
-#include "URL.h"
 #include "Logging.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include "URL.h"
 #include <gio/gio.h>
 #include <glib.h>
 #include <wtf/Vector.h>
@@ -48,9 +48,9 @@
 
 namespace WebCore {
 
-Ref<SocketStreamHandle> SocketStreamHandle::create(const URL& url, SocketStreamHandleClient& client, SessionID)
+Ref<SocketStreamHandle> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, SessionID)
 {
-    Ref<SocketStreamHandle> socket = adoptRef(*new SocketStreamHandle(url, client));
+    Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(url, client));
 
     unsigned port = url.hasPort() ? url.port() : (url.protocolIs("wss") ? 443 : 80);
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
@@ -59,38 +59,38 @@ Ref<SocketStreamHandle> SocketStreamHandle::create(const URL& url, SocketStreamH
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, socket->m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
-    return socket;
+    return WTFMove(socket);
 }
 
-Ref<SocketStreamHandle> SocketStreamHandle::create(GSocketConnection* socketConnection, SocketStreamHandleClient& client)
+Ref<SocketStreamHandle> SocketStreamHandleImpl::create(GSocketConnection* socketConnection, SocketStreamHandleClient& client)
 {
-    Ref<SocketStreamHandle> socket = adoptRef(*new SocketStreamHandle(URL(), client));
+    Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(URL(), client));
 
     GRefPtr<GSocketConnection> connection = socketConnection;
     socket->connected(WTFMove(connection));
-    return socket;
+    return WTFMove(socket);
 }
 
-SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client)
-    : SocketStreamHandleBase(url, client)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client)
+    : SocketStreamHandle(url, client)
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
 }
 
-SocketStreamHandle::~SocketStreamHandle()
+SocketStreamHandleImpl::~SocketStreamHandleImpl()
 {
     LOG(Network, "SocketStreamHandle %p delete", this);
 }
 
-void SocketStreamHandle::connected(GRefPtr<GSocketConnection>&& socketConnection)
+void SocketStreamHandleImpl::connected(GRefPtr<GSocketConnection>&& socketConnection)
 {
     m_socketConnection = WTFMove(socketConnection);
     m_outputStream = G_POLLABLE_OUTPUT_STREAM(g_io_stream_get_output_stream(G_IO_STREAM(m_socketConnection.get())));
     m_inputStream = g_io_stream_get_input_stream(G_IO_STREAM(m_socketConnection.get()));
     m_readBuffer = std::make_unique<char[]>(READ_BUFFER_SIZE);
 
-    RefPtr<SocketStreamHandle> protectedThis(this);
+    RefPtr<SocketStreamHandleImpl> protectedThis(this);
     g_input_stream_read_async(m_inputStream.get(), m_readBuffer.get(), READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), protectedThis.leakRef());
 
@@ -98,7 +98,7 @@ void SocketStreamHandle::connected(GRefPtr<GSocketConnection>&& socketConnection
     m_client.didOpenSocketStream(*this);
 }
 
-void SocketStreamHandle::connectedCallback(GSocketClient* client, GAsyncResult* result, SocketStreamHandle* handle)
+void SocketStreamHandleImpl::connectedCallback(GSocketClient* client, GAsyncResult* result, SocketStreamHandleImpl* handle)
 {
     RefPtr<SocketStreamHandle> protectedThis = adoptRef(handle);
 
@@ -119,7 +119,7 @@ void SocketStreamHandle::connectedCallback(GSocketClient* client, GAsyncResult* 
         handle->connected(WTFMove(socketConnection));
 }
 
-void SocketStreamHandle::readBytes(gssize bytesRead)
+void SocketStreamHandleImpl::readBytes(gssize bytesRead)
 {
     if (!bytesRead) {
         close();
@@ -135,7 +135,7 @@ void SocketStreamHandle::readBytes(gssize bytesRead)
     }
 }
 
-void SocketStreamHandle::readReadyCallback(GInputStream* stream, GAsyncResult* result, SocketStreamHandle* handle)
+void SocketStreamHandleImpl::readReadyCallback(GInputStream* stream, GAsyncResult* result, SocketStreamHandleImpl* handle)
 {
     RefPtr<SocketStreamHandle> protectedThis = adoptRef(handle);
 
@@ -152,12 +152,12 @@ void SocketStreamHandle::readReadyCallback(GInputStream* stream, GAsyncResult* r
         handle->readBytes(bytesRead);
 }
 
-void SocketStreamHandle::didFail(SocketStreamError&& error)
+void SocketStreamHandleImpl::didFail(SocketStreamError&& error)
 {
     m_client.didFailSocketStream(*this, WTFMove(error));
 }
 
-void SocketStreamHandle::writeReady()
+void SocketStreamHandleImpl::writeReady()
 {
     // We no longer have buffered data, so stop waiting for the socket to be writable.
     if (!bufferedAmount()) {
@@ -168,7 +168,7 @@ void SocketStreamHandle::writeReady()
     sendPendingData();
 }
 
-int SocketStreamHandle::platformSend(const char* data, int length)
+int SocketStreamHandleImpl::platformSend(const char* data, int length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
     if (!m_outputStream || !data)
@@ -185,14 +185,14 @@ int SocketStreamHandle::platformSend(const char* data, int length)
     }
 
     // If we did not send all the bytes we were given, we know that
-    // SocketStreamHandleBase will need to send more in the future.
+    // SocketStreamHandle will need to send more in the future.
     if (written < length)
         beginWaitingForSocketWritability();
 
     return written;
 }
 
-void SocketStreamHandle::platformClose()
+void SocketStreamHandleImpl::platformClose()
 {
     LOG(Network, "SocketStreamHandle %p platformClose", this);
     // We cancel this handle first to disable all callbacks.
@@ -214,19 +214,20 @@ void SocketStreamHandle::platformClose()
     m_client.didCloseSocketStream(*this);
 }
 
-void SocketStreamHandle::beginWaitingForSocketWritability()
+void SocketStreamHandleImpl::beginWaitingForSocketWritability()
 {
     if (m_writeReadySource) // Already waiting.
         return;
 
     m_writeReadySource = adoptGRef(g_pollable_output_stream_create_source(m_outputStream.get(), m_cancellable.get()));
     ref();
-    g_source_set_callback(m_writeReadySource.get(), reinterpret_cast<GSourceFunc>(writeReadyCallback), this,
-        [](gpointer handle) { static_cast<SocketStreamHandle*>(handle)->deref(); });
+    g_source_set_callback(m_writeReadySource.get(), reinterpret_cast<GSourceFunc>(writeReadyCallback), this, [](gpointer handle) { 
+        static_cast<SocketStreamHandleImpl*>(handle)->deref();
+    });
     g_source_attach(m_writeReadySource.get(), g_main_context_get_thread_default());
 }
 
-void SocketStreamHandle::stopWaitingForSocketWritability()
+void SocketStreamHandleImpl::stopWaitingForSocketWritability()
 {
     if (!m_writeReadySource) // Not waiting.
         return;
@@ -235,7 +236,7 @@ void SocketStreamHandle::stopWaitingForSocketWritability()
     m_writeReadySource = nullptr;
 }
 
-gboolean SocketStreamHandle::writeReadyCallback(GPollableOutputStream*, SocketStreamHandle* handle)
+gboolean SocketStreamHandleImpl::writeReadyCallback(GPollableOutputStream*, SocketStreamHandleImpl* handle)
 {
     if (g_cancellable_is_cancelled(handle->m_cancellable.get()))
         return G_SOURCE_REMOVE;

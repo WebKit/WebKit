@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "SocketStreamHandleBase.h"
+#include "SocketStreamHandle.h"
 
 #if PLATFORM(WIN)
 #include <winsock2.h>
@@ -48,14 +48,14 @@ namespace WebCore {
 
 class SocketStreamHandleClient;
 
-class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
+class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, SessionID) { return adoptRef(*new SocketStreamHandle(url, client)); }
+    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, SessionID) { return adoptRef(*new SocketStreamHandleImpl(url, client)); }
 
-    virtual ~SocketStreamHandle();
+    virtual ~SocketStreamHandleImpl();
 
 private:
-    SocketStreamHandle(const URL&, SocketStreamHandleClient&);
+    SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
 
     int platformSend(const char* data, int length) override;
     void platformClose() override;

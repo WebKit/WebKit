@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "SocketStreamHandle.h"
+#include "SocketStreamHandleImpl.h"
 
 #include "Credential.h"
 #include "CredentialStorage.h"
@@ -40,18 +40,14 @@
 #include "Settings.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include <CFNetwork/CFNetwork.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
-#include <CFNetwork/CFNetwork.h>
-#endif
-
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
-#include <CFNetwork/CFNetwork.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #else
 #include "WebCoreSystemInterface.h"
@@ -67,8 +63,8 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 
 namespace WebCore {
 
-SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client, SessionID sessionID)
-    : SocketStreamHandleBase(url, client)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, SessionID sessionID)
+    : SocketStreamHandle(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
     , m_sentStoredCredentials(false)
@@ -100,7 +96,7 @@ SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient&
     scheduleStreams();
 }
 
-void SocketStreamHandle::scheduleStreams()
+void SocketStreamHandleImpl::scheduleStreams()
 {
     ASSERT(m_readStream);
     ASSERT(m_writeStream);
@@ -127,25 +123,25 @@ void SocketStreamHandle::scheduleStreams()
     m_connectingSubstate = WaitingForConnect;
 }
 
-void* SocketStreamHandle::retainSocketStreamHandle(void* info)
+void* SocketStreamHandleImpl::retainSocketStreamHandle(void* info)
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(info);
     handle->ref();
     return handle;
 }
 
-void SocketStreamHandle::releaseSocketStreamHandle(void* info)
+void SocketStreamHandleImpl::releaseSocketStreamHandle(void* info)
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(info);
     handle->deref();
 }
 
-CFStringRef SocketStreamHandle::copyPACExecutionDescription(void*)
+CFStringRef SocketStreamHandleImpl::copyPACExecutionDescription(void*)
 {
     return CFSTR("WebSocket proxy PAC file execution");
 }
 
-static void callOnMainThreadAndWait(std::function<void ()> function)
+static void callOnMainThreadAndWait(std::function<void()> function)
 {
     if (isMainThread()) {
         function();
@@ -166,18 +162,22 @@ static void callOnMainThreadAndWait(std::function<void ()> function)
     });
 
     std::unique_lock<Lock> lock(mutex);
-    conditionVariable.wait(lock, [&] { return isFinished; });
+    conditionVariable.wait(lock, [&] {
+        return isFinished;
+    });
 }
 
 struct MainThreadPACCallbackInfo {
-    MainThreadPACCallbackInfo(SocketStreamHandle* handle, CFArrayRef proxyList) : handle(handle), proxyList(proxyList) { }
+    MainThreadPACCallbackInfo(SocketStreamHandle* handle, CFArrayRef proxyList)
+        : handle(handle), proxyList(proxyList)
+    { }
     RefPtr<SocketStreamHandle> handle;
     CFArrayRef proxyList;
 };
 
-void SocketStreamHandle::pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef)
+void SocketStreamHandleImpl::pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef)
 {
-    SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(client);
+    SocketStreamHandleImpl* handle = static_cast<SocketStreamHandleImpl*>(client);
 
     callOnMainThreadAndWait([&] {
         ASSERT(handle->m_connectingSubstate == ExecutingPACFile);
@@ -190,7 +190,7 @@ void SocketStreamHandle::pacExecutionCallback(void* client, CFArrayRef proxyList
     });
 }
 
-void SocketStreamHandle::executePACFileURL(CFURLRef pacFileURL)
+void SocketStreamHandleImpl::executePACFileURL(CFURLRef pacFileURL)
 {
     // CFNetwork returns an empty proxy array for WebSocket schemes, so use m_httpsURL.
     CFStreamClientContext clientContext = { 0, this, retainSocketStreamHandle, releaseSocketStreamHandle, copyPACExecutionDescription };
@@ -203,7 +203,7 @@ void SocketStreamHandle::executePACFileURL(CFURLRef pacFileURL)
     m_connectingSubstate = ExecutingPACFile;
 }
 
-void SocketStreamHandle::removePACRunLoopSource()
+void SocketStreamHandleImpl::removePACRunLoopSource()
 {
     ASSERT(m_pacRunLoopSource);
 
@@ -216,7 +216,7 @@ void SocketStreamHandle::removePACRunLoopSource()
     m_pacRunLoopSource = 0;
 }
 
-void SocketStreamHandle::chooseProxy()
+void SocketStreamHandleImpl::chooseProxy()
 {
     RetainPtr<CFDictionaryRef> proxyDictionary = adoptCF(CFNetworkCopySystemProxySettings());
 
@@ -237,7 +237,7 @@ void SocketStreamHandle::chooseProxy()
     chooseProxyFromArray(proxyArray.get());
 }
 
-void SocketStreamHandle::chooseProxyFromArray(CFArrayRef proxyArray)
+void SocketStreamHandleImpl::chooseProxyFromArray(CFArrayRef proxyArray)
 {
     if (!proxyArray) {
         m_connectionType = Direct;
@@ -297,7 +297,7 @@ void SocketStreamHandle::chooseProxyFromArray(CFArrayRef proxyArray)
 }
 
 
-void SocketStreamHandle::createStreams()
+void SocketStreamHandleImpl::createStreams()
 {
     if (m_connectionType == Unknown)
         chooseProxy();
@@ -350,7 +350,7 @@ void SocketStreamHandle::createStreams()
     }
 }
 
-bool SocketStreamHandle::getStoredCONNECTProxyCredentials(const ProtectionSpace& protectionSpace, String& login, String& password)
+bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSpace& protectionSpace, String& login, String& password)
 {
     // FIXME (<rdar://problem/10416495>): Proxy credentials should be retrieved from AuthBrokerAgent.
 
@@ -385,7 +385,7 @@ static ProtectionSpaceAuthenticationScheme authenticationSchemeFromAuthenticatio
     return ProtectionSpaceAuthenticationSchemeUnknown;
 }
 
-void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
+void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
 {
     RetainPtr<CFHTTPAuthenticationRef> authentication = adoptCF(CFHTTPAuthenticationCreateFromResponse(0, proxyResponse));
 
@@ -436,15 +436,15 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
     m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy credentials are not available"));
 }
 
-CFStringRef SocketStreamHandle::copyCFStreamDescription(void* info)
+CFStringRef SocketStreamHandleImpl::copyCFStreamDescription(void* info)
 {
-    SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(info);
+    SocketStreamHandleImpl* handle = static_cast<SocketStreamHandleImpl*>(info);
     return String("WebKit socket stream, " + handle->m_url.string()).createCFString().leakRef();
 }
 
-void SocketStreamHandle::readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
+void SocketStreamHandleImpl::readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
 {
-    SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(clientCallBackInfo);
+    SocketStreamHandleImpl* handle = static_cast<SocketStreamHandleImpl*>(clientCallBackInfo);
     ASSERT_UNUSED(stream, stream == handle->m_readStream.get());
     // Workaround for <rdar://problem/17727073>. Keeping this below the assertion as we'd like better steps to reproduce this.
     if (!handle->m_readStream)
@@ -462,9 +462,9 @@ void SocketStreamHandle::readStreamCallback(CFReadStreamRef stream, CFStreamEven
 #endif
 }
 
-void SocketStreamHandle::writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
+void SocketStreamHandleImpl::writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
 {
-    SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(clientCallBackInfo);
+    SocketStreamHandleImpl* handle = static_cast<SocketStreamHandleImpl*>(clientCallBackInfo);
     ASSERT_UNUSED(stream, stream == handle->m_writeStream.get());
     // This wasn't seen happening in practice, yet it seems like it could, due to symmetry with read stream callback.
     if (!handle->m_writeStream)
@@ -482,9 +482,9 @@ void SocketStreamHandle::writeStreamCallback(CFWriteStreamRef stream, CFStreamEv
 #endif
 }
 
-void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
+void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
 {
-    switch(type) {
+    switch (type) {
     case kCFStreamEventNone:
         return;
     case kCFStreamEventOpenCompleted:
@@ -554,9 +554,9 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
     }
 }
 
-void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
+void SocketStreamHandleImpl::writeStreamCallback(CFStreamEventType type)
 {
-    switch(type) {
+    switch (type) {
     case kCFStreamEventNone:
         return;
     case kCFStreamEventOpenCompleted:
@@ -610,7 +610,7 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
     }
 }
 
-void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
+void SocketStreamHandleImpl::reportErrorToClient(CFErrorRef error)
 {
     CFIndex errorCode = CFErrorGetCode(error);
     String description;
@@ -642,14 +642,14 @@ void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
     m_client.didFailSocketStream(*this, SocketStreamError(static_cast<int>(errorCode), m_url.string(), description));
 }
 
-SocketStreamHandle::~SocketStreamHandle()
+SocketStreamHandleImpl::~SocketStreamHandleImpl()
 {
     LOG(Network, "SocketStreamHandle %p dtor", this);
 
     ASSERT(!m_pacRunLoopSource);
 }
 
-int SocketStreamHandle::platformSend(const char* data, int length)
+int SocketStreamHandleImpl::platformSend(const char* data, int length)
 {
     if (!CFWriteStreamCanAcceptBytes(m_writeStream.get()))
         return 0;
@@ -657,7 +657,7 @@ int SocketStreamHandle::platformSend(const char* data, int length)
     return CFWriteStreamWrite(m_writeStream.get(), reinterpret_cast<const UInt8*>(data), length);
 }
 
-void SocketStreamHandle::platformClose()
+void SocketStreamHandleImpl::platformClose()
 {
     LOG(Network, "SocketStreamHandle %p platformClose", this);
 
@@ -688,7 +688,7 @@ void SocketStreamHandle::platformClose()
     m_client.didCloseSocketStream(*this);
 }
 
-unsigned short SocketStreamHandle::port() const
+unsigned short SocketStreamHandleImpl::port() const
 {
     if (unsigned short urlPort = m_url.port())
         return urlPort;
@@ -697,4 +697,4 @@ unsigned short SocketStreamHandle::port() const
     return 80;
 }
 
-}  // namespace WebCore
+} // namespace WebCore

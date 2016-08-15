@@ -28,7 +28,7 @@
 
 #include "Logging.h"
 #include "WebSocketServerConnection.h"
-#include <WebCore/SocketStreamHandle.h>
+#include <WebCore/SocketStreamHandleImpl.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -47,7 +47,7 @@ static gboolean connectionCallback(GSocketService* /*service*/, GSocketConnectio
 #endif
 
     auto webSocketConnection = std::make_unique<WebSocketServerConnection>(server->client(), server);
-    webSocketConnection->setSocketHandle(SocketStreamHandle::create(connection, *webSocketConnection));
+    webSocketConnection->setSocketHandle(SocketStreamHandleImpl::create(connection, *webSocketConnection));
     server->didAcceptConnection(WTFMove(webSocketConnection));
 
     return TRUE;

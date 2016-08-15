@@ -2368,7 +2368,7 @@ set(WebCore_SOURCES
     platform/network/ResourceHandleClient.cpp
     platform/network/ResourceRequestBase.cpp
     platform/network/ResourceResponseBase.cpp
-    platform/network/SocketStreamHandleBase.cpp
+    platform/network/SocketStreamHandle.cpp
     platform/network/SynchronousLoaderClient.cpp
 
     platform/sql/SQLValue.cpp

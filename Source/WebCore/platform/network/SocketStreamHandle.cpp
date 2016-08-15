@@ -29,28 +29,27 @@
  */
 
 #include "config.h"
-#include "SocketStreamHandleBase.h"
-
 #include "SocketStreamHandle.h"
+
 #include "SocketStreamHandleClient.h"
 
 namespace WebCore {
 
-const unsigned int bufferSize = 100 * 1024 * 1024;
+const unsigned bufferSize = 100 * 1024 * 1024;
 
-SocketStreamHandleBase::SocketStreamHandleBase(const URL& url, SocketStreamHandleClient& client)
+SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client)
     : m_url(url)
     , m_client(client)
     , m_state(Connecting)
 {
 }
 
-SocketStreamHandleBase::SocketStreamState SocketStreamHandleBase::state() const
+SocketStreamHandle::SocketStreamState SocketStreamHandle::state() const
 {
     return m_state;
 }
 
-bool SocketStreamHandleBase::send(const char* data, int length)
+bool SocketStreamHandle::send(const char* data, int length)
 {
     if (m_state == Connecting || m_state == Closing)
         return false;
@@ -79,7 +78,7 @@ bool SocketStreamHandleBase::send(const char* data, int length)
     return true;
 }
 
-void SocketStreamHandleBase::close()
+void SocketStreamHandle::close()
 {
     if (m_state == Closed)
         return;
@@ -89,7 +88,7 @@ void SocketStreamHandleBase::close()
     disconnect();
 }
 
-void SocketStreamHandleBase::disconnect()
+void SocketStreamHandle::disconnect()
 {
     auto protect = makeRef(static_cast<SocketStreamHandle&>(*this)); // platformClose calls the client, which may make the handle get deallocated immediately.
 
@@ -97,7 +96,7 @@ void SocketStreamHandleBase::disconnect()
     m_state = Closed;
 }
 
-bool SocketStreamHandleBase::sendPendingData()
+bool SocketStreamHandle::sendPendingData()
 {
     if (m_state != Open && m_state != Closing)
         return false;
@@ -122,4 +121,4 @@ bool SocketStreamHandleBase::sendPendingData()
     return true;
 }
 
-}  // namespace WebCore
+} // namespace WebCore

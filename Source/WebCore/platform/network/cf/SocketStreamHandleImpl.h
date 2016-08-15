@@ -32,9 +32,8 @@
 #pragma once
 
 #include "SessionID.h"
-#include "SocketStreamHandleBase.h"
+#include "SocketStreamHandle.h"
 #include <wtf/RetainPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 typedef struct __CFHTTPMessage* CFHTTPMessageRef;
 
@@ -44,17 +43,17 @@ class Credential;
 class ProtectionSpace;
 class SocketStreamHandleClient;
 
-class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
+class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID) { return adoptRef(*new SocketStreamHandle(url, client, sessionID)); }
+    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID)); }
 
-    virtual ~SocketStreamHandle();
+    virtual ~SocketStreamHandleImpl();
 
 private:
     virtual int platformSend(const char* data, int length);
     virtual void platformClose();
 
-    WEBCORE_EXPORT SocketStreamHandle(const URL&, SocketStreamHandleClient&, SessionID);
+    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, SessionID);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
@@ -62,7 +61,7 @@ private:
     void executePACFileURL(CFURLRef);
     void removePACRunLoopSource();
     RetainPtr<CFRunLoopSourceRef> m_pacRunLoopSource;
-    static void pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef error);
+    static void pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef);
     static CFStringRef copyPACExecutionDescription(void*);
 
     bool shouldUseSSL() const { return m_url.protocolIs("wss"); }
@@ -99,4 +98,4 @@ private:
     SessionID m_sessionID;
 };
 
-}  // namespace WebCore
+} // namespace WebCore

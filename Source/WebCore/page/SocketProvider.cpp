@@ -28,13 +28,13 @@
 
 #if ENABLE(WEB_SOCKETS)
 
-#include "SocketStreamHandle.h"
+#include "SocketStreamHandleImpl.h"
 
 namespace WebCore {
     
 Ref<SocketStreamHandle> SocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, SessionID sessionID)
 {
-    return SocketStreamHandle::create(url, client, sessionID);
+    return SocketStreamHandleImpl::create(url, client, sessionID);
 }
     
 }

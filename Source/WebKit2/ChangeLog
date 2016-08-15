@@ -1,3 +1,13 @@
+2016-08-15  Alex Christensen  <achristensen@webkit.org>
+
+        Rename SocketStreamHandleBase to SocketStreamHandle and SocketStreamHandle to SocketStreamHandleImpl
+        https://bugs.webkit.org/show_bug.cgi?id=160858
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/Network/WebSocketProvider.cpp:
+        (WebKit::WebSocketProvider::createSocketStreamHandle):
+
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
         Fix iOS build.
