@@ -100,8 +100,8 @@ class GtkPort(Port):
             return self.default_timeout_ms()
         return super(GtkPort, self).driver_stop_timeout()
 
-    def setup_test_run(self):
-        super(GtkPort, self).setup_test_run()
+    def setup_test_run(self, device_class=None):
+        super(GtkPort, self).setup_test_run(device_class)
         self._pulseaudio_sanitizer.unload_pulseaudio_module()
 
         if self.get_option("leaks"):

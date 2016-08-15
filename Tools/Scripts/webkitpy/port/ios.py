@@ -74,14 +74,32 @@ class IOSSimulatorPort(ApplePort):
     ARCHITECTURES = ['x86_64', 'x86']
     DEFAULT_ARCHITECTURE = 'x86_64'
 
+    DEFAULT_DEVICE_CLASS = 'iphone'
+    CUSTOM_DEVICE_CLASSES = ['ipad']
+
     SIMULATOR_BUNDLE_ID = 'com.apple.iphonesimulator'
     relay_name = 'LayoutTestRelay'
     SIMULATOR_DIRECTORY = "/tmp/WebKitTestingSimulators/"
     LSREGISTER_PATH = "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
     PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 100
 
+    DEVICE_CLASS_MAP = {
+        'x86_64': {
+            'iphone': 'iPhone 5s',
+            'ipad': 'iPad Air'
+        },
+        'x86': {
+            'iphone': 'iPhone 5',
+            'ipad': 'iPad Retina'
+        },
+    }
+
     def __init__(self, host, port_name, **kwargs):
         super(IOSSimulatorPort, self).__init__(host, port_name, **kwargs)
+
+        optional_device_class = self.get_option('device_class')
+        self._device_class = optional_device_class if optional_device_class else self.DEFAULT_DEVICE_CLASS
+        _log.debug('IOSSimulatorPort _device_class is %s', self._device_class)
 
     def driver_name(self):
         if self.get_option('driver_name'):
@@ -100,17 +118,17 @@ class IOSSimulatorPort(ApplePort):
             runtime = Runtime.from_version_string(self.host.platform.xcode_sdk_version('iphonesimulator'))
         return runtime
 
-    @property
-    @memoized
     def simulator_device_type(self):
         device_type_identifier = self.get_option('device_type')
         if device_type_identifier:
+            _log.debug('simulator_device_type for device identifier %s', device_type_identifier)
             device_type = DeviceType.from_identifier(device_type_identifier)
         else:
-            if self.architecture() == 'x86_64':
-                device_type = DeviceType.from_name('iPhone 5s')
-            else:
-                device_type = DeviceType.from_name('iPhone 5')
+            _log.debug('simulator_device_type for device %s', self._device_class)
+            device_name = self.DEVICE_CLASS_MAP[self.architecture()][self._device_class]
+            if not device_name:
+                raise Exception('Failed to find device for architecture {} and device class {}'.format(self.architecture()), self._device_class)
+            device_type = DeviceType.from_name(device_name)
         return device_type
 
     @property
@@ -205,12 +223,37 @@ class IOSSimulatorPort(ApplePort):
     def _port_specific_expectations_files(self):
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path()]))
 
-    def setup_test_run(self):
+    def _set_device_class(self, device_class):
+        # Ideally we'd ensure that no simulators are running when this is called.
+        self._device_class = device_class if device_class else self.DEFAULT_DEVICE_CLASS
+
+    def _create_simulators(self):
+        if (self.default_child_processes() < self.child_processes()):
+                _log.warn("You have specified very high value({0}) for --child-processes".format(self.child_processes()))
+                _log.warn("maximum child-processes which can be supported on this system are: {0}".format(self.default_child_processes()))
+                _log.warn("This is very likely to fail.")
+
+        self._createSimulatorApps()
+
+        for i in xrange(self.child_processes()):
+            Simulator.wait_until_device_is_in_state(self.testing_device(i).udid, Simulator.DeviceState.SHUTDOWN)
+            Simulator.reset_device(self.testing_device(i).udid)
+
+    def setup_test_run(self, device_class=None):
         mac_os_version = self.host.platform.os_version
+
+        self._set_device_class(device_class)
+
+        _log.debug('')
+        _log.debug('setup_test_run for %s', self._device_class)
+
+        self._create_simulators()
+
         for i in xrange(self.child_processes()):
             device_udid = self.testing_device(i).udid
-            # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
+            _log.debug('testing device %s has udid %s', i, device_udid)
 
+            # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
             self._executive.run_command([
                 'open', '-g', '-b', self.SIMULATOR_BUNDLE_ID + str(i),
                 '--args', '-CurrentDeviceUDID', device_udid])
@@ -284,9 +327,6 @@ class IOSSimulatorPort(ApplePort):
         if not self.simulator_runtime.available:
             _log.error('The iOS Simulator runtime with identifier "{0}" cannot be used because it is unavailable.'.format(self.simulator_runtime.identifier))
             return False
-        for i in xrange(self.child_processes()):
-            # FIXME: This creates the devices sequentially, doing this in parallel can improve performance.
-            testing_device = self.testing_device(i)
         return super(IOSSimulatorPort, self).check_sys_deps(needs_http)
 
     SUBPROCESS_CRASH_REGEX = re.compile('#CRASHED - (?P<subprocess_name>\S+) \(pid (?P<subprocess_pid>\d+)\)')
@@ -329,9 +369,12 @@ class IOSSimulatorPort(ApplePort):
             return stderr, None
         return stderr, crash_log
 
-    @memoized
     def testing_device(self, number):
-        return Simulator().lookup_or_create_device(self.simulator_device_type.name + ' WebKit Tester' + str(number), self.simulator_device_type, self.simulator_runtime)
+        # FIXME: rather than calling lookup_or_create_device every time, we should just store a mapping of
+        # number to device_udid.
+        device_type = self.simulator_device_type()
+        _log.debug(' testing_device %s using device_type %s', number, device_type)
+        return Simulator().lookup_or_create_device(device_type.name + ' WebKit Tester' + str(number), device_type, self.simulator_runtime)
 
     def get_simulator_path(self, suffix=""):
         return os.path.join(self.SIMULATOR_DIRECTORY, "Simulator" + str(suffix) + ".app")
@@ -350,17 +393,8 @@ class IOSSimulatorPort(ApplePort):
 
     def reset_preferences(self):
         _log.debug("reset_preferences")
-        if (self.default_child_processes() < self.child_processes()):
-                _log.warn("You have specified very high value({0}) for --child-processes".format(self.child_processes()))
-                _log.warn("maximum child-processes which can be supported on this system are: {0}".format(self.default_child_processes()))
-                _log.warn("This is very likely to fail.")
-
         self._quit_ios_simulator()
-        self._createSimulatorApps()
-
-        for i in xrange(self.child_processes()):
-            Simulator.wait_until_device_is_in_state(self.testing_device(i).udid, Simulator.DeviceState.SHUTDOWN)
-            Simulator.reset_device(self.testing_device(i).udid)
+        # Maybe this should delete all devices that we've created?
 
     def nm_command(self):
         return self.xcrun_find('nm')

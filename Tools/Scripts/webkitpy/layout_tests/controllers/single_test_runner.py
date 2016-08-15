@@ -70,8 +70,7 @@ class SingleTestRunner(object):
             for suffix in ('.txt', '.png', '.wav'):
                 expected_filename = self._port.expected_filename(self._test_name, suffix)
                 if self._filesystem.exists(expected_filename):
-                    _log.error('%s is a reftest, but has an unused expectation file. Please remove %s.',
-                        self._test_name, expected_filename)
+                    _log.error('%s is a reftest, but has an unused expectation file. Please remove %s.', self._test_name, expected_filename)
 
     def _expected_driver_output(self):
         return DriverOutput(self._port.expected_text(self._test_name),

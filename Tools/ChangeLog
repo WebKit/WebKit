@@ -1,3 +1,61 @@
+2016-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow a port to run tests with a custom device setup
+        https://bugs.webkit.org/show_bug.cgi?id=160833
+
+        Reviewed by Daniel Bates.
+
+        These changes allow the IOSSimulator port to run tests in iPad mode.
+
+        This is made possible by allowing a platform to define CUSTOM_DEVICE_CLASSES,
+        in this case 'ipad'. When specified, any test in a directory with a suffix that matches
+        a custom device will be collected into a set, and run in that device's environment after
+        the other tests have run.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._custom_device_for_test): If the test contains a directory matching a
+        custom device suffix, return that custom device.
+        (Manager._set_up_run): Push the custom device class, if any, into options so
+        that the Worker can get to it.
+        (Manager.run): Go through the list of tests, and break it down into device-generic
+        tests, and tests for each device class. _run_test_subset is then called for
+        each collection of tests, and the results merged.
+        (Manager._run_test_subset): Some lines unwrapped.
+        (Manager._end_test_run):
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__): Unwrapped a line.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.merge): Add this function to merge TestRunResults
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_workers_and_shards): Print the custom device, if any.
+        * Scripts/webkitpy/port/base.py:
+        (Port): Base port has empty array of custom devices.
+        (Port.setup_test_run): Add device_class argument.
+        * Scripts/webkitpy/port/driver.py:
+        (DriverInput.__repr__):
+        (Driver.check_driver.implementation):
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort.setup_test_run):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_test_run):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort): Add CUSTOM_DEVICE_CLASSES for ipad.
+        (IOSSimulatorPort.__init__):
+        (IOSSimulatorPort.simulator_device_type): Use a device name from the DEVICE_CLASS_MAP
+        based on the custom device class.
+        (IOSSimulatorPort._set_device_class):
+        (IOSSimulatorPort._create_simulators): Factor some code into this function.
+        (IOSSimulatorPort.setup_test_run):
+        (IOSSimulatorPort.testing_device):
+        (IOSSimulatorPort.reset_preferences): This used to create the simulator apps, but that
+        seemed wrong for this function. That was moved to setup_test_run().
+        (IOSSimulatorPort.check_sys_deps): This function used to create testing devices,
+        but this happened too early, before we knew which kind of devices to create. Devices
+        are now created in setup_test_run().
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.setup_test_run):
+
 2016-08-15  Daniel Bates  <dabates@apple.com>
 
         Cannot build WebKit for iOS device using Xcode 7.3/iOS 9.3 public SDK due to missing

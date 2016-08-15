@@ -37,6 +37,7 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
+from webkitpy.port.test import TestPort
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 
@@ -99,3 +100,19 @@ class ManagerTest(unittest.TestCase):
         run_results = TestRunResults(expectations, len(tests))
         manager = get_manager()
         manager._look_for_new_crash_logs(run_results, time.time())
+
+    def test_uses_custom_device(self):
+        class MockCustomDevicePort(TestPort):
+            CUSTOM_DEVICE_CLASSES = ['starship']            
+            def __init__(self, host):
+                super(MockCustomDevicePort, self).__init__(host)
+
+        def get_manager():
+            host = MockHost()
+            port = MockCustomDevicePort(host)
+            manager = Manager(port, options=MockOptions(test_list=['fast/test-starship/lasers.html'], http=True), printer=Mock())
+            return manager
+
+        manager = get_manager()
+        self.assertTrue(manager._custom_device_for_test('fast/test-starship/lasers.html') == 'starship')
+        

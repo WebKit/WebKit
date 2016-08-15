@@ -82,6 +82,8 @@ class Port(object):
 
     DEFAULT_ARCHITECTURE = 'x86'
 
+    CUSTOM_DEVICE_CLASSES = []
+
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         """Return a fully-specified port name that can be used to construct objects."""
@@ -803,7 +805,7 @@ class Port(object):
         # to have multiple copies of webkit checked out and built.
         return self._build_path('layout-test-results')
 
-    def setup_test_run(self):
+    def setup_test_run(self, device_class=None):
         """Perform port-specific work at the beginning of a test run."""
         pass
 

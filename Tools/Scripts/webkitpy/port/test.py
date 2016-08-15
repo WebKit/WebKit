@@ -457,7 +457,7 @@ class TestPort(Port):
     def default_results_directory(self):
         return '/tmp/layout-test-results'
 
-    def setup_test_run(self):
+    def setup_test_run(self, device_class=None):
         pass
 
     def _driver_class(self):

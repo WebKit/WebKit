@@ -345,12 +345,12 @@ class WinPort(ApplePort):
     def delete_sem_locks(self):
         os.system("rm -rf /dev/shm/sem.*")
 
-    def setup_test_run(self):
+    def setup_test_run(self, device_class=None):
         atexit.register(self.restore_crash_log_saving)
         self.setup_crash_log_saving()
         self.prevent_error_dialogs()
         self.delete_sem_locks()
-        super(WinPort, self).setup_test_run()
+        super(WinPort, self).setup_test_run(device_class)
 
     def clean_up_test_run(self):
         self.allow_error_dialogs()

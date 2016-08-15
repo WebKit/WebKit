@@ -52,6 +52,9 @@ class DriverInput(object):
         self.should_run_pixel_test = should_run_pixel_test
         self.args = args or []
 
+    def __repr__(self):
+        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test)
+
 
 class DriverOutput(object):
     """Groups information about a output from driver for easy passing
@@ -587,6 +590,7 @@ class Driver(object):
         return True
 
 
+# FIXME: this should be abstracted out via the Port subclass somehow.
 class IOSSimulatorDriver(Driver):
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = super(IOSSimulatorDriver, self).cmd_line(pixel_tests, per_test_args)

@@ -54,8 +54,8 @@ class EflPort(Port):
     def _port_flag_for_scripts(self):
         return "--efl"
 
-    def setup_test_run(self):
-        super(EflPort, self).setup_test_run()
+    def setup_test_run(self, device_class=None):
+        super(EflPort, self).setup_test_run(device_class)
         self._pulseaudio_sanitizer.unload_pulseaudio_module()
 
     def setup_environ_for_server(self, server_name=None):

@@ -39,6 +39,7 @@ import logging
 import random
 import sys
 import time
+from collections import defaultdict
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.net.file_uploader import FileUploader
@@ -97,6 +98,13 @@ class Manager(object):
     def _is_web_platform_test(self, test):
         return self.web_platform_test_subdir in test
 
+    def _custom_device_for_test(self, test):
+        for device_class in self._port.CUSTOM_DEVICE_CLASSES:
+            directory_suffix = device_class + self._port.TEST_PATH_SEPARATOR
+            if directory_suffix in test:
+                return device_class
+        return None
+
     def _http_tests(self, test_names):
         return set(test for test in test_names if self._is_http_test(test))
 
@@ -141,11 +149,13 @@ class Manager(object):
         worker_count = self._runner.get_worker_count(test_inputs, int(self._options.child_processes))
         self._options.child_processes = worker_count
 
-    def _set_up_run(self, test_names):
+    def _set_up_run(self, test_names, device_class=None):
         self._printer.write_update("Checking build ...")
         if not self._port.check_build(self.needs_servers(test_names)):
             _log.error("Build check failed")
             return False
+
+        self._options.device_class = device_class
 
         # This must be started before we check the system dependencies,
         # since the helper may do things to make the setup correct.
@@ -169,7 +179,7 @@ class Manager(object):
         # Create the output directory if it doesn't already exist.
         self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
-        self._port.setup_test_run()
+        self._port.setup_test_run(self._options.device_class)
         return True
 
     def run(self, args):
@@ -194,13 +204,56 @@ class Manager(object):
             _log.critical('No tests to run.')
             return test_run_results.RunDetails(exit_code=-1)
 
-        try:
+        default_device_tests = []
+
+        # Look for tests with custom device requirements.
+        custom_device_tests = defaultdict(list)
+        for test_file in tests_to_run:
+            custom_device = self._custom_device_for_test(test_file)
+            if custom_device:
+                custom_device_tests[custom_device].append(test_file)
+            else:
+                default_device_tests.append(test_file)
+
+        if custom_device_tests:
+            for device_class in custom_device_tests:
+                _log.debug('{} tests use device {}'.format(len(custom_device_tests[device_class]), device_class))
+
+        initial_results = None
+        retry_results = None
+        enabled_pixel_tests_in_retry = False
+
+        if default_device_tests:
+            _log.info('')
+            _log.info("Running %s", pluralize(len(tests_to_run), "test"))
+            _log.info('')
             if not self._set_up_run(tests_to_run):
                 return test_run_results.RunDetails(exit_code=-1)
 
+            initial_results, retry_results, enabled_pixel_tests_in_retry = self._run_test_subset(default_device_tests, tests_to_skip)
+
+        for device_class in custom_device_tests:
+            device_tests = custom_device_tests[device_class]
+            if device_tests:
+                _log.info('')
+                _log.info('Running %s for %s', pluralize(len(device_tests), "test"), device_class)
+                _log.info('')
+                if not self._set_up_run(device_tests, device_class):
+                    return test_run_results.RunDetails(exit_code=-1)
+
+                device_initial_results, device_retry_results, device_enabled_pixel_tests_in_retry = self._run_test_subset(device_tests, tests_to_skip)
+
+                initial_results = initial_results.merge(device_initial_results) if initial_results else device_initial_results
+                retry_results = retry_results.merge(device_retry_results) if retry_results else device_retry_results
+                enabled_pixel_tests_in_retry |= device_enabled_pixel_tests_in_retry
+
+        end_time = time.time()
+        return self._end_test_run(start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry)
+
+    def _run_test_subset(self, tests_to_run, tests_to_skip):
+        try:
             enabled_pixel_tests_in_retry = False
-            initial_results = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations,
-                int(self._options.child_processes), retrying=False)
+            initial_results = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations, int(self._options.child_processes), retrying=False)
 
             tests_to_retry = self._tests_to_retry(initial_results, include_crashes=self._port.should_retry_crashes())
             # Don't retry failures when interrupted by user or failures limit exception.
@@ -211,8 +264,7 @@ class Manager(object):
                 _log.info('')
                 _log.info("Retrying %s ..." % pluralize(len(tests_to_retry), "unexpected failure"))
                 _log.info('')
-                retry_results = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1,
-                    num_workers=1, retrying=True)
+                retry_results = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1, num_workers=1, retrying=True)
 
                 if enabled_pixel_tests_in_retry:
                     self._options.pixel_tests = False
@@ -221,10 +273,12 @@ class Manager(object):
         finally:
             self._clean_up_run()
 
-        end_time = time.time()
+        return (initial_results, retry_results, enabled_pixel_tests_in_retry)
 
+    def _end_test_run(self, start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry):
         # Some crash logs can take a long time to be written out so look
         # for new logs after the test run finishes.
+
         _log.debug("looking for new crash logs")
         self._look_for_new_crash_logs(initial_results, start_time)
         if retry_results:
@@ -259,6 +313,7 @@ class Manager(object):
         needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
 
         test_inputs = self._get_test_inputs(tests_to_run, repeat_each, iterations)
+
         return self._runner.run_tests(self._expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, needs_web_platform_test_server, retrying)
 
     def _clean_up_run(self):
