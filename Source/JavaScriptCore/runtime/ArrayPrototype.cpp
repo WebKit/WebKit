@@ -1032,20 +1032,23 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     if (!thisObj)
         return JSValue::encode(JSValue());
+    VM& vm = exec->vm();
     unsigned length = getLength(exec, thisObj);
-    if (exec->hadException())
+    if (UNLIKELY(vm.exception()))
         return JSValue::encode(jsUndefined());
 
     unsigned index = argumentClampedIndexFromStartOrEnd(exec, 1, length);
     JSValue searchElement = exec->argument(0);
     for (; index < length; ++index) {
         JSValue e = getProperty(exec, thisObj, index);
-        if (exec->hadException())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
         if (!e)
             continue;
         if (JSValue::strictEqual(exec, searchElement, e))
             return JSValue::encode(jsNumber(index));
+        if (UNLIKELY(vm.exception()))
+            return JSValue::encode(jsUndefined());
     }
 
     return JSValue::encode(jsNumber(-1));
@@ -1074,16 +1077,19 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
             index = static_cast<unsigned>(fromDouble);
     }
 
+    VM& vm = exec->vm();
     JSValue searchElement = exec->argument(0);
     do {
         RELEASE_ASSERT(index < length);
         JSValue e = getProperty(exec, thisObj, index);
-        if (exec->hadException())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
         if (!e)
             continue;
         if (JSValue::strictEqual(exec, searchElement, e))
             return JSValue::encode(jsNumber(index));
+        if (UNLIKELY(vm.exception()))
+            return JSValue::encode(jsUndefined());
     } while (index--);
 
     return JSValue::encode(jsNumber(-1));

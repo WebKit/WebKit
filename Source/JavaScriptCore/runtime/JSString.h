@@ -155,6 +155,7 @@ public:
     SafeView view(ExecState*) const;
     StringViewWithUnderlyingString viewWithUnderlyingString(ExecState&) const;
 
+    inline bool equal(ExecState*, JSString* other) const;
     const String& value(ExecState*) const;
     const String& tryGetValue() const;
     const StringImpl* tryGetValueImpl() const;
@@ -192,6 +193,7 @@ public:
 protected:
     friend class JSValue;
 
+    JS_EXPORT_PRIVATE bool equalSlowCase(ExecState*, JSString* other) const;
     bool isRope() const { return m_value.isNull(); }
     bool isSubstring() const;
     bool is8Bit() const { return m_flags & Is8Bit; }

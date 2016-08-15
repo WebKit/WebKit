@@ -1,3 +1,36 @@
+2016-08-15  Mark Lam  <mark.lam@apple.com>
+
+        Make JSValue::strictEqual() handle failures to resolve JSRopeStrings.
+        https://bugs.webkit.org/show_bug.cgi?id=160832
+        <rdar://problem/27577556>
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, JSValue::strictEqualSlowCaseInline() (and peers) will blindly try to
+        access the StringImpl of a JSRopeString that fails to resolve its rope.  As a
+        result, we'll crash with null pointer dereferences.
+
+        We can fix this by introducing a JSString::equal() method that will do the
+        equality comparison, but is aware of the potential failures to resolve ropes.
+        JSValue::strictEqualSlowCaseInline() (and peers) will now call JSString::equal()
+        instead of accessing the underlying StringImpl directly.
+
+        Also added some exception checks.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITOperations.cpp:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqualSlowCaseInline):
+        * runtime/JSString.cpp:
+        (JSC::JSString::equalSlowCase):
+        * runtime/JSString.h:
+        * runtime/JSStringInlines.h: Added.
+        (JSC::JSString::equal):
+
 2016-08-15  Keith Miller  <keith_miller@apple.com>
 
         Implement WASM Parser and B3 IR generator
