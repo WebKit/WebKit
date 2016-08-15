@@ -89,8 +89,6 @@ _WebPlugInContainingElementKey
 _WebPlugInModeKey
 _WebPlugInShouldLoadMainResourceKey
 _WebPreferencesChangedNotification
-_WebReportAssertionFailure
-_WebReportError
 _WebScriptErrorDescriptionKey
 _WebScriptErrorDomain
 _WebScriptErrorLineNumberKey

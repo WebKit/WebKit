@@ -1,5 +1,11 @@
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix.
+
+        * WebKit.exp:
+
+2016-08-15  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * Configurations/WebKitLegacy.xcconfig:
