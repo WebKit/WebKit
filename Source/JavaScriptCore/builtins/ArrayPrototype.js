@@ -212,9 +212,9 @@ function filter(callback /*, thisArg */)
                 constructor = @undefined;
         }
     }
-    if (constructor === @undefined) {
+    if (constructor === @Array || constructor === @undefined)
         result = [];
-    } else
+    else
         result = new constructor(0);
 
     var nextIndex = 0;
@@ -261,9 +261,9 @@ function map(callback /*, thisArg */)
                 constructor = @undefined;
         }
     }
-    if (constructor === @undefined) {
+    if (constructor === @Array || constructor === @undefined)
         result = @Array(length);
-    } else
+    else
         result = new constructor(length);
 
     var nextIndex = 0;
@@ -676,11 +676,13 @@ function concatSlowPath()
                 constructor = @Array;
         }
     }
-    if (constructor === @undefined)
-        constructor = @Array;
 
     var argCount = arguments.length;
-    var result = new constructor(0);
+    var result;
+    if (constructor === @Array || constructor === @undefined)
+        result = [];
+    else
+        result = new constructor(0);
     var resultIsArray = @isJSArray(result);
 
     var resultIndex = 0;

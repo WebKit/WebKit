@@ -1,3 +1,30 @@
+2016-08-15  Saam Barati  <sbarati@apple.com>
+
+        Array.prototype.map builtin should go on the fast path when constructor===@Array
+        https://bugs.webkit.org/show_bug.cgi?id=160836
+
+        Reviewed by Keith Miller.
+
+        In the FTL, we were not compiling the result array in Array.prototype.map
+        efficiently when the result array should use the Array constructor
+        (which is the common case). We used to compile it as:
+        x: JSConstant(Array)
+        y: Construct(@x, ...)
+        instead of
+        y: NewArrayWithSize(...)
+
+        This patch changes the builtin to go down the fast path when certain
+        conditions are met. Often, the check to go down the fast path will
+        be constant folded because we always create a normal array from the
+        Array constructor.
+
+        This is around a 5% speedup on ES6 Sample Bench.
+
+        I also made similar changes for Array.prototype.filter
+        and Array.prototype.concat on its slow path.
+
+        * builtins/ArrayPrototype.js:
+
 2016-08-15  Mark Lam  <mark.lam@apple.com>
 
         Make JSValue::strictEqual() handle failures to resolve JSRopeStrings.
