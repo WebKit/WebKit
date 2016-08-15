@@ -2283,6 +2283,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'WebKitNamespace').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitNamespace').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitNamespace').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitNamespace').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitPlaybackTargetAvailabilityEvent').value is WebKitPlaybackTargetAvailabilityEvent
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitPlaybackTargetAvailabilityEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitPlaybackTargetAvailabilityEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitPlaybackTargetAvailabilityEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitPlaybackTargetAvailabilityEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitPoint').value is WebKitPoint
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitPoint').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitPoint').hasOwnProperty('set') is false
