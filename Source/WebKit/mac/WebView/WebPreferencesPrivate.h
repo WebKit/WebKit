@@ -493,6 +493,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setCSSGridLayoutEnabled:(BOOL)flag;
 - (BOOL)isCSSGridLayoutEnabled;
 
+@property (nonatomic) BOOL visualViewportEnabled;
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;
 @property (nonatomic) BOOL attachmentElementEnabled;

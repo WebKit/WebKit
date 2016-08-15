@@ -352,6 +352,7 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     preferences._acceleratedDrawingEnabled = settings.acceleratedDrawingEnabled;
     preferences._resourceUsageOverlayVisible = settings.resourceUsageOverlayVisible;
     preferences._displayListDrawingEnabled = settings.displayListDrawingEnabled;
+    preferences._visualViewportEnabled = settings.visualViewportEnabled;
 
     _webView.configuration.websiteDataStore._resourceLoadStatisticsEnabled = settings.resourceLoadStatisticsEnabled;
 

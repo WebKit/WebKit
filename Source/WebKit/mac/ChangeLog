@@ -1,3 +1,19 @@
+2016-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a setting and preferences to enable visual viewport mode
+        https://bugs.webkit.org/show_bug.cgi?id=160843
+
+        Reviewed by Sam Weinig.
+
+        Hook up the visualViewportEnabled setting for WebKit1.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences visualViewportEnabled]):
+        (-[WebPreferences setVisualViewportEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused includes of wtf headers

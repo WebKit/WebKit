@@ -1,3 +1,23 @@
+2016-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a setting and preferences to enable visual viewport mode
+        https://bugs.webkit.org/show_bug.cgi?id=160843
+
+        Reviewed by Sam Weinig.
+        
+        Pref and a menu item to toggle visualViewportEnabled for WebKits 1 and 2.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController visualViewportEnabled]):
+        (-[SettingsController toggleVisualViewportEnabled:]):
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController didChangeSettings]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]):
+
 2016-08-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         Allow using make-dist with non-GTK ports

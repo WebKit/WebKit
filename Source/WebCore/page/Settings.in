@@ -273,3 +273,6 @@ shouldConvertInvalidURLsToBlank initial=true
 springTimingFunctionEnabled initial=false
 
 treatIPAddressAsDomain initial=false
+
+# Runtime-enabled features
+visualViewportEnabled initial=false

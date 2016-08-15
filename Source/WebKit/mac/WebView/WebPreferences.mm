@@ -622,6 +622,7 @@ public:
 #if ENABLE(CSS_GRID_LAYOUT)
         [NSNumber numberWithBool:YES], WebKitCSSGridLayoutEnabledPreferenceKey,
 #endif
+        [NSNumber numberWithBool:NO], WebKitVisualViewportEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -2760,6 +2761,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSGridLayoutEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCSSGridLayoutEnabledPreferenceKey];
+}
+
+- (BOOL)visualViewportEnabled
+{
+    return [self _boolValueForKey:WebKitVisualViewportEnabledPreferenceKey];
+}
+
+- (void)setVisualViewportEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitVisualViewportEnabledPreferenceKey];
 }
 
 @end

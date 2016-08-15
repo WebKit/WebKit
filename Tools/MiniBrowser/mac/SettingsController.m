@@ -53,6 +53,8 @@ static NSString * const UseTransparentWindowsPreferenceKey = @"UseTransparentWin
 static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
 static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPixelCSSOMMetrics";
 
+static NSString * const VisualViewportEnabledPreferenceKey = @"VisualViewportEnabled";
+
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
 
@@ -121,6 +123,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Suppress Incremental Rendering in New Windows" action:@selector(toggleIncrementalRenderingSuppressed:) indented:NO];
     [self _addItemWithTitle:@"Enable Accelerated Drawing" action:@selector(toggleAcceleratedDrawingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Display List Drawing" action:@selector(toggleDisplayListDrawingEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Enable Visual Viewport" action:@selector(toggleVisualViewportEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Resource Load Statistics" action:@selector(toggleResourceLoadStatisticsEnabled:) indented:NO];
 
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
@@ -194,6 +197,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self displayListDrawingEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleResourceLoadStatisticsEnabled:))
         [menuItem setState:[self resourceLoadStatisticsEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleVisualViewportEnabled:))
+        [menuItem setState:[self visualViewportEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
         [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowResourceUsageOverlay:))
@@ -358,6 +363,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (void)toggleResourceLoadStatisticsEnabled:(id)sender
 {
     [self _toggleBooleanDefault:ResourceLoadStatisticsEnabledPreferenceKey];
+}
+
+- (BOOL)visualViewportEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:VisualViewportEnabledPreferenceKey];
+}
+
+- (void)toggleVisualViewportEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:VisualViewportEnabledPreferenceKey];
 }
 
 - (BOOL)resourceLoadStatisticsEnabled
