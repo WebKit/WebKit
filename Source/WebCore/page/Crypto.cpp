@@ -39,18 +39,13 @@
 
 namespace WebCore {
 
-Crypto::Crypto(Document& document)
-    : ContextDestructionObserver(&document)
+Crypto::Crypto(ScriptExecutionContext& context)
+    : ContextDestructionObserver(&context)
 {
 }
 
 Crypto::~Crypto()
 {
-}
-
-Document* Crypto::document() const
-{
-    return downcast<Document>(scriptExecutionContext());
 }
 
 void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)
@@ -67,11 +62,15 @@ void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)
 }
 
 #if ENABLE(SUBTLE_CRYPTO)
-WebKitSubtleCrypto* Crypto::webkitSubtle()
+WebKitSubtleCrypto* Crypto::webkitSubtle(ExceptionCode& ec)
 {
-    ASSERT(isMainThread());
+    if (!isMainThread()) {
+        ec = NOT_SUPPORTED_ERR;
+        return 0;
+    }
+
     if (!m_webkitSubtle)
-        m_webkitSubtle = WebKitSubtleCrypto::create(*document());
+        m_webkitSubtle = WebKitSubtleCrypto::create(*downcast<Document>(scriptExecutionContext()));
 
     return m_webkitSubtle.get();
 }

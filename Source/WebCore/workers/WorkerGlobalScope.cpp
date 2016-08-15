@@ -30,6 +30,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ContentSecurityPolicy.h"
+#include "Crypto.h"
 #include "DOMTimer.h"
 #include "DOMURL.h"
 #include "DOMWindow.h"
@@ -389,5 +390,12 @@ bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&
     return false;
 }
 #endif // ENABLE(SUBTLE_CRYPTO)
+
+Crypto& WorkerGlobalScope::crypto() const
+{
+    if (!m_crypto)
+        m_crypto = Crypto::create(*scriptExecutionContext());
+    return *m_crypto;
+}
 
 } // namespace WebCore

@@ -22,9 +22,10 @@
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     CustomToJSObject,
-    JSCustomHeader,
-    JSGenerateToNativeObject,
     ExportMacro=WEBCORE_EXPORT,
+    JSCustomHeader,
+    JSCustomMarkFunction,
+    JSGenerateToNativeObject,
 ] interface Document : Node {
 
     // DOM Level 1 Core

@@ -141,4 +141,9 @@ JSValue JSDocument::createTouchList(ExecState& state)
 }
 #endif
 
+void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)
+{
+    visitor.addOpaqueRoot(wrapped().scriptExecutionContext());
+}
+
 } // namespace WebCore

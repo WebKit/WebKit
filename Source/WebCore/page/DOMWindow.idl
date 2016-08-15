@@ -50,7 +50,6 @@
     [Replaceable] readonly attribute BarProp toolbar;
     readonly attribute Navigator navigator;
     [Replaceable] readonly attribute Navigator clientInformation;
-    readonly attribute Crypto crypto;
     [DoNotCheckSecurity, CustomSetter, Unforgeable] attribute Location location;
     [Replaceable, CustomGetter] readonly attribute Event event;
 
@@ -234,6 +233,7 @@ dictionary ScrollToOptions {
     unrestricted double top;
 };
 
+DOMWindow implements GlobalCrypto;
 DOMWindow implements GlobalEventHandlers;
 DOMWindow implements WindowEventHandlers;
 DOMWindow implements WindowOrWorkerGlobalScope;

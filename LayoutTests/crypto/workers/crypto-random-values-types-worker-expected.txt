@@ -1,0 +1,53 @@
+[Worker] Tests which types are valid for crypto.randomValues.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/crypto-random-values-types-worker.js
+PASS [Worker] 'crypto' in self is true
+PASS [Worker] 'getRandomValues' in self.crypto is true
+PASS [Worker] random = crypto.getRandomValues(new Uint8Array(3)) is defined.
+PASS [Worker] random is an instance of Uint8Array
+PASS [Worker] view = new Uint8Array(3) is defined.
+PASS [Worker] random = crypto.getRandomValues(view) is defined.
+PASS [Worker] random is view
+PASS [Worker] random = crypto.getRandomValues(new Int8Array(3)) is defined.
+PASS [Worker] random is an instance of Int8Array
+PASS [Worker] view = new Int8Array(3) is defined.
+PASS [Worker] random = crypto.getRandomValues(view) is defined.
+PASS [Worker] random is view
+PASS [Worker] random = crypto.getRandomValues(new Uint8ClampedArray(3)) is defined.
+PASS [Worker] random is an instance of Uint8ClampedArray
+PASS [Worker] view = new Uint8ClampedArray(3) is defined.
+PASS [Worker] random = crypto.getRandomValues(view) is defined.
+PASS [Worker] random is view
+PASS [Worker] random = crypto.getRandomValues(new Uint16Array(3)) is defined.
+PASS [Worker] random is an instance of Uint16Array
+PASS [Worker] view = new Uint16Array(3) is defined.
+PASS [Worker] random = crypto.getRandomValues(view) is defined.
+PASS [Worker] random is view
+PASS [Worker] random = crypto.getRandomValues(new Int16Array(3)) is defined.
+PASS [Worker] random is an instance of Int16Array
+PASS [Worker] view = new Int16Array(3) is defined.
+PASS [Worker] random = crypto.getRandomValues(view) is defined.
+PASS [Worker] random is view
+PASS [Worker] random = crypto.getRandomValues(new Uint32Array(3)) is defined.
+PASS [Worker] random is an instance of Uint32Array
+PASS [Worker] view = new Uint32Array(3) is defined.
+PASS [Worker] random = crypto.getRandomValues(view) is defined.
+PASS [Worker] random is view
+PASS [Worker] random = crypto.getRandomValues(new Int32Array(3)) is defined.
+PASS [Worker] random is an instance of Int32Array
+PASS [Worker] view = new Int32Array(3) is defined.
+PASS [Worker] random = crypto.getRandomValues(view) is defined.
+PASS [Worker] random is view
+PASS [Worker] crypto.getRandomValues(new Float32Array(3)) threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
+PASS [Worker] crypto.getRandomValues(new Float64Array(3)) threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
+PASS [Worker] buffer = new Uint8Array(32) is defined.
+PASS [Worker] buffer.buffer is defined.
+PASS [Worker] view = new DataView(buffer.buffer) is defined.
+PASS [Worker] crypto.getRandomValues(view) threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

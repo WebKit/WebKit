@@ -48,6 +48,7 @@ namespace WebCore {
 
 class Blob;
 class ContentSecurityPolicyResponseHeaders;
+class Crypto;
 class ScheduledAction;
 class WorkerLocation;
 class WorkerNavigator;
@@ -148,6 +149,8 @@ public:
     bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override;
 #endif
 
+    Crypto& crypto() const;
+
 protected:
     WorkerGlobalScope(const URL&, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, RefPtr<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
@@ -193,6 +196,8 @@ private:
 #if ENABLE(WEB_SOCKETS)
     RefPtr<SocketProvider> m_socketProvider;
 #endif
+
+    mutable RefPtr<Crypto> m_crypto;
 };
 
 } // namespace WebCore

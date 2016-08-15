@@ -513,6 +513,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/DOMSelection.idl \
     $(WebCore)/page/DOMWindow.idl \
     $(WebCore)/page/EventSource.idl \
+    $(WebCore)/page/GlobalCrypto.idl \
     $(WebCore)/page/History.idl \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/Navigator.idl \

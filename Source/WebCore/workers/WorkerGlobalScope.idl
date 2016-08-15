@@ -64,4 +64,5 @@
     [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBVersionChangeEventConstructor IDBVersionChangeEvent;
 };
 
+WorkerGlobalScope implements GlobalCrypto;
 WorkerGlobalScope implements WindowOrWorkerGlobalScope;

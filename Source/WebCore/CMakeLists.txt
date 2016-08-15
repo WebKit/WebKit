@@ -604,6 +604,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/DOMSelection.idl
     page/DOMWindow.idl
     page/EventSource.idl
+    page/GlobalCrypto.idl
     page/History.idl
     page/Location.idl
     page/Navigator.idl

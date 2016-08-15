@@ -210,6 +210,7 @@
 #endif
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"
+#include "JSGlobalCrypto.cpp"
 #include "JSGlobalEventHandlers.cpp"
 #include "JSHashChangeEvent.cpp"
 #include "JSHistory.cpp"

@@ -1,0 +1,14 @@
+[Worker] Tests the limits of crypto.randomValues.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/crypto-random-limits-worker.js
+PASS [Worker] 'crypto' in self is true
+PASS [Worker] 'getRandomValues' in self.crypto is true
+PASS [Worker] crypto.getRandomValues(almostTooLargeArray) did not throw exception.
+PASS [Worker] crypto.getRandomValues(tooLargeArray) threw exception QuotaExceededError (DOM Exception 22): The quota has been exceeded..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

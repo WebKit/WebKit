@@ -1,0 +1,11 @@
+[Worker] Tests that crypto.webkitSubtle will throw in workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/disallowed-in-worker.js
+PASS [Worker] crypto.webkitSubtle threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

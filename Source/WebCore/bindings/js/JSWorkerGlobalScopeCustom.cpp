@@ -57,6 +57,7 @@ void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(location);
     if (WorkerNavigator* navigator = wrapped().optionalNavigator())
         visitor.addOpaqueRoot(navigator);
+    visitor.addOpaqueRoot(wrapped().scriptExecutionContext());
 }
 
 JSValue JSWorkerGlobalScope::importScripts(ExecState& state)
