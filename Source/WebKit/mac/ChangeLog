@@ -1,3 +1,20 @@
+2016-08-12  Anders Carlsson  <andersca@apple.com>
+
+        Move the plug-in and WebGL blacklist code to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=160831
+
+        Reviewed by Sam Weinig.
+
+        Adopt the plug-in and WebGL blacklist code from WebCore instead of using the code from WebKitSystemInterface.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (shouldBlockPlugin):
+        (WebFrameLoaderClient::createPlugin):
+        (WebFrameLoaderClient::createJavaAppletWidget):
+        (shouldBlockWebGL):
+        (WebFrameLoaderClient::webGLPolicyForURL):
+        (WebFrameLoaderClient::resolveWebGLPolicyForURL):
+
 2016-08-14  Daniel Bates  <dabates@apple.com>
 
         Fix compiler errors when building iOS WebKit using the iOS 10 beta SDK

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginModuleInfo_h
-#define PluginModuleInfo_h
+#pragma once
 
 #include <WebCore/PluginData.h>
 
@@ -63,5 +62,3 @@ struct PluginModuleInfo {
 };
 
 } // namespace WebKit
-
-#endif // PluginModuleInfo_h

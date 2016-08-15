@@ -31,7 +31,7 @@
 #import "Logging.h"
 #import "NetscapePluginModule.h"
 #import "SandboxUtilities.h"
-#import "WebKitSystemInterface.h"
+#import <WebCore/PluginBlacklist.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
@@ -76,7 +76,7 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
 static bool shouldBlockPlugin(const PluginModuleInfo& plugin)
 {
     PluginModuleLoadPolicy loadPolicy = PluginInfoStore::defaultLoadPolicyForPlugin(plugin);
-    return (loadPolicy == PluginModuleBlockedForSecurity) || (loadPolicy == PluginModuleBlockedForCompatibility);
+    return loadPolicy == PluginModuleBlockedForSecurity || loadPolicy == PluginModuleBlockedForCompatibility;
 }
 
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
@@ -108,27 +108,16 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     return true;
 }
 
-inline PluginModuleLoadPolicy WKPlugInModuleLoadPolicyToPluginModuleLoadPolicy(WKPlugInModuleLoadPolicy wksiPolicy)
-{
-
-    switch (wksiPolicy) {
-        case WKPlugInModuleLoadPolicyLoadNormally:
-            return PluginModuleLoadNormally;
-        case WKPlugInModuleLoadPolicyLoadUnsandboxed:
-            return PluginModuleLoadUnsandboxed;
-        case WKPlugInModuleLoadPolicyBlockedForSecurity:
-            return PluginModuleBlockedForSecurity;
-        case WKPlugInModuleLoadPolicyBlockedForCompatibility:
-            return PluginModuleBlockedForCompatibility;
-    }
-
-    ASSERT_NOT_REACHED();
-    return PluginModuleBlockedForSecurity;
-}
-
 PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginModuleInfo& plugin)
 {
-    return WKPlugInModuleLoadPolicyToPluginModuleLoadPolicy(WKLoadPolicyForPluginVersion(plugin.bundleIdentifier, plugin.versionString));
+    switch (PluginBlacklist::loadPolicyForPluginVersion(plugin.bundleIdentifier, plugin.versionString)) {
+    case PluginBlacklist::LoadPolicy::LoadNormally:
+        return PluginModuleLoadNormally;
+    case PluginBlacklist::LoadPolicy::BlockedForSecurity:
+        return PluginModuleBlockedForSecurity;
+    case PluginBlacklist::LoadPolicy::BlockedForCompatibility:
+        return PluginModuleBlockedForCompatibility;
+    }
 }
 
 PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String& bundleIdentifier)

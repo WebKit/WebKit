@@ -32,7 +32,9 @@
 #import "APIString.h"
 #import "PluginModuleInfo.h"
 #import "StringUtilities.h"
-#import <WebKitSystemInterface.h>
+#import <WebCore/PluginBlacklist.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -41,7 +43,7 @@ void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, API::Dic
     map.set(pluginInformationBundleIdentifierKey(), API::String::create(plugin.bundleIdentifier));
     map.set(pluginInformationBundleVersionKey(), API::String::create(plugin.versionString));
     map.set(pluginInformationBundleShortVersionKey(), API::String::create(plugin.shortVersionString));
-    map.set(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey(), API::Boolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(plugin.bundleIdentifier))));
+    map.set(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey(), API::Boolean::create(WebCore::PluginBlacklist::isPluginUpdateAvailable(nsStringFromWebCoreString(plugin.bundleIdentifier))));
     map.set(pluginInformationHasSandboxProfileKey(), API::Boolean::create(plugin.hasSandboxProfile));
 }
 
