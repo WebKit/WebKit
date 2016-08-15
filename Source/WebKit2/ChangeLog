@@ -1,3 +1,20 @@
+2016-08-14  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove deprecated _WKFormDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=160848
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WebKitPrivate.h: Removed #import.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _formDelegate]): Moved into WKBinaryCompatibilityIOS10 cateogry implementation,
+          chaged type to id <_WKInputDelegate>.
+        (-[WKWebView _setFormDelegate:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Removed property declaration.
+        * UIProcess/API/Cocoa/_WKFormDelegate.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj: Removed reference to header.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Fixed comment.
+
 2016-08-14  Daniel Bates  <dabates@apple.com>
 
         Fix compiler errors when building iOS WebKit using the iOS 10 beta SDK

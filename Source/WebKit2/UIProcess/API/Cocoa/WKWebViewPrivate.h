@@ -62,7 +62,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @protocol WKHistoryDelegatePrivate;
 @protocol _WKDiagnosticLoggingDelegate;
 @protocol _WKFindDelegate;
-@protocol _WKFormDelegate;
 @protocol _WKInputDelegate;
 
 @interface WKWebView (WKPrivate)
@@ -231,7 +230,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)_hideFindUI;
 
-@property (nonatomic, weak, setter=_setFormDelegate:) id <_WKFormDelegate> _formDelegate WK_API_DEPRECATED_WITH_REPLACEMENT("_inputDelegate", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 @property (nonatomic, weak, setter=_setInputDelegate:) id <_WKInputDelegate> _inputDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneImageDocument) BOOL _displayingStandaloneImageDocument;
