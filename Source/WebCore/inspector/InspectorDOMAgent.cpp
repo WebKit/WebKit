@@ -822,8 +822,8 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
     size_t eventInformationLength = eventInformation.size();
     for (auto& info : eventInformation) {
         for (auto& listener : info.eventListenerVector) {
-            if (listener.useCapture)
-                listenersArray->addItem(buildObjectForEventListener(listener, info.eventType, info.node, objectGroup));
+            if (listener->useCapture())
+                listenersArray->addItem(buildObjectForEventListener(*listener, info.eventType, info.node, objectGroup));
         }
     }
 
@@ -831,8 +831,8 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
     for (size_t i = eventInformationLength; i; --i) {
         const EventListenerInfo& info = eventInformation[i - 1];
         for (auto& listener : info.eventListenerVector) {
-            if (!listener.useCapture)
-                listenersArray->addItem(buildObjectForEventListener(listener, info.eventType, info.node, objectGroup));
+            if (!listener->useCapture())
+                listenersArray->addItem(buildObjectForEventListener(*listener, info.eventType, info.node, objectGroup));
         }
     }
 }
@@ -858,13 +858,13 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
         for (auto& type : d->eventListenerMap.eventTypes()) {
             const EventListenerVector& listeners = ancestor->getEventListeners(type);
             EventListenerVector filteredListeners;
-            filteredListeners.reserveCapacity(listeners.size());
+            filteredListeners.reserveInitialCapacity(listeners.size());
             for (auto& listener : listeners) {
-                if (listener.listener->type() == EventListener::JSEventListenerType)
-                    filteredListeners.append(listener);
+                if (listener->listener().type() == EventListener::JSEventListenerType)
+                    filteredListeners.uncheckedAppend(listener);
             }
             if (!filteredListeners.isEmpty())
-                eventInformation.append(EventListenerInfo(ancestor, type, filteredListeners));
+                eventInformation.append(EventListenerInfo(ancestor, type, WTFMove(filteredListeners)));
         }
     }
 }
@@ -1477,7 +1477,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> InspectorDOMA
 
 Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node, const String* objectGroupId)
 {
-    RefPtr<EventListener> eventListener = registeredEventListener.listener;
+    Ref<EventListener> eventListener = registeredEventListener.listener();
 
     JSC::ExecState* state = nullptr;
     JSC::JSObject* handler = nullptr;
@@ -1486,7 +1486,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
     int columnNumber = 0;
     String scriptID;
     String sourceName;
-    if (auto scriptListener = JSEventListener::cast(eventListener.get())) {
+    if (auto scriptListener = JSEventListener::cast(eventListener.ptr())) {
         JSC::JSLockHolder lock(scriptListener->isolatedWorld().vm());
         state = execStateFromNode(scriptListener->isolatedWorld(), &node->document());
         handler = scriptListener->jsFunction(&node->document());
@@ -1507,7 +1507,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
 
     auto value = Inspector::Protocol::DOM::EventListener::create()
         .setType(eventType)
-        .setUseCapture(registeredEventListener.useCapture)
+        .setUseCapture(registeredEventListener.useCapture())
         .setIsAttribute(eventListener->isAttribute())
         .setNodeId(pushNodePathToFrontend(node))
         .setHandlerBody(body)

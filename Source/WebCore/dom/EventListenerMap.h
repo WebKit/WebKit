@@ -30,8 +30,7 @@
  *
  */
 
-#ifndef EventListenerMap_h
-#define EventListenerMap_h
+#pragma once
 
 #include "RegisteredEventListener.h"
 #include <atomic>
@@ -43,22 +42,22 @@ namespace WebCore {
 
 class EventTarget;
 
-typedef Vector<RegisteredEventListener, 1> EventListenerVector;
+using EventListenerVector = Vector<RefPtr<RegisteredEventListener>, 1>;
 
 class EventListenerMap {
 public:
     EventListenerMap();
 
     bool isEmpty() const { return m_entries.isEmpty(); }
-    WEBCORE_EXPORT bool contains(const AtomicString& eventType) const;
+    bool contains(const AtomicString& eventType) const { return find(eventType); }
     bool containsCapturing(const AtomicString& eventType) const;
     bool containsActive(const AtomicString& eventType) const;
 
     void clear();
 
     bool add(const AtomicString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
-    bool remove(const AtomicString& eventType, EventListener&, bool useCapture, size_t& indexOfRemovedListener);
-    EventListenerVector* find(const AtomicString& eventType);
+    bool remove(const AtomicString& eventType, EventListener&, bool useCapture);
+    WEBCORE_EXPORT EventListenerVector* find(const AtomicString& eventType) const;
     Vector<AtomicString> eventTypes() const;
 
     void removeFirstEventListenerCreatedFromMarkup(const AtomicString& eventType);
@@ -67,7 +66,7 @@ public:
 private:
     friend class EventListenerIterator;
 
-    void assertNoActiveIterators();
+    void assertNoActiveIterators() const;
 
     Vector<std::pair<AtomicString, std::unique_ptr<EventListenerVector>>, 2> m_entries;
 
@@ -79,7 +78,6 @@ private:
 class EventListenerIterator {
     WTF_MAKE_NONCOPYABLE(EventListenerIterator);
 public:
-    EventListenerIterator();
     explicit EventListenerIterator(EventTarget*);
 #ifndef NDEBUG
     ~EventListenerIterator();
@@ -94,9 +92,7 @@ private:
 };
 
 #ifdef NDEBUG
-inline void EventListenerMap::assertNoActiveIterators() { }
+inline void EventListenerMap::assertNoActiveIterators() const { }
 #endif
 
 } // namespace WebCore
-
-#endif // EventListenerMap_h

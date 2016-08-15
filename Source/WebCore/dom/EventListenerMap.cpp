@@ -45,7 +45,7 @@ using namespace WTF;
 namespace WebCore {
 
 #ifndef NDEBUG
-void EventListenerMap::assertNoActiveIterators()
+void EventListenerMap::assertNoActiveIterators() const
 {
     ASSERT(!m_activeIteratorCount);
 }
@@ -55,37 +55,28 @@ EventListenerMap::EventListenerMap()
 {
 }
 
-bool EventListenerMap::contains(const AtomicString& eventType) const
-{
-    for (auto& entry : m_entries) {
-        if (entry.first == eventType)
-            return true;
-    }
-    return false;
-}
-
 bool EventListenerMap::containsCapturing(const AtomicString& eventType) const
 {
-    for (auto& entry : m_entries) {
-        if (entry.first == eventType) {
-            for (auto& eventListener : *entry.second) {
-                if (eventListener.useCapture)
-                    return true;
-            }
-        }
+    auto* listeners = find(eventType);
+    if (!listeners)
+        return false;
+
+    for (auto& eventListener : *listeners) {
+        if (eventListener->useCapture())
+            return true;
     }
     return false;
 }
 
 bool EventListenerMap::containsActive(const AtomicString& eventType) const
 {
-    for (auto& entry : m_entries) {
-        if (entry.first == eventType) {
-            for (auto& eventListener : *entry.second) {
-                if (!eventListener.isPassive)
-                    return true;
-            }
-        }
+    auto* listeners = find(eventType);
+    if (!listeners)
+        return false;
+
+    for (auto& eventListener : *listeners) {
+        if (!eventListener->isPassive())
+            return true;
     }
     return false;
 }
@@ -108,47 +99,51 @@ Vector<AtomicString> EventListenerMap::eventTypes() const
     return types;
 }
 
-static bool addListenerToVector(EventListenerVector* vector, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
+static inline size_t findListener(const EventListenerVector& listeners, EventListener& listener, bool useCapture)
 {
-    RegisteredEventListener registeredListener(WTFMove(listener), options);
-
-    if (vector->find(registeredListener) != notFound)
-        return false; // Duplicate listener.
-
-    vector->append(registeredListener);
-    return true;
+    for (size_t i = 0; i < listeners.size(); ++i) {
+        auto& registeredListener = listeners[i];
+        if (registeredListener->listener() == listener && registeredListener->useCapture() == useCapture)
+            return i;
+    }
+    return notFound;
 }
 
 bool EventListenerMap::add(const AtomicString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
     assertNoActiveIterators();
 
-    for (auto& entry : m_entries) {
-        if (entry.first == eventType)
-            return addListenerToVector(entry.second.get(), WTFMove(listener), options);
+    if (auto* listeners = find(eventType)) {
+        if (findListener(*listeners, listener, options.capture) != notFound)
+            return false; // Duplicate listener.
+        listeners->append(RegisteredEventListener::create(WTFMove(listener), options));
+        return true;
     }
 
-    m_entries.append(std::make_pair(eventType, std::make_unique<EventListenerVector>()));
-    return addListenerToVector(m_entries.last().second.get(), WTFMove(listener), options);
-}
-
-static bool removeListenerFromVector(EventListenerVector* listenerVector, EventListener& listener, bool useCapture, size_t& indexOfRemovedListener)
-{
-    RegisteredEventListener registeredListener(listener, useCapture);
-    indexOfRemovedListener = listenerVector->find(registeredListener);
-    if (indexOfRemovedListener == notFound)
-        return false;
-    listenerVector->remove(indexOfRemovedListener);
+    auto listeners = std::make_unique<EventListenerVector>();
+    listeners->uncheckedAppend(RegisteredEventListener::create(WTFMove(listener), options));
+    m_entries.append({ eventType, WTFMove(listeners) });
     return true;
 }
 
-bool EventListenerMap::remove(const AtomicString& eventType, EventListener& listener, bool useCapture, size_t& indexOfRemovedListener)
+static bool removeListenerFromVector(EventListenerVector& listeners, EventListener& listener, bool useCapture)
+{
+    size_t indexOfRemovedListener = findListener(listeners, listener, useCapture);
+    if (UNLIKELY(indexOfRemovedListener == notFound))
+        return false;
+
+    listeners[indexOfRemovedListener]->markAsRemoved();
+    listeners.remove(indexOfRemovedListener);
+    return true;
+}
+
+bool EventListenerMap::remove(const AtomicString& eventType, EventListener& listener, bool useCapture)
 {
     assertNoActiveIterators();
 
     for (unsigned i = 0; i < m_entries.size(); ++i) {
         if (m_entries[i].first == eventType) {
-            bool wasRemoved = removeListenerFromVector(m_entries[i].second.get(), listener, useCapture, indexOfRemovedListener);
+            bool wasRemoved = removeListenerFromVector(*m_entries[i].second, listener, useCapture);
             if (m_entries[i].second->isEmpty())
                 m_entries.remove(i);
             return wasRemoved;
@@ -158,7 +153,7 @@ bool EventListenerMap::remove(const AtomicString& eventType, EventListener& list
     return false;
 }
 
-EventListenerVector* EventListenerMap::find(const AtomicString& eventType)
+EventListenerVector* EventListenerMap::find(const AtomicString& eventType) const
 {
     assertNoActiveIterators();
 
@@ -172,8 +167,12 @@ EventListenerVector* EventListenerMap::find(const AtomicString& eventType)
 
 static void removeFirstListenerCreatedFromMarkup(EventListenerVector& listenerVector)
 {
-    bool foundListener = listenerVector.removeFirstMatching([] (const RegisteredEventListener& listener) {
-        return listener.listener->wasCreatedFromMarkup();
+    bool foundListener = listenerVector.removeFirstMatching([] (const auto& registeredListener) {
+        if (registeredListener->listener().wasCreatedFromMarkup()) {
+            registeredListener->markAsRemoved();
+            return true;
+        }
+        return false;
     });
     ASSERT_UNUSED(foundListener, foundListener);
 }
@@ -192,13 +191,13 @@ void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomicStr
     }
 }
 
-static void copyListenersNotCreatedFromMarkupToTarget(const AtomicString& eventType, EventListenerVector* listenerVector, EventTarget* target)
+static void copyListenersNotCreatedFromMarkupToTarget(const AtomicString& eventType, EventListenerVector& listenerVector, EventTarget* target)
 {
-    for (auto& listener : *listenerVector) {
+    for (auto& registeredListener : listenerVector) {
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
-        if (listener.listener->wasCreatedFromMarkup())
+        if (registeredListener->listener().wasCreatedFromMarkup())
             continue;
-        target->addEventListener(eventType, *listener.listener, listener.useCapture);
+        target->addEventListener(eventType, registeredListener->listener(), registeredListener->useCapture());
     }
 }
 
@@ -207,7 +206,7 @@ void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarge
     assertNoActiveIterators();
 
     for (auto& entry : m_entries)
-        copyListenersNotCreatedFromMarkupToTarget(entry.first, entry.second.get(), target);
+        copyListenersNotCreatedFromMarkupToTarget(entry.first, *entry.second, target);
 }
 
 EventListenerIterator::EventListenerIterator(EventTarget* target)
@@ -236,16 +235,16 @@ EventListenerIterator::~EventListenerIterator()
 EventListener* EventListenerIterator::nextListener()
 {
     if (!m_map)
-        return 0;
+        return nullptr;
 
     for (; m_entryIndex < m_map->m_entries.size(); ++m_entryIndex) {
         EventListenerVector& listeners = *m_map->m_entries[m_entryIndex].second;
         if (m_index < listeners.size())
-            return listeners[m_index++].listener.get();
+            return &listeners[m_index++]->listener();
         m_index = 0;
     }
 
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

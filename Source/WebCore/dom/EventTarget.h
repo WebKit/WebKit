@@ -97,7 +97,7 @@ public:
     ~EventTargetData();
 
     EventListenerMap eventListenerMap;
-    std::unique_ptr<FiringEventIteratorVector> firingEventIterators;
+    bool isFiringEventListeners { false };
 };
 
 enum EventTargetInterface {
@@ -182,7 +182,7 @@ private:
     virtual void refEventTarget() = 0;
     virtual void derefEventTarget() = 0;
     
-    void fireEventListeners(Event&, EventTargetData*, EventListenerVector&);
+    void fireEventListeners(Event&, EventListenerVector);
 
     friend class EventListenerIterator;
 };
@@ -207,7 +207,7 @@ inline bool EventTarget::isFiringEventListeners()
     EventTargetData* d = eventTargetData();
     if (!d)
         return false;
-    return d->firingEventIterators && !d->firingEventIterators->isEmpty();
+    return d->isFiringEventListeners;
 }
 
 inline bool EventTarget::hasEventListeners() const

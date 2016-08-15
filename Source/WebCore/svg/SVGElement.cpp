@@ -584,11 +584,8 @@ static bool hasLoadListener(Element* element)
         return true;
 
     for (element = element->parentOrShadowHostElement(); element; element = element->parentOrShadowHostElement()) {
-        const EventListenerVector& entry = element->getEventListeners(eventNames().loadEvent);
-        for (auto& listener : entry) {
-            if (listener.useCapture)
-                return true;
-        }
+        if (element->hasCapturingEventListeners(eventNames().loadEvent))
+            return true;
     }
 
     return false;

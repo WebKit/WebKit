@@ -43,6 +43,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
 
 using namespace WTF;
@@ -101,28 +102,7 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
     if (!d)
         return false;
 
-    size_t indexOfRemovedListener;
-
-    if (!d->eventListenerMap.remove(eventType, listener, options.capture, indexOfRemovedListener))
-        return false;
-
-    // Notify firing events planning to invoke the listener at 'index' that
-    // they have one less listener to invoke.
-    if (!d->firingEventIterators)
-        return true;
-    for (auto& firingIterator : *d->firingEventIterators) {
-        if (eventType != firingIterator.eventType)
-            continue;
-
-        if (indexOfRemovedListener >= firingIterator.size)
-            continue;
-
-        --firingIterator.size;
-        if (indexOfRemovedListener <= firingIterator.iterator)
-            --firingIterator.iterator;
-    }
-
-    return true;
+    return d->eventListenerMap.remove(eventType, listener, options.capture);
 }
 
 bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener)
@@ -136,10 +116,10 @@ bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPt
 EventListener* EventTarget::getAttributeEventListener(const AtomicString& eventType)
 {
     for (auto& eventListener : getEventListeners(eventType)) {
-        if (eventListener.listener->isAttribute())
-            return eventListener.listener.get();
+        if (eventListener->listener().isAttribute())
+            return &eventListener->listener();
     }
-    return 0;
+    return nullptr;
 }
 
 bool EventTarget::hasActiveEventListeners(const AtomicString& eventType) const
@@ -215,57 +195,51 @@ bool EventTarget::fireEventListeners(Event& event)
     ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event.isInitialized());
 
-    EventTargetData* d = eventTargetData();
-    if (!d)
+    EventTargetData* data = eventTargetData();
+    if (!data)
         return true;
 
-    EventListenerVector* legacyListenersVector = nullptr;
-    const AtomicString& legacyTypeName = legacyType(event);
-    if (!legacyTypeName.isEmpty())
-        legacyListenersVector = d->eventListenerMap.find(legacyTypeName);
+    TemporaryChange<bool> firingEventListenersScope(data->isFiringEventListeners, true);
 
-    EventListenerVector* listenersVector = d->eventListenerMap.find(event.type());
-
-    if (listenersVector)
-        fireEventListeners(event, d, *listenersVector);
-    else if (legacyListenersVector) {
-        AtomicString typeName = event.type();
-        event.setType(legacyTypeName);
-        fireEventListeners(event, d, *legacyListenersVector);
-        event.setType(typeName);
+    if (auto* listenersVector = data->eventListenerMap.find(event.type())) {
+        fireEventListeners(event, *listenersVector);
+        return !event.defaultPrevented();
     }
 
+    const AtomicString& legacyTypeName = legacyType(event);
+    if (!legacyTypeName.isEmpty()) {
+        if (auto* legacyListenersVector = data->eventListenerMap.find(legacyTypeName)) {
+            AtomicString typeName = event.type();
+            event.setType(legacyTypeName);
+            fireEventListeners(event, *legacyListenersVector);
+            event.setType(typeName);
+        }
+    }
     return !event.defaultPrevented();
 }
 
-void EventTarget::fireEventListeners(Event& event, EventTargetData* d, EventListenerVector& entry)
+// Intentionally creates a copy of the listeners vector to avoid event listeners added after this point from being run.
+// Note that removal still has an effect due to the removed field in RegisteredEventListener.
+void EventTarget::fireEventListeners(Event& event, EventListenerVector listeners)
 {
     Ref<EventTarget> protectedThis(*this);
-
-    // Fire all listeners registered for this event. Don't fire listeners removed during event dispatch.
-    // Also, don't fire event listeners added during event dispatch. Conveniently, all new event listeners will be added
-    // after or at index |size|, so iterating up to (but not including) |size| naturally excludes new event listeners.
-
-    size_t i = 0;
-    size_t size = entry.size();
-    if (!d->firingEventIterators)
-        d->firingEventIterators = std::make_unique<FiringEventIteratorVector>();
-    d->firingEventIterators->append(FiringEventIterator(event.type(), i, size));
+    ASSERT(!listeners.isEmpty());
 
     ScriptExecutionContext* context = scriptExecutionContext();
     Document* document = nullptr;
     InspectorInstrumentationCookie willDispatchEventCookie;
     if (is<Document>(context)) {
         document = downcast<Document>(context);
-        willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(*document, event, size > 0);
+        willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(*document, event, true);
     }
 
-    for (; i < size; ++i) {
-        RegisteredEventListener registeredListener = entry[i];
-
-        if (event.eventPhase() == Event::CAPTURING_PHASE && !registeredListener.useCapture)
+    for (auto& registeredListener : listeners) {
+        if (UNLIKELY(registeredListener->wasRemoved()))
             continue;
-        if (event.eventPhase() == Event::BUBBLING_PHASE && registeredListener.useCapture)
+
+        if (event.eventPhase() == Event::CAPTURING_PHASE && !registeredListener->useCapture())
+            continue;
+        if (event.eventPhase() == Event::BUBBLING_PHASE && registeredListener->useCapture())
             continue;
 
         // If stopImmediatePropagation has been called, we just break out immediately, without
@@ -274,23 +248,21 @@ void EventTarget::fireEventListeners(Event& event, EventTargetData* d, EventList
             break;
 
         // Do this before invocation to avoid reentrancy issues.
-        if (registeredListener.isOnce)
-            removeEventListener(event.type(), *registeredListener.listener, ListenerOptions(registeredListener.useCapture));
+        if (registeredListener->isOnce())
+            removeEventListener(event.type(), registeredListener->listener(), ListenerOptions(registeredListener->useCapture()));
 
-        if (registeredListener.isPassive)
+        if (registeredListener->isPassive())
             event.setInPassiveListener(true);
 
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willHandleEvent(context, event);
         // To match Mozilla, the AT_TARGET phase fires both capturing and bubbling
         // event listeners, even though that violates some versions of the DOM spec.
-        registeredListener.listener->handleEvent(context, &event);
+        registeredListener->listener().handleEvent(context, &event);
         InspectorInstrumentation::didHandleEvent(cookie);
 
-        if (registeredListener.isPassive)
+        if (registeredListener->isPassive())
             event.setInPassiveListener(false);
     }
-
-    d->firingEventIterators->removeLast();
 
     if (document)
         InspectorInstrumentation::didDispatchEvent(willDispatchEventCookie);
@@ -310,15 +282,6 @@ void EventTarget::removeAllEventListeners()
     if (!d)
         return;
     d->eventListenerMap.clear();
-
-    // Notify firing events planning to invoke the listener at 'index' that
-    // they have one less listener to invoke.
-    if (d->firingEventIterators) {
-        for (auto& firingEventIterator : *d->firingEventIterators) {
-            firingEventIterator.iterator = 0;
-            firingEventIterator.size = 0;
-        }
-    }
 }
 
 } // namespace WebCore

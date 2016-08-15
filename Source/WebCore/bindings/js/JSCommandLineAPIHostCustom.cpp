@@ -73,7 +73,7 @@ static JSArray* getJSListenerFunctions(ExecState& state, Document* document, con
         return nullptr;
     size_t handlersCount = listenerInfo.eventListenerVector.size();
     for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
-        const JSEventListener* jsListener = JSEventListener::cast(listenerInfo.eventListenerVector[i].listener.get());
+        const JSEventListener* jsListener = JSEventListener::cast(&listenerInfo.eventListenerVector[i]->listener());
         if (!jsListener) {
             ASSERT_NOT_REACHED();
             continue;
@@ -89,7 +89,7 @@ static JSArray* getJSListenerFunctions(ExecState& state, Document* document, con
 
         JSObject* listenerEntry = constructEmptyObject(&state);
         listenerEntry->putDirect(vm, Identifier::fromString(&state, "listener"), function);
-        listenerEntry->putDirect(vm, Identifier::fromString(&state, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
+        listenerEntry->putDirect(vm, Identifier::fromString(&state, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i]->useCapture()));
         result->putDirectIndex(&state, outputIndex++, JSValue(listenerEntry));
     }
     return result;

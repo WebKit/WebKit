@@ -80,10 +80,10 @@ typedef String ErrorString;
 typedef int BackendNodeId;
 
 struct EventListenerInfo {
-    EventListenerInfo(Node* node, const AtomicString& eventType, const EventListenerVector& eventListenerVector)
+    EventListenerInfo(Node* node, const AtomicString& eventType, EventListenerVector&& eventListenerVector)
         : node(node)
         , eventType(eventType)
-        , eventListenerVector(eventListenerVector)
+        , eventListenerVector(WTFMove(eventListenerVector))
     {
     }
 

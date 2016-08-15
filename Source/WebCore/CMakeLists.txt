@@ -1503,7 +1503,6 @@ set(WebCore_SOURCES
     dom/QualifiedName.cpp
     dom/RadioButtonGroups.cpp
     dom/Range.cpp
-    dom/RegisteredEventListener.cpp
     dom/ScopedEventQueue.cpp
     dom/ScriptElement.cpp
     dom/ScriptExecutionContext.cpp

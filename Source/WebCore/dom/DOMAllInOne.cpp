@@ -128,7 +128,6 @@
 // #include "QualifiedName.cpp"
 #include "RadioButtonGroups.cpp"
 #include "Range.cpp"
-#include "RegisteredEventListener.cpp"
 #include "ScopedEventQueue.cpp"
 #include "ScriptElement.cpp"
 #include "ScriptExecutionContext.cpp"

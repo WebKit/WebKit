@@ -29,46 +29,49 @@
 
 namespace WebCore {
 
-    class RegisteredEventListener {
-    public:
-        struct Options {
-            Options(bool capture = false, bool passive = false, bool once = false)
-                : capture(capture)
-                , passive(passive)
-                , once(once)
-            { }
+// https://dom.spec.whatwg.org/#concept-event-listener
+class RegisteredEventListener : public RefCounted<RegisteredEventListener> {
+public:
+    struct Options {
+        Options(bool capture = false, bool passive = false, bool once = false)
+            : capture(capture)
+            , passive(passive)
+            , once(once)
+        { }
 
-            bool capture;
-            bool passive;
-            bool once;
-        };
-
-        RegisteredEventListener(Ref<EventListener>&& listener, const Options& options)
-            : listener(WTFMove(listener))
-            , useCapture(options.capture)
-            , isPassive(options.passive)
-            , isOnce(options.once)
-        {
-        }
-
-        RegisteredEventListener(Ref<EventListener>&& listener, bool useCapture)
-            : listener(WTFMove(listener))
-            , useCapture(useCapture)
-        {
-        }
-
-        RefPtr<EventListener> listener;
-        bool useCapture { false };
-        bool isPassive { false };
-        bool isOnce { false };
+        bool capture;
+        bool passive;
+        bool once;
     };
-    
-    inline bool operator==(const RegisteredEventListener& a, const RegisteredEventListener& b)
+
+    static Ref<RegisteredEventListener> create(Ref<EventListener>&& listener, const Options& options)
     {
-        // Other data members are purposefully not checked. The DOM specification says that upon adding / removing
-        // EventListeners, we should only check the type and the capture flag.
-        return *a.listener == *b.listener && a.useCapture == b.useCapture;
+        return adoptRef(*new RegisteredEventListener(WTFMove(listener), options));
     }
+
+    EventListener& listener() const { return const_cast<EventListener&>(m_listener.get()); }
+    bool useCapture() const { return m_useCapture; }
+    bool isPassive() const { return m_isPassive; }
+    bool isOnce() const { return m_isOnce; }
+    bool wasRemoved() const { return m_wasRemoved; }
+
+    void markAsRemoved() { m_wasRemoved = true; }
+
+private:
+    RegisteredEventListener(Ref<EventListener>&& listener, const Options& options)
+        : m_listener(WTFMove(listener))
+        , m_useCapture(options.capture)
+        , m_isPassive(options.passive)
+        , m_isOnce(options.once)
+    {
+    }
+
+    Ref<EventListener> m_listener;
+    bool m_useCapture { false };
+    bool m_isPassive { false };
+    bool m_isOnce { false };
+    bool m_wasRemoved { false };
+};
 
 } // namespace WebCore
 
