@@ -1,5 +1,12 @@
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * WebKit.mac.exp:
+
+2016-08-15  Anders Carlsson  <andersca@apple.com>
+
         Remove OldWebAssertions.c
         https://bugs.webkit.org/show_bug.cgi?id=160862
 
