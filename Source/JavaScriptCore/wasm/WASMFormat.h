@@ -52,15 +52,17 @@ namespace JSC {
 
 class JSFunction;
 
-enum class WASMType : uint8_t {
+enum class WASMValueType : uint8_t {
     I32,
+    I64,
     F32,
     F64,
     NumberOfTypes
 };
 
-enum class WASMExpressionType : uint8_t {
+enum class WASMFunctionReturnType : uint8_t {
     I32,
+    I64,
     F32,
     F64,
     Void,
@@ -68,8 +70,8 @@ enum class WASMExpressionType : uint8_t {
 };
 
 struct WASMSignature {
-    WASMExpressionType returnType;
-    Vector<WASMType> arguments;
+    WASMFunctionReturnType returnType;
+    Vector<WASMValueType> arguments;
 };
 
 struct WASMFunctionImport {
@@ -89,6 +91,11 @@ struct WASMFunctionPointerTable {
     uint32_t signatureIndex;
     Vector<uint32_t> functionIndices;
     Vector<JSFunction*> functions;
+};
+
+struct WASMFunctionInformation {
+    size_t start;
+    size_t end;
 };
 
 } // namespace JSC

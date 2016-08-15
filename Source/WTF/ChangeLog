@@ -1,3 +1,18 @@
+2016-08-15  Keith Miller  <keith_miller@apple.com>
+
+        Implement WASM Parser and B3 IR generator
+        https://bugs.webkit.org/show_bug.cgi?id=160681
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/DataLog.h:
+        (WTF::dataLogLn): Add a new dataLog function, dataLogLn that
+        automagically includes a new line at the end of the print.
+        * wtf/LEBDecoder.h:
+        (decodeUInt32):
+        (decodeInt32): Change the LEBDecoder to take a pointer and length
+        rather than a Vector.
+
 2016-08-15  Keith Rollin  <krollin@apple.com>
 
         Rename LOG_ALWAYS

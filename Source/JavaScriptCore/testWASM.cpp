@@ -25,7 +25,11 @@
 
 #include "config.h"
 
+#include "B3Compilation.h"
+#include "InitializeThreading.h"
 #include "JSString.h"
+#include "VM.h"
+#include "WASMPlan.h"
 #include <wtf/DataLog.h>
 #include <wtf/LEBDecoder.h>
 
@@ -38,6 +42,7 @@ public:
 
     Vector<String> m_arguments;
     bool m_runLEBTests { false };
+    bool m_runWASMTests { false };
 
     void parseArguments(int, char**);
 };
@@ -47,6 +52,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "Usage: testWASM [options]\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
     fprintf(stderr, "  -l|--leb   Runs the LEB decoder tests\n");
+    fprintf(stderr, "  -w|--web   Run the WASM tests\n");
     fprintf(stderr, "\n");
 
     exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -63,6 +69,9 @@ void CommandLine::parseArguments(int argc, char** argv)
 
         if (!strcmp(arg, "-l") || !strcmp(arg, "--leb"))
             m_runLEBTests = true;
+
+        if (!strcmp(arg, "-w") || !strcmp(arg, "--web"))
+            m_runWASMTests = true;
     }
 
     for (; i < argc; ++i)
@@ -109,7 +118,7 @@ void CommandLine::parseArguments(int argc, char** argv)
         Vector<uint8_t> vector = Vector<uint8_t> init; \
         size_t offset = startOffset; \
         uint32_t result; \
-        bool status = decodeUInt32(vector, offset, result); \
+        bool status = decodeUInt32(vector.data(), vector.size(), offset, result); \
         RELEASE_ASSERT(status == expectedStatus); \
         if (expectedStatus) { \
             RELEASE_ASSERT(result == expectedResult); \
@@ -157,7 +166,7 @@ void CommandLine::parseArguments(int argc, char** argv)
         Vector<uint8_t> vector = Vector<uint8_t> init; \
         size_t offset = startOffset; \
         int32_t result; \
-        bool status = decodeInt32(vector, offset, result); \
+        bool status = decodeInt32(vector.data(), vector.size(), offset, result); \
         RELEASE_ASSERT(status == expectedStatus); \
         if (expectedStatus) { \
             int32_t expected = expectedResult; \
@@ -173,6 +182,117 @@ static void runLEBTests()
     FOR_EACH_SIGNED_LEB_TEST(TEST_SIGNED_LEB_DECODE)
 }
 
+#if ENABLE(WEBASSEMBLY)
+
+static JSC::VM* vm;
+
+using namespace JSC;
+using namespace WASM;
+using namespace B3;
+
+template<typename T, typename... Arguments>
+T invoke(MacroAssemblerCodePtr ptr, Arguments... arguments)
+{
+    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(ptr.executableAddress());
+    return function(arguments...);
+}
+
+template<typename T, typename... Arguments>
+T invoke(const Compilation& code, Arguments... arguments)
+{
+    return invoke<T>(code.code(), arguments...);
+}
+
+// For now we inline the test files.
+static void runWASMTests()
+{
+    {
+        // Generated from: (module (func "return-i32" (result i32) (return (i32.const 5))) )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x04, 0x74, 0x79, 0x70, 0x65, 0x85, 0x80, 0x80,
+            0x00, 0x01, 0x40, 0x00, 0x01, 0x01, 0x08, 0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x82,
+            0x80, 0x80, 0x00, 0x01, 0x00, 0x06, 0x65, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x8d, 0x80, 0x80, 0x00,
+            0x01, 0x00, 0x0a, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x2d, 0x69, 0x33, 0x32, 0x04, 0x63, 0x6f,
+            0x64, 0x65, 0x8b, 0x80, 0x80, 0x00, 0x01, 0x86, 0x80, 0x80, 0x00, 0x00, 0x10, 0x05, 0x09, 0x01,
+            0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        RELEASE_ASSERT(invoke<int>(*plan.result[0]) == 5);
+    }
+
+
+    {
+        // Generated from: (module (func "return-i32" (result i32) (return (i32.add (i32.const 5) (i32.const 6)))) )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x04, 0x74, 0x79, 0x70, 0x65, 0x85, 0x80, 0x80,
+            0x00, 0x01, 0x40, 0x00, 0x01, 0x01, 0x08, 0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x82,
+            0x80, 0x80, 0x00, 0x01, 0x00, 0x06, 0x65, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x8d, 0x80, 0x80, 0x00,
+            0x01, 0x00, 0x0a, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x2d, 0x69, 0x33, 0x32, 0x04, 0x63, 0x6f,
+            0x64, 0x65, 0x8e, 0x80, 0x80, 0x00, 0x01, 0x89, 0x80, 0x80, 0x00, 0x00, 0x10, 0x05, 0x10, 0x06,
+            0x40, 0x09, 0x01, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        RELEASE_ASSERT(invoke<int>(*plan.result[0]) == 11);
+    }
+    
+    {
+        // Generated from: (module (func "return-i32" (result i32) (return (i32.add (i32.add (i32.const 5) (i32.const 3)) (i32.const 3)))) )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x04, 0x74, 0x79, 0x70, 0x65, 0x85, 0x80, 0x80,
+            0x00, 0x01, 0x40, 0x00, 0x01, 0x01, 0x08, 0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x82,
+            0x80, 0x80, 0x00, 0x01, 0x00, 0x06, 0x65, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x8d, 0x80, 0x80, 0x00,
+            0x01, 0x00, 0x0a, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x2d, 0x69, 0x33, 0x32, 0x04, 0x63, 0x6f,
+            0x64, 0x65, 0x91, 0x80, 0x80, 0x00, 0x01, 0x8c, 0x80, 0x80, 0x00, 0x00, 0x10, 0x05, 0x10, 0x03,
+            0x40, 0x10, 0x03, 0x40, 0x09, 0x01, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        RELEASE_ASSERT(invoke<int>(*plan.result[0]) == 11);
+    }
+
+    {
+        // Generated from: (module (func "return-i32" (result i32) (block (return (i32.add (i32.add (i32.const 5) (i32.const 3)) (i32.const 3))))) )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x04, 0x74, 0x79, 0x70, 0x65, 0x85, 0x80, 0x80,
+            0x00, 0x01, 0x40, 0x00, 0x01, 0x01, 0x08, 0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x82,
+            0x80, 0x80, 0x00, 0x01, 0x00, 0x06, 0x65, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x8d, 0x80, 0x80, 0x00,
+            0x01, 0x00, 0x0a, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x2d, 0x69, 0x33, 0x32, 0x04, 0x63, 0x6f,
+            0x64, 0x65, 0x93, 0x80, 0x80, 0x00, 0x01, 0x8e, 0x80, 0x80, 0x00, 0x00, 0x01, 0x10, 0x05, 0x10,
+            0x03, 0x40, 0x10, 0x03, 0x40, 0x09, 0x01, 0x0f, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        RELEASE_ASSERT(invoke<int>(*plan.result[0]) == 11);
+    }
+}
+
+#endif // ENABLE(WEBASSEMBLY)
 
 int main(int argc, char** argv)
 {
@@ -180,6 +300,18 @@ int main(int argc, char** argv)
 
     if (options.m_runLEBTests)
         runLEBTests();
+
+
+    if (options.m_runWASMTests) {
+#if ENABLE(WEBASSEMBLY)
+        JSC::initializeThreading();
+        vm = &JSC::VM::create(JSC::LargeHeap).leakRef();
+        runWASMTests();
+#else
+        dataLogLn("WASM is not enabled!");
+        return EXIT_FAILURE;
+#endif // ENABLE(WEBASSEMBLY)
+    }
 
     return EXIT_SUCCESS;
 }

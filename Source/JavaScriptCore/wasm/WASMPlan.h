@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +20,36 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataLog_h
-#define DataLog_h
+#pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <wtf/FilePrintStream.h>
-#include <wtf/StdLibExtras.h>
+#include "CompilationResult.h"
+#include "VM.h"
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Vector.h>
 
-namespace WTF {
+#if ENABLE(WEBASSEMBLY)
 
-WTF_EXPORT_PRIVATE FilePrintStream& dataFile();
+namespace JSC {
 
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
+namespace B3 {
+class Compilation;
+} // namespace B3
 
-template<typename... Types>
-void dataLog(const Types&... values)
-{
-    dataFile().print(values...);
-}
+namespace WASM {
 
-template<typename... Types>
-void dataLogLn(const Types&... values)
-{
-    dataFile().print(values..., "\n");
-}
+// TODO: This should create a WASM Module not a list of functions.
+class Plan {
+public:
+    JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t> source);
 
-} // namespace WTF
+    Vector<std::unique_ptr<B3::Compilation>> result;
+};
 
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogF;
-using WTF::dataLogFString;
+} // namespace WASM
 
-#endif // DataLog_h
+} // namespace JSC
 
+#endif // ENABLE(WEBASSEMBLY)

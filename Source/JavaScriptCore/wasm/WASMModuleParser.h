@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +20,48 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataLog_h
-#define DataLog_h
+#pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <wtf/FilePrintStream.h>
-#include <wtf/StdLibExtras.h>
+#include "WASMOps.h"
+#include "WASMParser.h"
+#include <wtf/Vector.h>
 
-namespace WTF {
+#if ENABLE(WEBASSEMBLY)
 
-WTF_EXPORT_PRIVATE FilePrintStream& dataFile();
+namespace JSC {
 
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
+namespace WASM {
 
-template<typename... Types>
-void dataLog(const Types&... values)
-{
-    dataFile().print(values...);
-}
+class WASMModuleParser : public WASMParser {
+public:
 
-template<typename... Types>
-void dataLogLn(const Types&... values)
-{
-    dataFile().print(values..., "\n");
-}
+    static const unsigned magicNumber = 0xc;
 
-} // namespace WTF
+    WASMModuleParser(const Vector<uint8_t>& sourceBuffer)
+        : WASMParser(sourceBuffer, 0, sourceBuffer.size())
+    {
+    }
 
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogF;
-using WTF::dataLogFString;
+    bool WARN_UNUSED_RETURN parse();
 
-#endif // DataLog_h
+    const Vector<WASMFunctionInformation>& functionInformation() { return m_functions; }
 
+private:
+    bool WARN_UNUSED_RETURN parseFunctionTypes();
+    bool WARN_UNUSED_RETURN parseFunctionSignatures();
+    bool WARN_UNUSED_RETURN parseFunctionDefinitions();
+    bool WARN_UNUSED_RETURN parseFunctionDefinition(uint32_t number);
+    bool WARN_UNUSED_RETURN parseBlock();
+    bool WARN_UNUSED_RETURN parseExpression(WASMOpType);
+
+    Vector<WASMFunctionInformation> m_functions;
+};
+
+} // namespace WASM
+
+} // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

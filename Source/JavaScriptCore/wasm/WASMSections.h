@@ -25,52 +25,39 @@
 
 #pragma once
 
-#include "Compiler.h"
-#include <algorithm>
+#if ENABLE(WEBASSEMBLY)
 
-// This file contains a bunch of helper functions for decoding LEB numbers.
-// See https://en.wikipedia.org/wiki/LEB128 for more information about the
-// LEB format.
+namespace JSC {
 
-const size_t maxLEBByteLength = 5;
+namespace WASM {
 
-inline bool WARN_UNUSED_RETURN decodeUInt32(const uint8_t* bytes, size_t length, size_t& offset, uint32_t& result)
-{
-    ASSERT(length > offset);
-    result = 0;
-    unsigned shift = 0;
-    size_t last = std::min(maxLEBByteLength, length - offset - 1);
-    for (unsigned i = 0; true; ++i) {
-        uint8_t byte = bytes[offset++];
-        result |= (byte & 0x7f) << shift;
-        shift += 7;
-        if (!(byte & 0x80))
+// These should be in the order that we expect them to be in the binary.
+#define FOR_EACH_WASM_SECTION_TYPE(macro) \
+    macro(FunctionTypes, "type") \
+    macro(Signatures, "function") \
+    macro(Definitions, "code") \
+    macro(End, "end")
+
+struct WASMSections {
+    enum class Section {
+#define CREATE_SECTION_ENUM(name, str) name,
+        FOR_EACH_WASM_SECTION_TYPE(CREATE_SECTION_ENUM)
+#undef CREATE_SECTION_ENUM
+        Unknown
+    };
+    static Section lookup(const uint8_t*, unsigned);
+    static bool validateOrder(Section previous, Section next)
+    {
+        // This allows unknown sections after End, which I doubt will ever be supported but
+        // there is no reason to potentially break backwards compatability.
+        if (previous == Section::Unknown)
             return true;
-        if (i == last)
-            return false;
+        return previous < next;
     }
-    RELEASE_ASSERT_NOT_REACHED();
-    return true;
-}
+};
 
-inline bool WARN_UNUSED_RETURN decodeInt32(const uint8_t* bytes, size_t length, size_t& offset, int32_t& result)
-{
-    ASSERT(length > offset);
-    result = 0;
-    unsigned shift = 0;
-    size_t last = std::min(maxLEBByteLength, length - offset - 1);
-    uint8_t byte;
-    for (unsigned i = 0; true; ++i) {
-        byte = bytes[offset++];
-        result |= (byte & 0x7f) << shift;
-        shift += 7;
-        if (!(byte & 0x80))
-            break;
-        if (i == last)
-            return false;
-    }
+} // namespace WASM
 
-    if (shift < 32 && (byte & 0x40))
-        result |= ((-1u) << shift);
-    return true;
-}
+} // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

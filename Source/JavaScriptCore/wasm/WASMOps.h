@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +20,52 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataLog_h
-#define DataLog_h
+#pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <wtf/FilePrintStream.h>
-#include <wtf/StdLibExtras.h>
+#if ENABLE(WEBASSEMBLY)
 
-namespace WTF {
+namespace JSC {
 
-WTF_EXPORT_PRIVATE FilePrintStream& dataFile();
+namespace WASM {
 
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
+#define FOR_EACH_WASM_SPECIAL_OP(macro) \
+    macro(I32Const, 0x10)
 
-template<typename... Types>
-void dataLog(const Types&... values)
-{
-    dataFile().print(values...);
-}
+#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \
+    macro(Block, 0x01) \
+    macro(Return, 0x09) \
+    macro(End, 0x0f)
 
-template<typename... Types>
-void dataLogLn(const Types&... values)
-{
-    dataFile().print(values..., "\n");
-}
+#define FOR_EACH_WASM_UNARY_OP(macro)
 
-} // namespace WTF
+#define FOR_EACH_WASM_BINARY_OP(macro) \
+    macro(I32Add, 0x40)
 
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogF;
-using WTF::dataLogFString;
+#define FOR_EACH_WASM_OP(macro) \
+    FOR_EACH_WASM_SPECIAL_OP(macro) \
+    FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \
+    FOR_EACH_WASM_UNARY_OP(macro) \
+    FOR_EACH_WASM_BINARY_OP(macro)
 
-#endif // DataLog_h
+#define CREATE_ENUM_VALUE(name, id) name = id,
 
+enum WASMOpType : uint8_t {
+    FOR_EACH_WASM_OP(CREATE_ENUM_VALUE)
+};
+
+
+
+enum class WASMBinaryOpType : uint8_t {
+    FOR_EACH_WASM_BINARY_OP(CREATE_ENUM_VALUE)
+};
+
+} // namespace WASM
+
+} // namespace JSC
+
+#undef CREATE_ENUM_VALUE
+
+#endif // ENABLE(WEBASSEMBLY)

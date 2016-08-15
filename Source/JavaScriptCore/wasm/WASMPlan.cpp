@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +20,47 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataLog_h
-#define DataLog_h
+#include "config.h"
+#include "WASMPlan.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <wtf/FilePrintStream.h>
-#include <wtf/StdLibExtras.h>
+#include "B3Compilation.h"
+#include "WASMB3IRGenerator.h"
+#include "WASMModuleParser.h"
+#include <wtf/DataLog.h>
 
-namespace WTF {
+#if ENABLE(WEBASSEMBLY)
 
-WTF_EXPORT_PRIVATE FilePrintStream& dataFile();
+namespace JSC {
 
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
+namespace WASM {
 
-template<typename... Types>
-void dataLog(const Types&... values)
+static const bool verbose = false;
+
+Plan::Plan(VM& vm, Vector<uint8_t> source)
 {
-    dataFile().print(values...);
+    if (verbose)
+        dataLogLn("Starting plan.");
+    WASMModuleParser moduleParser(source);
+    if (!moduleParser.parse()) {
+        dataLogLn("Parsing module failed.");
+        return;
+    }
+
+    if (verbose)
+        dataLogLn("Parsed module.");
+
+    for (const WASMFunctionInformation& info : moduleParser.functionInformation()) {
+        if (verbose)
+            dataLogLn("Processing funcion starting at: ", info.start, " and ending at: ", info.end);
+        result.append(parseAndCompile(vm, source, info));
+    }
 }
 
-template<typename... Types>
-void dataLogLn(const Types&... values)
-{
-    dataFile().print(values..., "\n");
-}
+} // namespace WASM
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogF;
-using WTF::dataLogFString;
-
-#endif // DataLog_h
-
+#endif // ENABLE(WEBASSEMBLY)
