@@ -1,5 +1,14 @@
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
+        Remove OldWebAssertions.c
+        https://bugs.webkit.org/show_bug.cgi?id=160862
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2016-08-15  Anders Carlsson  <andersca@apple.com>
+
         Remove WebKeyGenerator
         https://bugs.webkit.org/show_bug.cgi?id=160854
 

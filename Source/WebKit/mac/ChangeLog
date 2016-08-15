@@ -1,5 +1,18 @@
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
+        Remove OldWebAssertions.c
+        https://bugs.webkit.org/show_bug.cgi?id=160862
+
+        Reviewed by Dan Bernstein.
+
+        These functions were used by an old version of iWeb. The latest version of iWeb no longer uses them.
+
+        * Misc/OldWebAssertions.c: Removed.
+        (WebReportAssertionFailure): Deleted.
+        (WebReportError): Deleted.
+
+2016-08-15  Anders Carlsson  <andersca@apple.com>
+
         Remove WebKeyGenerator
         https://bugs.webkit.org/show_bug.cgi?id=160854
 
