@@ -1,3 +1,16 @@
+2016-08-15  Keith Rollin  <krollin@apple.com>
+
+        Rename LOG_ALWAYS
+        https://bugs.webkit.org/show_bug.cgi?id=160768
+
+        Rename LOG_ALWAYS and friends, given that the first parameter to it is
+        a boolean expression that determines whether or not logging should be
+        performed.
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Assertions.h:
+
 2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused includes of wtf headers

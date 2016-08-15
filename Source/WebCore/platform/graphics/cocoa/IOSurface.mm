@@ -211,7 +211,7 @@ WebCore::IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef
     if (success)
         m_totalBytes = IOSurfaceGetAllocSize(m_surface.get());
     else
-        LOG_ALWAYS_ERROR(true, "Surface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
+        RELEASE_LOG_ERROR("Surface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
 }
 
 WebCore::IOSurface::IOSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)

@@ -57,8 +57,8 @@
 
 using namespace WebCore;
 
-#define WEBLOADERSTRATEGY_LOG_ALWAYS(...) LOG_ALWAYS(loadParameters.sessionID.isAlwaysOnLoggingAllowed(), __VA_ARGS__)
-#define WEBLOADERSTRATEGY_LOG_ALWAYS_ERROR(...) LOG_ALWAYS_ERROR(loadParameters.sessionID.isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(loadParameters.sessionID.isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(loadParameters.sessionID.isAlwaysOnLoggingAllowed(), __VA_ARGS__)
 
 namespace WebKit {
 
@@ -203,7 +203,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials);
 
     if (!WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
-        WEBLOADERSTRATEGY_LOG_ALWAYS_ERROR("WebLoaderStrategy::scheduleLoad: Unable to schedule resource with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu", static_cast<int>(resourceLoader.request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID));
+        RELEASE_LOG_ERROR_IF_ALLOWED("WebLoaderStrategy::scheduleLoad: Unable to schedule resource with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu", static_cast<int>(resourceLoader.request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID));
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
         scheduleInternallyFailedLoad(resourceLoader);
@@ -211,7 +211,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 
     auto webResourceLoader = WebResourceLoader::create(resourceLoader);
-    WEBLOADERSTRATEGY_LOG_ALWAYS("WebLoaderStrategy::scheduleLoad: Resource will be scheduled with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu, WebResourceLoader = %p", static_cast<int>(resourceLoader.request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID), webResourceLoader.ptr());
+    RELEASE_LOG_IF_ALLOWED("WebLoaderStrategy::scheduleLoad: Resource will be scheduled with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu, WebResourceLoader = %p", static_cast<int>(resourceLoader.request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID), webResourceLoader.ptr());
     m_webResourceLoaders.set(identifier, WTFMove(webResourceLoader));
 }
 

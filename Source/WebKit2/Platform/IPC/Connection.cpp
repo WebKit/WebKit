@@ -34,8 +34,6 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
 
-#define CONNECTION_LOG_ALWAYS_ERROR(...) LOG_ALWAYS_ERROR(true, __VA_ARGS__)
-
 namespace IPC {
 
 struct WaitForMessageState {
@@ -585,7 +583,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
         // If that happens, we need to stop waiting, or we'll hang since we won't get
         // any more incoming messages.
         if (!isValid()) {
-            CONNECTION_LOG_ALWAYS_ERROR("Connection::waitForSyncReply: Connection no longer valid, id = %" PRIu64, syncRequestID);
+            RELEASE_LOG_ERROR("Connection::waitForSyncReply: Connection no longer valid, id = %" PRIu64, syncRequestID);
             didReceiveSyncReply(syncSendFlags);
             return nullptr;
         }
@@ -596,7 +594,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
         timedOut = !SyncMessageState::singleton().wait(absoluteTime);
     }
 
-    CONNECTION_LOG_ALWAYS_ERROR("Connection::waitForSyncReply: Timed-out while waiting for reply, id = %" PRIu64, syncRequestID);
+    RELEASE_LOG_ERROR("Connection::waitForSyncReply: Timed-out while waiting for reply, id = %" PRIu64, syncRequestID);
     didReceiveSyncReply(syncSendFlags);
 
     return nullptr;
