@@ -59,6 +59,9 @@ public:
 
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();
+    
+    void dismissFormAccessoryView();
+    void selectFormAccessoryPickerRow(long);
 
     void setWillBeginZoomingCallback(JSValueRef);
     JSValueRef willBeginZoomingCallback() const;

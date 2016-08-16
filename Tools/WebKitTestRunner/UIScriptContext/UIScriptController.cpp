@@ -150,6 +150,14 @@ void UIScriptController::keyDownUsingHardwareKeyboard(JSStringRef, JSValueRef)
 {
 }
 
+void UIScriptController::dismissFormAccessoryView()
+{
+}
+
+void UIScriptController::selectFormAccessoryPickerRow(long)
+{
+}
+
 void UIScriptController::keyboardAccessoryBarNext()
 {
 }

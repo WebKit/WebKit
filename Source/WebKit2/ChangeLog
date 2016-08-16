@@ -1,3 +1,29 @@
+2016-08-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test iOS select elements, and add iPhone and iPad tests for them
+        https://bugs.webkit.org/show_bug.cgi?id=160909
+
+        Reviewed by Enrica Casucci.
+        
+        Hook up form-related UIScriptController functions, and plumb through the various
+        <select> pickers the ability to select a row.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView dismissFormAccessoryView]):
+        (-[WKWebView selectFormAccessoryPickerRow:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectFormAccessoryPickerRow:]):
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl selectRow:inComponent:extendingSelection:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKMultipleSelectPicker selectRow:inComponent:extendingSelection:]):
+        (-[WKSelectSinglePicker selectRow:inComponent:extendingSelection:]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover selectRow:inComponent:extendingSelection:]):
+
 2016-08-16  Brady Eidson  <beidson@apple.com>
 
         Cleanup WK2 platform gamepad handling.

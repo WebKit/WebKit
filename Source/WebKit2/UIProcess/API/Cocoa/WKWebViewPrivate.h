@@ -254,12 +254,16 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @interface WKWebView (WKTesting)
 
 #if TARGET_OS_IPHONE
+
 @property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (CGPoint)_convertPointFromContentsToView:(CGPoint)point WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)keyboardAccessoryBarNext WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)dismissFormAccessoryView WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)selectFormAccessoryPickerRow:(int)rowIndex WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 #endif
 
 #if !TARGET_OS_IPHONE

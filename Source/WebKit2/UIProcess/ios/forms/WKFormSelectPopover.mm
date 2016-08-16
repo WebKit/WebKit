@@ -448,4 +448,16 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
 
 @end
 
+@implementation WKSelectPopover(WKTesting)
+
+- (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection
+{
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:rowIndex inSection:componentIndex];
+    [[_tableViewController tableView] selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
+    // Inform the delegate, since -selectRowAtIndexPath:... doesn't do that.
+    [_tableViewController tableView:[_tableViewController tableView] didSelectRowAtIndexPath:indexPath];
+}
+
+@end
+
 #endif  // PLATFORM(IOS)

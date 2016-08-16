@@ -175,6 +175,18 @@ void UIScriptController::keyUpUsingHardwareKeyboard(JSStringRef character, JSVal
     }];
 }
 
+void UIScriptController::dismissFormAccessoryView()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView dismissFormAccessoryView];
+}
+
+void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView selectFormAccessoryPickerRow:rowIndex];
+}
+
 void UIScriptController::keyboardAccessoryBarNext()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

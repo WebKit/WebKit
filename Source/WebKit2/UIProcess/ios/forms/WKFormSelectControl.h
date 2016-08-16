@@ -39,6 +39,10 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, c
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 
+@interface WKFormSelectControl(WKTesting)
+- (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection;
+@end
+
 @interface WKSelectPopover : WKFormRotatingAccessoryPopover<WKFormControl>
 - (instancetype)initWithView:(WKContentView *)view hasGroups:(BOOL)hasGroups;
 - (void)_userActionDismissedPopover:(id)sender;
@@ -50,6 +54,11 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, c
 
 @interface WKMultipleSelectPicker : UIPickerView <WKFormControl, UIPickerViewDataSource, UIPickerViewDelegate>
 - (instancetype)initWithView:(WKContentView *)view;
+@end
+
+@protocol WKSelectTesting
+@optional
+- (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection;
 @end
 
 #endif // PLATFORM(IOS)

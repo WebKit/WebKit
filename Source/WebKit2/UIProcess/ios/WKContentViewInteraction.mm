@@ -3797,6 +3797,16 @@ static bool isAssistableInputType(InputType type)
 
 @end
 
+@implementation WKContentView (WKTesting)
+
+- (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex
+{
+    if ([_inputPeripheral isKindOfClass:[WKFormSelectControl self]])
+        [(WKFormSelectControl *)_inputPeripheral selectRow:rowIndex inComponent:0 extendingSelection:NO];
+}
+
+@end
+
 #if HAVE(LINK_PREVIEW)
 
 @implementation WKContentView (WKInteractionPreview)
@@ -4108,7 +4118,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
 @end
 
-#endif
+#endif // HAVE(LINK_PREVIEW)
 
 // UITextRange, UITextPosition and UITextSelectionRect implementations for WK2
 

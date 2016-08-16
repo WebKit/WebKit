@@ -1,0 +1,4 @@
+Tests that a basic select element works
+
+
+Successfully handled oninput, value is now "april"

@@ -223,6 +223,12 @@ struct WKAutoCorrectionData {
 - (NSArray *)_dataDetectionResults;
 @end
 
+@interface WKContentView (WKTesting)
+
+- (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;
+
+@end
+
 #if HAVE(LINK_PREVIEW)
 @interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
 

@@ -4517,6 +4517,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView accessoryTab:NO];
 }
 
+- (void)dismissFormAccessoryView
+{
+    [_contentView accessoryDone];
+}
+
+- (void)selectFormAccessoryPickerRow:(int)rowIndex
+{
+    [_contentView selectFormAccessoryPickerRow:rowIndex];
+}
+
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)

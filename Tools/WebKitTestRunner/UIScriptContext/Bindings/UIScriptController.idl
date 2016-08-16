@@ -42,9 +42,16 @@ interface UIScriptController {
     void keyDownUsingHardwareKeyboard(DOMString character, object callback);
     void keyUpUsingHardwareKeyboard(DOMString character, object callback);
 
+    // Equivalent of pressing the Done button in the form accessory bar.
+    void dismissFormAccessoryView();
+
+    // <select> picker
+    void selectFormAccessoryPickerRow(long rowIndex);
+
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();
 
+    // These callbacks also work for the form accessory views.
     attribute object didShowKeyboardCallback;
     attribute object didHideKeyboardCallback;
 

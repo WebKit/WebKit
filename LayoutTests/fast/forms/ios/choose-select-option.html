@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+    </style>
+    
+    <script src="resources/zooming-test-utils.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var uiScriptHasCompleted = false;
+    var oninputHasBeenHandled = false;
+
+    function getUIScript(x, y)
+    {
+        return `
+            (function() {
+                uiController.didShowKeyboardCallback = function() {
+                    uiController.selectFormAccessoryPickerRow(3);
+                    uiController.dismissFormAccessoryView();
+                    uiController.uiScriptComplete();
+                }
+                uiController.singleTapAtPoint(${x}, ${y}, function() {});
+            })();`
+    }
+
+    function checkDone()
+    {
+        if (oninputHasBeenHandled && uiScriptHasCompleted)
+            testRunner.notifyDone();
+    }
+
+    function handleValueChanged(value)
+    {
+        document.getElementById("console").textContent = "Successfully handled oninput, value is now \"" + value.toLowerCase() + "\"";
+        oninputHasBeenHandled = true;
+        checkDone();
+    }
+    
+    function doTest()
+    {
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        var targetElement = document.getElementsByTagName('select')[0];
+        var point = getPointInsideElement(targetElement, 10, 10);
+
+        testRunner.runUIScript(getUIScript(point.x, point.y), function() {
+            uiScriptHasCompleted = true;
+            checkDone();
+        });
+    }
+
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<p>Tests that a basic select element works</p>
+
+<select oninput="handleValueChanged(this.value)">
+    <option>January</option>
+    <option>February</option>
+    <option>March</option>
+    <option>April</option>
+    <option>May</option>
+    <option>June</option>
+    <option>July</option>
+    <option>August</option>
+    <option>September</option>
+    <option>October</option>
+    <option>November</option>
+    <option>December</option>
+</select>
+
+<div id="console">Failed to handle oninput<div>
+
+</body>
+</html>

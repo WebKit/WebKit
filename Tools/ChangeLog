@@ -1,3 +1,22 @@
+2016-08-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test iOS select elements, and add iPhone and iPad tests for them
+        https://bugs.webkit.org/show_bug.cgi?id=160909
+
+        Reviewed by Enrica Casucci.
+        
+        Add functions to UIScriptController to dismiss the form accessory view for iOS,
+        and to programmatically pick a row from a <select> picker.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::dismissFormAccessoryView):
+        (WTR::UIScriptController::selectFormAccessoryPickerRow):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::dismissFormAccessoryView):
+        (WTR::UIScriptController::selectFormAccessoryPickerRow):
+
 2016-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Add iPad viewport and form tests, and revert the iPad-testing part of r202132

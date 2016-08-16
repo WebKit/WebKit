@@ -1,3 +1,20 @@
+2016-08-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test iOS select elements, and add iPhone and iPad tests for them
+        https://bugs.webkit.org/show_bug.cgi?id=160909
+
+        Reviewed by Enrica Casucci.
+        
+        Add iPhone and iPad tests for the <select> pickers. The iPhone test has to 
+        use a didShowKeyboardCallback to know when to select the appropriate row,
+        and to dismiss the picker. The iPad test can just select the row, which also
+        dismisses the popover.
+
+        * fast/forms/ios/choose-select-option-expected.txt: Added.
+        * fast/forms/ios/choose-select-option.html: Added.
+        * fast/forms/ios/ipad/choose-select-option-expected.txt: Added.
+        * fast/forms/ios/ipad/choose-select-option.html: Added.
+
 2016-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Add iPad viewport and form tests, and revert the iPad-testing part of r202132
