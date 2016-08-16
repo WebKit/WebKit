@@ -1,3 +1,16 @@
+2016-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        webkitpy error in TestRunResults.merge()
+        https://bugs.webkit.org/show_bug.cgi?id=160882
+
+        Reviewed by Daniel Bates.
+        
+        The argument to TestRunResults.merge() can be None if there are no device-specifc
+        initial results or retry results in Manager.run(), so just return early in that case.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.merge):
+
 2016-08-15  Sam Weinig  <sam@webkit.org>
 
         Speed up compile times by not including wtf/Variant.h so much

@@ -94,6 +94,8 @@ class TestRunResults(object):
             self.slow_tests.add(test_result.test_name)
 
     def merge(self, test_run_results):
+        if not test_run_results:
+            return self
         # self.expectations should be the same for both
         self.total += test_run_results.total
         self.remaining += test_run_results.remaining
