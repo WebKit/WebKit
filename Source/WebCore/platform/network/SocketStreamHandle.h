@@ -45,18 +45,16 @@ public:
     virtual ~SocketStreamHandle() { }
     SocketStreamState state() const;
 
-    bool send(const char* data, int length);
+    bool send(const char* data, size_t length);
     void close(); // Disconnect after all data in buffer are sent.
     void disconnect();
     size_t bufferedAmount() const { return m_buffer.size(); }
-
-    SocketStreamHandleClient& client() const { return m_client; }
 
 protected:
     SocketStreamHandle(const URL&, SocketStreamHandleClient&);
 
     bool sendPendingData();
-    virtual int platformSend(const char* data, int length) = 0;
+    virtual Optional<size_t> platformSend(const char* data, size_t length) = 0;
     virtual void platformClose() = 0;
 
     URL m_url;

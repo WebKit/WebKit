@@ -58,7 +58,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     ASSERT(!m_workerThread);
 }
 
-int SocketStreamHandleImpl::platformSend(const char* data, int length)
+Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
 
@@ -89,7 +89,7 @@ bool SocketStreamHandleImpl::readData(CURL* curlHandle)
 {
     ASSERT(!isMainThread());
 
-    const int bufferSize = 1024;
+    const size_t bufferSize = 1024;
     std::unique_ptr<char[]> data(new char[bufferSize]);
     size_t bytesRead = 0;
 
@@ -97,7 +97,7 @@ bool SocketStreamHandleImpl::readData(CURL* curlHandle)
 
     if (ret == CURLE_OK && bytesRead >= 0) {
         m_mutexReceive.lock();
-        m_receiveData.append(SocketData { WTFMove(data), static_cast<int>(bytesRead) });
+        m_receiveData.append(SocketData { WTFMove(data), bytesRead });
         m_mutexReceive.unlock();
 
         ref();
@@ -130,7 +130,7 @@ bool SocketStreamHandleImpl::sendData(CURL* curlHandle)
         auto sendData = m_sendData.takeFirst();
         m_mutexSend.unlock();
 
-        int totalBytesSent = 0;
+        size_t totalBytesSent = 0;
         while (totalBytesSent < sendData.size) {
             size_t bytesSent = 0;
             CURLcode ret = curl_easy_send(curlHandle, sendData.data.get() + totalBytesSent, sendData.size - totalBytesSent, &bytesSent);
@@ -143,7 +143,7 @@ bool SocketStreamHandleImpl::sendData(CURL* curlHandle)
         // Insert remaining data into send queue.
 
         if (totalBytesSent < sendData.size) {
-            const int restLength = sendData.size - totalBytesSent;
+            const size_t restLength = sendData.size - totalBytesSent;
             auto copy = createCopy(sendData.data.get() + totalBytesSent, restLength);
 
             std::lock_guard<Lock> lock(m_mutexSend);

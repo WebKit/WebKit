@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 class SocketStreamError;
@@ -40,12 +42,11 @@ class SocketStreamHandleClient {
 public:
     virtual ~SocketStreamHandleClient() { }
 
-    virtual void didOpenSocketStream(SocketStreamHandle&) { }
-    virtual void didCloseSocketStream(SocketStreamHandle&) { }
-    virtual void didReceiveSocketStreamData(SocketStreamHandle&, const char* /*data*/, int /*length*/) { }
-    virtual void didUpdateBufferedAmount(SocketStreamHandle&, size_t /*bufferedAmount*/) { }
-
-    virtual void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) { }
+    virtual void didOpenSocketStream(SocketStreamHandle&) = 0;
+    virtual void didCloseSocketStream(SocketStreamHandle&) = 0;
+    virtual void didReceiveSocketStreamData(SocketStreamHandle&, const char* data, Optional<size_t> length) = 0;
+    virtual void didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount) = 0;
+    virtual void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) = 0;
 };
 
 } // namespace WebCore

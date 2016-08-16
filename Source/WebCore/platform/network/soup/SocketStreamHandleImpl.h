@@ -47,7 +47,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl final : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandle> create(const URL&, SocketStreamHandleClient&, SessionID);
+    static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, SessionID);
     static Ref<SocketStreamHandle> create(GSocketConnection*, SocketStreamHandleClient&);
 
     virtual ~SocketStreamHandleImpl();
@@ -55,8 +55,8 @@ public:
 private:
     SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
 
-    int platformSend(const char* data, int length) override;
-    void platformClose() override;
+    Optional<size_t> platformSend(const char* data, size_t length) final;
+    void platformClose() final;
 
     void beginWaitingForSocketWritability();
     void stopWaitingForSocketWritability();

@@ -536,7 +536,11 @@ void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
         if (!length)
             return;
 
-        m_client.didReceiveSocketStreamData(*this, reinterpret_cast<const char*>(ptr), length);
+        Optional<size_t> optionalLength;
+        if (length != -1)
+            optionalLength = length;
+        
+        m_client.didReceiveSocketStreamData(*this, reinterpret_cast<const char*>(ptr), optionalLength);
 
         return;
     }
@@ -649,12 +653,17 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     ASSERT(!m_pacRunLoopSource);
 }
 
-int SocketStreamHandleImpl::platformSend(const char* data, int length)
+Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
 {
     if (!CFWriteStreamCanAcceptBytes(m_writeStream.get()))
-        return 0;
+        return Nullopt;
 
-    return CFWriteStreamWrite(m_writeStream.get(), reinterpret_cast<const UInt8*>(data), length);
+    CFIndex result = CFWriteStreamWrite(m_writeStream.get(), reinterpret_cast<const UInt8*>(data), length);
+    if (result == -1)
+        return Nullopt;
+
+    ASSERT(result >= 0);
+    return static_cast<size_t>(result);
 }
 
 void SocketStreamHandleImpl::platformClose()

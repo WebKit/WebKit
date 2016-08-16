@@ -45,12 +45,12 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID)); }
 
     virtual ~SocketStreamHandleImpl();
 
 private:
-    virtual int platformSend(const char* data, int length);
+    virtual Optional<size_t> platformSend(const char* data, size_t length);
     virtual void platformClose();
 
     WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, SessionID);

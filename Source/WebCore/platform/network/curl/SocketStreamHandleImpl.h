@@ -50,15 +50,15 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient& client, SessionID) { return adoptRef(*new SocketStreamHandleImpl(url, client)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, SessionID) { return adoptRef(*new SocketStreamHandleImpl(url, client)); }
 
     virtual ~SocketStreamHandleImpl();
 
 private:
     SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
 
-    int platformSend(const char* data, int length) override;
-    void platformClose() override;
+    Optional<size_t> platformSend(const char* data, size_t length) final;
+    void platformClose() final;
 
     bool readData(CURL*);
     bool sendData(CURL*);
@@ -70,10 +70,10 @@ private:
     void didReceiveData();
     void didOpenSocket();
 
-    static std::unique_ptr<char[]> createCopy(const char* data, int length);
+    static std::unique_ptr<char[]> createCopy(const char* data, size_t length);
 
     struct SocketData {
-        SocketData(std::unique_ptr<char[]>&& source, int length)
+        SocketData(std::unique_ptr<char[]>&& source, size_t length)
         {
             data = WTFMove(source);
             size = length;
@@ -87,7 +87,7 @@ private:
         }
 
         std::unique_ptr<char[]> data;
-        int size { 0 };
+        size_t size { 0 };
     };
 
     ThreadIdentifier m_workerThread { 0 };

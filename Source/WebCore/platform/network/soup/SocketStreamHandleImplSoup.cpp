@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-Ref<SocketStreamHandle> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, SessionID)
+Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, SessionID)
 {
     Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(url, client));
 
@@ -59,7 +59,7 @@ Ref<SocketStreamHandle> SocketStreamHandleImpl::create(const URL& url, SocketStr
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, socket->m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
-    return WTFMove(socket);
+    return socket;
 }
 
 Ref<SocketStreamHandle> SocketStreamHandleImpl::create(GSocketConnection* socketConnection, SocketStreamHandleClient& client)
@@ -128,7 +128,10 @@ void SocketStreamHandleImpl::readBytes(gssize bytesRead)
 
     // The client can close the handle, potentially removing the last reference.
     RefPtr<SocketStreamHandle> protectedThis(this);
-    m_client.didReceiveSocketStreamData(*this, m_readBuffer.get(), bytesRead);
+    Optional<size_t> optionalLength;
+    if (bytesRead != -1)
+        optionalLength = static_cast<size_t>(bytesRead);
+    m_client.didReceiveSocketStreamData(*this, m_readBuffer.get(), optionalLength);
     if (m_inputStream) {
         g_input_stream_read_async(m_inputStream.get(), m_readBuffer.get(), READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, m_cancellable.get(),
             reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), protectedThis.leakRef());
@@ -168,11 +171,11 @@ void SocketStreamHandleImpl::writeReady()
     sendPendingData();
 }
 
-int SocketStreamHandleImpl::platformSend(const char* data, int length)
+Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
     if (!m_outputStream || !data)
-        return 0;
+        return Nullopt;
 
     GUniqueOutPtr<GError> error;
     gssize written = g_pollable_output_stream_write_nonblocking(m_outputStream.get(), data, length, m_cancellable.get(), &error.outPtr());
@@ -181,15 +184,18 @@ int SocketStreamHandleImpl::platformSend(const char* data, int length)
             beginWaitingForSocketWritability();
         else
             didFail(SocketStreamError(error->code, String(), error->message));
-        return 0;
+        return Nullopt;
     }
 
     // If we did not send all the bytes we were given, we know that
     // SocketStreamHandle will need to send more in the future.
-    if (written < length)
+    if (written == -1 || static_cast<size_t>(written) < length)
         beginWaitingForSocketWritability();
 
-    return written;
+    if (written == -1)
+        return Nullopt;
+
+    return static_cast<size_t>(written);
 }
 
 void SocketStreamHandleImpl::platformClose()

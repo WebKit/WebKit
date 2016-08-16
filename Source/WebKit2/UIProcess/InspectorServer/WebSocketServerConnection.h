@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketServerConnection_h
-#define WebSocketServerConnection_h
+#pragma once
 
 #if ENABLE(INSPECTOR_SERVER)
 
@@ -37,6 +36,7 @@
 
 namespace WebCore {
 class HTTPHeaderMap;
+class SocketStreamError;
 class SocketStreamHandle;
 }
 
@@ -67,9 +67,11 @@ public:
 
 private:
     // SocketStreamHandleClient implementation.
-    void didCloseSocketStream(WebCore::SocketStreamHandle&) override;
-    void didReceiveSocketStreamData(WebCore::SocketStreamHandle&, const char* data, int length) override;
-    void didUpdateBufferedAmount(WebCore::SocketStreamHandle&, size_t bufferedAmount) override;
+    void didOpenSocketStream(WebCore::SocketStreamHandle&) final { }
+    void didCloseSocketStream(WebCore::SocketStreamHandle&) final;
+    void didReceiveSocketStreamData(WebCore::SocketStreamHandle&, const char* data, Optional<size_t> length) final;
+    void didUpdateBufferedAmount(WebCore::SocketStreamHandle&, size_t bufferedAmount) final;
+    void didFailSocketStream(WebCore::SocketStreamHandle&, const WebCore::SocketStreamError&) final { }
 
     // HTTP Mode.
     void readHTTPMessage();
@@ -91,5 +93,3 @@ private:
 }
 
 #endif // ENABLE(INSPECTOR_SERVER)
-
-#endif // WebSocketServerConnection_h

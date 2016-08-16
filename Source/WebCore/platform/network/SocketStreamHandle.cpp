@@ -49,7 +49,7 @@ SocketStreamHandle::SocketStreamState SocketStreamHandle::state() const
     return m_state;
 }
 
-bool SocketStreamHandle::send(const char* data, int length)
+bool SocketStreamHandle::send(const char* data, size_t length)
 {
     if (m_state == Connecting || m_state == Closing)
         return false;
@@ -62,11 +62,13 @@ bool SocketStreamHandle::send(const char* data, int length)
         m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
         return true;
     }
-    int bytesWritten = 0;
-    if (m_state == Open)
-        bytesWritten = platformSend(data, length);
-    if (bytesWritten < 0)
-        return false;
+    size_t bytesWritten = 0;
+    if (m_state == Open) {
+        if (auto result = platformSend(data, length))
+            bytesWritten = result.value();
+        else
+            return false;
+    }
     if (m_buffer.size() + length - bytesWritten > bufferSize) {
         // FIXME: report error to indicate that buffer has no more space.
         return false;
@@ -110,10 +112,13 @@ bool SocketStreamHandle::sendPendingData()
     }
     bool pending;
     do {
-        int bytesWritten = platformSend(m_buffer.firstBlockData(), m_buffer.firstBlockSize());
-        pending = bytesWritten != static_cast<int>(m_buffer.firstBlockSize());
-        if (bytesWritten <= 0)
+        auto result = platformSend(m_buffer.firstBlockData(), m_buffer.firstBlockSize());
+        if (!result)
             return false;
+        size_t bytesWritten = result.value();
+        if (!bytesWritten)
+            return false;
+        pending = bytesWritten != m_buffer.firstBlockSize();
         ASSERT(m_buffer.size() - bytesWritten <= bufferSize);
         m_buffer.consume(bytesWritten);
     } while (!pending && !m_buffer.isEmpty());
