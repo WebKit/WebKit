@@ -116,12 +116,15 @@ static const Vector<String>* getLinkedFonts(String& family)
     }
 
     WCHAR* linkedFonts = reinterpret_cast<WCHAR*>(malloc(linkedFontsBufferSize));
-    if (SUCCEEDED(RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, NULL, reinterpret_cast<BYTE*>(linkedFonts), &linkedFontsBufferSize))) {
+    if (::RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts), &linkedFontsBufferSize) == ERROR_SUCCESS) {
         unsigned i = 0;
         unsigned length = linkedFontsBufferSize / sizeof(*linkedFonts);
         while (i < length) {
             while (i < length && linkedFonts[i] != ',')
                 i++;
+            // Break if we did not find a comma.
+            if (i == length)
+                break;
             i++;
             unsigned j = i;
             while (j < length && linkedFonts[j])
