@@ -24,6 +24,7 @@ fast/events/touch/ios [ Skip ]
 fast/scrolling/ios [ Skip ]
 fast/content-observation [ Skip ]
 media/mac [ Skip ]
+media/controls/ipad [ Skip ]
 
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]

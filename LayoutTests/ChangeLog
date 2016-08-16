@@ -1,3 +1,19 @@
+2016-08-15  Daniel Bates  <dabates@apple.com>
+
+        ASSERTION FAILURE: [[videoLayer delegate] isKindOfClass:getUIViewClass()] in WebAVPlayerLayerView_videoView()
+        https://bugs.webkit.org/show_bug.cgi?id=160433
+
+        Reviewed by Eric Carlson.
+
+        Add a layout test to ensure that we do not cause an assertion failure when exiting PiP by closing the tab.
+
+        * TestExpectations: Skip media/control/ipad tests on all ports. We will re-enable these tests for iOS.
+        * media/controls/close-page-with-picture-in-picture-video-assertion-failure-expected.txt: Added.
+        * media/controls/close-page-with-picture-in-picture-video-assertion-failure.html: Added.
+        * media/controls/resources/picture-in-picture.html: Added.
+        * platform/ios-simulator/TestExpectations: Mark tests media/control/ipad  as Pass so that we run them
+        in the iPad simulator.
+
 2016-08-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         Expose crypto.getRandomValues to Web Workers

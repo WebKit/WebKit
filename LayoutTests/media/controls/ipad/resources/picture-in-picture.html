@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../media-file.js"></script>
+</head>
+<body>
+<video controls></video>
+<script>
+if (window.internals)
+    internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+function dispatchDidChangePresentationMode()
+{
+    window.opener.notifyDidChangePresentationMode();
+}
+
+var video = document.querySelector("video");
+if (window.internals)
+    internals.setMediaElementRestrictions(video, "NoRestrictions");
+video.addEventListener("webkitpresentationmodechanged", dispatchDidChangePresentationMode, false);
+video.addEventListener("canplaythrough", function () { video.webkitSetPresentationMode("picture-in-picture"); }, false);
+video.src = findMediaFile("video", "../../../content/test");
+</script>
+</body>
+</html>

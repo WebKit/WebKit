@@ -10,6 +10,7 @@ accessibility/ios-simulator [ Pass ]
 displaylists [ Pass ]
 quicklook [ Pass ]
 http/tests/quicklook [ Pass ]
+media/controls/ipad [ Pass ]
 
 fast/text-autosizing/ios [ Pass ]
 

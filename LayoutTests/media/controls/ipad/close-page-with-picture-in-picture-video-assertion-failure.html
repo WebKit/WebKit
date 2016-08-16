@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+var child;
+
+if (window.testRunner) {
+    testRunner.setCanOpenWindows(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+
+// Called by resources/picture-in-picture.html
+function notifyDidChangePresentationMode()
+{
+    // For some reason waiting ~200ms to allow the video to transition from the page to its
+    // picture-in-picture window seems to make triggering the assertion more reliable (why?).
+    function closeWindowAndDone()
+    {
+        child.close(); // Trigger assertion failure
+        testPassed("did not cause an assertion failure.");
+        // For some reason waiting ~500ms after closing the window seems to make triggering the assertion more reliable (why?).
+        window.setTimeout(finishJSTest, 500);
+    }
+    window.setTimeout(closeWindowAndDone, 200);
+}
+
+function openNewWindow()
+{
+    child = window.open("resources/picture-in-picture.html");
+    document.body.removeChild(openNewWindowButton);
+}
+
+window.onload = function () {
+    var openNewWindowButton = document.getElementById("openNewWindowButton");
+    if (window.testRunner)
+        openNewWindow();
+    else
+        openNewWindowButton.onclick = openNewWindow;
+}
+</script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that closing a window that is presenting a video in picture-in-picture does not cause an assertion failure in a debug build. To run this test by hand, click the Open new window button then click the picture-in-picture button (tap the video on iOS).");
+</script>
+<button id="openNewWindowButton">Open new window</button>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
