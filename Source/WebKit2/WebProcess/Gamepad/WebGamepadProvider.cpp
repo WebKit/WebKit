@@ -53,21 +53,6 @@ WebGamepadProvider::~WebGamepadProvider()
 {
 }
 
-void WebGamepadProvider::setInitialGamepads(const Vector<GamepadData>& gamepadDatas)
-{
-    ASSERT(m_gamepads.isEmpty());
-
-    m_gamepads.resize(gamepadDatas.size());
-    m_rawGamepads.resize(gamepadDatas.size());
-    for (size_t i = 0; i < gamepadDatas.size(); ++i) {
-        if (gamepadDatas[i].isNull())
-            continue;
-
-        m_gamepads[i] = std::make_unique<WebGamepad>(gamepadDatas[i]);
-        m_rawGamepads[i] = m_gamepads[i].get();
-    }
-}
-
 void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData)
 {
     if (m_gamepads.size() <= gamepadData.index) {

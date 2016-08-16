@@ -46,8 +46,6 @@ public:
     void gamepadDisconnected(unsigned index);
     void gamepadActivity(const Vector<GamepadData>&);
 
-    void setInitialGamepads(const Vector<GamepadData>&);
-
 private:
     friend NeverDestroyed<WebGamepadProvider>;
     WebGamepadProvider();

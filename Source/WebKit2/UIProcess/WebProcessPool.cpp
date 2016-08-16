@@ -1286,20 +1286,6 @@ void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
         process->send(Messages::WebProcess::GamepadDisconnected(gamepad.index()), 0);
 }
 
-void WebProcessPool::setInitialConnectedGamepads(const Vector<std::unique_ptr<UIGamepad>>& gamepads)
-{
-    Vector<GamepadData> gamepadDatas;
-    gamepadDatas.resize(gamepads.size());
-    for (size_t i = 0; i < gamepads.size(); ++i) {
-        if (!gamepads[i])
-            continue;
-        gamepadDatas[i] = gamepads[i]->gamepadData();
-    }
-
-    for (auto& process : m_processesUsingGamepads)
-        process->send(Messages::WebProcess::SetInitialGamepads(gamepadDatas), 0);
-}
-
 #endif // ENABLE(GAMEPAD)
 
 void WebProcessPool::garbageCollectJavaScriptObjects()

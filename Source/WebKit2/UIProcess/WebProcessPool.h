@@ -370,8 +370,6 @@ public:
 #if ENABLE(GAMEPAD)
     void gamepadConnected(const UIGamepad&);
     void gamepadDisconnected(const UIGamepad&);
-
-    void setInitialConnectedGamepads(const Vector<std::unique_ptr<UIGamepad>>&);
 #endif
 
 private:

@@ -43,7 +43,6 @@ extern "C" {
 
 #define WEBKIT2_LOG_CHANNELS(M) \
     M(ContextMenu) \
-    M(Gamepad) \
     M(IDB) \
     M(IconDatabase) \
     M(IndexedDB) \

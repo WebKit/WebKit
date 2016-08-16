@@ -96,17 +96,6 @@ HIDGamepadProvider::HIDGamepadProvider()
     IOHIDManagerSetDeviceMatchingMultiple(m_manager.get(), matchingArray.get());
     IOHIDManagerRegisterDeviceMatchingCallback(m_manager.get(), deviceAddedCallback, this);
     IOHIDManagerRegisterDeviceRemovalCallback(m_manager.get(), deviceRemovedCallback, this);
-
-    startMonitoringInput();
-}
-
-void HIDGamepadProvider::stopMonitoringInput()
-{
-    IOHIDManagerRegisterInputValueCallback(m_manager.get(), nullptr, nullptr);
-}
-
-void HIDGamepadProvider::startMonitoringInput()
-{
     IOHIDManagerRegisterInputValueCallback(m_manager.get(), deviceValuesChangedCallback, this);
 }
 
@@ -122,9 +111,6 @@ unsigned HIDGamepadProvider::indexForNewlyConnectedDevice()
 void HIDGamepadProvider::connectionDelayTimerFired()
 {
     m_shouldDispatchCallbacks = true;
-
-    for (auto* client : m_clients)
-        client->setInitialConnectedGamepads(m_gamepadVector);
 }
 
 void HIDGamepadProvider::openAndScheduleManager()

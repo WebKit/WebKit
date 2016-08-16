@@ -51,16 +51,6 @@ const Vector<PlatformGamepad*>& UIGamepadProvider::platformGamepads()
     return HIDGamepadProvider::singleton().platformGamepads();
 }
 
-void UIGamepadProvider::platformStopMonitoringInput()
-{
-    return HIDGamepadProvider::singleton().stopMonitoringInput();
-}
-
-void UIGamepadProvider::platformStartMonitoringInput()
-{
-    return HIDGamepadProvider::singleton().startMonitoringInput();
-}
-
 }
 
 #endif // ENABLE(GAMEPAD)
