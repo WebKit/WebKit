@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKFormSelectControl.h"
+#import "WKFormSelectPopover.h"
 
 #if PLATFORM(IOS)
 
@@ -32,6 +32,7 @@
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
+#import "WKFormSelectControl.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIPickerView.h>
 #import <WebCore/LocalizedStrings.h>
@@ -372,7 +373,6 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
 @end
 
 @implementation WKSelectPopover {
-    WKContentView *_view;
     RetainPtr<WKSelectTableViewController> _tableViewController;
 }
 
@@ -381,7 +381,6 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     if (!(self = [super initWithView:view]))
         return nil;
     
-    _view = view;
     CGRect frame;
     frame.origin = CGPointZero;
     frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]];
@@ -391,12 +390,12 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     UIViewController *popoverViewController = _tableViewController.get();
     UINavigationController *navController = nil;
     NSString *title = view.assistedNodeInformation.title;
-    BOOL needsNavigationController = (_view && _UIApplicationUsesLegacyUI()) || [title length];
+    BOOL needsNavigationController = (self.view && _UIApplicationUsesLegacyUI()) || [title length];
     if (needsNavigationController) {
         navController = [[UINavigationController alloc] initWithRootViewController:_tableViewController.get()];
         popoverViewController = navController;
         
-        if (_view.assistedNodeInformation.isMultiSelect && _UIApplicationUsesLegacyUI())
+        if (self.view.assistedNodeInformation.isMultiSelect && _UIApplicationUsesLegacyUI())
             _tableViewController.get().navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_userActionDismissedPopover:)] autorelease];
     }
     

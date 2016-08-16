@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKFormSelectControl.h"
+#import "WKFormSelectPicker.h"
 
 #if PLATFORM(IOS)
 
@@ -32,6 +32,7 @@
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
+#import "WKFormSelectControl.h"
 #import "WebPageProxy.h"
 
 using namespace WebKit;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,14 @@
 
 #if PLATFORM(IOS)
 
-#import <UIKit/UIPopoverController.h>
+#import "WKFormPeripheral.h"
+#import "WKFormPopover.h"
 
 @class WKContentView;
-@protocol WKRotatingPopoverDelegate;
 
-@interface WKRotatingPopover : NSObject
-
-- (id)initWithView:(WKContentView *)view;
-- (void)presentPopoverAnimated:(BOOL)animated;
-- (void)dismissPopoverAnimated:(BOOL)animated;
-- (UIPopoverArrowDirection)popoverArrowDirections;
-
-@property (nonatomic, readonly) WKContentView *view;
-
-@property (nonatomic, assign) CGPoint presentationPoint;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@property (nonatomic, retain) UIPopoverController *popoverController;
-#pragma clang diagnostic pop
-@property (nonatomic, assign) id <WKRotatingPopoverDelegate> dismissionDelegate;
-@end
-
-
-@protocol WKRotatingPopoverDelegate
-- (void)popoverWasDismissed:(WKRotatingPopover *)popover;
-@end
-
-@interface WKFormRotatingAccessoryPopover : WKRotatingPopover <WKRotatingPopoverDelegate>
-- (void)accessoryDone;
+@interface WKSelectPopover : WKFormRotatingAccessoryPopover<WKFormControl>
+- (instancetype)initWithView:(WKContentView *)view hasGroups:(BOOL)hasGroups;
+- (void)_userActionDismissedPopover:(id)sender;
 @end
 
 #endif // PLATFORM(IOS)

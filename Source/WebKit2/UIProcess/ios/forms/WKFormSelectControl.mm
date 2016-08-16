@@ -32,6 +32,8 @@
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
+#import "WKFormSelectPicker.h"
+#import "WKFormSelectPopover.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIPickerView.h>
 #import <wtf/RetainPtr.h>

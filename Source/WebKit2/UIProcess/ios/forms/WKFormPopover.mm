@@ -39,22 +39,19 @@ using namespace WebKit;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
-@implementation WKFormRotatingAccessoryPopover {
-    WKContentView *_view;
-}
+@implementation WKFormRotatingAccessoryPopover
 
 - (id)initWithView:(WKContentView *)view
 {
     if (!(self = [super initWithView:view]))
         return nil;
-    _view = view;
     self.dismissionDelegate = self;
     return self;
 }
 
 - (void)accessoryDone
 {
-    [_view accessoryDone];
+    [self.view accessoryDone];
 }
 
 - (UIPopoverArrowDirection)popoverArrowDirections
