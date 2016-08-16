@@ -1,3 +1,18 @@
+2016-08-16  Daniel Bates  <dabates@apple.com>
+
+        WKSI static library should be named by major iOS revision, not individual updates
+        https://bugs.webkit.org/show_bug.cgi?id=160727
+        <rdar://problem/22274848>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * libWebKitSystemInterfaceIOSDevice9.0.a: Removed.
+        * libWebKitSystemInterfaceIOSDevice9.2.a: Removed.
+        * libWebKitSystemInterfaceIOSDevice9.a: Renamed from WebKitLibraries/libWebKitSystemInterfaceIOSDevice9.3.a.
+        * libWebKitSystemInterfaceIOSSimulator9.0.a: Removed.
+        * libWebKitSystemInterfaceIOSSimulator9.2.a: Removed.
+        * libWebKitSystemInterfaceIOSSimulator9.a: Renamed from WebKitLibraries/libWebKitSystemInterfaceIOSSimulator9.3.a.
+
 2016-08-15  Daniel Bates  <dabates@apple.com>
 
         Cannot build WebKit for iOS device using Xcode 7.3/iOS 9.3 public SDK due to missing

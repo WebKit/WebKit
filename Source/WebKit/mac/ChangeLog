@@ -1,3 +1,15 @@
+2016-08-16  Daniel Bates  <dabates@apple.com>
+
+        WKSI static library should be named by major iOS revision, not individual updates
+        https://bugs.webkit.org/show_bug.cgi?id=160727
+        <rdar://problem/22274848>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/WebKitLegacy.xcconfig:
+
 2016-08-16  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove dependency on Objective-C bindings in WebKit2 editing code
