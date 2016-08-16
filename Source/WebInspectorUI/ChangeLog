@@ -1,5 +1,18 @@
 2016-08-16  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: add "Copy Selected" context menu item to Console
+        https://bugs.webkit.org/show_bug.cgi?id=151836
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._previousMessageRepeatCountUpdated):
+        (WebInspector.LogContentView.prototype._handleContextMenuEvent):
+        (WebInspector.LogContentView.prototype._mousedown):
+
+2016-08-16  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Visual Styles: "Text -> Content" isn't escaped
         https://bugs.webkit.org/show_bug.cgi?id=158271
 

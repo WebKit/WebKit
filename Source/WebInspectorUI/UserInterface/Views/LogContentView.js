@@ -333,7 +333,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
     }
 
     _previousMessageRepeatCountUpdated(event)
-    {        
+    {
         if (this._logViewController.updatePreviousMessageRepeatCount(event.data.count) && this._lastMessageView)
             this._markScopeBarItemUnread(this._lastMessageView.message.level);
     }
@@ -346,11 +346,32 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             return;
         }
 
+        // In the case that there are selected messages, only clear that selection if the right-click
+        // is not on the element or descendants of the selected messages.
+        if (this._selectedMessages.length && !this._selectedMessages.some(element => event.target.isSelfOrDescendant(element))) {
+            this._clearMessagesSelection();
+            this._mousedown(event);
+        }
+
+        // If there are no selected messages, right-clicking will not reset the current mouse state
+        // meaning that when the context menu is dismissed, console messages will be selected when
+        // the user moves the mouse even though no buttons are pressed.
+        if (!this._selectedMessages.length)
+            this._mouseup(event);
+
         // We don't want to show the custom menu for links in the console.
         if (event.target.enclosingNodeOrSelfWithNodeName("a"))
             return;
 
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+
+        if (this._selectedMessages.length) {
+            contextMenu.appendItem(WebInspector.UIString("Copy Selected"), () => {
+                InspectorFrontendHost.copyText(this._formatMessagesAsData(true));
+            });
+            contextMenu.appendSeparator();
+        }
+
         contextMenu.appendItem(WebInspector.UIString("Clear Log"), this._clearLog.bind(this));
         contextMenu.appendSeparator();
 
@@ -360,7 +381,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
     _mousedown(event)
     {
-        if (event.button !== 0 || event.ctrlKey)
+        if (this._selectedMessages.length && (event.button !== 0 || event.ctrlKey))
             return;
 
         if (event.defaultPrevented) {
