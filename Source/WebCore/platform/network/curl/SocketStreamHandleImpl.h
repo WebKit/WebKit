@@ -70,8 +70,6 @@ private:
     void didReceiveData();
     void didOpenSocket();
 
-    static std::unique_ptr<char[]> createCopy(const char* data, size_t length);
-
     struct SocketData {
         SocketData(std::unique_ptr<char[]>&& source, size_t length)
         {

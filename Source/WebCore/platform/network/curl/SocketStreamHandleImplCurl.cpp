@@ -44,6 +44,14 @@
 
 namespace WebCore {
 
+static std::unique_ptr<char[]> createCopy(const char* data, int length)
+{
+    std::unique_ptr<char[]> copy(new char[length]);
+    memcpy(copy.get(), data, length);
+
+    return WTFMove(copy);
+}
+
 SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client)
     : SocketStreamHandle(url, client)
 {
@@ -271,14 +279,6 @@ void SocketStreamHandleImpl::didOpenSocket()
     m_state = Open;
 
     m_client.didOpenSocketStream(*this);
-}
-
-std::unique_ptr<char[]> SocketStreamHandleImpl::createCopy(const char* data, int length)
-{
-    std::unique_ptr<char[]> copy(new char[length]);
-    memcpy(copy.get(), data, length);
-
-    return WTFMove(copy);
 }
 
 } // namespace WebCore
