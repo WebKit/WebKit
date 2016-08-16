@@ -1,3 +1,33 @@
+2016-08-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Do not request Scope Chain lists if section is collapsed (mainly Global Variables)
+        https://bugs.webkit.org/show_bug.cgi?id=140567
+        <rdar://problem/19504745>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Main.html:
+        New file name.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshProperties.fillSection):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshProperties):
+        Avoid fetching object properties until the user expands the section.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateCallFramesSection):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateWatchExpressionsSection):
+        Avoid fetching scope variable properties until the user expands the section.
+
+        * UserInterface/Views/ObjectPropertiesDetailSectionRow.js: Renamed from Source/WebInspectorUI/UserInterface/Views/DetailsSectionPropertiesRow.js.
+        (WebInspector.ObjectPropertiesDetailSectionRow):
+        (WebInspector.ObjectPropertiesDetailSectionRow.prototype.get objectTree):
+        (WebInspector.ObjectPropertiesDetailSectionRow.prototype._detailsSectionCollapsedStateChanged):
+        Rename and simplify the class since it always has an ObjectTreeView.
+        By default the section will auto-expand the ObjectTreeView, however
+        if provided a details section group, it will defer expanion until
+        the group expands.
+
 2016-08-16  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: add "Copy Selected" context menu item to Console

@@ -23,35 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionPropertiesRow = class DetailsSectionPropertiesRow extends WebInspector.DetailsSectionRow
+WebInspector.ObjectPropertiesDetailSectionRow = class ObjectPropertiesDetailSectionRow extends WebInspector.DetailsSectionRow
 {
-    constructor(propertiesSection, emptyMessage)
+    constructor(objectTree, sectionForDeferredExpand)
     {
-        super(emptyMessage);
+        super();
 
+        console.assert(objectTree instanceof WebInspector.ObjectTreeView);
+        console.assert(!sectionForDeferredExpand || sectionForDeferredExpand instanceof WebInspector.DetailsSection);
+
+        this._objectTree = objectTree;
+
+        this.hideEmptyMessage();
         this.element.classList.add("properties", WebInspector.SyntaxHighlightedStyleClassName);
+        this.element.appendChild(objectTree.element);
 
-        this.propertiesSection = propertiesSection;
+        if (sectionForDeferredExpand && sectionForDeferredExpand.collapsed)
+            sectionForDeferredExpand.addEventListener(WebInspector.DetailsSection.Event.CollapsedStateChanged, this._detailsSectionCollapsedStateChanged, this);
+        else
+            this._objectTree.expand();
     }
 
     // Public
 
-    get propertiesSection()
+    get objectTree() { return this._objectTree; }
+
+    // Private
+
+    _detailsSectionCollapsedStateChanged(event)
     {
-        return this._propertiesSection;
-    }
+        console.assert(!event.target.collapsed);
 
-    set propertiesSection(propertiesSection)
-    {
-        this._propertiesSection = propertiesSection || null;
+        this._objectTree.expand();
 
-        if (propertiesSection) {
-            // Call expand to cause the section to populate.
-            propertiesSection.expand();
-
-            this.hideEmptyMessage();
-            this.element.appendChild(propertiesSection.element);
-        } else
-            this.showEmptyMessage();
+        event.target.removeEventListener(WebInspector.DetailsSection.Event.CollapsedStateChanged, this._detailsSectionCollapsedStateChanged, this);
     }
 };

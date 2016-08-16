@@ -224,6 +224,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
             }
 
             let detailsSectionIdentifier = scope.type + "-" + sectionCountByType.get(scope.type);
+            let detailsSection = new WebInspector.DetailsSection(detailsSectionIdentifier, title, null, null, collapsedByDefault);
 
             // FIXME: This just puts two ObjectTreeViews next to each other, but that means
             // that properties are not nicely sorted between the two separate lists.
@@ -244,12 +245,9 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                 treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAdded.bind(this, detailsSectionIdentifier), this);
                 treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange.bind(this, detailsSectionIdentifier), this);
 
-                // FIXME: <https://webkit.org/b/140567> Web Inspector: Do not request Scope Chain lists if section is collapsed (mainly Global Variables)
-                // This autoexpands the ObjectTreeView and fetches all properties. Should wait to see if we are collapsed or not.
-                rows.push(new WebInspector.DetailsSectionPropertiesRow(objectTree));
+                rows.push(new WebInspector.ObjectPropertiesDetailSectionRow(objectTree, detailsSection));
             }
 
-            let detailsSection = new WebInspector.DetailsSection(detailsSectionIdentifier, title, null, null, collapsedByDefault);
             detailsSection.groups[0].rows = rows;
             detailsSections.push(detailsSection);
         }
@@ -295,7 +293,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         }
 
         return Promise.all(promises).then(function() {
-            return Promise.resolve(new WebInspector.DetailsSectionPropertiesRow(objectTree));
+            return Promise.resolve(new WebInspector.ObjectPropertiesDetailSectionRow(objectTree));
         });
     }
 
