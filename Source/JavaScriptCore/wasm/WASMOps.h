@@ -32,17 +32,41 @@ namespace JSC {
 namespace WASM {
 
 #define FOR_EACH_WASM_SPECIAL_OP(macro) \
-    macro(I32Const, 0x10)
+    macro(I32Const, 0x10, NA)
 
 #define FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \
-    macro(Block, 0x01) \
-    macro(Return, 0x09) \
-    macro(End, 0x0f)
+    macro(Block, 0x01, NA) \
+    macro(Return, 0x09, NA) \
+    macro(End, 0x0f, NA)
 
 #define FOR_EACH_WASM_UNARY_OP(macro)
 
 #define FOR_EACH_WASM_BINARY_OP(macro) \
-    macro(I32Add, 0x40)
+    macro(I32Add, 0x40, Add) \
+    macro(I32Sub, 0x41, Sub) \
+    macro(I32Mul, 0x42, Mul) \
+    macro(I32DivS, 0x43, Div) \
+    /* macro(I32DivU, 0x44) */ \
+    macro(I32RemS, 0x45, Mod) \
+    macro(I32RemU, 0x46, Mod) \
+    macro(I32And, 0x47, BitAnd) \
+    macro(I32Or, 0x48, BitOr) \
+    macro(I32Xor, 0x49, BitXor) \
+    macro(I32Shl, 0x4a, Shl) \
+    macro(I32ShrU, 0x4b, SShr) \
+    macro(I32ShrS, 0x4c, ZShr) \
+    /* macro(I32RotR, 0xb6) */ \
+    /* macro(I32RotL, 0xb7) */ \
+    macro(I32Eq, 0x4d, Equal) \
+    macro(I32Ne, 0x4e, NotEqual) \
+    macro(I32LtS, 0x4f, LessThan) \
+    macro(I32LeS, 0x50, LessEqual) \
+    macro(I32LtU, 0x51, Below) \
+    macro(I32LeU, 0x52, BelowEqual) \
+    macro(I32GtS, 0x53, GreaterThan) \
+    macro(I32GeS, 0x54, GreaterEqual) \
+    macro(I32GtU, 0x55, Above) \
+    macro(I32GeU, 0x56, AboveEqual) \
 
 #define FOR_EACH_WASM_OP(macro) \
     FOR_EACH_WASM_SPECIAL_OP(macro) \
@@ -50,7 +74,7 @@ namespace WASM {
     FOR_EACH_WASM_UNARY_OP(macro) \
     FOR_EACH_WASM_BINARY_OP(macro)
 
-#define CREATE_ENUM_VALUE(name, id) name = id,
+#define CREATE_ENUM_VALUE(name, id, b3op) name = id,
 
 enum WASMOpType : uint8_t {
     FOR_EACH_WASM_OP(CREATE_ENUM_VALUE)

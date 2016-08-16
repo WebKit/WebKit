@@ -1,3 +1,19 @@
+2016-08-16  Keith Miller  <keith_miller@apple.com>
+
+        Add WASM I32 simple operators.
+        https://bugs.webkit.org/show_bug.cgi?id=160914
+
+        Reviewed by Benjamin Poulain.
+
+        This patch adds support for the i32 simple binary operators.
+
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::toB3Op):
+        (JSC::WASM::B3IRGenerator::binaryOp):
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::WASMFunctionParser<Context>::parseExpression):
+        * wasm/WASMOps.h:
+
 2016-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Conversion to sequence<T> is broken for iterable objects

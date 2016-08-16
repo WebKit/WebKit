@@ -110,7 +110,7 @@ template<typename Context>
 bool WASMFunctionParser<Context>::parseExpression(WASMOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, value) case name:
+#define CREATE_CASE(name, id, b3op) case name:
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE) {
 #undef CREATE_CASE
         ExpressionType left = m_expressionStack.takeLast();

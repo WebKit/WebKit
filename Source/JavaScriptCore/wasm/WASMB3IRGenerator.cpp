@@ -41,6 +41,15 @@ namespace WASM {
 
 using namespace B3;
 
+inline JSC::B3::Opcode toB3Op(WASMBinaryOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, op, b3op) case WASMBinaryOpType::name: return b3op;
+    FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
+#undef CREATE_CASE
+    }
+}
+
 class B3IRGenerator {
 public:
     typedef Value* ExpressionType;
@@ -82,13 +91,8 @@ void B3IRGenerator::addLocal(WASMValueType, uint32_t)
 
 bool B3IRGenerator::binaryOp(WASMBinaryOpType op, ExpressionType left, ExpressionType right, ExpressionType& result)
 {
-    switch (op) {
-    case WASMBinaryOpType::I32Add: {
-        ASSERT(left->type() == B3::Int32 && right->type() == B3::Int32);
-        result = m_currentBlock->appendNew<Value>(m_proc, Add, Origin(), left, right);
-        return true;
-    }
-    }
+    result = m_currentBlock->appendNew<Value>(m_proc, toB3Op(op), Origin(), left, right);
+    return true;
 }
 
 B3IRGenerator::ExpressionType B3IRGenerator::addConstant(WASMValueType type, uint64_t value)
