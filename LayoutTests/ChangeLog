@@ -1,3 +1,18 @@
+2016-08-16  Chris Dumez  <cdumez@apple.com>
+
+        DOM4: getElementsByClassName should include non StyledElements
+        https://bugs.webkit.org/show_bug.cgi?id=94718
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/getElementsByClassName/011-expected.txt: Removed.
+        * fast/dom/getElementsByClassName/011.xml: Removed.
+        Drop outdated test. It is failing in Firefox and Chrome.
+
+        * fast/dom/getElementsByClassName/non-styled-element-expected.txt: Added.
+        * fast/dom/getElementsByClassName/non-styled-element.html: Added.
+        Add layout test coverage.
+
 2016-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to test iOS select elements, and add iPhone and iPad tests for them
