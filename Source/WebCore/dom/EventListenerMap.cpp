@@ -67,19 +67,6 @@ bool EventListenerMap::containsCapturing(const AtomicString& eventType) const
     return false;
 }
 
-bool EventListenerMap::containsActive(const AtomicString& eventType) const
-{
-    auto* listeners = find(eventType);
-    if (!listeners)
-        return false;
-
-    for (auto& eventListener : *listeners) {
-        if (!eventListener->isPassive())
-            return true;
-    }
-    return false;
-}
-
 void EventListenerMap::clear()
 {
     assertNoActiveIterators();
