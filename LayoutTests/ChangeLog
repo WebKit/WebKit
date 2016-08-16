@@ -1,3 +1,24 @@
+2016-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Add iPad viewport and form tests, and revert the iPad-testing part of r202132
+        https://bugs.webkit.org/show_bug.cgi?id=160878
+
+        Reviewed by Tim Horton.
+        
+        Move forms/ios/focus-input-via-button-ipad.html into fast/forms/ios/ipad, making it
+        an iPad test, which allows for the removal of the "useIPadBehavior" flag.
+        
+        Add fast/viewport/ios/ipad/width-is-device-width.html with iPad-specific results.
+        
+        * fast/forms/ios/ipad/focus-input-via-button-expected.txt: Renamed from LayoutTests/fast/forms/ios/focus-input-via-button-ipad-expected.txt.
+        * fast/forms/ios/ipad/focus-input-via-button.html: Renamed from LayoutTests/fast/forms/ios/focus-input-via-button-ipad.html.
+        * fast/forms/ios/resources/zooming-test-utils.js:
+        (testZoomAfterTap):
+        * fast/viewport/ios/ipad/width-is-device-width-expected.txt: Added.
+        * fast/viewport/ios/ipad/width-is-device-width.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations: Enable fast/viewport/ios, because leaving
+        them skipped from the base TestExpectations is evil.
+
 2016-08-16  Chris Dumez  <cdumez@apple.com>
 
         querySelector() / querySelectorAll() should always throw a SyntaxError when failing to parse selector string

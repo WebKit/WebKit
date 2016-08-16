@@ -178,15 +178,6 @@ JSObjectRef UIScriptController::contentVisibleRect() const
     return nullptr;
 }
 
-bool UIScriptController::forceIPadStyleZoomOnInputFocus() const
-{
-    return false;
-}
-
-void UIScriptController::setForceIPadStyleZoomOnInputFocus(bool)
-{
-}
-
 void UIScriptController::platformSetWillBeginZoomingCallback()
 {
 }

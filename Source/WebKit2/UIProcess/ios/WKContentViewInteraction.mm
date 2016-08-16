@@ -1072,8 +1072,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
                   fontSize:_assistedNodeInformation.nodeFontSize
               minimumScale:_assistedNodeInformation.minimumScaleFactor
               maximumScale:_assistedNodeInformation.maximumScaleFactor
-              allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringForceAlwaysScaling && (!UICurrentUserInterfaceIdiomIsPad() || _forceIPadStyleZoomOnInputFocus))
-               forceScroll:[self requiresAccessoryView:_forceIPadStyleZoomOnInputFocus]];
+              allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringForceAlwaysScaling && !UICurrentUserInterfaceIdiomIsPad())
+               forceScroll:[self requiresAccessoryView]];
 
     _didAccessoryTabInitiateFocus = NO;
     [self _ensureFormAccessoryView];
@@ -1573,7 +1573,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [_textSelectionAssistant didEndScrollingOverflow];
 }
 
-- (BOOL)requiresAccessoryView:(BOOL)forceIPadBehavior
+- (BOOL)requiresAccessoryView
 {
     if ([_formInputSession accessoryViewShouldNotShow])
         return NO;
@@ -1598,7 +1598,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case InputType::Month:
     case InputType::Week:
     case InputType::Time:
-        return !(UICurrentUserInterfaceIdiomIsPad() || forceIPadBehavior);
+        return !UICurrentUserInterfaceIdiomIsPad();
     }
 }
 
@@ -1613,7 +1613,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (UIView *)inputAccessoryView
 {
-    if (![self requiresAccessoryView:NO])
+    if (![self requiresAccessoryView])
         return nil;
 
     return self.formAccessoryView;
@@ -4109,21 +4109,6 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 @end
 
 #endif
-
-@implementation WKContentView (WKInteractionTesting)
-
-- (BOOL)forceIPadStyleZoomOnInputFocus
-{
-    return _forceIPadStyleZoomOnInputFocus;
-}
-
-- (void)setForceIPadStyleZoomOnInputFocus:(BOOL)forceIPadStyleZoom
-{
-    _forceIPadStyleZoomOnInputFocus = forceIPadStyleZoom;
-}
-
-@end
-
 
 // UITextRange, UITextPosition and UITextSelectionRect implementations for WK2
 

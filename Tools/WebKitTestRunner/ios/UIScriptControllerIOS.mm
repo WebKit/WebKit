@@ -209,18 +209,6 @@ JSObjectRef UIScriptController::contentVisibleRect() const
     return m_context->objectFromRect(wkRect);
 }
 
-bool UIScriptController::forceIPadStyleZoomOnInputFocus() const
-{
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return webView.forceIPadStyleZoomOnInputFocus;
-}
-
-void UIScriptController::setForceIPadStyleZoomOnInputFocus(bool value)
-{
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.forceIPadStyleZoomOnInputFocus = value;
-}
-
 void UIScriptController::platformSetWillBeginZoomingCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

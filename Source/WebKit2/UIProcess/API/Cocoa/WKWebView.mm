@@ -4517,16 +4517,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView accessoryTab:NO];
 }
 
-- (BOOL)forceIPadStyleZoomOnInputFocus
-{
-    return [_contentView forceIPadStyleZoomOnInputFocus];
-}
-
-- (void)setForceIPadStyleZoomOnInputFocus:(BOOL)forceIPadStyleZoom
-{
-    [_contentView setForceIPadStyleZoomOnInputFocus:forceIPadStyleZoom];
-}
-
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)

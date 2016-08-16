@@ -83,7 +83,6 @@ void TestController::platformResetPreferencesToConsistentValues()
 void TestController::platformResetStateToConsistentValues()
 {
     cocoaResetStateToConsistentValues();
-    [mainWebView()->platformView() setForceIPadStyleZoomOnInputFocus:NO];
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

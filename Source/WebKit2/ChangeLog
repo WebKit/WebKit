@@ -1,3 +1,26 @@
+2016-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Add iPad viewport and form tests, and revert the iPad-testing part of r202132
+        https://bugs.webkit.org/show_bug.cgi?id=160878
+
+        Reviewed by Tim Horton.
+
+        Remove testing-specific "forceIPadStyleZoomOnInputFocus" behavior added in r202132
+        now that we have the ability to run tests in the iPad simulator.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView forceIPadStyleZoomOnInputFocus]): Deleted.
+        (-[WKWebView setForceIPadStyleZoomOnInputFocus:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _displayFormNodeInputView]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView inputAccessoryView]):
+        (-[WKContentView requiresAccessoryView:]): Deleted.
+        (-[WKContentView forceIPadStyleZoomOnInputFocus]): Deleted.
+        (-[WKContentView setForceIPadStyleZoomOnInputFocus:]): Deleted.
+
 2016-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Clean up WebSockets

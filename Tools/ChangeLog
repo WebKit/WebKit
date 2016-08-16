@@ -1,3 +1,24 @@
+2016-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Add iPad viewport and form tests, and revert the iPad-testing part of r202132
+        https://bugs.webkit.org/show_bug.cgi?id=160878
+
+        Reviewed by Tim Horton.
+        
+        Remove testing-specific "forceIPadStyleZoomOnInputFocus" behavior added in r202132
+        now that we have the ability to run tests in the iPad simulator.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::forceIPadStyleZoomOnInputFocus): Deleted.
+        (WTR::UIScriptController::setForceIPadStyleZoomOnInputFocus): Deleted.
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues): Deleted.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::forceIPadStyleZoomOnInputFocus): Deleted.
+        (WTR::UIScriptController::setForceIPadStyleZoomOnInputFocus): Deleted.
+
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
         Add an address-of operator to RetainPtr
