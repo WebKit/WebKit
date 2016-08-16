@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2009, 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,23 +29,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SocketStreamError_h
-#define SocketStreamError_h
+#pragma once
 
-#include "SocketStreamErrorBase.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-    class SocketStreamError : public SocketStreamErrorBase {
-    public:
-        SocketStreamError() { }
-        SocketStreamError(int errorCode, const gchar* description)
-            : SocketStreamErrorBase(errorCode, String(), String(description))
-        {
-        }
+class SocketStreamError {
+public:
+    SocketStreamError()
+    {
+    }
 
-    };
+    explicit SocketStreamError(int errorCode)
+        : m_errorCode(errorCode)
+        , m_isNull(false)
+    {
+    }
 
-}  // namespace WebCore
+    SocketStreamError(int errorCode, const String& failingURL, const String& localizedDescription)
+        : m_errorCode(errorCode)
+        , m_failingURL(failingURL)
+        , m_localizedDescription(localizedDescription)
+        , m_isNull(false)
+    {
+    }
 
-#endif  // SocketStreamError_h
+    bool isNull() const { return m_isNull; }
+    int errorCode() const { return m_errorCode; }
+    const String& failingURL() const { return m_failingURL; }
+    const String& localizedDescription() const { return m_localizedDescription; }
+
+private:
+    int m_errorCode { 0 };
+    String m_failingURL;
+    String m_localizedDescription;
+    bool m_isNull { true };
+};
+
+}

@@ -114,7 +114,7 @@ void SocketStreamHandleImpl::connectedCallback(GSocketClient* client, GAsyncResu
     }
 
     if (error)
-        handle->didFail(SocketStreamError(error->code, error->message));
+        handle->didFail(SocketStreamError(error->code, String(), error->message));
     else
         handle->connected(WTFMove(socketConnection));
 }
@@ -147,7 +147,7 @@ void SocketStreamHandleImpl::readReadyCallback(GInputStream* stream, GAsyncResul
         return;
 
     if (error)
-        handle->didFail(SocketStreamError(error->code, error->message));
+        handle->didFail(SocketStreamError(error->code, String(), error->message));
     else
         handle->readBytes(bytesRead);
 }
@@ -180,7 +180,7 @@ int SocketStreamHandleImpl::platformSend(const char* data, int length)
         if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK))
             beginWaitingForSocketWritability();
         else
-            didFail(SocketStreamError(error->code, error->message));
+            didFail(SocketStreamError(error->code, String(), error->message));
         return 0;
     }
 
@@ -203,7 +203,7 @@ void SocketStreamHandleImpl::platformClose()
         GUniqueOutPtr<GError> error;
         g_io_stream_close(G_IO_STREAM(m_socketConnection.get()), nullptr, &error.outPtr());
         if (error)
-            didFail(SocketStreamError(error->code, error->message));
+            didFail(SocketStreamError(error->code, String(), error->message));
         m_socketConnection = nullptr;
     }
 
