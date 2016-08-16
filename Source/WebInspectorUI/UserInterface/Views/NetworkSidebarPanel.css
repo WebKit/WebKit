@@ -74,6 +74,10 @@
     display: none;
 }
 
+.sidebar > .panel.navigation.network .status .close.status-button {
+    padding-bottom: 1px;
+}
+
 .sidebar > .panel.navigation.network.network-grid-content-view-showing .status .close.status-button {
     display: none;
 }
