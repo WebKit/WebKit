@@ -276,6 +276,7 @@ private:
     void mainThreadPing();
 
 #if ENABLE(GAMEPAD)
+    void setInitialGamepads(const Vector<GamepadData>&);
     void gamepadConnected(const GamepadData&);
     void gamepadDisconnected(unsigned index);
 #endif

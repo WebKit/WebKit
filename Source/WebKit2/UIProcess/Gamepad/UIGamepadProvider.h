@@ -64,7 +64,10 @@ private:
     void platformStopMonitoringGamepads();
     const Vector<WebCore::PlatformGamepad*>& platformGamepads();
     WebPageProxy* platformWebPageProxyForGamepadInput();
+    void platformStopMonitoringInput();
+    void platformStartMonitoringInput();
 
+    void setInitialConnectedGamepads(const Vector<WebCore::PlatformGamepad*>&) final;
     void platformGamepadConnected(WebCore::PlatformGamepad&) final;
     void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
     void platformGamepadInputActivity() final;
@@ -72,17 +75,16 @@ private:
     void scheduleGamepadStateSync();
     void gamepadSyncTimerFired();
 
-    void scheduleDisableGamepadMonitoring();
-    void disableMonitoringTimerFired();
+    Vector<GamepadData> snapshotGamepads();
 
     HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
 
     Vector<std::unique_ptr<UIGamepad>> m_gamepads;
 
     RunLoop::Timer<UIGamepadProvider> m_gamepadSyncTimer;
-    RunLoop::Timer<UIGamepadProvider> m_disableMonitoringTimer;
 
     bool m_isMonitoringGamepads { false };
+    bool m_hasInitialGamepads { false };
 };
 
 }
