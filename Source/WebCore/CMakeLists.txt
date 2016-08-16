@@ -2412,6 +2412,7 @@ set(WebCore_SOURCES
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp
     rendering/BorderEdge.cpp
+    rendering/BreakLines.cpp
     rendering/ClipRect.cpp
     rendering/CounterNode.cpp
     rendering/EllipsisBox.cpp
@@ -2530,7 +2531,6 @@ set(WebCore_SOURCES
     rendering/TextDecorationPainter.cpp
     rendering/TextPaintStyle.cpp
     rendering/TextPainter.cpp
-    rendering/break_lines.cpp
 
     rendering/line/LineBreaker.cpp
     rendering/line/LineInfo.cpp

@@ -33,12 +33,12 @@
 #import "WebPlatformStrategies.h"
 #import "WebSystemInterface.h"
 #import "WebViewPrivate.h"
+#import <WebCore/BreakLines.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebCoreSystemInterface.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
-#import <WebCore/break_lines.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/TextBreakIterator.h>
 
@@ -89,12 +89,12 @@ float WebKitGetMinimumZoomFontSize(void)
 
 int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length)
 {
-    int lastBreakPos = position;
-    int breakPos = 0;
-    LazyLineBreakIterator breakIterator(String(characters, length));
-    while ((breakPos = nextBreakablePosition(breakIterator, breakPos)) < position)
+    unsigned lastBreakPos = position;
+    unsigned breakPos = 0;
+    LazyLineBreakIterator breakIterator(StringView(characters, length));
+    while (static_cast<int>(breakPos = nextBreakablePosition(breakIterator, breakPos)) < position)
         lastBreakPos = breakPos++;
-    return lastBreakPos < position ? (NSUInteger)lastBreakPos : INT_MAX;
+    return static_cast<int>(lastBreakPos) < position ? lastBreakPos : INT_MAX;
 }
 
 const char *WebKitPlatformSystemRootDirectory(void)

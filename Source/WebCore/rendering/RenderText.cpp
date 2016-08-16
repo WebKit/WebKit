@@ -26,6 +26,7 @@
 #include "RenderText.h"
 
 #include "AXObjectCache.h"
+#include "BreakLines.h"
 #include "BreakingContext.h"
 #include "CharacterProperties.h"
 #include "EllipsisBox.h"
@@ -46,7 +47,6 @@
 #include <wtf/text/TextBreakIterator.h>
 #include "TextResourceDecoder.h"
 #include "VisiblePosition.h"
-#include "break_lines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
@@ -791,15 +791,15 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     const RenderStyle& style = this->style();
     const FontCascade& font = style.fontCascade(); // FIXME: This ignores first-line.
     float wordSpacing = font.wordSpacing();
-    int len = textLength();
+    unsigned len = textLength();
     LazyLineBreakIterator breakIterator(m_text, style.locale(), mapLineBreakToIteratorMode(style.lineBreak()));
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
     bool firstWord = true;
     bool firstLine = true;
-    int nextBreakable = -1;
-    int lastWordBoundary = 0;
+    Optional<unsigned> nextBreakable;
+    unsigned lastWordBoundary = 0;
 
     // Non-zero only when kerning is enabled, in which case we measure words with their trailing
     // space, then subtract its width.
@@ -833,7 +833,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     bool keepAllWords = style.wordBreak() == KeepAllWordBreak;
     bool isLooseCJKMode = breakIterator.isLooseCJKMode();
 
-    for (int i = 0; i < len; i++) {
+    for (unsigned i = 0; i < len; i++) {
         UChar c = uncheckedCharacterAt(i);
 
         bool previousCharacterIsSpace = isSpace;
@@ -869,6 +869,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             lastWordBoundary++;
             continue;
         } else if (c == softHyphen && style.hyphens() != HyphensNone) {
+            ASSERT(i >= lastWordBoundary);
             currMaxWidth += widthFromCache(font, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
             if (!firstGlyphLeftOverflow)
                 firstGlyphLeftOverflow = glyphOverflow.left;
@@ -878,7 +879,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
 
         bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP, isLooseCJKMode, keepAllWords);
         bool betweenWords = true;
-        int j = i;
+        unsigned j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && (c != softHyphen || style.hyphens() == HyphensNone)) {
             j++;
             if (j == len)
@@ -892,7 +893,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             }
         }
 
-        int wordLen = j - i;
+        unsigned wordLen = j - i;
         if (wordLen) {
             float currMinWidth = 0;
             bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style);
@@ -936,8 +937,10 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             if (betweenWords) {
                 if (lastWordBoundary == i)
                     currMaxWidth += w;
-                else
+                else {
+                    ASSERT(j >= lastWordBoundary);
                     currMaxWidth += widthFromCache(font, lastWordBoundary, j - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
+                }
                 lastWordBoundary = j;
             }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SimpleLineLayoutTextFragmentIterator_h
-#define SimpleLineLayoutTextFragmentIterator_h
+#pragma once
 
+#include "BreakLines.h"
 #include "RenderLineBreak.h"
 #include "SimpleLineLayoutFlowContents.h"
 #include <wtf/text/TextBreakIterator.h>
-#include "break_lines.h"
 
 namespace WebCore {
 
@@ -166,5 +165,3 @@ inline bool TextFragmentIterator::isHardLineBreak(const FlowContents::Iterator& 
 
 }
 }
-
-#endif

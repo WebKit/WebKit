@@ -114,8 +114,9 @@ template <typename CharacterType>
 unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment& segment, unsigned startPosition)
 {
     ASSERT(startPosition < segment.end);
-    if (segment.text.impl() != m_lineBreakIterator.string().impl()) {
-        const String& currentText = m_lineBreakIterator.string();
+    StringView currentText = m_lineBreakIterator.stringView();
+    StringView segmentText = StringView(segment.text);
+    if (segmentText != currentText) {
         unsigned textLength = currentText.length();
         UChar lastCharacter = textLength > 0 ? currentText[textLength - 1] : 0;
         UChar secondToLastCharacter = textLength > 1 ? currentText[textLength - 2] : 0;
@@ -125,7 +126,7 @@ unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment
     const auto* characters = segment.text.characters<CharacterType>();
     unsigned segmentLength = segment.end - segment.start;
     unsigned segmentPosition = startPosition - segment.start;
-    return segment.start + nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(m_lineBreakIterator, characters, segmentLength, segmentPosition);
+    return segment.start + nextBreakablePositionNonLoosely<CharacterType, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(m_lineBreakIterator, characters, segmentLength, segmentPosition);
 }
 
 template <typename CharacterType>

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "InlineTextBox.h"
 
+#include "BreakLines.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DashArray.h"
@@ -50,7 +51,6 @@
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
-#include "break_lines.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
 

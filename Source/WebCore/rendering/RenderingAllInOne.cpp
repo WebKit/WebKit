@@ -28,6 +28,7 @@
 #include "AutoTableLayout.cpp"
 #include "BidiRun.cpp"
 #include "BorderEdge.cpp"
+#include "BreakLines.cpp"
 #include "ClipRect.cpp"
 #include "CounterNode.cpp"
 #include "EllipsisBox.cpp"
@@ -149,4 +150,3 @@
 #include "TextDecorationPainter.cpp"
 #include "TextPaintStyle.cpp"
 #include "TextPainter.cpp"
-#include "break_lines.cpp"

@@ -1,3 +1,13 @@
+2016-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate line breaking code from ints to Optional<unsigned>s
+        https://bugs.webkit.org/show_bug.cgi?id=160859
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebUIKitSupport.mm:
+        (WebKitGetLastLineBreakInBuffer):
+
 2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused includes of wtf headers

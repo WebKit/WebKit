@@ -78,8 +78,8 @@ public:
         resetPriorContext();
     }
 
-    LazyLineBreakIterator(String string, const AtomicString& locale = AtomicString(), LineBreakIteratorMode mode = LineBreakIteratorModeUAX14)
-        : m_string(string)
+    LazyLineBreakIterator(StringView stringView, const AtomicString& locale = AtomicString(), LineBreakIteratorMode mode = LineBreakIteratorModeUAX14)
+        : m_stringView(stringView)
         , m_locale(locale)
         , m_iterator(nullptr)
         , m_cachedPriorContext(nullptr)
@@ -96,7 +96,7 @@ public:
             releaseLineBreakIterator(m_iterator);
     }
 
-    String string() const { return m_string; }
+    StringView stringView() const { return m_stringView; }
     bool isLooseCJKMode() const { return m_isCJK && m_mode == LineBreakIteratorModeUAX14Loose; }
 
     UChar lastCharacter() const
@@ -152,21 +152,21 @@ public:
         ASSERT(priorContextLength <= priorContextCapacity);
         const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : 0;
         if (!m_iterator) {
-            m_iterator = acquireLineBreakIterator(m_string, m_locale, priorContext, priorContextLength, m_mode, m_isCJK);
+            m_iterator = acquireLineBreakIterator(m_stringView, m_locale, priorContext, priorContextLength, m_mode, m_isCJK);
             m_cachedPriorContext = priorContext;
             m_cachedPriorContextLength = priorContextLength;
         } else if (priorContext != m_cachedPriorContext || priorContextLength != m_cachedPriorContextLength) {
-            resetStringAndReleaseIterator(m_string, m_locale, m_mode);
+            resetStringAndReleaseIterator(m_stringView, m_locale, m_mode);
             return this->get(priorContextLength);
         }
         return m_iterator;
     }
 
-    void resetStringAndReleaseIterator(String string, const AtomicString& locale, LineBreakIteratorMode mode)
+    void resetStringAndReleaseIterator(StringView stringView, const AtomicString& locale, LineBreakIteratorMode mode)
     {
         if (m_iterator)
             releaseLineBreakIterator(m_iterator);
-        m_string = string;
+        m_stringView = stringView;
         m_locale = locale;
         m_iterator = nullptr;
         m_cachedPriorContext = nullptr;
@@ -177,7 +177,7 @@ public:
 
 private:
     static const unsigned priorContextCapacity = 2;
-    String m_string;
+    StringView m_stringView;
     AtomicString m_locale;
     TextBreakIterator* m_iterator;
     const UChar* m_cachedPriorContext;
