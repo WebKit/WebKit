@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010. Adam Barth. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,11 +150,8 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     // Document object, it is discard in the subsequent 'clear' statements below. So, we must capture it
     // so we can restore it.
     HashSet<RefPtr<SecurityOrigin>> insecureNavigationRequestsToUpgrade;
-    bool upgradeInsecureRequests = false;
-    if (auto* existingDocument = m_frame->document()) {
-        upgradeInsecureRequests = existingDocument->contentSecurityPolicy()->upgradeInsecureRequests();
+    if (auto* existingDocument = m_frame->document())
         insecureNavigationRequestsToUpgrade = existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade();
-    }
     
     m_frame->loader().clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView);
     clear();
@@ -169,7 +167,6 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     m_frame->loader().setOutgoingReferrer(url);
     m_frame->setDocument(document.copyRef());
 
-    document->contentSecurityPolicy()->setUpgradeInsecureRequests(upgradeInsecureRequests);
     document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(WTFMove(insecureNavigationRequestsToUpgrade));
 
     if (m_decoder)

@@ -1,3 +1,15 @@
+2016-08-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Upgrade-Insecure-Request state is improperly retained between navigations
+        https://bugs.webkit.org/show_bug.cgi?id=160905
+        <rdar://problem/27075526>
+
+        Reviewed by Andy Estes.
+
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-uir-on-navigation-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-uir-on-navigation.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/insecure-site.html: Added.
+
 2016-08-16  Chris Dumez  <cdumez@apple.com>
 
         ctx.drawImage should clip source rect if it is outside the source image
