@@ -1,3 +1,15 @@
+2016-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Conversion to sequence<T> is broken for iterable objects
+        https://bugs.webkit.org/show_bug.cgi?id=160801
+
+        Reviewed by Darin Adler.
+
+        Export functions used to iterate over iterable objects.
+
+        * runtime/IteratorOperations.h:
+        (JSC::forEachInIterable):
+
 2016-08-15  Benjamin Poulain  <bpoulain@apple.com>
 
         [Regression 204203-204210] 32-bit ASSERTION FAILED: !m_data[index].name.isValid()

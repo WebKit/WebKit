@@ -773,7 +773,7 @@ public:
         return &m_butterfly;
     }
 
-    JSValue getMethod(ExecState* exec, CallData& callData, CallType& callType, const Identifier& ident, const String& errorMessage);
+    JS_EXPORT_PRIVATE JSValue getMethod(ExecState*, CallData&, CallType&, const Identifier&, const String& errorMessage);
 
     DECLARE_EXPORT_INFO;
 

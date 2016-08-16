@@ -1,6 +1,13 @@
 PASS new FontFaceSet() threw exception TypeError: Not enough arguments.
 PASS new FontFaceSet([]).size is 0
 PASS new FontFaceSet([fontFace1]).size is 1
+PASS new FontFaceSet(1) threw exception TypeError: Value is not a sequence.
+PASS new FontFaceSet('hello') threw exception TypeError: Value is not a sequence.
+PASS new FontFaceSet(new Set([fontFace1])).size is 1
+PASS x = { [Symbol.iterator]: function*() { yield fontFace1; yield fontFace2; } }; new FontFaceSet(x).size is 2
+PASS x = { [Symbol.iterator]: 1 }; new FontFaceSet(x) threw exception TypeError: Type error.
+PASS x = { [Symbol.iterator]: null }; new FontFaceSet(x) threw exception TypeError: Type error.
+PASS x = { [Symbol.iterator]: function*() { yield fontFace1; throw {name: 'SomeError', toString: () => 'Some error'}; } }; new FontFaceSet(x) threw exception Some error.
 PASS fontFaceSet.status is "loaded"
 PASS item.done is false
 PASS item.value.length is 2

@@ -18,6 +18,12 @@ PASS observer.observe(document.body, {characterData: true, attributeFilter: ["id
 PASS observer.observe(document.body, {attributes: false, attributeOldValue: true}) threw exception TypeError: Type error.
 PASS observer.observe(document.body, {attributes: false, attributeFilter: ["id"]}) threw exception TypeError: Type error.
 PASS observer.observe(document.body, {characterData: false, characterDataOldValue: true}) threw exception TypeError: Type error.
+PASS observer.observe(document.body, {attributeFilter: 1}) threw exception TypeError: Value is not a sequence.
+PASS observer.observe(document.body, {attributeFilter: "abc"}) threw exception TypeError: Value is not a sequence.
+PASS x = { [Symbol.iterator]: function* () { yield "foo"; } }; observer.observe(document.body, {attributeFilter: x}) did not throw exception.
+PASS x = { [Symbol.iterator]: 1 }; observer.observe(document.body, {attributeFilter: x}) threw exception TypeError: Type error.
+PASS x = { [Symbol.iterator]: null }; observer.observe(document.body, {attributeFilter: x}) threw exception TypeError: Type error.
+PASS x = { [Symbol.iterator]: function* () { throw {name: "error", toString: () => "error"}; } }; observer.observe(document.body, {attributeFilter: x}) threw exception error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

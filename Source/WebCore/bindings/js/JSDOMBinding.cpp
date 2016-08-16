@@ -365,6 +365,22 @@ void setDOMException(JSC::ExecState* exec, const ExceptionCodeWithMessage& ec)
 
 #undef TRY_TO_CREATE_EXCEPTION
 
+bool hasIteratorMethod(JSC::ExecState& state, JSC::JSValue value)
+{
+    if (!value.isObject())
+        return false;
+
+    auto& vm = state.vm();
+    JSObject* object = JSC::asObject(value);
+    CallData callData;
+    CallType callType;
+    JSValue applyMethod = object->getMethod(&state, callData, callType, vm.propertyNames->iteratorSymbol, ASCIILiteral("Symbol.iterator property should be callable"));
+    if (vm.exception())
+        return false;
+
+    return !applyMethod.isUndefined();
+}
+
 bool shouldAllowAccessToNode(ExecState* exec, Node* node)
 {
     return BindingSecurity::shouldAllowAccessToNode(exec, node);

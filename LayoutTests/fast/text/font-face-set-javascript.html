@@ -16,6 +16,13 @@ var fontFace5 = new FontFace("family5", "url('../../resources/Ahem.otf')", {});
 shouldThrow("new FontFaceSet()");
 shouldBe("new FontFaceSet([]).size", "0");
 shouldBe("new FontFaceSet([fontFace1]).size", "1");
+shouldThrowErrorName("new FontFaceSet(1)", "TypeError");
+shouldThrowErrorName("new FontFaceSet('hello')", "TypeError");
+shouldBe("new FontFaceSet(new Set([fontFace1])).size", "1");
+shouldBe("x = { [Symbol.iterator]: function*() { yield fontFace1; yield fontFace2; } }; new FontFaceSet(x).size", "2");
+shouldThrowErrorName("x = { [Symbol.iterator]: 1 }; new FontFaceSet(x)", "TypeError");
+shouldThrowErrorName("x = { [Symbol.iterator]: null }; new FontFaceSet(x)", "TypeError");
+shouldThrowErrorName("x = { [Symbol.iterator]: function*() { yield fontFace1; throw {name: 'SomeError', toString: () => 'Some error'}; } }; new FontFaceSet(x)", "SomeError");
 
 var fontFaceSet = new FontFaceSet([]);
 shouldBeEqualToString("fontFaceSet.status", "loaded");

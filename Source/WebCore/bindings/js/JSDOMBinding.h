@@ -285,9 +285,10 @@ RefPtr<JSC::Uint32Array> toUint32Array(JSC::JSValue);
 RefPtr<JSC::Float32Array> toFloat32Array(JSC::JSValue);
 RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue);
 
-template<typename T, typename JSType> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState*, JSC::JSValue, T* (*)(JSC::JSValue));
+template<typename T, typename JSType> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState*, JSC::JSValue);
 template<typename T> Vector<T> toNativeArray(JSC::ExecState&, JSC::JSValue);
 template<typename T> Vector<T> toNativeArguments(JSC::ExecState&, size_t startIndex = 0);
+bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
 
 bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
 bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*);
@@ -674,14 +675,8 @@ template<> struct NativeValueTraits<String> {
 template<> struct NativeValueTraits<unsigned> {
     static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, unsigned& indexedValue)
     {
-        if (!jsValue.isNumber())
-            return false;
-
         indexedValue = jsValue.toUInt32(&exec);
-        if (exec.hadException())
-            return false;
-
-        return true;
+        return !exec.hadException();
     }
 };
 
@@ -701,50 +696,38 @@ template<> struct NativeValueTraits<double> {
     }
 };
 
-template<typename T, typename JST> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState* exec, JSC::JSValue value, T* (*toT)(JSC::JSValue value))
+template<typename T, typename JST> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState& exec, JSC::JSValue value)
 {
-    if (!isJSArray(value))
+    if (!value.isObject()) {
+        throwSequenceTypeError(exec);
         return Vector<RefPtr<T>>();
+    }
 
     Vector<RefPtr<T>> result;
-    JSC::JSArray* array = asArray(value);
-    size_t size = array->length();
-    result.reserveInitialCapacity(size);
-    for (size_t i = 0; i < size; ++i) {
-        JSC::JSValue element = array->getIndex(exec, i);
-        if (element.inherits(JST::info()))
-            result.uncheckedAppend((*toT)(element));
-        else {
-            throwArrayElementTypeError(*exec);
-            return Vector<RefPtr<T>>();
-        }
-    }
+    forEachInIterable(&exec, value, [&result](JSC::VM&, JSC::ExecState* state, JSC::JSValue jsValue) {
+        if (jsValue.inherits(JST::info()))
+            result.append(JST::toWrapped(jsValue));
+        else
+            throwArrayElementTypeError(*state);
+    });
     return result;
 }
 
 template<typename T> Vector<T> toNativeArray(JSC::ExecState& exec, JSC::JSValue value)
 {
-    JSC::JSObject* object = value.getObject();
-    if (!object)
+    if (!value.isObject()) {
+        throwSequenceTypeError(exec);
         return Vector<T>();
-
-    unsigned length = 0;
-    if (isJSArray(value)) {
-        JSC::JSArray* array = asArray(value);
-        length = array->length();
-    } else
-        toJSSequence(exec, value, length);
+    }
 
     Vector<T> result;
-    result.reserveInitialCapacity(length);
-    typedef NativeValueTraits<T> TraitsType;
-
-    for (unsigned i = 0; i < length; ++i) {
-        T indexValue;
-        if (!TraitsType::nativeValue(exec, object->get(&exec, i), indexValue))
-            return Vector<T>();
-        result.uncheckedAppend(indexValue);
-    }
+    forEachInIterable(&exec, value, [&result](JSC::VM&, JSC::ExecState* state, JSC::JSValue jsValue) {
+        T convertedValue;
+        if (!NativeValueTraits<T>::nativeValue(*state, jsValue, convertedValue))
+            return;
+        ASSERT(!state->hadException());
+        result.append(convertedValue);
+    });
     return result;
 }
 

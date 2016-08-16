@@ -5172,7 +5172,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequenc
         return throwThisTypeError(*state, "TestObject", "methodWithOptionalSequenceIsEmpty");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto array = toNativeArray<String>(*state, state->argument(0));
+    auto array = state->argument(0).isUndefined() ? Vector<String>() : toNativeArray<String>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalSequenceIsEmpty(WTFMove(array));
@@ -5701,7 +5701,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
             return jsTestObjPrototypeFunctionOverloadedMethod8(state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod12(state);
-        if (distinguishingArg.isObject() && isJSArray(distinguishingArg))
+        if (hasIteratorMethod(*state, distinguishingArg))
             return jsTestObjPrototypeFunctionOverloadedMethod7(state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->type() != RegExpObjectType)
             return jsTestObjPrototypeFunctionOverloadedMethod5(state);

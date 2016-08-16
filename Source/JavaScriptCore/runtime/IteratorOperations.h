@@ -33,15 +33,15 @@ namespace JSC {
 
 JSValue iteratorNext(ExecState*, JSValue iterator, JSValue);
 JSValue iteratorNext(ExecState*, JSValue iterator);
-JSValue iteratorValue(ExecState*, JSValue iterator);
+JS_EXPORT_PRIVATE JSValue iteratorValue(ExecState*, JSValue iterator);
 bool iteratorComplete(ExecState*, JSValue iterator);
-JSValue iteratorStep(ExecState*, JSValue iterator);
-void iteratorClose(ExecState*, JSValue iterator);
+JS_EXPORT_PRIVATE JSValue iteratorStep(ExecState*, JSValue iterator);
+JS_EXPORT_PRIVATE void iteratorClose(ExecState*, JSValue iterator);
 JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(ExecState*, JSValue, bool done);
 
 Structure* createIteratorResultObjectStructure(VM&, JSGlobalObject&);
 
-JSValue iteratorForIterable(ExecState*, JSValue iterable);
+JS_EXPORT_PRIVATE JSValue iteratorForIterable(ExecState*, JSValue iterable);
 
 template <typename CallBackType>
 void forEachInIterable(ExecState* state, JSValue iterable, const CallBackType& callback)

@@ -2,9 +2,24 @@
 if (self.testRunner)
     testRunner.dumpAsText(self.enablePixelTesting);
 
-var description, debug, successfullyParsed, errorMessage;
+var description, debug, successfullyParsed, errorMessage, silentTestPass, didPassSomeTestsSilently, didFailSomeTests;
+
+silentTestPass = false;
+didPassSomeTestsSilently = false;
+didFailSomeTests = false;
 
 (function() {
+
+    function createHTMLElement(tagName)
+    {
+        // FIXME: In an XML document, document.createElement() creates an element with a null namespace URI.
+        // So, we need use document.createElementNS() to explicitly create an element with the specified
+        // tag name in the HTML namespace. We can remove this function and use document.createElement()
+        // directly once we fix <https://bugs.webkit.org/show_bug.cgi?id=131074>.
+        if (document.createElementNS)
+            return document.createElementNS("http://www.w3.org/1999/xhtml", tagName);
+        return document.createElement(tagName);
+    }
 
     function getOrCreate(id, tagName)
     {
@@ -12,7 +27,7 @@ var description, debug, successfullyParsed, errorMessage;
         if (element)
             return element;
 
-        element = document.createElement(tagName);
+        element = createHTMLElement(tagName);
         element.id = id;
         var refNode;
         var parent = document.body || document.documentElement;
@@ -28,7 +43,7 @@ var description, debug, successfullyParsed, errorMessage;
     description = function description(msg, quiet)
     {
         // For MSIE 6 compatibility
-        var span = document.createElement("span");
+        var span = createHTMLElement("span");
         if (quiet)
             span.innerHTML = '<p>' + msg + '</p><p>On success, you will see no "<span class="fail">FAIL</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
         else
@@ -43,7 +58,7 @@ var description, debug, successfullyParsed, errorMessage;
 
     debug = function debug(msg)
     {
-        var span = document.createElement("span");
+        var span = createHTMLElement("span");
         getOrCreate("console", "div").appendChild(span); // insert it first so XHTML knows the namespace
         span.innerHTML = msg + '<br />';
     };
@@ -64,7 +79,7 @@ var description, debug, successfullyParsed, errorMessage;
 
     function insertStyleSheet()
     {
-        var styleElement = document.createElement("style");
+        var styleElement = createHTMLElement("style");
         styleElement.textContent = css;
         (document.head || document.documentElement).appendChild(styleElement);
     }
@@ -96,12 +111,27 @@ function escapeHTML(text)
 
 function testPassed(msg)
 {
-    debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
+    if (silentTestPass)
+        didPassSomeTestsSilently = true;
+    else
+        debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
 }
 
 function testFailed(msg)
 {
+    didFailSomeTests = true;
     debug('<span><span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
+}
+
+function areNumbersEqual(_actual, _expected)
+{
+    if (_expected === 0)
+        return _actual === _expected && (1/_actual) === (1/_expected);
+    if (_actual === _expected)
+        return true;
+    if (typeof(_expected) == "number" && isNaN(_expected))
+        return typeof(_actual) == "number" && isNaN(_actual);
+    return false;
 }
 
 function areArraysEqual(_a, _b)
@@ -110,7 +140,7 @@ function areArraysEqual(_a, _b)
         if (_a.length !== _b.length)
             return false;
         for (var i = 0; i < _a.length; i++)
-            if (_a[i] !== _b[i])
+            if (!areNumbersEqual(_a[i], _b[i]))
                 return false;
     } catch (ex) {
         return false;
@@ -125,15 +155,27 @@ function isMinusZero(n)
     return n === 0 && 1/n < 0;
 }
 
+function isTypedArray(array)
+{
+    return array instanceof Int8Array
+        || array instanceof Int16Array
+        || array instanceof Int32Array
+        || array instanceof Uint8Array
+        || array instanceof Uint8ClampedArray
+        || array instanceof Uint16Array
+        || array instanceof Uint32Array
+        || array instanceof Float32Array
+        || array instanceof Float64Array;
+}
+
 function isResultCorrect(_actual, _expected)
 {
-    if (_expected === 0)
-        return _actual === _expected && (1/_actual) === (1/_expected);
-    if (_actual === _expected)
+    if (areNumbersEqual(_actual, _expected))
         return true;
-    if (typeof(_expected) == "number" && isNaN(_expected))
-        return typeof(_actual) == "number" && isNaN(_actual);
-    if (_expected && (Object.prototype.toString.call(_expected) == Object.prototype.toString.call([])))
+    if (_expected
+        && (Object.prototype.toString.call(_expected) ==
+            Object.prototype.toString.call([])
+            || isTypedArray(_expected)))
         return areArraysEqual(_actual, _expected);
     return false;
 }
@@ -142,16 +184,20 @@ function stringify(v)
 {
     if (v === 0 && 1/v < 0)
         return "-0";
-    else return "" + v;
+    else if (isTypedArray(v))
+        return v.__proto__.constructor.name + ":[" + Array.prototype.join.call(v, ",") + "]";
+    else
+        return "" + v;
 }
 
-function evalAndLog(_a)
+function evalAndLog(_a, _quiet)
 {
   if (typeof _a != "string")
     debug("WARN: tryAndLog() expects a string argument");
 
   // Log first in case things go horribly wrong or this causes a sync event.
-  debug(_a);
+  if (!_quiet)
+    debug(_a);
 
   var _av;
   try {
@@ -176,15 +222,116 @@ function shouldBe(_a, _b, quiet)
   var _bv = eval(_b);
 
   if (exception)
-    testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
+    testFailed(_a + " should be " + stringify(_bv) + ". Threw exception " + exception);
   else if (isResultCorrect(_av, _bv)) {
     if (!quiet) {
         testPassed(_a + " is " + _b);
     }
   } else if (typeof(_av) == typeof(_bv))
-    testFailed(_a + " should be " + _bv + ". Was " + stringify(_av) + ".");
+    testFailed(_a + " should be " + stringify(_bv) + ". Was " + stringify(_av) + ".");
   else
-    testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
+    testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
+}
+
+function dfgShouldBe(theFunction, _a, _b)
+{
+  if (typeof theFunction != "function" || typeof _a != "string" || typeof _b != "string")
+    debug("WARN: dfgShouldBe() expects a function and two strings");
+  noInline(theFunction);
+  var exception;
+  var values = [];
+
+  // Defend against tests that muck with numeric properties on array.prototype.
+  values.__proto__ = null;
+  values.push = Array.prototype.push;
+  
+  try {
+    while (!dfgCompiled({f:theFunction}))
+      values.push(eval(_a));
+    values.push(eval(_a));
+  } catch (e) {
+    exception = e;
+  }
+
+  var _bv = eval(_b);
+  if (exception)
+    testFailed(_a + " should be " + stringify(_bv) + ". On iteration " + (values.length + 1) + ", threw exception " + exception);
+  else {
+    var allPassed = true;
+    for (var i = 0; i < values.length; ++i) {
+      var _av = values[i];
+      if (isResultCorrect(_av, _bv))
+        continue;
+      if (typeof(_av) == typeof(_bv))
+        testFailed(_a + " should be " + stringify(_bv) + ". On iteration " + (i + 1) + ", was " + stringify(_av) + ".");
+      else
+        testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). On iteration " + (i + 1) + ", was " + _av + " (of type " + typeof _av + ").");
+      allPassed = false;
+    }
+    if (allPassed)
+      testPassed(_a + " is " + _b + " on all iterations including after DFG tier-up.");
+  }
+  
+  return values.length;
+}
+
+// Execute condition every 5 milliseconds until it succeeds.
+function _waitForCondition(condition, completionHandler)
+{
+  if (condition())
+    completionHandler();
+  else
+    setTimeout(_waitForCondition, 5, condition, completionHandler);
+}
+
+function shouldBecomeEqual(_a, _b, completionHandler)
+{
+  if (typeof _a != "string" || typeof _b != "string")
+    debug("WARN: shouldBecomeEqual() expects string arguments");
+
+  function condition() {
+    var exception;
+    var _av;
+    try {
+      _av = eval(_a);
+    } catch (e) {
+      exception = e;
+    }
+    var _bv = eval(_b);
+    if (exception)
+      testFailed(_a + " should become " + _bv + ". Threw exception " + exception);
+    if (isResultCorrect(_av, _bv)) {
+      testPassed(_a + " became " + _b);
+      return true;
+    }
+    return false;
+  }
+  setTimeout(_waitForCondition, 0, condition, completionHandler);
+}
+
+function shouldBecomeEqualToString(value, reference, completionHandler)
+{
+  if (typeof value !== "string" || typeof reference !== "string")
+    debug("WARN: shouldBecomeEqualToString() expects string arguments");
+  var unevaledString = JSON.stringify(reference);
+  shouldBecomeEqual(value, unevaledString, completionHandler);
+}
+
+function shouldBeType(_a, _type) {
+  var exception;
+  var _av;
+  try {
+    _av = eval(_a);
+  } catch (e) {
+    exception = e;
+  }
+
+  var _typev = eval(_type);
+  if (_av instanceof _typev) {
+    testPassed(_a + " is an instance of " + _type);
+  } else {
+    testFailed(_a + " is not an instance of " + _type);
+  }
 }
 
 // Variant of shouldBe()--confirms that result of eval(_to_eval) is within
@@ -249,6 +396,31 @@ function shouldNotBe(_a, _b, quiet)
     testFailed(_a + " should not be " + _bv + ".");
 }
 
+function shouldBecomeDifferent(_a, _b, completionHandler)
+{
+  if (typeof _a != "string" || typeof _b != "string")
+    debug("WARN: shouldBecomeDifferent() expects string arguments");
+
+  function condition() {
+    var exception;
+    var _av;
+    try {
+      _av = eval(_a);
+    } catch (e) {
+      exception = e;
+    }
+    var _bv = eval(_b);
+    if (exception)
+      testFailed(_a + " should became not equal to " + _bv + ". Threw exception " + exception);
+    if (!isResultCorrect(_av, _bv)) {
+      testPassed(_a + " became different from " + _b);
+      return true;
+    }
+    return false;
+  }
+  setTimeout(_waitForCondition, 0, condition, completionHandler);
+}
+
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
 function shouldBeTrueQuiet(_a) { shouldBe(_a, "true", true); }
 function shouldBeFalse(_a) { shouldBe(_a, "false"); }
@@ -264,6 +436,13 @@ function shouldBeEqualToString(a, b)
   shouldBe(a, unevaledString);
 }
 
+function shouldNotBeEqualToString(a, b)
+{
+  if (typeof a !== "string" || typeof b !== "string")
+    debug("WARN: shouldBeEqualToString() expects string arguments");
+  var unevaledString = JSON.stringify(b);
+  shouldNotBe(a, unevaledString);
+}
 function shouldBeEmptyString(_a) { shouldBeEqualToString(_a, ""); }
 
 function shouldEvaluateTo(actual, expected) {
@@ -396,38 +575,64 @@ function shouldBeGreaterThanOrEqual(_a, _b) {
         testPassed(_a + " is >= " + _b);
 }
 
-function shouldNotThrow(_a) {
+function expectTrue(v, msg) {
+  if (v) {
+    testPassed(msg);
+  } else {
+    testFailed(msg);
+  }
+}
+
+function shouldNotThrow(_a, _message) {
     try {
-        eval(_a);
-        testPassed(_a + " did not throw exception.");
+        typeof _a == "function" ? _a() : eval(_a);
+        testPassed((_message ? _message : _a) + " did not throw exception.");
     } catch (e) {
-        testFailed(_a + " should not throw exception. Threw exception " + e + ".");
+        testFailed((_message ? _message : _a) + " should not throw exception. Threw exception " + e + ".");
     }
 }
 
-function shouldThrow(_a, _e)
+function shouldThrow(_a, _e, _message)
 {
-  var exception;
-  var _av;
-  try {
-     _av = eval(_a);
-  } catch (e) {
-     exception = e;
-  }
+    var _exception;
+    var _av;
+    try {
+        _av = typeof _a == "function" ? _a() : eval(_a);
+    } catch (e) {
+        _exception = e;
+    }
 
-  var _ev;
-  if (_e)
-      _ev =  eval(_e);
+    var _ev;
+    if (_e)
+        _ev = eval(_e);
 
-  if (exception) {
-    if (typeof _e == "undefined" || exception == _ev)
-      testPassed(_a + " threw exception " + exception + ".");
+    if (_exception) {
+        if (typeof _e == "undefined" || _exception == _ev)
+            testPassed((_message ? _message : _a) + " threw exception " + _exception + ".");
+        else
+            testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Threw exception " + _exception + ".");
+    } else if (typeof _av == "undefined")
+        testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was undefined.");
     else
-      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Threw exception " + exception + ".");
-  } else if (typeof _av == "undefined")
-    testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was undefined.");
-  else
-    testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
+        testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
+}
+
+function shouldThrowErrorName(_a, _name)
+{
+    var _exception;
+    try {
+        typeof _a == "function" ? _a() : eval(_a);
+    } catch (e) {
+        _exception = e;
+    }
+
+    if (_exception) {
+        if (_exception.name == _name)
+            testPassed(_a + " threw exception " + _exception + ".");
+        else
+            testFailed(_a + " should throw a " + _name + ". Threw a " + _exception.name + ".");
+    } else
+        testFailed(_a + " should throw a " + _name + ". Did not throw.");
 }
 
 function shouldHaveHadError(message)
@@ -460,12 +665,61 @@ function gc() {
     }
 }
 
+function dfgCompiled(argument)
+{
+    var numberOfCompiles = "compiles" in argument ? argument.compiles : 1;
+    
+    if (!("f" in argument))
+        throw new Error("dfgCompiled called with invalid argument.");
+    
+    if (argument.f instanceof Array) {
+        for (var i = 0; i < argument.f.length; ++i) {
+            if (testRunner.numberOfDFGCompiles(argument.f[i]) < numberOfCompiles)
+                return false;
+        }
+    } else {
+        if (testRunner.numberOfDFGCompiles(argument.f) < numberOfCompiles)
+            return false;
+    }
+    
+    return true;
+}
+
+function dfgIncrement(argument)
+{
+    if (!self.testRunner)
+        return argument.i;
+    
+    if (argument.i < argument.n)
+        return argument.i;
+    
+    if (didFailSomeTests)
+        return argument.i;
+    
+    if (!dfgCompiled(argument))
+        return "start" in argument ? argument.start : 0;
+    
+    return argument.i;
+}
+
+function noInline(theFunction)
+{
+    if (!self.testRunner)
+        return;
+    
+    testRunner.neverInlineFunction(theFunction);
+}
+
 function isSuccessfullyParsed()
 {
     // FIXME: Remove this and only report unexpected syntax errors.
     if (!errorMessage)
         successfullyParsed = true;
     shouldBeTrue("successfullyParsed");
+    if (silentTestPass && didPassSomeTestsSilently)
+        debug("Passed some tests silently.");
+    if (silentTestPass && didFailSomeTests)
+        debug("Some tests failed.");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 }
 

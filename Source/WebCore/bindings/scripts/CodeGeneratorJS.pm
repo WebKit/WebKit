@@ -1924,8 +1924,9 @@ END
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrCallbackFunctionParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isFunction()");
 
+            # FIXME: Avoid invoking GetMethod(object, Symbol.iterator) again in toNativeArray and toRefPtrNativeArray.
             $overload = GetOverloadThatMatches($S, $d, \&$isSequenceParameter);
-            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && isJSArray(distinguishingArg)");
+            &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(*state, distinguishingArg)");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isDictionaryOrObjectOrCallbackInterfaceParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->type() != RegExpObjectType");
@@ -3781,9 +3782,6 @@ sub WillConvertUndefinedToDefaultParameterValue
     my $automaticallyGeneratedDefaultValue = $automaticallyGeneratedDefaultValues{$parameterType};
     return 1 if defined $automaticallyGeneratedDefaultValue && $automaticallyGeneratedDefaultValue eq $defaultValue;
 
-    # toRefPtrNativeArray() will convert undefined to an empty Vector.
-    return 1 if $defaultValue eq "[]" && $codeGenerator->GetSequenceType($parameterType);
-
     return 1 if $defaultValue eq "null" && $codeGenerator->IsWrapperType($parameterType);
 
     return 0;
@@ -4667,7 +4665,7 @@ sub JSValueToNative
     if ($sequenceType) {
         if ($codeGenerator->IsRefPtrType($sequenceType)) {
             AddToImplIncludes("JS${sequenceType}.h");
-            return ("(toRefPtrNativeArray<${sequenceType}, JS${sequenceType}>(state, $value, &JS${sequenceType}::toWrapped))", 1);
+            return ("toRefPtrNativeArray<${sequenceType}, JS${sequenceType}>(*state, $value)", 1);
         }
         return ("toNativeArray<" . GetNativeVectorInnerType($sequenceType) . ">(*state, $value)", 1);
     }

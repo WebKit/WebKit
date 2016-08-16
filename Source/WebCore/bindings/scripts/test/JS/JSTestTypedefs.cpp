@@ -453,7 +453,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* stat
         return throwThisTypeError(*state, "TestTypedefs", "func");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     auto& impl = castedThis->wrapped();
-    auto x = toNativeArray<int32_t>(*state, state->argument(0));
+    auto x = state->argument(0).isUndefined() ? Vector<int32_t>() : toNativeArray<int32_t>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.func(WTFMove(x));
@@ -499,7 +499,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto sequenceArg = (toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(state, state->argument(0), &JSSerializedScriptValue::toWrapped));
+    auto sequenceArg = toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsNumber(impl.methodWithSequenceArg(WTFMove(sequenceArg)));
@@ -605,7 +605,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto sequenceArg = (toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(state, state->argument(0), &JSTestEventTarget::toWrapped));
+    auto sequenceArg = toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsBoolean(impl.callWithSequenceThatRequiresInclude(WTFMove(sequenceArg)));
