@@ -1,3 +1,15 @@
+2016-08-16  Chris Dumez  <cdumez@apple.com>
+
+        ctx.drawImage should clip source rect if it is outside the source image
+        https://bugs.webkit.org/show_bug.cgi?id=160804
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/canvas/drawImage-srcRect-clipping-expected.html: Added.
+        * fast/canvas/drawImage-srcRect-clipping.html: Added.
+
 2016-08-16  George Ruan  <gruan@apple.com>
 
         ⛱ : Implement parsing of Media Constraints for getUserMedia algorithm in Media Capture and Streaming Spec
