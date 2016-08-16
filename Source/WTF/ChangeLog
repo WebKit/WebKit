@@ -1,3 +1,19 @@
+2016-08-16  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::ScopeExit
+        https://bugs.webkit.org/show_bug.cgi?id=160908
+
+        Reviewed by Geoffrey Garen.
+
+        WTF::ScopeExit and WTF::makeScopeExit let you define an object that will invoke a function when the
+        object goes out of scope. This is going to be used to avoid spagetti-code and gotos in a future patch.
+
+        The class is modeled after the LWG paper "P0052 - Generic Scope Guard and RAII Wrapper for the Standard Library".
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Scope.h: Added.
+        (WTF::makeScopeExit):
+
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
         Add an address-of operator to RetainPtr
