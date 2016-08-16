@@ -32,7 +32,7 @@ WebInspector.VisualStyleBasicInput = class VisualStyleBasicInput extends WebInsp
         this._inputElement = this.contentElement.createChild("input");
         this._inputElement.spellcheck = false;
         this._inputElement.setAttribute("placeholder", placeholder || "");
-        this._inputElement.addEventListener("input", this._handleInputElementInput.bind(this));
+        this._inputElement.addEventListener("input", this.debounce(500)._handleInputElementInput);
     }
 
     // Public
@@ -59,6 +59,19 @@ WebInspector.VisualStyleBasicInput = class VisualStyleBasicInput extends WebInsp
 
     _handleInputElementInput(event)
     {
+        let value = this.value;
+        if (value && value.trim().length) {
+            let validItems = [];
+            for (let item of value.split(/([^\"\'\s]+|\"[^\"]*\"|\'[^\']*\')/)) {
+                if (!item.length || (!item.hasMatchingEscapedQuotes() && !/^[\w\s\-\.\(\)]+$/.test(item)))
+                    continue;
+
+                validItems.push(item);
+            }
+
+            this.value = validItems.filter(item => item.trim().length).join(" ");
+        }
+
         this._valueDidChange();
     }
 };

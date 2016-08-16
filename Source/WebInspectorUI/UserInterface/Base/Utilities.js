@@ -917,6 +917,14 @@ Object.defineProperty(String.prototype, "toCamelCase",
     }
 });
 
+Object.defineProperty(String.prototype, "hasMatchingEscapedQuotes",
+{
+    value: function()
+    {
+        return /^\"(?:[^\"\\]|\\.)*\"$/.test(this) || /^\'(?:[^\'\\]|\\.)*\'$/.test(this);
+    }
+});
+
 Object.defineProperty(Math, "roundTo",
 {
     value: function(num, step)

@@ -1,3 +1,18 @@
+2016-08-16  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Visual Styles: "Text -> Content" isn't escaped
+        https://bugs.webkit.org/show_bug.cgi?id=158271
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js:
+        (String.prototype.hasMatchingEscapedQuotes):
+        Checks that the given string has property escaped quotes (single or double).
+
+        * UserInterface/Views/VisualStyleBasicInput.js:
+        (WebInspector.VisualStyleBasicInput):
+        (WebInspector.VisualStyleBasicInput.prototype._handleInputElementInput):
+
 2016-08-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Modernize model objects simple getters
