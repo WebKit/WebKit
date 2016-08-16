@@ -1,3 +1,16 @@
+2016-08-16  Keith Miller  <keith_miller@apple.com>
+
+        Enable WebAssembly in the build.
+        https://bugs.webkit.org/show_bug.cgi?id=160916
+
+        Reviewed by Benjamin Poulain.
+
+        This patch turns on WebAssembly on all the platforms that support B3.
+        Turning on WebAssembly by default lets us check the build on every
+        platform.
+
+        * wtf/FeatureDefines.h:
+
 2016-08-16  Anders Carlsson  <andersca@apple.com>
 
         Fix a thinko.
