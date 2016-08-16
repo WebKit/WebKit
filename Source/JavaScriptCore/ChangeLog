@@ -1,3 +1,16 @@
+2016-08-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Regression 204203-204210] 32-bit ASSERTION FAILED: !m_data[index].name.isValid()
+        https://bugs.webkit.org/show_bug.cgi?id=160881
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        We were trying to set the result of the Identity node to the same
+        value as the source of the Identity.
+        That is pretty messed up.
+
 2016-08-15  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: Introduce a method to enable code coverage profiler without enabling type profiler
