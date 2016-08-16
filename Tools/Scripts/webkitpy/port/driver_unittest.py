@@ -206,7 +206,7 @@ class DriverTest(unittest.TestCase):
             def stop(self, timeout):
                 pass
 
-            def write(self, str):
+            def write(self, bytes, ignore_crash=False):
                 pass
 
         def assert_crash(driver, error_line, crashed, name, pid, unresponsive=False):

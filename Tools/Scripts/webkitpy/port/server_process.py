@@ -144,7 +144,7 @@ class ServerProcess(object):
             return self._proc.poll()
         return None
 
-    def write(self, bytes):
+    def write(self, bytes, ignore_crash=False):
         """Write a request to the subprocess. The subprocess is (re-)start()'ed
         if is not already running."""
         if not self._proc:
@@ -153,8 +153,10 @@ class ServerProcess(object):
             self._proc.stdin.write(bytes)
         except IOError, e:
             self.stop(0.0)
-            # stop() calls _reset(), so we have to set crashed to True after calling stop().
-            self._crashed = True
+            # stop() calls _reset(), so we have to set crashed to True after calling stop()
+            # unless we already know that this is a timeout.
+            if not ignore_crash:
+                self._crashed = True
 
     def _pop_stdout_line_if_ready(self):
         index_after_newline = self._output.find('\n') + 1

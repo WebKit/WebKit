@@ -1,3 +1,18 @@
+2016-08-16  Jonathan Bedard  <jbedard@apple.com>
+
+        False crashes in fast/text/emoji-gender-* tests
+        https://bugs.webkit.org/show_bug.cgi?id=160779
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix from <rdar://problem/27786762>, where timed out tests falsely report as crashed.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._check_for_driver_crash_or_unresponsiveness): Change call to ‘write’ to disable crash flag.
+        * Scripts/webkitpy/port/driver_unittest.py: Added 3 variable to test version of ‘write.’
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.write): Allow caller to disable crash flag on exception.
+
 2016-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         webkitpy error in TestRunResults.merge()
