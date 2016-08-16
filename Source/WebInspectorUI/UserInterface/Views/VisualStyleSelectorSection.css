@@ -42,9 +42,6 @@
     width: calc(100% - 95px);
     margin-left: 10px;
     font-weight: normal;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .visual-style-selector-section.details-section:not(.collapsed) > .header > .current-selector {
@@ -112,12 +109,6 @@
 
 .details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider > :matches(.disclosure-button, .icon) {
     display: none;
-}
-
-.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider > .titles {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 
 .details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider ~ .visual-style-selector-item:nth-child(even) {

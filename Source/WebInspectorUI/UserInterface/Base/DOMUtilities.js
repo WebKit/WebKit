@@ -87,11 +87,13 @@ WebInspector.linkifyAccessibilityNodeReference = function(node)
     return link;
 };
 
-WebInspector.linkifyNodeReference = function(node)
+WebInspector.linkifyNodeReference = function(node, maxLength)
 {
-    var displayName = WebInspector.displayNameForNode(node);
+    let displayName = WebInspector.displayNameForNode(node);
+    if (!isNaN(maxLength))
+        displayName = displayName.truncate(maxLength);
 
-    var link = document.createElement("span");
+    let link = document.createElement("span");
     link.append(displayName);
     link.setAttribute("role", "link");
     link.className = "node-link";

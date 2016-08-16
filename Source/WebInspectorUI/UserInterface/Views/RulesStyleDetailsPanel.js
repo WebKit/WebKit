@@ -180,7 +180,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                 var inheritedLabel = document.createElement("div");
                 inheritedLabel.className = "label";
                 inheritedLabel.appendChild(prefixElement);
-                inheritedLabel.appendChild(WebInspector.linkifyNodeReference(style.node));
+                inheritedLabel.appendChild(WebInspector.linkifyNodeReference(style.node, 100));
                 newDOMFragment.appendChild(inheritedLabel);
 
                 hasMediaOrInherited.push(inheritedLabel);

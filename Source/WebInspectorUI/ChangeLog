@@ -1,5 +1,29 @@
 2016-08-15  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Large class lists are not easily discoverable with "Classes" quick-toggle
+        https://bugs.webkit.org/show_bug.cgi?id=160856
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/DOMUtilities.js:
+        (WebInspector.linkifyNodeReference):
+        Add option to truncate the text of the linkified node.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container):
+        Increase the max-height to partially show additional classes if many are set.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.insertMediaOrInheritanceLabel):
+        Trucate the name of inherited nodes so they don't take up as much space in the sidebar.
+
+        * UserInterface/Views/VisualStyleSelectorSection.css:
+        (.details-section.visual-style-selector-section > .header > .current-selector): Deleted.
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider > .titles): Deleted.
+        Removed since they are already inherited.
+
+2016-08-15  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Close button on selected item in Network tab is misaligned
         https://bugs.webkit.org/show_bug.cgi?id=160884
 
