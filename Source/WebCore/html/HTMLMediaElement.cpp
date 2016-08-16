@@ -5415,6 +5415,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 #endif
 
     fullscreenModeChanged(mode);
+    configureMediaControls();
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
     if (document().page() && is<HTMLVideoElement>(*this)) {

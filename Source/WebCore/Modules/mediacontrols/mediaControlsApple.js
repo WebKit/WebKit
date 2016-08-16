@@ -42,6 +42,7 @@ function Controller(root, video, host)
     this.updateHasVideo();
     this.updateWirelessTargetAvailable();
     this.updateWirelessPlaybackStatus();
+    this.updatePictureInPicturePlaceholder();
     this.scheduleUpdateLayoutForDisplayedWidth();
 
     this.listenFor(this.root, 'resize', this.handleRootResize);
@@ -915,7 +916,7 @@ Controller.prototype = {
         return presentationMode === 'inline' || presentationMode === 'fullscreen';
     },
 
-    handlePresentationModeChange: function(event)
+    updatePictureInPicturePlaceholder: function()
     {
         var presentationMode = this.presentationMode();
 
@@ -951,11 +952,15 @@ Controller.prototype = {
                 this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
                 break;
         }
+    },
 
+    handlePresentationModeChange: function(event)
+    {
+        this.updatePictureInPicturePlaceholder();
         this.updateControls();
         this.updateCaptionContainer();
         this.resetHideControlsTimer();
-        if (presentationMode != 'fullscreen' && this.video.paused && this.controlsAreHidden())
+        if (this.presentationMode() != 'fullscreen' && this.video.paused && this.controlsAreHidden())
             this.showControls();
         this.host.setPreparedToReturnVideoLayerToInline(this.shouldReturnVideoLayerToInline());
     },

@@ -473,6 +473,7 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 # PiP tests are only enabled for Sierra WebKit2.
 # rdar://problem/27574303
 [ Sierra+ ] media/controls/picture-in-picture.html [ Pass ]
+[ Sierra+ ] media/controls/pip-placeholder-without-video-controls.html [ Pass ]
 [ Sierra+ ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass ]
 [ Sierra+ ] media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
 [ Sierra+ ] media/fullscreen-video-going-into-pip.html [ Pass ]

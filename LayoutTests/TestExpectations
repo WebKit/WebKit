@@ -1002,6 +1002,7 @@ webkit.org/b/158085 http/tests/css/shared-stylesheet-mutation.html [ Pass Failur
 # PiP tests are only relevant on macOS Sierra and newer.
 media/click-placeholder-not-pausing.html [ WontFix ]
 media/controls/picture-in-picture.html [ WontFix ]
+media/controls/pip-placeholder-without-video-controls.html [ WontFix ]
 media/element-containing-pip-video-going-into-fullscreen.html [ WontFix ]
 media/fullscreen-api-enabled-media-with-presentation-mode.html [ WontFix ]
 media/fullscreen-video-going-into-pip.html [ WontFix ]

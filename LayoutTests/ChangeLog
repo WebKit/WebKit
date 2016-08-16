@@ -1,3 +1,17 @@
+2016-08-15  Ada Chan  <adachan@apple.com>
+
+        Placeholder does not show the first time going into picture-in-picture on video without controls
+        https://bugs.webkit.org/show_bug.cgi?id=160868
+
+        Reviewed by Eric Carlson.
+
+        Test that a video without controls attribute does show after going into picture-in-picture.
+
+        * TestExpectations:
+        * media/controls/pip-placeholder-without-video-controls-expected.txt: Added.
+        * media/controls/pip-placeholder-without-video-controls.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2016-08-16  Chris Dumez  <cdumez@apple.com>
 
         DOM4: getElementsByClassName should include non StyledElements

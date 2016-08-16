@@ -541,7 +541,7 @@ ControllerIOS.prototype = {
         return this.presentationMode() === 'inline';
     },
 
-    handlePresentationModeChange: function(event)
+    updatePictureInPicturePlaceholder: function(event)
     {
         var presentationMode = this.presentationMode();
 
@@ -557,7 +557,7 @@ ControllerIOS.prototype = {
                 break;
         }
 
-        Controller.prototype.handlePresentationModeChange.call(this, event);
+        Controller.prototype.updatePictureInPicturePlaceholder.call(this, event);
     },
 
     // Due to the bad way we are faking inheritance here, in particular the extends method
