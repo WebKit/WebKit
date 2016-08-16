@@ -1,3 +1,22 @@
+2016-08-16  Chris Dumez  <cdumez@apple.com>
+
+        Align isDefaultNamespace() / lookupPrefix() / lookupNamespaceURI() with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=160911
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop several outdated tests.
+
+        * dom/xhtml/level3/core/nodeisdefaultnamespace03-expected.txt: Removed.
+        * dom/xhtml/level3/core/nodeisdefaultnamespace03.js: Removed.
+        * dom/xhtml/level3/core/nodeisdefaultnamespace03.xhtml: Removed.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri08-expected.txt: Removed.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri08.js: Removed.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri08.xhtml: Removed.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri09-expected.txt: Removed.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri09.js: Removed.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri09.xhtml: Removed.
+
 2016-08-15  Ada Chan  <adachan@apple.com>
 
         Placeholder does not show the first time going into picture-in-picture on video without controls

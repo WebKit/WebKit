@@ -192,9 +192,8 @@ public:
     bool isSameNode(Node* other) const { return this == other; }
     bool isEqualNode(Node*) const;
     bool isDefaultNamespace(const AtomicString& namespaceURI) const;
-    String lookupPrefix(const AtomicString& namespaceURI) const;
-    String lookupNamespaceURI(const String& prefix) const;
-    String lookupNamespacePrefix(const AtomicString& namespaceURI, const Element* originalElement) const;
+    const AtomicString& lookupPrefix(const AtomicString& namespaceURI) const;
+    const AtomicString& lookupNamespaceURI(const AtomicString& prefix) const;
     
     WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
     WEBCORE_EXPORT void setTextContent(const String&, ExceptionCode&);

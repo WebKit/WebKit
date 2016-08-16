@@ -48,7 +48,7 @@ String NativeXPathNSResolver::lookupNamespaceURI(const String& prefix)
     if (prefix == "xml")
         return XMLNames::xmlNamespaceURI;
     
-    return m_node ? m_node->lookupNamespaceURI(prefix) : String();
+    return m_node ? m_node->lookupNamespaceURI(prefix).string() : String();
 }
 
 } // namespace WebCore
