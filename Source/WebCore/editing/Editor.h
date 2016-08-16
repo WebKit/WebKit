@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Editor_h
-#define Editor_h
+#pragma once
 
 #include "Color.h"
 #include "DataTransferAccessPolicy.h"
@@ -96,6 +95,13 @@ enum class MailBlockquoteHandling {
     RespectBlockquote,
     IgnoreBlockquote,
 };
+
+#if PLATFORM(COCOA)
+struct FragmentAndResources {
+    RefPtr<DocumentFragment> fragment;
+    Vector<RefPtr<ArchiveResource>> resources;
+};
+#endif
 
 class Editor {
     WTF_MAKE_FAST_ALLOCATED;
@@ -197,6 +203,7 @@ public:
     void reappliedEditing(PassRefPtr<EditCommandComposition>);
     void unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction);
 
+    // This is off by default, since most editors want this behavior (originally matched IE but not Firefox).
     void setShouldStyleWithCSS(bool flag) { m_shouldStyleWithCSS = flag; }
     bool shouldStyleWithCSS() const { return m_shouldStyleWithCSS; }
 
@@ -265,7 +272,7 @@ public:
 
 #if !PLATFORM(IOS)
     WEBCORE_EXPORT void advanceToNextMisspelling(bool startBeforeSelection = false);
-#endif // !PLATFORM(IOS)
+#endif
     void showSpellingGuessPanel();
     bool spellingPanelIsShowing();
 
@@ -498,6 +505,7 @@ private:
     RefPtr<Range> adjustedSelectionRange();
     RefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(RefPtr<ArchiveResource>&&);
     RefPtr<DocumentFragment> createFragmentAndAddResources(NSAttributedString *);
+    FragmentAndResources createFragment(NSAttributedString *);
     void fillInUserVisibleForm(PasteboardURL&);
 #endif
 
@@ -509,21 +517,21 @@ private:
     unsigned m_compositionStart;
     unsigned m_compositionEnd;
     Vector<CompositionUnderline> m_customCompositionUnderlines;
-    bool m_ignoreCompositionSelectionChange;
-    bool m_shouldStartNewKillRingSequence {false};
-    bool m_shouldStyleWithCSS;
+    bool m_ignoreCompositionSelectionChange { false };
+    bool m_shouldStartNewKillRingSequence { false };
+    bool m_shouldStyleWithCSS { false };
     const std::unique_ptr<KillRing> m_killRing;
     const std::unique_ptr<SpellChecker> m_spellChecker;
     const std::unique_ptr<AlternativeTextController> m_alternativeTextController;
     VisibleSelection m_mark;
-    bool m_areMarkedTextMatchesHighlighted;
-    EditorParagraphSeparator m_defaultParagraphSeparator;
-    bool m_overwriteModeEnabled;
+    bool m_areMarkedTextMatchesHighlighted { false };
+    EditorParagraphSeparator m_defaultParagraphSeparator { EditorParagraphSeparatorIsDiv };
+    bool m_overwriteModeEnabled { false };
 
     VisibleSelection m_oldSelectionForEditorUIUpdate;
     Timer m_editorUIUpdateTimer;
-    bool m_editorUIUpdateTimerShouldCheckSpellingAndGrammar;
-    bool m_editorUIUpdateTimerWasTriggeredByDictation;
+    bool m_editorUIUpdateTimerShouldCheckSpellingAndGrammar { false };
+    bool m_editorUIUpdateTimerWasTriggeredByDictation { false };
     bool m_isHandlingAcceptedCandidate { false };
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
@@ -557,4 +565,8 @@ inline bool Editor::markedTextMatchesAreHighlighted() const
 
 } // namespace WebCore
 
-#endif // Editor_h
+#if PLATFORM(COCOA)
+// This function is declared here but defined in the WebKitLegacy framework.
+// FIXME: Get rid of this and change this so it doesn't use WebKitLegacy.
+extern "C" void _WebCreateFragment(WebCore::Document&, NSAttributedString *, WebCore::FragmentAndResources&);
+#endif

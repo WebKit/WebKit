@@ -1,3 +1,26 @@
+2016-08-16  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove dependency on Objective-C bindings in WebKit2 editing code
+        https://bugs.webkit.org/show_bug.cgi?id=160891
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebEditorClient.h: Removed documentFragmentFromAttributedString.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (attributesForAttributedStringConversion): Replaced the
+        createExcludedElementsForAttributedStringConversion function with this one.
+        No good reason to keep the array around instead of the dictionary.
+        (_WebCreateFragment): Renamed from documentFragmentFromAttributedString.
+        This is now a global function exported so it can be called by WebCore with
+        a different way of returning its value.
+
+        * WebKit.exp: Added _WebCreateFragment.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        Removed long-ago-obsolete workaround for Radar bug 5052369.
+
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
         Another build fix.

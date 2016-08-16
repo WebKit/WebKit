@@ -510,11 +510,10 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    NSString* userVisibleString(NSURL*) override { return nullptr; }
-    DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<RefPtr<ArchiveResource>>&) override { return nullptr; };
+    NSString* userVisibleString(NSURL *) override { return nullptr; }
     void setInsertionPasteboard(const String&) override { };
-    NSURL *canonicalizeURL(NSURL*) override { return nullptr; }
-    NSURL *canonicalizeURLString(NSString*) override { return nullptr; }
+    NSURL *canonicalizeURL(NSURL *) override { return nullptr; }
+    NSURL *canonicalizeURLString(NSString *) override { return nullptr; }
 #endif
 
 #if USE(APPKIT)

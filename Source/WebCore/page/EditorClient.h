@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef EditorClient_h
-#define EditorClient_h
+#pragma once
 
 #include "EditorInsertAction.h"
-#include "FloatRect.h"
 #include "TextAffinity.h"
 #include "TextChecking.h"
 #include "UndoStep.h"
@@ -36,7 +34,6 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
-OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 #endif
@@ -143,7 +140,6 @@ public:
 
 #if PLATFORM(COCOA)
     virtual NSString* userVisibleString(NSURL*) = 0;
-    virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector< RefPtr<ArchiveResource>>&) = 0;
     virtual void setInsertionPasteboard(const String& pasteboardName) = 0;
     virtual NSURL* canonicalizeURL(NSURL*) = 0;
     virtual NSURL* canonicalizeURLString(NSString*) = 0;
@@ -190,5 +186,3 @@ public:
 };
 
 }
-
-#endif // EditorClient_h

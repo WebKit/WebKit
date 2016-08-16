@@ -65,12 +65,6 @@ NSURL *WebEditorClient::canonicalizeURLString(NSString *)
     return nil;
 }
 
-DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttributedString *, Vector<RefPtr<ArchiveResource> >&)
-{
-    notImplemented();
-    return nullptr;
-}
-
 void WebEditorClient::setInsertionPasteboard(const String&)
 {
     // This is used only by Mail, no need to implement it now.

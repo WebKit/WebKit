@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,10 @@
 #import "config.h"
 #import "Editor.h"
 
+#import "ArchiveResource.h"
 #import "CSSValueList.h"
 #import "CSSValuePool.h"
+#import "DocumentFragment.h"
 #import "EditingStyle.h"
 #import "Frame.h"
 #import "FrameSelection.h"
@@ -38,10 +40,14 @@
 #import "Text.h"
 #import "htmlediting.h"
 
+SOFT_LINK_FRAMEWORK(WebKitLegacy)
+
+SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
+
 namespace WebCore {
 
 // FIXME: This figures out the current style by inserting a <span>!
-const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
+const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node*& nodeToRemove)
 {
     nodeToRemove = nullptr;
     
@@ -95,6 +101,15 @@ void Editor::getTextDecorationAttributesRespectingTypingStyle(const RenderStyle&
         if (decoration & TextDecorationUnderline)
             [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
     }
+}
+
+FragmentAndResources Editor::createFragment(NSAttributedString *string)
+{
+    // FIXME: The algorithm to convert an attributed string into HTML should be implemented here in WebCore.
+    // For now, though, we call into WebKitLegacy, which in turn calls into AppKit/TextKit.
+    FragmentAndResources result;
+    _WebCreateFragment(*m_frame.document(), string, result);
+    return result;
 }
 
 }

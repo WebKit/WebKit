@@ -11493,7 +11493,6 @@
 		9B532EA11BA928570038A827 /* SlotAssignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlotAssignment.cpp; sourceTree = "<group>"; };
 		9B532EA21BA928570038A827 /* SlotAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlotAssignment.h; sourceTree = "<group>"; };
 		9B55EEE81B3E8898005342BC /* EditorCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorCocoa.mm; sourceTree = "<group>"; };
-		9B55EEEA1B3F3FEF005342BC /* EditorCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditorCocoa.h; sourceTree = "<group>"; };
 		9B56C9A81C89312800C456DF /* LifecycleCallbackQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LifecycleCallbackQueue.h; sourceTree = "<group>"; };
 		9B56C9A91C89329A00C456DF /* LifecycleCallbackQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LifecycleCallbackQueue.cpp; sourceTree = "<group>"; };
 		9B69D3B11B98FF0A00E3512B /* HTMLSlotElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSlotElement.idl; sourceTree = "<group>"; };
@@ -18348,7 +18347,6 @@
 			children = (
 				C5227DEF1C3C6DD700F5ED54 /* DataDetection.h */,
 				C5227DF01C3C6DD700F5ED54 /* DataDetection.mm */,
-				9B55EEEA1B3F3FEF005342BC /* EditorCocoa.h */,
 				9B55EEE81B3E8898005342BC /* EditorCocoa.mm */,
 				7C3E510818DF8F3500C112F7 /* HTMLConverter.h */,
 				7C3E510918DF8F3500C112F7 /* HTMLConverter.mm */,

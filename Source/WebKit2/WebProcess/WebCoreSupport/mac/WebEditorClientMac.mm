@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010, 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2010-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,32 +32,16 @@
 
 #if PLATFORM(MAC)
 
-#import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
-#import "WebFrame.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
-#import <WebCore/ArchiveResource.h>
-#import <WebCore/DocumentFragment.h>
-#import <WebCore/DOMDocumentFragmentInternal.h>
-#import <WebCore/DOMDocumentInternal.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/KeyboardEvent.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/NotImplemented.h>
-#import <WebCore/Page.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 
 using namespace WebCore;
-
-@interface NSAttributedString (WebNSAttributedStringDetails)
-- (DOMDocumentFragment*)_documentFromRange:(NSRange)range document:(DOMDocument*)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
-@end
-
-@interface NSObject (WebResourceInternal)
-- (WebCore::ArchiveResource*)_coreResource;
-@end
 
 namespace WebKit {
     
@@ -90,50 +74,12 @@ NSURL *WebEditorClient::canonicalizeURLString(NSString *URLString)
         URL = URLByCanonicalizingURL(URLWithUserTypedString(URLString, nil));
     return URL;
 }
-    
-static NSArray *createExcludedElementsForAttributedStringConversion()
-{
-    NSArray *elements = [[NSArray alloc] initWithObjects: 
-        // Omit style since we want style to be inline so the fragment can be easily inserted.
-        @"style", 
-        // Omit xml so the result is not XHTML.
-        @"xml", 
-        // Omit tags that will get stripped when converted to a fragment anyway.
-        @"doctype", @"html", @"head", @"body", 
-        // Omit deprecated tags.
-        @"applet", @"basefont", @"center", @"dir", @"font", @"isindex", @"menu", @"s", @"strike", @"u", 
-        // Omit object so no file attachments are part of the fragment.
-        @"object", nil];
-    CFRetain(elements);
-    return elements;
-}
-
-DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttributedString *string, Vector<RefPtr<ArchiveResource>>& resources)
-{
-    static NSArray *excludedElements = createExcludedElementsForAttributedStringConversion();
-    
-    NSDictionary *dictionary = [NSDictionary dictionaryWithObject:excludedElements forKey:NSExcludedElementsDocumentAttribute];
-    
-    NSArray *subResources;
-    Document* document = m_page->mainFrame()->document();
-
-    // FIXME: Isntead of calling this WebKit1 method, the code should be factored out and moved into WebCore.
-    DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length])
-                                                      document:kit(document)
-                                            documentAttributes:dictionary
-                                                  subresources:&subResources];
-    for (id resource in subResources)
-        resources.append([resource _coreResource]);
-
-    return core(fragment);
-}
 
 void WebEditorClient::setInsertionPasteboard(const String&)
 {
     // This is used only by Mail, no need to implement it now.
     notImplemented();
 }
-
 
 static void changeWordCase(WebPage* page, SEL selector)
 {
@@ -147,7 +93,6 @@ static void changeWordCase(WebPage* page, SEL selector)
     page->replaceSelectionWithText(&frame, [selectedString performSelector:selector]);
 }
 
-#if USE(APPKIT)
 void WebEditorClient::uppercaseWord()
 {
     changeWordCase(m_page, @selector(uppercaseString));
@@ -162,9 +107,9 @@ void WebEditorClient::capitalizeWord()
 {
     changeWordCase(m_page, @selector(capitalizedString));
 }
-#endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
+
 void WebEditorClient::showSubstitutionsPanel(bool)
 {
     notImplemented();
@@ -248,6 +193,7 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
 {
     notImplemented();
 }
+
 #endif // USE(AUTOMATIC_TEXT_REPLACEMENT)
 
 } // namespace WebKit
