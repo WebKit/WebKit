@@ -73,7 +73,7 @@ static JSArray* getJSListenerFunctions(ExecState& state, Document* document, con
         return nullptr;
     size_t handlersCount = listenerInfo.eventListenerVector.size();
     for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
-        const JSEventListener* jsListener = JSEventListener::cast(&listenerInfo.eventListenerVector[i]->listener());
+        const JSEventListener* jsListener = JSEventListener::cast(&listenerInfo.eventListenerVector[i]->callback());
         if (!jsListener) {
             ASSERT_NOT_REACHED();
             continue;

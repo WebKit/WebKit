@@ -116,8 +116,8 @@ bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPt
 EventListener* EventTarget::getAttributeEventListener(const AtomicString& eventType)
 {
     for (auto& eventListener : getEventListeners(eventType)) {
-        if (eventListener->listener().isAttribute())
-            return &eventListener->listener();
+        if (eventListener->callback().isAttribute())
+            return &eventListener->callback();
     }
     return nullptr;
 }
@@ -241,7 +241,7 @@ void EventTarget::fireEventListeners(Event& event, EventListenerVector listeners
 
         // Do this before invocation to avoid reentrancy issues.
         if (registeredListener->isOnce())
-            removeEventListener(event.type(), registeredListener->listener(), ListenerOptions(registeredListener->useCapture()));
+            removeEventListener(event.type(), registeredListener->callback(), ListenerOptions(registeredListener->useCapture()));
 
         if (registeredListener->isPassive())
             event.setInPassiveListener(true);
@@ -249,7 +249,7 @@ void EventTarget::fireEventListeners(Event& event, EventListenerVector listeners
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willHandleEvent(context, event);
         // To match Mozilla, the AT_TARGET phase fires both capturing and bubbling
         // event listeners, even though that violates some versions of the DOM spec.
-        registeredListener->listener().handleEvent(context, &event);
+        registeredListener->callback().handleEvent(context, &event);
         InspectorInstrumentation::didHandleEvent(cookie);
 
         if (registeredListener->isPassive())

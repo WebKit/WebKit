@@ -49,7 +49,7 @@ public:
         return adoptRef(*new RegisteredEventListener(WTFMove(listener), options));
     }
 
-    EventListener& listener() const { return const_cast<EventListener&>(m_listener.get()); }
+    EventListener& callback() const { return const_cast<EventListener&>(m_callback.get()); }
     bool useCapture() const { return m_useCapture; }
     bool isPassive() const { return m_isPassive; }
     bool isOnce() const { return m_isOnce; }
@@ -59,14 +59,14 @@ public:
 
 private:
     RegisteredEventListener(Ref<EventListener>&& listener, const Options& options)
-        : m_listener(WTFMove(listener))
+        : m_callback(WTFMove(listener))
         , m_useCapture(options.capture)
         , m_isPassive(options.passive)
         , m_isOnce(options.once)
     {
     }
 
-    Ref<EventListener> m_listener;
+    Ref<EventListener> m_callback;
     bool m_useCapture { false };
     bool m_isPassive { false };
     bool m_isOnce { false };

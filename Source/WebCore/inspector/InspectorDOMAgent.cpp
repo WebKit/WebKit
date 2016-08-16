@@ -860,7 +860,7 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
             EventListenerVector filteredListeners;
             filteredListeners.reserveInitialCapacity(listeners.size());
             for (auto& listener : listeners) {
-                if (listener->listener().type() == EventListener::JSEventListenerType)
+                if (listener->callback().type() == EventListener::JSEventListenerType)
                     filteredListeners.uncheckedAppend(listener);
             }
             if (!filteredListeners.isEmpty())
@@ -1477,7 +1477,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> InspectorDOMA
 
 Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node, const String* objectGroupId)
 {
-    Ref<EventListener> eventListener = registeredEventListener.listener();
+    Ref<EventListener> eventListener = registeredEventListener.callback();
 
     JSC::ExecState* state = nullptr;
     JSC::JSObject* handler = nullptr;

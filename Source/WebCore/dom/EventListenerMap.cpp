@@ -89,7 +89,7 @@ static inline size_t findListener(const EventListenerVector& listeners, EventLis
 {
     for (size_t i = 0; i < listeners.size(); ++i) {
         auto& registeredListener = listeners[i];
-        if (registeredListener->listener() == listener && registeredListener->useCapture() == useCapture)
+        if (registeredListener->callback() == listener && registeredListener->useCapture() == useCapture)
             return i;
     }
     return notFound;
@@ -154,7 +154,7 @@ EventListenerVector* EventListenerMap::find(const AtomicString& eventType) const
 static void removeFirstListenerCreatedFromMarkup(EventListenerVector& listenerVector)
 {
     bool foundListener = listenerVector.removeFirstMatching([] (const auto& registeredListener) {
-        if (registeredListener->listener().wasCreatedFromMarkup()) {
+        if (registeredListener->callback().wasCreatedFromMarkup()) {
             registeredListener->markAsRemoved();
             return true;
         }
@@ -181,9 +181,9 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomicString& eventT
 {
     for (auto& registeredListener : listenerVector) {
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
-        if (registeredListener->listener().wasCreatedFromMarkup())
+        if (registeredListener->callback().wasCreatedFromMarkup())
             continue;
-        target->addEventListener(eventType, registeredListener->listener(), registeredListener->useCapture());
+        target->addEventListener(eventType, registeredListener->callback(), registeredListener->useCapture());
     }
 }
 
@@ -226,7 +226,7 @@ EventListener* EventListenerIterator::nextListener()
     for (; m_entryIndex < m_map->m_entries.size(); ++m_entryIndex) {
         EventListenerVector& listeners = *m_map->m_entries[m_entryIndex].second;
         if (m_index < listeners.size())
-            return &listeners[m_index++]->listener();
+            return &listeners[m_index++]->callback();
         m_index = 0;
     }
 
