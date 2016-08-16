@@ -291,7 +291,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
                 this._representedProperty = property;
 
             if (!propertyMissing && property && !property.valid) {
-                this._warningElement.classList.add("invalid-value");
+                this._element.classList.add("invalid-value");
                 this._warningElement.title = WebInspector.UIString("The value “%s” is not supported for this property.").format(propertyText);
                 this.specialPropertyPlaceholderElementText = propertyText;
                 return;
@@ -326,7 +326,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         this._lastValue = this.synthesizedValue;
         this.disabled = false;
 
-        this._warningElement.classList.remove("invalid-value");
+        this._element.classList.remove("invalid-value");
         this._checkDependencies();
     }
 
@@ -501,7 +501,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         this._specialPropertyPlaceholderElement.hidden = true;
 
         this._checkDependencies();
-        this._warningElement.classList.remove("invalid-value");
+        this._element.classList.remove("invalid-value");
 
         this.dispatchEventToListeners(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange);
         return true;
@@ -532,7 +532,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
     _checkDependencies()
     {
         if (!this._dependencies.size || !this._style || !this.synthesizedValue) {
-            this._warningElement.classList.remove("missing-dependency");
+            this._element.classList.remove("missing-dependency");
             return;
         }
 
@@ -548,7 +548,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
                 title += "\n " + property.name + ": " + dependencyValues.join("/");
         }
 
-        this._warningElement.classList.toggle("missing-dependency", !!title.length);
+        this._element.classList.toggle("missing-dependency", !!title.length);
         this._warningElement.title = !!title.length ? WebInspector.UIString("Missing Dependencies:%s").format(title) : null;
     }
 

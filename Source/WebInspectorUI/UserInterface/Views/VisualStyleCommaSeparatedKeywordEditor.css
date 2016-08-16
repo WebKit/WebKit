@@ -32,10 +32,6 @@
     overflow: auto;
 }
 
-.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-special-property-placeholder {
-    display: none;
-}
-
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list {
     min-height: 51px;
     max-height: 94px;

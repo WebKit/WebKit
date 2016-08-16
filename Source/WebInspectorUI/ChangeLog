@@ -1,3 +1,29 @@
+2016-08-15  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Error/Warning icons are misplaced in the Visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=160875
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-special-property-placeholder): Deleted.
+        Reworked to apply more generally to editors without titles.
+
+        * UserInterface/Views/VisualStylePropertyEditor.css:
+        (.visual-style-property-container.missing-dependency > .visual-style-property-editor-warning):
+        (.visual-style-property-container.invalid-value > .visual-style-property-editor-warning):
+        (.visual-style-property-container:matches(.missing-dependency, .invalid-value) > *:first-child:matches(.visual-style-property-value-container)):
+        (.visual-style-property-container > *:first-child:matches(.visual-style-property-value-container) > .visual-style-special-property-placeholder):
+        (.visual-style-property-container > .visual-style-property-editor-warning.missing-dependency): Deleted.
+        (.visual-style-property-container > .visual-style-property-editor-warning.invalid-value): Deleted.
+        Reworked class names to be on the element container instead of the icon.
+
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor.prototype.update):
+        (WebInspector.VisualStylePropertyEditor.prototype.updateEditorValues):
+        (WebInspector.VisualStylePropertyEditor.prototype._valueDidChange):
+        (WebInspector.VisualStylePropertyEditor.prototype._checkDependencies):
+
 2016-08-15  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: Introduce a method to enable code coverage profiler without enabling type profiler
