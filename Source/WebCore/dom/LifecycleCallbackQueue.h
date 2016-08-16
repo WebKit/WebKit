@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LifecycleCallbackQueue_h
-#define LifecycleCallbackQueue_h
+#pragma once
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
@@ -47,9 +46,7 @@ public:
     ~LifecycleCallbackQueue();
 
     static void enqueueElementUpgrade(Element&, JSCustomElementInterface&);
-
-    static void enqueueAttributeChangedCallback(Element&, JSCustomElementInterface&,
-        const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
+    static void enqueueAttributeChangedCallbackIfNeeded(Element&, const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
 
     void invokeAll();
 
@@ -89,5 +86,3 @@ private:
 }
 
 #endif
-
-#endif // LifecycleCallbackQueue_h

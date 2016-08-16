@@ -1290,15 +1290,8 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
     document().incDOMTreeVersion();
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (UNLIKELY(isCustomElement())) {
-        if (auto* window = document().domWindow()) {
-            if (auto* registry = window->customElementsRegistry()) {
-                auto* elementInterface = registry->findInterface(tagQName());
-                RELEASE_ASSERT(elementInterface);
-                LifecycleCallbackQueue::enqueueAttributeChangedCallback(*this, *elementInterface, name, oldValue, newValue);
-            }
-        }
-    }
+    if (UNLIKELY(isCustomElement()))
+        LifecycleCallbackQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
 #endif
 
     if (valueIsSameAsBefore)

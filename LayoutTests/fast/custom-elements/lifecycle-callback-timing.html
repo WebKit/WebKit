@@ -20,6 +20,7 @@ class MyCustomElement extends HTMLElement {
 
     handler() { }
 }
+MyCustomElement.observedAttributes = ['data-title', 'title'];
 customElements.define('my-custom-element', MyCustomElement);
 
 test(function () {

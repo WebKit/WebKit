@@ -1,8 +1,0 @@
-
-PASS Check the existence of CustomElementsRegistry.prototype.define on CustomElementsRegistry interface 
-PASS customElements.define should throw with an invalid name 
-PASS customElements.define should throw when there is already a custom element of the same name 
-PASS customElements.define should throw when there is already a custom element with the same class 
-PASS customElements.define should throw when the element interface is not a constructor 
-PASS customElements.define should define an instantiatable custom element 
-

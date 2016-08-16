@@ -37,6 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace JSC {
 
@@ -65,6 +66,8 @@ public:
 
     void upgradeElement(Element&);
 
+    void setAttributeChangedCallback(JSC::JSObject* callback, const Vector<String>& observedAttributes);
+    bool observesAttribute(const AtomicString& name) const { return m_observedAttributes.contains(name); }
     void attributeChanged(Element&, const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
@@ -83,8 +86,10 @@ private:
 
     QualifiedName m_name;
     mutable JSC::Weak<JSC::JSObject> m_constructor;
+    mutable JSC::Weak<JSC::JSObject> m_attributeChangedCallback;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
     Vector<RefPtr<Element>, 1> m_constructionStack;
+    HashSet<AtomicString> m_observedAttributes;
 };
 
 } // namespace WebCore
