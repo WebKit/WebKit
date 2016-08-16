@@ -54,37 +54,16 @@
 
 namespace WebCore {
 
-static RefPtr<MediaConstraints> parseOptions(const Dictionary& options, const String& mediaType)
+void UserMediaRequest::start(Document* document, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&& promise, ExceptionCode& ec)
 {
-    Dictionary constraintsDictionary;
-    if (options.get(mediaType, constraintsDictionary) && !constraintsDictionary.isUndefinedOrNull())
-        return MediaConstraintsImpl::create(constraintsDictionary);
-
-    bool mediaRequested = false;
-    if (!options.get(mediaType, mediaRequested) || !mediaRequested)
-        return nullptr;
-
-    return MediaConstraintsImpl::create();
-}
-
-void UserMediaRequest::start(Document* document, const Dictionary& options, MediaDevices::Promise&& promise, ExceptionCode& ec)
-{
-    if (!options.isObject()) {
-        ec = TypeError;
-        return;
-    }
-
     UserMediaController* userMedia = UserMediaController::from(document ? document->page() : nullptr);
     if (!userMedia) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
 
-    auto audioConstraints = parseOptions(options, AtomicString("audio", AtomicString::ConstructFromLiteral));
-    auto videoConstraints = parseOptions(options, AtomicString("video", AtomicString::ConstructFromLiteral));
-
-    if (!audioConstraints && !videoConstraints) {
-        ec = NOT_SUPPORTED_ERR;
+    if (!audioConstraints->isValid() && !videoConstraints->isValid()) {
+        promise.reject(TypeError);
         return;
     }
 
@@ -92,7 +71,7 @@ void UserMediaRequest::start(Document* document, const Dictionary& options, Medi
     request->start();
 }
 
-UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, RefPtr<MediaConstraints>&& audioConstraints, RefPtr<MediaConstraints>&& videoConstraints, MediaDevices::Promise&& promise)
+UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, Ref<MediaConstraints>&& audioConstraints, Ref<MediaConstraints>&& videoConstraints, MediaDevices::Promise&& promise)
     : ContextDestructionObserver(context)
     , m_audioConstraints(WTFMove(audioConstraints))
     , m_videoConstraints(WTFMove(videoConstraints))
@@ -170,17 +149,15 @@ void UserMediaRequest::didCreateStream(RefPtr<MediaStreamPrivate>&& privateStrea
 
     // 4 - Create the MediaStream and pass it to the success callback.
     Ref<MediaStream> stream = MediaStream::create(*m_scriptExecutionContext, WTFMove(privateStream));
-    if (m_audioConstraints) {
-        for (auto& track : stream->getAudioTracks()) {
-            track->applyConstraints(*m_audioConstraints);
-            track->source().startProducingData();
-        }
+
+    for (auto& track : stream->getAudioTracks()) {
+        track->applyConstraints(m_audioConstraints);
+        track->source().startProducingData();
     }
-    if (m_videoConstraints) {
-        for (auto& track : stream->getVideoTracks()) {
-            track->applyConstraints(*m_videoConstraints);
-            track->source().startProducingData();
-        }
+
+    for (auto& track : stream->getVideoTracks()) {
+        track->applyConstraints(m_videoConstraints);
+        track->source().startProducingData();
     }
 
     m_promise.resolve(stream);

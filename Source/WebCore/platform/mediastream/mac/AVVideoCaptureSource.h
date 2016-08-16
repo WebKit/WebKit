@@ -61,7 +61,7 @@ private:
     void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) override;
 
     bool applyConstraints(MediaConstraints*);
-    bool setFrameRateConstraint(float minFrameRate, float maxFrameRate);
+    bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
 
     bool updateFramerate(CMSampleBufferRef);
 

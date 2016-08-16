@@ -44,11 +44,10 @@
             function error1(e) {
                 errorArg = e;
                 testPassed('Error callback called.');
-                shouldBeEqualToString('errorArg.name', 'ConstraintNotSatisfiedError');
-                shouldBeEqualToString('errorArg.constraintName', 'valid_but_unsupported_1');
+                shouldBeEqualToString('errorArg.name', 'OverConstrainedError');
 
-                shouldThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, 0);");
-                shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, error);");
+                shouldThrow("navigator.webkitGetUserMedia({audio:{volume:{exact:1}}, video:true}, gotStream5, 0);");
+                shouldNotThrow("navigator.webkitGetUserMedia({audio:{volume:{exact:1}}, video:true}, gotStream5, error);");
             }
 
             function gotStream4(s) {
@@ -57,8 +56,8 @@
                 shouldBe('stream.getAudioTracks().length', '1');
                 shouldBe('stream.getVideoTracks().length', '1');
 
-                shouldThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, null);");
-                shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, error1);");
+                shouldThrow("navigator.webkitGetUserMedia({audio:true, video:{width:{exact:11}}}, gotStreamInError, null);");
+                shouldNotThrow("navigator.webkitGetUserMedia({audio:true, video:{width:{exact:11}}}, gotStreamInError, error1);");
             }
 
             function gotStream3(s) {
@@ -67,8 +66,8 @@
                 shouldBe('stream.getAudioTracks().length', '1');
                 shouldBe('stream.getVideoTracks().length', '1');
 
-                shouldThrow("navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, null);");
-                shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, error);");
+                shouldThrow("navigator.webkitGetUserMedia({audio:{}, video:true}, gotStream4, null);");
+                shouldNotThrow("navigator.webkitGetUserMedia({audio:{}, video:true}, gotStream4, error);");
             }
 
             function gotStream2(s) {

@@ -35,31 +35,37 @@
 
 #include "ExceptionBase.h"
 #include "MediaConstraints.h"
-#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class ArrayValue;
 class Dictionary;
 
-class MediaConstraintsImpl : public MediaConstraints {
+class MediaConstraintsImpl final : public MediaConstraints {
 public:
     static Ref<MediaConstraintsImpl> create();
-    static RefPtr<MediaConstraintsImpl> create(const Dictionary&);
+    static Ref<MediaConstraintsImpl> create(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid);
 
     virtual ~MediaConstraintsImpl();
-    bool initialize(const Dictionary&);
+    void initialize(const Dictionary&);
 
-    void getMandatoryConstraints(Vector<MediaConstraint>&) const override;
-    void getOptionalConstraints(Vector<MediaConstraint>&) const override;
-
-    bool getMandatoryConstraintValue(const String& name, String& value) const override;
-    bool getOptionalConstraintValue(const String& name, String& value) const override;
+    const MediaTrackConstraintSetMap& mandatoryConstraints() const final { return m_mandatoryConstraints; }
+    const Vector<MediaTrackConstraintSetMap>& advancedConstraints() const final { return m_advancedConstraints; }
+    bool isValid() const final { return m_isValid; }
 
 private:
     MediaConstraintsImpl() { }
+    MediaConstraintsImpl(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid)
+        : m_mandatoryConstraints(WTFMove(mandatoryConstraints))
+        , m_advancedConstraints(WTFMove(advancedConstraints))
+        , m_isValid(isValid)
+    {
+    }
 
-    HashMap<String, String> m_mandatoryConstraints;
-    Vector<MediaConstraint> m_optionalConstraints;
+    MediaTrackConstraintSetMap m_mandatoryConstraints;
+    Vector<MediaTrackConstraintSetMap> m_advancedConstraints;
+    bool m_isValid;
 };
 
 } // namespace WebCore

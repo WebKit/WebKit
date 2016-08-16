@@ -63,9 +63,9 @@ Document* MediaDevices::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-void MediaDevices::getUserMedia(const Dictionary& options, Promise&& promise, ExceptionCode& ec) const
+void MediaDevices::getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&& promise, ExceptionCode& ec) const
 {
-    UserMediaRequest::start(document(), options, WTFMove(promise), ec);
+    UserMediaRequest::start(document(), WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise), ec);
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise, ExceptionCode& ec) const

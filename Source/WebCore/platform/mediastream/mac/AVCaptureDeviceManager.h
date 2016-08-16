@@ -64,7 +64,7 @@ public:
     Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, MediaConstraints&) override;
 
     TrackSourceInfoVector getSourcesInfo(const String&) override;
-    bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, MediaConstraints*, const CaptureSessionInfo*, String&) override;
+    bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, const MediaConstraints&, const CaptureSessionInfo*, String&) override;
 
     void deviceConnected();
     void deviceDisconnected(AVCaptureDevice*);
@@ -76,11 +76,11 @@ protected:
 
     AVCaptureDeviceManager();
     ~AVCaptureDeviceManager() override;
-    bool sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type, const String& name, const String& value) override;
+    bool sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type, const MediaConstraint&) override;
     RealtimeMediaSource* createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, MediaConstraints*) override;
     CaptureSessionInfo defaultCaptureSession() const override;
     void refreshCaptureDeviceList() override;
-    bool isSupportedFrameRate(float frameRate) const override;
+    bool isSupportedFrameRate(const MediaConstraint&) const override;
 
     void registerForDeviceNotifications();
 

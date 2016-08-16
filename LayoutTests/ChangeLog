@@ -1,3 +1,28 @@
+2016-08-16  George Ruan  <gruan@apple.com>
+
+        ⛱ : Implement parsing of Media Constraints for getUserMedia algorithm in Media Capture and Streaming Spec
+        https://bugs.webkit.org/show_bug.cgi?id=160533
+        <rdar://problem/27688483>
+
+        Reviewed by Chris Dumez.
+
+        Implementation of parsing of media constraints passed to getUserMedia has changed to meet
+        the current w3c standards. Three major changes have been introduced
+        - If the parameter in getUserMedia is missing a TypeError is thrown, according to the IDL spec
+        - Given a Dictionary value with neither 'audio' nor 'video' keys having dictionary values
+        or 'true', the promise is rejected with a TypeError
+        - If the constraints cannot be satisfied the promise is rejected with a DataError. This should
+        be changed to an OverConstrainedError in the future. See
+        https://bugs.webkit.org/show_bug.cgi?id=160790
+
+        * fast/mediastream/MediaDevices-getUserMedia-expected.txt:
+        * fast/mediastream/MediaDevices-getUserMedia.html: Added limited testing of parsing of
+        media constraints for getUserMedia(), this includes only testing of mandatory constraints
+        and whether the promise is rejected if the constraints cannot be satisfied.
+        * fast/mediastream/getusermedia-expected.txt:
+        * fast/mediastream/getusermedia.html: As format of media constraints have changed, the test
+        has been updated to reflect those changes.
+
 2016-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Conversion to sequence<T> is broken for iterable objects

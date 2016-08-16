@@ -78,7 +78,7 @@ RealtimeMediaSourceCenterOwr::~RealtimeMediaSourceCenterOwr()
 {
 }
 
-void RealtimeMediaSourceCenterOwr::validateRequestConstraints(MediaStreamCreationClient* client, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints)
+void RealtimeMediaSourceCenterOwr::validateRequestConstraints(MediaStreamCreationClient* client, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
 {
     m_client = client;
 
@@ -86,15 +86,15 @@ void RealtimeMediaSourceCenterOwr::validateRequestConstraints(MediaStreamCreatio
     // need to comply with the available audio/video device(s)
     // capabilities. See bug #123345.
     int types = OWR_MEDIA_TYPE_UNKNOWN;
-    if (audioConstraints)
+    if (audioConstraints.isValid())
         types |= OWR_MEDIA_TYPE_AUDIO;
-    if (videoConstraints)
+    if (videoConstraints.isValid())
         types |= OWR_MEDIA_TYPE_VIDEO;
 
     owr_get_capture_sources(static_cast<OwrMediaType>(types), mediaSourcesAvailableCallback, this);
 }
 
-void RealtimeMediaSourceCenterOwr::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
+void RealtimeMediaSourceCenterOwr::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
 {
     RefPtr<MediaStreamCreationClient> client = prpQueryClient;
     ASSERT(client);
@@ -105,7 +105,7 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(PassRefPtr<MediaStreamCreat
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
-    if (audioConstraints) {
+    if (audioConstraints.isValid()) {
         // TODO: verify constraints according to registered
         // sources. For now, unconditionally pick the first source, see bug #123345.
         RefPtr<RealtimeMediaSource> audioSource = firstSource(RealtimeMediaSource::Audio);
@@ -115,7 +115,7 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(PassRefPtr<MediaStreamCreat
         }
     }
 
-    if (videoConstraints) {
+    if (videoConstraints.isValid()) {
         // TODO: verify constraints according to registered
         // sources. For now, unconditionally pick the first source, see bug #123345.
         RefPtr<RealtimeMediaSource> videoSource = firstSource(RealtimeMediaSource::Video);

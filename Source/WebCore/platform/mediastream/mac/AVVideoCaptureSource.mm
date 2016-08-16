@@ -128,7 +128,7 @@ void AVVideoCaptureSource::updateSettings(RealtimeMediaSourceSettings& settings)
     settings.setAspectRatio(static_cast<float>(m_width) / m_height);
 }
 
-bool AVVideoCaptureSource::setFrameRateConstraint(float minFrameRate, float maxFrameRate)
+bool AVVideoCaptureSource::setFrameRateConstraint(double minFrameRate, double maxFrameRate)
 {
     AVFrameRateRange *bestFrameRateRange = 0;
 
@@ -173,41 +173,45 @@ bool AVVideoCaptureSource::applyConstraints(MediaConstraints* constraints)
 {
     ASSERT(constraints);
 
-    const RealtimeMediaSourceSupportedConstraints& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    String widthConstraintValue;
-    String heightConstraintValue;
+    // FIXME: Below needs to be refactored for https://bugs.webkit.org/show_bug.cgi?id=160579.
+
+    auto& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
     String widthConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::Width);
     String heightConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::Height);
 
-    constraints->getMandatoryConstraintValue(widthConstraintName, widthConstraintValue);
-    constraints->getMandatoryConstraintValue(heightConstraintName, heightConstraintValue);
+    auto& mandatoryConstraints = constraints->mandatoryConstraints();
 
-    int width = widthConstraintValue.toInt();
-    int height = heightConstraintValue.toInt();
-    if (!width && !height) {
-        constraints->getOptionalConstraintValue(widthConstraintName, widthConstraintValue);
-        constraints->getOptionalConstraintValue(heightConstraintName, heightConstraintValue);
-        width = widthConstraintValue.toInt();
-        height = heightConstraintValue.toInt();
-    }
+    RefPtr<MediaConstraint> widthConstraint = mandatoryConstraints.get(widthConstraintName);
+    RefPtr<MediaConstraint> heightConstraint = mandatoryConstraints.get(heightConstraintName);
+
+    int intValue;
+
+    Optional<int> width;
+    if (widthConstraint && widthConstraint->getExact(intValue))
+        width = intValue;
+
+    Optional<int> height;
+    if (heightConstraint && heightConstraint->getExact(intValue))
+        height = intValue;
     
-    if (width || height) {
-        NSString *preset = AVCaptureSessionInfo(session()).bestSessionPresetForVideoDimensions(width, height);
+    if (width && height) {
+        NSString *preset = AVCaptureSessionInfo(session()).bestSessionPresetForVideoDimensions(width.value(), height.value());
         if (!preset || ![session() canSetSessionPreset:preset])
             return false;
-        
+
         [session() setSessionPreset:preset];
     }
 
-    String frameRateConstraintValue;
     String frameRateConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::FrameRate);
-    constraints->getMandatoryConstraintValue(frameRateConstraintName, frameRateConstraintValue);
-    float frameRate = frameRateConstraintValue.toFloat();
-    if (!frameRate) {
-        constraints->getOptionalConstraintValue(frameRateConstraintName, frameRateConstraintValue);
-        frameRate = frameRateConstraintValue.toFloat();
-    }
-    if (frameRate && !setFrameRateConstraint(frameRate, 0))
+    RefPtr<MediaConstraint> frameRateConstraint = mandatoryConstraints.get(frameRateConstraintName);
+
+    double doubleValue;
+
+    Optional<double> frameRate;
+    if (frameRateConstraint && frameRateConstraint->getExact(doubleValue))
+        frameRate = doubleValue;
+
+    if (frameRate && !setFrameRateConstraint(frameRate.value(), 0))
         return false;
 
     return true;

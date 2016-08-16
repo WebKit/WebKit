@@ -29,6 +29,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "RealtimeMediaSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +39,7 @@ class MediaConstraints;
 
 class MediaConstraintsMock {
 public:
-    static String verifyConstraints(PassRefPtr<MediaConstraints>);
+    static const String& verifyConstraints(RealtimeMediaSource::Type, const MediaConstraints&);
 };
 
 } // namespace WebCore

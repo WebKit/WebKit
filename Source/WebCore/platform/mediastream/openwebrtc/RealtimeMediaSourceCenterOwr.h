@@ -53,15 +53,15 @@ public:
     RealtimeMediaSourceCenterOwr();
     ~RealtimeMediaSourceCenterOwr();
 
-    void validateRequestConstraints(MediaStreamCreationClient*, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints) override;
+    void validateRequestConstraints(MediaStreamCreationClient*, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints) final;
 
-    void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) override;
-    void createMediaStream(MediaStreamCreationClient*, const String& audioDeviceID, const String& videoDeviceID) override;
+    void createMediaStream(PassRefPtr<MediaStreamCreationClient>, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints) final;
+    void createMediaStream(MediaStreamCreationClient*, const String& audioDeviceID, const String& videoDeviceID) final;
 
-    bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) override;
+    bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) final;
 
     void mediaSourcesAvailable(GList* sources);
-    RefPtr<TrackSourceInfo> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) override;
+    RefPtr<TrackSourceInfo> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) final;
 
 private:
     PassRefPtr<RealtimeMediaSource> firstSource(RealtimeMediaSource::Type);

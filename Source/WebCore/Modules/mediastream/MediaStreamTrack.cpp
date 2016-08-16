@@ -169,6 +169,8 @@ RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrack::getCapabilities() cons
 
 void MediaStreamTrack::applyConstraints(const Dictionary& constraints)
 {
+    // FIXME: Implement correctly. https://bugs.webkit.org/show_bug.cgi?id=160579
+
     m_constraints->initialize(constraints);
     m_private->applyConstraints(*m_constraints);
 }

@@ -55,7 +55,7 @@ typedef int ExceptionCode;
 
 class UserMediaRequest : public MediaStreamCreationClient, public ContextDestructionObserver {
 public:
-    static void start(Document*, const Dictionary&, MediaDevices::Promise&&, ExceptionCode&);
+    static void start(Document*, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&&, ExceptionCode&);
 
     ~UserMediaRequest();
 
@@ -73,7 +73,7 @@ public:
     const String& allowedVideoDeviceUID() const { return m_allowedVideoDeviceUID; }
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, RefPtr<MediaConstraints>&& audioConstraints, RefPtr<MediaConstraints>&& videoConstraints, MediaDevices::Promise&&);
+    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, Ref<MediaConstraints>&& audioConstraints, Ref<MediaConstraints>&& videoConstraints, MediaDevices::Promise&&);
 
     // MediaStreamCreationClient
     void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>& videoTracks) final;
@@ -85,8 +85,8 @@ private:
     // ContextDestructionObserver
     void contextDestroyed() final;
     
-    RefPtr<MediaConstraints> m_audioConstraints;
-    RefPtr<MediaConstraints> m_videoConstraints;
+    Ref<MediaConstraints> m_audioConstraints;
+    Ref<MediaConstraints> m_videoConstraints;
 
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;

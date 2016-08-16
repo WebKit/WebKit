@@ -36,6 +36,7 @@
 #import "UUID.h"
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/text/StringHash.h>
 
 using namespace WebCore;
 
@@ -70,18 +71,14 @@ bool CaptureDeviceManager::captureDeviceFromDeviceID(const String& captureDevice
     return false;
 }
 
-bool CaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::Type type, MediaConstraints* constraints, const CaptureSessionInfo* session, String& invalidConstraint)
+bool CaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::Type type, const MediaConstraints& constraints, const CaptureSessionInfo* session, String& invalidConstraint)
 {
-    if (!constraints)
-        return true;
-
-    Vector<MediaConstraint> mandatoryConstraints;
-    constraints->getMandatoryConstraints(mandatoryConstraints);
-    for (auto& constraint : mandatoryConstraints) {
-        if (sessionSupportsConstraint(session, type, constraint.m_name, constraint.m_value))
+    auto& mandatoryConstraints = constraints.mandatoryConstraints();
+    for (auto& nameConstraintPair : mandatoryConstraints) {
+        if (sessionSupportsConstraint(session, type, *nameConstraintPair.value))
             continue;
 
-        invalidConstraint = constraint.m_name;
+        invalidConstraint = nameConstraintPair.key;
         return false;
     }
 
@@ -154,14 +151,14 @@ static inline RealtimeMediaSourceSettings::VideoFacingMode facingModeFromString(
     return RealtimeMediaSourceSettings::Unknown;
 }
 
-bool CaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type type, const String& name, const String& value)
+bool CaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type type, const MediaConstraint& constraint)
 {
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    MediaConstraintType constraint = supportedConstraints.constraintFromName(name);
-    if (!supportedConstraints.supportsConstraint(constraint))
+    MediaConstraintType constraintType = supportedConstraints.constraintFromName(constraint.name());
+    if (!supportedConstraints.supportsConstraint(constraintType))
         return false;
 
-    switch (constraint) {
+    switch (constraintType) {
     case MediaConstraintType::Width:
         return type == RealtimeMediaSource::Video;
 
@@ -172,22 +169,42 @@ bool CaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*, 
         if (type == RealtimeMediaSource::Audio)
             return false;
 
-        return isSupportedFrameRate(value.toFloat());
+        return isSupportedFrameRate(constraint);
     }
     case MediaConstraintType::FacingMode: {
         if (type == RealtimeMediaSource::Audio)
             return false;
 
-        return bestDeviceForFacingMode(facingModeFromString(value));
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160793. Handle sequence of facingMode constraints.
+        Vector<String> exactFacingMode;
+        if (!constraint.getExact(exactFacingMode))
+            return false;
+
+        return bestDeviceForFacingMode(facingModeFromString(exactFacingMode[0]));
     }
     default:
         return false;
     }
 }
 
-bool CaptureDeviceManager::isSupportedFrameRate(float frameRate) const
+bool CaptureDeviceManager::isSupportedFrameRate(const MediaConstraint& constraint) const
 {
-    return 0 < frameRate && frameRate <= 60;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160794. Dynamically check media devices if frame rate is supported.
+    bool isSupported = true;
+
+    int min = 0;
+    if (constraint.getMin(min))
+        isSupported &= min > 60;
+
+    int max = 60;
+    if (constraint.getMax(max))
+        isSupported &= max < min;
+
+    int exact;
+    if (constraint.getExact(exact))
+        isSupported &= (exact < min || exact > max);
+
+    return isSupported;
 }
 
 #endif // ENABLE(MEDIA_STREAM)

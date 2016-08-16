@@ -31,41 +31,105 @@
 #include "MediaConstraintsMock.h"
 
 #include "MediaConstraints.h"
+#include "RealtimeMediaSourceCenter.h"
+#include "RealtimeMediaSourceSupportedConstraints.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-static bool isSupported(const String& constraint)
+static bool isIntMediaConstraintSatisfiable(const MediaConstraint& constraint)
 {
-    return notFound != constraint.find("_and_supported_");
+    int ceiling = 10;
+    int floor = 0;
+
+    int min = floor;
+    if (constraint.getMin(min) && min > ceiling)
+        return false;
+
+    int max = ceiling;
+    if (constraint.getMax(max) && max < min)
+        return false;
+
+    int exact;
+    if (constraint.getExact(exact) && (exact < min || exact > max))
+        return false;
+
+    return true;
 }
 
-static bool isValid(const String& constraint)
+static bool isDoubleMediaConstraintSatisfiable(const MediaConstraint& constraint)
 {
-    return isSupported(constraint) || notFound != constraint.find("valid_");
+    double ceiling = 10;
+    double floor = 0;
+
+    double min = floor;
+    if (constraint.getMin(min) && min > ceiling)
+        return false;
+
+    double max = ceiling;
+    if (constraint.getMax(max) && max < min)
+        return false;
+
+    double exact;
+    if (constraint.getExact(exact) && (exact < min || exact > max))
+        return false;
+
+    return true;
 }
 
-String MediaConstraintsMock::verifyConstraints(PassRefPtr<MediaConstraints> prpConstraints)
+static bool isBooleanMediaConstraintSatisfiable(const MediaConstraint& constraint)
 {
-    RefPtr<MediaConstraints> constraints = prpConstraints;
+    bool exact;
+    if (constraint.getExact(exact))
+        return exact;
 
-    Vector<MediaConstraint> mandatoryConstraints;
-    constraints->getMandatoryConstraints(mandatoryConstraints);
-    if (mandatoryConstraints.size()) {
-        for (size_t i = 0; i < mandatoryConstraints.size(); ++i) {
-            const MediaConstraint& curr = mandatoryConstraints[i];
-            if (!isSupported(curr.m_name) || curr.m_value != "1")
-                return curr.m_name;
+    return true;
+}
+
+static bool isStringMediaConstraintSatisfiable(const MediaConstraint& constraint)
+{
+    Vector<String> exact;
+    if (constraint.getExact(exact)) {
+        for (auto& constraintValue : exact) {
+            if (constraintValue.find("invalid") != notFound)
+                return false;
         }
     }
+    
+    return true;
+}
 
-    Vector<MediaConstraint> optionalConstraints;
-    constraints->getOptionalConstraints(optionalConstraints);
-    if (optionalConstraints.size()) {
-        for (size_t i = 0; i < optionalConstraints.size(); ++i) {
-            const MediaConstraint& curr = optionalConstraints[i];
-            if (!isValid(curr.m_name) || curr.m_value != "0")
-                return curr.m_name;
-        }
+static bool isSatisfiable(RealtimeMediaSource::Type type, const MediaConstraint& constraint)
+{
+    const String& name = constraint.name();
+
+    if (type == RealtimeMediaSource::Audio) {
+        if (name == "sampleRate" || name == "sampleSize")
+            return isIntMediaConstraintSatisfiable(constraint);
+        if (name == "volume")
+            return isDoubleMediaConstraintSatisfiable(constraint);
+        if (name == "echoCancellation")
+            return isBooleanMediaConstraintSatisfiable(constraint);
+        if (name == "deviceId" || name == "groupId")
+            return isStringMediaConstraintSatisfiable(constraint);
+    } else if (type == RealtimeMediaSource::Video) {
+        if (name == "width" || name == "height")
+            return isIntMediaConstraintSatisfiable(constraint);
+        if (name == "aspectRatio" || name == "frameRate")
+            return isDoubleMediaConstraintSatisfiable(constraint);
+        if (name == "facingMode" || name == "deviceId" || name == "groupId")
+            return isStringMediaConstraintSatisfiable(constraint);
+    }
+
+    return false;
+}
+
+const String& MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Type type, const MediaConstraints& constraints)
+{
+    auto& mandatoryConstraints = constraints.mandatoryConstraints();
+    for (auto& nameConstraintPair : mandatoryConstraints) {
+        if (!isSatisfiable(type, *nameConstraintPair.value))
+            return nameConstraintPair.key;
     }
 
     return emptyString();

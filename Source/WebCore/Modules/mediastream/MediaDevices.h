@@ -45,6 +45,7 @@ namespace WebCore {
 
 class Dictionary;
 class Document;
+class MediaConstraintsImpl;
 class MediaStream;
 class MediaTrackSupportedConstraints;
 
@@ -60,7 +61,7 @@ public:
     typedef DOMPromise<MediaStream> Promise;
     typedef DOMPromise<MediaDeviceInfoVector> EnumerateDevicesPromise;
 
-    void getUserMedia(const Dictionary&, Promise&&, ExceptionCode&) const;
+    void getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&&, ExceptionCode&) const;
     void enumerateDevices(EnumerateDevicesPromise&&, ExceptionCode&) const;
     RefPtr<MediaTrackSupportedConstraints> getSupportedConstraints();
 

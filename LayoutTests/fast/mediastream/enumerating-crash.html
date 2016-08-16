@@ -16,7 +16,7 @@ function shouldNotCrash() {
     document.addEventListener("webglcontextlost", function () {
         var mediaDevices = window.navigator.mediaDevices;
         mediaDevices.enumerateDevices();
-        mediaDevices.getUserMedia(123456789.);
+        mediaDevices.getUserMedia({});
         if (window.testRunner)
             testRunner.notifyDone();
     }, true);
