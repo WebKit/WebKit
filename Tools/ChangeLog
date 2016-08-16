@@ -1,3 +1,18 @@
+2016-08-16  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS logs file are rotated too quickly
+        https://bugs.webkit.org/show_bug.cgi?id=160724
+
+        Reviewed by Daniel Bates.
+
+        Currently we are rotating the log file after 10 iterations of queue. If the queue
+        doesn't have any pending patches, these iterations result in very small amount of 
+        logs (1 KB log file). Even if the queue process some patches, logs are few KBs.
+        This results in a lot of log files in a day. This patch ensures that we rotate the
+        log file when its file size is greater than or equal to 100 KB.
+
+        * EWSTools/start-queue-mac.sh: Added check for file size before rotating log file.
+
 2016-08-16  Daniel Bates  <dabates@apple.com>
 
         WKSI static library should be named by major iOS revision, not individual updates

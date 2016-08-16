@@ -55,7 +55,10 @@ while [ $TIME_TO_REBOOT -gt $(date +%s) ] || [ $(date +%H) -lt 1 ] || [ $(date +
     cd $EWS_HOME/$QUEUE_NAME-logs
     find . -mtime +30 -delete
     if [ -s $QUEUE_NAME.log ]; then
-        mv -f $QUEUE_NAME.log ${QUEUE_NAME}_$(date +%Y-%m-%d_%H-%m).log
+        filesize=$(stat -f%z "$QUEUE_NAME.log")  # filesize in bytes.
+        if [ $filesize -ge 100000 ]; then
+            mv -f $QUEUE_NAME.log ${QUEUE_NAME}_$(date +%Y-%m-%d_%H-%m).log
+        fi
     fi
     cd $WEBKIT_HOME
     
