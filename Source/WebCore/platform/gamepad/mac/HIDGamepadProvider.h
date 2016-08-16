@@ -51,6 +51,9 @@ public:
     WEBCORE_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;
     const Vector<PlatformGamepad*>& platformGamepads() final { return m_gamepadVector; }
 
+    WEBCORE_EXPORT void stopMonitoringInput();
+    WEBCORE_EXPORT void startMonitoringInput();
+    
     void deviceAdded(IOHIDDeviceRef);
     void deviceRemoved(IOHIDDeviceRef);
     void valuesChanged(IOHIDValueRef);

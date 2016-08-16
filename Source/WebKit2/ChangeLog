@@ -1,3 +1,50 @@
+2016-08-16  Brady Eidson  <beidson@apple.com>
+
+        Cleanup WK2 platform gamepad handling.
+        https://bugs.webkit.org/show_bug.cgi?id=160871
+
+        Reviewed by Alex Christensen.
+
+        This patch does a few things:
+        1 - Separates the concepts of "monitoring gamepads" and "monitoring gamepad inputs"
+        2 - Uses this new concept to much more cleanly handle the case where we are not currently
+            monitoring gamepad inputs because an interested WKWebView is not front and center.
+        3 - Pre-populates the "initial set of gamepads" in WebProcesses that start listening for gamepads.
+        
+        * Platform/Logging.h:
+        
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::gamepadSyncTimerFired):
+        (WebKit::UIGamepadProvider::setInitialConnectedGamepads):
+        (WebKit::UIGamepadProvider::processPoolStoppedUsingGamepads):
+        (WebKit::UIGamepadProvider::viewBecameActive):
+        (WebKit::UIGamepadProvider::viewBecameInactive):
+        (WebKit::UIGamepadProvider::stopMonitoringGamepads):
+        (WebKit::UIGamepadProvider::snapshotGamepads):
+        (WebKit::UIGamepadProvider::platformStopMonitoringInput):
+        (WebKit::UIGamepadProvider::platformStartMonitoringInput):
+        (WebKit::UIGamepadProvider::UIGamepadProvider): Deleted.
+        (WebKit::UIGamepadProvider::scheduleDisableGamepadMonitoring): Deleted.
+        (WebKit::UIGamepadProvider::disableMonitoringTimerFired): Deleted.
+        * UIProcess/Gamepad/UIGamepadProvider.h:
+        
+        * UIProcess/Gamepad/mac/UIGamepadProviderHID.cpp:
+        (WebKit::UIGamepadProvider::platformStopMonitoringInput):
+        (WebKit::UIGamepadProvider::platformStartMonitoringInput):
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setInitialConnectedGamepads):
+        * UIProcess/WebProcessPool.h:
+        
+        * WebProcess/Gamepad/WebGamepadProvider.cpp:
+        (WebKit::WebGamepadProvider::setInitialGamepads):
+        * WebProcess/Gamepad/WebGamepadProvider.h:
+        
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setInitialGamepads):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2016-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Add iPad viewport and form tests, and revert the iPad-testing part of r202132

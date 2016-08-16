@@ -1030,6 +1030,11 @@ void WebProcess::mainThreadPing()
 
 #if ENABLE(GAMEPAD)
 
+void WebProcess::setInitialGamepads(const Vector<WebKit::GamepadData>& gamepadDatas)
+{
+    WebGamepadProvider::singleton().setInitialGamepads(gamepadDatas);
+}
+
 void WebProcess::gamepadConnected(const GamepadData& gamepadData)
 {
     WebGamepadProvider::singleton().gamepadConnected(gamepadData);
