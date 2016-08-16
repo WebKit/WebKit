@@ -158,6 +158,7 @@ public:
     bool hasEventListeners() const;
     bool hasEventListeners(const AtomicString& eventType) const;
     bool hasCapturingEventListeners(const AtomicString& eventType);
+    bool hasActiveEventListeners(const AtomicString& eventType) const;
     const EventListenerVector& getEventListeners(const AtomicString& eventType);
 
     bool fireEventListeners(Event&);

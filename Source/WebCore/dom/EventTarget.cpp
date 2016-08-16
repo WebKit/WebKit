@@ -122,6 +122,14 @@ EventListener* EventTarget::getAttributeEventListener(const AtomicString& eventT
     return nullptr;
 }
 
+bool EventTarget::hasActiveEventListeners(const AtomicString& eventType) const
+{
+    EventTargetData* eventTargetData = const_cast<EventTarget*>(this)->eventTargetData();
+    if (!eventTargetData)
+        return false;
+    return eventTargetData->eventListenerMap.containsActive(eventType);
+}
+
 bool EventTarget::clearAttributeEventListener(const AtomicString& eventType)
 {
     EventListener* listener = getAttributeEventListener(eventType);
