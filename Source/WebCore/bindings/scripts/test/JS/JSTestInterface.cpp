@@ -235,7 +235,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (UNLIKELY(!context))
         return throwConstructorDocumentUnavailableError(*state, "TestInterface");
-    auto object = TestInterface::create(*context, str1, str2, ec);
+    auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2), ec);
     if (UNLIKELY(ec)) {
         setDOMException(state, ec);
         return JSValue::encode(JSValue());

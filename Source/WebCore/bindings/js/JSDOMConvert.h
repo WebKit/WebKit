@@ -49,6 +49,8 @@ template<typename T> EnableIfFloatingPointType<T, Optional<T>> convertOptional(J
 template<typename T, typename U> EnableIfIntegralType<T> convertOptional(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration, U&& defaultValue);
 template<typename T, typename U> EnableIfFloatingPointType<T> convertOptional(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite, U&& defaultValue);
 
+template<typename T> Optional<T> convertDictionary(JSC::ExecState&, JSC::JSValue);
+
 enum class IsNullable { No, Yes };
 template<typename T, typename JST> T* convertWrapperType(JSC::ExecState&, JSC::JSValue, IsNullable);
 

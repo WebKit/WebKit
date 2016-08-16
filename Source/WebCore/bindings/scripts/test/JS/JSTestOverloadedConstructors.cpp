@@ -113,7 +113,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
     auto string = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto object = TestOverloadedConstructors::create(string);
+    auto object = TestOverloadedConstructors::create(WTFMove(string));
     return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));
 }
 
@@ -123,7 +123,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
     Vector<int32_t> longArgs = toNativeArguments<int32_t>(*state, 0);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto object = TestOverloadedConstructors::create(longArgs);
+    auto object = TestOverloadedConstructors::create(WTFMove(longArgs));
     return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));
 }
 

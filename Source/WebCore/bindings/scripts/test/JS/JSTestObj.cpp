@@ -452,137 +452,140 @@ template<> inline const char* expectedEnumerationValues<TestObj::Confidence>()
     return "\"high\", \"kinda-low\"";
 }
 
-template<> TestObj::Dictionary convert<TestObj::Dictionary>(ExecState& state, JSValue value)
+template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(ExecState& state, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { }, { }, { }, 0, 0, { }, { }, 0, 0, { }, { }, { }, 0, { }, 0, { }, 0, { }, 0, { }, 0, nullptr, jsUndefined(), jsUndefined() };
+        return TestObj::Dictionary { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { }, { }, { }, 0, 0, { }, { }, 0, 0, { }, { }, { }, 0, { }, 0, { }, 0, { }, 0, { }, 0, nullptr, jsUndefined(), jsUndefined() };
     auto* object = value.getObject();
     if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
         throwTypeError(&state);
-        return { };
+        return Nullopt;
     }
     auto enumerationValueWithoutDefault = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValueWithoutDefault")));
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto enumerationValueWithDefault = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValueWithDefault")), TestObj::EnumType::EnumValue1);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto enumerationValueWithEmptyStringDefault = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValueWithEmptyStringDefault")), TestObj::EnumType::EmptyString);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto stringWithDefault = convertOptional<String>(state, object->get(&state, Identifier::fromString(&state, "stringWithDefault")), "defaultString");
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto stringWithoutDefault = convertOptional<String>(state, object->get(&state, Identifier::fromString(&state, "stringWithoutDefault")));
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto booleanWithDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithDefault")), false);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto booleanWithoutDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault")));
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto sequenceOfStrings = convertOptional<Vector<String>>(state, object->get(&state, Identifier::fromString(&state, "sequenceOfStrings")));
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto restrictedDouble = convertOptional<double>(state, object->get(&state, Identifier::fromString(&state, "restrictedDouble")), ShouldAllowNonFinite::No);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto unrestrictedDouble = convertOptional<double>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedDouble")), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto restrictedDoubleWithDefault = convertOptional<double>(state, object->get(&state, Identifier::fromString(&state, "restrictedDoubleWithDefault")), ShouldAllowNonFinite::No, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto unrestrictedDoubleWithDefault = convertOptional<double>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedDoubleWithDefault")), ShouldAllowNonFinite::Yes, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto restrictedFloat = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "restrictedFloat")), ShouldAllowNonFinite::No);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto unrestrictedFloat = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedFloat")), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto restrictedFloatWithDefault = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "restrictedFloatWithDefault")), ShouldAllowNonFinite::No, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto unrestrictedFloatWithDefault = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedFloatWithDefault")), ShouldAllowNonFinite::Yes, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto smallIntegerClamped = convertOptional<int8_t>(state, object->get(&state, Identifier::fromString(&state, "smallIntegerClamped")), Clamp);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto smallIntegerWithDefault = convertOptional<int8_t>(state, object->get(&state, Identifier::fromString(&state, "smallIntegerWithDefault")), NormalConversion);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto smallUnsignedIntegerEnforcedRange = convertOptional<uint8_t>(state, object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerEnforcedRange")), EnforceRange);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto smallUnsignedIntegerWithDefault = convertOptional<uint8_t>(state, object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerWithDefault")), NormalConversion, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto integer = convertOptional<int32_t>(state, object->get(&state, Identifier::fromString(&state, "integer")), NormalConversion);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto integerWithDefault = convertOptional<int32_t>(state, object->get(&state, Identifier::fromString(&state, "integerWithDefault")), NormalConversion, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto unsignedInteger = convertOptional<uint32_t>(state, object->get(&state, Identifier::fromString(&state, "unsignedInteger")), NormalConversion);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto unsignedIntegerWithDefault = convertOptional<uint32_t>(state, object->get(&state, Identifier::fromString(&state, "unsignedIntegerWithDefault")), NormalConversion, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto largeInteger = convertOptional<int64_t>(state, object->get(&state, Identifier::fromString(&state, "largeInteger")), NormalConversion);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto largeIntegerWithDefault = convertOptional<int64_t>(state, object->get(&state, Identifier::fromString(&state, "largeIntegerWithDefault")), NormalConversion, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto unsignedLargeInteger = convertOptional<uint64_t>(state, object->get(&state, Identifier::fromString(&state, "unsignedLargeInteger")), NormalConversion);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto unsignedLargeIntegerWithDefault = convertOptional<uint64_t>(state, object->get(&state, Identifier::fromString(&state, "unsignedLargeIntegerWithDefault")), NormalConversion, 0);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto* nullableNode = convertWrapperType<Node, JSNode>(state, object->get(&state, Identifier::fromString(&state, "nullableNode")), IsNullable::Yes);
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto anyValue = convertOptional<JSC::JSValue>(state, object->get(&state, Identifier::fromString(&state, "anyValue")), jsUndefined());
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto anyTypedefValue = convertOptional<JSC::JSValue>(state, object->get(&state, Identifier::fromString(&state, "anyTypedefValue")), jsUndefined());
-    return { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault), WTFMove(smallIntegerClamped), WTFMove(smallIntegerWithDefault), WTFMove(smallUnsignedIntegerEnforcedRange), WTFMove(smallUnsignedIntegerWithDefault), WTFMove(integer), WTFMove(integerWithDefault), WTFMove(unsignedInteger), WTFMove(unsignedIntegerWithDefault), WTFMove(largeInteger), WTFMove(largeIntegerWithDefault), WTFMove(unsignedLargeInteger), WTFMove(unsignedLargeIntegerWithDefault), WTFMove(nullableNode), WTFMove(anyValue), WTFMove(anyTypedefValue) };
+    return TestObj::Dictionary { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault), WTFMove(smallIntegerClamped), WTFMove(smallIntegerWithDefault), WTFMove(smallUnsignedIntegerEnforcedRange), WTFMove(smallUnsignedIntegerWithDefault), WTFMove(integer), WTFMove(integerWithDefault), WTFMove(unsignedInteger), WTFMove(unsignedIntegerWithDefault), WTFMove(largeInteger), WTFMove(largeIntegerWithDefault), WTFMove(unsignedLargeInteger), WTFMove(unsignedLargeIntegerWithDefault), WTFMove(nullableNode), WTFMove(anyValue), WTFMove(anyTypedefValue) };
 }
 
-template<> TestObj::DictionaryThatShouldNotTolerateNull convert<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)
+template<> Optional<TestObj::DictionaryThatShouldNotTolerateNull> convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)
 {
     auto* object = value.getObject();
     if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
         throwTypeError(&state);
-        return { };
+        return Nullopt;
     }
     auto requiredEnumerationValue = convert<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "requiredEnumerationValue")));
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto booleanWithoutDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault")));
-    return { WTFMove(requiredEnumerationValue), WTFMove(booleanWithoutDefault) };
+    if (UNLIKELY(state.hadException()))
+        return Nullopt;
+    auto* nonNullableNode = convertWrapperType<Node, JSNode>(state, object->get(&state, Identifier::fromString(&state, "nonNullableNode")), IsNullable::No);
+    return TestObj::DictionaryThatShouldNotTolerateNull { WTFMove(requiredEnumerationValue), WTFMove(booleanWithoutDefault), *nonNullableNode };
 }
 
-template<> TestObj::DictionaryThatShouldTolerateNull convert<TestObj::DictionaryThatShouldTolerateNull>(ExecState& state, JSValue value)
+template<> Optional<TestObj::DictionaryThatShouldTolerateNull> convertDictionary<TestObj::DictionaryThatShouldTolerateNull>(ExecState& state, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return { { }, { } };
+        return TestObj::DictionaryThatShouldTolerateNull { { }, { } };
     auto* object = value.getObject();
     if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
         throwTypeError(&state);
-        return { };
+        return Nullopt;
     }
     auto enumerationValue = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValue")));
     if (UNLIKELY(state.hadException()))
-        return { };
+        return Nullopt;
     auto booleanWithoutDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault")));
-    return { WTFMove(enumerationValue), WTFMove(booleanWithoutDefault) };
+    return TestObj::DictionaryThatShouldTolerateNull { WTFMove(enumerationValue), WTFMove(booleanWithoutDefault) };
 }
 
 // Functions
@@ -6392,10 +6395,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(ExecStat
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto init = convert<TestObj::Dictionary>(*state, state->argument(0));
+    auto init = convertDictionary<TestObj::Dictionary>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.attachShadowRoot(WTFMove(init));
+    impl.attachShadowRoot(init.value());
     return JSValue::encode(jsUndefined());
 }
 
