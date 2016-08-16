@@ -70,7 +70,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
     auto sequenceOfStrings = state->argument(0).isUndefined() ? Vector<String>() : toNativeArray<String>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto object = TestOverloadedConstructorsWithSequence::create(sequenceOfStrings);
+    auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(sequenceOfStrings));
     return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));
 }
 
@@ -82,7 +82,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     auto string = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto object = TestOverloadedConstructorsWithSequence::create(string);
+    auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(string));
     return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));
 }
 
