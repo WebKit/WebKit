@@ -41,30 +41,11 @@ WebInspector.IndexedDatabaseObjectStore = class IndexedDatabaseObjectStore exten
 
     // Public
 
-    get name()
-    {
-        return this._name;
-    }
-
-    get keyPath()
-    {
-        return this._keyPath;
-    }
-
-    get autoIncrement()
-    {
-        return this._autoIncrement;
-    }
-
-    get parentDatabase()
-    {
-        return this._parentDatabase;
-    }
-
-    get indexes()
-    {
-        return this._indexes;
-    }
+    get name() { return this._name; }
+    get keyPath() { return this._keyPath; }
+    get autoIncrement() { return this._autoIncrement; }
+    get parentDatabase() { return this._parentDatabase; }
+    get indexes() { return this._indexes; }
 
     saveIdentityToCookie(cookie)
     {

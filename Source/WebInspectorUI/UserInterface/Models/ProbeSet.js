@@ -47,20 +47,9 @@ WebInspector.ProbeSet = class ProbeSet extends WebInspector.Object
 
     // Public
 
-    get breakpoint()
-    {
-         return this._breakpoint;
-    }
-
-    get probes()
-    {
-        return this._probes.slice();
-    }
-
-    get dataTable()
-    {
-        return this._dataTable;
-    }
+    get breakpoint() { return this._breakpoint; }
+    get probes() { return this._probes.slice(); }
+    get dataTable() { return this._dataTable; }
 
     clear()
     {

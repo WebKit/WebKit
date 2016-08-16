@@ -39,29 +39,14 @@ WebInspector.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject ext
 
     // Public
 
-    get sourceCode()
-    {
-        return this._sourceCode;
-    }
-
-    get title()
-    {
-        return this._lineText;
-    }
+    get sourceCode() { return this._sourceCode; }
+    get title() { return this._lineText; }
+    get searchTerm() { return this._searchTerm; }
+    get sourceCodeTextRange() { return this._sourceCodeTextRange; }
 
     get className()
     {
         return WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName;
-    }
-
-    get searchTerm()
-    {
-        return this._searchTerm;
-    }
-
-    get sourceCodeTextRange()
-    {
-        return this._sourceCodeTextRange;
     }
 
     saveIdentityToCookie(cookie)

@@ -70,45 +70,14 @@ WebInspector.ObjectPreview = class ObjectPreview extends WebInspector.Object
 
     // Public
 
-    get type()
-    {
-        return this._type;
-    }
-
-    get subtype()
-    {
-        return this._subtype;
-    }
-
-    get description()
-    {
-        return this._description;
-    }
-
-    get lossless()
-    {
-        return this._lossless;
-    }
-
-    get overflow()
-    {
-        return this._overflow;
-    }
-
-    get propertyPreviews()
-    {
-        return this._properties;
-    }
-
-    get collectionEntryPreviews()
-    {
-        return this._entries;
-    }
-
-    get size()
-    {
-        return this._size;
-    }
+    get type() { return this._type; }
+    get subtype() { return this._subtype; }
+    get description() { return this._description; }
+    get lossless() { return this._lossless; }
+    get overflow() { return this._overflow; }
+    get propertyPreviews() { return this._properties; }
+    get collectionEntryPreviews() { return this._entries; }
+    get size() { return this._size; }
 
     hasSize()
     {

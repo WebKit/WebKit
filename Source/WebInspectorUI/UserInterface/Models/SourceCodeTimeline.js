@@ -41,25 +41,10 @@ WebInspector.SourceCodeTimeline = class SourceCodeTimeline extends WebInspector.
 
     // Public
 
-    get sourceCode()
-    {
-        return this._sourceCode;
-    }
-
-    get sourceCodeLocation()
-    {
-        return this._sourceCodeLocation;
-    }
-
-    get recordType()
-    {
-        return this._recordType;
-    }
-
-    get recordEventType()
-    {
-        return this._recordEventType;
-    }
+    get sourceCode() { return this._sourceCode; }
+    get sourceCodeLocation() { return this._sourceCodeLocation; }
+    get recordType() { return this._recordType; }
+    get recordEventType() { return this._recordEventType; }
 
     saveIdentityToCookie(cookie)
     {

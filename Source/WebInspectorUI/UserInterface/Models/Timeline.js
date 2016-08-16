@@ -49,25 +49,10 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
 
     // Public
 
-    get type()
-    {
-        return this._type;
-    }
-
-    get startTime()
-    {
-        return this._startTime;
-    }
-
-    get endTime()
-    {
-        return this._endTime;
-    }
-
-    get records()
-    {
-        return this._records;
-    }
+    get type() { return this._type; }
+    get startTime() { return this._startTime; }
+    get endTime() { return this._endTime; }
+    get records() { return this._records; }
 
     reset(suppressEvents)
     {

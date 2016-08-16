@@ -58,28 +58,9 @@ WebInspector.TypeDescription = class TypeDescription extends WebInspector.Object
 
     // Public
 
-    get leastCommonAncestor()
-    {
-        return this._leastCommonAncestor;
-    }
-
-    get typeSet()
-    {
-        return this._typeSet;
-    }
-
-    get structures()
-    {
-        return this._structures;
-    }
-
-    get valid()
-    {
-        return this._valid;
-    }
-
-    get truncated()
-    {
-        return this._truncated;
-    }
+    get leastCommonAncestor() { return this._leastCommonAncestor; }
+    get typeSet() { return this._typeSet; }
+    get structures() { return this._structures; }
+    get valid() { return this._valid; }
+    get truncated() { return this._truncated; }
 };

@@ -39,23 +39,8 @@ WebInspector.AnalyzerMessage = class AnalyzerMessage extends WebInspector.Object
 
     // Public
 
-    get sourceCodeLocation()
-    {
-        return this._sourceCodeLocation;
-    }
-
-    get sourceCode()
-    {
-        return this._sourceCodeLocation.sourceCode;
-    }
-
-    get text()
-    {
-        return this._text;
-    }
-
-    get ruleIdentifier()
-    {
-        return this._ruleIdentifier;
-    }
+    get sourceCodeLocation() { return this._sourceCodeLocation; }
+    get sourceCode() { return this._sourceCodeLocation.sourceCode; }
+    get text() { return this._text; }
+    get ruleIdentifier() { return this._ruleIdentifier; }
 };

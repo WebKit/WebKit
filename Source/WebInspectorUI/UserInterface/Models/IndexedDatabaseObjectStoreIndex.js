@@ -38,30 +38,11 @@ WebInspector.IndexedDatabaseObjectStoreIndex = class IndexedDatabaseObjectStoreI
 
     // Public
 
-    get name()
-    {
-        return this._name;
-    }
-
-    get keyPath()
-    {
-        return this._keyPath;
-    }
-
-    get unique()
-    {
-        return this._unique;
-    }
-
-    get multiEntry()
-    {
-        return this._multiEntry;
-    }
-
-    get parentObjectStore()
-    {
-        return this._parentObjectStore;
-    }
+    get name() { return this._name; }
+    get keyPath() { return this._keyPath; }
+    get unique() { return this._unique; }
+    get multiEntry() { return this._multiEntry; }
+    get parentObjectStore() { return this._parentObjectStore; }
 
     saveIdentityToCookie(cookie)
     {

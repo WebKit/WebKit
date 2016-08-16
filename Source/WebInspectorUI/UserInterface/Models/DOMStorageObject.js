@@ -37,20 +37,9 @@ WebInspector.DOMStorageObject = class DOMStorageObject extends WebInspector.Obje
 
     // Public
 
-    get id()
-    {
-        return this._id;
-    }
-
-    get host()
-    {
-        return this._host;
-    }
-
-    get entries()
-    {
-        return this._entries;
-    }
+    get id() { return this._id; }
+    get host() { return this._host; }
+    get entries() { return this._entries; }
 
     saveIdentityToCookie(cookie)
     {

@@ -1,3 +1,44 @@
+2016-08-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Modernize model objects simple getters
+        https://bugs.webkit.org/show_bug.cgi?id=160863
+
+        Reviewed by Timothy Hatcher.
+
+        Simplify the style of many Model objects with basic accessors.
+        We reduce them to a single line and group them together so
+        that they can be more easily read at a glance.
+
+        * UserInterface/Models/AnalyzerMessage.js:
+        * UserInterface/Models/ApplicationCacheFrame.js:
+        * UserInterface/Models/ApplicationCacheManifest.js:
+        * UserInterface/Models/BreakpointAction.js:
+        * UserInterface/Models/CSSMedia.js:
+        * UserInterface/Models/CSSSelector.js:
+        * UserInterface/Models/CollectionEntry.js:
+        * UserInterface/Models/CollectionEntryPreview.js:
+        * UserInterface/Models/DOMStorageObject.js:
+        * UserInterface/Models/DatabaseObject.js:
+        * UserInterface/Models/DatabaseTableObject.js:
+        * UserInterface/Models/ExecutionContext.js:
+        * UserInterface/Models/GarbageCollection.js:
+        * UserInterface/Models/IndexedDatabase.js:
+        * UserInterface/Models/IndexedDatabaseObjectStore.js:
+        * UserInterface/Models/IndexedDatabaseObjectStoreIndex.js:
+        * UserInterface/Models/ObjectPreview.js:
+        * UserInterface/Models/ProbeSet.js:
+        * UserInterface/Models/PropertyDescriptor.js:
+        * UserInterface/Models/PropertyPath.js:
+        * UserInterface/Models/PropertyPreview.js:
+        * UserInterface/Models/SourceCodePosition.js:
+        * UserInterface/Models/SourceCodeSearchMatchObject.js:
+        * UserInterface/Models/SourceCodeTimeline.js:
+        * UserInterface/Models/StructureDescription.js:
+        * UserInterface/Models/TextRange.js:
+        * UserInterface/Models/Timeline.js:
+        * UserInterface/Models/TimelineRecording.js:
+        * UserInterface/Models/TypeDescription.js:
+
 2016-08-15  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Large class lists are not easily discoverable with "Classes" quick-toggle

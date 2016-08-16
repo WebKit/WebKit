@@ -38,20 +38,9 @@ WebInspector.CSSMedia = class CSSMedia extends WebInspector.Object
 
     // Public
 
-    get type()
-    {
-        return this._type;
-    }
-
-    get text()
-    {
-        return this._text;
-    }
-
-    get sourceCodeLocation()
-    {
-        return this._sourceCodeLocation;
-    }
+    get type() { return this._type; }
+    get text() { return this._text; }
+    get sourceCodeLocation() { return this._sourceCodeLocation; }
 };
 
 WebInspector.CSSMedia.Type = {

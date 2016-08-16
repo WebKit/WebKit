@@ -40,23 +40,8 @@ WebInspector.ExecutionContext = class ExecutionContext extends WebInspector.Obje
 
     // Public
 
-    get id()
-    {
-        return this._id;
-    }
-
-    get name()
-    {
-        return this._name;
-    }
-
-    get isPageContext()
-    {
-        return this._isPageContext;
-    }
-
-    get frame()
-    {
-        return this._frame;
-    }
+    get id() { return this._id; }
+    get name() { return this._name; }
+    get isPageContext() { return this._isPageContext; }
+    get frame() { return this._frame; }
 };

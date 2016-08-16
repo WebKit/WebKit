@@ -49,20 +49,9 @@ WebInspector.BreakpointAction = class BreakpointAction extends WebInspector.Obje
 
     // Public
 
-    get breakpoint()
-    {
-        return this._breakpoint;
-    }
-
-    get id()
-    {
-        return this._id;
-    }
-
-    get type()
-    {
-        return this._type;
-    }
+    get breakpoint() { return this._breakpoint; }
+    get id() { return this._id; }
+    get type() { return this._type; }
 
     get data()
     {

@@ -35,13 +35,6 @@ WebInspector.SourceCodePosition = class SourceCodePosition extends WebInspector.
 
     // Public
 
-    get lineNumber()
-    {
-        return this._lineNumber;
-    }
-
-    get columnNumber()
-    {
-        return this._columnNumber;
-    }
+    get lineNumber() { return this._lineNumber; }
+    get columnNumber() { return this._columnNumber; }
 };

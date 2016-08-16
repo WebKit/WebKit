@@ -61,60 +61,18 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
     // Public
 
-    get displayName()
-    {
-        return this._displayName;
-    }
+    get displayName() { return this._displayName; }
+    get identifier() { return this._identifier; }
+    get timelines() { return this._timelines; }
+    get instruments() { return this._instruments; }
+    get readonly() { return this._readonly; }
+    get startTime() { return this._startTime; }
+    get endTime() { return this._endTime; }
 
-    get identifier()
-    {
-        return this._identifier;
-    }
-
-    get timelines()
-    {
-        return this._timelines;
-    }
-
-    get instruments()
-    {
-        return this._instruments;
-    }
-
-    get readonly()
-    {
-        return this._readonly;
-    }
-
-    get startTime()
-    {
-        return this._startTime;
-    }
-
-    get endTime()
-    {
-        return this._endTime;
-    }
-
-    get topDownCallingContextTree()
-    {
-        return this._topDownCallingContextTree;
-    }
-
-    get bottomUpCallingContextTree()
-    {
-        return this._bottomUpCallingContextTree;
-    }
-
-    get topFunctionsTopDownCallingContextTree()
-    {
-        return this._topFunctionsTopDownCallingContextTree;
-    }
-
-    get topFunctionsBottomUpCallingContextTree()
-    {
-        return this._topFunctionsBottomUpCallingContextTree;
-    }
+    get topDownCallingContextTree() { return this._topDownCallingContextTree; }
+    get bottomUpCallingContextTree() { return this._bottomUpCallingContextTree; }
+    get topFunctionsTopDownCallingContextTree() { return this._topFunctionsTopDownCallingContextTree; }
+    get topFunctionsBottomUpCallingContextTree() { return this._topFunctionsBottomUpCallingContextTree; }
 
     start(initiatedByBackend)
     {

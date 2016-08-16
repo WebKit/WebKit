@@ -55,35 +55,12 @@ WebInspector.TextRange = class TextRange extends WebInspector.Object
 
     // Public
 
-    get startLine()
-    {
-        return this._startLine;
-    }
-
-    get startColumn()
-    {
-        return this._startColumn;
-    }
-
-    get endLine()
-    {
-        return this._endLine;
-    }
-
-    get endColumn()
-    {
-        return this._endColumn;
-    }
-
-    get startOffset()
-    {
-        return this._startOffset;
-    }
-
-    get endOffset()
-    {
-        return this._endOffset;
-    }
+    get startLine() { return this._startLine; }
+    get startColumn() { return this._startColumn; }
+    get endLine() { return this._endLine; }
+    get endColumn() { return this._endColumn; }
+    get startOffset() { return this._startOffset; }
+    get endOffset() { return this._endOffset; }
 
     startPosition()
     {

@@ -51,13 +51,6 @@ WebInspector.CollectionEntryPreview = class CollectionEntryPreview extends WebIn
 
     // Public
 
-    get keyPreview()
-    {
-        return this._key;
-    }
-
-    get valuePreview()
-    {
-        return this._value;
-    }
+    get keyPreview() { return this._key; }
+    get valuePreview() { return this._value; }
 };

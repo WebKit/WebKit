@@ -32,8 +32,7 @@ WebInspector.ApplicationCacheManifest = class ApplicationCacheManifest extends W
         this._manifestURL = manifestURL;
     }
 
-    get manifestURL()
-    {
-        return this._manifestURL;
-    }
+    // Public
+
+    get manifestURL() { return this._manifestURL; }
 };

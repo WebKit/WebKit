@@ -55,33 +55,10 @@ WebInspector.PropertyPreview = class PropertyPreview extends WebInspector.Object
 
     // Public
 
-    get name()
-    {
-        return this._name;
-    }
-
-    get type()
-    {
-        return this._type;
-    }
-
-    get subtype()
-    {
-        return this._subtype;
-    }
-
-    get value()
-    {
-        return this._value;
-    }
-
-    get valuePreview()
-    {
-        return this._valuePreview;
-    }
-
-    get internal()
-    {
-        return this._internal;
-    }
+    get name() { return this._name; }
+    get type() { return this._type; }
+    get subtype() { return this._subtype; }
+    get value() { return this._value; }
+    get valuePreview() { return this._valuePreview; }
+    get internal() { return this._internal; }
 };

@@ -54,20 +54,10 @@ WebInspector.PropertyPath = class PropertyPath extends WebInspector.Object
 
     // Public
 
-    get object()
-    {
-        return this._object;
-    }
-
-    get parent()
-    {
-        return this._parent;
-    }
-
-    get isPrototype()
-    {
-        return this._isPrototype;
-    }
+    get object() { return this._object; }
+    get parent() { return this._parent; }
+    get isPrototype() { return this._isPrototype; }
+    get pathComponent() { return this._pathComponent; }
 
     get rootObject()
     {
@@ -89,11 +79,6 @@ WebInspector.PropertyPath = class PropertyPath extends WebInspector.Object
         }
 
         return p.object;
-    }
-
-    get pathComponent()
-    {
-        return this._pathComponent;
     }
 
     get fullPath()

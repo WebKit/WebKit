@@ -54,28 +54,9 @@ WebInspector.StructureDescription = class StructureDescription extends WebInspec
 
     // Public
 
-    get fields()
-    {
-        return this._fields;
-    }
-
-    get optionalFields()
-    {
-        return this._optionalFields;
-    }
-
-    get constructorName()
-    {
-        return this._constructorName;
-    }
-
-    get prototypeStructure()
-    {
-        return this._prototypeStructure;
-    }
-
-    get imprecise()
-    {
-        return this._imprecise;
-    }
+    get fields() { return this._fields; }
+    get optionalFields() { return this._optionalFields; }
+    get constructorName() { return this._constructorName; }
+    get prototypeStructure() { return this._prototypeStructure; }
+    get imprecise() { return this._imprecise; }
 };

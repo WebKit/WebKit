@@ -37,25 +37,10 @@ WebInspector.DatabaseObject = class DatabaseObject extends WebInspector.Object
 
     // Public
 
-    get id()
-    {
-        return this._id;
-    }
-
-    get host()
-    {
-        return this._host;
-    }
-
-    get name()
-    {
-        return this._name;
-    }
-
-    get version()
-    {
-        return this._version;
-    }
+    get id() { return this._id; }
+    get host() { return this._host; }
+    get name() { return this._name; }
+    get version() { return this._version; }
 
     saveIdentityToCookie(cookie)
     {

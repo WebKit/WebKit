@@ -37,15 +37,8 @@ WebInspector.DatabaseTableObject = class DatabaseTableObject extends WebInspecto
 
     // Public
 
-    get name()
-    {
-        return this._name;
-    }
-
-    get database()
-    {
-        return this._database;
-    }
+    get name() { return this._name; }
+    get database() { return this._database; }
 
     saveIdentityToCookie(cookie)
     {

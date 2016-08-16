@@ -39,25 +39,10 @@ WebInspector.ApplicationCacheFrame = class ApplicationCacheFrame extends WebInsp
 
     // Public
 
-    get frame()
-    {
-        return this._frame;
-    }
-
-    get manifest()
-    {
-        return this._manifest;
-    }
-
-    get status()
-    {
-        return this._status;
-    }
-
-    set status(status)
-    {
-        this._status = status;
-    }
+    get frame() { return this._frame; }
+    get manifest() { return this._manifest; }
+    get status() { return this._status; }
+    set status(status) { this._status = status; }
 
     saveIdentityToCookie(cookie)
     {

@@ -41,30 +41,11 @@ WebInspector.IndexedDatabase = class IndexedDatabase extends WebInspector.Object
 
     // Public
 
-    get name()
-    {
-        return this._name;
-    }
-
-    get securityOrigin()
-    {
-        return this._securityOrigin;
-    }
-
-    get host()
-    {
-        return this._host;
-    }
-
-    get version()
-    {
-        return this._version;
-    }
-
-    get objectStores()
-    {
-        return this._objectStores;
-    }
+    get name() { return this._name; }
+    get securityOrigin() { return this._securityOrigin; }
+    get host() { return this._host; }
+    get version() { return this._version; }
+    get objectStores() { return this._objectStores; }
 
     saveIdentityToCookie(cookie)
     {

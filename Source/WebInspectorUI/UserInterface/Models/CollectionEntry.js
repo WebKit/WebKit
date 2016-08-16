@@ -51,13 +51,6 @@ WebInspector.CollectionEntry = class CollectionEntry extends WebInspector.Object
 
     // Public
 
-    get key()
-    {
-        return this._key;
-    }
-
-    get value()
-    {
-        return this._value;
-    }
+    get key() { return this._key; }
+    get value() { return this._value; }
 };
