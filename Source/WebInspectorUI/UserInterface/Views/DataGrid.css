@@ -331,3 +331,26 @@
     z-index: var(--z-index-resizer);
     transform: translateX(-2.5px);
 }
+
+.data-grid table.header,
+.data-grid table.data {
+    /* Hide right border from first hidden columns. */
+    width: calc(100% + 1px);
+    margin-left: -1px;
+}
+
+.data-grid :matches(th, td):first-child {
+    border-left: 1px solid transparent;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .data-grid table.header,
+    .data-grid table.data {
+        width: calc(100% + 0.5px);
+        margin-left: -0.5px;
+    }
+
+    .data-grid :matches(th, td):first-child {
+        border-width: 0.5px;
+    }
+}

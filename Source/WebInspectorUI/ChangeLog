@@ -1,3 +1,21 @@
+2016-08-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Data grid has a double left border when the first column is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=160723
+        <rdar://problem/27778081>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch exploits the fact hiding columns that aren't first in DataGrid don't create double
+        borders.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid table.header,):
+        (.data-grid :matches(th, td):first-child):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+
 2016-08-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Do not request Scope Chain lists if section is collapsed (mainly Global Variables)
