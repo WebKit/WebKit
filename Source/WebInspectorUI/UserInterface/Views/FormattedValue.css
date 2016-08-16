@@ -68,10 +68,6 @@
     margin-left: -2px;
 }
 
-.formatted-node > .tree-outline.dom ol {
-    -webkit-padding-start: 1.2em;
-}
-
 .formatted-node > .tree-outline.dom li {
     -webkit-user-select: none !important;
 }

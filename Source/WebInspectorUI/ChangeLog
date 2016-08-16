@@ -1,5 +1,16 @@
 2016-08-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: DOM nodes shift when hovering over them in Console
+        https://bugs.webkit.org/show_bug.cgi?id=160789
+        <rdar://problem/27815600>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-node > .tree-outline.dom ol): Deleted.
+
+2016-08-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Data grid has a double left border when the first column is hidden
         https://bugs.webkit.org/show_bug.cgi?id=160723
         <rdar://problem/27778081>
