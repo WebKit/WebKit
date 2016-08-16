@@ -109,18 +109,10 @@ PASS Document.querySelector: Unknown pseudo-element: ::example
 PASS Document.querySelectorAll: Unknown pseudo-element: ::example 
 PASS Document.querySelector: Invalid pseudo-element: :::before 
 PASS Document.querySelectorAll: Invalid pseudo-element: :::before 
-FAIL Document.querySelector: Undeclared namespace: ns|div assert_throws: function "function () {
-        root.querySelector(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Document.querySelectorAll: Undeclared namespace: ns|div assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Document.querySelector: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-        root.querySelector(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Document.querySelectorAll: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+PASS Document.querySelector: Undeclared namespace: ns|div 
+PASS Document.querySelectorAll: Undeclared namespace: ns|div 
+PASS Document.querySelector: Undeclared namespace: :not(ns|div) 
+PASS Document.querySelectorAll: Undeclared namespace: :not(ns|div) 
 PASS Document.querySelector: Invalid namespace: ^|div 
 PASS Document.querySelectorAll: Invalid namespace: ^|div 
 PASS Document.querySelector: Invalid namespace: $|div 
@@ -185,18 +177,10 @@ PASS Detached Element.querySelector: Unknown pseudo-element: ::example
 PASS Detached Element.querySelectorAll: Unknown pseudo-element: ::example 
 PASS Detached Element.querySelector: Invalid pseudo-element: :::before 
 PASS Detached Element.querySelectorAll: Invalid pseudo-element: :::before 
-FAIL Detached Element.querySelector: Undeclared namespace: ns|div assert_throws: function "function () {
-        root.querySelector(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Detached Element.querySelectorAll: Undeclared namespace: ns|div assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Detached Element.querySelector: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-        root.querySelector(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Detached Element.querySelectorAll: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+PASS Detached Element.querySelector: Undeclared namespace: ns|div 
+PASS Detached Element.querySelectorAll: Undeclared namespace: ns|div 
+PASS Detached Element.querySelector: Undeclared namespace: :not(ns|div) 
+PASS Detached Element.querySelectorAll: Undeclared namespace: :not(ns|div) 
 PASS Detached Element.querySelector: Invalid namespace: ^|div 
 PASS Detached Element.querySelectorAll: Invalid namespace: ^|div 
 PASS Detached Element.querySelector: Invalid namespace: $|div 
@@ -261,18 +245,10 @@ PASS Fragment.querySelector: Unknown pseudo-element: ::example
 PASS Fragment.querySelectorAll: Unknown pseudo-element: ::example 
 PASS Fragment.querySelector: Invalid pseudo-element: :::before 
 PASS Fragment.querySelectorAll: Invalid pseudo-element: :::before 
-FAIL Fragment.querySelector: Undeclared namespace: ns|div assert_throws: function "function () {
-        root.querySelector(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Fragment.querySelectorAll: Undeclared namespace: ns|div assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Fragment.querySelector: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-        root.querySelector(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Fragment.querySelectorAll: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+PASS Fragment.querySelector: Undeclared namespace: ns|div 
+PASS Fragment.querySelectorAll: Undeclared namespace: ns|div 
+PASS Fragment.querySelector: Undeclared namespace: :not(ns|div) 
+PASS Fragment.querySelectorAll: Undeclared namespace: :not(ns|div) 
 PASS Fragment.querySelector: Invalid namespace: ^|div 
 PASS Fragment.querySelectorAll: Invalid namespace: ^|div 
 PASS Fragment.querySelector: Invalid namespace: $|div 
@@ -337,18 +313,10 @@ PASS In-document Element.querySelector: Unknown pseudo-element: ::example
 PASS In-document Element.querySelectorAll: Unknown pseudo-element: ::example 
 PASS In-document Element.querySelector: Invalid pseudo-element: :::before 
 PASS In-document Element.querySelectorAll: Invalid pseudo-element: :::before 
-FAIL In-document Element.querySelector: Undeclared namespace: ns|div assert_throws: function "function () {
-        root.querySelector(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL In-document Element.querySelectorAll: Undeclared namespace: ns|div assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL In-document Element.querySelector: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-        root.querySelector(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL In-document Element.querySelectorAll: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+PASS In-document Element.querySelector: Undeclared namespace: ns|div 
+PASS In-document Element.querySelectorAll: Undeclared namespace: ns|div 
+PASS In-document Element.querySelector: Undeclared namespace: :not(ns|div) 
+PASS In-document Element.querySelectorAll: Undeclared namespace: :not(ns|div) 
 PASS In-document Element.querySelector: Invalid namespace: ^|div 
 PASS In-document Element.querySelectorAll: Invalid namespace: ^|div 
 PASS In-document Element.querySelector: Invalid namespace: $|div 

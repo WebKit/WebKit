@@ -42,12 +42,8 @@ PASS Detached Element.matches: Unknown pseudo-class: :example
 PASS Detached Element.matches: Unknown pseudo-element: div::example 
 PASS Detached Element.matches: Unknown pseudo-element: ::example 
 PASS Detached Element.matches: Invalid pseudo-element: :::before 
-FAIL Detached Element.matches: Undeclared namespace: ns|div assert_throws: function "function () {
-          root.matches(q)
-        }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL Detached Element.matches: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-          root.matches(q)
-        }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+PASS Detached Element.matches: Undeclared namespace: ns|div 
+PASS Detached Element.matches: Undeclared namespace: :not(ns|div) 
 PASS Detached Element.matches: Invalid namespace: ^|div 
 PASS Detached Element.matches: Invalid namespace: $|div 
 PASS In-document Element.matches: Empty String:  
@@ -80,12 +76,8 @@ PASS In-document Element.matches: Unknown pseudo-class: :example
 PASS In-document Element.matches: Unknown pseudo-element: div::example 
 PASS In-document Element.matches: Unknown pseudo-element: ::example 
 PASS In-document Element.matches: Invalid pseudo-element: :::before 
-FAIL In-document Element.matches: Undeclared namespace: ns|div assert_throws: function "function () {
-          root.matches(q)
-        }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
-FAIL In-document Element.matches: Undeclared namespace: :not(ns|div) assert_throws: function "function () {
-          root.matches(q)
-        }" threw object "NamespaceError (DOM Exception 14): The operation is not a..." that is not a DOMException SyntaxError: property "code" is equal to 14, expected 12
+PASS In-document Element.matches: Undeclared namespace: ns|div 
+PASS In-document Element.matches: Undeclared namespace: :not(ns|div) 
 PASS In-document Element.matches: Invalid namespace: ^|div 
 PASS In-document Element.matches: Invalid namespace: $|div 
 PASS In-document Element.matches: Type selector, matching html element (with no refNodes): html 

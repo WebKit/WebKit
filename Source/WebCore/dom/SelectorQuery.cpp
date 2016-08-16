@@ -630,9 +630,8 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& docume
         return nullptr;
     }
 
-    // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
     if (selectorList.selectorsNeedNamespaceResolution()) {
-        ec = NAMESPACE_ERR;
+        ec = SYNTAX_ERR;
         return nullptr;
     }
 
