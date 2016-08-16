@@ -142,8 +142,9 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     String cookieString = value.contains('=') ? value : value + "=";
 
     RetainPtr<CFStringRef> cookieStringCF = cookieString.createCFString();
+    auto cookieStringCFPtr = cookieStringCF.get();
     RetainPtr<CFDictionaryRef> headerFieldsCF = adoptCF(CFDictionaryCreate(kCFAllocatorDefault,
-        (const void**)&s_setCookieKeyCF, (const void**)&cookieStringCF, 1,
+        (const void**)&s_setCookieKeyCF, (const void**)&cookieStringCFPtr, 1,
         &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     RetainPtr<CFArrayRef> unfilteredCookies = adoptCF(createCookies(headerFieldsCF.get(), urlCF.get()));

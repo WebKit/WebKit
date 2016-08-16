@@ -1,3 +1,28 @@
+2016-08-15  Anders Carlsson  <andersca@apple.com>
+
+        Add an address-of operator to RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=160879
+
+        Reviewed by Tim Horton.
+
+        Test HashMap and HashSet with an object whose operator& is deleted.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Sort the Xcode project.
+
+        * TestWebKitAPI/Tests/WTF/DeletedAddressOfOperator.h: Added.
+        (DeletedAddressOfOperator::DeletedAddressOfOperator):
+        (DeletedAddressOfOperator::value):
+        (DeletedAddressOfOperator::operator==):
+        (WTF::HashTraits<DeletedAddressOfOperator>::constructDeletedValue):
+        (WTF::HashTraits<DeletedAddressOfOperator>::isDeletedValue):
+        (WTF::DefaultHash<DeletedAddressOfOperator>::Hash::hash):
+        (WTF::DefaultHash<DeletedAddressOfOperator>::Hash::equal):
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-08-16  Jonathan Bedard  <jbedard@apple.com>
 
         False crashes in fast/text/emoji-gender-* tests

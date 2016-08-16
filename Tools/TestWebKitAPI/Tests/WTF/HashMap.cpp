@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "Counters.h"
+#include "DeletedAddressOfOperator.h"
 #include "MoveOnly.h"
 #include "RefLogger.h"
 #include "Test.h"
@@ -891,6 +892,11 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-
+TEST(WTF_HashMap, DeletedAddressOfOperator)
+{
+    HashMap<int, DeletedAddressOfOperator> map1;
+    for (auto& value : map1.values())
+        (void)value;
+}
 
 } // namespace TestWebKitAPI

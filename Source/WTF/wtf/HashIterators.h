@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_HashIterators_h
-#define WTF_HashIterators_h
+#pragma once
 
 #include <iterator>
 
@@ -151,7 +150,7 @@ namespace WTF {
     public:
         HashTableValuesIterator(const Iterator& impl) : m_impl(impl) {}
         
-        MappedType* get() const { return &(m_impl.get()->value); }
+        MappedType* get() const { return std::addressof(m_impl.get()->value); }
         MappedType& operator*() const { return *get(); }
         MappedType* operator->() const { return get(); }
 
@@ -214,7 +213,4 @@ namespace WTF {
         return a.m_impl != b.m_impl;
     }
 
-
 } // namespace WTF
-
-#endif // WTF_HashIterators_h

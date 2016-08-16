@@ -1,3 +1,22 @@
+2016-08-15  Anders Carlsson  <andersca@apple.com>
+
+        Add an address-of operator to RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=160879
+
+        Reviewed by Tim Horton.
+
+        This will make some security-related code from WebKitSystemInterface easier to port.
+
+        * wtf/HashIterators.h:
+        (WTF::HashTableValuesIterator::get):
+        * wtf/HashTable.h:
+        (WTF::HashTableBucketInitializer<true>::initialize):
+        Use std::addressof instead of &, in case & is overloaded.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::operator&):
+        Implement this.
+
 2016-08-15  Sam Weinig  <sam@webkit.org>
 
         Speed up compile times by not including wtf/Variant.h so much

@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "Counters.h"
+#include "DeletedAddressOfOperator.h"
 #include "MoveOnly.h"
 #include "RefLogger.h"
 #include <wtf/HashSet.h>
@@ -427,6 +428,14 @@ TEST(WTF_HashSet, Ref)
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
+
+TEST(WTF_HashSet, DeletedAddressOfOperator)
+{
+    HashSet<DeletedAddressOfOperator> set1;
+    set1.add(10);
+
+    set1.remove(10);
 }
 
 } // namespace TestWebKitAPI
