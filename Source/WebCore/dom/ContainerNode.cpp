@@ -60,6 +60,7 @@
 #include "TemplateContentDocumentFragment.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -876,7 +877,7 @@ unsigned ContainerNode::childElementCount() const
     return std::distance(children.begin(), children.end());
 }
 
-void ContainerNode::append(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+void ContainerNode::append(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     RefPtr<Node> node = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector), ec);
     if (ec || !node)
@@ -885,7 +886,7 @@ void ContainerNode::append(Vector<std::variant<Ref<Node>, String>>&& nodeOrStrin
     appendChild(*node, ec);
 }
 
-void ContainerNode::prepend(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+void ContainerNode::prepend(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     RefPtr<Node> node = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector), ec);
     if (ec || !node)

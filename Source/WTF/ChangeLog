@@ -1,3 +1,16 @@
+2016-08-15  Sam Weinig  <sam@webkit.org>
+
+        Speed up compile times by not including wtf/Variant.h so much
+        https://bugs.webkit.org/show_bug.cgi?id=160847
+
+        Reviewed by Alex Christensen and Saam Barati.
+
+        * wtf/Forward.h:
+        Add forward declaration of std::variant.
+
+        * wtf/StdLibExtras.h:
+        Remove references to std::variant. Move them to wtf/Variant.h
+
 2016-08-15  Keith Miller  <keith_miller@apple.com>
 
         Implement WASM Parser and B3 IR generator

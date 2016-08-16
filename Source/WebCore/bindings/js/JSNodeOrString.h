@@ -38,7 +38,7 @@ namespace WebCore {
 
 class Node;
 
-Vector<std::variant<Ref<Node>, String>> toNodeOrStringVector(JSC::ExecState&);
+Vector<std::experimental::variant<Ref<Node>, String>> toNodeOrStringVector(JSC::ExecState&);
 
 } // namespace WebCore
 

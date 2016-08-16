@@ -73,6 +73,7 @@
 #include "XMLNames.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/SHA1.h>
+#include <wtf/Variant.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -437,7 +438,7 @@ bool Node::appendChild(Node& newChild, ExceptionCode& ec)
     return downcast<ContainerNode>(*this).appendChild(newChild, ec);
 }
 
-static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Vector<std::variant<Ref<Node>, String>>& vector)
+static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Vector<std::experimental::variant<Ref<Node>, String>>& vector)
 {
     HashSet<RefPtr<Node>> nodeSet;
 
@@ -447,7 +448,7 @@ static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const V
     );
 
     for (const auto& variant : vector)
-        std::visit(visitor, variant);
+        std::experimental::visit(visitor, variant);
 
     return nodeSet;
 }
@@ -470,7 +471,7 @@ static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashS
     return nullptr;
 }
 
-RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     if (nodeOrStringVector.isEmpty())
         return nullptr;
@@ -484,7 +485,7 @@ RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<std::variant<Ref<Node>, 
     );
 
     for (auto& variant : nodeOrStringVector)
-        std::visit(visitor, variant);
+        std::experimental::visit(visitor, variant);
 
     if (nodes.size() == 1)
         return WTFMove(nodes.first());
@@ -497,7 +498,7 @@ RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<std::variant<Ref<Node>, 
     return WTFMove(nodeToReturn);
 }
 
-void Node::before(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+void Node::before(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
@@ -518,7 +519,7 @@ void Node::before(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, 
     parent->insertBefore(*node, viablePreviousSibling.get(), ec);
 }
 
-void Node::after(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+void Node::after(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
@@ -534,7 +535,7 @@ void Node::after(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, E
     parent->insertBefore(*node, viableNextSibling.get(), ec);
 }
 
-void Node::replaceWith(Vector<std::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+void Node::replaceWith(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)

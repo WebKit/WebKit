@@ -32,7 +32,6 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/Variant.h>
 
 // This was used to declare and define a static local variable (static T;) so that
 //  it was leaked so that its destructors were not called at exit.
@@ -402,18 +401,6 @@ ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 
     return move(forward<T>(value));
 }
-
-#if !COMPILER(CLANG) || WTF_CPP_STD_VER >= 14
-
-template<typename... Types>
-using variant = std::experimental::variant<Types...>;
-
-using std::experimental::get;
-using std::experimental::get_if;
-using std::experimental::holds_alternative;
-using std::experimental::visit;
-
-#endif
 
 } // namespace std
 

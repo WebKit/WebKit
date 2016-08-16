@@ -33,11 +33,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-Vector<std::variant<Ref<Node>, String>> toNodeOrStringVector(ExecState& state)
+Vector<std::experimental::variant<Ref<Node>, String>> toNodeOrStringVector(ExecState& state)
 {
     size_t argumentCount = state.argumentCount();
 
-    Vector<std::variant<Ref<Node>, String>> result;
+    Vector<std::experimental::variant<Ref<Node>, String>> result;
     result.reserveInitialCapacity(argumentCount);
 
     for (size_t i = 0; i < argumentCount; ++i) {

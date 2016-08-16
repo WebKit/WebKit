@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef WTF_Forward_h
-#define WTF_Forward_h
+#pragma once
 
 #include <stddef.h>
 
@@ -54,6 +53,18 @@ class TextPosition;
 
 }
 
+namespace std {
+namespace experimental {
+
+template<typename... T> class variant;
+
+}
+
+template<typename... Types>
+using variant = std::experimental::variant<Types...>;
+
+}
+
 using WTF::AtomicString;
 using WTF::AtomicStringImpl;
 using WTF::BinarySemaphore;
@@ -78,5 +89,3 @@ using WTF::StringImpl;
 using WTF::StringView;
 using WTF::TextPosition;
 using WTF::Vector;
-
-#endif // WTF_Forward_h

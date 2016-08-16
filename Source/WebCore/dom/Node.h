@@ -35,7 +35,6 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/TypeCasts.h>
-#include <wtf/Variant.h>
 
 // This needs to be here because Document.h also depends on it.
 #define DUMP_NODE_STATISTICS 0
@@ -208,9 +207,9 @@ public:
     Element* nextElementSibling() const;
 
     // From the ChildNode - https://dom.spec.whatwg.org/#childnode
-    void before(Vector<std::variant<Ref<Node>, String>>&&, ExceptionCode&);
-    void after(Vector<std::variant<Ref<Node>, String>>&&, ExceptionCode&);
-    void replaceWith(Vector<std::variant<Ref<Node>, String>>&&, ExceptionCode&);
+    void before(Vector<std::experimental::variant<Ref<Node>, String>>&&, ExceptionCode&);
+    void after(Vector<std::experimental::variant<Ref<Node>, String>>&&, ExceptionCode&);
+    void replaceWith(Vector<std::experimental::variant<Ref<Node>, String>>&&, ExceptionCode&);
     WEBCORE_EXPORT void remove(ExceptionCode&);
 
     // Other methods (not part of DOM)
@@ -661,7 +660,7 @@ protected:
     void setStyleChange(StyleChangeType changeType) { m_nodeFlags = (m_nodeFlags & ~StyleChangeMask) | changeType; }
     void updateAncestorsForStyleRecalc();
 
-    RefPtr<Node> convertNodesOrStringsIntoNode(Vector<std::variant<Ref<Node>, String>>&&, ExceptionCode&);
+    RefPtr<Node> convertNodesOrStringsIntoNode(Vector<std::experimental::variant<Ref<Node>, String>>&&, ExceptionCode&);
 
 private:
     virtual PseudoId customPseudoId() const
