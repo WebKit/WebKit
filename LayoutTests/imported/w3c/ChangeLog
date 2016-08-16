@@ -1,5 +1,18 @@
 2016-08-16  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html with upstream
+        https://bugs.webkit.org/show_bug.cgi?id=160903
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html with upstream
+        after https://github.com/w3c/web-platform-tests/pull/3468.
+
+        * web-platform-tests/dom/ranges/Range-mutations-expected.txt:
+        * web-platform-tests/dom/ranges/Range-mutations.html:
+
+2016-08-16  Chris Dumez  <cdumez@apple.com>
+
         querySelector() / querySelectorAll() should always throw a SyntaxError when failing to parse selector string
         https://bugs.webkit.org/show_bug.cgi?id=160906
 
