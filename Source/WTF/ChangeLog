@@ -1,5 +1,11 @@
 2016-08-16  Anders Carlsson  <andersca@apple.com>
 
+        Fix a thinko.
+
+        * wtf/Scope.h:
+
+2016-08-16  Anders Carlsson  <andersca@apple.com>
+
         Add WTF::ScopeExit
         https://bugs.webkit.org/show_bug.cgi?id=160908
 

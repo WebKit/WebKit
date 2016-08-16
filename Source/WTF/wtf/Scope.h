@@ -37,7 +37,7 @@ class ScopeExit final {
 public:
     template<typename ExitFunctionParameter>
     explicit ScopeExit(ExitFunctionParameter&& exitFunction)
-        : m_exitFunction(std::forward<ExitFunction>(m_exitFunction))
+        : m_exitFunction(std::forward<ExitFunction>(exitFunction))
     {
     }
 
