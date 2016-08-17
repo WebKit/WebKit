@@ -31,13 +31,29 @@
 #include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
+#include "JSDOMConvert.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-    
 #if ENABLE(CUSTOM_ELEMENTS)
+
+static JSObject* getLifecycleCallback(ExecState& state, JSObject& prototype, const Identifier& id)
+{
+    JSValue callback = prototype.get(&state, id);
+    if (state.hadException())
+        return nullptr;
+    if (callback.isUndefined())
+        return nullptr;
+    if (!callback.isFunction()) {
+        throwTypeError(&state, ASCIILiteral("A lifecycle callback must be a function"));
+        return nullptr;
+    }
+    return callback.getObject();
+}
+
+// https://html.spec.whatwg.org/#dom-customelementsregistry-define
 JSValue JSCustomElementsRegistry::define(ExecState& state)
 {
     if (UNLIKELY(state.argumentCount() < 2))
@@ -53,6 +69,7 @@ JSValue JSCustomElementsRegistry::define(ExecState& state)
     JSObject* constructor = constructorValue.getObject();
 
     // FIXME: Throw a TypeError if constructor doesn't inherit from HTMLElement.
+    // https://github.com/w3c/webcomponents/issues/541
 
     switch (Document::validateCustomElementName(localName)) {
     case CustomElementNameValidationStatus::Valid:
@@ -65,6 +82,9 @@ JSValue JSCustomElementsRegistry::define(ExecState& state)
         return throwSyntaxError(&state, ASCIILiteral("Custom element name cannot contain an upper case letter"));
     }
 
+    // FIXME: Check re-entrancy here.
+    // https://github.com/w3c/webcomponents/issues/545
+
     CustomElementsRegistry& registry = wrapped();
     if (registry.findInterface(localName)) {
         throwNotSupportedError(state, ASCIILiteral("Cannot define multiple custom elements with the same tag name"));
@@ -76,20 +96,51 @@ JSValue JSCustomElementsRegistry::define(ExecState& state)
         return jsUndefined();
     }
 
-    // FIXME: 10. Let prototype be Get(constructor, "prototype"). Rethrow any exceptions.
-    // FIXME: 11. If Type(prototype) is not Object, throw a TypeError exception.
-    // FIXME: 12. Let attachedCallback be Get(prototype, "attachedCallback"). Rethrow any exceptions.
-    // FIXME: 13. Let detachedCallback be Get(prototype, "detachedCallback"). Rethrow any exceptions.
-    // FIXME: 14. Let attributeChangedCallback be Get(prototype, "attributeChangedCallback"). Rethrow any exceptions.
+    auto& vm = globalObject()->vm();
+    JSValue prototypeValue = constructor->get(&state, vm.propertyNames->prototype);
+    if (state.hadException())
+        return jsUndefined();
+    if (!prototypeValue.isObject())
+        return throwTypeError(&state, ASCIILiteral("Custom element constructor's prototype must be an object"));
+    JSObject& prototypeObject = *asObject(prototypeValue);
 
-    PrivateName uniquePrivateName;
-    globalObject()->putDirect(globalObject()->vm(), uniquePrivateName, constructor);
+    // FIXME: Add the support for connectedCallback.
+    getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback"));
+    if (state.hadException())
+        return jsUndefined();
+
+    // FIXME: Add the support for disconnectedCallback.
+    getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback"));
+    if (state.hadException())
+        return jsUndefined();
+
+    // FIXME: Add the support for adoptedCallback.
+    getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback"));
+    if (state.hadException())
+        return jsUndefined();
 
     QualifiedName name(nullAtom, localName, HTMLNames::xhtmlNamespaceURI);
-    registry.addElementDefinition(JSCustomElementInterface::create(name, constructor, globalObject()));
+    auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
+
+    auto* attributeChangedCallback = getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
+    if (state.hadException())
+        return jsUndefined();
+    if (attributeChangedCallback) {
+        auto value = convertOptional<Vector<String>>(state, constructor->get(&state, Identifier::fromString(&state, "observedAttributes")));
+        if (state.hadException())
+            return jsUndefined();
+        if (value)
+            elementInterface->setAttributeChangedCallback(attributeChangedCallback, *value);
+    }
+
+    PrivateName uniquePrivateName;
+    globalObject()->putDirect(vm, uniquePrivateName, constructor);
+
+    registry.addElementDefinition(WTFMove(elementInterface));
 
     // FIXME: 17. Let map be registry's upgrade candidates map.
     // FIXME: 18. Upgrade a newly-defined element given map and definition.
+    // FIXME: 19. Resolve whenDefined promise.
 
     return jsUndefined();
 }
