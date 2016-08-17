@@ -1,3 +1,31 @@
+2016-08-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed a potential bug in MarkedArgumentBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=160948
+        <rdar://problem/27889416>
+
+        Reviewed by Oliver Hunt.
+
+        I haven't been able to produce an observable test case after some trying.
+
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::addMarkSet): New helper function -- I broke
+        this out from existing code for clarity, but the behavior is the same.
+
+        (JSC::MarkedArgumentBuffer::expandCapacity): Ditto.
+
+        (JSC::MarkedArgumentBuffer::slowAppend): Always addMarkSet() on the slow
+        path. This is faster than the old linear scan, and I think it might
+        avoid cases the old scan could miss.
+
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::append): Account for the case where someone
+        has called clear() or removeLast().
+
+        (JSC::MarkedArgumentBuffer::mallocBase): No behavior change -- but it's
+        clearer to test the buffers directly instead of inferring what they
+        might be based on capacity.
+
 2016-08-17  Mark Lam  <mark.lam@apple.com>
 
         Remove an invalid assertion in the DFG backend's GetById emitter.
