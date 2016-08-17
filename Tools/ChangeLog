@@ -1,3 +1,15 @@
+2016-08-17  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] -[NSString isEqualToString:] returns NO for any WKNSString argument
+        https://bugs.webkit.org/show_bug.cgi?id=160938
+        <rdar://problem/27876652>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKObject.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2016-08-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support abbreviations in iOS

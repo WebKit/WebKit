@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import "config.h"
 
-#if WK_API_ENABLED
+#import <WebKit/WKFoundation.h>
 
-#import <type_traits>
+#if WK_API_ENABLED && WK_HAVE_C_SPI
 
-namespace API {
-class Object;
+#import <WebKit/WKString.h>
+#import <objc/runtime.h>
 
-template<typename T>
-struct ObjectStorage {
-    T* get() { return reinterpret_cast<T*>(&data); }
-    T& operator*() { return *reinterpret_cast<T*>(&data); }
-    T* operator->() { return reinterpret_cast<T*>(&data); }
+namespace TestWebKitAPI {
 
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type data;
-};
+TEST(WebKit2, WKObject)
+{
+    WKStringRef stringRef = WKStringCreateWithUTF8CString("just testing");
+    ASSERT_TRUE([@"just testing" isEqualToString:(NSString *)stringRef]);
 
-API::Object* unwrap(void*);
-void* wrap(API::Object*);
+    NSString *weakString = nil;
 
+    objc_storeWeak(&weakString, (NSString *)stringRef);
+    ASSERT_NE((id)0, weakString);
+
+    WKRelease(stringRef);
+    ASSERT_EQ((id)0, weakString);
 }
 
-@protocol WKObject <NSObject>
+} // namespace TestWebKitAPI
 
-@property (readonly) API::Object& _apiObject;
-
-@end
-
-NS_ROOT_CLASS
-@interface WKObject <WKObject>
-
-- (NSObject *)_web_createTarget NS_RETURNS_RETAINED;
-
-@end
-
-#endif // WK_API_ENABLED
+#endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-#if WK_API_ENABLED
+#import <objc/objc-internal.h>
 
-#import <type_traits>
+#endif
 
-namespace API {
-class Object;
-
-template<typename T>
-struct ObjectStorage {
-    T* get() { return reinterpret_cast<T*>(&data); }
-    T& operator*() { return *reinterpret_cast<T*>(&data); }
-    T* operator->() { return reinterpret_cast<T*>(&data); }
-
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type data;
-};
-
-API::Object* unwrap(void*);
-void* wrap(API::Object*);
-
-}
-
-@protocol WKObject <NSObject>
-
-@property (readonly) API::Object& _apiObject;
-
-@end
-
-NS_ROOT_CLASS
-@interface WKObject <WKObject>
-
-- (NSObject *)_web_createTarget NS_RETURNS_RETAINED;
-
-@end
-
-#endif // WK_API_ENABLED
+OBJC_EXPORT id _objc_rootRetain(id obj);
+OBJC_EXPORT bool _objc_rootReleaseWasZero(id obj);
+OBJC_EXPORT bool _objc_rootTryRetain(id obj);
+OBJC_EXPORT bool _objc_rootIsDeallocating(id obj);
+OBJC_EXPORT id _objc_rootAutorelease(id obj);
+OBJC_EXPORT uintptr_t _objc_rootRetainCount(id obj);
+OBJC_EXPORT void _objc_rootDealloc(id obj);

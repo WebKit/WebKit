@@ -29,22 +29,18 @@
 #if WK_API_ENABLED
 
 #import "APIObject.h"
-
-@interface NSObject ()
-- (CFTypeID)_cfTypeID;
-@end
+#import "objcSPI.h"
+#import <wtf/ObjcRuntimeExtras.h>
 
 @implementation WKObject {
+    Class _isa;
     BOOL _hasInitializedTarget;
     NSObject *_target;
 }
 
-- (void)dealloc
++ (Class)class
 {
-    static_cast<API::Object*>(object_getIndexedIvars(self))->~Object();
-    [_target release];
-
-    [super dealloc];
+    return self;
 }
 
 static inline void initializeTargetIfNeeded(WKObject *self)
@@ -55,6 +51,27 @@ static inline void initializeTargetIfNeeded(WKObject *self)
     self->_hasInitializedTarget = YES;
     self->_target = [self _web_createTarget];
 }
+
+// MARK: Methods used by the Objective-C runtime
+
+- (id)forwardingTargetForSelector:(SEL)selector
+{
+    initializeTargetIfNeeded(self);
+
+    return _target;
+}
+
+- (BOOL)allowsWeakReference
+{
+    return !_objc_rootIsDeallocating(self);
+}
+
+- (BOOL)retainWeakReference
+{
+    return _objc_rootTryRetain(self);
+}
+
+// MARK: NSObject protocol implementation
 
 - (BOOL)isEqual:(id)object
 {
@@ -73,7 +90,46 @@ static inline void initializeTargetIfNeeded(WKObject *self)
 {
     initializeTargetIfNeeded(self);
 
-    return _target ? [_target hash] : [super hash];
+    return _target ? [_target hash] : reinterpret_cast<NSUInteger>(self);
+}
+
+- (Class)superclass
+{
+    initializeTargetIfNeeded(self);
+
+    return _target ? [_target superclass] : class_getSuperclass(object_getClass(self));
+}
+
+- (Class)class
+{
+    initializeTargetIfNeeded(self);
+
+    return _target ? [_target class] : object_getClass(self);
+}
+
+- (instancetype)self
+{
+    return self;
+}
+
+- (id)performSelector:(SEL)selector
+{
+    return selector ? wtfObjcMsgSend<id>(self, selector) : nil;
+}
+
+- (id)performSelector:(SEL)selector withObject:(id)object
+{
+    return selector ? wtfObjcMsgSend<id>(self, selector, object) : nil;
+}
+
+- (id)performSelector:(SEL)selector withObject:(id)object1 withObject:(id)object2
+{
+    return selector ? wtfObjcMsgSend<id>(self, selector, object1, object2) : nil;
+}
+
+- (BOOL)isProxy
+{
+    return NO;
 }
 
 - (BOOL)isKindOfClass:(Class)aClass
@@ -94,47 +150,61 @@ static inline void initializeTargetIfNeeded(WKObject *self)
 {
     initializeTargetIfNeeded(self);
 
-    return [_target respondsToSelector:selector] || [super respondsToSelector:selector];
+    return [_target respondsToSelector:selector] || (selector && class_respondsToSelector(object_getClass(self), selector));
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)protocol
 {
     initializeTargetIfNeeded(self);
 
-    return [_target conformsToProtocol:protocol] || [super conformsToProtocol:protocol];
-}
+    if ([_target conformsToProtocol:protocol])
+        return YES;
 
-- (id)forwardingTargetForSelector:(SEL)selector
-{
-    initializeTargetIfNeeded(self);
+    if (!protocol)
+        return NO;
 
-    return _target;
+    for (Class cls = object_getClass(self); cls; cls = class_getSuperclass(cls)) {
+        if (class_conformsToProtocol(cls, protocol))
+            return YES;
+    }
+
+    return NO;
 }
 
 - (NSString *)description
 {
     initializeTargetIfNeeded(self);
 
-    return _target ? [_target description] : [super description];
+    return _target ? [_target description] : [NSString stringWithFormat:@"<%s %p>", class_getName(object_getClass(self)), self];
 }
 
-- (Class)classForCoder
+- (instancetype)retain
 {
-    initializeTargetIfNeeded(self);
-
-    return [_target classForCoder];
+    return _objc_rootRetain(self);
 }
 
-- (Class)classForKeyedArchiver
+- (oneway void)release
 {
-    initializeTargetIfNeeded(self);
-
-    return [_target classForKeyedArchiver];
+    if (_objc_rootReleaseWasZero(self)) {
+        static_cast<API::Object*>(object_getIndexedIvars(self))->~Object();
+        [_target release];
+        _objc_rootDealloc(self);
+    }
 }
 
-- (CFTypeID)_cfTypeID
+- (instancetype)autorelease
 {
-    return _target ? [_target _cfTypeID] : [super _cfTypeID];
+    return _objc_rootAutorelease(self);
+}
+
+- (NSUInteger)retainCount
+{
+    return _objc_rootRetainCount(self);
+}
+
+- (NSZone *)zone
+{
+    return NSDefaultMallocZone();
 }
 
 - (NSObject *)_web_createTarget

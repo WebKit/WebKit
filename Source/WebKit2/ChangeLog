@@ -1,3 +1,51 @@
+2016-08-17  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] -[NSString isEqualToString:] returns NO for any WKNSString argument
+        https://bugs.webkit.org/show_bug.cgi?id=160938
+        <rdar://problem/27876652>
+
+        Reviewed by Anders Carlsson.
+
+        -[NSString isEqualToString:] calls an internal NSObject method on its argument, which
+        NSString subclasses override to return YES, but WKObject does not override and does not
+        forward to its target NSString.
+
+        To fix this issue and other similar issues, we make WKObject a root class instead of an
+        NSObject subclass.
+
+        Test: TestWebKitAPI/Tests/WebKit2Cocoa/WKObject.mm
+
+        * Platform/spi/Cocoa/objcSPI.h: Added.
+
+        * Shared/Cocoa/WKObject.h: Make WKObject a root class instead of inhereting from NSObject.
+
+        * Shared/Cocoa/WKObject.mm:
+        (+[WKObject class]): Return self.
+        (-[WKObject allowsWeakReference]): Added. Called by the Objective-C runtime.
+        (-[WKObject retainWeakReference]): Ditto.
+        (-[WKObject hash]): If we don’t have a target, return our address.
+        (-[WKObject superclass]): Implement this NSObject protocol method.
+        (-[WKObject class]): Ditto.
+        (-[WKObject self]): Ditto.
+        (-[WKObject performSelector:]): Ditto.
+        (-[WKObject performSelector:withObject:]): Ditto.
+        (-[WKObject performSelector:withObject:withObject:]): Ditto.
+        (-[WKObject isProxy]): Ditto.
+        (-[WKObject respondsToSelector:]): Changed to not call super.
+        (-[WKObject conformsToProtocol:]): Ditto.
+        (-[WKObject description]): Ditto.
+        (-[WKObject retain]): Implement this NSObject protocol method.
+        (-[WKObject release]): Ditto.
+        (-[WKObject autorelease]): Ditto.
+        (-[WKObject retainCount]): Ditto.
+        (-[WKObject zone]): Ditto.
+        (-[WKObject dealloc]): Deleted.
+        (-[WKObject classForCoder]): Deleted.
+        (-[WKObject classForKeyedArchiver]): Deleted.
+        (-[WKObject _cfTypeID]): Deleted.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added reference to new file.
+
 2016-08-17  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Fix test_ewk2_view after r203612 
