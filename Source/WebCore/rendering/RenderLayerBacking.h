@@ -216,6 +216,8 @@ public:
     bool useGiantTiles() const override;
     bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
+    LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }
+
 #if PLATFORM(IOS)
     bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const override;
 #endif
@@ -247,8 +249,6 @@ public:
 
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool);
     WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const;
-
-    LayoutSize devicePixelFractionFromRenderer() const { return m_devicePixelFractionFromRenderer; }
 
 private:
     FloatRect backgroundBoxForSimpleContainerPainting() const;
@@ -343,6 +343,8 @@ private:
     static AnimatedPropertyID cssToGraphicsLayerProperty(CSSPropertyID);
 
     bool canIssueSetNeedsDisplay() const { return !paintsIntoWindow() && !paintsIntoCompositedAncestor(); }
+    LayoutRect computeParentGraphicsLayerRect(RenderLayer* compositedAncestor, LayoutSize& ancestorClippingLayerOffset) const;
+    LayoutRect computePrimaryGraphicsLayerRect(const LayoutRect& parentGraphicsLayerRect) const;
 
     RenderLayer& m_owningLayer;
 
@@ -366,8 +368,8 @@ private:
     ScrollingNodeID m_scrollingNodeID;
 
     LayoutRect m_compositedBounds;
-    LayoutSize m_devicePixelFractionFromRenderer;
-    LayoutSize m_compositedBoundsDeltaFromGraphicsLayer; // This is the (subpixel) distance between the edge of the graphics layer and the layer bounds.
+    LayoutSize m_subpixelOffsetFromRenderer; // This is the subpixel distance between the primary graphics layer and the associated renderer's bounds.
+    LayoutSize m_compositedBoundsOffsetFromGraphicsLayer; // This is the subpixel distance between the primary graphics layer and the render layer bounds.
 
     bool m_artificiallyInflatedBounds; // bounds had to be made non-zero to make transform-origin work
     bool m_isMainFrameRenderViewLayer;

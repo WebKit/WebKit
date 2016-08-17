@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests transform origin with subpixel values.</title>
+<style>
+.container {
+  position: absolute;
+  background-color: green; 
+  width: 15px; 
+  height: 15px;
+  transform: rotate(90deg) translateZ(0);
+}
+</style>
+</head>
+<body>
+<script>
+var subpixelForContainer = 30;
+for (var i = 0; i < 10; ++i) {
+  var subpixelForOrigin = 0;
+  for (var j = 0; j < 10; ++j) {
+    var container = document.createElement("div");
+    container.className = "container";
+    container.style.left = i * 20 + subpixelForContainer + "px";
+    container.style.top = j * 20 + subpixelForContainer + "px";
+	container.style.transformOrigin = i * subpixelForOrigin +"px " + j * subpixelForOrigin + "px";
+    document.body.appendChild(container);
+    subpixelForContainer += 0.05;
+    subpixelForOrigin += 0.2;
+  }
+}
+</script>
+</body>
+</html>
