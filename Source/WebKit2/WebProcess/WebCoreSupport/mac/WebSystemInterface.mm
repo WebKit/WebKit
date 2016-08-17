@@ -36,9 +36,6 @@ void InitWebCoreSystemInterface(void)
     static dispatch_once_t initOnce;
     
     dispatch_once(&initOnce, ^{
-#if !PLATFORM(IOS)
-        INIT(AdvanceDefaultButtonPulseAnimation);
-#endif
         INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
         INIT(CGPatternCreateWithImageAndTransform);
 #if !PLATFORM(IOS)
@@ -52,7 +49,6 @@ void InitWebCoreSystemInterface(void)
         INIT(DrawCellFocusRingWithFrameAtTime);
         INIT(DrawMediaSliderTrack);
         INIT(DrawMediaUIPart);
-        INIT(SignedPublicKeyAndChallengeString);
 #endif
         INIT(GetWebDefaultCFStringEncoding);
         INIT(CGContextIsPDFContext);

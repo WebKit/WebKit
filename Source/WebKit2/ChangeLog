@@ -1,3 +1,13 @@
+2016-08-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove a couple of unused WKSI function pointers
+        https://bugs.webkit.org/show_bug.cgi?id=160946
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Deleted.
+
 2016-08-17  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] -[NSString isEqualToString:] returns NO for any WKNSString argument

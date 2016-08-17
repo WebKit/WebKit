@@ -42,9 +42,6 @@ void InitWebCoreSystemInterface(void)
     if (didInit)
         return;
 
-#if !PLATFORM(IOS)
-    INIT(AdvanceDefaultButtonPulseAnimation);
-#endif
     INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
     INIT(CGPatternCreateWithImageAndTransform);
 #if !PLATFORM(IOS)
@@ -61,7 +58,6 @@ void InitWebCoreSystemInterface(void)
 #endif
     INIT(GetWebDefaultCFStringEncoding);
 #if !PLATFORM(IOS)
-    INIT(SignedPublicKeyAndChallengeString);
     INIT(GetWheelEventDeltas);
     INIT(GetNSEventKeyChar);
     INIT(HitTestMediaUIPart);

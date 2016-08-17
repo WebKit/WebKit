@@ -30,7 +30,6 @@
 
 #import <Foundation/Foundation.h>
 
-void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
 bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
 CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
@@ -48,7 +47,6 @@ NSView *(*wkCreateMediaUIBackgroundView)(void);
 NSControl *(*wkCreateMediaUIControl)(int);
 void (*wkWindowSetAlpha)(NSWindow *, float);
 void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
-CFStringRef (*wkSignedPublicKeyAndChallengeString)(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
