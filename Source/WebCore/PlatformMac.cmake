@@ -465,6 +465,9 @@ list(APPEND WebCore_SOURCES
 
     platform/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
+    platform/gamepad/mac/HIDGamepad.cpp
+    platform/gamepad/mac/HIDGamepadProvider.cpp
+
     platform/graphics/DisplayRefreshMonitor.cpp
     platform/graphics/DisplayRefreshMonitorManager.cpp
 
@@ -582,13 +585,12 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opentype/OpenTypeCG.cpp
     platform/graphics/opentype/OpenTypeMathData.cpp
 
+    platform/mac/BlacklistUpdater.mm
     platform/mac/CursorMac.mm
     platform/mac/DragDataMac.mm
     platform/mac/DragImageMac.mm
     platform/mac/EventLoopMac.mm
     platform/mac/FileSystemMac.mm
-    platform/mac/HIDGamepad.cpp
-    platform/mac/HIDGamepadProvider.cpp
     platform/mac/KeyEventMac.mm
     platform/mac/KillRingMac.mm
     platform/mac/LocalCurrentGraphicsContext.mm
@@ -602,6 +604,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/PlatformPasteboardMac.mm
     platform/mac/PlatformScreenMac.mm
     platform/mac/PlatformSpeechSynthesizerMac.mm
+    platform/mac/PluginBlacklist.mm
     platform/mac/PowerObserverMac.cpp
     platform/mac/PublicSuffixMac.mm
     platform/mac/RemoteCommandListenerMac.mm
@@ -625,6 +628,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebCoreNSURLExtras.mm
     platform/mac/WebCoreObjCExtras.mm
     platform/mac/WebCoreSystemInterface.mm
+    platform/mac/WebGLBlacklist.mm
     platform/mac/WebNSAttributedStringExtras.mm
     platform/mac/WebVideoFullscreenController.mm
     platform/mac/WebVideoFullscreenHUDWindowController.mm
@@ -764,6 +768,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/text
 
     platform/audio/cocoa
+
+    platform/gamepad/mac
 
     platform/graphics/ca
     platform/graphics/cocoa

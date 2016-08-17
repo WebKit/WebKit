@@ -86,7 +86,6 @@ list(APPEND WebKit_SOURCES
     mac/History/WebHistoryItem.mm
     mac/History/WebURLsWithTitles.m
 
-    mac/Misc/OldWebAssertions.c
     mac/Misc/WebCache.mm
     mac/Misc/WebCoreStatistics.mm
     mac/Misc/WebDownload.mm
@@ -173,11 +172,11 @@ list(APPEND WebKit_SOURCES
     mac/WebCoreSupport/WebIconDatabaseClient.mm
     mac/WebCoreSupport/WebInspectorClient.mm
     mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
-    mac/WebCoreSupport/WebKeyGenerator.mm
     mac/WebCoreSupport/WebKitFullScreenListener.mm
     mac/WebCoreSupport/WebNotificationClient.mm
     mac/WebCoreSupport/WebOpenPanelResultListener.mm
     mac/WebCoreSupport/WebPlatformStrategies.mm
+    mac/WebCoreSupport/WebPluginInfoProvider.mm
     mac/WebCoreSupport/WebProgressTrackerClient.mm
     mac/WebCoreSupport/WebSecurityOrigin.mm
     mac/WebCoreSupport/WebSelectionServiceController.mm
@@ -277,8 +276,6 @@ set(C99_FILES
     mac/DefaultDelegates/WebDefaultEditingDelegate.m
     mac/DefaultDelegates/WebDefaultPolicyDelegate.m
     mac/DefaultDelegates/WebDefaultUIDelegate.m
-
-    mac/Misc/OldWebAssertions.c
 
     mac/Misc/WebKitErrors.m
     mac/Misc/WebKitLogging.m

@@ -1,3 +1,9 @@
+2016-08-16  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed, CMake build fix
+
+        * PlatformMac.cmake:
+
 2016-08-15  Anders Carlsson  <andersca@apple.com>
 
         Remove OldWebAssertions.c
