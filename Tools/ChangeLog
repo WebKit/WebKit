@@ -1,3 +1,15 @@
+2016-08-17  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        [EFL] Bump efl version from 1.17 to 1.18
+        https://bugs.webkit.org/show_bug.cgi?id=160899
+
+        Reviewed by Antonio Gomes.
+
+        To use efl-1.18, EFL port needs to update install dependencies as well.
+
+        * efl/install-dependencies:
+        * efl/jhbuild.modules:
+
 2016-08-17  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Add tests for linked fonts.

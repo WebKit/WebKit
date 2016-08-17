@@ -14,7 +14,7 @@
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="libsoup"/>
-      <dep package="elementary"/>
+      <dep package="efl"/>
       <dep package="libxml2"/>
       <dep package="libxslt"/>
       <dep package="gstreamer"/>
@@ -159,38 +159,25 @@
             md5sum="e75e303b4f7756c2b16203a57ac87eba"/>
   </autotools>
 
- <autotools id="harfbuzz" autogen-sh="configure">
-   <branch module="software/harfbuzz/release/harfbuzz-0.9.35.tar.bz2" version="0.9.35"
+  <autotools id="harfbuzz" autogen-sh="configure">
+    <branch module="software/harfbuzz/release/harfbuzz-0.9.35.tar.bz2" version="0.9.35"
            checkoutdir="harfbuzz-0.9.35"
            repo="freedesktop.org"
            hash="sha256:0aa1a8aba6f502321cf6fef3c9d2c73dde48389c5ed1d3615a7691944c2a06ed">
-   </branch>
- </autotools>
+    </branch>
+  </autotools>
 
   <autotools id="efl" autogen-sh="configure"
-             autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb">
+             autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="rel/libs/efl/efl-1.17.0.tar.gz" version="1.17.0"
+    <branch module="rel/libs/efl/efl-1.18.0.tar.gz" version="1.18.0"
             repo="download.enlightenment.org"
-            hash="sha256:046ff2c5fe769d749278f9d3e5b85e25cb4d1070bd1b8b54ee6831d81739f3c5">
-      <patch file="ecore_remove_warnings.patch" strip="1"/>
+            hash="sha256:a90255e97f6b768883276d3e04946798c31bc9bf57da12702ca7c3f4a401ec9f">
     </branch>
-  </autotools>
-
-  <autotools id="elementary"
-             autogen-sh="configure"
-             autogenargs="--disable-emap --disable-eweather --with-elementary-web-backend=none">
-    <branch module="rel/libs/elementary/elementary-1.17.0.tar.gz" version="1.17.0"
-            repo="download.enlightenment.org"
-            hash="sha256:0004a3038968073f3e7599294933fab72226162d0436dce35d9ec4d3b0478267">
-    </branch>
-    <dependencies>
-        <dep package="efl"/>
-    </dependencies>
   </autotools>
 
   <autotools id="libxml2"

@@ -87,11 +87,16 @@ function installDependenciesWithApt {
         libjpeg-dev \
         libjson-glib-dev \
         liblua5.1-0-dev \
+        libluajit-5.1-dev \
         libmpg123-dev \
         liborc-0.4-dev \
         libp11-kit-dev \
         $(aptIfElse libpng-dev libpng12-dev) \
+        libpoppler-cpp-dev \
         libpulse-dev \
+        libraw-dev \
+        librsvg2-dev \
+        libspectre-dev \
         libsqlite3-dev \
         libssl-dev \
         libtheora-dev \

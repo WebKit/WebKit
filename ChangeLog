@@ -1,3 +1,12 @@
+2016-08-17  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        [EFL] Bump efl version from 1.17 to 1.18
+        https://bugs.webkit.org/show_bug.cgi?id=160899
+
+        Reviewed by Antonio Gomes.
+
+        * Source/cmake/OptionsEfl.cmake: Update ewebkit version to 1.18.0.
+
 2016-08-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Fix the build after Objective-C bindings generator removal
