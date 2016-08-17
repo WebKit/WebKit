@@ -1,3 +1,17 @@
+2016-08-17  Anders Carlsson  <andersca@apple.com>
+
+        Move WKSignedPublicKeyAndChallengeString into WebCore and make it proper C++
+        https://bugs.webkit.org/show_bug.cgi?id=160945
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::operator&):
+        Cast this to the right type.
+
+        * wtf/spi/cocoa/SecuritySPI.h:
+        Add new SPI.
+
 2016-08-17  Antti Koivisto  <antti@apple.com>
 
         Remove CSS_IMAGE_SET feature define

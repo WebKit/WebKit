@@ -96,7 +96,7 @@ public:
         // Require that the pointer is null, to prevent leaks.
         ASSERT(!m_ptr);
 
-        return &m_ptr;
+        return (PtrType*)&m_ptr;
     }
 #endif
 

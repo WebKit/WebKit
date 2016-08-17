@@ -23,14 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecuritySPI_h
-#define SecuritySPI_h
+#pragma once
 
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <Security/SecCertificatePriv.h>
 #include <Security/SecTask.h>
 #include <Security/SecTrustPriv.h>
+
+#if PLATFORM(MAC)
+#include <Security/keyTemplates.h>
+#endif
 
 #else
 
@@ -62,9 +65,13 @@ EXTERN_C CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitl
 EXTERN_C CFStringRef SecTaskCopySigningIdentifier(SecTaskRef, CFErrorRef *);
 #endif
 
+#if PLATFORM(MAC)
+#include <Security/SecAsn1Types.h>
+extern const SecAsn1Template kSecAsn1AlgorithmIDTemplate[];
+extern const SecAsn1Template kSecAsn1SubjectPublicKeyInfoTemplate[];
+#endif
+
 #if HAVE(SEC_TRUST_SERIALIZATION)
 EXTERN_C CF_RETURNS_RETAINED CFDataRef SecTrustSerialize(SecTrustRef, CFErrorRef *);
 EXTERN_C CF_RETURNS_RETAINED SecTrustRef SecTrustDeserialize(CFDataRef serializedTrust, CFErrorRef *);
 #endif
-
-#endif // SecuritySPI_h
