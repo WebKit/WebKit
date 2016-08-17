@@ -32,7 +32,7 @@ WebInspector.VisualStylePropertyNameInput = class VisualStylePropertyNameInput e
         this._propertyNameInputElement = document.createElement("input");
         this._propertyNameInputElement.placeholder = WebInspector.UIString("Enter a name.");
         this._propertyNameInputElement.addEventListener("keydown", this._inputKeyDown.bind(this));
-        this._propertyNameInputElement.addEventListener("keyup", this._inputKeyUp.bind(this));
+        this._propertyNameInputElement.addEventListener("keyup", this.debounce(250)._inputKeyUp);
         this._propertyNameInputElement.addEventListener("blur", this._hideCompletions.bind(this));
         this.contentElement.appendChild(this._propertyNameInputElement);
 

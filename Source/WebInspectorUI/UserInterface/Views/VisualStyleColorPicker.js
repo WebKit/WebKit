@@ -36,7 +36,7 @@ WebInspector.VisualStyleColorPicker = class VisualStyleColorPicker extends WebIn
         this._textInputElement = document.createElement("input");
         this._textInputElement.spellcheck = false;
         this._textInputElement.addEventListener("keydown", this._textInputKeyDown.bind(this));
-        this._textInputElement.addEventListener("keyup", this._textInputKeyUp.bind(this));
+        this._textInputElement.addEventListener("keyup", this.debounce(250)._textInputKeyUp);
         this._textInputElement.addEventListener("blur", this._hideCompletions.bind(this));
         this.contentElement.appendChild(this._textInputElement);
 

@@ -79,9 +79,9 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         this._valueNumberInputElement.spellcheck = false;
         this._valueNumberInputElement.addEventListener("focus", this._focusContentElement.bind(this));
         this._valueNumberInputElement.addEventListener("keydown", this._valueNumberInputKeyDown.bind(this));
-        this._valueNumberInputElement.addEventListener("keyup", this._valueNumberInputKeyUp.bind(this));
+        this._valueNumberInputElement.addEventListener("keyup", this.debounce(250)._valueNumberInputKeyUp);
         this._valueNumberInputElement.addEventListener("blur", this._blurContentElement.bind(this));
-        this._valueNumberInputElement.addEventListener("change", this._valueNumberInputChanged.bind(this));
+        this._valueNumberInputElement.addEventListener("change", this.debounce(250)._valueNumberInputChanged);
         this._numberUnitsContainer.appendChild(this._valueNumberInputElement);
 
         this._unitsElement = document.createElement("span");
@@ -309,7 +309,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         }
 
         this._markUnitsContainerIfInputHasValue();
-        this._valueDidChange();
+        this.debounce(250)._valueDidChange();
     }
 
     _valueNumberInputKeyUp(event)

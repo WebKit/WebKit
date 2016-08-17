@@ -1,3 +1,23 @@
+2016-08-17  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: rapid updates to status icons in Visual Styles sidebar causes flicker
+        https://bugs.webkit.org/show_bug.cgi?id=160887
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleBasicInput.js:
+        (WebInspector.VisualStyleBasicInput):
+
+        * UserInterface/Views/VisualStyleColorPicker.js:
+        (WebInspector.VisualStyleColorPicker):
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox):
+        (WebInspector.VisualStyleNumberInputBox.prototype._valueNumberInputKeyDown):
+
+        * UserInterface/Views/VisualStylePropertyNameInput.js:
+        (WebInspector.VisualStylePropertyNameInput):
+
 2016-08-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: DOM nodes shift when hovering over them in Console

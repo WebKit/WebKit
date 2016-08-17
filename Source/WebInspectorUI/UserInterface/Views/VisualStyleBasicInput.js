@@ -32,7 +32,7 @@ WebInspector.VisualStyleBasicInput = class VisualStyleBasicInput extends WebInsp
         this._inputElement = this.contentElement.createChild("input");
         this._inputElement.spellcheck = false;
         this._inputElement.setAttribute("placeholder", placeholder || "");
-        this._inputElement.addEventListener("input", this.debounce(500)._handleInputElementInput);
+        this._inputElement.addEventListener("input", this.debounce(250)._handleInputElementInput);
     }
 
     // Public
