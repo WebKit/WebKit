@@ -35,7 +35,6 @@
 #include "RenderStyle.h"
 #include "SVGURIReference.h"
 #include "StyleCachedImage.h"
-#include "StyleCachedImageSet.h"
 #include "StyleGeneratedImage.h"
 #include "StylePendingImage.h"
 #include "TransformFunctions.h"
@@ -69,7 +68,7 @@ static RefPtr<StyleImage> loadPendingImage(Document& document, const StyleImage&
 
 #if ENABLE(CSS_IMAGE_SET)
     if (auto imageSetValue = pendingImage.cssImageSetValue())
-        return imageSetValue->cachedImageSet(document.cachedResourceLoader(), options);
+        return imageSetValue->bestFitImage(document.cachedResourceLoader(), options);
 #endif
 
     return nullptr;

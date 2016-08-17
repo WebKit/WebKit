@@ -30,15 +30,19 @@
 
 namespace WebCore {
 
+class CSSImageSetValue;
 class CachedImage;
 
 class StyleCachedImage final : public StyleImage, private CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StyleCachedImage> create(CachedImage* image) { return adoptRef(*new StyleCachedImage(image)); }
+    static Ref<StyleCachedImage> create(CachedImage* image) { return adoptRef(*new StyleCachedImage(image, 1, nullptr)); }
+    static Ref<StyleCachedImage> createForImageSet(CachedImage* image, float scaleFactor, CSSImageSetValue& cssValue) { return adoptRef(*new StyleCachedImage(image, scaleFactor, &cssValue)); }
     virtual ~StyleCachedImage();
 
     CachedImage* cachedImage() const override { return m_image.get(); }
+
+    void detachFromCSSValue() { m_cssImageSetValue = nullptr; }
 
 private:
     WrappedImagePtr data() const override { return m_image.get(); }
@@ -57,11 +61,14 @@ private:
     void addClient(RenderElement*) override;
     void removeClient(RenderElement*) override;
     RefPtr<Image> image(RenderElement*, const FloatSize&) const override;
+    float imageScaleFactor() const override;
     bool knownToBeOpaque(const RenderElement*) const override;
 
-    explicit StyleCachedImage(CachedImage*);
+    StyleCachedImage(CachedImage*, float scaleFactor, CSSImageSetValue*);
 
     CachedResourceHandle<CachedImage> m_image;
+    float m_scaleFactor;
+    CSSImageSetValue* m_cssImageSetValue; // Not retained; it owns us.
 };
 
 } // namespace WebCore

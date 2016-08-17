@@ -3577,8 +3577,6 @@
 		9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392F14F0AD1862300691BD4 /* CounterNode.cpp */; };
 		9393E5FF151A99F200066F06 /* CSSImageSetValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9393E5FD151A99F200066F06 /* CSSImageSetValue.cpp */; };
 		9393E600151A99F200066F06 /* CSSImageSetValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9393E5FE151A99F200066F06 /* CSSImageSetValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9393E604151A9A1800066F06 /* StyleCachedImageSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9393E602151A9A1800066F06 /* StyleCachedImageSet.cpp */; };
-		9393E605151A9A1800066F06 /* StyleCachedImageSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 9393E603151A9A1800066F06 /* StyleCachedImageSet.h */; };
 		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */; };
@@ -11091,8 +11089,6 @@
 		9392F14F0AD1862300691BD4 /* CounterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CounterNode.cpp; sourceTree = "<group>"; };
 		9393E5FD151A99F200066F06 /* CSSImageSetValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSImageSetValue.cpp; sourceTree = "<group>"; };
 		9393E5FE151A99F200066F06 /* CSSImageSetValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSImageSetValue.h; sourceTree = "<group>"; };
-		9393E602151A9A1800066F06 /* StyleCachedImageSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCachedImageSet.cpp; sourceTree = "<group>"; };
-		9393E603151A9A1800066F06 /* StyleCachedImageSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleCachedImageSet.h; sourceTree = "<group>"; };
 		93955A4103D72932008635CE /* RenderTreeAsText.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeAsText.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93955A4203D72932008635CE /* RenderTreeAsText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeAsText.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C108B7E3D100E707C4 /* EventNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventNames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -22277,8 +22273,6 @@
 				BC5EB67A0E81D3BE00B25965 /* StyleBoxData.h */,
 				BCEF44790E6747D0001C1287 /* StyleCachedImage.cpp */,
 				BCEF444C0E674628001C1287 /* StyleCachedImage.h */,
-				9393E602151A9A1800066F06 /* StyleCachedImageSet.cpp */,
-				9393E603151A9A1800066F06 /* StyleCachedImageSet.h */,
 				9DAC7C561AF2CB6400437C44 /* StyleContentAlignmentData.h */,
 				BC779E151BB226A200CAA8BF /* StyleCustomPropertyData.h */,
 				BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */,
@@ -27651,7 +27645,6 @@
 				83B9687B19F8AB83004EF7AF /* StyleBuilderConverter.h in Headers */,
 				835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */,
 				BCEF444D0E674628001C1287 /* StyleCachedImage.h in Headers */,
-				9393E605151A9A1800066F06 /* StyleCachedImageSet.h in Headers */,
 				E401E0A41C3C0B8300F34D10 /* StyleChange.h in Headers */,
 				9DAC7C571AF2CB6400437C44 /* StyleContentAlignmentData.h in Headers */,
 				BC779E171BB227CA00CAA8BF /* StyleCustomPropertyData.h in Headers */,
@@ -31278,7 +31271,6 @@
 				BC5EB67D0E81D42000B25965 /* StyleBoxData.cpp in Sources */,
 				8386A97019F61E4F00E1EC4A /* StyleBuilder.cpp in Sources */,
 				BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */,
-				9393E604151A9A1800066F06 /* StyleCachedImageSet.cpp in Sources */,
 				E401E0A61C3C0CF700F34D10 /* StyleChange.cpp in Sources */,
 				A8C4A7FE09D563270003AC8D /* StyledElement.cpp in Sources */,
 				BC5EB8B80E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp in Sources */,

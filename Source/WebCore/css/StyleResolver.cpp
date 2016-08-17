@@ -154,7 +154,6 @@
 
 #if ENABLE(CSS_IMAGE_SET)
 #include "CSSImageSetValue.h"
-#include "StyleCachedImageSet.h"
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)

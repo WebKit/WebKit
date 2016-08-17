@@ -24,13 +24,16 @@
 #include "config.h"
 #include "StyleCachedImage.h"
 
+#include "CSSImageSetValue.h"
 #include "CachedImage.h"
 #include "RenderElement.h"
 
 namespace WebCore {
 
-StyleCachedImage::StyleCachedImage(CachedImage* image)
+StyleCachedImage::StyleCachedImage(CachedImage* image, float scaleFactor, CSSImageSetValue* cssValue)
     : m_image(image)
+    , m_scaleFactor(scaleFactor)
+    , m_cssImageSetValue(cssValue)
 {
     m_isCachedImage = true;
     m_image->addClient(this);
@@ -43,6 +46,8 @@ StyleCachedImage::~StyleCachedImage()
 
 PassRefPtr<CSSValue> StyleCachedImage::cssValue() const
 {
+    if (m_cssImageSetValue)
+        return const_cast<CSSImageSetValue*>(m_cssImageSetValue);
     return CSSPrimitiveValue::create(m_image->url(), CSSPrimitiveValue::CSS_URI);
 }
 
@@ -63,7 +68,9 @@ bool StyleCachedImage::errorOccurred() const
 
 FloatSize StyleCachedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
-    return m_image->imageSizeForRenderer(renderer, multiplier);
+    FloatSize size = m_image->imageSizeForRenderer(renderer, multiplier);
+    size.scale(1 / m_scaleFactor);
+    return size;
 }
 
 bool StyleCachedImage::imageHasRelativeWidth() const
@@ -104,6 +111,11 @@ void StyleCachedImage::removeClient(RenderElement* renderer)
 RefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const
 {
     return m_image->imageForRenderer(renderer);
+}
+
+float StyleCachedImage::imageScaleFactor() const
+{
+    return m_scaleFactor;
 }
 
 bool StyleCachedImage::knownToBeOpaque(const RenderElement* renderer) const

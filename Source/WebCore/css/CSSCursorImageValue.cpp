@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSCursorImageValue.h"
 
+#include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
@@ -39,7 +40,6 @@
 
 #if ENABLE(CSS_IMAGE_SET)
 #include "CSSImageSetValue.h"
-#include "StyleCachedImageSet.h"
 #endif
 
 namespace WebCore {
@@ -120,7 +120,7 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader, const
 {
 #if ENABLE(CSS_IMAGE_SET)
     if (is<CSSImageSetValue>(m_imageValue.get()))
-        return downcast<CSSImageSetValue>(m_imageValue.get()).cachedImageSet(loader, options);
+        return downcast<CSSImageSetValue>(m_imageValue.get()).bestFitImage(loader, options);
 #endif
 
     auto* cursorElement = loader.document() ? updateCursorElement(*loader.document()) : nullptr;

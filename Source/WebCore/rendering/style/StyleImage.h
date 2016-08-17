@@ -72,20 +72,17 @@ public:
     ALWAYS_INLINE bool isCachedImage() const { return m_isCachedImage; }
     ALWAYS_INLINE bool isPendingImage() const { return m_isPendingImage; }
     ALWAYS_INLINE bool isGeneratedImage() const { return m_isGeneratedImage; }
-    ALWAYS_INLINE bool isCachedImageSet() const { return m_isCachedImageSet; }
-    
+
 protected:
     StyleImage()
         : m_isCachedImage(false)
         , m_isPendingImage(false)
         , m_isGeneratedImage(false)
-        , m_isCachedImageSet(false)
     {
     }
     bool m_isCachedImage : 1;
     bool m_isPendingImage : 1;
     bool m_isGeneratedImage : 1;
-    bool m_isCachedImageSet : 1;
 };
 
 } // namespace WebCore

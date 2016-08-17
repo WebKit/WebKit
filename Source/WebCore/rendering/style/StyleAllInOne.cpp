@@ -41,7 +41,6 @@
 #include "StyleBackgroundData.cpp"
 #include "StyleBoxData.cpp"
 #include "StyleCachedImage.cpp"
-#include "StyleCachedImageSet.cpp"
 #include "StyleDeprecatedFlexibleBoxData.cpp"
 #include "StyleFilterData.cpp"
 #include "StyleFlexibleBoxData.cpp"

@@ -102,10 +102,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(CSS_IMAGE_SET)
-#include "StyleCachedImageSet.h"
-#endif
-
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include "PlatformTouchEventIOS.h"
 #endif

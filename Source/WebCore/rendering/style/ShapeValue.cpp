@@ -36,7 +36,7 @@ bool ShapeValue::isImageValid() const
 {
     if (!image())
         return false;
-    if (image()->isCachedImage() || image()->isCachedImageSet())
+    if (image()->isCachedImage())
         return image()->cachedImage() && image()->cachedImage()->hasImage();
     return image()->isGeneratedImage();
 }
