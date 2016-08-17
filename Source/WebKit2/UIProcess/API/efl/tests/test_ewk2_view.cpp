@@ -569,7 +569,7 @@ TEST_F(EWK2ViewTest, ewk_view_run_javascript_alert)
     EXPECT_TRUE(alertCallbackData.called);
 
     alertHTML = "<!doctype html><body onload=\"alert();\"></body>";
-    alertCallbackData.expectedMessage = "undefined";
+    alertCallbackData.expectedMessage = "";
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
     EXPECT_TRUE(waitUntilLoadFinished());
@@ -623,7 +623,7 @@ TEST_F(EWK2ViewTest, ewk_view_run_javascript_confirm)
     EXPECT_TRUE(confirmCallbackData.called);
 
     confirmHTML = "<!doctype html><body onload=\"document.title = confirm();\"></body>";
-    confirmCallbackData.expectedMessage = "undefined";
+    confirmCallbackData.expectedMessage = "";
     confirmCallbackData.result = true;
     confirmCallbackData.called = false;
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
@@ -688,7 +688,7 @@ TEST_F(EWK2ViewTest, ewk_view_run_javascript_prompt)
     EXPECT_TRUE(promptCallbackData.called);
 
     promptHTML = "<!doctype html><body onload=\"document.title = prompt();\"></body>";
-    promptCallbackData.expectedMessage = "undefined";
+    promptCallbackData.expectedMessage = "";
     promptCallbackData.expectedDefaultValue = "";
     promptCallbackData.result = promptResult;
     promptCallbackData.called = false;

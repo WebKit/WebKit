@@ -1,3 +1,16 @@
+2016-08-17  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Fix test_ewk2_view after r203612 
+        https://bugs.webkit.org/show_bug.cgi?id=160937
+
+        Reviewed by Gyuyoung Kim.
+
+        Default parameter values for window.alert() / prompt() / confirm() was
+        changed from "undefined" to the empty string after r203612.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2016-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Don't throw touchMove events on the floor
