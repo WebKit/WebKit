@@ -556,7 +556,7 @@ sub GenerateProperty {
         $mutableString = "read-write";
     }
 
-    my $getterFunctionName = "webkit_dom_${decamelizeInterfaceName}_get_" . $propFunctionName;
+    my $getterFunctionName = GetEffectiveFunctionName("webkit_dom_${decamelizeInterfaceName}_get_" . $propFunctionName);
     if (FunctionUsedToNotRaiseException($getterFunctionName)) {
         $getterFunctionName = $getterFunctionName . "_with_error";
     }
@@ -565,7 +565,7 @@ sub GenerateProperty {
     push(@getterArguments, "nullptr") if $hasGetterException || FunctionUsedToRaiseException($getterFunctionName);
 
     if (grep {$_ eq $attribute} @writeableProperties) {
-        my $setterFunctionName = "webkit_dom_${decamelizeInterfaceName}_set_" . $propFunctionName;
+        my $setterFunctionName = GetEffectiveFunctionName("webkit_dom_${decamelizeInterfaceName}_set_" . $propFunctionName);
         if (FunctionUsedToNotRaiseException($setterFunctionName)) {
             $setterFunctionName = $setterFunctionName . "_with_error";
         }
@@ -1020,6 +1020,12 @@ sub GetEffectiveFunctionName {
         || $functionName eq "webkit_dom_element_get_elements_by_tag_name_ns"
         || $functionName eq "webkit_dom_element_get_elements_by_class_name") {
         return $functionName . "_as_html_collection";
+    }
+
+    # Rename webkit_dom_html_input_element_get_capture as webkit_dom_html_input_element_get_capture_type since
+    # it changed the return value in r204312.
+    if ($functionName eq "webkit_dom_html_input_element_get_capture") {
+        return $functionName . "_type";
     }
 
     return $functionName;

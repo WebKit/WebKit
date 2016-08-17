@@ -28,8 +28,10 @@
 #include "HTMLCollection.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
+#include "WebKitDOMHTMLInputElementPrivate.h"
 #include "WebKitDOMHTMLTitleElement.h"
 #include "WebKitDOMNodeListPrivate.h"
+#include "WebKitDOMPrivate.h"
 #include "WebKitDOMTextPrivate.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -172,6 +174,20 @@ WebKitDOMText* webkit_dom_text_replace_whole_text(WebKitDOMText* self, const gch
     return WebKit::kit(gobjectResult.get());
 }
 
+gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), FALSE);
+
+#if ENABLE(MEDIA_CAPTURE)
+    WebCore::JSMainThreadNullState state;
+    WebCore::HTMLInputElement* item = WebKit::core(self);
+    return item->mediaCaptureType() != MediaCaptureTypeNone;
+#else
+    UNUSED_PARAM(self);
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Media Capture")
+    return FALSE;
+#endif /* ENABLE(MEDIA_CAPTURE) */
+}
 
 G_DEFINE_TYPE(WebKitDOMEntityReference, webkit_dom_entity_reference, WEBKIT_DOM_TYPE_NODE)
 

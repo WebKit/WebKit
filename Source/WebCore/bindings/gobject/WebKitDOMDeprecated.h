@@ -215,6 +215,17 @@ webkit_dom_document_get_default_charset(WebKitDOMDocument* self);
 WEBKIT_DEPRECATED WebKitDOMText*
 webkit_dom_text_replace_whole_text(WebKitDOMText* self, const gchar* content, GError** error);
 
+/**
+ * webkit_dom_html_input_element_get_capture:
+ * @self: A #WebKitDOMHTMLInputElement
+ *
+ * Returns: A #gboolean
+ *
+ * Deprecated: 2.14: Use webkit_dom_html_input_element_get_capture_type() instead.
+ **/
+WEBKIT_DEPRECATED_FOR(webkit_dom_html_input_element_get_capture_type) gboolean
+webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* self);
+
 #define WEBKIT_DOM_TYPE_ENTITY_REFERENCE            (webkit_dom_entity_reference_get_type())
 #define WEBKIT_DOM_ENTITY_REFERENCE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_ENTITY_REFERENCE, WebKitDOMEntityReference))
 #define WEBKIT_DOM_ENTITY_REFERENCE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_DOM_TYPE_ENTITY_REFERENCE, WebKitDOMEntityReferenceClass)
