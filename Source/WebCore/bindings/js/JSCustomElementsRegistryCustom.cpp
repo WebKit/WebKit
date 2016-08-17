@@ -120,7 +120,7 @@ JSValue JSCustomElementsRegistry::define(ExecState& state)
         return jsUndefined();
 
     QualifiedName name(nullAtom, localName, HTMLNames::xhtmlNamespaceURI);
-    auto interface = JSCustomElementInterface::create(name, constructor, globalObject());
+    Ref<JSCustomElementInterface> interface = JSCustomElementInterface::create(name, constructor, globalObject());
 
     auto* attributeChangedCallback = getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
     if (state.hadException())
