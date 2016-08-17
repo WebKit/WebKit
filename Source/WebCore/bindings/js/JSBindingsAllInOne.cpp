@@ -46,6 +46,7 @@
 #include "JSClientRectCustom.cpp"
 #include "JSCommandLineAPIHostCustom.cpp"
 #include "JSCryptoCustom.cpp"
+#include "JSCustomElementsRegistryCustom.cpp"
 #include "JSCustomEventCustom.cpp"
 #include "JSCustomSQLStatementErrorCallback.cpp"
 #include "JSCustomXPathNSResolver.cpp"
