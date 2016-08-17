@@ -1,3 +1,23 @@
+2016-08-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r204540, r204545, and r204547.
+        https://bugs.webkit.org/show_bug.cgi?id=160932
+
+        Broke Windows builds (Requested by rniwa on #webkit).
+
+        Reverted changesets:
+
+        "customElements.define should retrieve lifecycle callbacks"
+        https://bugs.webkit.org/show_bug.cgi?id=160797
+        http://trac.webkit.org/changeset/204540
+
+        "Windows build fix attempt after r204540."
+        http://trac.webkit.org/changeset/204545
+
+        "Another Windows build fix attempt. The error message doesn't
+        make any sense to me."
+        http://trac.webkit.org/changeset/204547
+
 2016-08-16  Chris Dumez  <cdumez@apple.com>
 
         Add support for ShadowRoot.mode attribute

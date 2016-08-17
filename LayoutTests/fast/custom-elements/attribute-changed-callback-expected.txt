@@ -3,8 +3,4 @@ PASS setAttribute and removeAttribute must enqueue and invoke attributeChangedCa
 PASS setAttributeNS and removeAttributeNS must enqueue and invoke attributeChangedCallback 
 PASS setAttributeNode and removeAttributeNS must enqueue and invoke attributeChangedCallback 
 PASS setAttributeNode and removeAttributeNS must enqueue and invoke attributeChangedCallback 
-PASS Mutating attributeChangedCallback after calling customElements.define must not affect the callback being invoked 
-PASS attributedChangedCallback must not be invoked when the observed attributes does not contain the attribute. 
-PASS Mutating observedAttributes after calling customElements.define must not affect the set of attributes for which attributedChangedCallback is invoked 
-PASS attributedChangedCallback must be enqueued for attributes specified in a non-Array iterable observedAttributes 
 

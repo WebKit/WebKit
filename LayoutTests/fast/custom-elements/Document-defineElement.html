@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: Extensions to Document interface</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="customElements.define should define a custom element">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+test(function () {
+    assert_true('define' in CustomElementsRegistry.prototype, '"define" exists on CustomElementsRegistry.prototype');
+    assert_true('define' in customElements, '"define" exists on window.customElements');
+}, 'Check the existence of CustomElementsRegistry.prototype.define on CustomElementsRegistry interface');
+
+test(function () {
+    class MyCustomElement extends HTMLElement {};
+
+    assert_throws({'name': 'SyntaxError'}, function () { customElements.define(null, MyCustomElement); },
+        'customElements.define must throw a SyntaxError if the tag name is null');
+    assert_throws({'name': 'SyntaxError'}, function () { customElements.define('', MyCustomElement); },
+        'customElements.define must throw a SyntaxError if the tag name is empty');
+    assert_throws({'name': 'SyntaxError'}, function () { customElements.define('abc', MyCustomElement); },
+        'customElements.define must throw a SyntaxError if the tag name does not contain "-"');
+    assert_throws({'name': 'SyntaxError'}, function () { customElements.define('a-Bc', MyCustomElement); },
+        'customElements.define must throw a SyntaxError if the tag name contains an upper case letter');
+
+    var builtinTagNames = [
+        'annotation-xml',
+        'color-profile',
+        'font-face',
+        'font-face-src',
+        'font-face-uri',
+        'font-face-format',
+        'font-face-name',
+        'missing-glyph'
+    ];
+
+    for (var tagName of builtinTagNames) {
+        assert_throws({'name': 'SyntaxError'}, function () { customElements.define(tagName, MyCustomElement); },
+            'customElements.define must throw a SyntaxError if the tag name is "' + tagName + '"');
+    }
+
+}, 'customElements.define should throw with an invalid name');
+
+test(function () {
+    class SomeCustomElement extends HTMLElement {};
+    class OtherCustomElement extends HTMLElement {};
+
+    customElements.define('some-custom-element', SomeCustomElement);
+    assert_throws({'name': 'NotSupportedError'}, function () { customElements.define('some-custom-element', OtherCustomElement); },
+        'customElements.define must throw a NotSupportedError if the specified tag name is already used');
+
+}, 'customElements.define should throw when there is already a custom element of the same name');
+
+test(function () {
+    class AnotherCustomElement extends HTMLElement {};
+
+    customElements.define('another-custom-element', AnotherCustomElement);
+    assert_throws({'name': 'NotSupportedError'}, function () { customElements.define('some-other-element', AnotherCustomElement); },
+        'customElements.define must throw a NotSupportedError if the specified class already defines an element');
+
+}, 'customElements.define should throw when there is already a custom element with the same class');
+
+test(function () {
+    assert_throws({'name': 'TypeError'}, function () { customElements.define('invalid-element', 1); },
+        'customElements.define must throw a TypeError when the element interface is a number');
+    assert_throws({'name': 'TypeError'}, function () { customElements.define('invalid-element', '123'); },
+        'customElements.define must throw a TypeError when the element interface is a string');
+    assert_throws({'name': 'TypeError'}, function () { customElements.define('invalid-element', {}); },
+        'customElements.define must throw a TypeError when the element interface is an object');
+    assert_throws({'name': 'TypeError'}, function () { customElements.define('invalid-element', []); },
+        'customElements.define must throw a TypeError when the element interface is an array');
+}, 'customElements.define should throw when the element interface is not a constructor');
+
+test(function () {
+    class MyCustomElement extends HTMLElement {};
+    customElements.define('my-custom-element', MyCustomElement);
+
+    var instance = new MyCustomElement;
+    assert_true(instance instanceof MyCustomElement,
+        'An instance of a custom HTML element be an instance of the associated interface');
+
+    assert_true(instance instanceof HTMLElement,
+        'An instance of a custom HTML element must inherit from HTMLElement');
+
+    assert_equals(instance.localName, 'my-custom-element',
+        'An instance of a custom element must use the associated tag name');
+
+    assert_equals(instance.namespaceURI, 'http://www.w3.org/1999/xhtml',
+        'A custom element HTML must use HTML namespace');
+
+}, 'customElements.define should define an instantiatable custom element');
+
+</script>
+</body>
+</html>

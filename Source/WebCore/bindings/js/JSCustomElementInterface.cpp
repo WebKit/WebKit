@@ -151,14 +151,6 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     ASSERT(wrappedElement->isCustomElement());
 }
 
-void JSCustomElementInterface::setAttributeChangedCallback(JSC::JSObject* callback, const Vector<String>& observedAttributes)
-{
-    m_attributeChangedCallback = callback;
-    m_observedAttributes.clear();
-    for (auto& name : observedAttributes)
-        m_observedAttributes.add(name);
-}
-
 void JSCustomElementInterface::attributeChanged(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
     if (!canInvokeCallback())
@@ -178,9 +170,12 @@ void JSCustomElementInterface::attributeChanged(Element& element, const Qualifie
 
     JSObject* jsElement = asObject(toJS(state, globalObject, element));
 
+    PropertyName attributeChanged(Identifier::fromString(state, "attributeChangedCallback"));
+    JSValue callback = jsElement->get(state, attributeChanged);
     CallData callData;
-    CallType callType = m_attributeChangedCallback->methodTable()->getCallData(m_attributeChangedCallback.get(), callData);
-    ASSERT(callType != CallType::None);
+    CallType callType = getCallData(callback, callData);
+    if (callType == CallType::None)
+        return;
 
     const AtomicString& namespaceURI = attributeName.namespaceURI();
     MarkedArgumentBuffer args;
@@ -192,7 +187,7 @@ void JSCustomElementInterface::attributeChanged(Element& element, const Qualifie
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 
     NakedPtr<Exception> exception;
-    JSMainThreadExecState::call(state, m_attributeChangedCallback.get(), callType, callData, jsElement, args, exception);
+    JSMainThreadExecState::call(state, callback, callType, callData, jsElement, args, exception);
 
     InspectorInstrumentation::didCallFunction(cookie, context);
 
