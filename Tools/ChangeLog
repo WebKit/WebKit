@@ -1,3 +1,17 @@
+2016-08-17  Jonathan Bedard  <jbedard@apple.com>
+
+        Extra logging for crash reason
+        https://bugs.webkit.org/show_bug.cgi?id=160943
+
+        Reviewed by Alexey Proskuryakov.
+
+        A number of tests have been erroneously marked as crashed, this should help diagnose these false crashes.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.write): Add extra logging to determine why a process has been marked as crashed.
+        (ServerProcess._wait_for_data_and_update_buffers_using_select): Ditto.
+        (ServerProcess.has_crashed): Ditto.
+
 2016-08-17  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] -[NSString isEqualToString:] returns NO for any WKNSString argument

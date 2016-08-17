@@ -156,6 +156,7 @@ class ServerProcess(object):
             # stop() calls _reset(), so we have to set crashed to True after calling stop()
             # unless we already know that this is a timeout.
             if not ignore_crash:
+                _log.debug('This test marked as a crash because of a broken pipe when writing to stdin of the server process.')
                 self._crashed = True
 
     def _pop_stdout_line_if_ready(self):
@@ -255,12 +256,14 @@ class ServerProcess(object):
             if out_fd in read_fds:
                 data = self._proc.stdout.read()
                 if not data and not stopping and (self._treat_no_data_as_crash or self._proc.poll()):
+                    _log.debug('This test marked as a crash because of no data while reading stdout for the server process.')
                     self._crashed = True
                 self._output += data
 
             if err_fd in read_fds:
                 data = self._proc.stderr.read()
                 if not data and not stopping and (self._treat_no_data_as_crash or self._proc.poll()):
+                    _log.debug('This test marked as a crash because of no data while reading stdout for the server process.')
                     self._crashed = True
                 self._error += data
         except IOError, e:
@@ -301,6 +304,7 @@ class ServerProcess(object):
 
     def has_crashed(self):
         if not self._crashed and self.poll():
+            _log.debug('This test marked as a crash because of failure to poll the server process.')
             self._crashed = True
             self._handle_possible_interrupt()
         return self._crashed
