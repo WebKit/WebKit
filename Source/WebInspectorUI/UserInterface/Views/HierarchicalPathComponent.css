@@ -97,7 +97,7 @@
  /* Positioned so the text in the menu aligns with the text in .title. */
     position: absolute;
     top: -1px;
-    left: 10px;
+    left: 13px;
     right: 0;
     bottom: 0;
 }

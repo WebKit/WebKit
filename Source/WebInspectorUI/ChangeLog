@@ -1,5 +1,15 @@
 2016-08-17  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Select elements in DOM hierarchy are misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=160885
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component > select):
+
+2016-08-17  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: rapid updates to status icons in Visual Styles sidebar causes flicker
         https://bugs.webkit.org/show_bug.cgi?id=160887
 
