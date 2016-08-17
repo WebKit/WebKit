@@ -1,3 +1,21 @@
+2016-08-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Network Tab should not layout if not visible
+        https://bugs.webkit.org/show_bug.cgi?id=160920
+        <rdar://problem/27876629>
+
+        Reviewed by Timothy Hatcher.
+
+        Avoid updating the current time when the Network tab is hidden.
+        The timer, and any debounced timer cancellations, need to be stopped
+        as soon as the view is hidden.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype.hidden):
+        (WebInspector.NetworkGridContentView.prototype._networkTimelineRecordAdded):
+        (WebInspector.NetworkGridContentView.prototype._stopUpdatingCurrentTime):
+        (WebInspector.NetworkGridContentView):
+
 2016-08-17  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Select elements in DOM hierarchy are misaligned
