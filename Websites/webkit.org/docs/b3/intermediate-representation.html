@@ -595,9 +595,16 @@ root->appendSuccessor(thirdEntrypoint);</code></pre>
           leads to only a small amount of cloned code in practice.</p>
       </dd>
 
-      <dt>Void Return(T)</dt>
-      <dd>Works for any type except Void.  Returns the given value and terminates the procedure.
-        Must appear at the end of the basic block. The block must have zero successors.</dd>
+      <dt>Void Return(T <i>(optional)</i>)</dt>
+      <dd>
+          <p>
+            Returns the control flow to the caller and terminates the procedure.
+            Must appear at the end of the basic block. The block must have zero successors.
+          </p>
+          <p>
+            If the node has a child, its value is returned. The type of the child can be any type except Void.
+          </p>
+      </dd>
 
       <dt>Void Oops()</dt>
       <dd>Indicates unreachable code.  This may be implemented as either a trap or as a bare

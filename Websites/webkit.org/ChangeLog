@@ -1,3 +1,12 @@
+2016-08-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Update the documentation of B3's Return opcode
+        https://bugs.webkit.org/show_bug.cgi?id=160912
+
+        Reviewed by Filip Pizlo.
+
+        * docs/b3/intermediate-representation.html:
+
 2016-08-04  Daniel Bates  <dabates@apple.com>
 
         Add some files for a Content Security Policy blog post
