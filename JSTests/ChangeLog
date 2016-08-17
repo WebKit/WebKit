@@ -1,3 +1,13 @@
+2016-08-17  Mark Lam  <mark.lam@apple.com>
+
+        Remove an invalid assertion in the DFG backend's GetById emitter.
+        https://bugs.webkit.org/show_bug.cgi?id=160925
+        <rdar://problem/27248961>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/dfg-get-by-id-should-not-assert-non-null-prediction.js: Added.
+
 2016-08-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r204464.

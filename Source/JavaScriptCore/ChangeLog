@@ -1,3 +1,28 @@
+2016-08-17  Mark Lam  <mark.lam@apple.com>
+
+        Remove an invalid assertion in the DFG backend's GetById emitter.
+        https://bugs.webkit.org/show_bug.cgi?id=160925
+        <rdar://problem/27248961>
+
+        Reviewed by Filip Pizlo.
+
+        The DFG backend's GetById assertion that the node's prediction not be SpecNone
+        is just plain wrong.  It assumes that we can never have a GetById node without a
+        type prediction, but this is not true.  The following test case proves otherwise:
+
+            function foo() {
+                "use strict";
+                return --arguments["callee"];
+            }
+
+        Will remove the assertion.  Nothing else needs to change as the DFG is working
+        correctly without the assertion.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2016-08-16  Mark Lam  <mark.lam@apple.com>
 
         Heap::collectAllGarbage() should work with JSC_useImmortalObjects=true.
