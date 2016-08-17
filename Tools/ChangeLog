@@ -1,3 +1,25 @@
+2016-08-16  Daniel Bates  <dabates@apple.com>
+
+        prepare-ChangeLog: Extract logic from generateFunctionLists() into a function that takes a delegate object
+        https://bugs.webkit.org/show_bug.cgi?id=160924
+
+        Reviewed by Stephanie Lewis.
+
+        Towards adding unit tests for generateFunctionLists() we move its logic into actuallyGenerateFunctionLists()
+        and have actuallyGenerateFunctionLists() take a delegate object to use to query the file system and SCM.
+        We modify generateFunctionLists() to call actuallyGenerateFunctionLists(). This will make is possible to
+        test the generate function list machinery without requiring a SCM checkout by substituting a delegate
+        object that mocks out the file system and SCM operations.
+
+        * Scripts/VCSUtils.pm:
+        (parseDiffStartLine): Parses an SVN or Git start line and returns the path to the target file.
+        * Scripts/prepare-ChangeLog:
+        (generateFunctionLists): Move functionality to actually generate the function lists to actuallyGenerateFunctionLists(),
+        abstracting the logic to query the file system and SCM into functions on a delegate object that
+        we pass to it.
+        (actuallyGenerateFunctionLists): Extracted from generateFunctionLists().
+        (diffHeaderFormat): Deleted.
+
 2016-08-16  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should parse URLs without credentials

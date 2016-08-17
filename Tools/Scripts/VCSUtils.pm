@@ -75,6 +75,7 @@ BEGIN {
         &mergeChangeLogs
         &normalizePath
         &parseChunkRange
+        &parseDiffStartLine
         &parseFirstEOL
         &parsePatch
         &pathRelativeToSVNRepositoryRootForPath
@@ -667,6 +668,19 @@ sub isExecutable($)
     my $fileMode = shift;
 
     return $fileMode % 2;
+}
+
+# Parses an SVN or Git diff header start line.
+#
+# Args:
+#   $line: "Index: " line or "diff --git" line
+#
+# Returns the path of the target file or undef if the $line is unrecognized.
+sub parseDiffStartLine($)
+{
+    my ($line) = @_;
+    return $1 if $line =~ /$svnDiffStartRegEx/;
+    return parseGitDiffStartLine($line) if $line =~ /$gitDiffStartRegEx/;
 }
 
 # Parse the Git diff header start line.

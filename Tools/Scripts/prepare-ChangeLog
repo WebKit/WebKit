@@ -64,6 +64,7 @@ use List::Util qw/max/;
 use POSIX qw(strftime);
 use VCSUtils;
 
+sub actuallyGenerateFunctionLists($$$$$$);
 sub attributeCommand($$);
 sub changeLogDate($);
 sub changeLogEmailAddressFromArgs($$);
@@ -73,7 +74,6 @@ sub decodeEntities($);
 sub determinePropertyChanges($$$);
 sub diffCommand($$$$);
 sub diffFromToString($$$);
-sub diffHeaderFormat();
 sub extractLineRangeAfterChange($);
 sub extractLineRangeBeforeChange($);
 sub fetchBugXMLData($$);
@@ -281,6 +281,33 @@ sub originalFile($$$$)
 sub generateFunctionLists($$$$$)
 {
     my ($changedFiles, $functionLists, $gitCommit, $gitIndex, $mergeBase) = @_;
+    my %delegateHash = (
+        openDiff => sub ($$$$) {
+            my ($changedFiles, $gitCommit, $gitIndex, $mergeBase) = @_;
+            return unless open(DIFF, "-|", diffCommand($changedFiles, $gitCommit, $gitIndex, $mergeBase));
+            return \*DIFF;
+        },
+        openFile => sub ($) {
+            my ($file) = @_;
+            return unless open(SOURCE, "<", $file);
+            return \*SOURCE;
+        },
+        openOriginalFile => sub ($) {
+            my ($file, $gitCommit, $gitIndex, $mergeBase) = @_;
+            return unless open(SOURCE, "-|", originalFile($file, $gitCommit, $gitIndex, $mergeBase));
+            return \*SOURCE;
+        },
+        normalizePath => sub ($) {
+            my ($path) = @_;
+            return normalizePath(makeFilePathRelative($path));
+        },
+    );
+    actuallyGenerateFunctionLists($changedFiles, $functionLists, $gitCommit, $gitIndex, $mergeBase, \%delegateHash);
+}
+
+sub actuallyGenerateFunctionLists($$$$$$)
+{
+    my ($changedFiles, $functionLists, $gitCommit, $gitIndex, $mergeBase, $delegateHashRef) = @_;
 
     my %line_ranges_after_changed;
     my %line_ranges_before_changed;
@@ -289,9 +316,13 @@ sub generateFunctionLists($$$$$)
         # Use line numbers from the "after" side of each diff.
         print STDERR "  Reviewing diff to determine which lines changed.\n";
         my $file;
-        open DIFF, "-|", diffCommand($changedFiles, $gitCommit, $gitIndex, $mergeBase) or die "The diff failed: $!.\n";
-        while (<DIFF>) {
-            $file = normalizePath(makeFilePathRelative($1)) if $_ =~ diffHeaderFormat();
+        my $diffFileHandle = $delegateHashRef->{openDiff}($changedFiles, $gitCommit, $gitIndex, $mergeBase);
+        if (!$diffFileHandle) {
+            die "The diff failed: $!.\n";
+        }
+        while (<$diffFileHandle>) {
+            my $filePath = parseDiffStartLine($_);
+            $file = $delegateHashRef->{normalizePath}($filePath) if $filePath;
             if (defined $file) {
                 my ($before_start, $before_end) = extractLineRangeBeforeChange($_);
                 if ($before_start >= 1 && $before_end >= 1) {
@@ -307,7 +338,7 @@ sub generateFunctionLists($$$$$)
                 }
             }
         }
-        close DIFF;
+        close($diffFileHandle);
     }
 
     # For each source file, convert line range to function list.
@@ -321,9 +352,10 @@ sub generateFunctionLists($$$$$)
         my %saw_function;
         # Find all the functions in the file.
         if ($line_ranges_after_changed{$file}) {
-            open(SOURCE, "<", $file) or next;
-            my @function_ranges = get_function_line_ranges(\*SOURCE, $file);
-            close SOURCE;
+            my $sourceFileHandle = $delegateHashRef->{openFile}($file);
+            next unless $sourceFileHandle;
+            my @function_ranges = get_function_line_ranges($sourceFileHandle, $file);
+            close($sourceFileHandle);
 
             my @change_ranges = (@{$line_ranges_after_changed{$file}}, []);
             my @functions = generateFunctionListsByRanges($file, \@change_ranges, \@function_ranges, \%saw_function);
@@ -335,10 +367,11 @@ sub generateFunctionLists($$$$$)
             }
         }
         # Find the deleted functions in the original file.
-        if($line_ranges_before_changed{$file}) {
-            open SOURCE, "-|", originalFile($file, $gitCommit, $gitIndex, $mergeBase) or next;
-                my @deleted_function_ranges = get_function_line_ranges(\*SOURCE, $file);
-            close SOURCE;
+        if ($line_ranges_before_changed{$file}) {
+            my $originalFileHandle = $delegateHashRef->{openOriginalFile}($file, $gitCommit, $gitIndex, $mergeBase);
+            next unless $originalFileHandle;
+            my @deleted_function_ranges = get_function_line_ranges($originalFileHandle, $file);
+            close($originalFileHandle);
 
             my @change_ranges = (@{$line_ranges_before_changed{$file}}, []);
             my @functions = generateFunctionListsByRanges($file, \@change_ranges, \@deleted_function_ranges, \%saw_function);
@@ -2048,12 +2081,6 @@ sub createPatchCommand($$$$)
     }
 
     return $command;
-}
-
-sub diffHeaderFormat()
-{
-    return qr/^Index: (\S+)[\r\n]*$/ if isSVN();
-    return qr/^diff --git a\/.+ b\/(.+)$/ if isGit();
 }
 
 sub findOriginalFileFromSvn($)
