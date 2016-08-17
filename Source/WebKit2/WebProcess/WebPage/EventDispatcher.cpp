@@ -180,8 +180,7 @@ void EventDispatcher::touchEvent(uint64_t pageID, const WebKit::WebTouchEvent& t
             const WebTouchEvent& lastTouchEvent = queuedEvents.last();
 
             // Coalesce touch move events.
-            WebEvent::Type type = lastTouchEvent.type();
-            if (type == WebEvent::TouchMove)
+            if (touchEvent.type() == WebEvent::TouchMove && lastTouchEvent.type() == WebEvent::TouchMove)
                 queuedEvents.last() = touchEvent;
             else
                 queuedEvents.append(touchEvent);

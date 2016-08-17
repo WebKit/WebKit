@@ -1,5 +1,24 @@
 2016-08-16  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Don't throw touchMove events on the floor
+        https://bugs.webkit.org/show_bug.cgi?id=160935
+
+        Reviewed by Tim Horton.
+        
+        EventDispatcher claimed to coalesce touchMove events, but actually threw away any
+        touchMove if there was one in the queue when the next non-move event came along.
+        
+        Fix to strictly coalesce touchMove events, so a start/move/end stream always fires
+        a move event. This is necessary for move-based interaction to work in testing,
+        for example the added range slider test.
+        
+        Test: fast/forms/ios/drag-range-thumb.html
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::touchEvent):
+
+2016-08-16  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Clean up form select code
         https://bugs.webkit.org/show_bug.cgi?id=160915
 
