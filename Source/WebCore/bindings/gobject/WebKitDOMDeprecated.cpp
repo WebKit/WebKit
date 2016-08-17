@@ -28,6 +28,7 @@
 #include "HTMLCollection.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
+#include "WebKitDOMHTMLDocumentPrivate.h"
 #include "WebKitDOMHTMLInputElementPrivate.h"
 #include "WebKitDOMHTMLTitleElement.h"
 #include "WebKitDOMNodeListPrivate.h"
@@ -187,6 +188,43 @@ gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* se
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Media Capture")
     return FALSE;
 #endif /* ENABLE(MEDIA_CAPTURE) */
+}
+
+gchar* webkit_dom_html_document_get_design_mode(WebKitDOMHTMLDocument* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), nullptr);
+    return webkit_dom_document_get_design_mode(WEBKIT_DOM_DOCUMENT(self));
+}
+
+
+void webkit_dom_html_document_set_design_mode(WebKitDOMHTMLDocument* self, const gchar* value)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self));
+    webkit_dom_document_set_design_mode(WEBKIT_DOM_DOCUMENT(self), value);
+}
+
+gchar* webkit_dom_html_document_get_compat_mode(WebKitDOMHTMLDocument* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), nullptr);
+    return webkit_dom_document_get_compat_mode(WEBKIT_DOM_DOCUMENT(self));
+}
+
+WebKitDOMHTMLCollection* webkit_dom_html_document_get_embeds(WebKitDOMHTMLDocument* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), nullptr);
+    return webkit_dom_document_get_embeds(WEBKIT_DOM_DOCUMENT(self));
+}
+
+WebKitDOMHTMLCollection* webkit_dom_html_document_get_plugins(WebKitDOMHTMLDocument* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), nullptr);
+    return webkit_dom_document_get_plugins(WEBKIT_DOM_DOCUMENT(self));
+}
+
+WebKitDOMHTMLCollection* webkit_dom_html_document_get_scripts(WebKitDOMHTMLDocument* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), nullptr);
+    return webkit_dom_document_get_scripts(WEBKIT_DOM_DOCUMENT(self));
 }
 
 G_DEFINE_TYPE(WebKitDOMEntityReference, webkit_dom_entity_reference, WEBKIT_DOM_TYPE_NODE)

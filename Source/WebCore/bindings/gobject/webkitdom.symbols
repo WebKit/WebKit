@@ -25,6 +25,12 @@ GType webkit_dom_dom_window_get_type(void)
 gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow*, const gchar*, const gchar*)@2.8
 GType webkit_dom_document_get_type(void)
 WebKitDOMDocumentType* webkit_dom_document_get_doctype(WebKitDOMDocument*)
+gchar* webkit_dom_document_get_design_mode(WebKitDOMDocument*)@2.14
+void webkit_dom_document_set_design_mode(WebKitDOMDocument*, const gchar*)@2.14
+gchar* webkit_dom_document_get_compat_mode(WebKitDOMDocument*)@2.14
+WebKitDOMHTMLCollection* webkit_dom_document_get_embeds(WebKitDOMDocument*)@2.14
+WebKitDOMHTMLCollection* webkit_dom_document_get_plugins(WebKitDOMDocument*)@2.14
+WebKitDOMHTMLCollection* webkit_dom_document_get_scripts(WebKitDOMDocument*)@2.14
 WebKitDOMHTMLCollection* webkit_dom_document_get_images(WebKitDOMDocument*)
 gchar* webkit_dom_document_get_title(WebKitDOMDocument*)
 void webkit_dom_document_set_title(WebKitDOMDocument*, const gchar*)
