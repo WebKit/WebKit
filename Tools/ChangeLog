@@ -1,3 +1,15 @@
+2016-08-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support abbreviations in iOS
+        https://bugs.webkit.org/show_bug.cgi?id=160907
+
+        Reviewed by Joanmarie Diggs.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::stringAttributeValue):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+
 2016-08-17  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         [EFL] Bump efl version from 1.17 to 1.18

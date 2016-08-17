@@ -2592,6 +2592,13 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return [NSArray arrayWithObjects:start, end, nil];
 }
 
+- (NSString *)accessibilityExpandedTextValue
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return m_object->expandedTextValue();
+}
+
 - (NSString *)accessibilityIdentifier
 {
     if (![self _prepareAccessibilityCall])

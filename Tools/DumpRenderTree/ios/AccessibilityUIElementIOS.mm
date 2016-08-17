@@ -96,6 +96,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
+- (NSString *)accessibilityExpandedTextValue;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -647,6 +648,9 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     
     if (JSStringIsEqualToUTF8CString(attribute, "AXARIACurrent"))
         return [[m_element accessibilityARIACurrentStatus] createJSStringRef];
+
+    if (JSStringIsEqualToUTF8CString(attribute, "AXExpandedTextValue"))
+        return [[m_element accessibilityExpandedTextValue] createJSStringRef];
     
     return JSStringCreateWithCharacters(0, 0);
 }

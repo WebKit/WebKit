@@ -1194,7 +1194,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
     }
 }
 
-static void AXAttributeStringSetexpandedTextValue(NSMutableAttributedString *attrString, RenderObject* renderer, NSRange range)
+static void AXAttributeStringSetExpandedTextValue(NSMutableAttributedString *attrString, RenderObject* renderer, NSRange range)
 {
     if (!renderer || !AXAttributedStringRangeIsValid(attrString, range))
         return;
@@ -1283,7 +1283,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetStyle(attrString, renderer, attrStringRange);
     AXAttributeStringSetHeadingLevel(attrString, renderer, attrStringRange);
     AXAttributeStringSetBlockquoteLevel(attrString, renderer, attrStringRange);
-    AXAttributeStringSetexpandedTextValue(attrString, renderer, attrStringRange);
+    AXAttributeStringSetExpandedTextValue(attrString, renderer, attrStringRange);
     AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), attrStringRange);
     
     // do spelling last because it tends to break up the range
