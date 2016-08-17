@@ -1,3 +1,16 @@
+2016-08-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Add tests for linked fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=160898
+
+        Reviewed by Brent Fulgham.
+
+        Add tests for https://trac.webkit.org/changeset/204502.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/Tests/WebCore/win/LinkedFonts.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2016-08-16  Daniel Bates  <dabates@apple.com>
 
         prepare-ChangeLog: Extract logic from generateFunctionLists() into a function that takes a delegate object
