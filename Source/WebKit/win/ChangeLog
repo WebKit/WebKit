@@ -1,3 +1,28 @@
+2016-08-17  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r204575. rdar://problem/27850667
+
+    2016-08-17  Babak Shafiei  <bshafiei@apple.com>
+
+            Merge patch for rdar://problem/27850667.
+
+        2016-08-16  Brent Fulgham  <bfulgham@apple.com>
+
+                [Win] Re-export a few symbols for backwards compatibility
+                <rdar://problem/27850667>
+
+                Reviewed by Dean Jackson.
+
+                Check in a workaround (in a custom branch) to re-export a few JavaScriptCore
+                functions that had been erroneously exported by WebKit in older builds. This
+                is needed so that we do not break certain old software still being used.
+
+                * WebKitDLL.cpp:
+                (DllMain): Bind functions at startup.
+                (bindJavaScriptTrampoline): Find JavaScriptCore library functions and
+                re-export them from WebKit.dll.
+                * WebKitDLL.h:
+
 2016-07-17  Sam Weinig  <sam@webkit.org>
 
         [WebKit API] Add SPI to track multiple navigations caused by a single user gesture
