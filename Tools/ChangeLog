@@ -1,3 +1,15 @@
+2016-08-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove old libraries from build inputs
+        https://bugs.webkit.org/show_bug.cgi?id=160949
+
+        Reviewed by Dean Jackson.
+
+        Modify the download script to remove the old 'icuuc.lib' and
+        'icuin.lib' files for Windows builds.
+
+        * Scripts/update-webkit-auxiliary-libs:
+
 2016-08-17  Jonathan Bedard  <jbedard@apple.com>
 
         Extra logging for crash reason

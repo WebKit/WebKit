@@ -31,6 +31,8 @@
 use strict;
 use warnings;
 use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
 
 my $file = "WebKitAuxiliaryLibrary";
 my $zipFile = "$file.zip"; 
@@ -38,3 +40,17 @@ my $auxiliaryLibsURL = "https://developer.apple.com/opensource/internet/$zipFile
 my $command = "$FindBin::Bin/update-webkit-dependency";
 
 system("perl", $command, $auxiliaryLibsURL, "win") == 0 or die;
+
+if (isAnyWindows()) {
+    # Get rid of ancient ICU cruft
+    my $sourceDir = sourceDir();
+    my $webkitLibrariesDir = $ENV{'WEBKIT_LIBRARIES'} || File::Spec->catdir($sourceDir, "WebKitLibraries", "win");
+
+    foreach ("icuin.lib", "icuuc.lib") {
+        my $filePath = File::Spec->catfile($webkitLibrariesDir, "lib32", $_);
+        if (-f $filePath) {
+            print "Removing old $filePath.\n";
+            unlink $filePath or warn "Failed to delete $file: $!\n";
+        }
+    }
+}
