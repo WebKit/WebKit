@@ -1,3 +1,15 @@
+2016-08-17  JF Bastien  <jfbastien@apple.com>
+
+        We allow assignments to const variables when in a for-in/for-of loop
+        https://bugs.webkit.org/show_bug.cgi?id=156673
+
+        Reviewed by Filip Pizlo.
+
+        * stress/for-in-of-const.js: Added.
+        (expect_nothrow):
+        (expect_throw):
+        (capture):
+
 2016-08-17  Mark Lam  <mark.lam@apple.com>
 
         Remove an invalid assertion in the DFG backend's GetById emitter.

@@ -1,3 +1,18 @@
+2016-08-17  JF Bastien  <jfbastien@apple.com>
+
+        We allow assignments to const variables when in a for-in/for-of loop
+        https://bugs.webkit.org/show_bug.cgi?id=156673
+
+        Reviewed by Filip Pizlo.
+
+        for-in and for-of weren't checking whether iteration variable from
+        parent scopes were const. Assigning to such variables should
+        throw, but used not to.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+
 2016-08-17  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a potential bug in MarkedArgumentBuffer.
