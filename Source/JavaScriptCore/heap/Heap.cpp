@@ -1079,9 +1079,13 @@ void Heap::collectAllGarbage()
     collect(FullCollection);
 
     DeferGCForAWhile deferGC(*this);
-    m_objectSpace.sweep();
-    m_objectSpace.shrink();
-    m_blockSnapshot.clear();
+    if (UNLIKELY(Options::useImmortalObjects()))
+        sweeper()->willFinishSweeping();
+    else {
+        m_objectSpace.sweep();
+        m_objectSpace.shrink();
+    }
+    ASSERT(m_blockSnapshot.isEmpty());
 
     sweepAllLogicallyEmptyWeakBlocks();
 }

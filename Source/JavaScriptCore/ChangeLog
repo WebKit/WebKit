@@ -1,3 +1,27 @@
+2016-08-16  Mark Lam  <mark.lam@apple.com>
+
+        Heap::collectAllGarbage() should work with JSC_useImmortalObjects=true.
+        https://bugs.webkit.org/show_bug.cgi?id=160917
+
+        Reviewed by Filip Pizlo.
+
+        If we do an synchronous GC when JSC_useImmortalObjects=true, we'll get a
+        RELEASE_ASSERT failure:
+
+            $ JSC_useImmortalObjects=true jsc
+            >>> gc()
+            Trace/BPT trap: 5
+
+        This is because Heap::collectAllGarbage() is doing an explicit sweep of the
+        MarkedSpace, and the sweeper is expecting to see no RetiredBlocks.  However, we
+        make objects immortal by retiring their blocks.  As a result, there is a mismatch
+        in expectancy.
+
+        The fix is simply to not run the sweeper when JSC_useImmortalObjects=true.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage):
+
 2016-08-16  Keith Miller  <keith_miller@apple.com>
 
         Add WASM I32 simple operators.
