@@ -725,7 +725,7 @@ PASS ShadowRoot interface object length
 PASS ShadowRoot interface object name 
 PASS ShadowRoot interface: existence and properties of interface prototype object 
 PASS ShadowRoot interface: existence and properties of interface prototype object's "constructor" property 
-FAIL ShadowRoot interface: attribute mode assert_true: The prototype object must have a property "mode" expected true got false
+PASS ShadowRoot interface: attribute mode 
 PASS ShadowRoot interface: attribute host 
 PASS Element interface: existence and properties of interface object 
 PASS Element interface object length 

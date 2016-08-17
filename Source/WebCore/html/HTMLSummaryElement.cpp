@@ -40,7 +40,7 @@ using namespace HTMLNames;
 Ref<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
 {
     Ref<HTMLSummaryElement> summary = adoptRef(*new HTMLSummaryElement(tagName, document));
-    summary->addShadowRoot(ShadowRoot::create(document, ShadowRoot::Type::UserAgent));
+    summary->addShadowRoot(ShadowRoot::create(document, ShadowRoot::Mode::UserAgent));
     return summary;
 }
 

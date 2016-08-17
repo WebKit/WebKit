@@ -158,7 +158,7 @@ void SlotAssignment::didChangeSlot(const AtomicString& slotAttrValue, ChangeType
         m_slotAssignmentsIsValid = false;
     }
 
-    if (shadowRoot.type() == ShadowRoot::Type::UserAgent)
+    if (shadowRoot.mode() == ShadowRoot::Mode::UserAgent)
         return;
 
     recursivelyFireSlotChangeEvent(*slotElement);

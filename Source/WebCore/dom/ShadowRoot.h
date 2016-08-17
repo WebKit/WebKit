@@ -42,13 +42,13 @@ class SlotAssignment;
 
 class ShadowRoot final : public DocumentFragment, public TreeScope {
 public:
-    enum class Type : uint8_t {
+    enum class Mode : uint8_t {
         UserAgent = 0,
         Closed,
         Open,
     };
 
-    static Ref<ShadowRoot> create(Document& document, Type type)
+    static Ref<ShadowRoot> create(Document& document, Mode type)
     {
         return adoptRef(*new ShadowRoot(document, type));
     }
@@ -79,7 +79,7 @@ public:
 
     Element* activeElement() const;
 
-    Type type() const { return m_type; }
+    Mode mode() const { return m_type; }
 
     void removeAllEventListeners() override;
 
@@ -97,7 +97,7 @@ public:
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
 
 protected:
-    ShadowRoot(Document&, Type);
+    ShadowRoot(Document&, Mode);
 
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
@@ -110,7 +110,7 @@ private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     bool m_resetStyleInheritance { false };
-    Type m_type { Type::UserAgent };
+    Mode m_type { Mode::UserAgent };
 
     Element* m_host { nullptr };
 

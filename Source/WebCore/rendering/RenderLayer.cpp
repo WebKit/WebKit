@@ -3096,7 +3096,7 @@ static inline RenderElement* rendererForScrollbar(RenderLayerModelObject& render
 {
     if (Element* element = renderer.element()) {
         if (ShadowRoot* shadowRoot = element->containingShadowRoot()) {
-            if (shadowRoot->type() == ShadowRoot::Type::UserAgent)
+            if (shadowRoot->mode() == ShadowRoot::Mode::UserAgent)
                 return shadowRoot->host()->renderer();
         }
     }

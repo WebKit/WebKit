@@ -148,7 +148,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
 #endif
 
     auto* shadowRoot = m_element.containingShadowRoot();
-    if (shadowRoot && shadowRoot->type() == ShadowRoot::Type::UserAgent) {
+    if (shadowRoot && shadowRoot->mode() == ShadowRoot::Mode::UserAgent) {
         const AtomicString& pseudoId = m_element.shadowPseudoId();
         if (!pseudoId.isEmpty())
             collectMatchingRulesForList(matchRequest.ruleSet->shadowPseudoElementRules(pseudoId.impl()), matchRequest, ruleRange);
