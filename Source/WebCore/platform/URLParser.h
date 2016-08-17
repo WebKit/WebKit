@@ -28,13 +28,20 @@
 #include "TextEncoding.h"
 #include "URL.h"
 #include <wtf/Forward.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
     
 class URLParser {
 public:
-    WEBCORE_EXPORT static Optional<URL> parse(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
+    WEBCORE_EXPORT Optional<URL> parse(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
     WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
+private:
+    URL m_url;
+    StringBuilder m_buffer;
+    StringBuilder m_authorityOrHostBuffer;
+    void authorityEndReached();
+    void hostEndReached();
 };
 
 }

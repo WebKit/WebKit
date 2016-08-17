@@ -53,7 +53,8 @@ struct ExpectedParts {
 static const char* s(const String& s) { return s.utf8().data(); }
 static void checkURL(const String& urlString, const ExpectedParts& parts)
 {
-    auto url = URLParser::parse(urlString);
+    URLParser parser;
+    auto url = parser.parse(urlString);
     EXPECT_STREQ(s(parts.protocol), s(url->protocol()));
     EXPECT_STREQ(s(parts.user), s(url->user()));
     EXPECT_STREQ(s(parts.password), s(url->pass()));
@@ -86,6 +87,19 @@ TEST_F(URLParserTest, Parse)
     checkURL("http://user:pass@webkit.org:123/", {"http", "user", "pass", "webkit.org", 123, "/", "", "", "http://user:pass@webkit.org:123/"});
     checkURL("http://user:pass@webkit.org:123", {"http", "user", "pass", "webkit.org", 123, "/", "", "", "http://user:pass@webkit.org:123/"});
     checkURL("http://user:pass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
+    checkURL("http://webkit.org", {"http", "", "", "webkit.org", 0, "/", "", "", "http://webkit.org/"});
+}
+
+static void shouldFail(const String& urlString)
+{
+    URLParser parser;
+    auto invalidURL = parser.parse(urlString);
+    EXPECT_TRUE(invalidURL == Nullopt);
+}
+    
+TEST_F(URLParserTest, ParserFailures)
+{
+    shouldFail("    ");
 }
 
 } // namespace TestWebKitAPI

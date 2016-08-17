@@ -78,6 +78,7 @@ namespace WebCore {
     M(StorageAPI) \
     M(TextAutosizing) \
     M(Threading) \
+    M(URLParser) \
     M(WebAudio) \
     M(WebGL) \
     M(WebReplay) \

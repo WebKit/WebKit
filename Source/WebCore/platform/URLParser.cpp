@@ -25,18 +25,16 @@
 
 #include "config.h"
 #include "URLParser.h"
-#include "NotImplemented.h"
 
+#include "Logging.h"
+#include "NotImplemented.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-static bool isC0Control(const StringView::CodePoints::Iterator& c) { return *c <= 0x001F; }
-static bool isC0ControlOrSpace(const StringView::CodePoints::Iterator& c) { return isC0Control(c) || *c == 0x0020; }
-static bool isTabOrNewline(const StringView::CodePoints::Iterator& c) { return *c == 0x0009 || *c == 0x000A || *c == 0x000D; }
-static bool isASCIIDigit(const StringView::CodePoints::Iterator& c) { return *c >= 0x0030  && *c <= 0x0039; }
-static bool isASCIIAlpha(const StringView::CodePoints::Iterator& c) { return (*c >= 0x0041 && *c <= 0x005A) || (*c >= 0x0061 && *c <= 0x007A); }
-static bool isASCIIAlphanumeric(const StringView::CodePoints::Iterator& c) { return isASCIIDigit(c) || isASCIIAlpha(c); }
+template<typename CharacterType> static bool isC0Control(CharacterType character) { return character <= 0x0001F; }
+template<typename CharacterType> static bool isC0ControlOrSpace(CharacterType character) { return isC0Control(character) || character == 0x0020; }
+template<typename CharacterType> static bool isTabOrNewline(CharacterType character) { return character == 0x0009 || character == 0x000A || character == 0x000D; }
     
 static bool isSpecialScheme(const String& scheme)
 {
@@ -51,13 +49,14 @@ static bool isSpecialScheme(const String& scheme)
 
 Optional<URL> URLParser::parse(const String& input, const URL& base, const TextEncoding&)
 {
-    URL url;
-    
+    m_url = { };
+    m_buffer.clear();
+    m_authorityOrHostBuffer.clear();
+
     auto codePoints = StringView(input).codePoints();
     auto c = codePoints.begin();
     auto end = codePoints.end();
-    StringBuilder buffer;
-    while (isC0ControlOrSpace(c))
+    while (c != end && isC0ControlOrSpace(*c))
         ++c;
     
     enum class State : uint8_t {
@@ -71,10 +70,8 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
         RelativeSlash,
         SpecialAuthoritySlashes,
         SpecialAuthorityIgnoreSlashes,
-        Authority,
+        AuthorityOrHost,
         Host,
-        Hostname,
-        Port,
         File,
         FileSlash,
         FileHost,
@@ -85,11 +82,12 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
         Fragment,
     };
 
-#define LOG_STATE(x)
+#define LOG_STATE(x) LOG(URLParser, x)
+#define LOG_FINAL_STATE(x) LOG(URLParser, "Final State: %s", x)
 
     State state = State::SchemeStart;
     while (c != end) {
-        if (isTabOrNewline(c)) {
+        if (isTabOrNewline(*c)) {
             ++c;
             continue;
         }
@@ -97,8 +95,8 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
         switch (state) {
         case State::SchemeStart:
             LOG_STATE("SchemeStart");
-            if (isASCIIAlpha(c)) {
-                buffer.append(toASCIILower(*c));
+            if (isASCIIAlpha(*c)) {
+                m_buffer.append(toASCIILower(*c));
                 state = State::Scheme;
             } else
                 state = State::NoScheme;
@@ -106,12 +104,12 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
             break;
         case State::Scheme:
             LOG_STATE("Scheme");
-            if (isASCIIAlphanumeric(c) || *c == '+' || *c == '-' || *c == '.')
-                buffer.append(toASCIILower(*c));
+            if (isASCIIAlphanumeric(*c) || *c == '+' || *c == '-' || *c == '.')
+                m_buffer.append(toASCIILower(*c));
             else if (*c == ':') {
-                url.m_schemeEnd = buffer.length();
-                String urlScheme = buffer.toString(); // FIXME: Find a way to do this without shrinking the buffer.
-                url.m_protocolIsInHTTPFamily = urlScheme == "http" || urlScheme == "https";
+                m_url.m_schemeEnd = m_buffer.length();
+                String urlScheme = m_buffer.toString(); // FIXME: Find a way to do this without shrinking the m_buffer.
+                m_url.m_protocolIsInHTTPFamily = urlScheme == "http" || urlScheme == "https";
                 if (urlScheme == "file")
                     state = State::File;
                 else if (isSpecialScheme(urlScheme)) {
@@ -121,9 +119,9 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
                         state = State::SpecialAuthoritySlashes;
                 } else
                     state = State::SchemeEndCheckForSlashes;
-                buffer.append(':');
+                m_buffer.append(':');
             } else {
-                buffer.clear();
+                m_buffer.clear();
                 state = State::NoScheme;
                 // FIXME: Find a way to start over here.
                 notImplemented();
@@ -179,9 +177,9 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
                 ++c;
                 if (c == end)
                     return Nullopt;
-                buffer.append('/');
+                m_buffer.append('/');
                 if (*c == '/') {
-                    buffer.append('/');
+                    m_buffer.append('/');
                     state = State::SpecialAuthorityIgnoreSlashes;
                     ++c;
                     break;
@@ -193,59 +191,32 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
             break;
         case State::SpecialAuthorityIgnoreSlashes:
             LOG_STATE("SpecialAuthorityIgnoreSlashes");
-            if (*c != '/' && *c != '\\') {
-                state = State::Authority;
-                break;
-            }
-            notImplemented();
-            ++c;
+            if (*c == '/' || *c == '\\')
+                ++c;
+            m_url.m_userStart = m_buffer.length();
+            state = State::AuthorityOrHost;
             break;
-        case State::Authority:
-            LOG_STATE("Authority");
-            if (!url.m_userStart)
-                url.m_userStart = buffer.length();
+        case State::AuthorityOrHost:
+            LOG_STATE("AuthorityOrHost");
             if (*c == '@') {
-                url.m_passwordEnd = buffer.length();
-                buffer.append('@');
+                authorityEndReached();
                 state = State::Host;
-                notImplemented();
-            } else if (*c == ':') {
-                url.m_userEnd = buffer.length();
-                buffer.append(*c);
-            } else {
-                if (*c == '/' || *c == '?' || *c == '#') {
-                    url.m_passwordEnd = buffer.length();
-                    state = State::Host;
-                }
-                buffer.append(*c);
-            }
+            } else if (*c == '/' || *c == '?' || *c == '#') {
+                hostEndReached();
+                state = State::Path;
+                break;
+            } else
+                m_authorityOrHostBuffer.append(*c);
             ++c;
             break;
         case State::Host:
-        case State::Hostname:
-            LOG_STATE("Host/Hostname");
-            if (*c == ':') {
-                url.m_hostEnd = buffer.length();
-                buffer.append(':');
-                state = State::Port;
-            } else if (*c == '/' || *c == '?' || *c == '#') {
-                url.m_hostEnd = buffer.length();
+            LOG_STATE("Host");
+            if (*c == '/' || *c == '?' || *c == '#') {
+                hostEndReached();
                 state = State::Path;
                 continue;
-            } else
-                buffer.append(*c);
-            ++c;
-            break;
-        case State::Port:
-            LOG_STATE("Port");
-            if (isASCIIDigit(c)) {
-                buffer.append(*c);
-            } else if (*c == '/' || *c == '?' || *c == '#') {
-                url.m_portEnd = buffer.length();
-                state = State::PathStart;
-                continue;
-            } else
-                return Nullopt;
+            }
+            m_authorityOrHostBuffer.append(*c);
             ++c;
             break;
         case State::File:
@@ -270,8 +241,8 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
         case State::Path:
             LOG_STATE("Path");
             if (*c == '/') {
-                buffer.append('/');
-                url.m_pathAfterLastSlash = buffer.length();
+                m_buffer.append('/');
+                m_url.m_pathAfterLastSlash = m_buffer.length();
                 ++c;
                 if (c == end)
                     break;
@@ -284,16 +255,16 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
                     notImplemented();
                 }
             } else if (*c == '?') {
-                url.m_pathEnd = buffer.length();
+                m_url.m_pathEnd = m_buffer.length();
                 state = State::Query;
                 continue;
             } else if (*c == '#') {
-                url.m_pathEnd = buffer.length();
+                m_url.m_pathEnd = m_buffer.length();
                 state = State::Fragment;
                 continue;
             }
             // FIXME: Percent encode c
-            buffer.append(*c);
+            m_buffer.append(*c);
             ++c;
             break;
         case State::CannotBeABaseURLPath:
@@ -304,79 +275,177 @@ Optional<URL> URLParser::parse(const String& input, const URL& base, const TextE
         case State::Query:
             LOG_STATE("Query");
             if (*c == '#') {
-                url.m_queryEnd = buffer.length();
+                m_url.m_queryEnd = m_buffer.length();
                 state = State::Fragment;
                 continue;
             }
-            buffer.append(*c);
+            m_buffer.append(*c);
             ++c;
             break;
         case State::Fragment:
             LOG_STATE("Fragment");
-            buffer.append(*c);
+            m_buffer.append(*c);
             ++c;
             break;
         }
     }
-    
+
     switch (state) {
     case State::SchemeStart:
+        LOG_FINAL_STATE("SchemeStart");
+        return Nullopt;
+        break;
     case State::Scheme:
+        LOG_FINAL_STATE("Scheme");
+        break;
     case State::SchemeEndCheckForSlashes:
+        LOG_FINAL_STATE("SchemeEndCheckForSlashes");
+        break;
     case State::NoScheme:
+        LOG_FINAL_STATE("NoScheme");
+        break;
     case State::SpecialRelativeOrAuthority:
+        LOG_FINAL_STATE("SpecialRelativeOrAuthority");
+        break;
     case State::PathOrAuthority:
+        LOG_FINAL_STATE("PathOrAuthority");
+        break;
     case State::Relative:
+        LOG_FINAL_STATE("Relative");
+        break;
     case State::RelativeSlash:
+        LOG_FINAL_STATE("RelativeSlash");
+        break;
     case State::SpecialAuthoritySlashes:
+        LOG_FINAL_STATE("SpecialAuthoritySlashes");
+        break;
     case State::SpecialAuthorityIgnoreSlashes:
-    case State::Authority:
+        LOG_FINAL_STATE("SpecialAuthorityIgnoreSlashes");
         break;
+    case State::AuthorityOrHost:
+        LOG_FINAL_STATE("AuthorityOrHost");
+        m_url.m_userEnd = m_buffer.length();
+        m_url.m_passwordEnd = m_url.m_userEnd;
+        FALLTHROUGH;
     case State::Host:
-    case State::Hostname:
-        url.m_hostEnd = buffer.length();
-        url.m_portEnd = url.m_hostEnd;
-        buffer.append('/');
-        url.m_pathEnd = url.m_hostEnd + 1;
-        url.m_pathAfterLastSlash = url.m_pathEnd;
-        url.m_queryEnd = url.m_pathEnd;
-        url.m_fragmentEnd = url.m_pathEnd;
-        break;
-    case State::Port:
-        url.m_portEnd = buffer.length();
-        buffer.append('/');
-        url.m_pathEnd = url.m_portEnd + 1;
-        url.m_pathAfterLastSlash = url.m_pathEnd;
-        url.m_queryEnd = url.m_pathEnd;
-        url.m_fragmentEnd = url.m_pathEnd;
+        if (state == State::Host)
+            LOG_FINAL_STATE("Host");
+        hostEndReached();
+        m_buffer.append('/');
+        m_url.m_pathEnd = m_url.m_portEnd + 1;
+        m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
+        m_url.m_queryEnd = m_url.m_pathEnd;
+        m_url.m_fragmentEnd = m_url.m_pathEnd;
         break;
     case State::File:
+        LOG_FINAL_STATE("File");
+        break;
     case State::FileSlash:
+        LOG_FINAL_STATE("FileSlash");
+        break;
     case State::FileHost:
+        LOG_FINAL_STATE("FileHost");
+        break;
     case State::PathStart:
+        LOG_FINAL_STATE("PathStart");
+        break;
     case State::Path:
-        url.m_pathEnd = buffer.length();
-        url.m_queryEnd = url.m_pathEnd;
-        url.m_fragmentEnd = url.m_pathEnd;
+        LOG_FINAL_STATE("Path");
+        m_url.m_pathEnd = m_buffer.length();
+        m_url.m_queryEnd = m_url.m_pathEnd;
+        m_url.m_fragmentEnd = m_url.m_pathEnd;
         break;
     case State::CannotBeABaseURLPath:
+        LOG_FINAL_STATE("CannotBeABaseURLPath");
         break;
     case State::Query:
-        url.m_queryEnd = buffer.length();
-        url.m_fragmentEnd = url.m_queryEnd;
+        LOG_FINAL_STATE("Query");
+        m_url.m_queryEnd = m_buffer.length();
+        m_url.m_fragmentEnd = m_url.m_queryEnd;
         break;
     case State::Fragment:
-        url.m_fragmentEnd = buffer.length();
+        LOG_FINAL_STATE("Fragment");
+        m_url.m_fragmentEnd = m_buffer.length();
         break;
     }
 
-    url.m_string = buffer.toString();
-    url.m_isValid = true;
-    return url;
+    m_url.m_string = m_buffer.toString();
+    m_url.m_isValid = true;
+    return m_url;
+}
+
+void URLParser::authorityEndReached()
+{
+    auto codePoints = StringView(m_authorityOrHostBuffer.toString()).codePoints();
+    auto iterator = codePoints.begin();
+    auto end = codePoints.end();
+    for (; iterator != end; ++iterator) {
+        m_buffer.append(*iterator);
+        if (*iterator == ':') {
+            ++iterator;
+            m_url.m_userEnd = m_buffer.length() - 1;
+            break;
+        }
+    }
+    for (; iterator != end; ++iterator)
+        m_buffer.append(*iterator);
+    m_url.m_passwordEnd = m_buffer.length();
+    m_buffer.append('@');
+    m_authorityOrHostBuffer.clear();
+}
+
+void URLParser::hostEndReached()
+{
+    auto codePoints = StringView(m_authorityOrHostBuffer.toString()).codePoints();
+    auto iterator = codePoints.begin();
+    auto end = codePoints.end();
+    for (; iterator != end; ++iterator) {
+        if (*iterator == ':') {
+            ++iterator;
+            m_url.m_hostEnd = m_buffer.length();
+            m_buffer.append(':');
+            for (; iterator != end; ++iterator)
+                m_buffer.append(*iterator);
+            m_url.m_portEnd = m_buffer.length();
+            return;
+        }
+        m_buffer.append(*iterator);
+    }
+    m_url.m_hostEnd = m_buffer.length();
+    m_url.m_portEnd = m_url.m_hostEnd;
+    m_authorityOrHostBuffer.clear();
 }
 
 bool URLParser::allValuesEqual(const URL& a, const URL& b)
 {
+    LOG(URLParser, "%d %d %d %d %d %d %d %d %d %d %d %d %s\n%d %d %d %d %d %d %d %d %d %d %d %d %s",
+        a.m_isValid,
+        a.m_protocolIsInHTTPFamily,
+        a.m_schemeEnd,
+        a.m_userStart,
+        a.m_userEnd,
+        a.m_passwordEnd,
+        a.m_hostEnd,
+        a.m_portEnd,
+        a.m_pathAfterLastSlash,
+        a.m_pathEnd,
+        a.m_queryEnd,
+        a.m_fragmentEnd,
+        a.m_string.utf8().data(),
+        b.m_isValid,
+        b.m_protocolIsInHTTPFamily,
+        b.m_schemeEnd,
+        b.m_userStart,
+        b.m_userEnd,
+        b.m_passwordEnd,
+        b.m_hostEnd,
+        b.m_portEnd,
+        b.m_pathAfterLastSlash,
+        b.m_pathEnd,
+        b.m_queryEnd,
+        b.m_fragmentEnd,
+        b.m_string.utf8().data());
+
     return a.m_string == b.m_string
         && a.m_isValid == b.m_isValid
         && a.m_protocolIsInHTTPFamily == b.m_protocolIsInHTTPFamily
