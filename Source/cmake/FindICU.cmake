@@ -18,15 +18,17 @@ find_path(
     NAMES unicode/utypes.h
     HINTS ${PC_ICU_INCLUDE_DIRS}
           ${PC_ICU_INCLUDEDIR}
+          ${WEBKIT_LIBRARIES_INCLUDE_DIR}
     DOC "Include directory for the ICU library")
 mark_as_advanced(ICU_INCLUDE_DIR)
 
 # Look for the library.
 find_library(
     ICU_LIBRARY
-    NAMES icuuc cygicuuc cygicuuc32
+    NAMES icuuc libicuuc cygicuuc cygicuuc32
     HINTS ${PC_ICU_LIBRARY_DIRS}
           ${PC_ICU_LIBDIR}
+          ${WEBKIT_LIBRARIES_LINK_DIR}
     DOC "Libraries to link against for the common parts of ICU")
 mark_as_advanced(ICU_LIBRARY)
 
@@ -49,9 +51,10 @@ if (ICU_INCLUDE_DIR AND ICU_LIBRARY)
     pkg_check_modules(PC_ICU_I18N icu-i18n)
     find_library(
         ICU_I18N_LIBRARY
-        NAMES icui18n icuin cygicuin cygicuin32
+        NAMES icui18n icuin libicui18n libicuin cygicuin cygicuin32
         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
               ${PC_ICU_I18N_LIBDIR}
+              ${WEBKIT_LIBRARIES_LINK_DIR}
         DOC "Libraries to link against for ICU internationalization")
     mark_as_advanced(ICU_I18N_LIBRARY)
     if (ICU_I18N_LIBRARY)
@@ -61,11 +64,30 @@ if (ICU_INCLUDE_DIR AND ICU_LIBRARY)
         set(ICU_I18N_FOUND 0)
         set(ICU_I18N_LIBRARIES)
     endif ()
+
+    # Look for the ICU data libraries
+    find_library(
+        ICU_DATA_LIBRARY
+        NAMES icudata libicudata cygicudata cygicudata32
+        HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
+              ${PC_ICU_I18N_LIBDIR}
+              ${WEBKIT_LIBRARIES_LINK_DIR}
+        DOC "Libraries to link against for ICU data")
+    mark_as_advanced(ICU_DATA_LIBRARY)
+    if (ICU_DATA_LIBRARY)
+        set(ICU_DATA_FOUND 1)
+        set(ICU_DATA_LIBRARIES ${ICU_DATA_LIBRARY})
+    else ()
+        set(ICU_DATA_FOUND 0)
+        set(ICU_DATA_LIBRARIES)
+    endif ()
 else ()
     set(ICU_FOUND 0)
     set(ICU_I18N_FOUND 0)
+    set(ICU_DATA_FOUND 0)
     set(ICU_LIBRARIES)
     set(ICU_I18N_LIBRARIES)
+    set(ICU_DATA_LIBRARIES)
     set(ICU_INCLUDE_DIRS)
     set(ICU_VERSION)
     set(ICU_MAJOR_VERSION)
@@ -76,6 +98,8 @@ if (ICU_FOUND)
     if (NOT ICU_FIND_QUIETLY)
         message(STATUS "Found ICU header files in ${ICU_INCLUDE_DIRS}")
         message(STATUS "Found ICU libraries: ${ICU_LIBRARIES}")
+        message(STATUS "Found ICU internationaliation libraries: ${ICU_I18N_LIBRARIES}")
+        message(STATUS "Found ICU data libraries: ${ICU_DATA_LIBRARIES}")
     endif ()
 else ()
     if (ICU_FIND_REQUIRED)

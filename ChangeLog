@@ -1,3 +1,13 @@
+2016-08-17  Don Olmstead  <don.olmstead@am.sony.com>
+
+        Use find_library within Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=160904
+
+        Reviewed by Brent Fulgham.
+
+        * Source/cmake/FindICU.cmake:
+        * Source/cmake/OptionsWin.cmake:
+
 2016-08-17  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         [EFL] Bump efl version from 1.17 to 1.18
