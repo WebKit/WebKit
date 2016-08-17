@@ -730,11 +730,7 @@ inline TextDecorationSkip StyleBuilderConverter::convertTextDecorationSkip(Style
 #if ENABLE(CSS_SHAPES)
 static inline bool isImageShape(const CSSValue& value)
 {
-    return is<CSSImageValue>(value)
-#if ENABLE(CSS_IMAGE_SET)
-        || is<CSSImageSetValue>(value)
-#endif 
-        || is<CSSImageGeneratorValue>(value);
+    return is<CSSImageValue>(value) || is<CSSImageSetValue>(value) || is<CSSImageGeneratorValue>(value);
 }
 
 inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver& styleResolver, CSSValue& value)

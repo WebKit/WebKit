@@ -150,10 +150,8 @@ bool CSSValue::traverseSubresources(const std::function<bool (const CachedResour
         return downcast<CSSCrossfadeValue>(*this).traverseSubresources(handler);
     if (is<CSSFilterImageValue>(*this))
         return downcast<CSSFilterImageValue>(*this).traverseSubresources(handler);
-#if ENABLE(CSS_IMAGE_SET)
     if (is<CSSImageSetValue>(*this))
         return downcast<CSSImageSetValue>(*this).traverseSubresources(handler);
-#endif
     return false;
 }
 
@@ -238,10 +236,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSLineBoxContainValue>(*this, other);
         case CalculationClass:
             return compareCSSValues<CSSCalcValue>(*this, other);
-#if ENABLE(CSS_IMAGE_SET)
         case ImageSetClass:
             return compareCSSValues<CSSImageSetValue>(*this, other);
-#endif
         case WebKitCSSFilterClass:
             return compareCSSValues<WebKitCSSFilterValue>(*this, other);
         case SVGColorClass:
@@ -346,10 +342,8 @@ String CSSValue::cssText() const
         return downcast<CSSLineBoxContainValue>(*this).customCSSText();
     case CalculationClass:
         return downcast<CSSCalcValue>(*this).customCSSText();
-#if ENABLE(CSS_IMAGE_SET)
     case ImageSetClass:
         return downcast<CSSImageSetValue>(*this).customCSSText();
-#endif
     case WebKitCSSFilterClass:
         return downcast<WebKitCSSFilterValue>(*this).customCSSText();
     case SVGColorClass:
@@ -479,11 +473,9 @@ void CSSValue::destroy()
     case CalculationClass:
         delete downcast<CSSCalcValue>(this);
         return;
-#if ENABLE(CSS_IMAGE_SET)
     case ImageSetClass:
         delete downcast<CSSImageSetValue>(this);
         return;
-#endif
     case FilterImageClass:
         delete downcast<CSSFilterImageValue>(this);
         return;
@@ -531,10 +523,8 @@ RefPtr<CSSValue> CSSValue::cloneForCSSOM() const
         return downcast<WebKitCSSFilterValue>(*this).cloneForCSSOM();
     case WebKitCSSTransformClass:
         return downcast<WebKitCSSTransformValue>(*this).cloneForCSSOM();
-#if ENABLE(CSS_IMAGE_SET)
     case ImageSetClass:
         return downcast<CSSImageSetValue>(*this).cloneForCSSOM();
-#endif
     case SVGColorClass:
         return downcast<SVGColor>(*this).cloneForCSSOM();
     case SVGPaintClass:

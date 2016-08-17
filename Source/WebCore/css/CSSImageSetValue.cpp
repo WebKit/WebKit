@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSImageSetValue.h"
 
-#if ENABLE(CSS_IMAGE_SET)
-
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CachedImage.h"
@@ -204,5 +202,3 @@ Ref<CSSImageSetValue> CSSImageSetValue::cloneForCSSOM() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_IMAGE_SET)

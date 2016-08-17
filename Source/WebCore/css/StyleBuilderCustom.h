@@ -1312,11 +1312,9 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             else
                 styleResolver.style()->setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(item.get())), didSet);
             didSet = true;
-#if ENABLE(CSS_IMAGE_SET)
         } else if (is<CSSImageSetValue>(item.get())) {
             styleResolver.style()->setContent(styleResolver.setOrPendingFromValue(CSSPropertyContent, downcast<CSSImageSetValue>(item.get())), didSet);
             didSet = true;
-#endif
         }
 
         if (is<CSSImageValue>(item.get())) {

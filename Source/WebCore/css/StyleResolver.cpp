@@ -41,6 +41,7 @@
 #include "CSSFontSelector.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
+#include "CSSImageSetValue.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSKeyframeRule.h"
@@ -150,10 +151,6 @@
 #if ENABLE(CSS_GRID_LAYOUT)
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
-#endif
-
-#if ENABLE(CSS_IMAGE_SET)
-#include "CSSImageSetValue.h"
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1715,10 +1712,8 @@ RefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue& v
         return generatedOrPendingFromValue(property, downcast<CSSImageGeneratorValue>(value));
     }
 
-#if ENABLE(CSS_IMAGE_SET)
     if (is<CSSImageSetValue>(value))
         return setOrPendingFromValue(property, downcast<CSSImageSetValue>(value));
-#endif
 
     if (is<CSSCursorImageValue>(value))
         return cursorOrPendingFromValue(property, downcast<CSSCursorImageValue>(value));
@@ -1748,7 +1743,6 @@ Ref<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID propert
     return StyleGeneratedImage::create(value);
 }
 
-#if ENABLE(CSS_IMAGE_SET)
 RefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue& value)
 {
     RefPtr<StyleImage> image = value.cachedOrPendingImageSet(document());
@@ -1756,7 +1750,6 @@ RefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID property, 
         m_state.ensurePendingResources().pendingImages.set(property, &value);
     return image;
 }
-#endif
 
 RefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID property, CSSCursorImageValue& value)
 {

@@ -38,10 +38,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(CSS_IMAGE_SET)
-#include "CSSImageSetValue.h"
-#endif
-
 namespace WebCore {
 
 CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, bool hasHotSpot, const IntPoint& hotSpot)
@@ -118,10 +114,8 @@ void CSSCursorImageValue::cursorElementChanged(SVGCursorElement& cursorElement)
 
 StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-#if ENABLE(CSS_IMAGE_SET)
     if (is<CSSImageSetValue>(m_imageValue.get()))
         return downcast<CSSImageSetValue>(m_imageValue.get()).bestFitImage(loader, options);
-#endif
 
     auto* cursorElement = loader.document() ? updateCursorElement(*loader.document()) : nullptr;
 
@@ -152,13 +146,9 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader, const
 
 StyleImage* CSSCursorImageValue::cachedOrPendingImage(const Document& document)
 {
-#if ENABLE(CSS_IMAGE_SET)
     // Need to delegate completely so that changes in device scale factor can be handled appropriately.
     if (is<CSSImageSetValue>(m_imageValue.get()))
         return downcast<CSSImageSetValue>(m_imageValue.get()).cachedOrPendingImageSet(document);
-#else
-    UNUSED_PARAM(document);
-#endif
 
     if (!m_image)
         m_image = StylePendingImage::create(this);

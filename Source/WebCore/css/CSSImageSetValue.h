@@ -26,8 +26,6 @@
 #ifndef CSSImageSetValue_h
 #define CSSImageSetValue_h
 
-#if ENABLE(CSS_IMAGE_SET)
-
 #include "CSSValueList.h"
 
 namespace WebCore {
@@ -89,7 +87,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSImageSetValue, isImageSetValue())
-
-#endif // ENABLE(CSS_IMAGE_SET)
 
 #endif // CSSImageSetValue_h

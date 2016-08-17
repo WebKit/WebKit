@@ -61,6 +61,7 @@ class CSSBasicShapeInset;
 class CSSBasicShapePath;
 class CSSBasicShapePolygon;
 class CSSGridLineNamesValue;
+class CSSImageSetValue;
 class CSSVariableDependentValue;
 class Document;
 class Element;
@@ -85,10 +86,6 @@ class StyleKeyframe;
 class StyleSheetContents;
 class StyledElement;
 class WebKitCSSTransformValue;
-
-#if ENABLE(CSS_IMAGE_SET)
-class CSSImageSetValue;
-#endif
 
 class CSSParser {
     friend inline int cssyylex(void*, CSSParser*);
@@ -334,9 +331,7 @@ public:
     RefPtr<CSSValueList> parseImageResolution();
 #endif
 
-#if ENABLE(CSS_IMAGE_SET)
     RefPtr<CSSImageSetValue> parseImageSet();
-#endif
 
     bool parseFilterImage(CSSParserValueList&, RefPtr<CSSValue>&);
 

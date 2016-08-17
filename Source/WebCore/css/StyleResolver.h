@@ -460,9 +460,7 @@ public:
     RefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
     Ref<StyleImage> cachedOrPendingFromValue(CSSPropertyID, CSSImageValue&);
     Ref<StyleImage> generatedOrPendingFromValue(CSSPropertyID, CSSImageGeneratorValue&);
-#if ENABLE(CSS_IMAGE_SET)
     RefPtr<StyleImage> setOrPendingFromValue(CSSPropertyID, CSSImageSetValue&);
-#endif
     RefPtr<StyleImage> cursorOrPendingFromValue(CSSPropertyID, CSSCursorImageValue&);
 
     bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }

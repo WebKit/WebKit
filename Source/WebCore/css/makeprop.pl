@@ -659,11 +659,7 @@ sub generateFillLayerPropertyValueSetter {
   my $setterContent = "";
   $setterContent .= $indent . "FillLayer* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "FillLayer* previousChild = nullptr;\n";
-  $setterContent .= $indent . "if (is<CSSValueList>(value)\n";
-  $setterContent .= "#if ENABLE(CSS_IMAGE_SET)\n";
-  $setterContent .= $indent . "&& !is<CSSImageSetValue>(value)\n";
-  $setterContent .= "#endif\n";
-  $setterContent .= $indent . ") {\n";
+  $setterContent .= $indent . "if (is<CSSValueList>(value) && !is<CSSImageSetValue>(value)) {\n";
   $setterContent .= $indent . "    // Walk each value and put it into a layer, creating new layers as needed.\n";
   $setterContent .= $indent . "    for (auto& item : downcast<CSSValueList>(value)) {\n";
   $setterContent .= $indent . "        if (!child) {\n";

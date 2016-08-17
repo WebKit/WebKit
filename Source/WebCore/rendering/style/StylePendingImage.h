@@ -28,12 +28,9 @@
 
 #include "CSSCursorImageValue.h"
 #include "CSSImageGeneratorValue.h"
+#include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "StyleImage.h"
-
-#if ENABLE(CSS_IMAGE_SET)
-#include "CSSImageSetValue.h"
-#endif
 
 namespace WebCore {
 
@@ -48,10 +45,7 @@ public:
     CSSImageValue* cssImageValue() const { return is<CSSImageValue>(m_value) ? downcast<CSSImageValue>(m_value) : nullptr; }
     CSSImageGeneratorValue* cssImageGeneratorValue() const { return is<CSSImageGeneratorValue>(m_value) ? static_cast<CSSImageGeneratorValue*>(m_value) : nullptr; }
     CSSCursorImageValue* cssCursorImageValue() const { return is<CSSCursorImageValue>(m_value) ? downcast<CSSCursorImageValue>(m_value) : nullptr; }
-
-#if ENABLE(CSS_IMAGE_SET)
     CSSImageSetValue* cssImageSetValue() const { return is<CSSImageSetValue>(m_value) ? downcast<CSSImageSetValue>(m_value) : nullptr; }
-#endif
 
     void detachFromCSSValue() { m_value = nullptr; }
 

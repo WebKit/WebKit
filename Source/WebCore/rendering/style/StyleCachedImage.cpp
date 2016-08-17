@@ -46,10 +46,8 @@ StyleCachedImage::~StyleCachedImage()
 
 PassRefPtr<CSSValue> StyleCachedImage::cssValue() const
 {
-#if ENABLE(CSS_IMAGE_SET)
     if (m_cssImageSetValue)
         return const_cast<CSSImageSetValue*>(m_cssImageSetValue);
-#endif
     return CSSPrimitiveValue::create(m_image->url(), CSSPrimitiveValue::CSS_URI);
 }
 
