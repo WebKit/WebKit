@@ -47,7 +47,8 @@ class Identifier;
     macro(tryGetById) \
     macro(putByValDirect) \
     macro(toNumber) \
-    macro(toString)
+    macro(toString) \
+    macro(newArrayWithSize) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
     macro(undefined) \

@@ -28,7 +28,7 @@ function of(/* items... */)
     "use strict";
 
     var length = arguments.length;
-    var array = @isConstructor(this) ? new this(length) : new @Array(length);
+    var array = @isConstructor(this) ? new this(length) : @newArrayWithSize(length);
     for (var k = 0; k < length; ++k)
         @putByValDirect(array, k, arguments[k]);
     array.length = length;
@@ -87,7 +87,7 @@ function from(items /*, mapFn, thisArg */)
     var arrayLike = @Object(items);
     var arrayLikeLength = @toLength(arrayLike.length);
 
-    var result = @isConstructor(thisObj) ? new thisObj(arrayLikeLength) : new @Array(arrayLikeLength);
+    var result = @isConstructor(thisObj) ? new thisObj(arrayLikeLength) : @newArrayWithSize(arrayLikeLength);
 
     var k = 0;
     while (k < arrayLikeLength) {

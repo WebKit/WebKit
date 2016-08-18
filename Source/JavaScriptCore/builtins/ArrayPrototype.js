@@ -213,7 +213,7 @@ function filter(callback /*, thisArg */)
         }
     }
     if (constructor === @Array || constructor === @undefined)
-        result = [];
+        result = @newArrayWithSize(0);
     else
         result = new constructor(0);
 
@@ -262,7 +262,7 @@ function map(callback /*, thisArg */)
         }
     }
     if (constructor === @Array || constructor === @undefined)
-        result = @Array(length);
+        result = @newArrayWithSize(length);
     else
         result = new constructor(length);
 
@@ -630,7 +630,7 @@ function sort(comparator)
 
         var valueCount = compact(array, length);
 
-        var strings = new @Array(valueCount);
+        var strings = @newArrayWithSize(valueCount);
         for (var i = 0; i < valueCount; ++i)
             strings[i] = { string: @toString(array[i]), value: array[i] };
 
@@ -680,7 +680,7 @@ function concatSlowPath()
     var argCount = arguments.length;
     var result;
     if (constructor === @Array || constructor === @undefined)
-        result = [];
+        result = @newArrayWithSize(0);
     else
         result = new constructor(0);
     var resultIsArray = @isJSArray(result);

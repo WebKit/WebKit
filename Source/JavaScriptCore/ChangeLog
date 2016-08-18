@@ -1,3 +1,33 @@
+2016-08-18  Saam Barati  <sbarati@apple.com>
+
+        Make @Array(size) a bytecode intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=160867
+
+        Reviewed by Mark Lam.
+
+        There were a few places in the code where we were emitting `@Array(size)`
+        or `new @Array(size)`. Since we have a bytecode operation that already
+        represents this, called new_array_with_size, it's faster to just make a
+        bytecode intrinsic for the this operation. This patch does that and
+        the intrinsic is called `@newArrayWithSize`. This might be around a
+        1% speedup on ES6 sample bench, but it's within the noise. This is just
+        a good bytecode operation to have because it's common enough to
+        create arrays and it's good to make that fast in all tiers.
+
+        * builtins/ArrayConstructor.js:
+        (of):
+        (from):
+        * builtins/ArrayPrototype.js:
+        (filter):
+        (map):
+        (sort.stringSort):
+        (sort):
+        (concatSlowPath):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isObject):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_newArrayWithSize):
+
 2016-08-18  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
 
         [web-animations] Add Animatable, AnimationEffect, KeyframeEffect and Animation interface
