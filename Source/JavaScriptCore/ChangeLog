@@ -1,3 +1,19 @@
+2016-08-17  Keith Miller  <keith_miller@apple.com>
+
+        Add WASM support for i64 simple opcodes.
+        https://bugs.webkit.org/show_bug.cgi?id=160928
+
+        Reviewed by Michael Saboff.
+
+        This patch also removes the unsigned int32 mod operator, which is not supported by B3 yet.
+
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::toB3Op):
+        (JSC::WASM::B3IRGenerator::unaryOp):
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::WASMFunctionParser<Context>::parseExpression):
+        * wasm/WASMOps.h:
+
 2016-08-17  JF Bastien  <jfbastien@apple.com>
 
         We allow assignments to const variables when in a for-in/for-of loop

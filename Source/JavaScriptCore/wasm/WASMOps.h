@@ -39,7 +39,15 @@ namespace WASM {
     macro(Return, 0x09, NA) \
     macro(End, 0x0f, NA)
 
-#define FOR_EACH_WASM_UNARY_OP(macro)
+#define FOR_EACH_WASM_UNARY_OP(macro) \
+    macro(I32Clz, 0x57, Clz) \
+    /* macro(I32Ctz, 0x58) */ \
+    /* macro(I32PopCnt, 0x59) */ \
+    /* macro(I32Eqz, 0x5a) */ \
+    macro(I64Clz, 0x72, Clz) \
+    /* macro(I64Ctz, 0x73) */ \
+    /* macro(I64PopCnt, 0x74) */ \
+    /* macro(I64Eqz, 0xba) */
 
 #define FOR_EACH_WASM_BINARY_OP(macro) \
     macro(I32Add, 0x40, Add) \
@@ -48,7 +56,7 @@ namespace WASM {
     macro(I32DivS, 0x43, Div) \
     /* macro(I32DivU, 0x44) */ \
     macro(I32RemS, 0x45, Mod) \
-    macro(I32RemU, 0x46, Mod) \
+    /* macro(I32RemU, 0x46, Mod) */ \
     macro(I32And, 0x47, BitAnd) \
     macro(I32Or, 0x48, BitOr) \
     macro(I32Xor, 0x49, BitXor) \
@@ -67,6 +75,28 @@ namespace WASM {
     macro(I32GeS, 0x54, GreaterEqual) \
     macro(I32GtU, 0x55, Above) \
     macro(I32GeU, 0x56, AboveEqual) \
+    macro(I64Add, 0x5b, Add) \
+    macro(I64Sub, 0x5c, Sub) \
+    macro(I64Mul, 0x5d, Mul) \
+    macro(I64DivS, 0x5e, Div) \
+    /* macro(I64DivU, 0x5f) */ \
+    macro(I64RemS, 0x60, Mod) \
+    /* macro(I64RemU, 0x61) */ \
+    macro(I64And, 0x62, BitAnd) \
+    macro(I64Or, 0x63, BitOr) \
+    macro(I64Xor, 0x64, BitXor) \
+    macro(I64Shl, 0x65, Shl) \
+    macro(I64ShrU, 0x66, SShr) \
+    macro(I64ShrS, 0x67, ZShr) \
+    /* macro(I64RotR, 0xb8) */ \
+    /* macro(I64RotL, 0xb9) */ \
+    macro(I64Eq, 0x68, Equal) \
+    macro(I64Ne, 0x69, NotEqual) \
+    macro(I64LtS, 0x6a, LessThan) \
+    macro(I64LeS, 0x6b, LessEqual) \
+    macro(I64LtU, 0x6c, Below) \
+    macro(I64LeU, 0x6d, BelowEqual) \
+
 
 #define FOR_EACH_WASM_OP(macro) \
     FOR_EACH_WASM_SPECIAL_OP(macro) \
@@ -80,16 +110,18 @@ enum WASMOpType : uint8_t {
     FOR_EACH_WASM_OP(CREATE_ENUM_VALUE)
 };
 
-
-
 enum class WASMBinaryOpType : uint8_t {
     FOR_EACH_WASM_BINARY_OP(CREATE_ENUM_VALUE)
 };
 
+enum class WASMUnaryOpType : uint8_t {
+    FOR_EACH_WASM_UNARY_OP(CREATE_ENUM_VALUE)
+};
+
+#undef CREATE_ENUM_VALUE
+
 } // namespace WASM
 
 } // namespace JSC
-
-#undef CREATE_ENUM_VALUE
 
 #endif // ENABLE(WEBASSEMBLY)

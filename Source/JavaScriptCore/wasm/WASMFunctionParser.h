@@ -112,7 +112,6 @@ bool WASMFunctionParser<Context>::parseExpression(WASMOpType op)
     switch (op) {
 #define CREATE_CASE(name, id, b3op) case name:
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE) {
-#undef CREATE_CASE
         ExpressionType left = m_expressionStack.takeLast();
         ExpressionType right = m_expressionStack.takeLast();
         ExpressionType result;
@@ -121,6 +120,16 @@ bool WASMFunctionParser<Context>::parseExpression(WASMOpType op)
         m_expressionStack.append(result);
         return true;
     }
+
+    FOR_EACH_WASM_UNARY_OP(CREATE_CASE) {
+        ExpressionType arg = m_expressionStack.takeLast();
+        ExpressionType result;
+        if (!m_context.unaryOp(static_cast<WASMUnaryOpType>(op), arg, result))
+            return false;
+        m_expressionStack.append(result);
+        return true;
+    }
+#undef CREATE_CASE
 
     case WASMOpType::I32Const: {
         uint32_t constant;

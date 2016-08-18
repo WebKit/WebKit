@@ -41,11 +41,20 @@ namespace WASM {
 
 using namespace B3;
 
-inline JSC::B3::Opcode toB3Op(WASMBinaryOpType op)
+inline B3::Opcode toB3Op(WASMBinaryOpType op)
 {
     switch (op) {
 #define CREATE_CASE(name, op, b3op) case WASMBinaryOpType::name: return b3op;
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
+#undef CREATE_CASE
+    }
+}
+
+inline B3::Opcode toB3Op(WASMUnaryOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, op, b3op) case WASMUnaryOpType::name: return b3op;
+    FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
     }
 }
@@ -60,6 +69,7 @@ public:
     ExpressionType addConstant(WASMValueType, uint64_t);
 
     bool WARN_UNUSED_RETURN binaryOp(WASMBinaryOpType, ExpressionType left, ExpressionType right, ExpressionType& result);
+    bool WARN_UNUSED_RETURN unaryOp(WASMUnaryOpType, ExpressionType arg, ExpressionType& result);
 
     bool WARN_UNUSED_RETURN addBlock();
     bool WARN_UNUSED_RETURN endBlock(Vector<ExpressionType>& expressionStack);
@@ -87,6 +97,12 @@ B3IRGenerator::B3IRGenerator(Procedure& procedure)
 void B3IRGenerator::addLocal(WASMValueType, uint32_t)
 {
     // TODO: Add locals.
+}
+
+bool B3IRGenerator::unaryOp(WASMUnaryOpType op, ExpressionType arg, ExpressionType& result)
+{
+    result = m_currentBlock->appendNew<Value>(m_proc, toB3Op(op), Origin(), arg);
+    return true;
 }
 
 bool B3IRGenerator::binaryOp(WASMBinaryOpType op, ExpressionType left, ExpressionType right, ExpressionType& result)
