@@ -1187,11 +1187,6 @@ String insertListTypeNone()
     return WEB_UI_STRING("None", "Option in segmented control for choosing list type in text editing");
 }
 
-String insertListTypeNoneAccessibilityTitle()
-{
-    return WEB_UI_STRING("No list", "Accessibility label for not inserting a list in text editing");
-}
-
 String insertListTypeBulleted()
 {
     return WEB_UI_STRING("•", "Option in segmented control for choosing list type in text editing");
@@ -1199,7 +1194,7 @@ String insertListTypeBulleted()
 
 String insertListTypeBulletedAccessibilityTitle()
 {
-    return WEB_UI_STRING("Insert a bulleted list", "Option in segmented control for inserting a bulleted list in text editing");
+    return WEB_UI_STRING("Bulleted list", "Option in segmented control for inserting a bulleted list in text editing");
 }
 
 String insertListTypeNumbered()
@@ -1209,7 +1204,7 @@ String insertListTypeNumbered()
 
 String insertListTypeNumberedAccessibilityTitle()
 {
-    return WEB_UI_STRING("Insert a numbered list", "Option in segmented control for inserting a numbered list in text editing");
+    return WEB_UI_STRING("Numbered list", "Option in segmented control for inserting a numbered list in text editing");
 }
 #endif // PLATFORM(MAC)
 
