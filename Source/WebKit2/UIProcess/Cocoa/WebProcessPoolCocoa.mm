@@ -27,6 +27,7 @@
 #import "WebProcessPool.h"
 
 #import "NetworkProcessCreationParameters.h"
+#import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
 #import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
@@ -247,6 +248,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
     parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
 #endif
+
+    parameters.cookieStoragePartitioningEnabled = cookieStoragePartitioningEnabled();
 }
 
 void WebProcessPool::platformInvalidateContext()
@@ -514,6 +517,12 @@ void WebProcessPool::resetHSTSHostsAddedAfterDate(double startDateIntervalSince1
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     _CFNetworkResetHSTSHostsSinceDate(privateBrowsingSession(), (__bridge CFDateRef)startDate);
 #endif
+}
+
+void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)
+{
+    m_cookieStoragePartitioningEnabled = enabled;
+    sendToNetworkingProcess(Messages::NetworkProcess::SetCookieStoragePartitioningEnabled(enabled));
 }
 
 int networkProcessLatencyQOS()

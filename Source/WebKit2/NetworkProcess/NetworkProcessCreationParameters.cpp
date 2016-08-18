@@ -74,6 +74,7 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
 #if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     IPC::encode(encoder, networkATSContext.get());
 #endif
+    encoder << cookieStoragePartitioningEnabled;
 #endif
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
@@ -146,6 +147,8 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!IPC::decode(decoder, result.networkATSContext))
         return false;
 #endif
+    if (!decoder.decode(result.cookieStoragePartitioningEnabled))
+        return false;
 #endif
 
 #if USE(SOUP)

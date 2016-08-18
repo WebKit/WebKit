@@ -33,13 +33,14 @@
 #if PLATFORM(COCOA)
 #include "PublicSuffix.h"
 #include "ResourceRequest.h"
-#include "Settings.h"
 #include "WebCoreSystemInterface.h"
 #else
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
 namespace WebCore {
+
+static bool cookieStoragePartitioningEnabled;
 
 NetworkStorageSession::NetworkStorageSession(SessionID sessionID, RetainPtr<CFURLStorageSessionRef> platformSession)
     : m_sessionID(sessionID)
@@ -100,6 +101,11 @@ RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
 #endif
 }
 
+void NetworkStorageSession::setCookieStoragePartitioningEnabled(bool enabled)
+{
+    cookieStoragePartitioningEnabled = enabled;
+}
+
 #if PLATFORM(COCOA)
 
 String cookieStoragePartition(const ResourceRequest& request)
@@ -119,7 +125,7 @@ static inline bool hostIsInDomain(StringView host, StringView domain)
 
 String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource)
 {
-    if (!Settings::cookieStoragePartitioningEnabled())
+    if (!cookieStoragePartitioningEnabled)
         return emptyString();
 
     String firstPartyDomain = firstPartyForCookies.host();

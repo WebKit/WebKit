@@ -1,3 +1,32 @@
+2016-08-18  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add SPI to WKProcessPool for enabling cookie storage partitioning
+        https://bugs.webkit.org/show_bug.cgi?id=160964
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/NetworkProcess.h: Declared setCookieStoragePartitioningEnabled().
+        * NetworkProcess/NetworkProcess.messages.in: Added message SetCookieStoragePartitioningEnabled.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode): Encoded cookieStoragePartitioningEnabled.
+        (WebKit::NetworkProcessCreationParameters::decode): Decoded cookieStoragePartitioningEnabled.
+        * NetworkProcess/NetworkProcessCreationParameters.h: Declared cookieStoragePartitioningEnabled.
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        Called NetworkStorageSession::setCookieStoragePartitioningEnabled() given the cookieStoragePartitioningEnabled parameter.
+        (WebKit::NetworkProcess::setCookieStoragePartitioningEnabled):
+        Called NetworkStorageSession::setCookieStoragePartitioningEnabled().
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool cookieStoragePartitioningEnabled]): Returned WebProcessPool::cookieStoragePartitioningEnabled().
+        (-[WKProcessPool setCookieStoragePartitioningEnabled:]): Called WebProcessPool::setCookieStoragePartitioningEnabled().
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h: Declared cookieStoragePartitioningEnabled as a property.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        Set the cookieStoragePartitioningEnabled parameter from m_cookieStoragePartitioningEnabled.
+        (WebKit::WebProcessPool::setCookieStoragePartitioningEnabled):
+        Set m_cookieStoragePartitioningEnabled and sent the NetworkProcess::SetCookieStoragePartitioningEnabled message.
+        * UIProcess/WebProcessPool.h: Declared cookieStoragePartitioningEnabled.
+
 2016-08-17  Anders Carlsson  <andersca@apple.com>
 
         Add support for additional networks

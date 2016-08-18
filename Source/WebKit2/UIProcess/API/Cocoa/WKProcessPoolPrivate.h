@@ -64,6 +64,8 @@
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateDatabaseProcess;
 
+@property (nonatomic) BOOL cookieStoragePartitioningEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #endif

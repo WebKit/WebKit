@@ -57,6 +57,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetProcessSuppressionEnabled(bool flag)
 #if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
+    SetCookieStoragePartitioningEnabled(bool enabled)
 #endif
 
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)

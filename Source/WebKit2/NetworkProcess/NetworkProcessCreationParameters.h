@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkProcessCreationParameters_h
-#define NetworkProcessCreationParameters_h
+#pragma once
 
 #include "Attachment.h"
 #include "CacheModel.h"
@@ -87,6 +86,7 @@ struct NetworkProcessCreationParameters {
 #if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     RetainPtr<CFDataRef> networkATSContext;
 #endif
+    bool cookieStoragePartitioningEnabled;
 #endif
 
 #if USE(SOUP)
@@ -103,5 +103,3 @@ struct NetworkProcessCreationParameters {
 };
 
 } // namespace WebKit
-
-#endif // NetworkProcessCreationParameters_h
