@@ -433,12 +433,14 @@ dictionary TestDictionary {
     Node? nullableNode = null;
     any anyValue;
     AnyTypedef anyTypedefValue;
+    TestDictionaryThatShouldTolerateNull dictionaryMember;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {
     required TestEnumType requiredEnumerationValue;
     boolean booleanWithoutDefault;
     required Node nonNullableNode;
+    required TestDictionary requiredDictionaryMember;
 };
 
 dictionary TestDictionaryThatShouldTolerateNull {

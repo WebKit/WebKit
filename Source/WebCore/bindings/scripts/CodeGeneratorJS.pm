@@ -1000,11 +1000,14 @@ sub GenerateDictionaryImplementationContent
             my $type = $member->type;
             my $name = $member->name;
             my $value = "object->get(&state, Identifier::fromString(&state, \"${name}\"))";
-            if ($codeGenerator->IsWrapperType($member->type)) {
+            if ($codeGenerator->IsWrapperType($type)) {
                 AddToImplIncludes("JS${type}.h");
                 die "Dictionary members of non-nullable wrapper types must be marked as required" if !$member->isNullable && $member->isOptional;
                 my $nullableParameter = $member->isNullable ? "IsNullable::Yes" : "IsNullable::No";
                 $result .= "    auto* $name = convertWrapperType<$type, JS${type}>(state, $value, $nullableParameter);\n";
+            } elsif ($codeGenerator->IsDictionaryType($type)) {
+                my $nativeType = GetNativeType($interface, $type);
+                $result .= "    auto $name = convertDictionary<$nativeType>(state, $value);\n";
             } else {
                 my $function = $member->isOptional ? "convertOptional" : "convert";
                 $result .= "    auto $name = ${function}<" . GetNativeTypeFromSignature($interface, $member) . ">(state, $value"
@@ -1020,6 +1023,8 @@ sub GenerateDictionaryImplementationContent
             my $value;
             if ($codeGenerator->IsWrapperType($member->type) && !$member->isNullable) {
                 $value = "*" . $member->name;
+            } elsif ($codeGenerator->IsDictionaryType($member->type)) {
+                $value = $member->name . ".value()";
             } else {
                 $value = "WTFMove(" . $member->name . ")";
             }
