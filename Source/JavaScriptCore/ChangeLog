@@ -1,5 +1,16 @@
 2016-08-18  Mark Lam  <mark.lam@apple.com>
 
+        ScopedArguments is using the wrong owner object for a write barrier.
+        https://bugs.webkit.org/show_bug.cgi?id=160976
+        <rdar://problem/27328506>
+
+        Reviewed by Keith Miller.
+
+        * runtime/ScopedArguments.h:
+        (JSC::ScopedArguments::setIndexQuickly):
+
+2016-08-18  Mark Lam  <mark.lam@apple.com>
+
         Add LLINT probe() macro for X86_64.
         https://bugs.webkit.org/show_bug.cgi?id=160968
 
