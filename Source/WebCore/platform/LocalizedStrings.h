@@ -266,6 +266,7 @@ namespace WebCore {
     String sdhTrackMenuItemText(const String&);
     String easyReaderTrackMenuItemText(const String&);
     String forcedTrackMenuItemText(const String&);
+    String audioDescriptionTrackSuffixText(const String&);
 #endif
 #endif
 

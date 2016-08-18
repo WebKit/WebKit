@@ -1145,6 +1145,11 @@ String forcedTrackMenuItemText(const String& title)
 {
     return formatLocalizedString(WEB_UI_STRING("%@ Forced", "Text track contains forced subtitles"), title.createCFString().get());
 }
+
+String audioDescriptionTrackSuffixText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_STRING("%@ AD", "Text track contains Audio Descriptions"), title.createCFString().get());
+}
 #endif
 
 #endif

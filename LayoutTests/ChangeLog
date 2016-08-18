@@ -1,3 +1,26 @@
+2016-08-18  Eric Carlson  <eric.carlson@apple.com>
+
+        AX: Audio Description tracks are not labeled correctly, causing user confusion
+        https://bugs.webkit.org/show_bug.cgi?id=160652
+        <rdar://problem/27742208>
+
+        Reviewed by Antoine Quint.
+
+        * http/tests/media/hls/hls-accessiblity-describes-video-menu-expected.txt: Added.
+        * http/tests/media/hls/hls-accessiblity-describes-video-menu.html: Added.
+
+        * media/trackmenu-test.js:
+        (clickCCButton): Fail immediately if "video" is null or not a media element. Make failure 
+        logging more descriptive.
+
+        * platform/gtk/TestExpectations: Skip new test.
+
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-expected.txt: Updated for
+        clickCCButton error message change.
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-hide-on-click-expected.txt: Ditto.
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-localized-expected.txt: Ditto.
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-sorted-expected.txt: Ditto.
+
 2016-08-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html after r204594.

@@ -114,6 +114,8 @@ AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
     if (m_assetTrack) {
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
             return AudioTrackPrivate::Alternative;
+        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+            return AudioTrackPrivate::Description;
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
             return AudioTrackPrivate::Main;
         return AudioTrackPrivate::None;
@@ -123,6 +125,8 @@ AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
         AVMediaSelectionOption *option = m_mediaSelectionOption->avMediaSelectionOption();
         if ([option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
             return AudioTrackPrivate::Alternative;
+        if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+            return AudioTrackPrivate::Description;
         if ([option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
             return AudioTrackPrivate::Main;
         return AudioTrackPrivate::None;

@@ -5,6 +5,6 @@ EVENT(canplaythrough)
 
 *** Set the user language preference.
 RUN(internals.setUserPreferredLanguages(['en']))
-undefined FAIL
+clickCCButton failed with exception: "undefined: FAIL
 END OF TEST
 

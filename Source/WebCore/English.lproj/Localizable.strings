@@ -34,6 +34,9 @@
 /* Text track contains closed captions */
 "%@ CC" = "%@ CC";
 
+/* Text track contains Audio Descriptions */
+"%@ AD" = "%@ AD";
+
 /* visible name of the database process. The argument is the application name. */
 "%@ Database Storage" = "%@ Database Storage";
 

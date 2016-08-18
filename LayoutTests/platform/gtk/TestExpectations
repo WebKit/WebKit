@@ -668,7 +668,6 @@ webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-audio-tracks-locale-sel
 webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-video-resize.html [ Timeout Failure ]
 webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-audio-tracks.html [ Timeout Failure ]
 webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeout Failure ]
-webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Timeout Failure ]
 webkit.org/b/154390 [ Release ] http/tests/media/hls/video-cookie.html [ Failure ]
 webkit.org/b/154390 http/tests/security/local-video-source-from-remote.html [ Timeout Pass ]
 
@@ -726,6 +725,10 @@ security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement
 security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
+
+# No support for descriptive audio tracks in HLS file
+http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
+http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures

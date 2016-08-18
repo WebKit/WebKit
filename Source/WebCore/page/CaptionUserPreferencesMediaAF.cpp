@@ -653,8 +653,11 @@ static String trackDisplayName(AudioTrack* track)
     
     if (displayName.isEmpty())
         displayName.append(audioTrackNoLabelText());
-    
-    return displayName.toString();
+
+    if (track->kind() != AudioTrack::descriptionKeyword())
+        return displayName.toString();
+
+    return audioDescriptionTrackSuffixText(displayName.toString());
 }
 
 String CaptionUserPreferencesMediaAF::displayNameForTrack(AudioTrack* track) const

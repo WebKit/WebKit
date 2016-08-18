@@ -2,11 +2,16 @@ var captionsButtonCoordinates = null;
 
 function clickCCButton()
 {
+    if (!video || (video.nodeName != "VIDEO" && video.nodeName != "AUDIO")) {
+        consoleWrite(`<br>*** ERROR: 'video' global = "${video} in clickCCButton`);
+        endTest();
+    }
+
     if (!captionsButtonCoordinates) {
         try {
             captionsButtonCoordinates = mediaControlsButtonCoordinates(video, "toggle-closed-captions-button");
         } catch (exception) {
-            failTest(exception.description);
+            failTest(`clickCCButton failed with exception: "${exception.description}:`);
             return;
         }
     }
