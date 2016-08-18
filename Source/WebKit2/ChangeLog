@@ -1,5 +1,21 @@
 2016-08-18  Andy Estes  <aestes@apple.com>
 
+        [Cocoa] Add SPI to WKProcessPool for enabling cookie storage partitioning
+        https://bugs.webkit.org/show_bug.cgi?id=160964
+
+        Reviewed by Anders Carlsson.
+
+        Followed the guidelines for SPI naming.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _isCookieStoragePartitioningEnabled]): Renamed from -cookieStoragePartitioningEnabled.
+        (-[WKProcessPool _setCookieStoragePartitioningEnabled:]): Renamed from -setCookieStoragePartitioningEnabled:.
+        (-[WKProcessPool cookieStoragePartitioningEnabled]): Renamed to -_isCookieStoragePartitioningEnabled.
+        (-[WKProcessPool setCookieStoragePartitioningEnabled:]): Renamed to -_setCookieStoragePartitioningEnabled:.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
+2016-08-18  Andy Estes  <aestes@apple.com>
+
         Generated messages headers should use #pragma once
         https://bugs.webkit.org/show_bug.cgi?id=160965
 

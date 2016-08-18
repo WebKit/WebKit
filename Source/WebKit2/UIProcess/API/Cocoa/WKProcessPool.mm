@@ -290,12 +290,12 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     _processPool->terminateDatabaseProcess();
 }
 
-- (BOOL)cookieStoragePartitioningEnabled
+- (BOOL)_isCookieStoragePartitioningEnabled
 {
     return _processPool->cookieStoragePartitioningEnabled();
 }
 
-- (void)setCookieStoragePartitioningEnabled:(BOOL)enabled
+- (void)_setCookieStoragePartitioningEnabled:(BOOL)enabled
 {
     _processPool->setCookieStoragePartitioningEnabled(enabled);
 }
