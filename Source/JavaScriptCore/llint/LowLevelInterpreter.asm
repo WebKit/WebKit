@@ -437,6 +437,45 @@ macro assert(assertion)
     end
 end
 
+# The probe macro can be used to insert some debugging code without perturbing scalar
+# registers. Presently, the probe macro only preserves scalar registers. Hence, the
+# C probe callback function should not trash floating point registers.
+#
+# The macro you pass to probe() can pass whatever registers you like to your probe
+# callback function. However, you need to be mindful of which of the registers are
+# also used as argument registers, and ensure that you don't trash the register value
+# before storing it in the probe callback argument register that you desire.
+#
+# Here's an example of how it's used:
+#
+#     probe(
+#         macro()
+#             move cfr, a0 # pass the ExecState* as arg0.
+#             move t0, a1 # pass the value of register t0 as arg1.
+#             call _cProbeCallbackFunction # to do whatever you want.
+#         end
+#     )
+#
+if X86_64
+    macro probe(action)
+        # save all the registers that the LLInt may use.
+        push a0, a1
+        push a2, a3
+        push t0, t1
+        push t2, t3
+        push t4, t5
+
+        action()
+
+        # restore all the registers we saved previously.
+        pop t5, t4
+        pop t3, t2
+        pop t1, t0
+        pop a3, a2
+        pop a1, a0
+    end
+end
+
 macro checkStackPointerAlignment(tempReg, location)
     if ARM64 or C_LOOP or SH4
         # ARM64 will check for us!
