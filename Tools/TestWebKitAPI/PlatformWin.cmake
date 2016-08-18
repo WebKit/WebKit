@@ -72,6 +72,7 @@ else ()
         CFNetwork${DEBUG_SUFFIX}
         CoreFoundation${DEBUG_SUFFIX}
         CoreGraphics${DEBUG_SUFFIX}
+        CoreText${DEBUG_SUFFIX}
         QuartzCore${DEBUG_SUFFIX}
         SQLite3${DEBUG_SUFFIX}
         WebKitSystemInterface${DEBUG_SUFFIX}

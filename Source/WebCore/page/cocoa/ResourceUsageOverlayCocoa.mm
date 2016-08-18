@@ -28,6 +28,8 @@
 
 #if ENABLE(RESOURCE_USAGE)
 
+#include <CoreText/CoreText.h>
+
 #include "JSDOMWindow.h"
 #include "PlatformCALayer.h"
 #include "ResourceUsageThread.h"
@@ -252,21 +254,24 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     CGContextSetTextDrawingMode(context, kCGTextFill);
     CGContextSetFillColorWithColor(context, color);
 
-    CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
-
-    // FIXME: Don't use deprecated APIs.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
+    CGAffineTransform matrix = CGAffineTransformMakeScale(1, -1);
 #if PLATFORM(IOS)
-    CGContextSelectFont(context, "Courier", 10, kCGEncodingMacRoman);
+    CFStringRef fontName = CFSTR("Courier");
+    CGFloat fontSize = 10;
 #else
-    CGContextSelectFont(context, "Menlo", 11, kCGEncodingMacRoman);
+    CFStringRef fontName = CFSTR("Menlo");
+    CGFloat fontSize = 11;
 #endif
-
+    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithName(fontName, fontSize, &matrix));
+    CFTypeRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
+    CFTypeRef values[] = { font.get(), kCFBooleanTrue };
+    RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CString cstr = text.ascii();
-    CGContextShowTextAtPoint(context, x, y, cstr.data(), cstr.length());
-#pragma clang diagnostic pop
+    RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(cstr.data()), cstr.length(), kCFStringEncodingASCII, false, kCFAllocatorNull));
+    RetainPtr<CFAttributedStringRef> attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
+    RetainPtr<CTLineRef> line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
+    CGContextSetTextPosition(context, x, y);
+    CTLineDraw(line.get(), context);
 
     CGContextRestoreGState(context);
 }

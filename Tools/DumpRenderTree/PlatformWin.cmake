@@ -116,6 +116,7 @@ else ()
     list(APPEND DumpRenderTreeLib_LIBRARIES
         CFNetwork
         CoreGraphics
+        CoreText
     )
     list(APPEND ImageDiff_SOURCES
         cg/ImageDiffCG.cpp
@@ -123,6 +124,7 @@ else ()
     list(APPEND ImageDiff_LIBRARIES
        CoreFoundation
        CoreGraphics
+       CoreText
     )
 endif ()
 

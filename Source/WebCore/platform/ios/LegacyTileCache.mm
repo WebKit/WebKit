@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS)
 
+#include <CoreText/CoreText.h>
+
 #include "FontAntialiasingStateSaver.h"
 #include "LegacyTileGrid.h"
 #include "LegacyTileGridTile.h"
@@ -591,14 +593,17 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context)
             CGContextSetRGBFillColor(context, 1, 0, 0, 0.4f);
         else
             CGContextSetRGBFillColor(context, 1, 1, 1, 0.6f);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        CGContextSelectFont(context, "Helvetica", 25, kCGEncodingMacRoman);
-        CGContextShowTextAtPoint(context, labelBounds.origin.x + 3, labelBounds.origin.y + 20, text, strlen(text));
-#pragma clang diagnostic pop
+
+        CGAffineTransform matrix = CGAffineTransformMakeScale(1, -1);
+        RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithName(CFSTR("Helvetica"), 25, &matrix));
+        CFTypeRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
+        CFTypeRef values[] = { font.get(), kCFBooleanTrue };
+        RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(text), strlen(text), kCFStringEncodingUTF8, false, kCFAllocatorNull));
+        RetainPtr<CFAttributedStringRef> attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
+        RetainPtr<CTLineRef> line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
+        CGContextSetTextPosition(context, labelBounds.origin.x + 3, labelBounds.origin.y + 20);
+        CTLineDraw(line.get(), context);
     
         CGContextRestoreGState(context);        
     }

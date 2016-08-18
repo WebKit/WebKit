@@ -34,6 +34,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/win"
     "${WEBCORE_DIR}/platform/network/win"
+    "${WEBCORE_DIR}/platform/spi/win"
     "${WEBCORE_DIR}/platform/win"
     "${THIRDPARTY_DIR}/ANGLE/include"
     "${THIRDPARTY_DIR}/ANGLE/include/egl"
@@ -103,6 +104,8 @@ list(APPEND WebCore_SOURCES
 
     platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
+
+    platform/spi/win/CoreTextSPIWin.cpp
 
     platform/text/LocaleNone.cpp
 

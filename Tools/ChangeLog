@@ -1,3 +1,15 @@
+2016-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate off of deprecated CoreGraphics API CGContextSelectFont() and CGContextShowTextAtPoint()
+        https://bugs.webkit.org/show_bug.cgi?id=160895
+
+        Reviewed by Dean Jackson.
+
+        Link to the existing CoreText framework.
+
+        * DumpRenderTree/PlatformWin.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+
 2016-08-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove old libraries from build inputs
