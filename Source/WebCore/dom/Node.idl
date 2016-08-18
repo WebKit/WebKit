@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -57,13 +57,12 @@
 
     [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node newChild, Node? refChild);
     [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node replaceChild(Node newChild, [CustomReturn] Node oldChild);
-    [Custom, RaisesException] Node removeChild([CustomReturn] Node oldChild);
-    [Custom, RaisesException] Node appendChild([CustomReturn] Node newChild);
+    [Custom, RaisesException, CEReactions] Node removeChild([CustomReturn] Node oldChild);
+    [Custom, RaisesException, CEReactions] Node appendChild([CustomReturn] Node newChild);
 
     boolean            hasChildNodes();
 
-    [NewObject, RaisesException, ImplementedAs=cloneNodeForBindings, InvokesCustomElementLifecycleCallbacks]
-    Node cloneNode(optional boolean deep = false);
+    [NewObject, RaisesException, ImplementedAs=cloneNodeForBindings, CEReactions] Node cloneNode(optional boolean deep = false);
 
     void               normalize();
 

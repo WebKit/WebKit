@@ -1596,6 +1596,11 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
             updateLabel(*newScope, nullAtom, attributeWithoutSynchronization(forAttr));
     }
 
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (newDocument && UNLIKELY(isCustomElement()))
+        LifecycleCallbackQueue::enqueueConnectedCallbackIfNeeded(*this);
+#endif
+
     return InsertionDone;
 }
 
@@ -1641,6 +1646,11 @@ void Element::removedFrom(ContainerNode& insertionPoint)
             if (oldScope->shouldCacheLabelsByForAttribute())
                 updateLabel(*oldScope, attributeWithoutSynchronization(forAttr), nullAtom);
         }
+
+#if ENABLE(CUSTOM_ELEMENTS)
+        if (oldDocument && UNLIKELY(isCustomElement()))
+            LifecycleCallbackQueue::enqueueDisconnectedCallbackIfNeeded(*this);
+#endif
     }
 
     if (!parentNode()) {

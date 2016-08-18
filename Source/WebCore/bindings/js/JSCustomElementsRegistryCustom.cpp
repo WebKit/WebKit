@@ -104,23 +104,25 @@ JSValue JSCustomElementsRegistry::define(ExecState& state)
         return throwTypeError(&state, ASCIILiteral("Custom element constructor's prototype must be an object"));
     JSObject& prototypeObject = *asObject(prototypeValue);
 
-    // FIXME: Add the support for connectedCallback.
-    getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback"));
-    if (state.hadException())
-        return jsUndefined();
+    QualifiedName name(nullAtom, localName, HTMLNames::xhtmlNamespaceURI);
+    auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
-    // FIXME: Add the support for disconnectedCallback.
-    getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback"));
+    auto* connectedCallback = getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback"));
     if (state.hadException())
         return jsUndefined();
+    if (connectedCallback)
+        elementInterface->setConnectedCallback(connectedCallback);
+
+    auto* disconnectedCallback = getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback"));
+    if (state.hadException())
+        return jsUndefined();
+    if (disconnectedCallback)
+        elementInterface->setDisconnectedCallback(disconnectedCallback);
 
     // FIXME: Add the support for adoptedCallback.
     getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback"));
     if (state.hadException())
         return jsUndefined();
-
-    QualifiedName name(nullAtom, localName, HTMLNames::xhtmlNamespaceURI);
-    auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
     auto* attributeChangedCallback = getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
     if (state.hadException())

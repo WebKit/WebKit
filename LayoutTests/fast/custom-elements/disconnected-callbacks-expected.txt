@@ -1,0 +1,10 @@
+
+PASS Removing a custom element from a document must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detahed node must not enqueue and invoke connectedCallback 
+FAIL Removing a custom element from a window-less document must enqueue and invoke disconnectedCallback assert_array_equals: lengths differ, expected 2 got 0
+PASS Removing an ancestor of a custom element from a document must enqueue and invoke disconnectedCallback 
+FAIL Removing an ancestor of custom element from a a window-less document must enqueue and invoke disconnectedCallback assert_array_equals: lengths differ, expected 2 got 0
+PASS Removing a custom element from a connected shadow tree must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a shadow tree with a custom element from a document must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree must not enqueue and invoke disconnectedCallback 
+

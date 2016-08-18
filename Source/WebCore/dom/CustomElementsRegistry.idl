@@ -29,6 +29,6 @@
     ImplementationLacksVTable
 ] interface CustomElementsRegistry {
 
-    [InvokesCustomElementLifecycleCallbacks, Custom] void define(DOMString name, Function constructor);
+    [CEReactions, Custom] void define(DOMString name, Function constructor);
 
 };

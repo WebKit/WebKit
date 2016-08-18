@@ -3340,7 +3340,7 @@ END
 
             $implIncludes{"<runtime/Error.h>"} = 1;
 
-            if ($function->signature->extendedAttributes->{"InvokesCustomElementLifecycleCallbacks"}) {
+            if ($function->signature->extendedAttributes->{"CEReactions"}) {
                 push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
                 push(@implContent, "    CustomElementLifecycleProcessingStack customElementLifecycleProcessingStack;\n");
                 push(@implContent, "#endif\n");

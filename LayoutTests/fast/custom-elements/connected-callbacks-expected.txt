@@ -1,0 +1,10 @@
+
+PASS Inserting a custom element into a document must enqueue and invoke connectedCallback 
+PASS Inserting a custom element into a detached node must not enqueue and invoke connectedCallback 
+FAIL Inserting a custom element into a window-less document must enqueue and invoke connectedCallback assert_array_equals: lengths differ, expected 2 got 0
+PASS Inserting an ancestor of a custom element into a document must enqueue and invoke connectedCallback 
+FAIL Inserting an ancestor of custom element into a window-less document must enqueue and invoke connectedCallback assert_array_equals: lengths differ, expected 2 got 0
+PASS Inserting a custom element into a connected shadow tree must enqueue and invoke connectedCallback 
+PASS Inserting the shadow host of a shadow tree with a custom element into a document must enqueue and invoke connectedCallback 
+PASS Inserting a custom element into a detached shadow tree must not enqueue and invoke connectedCallback 
+

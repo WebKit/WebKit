@@ -46,6 +46,8 @@ public:
     ~LifecycleCallbackQueue();
 
     static void enqueueElementUpgrade(Element&, JSCustomElementInterface&);
+    static void enqueueConnectedCallbackIfNeeded(Element&);
+    static void enqueueDisconnectedCallbackIfNeeded(Element&);
     static void enqueueAttributeChangedCallbackIfNeeded(Element&, const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
 
     void invokeAll();

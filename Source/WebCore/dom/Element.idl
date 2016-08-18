@@ -31,15 +31,13 @@
 
     DOMString? getAttribute(DOMString name);
 
-    [ObjCLegacyUnnamedParameters, RaisesException, InvokesCustomElementLifecycleCallbacks]
+    [ObjCLegacyUnnamedParameters, RaisesException, CEReactions] void setAttribute(DOMString name, DOMString value);
 
-    void setAttribute(DOMString name, DOMString value);
-
-    [InvokesCustomElementLifecycleCallbacks] void removeAttribute(DOMString name);
+    [CEReactions] void removeAttribute(DOMString name);
     Attr? getAttributeNode(DOMString name);
 
-    [RaisesException, InvokesCustomElementLifecycleCallbacks] Attr? setAttributeNode(Attr newAttr);
-    [RaisesException, InvokesCustomElementLifecycleCallbacks] Attr removeAttributeNode(Attr oldAttr);
+    [RaisesException, CEReactions] Attr? setAttributeNode(Attr newAttr);
+    [RaisesException, CEReactions] Attr removeAttributeNode(Attr oldAttr);
 
     HTMLCollection getElementsByTagName(DOMString name);
 
@@ -50,16 +48,14 @@
 
     [ObjCLegacyUnnamedParameters] DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
 
-    [ObjCLegacyUnnamedParameters, RaisesException, InvokesCustomElementLifecycleCallbacks]
+    [ObjCLegacyUnnamedParameters, RaisesException, CEReactions] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
 
-    void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
-
-    [ObjCLegacyUnnamedParameters, InvokesCustomElementLifecycleCallbacks] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [ObjCLegacyUnnamedParameters, CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 
     [ObjCLegacyUnnamedParameters] Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
-    [RaisesException, InvokesCustomElementLifecycleCallbacks] Attr? setAttributeNodeNS(Attr newAttr);
+    [RaisesException, CEReactions] Attr? setAttributeNodeNS(Attr newAttr);
     boolean hasAttribute(DOMString name);
 
     [ObjCLegacyUnnamedParameters] boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);

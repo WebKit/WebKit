@@ -44,6 +44,8 @@ class LifecycleQueueItem {
 public:
     enum class Type {
         ElementUpgrade,
+        Connected,
+        Disconnected,
         AttributeChanged,
     };
 
@@ -68,9 +70,15 @@ public:
         case Type::ElementUpgrade:
             m_interface->upgradeElement(m_element.get());
             break;
+        case Type::Connected:
+            m_interface->invokeConnectedCallback(m_element.get());
+            break;
+        case Type::Disconnected:
+            m_interface->invokeDisconnectedCallback(m_element.get());
+            break;
         case Type::AttributeChanged:
             ASSERT(m_attributeName);
-            m_interface->attributeChanged(m_element.get(), m_attributeName.value(), m_oldValue, m_newValue);
+            m_interface->invokeAttributeChangedCallback(m_element.get(), m_attributeName.value(), m_oldValue, m_newValue);
             break;
         }
     }
@@ -98,23 +106,48 @@ void LifecycleCallbackQueue::enqueueElementUpgrade(Element& element, JSCustomEle
         queue->m_items.append(LifecycleQueueItem(LifecycleQueueItem::Type::ElementUpgrade, element, elementInterface));
 }
 
-void LifecycleCallbackQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+static JSCustomElementInterface* findInterfaceForCustomElement(Element& element)
 {
     ASSERT(element.isCustomElement());
     auto* window = element.document().domWindow();
     if (!window)
-        return;
+        return nullptr;
 
     auto* registry = window->customElementsRegistry();
     if (!registry)
-        return;
+        return nullptr;
 
-    auto* elementInterface = registry->findInterface(element.tagQName());
-    if (!elementInterface->observesAttribute(attributeName.localName()))
+    return registry->findInterface(element.tagQName());
+}
+
+void LifecycleCallbackQueue::enqueueConnectedCallbackIfNeeded(Element& element)
+{
+    auto* elementInterface = findInterfaceForCustomElement(element);
+    if (!elementInterface)
         return;
 
     if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
-        queue->m_items.append(LifecycleQueueItem(element, *elementInterface, attributeName, oldValue, newValue));
+        queue->m_items.append({LifecycleQueueItem::Type::Connected, element, *elementInterface});
+}
+
+void LifecycleCallbackQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
+{
+    auto* elementInterface = findInterfaceForCustomElement(element);
+    if (!elementInterface)
+        return;
+
+    if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
+        queue->m_items.append({LifecycleQueueItem::Type::Disconnected, element, *elementInterface});
+}
+
+void LifecycleCallbackQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+{
+    auto* elementInterface = findInterfaceForCustomElement(element);
+    if (!elementInterface || !elementInterface->observesAttribute(attributeName.localName()))
+        return;
+
+    if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
+        queue->m_items.append({element, *elementInterface, attributeName, oldValue, newValue});
 }
 
 void LifecycleCallbackQueue::invokeAll()
@@ -127,7 +160,7 @@ void LifecycleCallbackQueue::invokeAll()
 
 LifecycleCallbackQueue* CustomElementLifecycleProcessingStack::ensureCurrentQueue()
 {
-    // FIXME: This early exit indicates a bug that some DOM API is missing InvokesCustomElementLifecycleCallbacks
+    // FIXME: This early exit indicates a bug that some DOM API is missing CEReactions
     if (!s_currentProcessingStack)
         return nullptr;
 

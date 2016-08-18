@@ -21,6 +21,7 @@
 ActiveDOMObject
 AppleCopyright
 AtomicString
+CEReactions
 CachedAttribute
 CallbackNeedsOperatorEqual
 Callback=FunctionOnly
@@ -91,7 +92,6 @@ JSLegacyParent=*
 LenientThis
 MasqueradesAsUndefined
 NamedConstructor=*
-InvokesCustomElementLifecycleCallbacks
 NewImpurePropertyFiresWatchpoints
 NewObject
 NoInterfaceObject
