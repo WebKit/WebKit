@@ -1,5 +1,15 @@
 2016-08-18  Andy Estes  <aestes@apple.com>
 
+        Generated messages headers should use #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=160965
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkit/messages.py:
+        (generate_messages_header): Used #pragma once instead of a header guard.
+
+2016-08-18  Andy Estes  <aestes@apple.com>
+
         [Cocoa] Add SPI to WKProcessPool for enabling cookie storage partitioning
         https://bugs.webkit.org/show_bug.cgi?id=160964
 

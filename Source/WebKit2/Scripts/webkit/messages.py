@@ -214,14 +214,13 @@ def forward_declarations_and_headers(receiver):
 
 def generate_messages_header(file):
     receiver = parser.parse(file)
-    header_guard = messages_header_filename(receiver).replace('.', '_')
 
     result = []
 
     result.append(_license_header)
 
-    result.append('#ifndef %s\n' % header_guard)
-    result.append('#define %s\n\n' % header_guard)
+    result.append('#pragma once\n')
+    result.append('\n')
 
     if receiver.condition:
         result.append('#if %s\n\n' % receiver.condition)
@@ -247,8 +246,6 @@ def generate_messages_header(file):
 
     if receiver.condition:
         result.append('\n#endif // %s\n' % receiver.condition)
-
-    result.append('\n#endif // %s\n' % header_guard)
 
     return ''.join(result)
 
