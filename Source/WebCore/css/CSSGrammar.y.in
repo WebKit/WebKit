@@ -1165,7 +1165,10 @@ complex_selector:
     ;
 
 namespace_selector:
-    '|' { $$.clear(); }
+    '|' {
+        static LChar emptyString = '\0';
+        $$.init(&emptyString, 0);
+    }
     | '*' '|' { static LChar star = '*'; $$.init(&star, 1); }
     | IDENT '|'
 ;
@@ -1176,8 +1179,10 @@ compound_selector:
     }
     | element_name specifier_list {
         $$ = $2;
-        if ($$)
-            parser->rewriteSpecifiersWithElementName(nullAtom, $1, *$$);
+        if ($$) {
+            QualifiedName elementName(nullAtom, $1, parser->m_defaultNamespace);
+            parser->rewriteSpecifiersWithElementName(elementName, *$$);
+        }
     }
     | specifier_list {
         $$ = $1;

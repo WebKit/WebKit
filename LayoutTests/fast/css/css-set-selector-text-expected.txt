@@ -38,6 +38,10 @@ PASS setThenReadSelectorText('*|*') is '*|*'
 PASS setThenReadSelectorText('n|*') is 'n|*'
 PASS setThenReadSelectorText('[*|a]') is '[*|a]'
 PASS setThenReadSelectorText('[n|a]') is '[n|a]'
+PASS setThenReadSelectorText('|*') is '|*'
+PASS setThenReadSelectorText('[*|a]') is '[*|a]'
+PASS setThenReadSelectorText('[n|a]') is '[n|a]'
+PASS setThenReadSelectorText('[|a]') is '[a]'
 
 PASS setThenReadSelectorText('a:active') is 'a:active'
 PASS setThenReadSelectorText('a b') is 'a b'
@@ -248,7 +252,6 @@ PASS setThenReadSelectorText(':-webkit-any(.class1:hover)') is ':-webkit-any(.cl
 PASS setThenReadSelectorText(':-webkit-any(a.class1.class2.class3:hover)') is ':-webkit-any(a.class1.class2.class3:hover)'
 
 PASS setThenReadSelectorText('*:active') is ':active'
-PASS setThenReadSelectorText('|a') is 'a'
 
 PASS setThenReadSelectorText('input[type=file]:focus') is 'input[type="file"]:focus'
 

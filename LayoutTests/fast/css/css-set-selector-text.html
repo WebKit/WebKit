@@ -96,6 +96,10 @@ testSelectorRoundTrip('*|*');
 testSelectorRoundTrip('n|*');
 testSelectorRoundTrip('[*|a]');
 testSelectorRoundTrip('[n|a]');
+testSelectorRoundTrip('|*');
+testSelectorRoundTrip('[*|a]');
+testSelectorRoundTrip('[n|a]');
+shouldBe("setThenReadSelectorText('[|a]')", "'[a]'");
 
 debug('');
 
@@ -351,7 +355,6 @@ testSelectorRoundTrip(':-webkit-any(a.class1.class2.class3:hover)');
 debug('');
 
 shouldBe("setThenReadSelectorText('*:active')", "':active'");
-shouldBe("setThenReadSelectorText('|a')", "'a'");
 
 debug('');
 

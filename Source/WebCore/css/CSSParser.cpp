@@ -13089,6 +13089,13 @@ void CSSParser::addNamespace(const AtomicString& prefix, const AtomicString& uri
 
 QualifiedName CSSParser::determineNameInNamespace(const AtomicString& prefix, const AtomicString& localName)
 {
+    if (prefix.isNull())
+        return QualifiedName(nullAtom, localName, nullAtom); // No namespace. If an element/attribute has a namespace, we won't match it.
+    if (prefix.isEmpty())
+        return QualifiedName(emptyAtom, localName, emptyAtom); // Empty namespace.
+    if (prefix == starAtom)
+        return QualifiedName(prefix, localName, starAtom); // We'll match any namespace.
+
     if (!m_styleSheet)
         return QualifiedName(prefix, localName, m_defaultNamespace);
     return QualifiedName(prefix, localName, m_styleSheet->determineNamespace(prefix));
@@ -13096,15 +13103,20 @@ QualifiedName CSSParser::determineNameInNamespace(const AtomicString& prefix, co
 
 void CSSParser::rewriteSpecifiersWithNamespaceIfNeeded(CSSParserSelector& specifiers)
 {
-    if (m_defaultNamespace != starAtom || specifiers.isCustomPseudoElement())
-        rewriteSpecifiersWithElementName(nullAtom, starAtom, specifiers, /*tagIsForNamespaceRule*/true);
+    if (m_defaultNamespace != starAtom || specifiers.isCustomPseudoElement()) {
+        QualifiedName elementName(nullAtom, starAtom, m_defaultNamespace);
+        rewriteSpecifiersWithElementName(elementName, specifiers, /*tagIsForNamespaceRule*/true);
+    }
 }
 
-void CSSParser::rewriteSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector& specifiers, bool tagIsForNamespaceRule)
+void CSSParser::rewriteSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector& specifiers)
 {
-    AtomicString determinedNamespace = namespacePrefix != nullAtom && m_styleSheet ? m_styleSheet->determineNamespace(namespacePrefix) : m_defaultNamespace;
-    QualifiedName tag(namespacePrefix, elementName, determinedNamespace);
+    QualifiedName tag(determineNameInNamespace(namespacePrefix, elementName));
+    rewriteSpecifiersWithElementName(tag, specifiers, false);
+}
 
+void CSSParser::rewriteSpecifiersWithElementName(const QualifiedName& tag, CSSParserSelector& specifiers, bool tagIsForNamespaceRule)
+{
     if (!specifiers.isCustomPseudoElement()) {
         if (tag == anyQName())
             return;

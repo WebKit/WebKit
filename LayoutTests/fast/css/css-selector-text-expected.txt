@@ -26,8 +26,11 @@ PASS parseThenSerializeRule('*|a { }') is '*|a { }'
 PASS parseThenSerializeRule('n|a { }') is 'n|a { }'
 PASS parseThenSerializeRule('*|* { }') is '*|* { }'
 PASS parseThenSerializeRule('n|* { }') is 'n|* { }'
+PASS parseThenSerializeRule('|a { }') is '|a { }'
+PASS parseThenSerializeRule('|* { }') is '|* { }'
 PASS parseThenSerializeRule('[*|a] { }') is '[*|a] { }'
 PASS parseThenSerializeRule('[n|a] { }') is '[n|a] { }'
+PASS parseThenSerializeRule('[|a] { }') is '[a] { }'
 
 PASS parseThenSerializeRule('a:active { }') is 'a:active { }'
 PASS parseThenSerializeRule('a b { }') is 'a b { }'
@@ -253,7 +256,6 @@ PASS parseThenSerializeRule(':any-link + div { }') is ':any-link + div { }'
 PASS parseThenSerializeRule(':not(:any-link) { }') is ':not(:any-link) { }'
 
 PASS parseThenSerializeRule('*:active { }') is ':active { }'
-PASS parseThenSerializeRule('|a { }') is 'a { }'
 
 PASS parseThenSerializeRule('input[type=file]:focus { }') is 'input[type="file"]:focus { }'
 

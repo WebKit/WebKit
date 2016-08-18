@@ -403,7 +403,8 @@ public:
     void addNamespace(const AtomicString& prefix, const AtomicString& uri);
     QualifiedName determineNameInNamespace(const AtomicString& prefix, const AtomicString& localName);
 
-    void rewriteSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector&, bool isNamespacePlaceholder = false);
+    void rewriteSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector&);
+    void rewriteSpecifiersWithElementName(const QualifiedName& tagName, CSSParserSelector&, bool isNamespacePlaceholder = false);
     void rewriteSpecifiersWithNamespaceIfNeeded(CSSParserSelector&);
     std::unique_ptr<CSSParserSelector> rewriteSpecifiers(std::unique_ptr<CSSParserSelector>, std::unique_ptr<CSSParserSelector>);
 

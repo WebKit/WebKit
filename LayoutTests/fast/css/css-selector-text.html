@@ -77,8 +77,11 @@ testSelectorRoundTrip('*|a');
 testSelectorRoundTrip('n|a');
 testSelectorRoundTrip('*|*');
 testSelectorRoundTrip('n|*');
+testSelectorRoundTrip('|a');
+testSelectorRoundTrip('|*');
 testSelectorRoundTrip('[*|a]');
 testSelectorRoundTrip('[n|a]');
+shouldBe("parseThenSerializeRule('[|a] { }')", "'[a] { }'");
 
 debug('');
 
@@ -354,7 +357,6 @@ testSelectorRoundTrip(':not(:any-link)');
 debug('');
 
 shouldBe("parseThenSerializeRule('*:active { }')", "':active { }'");
-shouldBe("parseThenSerializeRule('|a { }')", "'a { }'");
 
 debug('');
 

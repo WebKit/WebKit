@@ -279,10 +279,6 @@ void StyleSheetContents::parserAddNamespace(const AtomicString& prefix, const At
 
 const AtomicString& StyleSheetContents::determineNamespace(const AtomicString& prefix)
 {
-    if (prefix.isNull())
-        return nullAtom; // No namespace. If an element/attribute has a namespace, we won't match it.
-    if (prefix == starAtom)
-        return starAtom; // We'll match any namespace.
     PrefixNamespaceURIMap::const_iterator it = m_namespaces.find(prefix);
     if (it == m_namespaces.end())
         return nullAtom;
