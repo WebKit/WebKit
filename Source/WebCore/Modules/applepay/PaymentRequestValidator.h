@@ -45,7 +45,7 @@ private:
     bool validateCountryCode(const String&) const;
     bool validateCurrencyCode(const String&) const;
     bool validateMerchantCapabilities(const PaymentRequest::MerchantCapabilities&) const;
-    bool validateSupportedNetworks(const PaymentRequest::SupportedNetworks&) const;
+    bool validateSupportedNetworks(const Vector<String>&) const;
 
     bool validateShippingMethods(const Vector<PaymentRequest::ShippingMethod>&) const;
     bool validateShippingMethod(const PaymentRequest::ShippingMethod&) const;

@@ -238,7 +238,7 @@ bool ArgumentCoder<PaymentRequest>::decode(ArgumentDecoder& decoder, PaymentRequ
         return false;
     request.setMerchantCapabilities(merchantCapabilities);
 
-    PaymentRequest::SupportedNetworks supportedNetworks;
+    Vector<String> supportedNetworks;
     if (!decoder.decode(supportedNetworks))
         return false;
     request.setSupportedNetworks(supportedNetworks);
@@ -329,37 +329,6 @@ bool ArgumentCoder<PaymentRequest::MerchantCapabilities>::decode(ArgumentDecoder
     if (!decoder.decode(merchantCapabilities.supportsCredit))
         return false;
     if (!decoder.decode(merchantCapabilities.supportsDebit))
-        return false;
-
-    return true;
-}
-
-void ArgumentCoder<PaymentRequest::SupportedNetworks>::encode(ArgumentEncoder& encoder, const PaymentRequest::SupportedNetworks& supportedNetworks)
-{
-    encoder << supportedNetworks.amex;
-    encoder << supportedNetworks.chinaUnionPay;
-    encoder << supportedNetworks.discover;
-    encoder << supportedNetworks.interac;
-    encoder << supportedNetworks.masterCard;
-    encoder << supportedNetworks.privateLabel;
-    encoder << supportedNetworks.visa;
-}
-
-bool ArgumentCoder<PaymentRequest::SupportedNetworks>::decode(ArgumentDecoder& decoder, PaymentRequest::SupportedNetworks& supportedNetworks)
-{
-    if (!decoder.decode(supportedNetworks.amex))
-        return false;
-    if (!decoder.decode(supportedNetworks.chinaUnionPay))
-        return false;
-    if (!decoder.decode(supportedNetworks.discover))
-        return false;
-    if (!decoder.decode(supportedNetworks.interac))
-        return false;
-    if (!decoder.decode(supportedNetworks.masterCard))
-        return false;
-    if (!decoder.decode(supportedNetworks.privateLabel))
-        return false;
-    if (!decoder.decode(supportedNetworks.visa))
         return false;
 
     return true;

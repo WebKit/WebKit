@@ -28,6 +28,8 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "SoftLinking.h"
+
 namespace WebCore {
 
 PaymentRequest::PaymentRequest()
@@ -36,6 +38,35 @@ PaymentRequest::PaymentRequest()
 
 PaymentRequest::~PaymentRequest()
 {
+}
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PaymentRequestAdditions.cpp>)
+#include <WebKitAdditions/PaymentRequestAdditions.cpp>
+#else
+static inline bool isAdditionalValidSupportedNetwork(unsigned, const String&)
+{
+    return false;
+}
+#endif
+
+bool PaymentRequest::isValidSupportedNetwork(unsigned version, const String& supportedNetwork)
+{
+    if (supportedNetwork == "amex")
+        return true;
+    if (supportedNetwork == "chinaUnionPay")
+        return true;
+    if (supportedNetwork == "discover")
+        return true;
+    if (supportedNetwork == "interac")
+        return true;
+    if (supportedNetwork == "masterCard")
+        return true;
+    if (supportedNetwork == "privateLabel")
+        return true;
+    if (supportedNetwork == "visa")
+        return true;
+
+    return isAdditionalValidSupportedNetwork(version, supportedNetwork);
 }
 
 }
