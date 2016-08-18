@@ -521,11 +521,6 @@ template<> struct ArgumentCoder<WebCore::PaymentRequest::ShippingMethod> {
     static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::ShippingMethod&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentRequest::SupportedNetworks> {
-    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::SupportedNetworks&);
-    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::SupportedNetworks&);
-};
-
 template<> struct ArgumentCoder<WebCore::PaymentRequest::TotalAndLineItems> {
     static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::TotalAndLineItems&);
     static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::TotalAndLineItems&);

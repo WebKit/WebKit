@@ -1,5 +1,25 @@
 2016-08-17  Anders Carlsson  <andersca@apple.com>
 
+        Add support for additional networks
+        https://bugs.webkit.org/show_bug.cgi?id=160951
+        rdar://problem/27807479
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<PaymentRequest>::decode):
+        (IPC::ArgumentCoder<PaymentRequest::SupportedNetworks>::encode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::SupportedNetworks>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toAdditionalSupportedNetwork):
+        (WebKit::toSupportedNetwork):
+        (WebKit::toSupportedNetworks):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::supportsVersion):
+
+2016-08-17  Anders Carlsson  <andersca@apple.com>
+
         Remove a couple of unused WKSI function pointers
         https://bugs.webkit.org/show_bug.cgi?id=160946
 

@@ -54,7 +54,7 @@ bool WebPaymentCoordinator::supportsVersion(unsigned version)
 {
     ASSERT(version > 0);
 
-    if (version == 1)
+    if (version <= 2)
         return true;
 
     return false;

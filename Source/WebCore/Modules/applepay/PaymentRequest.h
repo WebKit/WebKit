@@ -64,18 +64,10 @@ public:
     const PaymentContact& shippingContact() const { return m_shippingContact; }
     void setShippingContact(const PaymentContact& shippingContact) { m_shippingContact = shippingContact; }
 
-    struct SupportedNetworks {
-        bool amex { false };
-        bool chinaUnionPay { false };
-        bool discover { false };
-        bool interac { false };
-        bool masterCard { false };
-        bool privateLabel { false };
-        bool visa { false };
-    };
+    static bool isValidSupportedNetwork(unsigned version, const String&);
 
-    const SupportedNetworks& supportedNetworks() const { return m_supportedNetworks; }
-    void setSupportedNetworks(const SupportedNetworks& supportedNetworks) { m_supportedNetworks = supportedNetworks; }
+    const Vector<String>& supportedNetworks() const { return m_supportedNetworks; }
+    void setSupportedNetworks(const Vector<String>& supportedNetworks) { m_supportedNetworks = supportedNetworks; }
 
     struct MerchantCapabilities {
         bool supports3DS { false };
@@ -143,7 +135,7 @@ private:
     ContactFields m_requiredShippingContactFields;
     PaymentContact m_shippingContact;
 
-    SupportedNetworks m_supportedNetworks;
+    Vector<String> m_supportedNetworks;
     MerchantCapabilities m_merchantCapabilities;
 
     ShippingType m_shippingType { ShippingType::Shipping };

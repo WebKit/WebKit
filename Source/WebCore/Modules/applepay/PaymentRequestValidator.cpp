@@ -147,9 +147,9 @@ bool PaymentRequestValidator::validateShippingMethod(const PaymentRequest::Shipp
     return true;
 }
 
-bool PaymentRequestValidator::validateSupportedNetworks(const PaymentRequest::SupportedNetworks& supportedNetworks) const
+bool PaymentRequestValidator::validateSupportedNetworks(const Vector<String>& supportedNetworks) const
 {
-    if (!supportedNetworks.amex && !supportedNetworks.chinaUnionPay && !supportedNetworks.discover && !supportedNetworks.interac && !supportedNetworks.masterCard && !supportedNetworks.privateLabel &&!supportedNetworks.visa) {
+    if (supportedNetworks.isEmpty()) {
         m_window.printErrorMessage("Missing supported networks");
         return false;
     }
