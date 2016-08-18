@@ -48,7 +48,7 @@ DocumentTimeline* DocumentAnimation::timeline(Document& document)
 {
     auto* documentAnimation = DocumentAnimation::from(&document);
     if (!documentAnimation->m_defaultTimeline)
-        documentAnimation->m_defaultTimeline = DocumentTimeline::create(0.0);
+        documentAnimation->m_defaultTimeline = DocumentTimeline::create(document, 0.0);
     return documentAnimation->m_defaultTimeline.get();
 }
 
@@ -66,6 +66,46 @@ DocumentAnimation* DocumentAnimation::from(Document* document)
         provideTo(document, supplementName(), WTFMove(newSupplement));
     }
     return supplement;
+}
+
+WebAnimationVector DocumentAnimation::getAnimations(std::function<bool(const AnimationEffect&)> effect_test) const
+{
+    WebAnimationVector animations;
+
+    auto sortBasedOnPriority = [](const RefPtr<WebAnimation>& a, const RefPtr<WebAnimation>& b)
+    {
+        // FIXME: Sort using the composite order as described in the spec.
+        UNUSED_PARAM(a);
+        UNUSED_PARAM(b);
+        return true;
+    };
+
+    for (auto& animation : m_animations.values()) {
+        if (animation && animation->effect()) {
+            const AnimationEffect& effect = *animation->effect();
+            if ((effect.isCurrent() || effect.isInEffect()) && effect_test(effect))
+                animations.append(animation.get());
+        }
+    }
+    std::sort(animations.begin(), animations.end(), sortBasedOnPriority);
+
+    return animations;
+}
+
+void DocumentAnimation::addAnimation(WebAnimation& animation)
+{
+    ASSERT(!m_animations.contains(&animation));
+    m_animations.add(&animation, animation.createWeakPtr());
+}
+
+void DocumentAnimation::removeAnimation(WebAnimation& animation)
+{
+    m_animations.remove(&animation);
+}
+
+WebAnimationVector DocumentAnimation::getAnimations(Document& document)
+{
+    return DocumentAnimation::from(&document)->getAnimations();
 }
 
 } // namespace WebCore

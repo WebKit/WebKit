@@ -27,8 +27,10 @@
  */
 
 [
-    EnabledAtRuntime=WebAnimations,
     Conditional=WEB_ANIMATIONS
 ] partial interface Document {
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT // Workaround problems with binding generators
     readonly attribute DocumentTimeline timeline;
+    sequence<WebAnimation> getAnimations();
+#endif
 }; 

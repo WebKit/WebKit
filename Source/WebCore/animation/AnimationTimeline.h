@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AnimationTimeline_h
-#define AnimationTimeline_h
+#pragma once
 
 #if ENABLE(WEB_ANIMATIONS)
 
@@ -35,6 +34,8 @@
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
+
+class WebAnimation;
 
 class AnimationTimeline : public RefCounted<AnimationTimeline> {
 public:
@@ -47,6 +48,9 @@ public:
     }
     
     bool isDocumentTimeline() const { return m_classType == DocumentTimelineClass; }
+
+    void attachAnimation(WebAnimation&);
+    void detachAnimation(WebAnimation&);
 
 protected:
     enum ClassType {
@@ -74,5 +78,3 @@ static bool isType(const WebCore::AnimationTimeline& value) { return value.predi
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_ANIMATIONS)
-
-#endif // AnimationTimeline_h

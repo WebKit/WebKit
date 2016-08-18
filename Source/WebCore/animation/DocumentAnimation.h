@@ -26,12 +26,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DocumentAnimation_h
-#define DocumentAnimation_h
+#pragma once
 
 #if ENABLE(WEB_ANIMATIONS)
 
+#include "AnimationEffect.h"
 #include "Supplementable.h"
+#include "WebAnimation.h"
+#include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -45,15 +48,21 @@ public:
 
     static DocumentAnimation* from(Document*);
     static DocumentTimeline* timeline(Document&);
+    static WebAnimationVector getAnimations(Document&);
+
+    WebAnimationVector getAnimations(std::function<bool(const AnimationEffect&)> = [](const AnimationEffect&) { return true; }) const;
+
+    void addAnimation(WebAnimation&);
+    void removeAnimation(WebAnimation&);
 
 private:
     static const char* supplementName();
 
     RefPtr<DocumentTimeline> m_defaultTimeline;
+
+    HashMap<WebAnimation*, WeakPtr<WebAnimation>> m_animations;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_ANIMATIONS)
-
-#endif // DocumentAnimation_h

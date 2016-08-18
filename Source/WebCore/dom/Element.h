@@ -52,6 +52,7 @@ class PlatformWheelEvent;
 class PseudoElement;
 class RenderNamedFlowFragment;
 class RenderTreePosition;
+class WebAnimation;
 struct ElementStyle;
 
 enum SpellcheckAttributeState {
@@ -537,6 +538,10 @@ public:
     bool isNamedFlowContentElement() const { return hasRareData() && rareDataIsNamedFlowContentElement(); }
     void setIsNamedFlowContentElement();
     void clearIsNamedFlowContentElement();
+
+#if ENABLE(WEB_ANIMATIONS)
+    Vector<WebAnimation*> getAnimations();
+#endif
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

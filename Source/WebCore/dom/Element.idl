@@ -200,6 +200,7 @@ dictionary ShadowRootInit {
     required ShadowRootMode mode;
 };
 
+Element implements Animatable;
 Element implements ChildNode;
 Element implements NonDocumentTypeChildNode;
 Element implements ParentNode;

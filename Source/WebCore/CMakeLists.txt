@@ -316,6 +316,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
 
+    animation/Animatable.idl
+    animation/AnimationEffect.idl
+    animation/AnimationTimeline.idl
+    animation/DocumentAnimation.idl
+    animation/DocumentTimeline.idl
+    animation/KeyframeEffect.idl
+    animation/WebAnimation.idl
+
     crypto/CryptoKey.idl
     crypto/CryptoKeyPair.idl
     crypto/WebKitSubtleCrypto.idl
@@ -1084,6 +1092,13 @@ set(WebCore_SOURCES
     accessibility/AccessibilityTableRow.cpp
     accessibility/AccessibilityTree.cpp
     accessibility/AccessibilityTreeItem.cpp
+
+    animation/AnimationEffect.cpp
+    animation/AnimationTimeline.cpp
+    animation/DocumentAnimation.cpp
+    animation/DocumentTimeline.cpp
+    animation/KeyframeEffect.cpp
+    animation/WebAnimation.cpp
 
     bindings/generic/ActiveDOMCallback.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
@@ -3036,20 +3051,6 @@ endif ()
 list(APPEND WebCore_CSS_VALUE_KEYWORDS
     ${WEBCORE_DIR}/css/SVGCSSValueKeywords.in
 )
-
-if (ENABLE_WEB_ANIMATIONS)
-    list(APPEND WebCore_IDL_FILES
-        "animation/AnimationTimeline.idl"
-        "animation/DocumentAnimation.idl"
-        "animation/DocumentTimeline.idl"
-    )
-
-    list(APPEND WebCore_SOURCES
-        "animation/AnimationTimeline.cpp"
-        "animation/DocumentAnimation.cpp"
-        "animation/DocumentTimeline.cpp"
-    )
-endif ()
 
 if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
