@@ -267,7 +267,7 @@ CaptureSessionInfo AVCaptureDeviceManager::defaultCaptureSession() const
 bool AVCaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo* session, RealtimeMediaSource::Type type, const MediaConstraint& constraint)
 {
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    MediaConstraintType constraintType = supportedConstraints.constraintFromName(constraint.name());
+    MediaConstraintType constraintType = constraint.type();
     if (!supportedConstraints.supportsConstraint(constraintType))
         return false;
 

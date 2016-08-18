@@ -101,23 +101,23 @@ static bool isStringMediaConstraintSatisfiable(const MediaConstraint& constraint
 
 static bool isSatisfiable(RealtimeMediaSource::Type type, const MediaConstraint& constraint)
 {
-    const String& name = constraint.name();
+    MediaConstraintType constraintType = constraint.type();
 
     if (type == RealtimeMediaSource::Audio) {
-        if (name == "sampleRate" || name == "sampleSize")
+        if (constraintType == MediaConstraintType::SampleRate || constraintType == MediaConstraintType::SampleSize)
             return isIntMediaConstraintSatisfiable(constraint);
-        if (name == "volume")
+        if (constraintType == MediaConstraintType::Volume)
             return isDoubleMediaConstraintSatisfiable(constraint);
-        if (name == "echoCancellation")
+        if (constraintType == MediaConstraintType::EchoCancellation)
             return isBooleanMediaConstraintSatisfiable(constraint);
-        if (name == "deviceId" || name == "groupId")
+        if (constraintType == MediaConstraintType::DeviceId || constraintType == MediaConstraintType::GroupId)
             return isStringMediaConstraintSatisfiable(constraint);
     } else if (type == RealtimeMediaSource::Video) {
-        if (name == "width" || name == "height")
+        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height)
             return isIntMediaConstraintSatisfiable(constraint);
-        if (name == "aspectRatio" || name == "frameRate")
+        if (constraintType == MediaConstraintType::AspectRatio || constraintType == MediaConstraintType::FrameRate)
             return isDoubleMediaConstraintSatisfiable(constraint);
-        if (name == "facingMode" || name == "deviceId" || name == "groupId")
+        if (constraintType == MediaConstraintType::FacingMode || constraintType == MediaConstraintType::DeviceId || constraintType == MediaConstraintType::GroupId)
             return isStringMediaConstraintSatisfiable(constraint);
     }
 

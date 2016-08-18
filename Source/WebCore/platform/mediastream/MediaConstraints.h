@@ -34,6 +34,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -68,16 +69,17 @@ public:
     virtual bool getExact(Vector<String>&) const;
     virtual bool getIdeal(Vector<String>&) const;
 
-    String name() const { return m_name; }
+    MediaConstraintType type() const { return m_type; }
+
 
 protected:
-    explicit MediaConstraint(const String& name)
-        : m_name(name)
+    explicit MediaConstraint(MediaConstraintType type)
+        : m_type(type)
     {
     }
 
 private:
-    String m_name;
+    MediaConstraintType m_type;
 };
 
 class NumericConstraint : public MediaConstraint {
@@ -86,8 +88,8 @@ public:
     bool isMandatory() const override { return m_hasMin || m_hasMax || m_hasExact; }
 
 protected:
-    explicit NumericConstraint(const String& name)
-        : MediaConstraint(name)
+    explicit NumericConstraint(MediaConstraintType type)
+        : MediaConstraint(type)
     {
     }
 
@@ -110,7 +112,7 @@ private:
 
 class IntConstraint final : public NumericConstraint {
 public:
-    static Ref<IntConstraint> create(const String& name);
+    static Ref<IntConstraint> create(MediaConstraintType);
 
     void setMin(int value);
     void setMax(int value);
@@ -123,8 +125,8 @@ public:
     bool getIdeal(int&) const final;
 
 private:
-    explicit IntConstraint(const String& name)
-        : WebCore::NumericConstraint(name)
+    explicit IntConstraint(MediaConstraintType type)
+        : WebCore::NumericConstraint(type)
     {
     }
 
@@ -136,7 +138,7 @@ private:
 
 class DoubleConstraint final : public NumericConstraint {
 public:
-    static Ref<DoubleConstraint> create(const String& name);
+    static Ref<DoubleConstraint> create(MediaConstraintType);
 
     void setMin(double value);
     void setMax(double value);
@@ -149,8 +151,8 @@ public:
     bool getIdeal(double&) const final;
 
 private:
-    explicit DoubleConstraint(const String& name)
-        : WebCore::NumericConstraint(name)
+    explicit DoubleConstraint(MediaConstraintType type)
+        : WebCore::NumericConstraint(type)
     {
     }
 
@@ -162,7 +164,7 @@ private:
 
 class BooleanConstraint final : public MediaConstraint {
 public:
-    static Ref<BooleanConstraint> create(const String& name);
+    static Ref<BooleanConstraint> create(MediaConstraintType);
 
     void setExact(bool value);
     void setIdeal(bool value);
@@ -174,8 +176,8 @@ public:
     bool isMandatory() const final { return m_hasExact; }
 
 private:
-    explicit BooleanConstraint(const String& name)
-        : MediaConstraint(name)
+    explicit BooleanConstraint(MediaConstraintType type)
+        : MediaConstraint(type)
     {
     }
 
@@ -187,7 +189,7 @@ private:
 
 class StringConstraint final : public MediaConstraint {
 public:
-    static Ref<StringConstraint> create(const String& name);
+    static Ref<StringConstraint> create(MediaConstraintType);
 
     void setExact(const String&);
     void appendExact(const String&);
@@ -201,8 +203,8 @@ public:
     bool isMandatory() const final { return !m_exact.isEmpty(); }
 
 private:
-    explicit StringConstraint(const String& name)
-        : MediaConstraint(name)
+    explicit StringConstraint(MediaConstraintType type)
+        : MediaConstraint(type)
     {
     }
 

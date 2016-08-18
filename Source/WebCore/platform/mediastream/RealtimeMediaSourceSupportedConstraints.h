@@ -91,9 +91,10 @@ public:
     bool supportsGroupId() const { return m_supportsGroupId; }
     void setSupportsGroupId(bool value) { m_supportsGroupId = value; }
 
-    const AtomicString& nameForConstraint(MediaConstraintType) const;
-    MediaConstraintType constraintFromName(const String& constraintName) const;
     bool supportsConstraint(MediaConstraintType) const;
+
+    static const AtomicString& nameForConstraint(MediaConstraintType);
+    static MediaConstraintType constraintFromName(const String&);
 
 private:
     bool m_supportsWidth { false };

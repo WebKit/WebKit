@@ -175,44 +175,43 @@ bool AVVideoCaptureSource::applyConstraints(MediaConstraints* constraints)
 
     // FIXME: Below needs to be refactored for https://bugs.webkit.org/show_bug.cgi?id=160579.
 
-    auto& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    String widthConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::Width);
-    String heightConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::Height);
-
     auto& mandatoryConstraints = constraints->mandatoryConstraints();
-
-    RefPtr<MediaConstraint> widthConstraint = mandatoryConstraints.get(widthConstraintName);
-    RefPtr<MediaConstraint> heightConstraint = mandatoryConstraints.get(heightConstraintName);
-
     int intValue;
 
+    String widthConstraintName = RealtimeMediaSourceSupportedConstraints::nameForConstraint(MediaConstraintType::Width);
+    auto widthConstraint = mandatoryConstraints.get(widthConstraintName);
     Optional<int> width;
     if (widthConstraint && widthConstraint->getExact(intValue))
         width = intValue;
 
+    String heightConstraintName = RealtimeMediaSourceSupportedConstraints::nameForConstraint(MediaConstraintType::Height);
+    auto heightConstraint = mandatoryConstraints.get(heightConstraintName);
     Optional<int> height;
     if (heightConstraint && heightConstraint->getExact(intValue))
         height = intValue;
     
     if (width && height) {
         NSString *preset = AVCaptureSessionInfo(session()).bestSessionPresetForVideoDimensions(width.value(), height.value());
-        if (!preset || ![session() canSetSessionPreset:preset])
+        if (!preset || ![session() canSetSessionPreset:preset]) {
+            LOG(Media, "AVVideoCaptureSource::applyConstraints(%p), unable find or set preset for width: %i, height: %i", this, width.value(), height.value());
             return false;
+        }
 
         [session() setSessionPreset:preset];
     }
 
-    String frameRateConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::FrameRate);
-    RefPtr<MediaConstraint> frameRateConstraint = mandatoryConstraints.get(frameRateConstraintName);
-
-    double doubleValue;
+    String frameRateConstraintName = RealtimeMediaSourceSupportedConstraints::nameForConstraint(MediaConstraintType::FrameRate);
+    auto frameRateConstraint = mandatoryConstraints.get(frameRateConstraintName);
 
     Optional<double> frameRate;
+    double doubleValue;
     if (frameRateConstraint && frameRateConstraint->getExact(doubleValue))
         frameRate = doubleValue;
 
-    if (frameRate && !setFrameRateConstraint(frameRate.value(), 0))
+    if (frameRate && !setFrameRateConstraint(frameRate.value(), 0)) {
+        LOG(Media, "AVVideoCaptureSource::applyConstraints(%p), unable set frame rate to %f", this, frameRate.value());
         return false;
+    }
 
     return true;
 }

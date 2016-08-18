@@ -58,9 +58,9 @@ static void initializeStringConstraintWithList(StringConstraint& constraint, voi
     }
 }
 
-static RefPtr<StringConstraint> createStringConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, ConstraintSetType constraintSetType)
+static RefPtr<StringConstraint> createStringConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
-    auto constraint = StringConstraint::create(name);
+    auto constraint = StringConstraint::create(type);
 
     // Dictionary constraint value.
     Dictionary dictionaryValue;
@@ -120,9 +120,9 @@ static RefPtr<StringConstraint> createStringConstraint(const Dictionary& mediaTr
     return nullptr;
 }
 
-static RefPtr<BooleanConstraint> createBooleanConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, ConstraintSetType constraintSetType)
+static RefPtr<BooleanConstraint> createBooleanConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
-    auto constraint = BooleanConstraint::create(name);
+    auto constraint = BooleanConstraint::create(type);
 
     // Dictionary constraint value.
     Dictionary dictionaryValue;
@@ -159,9 +159,9 @@ static RefPtr<BooleanConstraint> createBooleanConstraint(const Dictionary& media
     return nullptr;
 }
 
-static RefPtr<DoubleConstraint> createDoubleConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, ConstraintSetType constraintSetType)
+static RefPtr<DoubleConstraint> createDoubleConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
-    auto constraint = DoubleConstraint::create(name);
+    auto constraint = DoubleConstraint::create(type);
 
     // Dictionary constraint value.
     Dictionary dictionaryValue;
@@ -206,9 +206,9 @@ static RefPtr<DoubleConstraint> createDoubleConstraint(const Dictionary& mediaTr
     return nullptr;
 }
 
-static RefPtr<IntConstraint> createIntConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, ConstraintSetType constraintSetType)
+static RefPtr<IntConstraint> createIntConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
-    auto constraint = IntConstraint::create(name);
+    auto constraint = IntConstraint::create(type);
 
     // Dictionary constraint value.
     Dictionary dictionaryValue;
@@ -255,25 +255,24 @@ static RefPtr<IntConstraint> createIntConstraint(const Dictionary& mediaTrackCon
 
 static void parseMediaTrackConstraintSetForKey(const Dictionary& mediaTrackConstraintSet, const String& name, MediaTrackConstraintSetMap& map, ConstraintSetType constraintSetType, RealtimeMediaSource::Type sourceType)
 {
-    auto& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    MediaConstraintType constraintType = supportedConstraints.constraintFromName(name);
+    MediaConstraintType constraintType = RealtimeMediaSourceSupportedConstraints::constraintFromName(name);
 
     RefPtr<MediaConstraint> mediaConstraint;
     if (sourceType == RealtimeMediaSource::Audio) {
         switch (constraintType) {
         case MediaConstraintType::SampleRate:
         case MediaConstraintType::SampleSize:
-            mediaConstraint = createIntConstraint(mediaTrackConstraintSet, name, constraintSetType);
+            mediaConstraint = createIntConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
             break;
         case MediaConstraintType::Volume:
-            mediaConstraint = createDoubleConstraint(mediaTrackConstraintSet, name, constraintSetType);
+            mediaConstraint = createDoubleConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
             break;
         case MediaConstraintType::EchoCancellation:
-            mediaConstraint = createBooleanConstraint(mediaTrackConstraintSet, name, constraintSetType);
+            mediaConstraint = createBooleanConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
             break;
         case MediaConstraintType::DeviceId:
         case MediaConstraintType::GroupId:
-            mediaConstraint = createStringConstraint(mediaTrackConstraintSet, name, constraintSetType);
+            mediaConstraint = createStringConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
             break;
         default:
             LOG(Media, "parseMediaTrackConstraintSetForKey() - ignoring unsupported constraint '%s' for audio.", name.utf8().data());
@@ -284,16 +283,16 @@ static void parseMediaTrackConstraintSetForKey(const Dictionary& mediaTrackConst
         switch (constraintType) {
         case MediaConstraintType::Width:
         case MediaConstraintType::Height:
-            mediaConstraint = createIntConstraint(mediaTrackConstraintSet, name, constraintSetType);
+            mediaConstraint = createIntConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
             break;
         case MediaConstraintType::AspectRatio:
         case MediaConstraintType::FrameRate:
-            mediaConstraint = createDoubleConstraint(mediaTrackConstraintSet, name, constraintSetType);
+            mediaConstraint = createDoubleConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
             break;
         case MediaConstraintType::FacingMode:
         case MediaConstraintType::DeviceId:
         case MediaConstraintType::GroupId:
-            mediaConstraint = createStringConstraint(mediaTrackConstraintSet, name, constraintSetType);
+            mediaConstraint = createStringConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
             break;
         default:
             LOG(Media, "parseMediaTrackConstraintSetForKey() - ignoring unsupported constraint '%s' for video.", name.utf8().data());

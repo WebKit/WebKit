@@ -39,25 +39,24 @@ namespace WebCore {
 
 RefPtr<MediaConstraint> MediaConstraint::create(const String& name)
 {
-    auto& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    MediaConstraintType constraintType = supportedConstraints.constraintFromName(name);
+    MediaConstraintType constraintType = RealtimeMediaSourceSupportedConstraints::constraintFromName(name);
 
     switch (constraintType) {
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
     case MediaConstraintType::SampleRate:
     case MediaConstraintType::SampleSize:
-        return IntConstraint::create(name);
+        return IntConstraint::create(constraintType);
     case MediaConstraintType::AspectRatio:
     case MediaConstraintType::FrameRate:
     case MediaConstraintType::Volume:
-        return DoubleConstraint::create(name);
+        return DoubleConstraint::create(constraintType);
     case MediaConstraintType::EchoCancellation:
-        return BooleanConstraint::create(name);
+        return BooleanConstraint::create(constraintType);
     case MediaConstraintType::FacingMode:
     case MediaConstraintType::DeviceId:
     case MediaConstraintType::GroupId:
-        return StringConstraint::create(name);
+        return StringConstraint::create(constraintType);
     case MediaConstraintType::Unknown:
         return nullptr;
     }
@@ -159,9 +158,9 @@ bool MediaConstraint::getIdeal(Vector<String>&) const
     return false;
 }
 
-Ref<IntConstraint> IntConstraint::create(const String& name)
+Ref<IntConstraint> IntConstraint::create(MediaConstraintType type)
 {
-    return adoptRef(*new IntConstraint(name));
+    return adoptRef(*new IntConstraint(type));
 }
 
 void IntConstraint::setMin(int value)
@@ -224,9 +223,9 @@ bool IntConstraint::getIdeal(int& ideal) const
     return true;
 }
 
-Ref<DoubleConstraint> DoubleConstraint::create(const String& name)
+Ref<DoubleConstraint> DoubleConstraint::create(MediaConstraintType type)
 {
-    return adoptRef(*new DoubleConstraint(name));
+    return adoptRef(*new DoubleConstraint(type));
 }
 
 void DoubleConstraint::setMin(double value)
@@ -289,9 +288,9 @@ bool DoubleConstraint::getIdeal(double& ideal) const
     return true;
 }
 
-Ref<BooleanConstraint> BooleanConstraint::create(const String& name)
+Ref<BooleanConstraint> BooleanConstraint::create(MediaConstraintType type)
 {
-    return adoptRef(*new BooleanConstraint(name));
+    return adoptRef(*new BooleanConstraint(type));
 }
 
 void BooleanConstraint::setExact(bool value)
@@ -324,9 +323,9 @@ bool BooleanConstraint::getIdeal(bool& ideal) const
     return true;
 }
 
-Ref<StringConstraint> StringConstraint::create(const String& name)
+Ref<StringConstraint> StringConstraint::create(MediaConstraintType type)
 {
-    return adoptRef(*new StringConstraint(name));
+    return adoptRef(*new StringConstraint(type));
 }
 
 void StringConstraint::setExact(const String& value)
