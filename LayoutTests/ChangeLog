@@ -1,3 +1,25 @@
+2016-08-18  Chris Dumez  <cdumez@apple.com>
+
+        Align our encoding labels with the encoding specification
+        https://bugs.webkit.org/show_bug.cgi?id=160931
+
+        Reviewed by Darin Adler.
+
+        Update / rebaseline existing tests to reflect the code change.
+        The new baselines match Chrome and Firefox.
+
+        * fast/encoding/bracket-in-tag-expected.txt:
+        * fast/encoding/charset-invalid-expected.txt:
+        * fast/encoding/charset-replacement-expected.txt:
+        * fast/encoding/misplaced-xml-declaration-expected.txt:
+        * fast/encoding/pseudo-xml-expected.txt:
+        * http/tests/misc/char-encoding-bocu-1-blacklisted-expected.txt:
+        * http/tests/misc/char-encoding-bocu-1-blacklisted.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-default-expected.txt:
+        * http/tests/misc/char-encoding-scsu-blacklisted-expected.txt:
+        * http/tests/misc/char-encoding-scsu-blacklisted.html:
+        * http/tests/misc/frame-default-enc-different-domain-expected.txt:
+
 2016-08-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land test expectations for rdar://problem/27723718.

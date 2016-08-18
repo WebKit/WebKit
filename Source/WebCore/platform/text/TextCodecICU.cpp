@@ -72,125 +72,114 @@ std::unique_ptr<TextCodec> TextCodecICU::create(const TextEncoding& encoding, co
     return std::make_unique<TextCodecICU>(encoding.name(), static_cast<const char*>(additionalData));
 }
 
+#define DECLARE_ALIASES(encoding, ...) \
+    static const char* const encoding##_aliases[] { __VA_ARGS__ }
+
+// From https://encoding.spec.whatwg.org.
+DECLARE_ALIASES(IBM866, "866", "cp866", "csibm866");
+DECLARE_ALIASES(ISO_8859_2, "csisolatin2", "iso-ir-101", "iso8859-2", "iso88592", "iso_8859-2", "iso_8859-2:1987", "l2", "latin2");
+DECLARE_ALIASES(ISO_8859_3, "csisolatin3", "iso-ir-109", "iso8859-3", "iso88593", "iso_8859-3", "iso_8859-3:1988", "l3", "latin3");
+DECLARE_ALIASES(ISO_8859_4, "csisolatin4", "iso-ir-110", "iso8859-4", "iso88594", "iso_8859-4", "iso_8859-4:1988", "l4", "latin4");
+DECLARE_ALIASES(ISO_8859_5, "csisolatincyrillic", "cyrillic", "iso-ir-144", "iso8859-5", "iso88595", "iso_8859-5", "iso_8859-5:1988");
+DECLARE_ALIASES(ISO_8859_6, "arabic", "asmo-708", "csiso88596e", "csiso88596i", "csisolatinarabic", "ecma-114", "iso-8859-6-e", "iso-8859-6-i", "iso-ir-127", "iso8859-6", "iso88596", "iso_8859-6", "iso_8859-6:1987");
+DECLARE_ALIASES(ISO_8859_7, "csisolatingreek", "ecma-118", "elot_928", "greek", "greek8", "iso-ir-126", "iso8859-7", "iso88597", "iso_8859-7", "iso_8859-7:1987", "sun_eu_greek");
+DECLARE_ALIASES(ISO_8859_8, "csiso88598e", "csisolatinhebrew", "hebrew", "iso-8859-8-e", "iso-ir-138", "iso8859-8", "iso88598", "iso_8859-8", "iso_8859-8:1988", "visual");
+DECLARE_ALIASES(ISO_8859_8_I, "csiso88598i", "logical");
+DECLARE_ALIASES(ISO_8859_10, "csisolatin6", "iso-ir-157", "iso8859-10", "iso885910", "l6", "latin6");
+DECLARE_ALIASES(ISO_8859_13, "iso8859-13", "iso885913");
+DECLARE_ALIASES(ISO_8859_14, "iso8859-14", "iso885914");
+DECLARE_ALIASES(ISO_8859_15, "csisolatin9", "iso8859-15", "iso885915", "iso_8859-15", "l9");
+DECLARE_ALIASES(KOI8_R, "cskoi8r", "koi", "koi8", "koi8_r");
+DECLARE_ALIASES(KOI8_U, "koi8-ru");
+DECLARE_ALIASES(macintosh, "csmacintosh", "mac", "x-mac-roman", "macroman", "x-macroman");
+DECLARE_ALIASES(windows_874, "dos-874", "iso-8859-11", "iso8859-11", "iso885911", "tis-620");
+DECLARE_ALIASES(windows_949, "euc-kr", "cseuckr", "csksc56011987", "iso-ir-149", "korean", "ks_c_5601-1987", "ks_c_5601-1989", "ksc5601", "ksc_5601", "ms949", "x-KSC5601", "x-windows-949", "x-uhc");
+DECLARE_ALIASES(windows_1250, "cp1250", "x-cp1250", "winlatin2");
+DECLARE_ALIASES(windows_1251, "cp1251", "wincyrillic", "x-cp1251");
+DECLARE_ALIASES(windows_1253, "wingreek", "cp1253", "x-cp1253");
+DECLARE_ALIASES(windows_1254, "winturkish", "cp1254", "csisolatin5", "iso-8859-9", "iso-ir-148", "iso8859-9", "iso88599", "iso_8859-9", "iso_8859-9:1989", "l5", "latin5", "x-cp1254");
+DECLARE_ALIASES(windows_1255, "winhebrew", "cp1255", "x-cp1255");
+DECLARE_ALIASES(windows_1256, "winarabic", "cp1256", "x-cp1256");
+DECLARE_ALIASES(windows_1257, "winbaltic", "cp1257", "x-cp1257");
+DECLARE_ALIASES(windows_1258, "winvietnamese", "cp1258", "x-cp1258");
+DECLARE_ALIASES(x_mac_cyrillic, "maccyrillic", "x-mac-ukrainian", "windows-10007", "mac-cyrillic", "maccy", "x-MacCyrillic", "x-MacUkraine");
+DECLARE_ALIASES(GBK, "cn-gb", "csgb231280", "x-euc-cn", "chinese", "csgb2312", "csiso58gb231280", "gb2312", "gb_2312", "gb_2312-80", "iso-ir-58", "x-gbk", "euc-cn", "cp936", "ms936", "gb2312-1980", "windows-936", "windows-936-2000");
+DECLARE_ALIASES(gb18030, "ibm-1392", "windows-54936");
+DECLARE_ALIASES(Big5, "cn-big5", "x-x-big5", "csbig5", "windows-950", "windows-950-2000", "ms950", "x-windows-950", "x-big5");
+DECLARE_ALIASES(EUC_JP, "x-euc", "cseucpkdfmtjapanese", "x-euc-jp");
+DECLARE_ALIASES(ISO_2022_JP, "jis7", "csiso2022jp");
+DECLARE_ALIASES(Shift_JIS, "shift-jis", "csshiftjis", "ms932", "ms_kanji", "sjis", "windows-31j", "x-sjis");
+// Encodings below are not in the standard.
+DECLARE_ALIASES(UTF_32, "ISO-10646-UCS-4", "ibm-1236", "ibm-1237", "csUCS4", "ucs-4");
+DECLARE_ALIASES(UTF_32LE, "UTF32_LittleEndian", "ibm-1234", "ibm-1235");
+DECLARE_ALIASES(UTF_32BE, "UTF32_BigEndian", "ibm-1232", "ibm-1233", "ibm-9424");
+DECLARE_ALIASES(x_mac_greek, "windows-10006", "macgr", "x-MacGreek");
+DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029", "x-mac-ce", "macce", "maccentraleurope", "x-MacCentralEurope");
+DECLARE_ALIASES(x_mac_turkish, "windows-10081", "mactr", "x-MacTurkish");
+DECLARE_ALIASES(Big5_HKSCS, "big5hk", "HKSCS-BIG5", "ibm-1375", "ibm-1375_P100-2008");
+
+#define DECLARE_ENCODING_NAME(encoding, alias_array) \
+    { encoding, WTF_ARRAY_LENGTH(alias_array##_aliases), alias_array##_aliases }
+
+#define DECLARE_ENCODING_NAME_NO_ALIASES(encoding) \
+    { encoding, 0, nullptr }
+
+static const struct EncodingName {
+    const char* const name;
+    unsigned aliasCount;
+    const char* const * aliases;
+} encodingNames[] = {
+    DECLARE_ENCODING_NAME("IBM866", IBM866),
+    DECLARE_ENCODING_NAME("ISO-8859-2", ISO_8859_2),
+    DECLARE_ENCODING_NAME("ISO-8859-3", ISO_8859_3),
+    DECLARE_ENCODING_NAME("ISO-8859-4", ISO_8859_4),
+    DECLARE_ENCODING_NAME("ISO-8859-5", ISO_8859_5),
+    DECLARE_ENCODING_NAME("ISO-8859-6", ISO_8859_6),
+    DECLARE_ENCODING_NAME("ISO-8859-7", ISO_8859_7),
+    DECLARE_ENCODING_NAME("ISO-8859-8", ISO_8859_8),
+    DECLARE_ENCODING_NAME("ISO-8859-8-I", ISO_8859_8_I),
+    DECLARE_ENCODING_NAME("ISO-8859-10", ISO_8859_10),
+    DECLARE_ENCODING_NAME("ISO-8859-13", ISO_8859_13),
+    DECLARE_ENCODING_NAME("ISO-8859-14", ISO_8859_14),
+    DECLARE_ENCODING_NAME("ISO-8859-15", ISO_8859_15),
+    DECLARE_ENCODING_NAME_NO_ALIASES("ISO-8859-16"),
+    DECLARE_ENCODING_NAME("KOI8-R", KOI8_R),
+    DECLARE_ENCODING_NAME("KOI8-U", KOI8_U),
+    DECLARE_ENCODING_NAME("macintosh", macintosh),
+    DECLARE_ENCODING_NAME("windows-874", windows_874),
+    DECLARE_ENCODING_NAME("windows-949", windows_949),
+    DECLARE_ENCODING_NAME("windows-1250", windows_1250),
+    DECLARE_ENCODING_NAME("windows-1251", windows_1251),
+    DECLARE_ENCODING_NAME("windows-1253", windows_1253),
+    DECLARE_ENCODING_NAME("windows-1254", windows_1254),
+    DECLARE_ENCODING_NAME("windows-1255", windows_1255),
+    DECLARE_ENCODING_NAME("windows-1256", windows_1256),
+    DECLARE_ENCODING_NAME("windows-1257", windows_1257),
+    DECLARE_ENCODING_NAME("windows-1258", windows_1258),
+    DECLARE_ENCODING_NAME("x-mac-cyrillic", x_mac_cyrillic),
+    DECLARE_ENCODING_NAME("GBK", GBK),
+    DECLARE_ENCODING_NAME("gb18030", gb18030),
+    DECLARE_ENCODING_NAME("Big5", Big5),
+    DECLARE_ENCODING_NAME("EUC-JP", EUC_JP),
+    DECLARE_ENCODING_NAME("ISO-2022-JP", ISO_2022_JP),
+    DECLARE_ENCODING_NAME("Shift_JIS", Shift_JIS),
+    // Encodings below are not in the standard.
+    DECLARE_ENCODING_NAME("UTF-32", UTF_32),
+    DECLARE_ENCODING_NAME("UTF-32LE", UTF_32LE),
+    DECLARE_ENCODING_NAME("UTF-32BE", UTF_32BE),
+    DECLARE_ENCODING_NAME("x-mac-greek", x_mac_greek),
+    DECLARE_ENCODING_NAME("x-mac-centraleurroman", x_mac_centraleurroman),
+    DECLARE_ENCODING_NAME("x-mac-turkish", x_mac_turkish),
+    DECLARE_ENCODING_NAME("Big5-HKSCS", Big5_HKSCS),
+};
+
 void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
 {
-    // We register Hebrew with logical ordering using a separate name.
-    // Otherwise, this would share the same canonical name as the
-    // visual ordering case, and then TextEncoding could not tell them
-    // apart; ICU treats these names as synonyms.
-    registrar("ISO-8859-8-I", "ISO-8859-8-I");
-
-    int32_t numConverters = ucnv_countAvailable();
-    for (int32_t i = 0; i < numConverters; ++i) {
-        const char* canonicalConverterName = ucnv_getAvailableName(i);
-        UErrorCode error = U_ZERO_ERROR;
-        // Try MIME before trying IANA to pick up commonly used names like
-        // 'EUC-JP' instead of horrendously long names like 
-        // 'Extended_UNIX_Code_Packed_Format_for_Japanese'. 
-        const char* webStandardName = ucnv_getStandardName(canonicalConverterName, "MIME", &error);
-        if (!U_SUCCESS(error) || !webStandardName) {
-            error = U_ZERO_ERROR;
-            // Try IANA to pick up 'windows-12xx' and other names
-            // which are not preferred MIME names but are widely used. 
-            webStandardName = ucnv_getStandardName(canonicalConverterName, "IANA", &error);
-            if (!U_SUCCESS(error) || !webStandardName)
-                continue;
-        }
-
-        // Any standard encoding overrides should match checks in registerCodecs() below.
-
-        // 1. Treat GB2312 encoding as GBK (its more modern superset), to match other browsers.
-        // 2. On the Web, GB2312 is encoded as EUC-CN or HZ, while ICU provides a native encoding
-        //    for encoding GB_2312-80 and several others. So, we need to override this behavior, too.
-        if (strcmp(webStandardName, "GB2312") == 0 || strcmp(webStandardName, "GB_2312-80") == 0)
-            webStandardName = "GBK";
-        // Similarly, EUC-KR encodings all map to an extended version.
-        else if (strcmp(webStandardName, "KSC_5601") == 0 || strcmp(webStandardName, "EUC-KR") == 0 || strcmp(webStandardName, "cp1363") == 0)
-            webStandardName = "windows-949";
-        // And so on.
-        // FIXME: strcasecmp is locale sensitive, we should not be using it.
-        else if (strcasecmp(webStandardName, "iso-8859-9") == 0) // This name is returned in different case by ICU 3.2 and 3.6.
-            webStandardName = "windows-1254";
-        else if (strcmp(webStandardName, "TIS-620") == 0)
-            webStandardName = "windows-874";
-
-        registrar(webStandardName, webStandardName);
-
-        uint16_t numAliases = ucnv_countAliases(canonicalConverterName, &error);
-        ASSERT(U_SUCCESS(error));
-        if (U_SUCCESS(error))
-            for (uint16_t j = 0; j < numAliases; ++j) {
-                error = U_ZERO_ERROR;
-                const char* alias = ucnv_getAlias(canonicalConverterName, j, &error);
-                ASSERT(U_SUCCESS(error));
-                if (U_SUCCESS(error) && alias != webStandardName)
-                    registrar(alias, webStandardName);
-            }
+    for (auto& encodingName : encodingNames) {
+        registrar(encodingName.name, encodingName.name);
+        for (size_t i = 0; i < encodingName.aliasCount; ++i)
+            registrar(encodingName.aliases[i], encodingName.name);
     }
-
-    // Additional aliases.
-    // macroman is present in modern versions of ICU, but not in ICU 3.2 (shipped with Mac OS X 10.4).
-    // FIXME: Do any ports still use such old versions?
-    registrar("macroman", "macintosh");
-
-    // Additional aliases that historically were present in the encoding
-    // table in WebKit on Macintosh that don't seem to be present in ICU.
-    // Perhaps we can prove these are not used on the web and remove them.
-    // Or perhaps we can get them added to ICU.
-    registrar("x-mac-roman", "macintosh");
-    registrar("maccyrillic", "x-mac-cyrillic");
-    registrar("x-mac-ukrainian", "x-mac-cyrillic");
-    registrar("cn-big5", "Big5");
-    registrar("x-x-big5", "Big5");
-    registrar("cn-gb", "GBK");
-    registrar("csgb231280", "GBK");
-    registrar("x-euc-cn", "GBK");
-    registrar("x-gbk", "GBK");
-    registrar("csISO88598I", "ISO-8859-8-I");
-    registrar("koi", "KOI8-R");
-    registrar("logical", "ISO-8859-8-I");
-    registrar("visual", "ISO-8859-8");
-    registrar("winarabic", "windows-1256");
-    registrar("winbaltic", "windows-1257");
-    registrar("wincyrillic", "windows-1251");
-    registrar("iso-8859-11", "windows-874");
-    registrar("iso8859-11", "windows-874");
-    registrar("dos-874", "windows-874");
-    registrar("wingreek", "windows-1253");
-    registrar("winhebrew", "windows-1255");
-    registrar("winlatin2", "windows-1250");
-    registrar("winturkish", "windows-1254");
-    registrar("winvietnamese", "windows-1258");
-    registrar("x-cp1250", "windows-1250");
-    registrar("x-cp1251", "windows-1251");
-    registrar("x-euc", "EUC-JP");
-    registrar("x-windows-949", "windows-949");
-    registrar("KSC5601", "windows-949");
-    registrar("x-uhc", "windows-949");
-    registrar("shift-jis", "Shift_JIS");
-
-    // These aliases are present in modern versions of ICU, but use different codecs, and have no standard names.
-    // They are not present in ICU 3.2.
-    registrar("dos-720", "cp864");
-    registrar("jis7", "ISO-2022-JP");
-
-    // Alternative spelling of ISO encoding names.
-    registrar("ISO8859-1", "ISO-8859-1");
-    registrar("ISO8859-2", "ISO-8859-2");
-    registrar("ISO8859-3", "ISO-8859-3");
-    registrar("ISO8859-4", "ISO-8859-4");
-    registrar("ISO8859-5", "ISO-8859-5");
-    registrar("ISO8859-6", "ISO-8859-6");
-    registrar("ISO8859-7", "ISO-8859-7");
-    registrar("ISO8859-8", "ISO-8859-8");
-    registrar("ISO8859-8-I", "ISO-8859-8-I");
-    registrar("ISO8859-9", "windows-1254");
-    registrar("ISO8859-10", "ISO-8859-10");
-    registrar("ISO8859-13", "ISO-8859-13");
-    registrar("ISO8859-14", "ISO-8859-14");
-    registrar("ISO8859-15", "ISO-8859-15");
-    // Not registering ISO8859-16, because Firefox (as of version 3.6.6) doesn't know this particular alias,
-    // and because older versions of ICU don't support ISO-8859-16 encoding at all.
 
 #if PLATFORM(IOS)
     // A.B. adding a few more Mac encodings missing 'cause we don't have TextCodecMac right now
@@ -218,39 +207,39 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
 
 void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
 {
-    // See comment above in registerEncodingNames.
-    UErrorCode error = U_ZERO_ERROR;
-    const char* canonicalConverterName = ucnv_getCanonicalName("ISO-8859-8-I", "IANA", &error);
-    ASSERT(U_SUCCESS(error));
-    registrar("ISO-8859-8-I", create, canonicalConverterName);
-
-    int32_t numConverters = ucnv_countAvailable();
-    for (int32_t i = 0; i < numConverters; ++i) {
-        canonicalConverterName = ucnv_getAvailableName(i);
-        error = U_ZERO_ERROR;
-        const char* webStandardName = ucnv_getStandardName(canonicalConverterName, "MIME", &error);
-        if (!U_SUCCESS(error) || !webStandardName) {
-            error = U_ZERO_ERROR;
-            webStandardName = ucnv_getStandardName(canonicalConverterName, "IANA", &error);
-            if (!U_SUCCESS(error) || !webStandardName)
-                continue;
+    for (auto& encodingName : encodingNames) {
+        // These encodings currently don't have standard names, so we need to register encoders manually.
+        // http://demo.icu-project.org/icu-bin/convexp
+        if (!strcmp(encodingName.name, "windows-874")) {
+            registrar(encodingName.name, create, "windows-874-2000");
+            continue;
+        }
+        if (!strcmp(encodingName.name, "windows-949")) {
+            registrar(encodingName.name, create, "windows-949-2000");
+            continue;
+        }
+        if (!strcmp(encodingName.name, "x-mac-cyrillic")) {
+            registrar(encodingName.name, create, "macos-7_3-10.2");
+            continue;
+        }
+        if (!strcmp(encodingName.name, "x-mac-greek")) {
+            registrar(encodingName.name, create, "macos-6_2-10.4");
+            continue;
+        }
+        if (!strcmp(encodingName.name, "x-mac-centraleurroman")) {
+            registrar(encodingName.name, create, "macos-29-10.2");
+            continue;
+        }
+        if (!strcmp(encodingName.name, "x-mac-turkish")) {
+            registrar(encodingName.name, create, "macos-35-10.2");
+            continue;
         }
 
-        // Don't register codecs for overridden encodings.
-        if (strcmp(webStandardName, "GB2312") == 0 || strcmp(webStandardName, "GB_2312-80") == 0
-            || strcmp(webStandardName, "KSC_5601") == 0 || strcmp(webStandardName, "EUC-KR") == 0
-            || strcmp(webStandardName, "cp1363") == 0
-            || strcasecmp(webStandardName, "iso-8859-9") == 0
-            || strcmp(webStandardName, "TIS-620") == 0)
-            continue;
-
-        registrar(webStandardName, create, fastStrDup(canonicalConverterName));
+        UErrorCode error = U_ZERO_ERROR;
+        const char* canonicalConverterName = ucnv_getCanonicalName(encodingName.name, "IANA", &error);
+        ASSERT(U_SUCCESS(error));
+        registrar(encodingName.name, create, canonicalConverterName);
     }
-
-    // These encodings currently don't have standard names, so we need to register encoders manually.
-    // FIXME: Is there a good way to determine the most up to date variant programmatically?
-    registrar("windows-874", create, "windows-874-2000");
-    registrar("windows-949", create, "windows-949-2000");
 
 #if PLATFORM(IOS)
     // See comment above in registerEncodingNames().

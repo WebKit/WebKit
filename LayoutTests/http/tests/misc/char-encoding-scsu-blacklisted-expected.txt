@@ -3,7 +3,7 @@ Test that character set SCSU is not supported and we default to ISO-8859-1. With
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS charset is ISO-8859-1
+PASS charset is windows-1252
 PASS successfullyParsed is true
 
 TEST COMPLETE

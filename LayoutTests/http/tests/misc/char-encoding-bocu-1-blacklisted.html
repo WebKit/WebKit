@@ -14,8 +14,8 @@
     }
     function run() {
         var bocu1Frame = document.getElementById("bocu1Frame");
-        if (bocu1Frame.contentDocument.charset == "ISO-8859-1") {
-            testPassed("charset is ISO-8859-1");
+        if (bocu1Frame.contentDocument.charset == "windows-1252") {
+            testPassed("charset is windows-1252");
         } else {
             testFailed("charset is " + bocu1Frame.contentDocument.charset);
         }

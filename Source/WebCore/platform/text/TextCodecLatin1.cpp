@@ -72,35 +72,24 @@ static const UChar table[256] = {
 
 void TextCodecLatin1::registerEncodingNames(EncodingNameRegistrar registrar)
 {
+    // From https://encoding.spec.whatwg.org.
     registrar("windows-1252", "windows-1252");
-    registrar("ISO-8859-1", "ISO-8859-1");
-    registrar("US-ASCII", "US-ASCII");
-
-    registrar("WinLatin1", "windows-1252");
-    registrar("ibm-1252", "windows-1252");
-    registrar("ibm-1252_P100-2000", "windows-1252");
-
-    registrar("CP819", "ISO-8859-1");
-    registrar("IBM819", "ISO-8859-1");
-    registrar("csISOLatin1", "ISO-8859-1");
-    registrar("iso-ir-100", "ISO-8859-1");
-    registrar("iso_8859-1:1987", "ISO-8859-1");
-    registrar("l1", "ISO-8859-1");
-    registrar("latin1", "ISO-8859-1");
-
-    registrar("ANSI_X3.4-1968", "US-ASCII");
-    registrar("ANSI_X3.4-1986", "US-ASCII");
-    registrar("ASCII", "US-ASCII");
-    registrar("IBM367", "US-ASCII");
-    registrar("ISO646-US", "US-ASCII");
-    registrar("ISO_646.irv:1991", "US-ASCII");
-    registrar("cp367", "US-ASCII");
-    registrar("csASCII", "US-ASCII");
-    registrar("ibm-367_P100-1995", "US-ASCII");
-    registrar("iso-ir-6", "US-ASCII");
-    registrar("iso-ir-6-us", "US-ASCII");
-    registrar("us", "US-ASCII");
-    registrar("x-ansi", "US-ASCII");
+    registrar("ansi_x3.4-1968", "windows-1252");
+    registrar("ascii", "windows-1252");
+    registrar("cp1252", "windows-1252");
+    registrar("cp819", "windows-1252");
+    registrar("csisolatin1", "windows-1252");
+    registrar("ibm819", "windows-1252");
+    registrar("iso-8859-1", "windows-1252");
+    registrar("iso-ir-100", "windows-1252");
+    registrar("iso8859-1", "windows-1252");
+    registrar("iso88591", "windows-1252");
+    registrar("iso_8859-1", "windows-1252");
+    registrar("iso_8859-1:1987", "windows-1252");
+    registrar("l1", "windows-1252");
+    registrar("latin1", "windows-1252");
+    registrar("us-ascii", "windows-1252");
+    registrar("x-cp1252", "windows-1252");
 }
 
 static std::unique_ptr<TextCodec> newStreamingTextDecoderWindowsLatin1(const TextEncoding&, const void*)
@@ -111,10 +100,6 @@ static std::unique_ptr<TextCodec> newStreamingTextDecoderWindowsLatin1(const Tex
 void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
 {
     registrar("windows-1252", newStreamingTextDecoderWindowsLatin1, 0);
-
-    // ASCII and Latin-1 both decode as Windows Latin-1 although they retain unique identities.
-    registrar("ISO-8859-1", newStreamingTextDecoderWindowsLatin1, 0);
-    registrar("US-ASCII", newStreamingTextDecoderWindowsLatin1, 0);
 }
 
 String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, bool&)

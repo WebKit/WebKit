@@ -14,8 +14,8 @@
     }
     function run() {
         var scsuFrame = document.getElementById("scsuFrame");
-        if (scsuFrame.contentDocument.charset === "ISO-8859-1") {
-            testPassed("charset is ISO-8859-1");
+        if (scsuFrame.contentDocument.charset === "windows-1252") {
+            testPassed("charset is windows-1252");
         } else {
             testFailed("charset is " + scsuFrame.contentDocument.charset);
         }
