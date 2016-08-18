@@ -1,3 +1,35 @@
+2016-08-18  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] API::Number needs to be wrapped by an NSNumber
+        https://bugs.webkit.org/show_bug.cgi?id=160977
+        <rdar://problem/27877735>
+
+        Reviewed by Anders Carlsson.
+
+        We introduce a single WKNSNumber class to wrap three distinct API::Number instantiations
+        corresponding to the Boolean, UInt64 and Double types.
+
+        Test: TestWebKitAPI/Tests/WebKit2Cocoa/WKNSNumber.mm
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Create a WKNSNumber to contain any of the number types, and set
+          its _type ivar accordingly.
+        * Shared/Cocoa/WKNSNumber.h: Added.
+        (WebKit::wrapper):
+        * Shared/Cocoa/WKNSNumber.mm: Added.
+        (-[WKNSNumber dealloc]): Call the appropriate destructor.
+        (-[WKNSNumber objCType]): Implement this NSValue primitive method.
+        (-[WKNSNumber getValue:]): Ditto.
+        (-[WKNSNumber boolValue]): Implement this NSNumber method corresponding to one of our
+          possible types.
+        (-[WKNSNumber doubleValue]): Ditto.
+        (-[WKNSNumber unsignedLongLongValue]): Ditto.
+        (-[WKNSNumber copyWithZone:]): Implement this NSCopying method by retaining self.
+        (-[WKNSNumber _apiObject]): Implement this WKObject method by returning the appropriate
+          API object.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
 2016-08-18  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add SPI to WKProcessPool for enabling cookie storage partitioning

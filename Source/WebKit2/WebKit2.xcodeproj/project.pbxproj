@@ -792,6 +792,8 @@
 		3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		374436881820E7240049579F /* WKObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374436871820E7240049579F /* WKObject.mm */; };
 		3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */; };
+		375E0E131D66432700EFEC2C /* WKNSNumber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 375E0E111D66432700EFEC2C /* WKNSNumber.mm */; };
+		375E0E141D66432700EFEC2C /* WKNSNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 375E0E121D66432700EFEC2C /* WKNSNumber.h */; };
 		3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3760881C150413E900FC82C7 /* WebRenderObject.cpp */; };
 		3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3760881D150413E900FC82C7 /* WebRenderObject.h */; };
 		37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37608820150414F700FC82C7 /* WKRenderObject.cpp */; };
@@ -2836,6 +2838,8 @@
 		3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUIDelegatePrivate.h; sourceTree = "<group>"; };
 		374436871820E7240049579F /* WKObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObject.mm; sourceTree = "<group>"; };
 		3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSInvocationSPI.h; sourceTree = "<group>"; };
+		375E0E111D66432700EFEC2C /* WKNSNumber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSNumber.mm; sourceTree = "<group>"; };
+		375E0E121D66432700EFEC2C /* WKNSNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSNumber.h; sourceTree = "<group>"; };
 		375FB4731883415600BE34D4 /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		3760881C150413E900FC82C7 /* WebRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebRenderObject.cpp; sourceTree = "<group>"; };
 		3760881D150413E900FC82C7 /* WebRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderObject.h; sourceTree = "<group>"; };
@@ -5301,6 +5305,8 @@
 				371A193F1824D29300F32A5E /* WKNSDictionary.mm */,
 				372CAF091833FD910040AC27 /* WKNSError.h */,
 				372CAF0A1833FD910040AC27 /* WKNSError.mm */,
+				375E0E121D66432700EFEC2C /* WKNSNumber.h */,
+				375E0E111D66432700EFEC2C /* WKNSNumber.mm */,
 				378E1A4818208CD60031007A /* WKNSString.h */,
 				378E1A4718208CD60031007A /* WKNSString.mm */,
 				378E1A4C18208D700031007A /* WKNSURL.h */,
@@ -7827,6 +7833,7 @@
 				1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */,
 				37B47E2D1D64DB76005F4EFF /* objcSPI.h in Headers */,
 				1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */,
+				375E0E141D66432700EFEC2C /* WKNSNumber.h in Headers */,
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
 				1AA9BAE1184FFAC7003B6BC6 /* WeakObjCPtr.h in Headers */,
@@ -9140,6 +9147,7 @@
 				831EEBBE1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.cpp in Sources */,
 				832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp in Sources */,
 				83BDCCB91AC5FDB6003F6441 /* NetworkCacheStatistics.cpp in Sources */,
+				375E0E131D66432700EFEC2C /* WKNSNumber.mm in Sources */,
 				E4436ED01A0D040B00EAD204 /* NetworkCacheStorage.cpp in Sources */,
 				8310428C1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp in Sources */,
 				513A164C1630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp in Sources */,

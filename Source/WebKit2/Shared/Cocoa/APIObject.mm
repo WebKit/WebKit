@@ -38,6 +38,7 @@
 #import "WKNSData.h"
 #import "WKNSDictionary.h"
 #import "WKNSError.h"
+#import "WKNSNumber.h"
 #import "WKNSString.h"
 #import "WKNSURL.h"
 #import "WKNSURLAuthenticationChallenge.h"
@@ -114,6 +115,13 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::BackForwardListItem:
         wrapper = [WKBackForwardListItem alloc];
+        break;
+
+    case Type::Boolean:
+    case Type::Double:
+    case Type::UInt64:
+        wrapper = [WKNSNumber alloc];
+        ((WKNSNumber *)wrapper)->_type = type;
         break;
 
     case Type::Bundle:
