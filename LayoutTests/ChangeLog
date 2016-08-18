@@ -1,3 +1,9 @@
+2016-08-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/27723718.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-08-18  Eric Carlson  <eric.carlson@apple.com>
 
         AX: Audio Description tracks are not labeled correctly, causing user confusion
