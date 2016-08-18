@@ -125,7 +125,7 @@ DECLARE_ALIASES(Big5_HKSCS, "big5hk", "HKSCS-BIG5", "ibm-1375", "ibm-1375_P100-2
     { encoding, 0, nullptr }
 
 static const struct EncodingName {
-    const char* const name;
+    const char* name;
     unsigned aliasCount;
     const char* const * aliases;
 } encodingNames[] = {
