@@ -1,3 +1,15 @@
+2016-08-18  Mark Lam  <mark.lam@apple.com>
+
+        Remove unused SlotVisitor::append() variant.
+        https://bugs.webkit.org/show_bug.cgi?id=160961
+
+        Reviewed by Saam Barati.
+
+        * heap/SlotVisitor.h:
+        * jit/JITWriteBarrier.h:
+        (JSC::JITWriteBarrier::get):
+        (JSC::SlotVisitor::append): Deleted.
+
 2016-08-18  Saam Barati  <sbarati@apple.com>
 
         Make @Array(size) a bytecode intrinsic
