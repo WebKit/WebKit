@@ -105,8 +105,6 @@ list(APPEND WebCore_SOURCES
     platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
 
-    platform/spi/win/CoreTextSPIWin.cpp
-
     platform/text/LocaleNone.cpp
 
     platform/text/cf/HyphenationCF.cpp

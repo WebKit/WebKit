@@ -107,6 +107,8 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/SynchronousLoaderClientCFNet.cpp
     platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
 
+    platform/spi/win/CoreTextSPIWin.cpp
+
     platform/win/DragImageCGWin.cpp
 )
 
