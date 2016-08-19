@@ -166,6 +166,8 @@ public:
     bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
     bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 
+    void resetPropagationFlags();
+
     bool defaultPrevented() const { return m_defaultPrevented; }
     void preventDefault()
     {
@@ -226,6 +228,12 @@ private:
 
     RefPtr<Event> m_underlyingEvent;
 };
+
+inline void Event::resetPropagationFlags()
+{
+    m_propagationStopped = false;
+    m_immediatePropagationStopped = false;
+}
 
 } // namespace WebCore
 

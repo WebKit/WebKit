@@ -186,7 +186,8 @@ bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
 
     event.setTarget(EventPath::eventTargetRespectingTargetRules(*node));
     event.setCurrentTarget(nullptr);
-    event.setEventPhase(0);
+    event.resetPropagationFlags();
+    event.setEventPhase(Event::NONE);
 
     if (clickHandlingState.stateful)
         downcast<HTMLInputElement>(*node).didDispatchClickEvent(event, clickHandlingState);

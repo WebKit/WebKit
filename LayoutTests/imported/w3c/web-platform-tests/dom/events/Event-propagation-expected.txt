@@ -1,7 +1,7 @@
 
 PASS Newly-created Event 
-FAIL After stopPropagation() assert_equals: Propagation flag after first dispatch expected true but got false
+PASS After stopPropagation() 
 PASS Reinitialized after stopPropagation() 
-FAIL After stopImmediatePropagation() assert_equals: Propagation flag after first dispatch expected true but got false
+PASS After stopImmediatePropagation() 
 PASS Reinitialized after stopImmediatePropagation() 
 

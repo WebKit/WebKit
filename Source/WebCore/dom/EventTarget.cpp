@@ -162,7 +162,8 @@ bool EventTarget::dispatchEvent(Event& event)
     event.setCurrentTarget(this);
     event.setEventPhase(Event::AT_TARGET);
     bool defaultPrevented = fireEventListeners(event);
-    event.setEventPhase(0);
+    event.resetPropagationFlags();
+    event.setEventPhase(Event::NONE);
     return defaultPrevented;
 }
 
