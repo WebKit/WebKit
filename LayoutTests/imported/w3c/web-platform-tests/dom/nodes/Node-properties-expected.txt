@@ -242,7 +242,7 @@ PASS xmlElement.childNodes[0]
 PASS xmlElement.previousSibling 
 PASS xmlElement.nextSibling 
 PASS xmlElement.textContent 
-FAIL xmlElement.namespaceURI assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+PASS xmlElement.namespaceURI 
 PASS xmlElement.prefix 
 PASS xmlElement.localName 
 PASS xmlElement.tagName 
@@ -267,7 +267,7 @@ PASS detachedXmlElement.childNodes.length
 PASS detachedXmlElement.previousSibling 
 PASS detachedXmlElement.nextSibling 
 PASS detachedXmlElement.textContent 
-FAIL detachedXmlElement.namespaceURI assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+PASS detachedXmlElement.namespaceURI 
 PASS detachedXmlElement.prefix 
 PASS detachedXmlElement.localName 
 PASS detachedXmlElement.tagName 

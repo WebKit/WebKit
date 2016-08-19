@@ -1,5 +1,20 @@
 2016-08-18  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync DOM web platform tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=160980
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync DOM web platform tests from upstream.
+
+        * web-platform-tests/dom/events/Event-initEvent-expected.txt:
+        * web-platform-tests/dom/events/Event-initEvent.html:
+        * web-platform-tests/dom/events/Event-propagation-expected.txt:
+        * web-platform-tests/dom/events/Event-propagation.html:
+        * web-platform-tests/dom/nodes/Node-properties.html:
+
+2016-08-18  Chris Dumez  <cdumez@apple.com>
+
         Align our encoding labels with the encoding specification
         https://bugs.webkit.org/show_bug.cgi?id=160931
 

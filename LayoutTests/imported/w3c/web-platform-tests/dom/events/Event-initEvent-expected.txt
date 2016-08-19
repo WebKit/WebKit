@@ -7,5 +7,6 @@ PASS Calling initEvent multiple times (getting type).
 PASS Calling initEvent multiple times (not getting type). 
 PASS Calling initEvent must not have an effect during dispatching. 
 PASS Calling initEvent must unset the stop propagation flag. 
+PASS Calling initEvent must unset the stop immediate propagation flag. 
 PASS Calling initEvent during propagation. 
 
