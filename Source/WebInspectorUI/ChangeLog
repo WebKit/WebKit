@@ -1,3 +1,16 @@
+2016-08-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Make an icon for Code Coverage Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=160872
+        <rdar://problem/27855650>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a "C" icon, similar to the existing "T" (Type Profiler) icon.
+        "C" can stand for Code Coverage or Control Flow.
+
+        * UserInterface/Images/NavigationItemCodeCoverage.svg: Added.
+
 2016-08-19  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Console log counter on the dashboard should be better at displaying large numbers
