@@ -1,3 +1,12 @@
+2016-08-19  Daniel Bates  <dabates@apple.com>
+
+        Another attempt to fix the iOS 9.3 build
+
+        Define WK_EMPTY_, WK_NOT_, and WK_NOT_YES.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2016-08-19  Lucas Forschler  <lforschler@apple.com>
 
         Remove Yosemite Leaks bot from config.json
