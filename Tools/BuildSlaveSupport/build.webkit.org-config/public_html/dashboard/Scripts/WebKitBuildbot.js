@@ -49,7 +49,6 @@ WebKitBuildbot = function()
         "Apple Yosemite Release WK1 (Tests)": {platform: Dashboard.Platform.MacOSXYosemite, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple Yosemite Release WK2 (Tests)": {platform: Dashboard.Platform.MacOSXYosemite, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple Yosemite Release WK2 (Perf)": {platform: Dashboard.Platform.MacOSXYosemite, debug: false, performance: true, heading: "Performance"},
-        "Apple Yosemite (Leaks)": {platform: Dashboard.Platform.MacOSXYosemite, debug: true, leaks: true},
         "Apple Yosemite JSC": {platform: Dashboard.Platform.MacOSXYosemite, heading: "JavaScript", combinedQueues: {
             "Apple Yosemite 32-bit JSC (BuildAndTest)": {heading: "32-bit JSC (BuildAndTest)"},
             "Apple Yosemite LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},

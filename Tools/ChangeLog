@@ -1,3 +1,12 @@
+2016-08-19  Lucas Forschler  <lforschler@apple.com>
+
+        Remove Yosemite Leaks bot after http://trac.webkit.org/projects/webkit/changeset/204629
+
+        Reviewed by Kocsen Chung.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
 2016-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         Partial revert of r203811 - this key is not needed.
