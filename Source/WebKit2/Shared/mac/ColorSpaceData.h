@@ -30,13 +30,13 @@
 
 namespace IPC {
     class ArgumentDecoder;
-    class ArgumentEncoder;
+    class Encoder;
 }
 
 namespace WebKit {
 
 struct ColorSpaceData {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, ColorSpaceData&);
 
     RetainPtr<CGColorSpaceRef> cgColorSpace;

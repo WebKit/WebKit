@@ -27,13 +27,13 @@
 #define Arguments_h
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 namespace IPC {
 
 template<size_t index, typename... Elements>
 struct TupleCoder {
-    static void encode(ArgumentEncoder& encoder, const std::tuple<Elements...>& tuple)
+    static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
     {
         encoder << std::get<sizeof...(Elements) - index>(tuple);
         TupleCoder<index - 1, Elements...>::encode(encoder, tuple);
@@ -49,7 +49,7 @@ struct TupleCoder {
 
 template<typename... Elements>
 struct TupleCoder<0, Elements...> {
-    static void encode(ArgumentEncoder&, const std::tuple<Elements...>&)
+    static void encode(Encoder&, const std::tuple<Elements...>&)
     {
     }
 
@@ -60,7 +60,7 @@ struct TupleCoder<0, Elements...> {
 };
 
 template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
-    static void encode(ArgumentEncoder& encoder, const std::tuple<Elements...>& tuple)
+    static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
     {
         TupleCoder<sizeof...(Elements), Elements...>::encode(encoder, tuple);
     }
@@ -80,7 +80,7 @@ struct Arguments {
     {
     }
 
-    void encode(ArgumentEncoder& encoder) const
+    void encode(Encoder& encoder) const
     {
         ArgumentCoder<std::tuple<Types...>>::encode(encoder, arguments);
     }

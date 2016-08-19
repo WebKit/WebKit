@@ -31,13 +31,13 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
 
 struct WebUserScriptData {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebUserScriptData&);
 
     uint64_t identifier;
@@ -46,7 +46,7 @@ struct WebUserScriptData {
 };
 
 struct WebUserStyleSheetData {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebUserStyleSheetData&);
 
     uint64_t identifier;
@@ -55,7 +55,7 @@ struct WebUserStyleSheetData {
 };
 
 struct WebScriptMessageHandlerData {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebScriptMessageHandlerData&);
 
     uint64_t identifier;

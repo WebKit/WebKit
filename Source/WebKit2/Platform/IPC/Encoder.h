@@ -23,23 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArgumentEncoder_h
-#define ArgumentEncoder_h
+#pragma once
 
 #include "ArgumentCoder.h"
 #include "Attachment.h"
+#include "StringReference.h"
 #include <wtf/Vector.h>
 
 namespace IPC {
 
-class ArgumentEncoder;
+class Encoder;
 class DataReference;
 
-class ArgumentEncoder {
+class Encoder final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ArgumentEncoder();
-    virtual ~ArgumentEncoder();
+    Encoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
+    ~Encoder();
+
+    StringReference messageReceiverName() const { return m_messageReceiverName; }
+    StringReference messageName() const { return m_messageName; }
+    uint64_t destinationID() const { return m_destinationID; }
+
+    void setIsSyncMessage(bool);
+    bool isSyncMessage() const;
+
+    void setShouldDispatchMessageWhenWaitingForSyncReply(bool);
+    bool shouldDispatchMessageWhenWaitingForSyncReply() const;
+
+    void setFullySynchronousModeForTesting();
+
+    void wrapForTesting(std::unique_ptr<Encoder>);
 
     void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
     void encodeVariableLengthByteArray(const DataReference&);
@@ -56,7 +70,7 @@ public:
         ArgumentCoder<typename std::remove_const<typename std::remove_reference<T>::type>::type>::encode(*this, std::forward<T>(t));
     }
 
-    template<typename T> ArgumentEncoder& operator<<(T&& t)
+    template<typename T> Encoder& operator<<(T&& t)
     {
         encode(std::forward<T>(t));
         return *this;
@@ -70,6 +84,8 @@ public:
     void reserve(size_t);
 
 private:
+    uint8_t* grow(unsigned alignment, size_t);
+
     void encode(bool);
     void encode(uint8_t);
     void encode(uint16_t);
@@ -80,7 +96,11 @@ private:
     void encode(float);
     void encode(double);
 
-    uint8_t* grow(unsigned alignment, size_t size);
+    void encodeHeader();
+
+    StringReference m_messageReceiverName;
+    StringReference m_messageName;
+    uint64_t m_destinationID;
 
     uint8_t m_inlineBuffer[512];
 
@@ -94,5 +114,3 @@ private:
 };
 
 } // namespace IPC
-
-#endif // ArgumentEncoder_h

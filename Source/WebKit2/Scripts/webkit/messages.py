@@ -119,14 +119,14 @@ def message_to_struct_declaration(message):
         if message.has_attribute(DELAYED_ATTRIBUTE):
             send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
             result.append('    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {\n')
-            result.append('        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::MessageEncoder>);\n')
+            result.append('        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::Encoder>);\n')
             result.append('        ~DelayedReply();\n')
             result.append('\n')
             result.append('        bool send(%s);\n' % ', '.join([' '.join(x) for x in send_parameters]))
             result.append('\n')
             result.append('    private:\n')
             result.append('        RefPtr<IPC::Connection> m_connection;\n')
-            result.append('        std::unique_ptr<IPC::MessageEncoder> m_encoder;\n')
+            result.append('        std::unique_ptr<IPC::Encoder> m_encoder;\n')
             result.append('    };\n\n')
 
         result.append('    typedef %s Reply;\n' % reply_type(message))
@@ -170,8 +170,7 @@ def forward_declarations_and_headers(receiver):
 
     headers = set([
         '"Arguments.h"',
-        '"MessageEncoder.h"',
-        '"StringReference.h"',
+        '"Encoder.h"',
     ])
 
     non_template_wtf_types = frozenset([
@@ -366,9 +365,7 @@ def headers_for_type(type):
         'WebCore::TextIndicatorData': ['<WebCore/TextIndicator.h>'],
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
-        'WebKit::InjectedBundleUserMessageEncoder': [],
         'WebKit::PageState': ['"SessionState.h"'],
-        'WebKit::WebContextUserMessageEncoder': [],
         'WebKit::WebGestureEvent': ['"WebEvent.h"'],
         'WebKit::WebKeyboardEvent': ['"WebEvent.h"'],
         'WebKit::WebMouseEvent': ['"WebEvent.h"'],
@@ -486,7 +483,7 @@ def generate_message_handler(file):
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
 
-            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::MessageEncoder> encoder)\n' % message.name)
+            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::Encoder> encoder)\n' % message.name)
             result.append('    : m_connection(connection)\n')
             result.append('    , m_encoder(WTFMove(encoder))\n')
             result.append('{\n')
@@ -536,7 +533,7 @@ def generate_message_handler(file):
 
     if sync_messages:
         result.append('\n')
-        result.append('void %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
+        result.append('void %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         result.append('    UNUSED_PARAM(connection);\n')

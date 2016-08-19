@@ -171,8 +171,6 @@
 		1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */; };
 		1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */; };
 		1A2162B111F38971008AD0F5 /* NPRuntimeUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2162AF11F38971008AD0F5 /* NPRuntimeUtilities.h */; };
-		1A2328FE162C866A00D82F7A /* MessageEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2328FC162C866A00D82F7A /* MessageEncoder.cpp */; };
-		1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2328FD162C866A00D82F7A /* MessageEncoder.h */; };
 		1A232902162C867300D82F7A /* MessageDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A232900162C867300D82F7A /* MessageDecoder.cpp */; };
 		1A232903162C867300D82F7A /* MessageDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A232901162C867300D82F7A /* MessageDecoder.h */; };
 		1A2464F31891E45100234C5B /* APILoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2464F21891E45100234C5B /* APILoaderClient.h */; };
@@ -1342,8 +1340,8 @@
 		BC032D9710F437AF0058C15A /* WebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D9110F437AF0058C15A /* WebProcess.h */; };
 		BC032DA510F437D10058C15A /* ArgumentDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032D9D10F437D10058C15A /* ArgumentDecoder.cpp */; };
 		BC032DA610F437D10058C15A /* ArgumentDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D9E10F437D10058C15A /* ArgumentDecoder.h */; };
-		BC032DA710F437D10058C15A /* ArgumentEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032D9F10F437D10058C15A /* ArgumentEncoder.cpp */; };
-		BC032DA810F437D10058C15A /* ArgumentEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA010F437D10058C15A /* ArgumentEncoder.h */; };
+		BC032DA710F437D10058C15A /* Encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032D9F10F437D10058C15A /* Encoder.cpp */; };
+		BC032DA810F437D10058C15A /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA010F437D10058C15A /* Encoder.h */; };
 		BC032DA910F437D10058C15A /* Arguments.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA110F437D10058C15A /* Arguments.h */; };
 		BC032DAA10F437D10058C15A /* Connection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032DA210F437D10058C15A /* Connection.cpp */; };
 		BC032DAB10F437D10058C15A /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA310F437D10058C15A /* Connection.h */; };
@@ -3437,8 +3435,8 @@
 		BC032D9110F437AF0058C15A /* WebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcess.h; sourceTree = "<group>"; };
 		BC032D9D10F437D10058C15A /* ArgumentDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgumentDecoder.cpp; sourceTree = "<group>"; };
 		BC032D9E10F437D10058C15A /* ArgumentDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentDecoder.h; sourceTree = "<group>"; };
-		BC032D9F10F437D10058C15A /* ArgumentEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgumentEncoder.cpp; sourceTree = "<group>"; };
-		BC032DA010F437D10058C15A /* ArgumentEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentEncoder.h; sourceTree = "<group>"; };
+		BC032D9F10F437D10058C15A /* Encoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encoder.cpp; sourceTree = "<group>"; };
+		BC032DA010F437D10058C15A /* Encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encoder.h; sourceTree = "<group>"; };
 		BC032DA110F437D10058C15A /* Arguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arguments.h; sourceTree = "<group>"; };
 		BC032DA210F437D10058C15A /* Connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Connection.cpp; sourceTree = "<group>"; };
 		BC032DA310F437D10058C15A /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connection.h; sourceTree = "<group>"; };
@@ -4822,8 +4820,8 @@
 				1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */,
 				BC032D9D10F437D10058C15A /* ArgumentDecoder.cpp */,
 				BC032D9E10F437D10058C15A /* ArgumentDecoder.h */,
-				BC032D9F10F437D10058C15A /* ArgumentEncoder.cpp */,
-				BC032DA010F437D10058C15A /* ArgumentEncoder.h */,
+				BC032D9F10F437D10058C15A /* Encoder.cpp */,
+				BC032DA010F437D10058C15A /* Encoder.h */,
 				BC032DA110F437D10058C15A /* Arguments.h */,
 				BCEE966A112FAF57006BCC24 /* Attachment.cpp */,
 				BCEE966B112FAF57006BCC24 /* Attachment.h */,
@@ -7526,7 +7524,7 @@
 				1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */,
 				E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */,
 				BC032DA610F437D10058C15A /* ArgumentDecoder.h in Headers */,
-				BC032DA810F437D10058C15A /* ArgumentEncoder.h in Headers */,
+				BC032DA810F437D10058C15A /* Encoder.h in Headers */,
 				BC032DA910F437D10058C15A /* Arguments.h in Headers */,
 				CE1A0BD21A48E6C60054EF74 /* AssertionServicesSPI.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* AssistedNodeInformation.h in Headers */,
@@ -7644,7 +7642,6 @@
 				CE1A0BD51A48E6C60054EF74 /* ManagedConfigurationSPI.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
 				1A232903162C867300D82F7A /* MessageDecoder.h in Headers */,
-				1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */,
 				1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */,
 				1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */,
 				1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */,
@@ -8992,7 +8989,7 @@
 				1AAF0C4B12B16334008E49E2 /* ArgumentCodersCF.cpp in Sources */,
 				E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */,
 				BC032DA510F437D10058C15A /* ArgumentDecoder.cpp in Sources */,
-				BC032DA710F437D10058C15A /* ArgumentEncoder.cpp in Sources */,
+				BC032DA710F437D10058C15A /* Encoder.cpp in Sources */,
 				C59C4A5818B81174007BDCB6 /* AssistedNodeInformation.cpp in Sources */,
 				515E7727183DD6F60007203F /* AsyncRequest.cpp in Sources */,
 				BCEE966C112FAF57006BCC24 /* Attachment.cpp in Sources */,
@@ -9110,7 +9107,6 @@
 				1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */,
 				51933DF01965EB31008AC3EA /* MenuUtilities.mm in Sources */,
 				1A232902162C867300D82F7A /* MessageDecoder.cpp in Sources */,
-				1A2328FE162C866A00D82F7A /* MessageEncoder.cpp in Sources */,
 				1A3EED0E161A535400AEB4F5 /* MessageReceiverMap.cpp in Sources */,
 				2D5AB62F1A69D6FB0014A9CB /* MessageRecorder.cpp in Sources */,
 				2D5AB6301A69D6FB0014A9CB /* MessageRecorderProbes.d in Sources */,

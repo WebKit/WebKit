@@ -508,7 +508,7 @@ void WebProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Messag
     // FIXME: Add unhandled message logging.
 }
 
-void WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
         return;

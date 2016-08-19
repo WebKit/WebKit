@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void LoadParameters::encode(IPC::ArgumentEncoder& encoder) const
+void LoadParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << navigationID;
     encoder << request;
@@ -94,7 +94,7 @@ bool LoadParameters::decode(IPC::ArgumentDecoder& decoder, LoadParameters& data)
 
 #if !PLATFORM(COCOA)
 
-void LoadParameters::platformEncode(IPC::ArgumentEncoder&) const
+void LoadParameters::platformEncode(IPC::Encoder&) const
 {
 }
 

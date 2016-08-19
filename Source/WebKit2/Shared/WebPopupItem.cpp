@@ -66,7 +66,7 @@ WebPopupItem::WebPopupItem(Type type, const String& text, TextDirection textDire
 {
 }
 
-void WebPopupItem::encode(IPC::ArgumentEncoder& encoder) const
+void WebPopupItem::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(m_type);
     encoder << m_text;

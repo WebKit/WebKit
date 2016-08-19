@@ -33,8 +33,8 @@
 namespace IPC {
 
 class Connection;
+class Encoder;
 class MessageDecoder;
-class MessageEncoder;
 class MessageReceiver;
 
 class MessageReceiverMap {
@@ -52,7 +52,7 @@ public:
     void invalidate();
 
     bool dispatchMessage(Connection&, MessageDecoder&);
-    bool dispatchSyncMessage(Connection&, MessageDecoder&, std::unique_ptr<MessageEncoder>&);
+    bool dispatchSyncMessage(Connection&, MessageDecoder&, std::unique_ptr<Encoder>&);
 
 private:
     // Message receivers that don't require a destination ID.

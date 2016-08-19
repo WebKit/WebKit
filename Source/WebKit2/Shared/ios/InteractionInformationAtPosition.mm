@@ -39,7 +39,7 @@ namespace WebKit {
 
 #if PLATFORM(IOS)
 
-void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) const
+void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 {
     encoder << point;
     encoder << nodeAtPositionIsAssistedNode;

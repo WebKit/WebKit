@@ -31,13 +31,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-
-class ArgumentDecoder;
-class ArgumentEncoder;
-
-} // namespace IPC
-
 namespace WebKit {
 
 class WebNotification : public API::ObjectImpl<API::Object::Type::Notification> {

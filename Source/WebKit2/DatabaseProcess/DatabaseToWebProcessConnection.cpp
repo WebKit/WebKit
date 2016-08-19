@@ -72,7 +72,7 @@ void DatabaseToWebProcessConnection::didReceiveMessage(IPC::Connection& connecti
     ASSERT_NOT_REACHED();
 }
 
-void DatabaseToWebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void DatabaseToWebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (decoder.messageReceiverName() == Messages::DatabaseToWebProcessConnection::messageReceiverName()) {
         didReceiveSyncDatabaseToWebProcessConnectionMessage(connection, decoder, replyEncoder);

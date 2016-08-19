@@ -2,8 +2,8 @@
 #define HandleMessage_h
 
 #include "Arguments.h"
+#include "Encoder.h"
 #include "MessageDecoder.h"
-#include "MessageEncoder.h"
 #include <wtf/StdLibExtras.h>
 
 namespace IPC {
@@ -93,7 +93,7 @@ void handleMessage(MessageDecoder& decoder, C* object, MF function)
 }
 
 template<typename T, typename C, typename MF>
-void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
+void handleMessage(MessageDecoder& decoder, Encoder& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
     if (!decoder.decode(arguments)) {
@@ -107,7 +107,7 @@ void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* obj
 }
 
 template<typename T, typename C, typename MF>
-void handleMessage(Connection& connection, MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
+void handleMessage(Connection& connection, MessageDecoder& decoder, Encoder& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
     if (!decoder.decode(arguments)) {
@@ -132,7 +132,7 @@ void handleMessage(Connection& connection, MessageDecoder& decoder, C* object, M
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageDelayed(Connection& connection, MessageDecoder& decoder, std::unique_ptr<MessageEncoder>& replyEncoder, C* object, MF function)
+void handleMessageDelayed(Connection& connection, MessageDecoder& decoder, std::unique_ptr<Encoder>& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
     if (!decoder.decode(arguments)) {

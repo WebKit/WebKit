@@ -32,7 +32,7 @@
 
 namespace IPC {
 
-void ArgumentCoder<std::chrono::system_clock::time_point>::encode(IPC::ArgumentEncoder& encoder, const std::chrono::system_clock::time_point& timePoint)
+void ArgumentCoder<std::chrono::system_clock::time_point>::encode(IPC::Encoder& encoder, const std::chrono::system_clock::time_point& timePoint)
 {
     encoder << static_cast<int64_t>(timePoint.time_since_epoch().count());
 }
@@ -47,7 +47,7 @@ bool ArgumentCoder<std::chrono::system_clock::time_point>::decode(ArgumentDecode
     return true;
 }
 
-void ArgumentCoder<AtomicString>::encode(ArgumentEncoder& encoder, const AtomicString& atomicString)
+void ArgumentCoder<AtomicString>::encode(Encoder& encoder, const AtomicString& atomicString)
 {
     encoder << atomicString.string();
 }
@@ -62,7 +62,7 @@ bool ArgumentCoder<AtomicString>::decode(ArgumentDecoder& decoder, AtomicString&
     return true;
 }
 
-void ArgumentCoder<CString>::encode(ArgumentEncoder& encoder, const CString& string)
+void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
 {
     // Special case the null string.
     if (string.isNull()) {
@@ -103,7 +103,7 @@ bool ArgumentCoder<CString>::decode(ArgumentDecoder& decoder, CString& result)
 }
 
 
-void ArgumentCoder<String>::encode(ArgumentEncoder& encoder, const String& string)
+void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
 {
     // Special case the null string.
     if (string.isNull()) {
@@ -163,7 +163,7 @@ bool ArgumentCoder<String>::decode(ArgumentDecoder& decoder, String& result)
 }
 
 #if HAVE(DTRACE)
-void ArgumentCoder<uuid_t>::encode(ArgumentEncoder& encoder, const uuid_t& uuid)
+void ArgumentCoder<uuid_t>::encode(Encoder& encoder, const uuid_t& uuid)
 {
     SimpleArgumentCoder<uuid_t>::encode(encoder, uuid);
 }

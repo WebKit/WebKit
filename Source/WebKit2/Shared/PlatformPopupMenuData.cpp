@@ -34,7 +34,7 @@ PlatformPopupMenuData::PlatformPopupMenuData()
 {
 }
 
-void PlatformPopupMenuData::encode(IPC::ArgumentEncoder& encoder) const
+void PlatformPopupMenuData::encode(IPC::Encoder& encoder) const
 {
 #if PLATFORM(COCOA)
     encoder << fontInfo;

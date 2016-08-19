@@ -41,55 +41,55 @@ OBJC_CLASS NSURL;
 
 namespace IPC {
 
-class ArgumentEncoder;
+class Encoder;
 class ArgumentDecoder;
 
 // id
-void encode(ArgumentEncoder&, id);
+void encode(Encoder&, id);
 bool decode(ArgumentDecoder&, RetainPtr<id>&);
 
 // NSAttributedString
-void encode(ArgumentEncoder&, NSAttributedString *);
+void encode(Encoder&, NSAttributedString *);
 bool decode(ArgumentDecoder&, RetainPtr<NSAttributedString>&);
 
 #if USE(APPKIT)
 // NSColor
-void encode(ArgumentEncoder&, NSColor *);
+void encode(Encoder&, NSColor *);
 bool decode(ArgumentDecoder&, RetainPtr<NSColor>&);
 #endif
 
 // NSDictionary
-void encode(ArgumentEncoder&, NSDictionary *);
+void encode(Encoder&, NSDictionary *);
 bool decode(ArgumentDecoder&, RetainPtr<NSDictionary>&);
 
 // NSArray
-void encode(ArgumentEncoder&, NSArray *);
+void encode(Encoder&, NSArray *);
 bool decode(ArgumentDecoder&, RetainPtr<NSArray>&);
 
 #if USE(APPKIT)
 // NSFont
-void encode(ArgumentEncoder&, NSFont *);
+void encode(Encoder&, NSFont *);
 bool decode(ArgumentDecoder&, RetainPtr<NSFont>&);
 #endif
 
 // NSNumber
-void encode(ArgumentEncoder&, NSNumber *);
+void encode(Encoder&, NSNumber *);
 bool decode(ArgumentDecoder&, RetainPtr<NSNumber>&);
 
 // NSString
-void encode(ArgumentEncoder&, NSString *);
+void encode(Encoder&, NSString *);
 bool decode(ArgumentDecoder&, RetainPtr<NSString>&);
 
 // NSDate
-void encode(ArgumentEncoder&, NSDate *);
+void encode(Encoder&, NSDate *);
 bool decode(ArgumentDecoder&, RetainPtr<NSDate>&);
 
 // NSData
-void encode(ArgumentEncoder&, NSData *);
+void encode(Encoder&, NSData *);
 bool decode(ArgumentDecoder&, RetainPtr<NSData>&);
 
 // NSURL
-void encode(ArgumentEncoder&, NSURL *);
+void encode(Encoder&, NSURL *);
 bool decode(ArgumentDecoder&, RetainPtr<NSURL>&);
 
 } // namespace IPC

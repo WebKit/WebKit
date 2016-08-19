@@ -33,7 +33,7 @@
 
 #import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
-#import "ArgumentEncoder.h"
+#import "Encoder.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/ColorMac.h>
 
@@ -92,7 +92,7 @@ static NSType typeFromObject(id object)
     return Unknown;
 }
 
-void encode(ArgumentEncoder& encoder, id object)
+void encode(Encoder& encoder, id object)
 {
     NSType type = typeFromObject(object);
     encoder.encodeEnum(type);
@@ -263,7 +263,7 @@ static inline RetainPtr<NSDictionary> filterUnserializableValues(NSDictionary *d
     return result;
 }
 
-void encode(ArgumentEncoder& encoder, NSAttributedString *string)
+void encode(Encoder& encoder, NSAttributedString *string)
 {
     // Even though NSAttributedString is toll free bridged with CFAttributedStringRef, attributes' values may be not, so we should stay within this file's code.
 
@@ -334,7 +334,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSAttributedString>& result)
 }
 
 #if USE(APPKIT)
-void encode(ArgumentEncoder& encoder, NSColor *color)
+void encode(Encoder& encoder, NSColor *color)
 {
     encoder << colorFromNSColor(color);
 }
@@ -350,7 +350,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSColor>& result)
 }
 #endif
 
-void encode(ArgumentEncoder& encoder, NSDictionary *dictionary)
+void encode(Encoder& encoder, NSDictionary *dictionary)
 {
     // Even though NSDictionary is toll free bridged with CFDictionaryRef, values may be not, so we should stay within this file's code.
 
@@ -402,7 +402,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSDictionary>& result)
 }
 
 #if USE(APPKIT)
-void encode(ArgumentEncoder& encoder, NSFont *font)
+void encode(Encoder& encoder, NSFont *font)
 {
     // NSFont could use CTFontRef code if we had it in ArgumentCodersCF.
     encode(encoder, [[font fontDescriptor] fontAttributes]);
@@ -421,7 +421,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSFont>& result)
 }
 #endif
 
-void encode(ArgumentEncoder& encoder, NSNumber *number)
+void encode(Encoder& encoder, NSNumber *number)
 {
     encode(encoder, (CFNumberRef)number);
 }
@@ -436,7 +436,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSNumber>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, NSString *string)
+void encode(Encoder& encoder, NSString *string)
 {
     encode(encoder, (CFStringRef)string);
 }
@@ -451,7 +451,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSString>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, NSArray *array)
+void encode(Encoder& encoder, NSArray *array)
 {
     NSUInteger size = [array count];
     encoder << static_cast<uint64_t>(size);
@@ -488,7 +488,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSArray>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, NSDate *date)
+void encode(Encoder& encoder, NSDate *date)
 {
     encode(encoder, (CFDateRef)date);
 }
@@ -503,7 +503,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSDate>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, NSData *data)
+void encode(Encoder& encoder, NSData *data)
 {
     encode(encoder, (CFDataRef)data);
 }
@@ -518,7 +518,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSData>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, NSURL *URL)
+void encode(Encoder& encoder, NSURL *URL)
 {
     encode(encoder, (CFURLRef)URL);
 }

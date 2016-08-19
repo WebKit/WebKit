@@ -49,7 +49,7 @@ public:
         bool isNull() const { return m_handle.isNull(); }
         unsigned size() const { return m_size; }
 
-        void encode(IPC::ArgumentEncoder&) const;
+        void encode(IPC::Encoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Handle&);
 
         RefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() const;

@@ -29,10 +29,10 @@
 namespace IPC {
 
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
     
 template<typename T> struct ArgumentCoder {
-    static void encode(ArgumentEncoder& encoder, const T& t)
+    static void encode(Encoder& encoder, const T& t)
     {
         t.encode(encoder);
     }

@@ -31,7 +31,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -41,7 +41,7 @@ public:
     void append(CFDataRef);
     CFDataRef decodedData() const;
     void clear();
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, QuickLookDocumentData&);
 
 private:

@@ -210,7 +210,7 @@ void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Me
     didReceiveNetworkProcessProxyMessage(connection, decoder);
 }
 
-void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
         return;

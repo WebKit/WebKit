@@ -82,7 +82,7 @@ struct OptionItem {
     bool disabled { false };
     int parentGroupID { 0 };
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, OptionItem&);
 };
 
@@ -111,7 +111,7 @@ struct AssistedNodeInformation {
     String title;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, AssistedNodeInformation&);
 };
 #endif

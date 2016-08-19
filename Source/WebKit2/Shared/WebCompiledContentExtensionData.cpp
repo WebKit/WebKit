@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-void WebCompiledContentExtensionData::encode(IPC::ArgumentEncoder& encoder) const
+void WebCompiledContentExtensionData::encode(IPC::Encoder& encoder) const
 {
     SharedMemory::Handle handle;
     data->createHandle(handle, SharedMemory::Protection::ReadOnly);

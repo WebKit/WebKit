@@ -28,11 +28,11 @@
 
 #import "ArgumentCodersMac.h"
 #import "ArgumentDecoder.h"
-#import "ArgumentEncoder.h"
+#import "Encoder.h"
 
 namespace WebKit {
 
-void AttributedString::encode(IPC::ArgumentEncoder& encoder) const
+void AttributedString::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<bool>(!string);
     if (!string)

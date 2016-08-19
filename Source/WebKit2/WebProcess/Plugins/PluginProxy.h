@@ -64,7 +64,7 @@ public:
     void pluginProcessCrashed();
 
     void didReceivePluginProxyMessage(IPC::Connection&, IPC::MessageDecoder&);
-    void didReceiveSyncPluginProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    void didReceiveSyncPluginProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
 
     bool isBeingAsynchronouslyInitialized() const override { return m_waitingOnAsynchronousInitialization; }
 

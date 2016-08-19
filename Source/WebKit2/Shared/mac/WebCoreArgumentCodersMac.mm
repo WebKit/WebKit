@@ -58,7 +58,7 @@ using namespace WebCore;
 namespace IPC {
 
 #if USE(CFNETWORK)
-void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const ResourceRequest& resourceRequest)
 {
     RetainPtr<CFURLRequestRef> requestToSerialize = resourceRequest.cfURLRequest(DoNotUpdateHTTPBody);
 
@@ -87,7 +87,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
     encoder.encodeEnum(resourceRequest.requester());
 }
 #else
-void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const ResourceRequest& resourceRequest)
 {
     RetainPtr<NSURLRequest> requestToSerialize = resourceRequest.nsURLRequest(DoNotUpdateHTTPBody);
 
@@ -161,7 +161,7 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     return true;
 }
 
-void ArgumentCoder<CertificateInfo>::encode(ArgumentEncoder& encoder, const CertificateInfo& certificateInfo)
+void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateInfo& certificateInfo)
 {
     encoder.encodeEnum(certificateInfo.type());
 
@@ -213,7 +213,7 @@ bool ArgumentCoder<CertificateInfo>::decode(ArgumentDecoder& decoder, Certificat
     return true;
 }
 
-static void encodeNSError(ArgumentEncoder& encoder, NSError *nsError)
+static void encodeNSError(Encoder& encoder, NSError *nsError)
 {
     String domain = [nsError domain];
     encoder << domain;
@@ -271,7 +271,7 @@ static void encodeNSError(ArgumentEncoder& encoder, NSError *nsError)
         encoder << false;
 }
 
-void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
 {
     bool errorIsNull = resourceError.isNull();
     encoder << errorIsNull;
@@ -333,7 +333,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
     return true;
 }
 
-void ArgumentCoder<ProtectionSpace>::encodePlatformData(ArgumentEncoder& encoder, const ProtectionSpace& space)
+void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder& encoder, const ProtectionSpace& space)
 {
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
@@ -362,7 +362,7 @@ bool ArgumentCoder<ProtectionSpace>::decodePlatformData(ArgumentDecoder& decoder
     return true;
 }
 
-void ArgumentCoder<Credential>::encodePlatformData(ArgumentEncoder& encoder, const Credential& credential)
+void ArgumentCoder<Credential>::encodePlatformData(Encoder& encoder, const Credential& credential)
 {
     NSURLCredential *nsCredential = credential.nsCredential();
     // NSURLCredential doesn't serialize identities correctly, so we encode the pieces individually
@@ -436,12 +436,12 @@ bool ArgumentCoder<Credential>::decodePlatformData(ArgumentDecoder& decoder, Cre
     return true;
 }
 
-void ArgumentCoder<MachSendRight>::encode(ArgumentEncoder& encoder, const MachSendRight& sendRight)
+void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, const MachSendRight& sendRight)
 {
     encoder << Attachment(sendRight.copySendRight().leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
 }
 
-void ArgumentCoder<MachSendRight>::encode(ArgumentEncoder& encoder, MachSendRight&& sendRight)
+void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, MachSendRight&& sendRight)
 {
     encoder << Attachment(sendRight.leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
 }
@@ -459,7 +459,7 @@ bool ArgumentCoder<MachSendRight>::decode(ArgumentDecoder& decoder, MachSendRigh
     return true;
 }
 
-void ArgumentCoder<KeypressCommand>::encode(ArgumentEncoder& encoder, const KeypressCommand& keypressCommand)
+void ArgumentCoder<KeypressCommand>::encode(Encoder& encoder, const KeypressCommand& keypressCommand)
 {
     encoder << keypressCommand.commandName << keypressCommand.text;
 }
@@ -476,7 +476,7 @@ bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder& decoder, KeypressCo
 }
 
 #if ENABLE(CONTENT_FILTERING)
-void ArgumentCoder<ContentFilterUnblockHandler>::encode(ArgumentEncoder& encoder, const ContentFilterUnblockHandler& contentFilterUnblockHandler)
+void ArgumentCoder<ContentFilterUnblockHandler>::encode(Encoder& encoder, const ContentFilterUnblockHandler& contentFilterUnblockHandler)
 {
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
@@ -510,7 +510,7 @@ static NSString *deviceContextKey()
     return key;
 }
 
-void ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData(ArgumentEncoder& encoder, const MediaPlaybackTargetContext& target)
+void ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const MediaPlaybackTargetContext& target)
 {
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);

@@ -27,7 +27,7 @@
 #define StatisticsData_h
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -36,7 +36,7 @@
 namespace WebKit {
 
 struct StatisticsData {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, StatisticsData&);
     
     HashMap<String, uint64_t> statisticsNumbers;

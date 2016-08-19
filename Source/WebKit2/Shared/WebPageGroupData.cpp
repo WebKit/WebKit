@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void WebPageGroupData::encode(IPC::ArgumentEncoder& encoder) const
+void WebPageGroupData::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
     encoder << pageGroupID;

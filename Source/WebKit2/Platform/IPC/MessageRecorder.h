@@ -76,7 +76,7 @@ public:
         WebKitMessageRecord m_record;
     };
 
-    static std::unique_ptr<MessageRecorder::MessageProcessingToken> recordOutgoingMessage(IPC::Connection&, IPC::MessageEncoder&);
+    static std::unique_ptr<MessageRecorder::MessageProcessingToken> recordOutgoingMessage(IPC::Connection&, IPC::Encoder&);
     static void recordIncomingMessage(IPC::Connection&, IPC::MessageDecoder&);
 
 private:

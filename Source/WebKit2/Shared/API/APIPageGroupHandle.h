@@ -32,7 +32,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace API {
@@ -44,7 +44,7 @@ public:
 
     const WebKit::WebPageGroupData& webPageGroupData() const { return m_webPageGroupData; }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
 
 private:

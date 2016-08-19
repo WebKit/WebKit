@@ -1,3 +1,534 @@
+2016-08-19  Anders Carlsson  <andersca@apple.com>
+
+        Merge MessageEncoder and ArgumentEncoder into Encoder
+        https://bugs.webkit.org/show_bug.cgi?id=161016
+
+        Reviewed by Tim Horton.
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didReceiveSyncMessage):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * NetworkProcess/Downloads/DownloadID.h:
+        (IPC::ArgumentCoder<WebKit::DownloadID>::encode):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveSyncMessage):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * Platform/IPC/ArgumentCoder.h:
+        (IPC::ArgumentCoder::encode):
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<std::chrono::system_clock::time_point>::encode):
+        (IPC::ArgumentCoder<AtomicString>::encode):
+        (IPC::ArgumentCoder<CString>::encode):
+        (IPC::ArgumentCoder<String>::encode):
+        (IPC::ArgumentCoder<uuid_t>::encode):
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::SimpleArgumentCoder::encode):
+        (IPC::ArgumentCoder<OptionSet<T>>::encode):
+        (IPC::ArgumentCoder<WTF::Optional<T>>::encode):
+        * Platform/IPC/ArgumentEncoder.cpp:
+        (IPC::allocBuffer): Deleted.
+        (IPC::freeBuffer): Deleted.
+        (IPC::ArgumentEncoder::ArgumentEncoder): Deleted.
+        (IPC::ArgumentEncoder::~ArgumentEncoder): Deleted.
+        (IPC::roundUpToAlignment): Deleted.
+        (IPC::ArgumentEncoder::reserve): Deleted.
+        (IPC::ArgumentEncoder::grow): Deleted.
+        (IPC::ArgumentEncoder::encodeFixedLengthData): Deleted.
+        (IPC::ArgumentEncoder::encodeVariableLengthByteArray): Deleted.
+        (IPC::copyValueToBuffer): Deleted.
+        (IPC::ArgumentEncoder::encode): Deleted.
+        (IPC::ArgumentEncoder::addAttachment): Deleted.
+        (IPC::ArgumentEncoder::releaseAttachments): Deleted.
+        * Platform/IPC/ArgumentEncoder.h:
+        (IPC::ArgumentEncoder::encodeEnum): Deleted.
+        (IPC::ArgumentEncoder::encode): Deleted.
+        (IPC::ArgumentEncoder::operator<<): Deleted.
+        (IPC::ArgumentEncoder::buffer): Deleted.
+        (IPC::ArgumentEncoder::bufferSize): Deleted.
+        * Platform/IPC/Arguments.h:
+        (IPC::TupleCoder::encode):
+        (IPC::Arguments::encode):
+        * Platform/IPC/Attachment.cpp:
+        (IPC::Attachment::encode):
+        * Platform/IPC/Attachment.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::createSyncMessageEncoder):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendSyncReply):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::sendSyncMessageFromSecondaryThread):
+        (IPC::Connection::sendOutgoingMessages):
+        (IPC::Connection::dispatchSyncMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        (IPC::Connection::sendSync):
+        * Platform/IPC/DataReference.cpp:
+        (IPC::DataReference::encode):
+        (IPC::SharedBufferDataReference::encode):
+        * Platform/IPC/DataReference.h:
+        * Platform/IPC/Encoder.cpp: Renamed from Source/WebKit2/Platform/IPC/ArgumentEncoder.cpp.
+        (IPC::allocBuffer):
+        (IPC::freeBuffer):
+        (IPC::Encoder::Encoder):
+        (IPC::Encoder::~Encoder):
+        (IPC::Encoder::isSyncMessage):
+        (IPC::Encoder::shouldDispatchMessageWhenWaitingForSyncReply):
+        (IPC::Encoder::setIsSyncMessage):
+        (IPC::Encoder::setShouldDispatchMessageWhenWaitingForSyncReply):
+        (IPC::Encoder::setFullySynchronousModeForTesting):
+        (IPC::Encoder::wrapForTesting):
+        (IPC::roundUpToAlignment):
+        (IPC::Encoder::reserve):
+        (IPC::Encoder::encodeHeader):
+        (IPC::Encoder::grow):
+        (IPC::Encoder::encodeFixedLengthData):
+        (IPC::Encoder::encodeVariableLengthByteArray):
+        (IPC::copyValueToBuffer):
+        (IPC::Encoder::encode):
+        (IPC::Encoder::addAttachment):
+        (IPC::Encoder::releaseAttachments):
+        * Platform/IPC/Encoder.h: Renamed from Source/WebKit2/Platform/IPC/ArgumentEncoder.h.
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessage):
+        (IPC::handleMessageDelayed):
+        * Platform/IPC/MessageEncoder.cpp: Removed.
+        (IPC::MessageEncoder::MessageEncoder): Deleted.
+        (IPC::MessageEncoder::~MessageEncoder): Deleted.
+        (IPC::MessageEncoder::encodeHeader): Deleted.
+        (IPC::MessageEncoder::isSyncMessage): Deleted.
+        (IPC::MessageEncoder::shouldDispatchMessageWhenWaitingForSyncReply): Deleted.
+        (IPC::MessageEncoder::setIsSyncMessage): Deleted.
+        (IPC::MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply): Deleted.
+        (IPC::MessageEncoder::setFullySynchronousModeForTesting): Deleted.
+        (IPC::MessageEncoder::wrapForTesting): Deleted.
+        * Platform/IPC/MessageEncoder.h: Removed.
+        (IPC::MessageEncoder::messageReceiverName): Deleted.
+        (IPC::MessageEncoder::messageName): Deleted.
+        (IPC::MessageEncoder::destinationID): Deleted.
+        (IPC::MessageEncoder::UUID): Deleted.
+        * Platform/IPC/MessageReceiver.h:
+        (IPC::MessageReceiver::didReceiveSyncMessage):
+        * Platform/IPC/MessageReceiverMap.cpp:
+        (IPC::MessageReceiverMap::dispatchSyncMessage):
+        * Platform/IPC/MessageReceiverMap.h:
+        * Platform/IPC/MessageRecorder.h:
+        * Platform/IPC/MessageSender.cpp:
+        (IPC::MessageSender::sendMessage):
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::send):
+        * Platform/IPC/StringReference.cpp:
+        (IPC::StringReference::encode):
+        * Platform/IPC/StringReference.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::open):
+        (IPC::Connection::sendOutgoingMessage):
+        * Platform/IPC/mac/MachPort.h:
+        (IPC::MachPort::encode):
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::Handle::encode):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::encode):
+        * PluginProcess/PluginCreationParameters.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        * PluginProcess/WebProcessConnection.h:
+        * Scripts/webkit/messages.py:
+        (message_to_struct_declaration):
+        (forward_declarations_and_headers):
+        (generate_message_handler):
+        (headers_for_type): Deleted.
+        * Shared/API/APIData.cpp:
+        (API::Data::encode):
+        * Shared/API/APIData.h:
+        * Shared/API/APIError.cpp:
+        (API::Error::encode):
+        * Shared/API/APIError.h:
+        * Shared/API/APIFrameHandle.cpp:
+        (API::FrameHandle::encode):
+        * Shared/API/APIFrameHandle.h:
+        * Shared/API/APIGeometry.cpp:
+        (API::Point::encode):
+        (API::Size::encode):
+        (API::Rect::encode):
+        * Shared/API/APIGeometry.h:
+        * Shared/API/APINumber.h:
+        (API::Number::encode):
+        * Shared/API/APIPageGroupHandle.cpp:
+        (API::PageGroupHandle::encode):
+        * Shared/API/APIPageGroupHandle.h:
+        * Shared/API/APIPageHandle.cpp:
+        (API::PageHandle::encode):
+        * Shared/API/APIPageHandle.h:
+        * Shared/API/APIURL.h:
+        (API::URL::encode):
+        * Shared/API/APIURLRequest.cpp:
+        (API::URLRequest::encode):
+        * Shared/API/APIURLRequest.h:
+        * Shared/API/APIURLResponse.cpp:
+        (API::URLResponse::encode):
+        * Shared/API/APIURLResponse.h:
+        * Shared/API/Cocoa/RemoteObjectInvocation.h:
+        * Shared/API/Cocoa/RemoteObjectInvocation.mm:
+        (WebKit::RemoteObjectInvocation::encode):
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::OptionItem::encode):
+        (WebKit::AssistedNodeInformation::encode):
+        * Shared/AssistedNodeInformation.h:
+        * Shared/Cocoa/DataDetectionResult.h:
+        * Shared/Cocoa/DataDetectionResult.mm:
+        (WebKit::DataDetectionResult::encode):
+        * Shared/Cocoa/LoadParametersCocoa.mm:
+        (WebKit::LoadParameters::platformEncode):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::Payment>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentContact>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentMerchantSession>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentMethod>::encode):
+        (IPC::ArgumentCoder<PaymentRequest>::encode):
+        (IPC::ArgumentCoder<PaymentRequest::ContactFields>::encode):
+        (IPC::ArgumentCoder<PaymentRequest::LineItem>::encode):
+        (IPC::ArgumentCoder<PaymentRequest::MerchantCapabilities>::encode):
+        (IPC::ArgumentCoder<PaymentRequest::ShippingMethod>::encode):
+        (IPC::ArgumentCoder<PaymentRequest::TotalAndLineItems>::encode):
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::encode):
+        * Shared/ContextMenuContextData.h:
+        * Shared/Databases/DatabaseProcessCreationParameters.cpp:
+        (WebKit::DatabaseProcessCreationParameters::encode):
+        * Shared/Databases/DatabaseProcessCreationParameters.h:
+        * Shared/Databases/IndexedDB/WebIDBResult.cpp:
+        (WebKit::WebIDBResult::encode):
+        * Shared/Databases/IndexedDB/WebIDBResult.h:
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::PostLayoutData::encode):
+        * Shared/EditorState.h:
+        * Shared/FontInfo.cpp:
+        (WebKit::FontInfo::encode):
+        * Shared/FontInfo.h:
+        * Shared/Gamepad/GamepadData.cpp:
+        (WebKit::GamepadData::encode):
+        * Shared/Gamepad/GamepadData.h:
+        * Shared/LayerTreeContext.cpp:
+        (WebKit::LayerTreeContext::encode):
+        * Shared/LayerTreeContext.h:
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode):
+        (WebKit::LoadParameters::platformEncode):
+        * Shared/LoadParameters.h:
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode):
+        * Shared/NavigationActionData.h:
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::encode):
+        * Shared/PlatformPopupMenuData.h:
+        * Shared/Plugins/NPIdentifierData.cpp:
+        (WebKit::NPIdentifierData::encode):
+        * Shared/Plugins/NPIdentifierData.h:
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::didReceiveSyncMessage):
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::encode):
+        * Shared/Plugins/NPVariantData.h:
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode):
+        * Shared/PrintInfo.h:
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::Handle::encode):
+        (WebKit::SandboxExtension::HandleArray::encode):
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFixedNode>::encode):
+        (ArgumentCoder<ScrollingStateStickyNode>::encode):
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::encode):
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.h:
+        * Shared/SessionState.cpp:
+        (WebKit::HTTPBody::Element::encode):
+        (WebKit::HTTPBody::encode):
+        (WebKit::FrameState::encode):
+        (WebKit::PageState::encode):
+        (WebKit::BackForwardListItemState::encode):
+        (WebKit::BackForwardListState::encode):
+        * Shared/SessionState.h:
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::encode):
+        * Shared/ShareableBitmap.h:
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::Handle::encode):
+        * Shared/ShareableResource.h:
+        * Shared/StatisticsData.cpp:
+        (WebKit::StatisticsData::encode):
+        * Shared/StatisticsData.h:
+        * Shared/UpdateInfo.cpp:
+        (WebKit::UpdateInfo::encode):
+        * Shared/UpdateInfo.h:
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        * Shared/UserData.h:
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        * Shared/WebBackForwardListItem.h:
+        * Shared/WebCompiledContentExtensionData.cpp:
+        (WebKit::WebCompiledContentExtensionData::encode):
+        * Shared/WebCompiledContentExtensionData.h:
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::encode):
+        * Shared/WebContextMenuItemData.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<AffineTransform>::encode):
+        (IPC::ArgumentCoder<EventTrackingRegions>::encode):
+        (IPC::ArgumentCoder<TransformationMatrix>::encode):
+        (IPC::ArgumentCoder<LinearTimingFunction>::encode):
+        (IPC::ArgumentCoder<CubicBezierTimingFunction>::encode):
+        (IPC::ArgumentCoder<StepsTimingFunction>::encode):
+        (IPC::ArgumentCoder<SpringTimingFunction>::encode):
+        (IPC::ArgumentCoder<FloatPoint>::encode):
+        (IPC::ArgumentCoder<FloatPoint3D>::encode):
+        (IPC::ArgumentCoder<FloatRect>::encode):
+        (IPC::ArgumentCoder<FloatSize>::encode):
+        (IPC::ArgumentCoder<FloatRoundedRect>::encode):
+        (IPC::ArgumentCoder<FloatQuad>::encode):
+        (IPC::ArgumentCoder<ViewportArguments>::encode):
+        (IPC::ArgumentCoder<IntPoint>::encode):
+        (IPC::ArgumentCoder<IntRect>::encode):
+        (IPC::ArgumentCoder<IntSize>::encode):
+        (IPC::pathEncodeApplierFunction):
+        (IPC::ArgumentCoder<Path>::encode):
+        (IPC::ArgumentCoder<RecentSearch>::encode):
+        (IPC::ArgumentCoder<Region::Span>::encode):
+        (IPC::ArgumentCoder<Region>::encode):
+        (IPC::ArgumentCoder<Length>::encode):
+        (IPC::ArgumentCoder<ViewportAttributes>::encode):
+        (IPC::ArgumentCoder<MimeClassInfo>::encode):
+        (IPC::ArgumentCoder<PluginInfo>::encode):
+        (IPC::ArgumentCoder<AuthenticationChallenge>::encode):
+        (IPC::ArgumentCoder<ProtectionSpace>::encode):
+        (IPC::ArgumentCoder<Credential>::encode):
+        (IPC::encodeImage):
+        (IPC::encodeOptionalImage):
+        (IPC::ArgumentCoder<Cursor>::encode):
+        (IPC::ArgumentCoder<ResourceRequest>::encode):
+        (IPC::ArgumentCoder<ResourceError>::encode):
+        (IPC::ArgumentCoder<SelectionRect>::encode):
+        (IPC::ArgumentCoder<WindowFeatures>::encode):
+        (IPC::ArgumentCoder<Color>::encode):
+        (IPC::ArgumentCoder<CompositionUnderline>::encode):
+        (IPC::ArgumentCoder<Cookie>::encode):
+        (IPC::ArgumentCoder<DatabaseDetails>::encode):
+        (IPC::ArgumentCoder<Highlight>::encode):
+        (IPC::encodeSharedBuffer):
+        (IPC::ArgumentCoder<PasteboardWebContent>::encode):
+        (IPC::ArgumentCoder<PasteboardImage>::encode):
+        (IPC::ArgumentCoder<DictationAlternative>::encode):
+        (IPC::ArgumentCoder<FileChooserSettings>::encode):
+        (IPC::ArgumentCoder<GrammarDetail>::encode):
+        (IPC::ArgumentCoder<TextCheckingRequestData>::encode):
+        (IPC::ArgumentCoder<TextCheckingResult>::encode):
+        (IPC::ArgumentCoder<URL>::encode):
+        (IPC::ArgumentCoder<UserStyleSheet>::encode):
+        (IPC::ArgumentCoder<MediaSessionMetadata>::encode):
+        (IPC::ArgumentCoder<UserScript>::encode):
+        (IPC::ArgumentCoder<ScrollableAreaParameters>::encode):
+        (IPC::ArgumentCoder<FixedPositionViewportConstraints>::encode):
+        (IPC::ArgumentCoder<StickyPositionViewportConstraints>::encode):
+        (IPC::ArgumentCoder<FilterOperation>::encode):
+        (IPC::ArgumentCoder<FilterOperations>::encode):
+        (IPC::ArgumentCoder<SessionID>::encode):
+        (IPC::ArgumentCoder<BlobPart>::encode):
+        (IPC::ArgumentCoder<TextIndicatorData>::encode):
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encode):
+        (IPC::ArgumentCoder<DictionaryPopupInfo>::encode):
+        (IPC::ArgumentCoder<ExceptionDetails>::encode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.cpp:
+        (WebKit::WebEvent::encode):
+        * Shared/WebEvent.h:
+        * Shared/WebGeolocationPosition.cpp:
+        (WebKit::WebGeolocationPosition::Data::encode):
+        * Shared/WebGeolocationPosition.h:
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::encode):
+        (WebKit::WebHitTestResultData::platformEncode):
+        * Shared/WebHitTestResultData.h:
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::encode):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::encode):
+        * Shared/WebNavigationDataStore.h:
+        (WebKit::WebNavigationDataStore::encode):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode):
+        * Shared/WebPageGroupData.h:
+        * Shared/WebPlatformTouchPoint.cpp:
+        (WebKit::WebPlatformTouchPoint::encode):
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::encode):
+        * Shared/WebPopupItem.h:
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::Value::encode):
+        (WebKit::WebPreferencesStore::encode):
+        * Shared/WebPreferencesStore.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::encode):
+        * Shared/WebUserContentControllerDataTypes.cpp:
+        (WebKit::WebUserScriptData::encode):
+        (WebKit::WebUserStyleSheetData::encode):
+        (WebKit::WebScriptMessageHandlerData::encode):
+        * Shared/WebUserContentControllerDataTypes.h:
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::encode):
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::Entry::encode):
+        (WebKit::WebsiteData::encode):
+        * Shared/WebsiteData/WebsiteData.h:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode):
+        * Shared/cf/ArgumentCodersCF.h:
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode):
+        * Shared/ios/QuickLookDocumentData.cpp:
+        (WebKit::QuickLookDocumentData::encode):
+        * Shared/ios/QuickLookDocumentData.h:
+        * Shared/ios/WebPlatformTouchPointIOS.cpp:
+        (WebKit::WebPlatformTouchPoint::encode):
+        * Shared/ios/WebTouchEventIOS.cpp:
+        (WebKit::WebTouchEvent::encode):
+        * Shared/mac/ArgumentCodersMac.h:
+        * Shared/mac/ArgumentCodersMac.mm:
+        (IPC::encode):
+        * Shared/mac/AttributedString.h:
+        * Shared/mac/AttributedString.mm:
+        (WebKit::AttributedString::encode):
+        * Shared/mac/ColorSpaceData.h:
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::encode):
+        * Shared/mac/ObjCObjectGraph.h:
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::ObjCObjectGraph::encode):
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::Handle::encode):
+        (WebKit::SandboxExtension::HandleArray::encode):
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::encode):
+        * Shared/mac/SecItemRequestData.h:
+        * Shared/mac/SecItemResponseData.cpp:
+        (WebKit::SecItemResponseData::encode):
+        * Shared/mac/SecItemResponseData.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::encodeNSError):
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+        (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData):
+        (IPC::ArgumentCoder<Credential>::encodePlatformData):
+        (IPC::ArgumentCoder<MachSendRight>::encode):
+        (IPC::ArgumentCoder<KeypressCommand>::encode):
+        (IPC::ArgumentCoder<ContentFilterUnblockHandler>::encode):
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData):
+        * Shared/mac/WebGestureEvent.cpp:
+        (WebKit::WebGestureEvent::encode):
+        * Shared/mac/WebGestureEvent.h:
+        * Shared/mac/WebHitTestResultData.mm:
+        (WebKit::WebHitTestResultData::platformEncode):
+        * UIProcess/API/APIHitTestResult.h:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::sendMessage):
+        (WebKit::ChildProcessProxy::dispatchSyncMessage):
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        * UIProcess/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::send):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveSyncMessage):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Notifications/WebNotification.cpp:
+        * UIProcess/Notifications/WebNotification.h:
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sendMessage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::dispatchSyncMessage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::encode):
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didReceiveSyncMessage):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveSyncMessage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::KeyframeValue::encode):
+        (WebKit::PlatformCAAnimationRemote::Properties::encode):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::create):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveSyncMessage):
+        * WebProcess/WebProcess.h:
+
 2016-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         Rename didLayout(LayoutMilestones) to didReachLayoutMilestone(), and related WK2 functions

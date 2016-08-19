@@ -200,7 +200,7 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        auto encoder = std::make_unique<MessageEncoder>("IPC", "InitializeConnection", 0);
+        auto encoder = std::make_unique<Encoder>("IPC", "InitializeConnection", 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
         sendMessage(WTFMove(encoder));
@@ -223,7 +223,7 @@ bool Connection::open()
             connection->exceptionSourceEventHandler();
         });
 
-        auto encoder = std::make_unique<MessageEncoder>("IPC", "SetExceptionPort", 0);
+        auto encoder = std::make_unique<Encoder>("IPC", "SetExceptionPort", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
 
         sendMessage(WTFMove(encoder));
@@ -265,7 +265,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return true;
 }
 
-bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
+bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 {
     Vector<Attachment> attachments = encoder->releaseAttachments();
     

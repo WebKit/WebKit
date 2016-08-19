@@ -31,7 +31,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace API {
@@ -45,7 +45,7 @@ public:
     uint64_t pageID() const { return m_pageID; }
     bool isAutoconverting() const { return m_isAutoconverting; }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
 
 private:

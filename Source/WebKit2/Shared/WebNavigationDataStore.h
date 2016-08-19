@@ -27,7 +27,7 @@
 #define WebNavigationDataStore_h
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -36,7 +36,7 @@
 namespace WebKit {
 
 struct WebNavigationDataStore {
-    void encode(IPC::ArgumentEncoder& encoder) const
+    void encode(IPC::Encoder& encoder) const
     {
         encoder << url;
         encoder << title;

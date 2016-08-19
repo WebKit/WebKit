@@ -284,9 +284,9 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
     }
 
 #if HAVE(DTRACE)
-    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID, decoder.UUID());
+    auto replyEncoder = std::make_unique<Encoder>("IPC", "SyncMessageReply", syncRequestID, decoder.UUID());
 #else
-    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = std::make_unique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
 #endif
 
     // Hand off both the decoder and encoder to the work queue message receiver.
@@ -328,9 +328,9 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
     m_didReceiveInvalidMessage = true;
 }
 
-std::unique_ptr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
+std::unique_ptr<Encoder> Connection::createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
-    auto encoder = std::make_unique<MessageEncoder>(messageReceiverName, messageName, destinationID);
+    auto encoder = std::make_unique<Encoder>(messageReceiverName, messageName, destinationID);
     encoder->setIsSyncMessage(true);
 
     // Encode the sync request ID.
@@ -340,7 +340,7 @@ std::unique_ptr<MessageEncoder> Connection::createSyncMessageEncoder(StringRefer
     return encoder;
 }
 
-bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned messageSendFlags, bool alreadyRecordedMessage)
+bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, unsigned messageSendFlags, bool alreadyRecordedMessage)
 {
     if (!isValid())
         return false;
@@ -378,7 +378,7 @@ bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned m
     return true;
 }
 
-bool Connection::sendSyncReply(std::unique_ptr<MessageEncoder> encoder)
+bool Connection::sendSyncReply(std::unique_ptr<Encoder> encoder)
 {
     return sendMessage(WTFMove(encoder));
 }
@@ -459,7 +459,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
     return nullptr;
 }
 
-std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, std::chrono::milliseconds timeout, unsigned syncSendFlags)
+std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder> encoder, std::chrono::milliseconds timeout, unsigned syncSendFlags)
 {
     if (!RunLoop::isMain()) {
         // No flags are supported for synchronous messages sent from secondary threads.
@@ -512,7 +512,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequest
     return reply;
 }
 
-std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, std::chrono::milliseconds timeout)
+std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<Encoder> encoder, std::chrono::milliseconds timeout)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -806,7 +806,7 @@ void Connection::sendOutgoingMessages()
         return;
 
     while (true) {
-        std::unique_ptr<MessageEncoder> message;
+        std::unique_ptr<Encoder> message;
 
         {
             std::lock_guard<Lock> lock(m_outgoingMessagesMutex);
@@ -832,9 +832,9 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
     }
 
 #if HAVE(DTRACE)
-    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID, decoder.UUID());
+    auto replyEncoder = std::make_unique<Encoder>("IPC", "SyncMessageReply", syncRequestID, decoder.UUID());
 #else
-    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = std::make_unique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
 #endif
 
     if (decoder.messageReceiverName() == "IPC" && decoder.messageName() == "WrappedAsyncMessageForTesting") {

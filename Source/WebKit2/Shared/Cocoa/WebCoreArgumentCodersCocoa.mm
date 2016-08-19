@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace IPC {
 
-void ArgumentCoder<WebCore::Payment>::encode(ArgumentEncoder& encoder, const WebCore::Payment& payment)
+void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {
     auto data = adoptNS([[NSMutableData alloc] init]);
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
@@ -81,7 +81,7 @@ bool ArgumentCoder<WebCore::Payment>::decode(ArgumentDecoder& decoder, WebCore::
     return true;
 }
 
-void ArgumentCoder<WebCore::PaymentContact>::encode(ArgumentEncoder& encoder, const WebCore::PaymentContact& paymentContact)
+void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebCore::PaymentContact& paymentContact)
 {
     auto data = adoptNS([[NSMutableData alloc] init]);
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
@@ -115,7 +115,7 @@ bool ArgumentCoder<WebCore::PaymentContact>::decode(ArgumentDecoder& decoder, We
     return true;
 }
 
-void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(ArgumentEncoder& encoder, const WebCore::PaymentMerchantSession& paymentMerchantSession)
+void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, const WebCore::PaymentMerchantSession& paymentMerchantSession)
 {
     auto data = adoptNS([[NSMutableData alloc] init]);
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
@@ -150,7 +150,7 @@ bool ArgumentCoder<WebCore::PaymentMerchantSession>::decode(ArgumentDecoder& dec
     return true;
 }
 
-void ArgumentCoder<WebCore::PaymentMethod>::encode(ArgumentEncoder& encoder, const WebCore::PaymentMethod& paymentMethod)
+void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCore::PaymentMethod& paymentMethod)
 {
     auto data = adoptNS([[NSMutableData alloc] init]);
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
@@ -184,7 +184,7 @@ bool ArgumentCoder<WebCore::PaymentMethod>::decode(ArgumentDecoder& decoder, Web
     return true;
 }
 
-void ArgumentCoder<PaymentRequest>::encode(ArgumentEncoder& encoder, const PaymentRequest& request)
+void ArgumentCoder<PaymentRequest>::encode(Encoder& encoder, const PaymentRequest& request)
 {
     encoder << request.countryCode();
     encoder << request.currencyCode();
@@ -271,7 +271,7 @@ bool ArgumentCoder<PaymentRequest>::decode(ArgumentDecoder& decoder, PaymentRequ
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::ContactFields>::encode(ArgumentEncoder& encoder, const PaymentRequest::ContactFields& contactFields)
+void ArgumentCoder<PaymentRequest::ContactFields>::encode(Encoder& encoder, const PaymentRequest::ContactFields& contactFields)
 {
     encoder << contactFields.postalAddress;
     encoder << contactFields.phone;
@@ -293,7 +293,7 @@ bool ArgumentCoder<PaymentRequest::ContactFields>::decode(ArgumentDecoder& decod
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::LineItem>::encode(ArgumentEncoder& encoder, const PaymentRequest::LineItem& lineItem)
+void ArgumentCoder<PaymentRequest::LineItem>::encode(Encoder& encoder, const PaymentRequest::LineItem& lineItem)
 {
     encoder.encodeEnum(lineItem.type);
     encoder << lineItem.label;
@@ -312,7 +312,7 @@ bool ArgumentCoder<PaymentRequest::LineItem>::decode(ArgumentDecoder& decoder, P
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::MerchantCapabilities>::encode(ArgumentEncoder& encoder, const PaymentRequest::MerchantCapabilities& merchantCapabilities)
+void ArgumentCoder<PaymentRequest::MerchantCapabilities>::encode(Encoder& encoder, const PaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     encoder << merchantCapabilities.supports3DS;
     encoder << merchantCapabilities.supportsEMV;
@@ -334,7 +334,7 @@ bool ArgumentCoder<PaymentRequest::MerchantCapabilities>::decode(ArgumentDecoder
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::ShippingMethod>::encode(ArgumentEncoder& encoder, const PaymentRequest::ShippingMethod& shippingMethod)
+void ArgumentCoder<PaymentRequest::ShippingMethod>::encode(Encoder& encoder, const PaymentRequest::ShippingMethod& shippingMethod)
 {
     encoder << shippingMethod.label;
     encoder << shippingMethod.detail;
@@ -355,7 +355,7 @@ bool ArgumentCoder<PaymentRequest::ShippingMethod>::decode(ArgumentDecoder& deco
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::TotalAndLineItems>::encode(ArgumentEncoder& encoder, const PaymentRequest::TotalAndLineItems& totalAndLineItems)
+void ArgumentCoder<PaymentRequest::TotalAndLineItems>::encode(Encoder& encoder, const PaymentRequest::TotalAndLineItems& totalAndLineItems)
 {
     encoder << totalAndLineItems.total;
     encoder << totalAndLineItems.lineItems;

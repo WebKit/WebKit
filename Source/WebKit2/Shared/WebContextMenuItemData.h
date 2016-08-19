@@ -38,7 +38,7 @@ class Object;
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -62,7 +62,7 @@ public:
     API::Object* userData() const;
     void setUserData(API::Object*);
     
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebContextMenuItemData&);
 
 private:

@@ -31,7 +31,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 typedef struct objc_object* id;
@@ -54,11 +54,11 @@ public:
     };
     static RetainPtr<id> transform(id, const Transformer&);
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
 
 private:
-    static void encode(IPC::ArgumentEncoder&, id);
+    static void encode(IPC::Encoder&, id);
     static bool decode(IPC::ArgumentDecoder&, RetainPtr<id>&);
 
     explicit ObjCObjectGraph(id rootObject)

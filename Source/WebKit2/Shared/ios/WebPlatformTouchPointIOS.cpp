@@ -35,7 +35,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebPlatformTouchPoint::encode(IPC::ArgumentEncoder& encoder) const
+void WebPlatformTouchPoint::encode(IPC::Encoder& encoder) const
 {
     encoder << m_identifier;
     encoder << m_location;

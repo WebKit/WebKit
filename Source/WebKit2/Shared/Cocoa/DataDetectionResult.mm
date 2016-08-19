@@ -39,7 +39,7 @@ namespace WebKit {
 
 #if ENABLE(DATA_DETECTION)
 
-void DataDetectionResult::encode(IPC::ArgumentEncoder& encoder) const
+void DataDetectionResult::encode(IPC::Encoder& encoder) const
 {
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);

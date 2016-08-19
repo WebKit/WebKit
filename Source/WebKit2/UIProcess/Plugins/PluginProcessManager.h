@@ -41,7 +41,7 @@
 #include <wtf/Vector.h>
 
 namespace IPC {
-    class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {

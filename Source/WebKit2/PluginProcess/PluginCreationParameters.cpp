@@ -44,7 +44,7 @@ PluginCreationParameters::PluginCreationParameters()
 {
 }
 
-void PluginCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
+void PluginCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << pluginInstanceID;
     encoder << windowNPObjectID;

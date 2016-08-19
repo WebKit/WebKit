@@ -28,7 +28,6 @@
 
 #include "ArgumentCoders.h"
 #include "MessageDecoder.h"
-#include "MessageEncoder.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/ScrollingStateFixedNode.h>
@@ -47,32 +46,32 @@ using namespace WebCore;
 namespace IPC {
 
 template<> struct ArgumentCoder<ScrollingStateNode> {
-    static void encode(ArgumentEncoder&, const ScrollingStateNode&);
+    static void encode(Encoder&, const ScrollingStateNode&);
     static bool decode(ArgumentDecoder&, ScrollingStateNode&);
 };
 
 template<> struct ArgumentCoder<ScrollingStateScrollingNode> {
-    static void encode(ArgumentEncoder&, const ScrollingStateScrollingNode&);
+    static void encode(Encoder&, const ScrollingStateScrollingNode&);
     static bool decode(ArgumentDecoder&, ScrollingStateScrollingNode&);
 };
     
 template<> struct ArgumentCoder<ScrollingStateFrameScrollingNode> {
-    static void encode(ArgumentEncoder&, const ScrollingStateFrameScrollingNode&);
+    static void encode(Encoder&, const ScrollingStateFrameScrollingNode&);
     static bool decode(ArgumentDecoder&, ScrollingStateFrameScrollingNode&);
 };
     
 template<> struct ArgumentCoder<ScrollingStateOverflowScrollingNode> {
-    static void encode(ArgumentEncoder&, const ScrollingStateOverflowScrollingNode&);
+    static void encode(Encoder&, const ScrollingStateOverflowScrollingNode&);
     static bool decode(ArgumentDecoder&, ScrollingStateOverflowScrollingNode&);
 };
     
 template<> struct ArgumentCoder<ScrollingStateFixedNode> {
-    static void encode(ArgumentEncoder&, const ScrollingStateFixedNode&);
+    static void encode(Encoder&, const ScrollingStateFixedNode&);
     static bool decode(ArgumentDecoder&, ScrollingStateFixedNode&);
 };
 
 template<> struct ArgumentCoder<ScrollingStateStickyNode> {
-    static void encode(ArgumentEncoder&, const ScrollingStateStickyNode&);
+    static void encode(Encoder&, const ScrollingStateStickyNode&);
     static bool decode(ArgumentDecoder&, ScrollingStateStickyNode&);
 };
 
@@ -80,7 +79,7 @@ template<> struct ArgumentCoder<ScrollingStateStickyNode> {
 
 using namespace IPC;
 
-void ArgumentCoder<ScrollingStateNode>::encode(ArgumentEncoder& encoder, const ScrollingStateNode& node)
+void ArgumentCoder<ScrollingStateNode>::encode(Encoder& encoder, const ScrollingStateNode& node)
 {
     encoder.encodeEnum(node.nodeType());
     encoder << node.scrollingNodeID();
@@ -117,7 +116,7 @@ bool ArgumentCoder<ScrollingStateNode>::decode(ArgumentDecoder& decoder, Scrolli
     if (node.hasChangedProperty(property)) \
         encoder.encodeEnum(node.getter());
 
-void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder, const ScrollingStateScrollingNode& node)
+void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const ScrollingStateScrollingNode& node)
 {
     encoder << static_cast<const ScrollingStateNode&>(node);
     
@@ -137,7 +136,7 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::RequestedScrollPosition, requestedScrollPositionRepresentsProgrammaticScroll)
 }
 
-void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(ArgumentEncoder& encoder, const ScrollingStateFrameScrollingNode& node)
+void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, const ScrollingStateFrameScrollingNode& node)
 {
     encoder << static_cast<const ScrollingStateScrollingNode&>(node);
     
@@ -163,7 +162,7 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(ArgumentEncoder& en
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer());
 }
 
-void ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode(ArgumentEncoder& encoder, const ScrollingStateOverflowScrollingNode& node)
+void ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode(Encoder& encoder, const ScrollingStateOverflowScrollingNode& node)
 {
     encoder << static_cast<const ScrollingStateScrollingNode&>(node);
     
@@ -281,7 +280,7 @@ bool ArgumentCoder<ScrollingStateOverflowScrollingNode>::decode(ArgumentDecoder&
     return true;
 }
 
-void ArgumentCoder<ScrollingStateFixedNode>::encode(ArgumentEncoder& encoder, const ScrollingStateFixedNode& node)
+void ArgumentCoder<ScrollingStateFixedNode>::encode(Encoder& encoder, const ScrollingStateFixedNode& node)
 {
     encoder << static_cast<const ScrollingStateNode&>(node);
     
@@ -304,7 +303,7 @@ bool ArgumentCoder<ScrollingStateFixedNode>::decode(ArgumentDecoder& decoder, Sc
     return true;
 }
 
-void ArgumentCoder<ScrollingStateStickyNode>::encode(ArgumentEncoder& encoder, const ScrollingStateStickyNode& node)
+void ArgumentCoder<ScrollingStateStickyNode>::encode(Encoder& encoder, const ScrollingStateStickyNode& node)
 {
     encoder << static_cast<const ScrollingStateNode&>(node);
     
@@ -329,7 +328,7 @@ bool ArgumentCoder<ScrollingStateStickyNode>::decode(ArgumentDecoder& decoder, S
 
 namespace WebKit {
 
-static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const ScrollingStateNode& stateNode, int& encodedNodeCount)
+static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingStateNode& stateNode, int& encodedNodeCount)
 {
     ++encodedNodeCount;
 
@@ -355,7 +354,7 @@ static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const Scroll
         encodeNodeAndDescendants(encoder, *child.get(), encodedNodeCount);
 }
 
-void RemoteScrollingCoordinatorTransaction::encode(IPC::ArgumentEncoder& encoder) const
+void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder& encoder) const
 {
     int numNodes = m_scrollingStateTree ? m_scrollingStateTree->nodeCount() : 0;
     encoder << numNodes;
@@ -641,7 +640,7 @@ void RemoteScrollingCoordinatorTransaction::dump() const
 
 namespace WebKit {
 
-void RemoteScrollingCoordinatorTransaction::encode(IPC::ArgumentEncoder&) const
+void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder&) const
 {
 }
 

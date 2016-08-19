@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-void LoadParameters::platformEncode(IPC::ArgumentEncoder& encoder) const
+void LoadParameters::platformEncode(IPC::Encoder& encoder) const
 {
     IPC::encode(encoder, dataDetectionContext.get());
 }

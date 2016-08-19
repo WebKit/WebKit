@@ -33,7 +33,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 OBJC_CLASS NSData;
@@ -80,7 +80,7 @@ public:
 
     IPC::DataReference dataReference() const { return IPC::DataReference(m_bytes, m_size); }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
 
 private:

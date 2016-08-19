@@ -29,7 +29,7 @@
 #if USE(QUICK_LOOK)
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 namespace WebKit {
 
@@ -51,7 +51,7 @@ void QuickLookDocumentData::clear()
     m_data.clear();
 }
 
-void QuickLookDocumentData::encode(IPC::ArgumentEncoder& encoder) const
+void QuickLookDocumentData::encode(IPC::Encoder& encoder) const
 {
     uint64_t size = 0;
     for (const auto& data : m_data)

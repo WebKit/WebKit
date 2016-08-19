@@ -31,7 +31,7 @@
 #include <wtf/HashSet.h>
 
 namespace IPC {
-class ArgumentEncoder;
+class Encoder;
 class ArgumentDecoder;
 };
 
@@ -230,7 +230,7 @@ public:
             return filter.get();
         }
 
-        void encode(IPC::ArgumentEncoder&) const;
+        void encode(IPC::Encoder&) const;
         static bool decode(IPC::ArgumentDecoder&, KeyframeValue&);
 
     private:
@@ -262,7 +262,7 @@ public:
         {
         }
 
-        void encode(IPC::ArgumentEncoder&) const;
+        void encode(IPC::Encoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Properties&);
 
         String keyPath;

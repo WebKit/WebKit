@@ -37,7 +37,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -59,7 +59,7 @@ public:
     float gestureScale() const { return m_gestureScale; }
     float gestureRotation() const { return m_gestureRotation; }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebGestureEvent&);
     
 private:

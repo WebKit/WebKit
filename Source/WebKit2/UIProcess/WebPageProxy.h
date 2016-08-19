@@ -1145,10 +1145,10 @@ private:
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // IPC::MessageSender
-    bool sendMessage(std::unique_ptr<IPC::MessageEncoder>, unsigned messageSendFlags) override;
+    bool sendMessage(std::unique_ptr<IPC::Encoder>, unsigned messageSendFlags) override;
     IPC::Connection* messageSenderConnection() override;
     uint64_t messageSenderDestinationID() override;
 

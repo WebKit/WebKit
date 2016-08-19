@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-void EditorState::encode(IPC::ArgumentEncoder& encoder) const
+void EditorState::encode(IPC::Encoder& encoder) const
 {
     encoder << shouldIgnoreCompositionSelectionChange;
     encoder << selectionIsNone;
@@ -104,7 +104,7 @@ bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
 }
 
 #if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
-void EditorState::PostLayoutData::encode(IPC::ArgumentEncoder& encoder) const
+void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
 {
     encoder << typingAttributes;
 #if PLATFORM(IOS) || PLATFORM(GTK)

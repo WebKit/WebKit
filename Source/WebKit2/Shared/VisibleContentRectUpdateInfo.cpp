@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
+void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
 {
     encoder << m_exposedContentRect;
     encoder << m_unobscuredContentRect;

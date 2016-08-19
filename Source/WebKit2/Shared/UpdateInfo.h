@@ -33,7 +33,7 @@
 
 namespace IPC {
     class ArgumentDecoder;
-    class ArgumentEncoder;
+    class Encoder;
 }
 
 namespace WebKit {
@@ -44,7 +44,7 @@ class UpdateInfo {
 public:
     UpdateInfo() { }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, UpdateInfo&);
 
     // The size of the web view.

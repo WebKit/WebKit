@@ -70,7 +70,7 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
 #endif
 }
 
-void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
+void ContextMenuContextData::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(m_type);
     encoder << m_menuLocation;

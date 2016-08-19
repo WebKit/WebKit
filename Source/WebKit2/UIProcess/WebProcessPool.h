@@ -127,7 +127,7 @@ public:
     void removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID);
 
     bool dispatchMessage(IPC::Connection&, IPC::MessageDecoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
 
     void initializeClient(const WKContextClientBase*);
     void initializeInjectedBundleClient(const WKContextInjectedBundleClientBase*);
@@ -406,7 +406,7 @@ private:
     // IPC::MessageReceiver.
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     static void languageChanged(void* context);
     void languageChanged();

@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-void WebIDBResult::encode(IPC::ArgumentEncoder& encoder) const
+void WebIDBResult::encode(IPC::Encoder& encoder) const
 {
     m_resultData.encode(encoder);
     m_handles.encode(encoder);

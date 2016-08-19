@@ -33,7 +33,7 @@
 
 namespace IPC {
     class ArgumentDecoder;
-    class ArgumentEncoder;
+    class Encoder;
 }
 
 namespace WebKit {
@@ -45,7 +45,7 @@ public:
     static NPIdentifierData fromNPIdentifier(NPIdentifier);
     NPIdentifier createNPIdentifier() const;
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, NPIdentifierData&);
 
 private:

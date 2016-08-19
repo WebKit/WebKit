@@ -36,7 +36,7 @@ OBJC_CLASS DDActionContext;
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebCore {

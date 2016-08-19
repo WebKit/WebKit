@@ -56,7 +56,7 @@ WebProcessCreationParameters::~WebProcessCreationParameters()
 {
 }
 
-void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
+void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << injectedBundlePath;
     encoder << injectedBundlePathExtensionHandle;

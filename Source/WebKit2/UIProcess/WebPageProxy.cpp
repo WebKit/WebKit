@@ -4388,7 +4388,7 @@ void WebPageProxy::didFailToFindString(const String& string)
     m_findClient->didFailToFindString(this, string);
 }
 
-bool WebPageProxy::sendMessage(std::unique_ptr<IPC::MessageEncoder> encoder, unsigned messageSendFlags)
+bool WebPageProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, unsigned messageSendFlags)
 {
     return m_process->sendMessage(WTFMove(encoder), messageSendFlags);
 }

@@ -30,7 +30,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -42,7 +42,7 @@ public:
     std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
 #endif // ENABLE(ASYNC_SCROLLING)
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RemoteScrollingCoordinatorTransaction&);
 
 #if !defined(NDEBUG) || !LOG_DISABLED

@@ -146,7 +146,7 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Message
     didReceiveNetworkProcessMessage(connection, decoder);
 }
 
-void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
         return;

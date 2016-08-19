@@ -71,7 +71,7 @@ public:
     pid_t processIdentifier() const { return m_processLauncher->processIdentifier(); }
 
     bool canSendMessage() const { return state() != State::Terminated;}
-    bool sendMessage(std::unique_ptr<IPC::MessageEncoder>, unsigned messageSendFlags);
+    bool sendMessage(std::unique_ptr<IPC::Encoder>, unsigned messageSendFlags);
 
     void shutDownProcess();
 
@@ -80,7 +80,7 @@ protected:
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     bool dispatchMessage(IPC::Connection&, IPC::MessageDecoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
     
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
 
@@ -88,7 +88,7 @@ private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;
 
-    Vector<std::pair<std::unique_ptr<IPC::MessageEncoder>, unsigned>> m_pendingMessages;
+    Vector<std::pair<std::unique_ptr<IPC::Encoder>, unsigned>> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
@@ -99,7 +99,7 @@ bool ChildProcessProxy::send(T&& message, uint64_t destinationID, unsigned messa
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = std::make_unique<IPC::MessageEncoder>(T::receiverName(), T::name(), destinationID);
+    auto encoder = std::make_unique<IPC::Encoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message.arguments());
 
     return sendMessage(WTFMove(encoder), messageSendFlags);

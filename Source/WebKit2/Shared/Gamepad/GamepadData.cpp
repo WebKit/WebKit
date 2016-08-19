@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-void GamepadData::encode(IPC::ArgumentEncoder& encoder) const
+void GamepadData::encode(IPC::Encoder& encoder) const
 {
     encoder << index << axisValues << buttonValues;
 }

@@ -31,13 +31,13 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
 
 struct NavigationActionData {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, NavigationActionData&);
 
     WebCore::NavigationType navigationType { WebCore::NavigationType::Other };

@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 #include "DataReference.h"
+#include "MessageFlags.h"
 #include <algorithm>
 #include <stdio.h>
 
@@ -35,6 +36,8 @@
 #endif
 
 namespace IPC {
+
+static const uint8_t defaultMessageFlags = 0;
 
 template <typename T>
 static inline bool allocBuffer(T*& buffer, size_t size)
@@ -58,19 +61,69 @@ static inline void freeBuffer(void* addr, size_t size)
 #endif
 }
 
-ArgumentEncoder::ArgumentEncoder()
-    : m_buffer(m_inlineBuffer)
+Encoder::Encoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
+    : m_messageReceiverName(messageReceiverName)
+    , m_messageName(messageName)
+    , m_destinationID(destinationID)
+    , m_buffer(m_inlineBuffer)
     , m_bufferPointer(m_inlineBuffer)
     , m_bufferSize(0)
     , m_bufferCapacity(sizeof(m_inlineBuffer))
 {
+    encodeHeader();
 }
 
-ArgumentEncoder::~ArgumentEncoder()
+Encoder::~Encoder()
 {
     if (m_buffer != m_inlineBuffer)
         freeBuffer(m_buffer, m_bufferCapacity);
     // FIXME: We need to dispose of the attachments in cases of failure.
+}
+
+bool Encoder::isSyncMessage() const
+{
+    return *buffer() & SyncMessage;
+}
+
+bool Encoder::shouldDispatchMessageWhenWaitingForSyncReply() const
+{
+    return *buffer() & DispatchMessageWhenWaitingForSyncReply;
+}
+
+void Encoder::setIsSyncMessage(bool isSyncMessage)
+{
+    if (isSyncMessage)
+        *buffer() |= SyncMessage;
+    else
+        *buffer() &= ~SyncMessage;
+}
+
+void Encoder::setShouldDispatchMessageWhenWaitingForSyncReply(bool shouldDispatchMessageWhenWaitingForSyncReply)
+{
+    if (shouldDispatchMessageWhenWaitingForSyncReply)
+        *buffer() |= DispatchMessageWhenWaitingForSyncReply;
+    else
+        *buffer() &= ~DispatchMessageWhenWaitingForSyncReply;
+}
+
+void Encoder::setFullySynchronousModeForTesting()
+{
+    *buffer() |= UseFullySynchronousModeForTesting;
+}
+
+void Encoder::wrapForTesting(std::unique_ptr<Encoder> original)
+{
+    ASSERT(isSyncMessage());
+    ASSERT(!original->isSyncMessage());
+
+    original->setShouldDispatchMessageWhenWaitingForSyncReply(true);
+
+    encodeVariableLengthByteArray(DataReference(original->buffer(), original->bufferSize()));
+
+    Vector<Attachment> attachments = original->releaseAttachments();
+    reserve(attachments.size());
+    for (Attachment& attachment : attachments)
+        addAttachment(WTFMove(attachment));
 }
 
 static inline size_t roundUpToAlignment(size_t value, unsigned alignment)
@@ -78,7 +131,7 @@ static inline size_t roundUpToAlignment(size_t value, unsigned alignment)
     return ((value + alignment - 1) / alignment) * alignment;
 }
 
-void ArgumentEncoder::reserve(size_t size)
+void Encoder::reserve(size_t size)
 {
     if (size <= m_bufferCapacity)
         return;
@@ -100,7 +153,20 @@ void ArgumentEncoder::reserve(size_t size)
     m_bufferCapacity = newCapacity;
 }
 
-uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
+void Encoder::encodeHeader()
+{
+    ASSERT(!m_messageReceiverName.isEmpty());
+
+    *this << defaultMessageFlags;
+    *this << m_messageReceiverName;
+    *this << m_messageName;
+    *this << m_destinationID;
+#if HAVE(DTRACE)
+    *this << m_UUID;
+#endif
+}
+
+uint8_t* Encoder::grow(unsigned alignment, size_t size)
 {
     size_t alignedSize = roundUpToAlignment(m_bufferSize, alignment);
     reserve(alignedSize + size);
@@ -111,7 +177,7 @@ uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
     return m_buffer + alignedSize;
 }
 
-void ArgumentEncoder::encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
+void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
 {
     ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
 
@@ -119,7 +185,7 @@ void ArgumentEncoder::encodeFixedLengthData(const uint8_t* data, size_t size, un
     memcpy(buffer, data, size);
 }
 
-void ArgumentEncoder::encodeVariableLengthByteArray(const DataReference& dataReference)
+void Encoder::encodeVariableLengthByteArray(const DataReference& dataReference)
 {
     encode(static_cast<uint64_t>(dataReference.size()));
     encodeFixedLengthData(dataReference.data(), dataReference.size(), 1);
@@ -131,66 +197,66 @@ static void copyValueToBuffer(Type value, uint8_t* bufferPosition)
     memcpy(bufferPosition, &value, sizeof(Type));
 }
 
-void ArgumentEncoder::encode(bool n)
+void Encoder::encode(bool n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::encode(uint8_t n)
+void Encoder::encode(uint8_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::encode(uint16_t n)
+void Encoder::encode(uint16_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::encode(uint32_t n)
+void Encoder::encode(uint32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::encode(uint64_t n)
+void Encoder::encode(uint64_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::encode(int32_t n)
+void Encoder::encode(int32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::encode(int64_t n)
+void Encoder::encode(int64_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::encode(float n)
+void Encoder::encode(float n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::encode(double n)
+void Encoder::encode(double n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::addAttachment(Attachment&& attachment)
+void Encoder::addAttachment(Attachment&& attachment)
 {
     m_attachments.append(WTFMove(attachment));
 }
 
-Vector<Attachment> ArgumentEncoder::releaseAttachments()
+Vector<Attachment> Encoder::releaseAttachments()
 {
     return WTFMove(m_attachments);
 }

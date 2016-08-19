@@ -27,7 +27,7 @@
 #include "Attachment.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 namespace IPC {
 
@@ -50,7 +50,7 @@ void Attachment::release()
 }
 #endif
 
-void Attachment::encode(ArgumentEncoder& encoder) const
+void Attachment::encode(Encoder& encoder) const
 {
     encoder.addAttachment(WTFMove(*const_cast<Attachment*>(this)));
 }

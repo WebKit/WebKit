@@ -42,7 +42,7 @@ RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier
 {
 }
 
-void RemoteObjectInvocation::encode(IPC::ArgumentEncoder& encoder) const
+void RemoteObjectInvocation::encode(IPC::Encoder& encoder) const
 {
     encoder << m_interfaceIdentifier;
     UserData::encode(encoder, m_encodedInvocation.get());

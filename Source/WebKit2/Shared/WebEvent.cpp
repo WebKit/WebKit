@@ -27,8 +27,8 @@
 #include "WebEvent.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
 #include "Arguments.h"
+#include "Encoder.h"
 
 namespace WebKit {
 
@@ -46,7 +46,7 @@ WebEvent::WebEvent(Type type, Modifiers modifiers, double timestamp)
 {
 }
 
-void WebEvent::encode(IPC::ArgumentEncoder& encoder) const
+void WebEvent::encode(IPC::Encoder& encoder) const
 {
     encoder << m_type;
     encoder << m_modifiers;

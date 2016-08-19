@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void UpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
+void UpdateInfo::encode(IPC::Encoder& encoder) const
 {
     encoder << viewSize;
     encoder << deviceScaleFactor;

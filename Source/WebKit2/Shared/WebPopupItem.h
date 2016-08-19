@@ -31,7 +31,7 @@
 
 namespace IPC {
     class ArgumentDecoder;
-    class ArgumentEncoder;
+    class Encoder;
 }
 
 namespace WebKit {
@@ -46,7 +46,7 @@ struct WebPopupItem {
     WebPopupItem(Type);
     WebPopupItem(Type, const String& text, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected);
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebPopupItem&);
 
     Type m_type;

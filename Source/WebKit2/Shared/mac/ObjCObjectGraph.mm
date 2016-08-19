@@ -28,7 +28,7 @@
 
 #import "ArgumentCodersMac.h"
 #import "ArgumentDecoder.h"
-#import "ArgumentEncoder.h"
+#import "Encoder.h"
 #import <wtf/Optional.h>
 
 #if WK_API_ENABLED
@@ -140,7 +140,7 @@ static Optional<ObjCType> typeFromObject(id object)
     return Nullopt;
 }
 
-void ObjCObjectGraph::encode(IPC::ArgumentEncoder& encoder, id object)
+void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
 {
     if (!object) {
         encoder << static_cast<uint32_t>(ObjCType::Null);
@@ -205,7 +205,7 @@ void ObjCObjectGraph::encode(IPC::ArgumentEncoder& encoder, id object)
     }
 }
 
-void ObjCObjectGraph::encode(IPC::ArgumentEncoder& encoder) const
+void ObjCObjectGraph::encode(IPC::Encoder& encoder) const
 {
     encode(encoder, m_rootObject.get());
 }

@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-void WebGestureEvent::encode(IPC::ArgumentEncoder& encoder) const
+void WebGestureEvent::encode(IPC::Encoder& encoder) const
 {
     WebEvent::encode(encoder);
 

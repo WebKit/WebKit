@@ -49,7 +49,7 @@ SecItemRequestData::SecItemRequestData(Type type, CFDictionaryRef query, CFDicti
 {
 }
 
-void SecItemRequestData::encode(IPC::ArgumentEncoder& encoder) const
+void SecItemRequestData::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(m_type);
 

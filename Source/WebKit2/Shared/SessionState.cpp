@@ -41,7 +41,7 @@ bool isValidEnum(WebCore::ShouldOpenExternalURLsPolicy policy)
     return false;
 }
 
-void HTTPBody::Element::encode(IPC::ArgumentEncoder& encoder) const
+void HTTPBody::Element::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(type);
     encoder << data;
@@ -84,7 +84,7 @@ bool HTTPBody::Element::decode(IPC::ArgumentDecoder& decoder, Element& result)
     return true;
 }
 
-void HTTPBody::encode(IPC::ArgumentEncoder& encoder) const
+void HTTPBody::encode(IPC::Encoder& encoder) const
 {
     encoder << contentType;
     encoder << elements;
@@ -100,7 +100,7 @@ bool HTTPBody::decode(IPC::ArgumentDecoder& decoder, HTTPBody& result)
     return true;
 }
 
-void FrameState::encode(IPC::ArgumentEncoder& encoder) const
+void FrameState::encode(IPC::Encoder& encoder) const
 {
     encoder << urlString;
     encoder << originalURLString;
@@ -177,7 +177,7 @@ bool FrameState::decode(IPC::ArgumentDecoder& decoder, FrameState& result)
     return true;
 }
 
-void PageState::encode(IPC::ArgumentEncoder& encoder) const
+void PageState::encode(IPC::Encoder& encoder) const
 {
     encoder << title;
     encoder << mainFrameState;
@@ -196,7 +196,7 @@ bool PageState::decode(IPC::ArgumentDecoder& decoder, PageState& result)
     return true;
 }
 
-void BackForwardListItemState::encode(IPC::ArgumentEncoder& encoder) const
+void BackForwardListItemState::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
     encoder << pageState;
@@ -213,7 +213,7 @@ bool BackForwardListItemState::decode(IPC::ArgumentDecoder& decoder, BackForward
     return true;
 }
 
-void BackForwardListState::encode(IPC::ArgumentEncoder& encoder) const
+void BackForwardListState::encode(IPC::Encoder& encoder) const
 {
     encoder << items;
     encoder << currentIndex;

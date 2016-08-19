@@ -36,7 +36,7 @@ DatabaseProcessCreationParameters::DatabaseProcessCreationParameters()
 {
 }
 
-void DatabaseProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
+void DatabaseProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
 #if ENABLE(INDEXED_DATABASE)
     encoder << indexedDatabaseDirectory;

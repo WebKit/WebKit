@@ -30,7 +30,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -47,7 +47,7 @@ public:
     LayerTreeContext();
     ~LayerTreeContext();
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, LayerTreeContext&);
 
     bool isEmpty() const;

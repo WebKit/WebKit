@@ -27,7 +27,7 @@
 #define ArgumentCoders_h
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
@@ -45,7 +45,7 @@ namespace IPC {
 
 // An argument coder works on POD types
 template<typename T> struct SimpleArgumentCoder {
-    static void encode(ArgumentEncoder& encoder, const T& t)
+    static void encode(Encoder& encoder, const T& t)
     {
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&t), sizeof(T), alignof(T));
     }
@@ -57,7 +57,7 @@ template<typename T> struct SimpleArgumentCoder {
 };
 
 template<typename T> struct ArgumentCoder<OptionSet<T>> {
-    static void encode(ArgumentEncoder& encoder, const OptionSet<T>& optionSet)
+    static void encode(Encoder& encoder, const OptionSet<T>& optionSet)
     {
         encoder << (static_cast<uint64_t>(optionSet.toRaw()));
     }
@@ -74,7 +74,7 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
 };
 
 template<typename T> struct ArgumentCoder<WTF::Optional<T>> {
-    static void encode(ArgumentEncoder& encoder, const WTF::Optional<T>& optional)
+    static void encode(Encoder& encoder, const WTF::Optional<T>& optional)
     {
         if (!optional) {
             encoder << false;
@@ -106,7 +106,7 @@ template<typename T> struct ArgumentCoder<WTF::Optional<T>> {
 };
 
 template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
-    static void encode(ArgumentEncoder& encoder, const std::pair<T, U>& pair)
+    static void encode(Encoder& encoder, const std::pair<T, U>& pair)
     {
         encoder << pair.first << pair.second;
     }
@@ -128,7 +128,7 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
 };
 
 template<typename Rep, typename Period> struct ArgumentCoder<std::chrono::duration<Rep, Period>> {
-    static void encode(ArgumentEncoder& encoder, const std::chrono::duration<Rep, Period>& duration)
+    static void encode(Encoder& encoder, const std::chrono::duration<Rep, Period>& duration)
     {
         static_assert(std::is_integral<Rep>::value && std::is_signed<Rep>::value && sizeof(Rep) <= sizeof(int64_t), "Serialization of this Rep type is not supported yet. Only signed integer type which can be fit in an int64_t is currently supported.");
         encoder << static_cast<int64_t>(duration.count());
@@ -145,7 +145,7 @@ template<typename Rep, typename Period> struct ArgumentCoder<std::chrono::durati
 };
 
 template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValuePair<KeyType, ValueType>> {
-    static void encode(ArgumentEncoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
+    static void encode(Encoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         encoder << pair.key << pair.value;
     }
@@ -169,7 +169,7 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
 template<bool fixedSizeElements, typename T, size_t inlineCapacity> struct VectorArgumentCoder;
 
 template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<false, T, inlineCapacity> {
-    static void encode(ArgumentEncoder& encoder, const Vector<T, inlineCapacity>& vector)
+    static void encode(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
         for (size_t i = 0; i < vector.size(); ++i)
@@ -198,7 +198,7 @@ template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<false, T,
 };
 
 template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<true, T, inlineCapacity> {
-    static void encode(ArgumentEncoder& encoder, const Vector<T, inlineCapacity>& vector)
+    static void encode(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), alignof(T));
@@ -233,7 +233,7 @@ template<typename T, size_t inlineCapacity> struct ArgumentCoder<Vector<T, inlin
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
 
-    static void encode(ArgumentEncoder& encoder, const HashMapType& hashMap)
+    static void encode(Encoder& encoder, const HashMapType& hashMap)
     {
         encoder << static_cast<uint64_t>(hashMap.size());
         for (typename HashMapType::const_iterator it = hashMap.begin(), end = hashMap.end(); it != end; ++it)
@@ -270,7 +270,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct ArgumentCoder<HashSet<KeyArg, HashArg, KeyTraitsArg>> {
     typedef HashSet<KeyArg, HashArg, KeyTraitsArg> HashSetType;
 
-    static void encode(ArgumentEncoder& encoder, const HashSetType& hashSet)
+    static void encode(Encoder& encoder, const HashSetType& hashSet)
     {
         encoder << static_cast<uint64_t>(hashSet.size());
         for (typename HashSetType::const_iterator it = hashSet.begin(), end = hashSet.end(); it != end; ++it)
@@ -304,7 +304,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
 template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct ArgumentCoder<HashCountedSet<KeyArg, HashArg, KeyTraitsArg>> {
     typedef HashCountedSet<KeyArg, HashArg, KeyTraitsArg> HashCountedSetType;
     
-    static void encode(ArgumentEncoder& encoder, const HashCountedSetType& hashCountedSet)
+    static void encode(Encoder& encoder, const HashCountedSetType& hashCountedSet)
     {
         encoder << static_cast<uint64_t>(hashCountedSet.size());
         
@@ -343,28 +343,28 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
 };
 
 template<> struct ArgumentCoder<std::chrono::system_clock::time_point> {
-    static void encode(ArgumentEncoder&, const std::chrono::system_clock::time_point&);
+    static void encode(Encoder&, const std::chrono::system_clock::time_point&);
     static bool decode(ArgumentDecoder&, std::chrono::system_clock::time_point&);
 };
 
 template<> struct ArgumentCoder<AtomicString> {
-    static void encode(ArgumentEncoder&, const AtomicString&);
+    static void encode(Encoder&, const AtomicString&);
     static bool decode(ArgumentDecoder&, AtomicString&);
 };
 
 template<> struct ArgumentCoder<CString> {
-    static void encode(ArgumentEncoder&, const CString&);
+    static void encode(Encoder&, const CString&);
     static bool decode(ArgumentDecoder&, CString&);
 };
 
 template<> struct ArgumentCoder<String> {
-    static void encode(ArgumentEncoder&, const String&);
+    static void encode(Encoder&, const String&);
     static bool decode(ArgumentDecoder&, String&);
 };
 
 #if HAVE(DTRACE)
 template<> struct ArgumentCoder<uuid_t> {
-    static void encode(ArgumentEncoder&, const uuid_t&);
+    static void encode(Encoder&, const uuid_t&);
     static bool decode(ArgumentDecoder&, uuid_t&);
 };
 #endif

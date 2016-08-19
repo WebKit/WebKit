@@ -1035,7 +1035,7 @@ bool WebProcessPool::dispatchMessage(IPC::Connection& connection, IPC::MessageDe
     return m_messageReceiverMap.dispatchMessage(connection, decoder);
 }
 
-bool WebProcessPool::dispatchSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+bool WebProcessPool::dispatchSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }

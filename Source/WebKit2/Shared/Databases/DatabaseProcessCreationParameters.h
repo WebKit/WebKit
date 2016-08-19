@@ -34,7 +34,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -42,7 +42,7 @@ namespace WebKit {
 struct DatabaseProcessCreationParameters {
     DatabaseProcessCreationParameters();
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, DatabaseProcessCreationParameters&);
 
 #if ENABLE(INDEXED_DATABASE)

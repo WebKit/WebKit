@@ -27,11 +27,11 @@
 #include "APIData.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 namespace API {
 
-void Data::encode(IPC::ArgumentEncoder& encoder) const
+void Data::encode(IPC::Encoder& encoder) const
 {
     encoder << dataReference();
 }

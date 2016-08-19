@@ -105,7 +105,7 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 
 namespace WebKit {
 
-void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::ArgumentEncoder& encoder) const
+void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(keyType);
 
@@ -159,7 +159,7 @@ bool PlatformCAAnimationRemote::KeyframeValue::decode(IPC::ArgumentDecoder& deco
     return true;
 }
 
-void PlatformCAAnimationRemote::Properties::encode(IPC::ArgumentEncoder& encoder) const
+void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
 {
     encoder << keyPath;
     encoder.encodeEnum(animationType);

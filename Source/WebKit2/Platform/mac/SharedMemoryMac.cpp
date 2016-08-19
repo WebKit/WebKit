@@ -27,8 +27,8 @@
 #include "SharedMemory.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
 #include "Arguments.h"
+#include "Encoder.h"
 #include "MachPort.h"
 #include <WebCore/MachSendRight.h>
 #include <WebCore/MachVMSPI.h>
@@ -64,7 +64,7 @@ void SharedMemory::Handle::clear()
     m_size = 0;
 }
 
-void SharedMemory::Handle::encode(IPC::ArgumentEncoder& encoder) const
+void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<uint64_t>(m_size);
     encoder << IPC::MachPort(m_port, MACH_MSG_TYPE_MOVE_SEND);

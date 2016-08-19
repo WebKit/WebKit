@@ -27,8 +27,8 @@
 #import "RemoteLayerTreeTransaction.h"
 
 #import "ArgumentCoders.h"
+#import "Encoder.h"
 #import "MessageDecoder.h"
-#import "MessageEncoder.h"
 #import "PlatformCAAnimationRemote.h"
 #import "PlatformCALayerRemote.h"
 #import "WebCoreArgumentCoders.h"
@@ -50,7 +50,7 @@ RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
 {
 }
 
-void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::ArgumentEncoder& encoder) const
+void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& encoder) const
 {
     encoder << layerID;
     encoder.encodeEnum(type);
@@ -157,7 +157,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
         filters = std::make_unique<FilterOperations>(*other.filters);
 }
 
-void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& encoder) const
+void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(changedProperties);
 
@@ -511,7 +511,7 @@ RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
 {
 }
 
-void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
+void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 {
     encoder << m_rootLayerID;
     encoder << m_createdLayers;

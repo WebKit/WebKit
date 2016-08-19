@@ -34,7 +34,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
+void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
     encoder << webPageID;

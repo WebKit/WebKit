@@ -92,7 +92,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     ASSERT_NOT_REACHED();
 }
 
-void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& reply)
+void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& reply)
 {
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveSyncNetworkConnectionToWebProcessMessage(connection, decoder, reply);

@@ -98,7 +98,7 @@ using namespace WebKit;
 
 namespace IPC {
 
-void ArgumentCoder<AffineTransform>::encode(ArgumentEncoder& encoder, const AffineTransform& affineTransform)
+void ArgumentCoder<AffineTransform>::encode(Encoder& encoder, const AffineTransform& affineTransform)
 {
     SimpleArgumentCoder<AffineTransform>::encode(encoder, affineTransform);
 }
@@ -108,7 +108,7 @@ bool ArgumentCoder<AffineTransform>::decode(ArgumentDecoder& decoder, AffineTran
     return SimpleArgumentCoder<AffineTransform>::decode(decoder, affineTransform);
 }
 
-void ArgumentCoder<EventTrackingRegions>::encode(ArgumentEncoder& encoder, const EventTrackingRegions& eventTrackingRegions)
+void ArgumentCoder<EventTrackingRegions>::encode(Encoder& encoder, const EventTrackingRegions& eventTrackingRegions)
 {
     encoder << eventTrackingRegions.asynchronousDispatchRegion;
     encoder << eventTrackingRegions.eventSpecificSynchronousDispatchRegions;
@@ -127,7 +127,7 @@ bool ArgumentCoder<EventTrackingRegions>::decode(ArgumentDecoder& decoder, Event
     return true;
 }
 
-void ArgumentCoder<TransformationMatrix>::encode(ArgumentEncoder& encoder, const TransformationMatrix& transformationMatrix)
+void ArgumentCoder<TransformationMatrix>::encode(Encoder& encoder, const TransformationMatrix& transformationMatrix)
 {
     encoder << transformationMatrix.m11();
     encoder << transformationMatrix.m12();
@@ -208,7 +208,7 @@ bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder& decoder, Trans
     return true;
 }
 
-void ArgumentCoder<LinearTimingFunction>::encode(ArgumentEncoder& encoder, const LinearTimingFunction& timingFunction)
+void ArgumentCoder<LinearTimingFunction>::encode(Encoder& encoder, const LinearTimingFunction& timingFunction)
 {
     encoder.encodeEnum(timingFunction.type());
 }
@@ -219,7 +219,7 @@ bool ArgumentCoder<LinearTimingFunction>::decode(ArgumentDecoder&, LinearTimingF
     return true;
 }
 
-void ArgumentCoder<CubicBezierTimingFunction>::encode(ArgumentEncoder& encoder, const CubicBezierTimingFunction& timingFunction)
+void ArgumentCoder<CubicBezierTimingFunction>::encode(Encoder& encoder, const CubicBezierTimingFunction& timingFunction)
 {
     encoder.encodeEnum(timingFunction.type());
     
@@ -260,7 +260,7 @@ bool ArgumentCoder<CubicBezierTimingFunction>::decode(ArgumentDecoder& decoder, 
     return true;
 }
 
-void ArgumentCoder<StepsTimingFunction>::encode(ArgumentEncoder& encoder, const StepsTimingFunction& timingFunction)
+void ArgumentCoder<StepsTimingFunction>::encode(Encoder& encoder, const StepsTimingFunction& timingFunction)
 {
     encoder.encodeEnum(timingFunction.type());
     
@@ -285,7 +285,7 @@ bool ArgumentCoder<StepsTimingFunction>::decode(ArgumentDecoder& decoder, StepsT
     return true;
 }
 
-void ArgumentCoder<SpringTimingFunction>::encode(ArgumentEncoder& encoder, const SpringTimingFunction& timingFunction)
+void ArgumentCoder<SpringTimingFunction>::encode(Encoder& encoder, const SpringTimingFunction& timingFunction)
 {
     encoder.encodeEnum(timingFunction.type());
     
@@ -319,7 +319,7 @@ bool ArgumentCoder<SpringTimingFunction>::decode(ArgumentDecoder& decoder, Sprin
     return true;
 }
 
-void ArgumentCoder<FloatPoint>::encode(ArgumentEncoder& encoder, const FloatPoint& floatPoint)
+void ArgumentCoder<FloatPoint>::encode(Encoder& encoder, const FloatPoint& floatPoint)
 {
     SimpleArgumentCoder<FloatPoint>::encode(encoder, floatPoint);
 }
@@ -330,7 +330,7 @@ bool ArgumentCoder<FloatPoint>::decode(ArgumentDecoder& decoder, FloatPoint& flo
 }
 
 
-void ArgumentCoder<FloatPoint3D>::encode(ArgumentEncoder& encoder, const FloatPoint3D& floatPoint)
+void ArgumentCoder<FloatPoint3D>::encode(Encoder& encoder, const FloatPoint3D& floatPoint)
 {
     SimpleArgumentCoder<FloatPoint3D>::encode(encoder, floatPoint);
 }
@@ -341,7 +341,7 @@ bool ArgumentCoder<FloatPoint3D>::decode(ArgumentDecoder& decoder, FloatPoint3D&
 }
 
 
-void ArgumentCoder<FloatRect>::encode(ArgumentEncoder& encoder, const FloatRect& floatRect)
+void ArgumentCoder<FloatRect>::encode(Encoder& encoder, const FloatRect& floatRect)
 {
     SimpleArgumentCoder<FloatRect>::encode(encoder, floatRect);
 }
@@ -352,7 +352,7 @@ bool ArgumentCoder<FloatRect>::decode(ArgumentDecoder& decoder, FloatRect& float
 }
 
 
-void ArgumentCoder<FloatSize>::encode(ArgumentEncoder& encoder, const FloatSize& floatSize)
+void ArgumentCoder<FloatSize>::encode(Encoder& encoder, const FloatSize& floatSize)
 {
     SimpleArgumentCoder<FloatSize>::encode(encoder, floatSize);
 }
@@ -363,7 +363,7 @@ bool ArgumentCoder<FloatSize>::decode(ArgumentDecoder& decoder, FloatSize& float
 }
 
 
-void ArgumentCoder<FloatRoundedRect>::encode(ArgumentEncoder& encoder, const FloatRoundedRect& roundedRect)
+void ArgumentCoder<FloatRoundedRect>::encode(Encoder& encoder, const FloatRoundedRect& roundedRect)
 {
     SimpleArgumentCoder<FloatRoundedRect>::encode(encoder, roundedRect);
 }
@@ -374,7 +374,7 @@ bool ArgumentCoder<FloatRoundedRect>::decode(ArgumentDecoder& decoder, FloatRoun
 }
 
 #if PLATFORM(IOS)
-void ArgumentCoder<FloatQuad>::encode(ArgumentEncoder& encoder, const FloatQuad& floatQuad)
+void ArgumentCoder<FloatQuad>::encode(Encoder& encoder, const FloatQuad& floatQuad)
 {
     SimpleArgumentCoder<FloatQuad>::encode(encoder, floatQuad);
 }
@@ -384,7 +384,7 @@ bool ArgumentCoder<FloatQuad>::decode(ArgumentDecoder& decoder, FloatQuad& float
     return SimpleArgumentCoder<FloatQuad>::decode(decoder, floatQuad);
 }
 
-void ArgumentCoder<ViewportArguments>::encode(ArgumentEncoder& encoder, const ViewportArguments& viewportArguments)
+void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportArguments& viewportArguments)
 {
     SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
 }
@@ -396,7 +396,7 @@ bool ArgumentCoder<ViewportArguments>::decode(ArgumentDecoder& decoder, Viewport
 #endif // PLATFORM(IOS)
 
 
-void ArgumentCoder<IntPoint>::encode(ArgumentEncoder& encoder, const IntPoint& intPoint)
+void ArgumentCoder<IntPoint>::encode(Encoder& encoder, const IntPoint& intPoint)
 {
     SimpleArgumentCoder<IntPoint>::encode(encoder, intPoint);
 }
@@ -407,7 +407,7 @@ bool ArgumentCoder<IntPoint>::decode(ArgumentDecoder& decoder, IntPoint& intPoin
 }
 
 
-void ArgumentCoder<IntRect>::encode(ArgumentEncoder& encoder, const IntRect& intRect)
+void ArgumentCoder<IntRect>::encode(Encoder& encoder, const IntRect& intRect)
 {
     SimpleArgumentCoder<IntRect>::encode(encoder, intRect);
 }
@@ -418,7 +418,7 @@ bool ArgumentCoder<IntRect>::decode(ArgumentDecoder& decoder, IntRect& intRect)
 }
 
 
-void ArgumentCoder<IntSize>::encode(ArgumentEncoder& encoder, const IntSize& intSize)
+void ArgumentCoder<IntSize>::encode(Encoder& encoder, const IntSize& intSize)
 {
     SimpleArgumentCoder<IntSize>::encode(encoder, intSize);
 }
@@ -428,7 +428,7 @@ bool ArgumentCoder<IntSize>::decode(ArgumentDecoder& decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
-static void pathEncodeApplierFunction(ArgumentEncoder& encoder, const PathElement& element)
+static void pathEncodeApplierFunction(Encoder& encoder, const PathElement& element)
 {
     encoder.encodeEnum(element.type);
 
@@ -453,7 +453,7 @@ static void pathEncodeApplierFunction(ArgumentEncoder& encoder, const PathElemen
     }
 }
 
-void ArgumentCoder<Path>::encode(ArgumentEncoder& encoder, const Path& path)
+void ArgumentCoder<Path>::encode(Encoder& encoder, const Path& path)
 {
     uint64_t numPoints = 0;
     path.apply([&numPoints](const PathElement&) {
@@ -533,7 +533,7 @@ bool ArgumentCoder<Path>::decode(ArgumentDecoder& decoder, Path& path)
     return true;
 }
 
-void ArgumentCoder<RecentSearch>::encode(ArgumentEncoder& encoder, const RecentSearch& recentSearch)
+void ArgumentCoder<RecentSearch>::encode(Encoder& encoder, const RecentSearch& recentSearch)
 {
     encoder << recentSearch.string << recentSearch.time;
 }
@@ -550,11 +550,11 @@ bool ArgumentCoder<RecentSearch>::decode(ArgumentDecoder& decoder, RecentSearch&
 }
 
 template<> struct ArgumentCoder<Region::Span> {
-    static void encode(ArgumentEncoder&, const Region::Span&);
+    static void encode(Encoder&, const Region::Span&);
     static bool decode(ArgumentDecoder&, Region::Span&);
 };
 
-void ArgumentCoder<Region::Span>::encode(ArgumentEncoder& encoder, const Region::Span& span)
+void ArgumentCoder<Region::Span>::encode(Encoder& encoder, const Region::Span& span)
 {
     encoder << span.y;
     encoder << (uint64_t)span.segmentIndex;
@@ -573,7 +573,7 @@ bool ArgumentCoder<Region::Span>::decode(ArgumentDecoder& decoder, Region::Span&
     return true;
 }
 
-void ArgumentCoder<Region>::encode(ArgumentEncoder& encoder, const Region& region)
+void ArgumentCoder<Region>::encode(Encoder& encoder, const Region& region)
 {
     encoder.encode(region.shapeSegments());
     encoder.encode(region.shapeSpans());
@@ -599,7 +599,7 @@ bool ArgumentCoder<Region>::decode(ArgumentDecoder& decoder, Region& region)
     return true;
 }
 
-void ArgumentCoder<Length>::encode(ArgumentEncoder& encoder, const Length& length)
+void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 {
     SimpleArgumentCoder<Length>::encode(encoder, length);
 }
@@ -610,7 +610,7 @@ bool ArgumentCoder<Length>::decode(ArgumentDecoder& decoder, Length& length)
 }
 
 
-void ArgumentCoder<ViewportAttributes>::encode(ArgumentEncoder& encoder, const ViewportAttributes& viewportAttributes)
+void ArgumentCoder<ViewportAttributes>::encode(Encoder& encoder, const ViewportAttributes& viewportAttributes)
 {
     SimpleArgumentCoder<ViewportAttributes>::encode(encoder, viewportAttributes);
 }
@@ -621,7 +621,7 @@ bool ArgumentCoder<ViewportAttributes>::decode(ArgumentDecoder& decoder, Viewpor
 }
 
 
-void ArgumentCoder<MimeClassInfo>::encode(ArgumentEncoder& encoder, const MimeClassInfo& mimeClassInfo)
+void ArgumentCoder<MimeClassInfo>::encode(Encoder& encoder, const MimeClassInfo& mimeClassInfo)
 {
     encoder << mimeClassInfo.type << mimeClassInfo.desc << mimeClassInfo.extensions;
 }
@@ -639,7 +639,7 @@ bool ArgumentCoder<MimeClassInfo>::decode(ArgumentDecoder& decoder, MimeClassInf
 }
 
 
-void ArgumentCoder<PluginInfo>::encode(ArgumentEncoder& encoder, const PluginInfo& pluginInfo)
+void ArgumentCoder<PluginInfo>::encode(Encoder& encoder, const PluginInfo& pluginInfo)
 {
     encoder << pluginInfo.name;
     encoder << pluginInfo.file;
@@ -677,7 +677,7 @@ bool ArgumentCoder<PluginInfo>::decode(ArgumentDecoder& decoder, PluginInfo& plu
     return true;
 }
 
-void ArgumentCoder<AuthenticationChallenge>::encode(ArgumentEncoder& encoder, const AuthenticationChallenge& challenge)
+void ArgumentCoder<AuthenticationChallenge>::encode(Encoder& encoder, const AuthenticationChallenge& challenge)
 {
     encoder << challenge.protectionSpace() << challenge.proposedCredential() << challenge.previousFailureCount() << challenge.failureResponse() << challenge.error();
 }
@@ -709,7 +709,7 @@ bool ArgumentCoder<AuthenticationChallenge>::decode(ArgumentDecoder& decoder, Au
 }
 
 
-void ArgumentCoder<ProtectionSpace>::encode(ArgumentEncoder& encoder, const ProtectionSpace& space)
+void ArgumentCoder<ProtectionSpace>::encode(Encoder& encoder, const ProtectionSpace& space)
 {
     if (space.encodingRequiresPlatformData()) {
         encoder << true;
@@ -756,7 +756,7 @@ bool ArgumentCoder<ProtectionSpace>::decode(ArgumentDecoder& decoder, Protection
     return true;
 }
 
-void ArgumentCoder<Credential>::encode(ArgumentEncoder& encoder, const Credential& credential)
+void ArgumentCoder<Credential>::encode(Encoder& encoder, const Credential& credential)
 {
     if (credential.encodingRequiresPlatformData()) {
         encoder << true;
@@ -794,7 +794,7 @@ bool ArgumentCoder<Credential>::decode(ArgumentDecoder& decoder, Credential& cre
     return true;
 }
 
-static void encodeImage(ArgumentEncoder& encoder, Image& image)
+static void encodeImage(Encoder& encoder, Image& image)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image.size()), ShareableBitmap::SupportsAlpha);
     bitmap->createGraphicsContext()->drawImage(image, IntPoint());
@@ -820,7 +820,7 @@ static bool decodeImage(ArgumentDecoder& decoder, RefPtr<Image>& image)
     return true;
 }
 
-static void encodeOptionalImage(ArgumentEncoder& encoder, Image* image)
+static void encodeOptionalImage(Encoder& encoder, Image* image)
 {
     bool hasImage = !!image;
     encoder << hasImage;
@@ -844,7 +844,7 @@ static bool decodeOptionalImage(ArgumentDecoder& decoder, RefPtr<Image>& image)
 }
 
 #if !PLATFORM(IOS)
-void ArgumentCoder<Cursor>::encode(ArgumentEncoder& encoder, const Cursor& cursor)
+void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
 {
     encoder.encodeEnum(cursor.type());
         
@@ -916,7 +916,7 @@ bool ArgumentCoder<Cursor>::decode(ArgumentDecoder& decoder, Cursor& cursor)
 }
 #endif
 
-void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encode(Encoder& encoder, const ResourceRequest& resourceRequest)
 {
 #if ENABLE(CACHE_PARTITIONING)
     encoder << resourceRequest.cachePartition();
@@ -956,7 +956,7 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
     return resourceRequest.decodeWithoutPlatformData(decoder);
 }
 
-void ArgumentCoder<ResourceError>::encode(ArgumentEncoder& encoder, const ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError& resourceError)
 {
     encodePlatformData(encoder, resourceError);
 }
@@ -968,7 +968,7 @@ bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder& decoder, ResourceErro
 
 #if PLATFORM(IOS)
 
-void ArgumentCoder<SelectionRect>::encode(ArgumentEncoder& encoder, const SelectionRect& selectionRect)
+void ArgumentCoder<SelectionRect>::encode(Encoder& encoder, const SelectionRect& selectionRect)
 {
     encoder << selectionRect.rect();
     encoder << static_cast<uint32_t>(selectionRect.direction());
@@ -1043,7 +1043,7 @@ bool ArgumentCoder<SelectionRect>::decode(ArgumentDecoder& decoder, SelectionRec
 
 #endif
 
-void ArgumentCoder<WindowFeatures>::encode(ArgumentEncoder& encoder, const WindowFeatures& windowFeatures)
+void ArgumentCoder<WindowFeatures>::encode(Encoder& encoder, const WindowFeatures& windowFeatures)
 {
     encoder << windowFeatures.x;
     encoder << windowFeatures.y;
@@ -1089,7 +1089,7 @@ bool ArgumentCoder<WindowFeatures>::decode(ArgumentDecoder& decoder, WindowFeatu
 }
 
 
-void ArgumentCoder<Color>::encode(ArgumentEncoder& encoder, const Color& color)
+void ArgumentCoder<Color>::encode(Encoder& encoder, const Color& color)
 {
     if (!color.isValid()) {
         encoder << false;
@@ -1120,7 +1120,7 @@ bool ArgumentCoder<Color>::decode(ArgumentDecoder& decoder, Color& color)
 }
 
 
-void ArgumentCoder<CompositionUnderline>::encode(ArgumentEncoder& encoder, const CompositionUnderline& underline)
+void ArgumentCoder<CompositionUnderline>::encode(Encoder& encoder, const CompositionUnderline& underline)
 {
     encoder << underline.startOffset;
     encoder << underline.endOffset;
@@ -1143,7 +1143,7 @@ bool ArgumentCoder<CompositionUnderline>::decode(ArgumentDecoder& decoder, Compo
 }
 
 
-void ArgumentCoder<Cookie>::encode(ArgumentEncoder& encoder, const Cookie& cookie)
+void ArgumentCoder<Cookie>::encode(Encoder& encoder, const Cookie& cookie)
 {
     encoder << cookie.name;
     encoder << cookie.value;
@@ -1177,7 +1177,7 @@ bool ArgumentCoder<Cookie>::decode(ArgumentDecoder& decoder, Cookie& cookie)
     return true;
 }
 
-void ArgumentCoder<DatabaseDetails>::encode(ArgumentEncoder& encoder, const DatabaseDetails& details)
+void ArgumentCoder<DatabaseDetails>::encode(Encoder& encoder, const DatabaseDetails& details)
 {
     encoder << details.name();
     encoder << details.displayName();
@@ -1219,7 +1219,7 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder& decoder, DatabaseDe
 
 #if PLATFORM(IOS)
 
-void ArgumentCoder<Highlight>::encode(ArgumentEncoder& encoder, const Highlight& highlight)
+void ArgumentCoder<Highlight>::encode(Encoder& encoder, const Highlight& highlight)
 {
     encoder << static_cast<uint32_t>(highlight.type);
     encoder << highlight.usePageCoordinates;
@@ -1255,7 +1255,7 @@ bool ArgumentCoder<Highlight>::decode(ArgumentDecoder& decoder, Highlight& highl
     return true;
 }
 
-static void encodeSharedBuffer(ArgumentEncoder& encoder, SharedBuffer* buffer)
+static void encodeSharedBuffer(Encoder& encoder, SharedBuffer* buffer)
 {
     SharedMemory::Handle handle;
     encoder << (buffer ? static_cast<uint64_t>(buffer->size()): 0);
@@ -1285,7 +1285,7 @@ static bool decodeSharedBuffer(ArgumentDecoder& decoder, RefPtr<SharedBuffer>& b
     return true;
 }
 
-void ArgumentCoder<PasteboardWebContent>::encode(ArgumentEncoder& encoder, const PasteboardWebContent& content)
+void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const PasteboardWebContent& content)
 {
     encoder << content.canSmartCopyOrDelete;
     encoder << content.dataInStringFormat;
@@ -1324,7 +1324,7 @@ bool ArgumentCoder<PasteboardWebContent>::decode(ArgumentDecoder& decoder, Paste
     return true;
 }
 
-void ArgumentCoder<PasteboardImage>::encode(ArgumentEncoder& encoder, const PasteboardImage& pasteboardImage)
+void ArgumentCoder<PasteboardImage>::encode(Encoder& encoder, const PasteboardImage& pasteboardImage)
 {
     encodeOptionalImage(encoder, pasteboardImage.image.get());
     encoder << pasteboardImage.url.url;
@@ -1351,7 +1351,7 @@ bool ArgumentCoder<PasteboardImage>::decode(ArgumentDecoder& decoder, Pasteboard
 
 #endif
 
-void ArgumentCoder<DictationAlternative>::encode(ArgumentEncoder& encoder, const DictationAlternative& dictationAlternative)
+void ArgumentCoder<DictationAlternative>::encode(Encoder& encoder, const DictationAlternative& dictationAlternative)
 {
     encoder << dictationAlternative.rangeStart;
     encoder << dictationAlternative.rangeLength;
@@ -1370,7 +1370,7 @@ bool ArgumentCoder<DictationAlternative>::decode(ArgumentDecoder& decoder, Dicta
 }
 
 
-void ArgumentCoder<FileChooserSettings>::encode(ArgumentEncoder& encoder, const FileChooserSettings& settings)
+void ArgumentCoder<FileChooserSettings>::encode(Encoder& encoder, const FileChooserSettings& settings)
 {
     encoder << settings.allowsMultipleFiles;
     encoder << settings.acceptMIMETypes;
@@ -1397,7 +1397,7 @@ bool ArgumentCoder<FileChooserSettings>::decode(ArgumentDecoder& decoder, FileCh
 }
 
 
-void ArgumentCoder<GrammarDetail>::encode(ArgumentEncoder& encoder, const GrammarDetail& detail)
+void ArgumentCoder<GrammarDetail>::encode(Encoder& encoder, const GrammarDetail& detail)
 {
     encoder << detail.location;
     encoder << detail.length;
@@ -1419,7 +1419,7 @@ bool ArgumentCoder<GrammarDetail>::decode(ArgumentDecoder& decoder, GrammarDetai
     return true;
 }
 
-void ArgumentCoder<TextCheckingRequestData>::encode(ArgumentEncoder& encoder, const TextCheckingRequestData& request)
+void ArgumentCoder<TextCheckingRequestData>::encode(Encoder& encoder, const TextCheckingRequestData& request)
 {
     encoder << request.sequence();
     encoder << request.text();
@@ -1449,7 +1449,7 @@ bool ArgumentCoder<TextCheckingRequestData>::decode(ArgumentDecoder& decoder, Te
     return true;
 }
 
-void ArgumentCoder<TextCheckingResult>::encode(ArgumentEncoder& encoder, const TextCheckingResult& result)
+void ArgumentCoder<TextCheckingResult>::encode(Encoder& encoder, const TextCheckingResult& result)
 {
     encoder.encodeEnum(result.type);
     encoder << result.location;
@@ -1473,7 +1473,7 @@ bool ArgumentCoder<TextCheckingResult>::decode(ArgumentDecoder& decoder, TextChe
     return true;
 }
 
-void ArgumentCoder<URL>::encode(ArgumentEncoder& encoder, const URL& result)
+void ArgumentCoder<URL>::encode(Encoder& encoder, const URL& result)
 {
     encoder << result.string();
 }
@@ -1487,7 +1487,7 @@ bool ArgumentCoder<URL>::decode(ArgumentDecoder& decoder, URL& result)
     return true;
 }
 
-void ArgumentCoder<UserStyleSheet>::encode(ArgumentEncoder& encoder, const UserStyleSheet& userStyleSheet)
+void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleSheet& userStyleSheet)
 {
     encoder << userStyleSheet.source();
     encoder << userStyleSheet.url();
@@ -1528,7 +1528,7 @@ bool ArgumentCoder<UserStyleSheet>::decode(ArgumentDecoder& decoder, UserStyleSh
 }
 
 #if ENABLE(MEDIA_SESSION)
-void ArgumentCoder<MediaSessionMetadata>::encode(ArgumentEncoder& encoder, const MediaSessionMetadata& result)
+void ArgumentCoder<MediaSessionMetadata>::encode(Encoder& encoder, const MediaSessionMetadata& result)
 {
     encoder << result.artist();
     encoder << result.album();
@@ -1553,7 +1553,7 @@ bool ArgumentCoder<MediaSessionMetadata>::decode(ArgumentDecoder& decoder, Media
 }
 #endif
 
-void ArgumentCoder<UserScript>::encode(ArgumentEncoder& encoder, const UserScript& userScript)
+void ArgumentCoder<UserScript>::encode(Encoder& encoder, const UserScript& userScript)
 {
     encoder << userScript.source();
     encoder << userScript.url();
@@ -1593,7 +1593,7 @@ bool ArgumentCoder<UserScript>::decode(ArgumentDecoder& decoder, UserScript& use
     return true;
 }
 
-void ArgumentCoder<ScrollableAreaParameters>::encode(ArgumentEncoder& encoder, const ScrollableAreaParameters& parameters)
+void ArgumentCoder<ScrollableAreaParameters>::encode(Encoder& encoder, const ScrollableAreaParameters& parameters)
 {
     encoder.encodeEnum(parameters.horizontalScrollElasticity);
     encoder.encodeEnum(parameters.verticalScrollElasticity);
@@ -1625,7 +1625,7 @@ bool ArgumentCoder<ScrollableAreaParameters>::decode(ArgumentDecoder& decoder, S
     return true;
 }
 
-void ArgumentCoder<FixedPositionViewportConstraints>::encode(ArgumentEncoder& encoder, const FixedPositionViewportConstraints& viewportConstraints)
+void ArgumentCoder<FixedPositionViewportConstraints>::encode(Encoder& encoder, const FixedPositionViewportConstraints& viewportConstraints)
 {
     encoder << viewportConstraints.alignmentOffset();
     encoder << viewportConstraints.anchorEdges();
@@ -1662,7 +1662,7 @@ bool ArgumentCoder<FixedPositionViewportConstraints>::decode(ArgumentDecoder& de
     return true;
 }
 
-void ArgumentCoder<StickyPositionViewportConstraints>::encode(ArgumentEncoder& encoder, const StickyPositionViewportConstraints& viewportConstraints)
+void ArgumentCoder<StickyPositionViewportConstraints>::encode(Encoder& encoder, const StickyPositionViewportConstraints& viewportConstraints)
 {
     encoder << viewportConstraints.alignmentOffset();
     encoder << viewportConstraints.anchorEdges();
@@ -1746,7 +1746,7 @@ bool ArgumentCoder<StickyPositionViewportConstraints>::decode(ArgumentDecoder& d
 }
 
 #if !USE(COORDINATED_GRAPHICS)
-void ArgumentCoder<FilterOperation>::encode(ArgumentEncoder& encoder, const FilterOperation& filter)
+void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperation& filter)
 {
     encoder.encodeEnum(filter.type());
 
@@ -1853,7 +1853,7 @@ bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperation>& fi
 }
 
 
-void ArgumentCoder<FilterOperations>::encode(ArgumentEncoder& encoder, const FilterOperations& filters)
+void ArgumentCoder<FilterOperations>::encode(Encoder& encoder, const FilterOperations& filters)
 {
     encoder << static_cast<uint64_t>(filters.size());
 
@@ -1878,7 +1878,7 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
 }
 #endif // !USE(COORDINATED_GRAPHICS)
 
-void ArgumentCoder<SessionID>::encode(ArgumentEncoder& encoder, const SessionID& sessionID)
+void ArgumentCoder<SessionID>::encode(Encoder& encoder, const SessionID& sessionID)
 {
     encoder << sessionID.sessionID();
 }
@@ -1894,7 +1894,7 @@ bool ArgumentCoder<SessionID>::decode(ArgumentDecoder& decoder, SessionID& sessi
     return true;
 }
 
-void ArgumentCoder<BlobPart>::encode(ArgumentEncoder& encoder, const BlobPart& blobPart)
+void ArgumentCoder<BlobPart>::encode(Encoder& encoder, const BlobPart& blobPart)
 {
     encoder << static_cast<uint32_t>(blobPart.type());
     switch (blobPart.type()) {
@@ -1935,7 +1935,7 @@ bool ArgumentCoder<BlobPart>::decode(ArgumentDecoder& decoder, BlobPart& blobPar
     return true;
 }
 
-void ArgumentCoder<TextIndicatorData>::encode(ArgumentEncoder& encoder, const TextIndicatorData& textIndicatorData)
+void ArgumentCoder<TextIndicatorData>::encode(Encoder& encoder, const TextIndicatorData& textIndicatorData)
 {
     encoder << textIndicatorData.selectionRectInRootViewCoordinates;
     encoder << textIndicatorData.textBoundingRectInRootViewCoordinates;
@@ -1980,7 +1980,7 @@ bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndi
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void ArgumentCoder<MediaPlaybackTargetContext>::encode(ArgumentEncoder& encoder, const MediaPlaybackTargetContext& target)
+void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const MediaPlaybackTargetContext& target)
 {
     bool hasPlatformData = target.encodingRequiresPlatformData();
     encoder << hasPlatformData;
@@ -2026,7 +2026,7 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(ArgumentDecoder& decoder,
 }
 #endif
 
-void ArgumentCoder<DictionaryPopupInfo>::encode(IPC::ArgumentEncoder& encoder, const DictionaryPopupInfo& info)
+void ArgumentCoder<DictionaryPopupInfo>::encode(IPC::Encoder& encoder, const DictionaryPopupInfo& info)
 {
     encoder << info.origin;
     encoder << info.textIndicator;
@@ -2074,7 +2074,7 @@ bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::ArgumentDecoder& decoder, D
     return true;
 }
 
-void ArgumentCoder<ExceptionDetails>::encode(IPC::ArgumentEncoder& encoder, const ExceptionDetails& info)
+void ArgumentCoder<ExceptionDetails>::encode(IPC::Encoder& encoder, const ExceptionDetails& info)
 {
     encoder << info.message;
     encoder << info.lineNumber;
@@ -2099,7 +2099,7 @@ bool ArgumentCoder<ExceptionDetails>::decode(IPC::ArgumentDecoder& decoder, Exce
     return true;
 }
 
-void ArgumentCoder<ResourceLoadStatistics>::encode(ArgumentEncoder& encoder, const WebCore::ResourceLoadStatistics& statistics)
+void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCore::ResourceLoadStatistics& statistics)
 {
     encoder << statistics.highLevelDomain;
     

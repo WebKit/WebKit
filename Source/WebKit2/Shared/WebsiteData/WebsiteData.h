@@ -33,7 +33,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -46,7 +46,7 @@ struct WebsiteData {
         WebsiteDataType type;
         uint64_t size;
 
-        void encode(IPC::ArgumentEncoder&) const;
+        void encode(IPC::Encoder&) const;
         static bool decode(IPC::ArgumentDecoder&, WebsiteData::Entry&);
     };
 
@@ -57,7 +57,7 @@ struct WebsiteData {
     HashSet<String> hostNamesWithPluginData;
 #endif
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebsiteData&);
 };
 

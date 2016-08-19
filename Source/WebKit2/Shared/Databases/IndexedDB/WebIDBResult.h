@@ -54,7 +54,7 @@ public:
     const WebCore::IDBResultData& resultData() const { return m_resultData; }
     const SandboxExtension::HandleArray& handles() const { return m_handles; }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebIDBResult&);
 
 private:

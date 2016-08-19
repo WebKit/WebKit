@@ -27,7 +27,7 @@
 #include "LayerTreeContext.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 namespace WebKit {
 
@@ -40,7 +40,7 @@ LayerTreeContext::~LayerTreeContext()
 {
 }
 
-void LayerTreeContext::encode(IPC::ArgumentEncoder& encoder) const
+void LayerTreeContext::encode(IPC::Encoder& encoder) const
 {
     encoder << contextID;
 }

@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void WebUserScriptData::encode(IPC::ArgumentEncoder& encoder) const
+void WebUserScriptData::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
     encoder << worldIdentifier;
@@ -48,7 +48,7 @@ bool WebUserScriptData::decode(IPC::ArgumentDecoder& decoder, WebUserScriptData&
     return true;
 }
 
-void WebUserStyleSheetData::encode(IPC::ArgumentEncoder& encoder) const
+void WebUserStyleSheetData::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
     encoder << worldIdentifier;
@@ -67,7 +67,7 @@ bool WebUserStyleSheetData::decode(IPC::ArgumentDecoder& decoder, WebUserStyleSh
 }
 
 
-void WebScriptMessageHandlerData::encode(IPC::ArgumentEncoder& encoder) const
+void WebScriptMessageHandlerData::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
     encoder << worldIdentifier;

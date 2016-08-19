@@ -632,7 +632,7 @@ void WebProcess::terminate()
     ChildProcess::terminate();
 }
 
-void WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
         return;

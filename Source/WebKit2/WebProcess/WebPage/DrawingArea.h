@@ -153,7 +153,7 @@ protected:
 private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // Message handlers.
     // FIXME: These should be pure virtual.

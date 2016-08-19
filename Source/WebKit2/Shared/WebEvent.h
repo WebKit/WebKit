@@ -38,7 +38,7 @@
 
 namespace IPC {
     class ArgumentDecoder;
-    class ArgumentEncoder;
+    class Encoder;
 }
 
 #if USE(APPKIT)
@@ -111,7 +111,7 @@ protected:
 
     WebEvent(Type, Modifiers, double timestamp);
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebEvent&);
 
 private:
@@ -154,7 +154,7 @@ public:
     double force() const { return m_force; }
     SyntheticClickType syntheticClickType() const { return static_cast<SyntheticClickType>(m_syntheticClickType); }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebMouseEvent&);
 
 private:
@@ -216,7 +216,7 @@ public:
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebWheelEvent&);
 
 private:
@@ -269,7 +269,7 @@ public:
     bool isKeypad() const { return m_isKeypad; }
     bool isSystemKey() const { return m_isSystemKey; }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebKeyboardEvent&);
 
     static bool isKeyboardEventType(Type);
@@ -324,7 +324,7 @@ public:
     double force() const { return m_force; }
 #endif
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebPlatformTouchPoint&);
 
 private:
@@ -367,7 +367,7 @@ public:
 
     bool allTouchPointsAreReleased() const;
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebTouchEvent&);
     
 private:
@@ -411,7 +411,7 @@ public:
 
     void setState(TouchPointState state) { m_state = state; }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebPlatformTouchPoint&);
 
 private:
@@ -434,7 +434,7 @@ public:
 
     bool allTouchPointsAreReleased() const;
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebTouchEvent&);
   
 private:

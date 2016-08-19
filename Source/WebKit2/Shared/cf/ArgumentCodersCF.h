@@ -36,68 +36,68 @@
 
 namespace IPC {
 
-class ArgumentEncoder;
+class Encoder;
 class ArgumentDecoder;
 
 // CFArrayRef
-void encode(ArgumentEncoder&, CFArrayRef);
+void encode(Encoder&, CFArrayRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFArrayRef>& result);
 
 // CFBooleanRef
-void encode(ArgumentEncoder&, CFBooleanRef);
+void encode(Encoder&, CFBooleanRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFBooleanRef>& result);
 
 // CFDataRef
-void encode(ArgumentEncoder&, CFDataRef);
+void encode(Encoder&, CFDataRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFDataRef>& result);
 
 // CFDateRef
-void encode(ArgumentEncoder&, CFDateRef);
+void encode(Encoder&, CFDateRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFDateRef>& result);
 
 // CFDictionaryRef
-void encode(ArgumentEncoder&, CFDictionaryRef);
+void encode(Encoder&, CFDictionaryRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFDictionaryRef>& result);
 
 // CFNumberRef
-void encode(ArgumentEncoder&, CFNumberRef);
+void encode(Encoder&, CFNumberRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFNumberRef>& result);
 
 // CFStringRef
-void encode(ArgumentEncoder&, CFStringRef);
+void encode(Encoder&, CFStringRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFStringRef>& result);
 
 // CFTypeRef
-void encode(ArgumentEncoder&, CFTypeRef);
+void encode(Encoder&, CFTypeRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFTypeRef>& result);
 
 // CFURLRef
-void encode(ArgumentEncoder&, CFURLRef);
+void encode(Encoder&, CFURLRef);
 bool decode(ArgumentDecoder&, RetainPtr<CFURLRef>& result);
 
 // SecCertificateRef
-void encode(ArgumentEncoder&, SecCertificateRef);
+void encode(Encoder&, SecCertificateRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecCertificateRef>& result);
 
 // SecIdentityRef
-void encode(ArgumentEncoder&, SecIdentityRef);
+void encode(Encoder&, SecIdentityRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecIdentityRef>& result);
 
 #if HAVE(SEC_KEYCHAIN)
 // SecKeychainItemRef
-void encode(ArgumentEncoder&, SecKeychainItemRef);
+void encode(Encoder&, SecKeychainItemRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecKeychainItemRef>& result);
 #endif
 
 #if HAVE(SEC_ACCESS_CONTROL)
 // SecAccessControlRef
-void encode(ArgumentEncoder&, SecAccessControlRef);
+void encode(Encoder&, SecAccessControlRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecAccessControlRef>& result);
 #endif
 
 #if HAVE(SEC_TRUST_SERIALIZATION)
 // SecTrustRef
-void encode(ArgumentEncoder&, SecTrustRef);
+void encode(Encoder&, SecTrustRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecTrustRef>&);
 #endif
 

@@ -38,7 +38,7 @@ const WTF::String& Error::webKitErrorDomain()
     return webKitErrorDomainString;
 }
 
-void Error::encode(IPC::ArgumentEncoder& encoder) const
+void Error::encode(IPC::Encoder& encoder) const
 {
     encoder << platformError();
 }

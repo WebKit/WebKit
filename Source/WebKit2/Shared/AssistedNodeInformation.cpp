@@ -32,7 +32,7 @@
 namespace WebKit {
 
 #if PLATFORM(IOS)
-void OptionItem::encode(IPC::ArgumentEncoder& encoder) const
+void OptionItem::encode(IPC::Encoder& encoder) const
 {
     encoder << text;
     encoder << isGroup;
@@ -61,7 +61,7 @@ bool OptionItem::decode(IPC::ArgumentDecoder& decoder, OptionItem& result)
     return true;
 }
 
-void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
+void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
 {
     encoder << elementRect;
     encoder << selectionRect;

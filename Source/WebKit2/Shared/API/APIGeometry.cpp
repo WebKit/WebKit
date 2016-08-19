@@ -27,11 +27,11 @@
 #include "APIGeometry.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 namespace API {
 
-void Point::encode(IPC::ArgumentEncoder& encoder) const
+void Point::encode(IPC::Encoder& encoder) const
 {
     encoder << m_point.x;
     encoder << m_point.y;
@@ -50,7 +50,7 @@ bool Point::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
 }
 
 
-void Size::encode(IPC::ArgumentEncoder& encoder) const
+void Size::encode(IPC::Encoder& encoder) const
 {
     encoder << m_size.width;
     encoder << m_size.height;
@@ -69,7 +69,7 @@ bool Size::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
 }
 
 
-void Rect::encode(IPC::ArgumentEncoder& encoder) const
+void Rect::encode(IPC::Encoder& encoder) const
 {
     encoder << m_rect.origin.x;
     encoder << m_rect.origin.y;

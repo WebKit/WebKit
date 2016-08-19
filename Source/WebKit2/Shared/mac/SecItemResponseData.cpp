@@ -41,7 +41,7 @@ SecItemResponseData::SecItemResponseData(OSStatus resultCode, CFTypeRef resultOb
 {
 }
 
-void SecItemResponseData::encode(IPC::ArgumentEncoder& encoder) const
+void SecItemResponseData::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<int64_t>(m_resultCode);
     encoder << static_cast<bool>(m_resultObject.get());

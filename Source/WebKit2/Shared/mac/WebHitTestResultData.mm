@@ -30,14 +30,14 @@
 
 #import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
-#import "ArgumentEncoder.h"
+#import "Encoder.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/TextIndicator.h>
 
 namespace WebKit {
 
-void WebHitTestResultData::platformEncode(IPC::ArgumentEncoder& encoder) const
+void WebHitTestResultData::platformEncode(IPC::Encoder& encoder) const
 {
     bool hasActionContext = detectedDataActionContext;
     encoder << hasActionContext;

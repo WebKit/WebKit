@@ -30,7 +30,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
-class ArgumentEncoder;
+class Encoder;
 class ArgumentDecoder;
 }
 
@@ -57,7 +57,7 @@ public:
     const API::Dictionary* encodedInvocation() const { return m_encodedInvocation.get(); }
     const ReplyInfo* replyInfo() const { return m_replyInfo.get(); }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RemoteObjectInvocation&);
 
 private:

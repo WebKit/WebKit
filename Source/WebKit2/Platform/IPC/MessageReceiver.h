@@ -30,9 +30,9 @@
 
 namespace IPC {
 
-class MessageDecoder;
-class MessageEncoder;
 class Connection;
+class Encoder;
+class MessageDecoder;
 
 class MessageReceiver {
 public:
@@ -42,7 +42,7 @@ public:
     }
 
     virtual void didReceiveMessage(Connection&, MessageDecoder&) = 0;
-    virtual void didReceiveSyncMessage(Connection&, MessageDecoder&, std::unique_ptr<MessageEncoder>&)
+    virtual void didReceiveSyncMessage(Connection&, MessageDecoder&, std::unique_ptr<Encoder>&)
     {
         ASSERT_NOT_REACHED();
     }

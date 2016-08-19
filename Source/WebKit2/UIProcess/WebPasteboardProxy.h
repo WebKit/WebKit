@@ -54,7 +54,7 @@ private:
     WebPasteboardProxy();
 
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
 
 #if PLATFORM(IOS)
     void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&);

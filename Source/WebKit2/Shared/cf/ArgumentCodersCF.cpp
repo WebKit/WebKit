@@ -27,8 +27,8 @@
 #include "ArgumentCodersCF.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
 #include "DataReference.h"
+#include "Encoder.h"
 #include <WebCore/CFURLExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
@@ -142,7 +142,7 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
     return Unknown;
 }
 
-void encode(ArgumentEncoder& encoder, CFTypeRef typeRef)
+void encode(Encoder& encoder, CFTypeRef typeRef)
 {
     CFType type = typeFromCFTypeRef(typeRef);
     encoder.encodeEnum(type);
@@ -322,7 +322,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
     return false;
 }
 
-void encode(ArgumentEncoder& encoder, CFArrayRef array)
+void encode(Encoder& encoder, CFArrayRef array)
 {
     CFIndex size = CFArrayGetCount(array);
     Vector<CFTypeRef, 32> values(size);
@@ -358,7 +358,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFArrayRef>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, CFBooleanRef boolean)
+void encode(Encoder& encoder, CFBooleanRef boolean)
 {
     encoder << static_cast<bool>(CFBooleanGetValue(boolean));
 }
@@ -373,7 +373,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFBooleanRef>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, CFDataRef data)
+void encode(Encoder& encoder, CFDataRef data)
 {
     CFIndex length = CFDataGetLength(data);
     const UInt8* bytePtr = CFDataGetBytePtr(data);
@@ -391,7 +391,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFDataRef>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, CFDateRef date)
+void encode(Encoder& encoder, CFDateRef date)
 {
     encoder << static_cast<double>(CFDateGetAbsoluteTime(date));
 }
@@ -406,7 +406,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFDateRef>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, CFDictionaryRef dictionary)
+void encode(Encoder& encoder, CFDictionaryRef dictionary)
 {
     CFIndex size = CFDictionaryGetCount(dictionary);
     Vector<CFTypeRef, 32> keys(size);
@@ -454,7 +454,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFDictionaryRef>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, CFNumberRef number)
+void encode(Encoder& encoder, CFNumberRef number)
 {
     CFNumberType numberType = CFNumberGetType(number);
 
@@ -535,7 +535,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFNumberRef>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, CFStringRef string)
+void encode(Encoder& encoder, CFStringRef string)
 {
     CFIndex length = CFStringGetLength(string);
     CFStringEncoding encoding = CFStringGetFastestEncoding(string);
@@ -575,7 +575,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFStringRef>& result)
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, CFURLRef url)
+void encode(Encoder& encoder, CFURLRef url)
 {
     CFURLRef baseURL = CFURLGetBaseURL(url);
     encoder << static_cast<bool>(baseURL);
@@ -618,7 +618,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
     return result;
 }
 
-void encode(ArgumentEncoder& encoder, SecCertificateRef certificate)
+void encode(Encoder& encoder, SecCertificateRef certificate)
 {
     RetainPtr<CFDataRef> data = adoptCF(SecCertificateCopyData(certificate));
     encode(encoder, data.get());
@@ -659,7 +659,7 @@ static CFDataRef copyPersistentRef(SecKeyRef key)
 }
 #endif
 
-void encode(ArgumentEncoder& encoder, SecIdentityRef identity)
+void encode(Encoder& encoder, SecIdentityRef identity)
 {
     SecCertificateRef certificate = nullptr;
     SecIdentityCopyCertificate(identity, &certificate);
@@ -719,7 +719,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecIdentityRef>& result)
 }
 
 #if HAVE(SEC_KEYCHAIN)
-void encode(ArgumentEncoder& encoder, SecKeychainItemRef keychainItem)
+void encode(Encoder& encoder, SecKeychainItemRef keychainItem)
 {
     CFDataRef data;
     if (SecKeychainItemCreatePersistentReference(keychainItem, &data) == errSecSuccess) {
@@ -744,7 +744,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecKeychainItemRef>& result)
 #endif
 
 #if HAVE(SEC_ACCESS_CONTROL)
-void encode(ArgumentEncoder& encoder, SecAccessControlRef accessControl)
+void encode(Encoder& encoder, SecAccessControlRef accessControl)
 {
     RetainPtr<CFDataRef> data = adoptCF(SecAccessControlCopyData(accessControl));
     if (data)
@@ -766,7 +766,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecAccessControlRef>& result)
 #endif
 
 #if HAVE(SEC_TRUST_SERIALIZATION)
-void encode(ArgumentEncoder& encoder, SecTrustRef trust)
+void encode(Encoder& encoder, SecTrustRef trust)
 {
     auto data = adoptCF(SecTrustSerialize(trust, nullptr));
     if (!data) {

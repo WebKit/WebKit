@@ -45,7 +45,7 @@ static BoolOverridesMap& boolTestRunnerOverridesMap()
     return map;
 }
 
-void WebPreferencesStore::Value::encode(IPC::ArgumentEncoder& encoder) const
+void WebPreferencesStore::Value::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(m_type);
     
@@ -115,7 +115,7 @@ WebPreferencesStore::WebPreferencesStore()
 {
 }
 
-void WebPreferencesStore::encode(IPC::ArgumentEncoder& encoder) const
+void WebPreferencesStore::encode(IPC::Encoder& encoder) const
 {
     encoder << m_values;
     encoder << m_overridenDefaults;

@@ -66,7 +66,7 @@ struct InteractionInformationAtPosition {
     RetainPtr<NSArray> dataDetectorResults;
 #endif
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, InteractionInformationAtPosition&);
 };
 

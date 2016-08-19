@@ -96,7 +96,7 @@ WebKeyboardEvent::~WebKeyboardEvent()
 {
 }
 
-void WebKeyboardEvent::encode(IPC::ArgumentEncoder& encoder) const
+void WebKeyboardEvent::encode(IPC::Encoder& encoder) const
 {
     WebEvent::encode(encoder);
 

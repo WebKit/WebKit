@@ -44,7 +44,7 @@ public:
     {
         static_assert(!U::isSync, "Message is sync!");
 
-        auto encoder = std::make_unique<MessageEncoder>(U::receiverName(), U::name(), destinationID);
+        auto encoder = std::make_unique<Encoder>(U::receiverName(), U::name(), destinationID);
         encoder->encode(message.arguments());
         
         return sendMessage(WTFMove(encoder), messageSendFlags);
@@ -66,7 +66,7 @@ public:
         return messageSenderConnection()->sendSync(WTFMove(message), WTFMove(reply), destinationID, timeout, syncSendFlags);
     }
 
-    virtual bool sendMessage(std::unique_ptr<MessageEncoder>, unsigned messageSendFlags);
+    virtual bool sendMessage(std::unique_ptr<Encoder>, unsigned messageSendFlags);
 
 private:
     virtual Connection* messageSenderConnection() = 0;

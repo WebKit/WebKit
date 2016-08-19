@@ -48,8 +48,8 @@ OBJC_CLASS PDFSelection;
 struct NPObject;
 
 namespace IPC {
-    class ArgumentEncoder;
-    class ArgumentDecoder;
+class Encoder;
+class ArgumentDecoder;
 }
 
 namespace WebCore {
@@ -92,7 +92,7 @@ public:
         LayerHostingMode layerHostingMode;
 #endif
 
-        void encode(IPC::ArgumentEncoder&) const;
+        void encode(IPC::Encoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Parameters&);
     };
 

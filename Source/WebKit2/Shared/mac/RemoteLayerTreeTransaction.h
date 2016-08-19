@@ -42,7 +42,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -96,7 +96,7 @@ public:
     struct LayerCreationProperties {
         LayerCreationProperties();
 
-        void encode(IPC::ArgumentEncoder&) const;
+        void encode(IPC::Encoder&) const;
         static bool decode(IPC::ArgumentDecoder&, LayerCreationProperties&);
 
         WebCore::GraphicsLayer::PlatformLayerID layerID;
@@ -110,7 +110,7 @@ public:
         LayerProperties();
         LayerProperties(const LayerProperties& other);
 
-        void encode(IPC::ArgumentEncoder&) const;
+        void encode(IPC::Encoder&) const;
         static bool decode(IPC::ArgumentDecoder&, LayerProperties&);
 
         void notePropertiesChanged(LayerChange changeFlags)
@@ -173,7 +173,7 @@ public:
     explicit RemoteLayerTreeTransaction();
     ~RemoteLayerTreeTransaction();
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RemoteLayerTreeTransaction&);
 
     WebCore::GraphicsLayer::PlatformLayerID rootLayerID() const { return m_rootLayerID; }

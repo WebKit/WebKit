@@ -140,7 +140,7 @@ void WebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::M
     pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, decoder);
 }
 
-void WebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void WebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     TemporaryChange<IPC::Connection*> currentConnectionChange(currentConnection, &connection);
 

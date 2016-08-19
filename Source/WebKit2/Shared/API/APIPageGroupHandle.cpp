@@ -27,7 +27,7 @@
 #include "APIPageGroupHandle.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 namespace API {
 
@@ -45,7 +45,7 @@ PageGroupHandle::~PageGroupHandle()
 {
 }
 
-void PageGroupHandle::encode(IPC::ArgumentEncoder& encoder) const
+void PageGroupHandle::encode(IPC::Encoder& encoder) const
 {
     encoder << m_webPageGroupData;
 }

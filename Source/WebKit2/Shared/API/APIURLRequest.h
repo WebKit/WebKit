@@ -32,7 +32,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace API {
@@ -49,7 +49,7 @@ public:
     static double defaultTimeoutInterval(); // May return 0 when using platform default.
     static void setDefaultTimeoutInterval(double);
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
 
 private:

@@ -33,7 +33,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void Plugin::Parameters::encode(IPC::ArgumentEncoder& encoder) const
+void Plugin::Parameters::encode(IPC::Encoder& encoder) const
 {
     encoder << url.string();
     encoder << names;

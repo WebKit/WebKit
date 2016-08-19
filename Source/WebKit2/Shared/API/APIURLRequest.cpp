@@ -53,7 +53,7 @@ void URLRequest::setDefaultTimeoutInterval(double timeoutInterval)
         processPool->setDefaultRequestTimeoutInterval(timeoutInterval);
 }
 
-void URLRequest::encode(IPC::ArgumentEncoder& encoder) const
+void URLRequest::encode(IPC::Encoder& encoder) const
 {
     encoder << resourceRequest();
 }

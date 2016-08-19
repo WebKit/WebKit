@@ -38,7 +38,7 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters()
 {
 }
 
-void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
+void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << privateBrowsingEnabled;
     encoder.encodeEnum(cacheModel);

@@ -28,7 +28,7 @@
 
 #include "APIObject.h"
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 namespace API {
 
@@ -42,7 +42,7 @@ public:
 
     NumberType value() const { return m_value; }
 
-    void encode(IPC::ArgumentEncoder& encoder) const
+    void encode(IPC::Encoder& encoder) const
     {
         encoder << m_value;
     }

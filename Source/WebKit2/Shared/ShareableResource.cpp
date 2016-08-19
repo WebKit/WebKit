@@ -39,7 +39,7 @@ ShareableResource::Handle::Handle()
 {
 }
 
-void ShareableResource::Handle::encode(IPC::ArgumentEncoder& encoder) const
+void ShareableResource::Handle::encode(IPC::Encoder& encoder) const
 {
     encoder << m_handle;
     encoder << m_offset;

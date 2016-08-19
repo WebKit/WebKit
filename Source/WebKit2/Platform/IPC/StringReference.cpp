@@ -27,8 +27,8 @@
 #include "StringReference.h"
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
 #include "DataReference.h"
+#include "Encoder.h"
 #include <wtf/Hasher.h>
 #include <wtf/text/CString.h>
 
@@ -39,7 +39,7 @@ CString StringReference::toString() const
     return WTF::CString(m_data, m_size);
 }
 
-void StringReference::encode(ArgumentEncoder& encoder) const
+void StringReference::encode(Encoder& encoder) const
 {
     encoder << DataReference(reinterpret_cast<const uint8_t*>(m_data), m_size);
 }

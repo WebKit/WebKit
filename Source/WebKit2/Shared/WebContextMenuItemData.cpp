@@ -100,7 +100,7 @@ void WebContextMenuItemData::setUserData(API::Object* userData)
     m_userData = userData;
 }
     
-void WebContextMenuItemData::encode(IPC::ArgumentEncoder& encoder) const
+void WebContextMenuItemData::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_action);

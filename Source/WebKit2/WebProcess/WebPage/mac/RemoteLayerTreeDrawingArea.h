@@ -39,10 +39,6 @@ namespace WebCore {
 class PlatformCALayer;
 }
 
-namespace IPC {
-class MessageEncoder;
-}
-
 namespace WebKit {
 
 class RemoteLayerTreeContext;
@@ -125,16 +121,16 @@ private:
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
-        static Ref<BackingStoreFlusher> create(IPC::Connection*, std::unique_ptr<IPC::MessageEncoder>, Vector<RetainPtr<CGContextRef>>);
+        static Ref<BackingStoreFlusher> create(IPC::Connection*, std::unique_ptr<IPC::Encoder>, Vector<RetainPtr<CGContextRef>>);
 
         void flush();
         bool hasFlushed() const { return m_hasFlushed; }
 
     private:
-        BackingStoreFlusher(IPC::Connection*, std::unique_ptr<IPC::MessageEncoder>, Vector<RetainPtr<CGContextRef>>);
+        BackingStoreFlusher(IPC::Connection*, std::unique_ptr<IPC::Encoder>, Vector<RetainPtr<CGContextRef>>);
 
         RefPtr<IPC::Connection> m_connection;
-        std::unique_ptr<IPC::MessageEncoder> m_commitEncoder;
+        std::unique_ptr<IPC::Encoder> m_commitEncoder;
         Vector<RetainPtr<CGContextRef>> m_contextsToFlush;
 
         std::atomic<bool> m_hasFlushed;

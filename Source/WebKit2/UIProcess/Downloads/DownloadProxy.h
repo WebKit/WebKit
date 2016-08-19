@@ -67,14 +67,14 @@ public:
     void processDidClose();
 
     void didReceiveDownloadProxyMessage(IPC::Connection&, IPC::MessageDecoder&);
-    void didReceiveSyncDownloadProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    void didReceiveSyncDownloadProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
 
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // Message handlers.
     void didStart(const WebCore::ResourceRequest&, const AtomicString& suggestedFilename);

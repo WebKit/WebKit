@@ -32,7 +32,7 @@
 
 namespace IPC {
     class ArgumentDecoder;
-    class ArgumentEncoder;
+    class Encoder;
 }
 
 namespace WebKit {
@@ -40,7 +40,7 @@ namespace WebKit {
 struct PluginCreationParameters {
     PluginCreationParameters();
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, PluginCreationParameters&);
 
     // The unique ID of this plug-in instance.

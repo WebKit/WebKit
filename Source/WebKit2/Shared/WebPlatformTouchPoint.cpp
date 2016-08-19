@@ -57,7 +57,7 @@ WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state,
 {
 }
 
-void WebPlatformTouchPoint::encode(IPC::ArgumentEncoder& encoder) const
+void WebPlatformTouchPoint::encode(IPC::Encoder& encoder) const
 {
     encoder << m_id;
     encoder << m_state;

@@ -34,7 +34,7 @@ OBJC_CLASS DDActionContext;
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebCore {
@@ -79,8 +79,8 @@ struct WebHitTestResultData {
     WebHitTestResultData(const WebCore::HitTestResult&, bool includeImage);
     ~WebHitTestResultData();
 
-    void encode(IPC::ArgumentEncoder&) const;
-    void platformEncode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
+    void platformEncode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebHitTestResultData&);
     static bool platformDecode(IPC::ArgumentDecoder&, WebHitTestResultData&);
 

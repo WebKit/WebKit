@@ -29,7 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
@@ -118,7 +118,7 @@ NPVariantData NPVariantData::makeRemoteNPObjectID(uint64_t value)
     return npVariantData;
 }
 
-void NPVariantData::encode(IPC::ArgumentEncoder& encoder) const
+void NPVariantData::encode(IPC::Encoder& encoder) const
 {
     encoder << m_type;
 

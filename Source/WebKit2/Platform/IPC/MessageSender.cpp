@@ -32,7 +32,7 @@ MessageSender::~MessageSender()
 {
 }
 
-bool MessageSender::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned messageSendFlags)
+bool MessageSender::sendMessage(std::unique_ptr<Encoder> encoder, unsigned messageSendFlags)
 {
     ASSERT(messageSenderConnection());
 

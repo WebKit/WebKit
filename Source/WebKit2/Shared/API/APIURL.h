@@ -85,7 +85,7 @@ public:
         return m_parsedURL->isValid() ? m_parsedURL->lastPathComponent() : WTF::String();
     }
 
-    void encode(IPC::ArgumentEncoder& encoder) const
+    void encode(IPC::Encoder& encoder) const
     {
         encoder << m_string;
     }

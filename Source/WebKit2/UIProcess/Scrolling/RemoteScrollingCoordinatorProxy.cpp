@@ -30,7 +30,6 @@
 
 #include "ArgumentCoders.h"
 #include "MessageDecoder.h"
-#include "MessageEncoder.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteScrollingCoordinator.h"
 #include "RemoteScrollingCoordinatorMessages.h"

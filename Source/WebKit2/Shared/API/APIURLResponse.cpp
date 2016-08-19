@@ -37,7 +37,7 @@ URLResponse::URLResponse(const WebCore::ResourceResponse& response)
 {
 }
 
-void URLResponse::encode(IPC::ArgumentEncoder& encoder) const
+void URLResponse::encode(IPC::Encoder& encoder) const
 {
     encoder << resourceResponse();
 }

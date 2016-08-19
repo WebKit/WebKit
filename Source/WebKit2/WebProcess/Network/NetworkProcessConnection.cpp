@@ -63,7 +63,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     didReceiveNetworkProcessConnectionMessage(connection, decoder);
 }
 
-void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&)
+void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&)
 {
     ASSERT_NOT_REACHED();
 }

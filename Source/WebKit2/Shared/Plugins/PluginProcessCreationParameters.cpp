@@ -39,7 +39,7 @@ PluginProcessCreationParameters::PluginProcessCreationParameters()
 {
 }
 
-void PluginProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
+void PluginProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(processType);
     encoder << supportsAsynchronousPluginInitialization;

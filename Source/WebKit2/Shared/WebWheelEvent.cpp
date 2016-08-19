@@ -69,7 +69,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
 }
 #endif
 
-void WebWheelEvent::encode(IPC::ArgumentEncoder& encoder) const
+void WebWheelEvent::encode(IPC::Encoder& encoder) const
 {
     WebEvent::encode(encoder);
 

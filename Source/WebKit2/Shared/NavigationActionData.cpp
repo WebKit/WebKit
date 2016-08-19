@@ -28,13 +28,13 @@
 
 #include "ArgumentCoders.h"
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Encoder.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void NavigationActionData::encode(IPC::ArgumentEncoder& encoder) const
+void NavigationActionData::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(navigationType);
     encoder.encodeEnum(modifiers);

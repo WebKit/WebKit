@@ -40,7 +40,7 @@
 
 namespace IPC {
 class ArgumentDecoder;
-class ArgumentEncoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -49,7 +49,7 @@ bool isValidEnum(WebCore::ShouldOpenExternalURLsPolicy);
 
 struct HTTPBody {
     struct Element {
-        void encode(IPC::ArgumentEncoder&) const;
+        void encode(IPC::Encoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Element&);
 
         enum class Type {
@@ -73,7 +73,7 @@ struct HTTPBody {
         String blobURLString;
     };
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, HTTPBody&);
 
     String contentType;
@@ -81,7 +81,7 @@ struct HTTPBody {
 };
 
 struct FrameState {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, FrameState&);
 
     String urlString;
@@ -113,7 +113,7 @@ struct FrameState {
 };
 
 struct PageState {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, PageState&);
 
     String title;
@@ -122,7 +122,7 @@ struct PageState {
 };
 
 struct BackForwardListItemState {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, BackForwardListItemState&);
 
     uint64_t identifier;
@@ -135,7 +135,7 @@ struct BackForwardListItemState {
 };
 
 struct BackForwardListState {
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, BackForwardListState&);
 
     Vector<BackForwardListItemState> items;

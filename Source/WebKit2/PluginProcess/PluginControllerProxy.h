@@ -63,7 +63,7 @@ public:
     void destroy();
 
     void didReceivePluginControllerProxyMessage(IPC::Connection&, IPC::MessageDecoder&);
-    void didReceiveSyncPluginControllerProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    void didReceiveSyncPluginControllerProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
 
     bool wantsWheelEvents() const;
 

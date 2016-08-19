@@ -27,8 +27,8 @@
 #define MachPort_h
 
 #include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
 #include "Attachment.h"
+#include "Encoder.h"
 
 namespace IPC {
 
@@ -46,7 +46,7 @@ public:
     {
     }
 
-    void encode(ArgumentEncoder& encoder) const
+    void encode(Encoder& encoder) const
     {
         encoder << Attachment(m_port, m_disposition);
     }

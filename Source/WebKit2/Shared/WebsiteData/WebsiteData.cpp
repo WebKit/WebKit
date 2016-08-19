@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-void WebsiteData::Entry::encode(IPC::ArgumentEncoder& encoder) const
+void WebsiteData::Entry::encode(IPC::Encoder& encoder) const
 {
     encoder << WebCore::SecurityOriginData::fromSecurityOrigin(*origin);
     encoder.encodeEnum(type);
@@ -55,7 +55,7 @@ bool WebsiteData::Entry::decode(IPC::ArgumentDecoder& decoder, WebsiteData::Entr
     return true;
 }
 
-void WebsiteData::encode(IPC::ArgumentEncoder& encoder) const
+void WebsiteData::encode(IPC::Encoder& encoder) const
 {
     encoder << entries;
     encoder << hostNamesWithCookies;

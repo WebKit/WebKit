@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
+void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << viewSize;
     encoder << viewState;

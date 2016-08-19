@@ -70,7 +70,7 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position,
     ASSERT(isMouseEventType(type));
 }
 
-void WebMouseEvent::encode(IPC::ArgumentEncoder& encoder) const
+void WebMouseEvent::encode(IPC::Encoder& encoder) const
 {
     WebEvent::encode(encoder);
 

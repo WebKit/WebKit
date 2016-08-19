@@ -30,7 +30,7 @@
 #include <wtf/RefPtr.h>
 
 namespace IPC {
-class ArgumentEncoder;
+class Encoder;
 class ArgumentDecoder;
 }
 
@@ -51,14 +51,14 @@ public:
 
     API::Object* object() const { return m_object.get(); }
 
-    void encode(IPC::ArgumentEncoder&) const;
+    void encode(IPC::Encoder&) const;
     static bool decode(IPC::ArgumentDecoder&, UserData&);
 
-    static void encode(IPC::ArgumentEncoder&, const API::Object*);
+    static void encode(IPC::Encoder&, const API::Object*);
     static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
 
 private:
-    static void encode(IPC::ArgumentEncoder&, const API::Object&);
+    static void encode(IPC::Encoder&, const API::Object&);
 
     RefPtr<API::Object> m_object;
 };

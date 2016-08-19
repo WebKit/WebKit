@@ -3910,7 +3910,7 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder
     didReceiveWebPageMessage(connection, decoder);
 }
 
-void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {   
     didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
 }
