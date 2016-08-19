@@ -1,3 +1,14 @@
+2016-08-19  Chris Dumez  <cdumez@apple.com>
+
+        <command> should be an HTMLUnknownElement and <basefont> should be an HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=161004
+
+        Reviewed by Daniel Bates.
+
+        Rebaseline a W3C test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/interfaces-expected.txt:
+
 2016-08-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Gardening: Layout tests expectations updates and test rebaselines.

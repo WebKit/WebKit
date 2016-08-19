@@ -16,7 +16,7 @@ attachment conditional=ATTACHMENT_ELEMENT, settingsConditional=attachmentElement
 audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, customTypeHelper
 b interfaceName=HTMLElement
 base
-basefont interfaceName=HTMLUnknownElement
+basefont interfaceName=HTMLElement
 bdi interfaceName=HTMLBDIElement, JSInterfaceName=HTMLElement
 bdo interfaceName=HTMLElement
 bgsound interfaceName=HTMLUnknownElement
@@ -32,7 +32,7 @@ cite interfaceName=HTMLElement
 code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
-command interfaceName=HTMLElement
+command interfaceName=HTMLUnknownElement
 data
 datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT
 dd interfaceName=HTMLElement
