@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Intel Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -88,66 +89,66 @@ PerformanceTiming* Performance::timing() const
     return m_timing.get();
 }
 
-RefPtr<PerformanceEntryList> Performance::getEntries() const
+Vector<RefPtr<PerformanceEntry>> Performance::getEntries() const
 {
-    RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+    Vector<RefPtr<PerformanceEntry>> entries;
 
-    entries->appendAll(m_resourceTimingBuffer);
+    entries.appendVector(m_resourceTimingBuffer);
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
-        entries->appendAll(m_userTiming->getMarks());
-        entries->appendAll(m_userTiming->getMeasures());
+        entries.appendVector(m_userTiming->getMarks());
+        entries.appendVector(m_userTiming->getMeasures());
     }
 #endif // ENABLE(USER_TIMING)
 
-    entries->sort();
+    std::sort(entries.begin(), entries.end(), PerformanceEntry::startTimeCompareLessThan);
     return entries;
 }
 
-RefPtr<PerformanceEntryList> Performance::getEntriesByType(const String& entryType)
+Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByType(const String& entryType) const
 {
-    RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+    Vector<RefPtr<PerformanceEntry>> entries;
 
     if (equalLettersIgnoringASCIICase(entryType, "resource")) {
         for (auto& resource : m_resourceTimingBuffer)
-            entries->append(resource);
+            entries.append(resource);
     }
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
         if (equalLettersIgnoringASCIICase(entryType, "mark"))
-            entries->appendAll(m_userTiming->getMarks());
+            entries.appendVector(m_userTiming->getMarks());
         else if (equalLettersIgnoringASCIICase(entryType, "measure"))
-            entries->appendAll(m_userTiming->getMeasures());
+            entries.appendVector(m_userTiming->getMeasures());
     }
 #endif
 
-    entries->sort();
+    std::sort(entries.begin(), entries.end(), PerformanceEntry::startTimeCompareLessThan);
     return entries;
 }
 
-RefPtr<PerformanceEntryList> Performance::getEntriesByName(const String& name, const String& entryType)
+Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& name, const String& entryType) const
 {
-    RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+    Vector<RefPtr<PerformanceEntry>> entries;
 
     if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "resource")) {
         for (auto& resource : m_resourceTimingBuffer) {
             if (resource->name() == name)
-                entries->append(resource);
+                entries.append(resource);
         }
     }
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
         if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "mark"))
-            entries->appendAll(m_userTiming->getMarks(name));
+            entries.appendVector(m_userTiming->getMarks(name));
         if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "measure"))
-            entries->appendAll(m_userTiming->getMeasures(name));
+            entries.appendVector(m_userTiming->getMeasures(name));
     }
 #endif
 
-    entries->sort();
+    std::sort(entries.begin(), entries.end(), PerformanceEntry::startTimeCompareLessThan);
     return entries;
 }
 

@@ -527,7 +527,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/NavigatorOnLine.idl \
     $(WebCore)/page/Performance.idl \
     $(WebCore)/page/PerformanceEntry.idl \
-    $(WebCore)/page/PerformanceEntryList.idl \
     $(WebCore)/page/PerformanceNavigation.idl \
     $(WebCore)/page/PerformanceResourceTiming.idl \
     $(WebCore)/page/PerformanceTiming.idl \

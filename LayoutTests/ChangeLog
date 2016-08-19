@@ -1,3 +1,15 @@
+2016-08-19  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Resource Timing: Make PerformanceEntryList a sequence as per spec
+        https://bugs.webkit.org/show_bug.cgi?id=160963
+
+        Reviewed by Alex Christensen.
+
+        Testing that PerformanceEntryList (window.performance.getEntries()) is iterable.
+
+        * http/tests/performance/performance-resource-timing-entries-iterable-expected.txt: Added.
+        * http/tests/performance/performance-resource-timing-entries-iterable.html: Added.
+
 2016-08-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unskip tests that now pass on ios-simulator.

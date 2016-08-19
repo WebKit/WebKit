@@ -622,7 +622,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/NavigatorOnLine.idl
     page/Performance.idl
     page/PerformanceEntry.idl
-    page/PerformanceEntryList.idl
     page/PerformanceMark.idl
     page/PerformanceMeasure.idl
     page/PerformanceNavigation.idl
@@ -2064,7 +2063,6 @@ set(WebCore_SOURCES
     page/PageVisibilityState.cpp
     page/Performance.cpp
     page/PerformanceEntry.cpp
-    page/PerformanceEntryList.cpp
     page/PerformanceNavigation.cpp
     page/PerformanceResourceTiming.cpp
     page/PerformanceTiming.cpp

@@ -65,7 +65,7 @@ my %transferFullTypeHash = ("AudioTrack" => 1, "AudioTrackList" => 1, "BarProp" 
     "Geolocation" => 1, "HTMLOptionsCollection" => 1, "History" => 1,
     "KeyboardEvent" => 1, "KeyframeEffect" => 1, "MediaError" => 1, "MediaController" => 1,
     "MouseEvent" => 1, "MediaQueryList" => 1, "Navigator" => 1, "NodeFilter" => 1,
-    "Performance" => 1, "PerformanceEntry" => 1, "PerformanceEntryList" => 1, "PerformanceNavigation" => 1, "PerformanceTiming" => 1,
+    "Performance" => 1, "PerformanceEntry" => 1, "PerformanceNavigation" => 1, "PerformanceTiming" => 1,
     "Range" => 1, "Screen" => 1, "SpeechSynthesis" => 1, "SpeechSynthesisVoice" => 1,
     "Storage" => 1, "StyleMedia" => 1, "TextTrack" => 1, "TextTrackCueList" => 1,
     "TimeRanges" => 1, "Touch" => 1, "UIEvent" => 1, "UserMessageHandler" => 1, "UserMessageHandlersNamespace" => 1,

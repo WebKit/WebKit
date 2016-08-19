@@ -578,7 +578,6 @@ list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
     page/Navigator.idl
     page/Performance.idl
     page/PerformanceEntry.idl
-    page/PerformanceEntryList.idl
     page/PerformanceNavigation.idl
     page/PerformanceTiming.idl
     page/Screen.idl

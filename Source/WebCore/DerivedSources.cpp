@@ -382,7 +382,6 @@
 #include "JSParentNode.cpp"
 #include "JSPerformance.cpp"
 #include "JSPerformanceEntry.cpp"
-#include "JSPerformanceEntryList.cpp"
 #include "JSPerformanceMark.cpp"
 #include "JSPerformanceMeasure.cpp"
 #include "JSPerformanceNavigation.cpp"
