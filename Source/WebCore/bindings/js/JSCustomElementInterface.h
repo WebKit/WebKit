@@ -91,7 +91,7 @@ public:
 private:
     JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
 
-    void invokeCallback(Element&, JSC::JSObject* callback, const Function<void(JSC::ExecState*, JSC::MarkedArgumentBuffer&)>& addArguments = {});
+    void invokeCallback(Element&, JSC::JSObject* callback, const WTF::Function<void(JSC::ExecState*, JSC::MarkedArgumentBuffer&)>& addArguments = {});
 
     QualifiedName m_name;
     JSC::Weak<JSC::JSObject> m_constructor;

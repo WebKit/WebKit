@@ -151,7 +151,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     ASSERT(wrappedElement->isCustomElement());
 }
 
-void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const Function<void(ExecState*, MarkedArgumentBuffer&)>& addArguments)
+void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const WTF::Function<void(ExecState*, MarkedArgumentBuffer&)>& addArguments)
 {
     if (!canInvokeCallback())
         return;
