@@ -1,3 +1,8 @@
+2016-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix for non-USE_SIM_SERVICE_CONTEXT builds
+        * LayoutTestRelay/LayoutTestRelay/main.m: (main):
+
 2016-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r204477): Running LayoutTests on ios-simulator became ~15 minutes slower

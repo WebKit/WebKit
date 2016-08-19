@@ -91,7 +91,9 @@ int main(int argc, const char * argv[])
             }
         }
 
+#if USE_SIM_SERVICE_CONTEXT
         NSString *developerDirectory = getRequiredStringArgument(@"developerDir");
+#endif
         NSUUID *udid = [[NSUUID alloc] initWithUUIDString:getRequiredStringArgument(@"udid")];
         NSString *appPath = getRequiredStringArgument(@"app");
         NSString *productDirectory = getRequiredStringArgument(@"productDir");
