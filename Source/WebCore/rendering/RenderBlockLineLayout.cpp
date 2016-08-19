@@ -488,7 +488,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     // the style is linebox-contain: glyph.
     
     if (!lineBox->fitsToGlyphs() && canUseSimpleFontCodePath) {
-        int lastEndOffset = run->m_start;
+        unsigned lastEndOffset = run->m_start;
         for (size_t i = 0, size = wordMeasurements.size(); i < size && lastEndOffset < run->m_stop; ++i) {
             WordMeasurement& wordMeasurement = wordMeasurements[i];
             if (wordMeasurement.width <= 0 || wordMeasurement.startOffset == wordMeasurement.endOffset)
@@ -883,15 +883,15 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
                 ExpansionBehavior expansionBehavior = expansionBehaviorForInlineTextBox(*this, textBox, previousRun, run->next(), textAlign, isAfterExpansion);
                 applyExpansionBehavior(textBox, expansionBehavior);
                 unsigned opportunitiesInRun;
-                ASSERT(run->m_stop != -1);
                 std::tie(opportunitiesInRun, isAfterExpansion) = FontCascade::expansionOpportunityCount(renderText.stringView(run->m_start, run->m_stop), run->box()->direction(), expansionBehavior);
                 expansionOpportunities.append(opportunitiesInRun);
                 expansionOpportunityCount += opportunitiesInRun;
             }
 
-            if (int length = renderText.textLength()) {
+            if (unsigned length = renderText.textLength()) {
                 if (!run->m_start && needsWordSpacing && isSpaceOrNewline(renderText.characterAt(run->m_start)))
                     totalLogicalWidth += lineStyle(*renderText.parent(), lineInfo).fontCascade().wordSpacing();
+                ASSERT(run->m_stop > 0);
                 needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(run->m_stop - 1)) && run->m_stop == length;
             }
 
@@ -1026,9 +1026,9 @@ static inline bool isCollapsibleSpace(UChar character, const RenderText& rendere
 }
 
 template <typename CharacterType>
-static inline int findFirstTrailingSpace(const RenderText& lastText, const CharacterType* characters, int start, int stop)
+static inline unsigned findFirstTrailingSpace(const RenderText& lastText, const CharacterType* characters, unsigned start, unsigned stop)
 {
-    int firstSpace = stop;
+    unsigned firstSpace = stop;
     while (firstSpace > start) {
         UChar current = characters[firstSpace - 1];
         if (!isCollapsibleSpace(current, lastText))
@@ -1052,7 +1052,7 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
         return nullptr;
 
     const RenderText& lastText = downcast<RenderText>(lastObject);
-    int firstSpace;
+    unsigned firstSpace;
     if (lastText.is8Bit())
         firstSpace = findFirstTrailingSpace(lastText, lastText.characters8(), trailingSpaceRun->start(), trailingSpaceRun->stop());
     else

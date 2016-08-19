@@ -141,7 +141,7 @@ inline bool operator!=(const BidiStatus& status1, const BidiStatus& status2)
 struct BidiCharacterRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BidiCharacterRun(int start, int stop, BidiContext* context, UCharDirection direction)
+    BidiCharacterRun(unsigned start, unsigned stop, BidiContext* context, UCharDirection direction)
         : m_start(start)
         , m_stop(stop)
         , m_override(context->override())
@@ -171,8 +171,8 @@ public:
             next = WTFMove(next->m_next);
     }
 
-    int start() const { return m_start; }
-    int stop() const { return m_stop; }
+    unsigned start() const { return m_start; }
+    unsigned stop() const { return m_stop; }
     unsigned char level() const { return m_level; }
     bool reversed(bool visuallyOrdered) { return m_level % 2 && !visuallyOrdered; }
     bool dirOverride(bool visuallyOrdered) { return m_override || visuallyOrdered; }
@@ -185,8 +185,8 @@ private:
     std::unique_ptr<BidiCharacterRun> m_next;
 
 public:
-    int m_start;
-    int m_stop;
+    unsigned m_start;
+    unsigned m_stop;
     unsigned char m_level;
     bool m_override : 1;
     bool m_hasHyphen : 1; // Used by BidiRun subclass which is a layering violation but enables us to save 8 bytes per object on 64-bit.

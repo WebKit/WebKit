@@ -33,7 +33,7 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, bidiRunCounter, ("BidiRun"));
 
-BidiRun::BidiRun(int start, int stop, RenderObject& renderer, BidiContext* context, UCharDirection dir)
+BidiRun::BidiRun(unsigned start, unsigned stop, RenderObject& renderer, BidiContext* context, UCharDirection dir)
     : BidiCharacterRun(start, stop, context, dir)
     , m_renderer(renderer)
     , m_box(nullptr)

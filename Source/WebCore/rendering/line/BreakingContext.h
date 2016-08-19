@@ -58,8 +58,8 @@ struct WordMeasurement {
 
     RenderText* renderer;
     float width;
-    int startOffset;
-    int endOffset;
+    unsigned startOffset;
+    unsigned endOffset;
     HashSet<const Font*> fallbackFonts;
 };
 

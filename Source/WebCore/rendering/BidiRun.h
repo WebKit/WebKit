@@ -34,7 +34,7 @@ class InlineBox;
 class RenderObject;
 
 struct BidiRun : BidiCharacterRun {
-    BidiRun(int start, int stop, RenderObject&, BidiContext*, UCharDirection);
+    BidiRun(unsigned start, unsigned stop, RenderObject&, BidiContext*, UCharDirection);
     ~BidiRun();
 
     BidiRun* next() { return static_cast<BidiRun*>(BidiCharacterRun::next()); }

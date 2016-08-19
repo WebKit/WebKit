@@ -268,19 +268,19 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     context.setFillColor(Color::white);
     context.setTextDrawingMode(TextModeFill);
     String string = String::format("%02u:%02u:%02u.%03u", hours, minutes, seconds, milliseconds % 1000);
-    context.drawText(m_timeFont, TextRun((StringView(string))), timeLocation, 0, -1);
+    context.drawText(m_timeFont, TextRun((StringView(string))), timeLocation);
 
     string = String::format("%06u", m_frameNumber++);
     timeLocation.move(0, m_baseFontSize);
-    context.drawText(m_timeFont, TextRun((StringView(string))), timeLocation, 0, -1);
+    context.drawText(m_timeFont, TextRun((StringView(string))), timeLocation);
 
     FloatPoint statsLocation(m_size.width() * .65, m_size.height() * .75);
     string = String::format("Frame rate: %ufps", m_frameRate);
-    context.drawText(m_statsFont, TextRun((StringView(string))), statsLocation, 0, -1);
+    context.drawText(m_statsFont, TextRun((StringView(string))), statsLocation);
 
     string = String::format("Size: %u x %u", m_size.width(), m_size.height());
     statsLocation.move(0, m_statsFontSize);
-    context.drawText(m_statsFont, TextRun((StringView(string))), statsLocation, 0, -1);
+    context.drawText(m_statsFont, TextRun((StringView(string))), statsLocation);
 
     const char* camera;
     switch (settings().facingMode()) {
@@ -302,18 +302,18 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     }
     string = String::format("Camera: %s", camera);
     statsLocation.move(0, m_statsFontSize);
-    context.drawText(m_statsFont, TextRun((StringView(string))), statsLocation, 0, -1);
+    context.drawText(m_statsFont, TextRun((StringView(string))), statsLocation);
 
     FloatPoint bipBopLocation(m_size.width() * .6, m_size.height() * .6);
     unsigned frameMod = m_frameNumber % 60;
     if (frameMod <= 15) {
         context.setFillColor(Color::gray);
         String bip(ASCIILiteral("Bip"));
-        context.drawText(m_bipBopFont, TextRun(StringView(bip)), bipBopLocation, 0, -1);
+        context.drawText(m_bipBopFont, TextRun(StringView(bip)), bipBopLocation);
     } else if (frameMod > 30 && frameMod <= 45) {
         context.setFillColor(Color::white);
         String bop(ASCIILiteral("Bop"));
-        context.drawText(m_bipBopFont, TextRun(StringView(bop)), bipBopLocation, 0, -1);
+        context.drawText(m_bipBopFont, TextRun(StringView(bop)), bipBopLocation);
     }
 }
 
