@@ -2154,8 +2154,6 @@
 		1A2162AF11F38971008AD0F5 /* NPRuntimeUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPRuntimeUtilities.h; sourceTree = "<group>"; };
 		1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageOverlay.h; sourceTree = "<group>"; };
 		1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePageOverlay.cpp; sourceTree = "<group>"; };
-		1A2328FC162C866A00D82F7A /* MessageEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageEncoder.cpp; sourceTree = "<group>"; };
-		1A2328FD162C866A00D82F7A /* MessageEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageEncoder.h; sourceTree = "<group>"; };
 		1A232900162C867300D82F7A /* MessageDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageDecoder.cpp; sourceTree = "<group>"; };
 		1A232901162C867300D82F7A /* MessageDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageDecoder.h; sourceTree = "<group>"; };
 		1A2464F21891E45100234C5B /* APILoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APILoaderClient.h; sourceTree = "<group>"; };
@@ -4832,8 +4830,6 @@
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				1A232900162C867300D82F7A /* MessageDecoder.cpp */,
 				1A232901162C867300D82F7A /* MessageDecoder.h */,
-				1A2328FC162C866A00D82F7A /* MessageEncoder.cpp */,
-				1A2328FD162C866A00D82F7A /* MessageEncoder.h */,
 				1AC4C82816B876A90069DCCD /* MessageFlags.h */,
 				1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */,
 				1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */,

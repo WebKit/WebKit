@@ -1,5 +1,11 @@
 2016-08-19  Anders Carlsson  <andersca@apple.com>
 
+        Update Xcode project.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2016-08-19  Anders Carlsson  <andersca@apple.com>
+
         Merge MessageEncoder and ArgumentEncoder into Encoder
         https://bugs.webkit.org/show_bug.cgi?id=161016
 
