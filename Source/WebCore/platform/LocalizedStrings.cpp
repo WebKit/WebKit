@@ -511,12 +511,12 @@ String contextMenuItemTagExitVideoFullscreen()
 
 String contextMenuItemTagEnterVideoEnhancedFullscreen()
 {
-    return WEB_UI_STRING("Enter Picture-in-Picture", "menu item");
+    return WEB_UI_STRING("Enter Picture in Picture", "menu item");
 }
 
 String contextMenuItemTagExitVideoEnhancedFullscreen()
 {
-    return WEB_UI_STRING("Exit Picture-in-Picture", "menu item");
+    return WEB_UI_STRING("Exit Picture in Picture", "menu item");
 }
 
 #endif
