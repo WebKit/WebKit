@@ -1,3 +1,21 @@
+2016-08-19  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Console log counter on the dashboard should be better at displaying large numbers
+        https://bugs.webkit.org/show_bug.cgi?id=160054
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Utilities.js:
+        (Number.abbreviate):
+        Add logic for formatting a number as "#K", "#M", and "#B" when it is very large.
+
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView.prototype._updateDisplay):
+        (WebInspector.DefaultDashboardView.prototype._formatPossibleLargeNumber): Deleted.
+        (WebInspector.DefaultDashboardView.prototype._setConsoleItemValue):
+
 2016-08-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Network Tab should not layout if not visible

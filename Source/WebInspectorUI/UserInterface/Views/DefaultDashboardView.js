@@ -87,17 +87,12 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
         this._setItemEnabled(timeItem, dashboard.time > 0);
 
         var countItem = this._items.resourcesCount;
-        countItem.text = this._formatPossibleLargeNumber(dashboard.resourcesCount);
+        countItem.text = Number.abbreviate(dashboard.resourcesCount);
         this._setItemEnabled(countItem, dashboard.resourcesCount > 0);
 
         var sizeItem = this._items.resourcesSize;
         sizeItem.text = dashboard.resourcesSize ? Number.bytesToString(dashboard.resourcesSize, false) : emDash;
         this._setItemEnabled(sizeItem, dashboard.resourcesSize > 0);
-    }
-
-    _formatPossibleLargeNumber(number)
-    {
-        return number > 999 ? WebInspector.UIString("999+") : number;
     }
 
     _appendElementForNamedItem(name)
@@ -164,7 +159,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
         this[iVarName] = newValue;
 
         var item = this._items[itemName];
-        item.text = this._formatPossibleLargeNumber(newValue);
+        item.text = Number.abbreviate(newValue);
         this._setItemEnabled(item, newValue > 0);
 
         if (newValue <= previousValue)
