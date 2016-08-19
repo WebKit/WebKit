@@ -1,3 +1,31 @@
+2016-08-18  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Network Processes & Database processes do not exit promptly
+        https://bugs.webkit.org/show_bug.cgi?id=160978
+        <rdar://problem/27914081>
+
+        Reviewed by Anders Carlsson.
+
+        Network Processes & Database processes do not exit promptly. They hang
+        for 10 seconds until they log the following message:
+        > com.apple.WebKit.Networking: (WebKit) #WK: Exiting process early due to unacknowledged closed-connection
+
+        Then forcefully call exit(0).
+
+        To address the issue, we now call ChildProcess::stopRunLoop() instead
+        of RunLoop::current().stop(). stopRunLoop() works as expected on iOS
+        after r202723.
+
+        There is no impact on Mac because stopRunLoop() calls
+        RunLoop::current().stop().
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::didClose):
+        (WebKit::DatabaseProcess::didReceiveInvalidMessage):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::didReceiveInvalidMessage):
+
 2016-08-18  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] API::Number needs to be wrapped by an NSNumber

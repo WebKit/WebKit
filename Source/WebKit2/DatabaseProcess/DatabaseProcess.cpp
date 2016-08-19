@@ -76,7 +76,7 @@ bool DatabaseProcess::shouldTerminate()
 
 void DatabaseProcess::didClose(IPC::Connection&)
 {
-    RunLoop::current().stop();
+    stopRunLoop();
 }
 
 void DatabaseProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
@@ -92,7 +92,7 @@ void DatabaseProcess::didReceiveMessage(IPC::Connection& connection, IPC::Messag
 
 void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
-    RunLoop::current().stop();
+    stopRunLoop();
 }
 
 #if ENABLE(INDEXED_DATABASE)

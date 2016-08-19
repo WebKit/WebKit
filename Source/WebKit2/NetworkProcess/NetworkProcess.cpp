@@ -157,12 +157,12 @@ void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Mes
 void NetworkProcess::didClose(IPC::Connection&)
 {
     // The UIProcess just exited.
-    RunLoop::current().stop();
+    stopRunLoop();
 }
 
 void NetworkProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
-    RunLoop::current().stop();
+    stopRunLoop();
 }
 
 void NetworkProcess::didCreateDownload()
