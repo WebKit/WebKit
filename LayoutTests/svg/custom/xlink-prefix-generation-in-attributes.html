@@ -25,14 +25,7 @@
         xml = serializer.serializeToString(doc);
         document.getElementById("svgoutput2").textContent = xml + "\n";
    
-        // Example 3: Attempt to fix the document by setting Node.prefix.  The Node.prefix property should now contain "xlink".
-        doc = document.implementation.createDocument(svgns, "svg", null);
-        doc.documentElement.setAttributeNS(xlinkns, "href", "#foo");
-        doc.documentElement.attributes[0].prefix = "xlink";
-        xml = serializer.serializeToString(doc);
-        document.getElementById("svgoutput3").textContent = xml + "\n";
-   
-        // Example 4: Create the document with prefixes specified.  The Node.prefix property should now contain "xlink".
+        // Example 3: Create the document with prefixes specified.  The Node.prefix property should now contain "xlink".
         doc = document.implementation.createDocument(svgns, "svg", null);
         doc.documentElement.setAttributeNS(xlinkns, "xlink:href", "#foo");
         xml = serializer.serializeToString(doc);

@@ -20,20 +20,17 @@
 
 
         debug("Verifying that attributes with the same name but different namespaces are treated as unique entities. For the following test two different attribute values should be returned.");
-        var newAttr1 = document.createAttributeNS("ns1", "newattr");
-        newAttr1.prefix = "prefix1";
+        var newAttr1 = document.createAttributeNS("ns1", "prefix1:newattr");
         newAttr1.value = "newattr1";
         test.setAttributeNode(newAttr1);
-        var newAttr2 = document.createAttributeNS("ns2", "newattr");
-        newAttr2.prefix = "prefix2";
+        var newAttr2 = document.createAttributeNS("ns2", "prefix2:newattr");
         newAttr2.value = "newattr2";
         test.setAttributeNode(newAttr2);
         shouldBe("test.getAttributeNodeNS('ns1', 'newattr').value", "'newattr1'");
         shouldBe("test.getAttributeNodeNS('ns2', 'newattr').value", "'newattr2'");
 
         debug("Verifying that attributes with same name but different case and having same namespaces are treated as same. In the following test the new attribute should overwrite the value of the existing one.");
-        var newAttr3 = document.createAttributeNS("ns1", "NEWATTR");
-        newAttr3.prefix = "prefix2";
+        var newAttr3 = document.createAttributeNS("ns1", "prefix2:NEWATTR");
         newAttr3.value = "newattr3";
         test.setAttributeNode(newAttr3);
 

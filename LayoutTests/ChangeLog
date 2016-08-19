@@ -1,3 +1,24 @@
+2016-08-19  Chris Dumez  <cdumez@apple.com>
+
+        Attr.prefix / Element.prefix attribute should be readonly
+        https://bugs.webkit.org/show_bug.cgi?id=160998
+
+        Reviewed by Daniel Bates.
+
+        Update existing tests to reflect behavior change and drop a few
+        outdated tests.
+
+        * fast/dom/Element/prefix-setter-exception-expected.txt: Removed.
+        * fast/dom/Element/prefix-setter-exception.html: Removed.
+        * fast/dom/Element/setAttributeNode-case-insensitivity.html:
+        * fast/dom/bad-href-attribute-expected.txt: Removed.
+        * fast/dom/bad-href-attribute.html: Removed.
+        * fast/dom/node-prefix-setter-namespace-exception-expected.txt: Removed.
+        * fast/dom/node-prefix-setter-namespace-exception.html: Removed.
+        * fast/dom/script-tests/node-prefix-setter-namespace-exception.js: Removed.
+        * svg/custom/xlink-prefix-generation-in-attributes-expected.txt:
+        * svg/custom/xlink-prefix-generation-in-attributes.html:
+
 2016-08-19  Nan Wang  <n_wang@apple.com>
 
         AX: iOS, Wrong axLabel on static text if heading has multiple children

@@ -733,9 +733,7 @@ PASS Element interface object name
 PASS Element interface: existence and properties of interface prototype object 
 PASS Element interface: existence and properties of interface prototype object's "constructor" property 
 PASS Element interface: attribute namespaceURI 
-FAIL Element interface: attribute prefix assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function prefix() {
-    [native code]
-}"
+PASS Element interface: attribute prefix 
 PASS Element interface: attribute localName 
 PASS Element interface: attribute tagName 
 PASS Element interface: attribute id 
@@ -950,9 +948,7 @@ PASS Attr interface object name
 FAIL Attr interface: existence and properties of interface prototype object assert_equals: prototype of Attr.prototype is not Object.prototype expected object "[object Object]" but got object "[object NodePrototype]"
 PASS Attr interface: existence and properties of interface prototype object's "constructor" property 
 PASS Attr interface: attribute namespaceURI 
-FAIL Attr interface: attribute prefix assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function prefix() {
-    [native code]
-}"
+PASS Attr interface: attribute prefix 
 PASS Attr interface: attribute localName 
 PASS Attr interface: attribute name 
 FAIL Attr interface: attribute nodeName assert_own_property: expected property "nodeName" missing

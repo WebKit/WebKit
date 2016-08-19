@@ -66,8 +66,8 @@
     [Reflect] attribute DOMString id;
 
     readonly attribute DOMString? namespaceURI;
-    [SetterRaisesException] attribute DOMString? prefix;
-    readonly attribute DOMString? localName;
+    readonly attribute DOMString? prefix;
+    readonly attribute DOMString localName;
 
     // Common extensions
 
