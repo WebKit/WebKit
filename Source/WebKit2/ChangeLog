@@ -1,3 +1,16 @@
+2016-08-18  Daniel Bates  <dabates@apple.com>
+
+        Ld warns of non-existent PrivateFrameworks directory when building WebKit with the public iOS 9.3 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=160979
+
+        Rubber-stamped by Simon Fraser.
+
+        Only add the SDK PrivateFrameworks directory to the FRAMEWORK_SEARCH_PATH when building for
+        iOS Simulator, building with an iOS SDK that does not support text-based stubs, or building
+        an Apple-internal build.
+
+        * Configurations/BaseTarget.xcconfig:
+
 2016-08-18  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed, Fix CMake build after r204614
