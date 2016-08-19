@@ -600,8 +600,6 @@ public:
 
     // returns the containing block level element for this element.
     RenderBlock* containingBlock() const;
-    RenderBlock* containingBlockForFixedPosition() const;
-    RenderBlock* containingBlockForAbsolutePosition() const;
     RenderBlock* containingBlockForObjectInFlow() const;
 
     // Convert the given local point to absolute coordinates. If MapCoordinatesFlags includes UseTransforms, take transforms into account.

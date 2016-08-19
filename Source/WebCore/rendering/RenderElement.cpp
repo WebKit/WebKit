@@ -647,6 +647,29 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
         cache->childrenChanged(this);
 }
 
+RenderBlock* RenderElement::containingBlockForFixedPosition() const
+{
+    auto* renderer = parent();
+    while (renderer && !renderer->canContainFixedPositionObjects())
+        renderer = renderer->parent();
+
+    ASSERT(!renderer || !renderer->isAnonymousBlock());
+    return downcast<RenderBlock>(renderer);
+}
+
+RenderBlock* RenderElement::containingBlockForAbsolutePosition() const
+{
+    // A relatively positioned RenderInline forwards its absolute positioned descendants to
+    // its nearest non-anonymous containing block (to avoid having a positioned objects list in all RenderInlines).
+    auto* renderer = isRenderInline() ? const_cast<RenderElement*>(downcast<RenderElement>(this)) : parent();
+    while (renderer && !renderer->canContainAbsolutelyPositionedObjects())
+        renderer = renderer->parent();
+    // Make sure we only return non-anonymous RenderBlock as containing block.
+    while (renderer && (!is<RenderBlock>(*renderer) || renderer->isAnonymousBlock()))
+        renderer = renderer->containingBlock();
+    return downcast<RenderBlock>(renderer);
+}
+
 static void addLayers(RenderElement& renderer, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
 {
     if (renderer.hasLayer()) {

@@ -218,6 +218,8 @@ public:
     void adjustComputedFontSizesOnBlocks(float size, float visibleWidth);
     WEBCORE_EXPORT void resetTextAutosizing();
 #endif
+    RenderBlock* containingBlockForFixedPosition() const;
+    RenderBlock* containingBlockForAbsolutePosition() const;
 
 protected:
     enum BaseTypeFlag {
