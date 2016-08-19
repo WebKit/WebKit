@@ -21,8 +21,8 @@ PASS Interfaces for b
 PASS Interfaces for B 
 PASS Interfaces for base 
 PASS Interfaces for BASE 
-FAIL Interfaces for basefont assert_equals: Element basefont should have HTMLElement as its primary interface. expected "[object HTMLElement]" but got "[object HTMLUnknownElement]"
-FAIL Interfaces for BASEFONT assert_equals: Element BASEFONT should have HTMLElement as its primary interface. expected "[object HTMLElement]" but got "[object HTMLUnknownElement]"
+PASS Interfaces for basefont 
+PASS Interfaces for BASEFONT 
 PASS Interfaces for bdi 
 PASS Interfaces for BDI 
 PASS Interfaces for bdo 
@@ -55,8 +55,8 @@ PASS Interfaces for col
 PASS Interfaces for COL 
 PASS Interfaces for colgroup 
 PASS Interfaces for COLGROUP 
-FAIL Interfaces for command assert_equals: Element command should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
-FAIL Interfaces for COMMAND assert_equals: Element COMMAND should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
+PASS Interfaces for command 
+PASS Interfaces for COMMAND 
 PASS Interfaces for data 
 PASS Interfaces for DATA 
 FAIL Interfaces for datalist assert_equals: Element datalist should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
