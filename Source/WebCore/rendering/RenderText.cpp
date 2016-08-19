@@ -1676,18 +1676,15 @@ void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTyp
     secureTextTimer->restart(offsetAfterLastTypedCharacter);
 }
 
-StringView RenderText::stringView(int start, int stop) const
+StringView RenderText::stringView(unsigned start, Optional<unsigned> stop) const
 {
-    if (stop == -1)
-        stop = textLength();
-    ASSERT(static_cast<unsigned>(start) <= length());
-    ASSERT(static_cast<unsigned>(stop) <= length());
-    ASSERT(start <= stop);
-    ASSERT(start >= 0);
-    ASSERT(stop >= 0);
+    unsigned destination = stop.valueOr(textLength());
+    ASSERT(start <= length());
+    ASSERT(destination <= length());
+    ASSERT(start <= destination);
     if (is8Bit())
-        return StringView(characters8() + start, stop - start);
-    return StringView(characters16() + start, stop - start);
+        return StringView(characters8() + start, destination - start);
+    return StringView(characters16() + start, destination - start);
 }
 
 } // namespace WebCore
