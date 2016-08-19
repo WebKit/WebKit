@@ -397,7 +397,6 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
 
     attributes.noExtensions = true;
     attributes.shareResources = false;
-    attributes.preferDiscreteGPU = true;
 
     if (frame->settings().forceSoftwareWebGLRendering())
         attributes.forceSoftwareRenderer = true;

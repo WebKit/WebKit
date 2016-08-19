@@ -717,34 +717,19 @@ public:
 
     // Context creation attributes.
     struct Attributes {
-        Attributes()
-            : alpha(true)
-            , depth(true)
-            , stencil(false)
-            , antialias(true)
-            , premultipliedAlpha(true)
-            , preserveDrawingBuffer(false)
-            , noExtensions(false)
-            , shareResources(true)
-            , preferDiscreteGPU(false)
-            , forceSoftwareRenderer(false)
-            , useGLES3(false)
-            , devicePixelRatio(1)
-        {
-        }
-
-        bool alpha;
-        bool depth;
-        bool stencil;
-        bool antialias;
-        bool premultipliedAlpha;
-        bool preserveDrawingBuffer;
-        bool noExtensions;
-        bool shareResources;
-        bool preferDiscreteGPU;
-        bool forceSoftwareRenderer;
-        bool useGLES3;
-        float devicePixelRatio;
+        bool alpha { true };
+        bool depth { true };
+        bool stencil { false };
+        bool antialias { true };
+        bool premultipliedAlpha { true };
+        bool preserveDrawingBuffer { false };
+        bool noExtensions { false };
+        bool shareResources { true };
+        bool preferLowPowerToHighPerformance { false };
+        bool forceSoftwareRenderer { false };
+        bool failIfMajorPerformanceCaveat { false };
+        bool useGLES3 { false };
+        float devicePixelRatio { 1 };
     };
 
     enum RenderStyle {

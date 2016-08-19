@@ -34,4 +34,6 @@
     attribute boolean antialias;
     attribute boolean premultipliedAlpha;
     attribute boolean preserveDrawingBuffer;
+    attribute boolean preferLowPowerToHighPerformance;
+    attribute boolean failIfMajorPerformanceCaveat;
 };
