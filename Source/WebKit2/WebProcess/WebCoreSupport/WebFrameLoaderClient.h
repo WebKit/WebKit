@@ -102,7 +102,7 @@ private:
     void dispatchDidFinishDocumentLoad() override;
     void dispatchDidFinishLoad() override;
 
-    void dispatchDidLayout(WebCore::LayoutMilestones) override;
+    void dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) override;
     void dispatchDidLayout() override;
 
     WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) override;

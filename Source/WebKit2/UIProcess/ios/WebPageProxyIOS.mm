@@ -364,7 +364,7 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     if (m_wantsSessionRestorationRenderTreeSizeThresholdEvent && !m_hitRenderTreeSizeThreshold
         && exceedsRenderTreeSizeSizeThreshold(m_sessionRestorationRenderTreeSize, layerTreeTransaction.renderTreeSize())) {
         m_hitRenderTreeSizeThreshold = true;
-        didLayout(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
+        didReachLayoutMilestone(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
     }
 
     if (m_hasDeferredStartAssistingNode) {

@@ -1087,7 +1087,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didFirstVisuallyNonEmptyLayoutForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void didLayout(WebPageProxy& page, LayoutMilestones milestones) override
+        void didReachLayoutMilestone(WebPageProxy& page, LayoutMilestones milestones) override
         {
             if (!m_client.didLayout)
                 return;

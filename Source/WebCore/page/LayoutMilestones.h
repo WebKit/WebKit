@@ -32,13 +32,13 @@ namespace WebCore {
 // We should either re-name them to something more generic, or split them into
 // two enums -- one for painting and one for layout.
 enum LayoutMilestoneFlag {
-    DidFirstLayout = 1 << 0,
-    DidFirstVisuallyNonEmptyLayout = 1 << 1,
-    DidHitRelevantRepaintedObjectsAreaThreshold = 1 << 2,
-    DidFirstFlushForHeaderLayer = 1 << 3,
-    DidFirstLayoutAfterSuppressedIncrementalRendering = 1 << 4,
-    DidFirstPaintAfterSuppressedIncrementalRendering = 1 << 5,
-    ReachedSessionRestorationRenderTreeSizeThreshold = 1 << 6 // FIXME: only implemented by WK2 currently.
+    DidFirstLayout                                      = 1 << 0,
+    DidFirstVisuallyNonEmptyLayout                      = 1 << 1,
+    DidHitRelevantRepaintedObjectsAreaThreshold         = 1 << 2,
+    DidFirstFlushForHeaderLayer                         = 1 << 3,
+    DidFirstLayoutAfterSuppressedIncrementalRendering   = 1 << 4,
+    DidFirstPaintAfterSuppressedIncrementalRendering    = 1 << 5,
+    ReachedSessionRestorationRenderTreeSizeThreshold    = 1 << 6 // FIXME: only implemented by WK2 currently.
 };
 
 typedef unsigned LayoutMilestones;

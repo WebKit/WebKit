@@ -3469,17 +3469,17 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, cons
 
 void WebPageProxy::didLayoutForCustomContentProvider()
 {
-    didLayout(DidFirstLayout | DidFirstVisuallyNonEmptyLayout | DidHitRelevantRepaintedObjectsAreaThreshold);
+    didReachLayoutMilestone(DidFirstLayout | DidFirstVisuallyNonEmptyLayout | DidHitRelevantRepaintedObjectsAreaThreshold);
 }
 
-void WebPageProxy::didLayout(uint32_t layoutMilestones)
+void WebPageProxy::didReachLayoutMilestone(uint32_t layoutMilestones)
 {
     PageClientProtector protector(m_pageClient);
 
     if (m_navigationClient)
         m_navigationClient->renderingProgressDidChange(*this, static_cast<LayoutMilestones>(layoutMilestones));
     else
-        m_loaderClient->didLayout(*this, static_cast<LayoutMilestones>(layoutMilestones));
+        m_loaderClient->didReachLayoutMilestone(*this, static_cast<LayoutMilestones>(layoutMilestones));
 }
 
 void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, const UserData& userData)

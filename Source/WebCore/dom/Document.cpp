@@ -1305,7 +1305,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         if (frame()->isMainFrame()) {
             frameView->addPaintPendingMilestones(DidFirstPaintAfterSuppressedIncrementalRendering);
             if (page->requestedLayoutMilestones() & DidFirstLayoutAfterSuppressedIncrementalRendering)
-                frame()->loader().didLayout(DidFirstLayoutAfterSuppressedIncrementalRendering);
+                frame()->loader().didReachLayoutMilestone(DidFirstLayoutAfterSuppressedIncrementalRendering);
         }
     }
 

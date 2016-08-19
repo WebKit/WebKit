@@ -1,3 +1,54 @@
+2016-08-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename didLayout(LayoutMilestones) to didReachLayoutMilestone(), and related WK2 functions
+        https://bugs.webkit.org/show_bug.cgi?id=160923
+
+        Reviewed by Tim Horton.
+
+        didLayout(LayoutMilestones) -> didReachLayoutMilestone(LayoutMilestones)
+        dispatchDidLayout(LayoutMilestones) -> dispatchDidReachLayoutMilestone(LayoutMilestones)
+
+        Avoided changing functions that are exposed as API/SPI.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didReachLayoutMilestone):
+        (API::LoaderClient::didLayout): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didLayoutForCustomContentProvider):
+        (WebKit::WebPageProxy::didReachLayoutMilestone):
+        (WebKit::WebPageProxy::didLayout): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didReachLayoutMilestone):
+        (setUpPageLoaderClient):
+        (didLayout): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didReachLayoutMilestone):
+        (WebKit::InjectedBundlePageLoaderClient::didLayout): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::dispatchDidReachLayoutMilestone):
+        (WebKit::DrawingArea::dispatchDidLayout): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dispatchDidReachLayoutMilestone):
+        (WebKit::WebPage::dispatchDidLayout): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::dispatchDidReachLayoutMilestone):
+        (WebKit::RemoteLayerTreeDrawingArea::dispatchDidLayout): Deleted.
+
 2016-08-18  Daniel Bates  <dabates@apple.com>
 
         Ld warns of non-existent PrivateFrameworks directory when building WebKit with the public iOS 9.3 SDK

@@ -174,7 +174,7 @@ namespace WebCore {
 #endif
 
         virtual void dispatchDidLayout() { }
-        virtual void dispatchDidLayout(LayoutMilestones) { }
+        virtual void dispatchDidReachLayoutMilestone(LayoutMilestones) { }
 
         virtual Frame* dispatchCreatePage(const NavigationAction&) = 0;
         virtual void dispatchShow() = 0;

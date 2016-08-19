@@ -252,7 +252,7 @@ void InjectedBundlePageLoaderClient::didLayoutForFrame(WebPage* page, WebFrame* 
     m_client.didLayoutForFrame(toAPI(page), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::didLayout(WebPage* page, LayoutMilestones milestones, RefPtr<API::Object>& userData)
+void InjectedBundlePageLoaderClient::didReachLayoutMilestone(WebPage* page, LayoutMilestones milestones, RefPtr<API::Object>& userData)
 {
     if (!m_client.didLayout)
         return;

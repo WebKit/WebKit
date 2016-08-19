@@ -937,7 +937,7 @@ public:
     void addUserStyleSheet(const String& source, WebCore::UserContentInjectedFrames);
     void removeAllUserContent();
 
-    void dispatchDidLayout(WebCore::LayoutMilestones);
+    void dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones);
 
     void didRestoreScrollPosition();
 

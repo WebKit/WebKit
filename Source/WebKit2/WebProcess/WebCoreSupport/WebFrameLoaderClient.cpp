@@ -566,7 +566,7 @@ void WebFrameLoaderClient::forcePageTransitionIfNeeded()
     m_didCompletePageTransition = true;
 }
 
-void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
+void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(LayoutMilestones milestones)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -595,7 +595,7 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
     }
 
     // Send this after DidFirstLayout-specific calls since some clients expect to get those messages first.
-    webPage->dispatchDidLayout(milestones);
+    webPage->dispatchDidReachLayoutMilestone(milestones);
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
         if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {

@@ -116,7 +116,7 @@ private:
     void dispatchDidFailLoad(const WebCore::ResourceError&) override;
     void dispatchDidFinishDocumentLoad() override;
     void dispatchDidFinishLoad() override;
-    void dispatchDidLayout(WebCore::LayoutMilestones) override;
+    void dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) override;
 
     WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) override;
     void dispatchShow() override;

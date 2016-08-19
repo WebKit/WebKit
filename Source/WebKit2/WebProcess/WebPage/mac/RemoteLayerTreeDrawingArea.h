@@ -110,7 +110,7 @@ private:
 
     bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) override;
 
-    bool dispatchDidLayout(WebCore::LayoutMilestones) override;
+    bool dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) override;
 
     void updateScrolledExposedRect();
     void updateRootLayers();

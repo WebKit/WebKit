@@ -1,3 +1,18 @@
+2016-08-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename didLayout(LayoutMilestones) to didReachLayoutMilestone(), and related WK2 functions
+        https://bugs.webkit.org/show_bug.cgi?id=160923
+
+        Reviewed by Tim Horton.
+
+        didLayout(LayoutMilestones) -> didReachLayoutMilestone(LayoutMilestones)
+        dispatchDidLayout(LayoutMilestones) -> dispatchDidReachLayoutMilestone(LayoutMilestones)
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+        (WebFrameLoaderClient::dispatchDidLayout): Deleted.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2016-08-18  Anders Carlsson  <andersca@apple.com>
 
         Move an NPAPI-only function from WebCore to WebKit
