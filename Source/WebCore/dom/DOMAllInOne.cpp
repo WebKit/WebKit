@@ -92,7 +92,7 @@
 #include "IdTargetObserverRegistry.cpp"
 #include "InlineStyleSheetOwner.cpp"
 #include "KeyboardEvent.cpp"
-#include "LifecycleCallbackQueue.cpp"
+#include "CustomElementReactionQueue.cpp"
 #include "LiveNodeList.cpp"
 #include "MessageChannel.cpp"
 #include "MessageEvent.cpp"
