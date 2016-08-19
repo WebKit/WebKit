@@ -62,36 +62,10 @@ storage/domstorage/storage-close-database-on-idle.html
 ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
 
 # <rdar://problem/17349058> Assertion in WebProcessProxy::didNavigateWithNavigationData() when running layout tests in WTR
-loader/go-back-cached-main-resource.html
-js/dom/function-constructor-this-value.html
-storage/domstorage/localstorage/access-storage-after-window-close.html
-storage/domstorage/localstorage/set-value-in-storage-after-window-close.html
-storage/domstorage/localstorage/window-open.html
-storage/domstorage/localstorage/access-storage-then-set-value-in-storage-after-window-close.html
-fast/loader/ping-error.html
-fast/loader/stateobjects/popstate-fires-with-page-cache.html
-fast/loader/stateobjects/replacestate-in-iframe.html
-fast/loader/stateobjects/pushstate-without-history.html
-fast/frames/sandboxed-iframe-close-top-noclose.html
-fast/frames/sandboxed-iframe-close-top.html
-fast/frames/frame-crash-with-page-cache.html
-fast/events/show-modal-dialog-onblur-onfocus.html
-fast/dom/HTMLBaseElement/href-attribute-resolves-with-respect-to-document.html
-fast/dom/open-and-close-by-DOM.html
-fast/dom/Geolocation/window-close-crash.html
-fast/dom/Window/window-early-properties.html
-fast/dom/Window/open-zero-size-as-default.html
-fast/dom/Window/window-property-invalid-characters-ignored.html
-fast/dom/Window/setting-properties-on-closed-window.html
-fast/dom/Window/dom-access-from-closure-window-with-gc.html
 fast/dom/Window/mozilla-focus-blur.html
-fast/dom/Window/closure-access-after-navigation-window.html
-fast/dom/Window/open-invalid-url.html
-fast/dom/Window/dom-access-from-closure-window.html
-fast/dom/Window/Location/set-location-after-close.html
+fast/dom/Window/window-property-invalid-characters-ignored.html
+fast/events/show-modal-dialog-onblur-onfocus.html
 fast/harness/show-modal-dialog.html
-fast/harness/page-cache-crash-on-data-urls.html
-fast/harness/use-page-cache.html
 
 # JavaScript tests that fail:
 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
@@ -401,50 +375,12 @@ http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
 http/tests/uri/css-href.php [ Failure ]
 
 # HTTP tests that assert:
-http/tests/appcache/crash-when-navigating-away-then-back.html
-http/tests/cache/display-image-unset-allows-cached-image-load.html
-http/tests/cache/history-only-cached-subresource-loads.html
-http/tests/misc/iframe-reparenting-id-collision.html
-http/tests/misc/set-window-opener-to-null.html
-http/tests/misc/slow-preload-cancel.html
 http/tests/navigation/new-window-redirect-history.html
-http/tests/navigation/target-frame-from-window.html
 http/tests/plugins/plugin-document-has-focus.html
-http/tests/security/aboutBlank/security-context-window-open.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
-http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
-http/tests/security/frameNavigation/cross-origin-opener.html
-http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html
-http/tests/security/frameNavigation/not-opener.html
-http/tests/security/frameNavigation/opener.html
-http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
 http/tests/security/inactive-document-with-empty-security-origin.html
-http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
-http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
-http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
-http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/insecure-xhr-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
-http/tests/security/originHeader/origin-header-for-empty.html
-http/tests/security/popup-allowed-by-sandbox-is-sandboxed-control.html
-http/tests/security/popup-allowed-by-sandbox-is-sandboxed.html
-http/tests/security/popup-allowed-by-sandbox-when-allowed.html
 http/tests/security/popup-blocked-from-fake-event.html
 http/tests/security/popup-blocked-from-window-open.html
-http/tests/security/referrer-policy-window-open.html
-http/tests/security/window-events-clear-domain.html
-http/tests/security/window-events-clear-port.html
-http/tests/security/window-events-pass.html
-http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html
-http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
-http/tests/security/xssAuditor/link-opens-new-window.html
-http/tests/xmlhttprequest/close-window.html
-http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 
 # HTTP tests that time out:

@@ -1,3 +1,11 @@
+2016-08-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unskip tests that now pass on ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-08-18  Chris Dumez  <cdumez@apple.com>
 
         Move prefix / namespaceURI / localName attributes from Node to Attr / Element
