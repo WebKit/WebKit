@@ -1,3 +1,9 @@
+2016-08-18  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed, Fix CMake build after r204614
+
+        * PlatformMac.cmake:
+
 2016-08-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Network Processes & Database processes do not exit promptly

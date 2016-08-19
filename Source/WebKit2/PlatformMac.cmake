@@ -105,6 +105,7 @@ list(APPEND WebKit2_SOURCES
     Shared/Cocoa/WKNSData.mm
     Shared/Cocoa/WKNSDictionary.mm
     Shared/Cocoa/WKNSError.mm
+    Shared/Cocoa/WKNSNumber.mm
     Shared/Cocoa/WKNSString.mm
     Shared/Cocoa/WKNSURL.mm
     Shared/Cocoa/WKNSURLExtras.mm
