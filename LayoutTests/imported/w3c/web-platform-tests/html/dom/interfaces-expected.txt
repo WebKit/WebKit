@@ -114,7 +114,6 @@ PASS Document interface: attribute onseeked
 PASS Document interface: attribute onseeking 
 PASS Document interface: attribute onselect 
 FAIL Document interface: attribute onshow assert_true: The prototype object must have a property "onshow" expected true got false
-FAIL Document interface: attribute onsort assert_true: The prototype object must have a property "onsort" expected true got false
 PASS Document interface: attribute onstalled 
 PASS Document interface: attribute onsubmit 
 PASS Document interface: attribute onsuspend 
@@ -241,77 +240,72 @@ PASS Document interface: iframe.contentDocument must inherit property "prepend" 
 PASS Document interface: calling prepend([object Object],[object Object]) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "append" with the proper type (88) 
 PASS Document interface: calling append([object Object],[object Object]) on iframe.contentDocument with too few arguments must throw TypeError 
-FAIL Document interface: iframe.contentDocument must inherit property "query" with the proper type (89) assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: calling query(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "queryAll" with the proper type (90) assert_inherits: property "queryAll" not found in prototype chain
-FAIL Document interface: calling queryAll(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "querySelector" with the proper type (91) 
+PASS Document interface: iframe.contentDocument must inherit property "querySelector" with the proper type (89) 
 PASS Document interface: calling querySelector(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "querySelectorAll" with the proper type (92) 
+PASS Document interface: iframe.contentDocument must inherit property "querySelectorAll" with the proper type (90) 
 PASS Document interface: calling querySelectorAll(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "onabort" with the proper type (93) 
-FAIL Document interface: iframe.contentDocument must inherit property "onautocomplete" with the proper type (94) assert_inherits: property "onautocomplete" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "onautocompleteerror" with the proper type (95) assert_inherits: property "onautocompleteerror" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "onblur" with the proper type (96) 
-FAIL Document interface: iframe.contentDocument must inherit property "oncancel" with the proper type (97) assert_inherits: property "oncancel" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "oncanplay" with the proper type (98) 
-PASS Document interface: iframe.contentDocument must inherit property "oncanplaythrough" with the proper type (99) 
-PASS Document interface: iframe.contentDocument must inherit property "onchange" with the proper type (100) 
-PASS Document interface: iframe.contentDocument must inherit property "onclick" with the proper type (101) 
-FAIL Document interface: iframe.contentDocument must inherit property "onclose" with the proper type (102) assert_inherits: property "onclose" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "oncontextmenu" with the proper type (103) 
-FAIL Document interface: iframe.contentDocument must inherit property "oncuechange" with the proper type (104) assert_inherits: property "oncuechange" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "ondblclick" with the proper type (105) 
-PASS Document interface: iframe.contentDocument must inherit property "ondrag" with the proper type (106) 
-PASS Document interface: iframe.contentDocument must inherit property "ondragend" with the proper type (107) 
-PASS Document interface: iframe.contentDocument must inherit property "ondragenter" with the proper type (108) 
-FAIL Document interface: iframe.contentDocument must inherit property "ondragexit" with the proper type (109) assert_inherits: property "ondragexit" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "ondragleave" with the proper type (110) 
-PASS Document interface: iframe.contentDocument must inherit property "ondragover" with the proper type (111) 
-PASS Document interface: iframe.contentDocument must inherit property "ondragstart" with the proper type (112) 
-PASS Document interface: iframe.contentDocument must inherit property "ondrop" with the proper type (113) 
-PASS Document interface: iframe.contentDocument must inherit property "ondurationchange" with the proper type (114) 
-PASS Document interface: iframe.contentDocument must inherit property "onemptied" with the proper type (115) 
-PASS Document interface: iframe.contentDocument must inherit property "onended" with the proper type (116) 
-PASS Document interface: iframe.contentDocument must inherit property "onerror" with the proper type (117) 
-PASS Document interface: iframe.contentDocument must inherit property "onfocus" with the proper type (118) 
-PASS Document interface: iframe.contentDocument must inherit property "oninput" with the proper type (119) 
-PASS Document interface: iframe.contentDocument must inherit property "oninvalid" with the proper type (120) 
-PASS Document interface: iframe.contentDocument must inherit property "onkeydown" with the proper type (121) 
-PASS Document interface: iframe.contentDocument must inherit property "onkeypress" with the proper type (122) 
-PASS Document interface: iframe.contentDocument must inherit property "onkeyup" with the proper type (123) 
-PASS Document interface: iframe.contentDocument must inherit property "onload" with the proper type (124) 
-PASS Document interface: iframe.contentDocument must inherit property "onloadeddata" with the proper type (125) 
-PASS Document interface: iframe.contentDocument must inherit property "onloadedmetadata" with the proper type (126) 
-PASS Document interface: iframe.contentDocument must inherit property "onloadstart" with the proper type (127) 
-PASS Document interface: iframe.contentDocument must inherit property "onmousedown" with the proper type (128) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseenter" with the proper type (129) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseleave" with the proper type (130) 
-PASS Document interface: iframe.contentDocument must inherit property "onmousemove" with the proper type (131) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseout" with the proper type (132) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseover" with the proper type (133) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseup" with the proper type (134) 
-PASS Document interface: iframe.contentDocument must inherit property "onmousewheel" with the proper type (135) 
-PASS Document interface: iframe.contentDocument must inherit property "onpause" with the proper type (136) 
-PASS Document interface: iframe.contentDocument must inherit property "onplay" with the proper type (137) 
-PASS Document interface: iframe.contentDocument must inherit property "onplaying" with the proper type (138) 
-PASS Document interface: iframe.contentDocument must inherit property "onprogress" with the proper type (139) 
-PASS Document interface: iframe.contentDocument must inherit property "onratechange" with the proper type (140) 
-PASS Document interface: iframe.contentDocument must inherit property "onreset" with the proper type (141) 
-PASS Document interface: iframe.contentDocument must inherit property "onresize" with the proper type (142) 
-PASS Document interface: iframe.contentDocument must inherit property "onscroll" with the proper type (143) 
-PASS Document interface: iframe.contentDocument must inherit property "onseeked" with the proper type (144) 
-PASS Document interface: iframe.contentDocument must inherit property "onseeking" with the proper type (145) 
-PASS Document interface: iframe.contentDocument must inherit property "onselect" with the proper type (146) 
-FAIL Document interface: iframe.contentDocument must inherit property "onshow" with the proper type (147) assert_inherits: property "onshow" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "onsort" with the proper type (148) assert_inherits: property "onsort" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "onstalled" with the proper type (149) 
-PASS Document interface: iframe.contentDocument must inherit property "onsubmit" with the proper type (150) 
-PASS Document interface: iframe.contentDocument must inherit property "onsuspend" with the proper type (151) 
-PASS Document interface: iframe.contentDocument must inherit property "ontimeupdate" with the proper type (152) 
-FAIL Document interface: iframe.contentDocument must inherit property "ontoggle" with the proper type (153) assert_inherits: property "ontoggle" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "onvolumechange" with the proper type (154) 
-PASS Document interface: iframe.contentDocument must inherit property "onwaiting" with the proper type (155) 
+PASS Document interface: iframe.contentDocument must inherit property "onabort" with the proper type (91) 
+FAIL Document interface: iframe.contentDocument must inherit property "onautocomplete" with the proper type (92) assert_inherits: property "onautocomplete" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "onautocompleteerror" with the proper type (93) assert_inherits: property "onautocompleteerror" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onblur" with the proper type (94) 
+FAIL Document interface: iframe.contentDocument must inherit property "oncancel" with the proper type (95) assert_inherits: property "oncancel" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "oncanplay" with the proper type (96) 
+PASS Document interface: iframe.contentDocument must inherit property "oncanplaythrough" with the proper type (97) 
+PASS Document interface: iframe.contentDocument must inherit property "onchange" with the proper type (98) 
+PASS Document interface: iframe.contentDocument must inherit property "onclick" with the proper type (99) 
+FAIL Document interface: iframe.contentDocument must inherit property "onclose" with the proper type (100) assert_inherits: property "onclose" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "oncontextmenu" with the proper type (101) 
+FAIL Document interface: iframe.contentDocument must inherit property "oncuechange" with the proper type (102) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "ondblclick" with the proper type (103) 
+PASS Document interface: iframe.contentDocument must inherit property "ondrag" with the proper type (104) 
+PASS Document interface: iframe.contentDocument must inherit property "ondragend" with the proper type (105) 
+PASS Document interface: iframe.contentDocument must inherit property "ondragenter" with the proper type (106) 
+FAIL Document interface: iframe.contentDocument must inherit property "ondragexit" with the proper type (107) assert_inherits: property "ondragexit" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "ondragleave" with the proper type (108) 
+PASS Document interface: iframe.contentDocument must inherit property "ondragover" with the proper type (109) 
+PASS Document interface: iframe.contentDocument must inherit property "ondragstart" with the proper type (110) 
+PASS Document interface: iframe.contentDocument must inherit property "ondrop" with the proper type (111) 
+PASS Document interface: iframe.contentDocument must inherit property "ondurationchange" with the proper type (112) 
+PASS Document interface: iframe.contentDocument must inherit property "onemptied" with the proper type (113) 
+PASS Document interface: iframe.contentDocument must inherit property "onended" with the proper type (114) 
+PASS Document interface: iframe.contentDocument must inherit property "onerror" with the proper type (115) 
+PASS Document interface: iframe.contentDocument must inherit property "onfocus" with the proper type (116) 
+PASS Document interface: iframe.contentDocument must inherit property "oninput" with the proper type (117) 
+PASS Document interface: iframe.contentDocument must inherit property "oninvalid" with the proper type (118) 
+PASS Document interface: iframe.contentDocument must inherit property "onkeydown" with the proper type (119) 
+PASS Document interface: iframe.contentDocument must inherit property "onkeypress" with the proper type (120) 
+PASS Document interface: iframe.contentDocument must inherit property "onkeyup" with the proper type (121) 
+PASS Document interface: iframe.contentDocument must inherit property "onload" with the proper type (122) 
+PASS Document interface: iframe.contentDocument must inherit property "onloadeddata" with the proper type (123) 
+PASS Document interface: iframe.contentDocument must inherit property "onloadedmetadata" with the proper type (124) 
+PASS Document interface: iframe.contentDocument must inherit property "onloadstart" with the proper type (125) 
+PASS Document interface: iframe.contentDocument must inherit property "onmousedown" with the proper type (126) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseenter" with the proper type (127) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseleave" with the proper type (128) 
+PASS Document interface: iframe.contentDocument must inherit property "onmousemove" with the proper type (129) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseout" with the proper type (130) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseover" with the proper type (131) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseup" with the proper type (132) 
+PASS Document interface: iframe.contentDocument must inherit property "onmousewheel" with the proper type (133) 
+PASS Document interface: iframe.contentDocument must inherit property "onpause" with the proper type (134) 
+PASS Document interface: iframe.contentDocument must inherit property "onplay" with the proper type (135) 
+PASS Document interface: iframe.contentDocument must inherit property "onplaying" with the proper type (136) 
+PASS Document interface: iframe.contentDocument must inherit property "onprogress" with the proper type (137) 
+PASS Document interface: iframe.contentDocument must inherit property "onratechange" with the proper type (138) 
+PASS Document interface: iframe.contentDocument must inherit property "onreset" with the proper type (139) 
+PASS Document interface: iframe.contentDocument must inherit property "onresize" with the proper type (140) 
+PASS Document interface: iframe.contentDocument must inherit property "onscroll" with the proper type (141) 
+PASS Document interface: iframe.contentDocument must inherit property "onseeked" with the proper type (142) 
+PASS Document interface: iframe.contentDocument must inherit property "onseeking" with the proper type (143) 
+PASS Document interface: iframe.contentDocument must inherit property "onselect" with the proper type (144) 
+FAIL Document interface: iframe.contentDocument must inherit property "onshow" with the proper type (145) assert_inherits: property "onshow" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onstalled" with the proper type (146) 
+PASS Document interface: iframe.contentDocument must inherit property "onsubmit" with the proper type (147) 
+PASS Document interface: iframe.contentDocument must inherit property "onsuspend" with the proper type (148) 
+PASS Document interface: iframe.contentDocument must inherit property "ontimeupdate" with the proper type (149) 
+FAIL Document interface: iframe.contentDocument must inherit property "ontoggle" with the proper type (150) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onvolumechange" with the proper type (151) 
+PASS Document interface: iframe.contentDocument must inherit property "onwaiting" with the proper type (152) 
 PASS Node interface: iframe.contentDocument must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: iframe.contentDocument must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
 PASS Node interface: iframe.contentDocument must inherit property "TEXT_NODE" with the proper type (2) 
@@ -493,77 +487,72 @@ PASS Document interface: new Document() must inherit property "prepend" with the
 PASS Document interface: calling prepend([object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "append" with the proper type (88) 
 PASS Document interface: calling append([object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
-FAIL Document interface: new Document() must inherit property "query" with the proper type (89) assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: calling query(DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: new Document() must inherit property "queryAll" with the proper type (90) assert_inherits: property "queryAll" not found in prototype chain
-FAIL Document interface: calling queryAll(DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
-PASS Document interface: new Document() must inherit property "querySelector" with the proper type (91) 
+PASS Document interface: new Document() must inherit property "querySelector" with the proper type (89) 
 PASS Document interface: calling querySelector(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "querySelectorAll" with the proper type (92) 
+PASS Document interface: new Document() must inherit property "querySelectorAll" with the proper type (90) 
 PASS Document interface: calling querySelectorAll(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "onabort" with the proper type (93) 
-FAIL Document interface: new Document() must inherit property "onautocomplete" with the proper type (94) assert_inherits: property "onautocomplete" not found in prototype chain
-FAIL Document interface: new Document() must inherit property "onautocompleteerror" with the proper type (95) assert_inherits: property "onautocompleteerror" not found in prototype chain
-PASS Document interface: new Document() must inherit property "onblur" with the proper type (96) 
-FAIL Document interface: new Document() must inherit property "oncancel" with the proper type (97) assert_inherits: property "oncancel" not found in prototype chain
-PASS Document interface: new Document() must inherit property "oncanplay" with the proper type (98) 
-PASS Document interface: new Document() must inherit property "oncanplaythrough" with the proper type (99) 
-PASS Document interface: new Document() must inherit property "onchange" with the proper type (100) 
-PASS Document interface: new Document() must inherit property "onclick" with the proper type (101) 
-FAIL Document interface: new Document() must inherit property "onclose" with the proper type (102) assert_inherits: property "onclose" not found in prototype chain
-PASS Document interface: new Document() must inherit property "oncontextmenu" with the proper type (103) 
-FAIL Document interface: new Document() must inherit property "oncuechange" with the proper type (104) assert_inherits: property "oncuechange" not found in prototype chain
-PASS Document interface: new Document() must inherit property "ondblclick" with the proper type (105) 
-PASS Document interface: new Document() must inherit property "ondrag" with the proper type (106) 
-PASS Document interface: new Document() must inherit property "ondragend" with the proper type (107) 
-PASS Document interface: new Document() must inherit property "ondragenter" with the proper type (108) 
-FAIL Document interface: new Document() must inherit property "ondragexit" with the proper type (109) assert_inherits: property "ondragexit" not found in prototype chain
-PASS Document interface: new Document() must inherit property "ondragleave" with the proper type (110) 
-PASS Document interface: new Document() must inherit property "ondragover" with the proper type (111) 
-PASS Document interface: new Document() must inherit property "ondragstart" with the proper type (112) 
-PASS Document interface: new Document() must inherit property "ondrop" with the proper type (113) 
-PASS Document interface: new Document() must inherit property "ondurationchange" with the proper type (114) 
-PASS Document interface: new Document() must inherit property "onemptied" with the proper type (115) 
-PASS Document interface: new Document() must inherit property "onended" with the proper type (116) 
-PASS Document interface: new Document() must inherit property "onerror" with the proper type (117) 
-PASS Document interface: new Document() must inherit property "onfocus" with the proper type (118) 
-PASS Document interface: new Document() must inherit property "oninput" with the proper type (119) 
-PASS Document interface: new Document() must inherit property "oninvalid" with the proper type (120) 
-PASS Document interface: new Document() must inherit property "onkeydown" with the proper type (121) 
-PASS Document interface: new Document() must inherit property "onkeypress" with the proper type (122) 
-PASS Document interface: new Document() must inherit property "onkeyup" with the proper type (123) 
-PASS Document interface: new Document() must inherit property "onload" with the proper type (124) 
-PASS Document interface: new Document() must inherit property "onloadeddata" with the proper type (125) 
-PASS Document interface: new Document() must inherit property "onloadedmetadata" with the proper type (126) 
-PASS Document interface: new Document() must inherit property "onloadstart" with the proper type (127) 
-PASS Document interface: new Document() must inherit property "onmousedown" with the proper type (128) 
-PASS Document interface: new Document() must inherit property "onmouseenter" with the proper type (129) 
-PASS Document interface: new Document() must inherit property "onmouseleave" with the proper type (130) 
-PASS Document interface: new Document() must inherit property "onmousemove" with the proper type (131) 
-PASS Document interface: new Document() must inherit property "onmouseout" with the proper type (132) 
-PASS Document interface: new Document() must inherit property "onmouseover" with the proper type (133) 
-PASS Document interface: new Document() must inherit property "onmouseup" with the proper type (134) 
-PASS Document interface: new Document() must inherit property "onmousewheel" with the proper type (135) 
-PASS Document interface: new Document() must inherit property "onpause" with the proper type (136) 
-PASS Document interface: new Document() must inherit property "onplay" with the proper type (137) 
-PASS Document interface: new Document() must inherit property "onplaying" with the proper type (138) 
-PASS Document interface: new Document() must inherit property "onprogress" with the proper type (139) 
-PASS Document interface: new Document() must inherit property "onratechange" with the proper type (140) 
-PASS Document interface: new Document() must inherit property "onreset" with the proper type (141) 
-PASS Document interface: new Document() must inherit property "onresize" with the proper type (142) 
-PASS Document interface: new Document() must inherit property "onscroll" with the proper type (143) 
-PASS Document interface: new Document() must inherit property "onseeked" with the proper type (144) 
-PASS Document interface: new Document() must inherit property "onseeking" with the proper type (145) 
-PASS Document interface: new Document() must inherit property "onselect" with the proper type (146) 
-FAIL Document interface: new Document() must inherit property "onshow" with the proper type (147) assert_inherits: property "onshow" not found in prototype chain
-FAIL Document interface: new Document() must inherit property "onsort" with the proper type (148) assert_inherits: property "onsort" not found in prototype chain
-PASS Document interface: new Document() must inherit property "onstalled" with the proper type (149) 
-PASS Document interface: new Document() must inherit property "onsubmit" with the proper type (150) 
-PASS Document interface: new Document() must inherit property "onsuspend" with the proper type (151) 
-PASS Document interface: new Document() must inherit property "ontimeupdate" with the proper type (152) 
-FAIL Document interface: new Document() must inherit property "ontoggle" with the proper type (153) assert_inherits: property "ontoggle" not found in prototype chain
-PASS Document interface: new Document() must inherit property "onvolumechange" with the proper type (154) 
-PASS Document interface: new Document() must inherit property "onwaiting" with the proper type (155) 
+PASS Document interface: new Document() must inherit property "onabort" with the proper type (91) 
+FAIL Document interface: new Document() must inherit property "onautocomplete" with the proper type (92) assert_inherits: property "onautocomplete" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "onautocompleteerror" with the proper type (93) assert_inherits: property "onautocompleteerror" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onblur" with the proper type (94) 
+FAIL Document interface: new Document() must inherit property "oncancel" with the proper type (95) assert_inherits: property "oncancel" not found in prototype chain
+PASS Document interface: new Document() must inherit property "oncanplay" with the proper type (96) 
+PASS Document interface: new Document() must inherit property "oncanplaythrough" with the proper type (97) 
+PASS Document interface: new Document() must inherit property "onchange" with the proper type (98) 
+PASS Document interface: new Document() must inherit property "onclick" with the proper type (99) 
+FAIL Document interface: new Document() must inherit property "onclose" with the proper type (100) assert_inherits: property "onclose" not found in prototype chain
+PASS Document interface: new Document() must inherit property "oncontextmenu" with the proper type (101) 
+FAIL Document interface: new Document() must inherit property "oncuechange" with the proper type (102) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: new Document() must inherit property "ondblclick" with the proper type (103) 
+PASS Document interface: new Document() must inherit property "ondrag" with the proper type (104) 
+PASS Document interface: new Document() must inherit property "ondragend" with the proper type (105) 
+PASS Document interface: new Document() must inherit property "ondragenter" with the proper type (106) 
+FAIL Document interface: new Document() must inherit property "ondragexit" with the proper type (107) assert_inherits: property "ondragexit" not found in prototype chain
+PASS Document interface: new Document() must inherit property "ondragleave" with the proper type (108) 
+PASS Document interface: new Document() must inherit property "ondragover" with the proper type (109) 
+PASS Document interface: new Document() must inherit property "ondragstart" with the proper type (110) 
+PASS Document interface: new Document() must inherit property "ondrop" with the proper type (111) 
+PASS Document interface: new Document() must inherit property "ondurationchange" with the proper type (112) 
+PASS Document interface: new Document() must inherit property "onemptied" with the proper type (113) 
+PASS Document interface: new Document() must inherit property "onended" with the proper type (114) 
+PASS Document interface: new Document() must inherit property "onerror" with the proper type (115) 
+PASS Document interface: new Document() must inherit property "onfocus" with the proper type (116) 
+PASS Document interface: new Document() must inherit property "oninput" with the proper type (117) 
+PASS Document interface: new Document() must inherit property "oninvalid" with the proper type (118) 
+PASS Document interface: new Document() must inherit property "onkeydown" with the proper type (119) 
+PASS Document interface: new Document() must inherit property "onkeypress" with the proper type (120) 
+PASS Document interface: new Document() must inherit property "onkeyup" with the proper type (121) 
+PASS Document interface: new Document() must inherit property "onload" with the proper type (122) 
+PASS Document interface: new Document() must inherit property "onloadeddata" with the proper type (123) 
+PASS Document interface: new Document() must inherit property "onloadedmetadata" with the proper type (124) 
+PASS Document interface: new Document() must inherit property "onloadstart" with the proper type (125) 
+PASS Document interface: new Document() must inherit property "onmousedown" with the proper type (126) 
+PASS Document interface: new Document() must inherit property "onmouseenter" with the proper type (127) 
+PASS Document interface: new Document() must inherit property "onmouseleave" with the proper type (128) 
+PASS Document interface: new Document() must inherit property "onmousemove" with the proper type (129) 
+PASS Document interface: new Document() must inherit property "onmouseout" with the proper type (130) 
+PASS Document interface: new Document() must inherit property "onmouseover" with the proper type (131) 
+PASS Document interface: new Document() must inherit property "onmouseup" with the proper type (132) 
+PASS Document interface: new Document() must inherit property "onmousewheel" with the proper type (133) 
+PASS Document interface: new Document() must inherit property "onpause" with the proper type (134) 
+PASS Document interface: new Document() must inherit property "onplay" with the proper type (135) 
+PASS Document interface: new Document() must inherit property "onplaying" with the proper type (136) 
+PASS Document interface: new Document() must inherit property "onprogress" with the proper type (137) 
+PASS Document interface: new Document() must inherit property "onratechange" with the proper type (138) 
+PASS Document interface: new Document() must inherit property "onreset" with the proper type (139) 
+PASS Document interface: new Document() must inherit property "onresize" with the proper type (140) 
+PASS Document interface: new Document() must inherit property "onscroll" with the proper type (141) 
+PASS Document interface: new Document() must inherit property "onseeked" with the proper type (142) 
+PASS Document interface: new Document() must inherit property "onseeking" with the proper type (143) 
+PASS Document interface: new Document() must inherit property "onselect" with the proper type (144) 
+FAIL Document interface: new Document() must inherit property "onshow" with the proper type (145) assert_inherits: property "onshow" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onstalled" with the proper type (146) 
+PASS Document interface: new Document() must inherit property "onsubmit" with the proper type (147) 
+PASS Document interface: new Document() must inherit property "onsuspend" with the proper type (148) 
+PASS Document interface: new Document() must inherit property "ontimeupdate" with the proper type (149) 
+FAIL Document interface: new Document() must inherit property "ontoggle" with the proper type (150) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onvolumechange" with the proper type (151) 
+PASS Document interface: new Document() must inherit property "onwaiting" with the proper type (152) 
 PASS Node interface: new Document() must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: new Document() must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
 PASS Node interface: new Document() must inherit property "TEXT_NODE" with the proper type (2) 
@@ -625,11 +614,8 @@ PASS EventTarget interface: new Document() must inherit property "removeEventLis
 PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new Document() with too few arguments must throw TypeError 
 PASS EventTarget interface: new Document() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new Document() with too few arguments must throw TypeError 
-FAIL XMLDocument interface: operation load(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "load" missing
 PASS XMLDocument must be primary interface of document.implementation.createDocument(null, "", null) 
 PASS Stringification of document.implementation.createDocument(null, "", null) 
-FAIL XMLDocument interface: document.implementation.createDocument(null, "", null) must inherit property "load" with the proper type (0) assert_inherits: property "load" not found in prototype chain
-FAIL XMLDocument interface: calling load(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "load" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "implementation" with the proper type (0) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "URL" with the proper type (1) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "documentURI" with the proper type (2) 
@@ -748,77 +734,72 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: calling prepend([object Object],[object Object]) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "append" with the proper type (88) 
 PASS Document interface: calling append([object Object],[object Object]) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "query" with the proper type (89) assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: calling query(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryAll" with the proper type (90) assert_inherits: property "queryAll" not found in prototype chain
-FAIL Document interface: calling queryAll(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "querySelector" with the proper type (91) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "querySelector" with the proper type (89) 
 PASS Document interface: calling querySelector(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "querySelectorAll" with the proper type (92) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "querySelectorAll" with the proper type (90) 
 PASS Document interface: calling querySelectorAll(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onabort" with the proper type (93) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onautocomplete" with the proper type (94) assert_inherits: property "onautocomplete" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onautocompleteerror" with the proper type (95) assert_inherits: property "onautocompleteerror" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onblur" with the proper type (96) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncancel" with the proper type (97) assert_inherits: property "oncancel" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncanplay" with the proper type (98) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncanplaythrough" with the proper type (99) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onchange" with the proper type (100) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclick" with the proper type (101) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclose" with the proper type (102) assert_inherits: property "onclose" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncontextmenu" with the proper type (103) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncuechange" with the proper type (104) assert_inherits: property "oncuechange" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondblclick" with the proper type (105) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrag" with the proper type (106) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragend" with the proper type (107) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragenter" with the proper type (108) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragexit" with the proper type (109) assert_inherits: property "ondragexit" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragleave" with the proper type (110) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragover" with the proper type (111) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragstart" with the proper type (112) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrop" with the proper type (113) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondurationchange" with the proper type (114) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onemptied" with the proper type (115) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onended" with the proper type (116) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onerror" with the proper type (117) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onfocus" with the proper type (118) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oninput" with the proper type (119) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oninvalid" with the proper type (120) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeydown" with the proper type (121) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeypress" with the proper type (122) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeyup" with the proper type (123) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onload" with the proper type (124) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadeddata" with the proper type (125) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadedmetadata" with the proper type (126) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadstart" with the proper type (127) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousedown" with the proper type (128) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseenter" with the proper type (129) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseleave" with the proper type (130) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousemove" with the proper type (131) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseout" with the proper type (132) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseover" with the proper type (133) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseup" with the proper type (134) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousewheel" with the proper type (135) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onpause" with the proper type (136) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onplay" with the proper type (137) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onplaying" with the proper type (138) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onprogress" with the proper type (139) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onratechange" with the proper type (140) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onreset" with the proper type (141) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onresize" with the proper type (142) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onscroll" with the proper type (143) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeked" with the proper type (144) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeking" with the proper type (145) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onselect" with the proper type (146) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onshow" with the proper type (147) assert_inherits: property "onshow" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsort" with the proper type (148) assert_inherits: property "onsort" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onstalled" with the proper type (149) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsubmit" with the proper type (150) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsuspend" with the proper type (151) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontimeupdate" with the proper type (152) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontoggle" with the proper type (153) assert_inherits: property "ontoggle" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onvolumechange" with the proper type (154) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onwaiting" with the proper type (155) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onabort" with the proper type (91) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onautocomplete" with the proper type (92) assert_inherits: property "onautocomplete" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onautocompleteerror" with the proper type (93) assert_inherits: property "onautocompleteerror" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onblur" with the proper type (94) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncancel" with the proper type (95) assert_inherits: property "oncancel" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncanplay" with the proper type (96) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncanplaythrough" with the proper type (97) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onchange" with the proper type (98) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclick" with the proper type (99) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclose" with the proper type (100) assert_inherits: property "onclose" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncontextmenu" with the proper type (101) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncuechange" with the proper type (102) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondblclick" with the proper type (103) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrag" with the proper type (104) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragend" with the proper type (105) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragenter" with the proper type (106) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragexit" with the proper type (107) assert_inherits: property "ondragexit" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragleave" with the proper type (108) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragover" with the proper type (109) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragstart" with the proper type (110) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrop" with the proper type (111) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondurationchange" with the proper type (112) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onemptied" with the proper type (113) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onended" with the proper type (114) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onerror" with the proper type (115) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onfocus" with the proper type (116) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oninput" with the proper type (117) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oninvalid" with the proper type (118) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeydown" with the proper type (119) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeypress" with the proper type (120) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeyup" with the proper type (121) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onload" with the proper type (122) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadeddata" with the proper type (123) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadedmetadata" with the proper type (124) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadstart" with the proper type (125) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousedown" with the proper type (126) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseenter" with the proper type (127) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseleave" with the proper type (128) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousemove" with the proper type (129) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseout" with the proper type (130) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseover" with the proper type (131) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseup" with the proper type (132) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousewheel" with the proper type (133) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onpause" with the proper type (134) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onplay" with the proper type (135) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onplaying" with the proper type (136) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onprogress" with the proper type (137) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onratechange" with the proper type (138) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onreset" with the proper type (139) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onresize" with the proper type (140) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onscroll" with the proper type (141) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeked" with the proper type (142) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeking" with the proper type (143) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onselect" with the proper type (144) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onshow" with the proper type (145) assert_inherits: property "onshow" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onstalled" with the proper type (146) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsubmit" with the proper type (147) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsuspend" with the proper type (148) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontimeupdate" with the proper type (149) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontoggle" with the proper type (150) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onvolumechange" with the proper type (151) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onwaiting" with the proper type (152) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "TEXT_NODE" with the proper type (2) 
@@ -981,6 +962,7 @@ PASS HTMLElement interface: attribute isContentEditable
 FAIL HTMLElement interface: attribute contextMenu assert_true: The prototype object must have a property "contextMenu" expected true got false
 PASS HTMLElement interface: attribute spellcheck 
 FAIL HTMLElement interface: operation forceSpellCheck() assert_own_property: interface prototype object missing non-static operation expected property "forceSpellCheck" missing
+PASS HTMLElement interface: attribute innerText 
 FAIL HTMLElement interface: attribute commandType assert_true: The prototype object must have a property "commandType" expected true got false
 FAIL HTMLElement interface: attribute commandLabel assert_true: The prototype object must have a property "commandLabel" expected true got false
 FAIL HTMLElement interface: attribute commandIcon assert_true: The prototype object must have a property "commandIcon" expected true got false
@@ -1042,7 +1024,6 @@ PASS HTMLElement interface: attribute onseeked
 PASS HTMLElement interface: attribute onseeking 
 PASS HTMLElement interface: attribute onselect 
 FAIL HTMLElement interface: attribute onshow assert_true: The prototype object must have a property "onshow" expected true got false
-FAIL HTMLElement interface: attribute onsort assert_true: The prototype object must have a property "onsort" expected true got false
 PASS HTMLElement interface: attribute onstalled 
 PASS HTMLElement interface: attribute onsubmit 
 PASS HTMLElement interface: attribute onsuspend 
@@ -1071,68 +1052,68 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "contextMenu" with the proper type (16) assert_inherits: property "contextMenu" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "spellcheck" with the proper type (17) 
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "forceSpellCheck" with the proper type (18) assert_inherits: property "forceSpellCheck" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandType" with the proper type (19) assert_inherits: property "commandType" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandLabel" with the proper type (20) assert_inherits: property "commandLabel" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandIcon" with the proper type (21) assert_inherits: property "commandIcon" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandHidden" with the proper type (22) assert_inherits: property "commandHidden" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandDisabled" with the proper type (23) assert_inherits: property "commandDisabled" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandChecked" with the proper type (24) assert_inherits: property "commandChecked" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type (25) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onautocomplete" with the proper type (26) assert_inherits: property "onautocomplete" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onautocompleteerror" with the proper type (27) assert_inherits: property "onautocompleteerror" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onblur" with the proper type (28) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "oncancel" with the proper type (29) assert_inherits: property "oncancel" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplay" with the proper type (30) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplaythrough" with the proper type (31) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onchange" with the proper type (32) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onclick" with the proper type (33) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onclose" with the proper type (34) assert_inherits: property "onclose" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncontextmenu" with the proper type (35) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "oncuechange" with the proper type (36) assert_inherits: property "oncuechange" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondblclick" with the proper type (37) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrag" with the proper type (38) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragend" with the proper type (39) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragenter" with the proper type (40) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "ondragexit" with the proper type (41) assert_inherits: property "ondragexit" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragleave" with the proper type (42) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragover" with the proper type (43) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragstart" with the proper type (44) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrop" with the proper type (45) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondurationchange" with the proper type (46) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onemptied" with the proper type (47) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onended" with the proper type (48) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onerror" with the proper type (49) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onfocus" with the proper type (50) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninput" with the proper type (51) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninvalid" with the proper type (52) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeydown" with the proper type (53) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeypress" with the proper type (54) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeyup" with the proper type (55) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onload" with the proper type (56) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadeddata" with the proper type (57) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadedmetadata" with the proper type (58) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadstart" with the proper type (59) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousedown" with the proper type (60) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseenter" with the proper type (61) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseleave" with the proper type (62) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousemove" with the proper type (63) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseout" with the proper type (64) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseover" with the proper type (65) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseup" with the proper type (66) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousewheel" with the proper type (67) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onpause" with the proper type (68) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onplay" with the proper type (69) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onplaying" with the proper type (70) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onprogress" with the proper type (71) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onratechange" with the proper type (72) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onreset" with the proper type (73) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onresize" with the proper type (74) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onscroll" with the proper type (75) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeked" with the proper type (76) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeking" with the proper type (77) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onselect" with the proper type (78) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onshow" with the proper type (79) assert_inherits: property "onshow" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onsort" with the proper type (80) assert_inherits: property "onsort" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "innerText" with the proper type (19) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandType" with the proper type (20) assert_inherits: property "commandType" not found in prototype chain
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandLabel" with the proper type (21) assert_inherits: property "commandLabel" not found in prototype chain
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandIcon" with the proper type (22) assert_inherits: property "commandIcon" not found in prototype chain
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandHidden" with the proper type (23) assert_inherits: property "commandHidden" not found in prototype chain
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandDisabled" with the proper type (24) assert_inherits: property "commandDisabled" not found in prototype chain
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "commandChecked" with the proper type (25) assert_inherits: property "commandChecked" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type (26) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onautocomplete" with the proper type (27) assert_inherits: property "onautocomplete" not found in prototype chain
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onautocompleteerror" with the proper type (28) assert_inherits: property "onautocompleteerror" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onblur" with the proper type (29) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "oncancel" with the proper type (30) assert_inherits: property "oncancel" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplay" with the proper type (31) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplaythrough" with the proper type (32) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onchange" with the proper type (33) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onclick" with the proper type (34) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onclose" with the proper type (35) assert_inherits: property "onclose" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncontextmenu" with the proper type (36) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "oncuechange" with the proper type (37) assert_inherits: property "oncuechange" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondblclick" with the proper type (38) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrag" with the proper type (39) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragend" with the proper type (40) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragenter" with the proper type (41) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "ondragexit" with the proper type (42) assert_inherits: property "ondragexit" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragleave" with the proper type (43) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragover" with the proper type (44) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragstart" with the proper type (45) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrop" with the proper type (46) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondurationchange" with the proper type (47) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onemptied" with the proper type (48) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onended" with the proper type (49) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onerror" with the proper type (50) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onfocus" with the proper type (51) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninput" with the proper type (52) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninvalid" with the proper type (53) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeydown" with the proper type (54) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeypress" with the proper type (55) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeyup" with the proper type (56) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onload" with the proper type (57) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadeddata" with the proper type (58) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadedmetadata" with the proper type (59) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadstart" with the proper type (60) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousedown" with the proper type (61) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseenter" with the proper type (62) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseleave" with the proper type (63) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousemove" with the proper type (64) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseout" with the proper type (65) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseover" with the proper type (66) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseup" with the proper type (67) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousewheel" with the proper type (68) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onpause" with the proper type (69) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onplay" with the proper type (70) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onplaying" with the proper type (71) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onprogress" with the proper type (72) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onratechange" with the proper type (73) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onreset" with the proper type (74) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onresize" with the proper type (75) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onscroll" with the proper type (76) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeked" with the proper type (77) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeking" with the proper type (78) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onselect" with the proper type (79) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onshow" with the proper type (80) assert_inherits: property "onshow" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onstalled" with the proper type (81) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsubmit" with the proper type (82) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsuspend" with the proper type (83) 
@@ -1194,23 +1175,19 @@ PASS Element interface: document.createElement("noscript") must inherit property
 PASS Element interface: calling prepend([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "append" with the proper type (33) 
 PASS Element interface: calling append([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-FAIL Element interface: document.createElement("noscript") must inherit property "query" with the proper type (34) assert_inherits: property "query" not found in prototype chain
-FAIL Element interface: calling query(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "queryAll" with the proper type (35) assert_inherits: property "queryAll" not found in prototype chain
-FAIL Element interface: calling queryAll(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
-PASS Element interface: document.createElement("noscript") must inherit property "querySelector" with the proper type (36) 
+PASS Element interface: document.createElement("noscript") must inherit property "querySelector" with the proper type (34) 
 PASS Element interface: calling querySelector(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "querySelectorAll" with the proper type (37) 
+PASS Element interface: document.createElement("noscript") must inherit property "querySelectorAll" with the proper type (35) 
 PASS Element interface: calling querySelectorAll(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "previousElementSibling" with the proper type (38) 
-PASS Element interface: document.createElement("noscript") must inherit property "nextElementSibling" with the proper type (39) 
-PASS Element interface: document.createElement("noscript") must inherit property "before" with the proper type (40) 
+PASS Element interface: document.createElement("noscript") must inherit property "previousElementSibling" with the proper type (36) 
+PASS Element interface: document.createElement("noscript") must inherit property "nextElementSibling" with the proper type (37) 
+PASS Element interface: document.createElement("noscript") must inherit property "before" with the proper type (38) 
 PASS Element interface: calling before([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "after" with the proper type (41) 
+PASS Element interface: document.createElement("noscript") must inherit property "after" with the proper type (39) 
 PASS Element interface: calling after([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "replaceWith" with the proper type (42) 
+PASS Element interface: document.createElement("noscript") must inherit property "replaceWith" with the proper type (40) 
 PASS Element interface: calling replaceWith([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "remove" with the proper type (43) 
+PASS Element interface: document.createElement("noscript") must inherit property "remove" with the proper type (41) 
 PASS Node interface: document.createElement("noscript") must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: document.createElement("noscript") must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
 PASS Node interface: document.createElement("noscript") must inherit property "TEXT_NODE" with the proper type (2) 
@@ -2083,9 +2060,7 @@ PASS HTMLMediaElement interface: attribute seekable
 PASS HTMLMediaElement interface: attribute ended 
 PASS HTMLMediaElement interface: attribute autoplay 
 PASS HTMLMediaElement interface: attribute loop 
-FAIL HTMLMediaElement interface: operation play() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLMediaElement interface: operation play() 
 PASS HTMLMediaElement interface: operation pause() 
 PASS HTMLMediaElement interface: attribute mediaGroup 
 PASS HTMLMediaElement interface: attribute controller 
@@ -2448,8 +2423,6 @@ PASS HTMLTableElement interface: operation createTBody()
 PASS HTMLTableElement interface: attribute rows 
 PASS HTMLTableElement interface: operation insertRow(long) 
 PASS HTMLTableElement interface: operation deleteRow(long) 
-FAIL HTMLTableElement interface: attribute sortable assert_true: The prototype object must have a property "sortable" expected true got false
-FAIL HTMLTableElement interface: operation stopSorting() assert_own_property: interface prototype object missing non-static operation expected property "stopSorting" missing
 PASS HTMLTableElement interface: attribute align 
 PASS HTMLTableElement interface: attribute border 
 PASS HTMLTableElement interface: attribute frame 
@@ -2477,17 +2450,15 @@ PASS HTMLTableElement interface: document.createElement("table") must inherit pr
 PASS HTMLTableElement interface: calling insertRow(long) on document.createElement("table") with too few arguments must throw TypeError 
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "deleteRow" with the proper type (13) 
 PASS HTMLTableElement interface: calling deleteRow(long) on document.createElement("table") with too few arguments must throw TypeError 
-FAIL HTMLTableElement interface: document.createElement("table") must inherit property "sortable" with the proper type (14) assert_inherits: property "sortable" not found in prototype chain
-FAIL HTMLTableElement interface: document.createElement("table") must inherit property "stopSorting" with the proper type (15) assert_inherits: property "stopSorting" not found in prototype chain
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "align" with the proper type (16) 
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "border" with the proper type (17) 
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "frame" with the proper type (18) 
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "rules" with the proper type (19) 
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "summary" with the proper type (20) 
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "width" with the proper type (21) 
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "bgColor" with the proper type (22) 
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "cellPadding" with the proper type (23) 
-PASS HTMLTableElement interface: document.createElement("table") must inherit property "cellSpacing" with the proper type (24) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "align" with the proper type (14) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "border" with the proper type (15) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "frame" with the proper type (16) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "rules" with the proper type (17) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "summary" with the proper type (18) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "width" with the proper type (19) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "bgColor" with the proper type (20) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "cellPadding" with the proper type (21) 
+PASS HTMLTableElement interface: document.createElement("table") must inherit property "cellSpacing" with the proper type (22) 
 PASS HTMLTableCaptionElement interface: existence and properties of interface object 
 PASS HTMLTableCaptionElement interface object length 
 PASS HTMLTableCaptionElement interface object name 
@@ -4802,53 +4773,38 @@ PASS HTMLCanvasElement interface: existence and properties of interface prototyp
 PASS HTMLCanvasElement interface: attribute width 
 PASS HTMLCanvasElement interface: attribute height 
 PASS HTMLCanvasElement interface: operation getContext(DOMString,any) 
-PASS HTMLCanvasElement interface: operation probablySupportsContext(DOMString,any) 
-FAIL HTMLCanvasElement interface: operation setContext(RenderingContext) assert_own_property: interface prototype object missing non-static operation expected property "setContext" missing
-FAIL HTMLCanvasElement interface: operation transferControlToProxy() assert_own_property: interface prototype object missing non-static operation expected property "transferControlToProxy" missing
 PASS HTMLCanvasElement interface: operation toDataURL(DOMString,any) 
-FAIL HTMLCanvasElement interface: operation toBlob(FileCallback,DOMString,any) assert_own_property: interface prototype object missing non-static operation expected property "toBlob" missing
+FAIL HTMLCanvasElement interface: operation toBlob(BlobCallback,DOMString,any) assert_own_property: interface prototype object missing non-static operation expected property "toBlob" missing
 PASS HTMLCanvasElement must be primary interface of document.createElement("canvas") 
 PASS Stringification of document.createElement("canvas") 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "width" with the proper type (0) 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "height" with the proper type (1) 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "getContext" with the proper type (2) 
 PASS HTMLCanvasElement interface: calling getContext(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError 
-PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "probablySupportsContext" with the proper type (3) 
-PASS HTMLCanvasElement interface: calling probablySupportsContext(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError 
-FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "setContext" with the proper type (4) assert_inherits: property "setContext" not found in prototype chain
-FAIL HTMLCanvasElement interface: calling setContext(RenderingContext) on document.createElement("canvas") with too few arguments must throw TypeError assert_inherits: property "setContext" not found in prototype chain
-FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "transferControlToProxy" with the proper type (5) assert_inherits: property "transferControlToProxy" not found in prototype chain
-PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toDataURL" with the proper type (6) 
+PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toDataURL" with the proper type (3) 
 PASS HTMLCanvasElement interface: calling toDataURL(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError 
-FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toBlob" with the proper type (7) assert_inherits: property "toBlob" not found in prototype chain
-FAIL HTMLCanvasElement interface: calling toBlob(FileCallback,DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError assert_inherits: property "toBlob" not found in prototype chain
-FAIL CanvasProxy interface: existence and properties of interface object assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
-FAIL CanvasProxy interface object length assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
-FAIL CanvasProxy interface object name assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
-FAIL CanvasProxy interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
-FAIL CanvasProxy interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
-FAIL CanvasProxy interface: operation setContext(RenderingContext) assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
+FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toBlob" with the proper type (4) assert_inherits: property "toBlob" not found in prototype chain
+FAIL HTMLCanvasElement interface: calling toBlob(BlobCallback,DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError assert_inherits: property "toBlob" not found in prototype chain
 PASS CanvasRenderingContext2D interface: existence and properties of interface object 
-FAIL CanvasRenderingContext2D interface object length assert_equals: wrong value for CanvasRenderingContext2D.length expected 1 but got 0
+PASS CanvasRenderingContext2D interface object length 
 PASS CanvasRenderingContext2D interface object name 
 FAIL CanvasRenderingContext2D interface: existence and properties of interface prototype object assert_equals: prototype of CanvasRenderingContext2D.prototype is not Object.prototype expected object "[object Object]" but got object "[object CanvasRenderingContextPrototype]"
 PASS CanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CanvasRenderingContext2D interface: attribute canvas assert_own_property: expected property "canvas" missing
-FAIL CanvasRenderingContext2D interface: attribute width assert_true: The prototype object must have a property "width" expected true got false
-FAIL CanvasRenderingContext2D interface: attribute height assert_true: The prototype object must have a property "height" expected true got false
-PASS CanvasRenderingContext2D interface: operation commit() 
 PASS CanvasRenderingContext2D interface: operation save() 
 PASS CanvasRenderingContext2D interface: operation restore() 
-FAIL CanvasRenderingContext2D interface: attribute currentTransform assert_true: The prototype object must have a property "currentTransform" expected true got false
 PASS CanvasRenderingContext2D interface: operation scale(unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation rotate(unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation translate(unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation transform(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
-PASS CanvasRenderingContext2D interface: operation setTransform(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+FAIL CanvasRenderingContext2D interface: operation getTransform() assert_own_property: interface prototype object missing non-static operation expected property "getTransform" missing
+FAIL CanvasRenderingContext2D interface: operation setTransform(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_equals: property has wrong .length expected 0 but got 6
+FAIL CanvasRenderingContext2D interface: operation setTransform(DOMMatrixInit) assert_equals: property has wrong .length expected 0 but got 6
 FAIL CanvasRenderingContext2D interface: operation resetTransform() assert_own_property: interface prototype object missing non-static operation expected property "resetTransform" missing
 PASS CanvasRenderingContext2D interface: attribute globalAlpha 
 PASS CanvasRenderingContext2D interface: attribute globalCompositeOperation 
 PASS CanvasRenderingContext2D interface: attribute imageSmoothingEnabled 
+PASS CanvasRenderingContext2D interface: attribute imageSmoothingQuality 
 PASS CanvasRenderingContext2D interface: attribute strokeStyle 
 PASS CanvasRenderingContext2D interface: attribute fillStyle 
 PASS CanvasRenderingContext2D interface: operation createLinearGradient(double,double,double,double) 
@@ -4858,6 +4814,7 @@ PASS CanvasRenderingContext2D interface: attribute shadowOffsetX
 PASS CanvasRenderingContext2D interface: attribute shadowOffsetY 
 PASS CanvasRenderingContext2D interface: attribute shadowBlur 
 PASS CanvasRenderingContext2D interface: attribute shadowColor 
+FAIL CanvasRenderingContext2D interface: attribute filter assert_true: The prototype object must have a property "filter" expected true got false
 PASS CanvasRenderingContext2D interface: operation clearRect(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation fillRect(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation strokeRect(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
@@ -4866,12 +4823,6 @@ PASS CanvasRenderingContext2D interface: operation fill(CanvasFillRule)
 PASS CanvasRenderingContext2D interface: operation fill(Path2D,CanvasFillRule) 
 PASS CanvasRenderingContext2D interface: operation stroke() 
 PASS CanvasRenderingContext2D interface: operation stroke(Path2D) 
-FAIL CanvasRenderingContext2D interface: operation drawSystemFocusRing(Element) assert_own_property: interface prototype object missing non-static operation expected property "drawSystemFocusRing" missing
-FAIL CanvasRenderingContext2D interface: operation drawSystemFocusRing(Path2D,Element) assert_own_property: interface prototype object missing non-static operation expected property "drawSystemFocusRing" missing
-FAIL CanvasRenderingContext2D interface: operation drawCustomFocusRing(Element) assert_own_property: interface prototype object missing non-static operation expected property "drawCustomFocusRing" missing
-FAIL CanvasRenderingContext2D interface: operation drawCustomFocusRing(Path2D,Element) assert_own_property: interface prototype object missing non-static operation expected property "drawCustomFocusRing" missing
-FAIL CanvasRenderingContext2D interface: operation scrollPathIntoView() assert_own_property: interface prototype object missing non-static operation expected property "scrollPathIntoView" missing
-FAIL CanvasRenderingContext2D interface: operation scrollPathIntoView(Path2D) assert_own_property: interface prototype object missing non-static operation expected property "scrollPathIntoView" missing
 PASS CanvasRenderingContext2D interface: operation clip(CanvasFillRule) 
 PASS CanvasRenderingContext2D interface: operation clip(Path2D,CanvasFillRule) 
 FAIL CanvasRenderingContext2D interface: operation resetClip() assert_own_property: interface prototype object missing non-static operation expected property "resetClip" missing
@@ -4879,6 +4830,10 @@ PASS CanvasRenderingContext2D interface: operation isPointInPath(unrestricted do
 PASS CanvasRenderingContext2D interface: operation isPointInPath(Path2D,unrestricted double,unrestricted double,CanvasFillRule) 
 PASS CanvasRenderingContext2D interface: operation isPointInStroke(unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation isPointInStroke(Path2D,unrestricted double,unrestricted double) 
+PASS CanvasRenderingContext2D interface: operation drawFocusIfNeeded(Element) 
+PASS CanvasRenderingContext2D interface: operation drawFocusIfNeeded(Path2D,Element) 
+FAIL CanvasRenderingContext2D interface: operation scrollPathIntoView() assert_own_property: interface prototype object missing non-static operation expected property "scrollPathIntoView" missing
+FAIL CanvasRenderingContext2D interface: operation scrollPathIntoView(Path2D) assert_own_property: interface prototype object missing non-static operation expected property "scrollPathIntoView" missing
 PASS CanvasRenderingContext2D interface: operation fillText(DOMString,unrestricted double,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation strokeText(DOMString,unrestricted double,unrestricted double,unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation measureText(DOMString) 
@@ -4887,6 +4842,7 @@ PASS CanvasRenderingContext2D interface: operation drawImage(CanvasImageSource,u
 PASS CanvasRenderingContext2D interface: operation drawImage(CanvasImageSource,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
 FAIL CanvasRenderingContext2D interface: operation addHitRegion(HitRegionOptions) assert_own_property: interface prototype object missing non-static operation expected property "addHitRegion" missing
 FAIL CanvasRenderingContext2D interface: operation removeHitRegion(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "removeHitRegion" missing
+FAIL CanvasRenderingContext2D interface: operation clearHitRegions() assert_own_property: interface prototype object missing non-static operation expected property "clearHitRegions" missing
 PASS CanvasRenderingContext2D interface: operation createImageData(double,double) 
 PASS CanvasRenderingContext2D interface: operation createImageData(ImageData) 
 PASS CanvasRenderingContext2D interface: operation getImageData(double,double,double,double) 
@@ -4916,38 +4872,39 @@ PASS CanvasRenderingContext2D interface: operation ellipse(unrestricted double,u
 PASS CanvasRenderingContext2D must be primary interface of document.createElement("canvas").getContext("2d") 
 PASS Stringification of document.createElement("canvas").getContext("2d") 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "canvas" with the proper type (0) 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "width" with the proper type (1) assert_inherits: property "width" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "height" with the proper type (2) assert_inherits: property "height" not found in prototype chain
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "commit" with the proper type (3) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "save" with the proper type (4) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "restore" with the proper type (5) 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "currentTransform" with the proper type (6) assert_inherits: property "currentTransform" not found in prototype chain
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scale" with the proper type (7) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "save" with the proper type (1) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "restore" with the proper type (2) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scale" with the proper type (3) 
 PASS CanvasRenderingContext2D interface: calling scale(unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "rotate" with the proper type (8) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "rotate" with the proper type (4) 
 PASS CanvasRenderingContext2D interface: calling rotate(unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "translate" with the proper type (9) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "translate" with the proper type (5) 
 PASS CanvasRenderingContext2D interface: calling translate(unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "transform" with the proper type (10) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "transform" with the proper type (6) 
 PASS CanvasRenderingContext2D interface: calling transform(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setTransform" with the proper type (11) 
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getTransform" with the proper type (7) assert_inherits: property "getTransform" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setTransform" with the proper type (8) 
 PASS CanvasRenderingContext2D interface: calling setTransform(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "resetTransform" with the proper type (12) assert_inherits: property "resetTransform" not found in prototype chain
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalAlpha" with the proper type (13) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalCompositeOperation" with the proper type (14) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "imageSmoothingEnabled" with the proper type (15) 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "strokeStyle" with the proper type (16) Unrecognized type [object Object],[object Object],[object Object]
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillStyle" with the proper type (17) Unrecognized type [object Object],[object Object],[object Object]
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createLinearGradient" with the proper type (18) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setTransform" with the proper type (9) 
+PASS CanvasRenderingContext2D interface: calling setTransform(DOMMatrixInit) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "resetTransform" with the proper type (10) assert_inherits: property "resetTransform" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalAlpha" with the proper type (11) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalCompositeOperation" with the proper type (12) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "imageSmoothingEnabled" with the proper type (13) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "imageSmoothingQuality" with the proper type (14) 
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "strokeStyle" with the proper type (15) Unrecognized type [object Object],[object Object],[object Object]
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillStyle" with the proper type (16) Unrecognized type [object Object],[object Object],[object Object]
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createLinearGradient" with the proper type (17) 
 PASS CanvasRenderingContext2D interface: calling createLinearGradient(double,double,double,double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createRadialGradient" with the proper type (19) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createRadialGradient" with the proper type (18) 
 PASS CanvasRenderingContext2D interface: calling createRadialGradient(double,double,double,double,double,double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createPattern" with the proper type (20) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createPattern" with the proper type (19) 
 PASS CanvasRenderingContext2D interface: calling createPattern(CanvasImageSource,DOMString) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowOffsetX" with the proper type (21) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowOffsetY" with the proper type (22) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowBlur" with the proper type (23) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowColor" with the proper type (24) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowOffsetX" with the proper type (20) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowOffsetY" with the proper type (21) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowBlur" with the proper type (22) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowColor" with the proper type (23) 
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "filter" with the proper type (24) assert_inherits: property "filter" not found in prototype chain
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "clearRect" with the proper type (25) 
 PASS CanvasRenderingContext2D interface: calling clearRect(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillRect" with the proper type (26) 
@@ -4962,86 +4919,83 @@ PASS CanvasRenderingContext2D interface: calling fill(Path2D,CanvasFillRule) on 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "stroke" with the proper type (31) 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "stroke" with the proper type (32) 
 PASS CanvasRenderingContext2D interface: calling stroke(Path2D) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawSystemFocusRing" with the proper type (33) assert_inherits: property "drawSystemFocusRing" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: calling drawSystemFocusRing(Element) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "drawSystemFocusRing" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawSystemFocusRing" with the proper type (34) assert_inherits: property "drawSystemFocusRing" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: calling drawSystemFocusRing(Path2D,Element) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "drawSystemFocusRing" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawCustomFocusRing" with the proper type (35) assert_inherits: property "drawCustomFocusRing" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: calling drawCustomFocusRing(Element) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "drawCustomFocusRing" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawCustomFocusRing" with the proper type (36) assert_inherits: property "drawCustomFocusRing" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: calling drawCustomFocusRing(Path2D,Element) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "drawCustomFocusRing" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scrollPathIntoView" with the proper type (37) assert_inherits: property "scrollPathIntoView" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scrollPathIntoView" with the proper type (38) assert_inherits: property "scrollPathIntoView" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: calling scrollPathIntoView(Path2D) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "scrollPathIntoView" not found in prototype chain
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "clip" with the proper type (39) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "clip" with the proper type (33) 
 PASS CanvasRenderingContext2D interface: calling clip(CanvasFillRule) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "clip" with the proper type (40) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "clip" with the proper type (34) 
 PASS CanvasRenderingContext2D interface: calling clip(Path2D,CanvasFillRule) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "resetClip" with the proper type (41) assert_inherits: property "resetClip" not found in prototype chain
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "isPointInPath" with the proper type (42) 
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "resetClip" with the proper type (35) assert_inherits: property "resetClip" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "isPointInPath" with the proper type (36) 
 PASS CanvasRenderingContext2D interface: calling isPointInPath(unrestricted double,unrestricted double,CanvasFillRule) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "isPointInPath" with the proper type (43) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "isPointInPath" with the proper type (37) 
 PASS CanvasRenderingContext2D interface: calling isPointInPath(Path2D,unrestricted double,unrestricted double,CanvasFillRule) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "isPointInStroke" with the proper type (44) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "isPointInStroke" with the proper type (38) 
 PASS CanvasRenderingContext2D interface: calling isPointInStroke(unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "isPointInStroke" with the proper type (45) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "isPointInStroke" with the proper type (39) 
 PASS CanvasRenderingContext2D interface: calling isPointInStroke(Path2D,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillText" with the proper type (46) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawFocusIfNeeded" with the proper type (40) 
+PASS CanvasRenderingContext2D interface: calling drawFocusIfNeeded(Element) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawFocusIfNeeded" with the proper type (41) 
+PASS CanvasRenderingContext2D interface: calling drawFocusIfNeeded(Path2D,Element) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scrollPathIntoView" with the proper type (42) assert_inherits: property "scrollPathIntoView" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scrollPathIntoView" with the proper type (43) assert_inherits: property "scrollPathIntoView" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: calling scrollPathIntoView(Path2D) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "scrollPathIntoView" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillText" with the proper type (44) 
 PASS CanvasRenderingContext2D interface: calling fillText(DOMString,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "strokeText" with the proper type (47) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "strokeText" with the proper type (45) 
 PASS CanvasRenderingContext2D interface: calling strokeText(DOMString,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "measureText" with the proper type (48) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "measureText" with the proper type (46) 
 PASS CanvasRenderingContext2D interface: calling measureText(DOMString) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawImage" with the proper type (49) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawImage" with the proper type (47) 
 PASS CanvasRenderingContext2D interface: calling drawImage(CanvasImageSource,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawImage" with the proper type (50) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawImage" with the proper type (48) 
 PASS CanvasRenderingContext2D interface: calling drawImage(CanvasImageSource,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawImage" with the proper type (51) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawImage" with the proper type (49) 
 PASS CanvasRenderingContext2D interface: calling drawImage(CanvasImageSource,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "addHitRegion" with the proper type (52) assert_inherits: property "addHitRegion" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "addHitRegion" with the proper type (50) assert_inherits: property "addHitRegion" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: calling addHitRegion(HitRegionOptions) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "addHitRegion" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "removeHitRegion" with the proper type (53) assert_inherits: property "removeHitRegion" not found in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "removeHitRegion" with the proper type (51) assert_inherits: property "removeHitRegion" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: calling removeHitRegion(DOMString) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "removeHitRegion" not found in prototype chain
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createImageData" with the proper type (54) 
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "clearHitRegions" with the proper type (52) assert_inherits: property "clearHitRegions" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createImageData" with the proper type (53) 
 PASS CanvasRenderingContext2D interface: calling createImageData(double,double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createImageData" with the proper type (55) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createImageData" with the proper type (54) 
 PASS CanvasRenderingContext2D interface: calling createImageData(ImageData) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getImageData" with the proper type (56) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getImageData" with the proper type (55) 
 PASS CanvasRenderingContext2D interface: calling getImageData(double,double,double,double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "putImageData" with the proper type (57) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "putImageData" with the proper type (56) 
 PASS CanvasRenderingContext2D interface: calling putImageData(ImageData,double,double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "putImageData" with the proper type (58) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "putImageData" with the proper type (57) 
 PASS CanvasRenderingContext2D interface: calling putImageData(ImageData,double,double,double,double,double,double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineWidth" with the proper type (59) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineCap" with the proper type (60) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineJoin" with the proper type (61) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "miterLimit" with the proper type (62) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setLineDash" with the proper type (63) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineWidth" with the proper type (58) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineCap" with the proper type (59) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineJoin" with the proper type (60) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "miterLimit" with the proper type (61) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setLineDash" with the proper type (62) 
 PASS CanvasRenderingContext2D interface: calling setLineDash([object Object]) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getLineDash" with the proper type (64) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineDashOffset" with the proper type (65) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "font" with the proper type (66) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textAlign" with the proper type (67) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textBaseline" with the proper type (68) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "direction" with the proper type (69) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "closePath" with the proper type (70) 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "moveTo" with the proper type (71) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getLineDash" with the proper type (63) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineDashOffset" with the proper type (64) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "font" with the proper type (65) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textAlign" with the proper type (66) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textBaseline" with the proper type (67) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "direction" with the proper type (68) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "closePath" with the proper type (69) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "moveTo" with the proper type (70) 
 PASS CanvasRenderingContext2D interface: calling moveTo(unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineTo" with the proper type (72) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineTo" with the proper type (71) 
 PASS CanvasRenderingContext2D interface: calling lineTo(unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "quadraticCurveTo" with the proper type (73) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "quadraticCurveTo" with the proper type (72) 
 PASS CanvasRenderingContext2D interface: calling quadraticCurveTo(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "bezierCurveTo" with the proper type (74) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "bezierCurveTo" with the proper type (73) 
 PASS CanvasRenderingContext2D interface: calling bezierCurveTo(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "arcTo" with the proper type (75) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "arcTo" with the proper type (74) 
 PASS CanvasRenderingContext2D interface: calling arcTo(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "arcTo" with the proper type (76) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "arcTo" with the proper type (75) 
 PASS CanvasRenderingContext2D interface: calling arcTo(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "rect" with the proper type (77) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "rect" with the proper type (76) 
 PASS CanvasRenderingContext2D interface: calling rect(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "arc" with the proper type (78) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "arc" with the proper type (77) 
 PASS CanvasRenderingContext2D interface: calling arc(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,boolean) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "ellipse" with the proper type (79) 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "ellipse" with the proper type (78) 
 PASS CanvasRenderingContext2D interface: calling ellipse(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,boolean) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
 PASS CanvasGradient interface: existence and properties of interface object 
 PASS CanvasGradient interface object length 
@@ -5054,7 +5008,7 @@ PASS CanvasPattern interface object length
 PASS CanvasPattern interface object name 
 PASS CanvasPattern interface: existence and properties of interface prototype object 
 PASS CanvasPattern interface: existence and properties of interface prototype object's "constructor" property 
-FAIL CanvasPattern interface: operation setTransform(SVGMatrix) assert_own_property: interface prototype object missing non-static operation expected property "setTransform" missing
+FAIL CanvasPattern interface: operation setTransform(DOMMatrixInit) assert_own_property: interface prototype object missing non-static operation expected property "setTransform" missing
 PASS TextMetrics interface: existence and properties of interface object 
 PASS TextMetrics interface object length 
 PASS TextMetrics interface object name 
@@ -5080,33 +5034,12 @@ PASS ImageData interface: existence and properties of interface prototype object
 PASS ImageData interface: attribute width 
 PASS ImageData interface: attribute height 
 FAIL ImageData interface: attribute data assert_true: The prototype object must have a property "data" expected true got false
-FAIL DrawingStyle interface: existence and properties of interface object assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface object length assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface object name assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: existence and properties of interface prototype object assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute lineWidth assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute lineCap assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute lineJoin assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute miterLimit assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: operation setLineDash([object Object]) assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: operation getLineDash() assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute lineDashOffset assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute font assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute textAlign assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute textBaseline assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL DrawingStyle interface: attribute direction assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
 PASS Path2D interface: existence and properties of interface object 
 PASS Path2D interface object length 
 PASS Path2D interface object name 
 PASS Path2D interface: existence and properties of interface prototype object 
 PASS Path2D interface: existence and properties of interface prototype object's "constructor" property 
-PASS Path2D interface: operation addPath(Path2D,SVGMatrix) 
-FAIL Path2D interface: operation addPathByStrokingPath(Path2D,CanvasDrawingStyles,SVGMatrix) assert_own_property: interface prototype object missing non-static operation expected property "addPathByStrokingPath" missing
-FAIL Path2D interface: operation addText(DOMString,CanvasDrawingStyles,SVGMatrix,unrestricted double,unrestricted double,unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "addText" missing
-FAIL Path2D interface: operation addPathByStrokingText(DOMString,CanvasDrawingStyles,SVGMatrix,unrestricted double,unrestricted double,unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "addPathByStrokingText" missing
-FAIL Path2D interface: operation addText(DOMString,CanvasDrawingStyles,SVGMatrix,Path2D,unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "addText" missing
-FAIL Path2D interface: operation addPathByStrokingText(DOMString,CanvasDrawingStyles,SVGMatrix,Path2D,unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "addPathByStrokingText" missing
+PASS Path2D interface: operation addPath(Path2D,DOMMatrixInit) 
 PASS Path2D interface: operation closePath() 
 FAIL Path2D interface: operation moveTo(unrestricted double,unrestricted double) assert_equals: property has wrong .length expected 2 but got 0
 FAIL Path2D interface: operation lineTo(unrestricted double,unrestricted double) assert_equals: property has wrong .length expected 2 but got 0
@@ -5248,7 +5181,6 @@ PASS Window interface: attribute onseeked
 PASS Window interface: attribute onseeking 
 PASS Window interface: attribute onselect 
 FAIL Window interface: attribute onshow assert_own_property: The global object must have a property "onshow" expected property "onshow" missing
-FAIL Window interface: attribute onsort assert_own_property: The global object must have a property "onsort" expected property "onsort" missing
 PASS Window interface: attribute onstalled 
 PASS Window interface: attribute onsubmit 
 PASS Window interface: attribute onsuspend 
@@ -5378,47 +5310,46 @@ PASS Window interface: window must inherit property "onseeked" with the proper t
 PASS Window interface: window must inherit property "onseeking" with the proper type (90) 
 PASS Window interface: window must inherit property "onselect" with the proper type (91) 
 FAIL Window interface: window must inherit property "onshow" with the proper type (92) assert_own_property: expected property "onshow" missing
-FAIL Window interface: window must inherit property "onsort" with the proper type (93) assert_own_property: expected property "onsort" missing
-PASS Window interface: window must inherit property "onstalled" with the proper type (94) 
-PASS Window interface: window must inherit property "onsubmit" with the proper type (95) 
-PASS Window interface: window must inherit property "onsuspend" with the proper type (96) 
-PASS Window interface: window must inherit property "ontimeupdate" with the proper type (97) 
-FAIL Window interface: window must inherit property "ontoggle" with the proper type (98) assert_own_property: expected property "ontoggle" missing
-PASS Window interface: window must inherit property "onvolumechange" with the proper type (99) 
-PASS Window interface: window must inherit property "onwaiting" with the proper type (100) 
-FAIL Window interface: window must inherit property "onafterprint" with the proper type (101) assert_own_property: expected property "onafterprint" missing
-FAIL Window interface: window must inherit property "onbeforeprint" with the proper type (102) assert_own_property: expected property "onbeforeprint" missing
-PASS Window interface: window must inherit property "onbeforeunload" with the proper type (103) 
-PASS Window interface: window must inherit property "onhashchange" with the proper type (104) 
-FAIL Window interface: window must inherit property "onlanguagechange" with the proper type (105) assert_own_property: expected property "onlanguagechange" missing
-PASS Window interface: window must inherit property "onmessage" with the proper type (106) 
-PASS Window interface: window must inherit property "onoffline" with the proper type (107) 
-PASS Window interface: window must inherit property "ononline" with the proper type (108) 
-PASS Window interface: window must inherit property "onpagehide" with the proper type (109) 
-PASS Window interface: window must inherit property "onpageshow" with the proper type (110) 
-PASS Window interface: window must inherit property "onpopstate" with the proper type (111) 
-PASS Window interface: window must inherit property "onstorage" with the proper type (112) 
-PASS Window interface: window must inherit property "onunload" with the proper type (113) 
-PASS Window interface: window must inherit property "btoa" with the proper type (114) 
+PASS Window interface: window must inherit property "onstalled" with the proper type (93) 
+PASS Window interface: window must inherit property "onsubmit" with the proper type (94) 
+PASS Window interface: window must inherit property "onsuspend" with the proper type (95) 
+PASS Window interface: window must inherit property "ontimeupdate" with the proper type (96) 
+FAIL Window interface: window must inherit property "ontoggle" with the proper type (97) assert_own_property: expected property "ontoggle" missing
+PASS Window interface: window must inherit property "onvolumechange" with the proper type (98) 
+PASS Window interface: window must inherit property "onwaiting" with the proper type (99) 
+FAIL Window interface: window must inherit property "onafterprint" with the proper type (100) assert_own_property: expected property "onafterprint" missing
+FAIL Window interface: window must inherit property "onbeforeprint" with the proper type (101) assert_own_property: expected property "onbeforeprint" missing
+PASS Window interface: window must inherit property "onbeforeunload" with the proper type (102) 
+PASS Window interface: window must inherit property "onhashchange" with the proper type (103) 
+FAIL Window interface: window must inherit property "onlanguagechange" with the proper type (104) assert_own_property: expected property "onlanguagechange" missing
+PASS Window interface: window must inherit property "onmessage" with the proper type (105) 
+PASS Window interface: window must inherit property "onoffline" with the proper type (106) 
+PASS Window interface: window must inherit property "ononline" with the proper type (107) 
+PASS Window interface: window must inherit property "onpagehide" with the proper type (108) 
+PASS Window interface: window must inherit property "onpageshow" with the proper type (109) 
+PASS Window interface: window must inherit property "onpopstate" with the proper type (110) 
+PASS Window interface: window must inherit property "onstorage" with the proper type (111) 
+PASS Window interface: window must inherit property "onunload" with the proper type (112) 
+PASS Window interface: window must inherit property "btoa" with the proper type (113) 
 PASS Window interface: calling btoa(DOMString) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "atob" with the proper type (115) 
+PASS Window interface: window must inherit property "atob" with the proper type (114) 
 PASS Window interface: calling atob(DOMString) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "setTimeout" with the proper type (116) 
+PASS Window interface: window must inherit property "setTimeout" with the proper type (115) 
 PASS Window interface: calling setTimeout(Function,long,any) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "setTimeout" with the proper type (117) 
+PASS Window interface: window must inherit property "setTimeout" with the proper type (116) 
 PASS Window interface: calling setTimeout(DOMString,long,any) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "clearTimeout" with the proper type (118) 
+PASS Window interface: window must inherit property "clearTimeout" with the proper type (117) 
 PASS Window interface: calling clearTimeout(long) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "setInterval" with the proper type (119) 
+PASS Window interface: window must inherit property "setInterval" with the proper type (118) 
 PASS Window interface: calling setInterval(Function,long,any) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "setInterval" with the proper type (120) 
+PASS Window interface: window must inherit property "setInterval" with the proper type (119) 
 PASS Window interface: calling setInterval(DOMString,long,any) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "clearInterval" with the proper type (121) 
+PASS Window interface: window must inherit property "clearInterval" with the proper type (120) 
 PASS Window interface: calling clearInterval(long) on window with too few arguments must throw TypeError 
-FAIL Window interface: window must inherit property "createImageBitmap" with the proper type (122) assert_own_property: expected property "createImageBitmap" missing
+FAIL Window interface: window must inherit property "createImageBitmap" with the proper type (121) assert_own_property: expected property "createImageBitmap" missing
 FAIL Window interface: calling createImageBitmap(ImageBitmapSource,long,long,long,long) on window with too few arguments must throw TypeError assert_own_property: expected property "createImageBitmap" missing
-PASS Window interface: window must inherit property "sessionStorage" with the proper type (123) 
-PASS Window interface: window must inherit property "localStorage" with the proper type (124) 
+PASS Window interface: window must inherit property "sessionStorage" with the proper type (122) 
+PASS Window interface: window must inherit property "localStorage" with the proper type (123) 
 PASS EventTarget interface: window must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError 
 PASS EventTarget interface: window must inherit property "removeEventListener" with the proper type (1) 
@@ -5838,15 +5769,6 @@ PASS MessagePort interface: operation postMessage(any,[object Object])
 PASS MessagePort interface: operation start() 
 PASS MessagePort interface: operation close() 
 PASS MessagePort interface: attribute onmessage 
-FAIL PortCollection interface: existence and properties of interface object assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
-FAIL PortCollection interface object length assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
-FAIL PortCollection interface object name assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
-FAIL PortCollection interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
-FAIL PortCollection interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
-FAIL PortCollection interface: operation add(MessagePort) assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
-FAIL PortCollection interface: operation remove(MessagePort) assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
-FAIL PortCollection interface: operation clear() assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
-FAIL PortCollection interface: operation iterate(PortCollectionCallback) assert_own_property: self does not have own property "PortCollection" expected property "PortCollection" missing
 FAIL BroadcastChannel interface: existence and properties of interface object assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
 FAIL BroadcastChannel interface object length assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
 FAIL BroadcastChannel interface object name assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing

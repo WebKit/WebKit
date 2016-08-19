@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset=utf-8>
-<!--  WARNING: These tests are preliminary and probably partly incorrect.   -->
+<!-- WARNING: These tests are preliminary and probably partly incorrect.  -->
 <title>HTML IDL tests</title>
 <meta name=timeout content=long>
 <script src=/resources/testharness.js></script>
@@ -84,8 +84,6 @@ interface ParentNode {
   [Unscopable] void prepend((Node or DOMString)... nodes);
   [Unscopable] void append((Node or DOMString)... nodes);
 
-  [Unscopable] Element? query(DOMString relativeSelectors);
-  [NewObject, Unscopable] Elements queryAll(DOMString relativeSelectors);
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
 };
@@ -469,7 +467,7 @@ interface DOMTokenList {
   stringifier;
 //  iterable<DOMString>;
 };</script>
-<!--  UI Events IDLs  -->
+<!-- UI Events IDLs -->
 <script type=text/plain class=untested>
 [Constructor(DOMString type, optional UIEventInit eventInitDict)]
 interface UIEvent : Event {
@@ -532,7 +530,7 @@ partial interface MouseEvent {
     void initMouseEvent (DOMString typeArg, boolean bubblesArg, boolean cancelableArg, Window? viewArg, long detailArg, long screenXArg, long screenYArg, long clientXArg, long clientYArg, boolean ctrlKeyArg, boolean altKeyArg, boolean shiftKeyArg, boolean metaKeyArg, short buttonArg, EventTarget? relatedTargetArg);
 };
 </script>
-<!--  Touch Events IDLs  -->
+<!-- Touch Events IDLs -->
 <script type=text/plain class=untested>
 interface Touch {
     readonly    attribute long        identifier;
@@ -545,7 +543,7 @@ interface Touch {
     readonly    attribute long        pageY;
 };
 </script>
-<!--  CSSOM IDLs  -->
+<!-- CSSOM IDLs -->
 <script type=text/plain class=untested>
 interface MediaList {
   stringifier attribute DOMString mediaText;
@@ -849,7 +847,7 @@ interface CSSPropertyValue {
 //};
 </script>
 
-<!--  HTML IDLs  -->
+<!-- HTML IDLs -->
 <script type=text/plain>
 typedef (Int8Array or Uint8Array or Uint8ClampedArray or
          Int16Array or Uint16Array or
@@ -913,7 +911,7 @@ interface DOMElementMap {
   deleter void (DOMString name);
 };
 
-typedef (ArrayBuffer or CanvasProxy or MessagePort) Transferable;
+typedef (ArrayBuffer or MessagePort) Transferable;
 
 callback FileCallback = void (File file);
 
@@ -972,10 +970,6 @@ partial /*sealed*/ interface Document {
 };
 Document implements GlobalEventHandlers;
 
-partial interface XMLDocument {
-  boolean load(DOMString url);
-};
-
 interface HTMLElement : Element {
   // metadata attributes
            attribute DOMString title;
@@ -999,6 +993,8 @@ interface HTMLElement : Element {
            attribute HTMLMenuElement? contextMenu;
            attribute boolean spellcheck;
   void forceSpellCheck();
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString innerText;
 
   // command API
   readonly attribute DOMString? commandType;
@@ -1300,7 +1296,7 @@ interface HTMLMediaElement : HTMLElement {
   readonly attribute boolean ended;
            attribute boolean autoplay;
            attribute boolean loop;
-  void play();
+  Promise<void> play();
   void pause();
 
   // media controller
@@ -1503,8 +1499,6 @@ interface HTMLTableElement : HTMLElement {
   readonly attribute HTMLCollection rows;
   HTMLElement insertRow(optional long index = -1);
   void deleteRow(long index);
-           attribute boolean sortable;
-  void stopSorting();
 
   // also has obsolete members
 };
@@ -1942,98 +1936,135 @@ dictionary AssignedNodesOptions {
 };
 
 typedef (CanvasRenderingContext2D or WebGLRenderingContext) RenderingContext;
+callback BlobCallback = void (Blob? blob);
 
 interface HTMLCanvasElement : HTMLElement {
            attribute unsigned long width;
            attribute unsigned long height;
 
   RenderingContext? getContext(DOMString contextId, any... arguments);
-  boolean probablySupportsContext(DOMString contextId, any... arguments);
-
-  void setContext(RenderingContext context);
-  CanvasProxy transferControlToProxy();
 
   DOMString toDataURL(optional DOMString type, any... arguments);
-  void toBlob(FileCallback? _callback, optional DOMString type, any... arguments);
+  void toBlob(BlobCallback _callback, optional DOMString type, any... arguments);
 };
-
-[Exposed=(Window,Worker)]
-interface CanvasProxy {
-  void setContext(RenderingContext context);
-};
-// CanvasProxy implements Transferable;
 
 typedef (HTMLImageElement or
+         SVGImageElement) HTMLOrSVGImageElement;
+
+typedef (HTMLOrSVGImageElement or
          HTMLVideoElement or
          HTMLCanvasElement or
-         CanvasRenderingContext2D or
          ImageBitmap) CanvasImageSource;
 
 enum CanvasFillRule { "nonzero", "evenodd" };
 
-[Constructor(optional unsigned long width, unsigned long height), Exposed=(Window,Worker)]
-interface CanvasRenderingContext2D {
+dictionary CanvasRenderingContext2DSettings {
+  boolean alpha = true;
+};
 
+enum ImageSmoothingQuality { "low", "medium", "high" };
+
+interface CanvasRenderingContext2D {
   // back-reference to the canvas
   readonly attribute HTMLCanvasElement canvas;
+};
+CanvasRenderingContext2D implements CanvasState;
+CanvasRenderingContext2D implements CanvasTransform;
+CanvasRenderingContext2D implements CanvasCompositing;
+CanvasRenderingContext2D implements CanvasImageSmoothing;
+CanvasRenderingContext2D implements CanvasFillStrokeStyles;
+CanvasRenderingContext2D implements CanvasShadowStyles;
+CanvasRenderingContext2D implements CanvasFilters;
+CanvasRenderingContext2D implements CanvasRect;
+CanvasRenderingContext2D implements CanvasDrawPath;
+CanvasRenderingContext2D implements CanvasUserInterface;
+CanvasRenderingContext2D implements CanvasText;
+CanvasRenderingContext2D implements CanvasDrawImage;
+CanvasRenderingContext2D implements CanvasHitRegion;
+CanvasRenderingContext2D implements CanvasImageData;
+CanvasRenderingContext2D implements CanvasPathDrawingStyles;
+CanvasRenderingContext2D implements CanvasTextDrawingStyles;
+CanvasRenderingContext2D implements CanvasPath;
 
-  // canvas dimensions
-           attribute unsigned long width;
-           attribute unsigned long height;
-
-  // for contexts that aren't directly fixed to a specific canvas
-  void commit(); // push the image to the output bitmap
-
+[NoInterfaceObject]
+interface CanvasState {
   // state
   void save(); // push state on state stack
   void restore(); // pop state stack and restore state
+};
 
+[NoInterfaceObject]
+interface CanvasTransform {
   // transformations (default transform is the identity matrix)
-           attribute SVGMatrix currentTransform;
   void scale(unrestricted double x, unrestricted double y);
   void rotate(unrestricted double angle);
   void translate(unrestricted double x, unrestricted double y);
   void transform(unrestricted double a, unrestricted double b, unrestricted double c, unrestricted double d, unrestricted double e, unrestricted double f);
+
+  [NewObject] DOMMatrix getTransform();
   void setTransform(unrestricted double a, unrestricted double b, unrestricted double c, unrestricted double d, unrestricted double e, unrestricted double f);
+  void setTransform(optional DOMMatrixInit transform);
   void resetTransform();
 
+};
+
+[NoInterfaceObject]
+interface CanvasCompositing {
   // compositing
-           attribute unrestricted double globalAlpha; // (default 1.0)
-           attribute DOMString globalCompositeOperation; // (default source-over)
+  attribute unrestricted double globalAlpha; // (default 1.0)
+  attribute DOMString globalCompositeOperation; // (default source-over)
+};
 
+[NoInterfaceObject]
+interface CanvasImageSmoothing {
   // image smoothing
-           attribute boolean imageSmoothingEnabled; // (default true)
+  attribute boolean imageSmoothingEnabled; // (default true)
+  attribute ImageSmoothingQuality imageSmoothingQuality; // (default low)
 
-  // colours and styles (see also the CanvasDrawingStyles interface)
-           attribute (DOMString or CanvasGradient or CanvasPattern) strokeStyle; // (default black)
-           attribute (DOMString or CanvasGradient or CanvasPattern) fillStyle; // (default black)
+};
+
+[NoInterfaceObject]
+interface CanvasFillStrokeStyles {
+  // colours and styles (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)
+  attribute (DOMString or CanvasGradient or CanvasPattern) strokeStyle; // (default black)
+  attribute (DOMString or CanvasGradient or CanvasPattern) fillStyle; // (default black)
   CanvasGradient createLinearGradient(double x0, double y0, double x1, double y1);
   CanvasGradient createRadialGradient(double x0, double y0, double r0, double x1, double y1, double r1);
-  CanvasPattern createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);
+  CanvasPattern? createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);
 
+};
+
+[NoInterfaceObject]
+interface CanvasShadowStyles {
   // shadows
-           attribute unrestricted double shadowOffsetX; // (default 0)
-           attribute unrestricted double shadowOffsetY; // (default 0)
-           attribute unrestricted double shadowBlur; // (default 0)
-           attribute DOMString shadowColor; // (default transparent black)
+  attribute unrestricted double shadowOffsetX; // (default 0)
+  attribute unrestricted double shadowOffsetY; // (default 0)
+  attribute unrestricted double shadowBlur; // (default 0)
+  attribute DOMString shadowColor; // (default transparent black)
+};
 
+[NoInterfaceObject]
+interface CanvasFilters {
+  // filters
+  attribute DOMString filter; // (default "none")
+};
+
+[NoInterfaceObject]
+interface CanvasRect {
   // rects
   void clearRect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h);
   void fillRect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h);
   void strokeRect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h);
+};
 
-  // path API (see also CanvasPathMethods)
+[NoInterfaceObject]
+interface CanvasDrawPath {
+  // path API (see also CanvasPath)
   void beginPath();
   void fill(optional CanvasFillRule fillRule = "nonzero");
   void fill(Path2D path, optional CanvasFillRule fillRule = "nonzero");
   void stroke();
   void stroke(Path2D path);
-  void drawSystemFocusRing(Element element);
-  void drawSystemFocusRing(Path2D path, Element element);
-  boolean drawCustomFocusRing(Element element);
-  boolean drawCustomFocusRing(Path2D path, Element element);
-  void scrollPathIntoView();
-  void scrollPathIntoView(Path2D path);
   void clip(optional CanvasFillRule fillRule = "nonzero");
   void clip(Path2D path, optional CanvasFillRule fillRule = "nonzero");
   void resetClip();
@@ -2041,21 +2072,42 @@ interface CanvasRenderingContext2D {
   boolean isPointInPath(Path2D path, unrestricted double x, unrestricted double y, optional CanvasFillRule fillRule = "nonzero");
   boolean isPointInStroke(unrestricted double x, unrestricted double y);
   boolean isPointInStroke(Path2D path, unrestricted double x, unrestricted double y);
+};
 
-  // text (see also the CanvasDrawingStyles interface)
+[NoInterfaceObject]
+interface CanvasUserInterface {
+  void drawFocusIfNeeded(Element element);
+  void drawFocusIfNeeded(Path2D path, Element element);
+  void scrollPathIntoView();
+  void scrollPathIntoView(Path2D path);
+};
+
+[NoInterfaceObject]
+interface CanvasText {
+  // text (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)
   void fillText(DOMString text, unrestricted double x, unrestricted double y, optional unrestricted double maxWidth);
   void strokeText(DOMString text, unrestricted double x, unrestricted double y, optional unrestricted double maxWidth);
   TextMetrics measureText(DOMString text);
+};
 
+[NoInterfaceObject]
+interface CanvasDrawImage {
   // drawing images
   void drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy);
   void drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);
   void drawImage(CanvasImageSource image, unrestricted double sx, unrestricted double sy, unrestricted double sw, unrestricted double sh, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);
+};
 
+[NoInterfaceObject]
+interface CanvasHitRegion {
   // hit regions
   void addHitRegion(optional HitRegionOptions options);
   void removeHitRegion(DOMString id);
+  void clearHitRegions();
+};
 
+[NoInterfaceObject]
+interface CanvasImageData {
   // pixel manipulation
   ImageData createImageData(double sw, double sh);
   ImageData createImageData(ImageData imagedata);
@@ -2063,31 +2115,38 @@ interface CanvasRenderingContext2D {
   void putImageData(ImageData imagedata, double dx, double dy);
   void putImageData(ImageData imagedata, double dx, double dy, double dirtyX, double dirtyY, double dirtyWidth, double dirtyHeight);
 };
-CanvasRenderingContext2D implements CanvasDrawingStyles;
-CanvasRenderingContext2D implements CanvasPathMethods;
 
-[NoInterfaceObject, Exposed=(Window,Worker)]
-interface CanvasDrawingStyles {
+enum CanvasLineCap { "butt", "round", "square" };
+enum CanvasLineJoin { "round", "bevel", "miter"};
+enum CanvasTextAlign { "start", "end", "left", "right", "center" };
+enum CanvasTextBaseline { "top", "hanging", "middle", "alphabetic", "ideographic", "bottom" };
+enum CanvasDirection { "ltr", "rtl", "inherit" };
+
+[NoInterfaceObject]
+interface CanvasPathDrawingStyles {
   // line caps/joins
-           attribute unrestricted double lineWidth; // (default 1)
-           attribute DOMString lineCap; // "butt", "round", "square" (default "butt")
-           attribute DOMString lineJoin; // "round", "bevel", "miter" (default "miter")
-           attribute unrestricted double miterLimit; // (default 10)
+  attribute unrestricted double lineWidth; // (default 1)
+  attribute CanvasLineCap lineCap; // (default "butt")
+  attribute CanvasLineJoin lineJoin; // (default "miter")
+  attribute unrestricted double miterLimit; // (default 10)
 
   // dashed lines
   void setLineDash(sequence<unrestricted double> segments); // default empty
   sequence<unrestricted double> getLineDash();
-           attribute unrestricted double lineDashOffset;
+  attribute unrestricted double lineDashOffset;
+};
 
+[NoInterfaceObject]
+interface CanvasTextDrawingStyles {
   // text
-           attribute DOMString font; // (default 10px sans-serif)
-           attribute DOMString textAlign; // "start", "end", "left", "right", "center" (default: "start")
-           attribute DOMString textBaseline; // "top", "hanging", "middle", "alphabetic", "ideographic", "bottom" (default: "alphabetic")
-           attribute DOMString direction; // "ltr", "rtl", "inherit" (default: "inherit")
+  attribute DOMString font; // (default 10px sans-serif)
+  attribute CanvasTextAlign textAlign; // (default: "start")
+  attribute CanvasTextBaseline textBaseline; // (default: "alphabetic")
+  attribute CanvasDirection direction; // (default: "inherit")
 };
 
 [NoInterfaceObject, Exposed=(Window,Worker)]
-interface CanvasPathMethods {
+interface CanvasPath {
   // shared path API methods
   void closePath();
   void moveTo(unrestricted double x, unrestricted double y);
@@ -2101,19 +2160,16 @@ interface CanvasPathMethods {
   void ellipse(unrestricted double x, unrestricted double y, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
 };
 
-[Exposed=(Window,Worker)]
 interface CanvasGradient {
   // opaque object
   void addColorStop(double offset, DOMString color);
 };
 
-[Exposed=(Window,Worker)]
 interface CanvasPattern {
   // opaque object
-  void setTransform(SVGMatrix transform);
+  void setTransform(optional DOMMatrixInit transform);
 };
 
-[Exposed=(Window,Worker)]
 interface TextMetrics {
   // x-direction
   readonly attribute double width; // advance width
@@ -2154,23 +2210,14 @@ interface ImageData {
   readonly attribute Uint8ClampedArray data;
 };
 
-[Constructor(optional Element scope), Exposed=(Window,Worker)]
-interface DrawingStyle { };
-DrawingStyle implements CanvasDrawingStyles;
-
 [Constructor,
  Constructor(Path2D path),
- Constructor(Path2D[] paths, optional CanvasFillRule fillRule = "nonzero"),
+ Constructor(sequence<Path2D> paths, optional CanvasFillRule fillRule = "nonzero"),
  Constructor(DOMString d), Exposed=(Window,Worker)]
 interface Path2D {
-  void addPath(Path2D path, optional SVGMatrix? transformation = null);
-  void addPathByStrokingPath(Path2D path, CanvasDrawingStyles styles, optional SVGMatrix? transformation = null);
-  void addText(DOMString text, CanvasDrawingStyles styles, SVGMatrix? transformation, unrestricted double x, unrestricted double y, optional unrestricted double maxWidth);
-  void addPathByStrokingText(DOMString text, CanvasDrawingStyles styles, SVGMatrix? transformation, unrestricted double x, unrestricted double y, optional unrestricted double maxWidth);
-  void addText(DOMString text, CanvasDrawingStyles styles, SVGMatrix? transformation, Path2D path, optional unrestricted double maxWidth);
-  void addPathByStrokingText(DOMString text, CanvasDrawingStyles styles, SVGMatrix? transformation, Path2D path, optional unrestricted double maxWidth);
+  void addPath(Path2D path, optional DOMMatrixInit transform);
 };
-Path2D implements CanvasPathMethods;
+Path2D implements CanvasPath;
 
 partial interface MouseEvent {
   readonly attribute DOMString? region;
@@ -2472,7 +2519,6 @@ interface GlobalEventHandlers {
            attribute EventHandler onseeking;
            attribute EventHandler onselect;
            attribute EventHandler onshow;
-           attribute EventHandler onsort;
            attribute EventHandler onstalled;
            attribute EventHandler onsubmit;
            attribute EventHandler onsuspend;
@@ -2729,16 +2775,6 @@ interface MessagePort : EventTarget {
            attribute EventHandler onmessage;
 };
 // MessagePort implements Transferable;
-
-[Constructor, Exposed=(Window,Worker)]
-interface PortCollection {
-  void add(MessagePort port);
-  void remove(MessagePort port);
-  void clear();
-  void iterate(PortCollectionCallback callback);
-};
-
-callback PortCollectionCallback = void (MessagePort port);
 
 [Constructor(DOMString channel), Exposed=(Window,Worker)]
 interface BroadcastChannel : EventTarget {

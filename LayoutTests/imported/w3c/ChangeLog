@@ -1,5 +1,17 @@
 2016-08-19  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync html/dom/interfaces.html web-platform-test from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=161012
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync html/dom/interfaces.html web-platform-test from upstream.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+
+2016-08-19  Chris Dumez  <cdumez@apple.com>
+
         Attr.prefix / Element.prefix attribute should be readonly
         https://bugs.webkit.org/show_bug.cgi?id=160998
 
