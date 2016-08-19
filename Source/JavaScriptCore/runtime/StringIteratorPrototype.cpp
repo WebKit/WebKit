@@ -34,10 +34,6 @@
 #include "ObjectConstructor.h"
 #include "StructureInlines.h"
 
-namespace JSC {
-
-}
-
 #include "StringIteratorPrototype.lut.h"
 
 namespace JSC {

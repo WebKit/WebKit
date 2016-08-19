@@ -97,7 +97,6 @@
 #include "MessageChannel.cpp"
 #include "MessageEvent.cpp"
 #include "MessagePort.cpp"
-#include "MessagePortChannel.cpp"
 #include "Microtasks.cpp"
 #include "MouseEvent.cpp"
 #include "MouseRelatedEvent.cpp"

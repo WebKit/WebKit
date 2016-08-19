@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-class IDBConnectionManager;
 class SessionID;
 
 namespace IDBClient {

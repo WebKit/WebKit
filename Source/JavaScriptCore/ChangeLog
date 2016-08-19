@@ -1,3 +1,22 @@
+2016-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove empty files and empty namespace blocks
+        https://bugs.webkit.org/show_bug.cgi?id=160990
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ValueProfile.cpp: Removed.
+        * runtime/WatchdogMac.cpp: Removed.
+        * runtime/WatchdogNone.cpp: Removed.
+
+        * runtime/StringIteratorPrototype.cpp:
+        Remove empty namespace block.
+
+        * runtime/JSDestructibleObject.h:
+        Drive-by add missing copyright.
+
 2016-08-19  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Warning fix.

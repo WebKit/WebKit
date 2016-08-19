@@ -231,7 +231,6 @@ set(JavaScriptCore_SOURCES
     bytecode/UnlinkedCodeBlock.cpp
     bytecode/UnlinkedFunctionExecutable.cpp
     bytecode/UnlinkedInstructionStream.cpp
-    bytecode/ValueProfile.cpp
     bytecode/ValueRecovery.cpp
     bytecode/VariableWriteFireDetail.cpp
     bytecode/VirtualRegister.cpp

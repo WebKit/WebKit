@@ -6085,7 +6085,6 @@
 		CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00B1820540600F2B424 /* MockMediaSourcePrivate.h */; };
 		CDF2B0161820540700F2B424 /* MockSourceBufferPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B00C1820540600F2B424 /* MockSourceBufferPrivate.cpp */; };
 		CDF2B0171820540700F2B424 /* MockSourceBufferPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00D1820540600F2B424 /* MockSourceBufferPrivate.h */; };
-		CDF2B0181820540700F2B424 /* MockTracks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B00E1820540600F2B424 /* MockTracks.cpp */; };
 		CDF2B0191820540700F2B424 /* MockTracks.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00F1820540600F2B424 /* MockTracks.h */; };
 		CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27F6E4145767870078207D /* MediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13996,7 +13995,6 @@
 		CDF2B00B1820540600F2B424 /* MockMediaSourcePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockMediaSourcePrivate.h; sourceTree = "<group>"; };
 		CDF2B00C1820540600F2B424 /* MockSourceBufferPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockSourceBufferPrivate.cpp; sourceTree = "<group>"; };
 		CDF2B00D1820540600F2B424 /* MockSourceBufferPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockSourceBufferPrivate.h; sourceTree = "<group>"; };
-		CDF2B00E1820540600F2B424 /* MockTracks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockTracks.cpp; sourceTree = "<group>"; };
 		CDF2B00F1820540600F2B424 /* MockTracks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTracks.h; sourceTree = "<group>"; };
 		CDF419991AB0DA14004E64E1 /* missingImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "missingImage@3x.png"; sourceTree = "<group>"; };
 		CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControllerInterface.h; sourceTree = "<group>"; };
@@ -22926,7 +22924,6 @@
 				CDF2B00B1820540600F2B424 /* MockMediaSourcePrivate.h */,
 				CDF2B00C1820540600F2B424 /* MockSourceBufferPrivate.cpp */,
 				CDF2B00D1820540600F2B424 /* MockSourceBufferPrivate.h */,
-				CDF2B00E1820540600F2B424 /* MockTracks.cpp */,
 				CDF2B00F1820540600F2B424 /* MockTracks.h */,
 			);
 			path = mediasource;
@@ -30733,7 +30730,6 @@
 				07EE76EB1BE96DB000F89133 /* MockRealtimeVideoSource.cpp in Sources */,
 				07EE76F01BEA619800F89133 /* MockRealtimeVideoSourceMac.mm in Sources */,
 				CDF2B0161820540700F2B424 /* MockSourceBufferPrivate.cpp in Sources */,
-				CDF2B0181820540700F2B424 /* MockTracks.cpp in Sources */,
 				C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */,
 				F55B3DC51251F12D003EF269 /* MonthInputType.cpp in Sources */,
 				85031B450A44EFC700F992E0 /* MouseEvent.cpp in Sources */,

@@ -1489,7 +1489,6 @@ set(WebCore_SOURCES
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp
     dom/MessagePort.cpp
-    dom/MessagePortChannel.cpp
     dom/Microtasks.cpp
     dom/MouseEvent.cpp
     dom/MouseRelatedEvent.cpp
@@ -2155,7 +2154,6 @@ set(WebCore_SOURCES
     platform/MainThreadSharedTimer.cpp
     platform/MemoryPressureHandler.cpp
     platform/NotImplemented.cpp
-    platform/PlatformEvent.cpp
     platform/PlatformSpeechSynthesisUtterance.cpp
     platform/PlatformSpeechSynthesisVoice.cpp
     platform/PlatformSpeechSynthesizer.cpp
@@ -3450,7 +3448,6 @@ list(APPEND WebCoreTestSupport_SOURCES
     platform/mock/mediasource/MockMediaPlayerMediaSource.cpp
     platform/mock/mediasource/MockMediaSourcePrivate.cpp
     platform/mock/mediasource/MockSourceBufferPrivate.cpp
-    platform/mock/mediasource/MockTracks.cpp
 
     testing/GCObservation.cpp
     testing/InternalSettings.cpp
