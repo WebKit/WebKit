@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,12 +91,28 @@ int main(int argc, const char * argv[])
             }
         }
 
+        NSString *developerDirectory = getRequiredStringArgument(@"developerDir");
         NSUUID *udid = [[NSUUID alloc] initWithUUIDString:getRequiredStringArgument(@"udid")];
         NSString *appPath = getRequiredStringArgument(@"app");
         NSString *productDirectory = getRequiredStringArgument(@"productDir");
         NSArray *dumpToolArguments = getDumpToolArguments();
 
+#if USE_SIM_SERVICE_CONTEXT
+        NSError *error;
+        SimServiceContext *serviceContext = [SimServiceContext sharedServiceContextForDeveloperDir:developerDirectory error:&error];
+        if (!serviceContext) {
+            NSLog(@"Device context couldn't be found: %@", error);
+            exit(EXIT_FAILURE);
+        }
+        SimDeviceSet *deviceSet = [serviceContext defaultDeviceSetWithError:nil];
+        if (!deviceSet) {
+            NSLog(@"Default device set couldn't be found: %@", error);
+            exit(EXIT_FAILURE);
+        }
+        SimDevice *device = [deviceSet.devicesByUDID objectForKey:udid];
+#else
         SimDevice *device = [SimDeviceSet.defaultSet.devicesByUDID objectForKey:udid];
+#endif
         if (!device) {
             NSLog(@"Device %@ couldn't be found", udid);
             exit(EXIT_FAILURE);

@@ -1,3 +1,14 @@
+2016-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Adopt SimServiceContext in LayoutTestRelay
+        https://bugs.webkit.org/show_bug.cgi?id=161000
+        <rdar://problem/25765594>
+
+        Reviewed by Daniel Bates.
+
+        * LayoutTestRelay/LayoutTestRelay/CoreSimulatorSPI.h:
+        * LayoutTestRelay/LayoutTestRelay/main.m:
+
 2016-08-19  Lucas Forschler  <lforschler@apple.com>
 
         Remove Yosemite Leaks bot after http://trac.webkit.org/projects/webkit/changeset/204629
