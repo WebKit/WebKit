@@ -1,3 +1,11 @@
+2016-08-19  Lucas Forschler  <lforschler@apple.com>
+
+        Remove Yosemite Leaks bot from config.json
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2016-08-18  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] API::Number needs to be wrapped by an NSNumber

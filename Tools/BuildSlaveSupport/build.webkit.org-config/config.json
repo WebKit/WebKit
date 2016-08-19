@@ -2,7 +2,6 @@
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
                     { "name": "bot139", "platform": "mac-yosemite" },
-                    { "name": "bot148", "platform": "mac-yosemite" },
                     { "name": "bot155", "platform": "mac-yosemite" },
                     { "name": "bot157", "platform": "mac-yosemite" },
                     { "name": "bot180", "platform": "mac-yosemite" },
@@ -147,18 +146,13 @@
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["bot419"]
                     },
-                    { "name": "Apple Yosemite (Leaks)", "type": "TestWebKit1Leaks", "builddir": "yosemite-leaks",
-                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot148"]
-                    },
                     { "name": "Apple Yosemite Release (32-bit Build)", "type": "Build", "builddir": "yosemite-32bit-release",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["bot139"]
                     },
                     { "name": "Apple Yosemite Debug (Build)", "type": "Build", "builddir": "yosemite-debug",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["yosemite-debug-tests-jsc", "yosemite-debug-tests-wk1", "yosemite-debug-tests-wk2", "yosemite-leaks"],
+                      "triggers": ["yosemite-debug-tests-jsc", "yosemite-debug-tests-wk1", "yosemite-debug-tests-wk2"],
                       "slavenames": ["bot180", "bot181"]
                     },
                     { "name": "Apple Yosemite Debug JSC (Tests)", "type": "TestJSC", "builddir": "yosemite-debug-tests-jsc",
@@ -365,9 +359,6 @@
                     },
                     { "type": "Triggerable", "name": "elcapitan-leaks",
                       "builderNames": ["Apple El Capitan (Leaks)"]
-                    },
-                    { "type": "Triggerable", "name": "yosemite-leaks",
-                      "builderNames": ["Apple Yosemite (Leaks)"]
                     },
                     { "type": "Triggerable", "name": "elcapitan-release-tests-jsc",
                       "builderNames": ["Apple El Capitan Release JSC (Tests)"]
