@@ -254,7 +254,7 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     CGContextSetTextDrawingMode(context, kCGTextFill);
     CGContextSetFillColorWithColor(context, color);
 
-    CGAffineTransform matrix = CGAffineTransformMakeScale(1, -1);
+    auto matrix = CGAffineTransformMakeScale(1, -1);
 #if PLATFORM(IOS)
     CFStringRef fontName = CFSTR("Courier");
     CGFloat fontSize = 10;
@@ -262,14 +262,14 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     CFStringRef fontName = CFSTR("Menlo");
     CGFloat fontSize = 11;
 #endif
-    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithName(fontName, fontSize, &matrix));
+    auto font = adoptCF(CTFontCreateWithName(fontName, fontSize, &matrix));
     CFTypeRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
     CFTypeRef values[] = { font.get(), kCFBooleanTrue };
-    RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CString cstr = text.ascii();
-    RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(cstr.data()), cstr.length(), kCFStringEncodingASCII, false, kCFAllocatorNull));
-    RetainPtr<CFAttributedStringRef> attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
-    RetainPtr<CTLineRef> line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
+    auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(cstr.data()), cstr.length(), kCFStringEncodingASCII, false, kCFAllocatorNull));
+    auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
+    auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
     CGContextSetTextPosition(context, x, y);
     CTLineDraw(line.get(), context);
 
