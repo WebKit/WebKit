@@ -1,5 +1,8 @@
 ---
 archs: [ armv7, armv7s, arm64 ]
+platform: ios
+install-name: /System/Library/PrivateFrameworks/IOSurface.framework/IOSurface
+objc-constraint: none
 exports:
   - archs: [ armv7, armv7s, arm64 ]
     symbols: [
@@ -36,7 +39,4 @@ exports:
                _kIOSurfacePlaneWidth,
                _kIOSurfaceWidth
              ]
-install-name: /System/Library/PrivateFrameworks/IOSurface.framework/IOSurface
-objc-constraint: none
-platform: ios
 ...

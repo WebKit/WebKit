@@ -1,3 +1,15 @@
+2016-08-19  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the iOS 9.3 build
+
+        Reorder the keys in the text-based stubs to make linker happy.
+
+        * WebKitPrivateFrameworkStubs/iOS/9/AppSupport.framework/AppSupport.tbd:
+        * WebKitPrivateFrameworkStubs/iOS/9/AssertionServices.framework/AssertionServices.tbd:
+        * WebKitPrivateFrameworkStubs/iOS/9/CorePDF.framework/CorePDF.tbd:
+        * WebKitPrivateFrameworkStubs/iOS/9/GraphicsServices.framework/GraphicsServices.tbd:
+        * WebKitPrivateFrameworkStubs/iOS/9/IOSurface.framework/IOSurface.tbd:
+
 2016-08-16  Daniel Bates  <dabates@apple.com>
 
         WKSI static library should be named by major iOS revision, not individual updates
