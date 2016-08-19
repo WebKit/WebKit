@@ -37,6 +37,7 @@
 #include "ClientRectList.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
+#include "CustomElementReactionQueue.h"
 #include "CustomElementsRegistry.h"
 #include "DOMTokenList.h"
 #include "Dictionary.h"
@@ -69,7 +70,6 @@
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
-#include "LifecycleCallbackQueue.h"
 #include "MainFrame.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
@@ -1293,7 +1293,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
 
 #if ENABLE(CUSTOM_ELEMENTS)
     if (UNLIKELY(isCustomElement()))
-        LifecycleCallbackQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
+        CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
 #endif
 
     if (valueIsSameAsBefore)
@@ -1598,7 +1598,7 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
 
 #if ENABLE(CUSTOM_ELEMENTS)
     if (newDocument && UNLIKELY(isCustomElement()))
-        LifecycleCallbackQueue::enqueueConnectedCallbackIfNeeded(*this);
+        CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
 #endif
 
     return InsertionDone;
@@ -1649,7 +1649,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
 
 #if ENABLE(CUSTOM_ELEMENTS)
         if (oldDocument && UNLIKELY(isCustomElement()))
-            LifecycleCallbackQueue::enqueueDisconnectedCallbackIfNeeded(*this);
+            CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(*this);
 #endif
     }
 

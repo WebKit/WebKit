@@ -390,7 +390,7 @@ enum TestConfidence { "high", "kinda-low" };
     [PutForwards=name] readonly attribute TestNode? putForwardsNullableAttribute;
 
 #if defined(TESTING_JS)
-    [CEReactions] void methodWithNeedsLifecycleProcessingStack();
+    [CEReactions] void methodWithNeedsCustomElementReactionStack();
 #endif
 
     void attachShadowRoot(TestDictionary init);

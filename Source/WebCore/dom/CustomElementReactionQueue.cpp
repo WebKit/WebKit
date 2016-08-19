@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LifecycleCallbackQueue.h"
+#include "CustomElementReactionQueue.h"
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class LifecycleQueueItem {
+class CustomElementReactionQueueItem {
 public:
     enum class Type {
         ElementUpgrade,
@@ -49,13 +49,13 @@ public:
         AttributeChanged,
     };
 
-    LifecycleQueueItem(Type type, Element& element, JSCustomElementInterface& elementInterface)
+    CustomElementReactionQueueItem(Type type, Element& element, JSCustomElementInterface& elementInterface)
         : m_type(type)
         , m_element(element)
         , m_interface(elementInterface)
     { }
 
-    LifecycleQueueItem(Element& element, JSCustomElementInterface& elementInterface, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+    CustomElementReactionQueueItem(Element& element, JSCustomElementInterface& elementInterface, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
         : m_type(Type::AttributeChanged)
         , m_element(element)
         , m_interface(elementInterface)
@@ -92,18 +92,18 @@ private:
     AtomicString m_newValue;
 };
 
-LifecycleCallbackQueue::LifecycleCallbackQueue()
+CustomElementReactionQueue::CustomElementReactionQueue()
 { }
 
-LifecycleCallbackQueue::~LifecycleCallbackQueue()
+CustomElementReactionQueue::~CustomElementReactionQueue()
 {
     ASSERT(m_items.isEmpty());
 }
 
-void LifecycleCallbackQueue::enqueueElementUpgrade(Element& element, JSCustomElementInterface& elementInterface)
+void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, JSCustomElementInterface& elementInterface)
 {
-    if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
-        queue->m_items.append(LifecycleQueueItem(LifecycleQueueItem::Type::ElementUpgrade, element, elementInterface));
+    if (auto* queue = CustomElementReactionStack::ensureCurrentQueue())
+        queue->m_items.append({CustomElementReactionQueueItem::Type::ElementUpgrade, element, elementInterface});
 }
 
 static JSCustomElementInterface* findInterfaceForCustomElement(Element& element)
@@ -120,59 +120,59 @@ static JSCustomElementInterface* findInterfaceForCustomElement(Element& element)
     return registry->findInterface(element.tagQName());
 }
 
-void LifecycleCallbackQueue::enqueueConnectedCallbackIfNeeded(Element& element)
+void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& element)
 {
     auto* elementInterface = findInterfaceForCustomElement(element);
     if (!elementInterface)
         return;
 
-    if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
-        queue->m_items.append({LifecycleQueueItem::Type::Connected, element, *elementInterface});
+    if (auto* queue = CustomElementReactionStack::ensureCurrentQueue())
+        queue->m_items.append({CustomElementReactionQueueItem::Type::Connected, element, *elementInterface});
 }
 
-void LifecycleCallbackQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
+void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
 {
     auto* elementInterface = findInterfaceForCustomElement(element);
     if (!elementInterface)
         return;
 
-    if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
-        queue->m_items.append({LifecycleQueueItem::Type::Disconnected, element, *elementInterface});
+    if (auto* queue = CustomElementReactionStack::ensureCurrentQueue())
+        queue->m_items.append({CustomElementReactionQueueItem::Type::Disconnected, element, *elementInterface});
 }
 
-void LifecycleCallbackQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
     auto* elementInterface = findInterfaceForCustomElement(element);
     if (!elementInterface || !elementInterface->observesAttribute(attributeName.localName()))
         return;
 
-    if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
+    if (auto* queue = CustomElementReactionStack::ensureCurrentQueue())
         queue->m_items.append({element, *elementInterface, attributeName, oldValue, newValue});
 }
 
-void LifecycleCallbackQueue::invokeAll()
+void CustomElementReactionQueue::invokeAll()
 {
-    Vector<LifecycleQueueItem> items;
+    Vector<CustomElementReactionQueueItem> items;
     items.swap(m_items);
     for (auto& item : items)
         item.invoke();
 }
 
-LifecycleCallbackQueue* CustomElementLifecycleProcessingStack::ensureCurrentQueue()
+CustomElementReactionQueue* CustomElementReactionStack::ensureCurrentQueue()
 {
     // FIXME: This early exit indicates a bug that some DOM API is missing CEReactions
     if (!s_currentProcessingStack)
         return nullptr;
 
     auto*& queue = s_currentProcessingStack->m_queue;
-    if (!queue) // We use a raw pointer to avoid genearing code to delete it in ~CustomElementLifecycleProcessingStack.
-        queue = new LifecycleCallbackQueue;
+    if (!queue) // We use a raw pointer to avoid genearing code to delete it in ~CustomElementReactionStack.
+        queue = new CustomElementReactionQueue;
     return queue;
 }
 
-CustomElementLifecycleProcessingStack* CustomElementLifecycleProcessingStack::s_currentProcessingStack = nullptr;
+CustomElementReactionStack* CustomElementReactionStack::s_currentProcessingStack = nullptr;
 
-void CustomElementLifecycleProcessingStack::processQueue()
+void CustomElementReactionStack::processQueue()
 {
     ASSERT(m_queue);
     m_queue->invokeAll();

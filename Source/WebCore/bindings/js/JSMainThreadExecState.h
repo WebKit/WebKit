@@ -26,8 +26,8 @@
 #ifndef JSMainThreadExecState_h
 #define JSMainThreadExecState_h
 
+#include "CustomElementReactionQueue.h"
 #include "JSDOMBinding.h"
-#include "LifecycleCallbackQueue.h"
 #include <runtime/Completion.h>
 #include <runtime/Microtask.h>
 #include <wtf/MainThread.h>
@@ -148,7 +148,7 @@ public:
 private:
     JSC::ExecState* m_previousState;
 #if ENABLE(CUSTOM_ELEMENTS)
-    CustomElementLifecycleProcessingStack m_lifecycleProcessingStack;
+    CustomElementReactionStack m_customElementReactionStack;
 #endif
 };
 

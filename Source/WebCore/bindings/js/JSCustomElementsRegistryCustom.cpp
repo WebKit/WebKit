@@ -39,7 +39,7 @@ namespace WebCore {
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
-static JSObject* getLifecycleCallback(ExecState& state, JSObject& prototype, const Identifier& id)
+static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype, const Identifier& id)
 {
     JSValue callback = prototype.get(&state, id);
     if (state.hadException())
@@ -47,7 +47,7 @@ static JSObject* getLifecycleCallback(ExecState& state, JSObject& prototype, con
     if (callback.isUndefined())
         return nullptr;
     if (!callback.isFunction()) {
-        throwTypeError(&state, ASCIILiteral("A lifecycle callback must be a function"));
+        throwTypeError(&state, ASCIILiteral("A custom element callback must be a function"));
         return nullptr;
     }
     return callback.getObject();
@@ -107,24 +107,24 @@ JSValue JSCustomElementsRegistry::define(ExecState& state)
     QualifiedName name(nullAtom, localName, HTMLNames::xhtmlNamespaceURI);
     auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
-    auto* connectedCallback = getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback"));
+    auto* connectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback"));
     if (state.hadException())
         return jsUndefined();
     if (connectedCallback)
         elementInterface->setConnectedCallback(connectedCallback);
 
-    auto* disconnectedCallback = getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback"));
+    auto* disconnectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback"));
     if (state.hadException())
         return jsUndefined();
     if (disconnectedCallback)
         elementInterface->setDisconnectedCallback(disconnectedCallback);
 
     // FIXME: Add the support for adoptedCallback.
-    getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback"));
+    getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback"));
     if (state.hadException())
         return jsUndefined();
 
-    auto* attributeChangedCallback = getLifecycleCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
+    auto* attributeChangedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
     if (state.hadException())
         return jsUndefined();
     if (attributeChangedCallback) {

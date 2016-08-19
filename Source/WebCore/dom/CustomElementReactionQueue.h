@@ -36,14 +36,14 @@ namespace WebCore {
 class JSCustomElementInterface;
 class Document;
 class Element;
-class LifecycleQueueItem;
+class CustomElementReactionQueueItem;
 class QualifiedName;
 
-class LifecycleCallbackQueue {
-    WTF_MAKE_NONCOPYABLE(LifecycleCallbackQueue);
+class CustomElementReactionQueue {
+    WTF_MAKE_NONCOPYABLE(CustomElementReactionQueue);
 public:
-    LifecycleCallbackQueue();
-    ~LifecycleCallbackQueue();
+    CustomElementReactionQueue();
+    ~CustomElementReactionQueue();
 
     static void enqueueElementUpgrade(Element&, JSCustomElementInterface&);
     static void enqueueConnectedCallbackIfNeeded(Element&);
@@ -53,18 +53,18 @@ public:
     void invokeAll();
 
 private:
-    Vector<LifecycleQueueItem> m_items;
+    Vector<CustomElementReactionQueueItem> m_items;
 };
 
-class CustomElementLifecycleProcessingStack {
+class CustomElementReactionStack {
 public:
-    CustomElementLifecycleProcessingStack()
+    CustomElementReactionStack()
         : m_previousProcessingStack(s_currentProcessingStack)
     {
         s_currentProcessingStack = this;
     }
 
-    ~CustomElementLifecycleProcessingStack()
+    ~CustomElementReactionStack()
     {
         if (UNLIKELY(m_queue))
             processQueue();
@@ -72,17 +72,17 @@ public:
     }
 
     // FIXME: This should be a reference once "ensure" starts to work.
-    static LifecycleCallbackQueue* ensureCurrentQueue();
+    static CustomElementReactionQueue* ensureCurrentQueue();
 
     static bool hasCurrentProcessingStack() { return s_currentProcessingStack; }
 
 private:
     void processQueue();
 
-    LifecycleCallbackQueue* m_queue { nullptr };
-    CustomElementLifecycleProcessingStack* m_previousProcessingStack;
+    CustomElementReactionQueue* m_queue { nullptr };
+    CustomElementReactionStack* m_previousProcessingStack;
 
-    static CustomElementLifecycleProcessingStack* s_currentProcessingStack;
+    static CustomElementReactionStack* s_currentProcessingStack;
 };
 
 }

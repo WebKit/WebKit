@@ -3930,7 +3930,7 @@
 		9B532EA31BA928570038A827 /* SlotAssignment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B532EA11BA928570038A827 /* SlotAssignment.cpp */; };
 		9B532EA41BA928570038A827 /* SlotAssignment.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B532EA21BA928570038A827 /* SlotAssignment.h */; };
 		9B55EEE91B3E8898005342BC /* EditorCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B55EEE81B3E8898005342BC /* EditorCocoa.mm */; };
-		9B56C9AA1C89329A00C456DF /* LifecycleCallbackQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B56C9A91C89329A00C456DF /* LifecycleCallbackQueue.cpp */; };
+		9B56C9AA1C89329A00C456DF /* CustomElementReactionQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B56C9A91C89329A00C456DF /* CustomElementReactionQueue.cpp */; };
 		9B69D3B41B98FFE900E3512B /* HTMLSlotElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B69D3B21B98FFE900E3512B /* HTMLSlotElement.cpp */; };
 		9B69D3B51B98FFE900E3512B /* HTMLSlotElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B69D3B31B98FFE900E3512B /* HTMLSlotElement.h */; };
 		9B69D3B81B99100700E3512B /* JSHTMLSlotElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B69D3B61B99100700E3512B /* JSHTMLSlotElement.cpp */; };
@@ -11515,8 +11515,8 @@
 		9B532EA11BA928570038A827 /* SlotAssignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlotAssignment.cpp; sourceTree = "<group>"; };
 		9B532EA21BA928570038A827 /* SlotAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlotAssignment.h; sourceTree = "<group>"; };
 		9B55EEE81B3E8898005342BC /* EditorCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorCocoa.mm; sourceTree = "<group>"; };
-		9B56C9A81C89312800C456DF /* LifecycleCallbackQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LifecycleCallbackQueue.h; sourceTree = "<group>"; };
-		9B56C9A91C89329A00C456DF /* LifecycleCallbackQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LifecycleCallbackQueue.cpp; sourceTree = "<group>"; };
+		9B56C9A81C89312800C456DF /* CustomElementReactionQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomElementReactionQueue.h; sourceTree = "<group>"; };
+		9B56C9A91C89329A00C456DF /* CustomElementReactionQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomElementReactionQueue.cpp; sourceTree = "<group>"; };
 		9B69D3B11B98FF0A00E3512B /* HTMLSlotElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSlotElement.idl; sourceTree = "<group>"; };
 		9B69D3B21B98FFE900E3512B /* HTMLSlotElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSlotElement.cpp; sourceTree = "<group>"; };
 		9B69D3B31B98FFE900E3512B /* HTMLSlotElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSlotElement.h; sourceTree = "<group>"; };
@@ -23998,6 +23998,8 @@
 				9BD4E9181C462CFC005065BC /* CustomElementsRegistry.cpp */,
 				9BD4E9191C462CFC005065BC /* CustomElementsRegistry.h */,
 				9BC5F9DE1D5AAD5D002B749D /* CustomElementsRegistry.idl */,
+				9B56C9A91C89329A00C456DF /* CustomElementReactionQueue.cpp */,
+				9B56C9A81C89312800C456DF /* CustomElementReactionQueue.h */,
 				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
 				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
 				62CD32581157E57C0063B0A7 /* CustomEvent.idl */,
@@ -24137,8 +24139,6 @@
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
 				85031B2E0A44EFC700F992E0 /* KeyboardEvent.h */,
 				14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */,
-				9B56C9A91C89329A00C456DF /* LifecycleCallbackQueue.cpp */,
-				9B56C9A81C89312800C456DF /* LifecycleCallbackQueue.h */,
 				BC7FA61E0D1F0CBD00DB22A9 /* LiveNodeList.cpp */,
 				BC7FA61F0D1F0CBD00DB22A9 /* LiveNodeList.h */,
 				BC9A6144146859D9006057FD /* make_dom_exceptions.pl */,
@@ -30576,7 +30576,7 @@
 				E55F497A151B888000BB67DB /* LengthFunctions.cpp in Sources */,
 				0F87166F1C869D83004FF0DE /* LengthPoint.cpp in Sources */,
 				0FEF20CE1BD4A24100128E5D /* LengthSize.cpp in Sources */,
-				9B56C9AA1C89329A00C456DF /* LifecycleCallbackQueue.cpp in Sources */,
+				9B56C9AA1C89329A00C456DF /* CustomElementReactionQueue.cpp in Sources */,
 				FFB698CC1833EE0D00158A31 /* LineBreaker.cpp in Sources */,
 				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,
 				FFB698CF183402BB00158A31 /* LineInfo.cpp in Sources */,

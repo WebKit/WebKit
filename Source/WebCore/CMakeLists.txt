@@ -1438,6 +1438,7 @@ set(WebCore_SOURCES
     dom/ContainerNode.cpp
     dom/ContainerNodeAlgorithms.cpp
     dom/ContextDestructionObserver.cpp
+    dom/CustomElementReactionQueue.cpp
     dom/CustomElementsRegistry.cpp
     dom/CustomEvent.cpp
     dom/DOMCoreException.cpp
@@ -1484,7 +1485,6 @@ set(WebCore_SOURCES
     dom/IdTargetObserverRegistry.cpp
     dom/InlineStyleSheetOwner.cpp
     dom/KeyboardEvent.cpp
-    dom/LifecycleCallbackQueue.cpp
     dom/LiveNodeList.cpp
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp

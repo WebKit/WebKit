@@ -3342,9 +3342,9 @@ END
 
             if ($function->signature->extendedAttributes->{"CEReactions"}) {
                 push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
-                push(@implContent, "    CustomElementLifecycleProcessingStack customElementLifecycleProcessingStack;\n");
+                push(@implContent, "    CustomElementReactionStack customElementReactionStack;\n");
                 push(@implContent, "#endif\n");
-                $implIncludes{"LifecycleCallbackQueue.h"} = 1;
+                $implIncludes{"CustomElementReactionQueue.h"} = 1;
             }
 
             if ($function->isStatic) {
