@@ -1,3 +1,25 @@
+2016-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Make custom Error properties (line, column, sourceURL) configurable and writable
+        https://bugs.webkit.org/show_bug.cgi?id=160984
+        <rdar://problem/27905979>
+
+        Reviewed by Saam Barati.
+
+        * stress/native-error-properties.js: Added.
+        (assert):
+        (shouldNotThrow):
+
+        (checkEmptyErrorPropertiesDescriptors):
+        (checkNonEmptyErrorPropertiesDescriptors):
+        The spec only describes the "message" property, so
+        ensure it has the right descriptor attributes.
+
+        (checkErrorPropertiesWritable):
+        Ensure common error property names are writable.
+        In strict mode this would have thrown an exception
+        if they were readonly.
+
 2016-08-18  Mark Lam  <mark.lam@apple.com>
 
         ScopedArguments is using the wrong owner object for a write barrier.

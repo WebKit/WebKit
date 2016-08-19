@@ -159,12 +159,12 @@ bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bo
         unsigned line;
         unsigned column;
         firstNonNativeFrame->computeLineAndColumn(line, column);
-        obj->putDirect(vm, vm.propertyNames->line, jsNumber(line), ReadOnly | DontDelete);
-        obj->putDirect(vm, vm.propertyNames->column, jsNumber(column), ReadOnly | DontDelete);
+        obj->putDirect(vm, vm.propertyNames->line, jsNumber(line));
+        obj->putDirect(vm, vm.propertyNames->column, jsNumber(column));
 
         String frameSourceURL = firstNonNativeFrame->sourceURL();
         if (!frameSourceURL.isEmpty())
-            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, frameSourceURL), ReadOnly | DontDelete);
+            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, frameSourceURL));
 
         obj->putDirect(vm, vm.propertyNames->stack, Interpreter::stackTraceAsString(vm, stackTrace), DontEnum);
 
@@ -185,9 +185,9 @@ JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const So
     const String& sourceURL = source.provider()->url();
 
     if (line != -1)
-        error->putDirect(*vm, Identifier::fromString(vm, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
+        error->putDirect(*vm, Identifier::fromString(vm, linePropertyName), jsNumber(line));
     if (!sourceURL.isNull())
-        error->putDirect(*vm, Identifier::fromString(vm, sourceURLPropertyName), jsString(vm, sourceURL), ReadOnly | DontDelete);
+        error->putDirect(*vm, Identifier::fromString(vm, sourceURLPropertyName), jsString(vm, sourceURL));
     return error;
 }
 
