@@ -1,3 +1,11 @@
+2016-08-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Test gardening for rdar://problem/27595142.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt:
+        * platform/ios-simulator/js/dom/constructor-length-expected.txt:
+        * platform/ios-simulator/js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Added.
+
 2016-08-09  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r203458. rdar://problem/27434307
