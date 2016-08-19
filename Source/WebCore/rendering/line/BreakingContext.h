@@ -166,10 +166,17 @@ public:
         m_hangsAtEnd = false;
     }
 
-    void commitLineBreakAtCurrentWidth(RenderObject& object, unsigned offset = 0, Optional<unsigned> nextBreak = Nullopt)
+    void commitLineBreakClear()
     {
         m_width.commit();
-        m_lineBreakHistory.moveTo(&object, offset, nextBreak);
+        m_lineBreakHistory.clear();
+        m_hangsAtEnd = false;
+    }
+
+    void commitLineBreakAtCurrentWidth(RenderObject& object, unsigned offset = 0, Optional<unsigned> nextBreak = Optional<unsigned>())
+    {
+        m_width.commit();
+        m_lineBreakHistory.moveTo(object, offset, nextBreak);
         m_hangsAtEnd = false;
     }
 
@@ -210,7 +217,7 @@ private:
         const InlineIterator& current() const { return get(0); }
         size_t historyLength() const { return this->size(); }
 
-        void moveTo(RenderObject* object, unsigned offset, Optional<unsigned> nextBreak = Nullopt)
+        void moveTo(RenderObject& object, unsigned offset, Optional<unsigned> nextBreak = Nullopt)
         {
             push([&](InlineIterator& modifyMe) {
                 modifyMe.moveTo(object, offset, nextBreak);
@@ -326,7 +333,10 @@ inline void BreakingContext::increment()
     if (!m_collapseWhiteSpace)
         m_currentCharacterIsSpace = false;
 
-    m_current.moveToStartOf(m_nextObject);
+    if (m_nextObject)
+        m_current.moveToStartOf(*m_nextObject);
+    else
+        m_current.clear();
     m_atStart = false;
 }
 
@@ -335,7 +345,7 @@ inline void BreakingContext::handleBR(EClear& clear)
     if (fitsOnLineOrHangsAtEnd()) {
         RenderObject& br = *m_current.renderer();
         m_lineBreakHistory.push([&](InlineIterator& modifyMe) {
-            modifyMe.moveToStartOf(&br);
+            modifyMe.moveToStartOf(br);
             modifyMe.increment();
         });
 
@@ -533,7 +543,10 @@ inline void BreakingContext::handleReplaced()
     // Break on replaced elements if either has normal white-space.
     if (((m_autoWrap || RenderStyle::autoWrap(m_lastWS)) && (!m_current.renderer()->isImage() || m_allowImagesToBreak)
         && (!m_current.renderer()->isRubyRun() || downcast<RenderRubyRun>(m_current.renderer())->canBreakBefore(m_renderTextInfo.lineBreakIterator))) || replacedBox.isAnonymousInlineBlock()) {
-        commitLineBreakAtCurrentWidth(*m_current.renderer());
+        if (auto* renderer = m_current.renderer())
+            commitLineBreakAtCurrentWidth(*renderer);
+        else
+            commitLineBreakClear();
         if (m_width.committedWidth() && replacedBox.isAnonymousInlineBlock()) {
             // Always force a break before an anonymous inline block if there is content on the line
             // already.
@@ -713,7 +726,7 @@ inline void tryHyphenating(RenderText& text, const FontCascade& font, const Atom
     UNUSED_PARAM(isFixedPitch);
 #endif
 
-    lineBreak.moveTo(&text, lastSpace + prefixLength, nextBreakable);
+    lineBreak.moveTo(text, lastSpace + prefixLength, nextBreakable);
     hyphenated = true;
 }
 
@@ -749,7 +762,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     if (!m_current.offset())
         m_appliedStartWidth = false;
 
-    RenderText& renderText = downcast<RenderText>(*m_current.renderer());
+    RenderObject& renderObject = *m_current.renderer();
+    RenderText& renderText = downcast<RenderText>(renderObject);
 
     bool isSVGText = renderText.isSVGInlineText();
 
@@ -931,7 +945,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     if (!m_width.fitsOnLineIncludingExtraWidth(charWidth)) {
                         lineWasTooWide = true;
                         m_lineBreakHistory.push([&](InlineIterator& modifyMe) {
-                            modifyMe.moveTo(m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
+                            modifyMe.moveTo(renderObject, m_current.offset(), m_current.nextBreakablePosition());
                             m_lineBreaker.skipTrailingWhitespace(modifyMe, m_lineInfo);
                         });
                     }
@@ -1008,14 +1022,14 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             if (c == '\n' && m_preservesNewline) {
                 if (!stoppedIgnoringSpaces && m_current.offset())
                     ensureCharacterGetsLineBox(m_lineWhitespaceCollapsingState, m_current);
-                commitLineBreakAtCurrentWidth(*m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
+                commitLineBreakAtCurrentWidth(renderObject, m_current.offset(), m_current.nextBreakablePosition());
                 m_lineBreakHistory.increment();
                 m_lineInfo.setPreviousLineBrokeCleanly(true);
                 return true;
             }
 
             if (m_autoWrap && betweenWords) {
-                commitLineBreakAtCurrentWidth(*m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
+                commitLineBreakAtCurrentWidth(renderObject, m_current.offset(), m_current.nextBreakablePosition());
                 wrapW = 0;
                 // Auto-wrapping text should not wrap in the middle of a word once it has had an
                 // opportunity to break after a word.
@@ -1025,7 +1039,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             if (midWordBreak && !U16_IS_TRAIL(c) && !(U_GET_GC_MASK(c) & U_GC_M_MASK)) {
                 // Remember this as a breakable position in case
                 // adding the end width forces a break.
-                m_lineBreakHistory.moveTo(m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
+                m_lineBreakHistory.moveTo(renderObject, m_current.offset(), m_current.nextBreakablePosition());
                 midWordBreak &= (breakWords || breakAll);
             }
 
@@ -1085,7 +1099,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
 
         if (!m_currentCharacterIsWS && previousCharacterIsWS) {
             if (m_autoWrap && m_currentStyle->breakOnlyAfterWhiteSpace())
-                m_lineBreakHistory.moveTo(m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
+                m_lineBreakHistory.moveTo(renderObject, m_current.offset(), m_current.nextBreakablePosition());
         }
 
         if (m_collapseWhiteSpace && m_currentCharacterIsSpace && !m_ignoringSpaces)
@@ -1223,8 +1237,12 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
 
     if (!m_current.renderer()->isFloatingOrOutOfFlowPositioned()) {
         m_lastObject = m_current.renderer();
-        if (m_lastObject->isReplaced() && m_autoWrap && !m_lastObject->isRubyRun() && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!is<RenderListMarker>(*m_lastObject) || downcast<RenderListMarker>(*m_lastObject).isInside()))
-            commitLineBreakAtCurrentWidth(*m_nextObject);
+        if (m_lastObject->isReplaced() && m_autoWrap && !m_lastObject->isRubyRun() && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!is<RenderListMarker>(*m_lastObject) || downcast<RenderListMarker>(*m_lastObject).isInside())) {
+            if (m_nextObject)
+                commitLineBreakAtCurrentWidth(*m_nextObject);
+            else
+                commitLineBreakClear();
+        }
     }
 }
 
@@ -1257,8 +1275,12 @@ inline InlineIterator BreakingContext::handleEndOfLine()
     if (m_lineBreakHistory.current() == m_resolver.position()) {
         if (!m_lineBreakHistory.renderer() || !m_lineBreakHistory.renderer()->isBR()) {
             // we just add as much as possible
-            if (m_blockStyle.whiteSpace() == PRE && !m_current.offset())
-                commitLineBreakAtCurrentWidth(*m_lastObject, m_lastObject->isText() ? m_lastObject->length() : 0);
+            if (m_blockStyle.whiteSpace() == PRE && !m_current.offset()) {
+                if (m_lastObject)
+                    commitLineBreakAtCurrentWidth(*m_lastObject, m_lastObject->isText() ? m_lastObject->length() : 0);
+                else
+                    commitLineBreakClear();
+            }
             else if (m_lineBreakHistory.renderer()) {
                 // Don't ever break in the middle of a word if we can help it.
                 // There's no room at all. We just have to be on this line,

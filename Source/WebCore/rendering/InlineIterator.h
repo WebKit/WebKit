@@ -64,16 +64,20 @@ public:
     {
     }
 
-    void clear() { moveTo(nullptr, 0); }
-
-    void moveToStartOf(RenderObject* object)
+    void clear()
+    {
+        setRenderer(nullptr);
+        setOffset(0);
+        setNextBreakablePosition(-1);
+    }
+    void moveToStartOf(RenderObject& object)
     {
         moveTo(object, 0);
     }
 
-    void moveTo(RenderObject* object, unsigned offset, Optional<unsigned> nextBreak = Nullopt)
+    void moveTo(RenderObject& object, unsigned offset, Optional<unsigned> nextBreak = Optional<unsigned>())
     {
-        setRenderer(object);
+        setRenderer(&object);
         setOffset(offset);
         setNextBreakablePosition(nextBreak);
     }
@@ -397,8 +401,12 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
         if (m_pos < downcast<RenderText>(*m_renderer).textLength())
             return;
     }
-    // bidiNext can return nullptr, so use moveTo instead of moveToStartOf
-    moveTo(bidiNextSkippingEmptyInlines(*m_root, m_renderer, resolver), 0);
+    // bidiNext can return nullptr
+    RenderObject* bidiNext = bidiNextSkippingEmptyInlines(*m_root, m_renderer, resolver);
+    if (bidiNext)
+        moveToStartOf(*bidiNext);
+    else
+        clear();
 }
 
 inline void InlineIterator::fastDecrement()
