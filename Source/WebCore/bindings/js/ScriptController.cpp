@@ -384,7 +384,6 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*,
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-
 NPObject* ScriptController::windowScriptNPObject()
 {
     if (!m_windowScriptNPObject) {
@@ -405,17 +404,6 @@ NPObject* ScriptController::windowScriptNPObject()
 
     return m_windowScriptNPObject;
 }
-
-NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement* plugin)
-{
-    JSObject* object = jsObjectForPluginElement(plugin);
-    if (!object)
-        return _NPN_CreateNoScriptObject();
-
-    // Wrap the JSObject in an NPObject
-    return _NPN_CreateScriptObject(0, object, bindingRootObject());
-}
-
 #endif
 
 #if !PLATFORM(COCOA)

@@ -61,7 +61,8 @@
 #import <WebCore/FrameTree.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLPlugInElement.h>
-#import <WebCore/Page.h> 
+#import <WebCore/NP_jsobject.h>
+#import <WebCore/Page.h>
 #import <WebCore/ProxyServer.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
@@ -70,6 +71,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebCore/npruntime_impl.h>
+#import <WebCore/runtime_root.h>
 #import <WebKitLegacy/DOMPrivate.h>
 #import <WebKitLegacy/WebUIDelegate.h>
 #import <objc/runtime.h>
@@ -1922,17 +1924,26 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
         case NPNVPluginElementNPObject:
         {
-            if (!_element)
-                return NPERR_GENERIC_ERROR;
-            
-            NPObject *plugInScriptObject = _element->getNPObject();
+            if (!_elementNPObject) {
+                if (!_element)
+                    return NPERR_GENERIC_ERROR;
+
+                Frame* frame = core(self.webFrame);
+                if (!frame)
+                    return NPERR_GENERIC_ERROR;
+
+                JSC::JSObject* object = frame->script().jsObjectForPluginElement(_element.get());
+                if (!object)
+                    _elementNPObject = _NPN_CreateNoScriptObject();
+                else
+                    _elementNPObject = _NPN_CreateScriptObject(0, object, frame->script().bindingRootObject());
+            }
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
-            if (plugInScriptObject)
-                _NPN_RetainObject(plugInScriptObject);
+            if (_elementNPObject)
+                _NPN_RetainObject(_elementNPObject);
 
-            void **v = (void **)value;
-            *v = plugInScriptObject;
+            *(void **)value = _elementNPObject;
 
             return NPERR_NO_ERROR;
         }
@@ -2280,7 +2291,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     NPError npErr;
     npErr = ![_pluginPackage.get() pluginFuncs]->destroy(plugin, NULL);
     LOG(Plugins, "NPP_Destroy: %d", npErr);
-    
+
+    if (_elementNPObject)
+        _NPN_ReleaseObject(_elementNPObject);
+
     if (Frame* frame = core([self webFrame]))
         frame->script().cleanupScriptObjectsForPlugin(self);
         

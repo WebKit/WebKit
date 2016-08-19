@@ -1,3 +1,16 @@
+2016-08-18  Anders Carlsson  <andersca@apple.com>
+
+        Move an NPAPI-only function from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=160967
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::~PluginView):
+        (WebCore::PluginView::PluginView):
+        (WebCore::PluginView::getValue):
+        * Plugins/PluginView.h:
+
 2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused includes of wtf headers

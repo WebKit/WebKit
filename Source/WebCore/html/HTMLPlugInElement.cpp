@@ -67,9 +67,6 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& doc
     : HTMLFrameOwnerElement(tagName, document)
     , m_inBeforeLoadEventHandler(false)
     , m_swapRendererTimer(*this, &HTMLPlugInElement::swapRendererTimerFired)
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    , m_NPObject(0)
-#endif
     , m_isCapturingMouseEvents(false)
     , m_displayState(Playing)
 {
@@ -79,13 +76,6 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& doc
 HTMLPlugInElement::~HTMLPlugInElement()
 {
     ASSERT(!m_instance); // cleared in detach()
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (m_NPObject) {
-        _NPN_ReleaseObject(m_NPObject);
-        m_NPObject = 0;
-    }
-#endif
 }
 
 bool HTMLPlugInElement::canProcessDrag() const
@@ -111,13 +101,6 @@ void HTMLPlugInElement::willDetachRenderers()
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
         m_isCapturingMouseEvents = false;
     }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (m_NPObject) {
-        _NPN_ReleaseObject(m_NPObject);
-        m_NPObject = 0;
-    }
-#endif
 }
 
 void HTMLPlugInElement::resetInstance()
@@ -281,18 +264,6 @@ bool HTMLPlugInElement::supportsFocus() const
         return false;
     return !downcast<RenderEmbeddedObject>(*renderer()).isPluginUnavailable();
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
-NPObject* HTMLPlugInElement::getNPObject()
-{
-    ASSERT(document().frame());
-    if (!m_NPObject)
-        m_NPObject = document().frame()->script().createScriptObjectForPluginElement(this);
-    return m_NPObject;
-}
-
-#endif /* ENABLE(NETSCAPE_PLUGIN_API) */
 
 RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {

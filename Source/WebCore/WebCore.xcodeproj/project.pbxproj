@@ -737,7 +737,7 @@
 		1A569CFD0D7E2B82007C3983 /* c_utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CCC0D7E2B82007C3983 /* c_utility.cpp */; };
 		1A569CFE0D7E2B82007C3983 /* c_utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CCD0D7E2B82007C3983 /* c_utility.h */; };
 		1A569D0A0D7E2B82007C3983 /* NP_jsobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CDA0D7E2B82007C3983 /* NP_jsobject.cpp */; };
-		1A569D0B0D7E2B82007C3983 /* NP_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CDB0D7E2B82007C3983 /* NP_jsobject.h */; };
+		1A569D0B0D7E2B82007C3983 /* NP_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CDB0D7E2B82007C3983 /* NP_jsobject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A569D0D0D7E2B82007C3983 /* npruntime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CDD0D7E2B82007C3983 /* npruntime.cpp */; };
 		1A569D0F0D7E2B82007C3983 /* npruntime_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CDF0D7E2B82007C3983 /* npruntime_impl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A569D100D7E2B82007C3983 /* npruntime_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CE00D7E2B82007C3983 /* npruntime_internal.h */; settings = {ATTRIBUTES = (Private, ); }; };

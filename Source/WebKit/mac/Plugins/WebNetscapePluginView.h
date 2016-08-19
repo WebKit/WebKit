@@ -59,7 +59,9 @@ typedef union PluginPort {
     RetainPtr<CALayer> _pluginLayer;
     unsigned _dataLengthReceived;
     RetainPtr<NSError> _error;
-        
+
+    NPObject* _elementNPObject;
+
     unsigned argsCount;
     char **cAttributes;
     char **cValues;

@@ -310,6 +310,8 @@ namespace WebCore {
         NPWindow m_npWindow;
 #endif
 
+        NPObject* m_elementNPObject;
+
         Vector<bool, 4> m_popupStateStack;
 
         HashSet<RefPtr<PluginStream> > m_streams;

@@ -26,10 +26,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "Image.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-struct NPObject;
-#endif
-
 namespace JSC {
 namespace Bindings {
 class Instance;
@@ -70,10 +66,6 @@ public:
     virtual bool isRestartedPlugin() const { return false; }
 
     JSC::JSObject* scriptObjectForPluginReplacement();
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WEBCORE_EXPORT NPObject* getNPObject();
-#endif
 
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
@@ -128,9 +120,6 @@ private:
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer m_swapRendererTimer;
     RefPtr<PluginReplacement> m_pluginReplacement;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* m_NPObject;
-#endif
     bool m_isCapturingMouseEvents;
 
     DisplayState m_displayState;

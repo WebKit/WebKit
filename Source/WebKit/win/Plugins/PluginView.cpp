@@ -55,6 +55,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
+#include <WebCore/NP_jsobject.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMouseEvent.h>
@@ -292,6 +293,9 @@ PluginView::~PluginView()
 
     stop();
 
+    if (m_elementNPObject)
+        _NPN_ReleaseObject(m_elementNPObject);
+    
     freeStringArray(m_paramNames, m_paramCount);
     freeStringArray(m_paramValues, m_paramCount);
 
@@ -749,6 +753,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_paramValues(0)
     , m_mimeType(mimeType)
     , m_instance(0)
+    , m_elementNPObject(nullptr)
     , m_isWindowed(true)
     , m_isTransparent(false)
     , m_haveInitialized(false)
@@ -1192,6 +1197,14 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
     return NPERR_GENERIC_ERROR;
 }
 
+static Frame* getFrame(Frame* parentFrame, Element* element)
+{
+    if (parentFrame)
+        return parentFrame;
+    
+    return element->document().frame();
+}
+
 NPError PluginView::getValue(NPNVariable variable, void* value)
 {
     LOG(Plugins, "PluginView::getValue(%s)", prettyNameForNPNVariable(variable).data());
@@ -1224,18 +1237,23 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         if (m_isJavaScriptPaused)
             return NPERR_GENERIC_ERROR;
 
-        NPObject* pluginScriptObject = 0;
+        if (!m_elementNPObject) {
+            Frame* frame = getFrame(parentFrame(), m_element);
+            if (!frame)
+                return NPERR_GENERIC_ERROR;
 
-        if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
-            pluginScriptObject = m_element->getNPObject();
+            JSC::JSObject* object = frame->script().jsObjectForPluginElement(m_element);
+            if (!object)
+                m_elementNPObject = _NPN_CreateNoScriptObject();
+            else
+                m_elementNPObject = _NPN_CreateScriptObject(0, object, frame->script().bindingRootObject());
+        }
 
-        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-        if (pluginScriptObject)
-            _NPN_RetainObject(pluginScriptObject);
+        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
+        if (m_elementNPObject)
+            _NPN_RetainObject(m_elementNPObject);
 
-        void** v = (void**)value;
-        *v = pluginScriptObject;
-
+        *(void **)value = m_elementNPObject;
         return NPERR_NO_ERROR;
     }
 
@@ -1250,14 +1268,6 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
     default:
         return NPERR_GENERIC_ERROR;
     }
-}
-
-static Frame* getFrame(Frame* parentFrame, Element* element)
-{
-    if (parentFrame)
-        return parentFrame;
-    
-    return element->document().frame();
 }
 
 NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, char** value, uint32_t* len)
