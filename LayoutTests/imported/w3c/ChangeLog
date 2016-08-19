@@ -1,3 +1,18 @@
+2016-08-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Gardening: Layout tests expectations updates and test rebaselines.
+
+        Unreviewed.
+
+        The test below contained wrong results (FAIL strings instead of PASS).
+        There are many more. I'm only updating this 3 ones because they are passing
+        on the GTK+ port, but the tooling gives Failures due to the wrong expectation
+        files. Reported https://bugs.webkit.org/show_bug.cgi?id=161003 regarding this.
+
+        * web-platform-tests/XMLHttpRequest/send-entity-body-empty-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-none-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt:
+
 2016-08-19  Chris Dumez  <cdumez@apple.com>
 
         WebKit should unset event propagation flags after dispatch

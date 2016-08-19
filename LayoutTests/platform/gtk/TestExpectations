@@ -1302,8 +1302,6 @@ webkit.org/b/153948 imported/w3c/web-platform-tests/html/semantics/document-meta
 
 webkit.org/b/156436 fast/harness/sample-fail-mismatch-reftest.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/157728 plugins/get-javascript-url.html [ Timeout Pass ]
 
 webkit.org/b/145639 media/volume-bar-empty-when-muted.html [ Failure Pass ]
@@ -2486,6 +2484,7 @@ webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/interactive-e
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # web-platform-tests XHR tests
+imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-accept-language.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head.htm [ Failure ]
@@ -2493,7 +2492,11 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Timeout ]
+imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Failure Timeout ]
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Pass ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-none.htm [ Pass ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-empty.htm  [ Pass ]
+
 
 webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/will-change/stacking-context-creation.html [ ImageOnlyFailure ]
@@ -2652,7 +2655,6 @@ fast/scrolling/rtl-scrollbars-iframe-offset.html [ Pass ]
 fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Pass ]
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Pass ]
 fast/scrolling/rtl-scrollbars-positioning.html [ Pass ]
-fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
 fast/scrolling/rtl-scrollbars-listbox-select-left.html [ Pass ]
 fast/scrolling/rtl-scrollbars-listbox-select-right.html [ Pass ]
 fast/scrolling/rtl-scrollbars-listbox-simple.html [ Pass ]
@@ -2660,7 +2662,7 @@ fast/scrolling/rtl-scrollbars-listbox.html [ Pass ]
 fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
-fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
+webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=156612
 http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html [ Pass ]
@@ -2785,7 +2787,7 @@ webkit.org/b/160119 fast/repaint/selection-gap-fixed-child.html [ Failure ]
 webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
 
 webkit.org/b/160119 fast/scrolling/iframe-scrollable-after-back.html [ Failure Pass ]
-webkit.org/b/160119 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Failure ]
+webkit.org/b/160119 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 webkit.org/b/160119 fast/scrolling/rtl-scrollbars-sticky-document.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 fast/scrolling/rtl-scrollbars-sticky-document-2.html [ Failure ]
 

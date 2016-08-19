@@ -1,3 +1,16 @@
+2016-08-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Gardening: Layout tests expectations updates and test rebaselines.
+
+        Unreviewed.
+
+        * TestExpectations: Mark as failing 3 tests from imported/w3c/web-platform-tests/XMLHttpRequest that had wrong results.
+        * platform/gtk/TestExpectations: Update list for imported/w3c/web-platform-tests/XMLHttpRequest and merge repeated results.
+        * platform/gtk/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt: Added. Rebaseline after r201449 (updated version of libicu).
+        * platform/gtk/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt: Added. Rebaseline after r201449 (updated version of libicu).
+        * platform/gtk/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt: Added. Rebaseline after r201449 (updated version of libicu).
+        * platform/gtk/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt: Added. Rebaseline after r201449 (updated version of libicu).
+
 2016-08-19  Johan K. Jensen  <johan_jensen@apple.com>
 
         Resource Timing: Make PerformanceEntryList a sequence as per spec

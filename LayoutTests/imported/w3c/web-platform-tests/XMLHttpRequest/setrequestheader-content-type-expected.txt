@@ -20,10 +20,10 @@ PASS Blob request with unset type keeps setRequestHeader() Content-Type and char
 PASS Blob request with set type uses that it for Content-Type unless setRequestHeader() 
 PASS Blob request with set type keeps setRequestHeader() Content-Type and charset 
 PASS ArrayBuffer request respects setRequestHeader("") 
-FAIL ArrayBuffer request sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "content-type: application/x-www-form-urlencoded"
+PASS ArrayBuffer request sends no Content-Type without setRequestHeader() call 
 PASS ArrayBuffer request keeps setRequestHeader() Content-Type and charset 
 PASS ArrayBufferView request respects setRequestHeader("") 
-FAIL ArrayBufferView request sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "content-type: application/x-www-form-urlencoded"
+PASS ArrayBufferView request sends no Content-Type without setRequestHeader() call 
 PASS ArrayBufferView request keeps setRequestHeader() Content-Type and charset 
 PASS FormData request respects setRequestHeader("") 
 PASS FormData request has correct default Content-Type of "multipart/form-data;boundary=_" 
