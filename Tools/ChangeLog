@@ -1,3 +1,9 @@
+2016-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Partial revert of r203811 - this key is not needed.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m: (-[LTRelayController installApp]):
+
 2016-08-19  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the iOS 9.3 build

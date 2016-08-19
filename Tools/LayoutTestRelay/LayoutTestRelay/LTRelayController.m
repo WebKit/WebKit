@@ -145,7 +145,6 @@
 {
     NSDictionary *installOptions = @{
         (NSString *)kCFBundleIdentifierKey: self.appBundleIdentifier,
-        @"LSBlockUntilComplete": @YES,
     };
 
     NSError *error = nil;
