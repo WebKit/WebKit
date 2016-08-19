@@ -98,6 +98,7 @@ class IOSSimulatorPort(ApplePort):
         super(IOSSimulatorPort, self).__init__(host, port_name, **kwargs)
 
         optional_device_class = self.get_option('device_class')
+        self._printing_cmd_line = False
         self._device_class = optional_device_class if optional_device_class else self.DEFAULT_DEVICE_CLASS
         _log.debug('IOSSimulatorPort _device_class is %s', self._device_class)
 
@@ -107,6 +108,13 @@ class IOSSimulatorPort(ApplePort):
         if self.get_option('webkit_test_runner'):
             return 'WebKitTestRunnerApp.app'
         return 'DumpRenderTree.app'
+
+    def driver_cmd_line_for_logging(self):
+        # Avoid spinning up devices just for logging the commandline.
+        self._printing_cmd_line = True
+        result = super(IOSSimulatorPort, self).driver_cmd_line_for_logging()
+        self._printing_cmd_line = False
+        return result
 
     @property
     @memoized
@@ -224,7 +232,6 @@ class IOSSimulatorPort(ApplePort):
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path()]))
 
     def _set_device_class(self, device_class):
-        # Ideally we'd ensure that no simulators are running when this is called.
         self._device_class = device_class if device_class else self.DEFAULT_DEVICE_CLASS
 
     def _create_simulators(self):
@@ -236,8 +243,12 @@ class IOSSimulatorPort(ApplePort):
         self._createSimulatorApps()
 
         for i in xrange(self.child_processes()):
-            Simulator.wait_until_device_is_in_state(self.testing_device(i).udid, Simulator.DeviceState.SHUTDOWN)
-            Simulator.reset_device(self.testing_device(i).udid)
+            self._create_device(i)
+
+        for i in xrange(self.child_processes()):
+            device_udid = self._testing_device(i).udid
+            Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.SHUTDOWN)
+            Simulator.reset_device(device_udid)
 
     def setup_test_run(self, device_class=None):
         mac_os_version = self.host.platform.os_version
@@ -250,7 +261,7 @@ class IOSSimulatorPort(ApplePort):
         self._create_simulators()
 
         for i in xrange(self.child_processes()):
-            device_udid = self.testing_device(i).udid
+            device_udid = self._testing_device(i).udid
             _log.debug('testing device %s has udid %s', i, device_udid)
 
             # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
@@ -263,10 +274,10 @@ class IOSSimulatorPort(ApplePort):
 
         _log.info('Waiting for all iOS Simulators to finish booting.')
         for i in xrange(self.child_processes()):
-            Simulator.wait_until_device_is_booted(self.testing_device(i).udid)
+            Simulator.wait_until_device_is_booted(self._testing_device(i).udid)
 
     def _quit_ios_simulator(self):
-        _log.debug("_quit_ios_simulator")
+        _log.debug("_quit_ios_simulator killing all Simulator processes")
         # FIXME: We should kill only the Simulators we started.
         subprocess.call(["killall", "-9", "-m", "Simulator"])
 
@@ -284,7 +295,9 @@ class IOSSimulatorPort(ApplePort):
 
         for i in xrange(self.child_processes()):
             simulator_path = self.get_simulator_path(i)
-            device_udid = self.testing_device(i).udid
+            device_udid = self._testing_device(i).udid
+            self._remove_device(i)
+
             if not os.path.exists(simulator_path):
                 continue
             try:
@@ -301,7 +314,6 @@ class IOSSimulatorPort(ApplePort):
                 _log.debug('rmtree %s', saved_state_path)
                 self._filesystem.rmtree(saved_state_path)
 
-                Simulator().delete_device(device_udid)
             except:
                 _log.warning('Unable to remove Simulator' + str(i))
 
@@ -369,12 +381,20 @@ class IOSSimulatorPort(ApplePort):
             return stderr, None
         return stderr, crash_log
 
-    def testing_device(self, number):
-        # FIXME: rather than calling lookup_or_create_device every time, we should just store a mapping of
-        # number to device_udid.
-        device_type = self.simulator_device_type()
-        _log.debug(' testing_device %s using device_type %s', number, device_type)
-        return Simulator().lookup_or_create_device(device_type.name + ' WebKit Tester' + str(number), device_type, self.simulator_runtime)
+    def _create_device(self, number):
+        return Simulator.create_device(number, self.simulator_device_type(), self.simulator_runtime)
+
+    def _remove_device(self, number):
+        Simulator.remove_device(number)
+
+    def _testing_device(self, number):
+        return Simulator.device_number(number)
+
+    # This is only exposed so that IOSSimulatorDriver can use it.
+    def device_id_for_worker_number(self, number):
+        if self._printing_cmd_line:
+            return '<dummy id>'
+        return self._testing_device(number).udid
 
     def get_simulator_path(self, suffix=""):
         return os.path.join(self.SIMULATOR_DIRECTORY, "Simulator" + str(suffix) + ".app")

@@ -1,3 +1,63 @@
+2016-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r204477): Running LayoutTests on ios-simulator became ~15 minutes slower
+        https://bugs.webkit.org/show_bug.cgi?id=160985
+
+        Reviewed by Alexey Proskuryakov.
+        
+        r204477 removed @memoized on a couple of ios.py functions, causing them to instantiate
+        a Simulator() on every call, which causes 'xcrun simctl list' to run. The functions
+        must not be @memoized, because their return value depends on the value of simulator_device_type().
+        
+        Fix by adding some global state in simulator.py that tracks the created devices 
+        in a worker number -> Device dictionary. Explicitly create devices in _create_simulators(),
+        and delete them in clean_up_test_run().
+        
+        Also explicitly called 'xcrun simctl shutdown' to shut down devices, since it seems
+        that killing the Simulator apps isn't enough.
+        
+        Simulator tracks the devices in a global dictionary, since state needs to persist
+        across different instances of IOSSimulatorPort.
+        
+        Annoyingly, the "Command line:" dumping tried to access a device before we'd done
+        any setup. Rather than implicitly creating a device here (which the old code did),
+        override the more clearly named driver_cmd_line_for_logging() in IOSSimulatorPort
+        and set flag to say that device_id_for_worker_number() doesn't need to return a real
+        device id.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (print_options):
+        (Printer.print_config):
+        * Scripts/webkitpy/port/base.py:
+        (Port.driver_cmd_line_for_logging):
+        (Port.driver_cmd_line): Deleted.
+        * Scripts/webkitpy/port/driver.py:
+        (IOSSimulatorDriver.cmd_line):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.__init__):
+        (IOSSimulatorPort.driver_cmd_line_for_logging):
+        (IOSSimulatorPort._create_simulators):
+        (IOSSimulatorPort.setup_test_run):
+        (IOSSimulatorPort.clean_up_test_run):
+        (IOSSimulatorPort._create_device):
+        (IOSSimulatorPort):
+        (IOSSimulatorPort._remove_device):
+        (IOSSimulatorPort._testing_device):
+        (IOSSimulatorPort.device_id_for_worker_number):
+        (IOSSimulatorPort._set_device_class): Deleted.
+        (IOSSimulatorPort.testing_device): Deleted.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_driver_cmd_line):
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.shutdown):
+        (Device.delete):
+        (Device.reset):
+        (Simulator.create_device):
+        (Simulator.remove_device):
+        (Simulator.device_number):
+        (Simulator.device_state_description):
+        (Simulator.wait_until_device_is_in_state):
+
 2016-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         Adopt SimServiceContext in LayoutTestRelay

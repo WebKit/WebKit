@@ -658,7 +658,7 @@ class Port(object):
             return test_name + '/'
         return test_name
 
-    def driver_cmd_line(self):
+    def driver_cmd_line_for_logging(self):
         """Prints the DRT command line that will be used."""
         driver = self.create_driver(0)
         return driver.cmd_line(self.get_option('pixel_tests'), [])
