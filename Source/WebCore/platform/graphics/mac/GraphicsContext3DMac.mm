@@ -84,7 +84,7 @@ public:
 };
 
 #if !PLATFORM(IOS)
-static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest, bool antialias)
+static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest, bool antialias, bool allowOffline)
 {
     attribs.clear();
     
@@ -92,7 +92,14 @@ static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBi
     attribs.append(static_cast<CGLPixelFormatAttribute>(colorBits));
     attribs.append(kCGLPFADepthSize);
     attribs.append(static_cast<CGLPixelFormatAttribute>(depthBits));
-    
+
+    // This attribute, while mentioning offline renderers, is actually
+    // allowing us to request the integrated graphics on a dual GPU
+    // system, and not force the discrete GPU.
+    // See https://developer.apple.com/library/mac/technotes/tn2229/_index.html
+    if (allowOffline)
+        attribs.append(kCGLPFAAllowOfflineRenderers);
+
     if (accelerated)
         attribs.append(kCGLPFAAccelerated);
     else {
@@ -191,22 +198,22 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     // If none of that works, we simply fail and set m_contextObj to 0.
 
     bool useMultisampling = m_attrs.antialias;
-    
-    setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling);
+
+    setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling, attrs.preferLowPowerToHighPerformance);
     CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
-    if (numPixelFormats == 0) {
-        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false, useMultisampling);
+    if (!numPixelFormats) {
+        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.preferLowPowerToHighPerformance);
         CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
-        if (numPixelFormats == 0) {
-            setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false, useMultisampling);
+        if (!numPixelFormats) {
+            setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.preferLowPowerToHighPerformance);
             CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
-             if (!attrs.forceSoftwareRenderer && numPixelFormats == 0) {
-                 setPixelFormat(attribs, 32, 16, false, false, true, false);
-                 CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
-                 useMultisampling = false;
+            if (!attrs.forceSoftwareRenderer && !numPixelFormats) {
+                setPixelFormat(attribs, 32, 16, false, false, true, false, false);
+                CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
+                useMultisampling = false;
             }
         }
     }
