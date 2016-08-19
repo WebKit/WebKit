@@ -1,3 +1,13 @@
+2016-08-19  Nan Wang  <n_wang@apple.com>
+
+        AX: iOS, Wrong axLabel on static text if heading has multiple children
+        https://bugs.webkit.org/show_bug.cgi?id=160981
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/heading-with-aria-label-expected.txt:
+        * accessibility/ios-simulator/heading-with-aria-label.html:
+
 2016-08-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Gardening: Layout tests expectations updates and test rebaselines.

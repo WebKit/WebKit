@@ -601,7 +601,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
                 if (role == StaticTextRole) {
                     // We should only set the text value as the label when there's no
                     // alternate text on the heading parent.
-                    NSString *headingLabel = [wrapper accessibilityLabel];
+                    NSString *headingLabel = [wrapper baseAccessibilityDescription];
                     if (![headingLabel length])
                         [self setAccessibilityLabel:m_object->stringValue()];
                     else
