@@ -45,9 +45,9 @@ PASS Text member must be nuked: isElementContentWhitespace
 PASS Text member must be nuked: replaceWholeText 
 PASS Node member must be nuked: hasAttributes 
 PASS Node member must be nuked: attributes 
-FAIL Node member must be nuked: namespaceURI assert_equals: expected (undefined) undefined but got (object) null
-FAIL Node member must be nuked: prefix assert_equals: expected (undefined) undefined but got (object) null
-FAIL Node member must be nuked: localName assert_equals: expected (undefined) undefined but got (object) null
+PASS Node member must be nuked: namespaceURI 
+PASS Node member must be nuked: prefix 
+PASS Node member must be nuked: localName 
 PASS Node member must be nuked: isSupported 
 PASS Node member must be nuked: getFeature 
 PASS Node member must be nuked: getUserData 

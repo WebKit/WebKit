@@ -39,5 +39,9 @@
     // DOM Level 3
 
     readonly attribute boolean isId;
+
+    readonly attribute DOMString? namespaceURI;
+    [SetterRaisesException] attribute DOMString? prefix;
+    readonly attribute DOMString? localName;
 };
 

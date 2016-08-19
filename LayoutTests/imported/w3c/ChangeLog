@@ -1,5 +1,17 @@
 2016-08-18  Chris Dumez  <cdumez@apple.com>
 
+        Move prefix / namespaceURI / localName attributes from Node to Attr / Element
+        https://bugs.webkit.org/show_bug.cgi?id=160988
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/historical-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+
+2016-08-18  Chris Dumez  <cdumez@apple.com>
+
         Re-sync DOM web platform tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=160980
 

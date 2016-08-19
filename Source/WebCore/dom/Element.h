@@ -209,6 +209,8 @@ public:
     const AtomicString& prefix() const final { return m_tagName.prefix(); }
     const AtomicString& namespaceURI() const final { return m_tagName.namespaceURI(); }
 
+    void setPrefix(const AtomicString&, ExceptionCode&) final;
+
     String nodeName() const override;
 
     Ref<Element> cloneElementWithChildren(Document&);
@@ -605,7 +607,6 @@ private:
 
     void scrollByUnits(int units, ScrollGranularity);
 
-    void setPrefix(const AtomicString&, ExceptionCode&) final;
     NodeType nodeType() const final;
     bool childTypeAllowed(NodeType) const final;
 

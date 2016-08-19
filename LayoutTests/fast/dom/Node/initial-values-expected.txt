@@ -36,33 +36,33 @@ PASS attr.prefix is 'example'
 PASS attr.nodeValue is ''
 PASS attr.value is ''
 PASS comment.nodeName is '#comment'
-PASS comment.localName is null
-PASS comment.namespaceURI is null
-PASS comment.prefix is null
+PASS comment.localName is undefined.
+PASS comment.namespaceURI is undefined.
+PASS comment.prefix is undefined.
 PASS comment.nodeValue is 'foo'
 PASS comment.data is 'foo'
 PASS document.createCDATASection('foo') threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS cdata.nodeName is '#cdata-section'
-PASS cdata.localName is null
-PASS cdata.namespaceURI is null
-PASS cdata.prefix is null
+PASS cdata.localName is undefined.
+PASS cdata.namespaceURI is undefined.
+PASS cdata.prefix is undefined.
 PASS cdata.nodeValue is 'foo'
 PASS cdata.data is 'foo'
 PASS fragment.nodeName is '#document-fragment'
-PASS fragment.localName is null
-PASS fragment.namespaceURI is null
-PASS fragment.prefix is null
+PASS fragment.localName is undefined.
+PASS fragment.namespaceURI is undefined.
+PASS fragment.prefix is undefined.
 PASS fragment.nodeValue is null
 PASS doc.nodeName is '#document'
-PASS doc.localName is null
-FAIL doc.namespaceURI should be http://www.w3.org/1999/xhtml (of type string). Was null (of type object).
-PASS doc.prefix is null
+PASS doc.localName is undefined.
+PASS doc.namespaceURI is undefined.
+PASS doc.prefix is undefined.
 PASS doc.nodeValue is null
 PASS doctype.nodeName is 'svg'
 PASS doctype.name is 'svg'
-PASS doctype.localName is null
-PASS doctype.namespaceURI is null
-PASS doctype.prefix is null
+PASS doctype.localName is undefined.
+PASS doctype.namespaceURI is undefined.
+PASS doctype.prefix is undefined.
 PASS doctype.nodeValue is null
 Element creation using createElement on an HTML doc:
 PASS element.nodeName is 'PRE'
@@ -114,20 +114,20 @@ PASS element.prefix is 'html'
 PASS element.nodeValue is null
 PASS element.attributes.toString() is '[object NamedNodeMap]'
 PASS processingInstruction.nodeName is 'xml-stylesheet'
-PASS processingInstruction.localName is null
-PASS processingInstruction.namespaceURI is null
-PASS processingInstruction.prefix is null
+PASS processingInstruction.localName is undefined.
+PASS processingInstruction.namespaceURI is undefined.
+PASS processingInstruction.prefix is undefined.
 PASS processingInstruction.nodeName is 'xml-stylesheet'
-PASS processingInstruction.localName is null
-PASS processingInstruction.namespaceURI is null
-PASS processingInstruction.prefix is null
+PASS processingInstruction.localName is undefined.
+PASS processingInstruction.namespaceURI is undefined.
+PASS processingInstruction.prefix is undefined.
 PASS processingInstruction.nodeValue is 'type="text/xsl" href="missing.xsl"'
 PASS processingInstruction.target is 'xml-stylesheet'
 PASS processingInstruction.data is 'type="text/xsl" href="missing.xsl"'
 PASS text.nodeName is '#text'
-PASS text.localName is null
-PASS text.namespaceURI is null
-PASS text.prefix is null
+PASS text.localName is undefined.
+PASS text.namespaceURI is undefined.
+PASS text.prefix is undefined.
 PASS text.nodeValue is 'foo'
 PASS text.data is 'foo'
 PASS successfullyParsed is true

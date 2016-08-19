@@ -72,10 +72,6 @@
     [ImplementedAs=isSupportedForBindings] boolean isSupported(optional DOMString feature, optional DOMString version);
 #endif
 
-    readonly attribute DOMString?        namespaceURI;
-    [SetterRaisesException] attribute DOMString? prefix;
-    readonly attribute DOMString?        localName;
-
     // Introduced in DOM Level 3:
 
     readonly attribute USVString baseURI;

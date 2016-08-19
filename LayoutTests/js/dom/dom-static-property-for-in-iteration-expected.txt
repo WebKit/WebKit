@@ -104,8 +104,11 @@ PASS a["tagName"] is A
 PASS a["attributes"] is [object NamedNodeMap]
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["id"] is foo
+PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
+PASS a["prefix"] is null
+PASS a["localName"] is a
 PASS a["offsetLeft"] is 8
-PASS a["offsetTop"] is 1614
+PASS a["offsetTop"] is 1659
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
 PASS a["clientLeft"] is 0
@@ -143,9 +146,6 @@ PASS a["lastChild"] is [object Text]
 PASS a["previousSibling"] is [object Text]
 PASS a["nextSibling"] is [object Text]
 PASS a["ownerDocument"] is [object HTMLDocument]
-PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
-PASS a["prefix"] is null
-PASS a["localName"] is a
 PASS a["textContent"] is nerget
 PASS a["isConnected"] is true
 PASS a["parentElement"] is [object HTMLBodyElement]

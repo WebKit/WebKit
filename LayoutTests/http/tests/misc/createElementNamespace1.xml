@@ -10,10 +10,6 @@
     log("This test was written to address rdar://problem/4976879.  And tests how namespaceURI's are assigned.");
     log("");
 
-    log("Test1: document.namespaceURI")
-    shouldBe("document.namespaceURI", "null");
-    log("");
-
     log("Test2: document.createElement().namespaceURI")
     shouldBe("document.createElement(\"div\").namespaceURI", "null");
     log("");

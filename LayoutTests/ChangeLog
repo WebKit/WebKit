@@ -1,3 +1,22 @@
+2016-08-18  Chris Dumez  <cdumez@apple.com>
+
+        Move prefix / namespaceURI / localName attributes from Node to Attr / Element
+        https://bugs.webkit.org/show_bug.cgi?id=160988
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing layout tests to reflect behavior change.
+
+        * fast/dom/Node/initial-values-expected.txt:
+        * fast/dom/Node/script-tests/initial-values.js:
+        * http/tests/misc/createElementNamespace1-expected.txt:
+        * http/tests/misc/createElementNamespace1.xml:
+        * http/tests/misc/createElementNamespace2-expected.txt:
+        * http/tests/misc/createElementNamespace2.xhtml:
+        * http/tests/misc/createElementNamespace3-expected.txt:
+        * http/tests/misc/createElementNamespace3.html:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2016-08-18  Dean Jackson  <dino@apple.com>
 
         Support passing preferLowPowerToHighPerformance and failIfMajorPerformanceCaveat

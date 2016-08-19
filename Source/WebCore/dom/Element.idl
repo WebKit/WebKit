@@ -65,6 +65,10 @@
     // DOM 4
     [Reflect] attribute DOMString id;
 
+    readonly attribute DOMString? namespaceURI;
+    [SetterRaisesException] attribute DOMString? prefix;
+    readonly attribute DOMString? localName;
+
     // Common extensions
 
     readonly attribute double offsetLeft;

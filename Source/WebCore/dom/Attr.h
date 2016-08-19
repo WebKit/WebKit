@@ -64,7 +64,11 @@ public:
     void attachToElement(Element*);
     void detachFromElementWithValue(const AtomicString&);
 
-    const AtomicString& namespaceURI() const override { return m_name.namespaceURI(); }
+    const AtomicString& namespaceURI() const final { return m_name.namespaceURI(); }
+    const AtomicString& localName() const final { return m_name.localName(); }
+    const AtomicString& prefix() const final { return m_name.prefix(); }
+
+    void setPrefix(const AtomicString&, ExceptionCode&) final;
 
 private:
     Attr(Element*, const QualifiedName&);
@@ -74,11 +78,6 @@ private:
 
     String nodeName() const override { return name(); }
     NodeType nodeType() const override { return ATTRIBUTE_NODE; }
-
-    const AtomicString& localName() const override { return m_name.localName(); }
-    const AtomicString& prefix() const override { return m_name.prefix(); }
-
-    void setPrefix(const AtomicString&, ExceptionCode&) override;
 
     String nodeValue() const override { return value(); }
     void setNodeValue(const String&, ExceptionCode&) override;

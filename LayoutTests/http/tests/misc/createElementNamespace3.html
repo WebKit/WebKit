@@ -12,10 +12,6 @@
     log("This test was written to address rdar://problem/4976879.  And tests how namespaceURI's are assigned.");
     log("");
 
-    log("Test1: document.namespaceURI")
-    shouldBe("document.namespaceURI", "null");
-    log("");
-
     log("Test2: document.createElement().namespaceURI")
     shouldBe("document.createElement(\"div\").namespaceURI", "'http://www.w3.org/1999/xhtml'");
     log("");
@@ -26,9 +22,6 @@
     log("");
 
     var newDoc = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "", null);
-    log("Test4: created document.namespaceURI");
-    shouldBe("newDoc.namespaceURI", "null");
-    log("");
 
     log("Test5: created document.createElement.namespaceURI");
     shouldBe("newDoc.createElement(\"div\").namespaceURI", "'http://www.w3.org/1999/xhtml'");
