@@ -221,8 +221,8 @@ sub ForAllParents
         my $outerInterface = shift;
         my $currentInterface = shift;
 
-        for (@{$currentInterface->parents}) {
-            my $interfaceName = $_;
+        if ($currentInterface->parent) {
+            my $interfaceName = $currentInterface->parent;
             my $parentInterface = $object->ParseInterface($outerInterface, $interfaceName);
 
             if ($beforeRecursion) {

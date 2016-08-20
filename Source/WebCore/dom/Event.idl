@@ -23,7 +23,6 @@
     CustomToJSObject,
     ConstructorTemplate=Event,
     Exposed=(Window,Worker),
-    ObjCPolymorphic,
 ] interface Event {
 
     // DOM PhaseType
@@ -64,7 +63,7 @@
     void               stopPropagation();
     void               preventDefault();
 
-    [ObjCLegacyUnnamedParameters] void initEvent(DOMString eventTypeArg, boolean canBubbleArg, boolean cancelableArg);
+    void initEvent(DOMString eventTypeArg, boolean canBubbleArg, boolean cancelableArg);
 
     // DOM Level 3 Additions.
     readonly attribute boolean defaultPrevented;

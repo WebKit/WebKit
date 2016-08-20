@@ -25,7 +25,7 @@
     [InitializedByEventConstructor] readonly attribute long detail;
     
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters] void initUIEvent(optional DOMString type = "undefined",
+    void initUIEvent(optional DOMString type = "undefined",
                                     optional boolean canBubble = false,
                                     optional boolean cancelable = false,
                                     optional DOMWindow? view = null,

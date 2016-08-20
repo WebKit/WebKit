@@ -22,7 +22,6 @@
     CustomToJSObject,
     CustomIsReachable,
     JSCustomFinalize,
-    ObjCPolymorphic,
     ImplementationLacksVTable
 ] interface CSSValue {
     // UnitTypes

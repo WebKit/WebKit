@@ -20,7 +20,6 @@
 
 // Introduced in DOM Level 2:
 [
-    ObjCProtocol,
     IsWeakCallback,
 ] callback interface NodeFilter {
     // Constants returned by acceptNode

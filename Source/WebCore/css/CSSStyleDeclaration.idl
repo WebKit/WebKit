@@ -37,7 +37,7 @@
     [RaisesException] DOMString removeProperty(DOMString propertyName);
     DOMString? getPropertyPriority(DOMString propertyName);
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
+    [RaisesException] void setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
 
     readonly attribute unsigned long length;
     getter DOMString item(unsigned long index);
