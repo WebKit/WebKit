@@ -54,55 +54,55 @@ struct GraphicsSurfaceToken;
 namespace IPC {
 
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
-    static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
-    static bool decode(ArgumentDecoder&, WebCore::FilterOperations&);
+    static void encode(Encoder&, const WebCore::FilterOperations&);
+    static bool decode(Decoder&, WebCore::FilterOperations&);
 };
 
 template<> struct ArgumentCoder<WebCore::TransformOperations> {
-    static void encode(ArgumentEncoder&, const WebCore::TransformOperations&);
-    static bool decode(ArgumentDecoder&, WebCore::TransformOperations&);
+    static void encode(Encoder&, const WebCore::TransformOperations&);
+    static bool decode(Decoder&, WebCore::TransformOperations&);
 };
 
 template<> struct ArgumentCoder<WebCore::TextureMapperAnimations> {
-    static void encode(ArgumentEncoder&, const WebCore::TextureMapperAnimations&);
-    static bool decode(ArgumentDecoder&, WebCore::TextureMapperAnimations&);
+    static void encode(Encoder&, const WebCore::TextureMapperAnimations&);
+    static bool decode(Decoder&, WebCore::TextureMapperAnimations&);
 };
 
 template<> struct ArgumentCoder<WebCore::TextureMapperAnimation> {
-    static void encode(ArgumentEncoder&, const WebCore::TextureMapperAnimation&);
-    static bool decode(ArgumentDecoder&, WebCore::TextureMapperAnimation&);
+    static void encode(Encoder&, const WebCore::TextureMapperAnimation&);
+    static bool decode(Decoder&, WebCore::TextureMapperAnimation&);
 };
 
 #if USE(GRAPHICS_SURFACE)
 template<> struct ArgumentCoder<WebCore::GraphicsSurfaceToken> {
-    static void encode(ArgumentEncoder&, const WebCore::GraphicsSurfaceToken&);
-    static bool decode(ArgumentDecoder&, WebCore::GraphicsSurfaceToken&);
+    static void encode(Encoder&, const WebCore::GraphicsSurfaceToken&);
+    static bool decode(Decoder&, WebCore::GraphicsSurfaceToken&);
 };
 #endif
 
 template<> struct ArgumentCoder<WebCore::SurfaceUpdateInfo> {
-    static void encode(ArgumentEncoder&, const WebCore::SurfaceUpdateInfo&);
-    static bool decode(ArgumentDecoder&, WebCore::SurfaceUpdateInfo&);
+    static void encode(Encoder&, const WebCore::SurfaceUpdateInfo&);
+    static bool decode(Decoder&, WebCore::SurfaceUpdateInfo&);
 };
 
 template<> struct ArgumentCoder<WebCore::CoordinatedGraphicsLayerState> {
-    static void encode(ArgumentEncoder&, const WebCore::CoordinatedGraphicsLayerState&);
-    static bool decode(ArgumentDecoder&, WebCore::CoordinatedGraphicsLayerState&);
+    static void encode(Encoder&, const WebCore::CoordinatedGraphicsLayerState&);
+    static bool decode(Decoder&, WebCore::CoordinatedGraphicsLayerState&);
 };
 
 template<> struct ArgumentCoder<WebCore::TileUpdateInfo> {
-    static void encode(ArgumentEncoder&, const WebCore::TileUpdateInfo&);
-    static bool decode(ArgumentDecoder&, WebCore::TileUpdateInfo&);
+    static void encode(Encoder&, const WebCore::TileUpdateInfo&);
+    static bool decode(Decoder&, WebCore::TileUpdateInfo&);
 };
 
 template<> struct ArgumentCoder<WebCore::TileCreationInfo> {
-    static void encode(ArgumentEncoder&, const WebCore::TileCreationInfo&);
-    static bool decode(ArgumentDecoder&, WebCore::TileCreationInfo&);
+    static void encode(Encoder&, const WebCore::TileCreationInfo&);
+    static bool decode(Decoder&, WebCore::TileCreationInfo&);
 };
 
 template<> struct ArgumentCoder<WebCore::CoordinatedGraphicsState> {
-    static void encode(ArgumentEncoder&, const WebCore::CoordinatedGraphicsState&);
-    static bool decode(ArgumentDecoder&, WebCore::CoordinatedGraphicsState&);
+    static void encode(Encoder&, const WebCore::CoordinatedGraphicsState&);
+    static bool decode(Decoder&, WebCore::CoordinatedGraphicsState&);
 };
 
 } // namespace IPC

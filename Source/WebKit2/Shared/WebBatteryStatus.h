@@ -29,16 +29,16 @@
 #if ENABLE(BATTERY_STATUS)
 
 #include "APIObject.h"
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Decoder.h"
+#include "Encoder.h"
 
 namespace WebKit {
 
 class WebBatteryStatus : public API::ObjectImpl<API::Object::Type::BatteryStatus> {
 public:
     struct Data {
-        void encode(IPC::ArgumentEncoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, Data&);
+        void encode(IPC::Encoder&) const;
+        static bool decode(IPC::Decoder&, Data&);
 
         bool isCharging;
         double chargingTime;

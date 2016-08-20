@@ -29,8 +29,8 @@
 #if HAVE(DTRACE)
 
 #include "Connection.h"
-#include "MessageDecoder.h"
-#include "MessageEncoder.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include "MessageRecorderProbes.h"
 #include <wtf/CurrentTime.h>
 
@@ -41,7 +41,7 @@ bool MessageRecorder::isEnabled()
     return WEBKITMESSAGERECORDER_MESSAGE_RECEIVED_ENABLED() || WEBKITMESSAGERECORDER_MESSAGE_SENT_ENABLED();
 }
 
-std::unique_ptr<MessageRecorder::MessageProcessingToken> MessageRecorder::recordOutgoingMessage(Connection& connection, MessageEncoder& encoder)
+std::unique_ptr<MessageRecorder::MessageProcessingToken> MessageRecorder::recordOutgoingMessage(Connection& connection, Encoder& encoder)
 {
     if (!isEnabled() || !connection.isValid())
         return nullptr;

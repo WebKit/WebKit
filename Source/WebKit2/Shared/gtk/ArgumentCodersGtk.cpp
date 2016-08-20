@@ -41,7 +41,7 @@ using namespace WebKit;
 
 namespace IPC {
 
-static void encodeImage(ArgumentEncoder& encoder, const GdkPixbuf* pixbuf)
+static void encodeImage(Encoder& encoder, const GdkPixbuf* pixbuf)
 {
     IntSize imageSize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
@@ -57,7 +57,7 @@ static void encodeImage(ArgumentEncoder& encoder, const GdkPixbuf* pixbuf)
     encoder << handle;
 }
 
-static bool decodeImage(ArgumentDecoder& decoder, GRefPtr<GdkPixbuf>& pixbuf)
+static bool decodeImage(Decoder& decoder, GRefPtr<GdkPixbuf>& pixbuf)
 {
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
@@ -82,7 +82,7 @@ static bool decodeImage(ArgumentDecoder& decoder, GRefPtr<GdkPixbuf>& pixbuf)
     return true;
 }
 
-static void encodeDataObject(ArgumentEncoder& encoder, const DataObjectGtk* dataObject)
+static void encodeDataObject(Encoder& encoder, const DataObjectGtk* dataObject)
 {
     bool hasText = dataObject->hasText();
     encoder << hasText;
@@ -115,7 +115,7 @@ static void encodeDataObject(ArgumentEncoder& encoder, const DataObjectGtk* data
         encoder << dataObject->unknownTypes();
 }
 
-static bool decodeDataObject(ArgumentDecoder& decoder, RefPtr<DataObjectGtk>& dataObject)
+static bool decodeDataObject(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
 {
     RefPtr<DataObjectGtk> data = DataObjectGtk::create();
 
@@ -188,7 +188,7 @@ static bool decodeDataObject(ArgumentDecoder& decoder, RefPtr<DataObjectGtk>& da
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void ArgumentCoder<DragData>::encode(ArgumentEncoder& encoder, const DragData& dragData)
+void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
 {
     encoder << dragData.clientPosition();
     encoder << dragData.globalPosition();
@@ -201,7 +201,7 @@ void ArgumentCoder<DragData>::encode(ArgumentEncoder& encoder, const DragData& d
         encodeDataObject(encoder, platformData);
 }
 
-bool ArgumentCoder<DragData>::decode(ArgumentDecoder& decoder, DragData& dragData)
+bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
 {
     IntPoint clientPosition;
     if (!decoder.decode(clientPosition))
@@ -236,14 +236,14 @@ bool ArgumentCoder<DragData>::decode(ArgumentDecoder& decoder, DragData& dragDat
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-static void encodeGKeyFile(ArgumentEncoder& encoder, GKeyFile* keyFile)
+static void encodeGKeyFile(Encoder& encoder, GKeyFile* keyFile)
 {
     gsize dataSize;
     GUniquePtr<char> data(g_key_file_to_data(keyFile, &dataSize, 0));
     encoder << DataReference(reinterpret_cast<uint8_t*>(data.get()), dataSize);
 }
 
-static bool decodeGKeyFile(ArgumentDecoder& decoder, GUniquePtr<GKeyFile>& keyFile)
+static bool decodeGKeyFile(Decoder& decoder, GUniquePtr<GKeyFile>& keyFile)
 {
     DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -261,14 +261,14 @@ static bool decodeGKeyFile(ArgumentDecoder& decoder, GUniquePtr<GKeyFile>& keyFi
     return true;
 }
 
-void encode(ArgumentEncoder& encoder, GtkPrintSettings* printSettings)
+void encode(Encoder& encoder, GtkPrintSettings* printSettings)
 {
     GUniquePtr<GKeyFile> keyFile(g_key_file_new());
     gtk_print_settings_to_key_file(printSettings, keyFile.get(), "Print Settings");
     encodeGKeyFile(encoder, keyFile.get());
 }
 
-bool decode(ArgumentDecoder& decoder, GRefPtr<GtkPrintSettings>& printSettings)
+bool decode(Decoder& decoder, GRefPtr<GtkPrintSettings>& printSettings)
 {
     GUniquePtr<GKeyFile> keyFile;
     if (!decodeGKeyFile(decoder, keyFile))
@@ -284,14 +284,14 @@ bool decode(ArgumentDecoder& decoder, GRefPtr<GtkPrintSettings>& printSettings)
     return printSettings;
 }
 
-void encode(ArgumentEncoder& encoder, GtkPageSetup* pageSetup)
+void encode(Encoder& encoder, GtkPageSetup* pageSetup)
 {
     GUniquePtr<GKeyFile> keyFile(g_key_file_new());
     gtk_page_setup_to_key_file(pageSetup, keyFile.get(), "Page Setup");
     encodeGKeyFile(encoder, keyFile.get());
 }
 
-bool decode(ArgumentDecoder& decoder, GRefPtr<GtkPageSetup>& pageSetup)
+bool decode(Decoder& decoder, GRefPtr<GtkPageSetup>& pageSetup)
 {
     GUniquePtr<GKeyFile> keyFile;
     if (!decodeGKeyFile(decoder, keyFile))

@@ -37,7 +37,7 @@
 #if PLATFORM(MAC)
 #include "MachPort.h"
 #endif
-#include "MessageDecoder.h"
+#include "Decoder.h"
 #include "Plugin.h"
 #include "WebCoreArgumentCoders.h"
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
@@ -59,7 +59,7 @@ namespace Messages {
 
 namespace WebPage {
 
-GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::MessageEncoder> encoder)
+GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::Encoder> encoder)
     : m_connection(connection)
     , m_encoder(WTFMove(encoder))
 {
@@ -79,7 +79,7 @@ bool GetPluginProcessConnection::DelayedReply::send(const IPC::Connection::Handl
     return _result;
 }
 
-TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::MessageEncoder> encoder)
+TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::Encoder> encoder)
     : m_connection(connection)
     , m_encoder(WTFMove(encoder))
 {
@@ -104,7 +104,7 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveWebPageMessage(IPC::Connection*, IPC::MessageDecoder& decoder)
+void WebPage::didReceiveWebPageMessage(IPC::Connection*, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
         IPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
@@ -188,7 +188,7 @@ void WebPage::didReceiveWebPageMessage(IPC::Connection*, IPC::MessageDecoder& de
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::didReceiveSyncWebPageMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void WebPage::didReceiveSyncWebPageMessage(IPC::Connection* connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (decoder.messageName() == Messages::WebPage::CreatePlugin::name()) {
         IPC::handleMessage<Messages::WebPage::CreatePlugin>(decoder, *replyEncoder, this, &WebPage::createPlugin);

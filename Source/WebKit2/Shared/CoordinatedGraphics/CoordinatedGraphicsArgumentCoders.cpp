@@ -60,7 +60,7 @@ using namespace WebKit;
 
 namespace IPC {
 
-void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, const WebCore::FilterOperations& filters)
+void ArgumentCoder<WebCore::FilterOperations>::encode(Encoder& encoder, const WebCore::FilterOperations& filters)
 {
     encoder << static_cast<uint32_t>(filters.size());
     for (size_t i = 0; i < filters.size(); ++i) {
@@ -99,7 +99,7 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
     }
 }
 
-bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, WebCore::FilterOperations& filters)
+bool ArgumentCoder<WebCore::FilterOperations>::decode(Decoder& decoder, WebCore::FilterOperations& filters)
 {
     uint32_t size;
     if (!decoder.decode(size))
@@ -168,7 +168,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
     return true;
 }
 
-void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const TransformOperations& transformOperations)
+void ArgumentCoder<TransformOperations>::encode(Encoder& encoder, const TransformOperations& transformOperations)
 {
     encoder << static_cast<uint32_t>(transformOperations.size());
     for (const auto& operation : transformOperations.operations()) {
@@ -234,7 +234,7 @@ void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const 
     }
 }
 
-bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder& decoder, TransformOperations& transformOperations)
+bool ArgumentCoder<TransformOperations>::decode(Decoder& decoder, TransformOperations& transformOperations)
 {
     uint32_t operationsSize;
     if (!decoder.decode(operationsSize))
@@ -335,7 +335,7 @@ bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder& decoder, Transf
     return true;
 }
 
-static void encodeTimingFunction(ArgumentEncoder& encoder, const TimingFunction* timingFunction)
+static void encodeTimingFunction(Encoder& encoder, const TimingFunction* timingFunction)
 {
     if (!timingFunction) {
         encoder.encodeEnum(TimingFunction::TimingFunctionType(-1));
@@ -376,7 +376,7 @@ static void encodeTimingFunction(ArgumentEncoder& encoder, const TimingFunction*
     }
 }
 
-bool decodeTimingFunction(ArgumentDecoder& decoder, RefPtr<TimingFunction>& timingFunction)
+bool decodeTimingFunction(Decoder& decoder, RefPtr<TimingFunction>& timingFunction)
 {
     TimingFunction::TimingFunctionType type;
     if (!decoder.decodeEnum(type))
@@ -443,7 +443,7 @@ bool decodeTimingFunction(ArgumentDecoder& decoder, RefPtr<TimingFunction>& timi
     return false;
 }
 
-void ArgumentCoder<TextureMapperAnimation>::encode(ArgumentEncoder& encoder, const TextureMapperAnimation& animation)
+void ArgumentCoder<TextureMapperAnimation>::encode(Encoder& encoder, const TextureMapperAnimation& animation)
 {
     encoder << animation.name();
     encoder << animation.boxSize();
@@ -482,7 +482,7 @@ void ArgumentCoder<TextureMapperAnimation>::encode(ArgumentEncoder& encoder, con
     }
 }
 
-bool ArgumentCoder<TextureMapperAnimation>::decode(ArgumentDecoder& decoder, TextureMapperAnimation& animation)
+bool ArgumentCoder<TextureMapperAnimation>::decode(Decoder& decoder, TextureMapperAnimation& animation)
 {
     String name;
     FloatSize boxSize;
@@ -575,18 +575,18 @@ bool ArgumentCoder<TextureMapperAnimation>::decode(ArgumentDecoder& decoder, Tex
     return true;
 }
 
-void ArgumentCoder<TextureMapperAnimations>::encode(ArgumentEncoder& encoder, const TextureMapperAnimations& animations)
+void ArgumentCoder<TextureMapperAnimations>::encode(Encoder& encoder, const TextureMapperAnimations& animations)
 {
     encoder << animations.animations();
 }
 
-bool ArgumentCoder<TextureMapperAnimations>::decode(ArgumentDecoder& decoder, TextureMapperAnimations& animations)
+bool ArgumentCoder<TextureMapperAnimations>::decode(Decoder& decoder, TextureMapperAnimations& animations)
 {
     return decoder.decode(animations.animations());
 }
 
 #if USE(GRAPHICS_SURFACE)
-void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(ArgumentEncoder& encoder, const WebCore::GraphicsSurfaceToken& token)
+void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(Encoder& encoder, const WebCore::GraphicsSurfaceToken& token)
 {
 #if OS(DARWIN)
     encoder << Attachment(token.frontBufferHandle, MACH_MSG_TYPE_MOVE_SEND);
@@ -596,7 +596,7 @@ void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(ArgumentEncoder& encod
 #endif
 }
 
-bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder& decoder, WebCore::GraphicsSurfaceToken& token)
+bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(Decoder& decoder, WebCore::GraphicsSurfaceToken& token)
 {
 #if OS(DARWIN)
     Attachment frontAttachment, backAttachment;
@@ -614,17 +614,17 @@ bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder& decod
 }
 #endif
 
-void ArgumentCoder<SurfaceUpdateInfo>::encode(ArgumentEncoder& encoder, const SurfaceUpdateInfo& surfaceUpdateInfo)
+void ArgumentCoder<SurfaceUpdateInfo>::encode(Encoder& encoder, const SurfaceUpdateInfo& surfaceUpdateInfo)
 {
     SimpleArgumentCoder<SurfaceUpdateInfo>::encode(encoder, surfaceUpdateInfo);
 }
 
-bool ArgumentCoder<SurfaceUpdateInfo>::decode(ArgumentDecoder& decoder, SurfaceUpdateInfo& surfaceUpdateInfo)
+bool ArgumentCoder<SurfaceUpdateInfo>::decode(Decoder& decoder, SurfaceUpdateInfo& surfaceUpdateInfo)
 {
     return SimpleArgumentCoder<SurfaceUpdateInfo>::decode(decoder, surfaceUpdateInfo);
 }
 
-void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(ArgumentEncoder& encoder, const CoordinatedGraphicsLayerState& state)
+void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(Encoder& encoder, const CoordinatedGraphicsLayerState& state)
 {
     encoder << state.changeMask;
 
@@ -705,7 +705,7 @@ void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(ArgumentEncoder& encod
         encoder << state.committedScrollOffset;
 }
 
-bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decoder, CoordinatedGraphicsLayerState& state)
+bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(Decoder& decoder, CoordinatedGraphicsLayerState& state)
 {
     if (!decoder.decode(state.changeMask))
         return false;
@@ -802,27 +802,27 @@ bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decod
     return true;
 }
 
-void ArgumentCoder<TileUpdateInfo>::encode(ArgumentEncoder& encoder, const TileUpdateInfo& updateInfo)
+void ArgumentCoder<TileUpdateInfo>::encode(Encoder& encoder, const TileUpdateInfo& updateInfo)
 {
     SimpleArgumentCoder<TileUpdateInfo>::encode(encoder, updateInfo);
 }
 
-bool ArgumentCoder<TileUpdateInfo>::decode(ArgumentDecoder& decoder, TileUpdateInfo& updateInfo)
+bool ArgumentCoder<TileUpdateInfo>::decode(Decoder& decoder, TileUpdateInfo& updateInfo)
 {
     return SimpleArgumentCoder<TileUpdateInfo>::decode(decoder, updateInfo);
 }
 
-void ArgumentCoder<TileCreationInfo>::encode(ArgumentEncoder& encoder, const TileCreationInfo& updateInfo)
+void ArgumentCoder<TileCreationInfo>::encode(Encoder& encoder, const TileCreationInfo& updateInfo)
 {
     SimpleArgumentCoder<TileCreationInfo>::encode(encoder, updateInfo);
 }
 
-bool ArgumentCoder<TileCreationInfo>::decode(ArgumentDecoder& decoder, TileCreationInfo& updateInfo)
+bool ArgumentCoder<TileCreationInfo>::decode(Decoder& decoder, TileCreationInfo& updateInfo)
 {
     return SimpleArgumentCoder<TileCreationInfo>::decode(decoder, updateInfo);
 }
 
-static void encodeCoordinatedSurface(ArgumentEncoder& encoder, const RefPtr<CoordinatedSurface>& surface)
+static void encodeCoordinatedSurface(Encoder& encoder, const RefPtr<CoordinatedSurface>& surface)
 {
     bool isValidSurface = false;
     if (!surface) {
@@ -841,7 +841,7 @@ static void encodeCoordinatedSurface(ArgumentEncoder& encoder, const RefPtr<Coor
         encoder << handle;
 }
 
-static bool decodeCoordinatedSurface(ArgumentDecoder& decoder, RefPtr<CoordinatedSurface>& surface)
+static bool decodeCoordinatedSurface(Decoder& decoder, RefPtr<CoordinatedSurface>& surface)
 {
     bool isValidSurface;
     if (!decoder.decode(isValidSurface))
@@ -858,7 +858,7 @@ static bool decodeCoordinatedSurface(ArgumentDecoder& decoder, RefPtr<Coordinate
     return true;
 }
 
-void ArgumentCoder<CoordinatedGraphicsState>::encode(ArgumentEncoder& encoder, const CoordinatedGraphicsState& state)
+void ArgumentCoder<CoordinatedGraphicsState>::encode(Encoder& encoder, const CoordinatedGraphicsState& state)
 {
     encoder << state.rootCompositingLayer;
     encoder << state.scrollPosition;
@@ -889,7 +889,7 @@ void ArgumentCoder<CoordinatedGraphicsState>::encode(ArgumentEncoder& encoder, c
     encoder << state.updateAtlasesToRemove;
 }
 
-bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, CoordinatedGraphicsState& state)
+bool ArgumentCoder<CoordinatedGraphicsState>::decode(Decoder& decoder, CoordinatedGraphicsState& state)
 {
     if (!decoder.decode(state.rootCompositingLayer))
         return false;

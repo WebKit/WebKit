@@ -1,3 +1,92 @@
+2016-08-20  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed GTK build fix since r204665 and 204668
+        https://bugs.webkit.org/show_bug.cgi?id=161020
+
+        * CMakeLists.txt:
+        * Platform/IPC/MessageRecorder.cpp:
+        (IPC::MessageRecorder::recordOutgoingMessage):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+        (IPC::Connection::sendOutgoingMessage):
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::encode):
+        (WebKit::SharedMemory::Handle::decode):
+        * PlatformGTK.cmake:
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp:
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::DelayedReply):
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::DelayedReply):
+        (WebKit::WebPage::didReceiveWebPageMessage):
+        (WebKit::WebPage::didReceiveSyncWebPageMessage):
+        * Scripts/webkit/LegacyMessages-expected.h:
+        * Scripts/webkit/MessageReceiver-expected.cpp:
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::DelayedReply):
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::DelayedReply):
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::didReceiveSyncMessage):
+        * Scripts/webkit/Messages-expected.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::FilterOperations>::encode):
+        (IPC::ArgumentCoder<WebCore::FilterOperations>::decode):
+        (IPC::ArgumentCoder<TransformOperations>::encode):
+        (IPC::ArgumentCoder<TransformOperations>::decode):
+        (IPC::encodeTimingFunction):
+        (IPC::decodeTimingFunction):
+        (IPC::ArgumentCoder<TextureMapperAnimation>::encode):
+        (IPC::ArgumentCoder<TextureMapperAnimation>::decode):
+        (IPC::ArgumentCoder<TextureMapperAnimations>::encode):
+        (IPC::ArgumentCoder<TextureMapperAnimations>::decode):
+        (IPC::ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode):
+        (IPC::ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode):
+        (IPC::ArgumentCoder<SurfaceUpdateInfo>::encode):
+        (IPC::ArgumentCoder<SurfaceUpdateInfo>::decode):
+        (IPC::ArgumentCoder<CoordinatedGraphicsLayerState>::encode):
+        (IPC::ArgumentCoder<CoordinatedGraphicsLayerState>::decode):
+        (IPC::ArgumentCoder<TileUpdateInfo>::encode):
+        (IPC::ArgumentCoder<TileUpdateInfo>::decode):
+        (IPC::ArgumentCoder<TileCreationInfo>::encode):
+        (IPC::ArgumentCoder<TileCreationInfo>::decode):
+        (IPC::encodeCoordinatedSurface):
+        (IPC::decodeCoordinatedSurface):
+        (IPC::ArgumentCoder<CoordinatedGraphicsState>::encode):
+        (IPC::ArgumentCoder<CoordinatedGraphicsState>::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::Handle::encode):
+        (WebKit::WebCoordinatedSurface::Handle::decode):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * Shared/WebBatteryStatus.cpp:
+        (WebKit::WebBatteryStatus::Data::encode):
+        (WebKit::WebBatteryStatus::Data::decode):
+        * Shared/WebBatteryStatus.h:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::encodeImage):
+        (IPC::decodeImage):
+        (IPC::encodeDataObject):
+        (IPC::decodeDataObject):
+        (IPC::ArgumentCoder<DragData>::encode):
+        (IPC::ArgumentCoder<DragData>::decode):
+        (IPC::encodeGKeyFile):
+        (IPC::decodeGKeyFile):
+        (IPC::encode):
+        (IPC::decode):
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+        (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData):
+        (IPC::ArgumentCoder<ProtectionSpace>::decodePlatformData):
+        (IPC::ArgumentCoder<Credential>::encodePlatformData):
+        (IPC::ArgumentCoder<Credential>::decodePlatformData):
+        * UIProcess/LegacySessionStateCodingNone.cpp:
+        (WebKit::encodeLegacySessionState):
+        (WebKit::decodeLegacySessionState):
+        * UIProcess/WebBatteryManagerProxy.h:
+
 2016-08-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix attempt after r204665 and r204668.

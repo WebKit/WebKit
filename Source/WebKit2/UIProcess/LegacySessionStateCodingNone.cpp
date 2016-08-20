@@ -27,8 +27,9 @@
 #include "LegacySessionStateCoding.h"
 
 #include "APIData.h"
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "DataReference.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include "SessionState.h"
 #include "WebCoreArgumentCoders.h"
 
@@ -36,7 +37,8 @@ namespace WebKit {
 
 RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 {
-    IPC::ArgumentEncoder encoder;
+    // FIXME: I'm not sure whether these are the proper arguments for the encoder.
+    IPC::Encoder encoder("IPC", "LegacySessionState", 0);
     encoder << sessionState.backForwardListState;
     encoder << sessionState.renderTreeSize;
     encoder << sessionState.provisionalURL;
@@ -45,7 +47,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 
 bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState& sessionState)
 {
-    IPC::ArgumentDecoder decoder(data, dataSize);
+    IPC::Decoder decoder(IPC::DataReference(data, dataSize), Vector<IPC::Attachment>());
     if (!decoder.decode(sessionState.backForwardListState))
         return false;
     if (!decoder.decode(sessionState.renderTreeSize))

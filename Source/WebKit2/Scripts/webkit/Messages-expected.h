@@ -29,7 +29,7 @@
 
 #include "Arguments.h"
 #include "Connection.h"
-#include "MessageEncoder.h"
+#include "Encoder.h"
 #include "Plugin.h"
 #include "StringReference.h"
 #include <WebCore/GraphicsLayer.h>
@@ -365,14 +365,14 @@ public:
     static const bool isSync = true;
 
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::MessageEncoder>);
+        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::Encoder>);
         ~DelayedReply();
 
         bool send(const IPC::Connection::Handle& connectionHandle);
 
     private:
         RefPtr<IPC::Connection> m_connection;
-        std::unique_ptr<IPC::MessageEncoder> m_encoder;
+        std::unique_ptr<IPC::Encoder> m_encoder;
     };
 
     typedef IPC::Arguments<IPC::Connection::Handle&> Reply;
@@ -399,14 +399,14 @@ public:
     static const bool isSync = true;
 
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::MessageEncoder>);
+        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::Encoder>);
         ~DelayedReply();
 
         bool send();
 
     private:
         RefPtr<IPC::Connection> m_connection;
-        std::unique_ptr<IPC::MessageEncoder> m_encoder;
+        std::unique_ptr<IPC::Encoder> m_encoder;
     };
 
     typedef IPC::Arguments<> Reply;

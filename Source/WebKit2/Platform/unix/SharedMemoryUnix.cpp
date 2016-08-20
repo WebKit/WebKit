@@ -29,8 +29,8 @@
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include "SharedMemory.h"
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -64,12 +64,12 @@ bool SharedMemory::Handle::isNull() const
     return m_attachment.fileDescriptor() == -1;
 }
 
-void SharedMemory::Handle::encode(IPC::ArgumentEncoder& encoder) const
+void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
 {
     encoder << releaseAttachment();
 }
 
-bool SharedMemory::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
+bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
     ASSERT_ARG(handle, handle.isNull());
 
