@@ -1,3 +1,47 @@
+2016-08-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r204477): Running LayoutTests on ios-simulator became ~15 minutes slower
+        https://bugs.webkit.org/show_bug.cgi?id=160985
+
+        Re-land r204672, but don't check the result of 'xcrun simctl shutdown', because
+        device shutdown seems to happen as result of killing Simulator.apps, and we're racing
+        with that.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_config):
+        * Scripts/webkitpy/port/base.py:
+        (Port.driver_cmd_line_for_logging):
+        (Port.driver_cmd_line): Deleted.
+        * Scripts/webkitpy/port/driver.py:
+        (IOSSimulatorDriver.cmd_line):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.__init__):
+        (IOSSimulatorPort.driver_cmd_line_for_logging):
+        (IOSSimulatorPort._create_simulators):
+        (IOSSimulatorPort.setup_test_run):
+        (IOSSimulatorPort._quit_ios_simulator):
+        (IOSSimulatorPort.clean_up_test_run):
+        (IOSSimulatorPort._create_device):
+        (IOSSimulatorPort):
+        (IOSSimulatorPort._remove_device):
+        (IOSSimulatorPort._testing_device):
+        (IOSSimulatorPort.device_id_for_worker_number):
+        (IOSSimulatorPort._set_device_class): Deleted.
+        (IOSSimulatorPort.testing_device): Deleted.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_driver_cmd_line):
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.shutdown):
+        (Device):
+        (Device.delete):
+        (Device.reset):
+        (Simulator):
+        (Simulator.create_device):
+        (Simulator.remove_device):
+        (Simulator.device_number):
+        (Simulator.device_state_description):
+        (Simulator.wait_until_device_is_in_state):
+
 2016-08-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r204659.

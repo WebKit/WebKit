@@ -218,14 +218,28 @@ class Device(object):
         return Simulator().find_device_by_udid(device_udid)
 
     @classmethod
+    def shutdown(cls, udid):
+        """
+        Shut down the given CoreSimulator device.
+        :param udid: The udid of the device.
+        :type udid: str
+        """
+        device_state = Simulator.device_state(udid)
+        if device_state == Simulator.DeviceState.BOOTING or device_state == Simulator.DeviceState.BOOTED:
+            _log.debug('xcrun simctl shutdown %s', udid)
+            # Don't throw on error. Device shutdown seems to be racy with Simulator app killing.
+            subprocess.call(['xcrun', 'simctl', 'shutdown', udid])
+
+        Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.SHUTDOWN)
+
+    @classmethod
     def delete(cls, udid):
         """
         Delete the given CoreSimulator device.
         :param udid: The udid of the device.
         :type udid: str
         """
-        _log.debug('deleting device %s', udid)
-        Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.SHUTDOWN)
+        Device.shutdown(udid)
         try:
             _log.debug('xcrun simctl delete %s', udid)
             subprocess.check_call(['xcrun', 'simctl', 'delete', udid])
@@ -239,8 +253,7 @@ class Device(object):
         :param udid: The udid of the device.
         :type udid: str
         """
-        _log.debug('resetting device %s', udid)
-        Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.SHUTDOWN)
+        Device.shutdown(udid)
         try:
             _log.debug('xcrun simctl erase %s', udid)
             subprocess.check_call(['xcrun', 'simctl', 'erase', udid])
@@ -281,6 +294,8 @@ class Simulator(object):
     devices_re = re.compile(
         '\s*(?P<name>[^(]+ )\((?P<udid>[^)]+)\) \((?P<state>[^)]+)\)( \((?P<availability>[^)]+)\))?')
 
+    _managed_devices = {}
+
     def __init__(self, host=None):
         self._host = host or Host()
         self.runtimes = []
@@ -295,6 +310,40 @@ class Simulator(object):
         BOOTING = 2
         BOOTED = 3
         SHUTTING_DOWN = 4
+
+    NAME_FOR_STATE = [
+        'CREATING',
+        'SHUTDOWN',
+        'BOOTING',
+        'BOOTED',
+        'SHUTTING_DOWN'
+    ]
+
+    @staticmethod
+    def create_device(number, device_type, runtime):
+        device = Simulator().lookup_or_create_device(device_type.name + ' WebKit Tester' + str(number), device_type, runtime)
+        _log.debug('created device {} {}'.format(number, device))
+        assert(len(Simulator._managed_devices) == number)
+        Simulator._managed_devices[number] = device
+
+    @staticmethod
+    def remove_device(number):
+        if not Simulator._managed_devices[number]:
+            return
+        device_udid = Simulator._managed_devices[number].udid
+        _log.debug('removing device {} {}'.format(number, device_udid))
+        del Simulator._managed_devices[number]
+        Simulator.delete_device(device_udid)
+
+    @staticmethod
+    def device_number(number):
+        return Simulator._managed_devices[number]
+
+    @staticmethod
+    def device_state_description(state):
+        if (state == Simulator.DeviceState.DOES_NOT_EXIST):
+            return 'DOES_NOT_EXIST'
+        return Simulator.NAME_FOR_STATE[state]
 
     @staticmethod
     def wait_until_device_is_booted(udid, timeout_seconds=60 * 5):
@@ -315,17 +364,17 @@ class Simulator(object):
 
     @staticmethod
     def wait_until_device_is_in_state(udid, wait_until_state, timeout_seconds=60 * 5):
-        _log.debug('waiting for device %s to enter state %s with timeout %s', udid, wait_until_state, timeout_seconds)
+        _log.debug('waiting for device %s to enter state %s with timeout %s', udid, Simulator.device_state_description(wait_until_state), timeout_seconds)
         with timeout(seconds=timeout_seconds):
             device_state = Simulator.device_state(udid)
             while (device_state != wait_until_state):
                 device_state = Simulator.device_state(udid)
-                _log.debug(' device state %s', device_state)
+                _log.debug(' device state %s', Simulator.device_state_description(device_state))
                 time.sleep(0.5)
 
         end_state = Simulator.device_state(udid)
         if (end_state != wait_until_state):
-            raise RuntimeError('Timed out waiting for simulator device to enter state {0}; current state is {1}'.format(wait_until_state, end_state))
+            raise RuntimeError('Timed out waiting for simulator device to enter state {0}; current state is {1}'.format(Simulator.device_state_description(wait_until_state), Simulator.device_state_description(end_state)))
 
     @staticmethod
     def device_state(udid):
