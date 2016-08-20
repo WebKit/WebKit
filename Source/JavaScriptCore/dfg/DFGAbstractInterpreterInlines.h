@@ -961,7 +961,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(sqrt(child.asNumber())));
             break;
         }
-        forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
+        SpeculatedType sqrtType = SpecFullNumber;
+        if (node->child1().useKind() == DoubleRepUse)
+            sqrtType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
+        forNode(node).setType(sqrtType);
         break;
     }
         

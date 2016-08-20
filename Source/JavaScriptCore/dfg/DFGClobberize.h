@@ -154,7 +154,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithMin:
     case ArithMax:
     case ArithPow:
-    case ArithSqrt:
     case ArithFRound:
     case ArithSin:
     case ArithCos:
@@ -188,6 +187,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case BottomValue:
     case TypeOf:
         def(PureValue(node));
+        return;
+
+    case ArithSqrt:
+        if (node->child1().useKind() == DoubleRepUse)
+            def(PureValue(node));
+        else {
+            read(World);
+            write(Heap);
+        }
         return;
 
     case BitAnd:

@@ -386,7 +386,14 @@ private:
             break;
         }
             
-        case ArithSqrt:
+        case ArithSqrt: {
+            Edge& child1 = node->child1();
+            if (child1->shouldSpeculateNumberOrBoolean())
+                fixDoubleOrBooleanEdge(child1);
+            else
+                fixEdge<UntypedUse>(child1);
+            break;
+        }
         case ArithFRound:
         case ArithSin:
         case ArithCos:

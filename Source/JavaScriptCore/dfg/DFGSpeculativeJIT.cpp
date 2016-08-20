@@ -33,6 +33,7 @@
 #include "DFGArrayifySlowPathGenerator.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGCallCreateDirectArgumentsSlowPathGenerator.h"
+#include "DFGCapabilities.h"
 #include "DFGMayExit.h"
 #include "DFGOSRExitFuzz.h"
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
@@ -193,7 +194,9 @@ void SpeculativeJIT::emitGetArgumentStart(CodeOrigin origin, GPRReg startGPR)
 
 MacroAssembler::Jump SpeculativeJIT::emitOSRExitFuzzCheck()
 {
-    if (!doOSRExitFuzzing())
+    if (!Options::useOSRExitFuzz()
+        || !canUseOSRExitFuzzing(m_jit.graph().baselineCodeBlockFor(m_origin.semantic))
+        || !doOSRExitFuzzing())
         return MacroAssembler::Jump();
     
     MacroAssembler::Jump result;
@@ -4887,19 +4890,30 @@ void SpeculativeJIT::compileArithRounding(Node* node)
 
 void SpeculativeJIT::compileArithSqrt(Node* node)
 {
-    SpeculateDoubleOperand op1(this, node->child1());
-    FPRReg op1FPR = op1.fpr();
+    if (node->child1().useKind() == DoubleRepUse) {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRReg op1FPR = op1.fpr();
 
-    if (!MacroAssembler::supportsFloatingPointSqrt() || !Options::useArchitectureSpecificOptimizations()) {
-        flushRegisters();
-        FPRResult result(this);
-        callOperation(sqrt, result.fpr(), op1FPR);
-        doubleResult(result.fpr(), node);
-    } else {
-        FPRTemporary result(this, op1);
-        m_jit.sqrtDouble(op1.fpr(), result.fpr());
-        doubleResult(result.fpr(), node);
+        if (!MacroAssembler::supportsFloatingPointSqrt() || !Options::useArchitectureSpecificOptimizations()) {
+            flushRegisters();
+            FPRResult result(this);
+            callOperation(sqrt, result.fpr(), op1FPR);
+            doubleResult(result.fpr(), node);
+        } else {
+            FPRTemporary result(this, op1);
+            m_jit.sqrtDouble(op1.fpr(), result.fpr());
+            doubleResult(result.fpr(), node);
+        }
+        return;
     }
+
+    JSValueOperand op1(this, node->child1());
+    JSValueRegs op1Regs = op1.jsValueRegs();
+    flushRegisters();
+    FPRResult result(this);
+    callOperation(operationArithSqrt, result.fpr(), op1Regs);
+    m_jit.exceptionCheck();
+    doubleResult(result.fpr(), node);
 }
 
 // For small positive integers , it is worth doing a tiny inline loop to exponentiate the base.

@@ -1,3 +1,40 @@
+2016-08-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] ArithSqrt should work with any argument type
+        https://bugs.webkit.org/show_bug.cgi?id=160954
+
+        Reviewed by Saam Barati.
+
+        Previsouly, ArithSqrt would always OSR Exit if the argument
+        is not typed Integer, Double, or Boolean.
+        Since we can't recover by generalizing to those, we continuously
+        OSR Exit and recompile the same code over and over again.
+
+        This patch introduces a fallback to handle the remaining types.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+        * dfg/DFGMayExit.cpp:
+        This is somewhat unrelated. While discussing the design of this
+        with Filip, we decided not to use ToNumber+ArithSqrt despite
+        the guarantee that ToNumber does not OSR Exit.
+        Since it does not OSR Exit, we should say so in mayExitImpl().
+
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithSqrt):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithSqrt):
+
 2016-08-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make custom Error properties (line, column, sourceURL) configurable and writable

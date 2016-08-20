@@ -91,6 +91,10 @@ bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
     return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()
         && isSupportedForInlining(codeBlock);
 }
+bool canUseOSRExitFuzzing(CodeBlock* codeBlock)
+{
+    return codeBlock->ownerScriptExecutable()->canUseOSRExitFuzzing();
+}
 
 inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel result)
 {

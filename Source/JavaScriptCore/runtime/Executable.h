@@ -337,12 +337,14 @@ public:
     void setNeverOptimize(bool value) { m_neverOptimize = value; }
     void setNeverFTLOptimize(bool value) { m_neverFTLOptimize = value; }
     void setDidTryToEnterInLoop(bool value) { m_didTryToEnterInLoop = value; }
+    void setCanUseOSRExitFuzzing(bool value) { m_canUseOSRExitFuzzing = value; }
     bool neverInline() const { return m_neverInline; }
     bool neverOptimize() const { return m_neverOptimize; }
     bool neverFTLOptimize() const { return m_neverFTLOptimize; }
     bool didTryToEnterInLoop() const { return m_didTryToEnterInLoop; }
     bool isInliningCandidate() const { return !neverInline(); }
     bool isOkToOptimize() const { return !neverOptimize(); }
+    bool canUseOSRExitFuzzing() const { return m_canUseOSRExitFuzzing; }
     
     bool* addressOfDidTryToEnterInLoop() { return &m_didTryToEnterInLoop; }
 
@@ -403,6 +405,7 @@ protected:
     bool m_neverOptimize : 1;
     bool m_neverFTLOptimize : 1;
     bool m_isArrowFunctionContext : 1;
+    bool m_canUseOSRExitFuzzing : 1;
     unsigned m_derivedContextType : 2; // DerivedContextType
     unsigned m_evalContextType : 2; // EvalContextType
 

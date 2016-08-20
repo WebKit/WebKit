@@ -100,12 +100,13 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case ConstructVarargs:
     case CallForwardVarargs:
     case ConstructForwardVarargs:
+    case CreateActivation:
     case MaterializeCreateActivation:
     case MaterializeNewObject:
     case NewFunction:
     case NewGeneratorFunction:
     case NewStringObject:
-    case CreateActivation:
+    case ToNumber:
         result = ExitsForExceptions;
         break;
 

@@ -38,6 +38,7 @@
 #include "CallFrameShuffler.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
+#include "DFGCapabilities.h"
 #include "DFGDominators.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
@@ -2272,7 +2273,16 @@ private:
             setDouble(result);
     }
 
-    void compileArithSqrt() { setDouble(m_out.doubleSqrt(lowDouble(m_node->child1()))); }
+    void compileArithSqrt()
+    {
+        if (m_node->child1().useKind() == DoubleRepUse) {
+            setDouble(m_out.doubleSqrt(lowDouble(m_node->child1())));
+            return;
+        }
+        LValue argument = lowJSValue(m_node->child1());
+        LValue result = vmCall(Double, m_out.operation(operationArithSqrt), m_callFrame, argument);
+        setDouble(result);
+    }
 
     void compileArithLog() { setDouble(m_out.doubleLog(lowDouble(m_node->child1()))); }
     
@@ -11058,8 +11068,11 @@ private:
         }
 
         DFG_ASSERT(m_graph, m_node, origin.exitOK);
-        
-        if (doOSRExitFuzzing() && !isExceptionHandler) {
+
+        if (!isExceptionHandler
+            && Options::useOSRExitFuzz()
+            && canUseOSRExitFuzzing(m_graph.baselineCodeBlockFor(m_node->origin.semantic))
+            && doOSRExitFuzzing()) {
             LValue numberOfFuzzChecks = m_out.add(
                 m_out.load32(m_out.absolute(&g_numberOfOSRExitFuzzChecks)),
                 m_out.int32One);

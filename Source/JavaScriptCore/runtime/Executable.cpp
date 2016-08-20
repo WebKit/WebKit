@@ -146,6 +146,7 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_neverOptimize(false)
     , m_neverFTLOptimize(false)
     , m_isArrowFunctionContext(isInArrowFunctionContext)
+    , m_canUseOSRExitFuzzing(true)
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_evalContextType(static_cast<unsigned>(evalContextType))
     , m_overrideLineNumber(-1)

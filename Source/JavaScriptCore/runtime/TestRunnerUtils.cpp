@@ -131,6 +131,18 @@ JSValue setNeverOptimize(ExecState* exec)
     return setNeverOptimize(exec->uncheckedArgument(0));
 }
 
+JSValue setCannotUseOSRExitFuzzing(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue theFunctionValue = exec->uncheckedArgument(0);
+    if (FunctionExecutable* executable = getExecutableForFunction(theFunctionValue))
+        executable->setCanUseOSRExitFuzzing(false);
+
+    return jsUndefined();
+}
+
 JSValue optimizeNextInvocation(ExecState* exec)
 {
     if (exec->argumentCount() < 1)

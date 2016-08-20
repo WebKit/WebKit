@@ -1712,6 +1712,11 @@ public:
         m_jit.setupArgumentsWithExecState(regOp1, TrustedImmPtr(identOp2), TrustedImm32(op3), regOp4, regOp5);
         return appendCall(operation);
     }
+    JITCompiler::Call callOperation(D_JITOperation_EJ operation, FPRReg result, JSValueRegs arg1)
+    {
+        m_jit.setupArgumentsWithExecState(arg1.gpr());
+        return appendCallSetResult(operation, result);
+    }
 #else // USE(JSVALUE32_64)
 
     JITCompiler::Call callOperation(J_JITOperation_EJJMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr mathIC)
@@ -2137,6 +2142,11 @@ public:
     {
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identOp2), TrustedImm32(op3), arg4, arg5);
         return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(D_JITOperation_EJ operation, FPRReg result, JSValueRegs arg1)
+    {
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR());
+        return appendCallSetResult(operation, result);
     }
 #endif // USE(JSVALUE32_64)
     
