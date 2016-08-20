@@ -48,14 +48,14 @@ private:
     DatabaseToWebProcessConnection(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
     IPC::ProcessType localProcessType() override { return IPC::ProcessType::Database; }
     IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Web; }
-    void didReceiveDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::MessageDecoder&);
-    void didReceiveSyncDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
+    void didReceiveDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveSyncDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override { return m_connection.ptr(); }

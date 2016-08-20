@@ -98,7 +98,7 @@ public:
 
 private:
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void didPostMessage(IPC::Connection&, uint64_t pageID, uint64_t frameID, const WebCore::SecurityOriginData&, uint64_t messageHandlerID, const IPC::DataReference&);
 

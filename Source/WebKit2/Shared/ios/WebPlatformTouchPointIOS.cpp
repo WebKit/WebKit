@@ -45,7 +45,7 @@ void WebPlatformTouchPoint::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool WebPlatformTouchPoint::decode(IPC::ArgumentDecoder& decoder, WebPlatformTouchPoint& result)
+bool WebPlatformTouchPoint::decode(IPC::Decoder& decoder, WebPlatformTouchPoint& result)
 {
     if (!decoder.decode(result.m_identifier))
         return false;

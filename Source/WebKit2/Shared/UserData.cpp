@@ -146,7 +146,7 @@ void UserData::encode(IPC::Encoder& encoder) const
     encode(encoder, m_object.get());
 }
 
-bool UserData::decode(IPC::ArgumentDecoder& decoder, UserData& userData)
+bool UserData::decode(IPC::Decoder& decoder, UserData& userData)
 {
     return decode(decoder, userData.m_object);
 }
@@ -327,7 +327,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     }
 }
 
-bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 {
     API::Object::Type type;
     if (!decoder.decodeEnum(type))

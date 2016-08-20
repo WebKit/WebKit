@@ -118,7 +118,7 @@ protected:
     WebCore::IntSize m_scrollOffset;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
 private:
     virtual void sizeDidChange() = 0;

@@ -140,8 +140,8 @@ private:
     bool shouldTerminate() override;
 
     // IPC::Connection::Client
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
     IPC::ProcessType localProcessType() override { return IPC::ProcessType::Network; }
@@ -157,8 +157,8 @@ private:
 #endif
 
     // Message Handlers
-    void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
-    void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
+    void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
     void initializeNetworkProcess(NetworkProcessCreationParameters&&);
     void createNetworkConnectionToWebProcess();
     void destroyPrivateBrowsingSession(WebCore::SessionID);

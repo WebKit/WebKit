@@ -46,7 +46,7 @@ void ShareableResource::Handle::encode(IPC::Encoder& encoder) const
     encoder << m_size;
 }
 
-bool ShareableResource::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
+bool ShareableResource::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
     if (!decoder.decode(handle.m_handle))
         return false;

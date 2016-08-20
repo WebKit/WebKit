@@ -26,7 +26,7 @@
 #ifndef StatisticsData_h
 #define StatisticsData_h
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -37,7 +37,7 @@ namespace WebKit {
 
 struct StatisticsData {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, StatisticsData&);
+    static bool decode(IPC::Decoder&, StatisticsData&);
     
     HashMap<String, uint64_t> statisticsNumbers;
     HashMap<String, uint64_t> javaScriptProtectedObjectTypeCounts;

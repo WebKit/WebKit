@@ -31,7 +31,7 @@
 
 namespace IPC {
 
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
     
 class DataReference {
@@ -74,7 +74,7 @@ public:
     }
 
     virtual void encode(Encoder&) const;
-    static bool decode(ArgumentDecoder&, DataReference&);
+    static bool decode(Decoder&, DataReference&);
 
     virtual ~DataReference() { }
 

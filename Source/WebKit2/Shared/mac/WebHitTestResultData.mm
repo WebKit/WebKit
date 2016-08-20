@@ -29,7 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "ArgumentCodersCF.h"
-#import "ArgumentDecoder.h"
+#import "Decoder.h"
 #import "Encoder.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/DataDetectorsSPI.h>
@@ -61,7 +61,7 @@ void WebHitTestResultData::platformEncode(IPC::Encoder& encoder) const
         encoder << detectedDataTextIndicator->data();
 }
 
-bool WebHitTestResultData::platformDecode(IPC::ArgumentDecoder& decoder, WebHitTestResultData& hitTestResultData)
+bool WebHitTestResultData::platformDecode(IPC::Decoder& decoder, WebHitTestResultData& hitTestResultData)
 {
     bool hasActionContext;
     if (!decoder.decode(hasActionContext))

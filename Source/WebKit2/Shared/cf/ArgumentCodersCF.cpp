@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ArgumentCodersCF.h"
 
-#include "ArgumentDecoder.h"
 #include "DataReference.h"
+#include "Decoder.h"
 #include "Encoder.h"
 #include <WebCore/CFURLExtras.h>
 #include <wtf/Vector.h>
@@ -204,7 +204,7 @@ void encode(Encoder& encoder, CFTypeRef typeRef)
     ASSERT_NOT_REACHED();
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFTypeRef>& result)
 {
     CFType type;
     if (!decoder.decodeEnum(type))
@@ -338,7 +338,7 @@ void encode(Encoder& encoder, CFArrayRef array)
     }
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFArrayRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFArrayRef>& result)
 {
     uint64_t size;
     if (!decoder.decode(size))
@@ -363,7 +363,7 @@ void encode(Encoder& encoder, CFBooleanRef boolean)
     encoder << static_cast<bool>(CFBooleanGetValue(boolean));
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFBooleanRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFBooleanRef>& result)
 {
     bool boolean;
     if (!decoder.decode(boolean))
@@ -381,7 +381,7 @@ void encode(Encoder& encoder, CFDataRef data)
     encoder << IPC::DataReference(bytePtr, length);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFDataRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFDataRef>& result)
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -396,7 +396,7 @@ void encode(Encoder& encoder, CFDateRef date)
     encoder << static_cast<double>(CFDateGetAbsoluteTime(date));
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFDateRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFDateRef>& result)
 {
     double absoluteTime;
     if (!decoder.decode(absoluteTime))
@@ -430,7 +430,7 @@ void encode(Encoder& encoder, CFDictionaryRef dictionary)
     }
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFDictionaryRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFDictionaryRef>& result)
 {
     uint64_t size;
     if (!decoder.decode(size))
@@ -514,7 +514,7 @@ static size_t sizeForNumberType(CFNumberType numberType)
     return 0;
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFNumberRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFNumberRef>& result)
 {
     CFNumberType numberType;
     if (!decoder.decodeEnum(numberType))
@@ -554,7 +554,7 @@ void encode(Encoder& encoder, CFStringRef string)
     encoder << IPC::DataReference(buffer);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFStringRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFStringRef>& result)
 {
     CFStringEncoding encoding;
     if (!decoder.decodeEnum(encoding))
@@ -588,7 +588,7 @@ void encode(Encoder& encoder, CFURLRef url)
     encoder << dataReference;
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
+bool decode(Decoder& decoder, RetainPtr<CFURLRef>& result)
 {
     RetainPtr<CFURLRef> baseURL;
     bool hasBaseURL;
@@ -624,7 +624,7 @@ void encode(Encoder& encoder, SecCertificateRef certificate)
     encode(encoder, data.get());
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<SecCertificateRef>& result)
+bool decode(Decoder& decoder, RetainPtr<SecCertificateRef>& result)
 {
     RetainPtr<CFDataRef> data;
     if (!decode(decoder, data))
@@ -685,7 +685,7 @@ void encode(Encoder& encoder, SecIdentityRef identity)
     }
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<SecIdentityRef>& result)
+bool decode(Decoder& decoder, RetainPtr<SecIdentityRef>& result)
 {
     RetainPtr<SecCertificateRef> certificate;
     if (!decode(decoder, certificate))
@@ -728,7 +728,7 @@ void encode(Encoder& encoder, SecKeychainItemRef keychainItem)
     }
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<SecKeychainItemRef>& result)
+bool decode(Decoder& decoder, RetainPtr<SecKeychainItemRef>& result)
 {
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))
@@ -751,7 +751,7 @@ void encode(Encoder& encoder, SecAccessControlRef accessControl)
         encode(encoder, data.get());
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<SecAccessControlRef>& result)
+bool decode(Decoder& decoder, RetainPtr<SecAccessControlRef>& result)
 {
     RetainPtr<CFDataRef> data;
     if (!decode(decoder, data))
@@ -778,7 +778,7 @@ void encode(Encoder& encoder, SecTrustRef trust)
     IPC::encode(encoder, data.get());
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<SecTrustRef>& result)
+bool decode(Decoder& decoder, RetainPtr<SecTrustRef>& result)
 {
     bool hasTrust;
     if (!decoder.decode(hasTrust))

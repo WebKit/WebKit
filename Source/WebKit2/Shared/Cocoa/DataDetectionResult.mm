@@ -50,7 +50,7 @@ void DataDetectionResult::encode(IPC::Encoder& encoder) const
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));        
 }
 
-bool DataDetectionResult::decode(IPC::ArgumentDecoder& decoder, DataDetectionResult& result)
+bool DataDetectionResult::decode(IPC::Decoder& decoder, DataDetectionResult& result)
 {
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))

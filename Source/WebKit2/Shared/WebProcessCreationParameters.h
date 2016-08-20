@@ -50,7 +50,7 @@ class Data;
 }
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -61,7 +61,7 @@ struct WebProcessCreationParameters {
     ~WebProcessCreationParameters();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebProcessCreationParameters&);
+    static bool decode(IPC::Decoder&, WebProcessCreationParameters&);
 
     String injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;

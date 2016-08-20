@@ -29,7 +29,7 @@
 #include <stdint.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -48,7 +48,7 @@ public:
     ~LayerTreeContext();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, LayerTreeContext&);
+    static bool decode(IPC::Decoder&, LayerTreeContext&);
 
     bool isEmpty() const;
 

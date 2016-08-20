@@ -43,7 +43,7 @@ void UpdateInfo::encode(IPC::Encoder& encoder) const
     encoder << bitmapOffset;
 }
 
-bool UpdateInfo::decode(IPC::ArgumentDecoder& decoder, UpdateInfo& result)
+bool UpdateInfo::decode(IPC::Decoder& decoder, UpdateInfo& result)
 {
     if (!decoder.decode(result.viewSize))
         return false;

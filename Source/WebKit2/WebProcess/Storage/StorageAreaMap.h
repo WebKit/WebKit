@@ -65,7 +65,7 @@ private:
     StorageAreaMap(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void didGetValues(uint64_t storageMapSeed);
     void didSetItem(uint64_t storageMapSeed, const String& key, bool quotaError);

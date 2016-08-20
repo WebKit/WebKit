@@ -23,16 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MessageReceiver_h
-#define MessageReceiver_h
+#pragma once
 
 #include <wtf/Assertions.h>
 
 namespace IPC {
 
 class Connection;
+class Decoder;
 class Encoder;
-class MessageDecoder;
 
 class MessageReceiver {
 public:
@@ -41,8 +40,8 @@ public:
         ASSERT(!m_messageReceiverMapCount);
     }
 
-    virtual void didReceiveMessage(Connection&, MessageDecoder&) = 0;
-    virtual void didReceiveSyncMessage(Connection&, MessageDecoder&, std::unique_ptr<Encoder>&)
+    virtual void didReceiveMessage(Connection&, Decoder&) = 0;
+    virtual void didReceiveSyncMessage(Connection&, Decoder&, std::unique_ptr<Encoder>&)
     {
         ASSERT_NOT_REACHED();
     }
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace IPC
-
-#endif // MessageReceiver_h

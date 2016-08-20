@@ -138,7 +138,7 @@ private:
     String handleForWebFrameProxy(const WebFrameProxy&);
 
     // Implemented in generated WebAutomationSessionMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by WebAutomationSession messages
     void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);

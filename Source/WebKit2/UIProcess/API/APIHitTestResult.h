@@ -35,7 +35,7 @@
 OBJC_CLASS DDActionContext;
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 

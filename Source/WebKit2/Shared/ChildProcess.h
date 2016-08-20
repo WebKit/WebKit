@@ -101,7 +101,7 @@ protected:
     static void stopNSAppRunLoop();
 #endif
 
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
 private:
     // IPC::MessageSender

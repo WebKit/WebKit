@@ -27,7 +27,6 @@
 #include "RemoteScrollingCoordinatorTransaction.h"
 
 #include "ArgumentCoders.h"
-#include "MessageDecoder.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/ScrollingStateFixedNode.h>
@@ -47,32 +46,32 @@ namespace IPC {
 
 template<> struct ArgumentCoder<ScrollingStateNode> {
     static void encode(Encoder&, const ScrollingStateNode&);
-    static bool decode(ArgumentDecoder&, ScrollingStateNode&);
+    static bool decode(Decoder&, ScrollingStateNode&);
 };
 
 template<> struct ArgumentCoder<ScrollingStateScrollingNode> {
     static void encode(Encoder&, const ScrollingStateScrollingNode&);
-    static bool decode(ArgumentDecoder&, ScrollingStateScrollingNode&);
+    static bool decode(Decoder&, ScrollingStateScrollingNode&);
 };
     
 template<> struct ArgumentCoder<ScrollingStateFrameScrollingNode> {
     static void encode(Encoder&, const ScrollingStateFrameScrollingNode&);
-    static bool decode(ArgumentDecoder&, ScrollingStateFrameScrollingNode&);
+    static bool decode(Decoder&, ScrollingStateFrameScrollingNode&);
 };
     
 template<> struct ArgumentCoder<ScrollingStateOverflowScrollingNode> {
     static void encode(Encoder&, const ScrollingStateOverflowScrollingNode&);
-    static bool decode(ArgumentDecoder&, ScrollingStateOverflowScrollingNode&);
+    static bool decode(Decoder&, ScrollingStateOverflowScrollingNode&);
 };
     
 template<> struct ArgumentCoder<ScrollingStateFixedNode> {
     static void encode(Encoder&, const ScrollingStateFixedNode&);
-    static bool decode(ArgumentDecoder&, ScrollingStateFixedNode&);
+    static bool decode(Decoder&, ScrollingStateFixedNode&);
 };
 
 template<> struct ArgumentCoder<ScrollingStateStickyNode> {
     static void encode(Encoder&, const ScrollingStateStickyNode&);
-    static bool decode(ArgumentDecoder&, ScrollingStateStickyNode&);
+    static bool decode(Decoder&, ScrollingStateStickyNode&);
 };
 
 } // namespace IPC
@@ -90,7 +89,7 @@ void ArgumentCoder<ScrollingStateNode>::encode(Encoder& encoder, const Scrolling
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.layer());
 }
 
-bool ArgumentCoder<ScrollingStateNode>::decode(ArgumentDecoder& decoder, ScrollingStateNode& node)
+bool ArgumentCoder<ScrollingStateNode>::decode(Decoder& decoder, ScrollingStateNode& node)
 {
     // nodeType, scrollingNodeID and parentNodeID have already been decoded by the caller in order to create the node.
     ScrollingStateNode::ChangedProperties changedProperties;
@@ -186,7 +185,7 @@ void ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode(Encoder& encoder
         node.setter(decodedValue); \
     }
 
-bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder, ScrollingStateScrollingNode& node)
+bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, ScrollingStateScrollingNode& node)
 {
     if (!decoder.decode(static_cast<ScrollingStateNode&>(node)))
         return false;
@@ -219,7 +218,7 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder
     return true;
 }
 
-bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(ArgumentDecoder& decoder, ScrollingStateFrameScrollingNode& node)
+bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, ScrollingStateFrameScrollingNode& node)
 {
     if (!decoder.decode(static_cast<ScrollingStateScrollingNode&>(node)))
         return false;
@@ -265,7 +264,7 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(ArgumentDecoder& de
     return true;
 }
 
-bool ArgumentCoder<ScrollingStateOverflowScrollingNode>::decode(ArgumentDecoder& decoder, ScrollingStateOverflowScrollingNode& node)
+bool ArgumentCoder<ScrollingStateOverflowScrollingNode>::decode(Decoder& decoder, ScrollingStateOverflowScrollingNode& node)
 {
     if (!decoder.decode(static_cast<ScrollingStateScrollingNode&>(node)))
         return false;
@@ -288,7 +287,7 @@ void ArgumentCoder<ScrollingStateFixedNode>::encode(Encoder& encoder, const Scro
         encoder << node.viewportConstraints();
 }
 
-bool ArgumentCoder<ScrollingStateFixedNode>::decode(ArgumentDecoder& decoder, ScrollingStateFixedNode& node)
+bool ArgumentCoder<ScrollingStateFixedNode>::decode(Decoder& decoder, ScrollingStateFixedNode& node)
 {
     if (!decoder.decode(static_cast<ScrollingStateNode&>(node)))
         return false;
@@ -311,7 +310,7 @@ void ArgumentCoder<ScrollingStateStickyNode>::encode(Encoder& encoder, const Scr
         encoder << node.viewportConstraints();
 }
 
-bool ArgumentCoder<ScrollingStateStickyNode>::decode(ArgumentDecoder& decoder, ScrollingStateStickyNode& node)
+bool ArgumentCoder<ScrollingStateStickyNode>::decode(Decoder& decoder, ScrollingStateStickyNode& node)
 {
     if (!decoder.decode(static_cast<ScrollingStateNode&>(node)))
         return false;
@@ -375,12 +374,12 @@ void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder& encoder) const
         encoder << Vector<ScrollingNodeID>();
 }
 
-bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteScrollingCoordinatorTransaction& transaction)
+bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder, RemoteScrollingCoordinatorTransaction& transaction)
 {
     return transaction.decode(decoder);
 }
 
-bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder)
+bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
 {
     int numNodes;
     if (!decoder.decode(numNodes))
@@ -644,7 +643,7 @@ void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder&) const
 {
 }
 
-bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteScrollingCoordinatorTransaction& transaction)
+bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder, RemoteScrollingCoordinatorTransaction& transaction)
 {
     return true;
 }

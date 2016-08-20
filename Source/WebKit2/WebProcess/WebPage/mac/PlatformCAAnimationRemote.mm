@@ -128,7 +128,7 @@ void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::Encoder& encoder) con
     }
 }
 
-bool PlatformCAAnimationRemote::KeyframeValue::decode(IPC::ArgumentDecoder& decoder, PlatformCAAnimationRemote::KeyframeValue& value)
+bool PlatformCAAnimationRemote::KeyframeValue::decode(IPC::Decoder& decoder, PlatformCAAnimationRemote::KeyframeValue& value)
 {
     if (!decoder.decodeEnum(value.keyType))
         return false;
@@ -204,7 +204,7 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     }
 }
 
-bool PlatformCAAnimationRemote::Properties::decode(IPC::ArgumentDecoder& decoder, PlatformCAAnimationRemote::Properties& properties)
+bool PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder, PlatformCAAnimationRemote::Properties& properties)
 {
     if (!decoder.decode(properties.keyPath))
         return false;

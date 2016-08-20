@@ -36,7 +36,7 @@
 #endif
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -66,7 +66,7 @@ public:
         void clear();
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, Handle&);
+        static bool decode(IPC::Decoder&, Handle&);
 
 #if USE(UNIX_DOMAIN_SOCKETS)
         IPC::Attachment releaseAttachment() const;

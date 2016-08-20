@@ -36,7 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -60,7 +60,7 @@ public:
     float gestureRotation() const { return m_gestureRotation; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebGestureEvent&);
+    static bool decode(IPC::Decoder&, WebGestureEvent&);
     
 private:
     bool isGestureEventType(Type) const;

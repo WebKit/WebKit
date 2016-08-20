@@ -26,8 +26,7 @@
 #include "config.h"
 #include "SharedMemory.h"
 
-#include "ArgumentDecoder.h"
-#include "Arguments.h"
+#include "Decoder.h"
 #include "Encoder.h"
 #include "MachPort.h"
 #include <WebCore/MachSendRight.h>
@@ -71,7 +70,7 @@ void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
     m_port = MACH_PORT_NULL;
 }
 
-bool SharedMemory::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
+bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
     ASSERT(!handle.m_port);
     ASSERT(!handle.m_size);

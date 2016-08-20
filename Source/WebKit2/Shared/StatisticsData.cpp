@@ -38,7 +38,7 @@ void StatisticsData::encode(IPC::Encoder& encoder) const
     encoder << webCoreCacheStatistics;
 }
 
-bool StatisticsData::decode(IPC::ArgumentDecoder& decoder, StatisticsData& statisticsData)
+bool StatisticsData::decode(IPC::Decoder& decoder, StatisticsData& statisticsData)
 {
     if (!decoder.decode(statisticsData.statisticsNumbers))
         return false;

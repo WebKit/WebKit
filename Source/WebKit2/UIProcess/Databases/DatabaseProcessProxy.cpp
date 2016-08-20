@@ -76,7 +76,7 @@ void DatabaseProcessProxy::processWillShutDown(IPC::Connection& connection)
     ASSERT_UNUSED(connection, this->connection() == &connection);
 }
 
-void DatabaseProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
+void DatabaseProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::DatabaseProcessProxy::messageReceiverName()) {
         didReceiveDatabaseProcessProxyMessage(connection, decoder);

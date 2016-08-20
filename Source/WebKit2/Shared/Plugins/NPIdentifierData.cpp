@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/IdentifierRep.h>
@@ -76,7 +76,7 @@ void NPIdentifierData::encode(IPC::Encoder& encoder) const
         encoder << m_number;
 }
 
-bool NPIdentifierData::decode(IPC::ArgumentDecoder& decoder, NPIdentifierData& result)
+bool NPIdentifierData::decode(IPC::Decoder& decoder, NPIdentifierData& result)
 {
     if (!decoder.decode(result.m_isString))
         return false;

@@ -107,7 +107,7 @@ struct EditorState {
 #endif
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, PostLayoutData&);
+        static bool decode(IPC::Decoder&, PostLayoutData&);
     };
 
     const PostLayoutData& postLayoutData() const;
@@ -115,7 +115,7 @@ struct EditorState {
 #endif // PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, EditorState&);
+    static bool decode(IPC::Decoder&, EditorState&);
 
 #if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 private:

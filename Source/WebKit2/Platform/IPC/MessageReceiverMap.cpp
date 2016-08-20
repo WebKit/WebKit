@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MessageReceiverMap.h"
 
-#include "MessageDecoder.h"
+#include "Decoder.h"
 #include "MessageReceiver.h"
 
 namespace IPC {
@@ -110,7 +110,7 @@ void MessageReceiverMap::invalidate()
     m_messageReceivers.clear();
 }
 
-bool MessageReceiverMap::dispatchMessage(Connection& connection, MessageDecoder& decoder)
+bool MessageReceiverMap::dispatchMessage(Connection& connection, Decoder& decoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
         ASSERT(!decoder.destinationID());
@@ -127,7 +127,7 @@ bool MessageReceiverMap::dispatchMessage(Connection& connection, MessageDecoder&
     return false;
 }
 
-bool MessageReceiverMap::dispatchSyncMessage(Connection& connection, MessageDecoder& decoder, std::unique_ptr<Encoder>& replyEncoder)
+bool MessageReceiverMap::dispatchSyncMessage(Connection& connection, Decoder& decoder, std::unique_ptr<Encoder>& replyEncoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
         ASSERT(!decoder.destinationID());

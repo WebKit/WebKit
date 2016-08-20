@@ -122,7 +122,7 @@ class Array;
 }
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Connection;
 }
 
@@ -310,8 +310,8 @@ public:
     WebOpenPanelResultListener* activeOpenPanelResultListener() const { return m_activeOpenPanelResultListener.get(); }
     void setActiveOpenPanelResultListener(PassRefPtr<WebOpenPanelResultListener>);
 
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // -- InjectedBundle methods
 #if ENABLE(CONTEXT_MENUS)
@@ -965,8 +965,8 @@ private:
     void platformDetach();
     void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
 
-    void didReceiveWebPageMessage(IPC::Connection&, IPC::MessageDecoder&);
-    void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
+    void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if PLATFORM(IOS)
     void resetViewportDefaultConfiguration(WebFrame* mainFrame);

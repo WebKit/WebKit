@@ -49,7 +49,7 @@ void SecItemResponseData::encode(IPC::Encoder& encoder) const
         IPC::encode(encoder, m_resultObject.get());
 }
 
-bool SecItemResponseData::decode(IPC::ArgumentDecoder& decoder, SecItemResponseData& secItemResponseData)
+bool SecItemResponseData::decode(IPC::Decoder& decoder, SecItemResponseData& secItemResponseData)
 {
     int64_t resultCode;
     if (!decoder.decode(resultCode))

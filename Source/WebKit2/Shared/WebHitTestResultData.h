@@ -33,7 +33,7 @@
 OBJC_CLASS DDActionContext;
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -81,8 +81,8 @@ struct WebHitTestResultData {
 
     void encode(IPC::Encoder&) const;
     void platformEncode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebHitTestResultData&);
-    static bool platformDecode(IPC::ArgumentDecoder&, WebHitTestResultData&);
+    static bool decode(IPC::Decoder&, WebHitTestResultData&);
+    static bool platformDecode(IPC::Decoder&, WebHitTestResultData&);
 
     WebCore::IntRect elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult&);
 };

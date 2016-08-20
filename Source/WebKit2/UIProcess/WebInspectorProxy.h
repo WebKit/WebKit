@@ -162,7 +162,7 @@ private:
     void eagerlyCreateInspectorPage();
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();

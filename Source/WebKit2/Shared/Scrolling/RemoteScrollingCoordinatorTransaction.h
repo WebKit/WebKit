@@ -29,7 +29,7 @@
 #include <WebCore/ScrollingStateTree.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -43,7 +43,7 @@ public:
 #endif // ENABLE(ASYNC_SCROLLING)
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RemoteScrollingCoordinatorTransaction&);
+    static bool decode(IPC::Decoder&, RemoteScrollingCoordinatorTransaction&);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     WTF::CString description() const;
@@ -52,7 +52,7 @@ public:
 
 private:
 #if ENABLE(ASYNC_SCROLLING)
-    bool decode(IPC::ArgumentDecoder&);
+    bool decode(IPC::Decoder&);
     
     std::unique_ptr<WebCore::ScrollingStateTree> m_scrollingStateTree;
 #endif // ENABLE(ASYNC_SCROLLING)

@@ -26,7 +26,7 @@
 #ifndef Arguments_h
 #define Arguments_h
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace IPC {
@@ -39,7 +39,7 @@ struct TupleCoder {
         TupleCoder<index - 1, Elements...>::encode(encoder, tuple);
     }
 
-    static bool decode(ArgumentDecoder& decoder, std::tuple<Elements...>& tuple)
+    static bool decode(Decoder& decoder, std::tuple<Elements...>& tuple)
     {
         if (!decoder.decode(std::get<sizeof...(Elements) - index>(tuple)))
             return false;
@@ -53,7 +53,7 @@ struct TupleCoder<0, Elements...> {
     {
     }
 
-    static bool decode(ArgumentDecoder&, std::tuple<Elements...>&)
+    static bool decode(Decoder&, std::tuple<Elements...>&)
     {
         return true;
     }
@@ -65,7 +65,7 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
         TupleCoder<sizeof...(Elements), Elements...>::encode(encoder, tuple);
     }
 
-    static bool decode(ArgumentDecoder& decoder, std::tuple<Elements...>& tuple)
+    static bool decode(Decoder& decoder, std::tuple<Elements...>& tuple)
     {
         return TupleCoder<sizeof...(Elements), Elements...>::decode(decoder, tuple);
     }
@@ -85,7 +85,7 @@ struct Arguments {
         ArgumentCoder<std::tuple<Types...>>::encode(encoder, arguments);
     }
 
-    static bool decode(ArgumentDecoder& decoder, Arguments& result)
+    static bool decode(Decoder& decoder, Arguments& result)
     {
         return ArgumentCoder<std::tuple<Types...>>::decode(decoder, result.arguments);
     }

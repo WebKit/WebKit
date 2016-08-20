@@ -37,7 +37,7 @@ void ArgumentCoder<std::chrono::system_clock::time_point>::encode(IPC::Encoder& 
     encoder << static_cast<int64_t>(timePoint.time_since_epoch().count());
 }
 
-bool ArgumentCoder<std::chrono::system_clock::time_point>::decode(ArgumentDecoder& decoder, std::chrono::system_clock::time_point& result)
+bool ArgumentCoder<std::chrono::system_clock::time_point>::decode(Decoder& decoder, std::chrono::system_clock::time_point& result)
 {
     int64_t time;
     if (!decoder.decode(time))
@@ -52,7 +52,7 @@ void ArgumentCoder<AtomicString>::encode(Encoder& encoder, const AtomicString& a
     encoder << atomicString.string();
 }
 
-bool ArgumentCoder<AtomicString>::decode(ArgumentDecoder& decoder, AtomicString& atomicString)
+bool ArgumentCoder<AtomicString>::decode(Decoder& decoder, AtomicString& atomicString)
 {
     String string;
     if (!decoder.decode(string))
@@ -75,7 +75,7 @@ void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length, 1);
 }
 
-bool ArgumentCoder<CString>::decode(ArgumentDecoder& decoder, CString& result)
+bool ArgumentCoder<CString>::decode(Decoder& decoder, CString& result)
 {
     uint32_t length;
     if (!decoder.decode(length))
@@ -123,7 +123,7 @@ void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
 }
 
 template <typename CharacterType>
-static inline bool decodeStringText(ArgumentDecoder& decoder, uint32_t length, String& result)
+static inline bool decodeStringText(Decoder& decoder, uint32_t length, String& result)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
     if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length)) {
@@ -140,7 +140,7 @@ static inline bool decodeStringText(ArgumentDecoder& decoder, uint32_t length, S
     return true;    
 }
 
-bool ArgumentCoder<String>::decode(ArgumentDecoder& decoder, String& result)
+bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
 {
     uint32_t length;
     if (!decoder.decode(length))
@@ -168,7 +168,7 @@ void ArgumentCoder<uuid_t>::encode(Encoder& encoder, const uuid_t& uuid)
     SimpleArgumentCoder<uuid_t>::encode(encoder, uuid);
 }
 
-bool ArgumentCoder<uuid_t>::decode(ArgumentDecoder& decoder, uuid_t& uuid)
+bool ArgumentCoder<uuid_t>::decode(Decoder& decoder, uuid_t& uuid)
 {
     return SimpleArgumentCoder<uuid_t>::decode(decoder, uuid);
 }

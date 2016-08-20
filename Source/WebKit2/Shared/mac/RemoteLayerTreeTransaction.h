@@ -41,7 +41,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -97,7 +97,7 @@ public:
         LayerCreationProperties();
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, LayerCreationProperties&);
+        static bool decode(IPC::Decoder&, LayerCreationProperties&);
 
         WebCore::GraphicsLayer::PlatformLayerID layerID;
         WebCore::PlatformCALayer::LayerType type;
@@ -111,7 +111,7 @@ public:
         LayerProperties(const LayerProperties& other);
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, LayerProperties&);
+        static bool decode(IPC::Decoder&, LayerProperties&);
 
         void notePropertiesChanged(LayerChange changeFlags)
         {
@@ -174,7 +174,7 @@ public:
     ~RemoteLayerTreeTransaction();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RemoteLayerTreeTransaction&);
+    static bool decode(IPC::Decoder&, RemoteLayerTreeTransaction&);
 
     WebCore::GraphicsLayer::PlatformLayerID rootLayerID() const { return m_rootLayerID; }
     void setRootLayerID(WebCore::GraphicsLayer::PlatformLayerID);

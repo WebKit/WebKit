@@ -31,7 +31,7 @@
 #include <wtf/Forward.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -47,7 +47,7 @@ public:
     const WebCore::ResourceResponse& resourceResponse() const { return m_response; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
+    static bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
     explicit URLResponse(const WebCore::ResourceResponse&);

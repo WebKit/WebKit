@@ -32,8 +32,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -42,7 +42,7 @@ struct PlatformPopupMenuData {
     PlatformPopupMenuData();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, PlatformPopupMenuData&);
+    static bool decode(IPC::Decoder&, PlatformPopupMenuData&);
 
 #if PLATFORM(COCOA)
     FontInfo fontInfo;

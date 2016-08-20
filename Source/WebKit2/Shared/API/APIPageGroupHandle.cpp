@@ -26,7 +26,7 @@
 #include "config.h"
 #include "APIPageGroupHandle.h"
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace API {
@@ -50,7 +50,7 @@ void PageGroupHandle::encode(IPC::Encoder& encoder) const
     encoder << m_webPageGroupData;
 }
 
-bool PageGroupHandle::decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+bool PageGroupHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
 {
     WebKit::WebPageGroupData webPageGroupData;
     if (!decoder.decode(webPageGroupData))

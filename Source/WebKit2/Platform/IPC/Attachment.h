@@ -33,7 +33,7 @@
 
 namespace IPC {
 
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 
 class Attachment {
@@ -76,7 +76,7 @@ public:
 #endif
 
     void encode(Encoder&) const;
-    static bool decode(ArgumentDecoder&, Attachment&);
+    static bool decode(Decoder&, Attachment&);
     
 private:
     Type m_type;

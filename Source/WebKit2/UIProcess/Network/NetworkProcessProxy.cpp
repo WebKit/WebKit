@@ -199,7 +199,7 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     m_processPool.networkProcessCrashed(this);
 }
 
-void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
+void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (dispatchMessage(connection, decoder))
         return;
@@ -210,7 +210,7 @@ void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Me
     didReceiveNetworkProcessProxyMessage(connection, decoder);
 }
 
-void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
         return;

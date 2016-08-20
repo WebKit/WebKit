@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DataReference.h"
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace IPC {
@@ -36,7 +36,7 @@ void DataReference::encode(Encoder& encoder) const
     encoder.encodeVariableLengthByteArray(*this);
 }
 
-bool DataReference::decode(ArgumentDecoder& decoder, DataReference& dataReference)
+bool DataReference::decode(Decoder& decoder, DataReference& dataReference)
 {
     return decoder.decodeVariableLengthByteArray(dataReference);
 }

@@ -29,8 +29,8 @@
 #include <wtf/RetainPtr.h>
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -41,7 +41,7 @@ public:
     SecItemResponseData(OSStatus, CFTypeRef result);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, SecItemResponseData&);
+    static bool decode(IPC::Decoder&, SecItemResponseData&);
 
     RetainPtr<CFTypeRef>& resultObject() { return m_resultObject; }
     OSStatus resultCode() const { return m_resultCode; }

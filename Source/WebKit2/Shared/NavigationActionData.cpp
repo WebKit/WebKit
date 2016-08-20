@@ -27,7 +27,7 @@
 #include "NavigationActionData.h"
 
 #include "ArgumentCoders.h"
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 using namespace WebCore;
@@ -46,7 +46,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << downloadAttribute;
 }
 
-bool NavigationActionData::decode(IPC::ArgumentDecoder& decoder, NavigationActionData& result)
+bool NavigationActionData::decode(IPC::Decoder& decoder, NavigationActionData& result)
 {
     if (!decoder.decodeEnum(result.navigationType))
         return false;

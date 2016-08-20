@@ -31,15 +31,15 @@
 #endif
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
     
 struct FontInfo {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, FontInfo&);
+    static bool decode(IPC::Decoder&, FontInfo&);
     
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> fontAttributeDictionary;

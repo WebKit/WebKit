@@ -36,7 +36,7 @@
 #endif
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -46,7 +46,7 @@ struct NetworkProcessCreationParameters {
     NetworkProcessCreationParameters();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, NetworkProcessCreationParameters&);
+    static bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
 
     bool privateBrowsingEnabled;
     CacheModel cacheModel;

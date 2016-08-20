@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 #include "WebCoreArgumentCoders.h"
 
@@ -147,7 +147,7 @@ void NPVariantData::encode(IPC::Encoder& encoder) const
     }
 }
 
-bool NPVariantData::decode(IPC::ArgumentDecoder& decoder, NPVariantData& result)
+bool NPVariantData::decode(IPC::Decoder& decoder, NPVariantData& result)
 {
     uint32_t type;
     if (!decoder.decode(type))

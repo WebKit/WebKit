@@ -114,7 +114,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const 
 }
 #endif
 
-bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder, ResourceRequest& resourceRequest)
+bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, ResourceRequest& resourceRequest)
 {
     bool requestIsPresent;
     if (!decoder.decode(requestIsPresent))
@@ -180,7 +180,7 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
     }
 }
 
-bool ArgumentCoder<CertificateInfo>::decode(ArgumentDecoder& decoder, CertificateInfo& certificateInfo)
+bool ArgumentCoder<CertificateInfo>::decode(Decoder& decoder, CertificateInfo& certificateInfo)
 {
     CertificateInfo::Type certificateInfoType;
     if (!decoder.decodeEnum(certificateInfoType))
@@ -283,7 +283,7 @@ void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const Re
     encodeNSError(encoder, nsError);
 }
 
-static bool decodeNSError(ArgumentDecoder& decoder, RetainPtr<NSError>& nsError)
+static bool decodeNSError(Decoder& decoder, RetainPtr<NSError>& nsError)
 {
     String domain;
     if (!decoder.decode(domain))
@@ -314,7 +314,7 @@ static bool decodeNSError(ArgumentDecoder& decoder, RetainPtr<NSError>& nsError)
     return true;
 }
 
-bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, ResourceError& resourceError)
 {
     bool errorIsNull;
     if (!decoder.decode(errorIsNull))
@@ -343,7 +343,7 @@ void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder& encoder, const 
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
 }
 
-bool ArgumentCoder<ProtectionSpace>::decodePlatformData(ArgumentDecoder& decoder, ProtectionSpace& space)
+bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder& decoder, ProtectionSpace& space)
 {
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))
@@ -390,7 +390,7 @@ void ArgumentCoder<Credential>::encodePlatformData(Encoder& encoder, const Crede
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
 }
 
-bool ArgumentCoder<Credential>::decodePlatformData(ArgumentDecoder& decoder, Credential& credential)
+bool ArgumentCoder<Credential>::decodePlatformData(Decoder& decoder, Credential& credential)
 {
     bool hasIdentity;
     if (!decoder.decode(hasIdentity))
@@ -446,7 +446,7 @@ void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, MachSendRight&& send
     encoder << Attachment(sendRight.leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
 }
 
-bool ArgumentCoder<MachSendRight>::decode(ArgumentDecoder& decoder, MachSendRight& sendRight)
+bool ArgumentCoder<MachSendRight>::decode(Decoder& decoder, MachSendRight& sendRight)
 {
     Attachment attachment;
     if (!decoder.decode(attachment))
@@ -464,7 +464,7 @@ void ArgumentCoder<KeypressCommand>::encode(Encoder& encoder, const KeypressComm
     encoder << keypressCommand.commandName << keypressCommand.text;
 }
     
-bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder& decoder, KeypressCommand& keypressCommand)
+bool ArgumentCoder<KeypressCommand>::decode(Decoder& decoder, KeypressCommand& keypressCommand)
 {
     if (!decoder.decode(keypressCommand.commandName))
         return false;
@@ -486,7 +486,7 @@ void ArgumentCoder<ContentFilterUnblockHandler>::encode(Encoder& encoder, const 
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
 }
 
-bool ArgumentCoder<ContentFilterUnblockHandler>::decode(ArgumentDecoder& decoder, ContentFilterUnblockHandler& contentFilterUnblockHandler)
+bool ArgumentCoder<ContentFilterUnblockHandler>::decode(Decoder& decoder, ContentFilterUnblockHandler& contentFilterUnblockHandler)
 {
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))
@@ -524,7 +524,7 @@ void ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData(Encoder& enco
 
 }
 
-bool ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData(ArgumentDecoder& decoder, MediaPlaybackTargetContext& target)
+bool ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData(Decoder& decoder, MediaPlaybackTargetContext& target)
 {
     if (![getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
         return false;

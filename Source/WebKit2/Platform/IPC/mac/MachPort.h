@@ -26,8 +26,8 @@
 #ifndef MachPort_h
 #define MachPort_h
 
-#include "ArgumentDecoder.h"
 #include "Attachment.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace IPC {
@@ -51,7 +51,7 @@ public:
         encoder << Attachment(m_port, m_disposition);
     }
 
-    static bool decode(ArgumentDecoder& decoder, MachPort& p)
+    static bool decode(Decoder& decoder, MachPort& p)
     {
         Attachment attachment;
         if (!decoder.decode(attachment))

@@ -32,7 +32,7 @@
 
 namespace IPC {
 class Encoder;
-class ArgumentDecoder;
+class Decoder;
 };
 
 namespace WebCore {
@@ -231,7 +231,7 @@ public:
         }
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, KeyframeValue&);
+        static bool decode(IPC::Decoder&, KeyframeValue&);
 
     private:
         KeyframeType keyType;
@@ -263,7 +263,7 @@ public:
         }
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, Properties&);
+        static bool decode(IPC::Decoder&, Properties&);
 
         String keyPath;
         PlatformCAAnimation::AnimationType animationType;

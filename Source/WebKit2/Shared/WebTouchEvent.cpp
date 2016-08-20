@@ -47,7 +47,7 @@ void WebTouchEvent::encode(IPC::Encoder& encoder) const
     encoder << m_touchPoints;
 }
 
-bool WebTouchEvent::decode(IPC::ArgumentDecoder& decoder, WebTouchEvent& result)
+bool WebTouchEvent::decode(IPC::Decoder& decoder, WebTouchEvent& result)
 {
     if (!WebEvent::decode(decoder, result))
         return false;

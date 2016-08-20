@@ -66,7 +66,7 @@ private:
     void derefWebContextSupplement() override;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     bool isUpdating() const { return !m_updateRequesters.isEmpty(); }
     bool isHighAccuracyEnabled() const { return !m_highAccuracyRequesters.isEmpty(); }

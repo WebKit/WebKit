@@ -28,8 +28,8 @@
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 
-#import "ArgumentDecoder.h"
 #import "DataReference.h"
+#import "Decoder.h"
 #import "Encoder.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
@@ -71,7 +71,7 @@ void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
     m_sandboxExtension = 0;
 }
 
-bool SandboxExtension::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& result)
+bool SandboxExtension::Handle::decode(IPC::Decoder& decoder, Handle& result)
 {
     ASSERT(!result.m_sandboxExtension);
 
@@ -131,7 +131,7 @@ void SandboxExtension::HandleArray::encode(IPC::Encoder& encoder) const
     
 }
 
-bool SandboxExtension::HandleArray::decode(IPC::ArgumentDecoder& decoder, SandboxExtension::HandleArray& handles)
+bool SandboxExtension::HandleArray::decode(IPC::Decoder& decoder, SandboxExtension::HandleArray& handles)
 {
     uint64_t size;
     if (!decoder.decode(size))

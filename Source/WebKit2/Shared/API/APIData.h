@@ -32,7 +32,7 @@
 #include <wtf/Vector.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -81,7 +81,7 @@ public:
     IPC::DataReference dataReference() const { return IPC::DataReference(m_bytes, m_size); }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
+    static bool decode(IPC::Decoder&, RefPtr<API::Object>&);
 
 private:
     Data(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)

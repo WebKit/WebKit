@@ -36,7 +36,7 @@ class Data;
 }
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 

@@ -48,7 +48,7 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     platformEncode(encoder);
 }
 
-bool LoadParameters::decode(IPC::ArgumentDecoder& decoder, LoadParameters& data)
+bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
 {
     if (!decoder.decode(data.navigationID))
         return false;
@@ -98,7 +98,7 @@ void LoadParameters::platformEncode(IPC::Encoder&) const
 {
 }
 
-bool LoadParameters::platformDecode(IPC::ArgumentDecoder&, LoadParameters&)
+bool LoadParameters::platformDecode(IPC::Decoder&, LoadParameters&)
 {
     return true;
 }

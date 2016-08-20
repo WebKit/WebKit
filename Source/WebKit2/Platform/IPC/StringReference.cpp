@@ -26,8 +26,8 @@
 #include "config.h"
 #include "StringReference.h"
 
-#include "ArgumentDecoder.h"
 #include "DataReference.h"
+#include "Decoder.h"
 #include "Encoder.h"
 #include <wtf/Hasher.h>
 #include <wtf/text/CString.h>
@@ -44,7 +44,7 @@ void StringReference::encode(Encoder& encoder) const
     encoder << DataReference(reinterpret_cast<const uint8_t*>(m_data), m_size);
 }
 
-bool StringReference::decode(ArgumentDecoder& decoder, StringReference& result)
+bool StringReference::decode(Decoder& decoder, StringReference& result)
 {
     DataReference dataReference;
     if (!decoder.decode(dataReference))

@@ -79,8 +79,8 @@ protected:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
-    bool dispatchMessage(IPC::Connection&, IPC::MessageDecoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
     
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
 

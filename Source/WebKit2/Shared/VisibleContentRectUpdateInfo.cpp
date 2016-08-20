@@ -49,7 +49,7 @@ void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
     encoder << m_enclosedInScrollableAncestorView;
 }
 
-bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, VisibleContentRectUpdateInfo& result)
+bool VisibleContentRectUpdateInfo::decode(IPC::Decoder& decoder, VisibleContentRectUpdateInfo& result)
 {
     if (!decoder.decode(result.m_exposedContentRect))
         return false;

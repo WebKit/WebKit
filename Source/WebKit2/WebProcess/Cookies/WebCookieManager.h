@@ -60,7 +60,7 @@ public:
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void getHostnamesWithCookies(uint64_t callbackID);
     void deleteCookiesForHostname(const String&);

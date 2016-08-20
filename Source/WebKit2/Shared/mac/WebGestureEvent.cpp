@@ -43,7 +43,7 @@ void WebGestureEvent::encode(IPC::Encoder& encoder) const
     encoder << m_gestureRotation;
 }
 
-bool WebGestureEvent::decode(IPC::ArgumentDecoder& decoder, WebGestureEvent& result)
+bool WebGestureEvent::decode(IPC::Decoder& decoder, WebGestureEvent& result)
 {
     if (!WebEvent::decode(decoder, result))
         return false;

@@ -30,7 +30,7 @@
 #include <wtf/PassRefPtr.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -40,7 +40,7 @@ class WebGeolocationPosition : public API::ObjectImpl<API::Object::Type::Geoloca
 public:
     struct Data {
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, Data&);
+        static bool decode(IPC::Decoder&, Data&);
 
         double timestamp;
         double latitude;

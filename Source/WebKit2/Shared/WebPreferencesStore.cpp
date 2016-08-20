@@ -67,7 +67,7 @@ void WebPreferencesStore::Value::encode(IPC::Encoder& encoder) const
     }
 }
 
-bool WebPreferencesStore::Value::decode(IPC::ArgumentDecoder& decoder, Value& result)
+bool WebPreferencesStore::Value::decode(IPC::Decoder& decoder, Value& result)
 {
     Value::Type type;
     if (!decoder.decodeEnum(type))
@@ -121,7 +121,7 @@ void WebPreferencesStore::encode(IPC::Encoder& encoder) const
     encoder << m_overridenDefaults;
 }
 
-bool WebPreferencesStore::decode(IPC::ArgumentDecoder& decoder, WebPreferencesStore& result)
+bool WebPreferencesStore::decode(IPC::Decoder& decoder, WebPreferencesStore& result)
 {
     if (!decoder.decode(result.m_values))
         return false;

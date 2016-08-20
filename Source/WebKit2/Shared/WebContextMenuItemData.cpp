@@ -110,7 +110,7 @@ void WebContextMenuItemData::encode(IPC::Encoder& encoder) const
     encoder << m_submenu;
 }
 
-bool WebContextMenuItemData::decode(IPC::ArgumentDecoder& decoder, WebContextMenuItemData& item)
+bool WebContextMenuItemData::decode(IPC::Decoder& decoder, WebContextMenuItemData& item)
 {
     WebCore::ContextMenuItemType type;
     if (!decoder.decodeEnum(type))

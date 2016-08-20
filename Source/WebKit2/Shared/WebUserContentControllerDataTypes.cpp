@@ -37,7 +37,7 @@ void WebUserScriptData::encode(IPC::Encoder& encoder) const
     encoder << userScript;
 }
 
-bool WebUserScriptData::decode(IPC::ArgumentDecoder& decoder, WebUserScriptData& data)
+bool WebUserScriptData::decode(IPC::Decoder& decoder, WebUserScriptData& data)
 {
     if (!decoder.decode(data.identifier))
         return false;
@@ -55,7 +55,7 @@ void WebUserStyleSheetData::encode(IPC::Encoder& encoder) const
     encoder << userStyleSheet;
 }
 
-bool WebUserStyleSheetData::decode(IPC::ArgumentDecoder& decoder, WebUserStyleSheetData& data)
+bool WebUserStyleSheetData::decode(IPC::Decoder& decoder, WebUserStyleSheetData& data)
 {
     if (!decoder.decode(data.identifier))
         return false;
@@ -74,7 +74,7 @@ void WebScriptMessageHandlerData::encode(IPC::Encoder& encoder) const
     encoder << name;
 }
 
-bool WebScriptMessageHandlerData::decode(IPC::ArgumentDecoder& decoder, WebScriptMessageHandlerData& data)
+bool WebScriptMessageHandlerData::decode(IPC::Decoder& decoder, WebScriptMessageHandlerData& data)
 {
     if (!decoder.decode(data.identifier))
         return false;

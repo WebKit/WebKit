@@ -217,7 +217,7 @@ void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
     }
 }
 
-void NPRemoteObjectMap::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+void NPRemoteObjectMap::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     NPObjectMessageReceiver* messageReceiver = m_registeredNPObjects.get(decoder.destinationID());
     if (!messageReceiver)

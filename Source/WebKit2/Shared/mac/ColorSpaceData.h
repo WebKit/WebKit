@@ -29,15 +29,15 @@
 #include <wtf/RetainPtr.h>
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
 
 struct ColorSpaceData {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, ColorSpaceData&);
+    static bool decode(IPC::Decoder&, ColorSpaceData&);
 
     RetainPtr<CGColorSpaceRef> cgColorSpace;
 };

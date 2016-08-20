@@ -55,7 +55,7 @@ void EditorState::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
+bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
 {
     if (!decoder.decode(result.shouldIgnoreCompositionSelectionChange))
         return false;
@@ -134,7 +134,7 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool EditorState::PostLayoutData::decode(IPC::ArgumentDecoder& decoder, PostLayoutData& result)
+bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& result)
 {
     if (!decoder.decode(result.typingAttributes))
         return false;

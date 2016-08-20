@@ -77,7 +77,7 @@ private:
 #endif
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void addUserContentWorlds(const Vector<std::pair<uint64_t, String>>&);
     void removeUserContentWorlds(const Vector<uint64_t>&);

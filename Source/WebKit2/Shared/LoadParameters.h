@@ -34,7 +34,7 @@
 OBJC_CLASS NSDictionary;
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -42,10 +42,10 @@ namespace WebKit {
 
 struct LoadParameters {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, LoadParameters&);
+    static bool decode(IPC::Decoder&, LoadParameters&);
 
     void platformEncode(IPC::Encoder&) const;
-    static bool platformDecode(IPC::ArgumentDecoder&, LoadParameters&);
+    static bool platformDecode(IPC::Decoder&, LoadParameters&);
 
     uint64_t navigationID;
 

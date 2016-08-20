@@ -30,7 +30,7 @@
 #include <WebCore/ResourceError.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -58,7 +58,7 @@ public:
     const WebCore::ResourceError& platformError() const { return m_platformError; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
+    static bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
     Error()

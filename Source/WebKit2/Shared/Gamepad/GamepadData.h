@@ -31,7 +31,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -39,7 +39,7 @@ namespace WebKit {
 
 struct GamepadData {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, GamepadData&);
+    static bool decode(IPC::Decoder&, GamepadData&);
 
     bool isNull() const;
 

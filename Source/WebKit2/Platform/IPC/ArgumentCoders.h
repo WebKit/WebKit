@@ -26,7 +26,7 @@
 #ifndef ArgumentCoders_h
 #define ArgumentCoders_h
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 #include <utility>
 #include <wtf/Forward.h>
@@ -50,7 +50,7 @@ template<typename T> struct SimpleArgumentCoder {
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&t), sizeof(T), alignof(T));
     }
 
-    static bool decode(ArgumentDecoder& decoder, T& t)
+    static bool decode(Decoder& decoder, T& t)
     {
         return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&t), sizeof(T), alignof(T));
     }
@@ -62,7 +62,7 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
         encoder << (static_cast<uint64_t>(optionSet.toRaw()));
     }
 
-    static bool decode(ArgumentDecoder& decoder, OptionSet<T>& optionSet)
+    static bool decode(Decoder& decoder, OptionSet<T>& optionSet)
     {
         uint64_t value;
         if (!decoder.decode(value))
@@ -85,7 +85,7 @@ template<typename T> struct ArgumentCoder<WTF::Optional<T>> {
         encoder << optional.value();
     }
 
-    static bool decode(ArgumentDecoder& decoder, WTF::Optional<T>& optional)
+    static bool decode(Decoder& decoder, WTF::Optional<T>& optional)
     {
         bool isEngaged;
         if (!decoder.decode(isEngaged))
@@ -111,7 +111,7 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
         encoder << pair.first << pair.second;
     }
 
-    static bool decode(ArgumentDecoder& decoder, std::pair<T, U>& pair)
+    static bool decode(Decoder& decoder, std::pair<T, U>& pair)
     {
         T first;
         if (!decoder.decode(first))
@@ -134,7 +134,7 @@ template<typename Rep, typename Period> struct ArgumentCoder<std::chrono::durati
         encoder << static_cast<int64_t>(duration.count());
     }
 
-    static bool decode(ArgumentDecoder& decoder, std::chrono::duration<Rep, Period>& result)
+    static bool decode(Decoder& decoder, std::chrono::duration<Rep, Period>& result)
     {
         int64_t count;
         if (!decoder.decode(count))
@@ -150,7 +150,7 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
         encoder << pair.key << pair.value;
     }
 
-    static bool decode(ArgumentDecoder& decoder, WTF::KeyValuePair<KeyType, ValueType>& pair)
+    static bool decode(Decoder& decoder, WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         KeyType key;
         if (!decoder.decode(key))
@@ -176,7 +176,7 @@ template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<false, T,
             encoder << vector[i];
     }
 
-    static bool decode(ArgumentDecoder& decoder, Vector<T, inlineCapacity>& vector)
+    static bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)
     {
         uint64_t size;
         if (!decoder.decode(size))
@@ -204,7 +204,7 @@ template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<true, T, 
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), alignof(T));
     }
     
-    static bool decode(ArgumentDecoder& decoder, Vector<T, inlineCapacity>& vector)
+    static bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)
     {
         uint64_t size;
         if (!decoder.decode(size))
@@ -240,7 +240,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             encoder << *it;
     }
 
-    static bool decode(ArgumentDecoder& decoder, HashMapType& hashMap)
+    static bool decode(Decoder& decoder, HashMapType& hashMap)
     {
         uint64_t hashMapSize;
         if (!decoder.decode(hashMapSize))
@@ -277,7 +277,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
             encoder << *it;
     }
 
-    static bool decode(ArgumentDecoder& decoder, HashSetType& hashSet)
+    static bool decode(Decoder& decoder, HashSetType& hashSet)
     {
         uint64_t hashSetSize;
         if (!decoder.decode(hashSetSize))
@@ -314,7 +314,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
         }
     }
     
-    static bool decode(ArgumentDecoder& decoder, HashCountedSetType& hashCountedSet)
+    static bool decode(Decoder& decoder, HashCountedSetType& hashCountedSet)
     {
         uint64_t hashCountedSetSize;
         if (!decoder.decode(hashCountedSetSize))
@@ -344,28 +344,28 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
 
 template<> struct ArgumentCoder<std::chrono::system_clock::time_point> {
     static void encode(Encoder&, const std::chrono::system_clock::time_point&);
-    static bool decode(ArgumentDecoder&, std::chrono::system_clock::time_point&);
+    static bool decode(Decoder&, std::chrono::system_clock::time_point&);
 };
 
 template<> struct ArgumentCoder<AtomicString> {
     static void encode(Encoder&, const AtomicString&);
-    static bool decode(ArgumentDecoder&, AtomicString&);
+    static bool decode(Decoder&, AtomicString&);
 };
 
 template<> struct ArgumentCoder<CString> {
     static void encode(Encoder&, const CString&);
-    static bool decode(ArgumentDecoder&, CString&);
+    static bool decode(Decoder&, CString&);
 };
 
 template<> struct ArgumentCoder<String> {
     static void encode(Encoder&, const String&);
-    static bool decode(ArgumentDecoder&, String&);
+    static bool decode(Decoder&, String&);
 };
 
 #if HAVE(DTRACE)
 template<> struct ArgumentCoder<uuid_t> {
     static void encode(Encoder&, const uuid_t&);
-    static bool decode(ArgumentDecoder&, uuid_t&);
+    static bool decode(Decoder&, uuid_t&);
 };
 #endif
 

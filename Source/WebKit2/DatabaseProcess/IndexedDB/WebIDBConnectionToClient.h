@@ -113,7 +113,7 @@ public:
 
     void disconnectedFromWebProcess();
 
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
     WebIDBConnectionToClient(DatabaseToWebProcessConnection&, uint64_t serverConnectionIdentifier);

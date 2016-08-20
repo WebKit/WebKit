@@ -27,7 +27,7 @@
 #import "ObjCObjectGraph.h"
 
 #import "ArgumentCodersMac.h"
-#import "ArgumentDecoder.h"
+#import "Decoder.h"
 #import "Encoder.h"
 #import <wtf/Optional.h>
 
@@ -210,7 +210,7 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder) const
     encode(encoder, m_rootObject.get());
 }
 
-bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& result)
+bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
 {
     uint32_t typeAsUInt32;
     if (!decoder.decode(typeAsUInt32))
@@ -329,7 +329,7 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
     return true;
 }
 
-bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 {
     RetainPtr<id> rootObject;
     if (!decode(decoder, rootObject))

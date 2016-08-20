@@ -31,8 +31,8 @@
 #include "Plugin.h"
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -41,7 +41,7 @@ struct PluginCreationParameters {
     PluginCreationParameters();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, PluginCreationParameters&);
+    static bool decode(IPC::Decoder&, PluginCreationParameters&);
 
     // The unique ID of this plug-in instance.
     uint64_t pluginInstanceID;

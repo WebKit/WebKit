@@ -89,7 +89,7 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuContextData& result)
+bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextData& result)
 {
     if (!decoder.decodeEnum(result.m_type))
         return false;

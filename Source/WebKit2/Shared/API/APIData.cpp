@@ -26,7 +26,7 @@
 #include "config.h"
 #include "APIData.h"
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace API {
@@ -36,7 +36,7 @@ void Data::encode(IPC::Encoder& encoder) const
     encoder << dataReference();
 }
 
-bool Data::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+bool Data::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))

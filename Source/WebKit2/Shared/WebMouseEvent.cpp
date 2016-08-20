@@ -89,7 +89,7 @@ void WebMouseEvent::encode(IPC::Encoder& encoder) const
     encoder << m_syntheticClickType;
 }
 
-bool WebMouseEvent::decode(IPC::ArgumentDecoder& decoder, WebMouseEvent& result)
+bool WebMouseEvent::decode(IPC::Decoder& decoder, WebMouseEvent& result)
 {
     if (!WebEvent::decode(decoder, result))
         return false;

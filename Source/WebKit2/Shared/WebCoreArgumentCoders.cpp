@@ -103,7 +103,7 @@ void ArgumentCoder<AffineTransform>::encode(Encoder& encoder, const AffineTransf
     SimpleArgumentCoder<AffineTransform>::encode(encoder, affineTransform);
 }
 
-bool ArgumentCoder<AffineTransform>::decode(ArgumentDecoder& decoder, AffineTransform& affineTransform)
+bool ArgumentCoder<AffineTransform>::decode(Decoder& decoder, AffineTransform& affineTransform)
 {
     return SimpleArgumentCoder<AffineTransform>::decode(decoder, affineTransform);
 }
@@ -114,7 +114,7 @@ void ArgumentCoder<EventTrackingRegions>::encode(Encoder& encoder, const EventTr
     encoder << eventTrackingRegions.eventSpecificSynchronousDispatchRegions;
 }
 
-bool ArgumentCoder<EventTrackingRegions>::decode(ArgumentDecoder& decoder, EventTrackingRegions& eventTrackingRegions)
+bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTrackingRegions& eventTrackingRegions)
 {
     Region asynchronousDispatchRegion;
     if (!decoder.decode(asynchronousDispatchRegion))
@@ -150,7 +150,7 @@ void ArgumentCoder<TransformationMatrix>::encode(Encoder& encoder, const Transfo
     encoder << transformationMatrix.m44();
 }
 
-bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder& decoder, TransformationMatrix& transformationMatrix)
+bool ArgumentCoder<TransformationMatrix>::decode(Decoder& decoder, TransformationMatrix& transformationMatrix)
 {
     double m11;
     if (!decoder.decode(m11))
@@ -213,7 +213,7 @@ void ArgumentCoder<LinearTimingFunction>::encode(Encoder& encoder, const LinearT
     encoder.encodeEnum(timingFunction.type());
 }
 
-bool ArgumentCoder<LinearTimingFunction>::decode(ArgumentDecoder&, LinearTimingFunction&)
+bool ArgumentCoder<LinearTimingFunction>::decode(Decoder&, LinearTimingFunction&)
 {
     // Type is decoded by the caller. Nothing else to decode.
     return true;
@@ -231,7 +231,7 @@ void ArgumentCoder<CubicBezierTimingFunction>::encode(Encoder& encoder, const Cu
     encoder.encodeEnum(timingFunction.timingFunctionPreset());
 }
 
-bool ArgumentCoder<CubicBezierTimingFunction>::decode(ArgumentDecoder& decoder, CubicBezierTimingFunction& timingFunction)
+bool ArgumentCoder<CubicBezierTimingFunction>::decode(Decoder& decoder, CubicBezierTimingFunction& timingFunction)
 {
     // Type is decoded by the caller.
     double x1;
@@ -268,7 +268,7 @@ void ArgumentCoder<StepsTimingFunction>::encode(Encoder& encoder, const StepsTim
     encoder << timingFunction.stepAtStart();
 }
 
-bool ArgumentCoder<StepsTimingFunction>::decode(ArgumentDecoder& decoder, StepsTimingFunction& timingFunction)
+bool ArgumentCoder<StepsTimingFunction>::decode(Decoder& decoder, StepsTimingFunction& timingFunction)
 {
     // Type is decoded by the caller.
     int numSteps;
@@ -295,7 +295,7 @@ void ArgumentCoder<SpringTimingFunction>::encode(Encoder& encoder, const SpringT
     encoder << timingFunction.initialVelocity();
 }
 
-bool ArgumentCoder<SpringTimingFunction>::decode(ArgumentDecoder& decoder, SpringTimingFunction& timingFunction)
+bool ArgumentCoder<SpringTimingFunction>::decode(Decoder& decoder, SpringTimingFunction& timingFunction)
 {
     // Type is decoded by the caller.
     double mass;
@@ -324,7 +324,7 @@ void ArgumentCoder<FloatPoint>::encode(Encoder& encoder, const FloatPoint& float
     SimpleArgumentCoder<FloatPoint>::encode(encoder, floatPoint);
 }
 
-bool ArgumentCoder<FloatPoint>::decode(ArgumentDecoder& decoder, FloatPoint& floatPoint)
+bool ArgumentCoder<FloatPoint>::decode(Decoder& decoder, FloatPoint& floatPoint)
 {
     return SimpleArgumentCoder<FloatPoint>::decode(decoder, floatPoint);
 }
@@ -335,7 +335,7 @@ void ArgumentCoder<FloatPoint3D>::encode(Encoder& encoder, const FloatPoint3D& f
     SimpleArgumentCoder<FloatPoint3D>::encode(encoder, floatPoint);
 }
 
-bool ArgumentCoder<FloatPoint3D>::decode(ArgumentDecoder& decoder, FloatPoint3D& floatPoint)
+bool ArgumentCoder<FloatPoint3D>::decode(Decoder& decoder, FloatPoint3D& floatPoint)
 {
     return SimpleArgumentCoder<FloatPoint3D>::decode(decoder, floatPoint);
 }
@@ -346,7 +346,7 @@ void ArgumentCoder<FloatRect>::encode(Encoder& encoder, const FloatRect& floatRe
     SimpleArgumentCoder<FloatRect>::encode(encoder, floatRect);
 }
 
-bool ArgumentCoder<FloatRect>::decode(ArgumentDecoder& decoder, FloatRect& floatRect)
+bool ArgumentCoder<FloatRect>::decode(Decoder& decoder, FloatRect& floatRect)
 {
     return SimpleArgumentCoder<FloatRect>::decode(decoder, floatRect);
 }
@@ -357,7 +357,7 @@ void ArgumentCoder<FloatSize>::encode(Encoder& encoder, const FloatSize& floatSi
     SimpleArgumentCoder<FloatSize>::encode(encoder, floatSize);
 }
 
-bool ArgumentCoder<FloatSize>::decode(ArgumentDecoder& decoder, FloatSize& floatSize)
+bool ArgumentCoder<FloatSize>::decode(Decoder& decoder, FloatSize& floatSize)
 {
     return SimpleArgumentCoder<FloatSize>::decode(decoder, floatSize);
 }
@@ -368,7 +368,7 @@ void ArgumentCoder<FloatRoundedRect>::encode(Encoder& encoder, const FloatRounde
     SimpleArgumentCoder<FloatRoundedRect>::encode(encoder, roundedRect);
 }
 
-bool ArgumentCoder<FloatRoundedRect>::decode(ArgumentDecoder& decoder, FloatRoundedRect& roundedRect)
+bool ArgumentCoder<FloatRoundedRect>::decode(Decoder& decoder, FloatRoundedRect& roundedRect)
 {
     return SimpleArgumentCoder<FloatRoundedRect>::decode(decoder, roundedRect);
 }
@@ -379,7 +379,7 @@ void ArgumentCoder<FloatQuad>::encode(Encoder& encoder, const FloatQuad& floatQu
     SimpleArgumentCoder<FloatQuad>::encode(encoder, floatQuad);
 }
 
-bool ArgumentCoder<FloatQuad>::decode(ArgumentDecoder& decoder, FloatQuad& floatQuad)
+bool ArgumentCoder<FloatQuad>::decode(Decoder& decoder, FloatQuad& floatQuad)
 {
     return SimpleArgumentCoder<FloatQuad>::decode(decoder, floatQuad);
 }
@@ -389,7 +389,7 @@ void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportAr
     SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
 }
 
-bool ArgumentCoder<ViewportArguments>::decode(ArgumentDecoder& decoder, ViewportArguments& viewportArguments)
+bool ArgumentCoder<ViewportArguments>::decode(Decoder& decoder, ViewportArguments& viewportArguments)
 {
     return SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments);
 }
@@ -401,7 +401,7 @@ void ArgumentCoder<IntPoint>::encode(Encoder& encoder, const IntPoint& intPoint)
     SimpleArgumentCoder<IntPoint>::encode(encoder, intPoint);
 }
 
-bool ArgumentCoder<IntPoint>::decode(ArgumentDecoder& decoder, IntPoint& intPoint)
+bool ArgumentCoder<IntPoint>::decode(Decoder& decoder, IntPoint& intPoint)
 {
     return SimpleArgumentCoder<IntPoint>::decode(decoder, intPoint);
 }
@@ -412,7 +412,7 @@ void ArgumentCoder<IntRect>::encode(Encoder& encoder, const IntRect& intRect)
     SimpleArgumentCoder<IntRect>::encode(encoder, intRect);
 }
 
-bool ArgumentCoder<IntRect>::decode(ArgumentDecoder& decoder, IntRect& intRect)
+bool ArgumentCoder<IntRect>::decode(Decoder& decoder, IntRect& intRect)
 {
     return SimpleArgumentCoder<IntRect>::decode(decoder, intRect);
 }
@@ -423,7 +423,7 @@ void ArgumentCoder<IntSize>::encode(Encoder& encoder, const IntSize& intSize)
     SimpleArgumentCoder<IntSize>::encode(encoder, intSize);
 }
 
-bool ArgumentCoder<IntSize>::decode(ArgumentDecoder& decoder, IntSize& intSize)
+bool ArgumentCoder<IntSize>::decode(Decoder& decoder, IntSize& intSize)
 {
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
@@ -467,7 +467,7 @@ void ArgumentCoder<Path>::encode(Encoder& encoder, const Path& path)
     });
 }
 
-bool ArgumentCoder<Path>::decode(ArgumentDecoder& decoder, Path& path)
+bool ArgumentCoder<Path>::decode(Decoder& decoder, Path& path)
 {
     uint64_t numPoints;
     if (!decoder.decode(numPoints))
@@ -538,7 +538,7 @@ void ArgumentCoder<RecentSearch>::encode(Encoder& encoder, const RecentSearch& r
     encoder << recentSearch.string << recentSearch.time;
 }
 
-bool ArgumentCoder<RecentSearch>::decode(ArgumentDecoder& decoder, RecentSearch& recentSearch)
+bool ArgumentCoder<RecentSearch>::decode(Decoder& decoder, RecentSearch& recentSearch)
 {
     if (!decoder.decode(recentSearch.string))
         return false;
@@ -551,7 +551,7 @@ bool ArgumentCoder<RecentSearch>::decode(ArgumentDecoder& decoder, RecentSearch&
 
 template<> struct ArgumentCoder<Region::Span> {
     static void encode(Encoder&, const Region::Span&);
-    static bool decode(ArgumentDecoder&, Region::Span&);
+    static bool decode(Decoder&, Region::Span&);
 };
 
 void ArgumentCoder<Region::Span>::encode(Encoder& encoder, const Region::Span& span)
@@ -560,7 +560,7 @@ void ArgumentCoder<Region::Span>::encode(Encoder& encoder, const Region::Span& s
     encoder << (uint64_t)span.segmentIndex;
 }
 
-bool ArgumentCoder<Region::Span>::decode(ArgumentDecoder& decoder, Region::Span& span)
+bool ArgumentCoder<Region::Span>::decode(Decoder& decoder, Region::Span& span)
 {
     if (!decoder.decode(span.y))
         return false;
@@ -579,7 +579,7 @@ void ArgumentCoder<Region>::encode(Encoder& encoder, const Region& region)
     encoder.encode(region.shapeSpans());
 }
 
-bool ArgumentCoder<Region>::decode(ArgumentDecoder& decoder, Region& region)
+bool ArgumentCoder<Region>::decode(Decoder& decoder, Region& region)
 {
     Vector<int> segments;
     if (!decoder.decode(segments))
@@ -604,7 +604,7 @@ void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
     SimpleArgumentCoder<Length>::encode(encoder, length);
 }
 
-bool ArgumentCoder<Length>::decode(ArgumentDecoder& decoder, Length& length)
+bool ArgumentCoder<Length>::decode(Decoder& decoder, Length& length)
 {
     return SimpleArgumentCoder<Length>::decode(decoder, length);
 }
@@ -615,7 +615,7 @@ void ArgumentCoder<ViewportAttributes>::encode(Encoder& encoder, const ViewportA
     SimpleArgumentCoder<ViewportAttributes>::encode(encoder, viewportAttributes);
 }
 
-bool ArgumentCoder<ViewportAttributes>::decode(ArgumentDecoder& decoder, ViewportAttributes& viewportAttributes)
+bool ArgumentCoder<ViewportAttributes>::decode(Decoder& decoder, ViewportAttributes& viewportAttributes)
 {
     return SimpleArgumentCoder<ViewportAttributes>::decode(decoder, viewportAttributes);
 }
@@ -626,7 +626,7 @@ void ArgumentCoder<MimeClassInfo>::encode(Encoder& encoder, const MimeClassInfo&
     encoder << mimeClassInfo.type << mimeClassInfo.desc << mimeClassInfo.extensions;
 }
 
-bool ArgumentCoder<MimeClassInfo>::decode(ArgumentDecoder& decoder, MimeClassInfo& mimeClassInfo)
+bool ArgumentCoder<MimeClassInfo>::decode(Decoder& decoder, MimeClassInfo& mimeClassInfo)
 {
     if (!decoder.decode(mimeClassInfo.type))
         return false;
@@ -653,7 +653,7 @@ void ArgumentCoder<PluginInfo>::encode(Encoder& encoder, const PluginInfo& plugi
 #endif
 }
 
-bool ArgumentCoder<PluginInfo>::decode(ArgumentDecoder& decoder, PluginInfo& pluginInfo)
+bool ArgumentCoder<PluginInfo>::decode(Decoder& decoder, PluginInfo& pluginInfo)
 {
     if (!decoder.decode(pluginInfo.name))
         return false;
@@ -682,7 +682,7 @@ void ArgumentCoder<AuthenticationChallenge>::encode(Encoder& encoder, const Auth
     encoder << challenge.protectionSpace() << challenge.proposedCredential() << challenge.previousFailureCount() << challenge.failureResponse() << challenge.error();
 }
 
-bool ArgumentCoder<AuthenticationChallenge>::decode(ArgumentDecoder& decoder, AuthenticationChallenge& challenge)
+bool ArgumentCoder<AuthenticationChallenge>::decode(Decoder& decoder, AuthenticationChallenge& challenge)
 {    
     ProtectionSpace protectionSpace;
     if (!decoder.decode(protectionSpace))
@@ -723,7 +723,7 @@ void ArgumentCoder<ProtectionSpace>::encode(Encoder& encoder, const ProtectionSp
     encoder.encodeEnum(space.serverType());
 }
 
-bool ArgumentCoder<ProtectionSpace>::decode(ArgumentDecoder& decoder, ProtectionSpace& space)
+bool ArgumentCoder<ProtectionSpace>::decode(Decoder& decoder, ProtectionSpace& space)
 {
     bool hasPlatformData;
     if (!decoder.decode(hasPlatformData))
@@ -769,7 +769,7 @@ void ArgumentCoder<Credential>::encode(Encoder& encoder, const Credential& crede
     encoder.encodeEnum(credential.persistence());
 }
 
-bool ArgumentCoder<Credential>::decode(ArgumentDecoder& decoder, Credential& credential)
+bool ArgumentCoder<Credential>::decode(Decoder& decoder, Credential& credential)
 {
     bool hasPlatformData;
     if (!decoder.decode(hasPlatformData))
@@ -805,7 +805,7 @@ static void encodeImage(Encoder& encoder, Image& image)
     encoder << handle;
 }
 
-static bool decodeImage(ArgumentDecoder& decoder, RefPtr<Image>& image)
+static bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
 {
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
@@ -829,7 +829,7 @@ static void encodeOptionalImage(Encoder& encoder, Image* image)
         encodeImage(encoder, *image);
 }
 
-static bool decodeOptionalImage(ArgumentDecoder& decoder, RefPtr<Image>& image)
+static bool decodeOptionalImage(Decoder& decoder, RefPtr<Image>& image)
 {
     image = nullptr;
 
@@ -864,7 +864,7 @@ void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
 #endif
 }
 
-bool ArgumentCoder<Cursor>::decode(ArgumentDecoder& decoder, Cursor& cursor)
+bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
 {
     Cursor::Type type;
     if (!decoder.decodeEnum(type))
@@ -933,7 +933,7 @@ void ArgumentCoder<ResourceRequest>::encode(Encoder& encoder, const ResourceRequ
     resourceRequest.encodeWithoutPlatformData(encoder);
 }
 
-bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRequest& resourceRequest)
+bool ArgumentCoder<ResourceRequest>::decode(Decoder& decoder, ResourceRequest& resourceRequest)
 {
 #if ENABLE(CACHE_PARTITIONING)
     String cachePartition;
@@ -961,7 +961,7 @@ void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError&
     encodePlatformData(encoder, resourceError);
 }
 
-bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder& decoder, ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resourceError)
 {
     return decodePlatformData(decoder, resourceError);
 }
@@ -984,7 +984,7 @@ void ArgumentCoder<SelectionRect>::encode(Encoder& encoder, const SelectionRect&
     encoder << selectionRect.isHorizontal();
 }
 
-bool ArgumentCoder<SelectionRect>::decode(ArgumentDecoder& decoder, SelectionRect& selectionRect)
+bool ArgumentCoder<SelectionRect>::decode(Decoder& decoder, SelectionRect& selectionRect)
 {
     IntRect rect;
     if (!decoder.decode(rect))
@@ -1059,7 +1059,7 @@ void ArgumentCoder<WindowFeatures>::encode(Encoder& encoder, const WindowFeature
     encoder << windowFeatures.dialog;
 }
 
-bool ArgumentCoder<WindowFeatures>::decode(ArgumentDecoder& decoder, WindowFeatures& windowFeatures)
+bool ArgumentCoder<WindowFeatures>::decode(Decoder& decoder, WindowFeatures& windowFeatures)
 {
     if (!decoder.decode(windowFeatures.x))
         return false;
@@ -1100,7 +1100,7 @@ void ArgumentCoder<Color>::encode(Encoder& encoder, const Color& color)
     encoder << color.rgb();
 }
 
-bool ArgumentCoder<Color>::decode(ArgumentDecoder& decoder, Color& color)
+bool ArgumentCoder<Color>::decode(Decoder& decoder, Color& color)
 {
     bool isValid;
     if (!decoder.decode(isValid))
@@ -1128,7 +1128,7 @@ void ArgumentCoder<CompositionUnderline>::encode(Encoder& encoder, const Composi
     encoder << underline.color;
 }
 
-bool ArgumentCoder<CompositionUnderline>::decode(ArgumentDecoder& decoder, CompositionUnderline& underline)
+bool ArgumentCoder<CompositionUnderline>::decode(Decoder& decoder, CompositionUnderline& underline)
 {
     if (!decoder.decode(underline.startOffset))
         return false;
@@ -1155,7 +1155,7 @@ void ArgumentCoder<Cookie>::encode(Encoder& encoder, const Cookie& cookie)
     encoder << cookie.session;
 }
 
-bool ArgumentCoder<Cookie>::decode(ArgumentDecoder& decoder, Cookie& cookie)
+bool ArgumentCoder<Cookie>::decode(Decoder& decoder, Cookie& cookie)
 {
     if (!decoder.decode(cookie.name))
         return false;
@@ -1187,7 +1187,7 @@ void ArgumentCoder<DatabaseDetails>::encode(Encoder& encoder, const DatabaseDeta
     encoder << details.modificationTime();
 }
     
-bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder& decoder, DatabaseDetails& details)
+bool ArgumentCoder<DatabaseDetails>::decode(Decoder& decoder, DatabaseDetails& details)
 {
     String name;
     if (!decoder.decode(name))
@@ -1231,7 +1231,7 @@ void ArgumentCoder<Highlight>::encode(Encoder& encoder, const Highlight& highlig
     encoder << highlight.quads;
 }
 
-bool ArgumentCoder<Highlight>::decode(ArgumentDecoder& decoder, Highlight& highlight)
+bool ArgumentCoder<Highlight>::decode(Decoder& decoder, Highlight& highlight)
 {
     uint32_t type;
     if (!decoder.decode(type))
@@ -1267,7 +1267,7 @@ static void encodeSharedBuffer(Encoder& encoder, SharedBuffer* buffer)
     }
 }
 
-static bool decodeSharedBuffer(ArgumentDecoder& decoder, RefPtr<SharedBuffer>& buffer)
+static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
 {
     uint64_t bufferSize = 0;
     if (!decoder.decode(bufferSize))
@@ -1300,7 +1300,7 @@ void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const Pastebo
         encodeSharedBuffer(encoder, content.clientData[i].get());
 }
 
-bool ArgumentCoder<PasteboardWebContent>::decode(ArgumentDecoder& decoder, PasteboardWebContent& content)
+bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWebContent& content)
 {
     if (!decoder.decode(content.canSmartCopyOrDelete))
         return false;
@@ -1334,7 +1334,7 @@ void ArgumentCoder<PasteboardImage>::encode(Encoder& encoder, const PasteboardIm
         encodeSharedBuffer(encoder, pasteboardImage.resourceData.get());
 }
 
-bool ArgumentCoder<PasteboardImage>::decode(ArgumentDecoder& decoder, PasteboardImage& pasteboardImage)
+bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& pasteboardImage)
 {
     if (!decodeOptionalImage(decoder, pasteboardImage.image))
         return false;
@@ -1358,7 +1358,7 @@ void ArgumentCoder<DictationAlternative>::encode(Encoder& encoder, const Dictati
     encoder << dictationAlternative.dictationContext;
 }
 
-bool ArgumentCoder<DictationAlternative>::decode(ArgumentDecoder& decoder, DictationAlternative& dictationAlternative)
+bool ArgumentCoder<DictationAlternative>::decode(Decoder& decoder, DictationAlternative& dictationAlternative)
 {
     if (!decoder.decode(dictationAlternative.rangeStart))
         return false;
@@ -1380,7 +1380,7 @@ void ArgumentCoder<FileChooserSettings>::encode(Encoder& encoder, const FileChoo
 #endif
 }
 
-bool ArgumentCoder<FileChooserSettings>::decode(ArgumentDecoder& decoder, FileChooserSettings& settings)
+bool ArgumentCoder<FileChooserSettings>::decode(Decoder& decoder, FileChooserSettings& settings)
 {
     if (!decoder.decode(settings.allowsMultipleFiles))
         return false;
@@ -1405,7 +1405,7 @@ void ArgumentCoder<GrammarDetail>::encode(Encoder& encoder, const GrammarDetail&
     encoder << detail.userDescription;
 }
 
-bool ArgumentCoder<GrammarDetail>::decode(ArgumentDecoder& decoder, GrammarDetail& detail)
+bool ArgumentCoder<GrammarDetail>::decode(Decoder& decoder, GrammarDetail& detail)
 {
     if (!decoder.decode(detail.location))
         return false;
@@ -1427,7 +1427,7 @@ void ArgumentCoder<TextCheckingRequestData>::encode(Encoder& encoder, const Text
     encoder.encodeEnum(request.processType());
 }
 
-bool ArgumentCoder<TextCheckingRequestData>::decode(ArgumentDecoder& decoder, TextCheckingRequestData& request)
+bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextCheckingRequestData& request)
 {
     int sequence;
     if (!decoder.decode(sequence))
@@ -1458,7 +1458,7 @@ void ArgumentCoder<TextCheckingResult>::encode(Encoder& encoder, const TextCheck
     encoder << result.replacement;
 }
 
-bool ArgumentCoder<TextCheckingResult>::decode(ArgumentDecoder& decoder, TextCheckingResult& result)
+bool ArgumentCoder<TextCheckingResult>::decode(Decoder& decoder, TextCheckingResult& result)
 {
     if (!decoder.decodeEnum(result.type))
         return false;
@@ -1478,7 +1478,7 @@ void ArgumentCoder<URL>::encode(Encoder& encoder, const URL& result)
     encoder << result.string();
 }
     
-bool ArgumentCoder<URL>::decode(ArgumentDecoder& decoder, URL& result)
+bool ArgumentCoder<URL>::decode(Decoder& decoder, URL& result)
 {
     String urlAsString;
     if (!decoder.decode(urlAsString))
@@ -1497,7 +1497,7 @@ void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleShee
     encoder.encodeEnum(userStyleSheet.level());
 }
 
-bool ArgumentCoder<UserStyleSheet>::decode(ArgumentDecoder& decoder, UserStyleSheet& userStyleSheet)
+bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& userStyleSheet)
 {
     String source;
     if (!decoder.decode(source))
@@ -1536,7 +1536,7 @@ void ArgumentCoder<MediaSessionMetadata>::encode(Encoder& encoder, const MediaSe
     encoder << result.artworkURL();
 }
 
-bool ArgumentCoder<MediaSessionMetadata>::decode(ArgumentDecoder& decoder, MediaSessionMetadata& result)
+bool ArgumentCoder<MediaSessionMetadata>::decode(Decoder& decoder, MediaSessionMetadata& result)
 {
     String artist, album, title;
     URL artworkURL;
@@ -1563,7 +1563,7 @@ void ArgumentCoder<UserScript>::encode(Encoder& encoder, const UserScript& userS
     encoder.encodeEnum(userScript.injectedFrames());
 }
 
-bool ArgumentCoder<UserScript>::decode(ArgumentDecoder& decoder, UserScript& userScript)
+bool ArgumentCoder<UserScript>::decode(Decoder& decoder, UserScript& userScript)
 {
     String source;
     if (!decoder.decode(source))
@@ -1605,7 +1605,7 @@ void ArgumentCoder<ScrollableAreaParameters>::encode(Encoder& encoder, const Scr
     encoder << parameters.hasEnabledVerticalScrollbar;
 }
 
-bool ArgumentCoder<ScrollableAreaParameters>::decode(ArgumentDecoder& decoder, ScrollableAreaParameters& params)
+bool ArgumentCoder<ScrollableAreaParameters>::decode(Decoder& decoder, ScrollableAreaParameters& params)
 {
     if (!decoder.decodeEnum(params.horizontalScrollElasticity))
         return false;
@@ -1634,7 +1634,7 @@ void ArgumentCoder<FixedPositionViewportConstraints>::encode(Encoder& encoder, c
     encoder << viewportConstraints.layerPositionAtLastLayout();
 }
 
-bool ArgumentCoder<FixedPositionViewportConstraints>::decode(ArgumentDecoder& decoder, FixedPositionViewportConstraints& viewportConstraints)
+bool ArgumentCoder<FixedPositionViewportConstraints>::decode(Decoder& decoder, FixedPositionViewportConstraints& viewportConstraints)
 {
     FloatSize alignmentOffset;
     if (!decoder.decode(alignmentOffset))
@@ -1680,7 +1680,7 @@ void ArgumentCoder<StickyPositionViewportConstraints>::encode(Encoder& encoder, 
     encoder << viewportConstraints.layerPositionAtLastLayout();
 }
 
-bool ArgumentCoder<StickyPositionViewportConstraints>::decode(ArgumentDecoder& decoder, StickyPositionViewportConstraints& viewportConstraints)
+bool ArgumentCoder<StickyPositionViewportConstraints>::decode(Decoder& decoder, StickyPositionViewportConstraints& viewportConstraints)
 {
     FloatSize alignmentOffset;
     if (!decoder.decode(alignmentOffset))
@@ -1785,7 +1785,7 @@ void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperat
     }
 }
 
-bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperation>& filter)
+bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
 {
     FilterOperation::OperationType type;
     if (!decoder.decodeEnum(type))
@@ -1861,7 +1861,7 @@ void ArgumentCoder<FilterOperations>::encode(Encoder& encoder, const FilterOpera
         encoder << *filter;
 }
 
-bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOperations& filters)
+bool ArgumentCoder<FilterOperations>::decode(Decoder& decoder, FilterOperations& filters)
 {
     uint64_t filterCount;
     if (!decoder.decode(filterCount))
@@ -1883,7 +1883,7 @@ void ArgumentCoder<SessionID>::encode(Encoder& encoder, const SessionID& session
     encoder << sessionID.sessionID();
 }
 
-bool ArgumentCoder<SessionID>::decode(ArgumentDecoder& decoder, SessionID& sessionID)
+bool ArgumentCoder<SessionID>::decode(Decoder& decoder, SessionID& sessionID)
 {
     uint64_t session;
     if (!decoder.decode(session))
@@ -1907,7 +1907,7 @@ void ArgumentCoder<BlobPart>::encode(Encoder& encoder, const BlobPart& blobPart)
     }
 }
 
-bool ArgumentCoder<BlobPart>::decode(ArgumentDecoder& decoder, BlobPart& blobPart)
+bool ArgumentCoder<BlobPart>::decode(Decoder& decoder, BlobPart& blobPart)
 {
     uint32_t type;
     if (!decoder.decode(type))
@@ -1948,7 +1948,7 @@ void ArgumentCoder<TextIndicatorData>::encode(Encoder& encoder, const TextIndica
     encodeOptionalImage(encoder, textIndicatorData.contentImageWithHighlight.get());
 }
 
-bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndicatorData& textIndicatorData)
+bool ArgumentCoder<TextIndicatorData>::decode(Decoder& decoder, TextIndicatorData& textIndicatorData)
 {
     if (!decoder.decode(textIndicatorData.selectionRectInRootViewCoordinates))
         return false;
@@ -1998,7 +1998,7 @@ void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const M
     encoder << static_cast<int32_t>(target.mockState());
 }
 
-bool ArgumentCoder<MediaPlaybackTargetContext>::decode(ArgumentDecoder& decoder, MediaPlaybackTargetContext& target)
+bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPlaybackTargetContext& target)
 {
     bool hasPlatformData;
     if (!decoder.decode(hasPlatformData))
@@ -2044,7 +2044,7 @@ void ArgumentCoder<DictionaryPopupInfo>::encode(IPC::Encoder& encoder, const Dic
 #endif
 }
 
-bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::ArgumentDecoder& decoder, DictionaryPopupInfo& result)
+bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::Decoder& decoder, DictionaryPopupInfo& result)
 {
     if (!decoder.decode(result.origin))
         return false;
@@ -2082,7 +2082,7 @@ void ArgumentCoder<ExceptionDetails>::encode(IPC::Encoder& encoder, const Except
     encoder << info.sourceURL;
 }
 
-bool ArgumentCoder<ExceptionDetails>::decode(IPC::ArgumentDecoder& decoder, ExceptionDetails& result)
+bool ArgumentCoder<ExceptionDetails>::decode(IPC::Decoder& decoder, ExceptionDetails& result)
 {
     if (!decoder.decode(result.message))
         return false;
@@ -2137,7 +2137,7 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     encoder << statistics.isPrevalentResource;
 }
 
-bool ArgumentCoder<ResourceLoadStatistics>::decode(ArgumentDecoder& decoder, WebCore::ResourceLoadStatistics& statistics)
+bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::ResourceLoadStatistics& statistics)
 {
     if (!decoder.decode(statistics.highLevelDomain))
         return false;

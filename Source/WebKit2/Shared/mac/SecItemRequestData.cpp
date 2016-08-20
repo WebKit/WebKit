@@ -62,7 +62,7 @@ void SecItemRequestData::encode(IPC::Encoder& encoder) const
         IPC::encode(encoder, m_attributesToMatch.get());
 }
 
-bool SecItemRequestData::decode(IPC::ArgumentDecoder& decoder, SecItemRequestData& secItemRequestData)
+bool SecItemRequestData::decode(IPC::Decoder& decoder, SecItemRequestData& secItemRequestData)
 {
     if (!decoder.decodeEnum(secItemRequestData.m_type))
         return false;

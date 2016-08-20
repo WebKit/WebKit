@@ -45,7 +45,7 @@ public:
 private:
     ViewUpdateDispatcher();
     // IPC::Connection::WorkQueueMessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void visibleContentRectUpdate(uint64_t pageID, const VisibleContentRectUpdateInfo&);
 

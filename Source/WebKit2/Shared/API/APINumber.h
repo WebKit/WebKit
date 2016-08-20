@@ -27,7 +27,7 @@
 #define APINumber_h
 
 #include "APIObject.h"
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace API {
@@ -47,7 +47,7 @@ public:
         encoder << m_value;
     }
 
-    static bool decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+    static bool decode(IPC::Decoder& decoder, RefPtr<Object>& result)
     {
         NumberType value;
         if (!decoder.decode(value))

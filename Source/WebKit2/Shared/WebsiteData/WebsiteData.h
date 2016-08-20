@@ -32,7 +32,7 @@
 #include <wtf/Vector.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -47,7 +47,7 @@ struct WebsiteData {
         uint64_t size;
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, WebsiteData::Entry&);
+        static bool decode(IPC::Decoder&, WebsiteData::Entry&);
     };
 
     Vector<Entry> entries;
@@ -58,7 +58,7 @@ struct WebsiteData {
 #endif
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebsiteData&);
+    static bool decode(IPC::Decoder&, WebsiteData&);
 };
 
 }

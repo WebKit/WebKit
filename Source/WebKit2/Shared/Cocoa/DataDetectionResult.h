@@ -38,7 +38,7 @@ struct DataDetectionResult {
     RetainPtr<NSArray> results;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, DataDetectionResult&);
+    static bool decode(IPC::Decoder&, DataDetectionResult&);
 };
 
 }

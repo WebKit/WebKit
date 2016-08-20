@@ -41,7 +41,7 @@
 namespace IPC {
 class Attachment;
 class Connection;
-class MessageDecoder;
+class Decoder;
 class MessageReceiver;
 }
 
@@ -91,7 +91,7 @@ public:
     static Ref<WebPlaybackSessionManager> create(WebPage&);
     virtual ~WebPlaybackSessionManager();
 
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&);
     void clearPlaybackControlsManager();

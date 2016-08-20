@@ -67,7 +67,7 @@ private:
     void paymentCoordinatorDestroyed() override;
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers.
     void validateMerchant(const String& validationURLString);

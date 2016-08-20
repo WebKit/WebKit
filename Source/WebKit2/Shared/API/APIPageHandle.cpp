@@ -26,7 +26,7 @@
 #include "config.h"
 #include "APIPageHandle.h"
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace API {
@@ -57,7 +57,7 @@ void PageHandle::encode(IPC::Encoder& encoder) const
     encoder << m_isAutoconverting;
 }
 
-bool PageHandle::decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+bool PageHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
 {
     uint64_t pageID;
     if (!decoder.decode(pageID))

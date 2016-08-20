@@ -31,8 +31,8 @@
 #include <wtf/text/CString.h>
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -99,7 +99,7 @@ public:
     }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, NPVariantData&);
+    static bool decode(IPC::Decoder&, NPVariantData&);
 
 private:
     uint32_t m_type;

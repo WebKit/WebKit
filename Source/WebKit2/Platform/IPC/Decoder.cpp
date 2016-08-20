@@ -24,30 +24,86 @@
  */
 
 #include "config.h"
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 
 #include "DataReference.h"
+#include "MessageFlags.h"
 #include <stdio.h>
+
+#if PLATFORM(MAC)
+#include "ImportanceAssertion.h"
+#endif
 
 namespace IPC {
 
-ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize)
+Decoder::Decoder(const DataReference& buffer, Vector<Attachment> attachments)
 {
-    initialize(buffer, bufferSize);
-}
-
-ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vector<Attachment> attachments)
-{
-    initialize(buffer, bufferSize);
+    initialize(buffer.data(), buffer.size());
 
     m_attachments = WTFMove(attachments);
+
+    if (!decode(m_messageFlags))
+        return;
+
+    if (!decode(m_messageReceiverName))
+        return;
+
+    if (!decode(m_messageName))
+        return;
+
+    if (!decode(m_destinationID))
+        return;
 }
 
-ArgumentDecoder::~ArgumentDecoder()
+Decoder::~Decoder()
 {
     ASSERT(m_buffer);
     fastFree(m_buffer);
     // FIXME: We need to dispose of the mach ports in cases of failure.
+
+#if HAVE(QOS_CLASSES)
+    if (m_qosClassOverride)
+        pthread_override_qos_class_end_np(m_qosClassOverride);
+#endif
+}
+
+bool Decoder::isSyncMessage() const
+{
+    return m_messageFlags & SyncMessage;
+}
+
+bool Decoder::shouldDispatchMessageWhenWaitingForSyncReply() const
+{
+    return m_messageFlags & DispatchMessageWhenWaitingForSyncReply;
+}
+
+bool Decoder::shouldUseFullySynchronousModeForTesting() const
+{
+    return m_messageFlags & UseFullySynchronousModeForTesting;
+}
+
+#if PLATFORM(MAC)
+void Decoder::setImportanceAssertion(std::unique_ptr<ImportanceAssertion> assertion)
+{
+    m_importanceAssertion = WTFMove(assertion);
+}
+#endif
+
+std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
+{
+    ASSERT(decoder.isSyncMessage());
+
+    Vector<Attachment> attachments;
+    Attachment attachment;
+    while (decoder.removeAttachment(attachment))
+        attachments.append(WTFMove(attachment));
+    attachments.reverse();
+
+    DataReference wrappedMessage;
+    if (!decoder.decode(wrappedMessage))
+        return nullptr;
+
+    return std::make_unique<Decoder>(wrappedMessage, WTFMove(attachments));
 }
 
 static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
@@ -59,7 +115,7 @@ static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
     return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
 }
 
-void ArgumentDecoder::initialize(const uint8_t* buffer, size_t bufferSize)
+void Decoder::initialize(const uint8_t* buffer, size_t bufferSize)
 {
     m_buffer = static_cast<uint8_t*>(fastMalloc(bufferSize));
 
@@ -75,7 +131,7 @@ static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPos
     return bufferEnd >= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
 }
 
-bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)
+bool Decoder::alignBufferPosition(unsigned alignment, size_t size)
 {
     uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
     if (!alignedBufferIsLargeEnoughToContain(alignedPosition, m_bufferEnd, size)) {
@@ -88,12 +144,12 @@ bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)
     return true;
 }
 
-bool ArgumentDecoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
+bool Decoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
 {
     return alignedBufferIsLargeEnoughToContain(roundUpToAlignment(m_bufferPos, alignment), m_bufferEnd, size);
 }
 
-bool ArgumentDecoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned alignment)
+bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned alignment)
 {
     if (!alignBufferPosition(alignment, size))
         return false;
@@ -104,7 +160,7 @@ bool ArgumentDecoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned
     return true;
 }
 
-bool ArgumentDecoder::decodeVariableLengthByteArray(DataReference& dataReference)
+bool Decoder::decodeVariableLengthByteArray(DataReference& dataReference)
 {
     uint64_t size;
     if (!decode(size))
@@ -127,7 +183,7 @@ static void decodeValueFromBuffer(Type& value, uint8_t*& bufferPosition)
     bufferPosition += sizeof(Type);
 }
 
-bool ArgumentDecoder::decode(bool& result)
+bool Decoder::decode(bool& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -136,7 +192,7 @@ bool ArgumentDecoder::decode(bool& result)
     return true;
 }
 
-bool ArgumentDecoder::decode(uint8_t& result)
+bool Decoder::decode(uint8_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -145,7 +201,7 @@ bool ArgumentDecoder::decode(uint8_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decode(uint16_t& result)
+bool Decoder::decode(uint16_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -154,7 +210,7 @@ bool ArgumentDecoder::decode(uint16_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decode(uint32_t& result)
+bool Decoder::decode(uint32_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -163,16 +219,7 @@ bool ArgumentDecoder::decode(uint32_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decode(uint64_t& result)
-{
-    if (!alignBufferPosition(sizeof(result), sizeof(result)))
-        return false;
-    
-    decodeValueFromBuffer(result, m_bufferPos);
-    return true;
-}
-
-bool ArgumentDecoder::decode(int32_t& result)
+bool Decoder::decode(uint64_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -181,25 +228,7 @@ bool ArgumentDecoder::decode(int32_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decode(int64_t& result)
-{
-    if (!alignBufferPosition(sizeof(result), sizeof(result)))
-        return false;
-
-    decodeValueFromBuffer(result, m_bufferPos);
-    return true;
-}
-
-bool ArgumentDecoder::decode(float& result)
-{
-    if (!alignBufferPosition(sizeof(result), sizeof(result)))
-        return false;
-
-    decodeValueFromBuffer(result, m_bufferPos);
-    return true;
-}
-
-bool ArgumentDecoder::decode(double& result)
+bool Decoder::decode(int32_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -208,7 +237,34 @@ bool ArgumentDecoder::decode(double& result)
     return true;
 }
 
-bool ArgumentDecoder::removeAttachment(Attachment& attachment)
+bool Decoder::decode(int64_t& result)
+{
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
+        return false;
+
+    decodeValueFromBuffer(result, m_bufferPos);
+    return true;
+}
+
+bool Decoder::decode(float& result)
+{
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
+        return false;
+
+    decodeValueFromBuffer(result, m_bufferPos);
+    return true;
+}
+
+bool Decoder::decode(double& result)
+{
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
+        return false;
+    
+    decodeValueFromBuffer(result, m_bufferPos);
+    return true;
+}
+
+bool Decoder::removeAttachment(Attachment& attachment)
 {
     if (m_attachments.isEmpty())
         return false;

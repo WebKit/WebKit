@@ -36,7 +36,7 @@
 #endif
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -46,7 +46,7 @@ struct PluginProcessCreationParameters {
     PluginProcessCreationParameters();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, PluginProcessCreationParameters&);
+    static bool decode(IPC::Decoder&, PluginProcessCreationParameters&);
 
     PluginProcessType processType;
     bool supportsAsynchronousPluginInitialization;

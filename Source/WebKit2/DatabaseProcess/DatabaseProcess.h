@@ -91,12 +91,12 @@ private:
     bool shouldTerminate() override;
 
     // IPC::Connection::Client
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
     IPC::ProcessType localProcessType() override { return IPC::ProcessType::Database; }
     IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
-    void didReceiveDatabaseProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveDatabaseProcessMessage(IPC::Connection&, IPC::Decoder&);
 
     // Message Handlers
     void initializeDatabaseProcess(const DatabaseProcessCreationParameters&);

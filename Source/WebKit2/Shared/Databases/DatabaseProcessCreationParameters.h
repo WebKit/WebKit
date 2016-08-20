@@ -33,7 +33,7 @@
 #if ENABLE(DATABASE_PROCESS)
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -43,7 +43,7 @@ struct DatabaseProcessCreationParameters {
     DatabaseProcessCreationParameters();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, DatabaseProcessCreationParameters&);
+    static bool decode(IPC::Decoder&, DatabaseProcessCreationParameters&);
 
 #if ENABLE(INDEXED_DATABASE)
     String indexedDatabaseDirectory;

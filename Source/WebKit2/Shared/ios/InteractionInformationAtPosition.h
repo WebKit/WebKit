@@ -67,7 +67,7 @@ struct InteractionInformationAtPosition {
 #endif
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, InteractionInformationAtPosition&);
+    static bool decode(IPC::Decoder&, InteractionInformationAtPosition&);
 };
 
 }

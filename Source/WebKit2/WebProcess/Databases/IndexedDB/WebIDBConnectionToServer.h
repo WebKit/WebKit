@@ -96,7 +96,7 @@ public:
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
     void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames);
 
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void connectionToServerLost();
 

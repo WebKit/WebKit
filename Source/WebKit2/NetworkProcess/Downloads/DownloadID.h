@@ -27,7 +27,7 @@
 #define DownloadID_h
 
 #include "ArgumentCoder.h"
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 #include <wtf/HashTraits.h>
 
@@ -61,7 +61,7 @@ template<> struct ArgumentCoder<WebKit::DownloadID> {
     {
         encoder << downloadID.downloadID();
     }
-    static bool decode(ArgumentDecoder& decoder, WebKit::DownloadID& downloadID)
+    static bool decode(Decoder& decoder, WebKit::DownloadID& downloadID)
     {
         uint64_t id;
         if (!decoder.decode(id))

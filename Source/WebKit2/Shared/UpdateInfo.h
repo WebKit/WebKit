@@ -32,8 +32,8 @@
 #include <wtf/Vector.h>
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -45,7 +45,7 @@ public:
     UpdateInfo() { }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, UpdateInfo&);
+    static bool decode(IPC::Decoder&, UpdateInfo&);
 
     // The size of the web view.
     WebCore::IntSize viewSize;

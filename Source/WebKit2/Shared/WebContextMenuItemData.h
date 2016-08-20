@@ -37,7 +37,7 @@ class Object;
 }
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -63,7 +63,7 @@ public:
     void setUserData(API::Object*);
     
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebContextMenuItemData&);
+    static bool decode(IPC::Decoder&, WebContextMenuItemData&);
 
 private:
     WebCore::ContextMenuItemType m_type;

@@ -138,7 +138,7 @@ class URLRequest;
 }
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Connection;
 }
 
@@ -1144,8 +1144,8 @@ private:
 
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // IPC::MessageSender
     bool sendMessage(std::unique_ptr<IPC::Encoder>, unsigned messageSendFlags) override;

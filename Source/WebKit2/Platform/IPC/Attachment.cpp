@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Attachment.h"
 
-#include "ArgumentDecoder.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace IPC {
@@ -55,7 +55,7 @@ void Attachment::encode(Encoder& encoder) const
     encoder.addAttachment(WTFMove(*const_cast<Attachment*>(this)));
 }
 
-bool Attachment::decode(ArgumentDecoder& decoder, Attachment& attachment)
+bool Attachment::decode(Decoder& decoder, Attachment& attachment)
 {
     if (!decoder.removeAttachment(attachment))
         return false;

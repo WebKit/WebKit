@@ -41,7 +41,7 @@ void OptionItem::encode(IPC::Encoder& encoder) const
     encoder << parentGroupID;
 }
 
-bool OptionItem::decode(IPC::ArgumentDecoder& decoder, OptionItem& result)
+bool OptionItem::decode(IPC::Decoder& decoder, OptionItem& result)
 {
     if (!decoder.decode(result.text))
         return false;
@@ -88,7 +88,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(autofillFieldName);
 }
 
-bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNodeInformation& result)
+bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformation& result)
 {
     if (!decoder.decode(result.elementRect))
         return false;

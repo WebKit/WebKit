@@ -33,7 +33,7 @@
 
 namespace IPC {
 class Connection;
-class MessageDecoder;
+class Decoder;
 }
 
 namespace WebCore {
@@ -51,7 +51,7 @@ public:
     static Ref<WebFullScreenManager> create(WebPage*);
     virtual ~WebFullScreenManager();
 
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     bool supportsFullScreen(bool withKeyboard);
     void enterFullScreenForElement(WebCore::Element*);
@@ -74,7 +74,7 @@ protected:
     void saveScrollPosition();
     void restoreScrollPosition();
 
-    void didReceiveWebFullScreenManagerMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveWebFullScreenManagerMessage(IPC::Connection&, IPC::Decoder&);
 
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;

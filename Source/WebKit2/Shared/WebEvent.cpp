@@ -26,8 +26,7 @@
 #include "config.h"
 #include "WebEvent.h"
 
-#include "ArgumentDecoder.h"
-#include "Arguments.h"
+#include "Decoder.h"
 #include "Encoder.h"
 
 namespace WebKit {
@@ -53,7 +52,7 @@ void WebEvent::encode(IPC::Encoder& encoder) const
     encoder << m_timestamp;
 }
 
-bool WebEvent::decode(IPC::ArgumentDecoder& decoder, WebEvent& result)
+bool WebEvent::decode(IPC::Decoder& decoder, WebEvent& result)
 {
     if (!decoder.decode(result.m_type))
         return false;

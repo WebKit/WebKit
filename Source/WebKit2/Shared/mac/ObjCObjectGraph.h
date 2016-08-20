@@ -30,7 +30,7 @@
 #include <wtf/RetainPtr.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -55,11 +55,11 @@ public:
     static RetainPtr<id> transform(id, const Transformer&);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
+    static bool decode(IPC::Decoder&, RefPtr<API::Object>&);
 
 private:
     static void encode(IPC::Encoder&, id);
-    static bool decode(IPC::ArgumentDecoder&, RetainPtr<id>&);
+    static bool decode(IPC::Decoder&, RetainPtr<id>&);
 
     explicit ObjCObjectGraph(id rootObject)
         : m_rootObject(rootObject)

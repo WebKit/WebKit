@@ -46,7 +46,7 @@ void PlatformPopupMenuData::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool PlatformPopupMenuData::decode(IPC::ArgumentDecoder& decoder, PlatformPopupMenuData& data)
+bool PlatformPopupMenuData::decode(IPC::Decoder& decoder, PlatformPopupMenuData& data)
 {
 #if PLATFORM(COCOA)
     if (!decoder.decode(data.fontInfo))

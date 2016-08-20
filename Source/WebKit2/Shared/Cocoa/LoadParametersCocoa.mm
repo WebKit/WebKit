@@ -38,7 +38,7 @@ void LoadParameters::platformEncode(IPC::Encoder& encoder) const
     IPC::encode(encoder, dataDetectionContext.get());
 }
 
-bool LoadParameters::platformDecode(IPC::ArgumentDecoder& decoder, LoadParameters& data)
+bool LoadParameters::platformDecode(IPC::Decoder& decoder, LoadParameters& data)
 {
     if (!IPC::decode(decoder, data.dataDetectionContext))
         return false;

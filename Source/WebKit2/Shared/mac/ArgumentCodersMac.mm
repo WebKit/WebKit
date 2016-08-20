@@ -32,7 +32,7 @@
 #endif
 
 #import "ArgumentCodersCF.h"
-#import "ArgumentDecoder.h"
+#import "Decoder.h"
 #import "Encoder.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/ColorMac.h>
@@ -139,7 +139,7 @@ void encode(Encoder& encoder, id object)
     ASSERT_NOT_REACHED();
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<id>& result)
+bool decode(Decoder& decoder, RetainPtr<id>& result)
 {
     NSType type;
     if (!decoder.decodeEnum(type))
@@ -296,7 +296,7 @@ void encode(Encoder& encoder, NSAttributedString *string)
     }
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSAttributedString>& result)
+bool decode(Decoder& decoder, RetainPtr<NSAttributedString>& result)
 {
     RetainPtr<NSString> plainString;
     if (!IPC::decode(decoder, plainString))
@@ -339,7 +339,7 @@ void encode(Encoder& encoder, NSColor *color)
     encoder << colorFromNSColor(color);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSColor>& result)
+bool decode(Decoder& decoder, RetainPtr<NSColor>& result)
 {
     Color color;
     if (!decoder.decode(color))
@@ -377,7 +377,7 @@ void encode(Encoder& encoder, NSDictionary *dictionary)
     }
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSDictionary>& result)
+bool decode(Decoder& decoder, RetainPtr<NSDictionary>& result)
 {
     uint64_t size;
     if (!decoder.decode(size))
@@ -408,7 +408,7 @@ void encode(Encoder& encoder, NSFont *font)
     encode(encoder, [[font fontDescriptor] fontAttributes]);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSFont>& result)
+bool decode(Decoder& decoder, RetainPtr<NSFont>& result)
 {
     RetainPtr<NSDictionary> fontAttributes;
     if (!decode(decoder, fontAttributes))
@@ -426,7 +426,7 @@ void encode(Encoder& encoder, NSNumber *number)
     encode(encoder, (CFNumberRef)number);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSNumber>& result)
+bool decode(Decoder& decoder, RetainPtr<NSNumber>& result)
 {
     RetainPtr<CFNumberRef> number;
     if (!decode(decoder, number))
@@ -441,7 +441,7 @@ void encode(Encoder& encoder, NSString *string)
     encode(encoder, (CFStringRef)string);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSString>& result)
+bool decode(Decoder& decoder, RetainPtr<NSString>& result)
 {
     RetainPtr<CFStringRef> string;
     if (!decode(decoder, string))
@@ -469,7 +469,7 @@ void encode(Encoder& encoder, NSArray *array)
     }
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSArray>& result)
+bool decode(Decoder& decoder, RetainPtr<NSArray>& result)
 {
     uint64_t size;
     if (!decoder.decode(size))
@@ -493,7 +493,7 @@ void encode(Encoder& encoder, NSDate *date)
     encode(encoder, (CFDateRef)date);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSDate>& result)
+bool decode(Decoder& decoder, RetainPtr<NSDate>& result)
 {
     RetainPtr<CFDateRef> date;
     if (!decode(decoder, date))
@@ -508,7 +508,7 @@ void encode(Encoder& encoder, NSData *data)
     encode(encoder, (CFDataRef)data);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSData>& result)
+bool decode(Decoder& decoder, RetainPtr<NSData>& result)
 {
     RetainPtr<CFDataRef> data;
     if (!decode(decoder, data))
@@ -523,7 +523,7 @@ void encode(Encoder& encoder, NSURL *URL)
     encode(encoder, (CFURLRef)URL);
 }
 
-bool decode(ArgumentDecoder& decoder, RetainPtr<NSURL>& result)
+bool decode(Decoder& decoder, RetainPtr<NSURL>& result)
 {
     RetainPtr<CFURLRef> URL;
     if (!decode(decoder, URL))

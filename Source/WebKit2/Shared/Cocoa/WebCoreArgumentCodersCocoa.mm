@@ -60,7 +60,7 @@ void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Pa
     encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 }
 
-bool ArgumentCoder<WebCore::Payment>::decode(ArgumentDecoder& decoder, WebCore::Payment& payment)
+bool ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder, WebCore::Payment& payment)
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -94,7 +94,7 @@ void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebC
     encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 }
 
-bool ArgumentCoder<WebCore::PaymentContact>::decode(ArgumentDecoder& decoder, WebCore::PaymentContact& paymentContact)
+bool ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder, WebCore::PaymentContact& paymentContact)
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -128,7 +128,7 @@ void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, co
     encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 }
 
-bool ArgumentCoder<WebCore::PaymentMerchantSession>::decode(ArgumentDecoder& decoder, WebCore::PaymentMerchantSession& paymentMerchantSession)
+bool ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder, WebCore::PaymentMerchantSession& paymentMerchantSession)
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -163,7 +163,7 @@ void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCo
     encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 }
 
-bool ArgumentCoder<WebCore::PaymentMethod>::decode(ArgumentDecoder& decoder, WebCore::PaymentMethod& paymentMethod)
+bool ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder, WebCore::PaymentMethod& paymentMethod)
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -201,7 +201,7 @@ void ArgumentCoder<PaymentRequest>::encode(Encoder& encoder, const PaymentReques
     encoder << request.applicationData();
 }
 
-bool ArgumentCoder<PaymentRequest>::decode(ArgumentDecoder& decoder, PaymentRequest& request)
+bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& request)
 {
     String countryCode;
     if (!decoder.decode(countryCode))
@@ -279,7 +279,7 @@ void ArgumentCoder<PaymentRequest::ContactFields>::encode(Encoder& encoder, cons
     encoder << contactFields.name;
 }
 
-bool ArgumentCoder<PaymentRequest::ContactFields>::decode(ArgumentDecoder& decoder, PaymentRequest::ContactFields& contactFields)
+bool ArgumentCoder<PaymentRequest::ContactFields>::decode(Decoder& decoder, PaymentRequest::ContactFields& contactFields)
 {
     if (!decoder.decode(contactFields.postalAddress))
         return false;
@@ -300,7 +300,7 @@ void ArgumentCoder<PaymentRequest::LineItem>::encode(Encoder& encoder, const Pay
     encoder << lineItem.amount;
 }
 
-bool ArgumentCoder<PaymentRequest::LineItem>::decode(ArgumentDecoder& decoder, PaymentRequest::LineItem& lineItem)
+bool ArgumentCoder<PaymentRequest::LineItem>::decode(Decoder& decoder, PaymentRequest::LineItem& lineItem)
 {
     if (!decoder.decodeEnum(lineItem.type))
         return false;
@@ -320,7 +320,7 @@ void ArgumentCoder<PaymentRequest::MerchantCapabilities>::encode(Encoder& encode
     encoder << merchantCapabilities.supportsDebit;
 }
 
-bool ArgumentCoder<PaymentRequest::MerchantCapabilities>::decode(ArgumentDecoder& decoder, PaymentRequest::MerchantCapabilities& merchantCapabilities)
+bool ArgumentCoder<PaymentRequest::MerchantCapabilities>::decode(Decoder& decoder, PaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     if (!decoder.decode(merchantCapabilities.supports3DS))
         return false;
@@ -342,7 +342,7 @@ void ArgumentCoder<PaymentRequest::ShippingMethod>::encode(Encoder& encoder, con
     encoder << shippingMethod.identifier;
 }
 
-bool ArgumentCoder<PaymentRequest::ShippingMethod>::decode(ArgumentDecoder& decoder, PaymentRequest::ShippingMethod& shippingMethod)
+bool ArgumentCoder<PaymentRequest::ShippingMethod>::decode(Decoder& decoder, PaymentRequest::ShippingMethod& shippingMethod)
 {
     if (!decoder.decode(shippingMethod.label))
         return false;
@@ -361,7 +361,7 @@ void ArgumentCoder<PaymentRequest::TotalAndLineItems>::encode(Encoder& encoder, 
     encoder << totalAndLineItems.lineItems;
 }
 
-bool ArgumentCoder<PaymentRequest::TotalAndLineItems>::decode(ArgumentDecoder& decoder, PaymentRequest::TotalAndLineItems& totalAndLineItems)
+bool ArgumentCoder<PaymentRequest::TotalAndLineItems>::decode(Decoder& decoder, PaymentRequest::TotalAndLineItems& totalAndLineItems)
 {
     if (!decoder.decode(totalAndLineItems.total))
         return false;

@@ -34,7 +34,7 @@
 #include <WebCore/SessionID.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -45,7 +45,7 @@ typedef uint64_t ResourceLoadIdentifier;
 class NetworkResourceLoadParameters : public NetworkLoadParameters {
 public:
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, NetworkResourceLoadParameters&);
+    static bool decode(IPC::Decoder&, NetworkResourceLoadParameters&);
 
     ResourceLoadIdentifier identifier { 0 };
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.

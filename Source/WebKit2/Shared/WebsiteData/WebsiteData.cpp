@@ -39,7 +39,7 @@ void WebsiteData::Entry::encode(IPC::Encoder& encoder) const
     encoder << size;
 }
 
-bool WebsiteData::Entry::decode(IPC::ArgumentDecoder& decoder, WebsiteData::Entry& result)
+bool WebsiteData::Entry::decode(IPC::Decoder& decoder, WebsiteData::Entry& result)
 {
     WebCore::SecurityOriginData securityOriginData;
     if (!decoder.decode(securityOriginData))
@@ -64,7 +64,7 @@ void WebsiteData::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool WebsiteData::decode(IPC::ArgumentDecoder& decoder, WebsiteData& result)
+bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
 {
     if (!decoder.decode(result.entries))
         return false;

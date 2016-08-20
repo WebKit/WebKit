@@ -46,7 +46,7 @@ void Plugin::Parameters::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool Plugin::Parameters::decode(IPC::ArgumentDecoder& decoder, Parameters& parameters)
+bool Plugin::Parameters::decode(IPC::Decoder& decoder, Parameters& parameters)
 {
     String urlString;
     if (!decoder.decode(urlString))

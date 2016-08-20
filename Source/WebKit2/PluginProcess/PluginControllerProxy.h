@@ -62,8 +62,8 @@ public:
     bool initialize(const PluginCreationParameters&);
     void destroy();
 
-    void didReceivePluginControllerProxyMessage(IPC::Connection&, IPC::MessageDecoder&);
-    void didReceiveSyncPluginControllerProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>&);
+    void didReceivePluginControllerProxyMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveSyncPluginControllerProxyMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
     bool wantsWheelEvents() const;
 

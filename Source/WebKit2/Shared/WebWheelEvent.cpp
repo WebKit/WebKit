@@ -88,7 +88,7 @@ void WebWheelEvent::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool WebWheelEvent::decode(IPC::ArgumentDecoder& decoder, WebWheelEvent& t)
+bool WebWheelEvent::decode(IPC::Decoder& decoder, WebWheelEvent& t)
 {
     if (!WebEvent::decode(decoder, t))
         return false;

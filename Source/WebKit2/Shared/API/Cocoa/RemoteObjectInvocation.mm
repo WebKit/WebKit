@@ -56,7 +56,7 @@ void RemoteObjectInvocation::encode(IPC::Encoder& encoder) const
     encoder << m_replyInfo->blockSignature;
 }
 
-bool RemoteObjectInvocation::decode(IPC::ArgumentDecoder& decoder, RemoteObjectInvocation& result)
+bool RemoteObjectInvocation::decode(IPC::Decoder& decoder, RemoteObjectInvocation& result)
 {
     if (!decoder.decode(result.m_interfaceIdentifier))
         return false;

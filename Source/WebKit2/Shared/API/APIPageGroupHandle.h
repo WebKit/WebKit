@@ -31,7 +31,7 @@
 #include <wtf/RefPtr.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -45,7 +45,7 @@ public:
     const WebKit::WebPageGroupData& webPageGroupData() const { return m_webPageGroupData; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
+    static bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
     explicit PageGroupHandle(WebKit::WebPageGroupData&&);

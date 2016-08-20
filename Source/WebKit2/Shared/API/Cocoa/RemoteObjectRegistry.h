@@ -50,7 +50,7 @@ public:
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers
     void invokeMethod(const RemoteObjectInvocation&);

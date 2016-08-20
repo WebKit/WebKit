@@ -23,22 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArgumentDecoder_h
-#define ArgumentDecoder_h
+#pragma once
 
 #include "ArgumentCoder.h"
 #include "Attachment.h"
+#include "StringReference.h"
 #include <wtf/Vector.h>
+
+#if HAVE(QOS_CLASSES)
+#include <pthread/qos.h>
+#endif
 
 namespace IPC {
 
 class DataReference;
-    
-class ArgumentDecoder {
+class ImportanceAssertion;
+
+class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize);
-    virtual ~ArgumentDecoder();
+    Decoder(const DataReference& buffer, Vector<Attachment>);
+    ~Decoder();
+
+    StringReference messageReceiverName() const { return m_messageReceiverName; }
+    StringReference messageName() const { return m_messageName; }
+    uint64_t destinationID() const { return m_destinationID; }
+
+    bool isSyncMessage() const;
+    bool shouldDispatchMessageWhenWaitingForSyncReply() const;
+    bool shouldUseFullySynchronousModeForTesting() const;
+
+#if PLATFORM(MAC)
+    void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
+#endif
+
+#if HAVE(QOS_CLASSES)
+    void setQOSClassOverride(pthread_override_t override) { m_qosClassOverride = override; }
+#endif
+
+    static std::unique_ptr<Decoder> unwrapForTesting(Decoder&);
 
     size_t length() const { return m_bufferEnd - m_buffer; }
 
@@ -92,12 +115,10 @@ public:
     bool removeAttachment(Attachment&);
 
 protected:
-    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>);
-
     void initialize(const uint8_t* buffer, size_t bufferSize);
 
-    bool alignBufferPosition(unsigned alignment, size_t size);
-    bool bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const;
+    bool alignBufferPosition(unsigned alignment, size_t);
+    bool bufferIsLargeEnoughToContain(unsigned alignment, size_t) const;
 
 private:
     uint8_t* m_buffer;
@@ -105,8 +126,21 @@ private:
     uint8_t* m_bufferEnd;
 
     Vector<Attachment> m_attachments;
+
+    uint8_t m_messageFlags;
+    StringReference m_messageReceiverName;
+    StringReference m_messageName;
+
+    uint64_t m_destinationID;
+
+
+#if PLATFORM(MAC)
+    std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
+#endif
+
+#if HAVE(QOS_CLASSES)
+    pthread_override_t m_qosClassOverride { nullptr };
+#endif
 };
 
 } // namespace IPC
-
-#endif // ArgumentDecoder_h

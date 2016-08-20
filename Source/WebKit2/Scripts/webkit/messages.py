@@ -404,7 +404,7 @@ def generate_message_handler(file):
     header_conditions = {
         '"%s"' % messages_header_filename(receiver): [None],
         '"HandleMessage.h"': [None],
-        '"MessageDecoder.h"': [None],
+        '"Decoder.h"': [None],
     }
 
     type_conditions = {}
@@ -520,7 +520,7 @@ def generate_message_handler(file):
             async_messages.append(message)
 
     if async_messages:
-        result.append('void %s::didReceive%sMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
+        result.append('void %s::didReceive%sMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         result += [async_message_statement(receiver, message) for message in async_messages]
         if (receiver.superclass):
@@ -533,7 +533,7 @@ def generate_message_handler(file):
 
     if sync_messages:
         result.append('\n')
-        result.append('void %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
+        result.append('void %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         result.append('    UNUSED_PARAM(connection);\n')

@@ -157,12 +157,12 @@ void ChildProcessProxy::removeMessageReceiver(IPC::StringReference messageReceiv
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName);
 }
 
-bool ChildProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
+bool ChildProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     return m_messageReceiverMap.dispatchMessage(connection, decoder);
 }
 
-bool ChildProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool ChildProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }

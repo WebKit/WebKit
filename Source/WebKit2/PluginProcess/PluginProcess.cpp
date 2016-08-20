@@ -110,7 +110,7 @@ bool PluginProcess::shouldTerminate()
     return m_webProcessConnections.isEmpty();
 }
 
-void PluginProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
+void PluginProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     didReceivePluginProcessMessage(connection, decoder);
 }

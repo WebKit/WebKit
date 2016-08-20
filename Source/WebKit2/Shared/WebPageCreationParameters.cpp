@@ -90,7 +90,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(userInterfaceLayoutDirection);
 }
 
-bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCreationParameters& parameters)
+bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationParameters& parameters)
 {
     if (!decoder.decode(parameters.viewSize))
         return false;

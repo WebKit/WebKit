@@ -28,7 +28,7 @@
 
 namespace IPC {
 
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
     
 template<typename T> struct ArgumentCoder {
@@ -37,7 +37,7 @@ template<typename T> struct ArgumentCoder {
         t.encode(encoder);
     }
 
-    static bool decode(ArgumentDecoder& decoder, T& t)
+    static bool decode(Decoder& decoder, T& t)
     {
         return T::decode(decoder, t);
     }

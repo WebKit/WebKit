@@ -79,7 +79,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, InteractionInformationAtPosition& result)
+bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, InteractionInformationAtPosition& result)
 {
     if (!decoder.decode(result.point))
         return false;

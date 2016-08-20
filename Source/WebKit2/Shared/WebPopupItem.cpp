@@ -79,7 +79,7 @@ void WebPopupItem::encode(IPC::Encoder& encoder) const
     encoder << m_isSelected;
 }
 
-bool WebPopupItem::decode(IPC::ArgumentDecoder& decoder, WebPopupItem& item)
+bool WebPopupItem::decode(IPC::Decoder& decoder, WebPopupItem& item)
 {
     Type type;
     if (!decoder.decodeEnum(type))

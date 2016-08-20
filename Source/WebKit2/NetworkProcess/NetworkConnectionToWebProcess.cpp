@@ -75,7 +75,7 @@ void NetworkConnectionToWebProcess::didCleanupResourceLoader(NetworkResourceLoad
     m_networkResourceLoaders.remove(loader.identifier());
 }
     
-void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
+void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, decoder);
@@ -92,7 +92,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     ASSERT_NOT_REACHED();
 }
 
-void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& reply)
+void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& reply)
 {
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveSyncNetworkConnectionToWebProcessMessage(connection, decoder, reply);

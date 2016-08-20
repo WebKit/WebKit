@@ -69,7 +69,7 @@ std::unique_ptr<MessageRecorder::MessageProcessingToken> MessageRecorder::record
     return std::make_unique<MessageProcessingToken>(WTFMove(record));
 }
 
-void MessageRecorder::recordIncomingMessage(Connection& connection, MessageDecoder& decoder)
+void MessageRecorder::recordIncomingMessage(Connection& connection, Decoder& decoder)
 {
     if (!isEnabled() || !connection.isValid())
         return;

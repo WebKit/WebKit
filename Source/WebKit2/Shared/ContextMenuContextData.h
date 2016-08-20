@@ -34,7 +34,7 @@
 #include "WebHitTestResultData.h"
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -80,7 +80,7 @@ public:
 #endif
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, ContextMenuContextData&);
+    static bool decode(IPC::Decoder&, ContextMenuContextData&);
 
 private:
     Type m_type;

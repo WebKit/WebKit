@@ -64,7 +64,7 @@ public:
         void clear();
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, Handle&);
+        static bool decode(IPC::Decoder&, Handle&);
 
     private:
         friend class ShareableBitmap;

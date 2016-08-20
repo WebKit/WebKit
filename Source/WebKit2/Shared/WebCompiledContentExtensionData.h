@@ -33,7 +33,7 @@
 #include <wtf/RefPtr.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -60,7 +60,7 @@ public:
     }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebCompiledContentExtensionData&);
+    static bool decode(IPC::Decoder&, WebCompiledContentExtensionData&);
 
     RefPtr<SharedMemory> data;
     NetworkCache::Data fileData;

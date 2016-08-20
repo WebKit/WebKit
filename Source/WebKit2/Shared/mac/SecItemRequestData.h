@@ -29,8 +29,8 @@
 #include <wtf/RetainPtr.h>
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -50,7 +50,7 @@ public:
     SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, SecItemRequestData&);
+    static bool decode(IPC::Decoder&, SecItemRequestData&);
 
     Type type() const { return m_type; }
 

@@ -31,7 +31,7 @@
 
 namespace IPC {
 class Encoder;
-class ArgumentDecoder;
+class Decoder;
 }
 
 namespace WebKit {
@@ -58,7 +58,7 @@ public:
     const ReplyInfo* replyInfo() const { return m_replyInfo.get(); }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RemoteObjectInvocation&);
+    static bool decode(IPC::Decoder&, RemoteObjectInvocation&);
 
 private:
     String m_interfaceIdentifier;

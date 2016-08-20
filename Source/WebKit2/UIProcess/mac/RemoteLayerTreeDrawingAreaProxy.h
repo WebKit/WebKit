@@ -81,7 +81,7 @@ private:
     WebCore::FloatPoint indicatorLocation() const;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers
     void willCommitLayerTree(uint64_t transactionID);

@@ -43,10 +43,9 @@ namespace API {
 class Navigation;
 }
 
-
 namespace IPC {
-    class ArgumentDecoder;
-    class Connection;
+class Connection;
+class Decoder;
 }
 
 namespace WebKit {

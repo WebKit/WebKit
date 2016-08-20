@@ -31,7 +31,7 @@
 #include <wtf/Forward.h>
 
 namespace IPC {
-class ArgumentDecoder;
+class Decoder;
 class Encoder;
 }
 
@@ -50,7 +50,7 @@ public:
     static void setDefaultTimeoutInterval(double);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
+    static bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
     explicit URLRequest(const WebCore::ResourceRequest&);

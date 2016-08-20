@@ -75,8 +75,8 @@ private:
     explicit StorageManager(const String& localStorageDirectory);
 
     // IPC::Connection::WorkQueueMessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::Encoder>& replyEncoder) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder) override;
 
     // Message handlers.
     void createLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const WebCore::SecurityOriginData&);

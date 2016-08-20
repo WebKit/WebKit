@@ -52,7 +52,7 @@ protected:
 
     // IPC::MessageReceiver
     // Implemented in generated WebConnectionMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Mesage handling implementation functions.
     void handleMessage(const String& messageName, const UserData& messageBody);

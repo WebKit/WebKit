@@ -115,7 +115,7 @@ void WebKeyboardEvent::encode(IPC::Encoder& encoder) const
     encoder << m_isSystemKey;
 }
 
-bool WebKeyboardEvent::decode(IPC::ArgumentDecoder& decoder, WebKeyboardEvent& result)
+bool WebKeyboardEvent::decode(IPC::Decoder& decoder, WebKeyboardEvent& result)
 {
     if (!WebEvent::decode(decoder, result))
         return false;

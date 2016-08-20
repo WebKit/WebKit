@@ -44,7 +44,7 @@ void DatabaseProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool DatabaseProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, DatabaseProcessCreationParameters& result)
+bool DatabaseProcessCreationParameters::decode(IPC::Decoder& decoder, DatabaseProcessCreationParameters& result)
 {
 #if ENABLE(INDEXED_DATABASE)
     if (!decoder.decode(result.indexedDatabaseDirectory))

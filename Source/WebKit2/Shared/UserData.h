@@ -31,7 +31,7 @@
 
 namespace IPC {
 class Encoder;
-class ArgumentDecoder;
+class Decoder;
 }
 
 namespace WebKit {
@@ -52,10 +52,10 @@ public:
     API::Object* object() const { return m_object.get(); }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, UserData&);
+    static bool decode(IPC::Decoder&, UserData&);
 
     static void encode(IPC::Encoder&, const API::Object*);
-    static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
+    static bool decode(IPC::Decoder&, RefPtr<API::Object>&);
 
 private:
     static void encode(IPC::Encoder&, const API::Object&);

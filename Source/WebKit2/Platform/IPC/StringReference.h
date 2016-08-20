@@ -33,7 +33,7 @@
 namespace IPC {
 
 class Encoder;
-class ArgumentDecoder;
+class Decoder;
 
 class StringReference {
 public:
@@ -69,7 +69,7 @@ public:
     }
 
     void encode(Encoder&) const;
-    static bool decode(ArgumentDecoder&, StringReference&);
+    static bool decode(Decoder&, StringReference&);
 
     struct Hash {
         static unsigned hash(const StringReference& a);

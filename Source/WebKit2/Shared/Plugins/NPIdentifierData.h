@@ -32,8 +32,8 @@
 #include <wtf/text/CString.h>
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Encoder;
+class Decoder;
+class Encoder;
 }
 
 namespace WebKit {
@@ -46,7 +46,7 @@ public:
     NPIdentifier createNPIdentifier() const;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, NPIdentifierData&);
+    static bool decode(IPC::Decoder&, NPIdentifierData&);
 
 private:
     bool m_isString;

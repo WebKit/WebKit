@@ -3878,7 +3878,7 @@ bool WebPage::windowAndWebPageAreFocused() const
     return m_page->focusController().isFocused() && m_page->focusController().isActive();
 }
 
-void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
+void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     if (decoder.messageReceiverName() == Messages::CoordinatedLayerTreeHost::messageReceiverName()) {
@@ -3910,7 +3910,7 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder
     didReceiveWebPageMessage(connection, decoder);
 }
 
-void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {   
     didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
 }

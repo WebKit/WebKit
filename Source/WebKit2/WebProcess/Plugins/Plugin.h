@@ -49,7 +49,7 @@ struct NPObject;
 
 namespace IPC {
 class Encoder;
-class ArgumentDecoder;
+class Decoder;
 }
 
 namespace WebCore {
@@ -93,7 +93,7 @@ public:
 #endif
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, Parameters&);
+        static bool decode(IPC::Decoder&, Parameters&);
     };
 
     // Sets the active plug-in controller and initializes the plug-in.

@@ -81,7 +81,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << maximumBufferingTime;
 }
 
-bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
+bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourceLoadParameters& result)
 {
     if (!decoder.decode(result.identifier))
         return false;
