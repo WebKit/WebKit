@@ -36,12 +36,14 @@
 
     [Custom, RaisesExceptionWithMessage] IDBObjectStore createObjectStore(DOMString name, optional Dictionary options);
     [RaisesExceptionWithMessage] void deleteObjectStore(DOMString name);
-    [Custom, RaisesExceptionWithMessage] IDBTransaction transaction(DOMString storeName, optional DOMString mode);
-    [Custom, RaisesExceptionWithMessage] IDBTransaction transaction(sequence<DOMString> storeNames, optional DOMString mode);
+    [RaisesExceptionWithMessage] IDBTransaction transaction(DOMString storeName, optional DOMString mode = "readonly");
+    [RaisesExceptionWithMessage] IDBTransaction transaction(sequence<DOMString> storeNames, optional DOMString mode = "readonly");
+    // FIXME: This is not part of the spec, but is needed for compatibility.
+    // See https://github.com/w3c/IndexedDB/issues/85
+    [RaisesExceptionWithMessage] IDBTransaction transaction(DOMStringList storeNames, optional DOMString mode = "readonly");
     void close();
 
     attribute EventHandler onabort;
     attribute EventHandler onerror;
     attribute EventHandler onversionchange;
 };
-

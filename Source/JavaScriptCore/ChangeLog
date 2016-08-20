@@ -1,3 +1,14 @@
+2016-08-19  Sam Weinig  <sam@webkit.org>
+
+        Location.ancestorOrigins should return a FrozenArray<USVString>
+        https://bugs.webkit.org/show_bug.cgi?id=161018
+
+        Reviewed by Ryosuke Niwa and Chris Dumez.
+
+        * runtime/ObjectConstructor.h:
+        (JSC::objectConstructorFreeze):
+        Export objectConstructorFreeze so it can be used to freeze DOM FrozenArrays.
+
 2016-08-19  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] ArithSqrt should work with any argument type

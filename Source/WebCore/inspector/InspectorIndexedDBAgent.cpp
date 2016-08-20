@@ -201,10 +201,10 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
     return keyPath;
 }
 
-static RefPtr<IDBTransaction> transactionForDatabase(ScriptExecutionContext* scriptExecutionContext, IDBDatabase* idbDatabase, const String& objectStoreName, const String& mode = IDBTransaction::modeReadOnly())
+static RefPtr<IDBTransaction> transactionForDatabase(IDBDatabase* idbDatabase, const String& objectStoreName, const String& mode = IDBTransaction::modeReadOnly())
 {
     ExceptionCodeWithMessage ec;
-    RefPtr<IDBTransaction> idbTransaction = idbDatabase->transaction(scriptExecutionContext, objectStoreName, mode, ec);
+    RefPtr<IDBTransaction> idbTransaction = idbDatabase->transaction(objectStoreName, mode, ec);
     if (ec.code)
         return nullptr;
     return idbTransaction;
@@ -472,7 +472,7 @@ public:
         if (!requestCallback().isActive())
             return;
 
-        RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(context(), &database, m_objectStoreName);
+        RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(&database, m_objectStoreName);
         if (!idbTransaction) {
             m_requestCallback->sendFailure("Could not get transaction");
             return;
@@ -706,7 +706,7 @@ public:
         if (!requestCallback().isActive())
             return;
 
-        RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(context(), &database, m_objectStoreName);
+        RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(&database, m_objectStoreName);
         if (!idbTransaction) {
             m_requestCallback->sendFailure("Could not get transaction");
             return;

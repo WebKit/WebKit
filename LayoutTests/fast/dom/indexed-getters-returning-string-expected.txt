@@ -7,9 +7,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 DOMTokenList.item()
 PASS document.body.classList.item(666) is null
 PASS document.body.classList[666] is undefined.
-DOMStringList.item()
-PASS location.ancestorOrigins.item(666) is null
-PASS location.ancestorOrigins[666] is undefined.
 Storage.getItem()
 PASS localStorage.getItem(666) is null
 PASS localStorage[666] is undefined.

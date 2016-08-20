@@ -1,3 +1,17 @@
+2016-08-19  Sam Weinig  <sam@webkit.org>
+
+        Location.ancestorOrigins should return a FrozenArray<USVString>
+        https://bugs.webkit.org/show_bug.cgi?id=161018
+
+        Reviewed by Ryosuke Niwa and Chris Dumez.
+
+        Update existing tests to account for the change in type of Location.ancestorOrigins.
+
+        * fast/dom/Window/Location/ancestor-origins-expected.txt:
+        * fast/dom/Window/Location/ancestor-origins.html:
+        * fast/dom/indexed-getters-returning-string-expected.txt:
+        * fast/dom/indexed-getters-returning-string.html:
+
 2016-08-19  Dean Jackson  <dino@apple.com>
 
         Implement preferLowPowerToHighPerformance for WebGL

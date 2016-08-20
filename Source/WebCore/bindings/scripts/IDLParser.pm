@@ -2019,6 +2019,21 @@ sub parseNonAnyType
 
         return $type;
     }
+    if ($next->value() eq "FrozenArray") {
+        $self->assertTokenValue($self->getToken(), "FrozenArray", __LINE__);
+        $self->assertTokenValue($self->getToken(), "<", __LINE__);
+
+        my $subtype = $self->parseType();
+        my $subtypeName = $subtype->name;
+
+        $self->assertTokenValue($self->getToken(), ">", __LINE__);
+
+        # FIXME: This should just be "FrozenArray" when we start using domTypes in the CodeGenerators
+        $type->name("FrozenArray<${subtypeName}>");
+        push(@{$type->subtypes}, $subtype);
+
+        return $type;
+    }
     if ($next->type() == IdentifierToken) {
         my $identifier = $self->getToken();
 

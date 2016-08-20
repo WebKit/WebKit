@@ -202,11 +202,11 @@ sub AddIncludesForType
     # When we're finished with the one-file-per-class reorganization, we won't need these special cases.
     if ($isCallback && $codeGenerator->IsWrapperType($type)) {
         $includesRef->{"JS${type}.h"} = 1;
-    } elsif ($codeGenerator->GetSequenceType($type)) {
-        my $sequenceType = $codeGenerator->GetSequenceType($type);
-        if ($codeGenerator->IsRefPtrType($sequenceType)) {
-            $includesRef->{"JS${sequenceType}.h"} = 1;
-            $includesRef->{"${sequenceType}.h"} = 1;
+    } elsif ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
+        my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
+        if ($codeGenerator->IsRefPtrType($innerType)) {
+            $includesRef->{"JS${innerType}.h"} = 1;
+            $includesRef->{"${innerType}.h"} = 1;
         }
         $includesRef->{"<runtime/JSArray.h>"} = 1;
     } else {
@@ -1765,7 +1765,7 @@ sub AreTypesDistinguishableForOverloadResolution
     return 0 if &$isDictionary($typeA) && &$isDictionary($typeB);
     return 0 if $codeGenerator->IsCallbackInterface($typeA) && $codeGenerator->IsCallbackInterface($typeB);
     return 0 if &$isCallbackFunctionOrDictionary($typeA) && &$isCallbackFunctionOrDictionary($typeB);
-    return 0 if $codeGenerator->GetSequenceType($typeA) && $codeGenerator->GetSequenceType($typeB);
+    return 0 if $codeGenerator->IsSequenceOrFrozenArrayType($typeA) && $codeGenerator->IsSequenceOrFrozenArrayType($typeB);
     # FIXME: return 0 if typeA and typeB are both exception types.
     return 1;
 }
@@ -1854,9 +1854,9 @@ sub GenerateOverloadedFunctionOrConstructor
         my ($type, $optionality, $isNullable) = @_;
         return $type eq "object" || $codeGenerator->IsFunctionOnlyCallbackInterface($type);
     };
-    my $isSequenceParameter = sub {
+    my $isSequenceOrFrozenArrayParameter = sub {
         my ($type, $optionality, $isNullable) = @_;
-        return $codeGenerator->GetSequenceType($type);
+        return $codeGenerator->IsSequenceOrFrozenArrayType($type);
     };
     my $isDictionaryOrObjectOrCallbackInterfaceParameter = sub {
         my ($type, $optionality, $isNullable) = @_;
@@ -1930,7 +1930,7 @@ END
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isFunction()");
 
             # FIXME: Avoid invoking GetMethod(object, Symbol.iterator) again in toNativeArray and toRefPtrNativeArray.
-            $overload = GetOverloadThatMatches($S, $d, \&$isSequenceParameter);
+            $overload = GetOverloadThatMatches($S, $d, \&$isSequenceOrFrozenArrayParameter);
             &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(*state, distinguishingArg)");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isDictionaryOrObjectOrCallbackInterfaceParameter);
@@ -4497,7 +4497,6 @@ sub GetNativeTypeFromSignature
 my %nativeType = (
     "DOMString" => "String",
     "USVString" => "String",
-    "DOMStringList" => "RefPtr<DOMStringList>",
     "DOMTimeStamp" => "DOMTimeStamp",
     "Date" => "double",
     "Dictionary" => "Dictionary",
@@ -4534,8 +4533,7 @@ sub GetNativeType
 
     return "RefPtr<${type}>" if $codeGenerator->IsTypedArrayType($type) and $type ne "ArrayBuffer";
 
-    my $sequenceType = $codeGenerator->GetSequenceType($type);
-    return "Vector<" . GetNativeVectorInnerType($sequenceType) . ">" if $sequenceType;
+    return "Vector<" . GetNativeVectorInnerType($codeGenerator->GetSequenceOrFrozenArrayInnerType($type)) . ">" if $codeGenerator->IsSequenceOrFrozenArrayType($type);
 
     return "${type}*";
 }
@@ -4551,10 +4549,10 @@ sub ShouldPassWrapperByReference
 
 sub GetNativeVectorInnerType
 {
-    my $sequenceType = shift;
+    my $innerType = shift;
 
-    return $nativeType{$sequenceType} if exists $nativeType{$sequenceType};
-    return "RefPtr<${sequenceType}>";
+    return $nativeType{$innerType} if exists $nativeType{$innerType};
+    return "RefPtr<$innerType>";
 }
 
 sub GetNativeTypeForCallbacks
@@ -4562,7 +4560,6 @@ sub GetNativeTypeForCallbacks
     my ($interface, $type) = @_;
 
     return "RefPtr<SerializedScriptValue>&&" if $type eq "SerializedScriptValue";
-    return "RefPtr<DOMStringList>&&" if $type eq "DOMStringList";
     return "const String&" if $codeGenerator->IsStringType($type);
     return GetNativeType($interface, $type);
 }
@@ -4666,13 +4663,13 @@ sub JSValueToNative
         return ("Dictionary(state, $value)", 0);
     }
 
-    my $sequenceType = $codeGenerator->GetSequenceType($type);
-    if ($sequenceType) {
-        if ($codeGenerator->IsRefPtrType($sequenceType)) {
-            AddToImplIncludes("JS${sequenceType}.h");
-            return ("toRefPtrNativeArray<${sequenceType}, JS${sequenceType}>(*state, $value)", 1);
+    if ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
+        my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
+        if ($codeGenerator->IsRefPtrType($innerType)) {
+            AddToImplIncludes("JS${innerType}.h");
+            return ("toRefPtrNativeArray<${innerType}, JS${innerType}>(*state, $value)", 1);
         }
-        return ("toNativeArray<" . GetNativeVectorInnerType($sequenceType) . ">(*state, $value)", 1);
+        return ("toNativeArray<" . GetNativeVectorInnerType($innerType) . ">(*state, $value)", 1);
     }
 
     return ($value, 0) if $type eq "any";
@@ -4742,14 +4739,15 @@ sub NativeToJSValue
         AddToImplIncludes("<runtime/JSString.h>", $conditional);
         return "jsStringWithCache(state, $value)";
     }
-    
-    my $sequenceType = $codeGenerator->GetSequenceType($type);
-    if ($sequenceType) {
-        if ($codeGenerator->IsRefPtrType($sequenceType)) {
-            AddToImplIncludes("JS${sequenceType}.h", $conditional);
+
+    if ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
+        my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
+        if ($codeGenerator->IsRefPtrType($innerType)) {
+            AddToImplIncludes("JS${innerType}.h", $conditional);
         }
-        AddToImplIncludes("<runtime/JSArray.h>", $conditional);
-        return "jsArray(state, $globalObject, $value)";
+        
+        return "jsArray(state, $globalObject, $value)" if $codeGenerator->IsSequenceType($type);
+        return "jsFrozenArray(state, $globalObject, $value)" if $codeGenerator->IsFrozenArrayType($type);
     }
 
     if ($type eq "any") {

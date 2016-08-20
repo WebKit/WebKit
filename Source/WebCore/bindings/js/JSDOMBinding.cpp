@@ -24,7 +24,6 @@
 
 #include "CachedScript.h"
 #include "DOMConstructorWithDocument.h"
-#include "DOMStringList.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
 #include "ExceptionHeaders.h"
@@ -184,16 +183,6 @@ double valueToDate(ExecState* exec, JSValue value)
     if (!value.inherits(DateInstance::info()))
         return std::numeric_limits<double>::quiet_NaN();
     return static_cast<DateInstance*>(value.toObject(exec))->internalNumber();
-}
-
-JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMStringList* stringList)
-{
-    JSC::MarkedArgumentBuffer list;
-    if (stringList) {
-        for (unsigned i = 0; i < stringList->length(); ++i)
-            list.append(jsStringWithCache(exec, stringList->item(i)));
-    }
-    return JSC::constructArray(exec, 0, globalObject, list);
 }
 
 void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cachedScript)

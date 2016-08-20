@@ -54,7 +54,8 @@
 
     readonly attribute USVString origin;
 
-    readonly attribute DOMStringList ancestorOrigins;
+    // FIXME: Add support for SameObject
+    [Unforgeable, CachedAttribute] readonly attribute FrozenArray<USVString> ancestorOrigins;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable, Custom, ImplementedAs=toStringFunction] DOMString toString();

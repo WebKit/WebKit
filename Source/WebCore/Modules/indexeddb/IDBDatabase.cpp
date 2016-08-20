@@ -158,7 +158,7 @@ RefPtr<WebCore::IDBObjectStore> IDBDatabase::createObjectStore(const String& nam
     return adoptRef(&objectStore.leakRef());
 }
 
-RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*, const Vector<String>& objectStores, const String& modeString, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(const Vector<String>& objectStores, const String& modeString, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBDatabase::transaction");
 
@@ -211,13 +211,13 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
     return adoptRef(&transaction.leakRef());
 }
 
-RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const String& objectStore, const String& mode, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(const String& objectStore, const String& mode, ExceptionCodeWithMessage& ec)
 {
     ASSERT(currentThread() == originThreadID());
 
     Vector<String> objectStores(1);
     objectStores[0] = objectStore;
-    return transaction(context, objectStores, mode, ec);
+    return transaction(objectStores, mode, ec);
 }
 
 void IDBDatabase::deleteObjectStore(const String& objectStoreName, ExceptionCodeWithMessage& ec)

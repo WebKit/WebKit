@@ -3915,7 +3915,6 @@
 		99CC0B6B18BEA1FF006CEBCC /* WebReplayInputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 99CC0B6918BEA1FF006CEBCC /* WebReplayInputs.h */; };
 		99E45A1718A063BE0026D88F /* EventLoopInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1618A063BE0026D88F /* EventLoopInput.h */; };
 		9A1142041832D135000BB8AD /* ValueToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A1142031832D134000BB8AD /* ValueToString.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */; };
 		9A528E8317D7F52F00AA9518 /* FloatingObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */; };
 		9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A528E8217D7F52F00AA9518 /* FloatingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9AB1F38018E2489A00534743 /* CSSToLengthConversionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */; };
@@ -11491,7 +11490,6 @@
 		99CC0B6918BEA1FF006CEBCC /* WebReplayInputs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebReplayInputs.h; sourceTree = "<group>"; };
 		99E45A1618A063BE0026D88F /* EventLoopInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoopInput.h; sourceTree = "<group>"; };
 		9A1142031832D134000BB8AD /* ValueToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueToString.h; sourceTree = "<group>"; };
-		9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringListCustom.cpp; sourceTree = "<group>"; };
 		9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatingObjects.cpp; sourceTree = "<group>"; };
 		9A528E8217D7F52F00AA9518 /* FloatingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingObjects.h; sourceTree = "<group>"; };
 		9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSToLengthConversionData.h; sourceTree = "<group>"; };
@@ -22166,7 +22164,6 @@
 				A9C6E6460D7465CA006442E9 /* JSDOMMimeTypeArrayCustom.cpp */,
 				A9C6E64A0D7465E7006442E9 /* JSDOMPluginArrayCustom.cpp */,
 				A9C6E64B0D7465E7006442E9 /* JSDOMPluginCustom.cpp */,
-				9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */,
 				BC64649B11D8238C006455B0 /* JSDOMStringMapCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
@@ -29955,7 +29952,6 @@
 				E172AF8F1811BC3700FBADB9 /* JSDOMPromise.cpp in Sources */,
 				BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */,
 				C5137CF211A58378004ADB99 /* JSDOMStringList.cpp in Sources */,
-				9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */,
 				BC64649711D82349006455B0 /* JSDOMStringMap.cpp in Sources */,
 				BC64649C11D8238C006455B0 /* JSDOMStringMapCustom.cpp in Sources */,
 				7694563C1214D97C0007CBAE /* JSDOMTokenList.cpp in Sources */,

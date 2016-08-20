@@ -29,7 +29,6 @@
 #include "JSMessagePort.h"
 #include "SerializedScriptValue.h"
 #include <runtime/FunctionPrototype.h>
-#include <runtime/JSArray.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

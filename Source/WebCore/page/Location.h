@@ -72,7 +72,7 @@ public:
 
     String toString() const { return href(); }
 
-    Ref<DOMStringList> ancestorOrigins() const;
+    Vector<String> ancestorOrigins() const;
 
 private:
     explicit Location(Frame*);

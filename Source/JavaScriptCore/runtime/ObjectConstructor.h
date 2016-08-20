@@ -123,7 +123,7 @@ inline JSObject* constructObjectFromPropertyDescriptor(ExecState* exec, const Pr
 }
 
 
-JSObject* objectConstructorFreeze(ExecState*, JSObject*);
+JS_EXPORT_PRIVATE JSObject* objectConstructorFreeze(ExecState*, JSObject*);
 JSValue objectConstructorGetPrototypeOf(ExecState*, JSObject*);
 JSValue objectConstructorGetOwnPropertyDescriptor(ExecState*, JSObject*, const Identifier&);
 JSValue objectConstructorGetOwnPropertyDescriptors(ExecState*, JSObject*);

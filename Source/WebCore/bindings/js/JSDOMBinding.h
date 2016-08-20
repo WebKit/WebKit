@@ -41,6 +41,7 @@
 #include <runtime/JSCellInlines.h>
 #include <runtime/JSTypedArrays.h>
 #include <runtime/Lookup.h>
+#include <runtime/ObjectConstructor.h>
 #include <runtime/StructureInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/TypedArrays.h>
@@ -60,7 +61,6 @@ class JSFunction;
 namespace WebCore {
 
 class CachedScript;
-class DOMStringList;
 class DOMWindow;
 class Frame;
 class URL;
@@ -269,7 +269,7 @@ JSC::JSValue toJSIteratorEnd(JSC::ExecState&);
 
 template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>&);
 template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>*);
-WEBCORE_EXPORT JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, DOMStringList*);
+template<typename T, size_t inlineCapacity> JSC::JSValue jsFrozenArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>&);
 
 JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, JSC::JSValue, JSC::JSValue);
 template<typename FirstType, typename SecondType> JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, const FirstType&, const SecondType&);
@@ -631,6 +631,20 @@ template<typename T, size_t inlineCapacity> inline JSC::JSValue jsArray(JSC::Exe
     return jsArray(exec, globalObject, *vector);
 }
 
+template<typename T, size_t inlineCapacity> JSC::JSValue jsFrozenArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>& vector)
+{
+    JSC::MarkedArgumentBuffer list;
+    for (auto& element : vector) {
+        list.append(JSValueTraits<T>::arrayJSValue(exec, globalObject, element));
+        if (UNLIKELY(exec->hadException()))
+            return JSC::jsUndefined();
+    }
+    auto* array = JSC::constructArray(exec, nullptr, globalObject, list);
+    if (UNLIKELY(exec->hadException()))
+        return JSC::jsUndefined();
+    return JSC::objectConstructorFreeze(exec, array);
+}
+
 inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, JSC::JSValue value1, JSC::JSValue value2)
 {
     JSC::MarkedArgumentBuffer args;
@@ -668,7 +682,7 @@ template<> struct NativeValueTraits<String> {
     static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, String& indexedValue)
     {
         indexedValue = jsValue.toWTFString(&exec);
-        return true;
+        return !exec.hadException();
     }
 };
 

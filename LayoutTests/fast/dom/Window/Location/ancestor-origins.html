@@ -1,16 +1,36 @@
+<head>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="resources/location-tests-functions.js"></script>
+</head>
+
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.dumpChildFramesAsText();
+
+self.jsTestIsAsync = true;
+
+description("Test the Location object's ancestorOrigins property.")
+
+shouldBeType("window.location.ancestorOrigins", "Array");
+shouldBe("window.location.ancestorOrigins.length", "0");
+shouldBeTrue("Object.isFrozen(window.location.ancestorOrigins)");
+shouldBeTrue("window.location.ancestorOrigins === window.location.ancestorOrigins");
+
+var subframeOrigins;
+
+window.onmessage = function(event)
+{
+    subframeOrigins = event.data;
+
+    shouldBeType("subframeOrigins", "Array");
+    shouldBe("subframeOrigins.length", "1");
+    shouldBe("subframeOrigins[0]", "'file://'");
+
+    finishJSTest();
 }
 
-var origins = location.ancestorOrigins;
-document.write('ancestorOrigins.length = ' + origins.length);
 </script>
 <iframe srcdoc="
   <script>
-  var origins = location.ancestorOrigins;
-  document.write('ancestorOrigins.length = ' + origins.length + '<br>');
-  document.write('ancestorOrigins[0] = ' + origins[0]);
+    top.postMessage(location.ancestorOrigins, '*')
   </script>
 "></iframe>
+<script src="../../../../resources/js-test-post.js"></script>

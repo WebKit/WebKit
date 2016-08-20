@@ -471,7 +471,7 @@ sub IsRefPtrType
     return 0 if $object->IsPrimitiveType($type);
     return 0 if $object->IsDictionaryType($type);
     return 0 if $object->IsEnumType($type);
-    return 0 if $object->GetSequenceType($type);
+    return 0 if $object->IsSequenceOrFrozenArrayType($type);
     return 0 if $type eq "DOMString" or $type eq "USVString";
     return 0 if $type eq "any";
 
@@ -517,12 +517,55 @@ sub IsSVGAnimatedType
     return $type =~ /^SVGAnimated/;
 }
 
-sub GetSequenceType
+sub IsSequenceType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return $type =~ /^sequence</;
+}
+
+sub GetSequenceInnerType
 {
     my $object = shift;
     my $type = shift;
 
     return $1 if $type =~ /^sequence<([\w\d_\s]+)>.*/;
+    return "";
+}
+
+sub IsFrozenArrayType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return $type =~ /^FrozenArray</;
+}
+
+sub GetFrozenArrayInnerType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return $1 if $type =~ /^FrozenArray<([\w\d_\s]+)>.*/;
+    return "";
+}
+
+sub IsSequenceOrFrozenArrayType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return $object->IsSequenceType($type) || $object->IsFrozenArrayType($type);
+}
+
+sub GetSequenceOrFrozenArrayInnerType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return $object->GetSequenceInnerType($type) if $object->IsSequenceType($type);
+    return $object->GetFrozenArrayInnerType($type) if $object->IsFrozenArrayType($type);
     return "";
 }
 

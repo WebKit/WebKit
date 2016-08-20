@@ -82,45 +82,6 @@ JSValue JSIDBDatabase::createObjectStore(ExecState& state)
     return result;
 }
 
-JSValue JSIDBDatabase::transaction(ExecState& exec)
-{
-    size_t argsCount = std::min<size_t>(2, exec.argumentCount());
-    if (argsCount < 1)
-        return exec.vm().throwException(&exec, createNotEnoughArgumentsError(&exec));
-
-    auto* scriptContext = jsCast<JSDOMGlobalObject*>(exec.lexicalGlobalObject())->scriptExecutionContext();
-    if (!scriptContext)
-        return jsUndefined();
-
-    Vector<String> scope;
-    JSValue scopeArg(exec.argument(0));
-    auto domStringList = JSDOMStringList::toWrapped(exec, scopeArg);
-    if (exec.hadException())
-        return jsUndefined();
-
-    if (domStringList)
-        scope = *domStringList;
-    else {
-        scope.append(scopeArg.toString(&exec)->value(&exec));
-        if (exec.hadException())
-            return jsUndefined();
-    }
-
-    String mode;
-    if (argsCount == 2) {
-        JSValue modeArg(exec.argument(1));
-        mode = modeArg.toString(&exec)->value(&exec);
-
-        if (exec.hadException())
-            return jsUndefined();
-    }
-
-    ExceptionCodeWithMessage ec;
-    JSValue result = toJS(&exec, globalObject(), wrapped().transaction(scriptContext, scope, mode, ec));
-    setDOMException(&exec, ec);
-    return result;
-}
-
 }
 
 #endif

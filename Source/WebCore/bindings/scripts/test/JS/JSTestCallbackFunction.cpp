@@ -123,7 +123,7 @@ bool JSTestCallbackFunction::callbackWithSerializedScriptValueParam(RefPtr<Seria
     return !returnedException;
 }
 
-bool JSTestCallbackFunction::callbackWithStringList(RefPtr<DOMStringList>&& listParam)
+bool JSTestCallbackFunction::callbackWithStringList(DOMStringList* listParam)
 {
     if (!canInvokeCallback())
         return true;

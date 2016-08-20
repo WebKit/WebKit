@@ -244,7 +244,7 @@ sub SkipAttribute {
 
     return 1 if $attribute->isStatic;
     return 1 if $codeGenerator->IsTypedArrayType($propType);
-    return 1 if $codeGenerator->GetSequenceType($propType);
+    return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($propType);
 
     if ($codeGenerator->IsEnumType($propType)) {
         return 1;
@@ -320,7 +320,7 @@ sub SkipFunction {
         return 1 if $param->extendedAttributes->{"Clamp"};
         return 1 if $param->type eq "MediaQueryListListener";
         return 1 if $param->type eq "EventListener";
-        return 1 if $codeGenerator->GetSequenceType($param->type);
+        return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($param->type);
     }
 
     # This is for DataTransferItemList.idl add(File) method
@@ -361,7 +361,7 @@ sub SkipFunction {
         return 1;
     }
 
-    if ($codeGenerator->GetSequenceType($functionReturnType)) {
+    if ($codeGenerator->IsSequenceOrFrozenArrayType($functionReturnType)) {
         return 1;
     }
 
@@ -1103,7 +1103,7 @@ sub GenerateFunction {
     my @callImplParams;
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;
-        my $sequenceType = $codeGenerator->GetSequenceType($paramIDLType);
+        my $sequenceType = $codeGenerator->GetSequenceInnerType($paramIDLType);
         $paramIDLType = $sequenceType if $sequenceType ne "";
         my $paramType = GetGlibTypeName($paramIDLType);
         my $const = $paramType eq "gchar*" ? "const " : "";
@@ -1175,7 +1175,7 @@ sub GenerateFunction {
             last;
         }
         my $paramIDLType = $param->type;
-        my $sequenceType = $codeGenerator->GetSequenceType($paramIDLType);
+        my $sequenceType = $codeGenerator->GetSequenceInnerType($paramIDLType);
         $paramIDLType = $sequenceType if $sequenceType ne "";
         my $paramType = GetGlibTypeName($paramIDLType);
         # $paramType can have a trailing * in some cases
