@@ -1,3 +1,9 @@
+2016-08-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix attempt after r204665 and r204668.
+
+        * PlatformGTK.cmake:
+
 2016-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix attempt after r204665 and r204668.
