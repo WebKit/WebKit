@@ -1,10 +1,26 @@
+2016-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Merge r204656 and r204660.
+
+    2016-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+            Adopt SimServiceContext in LayoutTestRelay
+            https://bugs.webkit.org/show_bug.cgi?id=161000
+            <rdar://problem/25765594>
+
+            Reviewed by Daniel Bates.
+
+            * LayoutTestRelay/LayoutTestRelay/CoreSimulatorSPI.h:
+            * LayoutTestRelay/LayoutTestRelay/main.m:
+
 2016-08-11  Keith Miller  <keith_miller@apple.com>
 
         Merge r203972.
 
     2016-08-01  Keith Miller  <keith_miller@apple.com>
 
-            We should not keep the JavaScript tests inside the Source/JavaScriptCore/ directory.
+            We should no
+            t keep the JavaScript tests inside the Source/JavaScriptCore/ directory.
             https://bugs.webkit.org/show_bug.cgi?id=160372
 
             Rubber stamped by Geoffrey Garen.
@@ -19,8 +35,6 @@
             * Scripts/run-javascriptcore-tests:
             * Scripts/update-javascriptcore-test-res:
 
-2016-07-31  Nan Wang  <n_wang@apple.com>
->>>>>>> .merge-right.r203972
 2016-08-02  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204062. rdar://problem/27592936

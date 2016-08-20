@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,34 @@
 
 #if __has_include(<CoreSimulator/CoreSimulator.h>)
 
+/* FIXME: Remove the below #define once we require Xcode 7.3 with iOS 9.3 SDK or newer. */
 #define __coresim_unavailable_msg(msg)
 #import <CoreSimulator/CoreSimulator.h>
+
+/* FIXME: Always use SimServiceContext once we require Xcode 7.3 with iOS 9.3 SDK or newer. */
+#define USE_SIM_SERVICE_CONTEXT defined(CORESIM_API_MAX_ALLOWED)
 
 #else
 
 #import <Foundation/Foundation.h>
 
+#define USE_SIM_SERVICE_CONTEXT 1
+
 #define kSimDeviceLaunchApplicationArguments @"arguments"
 #define kSimDeviceLaunchApplicationEnvironment @"environment"
 
 @interface SimDevice : NSObject
-- (BOOL)installApplication:(NSURL *)installURL withOptions:(NSDictionary *)options error:(NSError **)error;
-- (pid_t)launchApplicationWithID:(NSString *)bundleID options:(NSDictionary *)options error:(NSError **)error;
+- (BOOL)installApplication:(NSURL *)installURL withOptions:(NSDictionary *)options error:(NSError * __autoreleasing *)error;
+- (pid_t)launchApplicationWithID:(NSString *)bundleID options:(NSDictionary *)options error:(NSError * __autoreleasing *)error;
 @end
 
 @interface SimDeviceSet : NSObject
-+ (SimDeviceSet *)defaultSet;
 @property (readonly, copy) NSDictionary *devicesByUDID;
+@end
 
+@interface SimServiceContext : NSObject
++(SimServiceContext *)sharedServiceContextForDeveloperDir:(NSString *)developerDir error:(NSError * __autoreleasing *)error;
+-(SimDeviceSet *)defaultDeviceSetWithError:(NSError * __autoreleasing *)error;
 @end
 
 #endif
