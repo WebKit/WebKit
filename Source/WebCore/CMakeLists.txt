@@ -607,7 +607,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     loader/appcache/DOMApplicationCache.idl
 
-    page/AbstractView.idl
     page/BarProp.idl
     page/Crypto.idl
     page/DOMSelection.idl

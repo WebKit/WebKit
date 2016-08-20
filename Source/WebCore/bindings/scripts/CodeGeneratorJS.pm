@@ -442,7 +442,6 @@ sub ShouldGenerateToJSDeclaration
 
     return 0 if ($interface->extendedAttributes->{"SuppressToJSObject"});
     return 0 if not NeedsImplementationClass($interface);
-    return 0 if $interface->name eq "AbstractView";
     return 0 if $interface->extendedAttributes->{"CustomProxyToJSObject"};
     return 1 if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"} or $interface->extendedAttributes->{"CustomToJSObject"});
     return 1 if $interface->parent && $interface->parent eq "EventTarget";
@@ -728,8 +727,6 @@ sub InstanceNeedsEstimatedSize
 sub GetImplClassName
 {
     my $name = shift;
-
-    return "DOMWindow" if $name eq "AbstractView";
 
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($name);
     return $svgNativeType if $svgNativeType;

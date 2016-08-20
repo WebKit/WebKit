@@ -54,7 +54,7 @@ public:
         DOM_DELTA_PAGE
     };
 
-    static Ref<WheelEvent> create(const PlatformWheelEvent& event, AbstractView* view)
+    static Ref<WheelEvent> create(const PlatformWheelEvent& event, DOMWindow* view)
     {
         return adoptRef(*new WheelEvent(event, view));
     }
@@ -69,11 +69,11 @@ public:
         return adoptRef(*new WheelEvent(type, initializer));
     }
 
-    void initWheelEvent(int rawDeltaX, int rawDeltaY, AbstractView*,
+    void initWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow*,
         int screenX, int screenY, int pageX, int pageY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
-    void initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, AbstractView*,
+    void initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow*,
         int screenX, int screenY, int pageX, int pageY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
@@ -98,7 +98,7 @@ public:
 private:
     WheelEvent();
     WheelEvent(const AtomicString&, const WheelEventInit&);
-    WheelEvent(const PlatformWheelEvent&, AbstractView*);
+    WheelEvent(const PlatformWheelEvent&, DOMWindow*);
 
     bool isWheelEvent() const override;
 

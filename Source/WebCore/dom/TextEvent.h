@@ -39,16 +39,16 @@ namespace WebCore {
 
     class TextEvent final : public UIEvent {
     public:
-        static Ref<TextEvent> create(AbstractView*, const String& data, TextEventInputType = TextEventInputKeyboard);
+        static Ref<TextEvent> create(DOMWindow*, const String& data, TextEventInputType = TextEventInputKeyboard);
         static Ref<TextEvent> createForBindings();
-        static Ref<TextEvent> createForPlainTextPaste(AbstractView*, const String& data, bool shouldSmartReplace);
-        static Ref<TextEvent> createForFragmentPaste(AbstractView*, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
-        static Ref<TextEvent> createForDrop(AbstractView*, const String& data);
-        static Ref<TextEvent> createForDictation(AbstractView*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
+        static Ref<TextEvent> createForPlainTextPaste(DOMWindow*, const String& data, bool shouldSmartReplace);
+        static Ref<TextEvent> createForFragmentPaste(DOMWindow*, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        static Ref<TextEvent> createForDrop(DOMWindow*, const String& data);
+        static Ref<TextEvent> createForDictation(DOMWindow*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         virtual ~TextEvent();
     
-        void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, const String& data);
+        void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, const String& data);
     
         String data() const { return m_data; }
 
@@ -70,9 +70,9 @@ namespace WebCore {
     private:
         TextEvent();
 
-        TextEvent(AbstractView*, const String& data, TextEventInputType = TextEventInputKeyboard);
-        TextEvent(AbstractView*, const String& data, RefPtr<DocumentFragment>&&, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
-        TextEvent(AbstractView*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
+        TextEvent(DOMWindow*, const String& data, TextEventInputType = TextEventInputKeyboard);
+        TextEvent(DOMWindow*, const String& data, RefPtr<DocumentFragment>&&, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        TextEvent(DOMWindow*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         bool isTextEvent() const override;
 

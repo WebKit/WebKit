@@ -48,7 +48,7 @@ public:
 
     static Ref<TouchEvent> create(TouchList* touches, 
             TouchList* targetTouches, TouchList* changedTouches, 
-            const AtomicString& type, AbstractView* view,
+            const AtomicString& type, DOMWindow* view,
             int screenX, int screenY, int pageX, int pageY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
     {
@@ -67,7 +67,7 @@ public:
 
     void initTouchEvent(TouchList* touches, TouchList* targetTouches,
             TouchList* changedTouches, const AtomicString& type, 
-            AbstractView*, int screenX, int screenY,
+            DOMWindow*, int screenX, int screenY,
             int clientX, int clientY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
@@ -87,7 +87,7 @@ private:
     TouchEvent();
     TouchEvent(TouchList* touches, TouchList* targetTouches,
             TouchList* changedTouches, const AtomicString& type,
-            AbstractView*, int screenX, int screenY, int pageX,
+            DOMWindow*, int screenX, int screenY, int pageX,
             int pageY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
     TouchEvent(const AtomicString&, const TouchEventInit&);

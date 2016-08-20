@@ -35,7 +35,7 @@ Ref<UIRequestEvent> UIRequestEvent::createForBindings(const AtomicString& type, 
     return adoptRef(*new UIRequestEvent(type, initializer));
 }
 
-Ref<UIRequestEvent> UIRequestEvent::create(const AtomicString& type, bool bubbles, bool cancelable, AbstractView* view, int detail, RefPtr<EventTarget>&& receiver)
+Ref<UIRequestEvent> UIRequestEvent::create(const AtomicString& type, bool bubbles, bool cancelable, DOMWindow* view, int detail, RefPtr<EventTarget>&& receiver)
 {
     return adoptRef(*new UIRequestEvent(type, bubbles, cancelable, view, detail, WTFMove(receiver)));
 }
@@ -46,7 +46,7 @@ UIRequestEvent::UIRequestEvent(const AtomicString& type, const UIRequestEventIni
 {
 }
     
-UIRequestEvent::UIRequestEvent(const AtomicString& type, bool bubbles, bool cancelable, AbstractView* view, int detail, RefPtr<EventTarget>&& receiver)
+UIRequestEvent::UIRequestEvent(const AtomicString& type, bool bubbles, bool cancelable, DOMWindow* view, int detail, RefPtr<EventTarget>&& receiver)
     : UIEvent(type, bubbles, cancelable, view, detail)
     , m_receiver(WTFMove(receiver))
 {

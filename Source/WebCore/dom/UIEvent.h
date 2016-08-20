@@ -29,16 +29,14 @@
 
 namespace WebCore {
 
-typedef DOMWindow AbstractView;
-
 struct UIEventInit : public EventInit {
-    RefPtr<AbstractView> view;
+    RefPtr<DOMWindow> view;
     int detail { 0 };
 };
 
 class UIEvent : public Event {
 public:
-    static Ref<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, int detail)
+    static Ref<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, int detail)
     {
         return adoptRef(*new UIEvent(type, canBubble, cancelable, view, detail));
     }
@@ -52,9 +50,9 @@ public:
     }
     virtual ~UIEvent();
 
-    void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, int detail);
+    void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, int detail);
 
-    AbstractView* view() const { return m_view.get(); }
+    DOMWindow* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
 
     EventInterface eventInterface() const override;
@@ -72,14 +70,14 @@ public:
 
 protected:
     UIEvent();
-    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, int detail);
-    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*, int detail);
+    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, int detail);
+    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow*, int detail);
     UIEvent(const AtomicString&, const UIEventInit&);
 
 private:
     bool isUIEvent() const final;
 
-    RefPtr<AbstractView> m_view;
+    RefPtr<DOMWindow> m_view;
     int m_detail;
 };
 

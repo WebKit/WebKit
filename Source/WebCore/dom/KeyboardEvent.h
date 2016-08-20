@@ -51,7 +51,7 @@ public:
         // DOM_KEY_LOCATION_JOYSTICK   = 0x05
     };
 
-    static Ref<KeyboardEvent> create(const PlatformKeyboardEvent& platformEvent, AbstractView* view)
+    static Ref<KeyboardEvent> create(const PlatformKeyboardEvent& platformEvent, DOMWindow* view)
     {
         return adoptRef(*new KeyboardEvent(platformEvent, view));
     }
@@ -75,7 +75,7 @@ public:
 
     virtual ~KeyboardEvent();
     
-    void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
+    void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*,
         const String& keyIdentifier, unsigned location,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
     
@@ -105,7 +105,7 @@ public:
 
 private:
     WEBCORE_EXPORT KeyboardEvent();
-    WEBCORE_EXPORT KeyboardEvent(const PlatformKeyboardEvent&, AbstractView*);
+    WEBCORE_EXPORT KeyboardEvent(const PlatformKeyboardEvent&, DOMWindow*);
     KeyboardEvent(const AtomicString&, const KeyboardEventInit&);
     // FIXME: This method should be get ride of in the future.
     // DO NOT USE IT!

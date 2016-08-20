@@ -38,27 +38,27 @@ Ref<TextEvent> TextEvent::createForBindings()
     return adoptRef(*new TextEvent);
 }
 
-Ref<TextEvent> TextEvent::create(AbstractView* view, const String& data, TextEventInputType inputType)
+Ref<TextEvent> TextEvent::create(DOMWindow* view, const String& data, TextEventInputType inputType)
 {
     return adoptRef(*new TextEvent(view, data, inputType));
 }
 
-Ref<TextEvent> TextEvent::createForPlainTextPaste(AbstractView* view, const String& data, bool shouldSmartReplace)
+Ref<TextEvent> TextEvent::createForPlainTextPaste(DOMWindow* view, const String& data, bool shouldSmartReplace)
 {
     return adoptRef(*new TextEvent(view, data, 0, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
 }
 
-Ref<TextEvent> TextEvent::createForFragmentPaste(AbstractView* view, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+Ref<TextEvent> TextEvent::createForFragmentPaste(DOMWindow* view, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
 {
     return adoptRef(*new TextEvent(view, emptyString(), WTFMove(data), shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
 }
 
-Ref<TextEvent> TextEvent::createForDrop(AbstractView* view, const String& data)
+Ref<TextEvent> TextEvent::createForDrop(DOMWindow* view, const String& data)
 {
     return adoptRef(*new TextEvent(view, data, TextEventInputDrop));
 }
 
-Ref<TextEvent> TextEvent::createForDictation(AbstractView* view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+Ref<TextEvent> TextEvent::createForDictation(DOMWindow* view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
 {
     return adoptRef(*new TextEvent(view, data, dictationAlternatives));
 }
@@ -71,7 +71,7 @@ TextEvent::TextEvent()
 {
 }
 
-TextEvent::TextEvent(AbstractView* view, const String& data, TextEventInputType inputType)
+TextEvent::TextEvent(DOMWindow* view, const String& data, TextEventInputType inputType)
     : UIEvent(eventNames().textInputEvent, true, true, view, 0)
     , m_inputType(inputType)
     , m_data(data)
@@ -81,7 +81,7 @@ TextEvent::TextEvent(AbstractView* view, const String& data, TextEventInputType 
 {
 }
 
-TextEvent::TextEvent(AbstractView* view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+TextEvent::TextEvent(DOMWindow* view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
     : UIEvent(eventNames().textInputEvent, true, true, view, 0)
     , m_inputType(TextEventInputPaste)
     , m_data(data)
@@ -92,7 +92,7 @@ TextEvent::TextEvent(AbstractView* view, const String& data, RefPtr<DocumentFrag
 {
 }
 
-TextEvent::TextEvent(AbstractView* view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+TextEvent::TextEvent(DOMWindow* view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
     : UIEvent(eventNames().textInputEvent, true, true, view, 0)
     , m_inputType(TextEventInputDictation)
     , m_data(data)
@@ -107,7 +107,7 @@ TextEvent::~TextEvent()
 {
 }
 
-void TextEvent::initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, const String& data)
+void TextEvent::initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, const String& data)
 {
     if (dispatched())
         return;

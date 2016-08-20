@@ -38,13 +38,13 @@ namespace WebCore {
 
 class SimulatedMouseEvent final : public MouseEvent {
 public:
-    static Ref<SimulatedMouseEvent> create(const AtomicString& eventType, AbstractView* view, RefPtr<Event>&& underlyingEvent, Element& target)
+    static Ref<SimulatedMouseEvent> create(const AtomicString& eventType, DOMWindow* view, RefPtr<Event>&& underlyingEvent, Element& target)
     {
         return adoptRef(*new SimulatedMouseEvent(eventType, view, WTFMove(underlyingEvent), target));
     }
 
 private:
-    SimulatedMouseEvent(const AtomicString& eventType, AbstractView* view, RefPtr<Event>&& underlyingEvent, Element& target)
+    SimulatedMouseEvent(const AtomicString& eventType, DOMWindow* view, RefPtr<Event>&& underlyingEvent, Element& target)
         : MouseEvent(eventType, true, true, underlyingEvent ? underlyingEvent->timeStamp() : currentTime(), view, 0, 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
                      0, 0,

@@ -40,7 +40,7 @@ struct MouseEventInit : public MouseRelatedEventInit {
 
 class MouseEvent : public MouseRelatedEvent {
 public:
-    static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*,
+    static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow*,
         int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
         int movementX, int movementY,
@@ -48,7 +48,7 @@ public:
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
         PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType);
 
-    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*,
+    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow*,
         int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
         int movementX, int movementY,
@@ -56,9 +56,9 @@ public:
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
         PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType, PassRefPtr<DataTransfer>, bool isSimulated = false);
 
-    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, AbstractView*, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
+    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, DOMWindow*, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
 
-    static Ref<MouseEvent> create(const AtomicString& eventType, bool canBubble, bool cancelable, AbstractView*,
+    static Ref<MouseEvent> create(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow*,
         int detail, int screenX, int screenY, int clientX, int clientY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         unsigned short button, unsigned short syntheticClickType, PassRefPtr<EventTarget> relatedTarget);
@@ -72,7 +72,7 @@ public:
 
     virtual ~MouseEvent();
 
-    void initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
+    void initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*,
         int detail, int screenX, int screenY, int clientX, int clientY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         unsigned short button, PassRefPtr<EventTarget> relatedTarget);
@@ -105,7 +105,7 @@ public:
     Ref<Event> cloneFor(HTMLIFrameElement*) const override;
 
 protected:
-    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*,
+    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow*,
         int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
         int movementX, int movementY,
@@ -113,7 +113,7 @@ protected:
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
         PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType, PassRefPtr<DataTransfer>, bool isSimulated);
 
-    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
+    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*,
         int detail, int screenX, int screenY, int clientX, int clientY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         unsigned short button, unsigned short syntheticClickType, PassRefPtr<EventTarget> relatedTarget);
