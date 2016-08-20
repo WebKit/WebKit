@@ -541,6 +541,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     html/canvas/ANGLEInstancedArrays.idl
     html/canvas/CanvasGradient.idl
+    html/canvas/CanvasPath.idl
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasProxy.idl
     html/canvas/CanvasRenderingContext.idl
@@ -1792,7 +1793,7 @@ set(WebCore_SOURCES
     html/canvas/ANGLEInstancedArrays.cpp
     html/canvas/CanvasContextAttributes.cpp
     html/canvas/CanvasGradient.cpp
-    html/canvas/CanvasPathMethods.cpp
+    html/canvas/CanvasPath.cpp
     html/canvas/CanvasPattern.cpp
     html/canvas/CanvasProxy.cpp
     html/canvas/CanvasRenderingContext.cpp

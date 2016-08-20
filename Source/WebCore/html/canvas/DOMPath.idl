@@ -37,38 +37,6 @@
     // [Conditional=CANVAS_PATH] void addPath(DOMPath path, optional SVGMatrix transform);
     [Conditional=CANVAS_PATH] void addPath(DOMPath? path);
     [Conditional=CANVAS_PATH] void addPath(DOMPath? path, SVGMatrix transform);
-
-    // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
-    void closePath();
-    void moveTo(optional float x = NaN,
-                optional float y = NaN);
-    void lineTo(optional float x = NaN,
-                optional float y = NaN);
-    void quadraticCurveTo(optional float cpx = NaN,
-                          optional float cpy = NaN,
-                          optional float x = NaN,
-                          optional float y = NaN);
-    void bezierCurveTo(optional float cp1x = NaN,
-                       optional float cp1y = NaN,
-                       optional float cp2x = NaN,
-                       optional float cp2y = NaN,
-                       optional float x = NaN,
-                       optional float y = NaN);
-    [RaisesException] void arcTo(optional float x1 = NaN,
-               optional float y1 = NaN,
-               optional float x2 = NaN,
-               optional float y2 = NaN,
-               optional float radius = NaN);
-    void rect(optional float x = NaN,
-              optional float y = NaN,
-              optional float width = NaN,
-              optional float height = NaN);
-    [RaisesException] void arc(optional float x = NaN,
-                               optional float y = NaN,
-                               optional float radius = NaN,
-                               optional float startAngle = NaN,
-                               optional float endAngle = NaN,
-                               optional boolean anticlockwise = false);
-    [RaisesException] void ellipse(unrestricted float x, unrestricted float y, unrestricted float radiusX, unrestricted float radiusY, unrestricted float rotation, unrestricted float startAngle, unrestricted float endAngle, optional boolean anticlockwise = false);
-
 };
+
+DOMPath implements CanvasPath;

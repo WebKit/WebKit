@@ -26,7 +26,7 @@
 #pragma once
 
 #include "AffineTransform.h"
-#include "CanvasPathMethods.h"
+#include "CanvasPath.h"
 #include "CanvasRenderingContext.h"
 #include "CanvasStyle.h"
 #include "Color.h"
@@ -57,7 +57,7 @@ class TextMetrics;
 
 typedef int ExceptionCode;
 
-class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPathMethods {
+class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPath {
 public:
     CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
     virtual ~CanvasRenderingContext2D();

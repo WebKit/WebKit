@@ -1812,6 +1812,8 @@
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
 		465A8E791C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm */; };
 		4669B2871B852A0B000F905F /* JSDOMNamedFlowCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46F2768E1B85297F005C2556 /* JSDOMNamedFlowCollectionCustom.cpp */; };
+		4671E0651D67A59600C6B497 /* CanvasPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4671E0631D67A57B00C6B497 /* CanvasPath.cpp */; };
+		4671E0661D67A59600C6B497 /* CanvasPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 4671E0641D67A57B00C6B497 /* CanvasPath.h */; };
 		467302021C4EFE7800BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
 		46A58AC51D46B3FA00432036 /* JSClientRectCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A58AC41D46B3FA00432036 /* JSClientRectCustom.cpp */; };
@@ -6728,8 +6730,6 @@
 		FB484F4D171F821E00040755 /* TransformFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FB484F4B171F821E00040755 /* TransformFunctions.h */; };
 		FB78AD2E151BF5E600FE54D3 /* CSSParserMode.h in Headers */ = {isa = PBXBuildFile; fileRef = FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FB91392416AE4C17001FE682 /* DOMPath.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91392016AE4B0B001FE682 /* DOMPath.h */; };
-		FB91392616AE4C2F001FE682 /* CanvasPathMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91391F16AE4B0B001FE682 /* CanvasPathMethods.h */; };
-		FB91392716AE4C34001FE682 /* CanvasPathMethods.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB91391E16AE4B0B001FE682 /* CanvasPathMethods.cpp */; };
 		FB91392A16AE4FC0001FE682 /* JSDOMPath.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91392816AE4FC0001FE682 /* JSDOMPath.h */; };
 		FB91392B16AE4FC0001FE682 /* JSDOMPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB91392916AE4FC0001FE682 /* JSDOMPath.cpp */; };
 		FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = FB92DF4915FED08700994433 /* ClipPathOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9133,6 +9133,8 @@
 		463EB6201B8789CB0096ED51 /* TagCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagCollection.cpp; sourceTree = "<group>"; };
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
 		465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecks.mm; sourceTree = "<group>"; };
+		4671E0631D67A57B00C6B497 /* CanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPath.cpp; sourceTree = "<group>"; };
+		4671E0641D67A57B00C6B497 /* CanvasPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPath.h; sourceTree = "<group>"; };
 		467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreOpensDuringUnloadCountIncrementer.h; sourceTree = "<group>"; };
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMetadata.h; sourceTree = "<group>"; };
 		46A58AC41D46B3FA00432036 /* JSClientRectCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClientRectCustom.cpp; sourceTree = "<group>"; };
@@ -14707,8 +14709,6 @@
 		FB484F4A171F821E00040755 /* TransformFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFunctions.cpp; sourceTree = "<group>"; };
 		FB484F4B171F821E00040755 /* TransformFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformFunctions.h; sourceTree = "<group>"; };
 		FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSParserMode.h; sourceTree = "<group>"; };
-		FB91391E16AE4B0B001FE682 /* CanvasPathMethods.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPathMethods.cpp; sourceTree = "<group>"; };
-		FB91391F16AE4B0B001FE682 /* CanvasPathMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPathMethods.h; sourceTree = "<group>"; };
 		FB91392016AE4B0B001FE682 /* DOMPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPath.h; sourceTree = "<group>"; };
 		FB91392116AE4B0B001FE682 /* DOMPath.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMPath.idl; sourceTree = "<group>"; };
 		FB91392816AE4FC0001FE682 /* JSDOMPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPath.h; sourceTree = "<group>"; };
@@ -17145,8 +17145,8 @@
 				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
 				49484FB4102CF23C00187DD3 /* CanvasGradient.h */,
 				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
-				FB91391E16AE4B0B001FE682 /* CanvasPathMethods.cpp */,
-				FB91391F16AE4B0B001FE682 /* CanvasPathMethods.h */,
+				4671E0631D67A57B00C6B497 /* CanvasPath.cpp */,
+				4671E0641D67A57B00C6B497 /* CanvasPath.h */,
 				49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */,
 				49484FB7102CF23C00187DD3 /* CanvasPattern.h */,
 				49484FB8102CF23C00187DD3 /* CanvasPattern.idl */,
@@ -24984,7 +24984,6 @@
 				B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */,
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
-				FB91392616AE4C2F001FE682 /* CanvasPathMethods.h in Headers */,
 				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
 				49484FC5102CF23C00188DD3 /* CanvasProxy.h in Headers */,
 				49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */,
@@ -28059,6 +28058,7 @@
 				1AF89A421518FDEA00E547B5 /* TiledBacking.h in Headers */,
 				7AA3A69C194A64E7001CBD24 /* TileGrid.h in Headers */,
 				498770F31242C535002226BA /* TilingData.h in Headers */,
+				4671E0661D67A59600C6B497 /* CanvasPath.h in Headers */,
 				F55B3DDC1251F12D003EF269 /* TimeInputType.h in Headers */,
 				7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */,
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
@@ -28865,7 +28865,6 @@
 				B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */,
 				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
-				FB91392716AE4C34001FE682 /* CanvasPathMethods.cpp in Sources */,
 				49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */,
 				49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */,
 				49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */,
@@ -29697,6 +29696,7 @@
 				5185FC901BB4C4E80012898F /* IDBIndex.cpp in Sources */,
 				51F798EF1BE880E7008AE491 /* IDBIndexInfo.cpp in Sources */,
 				5185FC941BB4C4E80012898F /* IDBKey.cpp in Sources */,
+				4671E0651D67A59600C6B497 /* CanvasPath.cpp in Sources */,
 				5185FC961BB4C4E80012898F /* IDBKeyData.cpp in Sources */,
 				5185FC981BB4C4E80012898F /* IDBKeyPath.cpp in Sources */,
 				5185FC9A1BB4C4E80012898F /* IDBKeyRange.cpp in Sources */,
