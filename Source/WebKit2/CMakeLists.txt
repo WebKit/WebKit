@@ -217,13 +217,11 @@ set(WebKit2_SOURCES
     Platform/Module.cpp
 
     Platform/IPC/ArgumentCoders.cpp
-    Platform/IPC/ArgumentDecoder.cpp
-    Platform/IPC/ArgumentEncoder.cpp
     Platform/IPC/Attachment.cpp
     Platform/IPC/Connection.cpp
     Platform/IPC/DataReference.cpp
     Platform/IPC/Encoder.cpp
-    Platform/IPC/MessageDecoder.cpp
+    Platform/IPC/Decoder.cpp
     Platform/IPC/MessageReceiverMap.cpp
     Platform/IPC/MessageSender.cpp
     Platform/IPC/StringReference.cpp
