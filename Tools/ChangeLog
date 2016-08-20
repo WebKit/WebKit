@@ -1,3 +1,17 @@
+2016-08-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r204659.
+
+        This change appears to have caused ios-simulator LayoutTests
+        to fail when shutting down the simulator
+
+        Reverted changeset:
+
+        "REGRESSION (r204477): Running LayoutTests on ios-simulator
+        became ~15 minutes slower"
+        https://bugs.webkit.org/show_bug.cgi?id=160985
+        http://trac.webkit.org/changeset/204659
+
 2016-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix for non-USE_SIM_SERVICE_CONTEXT builds

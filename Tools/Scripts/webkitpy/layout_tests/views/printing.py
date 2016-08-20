@@ -94,7 +94,7 @@ class Printer(object):
         self._print_default("Regular timeout: %s, slow test timeout: %s" %
                   (self._options.time_out_ms, self._options.slow_time_out_ms))
 
-        self._print_default('Command line: ' + ' '.join(self._port.driver_cmd_line_for_logging()))
+        self._print_default('Command line: ' + ' '.join(self._port.driver_cmd_line()))
         self._print_default('')
 
     def print_found(self, num_all_test_files, num_to_run, repeat_each, iterations):
