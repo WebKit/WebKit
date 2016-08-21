@@ -26,7 +26,6 @@
 
 [
     CustomToJSObject,
-    ObjCPolymorphic,
     ImplementationLacksVTable
 ] interface SVGPathSeg {
     // Path Segment Types

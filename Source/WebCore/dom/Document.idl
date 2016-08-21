@@ -39,17 +39,17 @@
     [NewObject] Text createTextNode(DOMString data);
     [NewObject] Comment createComment(DOMString data);
     [NewObject, RaisesException] CDATASection createCDATASection(DOMString data);
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
+    [NewObject, RaisesException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
     [NewObject, RaisesException] Attr createAttribute(DOMString name);
 
     HTMLCollection getElementsByTagName(DOMString tagname);
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode(Node importedNode, optional boolean deep = false);
+    [NewObject, RaisesException] Node importNode(Node importedNode, optional boolean deep = false);
 
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject, RaisesException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject, RaisesException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 
@@ -112,17 +112,17 @@
     // DOM Level 2 Style (DocumentCSS interface)
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters] CSSStyleDeclaration getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
+    CSSStyleDeclaration getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
 
     readonly attribute DOMString contentType;
 
     // DOM Level 3 XPath (XPathEvaluator interface)
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters, RaisesException] XPathExpression createExpression(optional DOMString expression = "undefined", optional XPathNSResolver? resolver);
+    [RaisesException] XPathExpression createExpression(optional DOMString expression = "undefined", optional XPathNSResolver? resolver);
     XPathNSResolver createNSResolver(Node? nodeResolver);
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters, RaisesException] XPathResult evaluate(optional DOMString expression = "undefined",
+    [RaisesException] XPathResult evaluate(optional DOMString expression = "undefined",
                                                   optional Node? contextNode,
                                                   optional XPathNSResolver? resolver,
                                                   optional unsigned short type = 0,

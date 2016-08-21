@@ -24,7 +24,6 @@
     Exposed=(Window,Worker),
     JSCustomHeader,
     JSCustomToNativeObject,
-    ObjCProtocol,
 ] interface EventTarget {
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // FIXME: Should be:
@@ -36,8 +35,8 @@
     [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, EventListenerOptions options);
 #endif
 
-    [ObjCLegacyUnnamedParameters, ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener, boolean useCapture);
-    [ObjCLegacyUnnamedParameters, ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, boolean useCapture);
+    [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener, boolean useCapture);
+    [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, boolean useCapture);
 
     [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event event);
 };

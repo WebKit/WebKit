@@ -24,7 +24,6 @@
     JSCustomMarkFunction,
     GenerateIsReachable,
     CustomToJSObject,
-    ObjCPolymorphic,
 ] interface StyleSheet {
     readonly attribute DOMString?       type;
              attribute boolean          disabled;

@@ -26,14 +26,14 @@
     // DOM Level 1
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters] boolean hasFeature(optional DOMString feature = "undefined",
+    boolean hasFeature(optional DOMString feature = "undefined",
         [TreatNullAs=EmptyString] optional DOMString version = "undefined");
 
     // DOM Level 2
 
-    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
+    [RaisesException, NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
 
-    [NewObject, ObjCLegacyUnnamedParameters, RaisesException]
+    [NewObject, RaisesException]
 #if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
         Document
 #else
@@ -44,7 +44,7 @@
     // DOMImplementationCSS interface from DOM Level 2 CSS
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [ObjCLegacyUnnamedParameters, RaisesException] CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");
+    [RaisesException] CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");
 
     // HTMLDOMImplementation interface from DOM Level 2 HTML
 
