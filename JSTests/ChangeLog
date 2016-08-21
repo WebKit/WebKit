@@ -1,3 +1,15 @@
+2016-08-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Should not fixup AnyIntUse in 32_64
+        https://bugs.webkit.org/show_bug.cgi?id=161029
+
+        Reviewed by Saam Barati.
+
+        * typeProfiler/int52-dfg.js: Added.
+        (test):
+        * typeProfiler/number-filter-dfg.js: Added.
+        (test):
+
 2016-08-19  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] ArithSqrt should work with any argument type
