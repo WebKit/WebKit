@@ -1996,11 +1996,13 @@ sub diffCommand($$$$)
 {
     my ($paths, $gitCommit, $gitIndex, $mergeBase) = @_;
 
+    # The function overlap detection logic in generateFunctionListsByRanges() assumes that its line
+    # ranges were from a unified diff without any context lines.
     my $command;
     if (isSVN()) {
         my @escapedPaths = map(escapeSubversionPath($_), @$paths);
         my $escapedPathsString = qq(") . join(qq(" "), @escapedPaths) . qq(");
-        $command = SVN . " diff --diff-cmd diff -x -u $escapedPathsString";
+        $command = SVN . " diff --diff-cmd diff -x -U0 $escapedPathsString";
     } elsif (isGit()) {
         my $pathsString = "'" . join("' '", @$paths) . "'"; 
         $command = GIT . " diff --no-ext-diff -U0 " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
@@ -2368,9 +2370,12 @@ sub extractLineRangeAfterChange($)
 {
     my ($string) = @_;
     my $chunkRange = parseChunkRange($string);
-    if (!$chunkRange || !$chunkRange->{newStartingLine} || !$chunkRange->{newLineCount}) {
+    if (!$chunkRange) {
+        return (-1, -1); # Malformed
+    }
+    if (!$chunkRange->{newStartingLine} || !$chunkRange->{newLineCount}) {
          # Deletion; no lines exist after change.
-        return (-1, -1);
+        return ($chunkRange->{newStartingLine}, $chunkRange->{newStartingLine});
     }
     return ($chunkRange->{newStartingLine}, $chunkRange->{newStartingLine} + $chunkRange->{newLineCount} - 1);
 }
@@ -2379,9 +2384,12 @@ sub extractLineRangeBeforeChange($)
 {
     my ($string) = @_;
     my $chunkRange = parseChunkRange($string);
-    if (!$chunkRange || !$chunkRange->{startingLine} || !$chunkRange->{lineCount}) {
+    if (!$chunkRange) {
+        return (-1, -1); # Malformed
+    }
+    if (!$chunkRange->{startingLine} || !$chunkRange->{lineCount}) {
         # Addition; no lines existed before change.
-        return (-1, -1);
+        return ($chunkRange->{startingLine}, $chunkRange->{startingLine});
     }
     return ($chunkRange->{startingLine}, $chunkRange->{startingLine} + $chunkRange->{lineCount} - 1);
 }

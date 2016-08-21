@@ -1,3 +1,22 @@
+2016-08-21  Daniel Bates  <dabates@apple.com>
+
+        prepare-ChangeLog lists modified methods as having been deleted
+        https://bugs.webkit.org/show_bug.cgi?id=148437
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/prepare-ChangeLog:
+        (diffCommand): When using a Subversion checkout, generate a unified diff without any context lines.
+        This matches our behavior when using a Git checkout. The function overlap logic in generateFunctionListsByRanges()
+        assumes that its line ranges were from a unified diff without any context lines.
+        (extractLineRangeAfterChange): A deleted line should be represented with a ("begin line number", "end line number") = ("new starting line number", "new starting line number").
+        (extractLineRangeBeforeChange): An added line should be represented with a ("begin line number", "end line number") = ("original starting line number", "original starting line number").
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/extractLineRangeBeforeAndAfterChange.pl: Update expected results
+        based on changes to extractLineRangeAfterChange() and extractLineRangeBeforeChange().
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/generateFunctionLists.pl: Added.
+        (discardOutput): Convenience function invokes the specified function redirecting standard output and standard error
+        to /dev/null for the duration of the function call.
+
 2016-08-20  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         [EFL] Remove unnecessary a patch to mute ecore warnings

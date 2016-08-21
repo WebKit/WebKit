@@ -39,7 +39,7 @@ my @testCaseHashRefs = (
     testName => "add single line to the beginning of the file",
     inputText => "@@ -0,0 +1 @@",
     expectedResults => {
-        beforeChange => [-1, -1],
+        beforeChange => [0, 0],
         afterChange => [1, 1],
     }
 },
@@ -48,7 +48,7 @@ my @testCaseHashRefs = (
     testName => "add two lines to the beginning of the file",
     inputText => "@@ -0,0 +1,2 @@",
     expectedResults => {
-        beforeChange => [-1, -1],
+        beforeChange => [0, 0],
         afterChange => [1, 2],
     }
 },
@@ -57,7 +57,7 @@ my @testCaseHashRefs = (
     testName => "add two lines in the middle of the file",
     inputText => "@@ -4,0 +5,2 @@",
     expectedResults => {
-        beforeChange => [-1, -1],
+        beforeChange => [4, 4],
         afterChange => [5, 6],
     }
 },
@@ -66,7 +66,7 @@ my @testCaseHashRefs = (
     testName => "append a single line to the end of the file",
     inputText => "@@ -1,0 +2 @@",
     expectedResults => {
-        beforeChange => [-1, -1],
+        beforeChange => [1, 1],
         afterChange => [2, 2],
     }
 },
@@ -79,7 +79,7 @@ my @testCaseHashRefs = (
     inputText => "@@ -1 +0,0 @@",
     expectedResults => {
         beforeChange => [1, 1],
-        afterChange => [-1, -1],
+        afterChange => [0, 0],
     }
 },
 {
@@ -88,7 +88,7 @@ my @testCaseHashRefs = (
     inputText => "@@ -1,7 +0,0 @@",
     expectedResults => {
         beforeChange => [1, 7],
-        afterChange => [-1, -1],
+        afterChange => [0, 0],
     }
 },
 {
@@ -97,7 +97,7 @@ my @testCaseHashRefs = (
     inputText => "@@ -4,2 +3,0 @@",
     expectedResults => {
         beforeChange => [4, 5],
-        afterChange => [-1, -1],
+        afterChange => [3, 3],
     }
 },
 ####
