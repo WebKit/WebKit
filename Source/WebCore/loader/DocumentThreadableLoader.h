@@ -117,6 +117,7 @@ namespace WebCore {
         bool m_async;
         std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
         Optional<CrossOriginPreflightChecker> m_preflightChecker;
+        Optional<HTTPHeaderMap> m_originalHeaders;
     };
 
 } // namespace WebCore

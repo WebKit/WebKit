@@ -1,3 +1,14 @@
+2016-08-21  Youenn Fablet  <youenn@apple.com>
+
+        cross-origin requests redirected fail or drop author requested headers
+        https://bugs.webkit.org/show_bug.cgi?id=112471
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/xmlhttprequest/redirections-and-user-headers-expected.txt: Added.
+        * http/tests/xmlhttprequest/redirections-and-user-headers.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-preflight-redirect.php: Added.
+
 2016-08-19  Sam Weinig  <sam@webkit.org>
 
         Location.ancestorOrigins should return a FrozenArray<USVString>

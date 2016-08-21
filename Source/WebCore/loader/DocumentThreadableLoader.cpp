@@ -99,6 +99,12 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
 
     m_options.allowCredentials = (m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_sameOriginRequest)) ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
+    ASSERT(!request.httpHeaderFields().contains(HTTPHeaderName::Origin));
+
+    // Copy headers if we need to replay the request after a redirection.
+    if (m_async && m_options.mode == FetchOptions::Mode::Cors)
+        m_originalHeaders = request.httpHeaderFields();
+
     if (m_sameOriginRequest || m_options.mode == FetchOptions::Mode::NoCors) {
         loadRequest(WTFMove(request), DoSecurityCheck);
         return;
@@ -246,9 +252,13 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
 
     clearResource();
 
-    // We need to clean the request again as SubresourceLoader may not always do the cleaning,
-    // especially in the case of a cross-origin load but redirection sticking to the same origin.
-    cleanRedirectedRequestForAccessControl(request);
+    ASSERT(m_originalHeaders);
+    // Let's fetch the request with the original headers (equivalent to request cloning specified by fetch algorithm).
+    // Do not copy the Authorization header if removed by the network layer.
+    if (!request.httpHeaderFields().contains(HTTPHeaderName::Authorization))
+        m_originalHeaders->remove(HTTPHeaderName::Authorization);
+    request.setHTTPHeaderFields(*m_originalHeaders);
+
     makeCrossOriginAccessRequest(ResourceRequest(request));
 }
 
