@@ -23,10 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[NoInterfaceObject]
-interface URLUtils {
+[NoInterfaceObject] interface URLUtils {
     [SetterRaisesException, URL] attribute USVString href;
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [NotEnumerable] DOMString toString();
 #endif
 

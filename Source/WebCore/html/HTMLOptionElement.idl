@@ -19,9 +19,9 @@
  */
 
 [
+    ConstructorRaisesException,
     JSGenerateToNativeObject,
     NamedConstructor=Option(optional DOMString data, optional DOMString value, optional boolean defaultSelected = false, optional boolean selected = false),
-    ConstructorRaisesException
 ] interface HTMLOptionElement : HTMLElement {
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
@@ -30,7 +30,7 @@
     attribute boolean selected;
     attribute DOMString value;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [SetterRaisesException] attribute DOMString text;
 #else
     readonly attribute DOMString text;

@@ -18,7 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
     IsWeakCallback,
 ] callback interface NodeFilter {
@@ -28,20 +27,19 @@
     const unsigned short FILTER_SKIP = 3;
 
     // Constants for whatToShow
-    const unsigned long       SHOW_ALL                       = 0xFFFFFFFF;
-    const unsigned long       SHOW_ELEMENT                   = 0x00000001;
-    const unsigned long       SHOW_ATTRIBUTE                 = 0x00000002;
-    const unsigned long       SHOW_TEXT                      = 0x00000004;
-    const unsigned long       SHOW_CDATA_SECTION             = 0x00000008;
-    const unsigned long       SHOW_ENTITY_REFERENCE          = 0x00000010;
-    const unsigned long       SHOW_ENTITY                    = 0x00000020;
-    const unsigned long       SHOW_PROCESSING_INSTRUCTION    = 0x00000040;
-    const unsigned long       SHOW_COMMENT                   = 0x00000080;
-    const unsigned long       SHOW_DOCUMENT                  = 0x00000100;
-    const unsigned long       SHOW_DOCUMENT_TYPE             = 0x00000200;
-    const unsigned long       SHOW_DOCUMENT_FRAGMENT         = 0x00000400;
-    const unsigned long       SHOW_NOTATION                  = 0x00000800;
+    const unsigned long SHOW_ALL = 0xFFFFFFFF;
+    const unsigned long SHOW_ELEMENT = 0x00000001;
+    const unsigned long SHOW_ATTRIBUTE = 0x00000002;
+    const unsigned long SHOW_TEXT = 0x00000004;
+    const unsigned long SHOW_CDATA_SECTION = 0x00000008;
+    const unsigned long SHOW_ENTITY_REFERENCE = 0x00000010;
+    const unsigned long SHOW_ENTITY = 0x00000020;
+    const unsigned long SHOW_PROCESSING_INSTRUCTION = 0x00000040;
+    const unsigned long SHOW_COMMENT = 0x00000080;
+    const unsigned long SHOW_DOCUMENT = 0x00000100;
+    const unsigned long SHOW_DOCUMENT_TYPE = 0x00000200;
+    const unsigned long SHOW_DOCUMENT_FRAGMENT = 0x00000400;
+    const unsigned long SHOW_NOTATION = 0x00000800;
 
     [Custom] unsigned short acceptNode(optional Node node);
 };
-

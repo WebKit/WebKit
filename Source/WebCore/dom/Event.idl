@@ -18,67 +18,60 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
-    CustomToJSObject,
     ConstructorTemplate=Event,
+    CustomToJSObject,
     Exposed=(Window,Worker),
 ] interface Event {
+    // PhaseType
+    const unsigned short NONE = 0;
+    const unsigned short CAPTURING_PHASE = 1;
+    const unsigned short AT_TARGET = 2;
+    const unsigned short BUBBLING_PHASE = 3;
 
-    // DOM PhaseType
-    const unsigned short NONE                = 0;
-    const unsigned short CAPTURING_PHASE     = 1;
-    const unsigned short AT_TARGET           = 2;
-    const unsigned short BUBBLING_PHASE      = 3;
+    const unsigned short MOUSEDOWN = 1;
+    const unsigned short MOUSEUP = 2;
+    const unsigned short MOUSEOVER = 4;
+    const unsigned short MOUSEOUT = 8;
+    const unsigned short MOUSEMOVE = 16;
+    const unsigned short MOUSEDRAG = 32;
+    const unsigned short CLICK = 64;
+    const unsigned short DBLCLICK = 128;
+    const unsigned short KEYDOWN = 256;
+    const unsigned short KEYUP = 512;
+    const unsigned short KEYPRESS = 1024;
+    const unsigned short DRAGDROP = 2048;
+    const unsigned short FOCUS = 4096;
+    const unsigned short BLUR = 8192;
+    const unsigned short SELECT = 16384;
+    const unsigned short CHANGE = 32768;
 
-    // Reverse-engineered from Netscape
-    const unsigned short MOUSEDOWN           = 1;
-    const unsigned short MOUSEUP             = 2;
-    const unsigned short MOUSEOVER           = 4;
-    const unsigned short MOUSEOUT            = 8;
-    const unsigned short MOUSEMOVE           = 16;
-    const unsigned short MOUSEDRAG           = 32;
-    const unsigned short CLICK               = 64;
-    const unsigned short DBLCLICK            = 128;
-    const unsigned short KEYDOWN             = 256;
-    const unsigned short KEYUP               = 512;
-    const unsigned short KEYPRESS            = 1024;
-    const unsigned short DRAGDROP            = 2048;
-    const unsigned short FOCUS               = 4096;
-    const unsigned short BLUR                = 8192;
-    const unsigned short SELECT              = 16384;
-    const unsigned short CHANGE              = 32768;
-
-    readonly attribute DOMString        type;
-    readonly attribute EventTarget      target;
-    readonly attribute EventTarget      currentTarget;
-    readonly attribute unsigned short   eventPhase;
+    readonly attribute DOMString type;
+    readonly attribute EventTarget target;
+    readonly attribute EventTarget currentTarget;
+    readonly attribute unsigned short eventPhase;
     [InitializedByEventConstructor] readonly attribute boolean bubbles;
     [InitializedByEventConstructor] readonly attribute boolean cancelable;
     [InitializedByEventConstructor, EnabledAtRuntime=ShadowDOM] readonly attribute boolean composed;
-    readonly attribute DOMTimeStamp     timeStamp;
+    readonly attribute DOMTimeStamp timeStamp;
 
     [EnabledAtRuntime=ShadowDOM] sequence<Node> composedPath();
 
-    void               stopPropagation();
-    void               preventDefault();
+    void stopPropagation();
+    void preventDefault();
 
     void initEvent(DOMString eventTypeArg, boolean canBubbleArg, boolean cancelableArg);
 
-    // DOM Level 3 Additions.
     readonly attribute boolean defaultPrevented;
     void stopImmediatePropagation();
 
     [Unforgeable] readonly attribute boolean isTrusted;
 
-    // IE Extensions
-    readonly attribute EventTarget      srcElement;
+    readonly attribute EventTarget srcElement;
     [ImplementedAs=legacyReturnValue] attribute boolean returnValue;
-             attribute boolean          cancelBubble;
+    attribute boolean cancelBubble;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Custom] readonly attribute DataTransfer        clipboardData;
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
+    [Custom] readonly attribute DataTransfer clipboardData;
 #endif
-
 };
-

@@ -27,15 +27,15 @@
  */
 
 [
-    JSCustomGetOwnPropertySlotAndDescriptor,
-    CustomNamedSetter,
-    GenerateIsReachable=ImplFrame,
     CustomDeleteProperty,
     CustomEnumerateProperty,
+    CustomNamedSetter,
+    GenerateIsReachable=ImplFrame,
     JSCustomDefineOwnProperty,
-    JSCustomNamedGetterOnPrototype,
     JSCustomDefineOwnPropertyOnPrototype,
-    Unforgeable
+    JSCustomGetOwnPropertySlotAndDescriptor,
+    JSCustomNamedGetterOnPrototype,
+    Unforgeable,
 ] interface Location {
     [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString href;
 
@@ -57,8 +57,7 @@
     // FIXME: Add support for SameObject
     [Unforgeable, CachedAttribute] readonly attribute FrozenArray<USVString> ancestorOrigins;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [NotEnumerable, Custom, ImplementedAs=toStringFunction] DOMString toString();
 #endif
 };
-

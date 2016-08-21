@@ -27,17 +27,16 @@
  */
 
 [
-    Exposed=(Window,Worker),
-    CustomToJSObject,
     Constructor(Uint8ClampedArray data, unsigned long sw, optional unsigned long sh = 0),
     Constructor(unsigned long sw, unsigned long sh),
     ConstructorRaisesException,
-    ImplementationLacksVTable
+    CustomToJSObject,
+    Exposed=(Window,Worker),
+    ImplementationLacksVTable,
 ] interface ImageData {
     readonly attribute long width;
     readonly attribute long height;
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     readonly attribute Uint8ClampedArray data;
 #endif
 };
-

@@ -25,8 +25,7 @@ interface HTMLAnchorElement : HTMLElement {
     [Reflect] attribute DOMString hreflang;
     [Reflect] attribute DOMString name;
 
-    // FIXME: This is supposed to be:
-    // [PutForwards=value] readonly attribute DOMTokenList ping;
+    // FIXME: This is supposed to be: [PutForwards=value] readonly attribute DOMTokenList ping;
     [Reflect] attribute USVString ping;
 
     [Reflect] attribute DOMString rel;
@@ -35,9 +34,9 @@ interface HTMLAnchorElement : HTMLElement {
     [Reflect] attribute DOMString target;
     [Reflect] attribute DOMString type;
 
-    [SetterRaisesException]  attribute DOMString text;
+    [SetterRaisesException] attribute DOMString text;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [NotEnumerable] DOMString toString();
 #endif
 

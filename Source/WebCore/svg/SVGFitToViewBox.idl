@@ -27,7 +27,6 @@
 [
     NoInterfaceObject,
 ] interface SVGFitToViewBox {
-    readonly attribute SVGAnimatedRect                viewBox;
+    readonly attribute SVGAnimatedRect viewBox;
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };
-

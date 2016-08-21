@@ -33,7 +33,7 @@
     readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
-#if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [RaisesException] void setStart(Node refNode, unsigned long offset);
     [RaisesException] void setEnd(Node refNode, unsigned long offset);
 #else
@@ -51,9 +51,9 @@
 
     // CompareHow
     const unsigned short START_TO_START = 0;
-    const unsigned short START_TO_END   = 1;
-    const unsigned short END_TO_END     = 2;
-    const unsigned short END_TO_START   = 3;
+    const unsigned short START_TO_END = 1;
+    const unsigned short END_TO_END = 2;
+    const unsigned short END_TO_START = 3;
 
     [RaisesException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
@@ -67,30 +67,24 @@
 
     void detach();
 
-#if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
-    // CSSOM View Module API extensions
-
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
 #endif
 
-    // extensions
-
     [RaisesException, NewObject] DocumentFragment createContextualFragment(DOMString html);
-
-    // WebKit extensions
 
     [RaisesException] short compareNode(Node refNode);
 
     // CompareResults
-    const unsigned short NODE_BEFORE           = 0;
-    const unsigned short NODE_AFTER            = 1;
+    const unsigned short NODE_BEFORE = 0;
+    const unsigned short NODE_AFTER = 1;
     const unsigned short NODE_BEFORE_AND_AFTER = 2;
-    const unsigned short NODE_INSIDE           = 3;
+    const unsigned short NODE_INSIDE = 3;
 
     [RaisesException] boolean intersectsNode(Node refNode);
 
-#if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [RaisesException] short comparePoint(Node refNode, unsigned long offset);
     [RaisesException] boolean isPointInRange(Node refNode, unsigned long offset);
 #else
@@ -101,8 +95,7 @@
     // FIXME: Using "undefined" as default parameter value is wrong.
     [RaisesException] void expand(optional DOMString unit = "undefined");
 
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     readonly attribute DOMString text;
 #endif
 };
-

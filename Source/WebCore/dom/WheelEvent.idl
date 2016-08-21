@@ -19,15 +19,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 3:
 [
     ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
     ConstructorTemplate=Event,
 ] interface WheelEvent : MouseEvent {
     // DeltaModeCode
-    const unsigned long              DOM_DELTA_PIXEL = 0x00;
-    const unsigned long              DOM_DELTA_LINE  = 0x01;
-    const unsigned long              DOM_DELTA_PAGE  = 0x02;
+    const unsigned long DOM_DELTA_PIXEL = 0x00;
+    const unsigned long DOM_DELTA_LINE = 0x01;
+    const unsigned long DOM_DELTA_PAGE = 0x02;
 
     [InitializedByEventConstructor] readonly attribute unrestricted double deltaX;
     [InitializedByEventConstructor] readonly attribute unrestricted double deltaY;
@@ -39,34 +38,17 @@
     [InitializedByEventConstructor] readonly attribute long wheelDeltaY;
     readonly attribute long wheelDelta;
 
-    // WebKit Extension
     readonly attribute boolean webkitDirectionInvertedFromDevice;
 
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-    void initWheelEvent(optional long wheelDeltaX,
-                        optional long wheelDeltaY,
-                        optional DOMWindow? view,
-                        optional long screenX,
-                        optional long screenY,
-                        optional long clientX,
-                        optional long clientY,
-                        optional boolean ctrlKey,
-                        optional boolean altKey,
-                        optional boolean shiftKey,
-                        optional boolean metaKey);
-#endif /* !defined(LANGUAGE_JAVASCRIPT) */
-
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    void initWebKitWheelEvent(optional long wheelDeltaX = 0,
-                              optional long wheelDeltaY = 0,
-                              optional DOMWindow? view = null,
-                              optional long screenX = 0,
-                              optional long screenY = 0,
-                              optional long clientX = 0,
-                              optional long clientY = 0,
-                              optional boolean ctrlKey = false,
-                              optional boolean altKey = false,
-                              optional boolean shiftKey = false,
-                              optional boolean metaKey = false);
-#endif /* defined(LANGUAGE_JAVASCRIPT) */
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
+    void initWebKitWheelEvent(optional long wheelDeltaX = 0, optional long wheelDeltaY = 0, optional DOMWindow? view = null,
+        optional long screenX = 0, optional long screenY = 0, optional long clientX = 0, optional long clientY = 0,
+        optional boolean ctrlKey = false, optional boolean altKey = false,
+        optional boolean shiftKey = false, optional boolean metaKey = false);
+#else
+    void initWheelEvent(optional long wheelDeltaX = 0, optional long wheelDeltaY = 0, optional DOMWindow? view = null,
+        optional long screenX = 0, optional long screenY = 0, optional long clientX = 0, optional long clientY = 0,
+        optional boolean ctrlKey = false, optional boolean altKey = false,
+        optional boolean shiftKey = false, optional boolean metaKey = false);
+#endif
 };

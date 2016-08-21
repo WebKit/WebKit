@@ -53,7 +53,7 @@
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitDroppedFrameCount;
 
     // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Conditional=VIDEO_PRESENTATION_MODE] boolean webkitSupportsPresentationMode(VideoPresentationMode mode);
     [Conditional=VIDEO_PRESENTATION_MODE] readonly attribute VideoPresentationMode webkitPresentationMode;
     [Conditional=VIDEO_PRESENTATION_MODE] void webkitSetPresentationMode(VideoPresentationMode mode);

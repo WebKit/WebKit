@@ -30,10 +30,7 @@
     [Custom] void write(optional DOMString text);
     [Custom] void writeln(optional DOMString text);
 
-    // Extensions
-
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    // FIXME: This should eventually be available (if they are wanted) for all languages.
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Custom, Replaceable, Deletable] readonly attribute HTMLAllCollection all;
 #endif
 
@@ -42,7 +39,7 @@
     void captureEvents();
     void releaseEvents();
 
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     readonly attribute long width;
     readonly attribute long height;
     attribute DOMString dir;
@@ -55,4 +52,3 @@
     [TreatNullAs=EmptyString] attribute DOMString linkColor;
     [TreatNullAs=EmptyString] attribute DOMString vlinkColor;
 };
-

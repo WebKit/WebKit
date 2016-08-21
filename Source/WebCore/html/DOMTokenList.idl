@@ -39,8 +39,7 @@
 
     attribute DOMString value;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     DOMString toString();
 #endif
 };
-

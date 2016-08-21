@@ -47,7 +47,7 @@
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [ImplementedAs=submitFromJavaScript] void submit();
 #else
     void submit();

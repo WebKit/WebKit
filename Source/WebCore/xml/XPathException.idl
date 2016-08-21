@@ -30,13 +30,11 @@
     DoNotCheckConstants,
     ImplementationLacksVTable,
 ] exception XPathException {
+    readonly attribute unsigned short code;
+    readonly attribute DOMString name;
+    readonly attribute DOMString message;
 
-    readonly attribute unsigned short   code;
-    readonly attribute DOMString        name;
-    readonly attribute DOMString        message;
-
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    // Override in a Mozilla compatible format
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [NotEnumerable] DOMString toString();
 #endif
 

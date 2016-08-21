@@ -25,14 +25,14 @@
  */
 
 [
-    Exposed=Worker,
     CustomProxyToJSObject,
+    Exposed=Worker,
     JSCustomMarkFunction,
     JSLegacyParent=JSWorkerGlobalScopeBase,
 ] interface WorkerGlobalScope : EventTarget {
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    readonly attribute  WorkerGlobalScope self;
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
+    readonly attribute WorkerGlobalScope self;
 #endif
     readonly attribute WorkerLocation location;
     void close();

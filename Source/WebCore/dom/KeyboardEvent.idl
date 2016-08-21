@@ -23,68 +23,37 @@
     ConstructorTemplate=Event,
 ] interface KeyboardEvent : UIEvent {
 
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     // KeyLocationCode
-    const unsigned long       KEY_LOCATION_STANDARD      = 0x00;
-    const unsigned long       KEY_LOCATION_LEFT          = 0x01;
-    const unsigned long       KEY_LOCATION_RIGHT         = 0x02;
-    const unsigned long       KEY_LOCATION_NUMPAD        = 0x03;
+    const unsigned long KEY_LOCATION_STANDARD = 0x00;
+    const unsigned long KEY_LOCATION_LEFT = 0x01;
+    const unsigned long KEY_LOCATION_RIGHT = 0x02;
+    const unsigned long KEY_LOCATION_NUMPAD = 0x03;
 #endif
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     const unsigned long DOM_KEY_LOCATION_STANDARD = 0x00;
-    const unsigned long DOM_KEY_LOCATION_LEFT     = 0x01;
-    const unsigned long DOM_KEY_LOCATION_RIGHT    = 0x02;
-    const unsigned long DOM_KEY_LOCATION_NUMPAD   = 0x03;
-    // FIXME: The following constants are defined in the specification but
-    // not yet supported.
-    // const unsigned long DOM_KEY_LOCATION_MOBILE   = 0x04;
-    // const unsigned long DOM_KEY_LOCATION_JOYSTICK = 0x05;
+    const unsigned long DOM_KEY_LOCATION_LEFT = 0x01;
+    const unsigned long DOM_KEY_LOCATION_RIGHT = 0x02;
+    const unsigned long DOM_KEY_LOCATION_NUMPAD = 0x03;
 #endif
 
-    [InitializedByEventConstructor] readonly attribute DOMString        keyIdentifier;
-    [InitializedByEventConstructor] readonly attribute unsigned long    location;
+    [InitializedByEventConstructor] readonly attribute DOMString keyIdentifier;
+    [InitializedByEventConstructor] readonly attribute unsigned long location;
     [InitializedByEventConstructor, ImplementedAs=location] readonly attribute unsigned long keyLocation; // Deprecated.
-    [InitializedByEventConstructor] readonly attribute boolean          ctrlKey;
-    [InitializedByEventConstructor] readonly attribute boolean          shiftKey;
-    [InitializedByEventConstructor] readonly attribute boolean          altKey;
-    [InitializedByEventConstructor] readonly attribute boolean          metaKey;
-    readonly attribute boolean          altGraphKey;
+    [InitializedByEventConstructor] readonly attribute boolean ctrlKey;
+    [InitializedByEventConstructor] readonly attribute boolean shiftKey;
+    [InitializedByEventConstructor] readonly attribute boolean altKey;
+    [InitializedByEventConstructor] readonly attribute boolean metaKey;
+    readonly attribute boolean altGraphKey;
 
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     boolean getModifierState(optional DOMString keyIdentifierArg);
 #endif
 
     // FIXME: this does not match the version in the DOM spec.
     // FIXME: Using "undefined" as default parameter value is wrong.
-    void initKeyboardEvent(optional DOMString type = "undefined",
-                           optional boolean canBubble = false,
-                           optional boolean cancelable = false,
-                           optional DOMWindow? view = null,
-                           optional DOMString keyIdentifier = "undefined",
-                           optional unsigned long location = 0,
-                           optional boolean ctrlKey = false,
-                           optional boolean altKey = false,
-                           optional boolean shiftKey = false,
-                           optional boolean metaKey = false,
-                           optional boolean altGraphKey = false);
-
-    // WebKit Extensions
-#if (!defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
-    readonly attribute long             keyCode;
-    readonly attribute long             charCode;
-    
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    void initKeyboardEvent(optional DOMString type = "undefined",
-                           optional boolean canBubble = false,
-                           optional boolean cancelable = false,
-                           optional DOMWindow? view = null,
-                           optional DOMString keyIdentifier = "undefined",
-                           optional unsigned long location = 0,
-                           optional boolean ctrlKey = false,
-                           optional boolean altKey = false,
-                           optional boolean shiftKey = false,
-                           optional boolean metaKey = false);
-#endif
+    void initKeyboardEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false,
+        optional DOMWindow? view = null, optional DOMString keyIdentifier = "undefined", optional unsigned long location = 0,
+        optional boolean ctrlKey = false, optional boolean altKey = false, optional boolean shiftKey = false, optional boolean metaKey = false, optional boolean altGraphKey = false);
 };
-

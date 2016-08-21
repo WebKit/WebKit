@@ -95,7 +95,7 @@
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitGenerateKeyRequest(DOMString? keySystem, optional Uint8Array? initData = null);
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitAddKey(DOMString? keySystem, Uint8Array key, optional Uint8Array? initData = null, optional DOMString sessionId);
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitCancelKeyRequest(DOMString? keySystem, optional DOMString sessionId);
@@ -113,7 +113,7 @@
 
     [CustomSetter] attribute MediaController controller;
 
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Conditional=MEDIA_SOURCE] VideoPlaybackQuality getVideoPlaybackQuality();
 #endif
 

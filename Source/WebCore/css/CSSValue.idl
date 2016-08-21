@@ -21,17 +21,16 @@
 [
     CustomToJSObject,
     CustomIsReachable,
+    ImplementationLacksVTable,
     JSCustomFinalize,
-    ImplementationLacksVTable
 ] interface CSSValue {
     // UnitTypes
-    const unsigned short CSS_INHERIT         = 0;
+    const unsigned short CSS_INHERIT = 0;
     const unsigned short CSS_PRIMITIVE_VALUE = 1;
-    const unsigned short CSS_VALUE_LIST      = 2;
-    const unsigned short CSS_CUSTOM          = 3;
+    const unsigned short CSS_VALUE_LIST = 2;
+    const unsigned short CSS_CUSTOM = 3;
 
     [SetterRaisesException] attribute DOMString? cssText;
 
     readonly attribute unsigned short cssValueType;
 };
-

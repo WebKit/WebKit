@@ -19,9 +19,9 @@
  */
 
 [
+    CustomCall,
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
-    CustomCall
 ] interface HTMLAppletElement : HTMLElement {
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString alt;
@@ -29,18 +29,17 @@
     [Reflect] attribute DOMString code;
     [Reflect] attribute USVString codeBase;
     [Reflect] attribute DOMString height;
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Reflect] attribute DOMString hspace;
 #else
     [Reflect] attribute long hspace;
 #endif
     [Reflect] attribute DOMString name;
     [Reflect] attribute USVString object;
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Reflect] attribute DOMString vspace;
 #else
     [Reflect] attribute long vspace;
 #endif
     [Reflect] attribute DOMString width;
 };
-

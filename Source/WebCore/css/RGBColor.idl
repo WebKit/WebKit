@@ -18,17 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
     ImplementationLacksVTable
 ] interface RGBColor {
-    readonly attribute CSSPrimitiveValue  red;
-    readonly attribute CSSPrimitiveValue  green;
-    readonly attribute CSSPrimitiveValue  blue;
+    readonly attribute CSSPrimitiveValue red;
+    readonly attribute CSSPrimitiveValue green;
+    readonly attribute CSSPrimitiveValue blue;
 
-    // WebKit extensions
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-    readonly attribute CSSPrimitiveValue  alpha;
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+    readonly attribute CSSPrimitiveValue alpha;
 #endif
 };
-

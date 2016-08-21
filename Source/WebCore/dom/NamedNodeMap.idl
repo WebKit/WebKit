@@ -24,7 +24,7 @@
 ] interface NamedNodeMap {
     readonly attribute unsigned long length;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     getter Attr? getNamedItem(DOMString name);
     [RaisesException] Attr? setNamedItem(Attr attr);
     [RaisesException] Attr removeNamedItem(DOMString name);

@@ -18,14 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
+    CustomToJSObject,
+    GenerateIsReachable,
     JSCustomHeader,
     JSCustomMarkFunction,
-    GenerateIsReachable,
-    CustomToJSObject,
 ] interface CSSRule {
-
     // RuleType
     const unsigned short UNKNOWN_RULE = 0;
     const unsigned short STYLE_RULE = 1;
@@ -44,15 +42,13 @@
     const unsigned short WEBKIT_REGION_RULE = 16;
 #endif
 
-    const unsigned short WEBKIT_KEYFRAMES_RULE = 7; // Avoid breaking exisiting content.
+    const unsigned short WEBKIT_KEYFRAMES_RULE = 7; // Avoid breaking existing content.
     const unsigned short WEBKIT_KEYFRAME_RULE = 8;
 
-    readonly attribute unsigned short   type;
+    readonly attribute unsigned short type;
 
     [SetterRaisesException] attribute DOMString? cssText;
 
-    readonly attribute CSSStyleSheet    parentStyleSheet;
-    readonly attribute CSSRule          parentRule;
-
+    readonly attribute CSSStyleSheet? parentStyleSheet;
+    readonly attribute CSSRule? parentRule;
 };
-

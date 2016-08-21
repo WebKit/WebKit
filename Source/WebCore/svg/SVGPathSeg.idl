@@ -28,7 +28,6 @@
     CustomToJSObject,
     ImplementationLacksVTable
 ] interface SVGPathSeg {
-    // Path Segment Types
     const unsigned short PATHSEG_UNKNOWN = 0;
     const unsigned short PATHSEG_CLOSEPATH = 1;
     const unsigned short PATHSEG_MOVETO_ABS = 2;
@@ -53,4 +52,3 @@
     readonly attribute unsigned short pathSegType;
     readonly attribute DOMString pathSegTypeAsLetter;
 };
-

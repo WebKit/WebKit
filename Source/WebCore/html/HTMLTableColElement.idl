@@ -22,7 +22,7 @@ interface HTMLTableColElement : HTMLElement {
     [Reflect] attribute DOMString align;
     [Reflect=char] attribute DOMString ch;
     [Reflect=charoff] attribute DOMString chOff;
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     attribute unsigned long span;
 #else
     attribute long span;
@@ -30,4 +30,3 @@ interface HTMLTableColElement : HTMLElement {
     [Reflect] attribute DOMString vAlign;
     [Reflect] attribute DOMString width;
 };
-

@@ -18,14 +18,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
     CustomToJSObject,
     Exposed=(Window,Worker),
     JSCustomHeader,
     JSCustomToNativeObject,
 ] interface EventTarget {
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     // FIXME: Should be:
     // void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options);
     // void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options);

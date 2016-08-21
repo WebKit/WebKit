@@ -26,16 +26,14 @@
  */
 
 [
-    CustomConstructor(USVString scriptUrl),
     ActiveDOMObject,
+    CustomConstructor(USVString scriptUrl),
 ] interface Worker : EventTarget {
-
     attribute EventHandler onmessage;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Custom, RaisesException] void postMessage(SerializedScriptValue message, optional Array messagePorts);
 #else
-    // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
     [RaisesException] void postMessage(SerializedScriptValue message, optional MessagePort messagePort);
 #endif
 
@@ -43,4 +41,3 @@
 };
 
 Worker implements AbstractWorker;
-

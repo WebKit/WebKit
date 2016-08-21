@@ -24,9 +24,6 @@
     JSGenerateToNativeObject,
     ExportMacro=WEBCORE_EXPORT,
 ] interface Element : Node {
-
-    // DOM Level 1 Core
-
     readonly attribute DOMString? tagName;
 
     DOMString? getAttribute(DOMString name);
@@ -44,12 +41,9 @@
     readonly attribute NamedNodeMap attributes;
     boolean hasAttributes();
 
-    // DOM Level 2 Core
-
     DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     [RaisesException, CEReactions] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
-
     [CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
@@ -62,14 +56,11 @@
 
     [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style;
 
-    // DOM 4
     [Reflect] attribute DOMString id;
 
     readonly attribute DOMString? namespaceURI;
     readonly attribute DOMString? prefix;
     readonly attribute DOMString localName;
-
-    // Common extensions
 
     readonly attribute double offsetLeft;
     readonly attribute double offsetTop;
@@ -96,17 +87,13 @@
 
     sequence<DOMString> getAttributeNames();
 
-    // WebKit extensions
-
     void scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
     void scrollByLines(optional long lines = 0);
     void scrollByPages(optional long pages = 0);
 
-    // HTML 5
     HTMLCollection getElementsByClassName(DOMString name);
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerHTML;
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString outerHTML;
-
 
     [Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList;
@@ -115,7 +102,7 @@
     [RaisesException] Element closest(DOMString selectors);    
     [ImplementedAs=matches, RaisesException] boolean webkitMatchesSelector(DOMString selectors);
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     // CSSOM View Module API
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
@@ -144,8 +131,8 @@
     [Conditional=CSS_REGIONS] readonly attribute DOMString webkitRegionOverset;
     [Conditional=CSS_REGIONS] sequence<Range> webkitGetRegionFlowRanges();
 
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     // Shadow DOM API
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [EnabledAtRuntime=ShadowDOM, RaisesException] ShadowRoot attachShadow(ShadowRootInit init);
     [EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot shadowRoot;
     [EnabledAtRuntime=ShadowDOM, Reflect] attribute DOMString slot;

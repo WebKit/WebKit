@@ -33,4 +33,3 @@
 ] interface AnimationTimeline {
     // FIXME: Only a stub at the moment.
 };
-

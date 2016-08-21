@@ -26,4 +26,3 @@
     // FIXME: Using "undefined" as default parameter value is wrong.
     DOMString? lookupNamespaceURI(optional DOMString prefix = "undefined");
 };
-

@@ -30,4 +30,3 @@
 ] interface SVGURIReference {
     readonly attribute SVGAnimatedString href;
 };
-

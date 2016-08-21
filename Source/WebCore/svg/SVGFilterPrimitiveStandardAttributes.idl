@@ -33,4 +33,3 @@
     readonly attribute SVGAnimatedLength height;
     readonly attribute SVGAnimatedString result;
 };
-

@@ -18,16 +18,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
-    JSCustomHeader,
-    JSCustomMarkFunction,
+    CustomEnumerateProperty,
+    CustomNamedSetter,
+    ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable,
     JSCustomGetOwnPropertySlotAndDescriptor,
-    CustomNamedSetter,
-    CustomEnumerateProperty,
+    JSCustomHeader,
+    JSCustomMarkFunction,
     SkipVTableValidation,
-    ExportMacro=WEBCORE_EXPORT,
 ] interface CSSStyleDeclaration {
     [SetterRaisesException] attribute DOMString cssText;
 
@@ -43,9 +42,7 @@
     getter DOMString item(unsigned long index);
     readonly attribute CSSRule? parentRule;
 
-    // Extensions
     // FIXME: Using "undefined" as default parameter value is wrong.
-    DOMString?          getPropertyShorthand(optional DOMString propertyName = "undefined");
-    boolean            isPropertyImplicit(optional DOMString propertyName = "undefined");
+    DOMString? getPropertyShorthand(optional DOMString propertyName = "undefined");
+    boolean isPropertyImplicit(optional DOMString propertyName = "undefined");
 };
-

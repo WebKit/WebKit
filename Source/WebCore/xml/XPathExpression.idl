@@ -17,9 +17,9 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 [
     ImplementationLacksVTable,
 ] interface XPathExpression {
     [RaisesException] XPathResult evaluate(optional Node? contextNode = null, optional unsigned short type = 0, optional XPathResult? inResult = null);
 };
-

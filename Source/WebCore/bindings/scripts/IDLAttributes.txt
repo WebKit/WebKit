@@ -97,13 +97,6 @@ NewObject
 NoInterfaceObject
 Nondeterministic
 NotEnumerable
-ObjCCustomImplementation
-ObjCExplicitAtomicString
-ObjCImplementedAsUnsignedLong
-ObjCLegacyUnnamedParameters
-ObjCPolymorphic
-ObjCProtocol
-ObjCUseDefaultView
 OverrideBuiltins
 PassContext
 PrivateIdentifier

@@ -17,29 +17,20 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 interface MutationEvent : Event {
-
     // attrChangeType
     const unsigned short MODIFICATION = 1;
-    const unsigned short ADDITION     = 2;
-    const unsigned short REMOVAL      = 3;
+    const unsigned short ADDITION = 2;
+    const unsigned short REMOVAL = 3;
 
-    readonly attribute Node           relatedNode;
-    readonly attribute DOMString      prevValue;
-    readonly attribute DOMString      newValue;
-    readonly attribute DOMString      attrName;
+    readonly attribute Node? relatedNode;
+    readonly attribute DOMString prevValue;
+    readonly attribute DOMString newValue;
+    readonly attribute DOMString attrName;
     readonly attribute unsigned short attrChange;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    void initMutationEvent(optional DOMString type = "undefined",
-                                          optional boolean canBubble = false,
-                                          optional boolean cancelable = false,
-                                          optional Node? relatedNode = null,
-                                          optional DOMString prevValue = "undefined",
-                                          optional DOMString newValue = "undefined",
-                                          optional DOMString attrName = "undefined",
-                                          optional unsigned short attrChange = 0);
-
+    void initMutationEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false,
+        optional Node? relatedNode = null, optional DOMString prevValue = "undefined", optional DOMString newValue = "undefined",
+        optional DOMString attrName = "undefined", optional unsigned short attrChange = 0);
 };
-

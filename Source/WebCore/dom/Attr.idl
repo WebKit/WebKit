@@ -20,23 +20,16 @@
 
 [
     JSCustomMarkFunction,
+    JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    JSGenerateToJSObject
 ] interface Attr : Node {
-
-    // DOM Level 1
-
     readonly attribute DOMString? name;
 
     readonly attribute boolean specified;
 
     [ImplementedAs=valueForBindings] attribute DOMString value;
 
-    // DOM Level 2
-
     readonly attribute Element ownerElement;
-
-    // DOM Level 3
 
     readonly attribute boolean isId;
 
@@ -44,4 +37,3 @@
     readonly attribute DOMString? prefix;
     readonly attribute DOMString localName;
 };
-

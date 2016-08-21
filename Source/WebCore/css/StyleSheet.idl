@@ -18,19 +18,17 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
+    CustomToJSObject,
+    GenerateIsReachable,
     JSCustomHeader,
     JSCustomMarkFunction,
-    GenerateIsReachable,
-    CustomToJSObject,
 ] interface StyleSheet {
-    readonly attribute DOMString?       type;
-             attribute boolean          disabled;
-    readonly attribute Node             ownerNode;
-    readonly attribute StyleSheet       parentStyleSheet;
-    readonly attribute DOMString?       href;
-    readonly attribute DOMString?       title;
-    readonly attribute MediaList        media;
+    readonly attribute DOMString? type;
+    attribute boolean disabled;
+    readonly attribute Node ownerNode;
+    readonly attribute StyleSheet parentStyleSheet;
+    readonly attribute DOMString? href;
+    readonly attribute DOMString? title;
+    readonly attribute MediaList media;
 };
-

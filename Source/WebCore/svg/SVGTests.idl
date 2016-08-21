@@ -35,4 +35,3 @@
     // FIXME: Using "undefined" as default parameter value is wrong.
     boolean hasExtension(optional DOMString extension = "undefined");
 };
-
