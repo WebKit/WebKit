@@ -29,6 +29,9 @@
 
 namespace WebCore {
 
+// FIXME: Remove this when no one is depending on it anymore.
+typedef DOMWindow AbstractView;
+
 struct UIEventInit : public EventInit {
     RefPtr<DOMWindow> view;
     int detail { 0 };
