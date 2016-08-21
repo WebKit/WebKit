@@ -1,6 +1,6 @@
 2016-08-21  Daniel Bates  <dabates@apple.com>
 
-        prepare-ChangeLog lists modified methods as having been deleted
+        prepare-ChangeLog lists unmodified functions as modified and marks functions with few changes as deleted
         https://bugs.webkit.org/show_bug.cgi?id=148437
 
         Reviewed by Dan Bernstein.
