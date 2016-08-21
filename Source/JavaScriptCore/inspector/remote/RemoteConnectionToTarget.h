@@ -49,9 +49,9 @@ public:
 
     // Main API.
     bool setup(bool isAutomaticInspection = false, bool automaticallyPause = false);
-    virtual void sendMessageToTarget(NSString *);
-    virtual void close();
-    virtual void targetClosed();
+    void sendMessageToTarget(NSString *);
+    void close();
+    void targetClosed();
 
     Optional<unsigned> targetIdentifier() const;
     NSString *connectionIdentifier() const;
