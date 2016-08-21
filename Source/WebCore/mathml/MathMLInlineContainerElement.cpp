@@ -65,7 +65,7 @@ void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (hasTagName(annotation_xmlTag) || hasTagName(merrorTag) || hasTagName(mphantomTag) || hasTagName(mrowTag) || hasTagName(mstyleTag))
+    if (hasTagName(merrorTag) || hasTagName(mphantomTag) || hasTagName(mrowTag) || hasTagName(mstyleTag))
         return createRenderer<RenderMathMLRow>(*this, WTFMove(style));
     if (hasTagName(msqrtTag) || hasTagName(mrootTag))
         return createRenderer<RenderMathMLRoot>(*this, WTFMove(style));

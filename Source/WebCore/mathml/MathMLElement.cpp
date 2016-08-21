@@ -279,41 +279,8 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
 
 bool MathMLElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (hasTagName(annotation_xmlTag)) {
-        auto& value = attributeWithoutSynchronization(MathMLNames::encodingAttr);
-
-        // See annotation-xml.model.mathml, annotation-xml.model.svg and annotation-xml.model.xhtml in the HTML5 RelaxNG schema.
-
-        if (is<MathMLElement>(child) && (MathMLSelectElement::isMathMLEncoding(value) || MathMLSelectElement::isHTMLEncoding(value))) {
-            auto& mathmlElement = downcast<MathMLElement>(child);
-            return is<MathMLMathElement>(mathmlElement);
-        }
-
-        if (is<SVGElement>(child) && (MathMLSelectElement::isSVGEncoding(value) || MathMLSelectElement::isHTMLEncoding(value))) {
-            auto& svgElement = downcast<SVGElement>(child);
-            return is<SVGSVGElement>(svgElement);
-        }
-
-        if (is<HTMLElement>(child) && MathMLSelectElement::isHTMLEncoding(value)) {
-            auto& htmlElement = downcast<HTMLElement>(child);
-            return is<HTMLHtmlElement>(htmlElement) || (isFlowContent(htmlElement) && StyledElement::childShouldCreateRenderer(child));
-        }
-
-        return false;
-    }
-
     // In general, only MathML children are allowed. Text nodes are only visible in token MathML elements.
     return is<MathMLElement>(child);
-}
-
-void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
-{
-    if (isSemanticAnnotation() && (name == MathMLNames::srcAttr || name == MathMLNames::encodingAttr)) {
-        auto* parent = parentElement();
-        if (is<MathMLElement>(parent) && parent->hasTagName(semanticsTag))
-            downcast<MathMLElement>(*parent).updateSelectedChild();
-    }
-    StyledElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 bool MathMLElement::willRespondToMouseClickEvents()

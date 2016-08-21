@@ -25,6 +25,7 @@
 
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
+#include "MathMLAnnotationElement.cpp"
 #include "MathMLElement.cpp"
 #include "MathMLFractionElement.cpp"
 #include "MathMLInlineContainerElement.cpp"

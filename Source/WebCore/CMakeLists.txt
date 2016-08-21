@@ -2002,6 +2002,7 @@ set(WebCore_SOURCES
     loader/icon/IconRecord.cpp
     loader/icon/PageURLRecord.cpp
 
+    mathml/MathMLAnnotationElement.cpp
     mathml/MathMLElement.cpp
     mathml/MathMLFractionElement.cpp
     mathml/MathMLInlineContainerElement.cpp

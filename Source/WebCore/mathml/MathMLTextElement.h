@@ -48,6 +48,7 @@ private:
 
     void didAttachRenderers() final;
 
+    bool isMathMLToken() const final { return true; }
     bool isPresentationMathML() const final { return true; }
 };
 

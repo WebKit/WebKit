@@ -3,8 +3,8 @@ namespaceURI="http://www.w3.org/1998/Math/MathML"
 guardFactoryWith="ENABLE(MATHML)"
 fallbackInterfaceName="MathMLElement"
 
-annotation interfaceName=MathMLTextElement
-annotation-xml interfaceName=MathMLInlineContainerElement
+annotation interfaceName=MathMLAnnotationElement
+annotation-xml interfaceName=MathMLAnnotationElement
 maction interfaceName=MathMLSelectElement
 math
 mfrac interfaceName=MathMLFractionElement

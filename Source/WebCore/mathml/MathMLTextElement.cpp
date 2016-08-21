@@ -73,11 +73,8 @@ void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicSt
     MathMLElement::parseAttribute(name, value);
 }
 
-RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (hasTagName(MathMLNames::annotationTag))
-        return MathMLElement::createElementRenderer(WTFMove(style), insertionPosition);
-
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 
     return createRenderer<RenderMathMLToken>(*this, WTFMove(style));
@@ -87,9 +84,6 @@ bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const
 {
     if (hasTagName(MathMLNames::mspaceTag))
         return false;
-
-    if (hasTagName(MathMLNames::annotationTag))
-        return child.isTextNode();
 
     // The HTML specification defines <mi>, <mo>, <mn>, <ms> and <mtext> as insertion points.
     return isPhrasingContent(child) && StyledElement::childShouldCreateRenderer(child);

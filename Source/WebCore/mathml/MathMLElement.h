@@ -42,16 +42,8 @@ public:
     unsigned colSpan() const;
     unsigned rowSpan() const;
 
-    bool isMathMLToken() const
-    {
-        return hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::moTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag);
-    }
-
-    bool isSemanticAnnotation() const
-    {
-        return hasTagName(MathMLNames::annotationTag) || hasTagName(MathMLNames::annotation_xmlTag);
-    }
-
+    virtual bool isMathMLToken() const { return false; }
+    virtual bool isSemanticAnnotation() const { return false; }
     virtual bool isPresentationMathML() const;
 
     bool hasTagName(const MathMLQualifiedName& name) const { return hasLocalName(name.localName()); }
@@ -96,12 +88,13 @@ public:
     virtual Optional<bool> specifiedDisplayStyle();
     Optional<MathVariant> specifiedMathVariant();
 
+    virtual void updateSelectedChild() { }
+
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     bool childShouldCreateRenderer(const Node&) const override;
-    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason) override;
 
     bool isPresentationAttribute(const QualifiedName&) const override;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
@@ -123,7 +116,6 @@ protected:
     Optional<MathVariant> m_mathVariant;
 
 private:
-    virtual void updateSelectedChild() { }
     static Length parseNumberAndUnit(const StringView&);
     static Length parseNamedSpace(const StringView&);
     static MathVariant parseMathVariantAttribute(const AtomicString& attributeValue);
