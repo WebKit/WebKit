@@ -58,7 +58,7 @@ protected:
     void dispatchUpdate(std::function<void()>);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebPageProxy& m_webPageProxy;
     RefPtr<CoordinatedGraphicsScene> m_scene;

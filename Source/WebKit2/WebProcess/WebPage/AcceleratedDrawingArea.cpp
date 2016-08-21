@@ -346,7 +346,7 @@ void AcceleratedDrawingArea::exitAcceleratedCompositingModeSoon()
 }
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-void AcceleratedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
+void AcceleratedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     m_layerTreeHost->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);
 }

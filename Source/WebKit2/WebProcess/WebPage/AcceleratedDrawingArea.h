@@ -60,7 +60,7 @@ protected:
     void scheduleCompositingLayerFlushImmediately() override;
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::Decoder&) override;
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)

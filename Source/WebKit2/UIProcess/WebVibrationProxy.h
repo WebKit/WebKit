@@ -50,7 +50,7 @@ private:
     explicit WebVibrationProxy(WebPageProxy*);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void vibrate(uint32_t vibrationTime);
     void cancelVibration();

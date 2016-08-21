@@ -1,3 +1,19 @@
+2016-08-20  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        Unreviewed EFL build fix since r204668
+
+        r204668 changed MessageDecoder with Decoder though, MessageDecoder remained
+        in EFL specific files.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/WebVibrationProxy.h:
+        * WebProcess/Battery/WebBatteryManager.h:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage):
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+
 2016-08-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Web Content service with a restricted entitlement may load arbitrary dylibs

@@ -79,7 +79,7 @@ private:
     void layerFlushTimerFired();
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::Decoder&) override;
 #endif
 
     static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
