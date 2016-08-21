@@ -29,6 +29,7 @@
 [
     Conditional=WEB_ANIMATIONS,
     CustomToJSObject,
+    ObjCPolymorphic,
     ImplementationLacksVTable
 ] interface AnimationTimeline {
     // FIXME: Only a stub at the moment.

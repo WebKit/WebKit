@@ -31,7 +31,7 @@
 
     DOMString? getAttribute(DOMString name);
 
-    [RaisesException, CEReactions] void setAttribute(DOMString name, DOMString value);
+    [ObjCLegacyUnnamedParameters, RaisesException, CEReactions] void setAttribute(DOMString name, DOMString value);
 
     [CEReactions] void removeAttribute(DOMString name);
     Attr? getAttributeNode(DOMString name);
@@ -46,19 +46,19 @@
 
     // DOM Level 2 Core
 
-    DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [ObjCLegacyUnnamedParameters] DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
 
-    [RaisesException, CEReactions] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
+    [ObjCLegacyUnnamedParameters, RaisesException, CEReactions] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
 
-    [CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [ObjCLegacyUnnamedParameters, CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 
-    Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
+    [ObjCLegacyUnnamedParameters] Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
     [RaisesException, CEReactions] Attr? setAttributeNodeNS(Attr newAttr);
     boolean hasAttribute(DOMString name);
 
-    boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [ObjCLegacyUnnamedParameters] boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style;
 

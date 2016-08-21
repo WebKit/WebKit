@@ -21,6 +21,7 @@
 [
     CustomToJSObject,
     GenerateIsReachable=ImplOwnerNodeRoot,
+    ObjCPolymorphic,
     ReportExtraMemoryCost,
 ] interface HTMLCollection {
     readonly attribute unsigned long length;

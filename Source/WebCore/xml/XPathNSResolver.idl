@@ -21,6 +21,7 @@
 [
     JSCustomToNativeObject,
     NoInterfaceObject,
+    ObjCProtocol,
     SkipVTableValidation,
 ] interface XPathNSResolver {
     // FIXME: Using "undefined" as default parameter value is wrong.

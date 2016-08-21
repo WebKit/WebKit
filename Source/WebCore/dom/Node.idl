@@ -55,8 +55,8 @@
     readonly attribute Node             nextSibling;
     readonly attribute Document         ownerDocument;
 
-    [Custom, RaisesException] Node insertBefore([CustomReturn] Node newChild, Node? refChild);
-    [Custom, RaisesException] Node replaceChild(Node newChild, [CustomReturn] Node oldChild);
+    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node newChild, Node? refChild);
+    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node replaceChild(Node newChild, [CustomReturn] Node oldChild);
     [Custom, RaisesException, CEReactions] Node removeChild([CustomReturn] Node oldChild);
     [Custom, RaisesException, CEReactions] Node appendChild([CustomReturn] Node newChild);
 

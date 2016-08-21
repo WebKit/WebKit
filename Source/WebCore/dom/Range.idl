@@ -37,8 +37,8 @@
     [RaisesException] void setStart(Node refNode, unsigned long offset);
     [RaisesException] void setEnd(Node refNode, unsigned long offset);
 #else
-    [RaisesException] void setStart(Node refNode, long offset);
-    [RaisesException] void setEnd(Node refNode, long offset);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setStart(Node refNode, long offset);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setEnd(Node refNode, long offset);
 #endif
 
     [RaisesException] void setStartBefore(Node refNode);
@@ -55,7 +55,7 @@
     const unsigned short END_TO_END     = 2;
     const unsigned short END_TO_START   = 3;
 
-    [RaisesException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
+    [ObjCLegacyUnnamedParameters, RaisesException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
     [RaisesException] void deleteContents();
     [RaisesException, NewObject] DocumentFragment extractContents();

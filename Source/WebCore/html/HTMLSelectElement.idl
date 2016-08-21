@@ -49,7 +49,7 @@
     HTMLOptionElement? namedItem(DOMString name);
 #endif
 
-    [RaisesException] void add(HTMLElement element, optional HTMLElement? before = null);
+    [ObjCLegacyUnnamedParameters, RaisesException] void add(HTMLElement element, optional HTMLElement? before = null);
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // FIXME: Should be:
     // void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);

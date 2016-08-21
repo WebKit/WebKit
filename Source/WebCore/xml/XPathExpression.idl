@@ -20,6 +20,6 @@
 [
     ImplementationLacksVTable,
 ] interface XPathExpression {
-    [RaisesException] XPathResult evaluate(optional Node? contextNode = null, optional unsigned short type = 0, optional XPathResult? inResult = null);
+    [ObjCLegacyUnnamedParameters, RaisesException] XPathResult evaluate(optional Node? contextNode = null, optional unsigned short type = 0, optional XPathResult? inResult = null);
 };
 

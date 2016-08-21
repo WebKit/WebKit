@@ -26,6 +26,7 @@
 
 [
     NoInterfaceObject,
+    ObjCProtocol
 ] interface SVGFilterPrimitiveStandardAttributes {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;

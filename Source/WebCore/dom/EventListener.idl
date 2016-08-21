@@ -20,7 +20,8 @@
 
 // Introduced in DOM Level 2:
 [
-    NoInterfaceObject
+    NoInterfaceObject,
+    ObjCProtocol,
 ] interface EventListener {
     void handleEvent(Event event);
 };

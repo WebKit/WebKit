@@ -23,7 +23,7 @@ interface CSSStyleSheet : StyleSheet {
     readonly attribute CSSRule          ownerRule;
     readonly attribute CSSRuleList      cssRules;
 
-    [RaisesException] unsigned long insertRule(DOMString rule, unsigned long index);
+    [ObjCLegacyUnnamedParameters, RaisesException] unsigned long insertRule(DOMString rule, unsigned long index);
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [RaisesException, ImplementedAs=deprecatedInsertRule] unsigned long insertRule(DOMString rule); // Deprecated.
 #endif

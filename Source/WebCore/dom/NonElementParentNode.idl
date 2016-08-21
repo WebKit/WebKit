@@ -28,5 +28,5 @@
 [
     NoInterfaceObject,
 ] interface NonElementParentNode {
-    Element getElementById([RequiresExistingAtomicString] DOMString elementId);
+    Element getElementById([ObjCExplicitAtomicString,RequiresExistingAtomicString] DOMString elementId);
 };

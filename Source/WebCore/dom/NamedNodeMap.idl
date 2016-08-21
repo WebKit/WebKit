@@ -37,8 +37,8 @@
     [RaisesException] Node? setNamedItem(Node node);
     [RaisesException] Node removeNamedItem(DOMString name);
     getter Node? item(unsigned long index);
-    Node? getNamedItemNS(DOMString? namespaceURI, DOMString localName);
+    [ObjCLegacyUnnamedParameters] Node? getNamedItemNS(DOMString? namespaceURI, DOMString localName);
     [RaisesException, ImplementedAs=setNamedItem] Node? setNamedItemNS(Node node);
-    [RaisesException] Node removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
+    [ObjCLegacyUnnamedParameters, RaisesException] Node removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
 #endif
 };

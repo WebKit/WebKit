@@ -48,6 +48,7 @@ struct( idlDocument => {
 struct( domInterface => {
     name => '$',      # Class identifier
     parent => '$',      # Parent class identifier
+    parents => '@',      # Parent class identifiers (Kept for compatibility with ObjC bindings)
     constants => '@',    # List of 'domConstant'
     functions => '@',    # List of 'domFunction'
     anonymousFunctions => '@', # List of 'domFunction'
@@ -538,7 +539,9 @@ sub parseInterface
         my $interfaceNameToken = $self->getToken();
         $self->assertTokenType($interfaceNameToken, IdentifierToken);
         $interface->name(identifierRemoveNullablePrefix($interfaceNameToken->value()));
-        $interface->parent($self->parseInheritance());
+        my $parents = $self->parseInheritance();
+        $interface->parents($parents);
+        $interface->parent($parents->[0]);
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         my $interfaceMembers = $self->parseInterfaceMembers();
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
@@ -765,7 +768,9 @@ sub parseException
         $self->assertTokenType($exceptionNameToken, IdentifierToken);
         $interface->name(identifierRemoveNullablePrefix($exceptionNameToken->value()));
         $interface->isException(1);
-        $interface->parent($self->parseInheritance());
+        my $parents = $self->parseInheritance();
+        $interface->parents($parents);
+        $interface->parent($parents->[0]);
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         my $exceptionMembers = $self->parseExceptionMembers();
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
@@ -801,12 +806,18 @@ sub parseExceptionMembers
 sub parseInheritance
 {
     my $self = shift;
+    my @parent = ();
 
     my $next = $self->nextToken();
     if ($next->value() eq ":") {
         $self->assertTokenValue($self->getToken(), ":", __LINE__);
-        return $self->parseName();
+        my $name = $self->parseName();
+        push(@parent, $name);
+
+        # FIXME: Remove. Was needed for needed for ObjC bindings.
+        push(@parent, @{$self->parseIdentifiers()});
     }
+    return \@parent;
 }
 
 sub parseEnum
