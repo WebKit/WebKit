@@ -338,9 +338,6 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip 
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
 # Failing assertion with dynamic message
 imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
-webkit.org/b/161003 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
-webkit.org/b/161003 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-none.htm [ Failure ]
-webkit.org/b/161003 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-empty.htm  [ Failure ]
 
 webkit.org/b/160510 http/tests/fetch/fetch-in-worker-crash.html [ Failure Crash Pass ]
 imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Skip ]
