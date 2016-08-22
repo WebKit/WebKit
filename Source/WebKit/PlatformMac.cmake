@@ -12,7 +12,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/dfg"
     "${WEBCORE_DIR}/accessibility/mac"
-    "${WEBCORE_DIR}/bindings/objc"
     "${WEBCORE_DIR}/bridge"
     "${WEBCORE_DIR}/bridge/jsc"
     "${WEBCORE_DIR}/bridge/objc"
@@ -73,6 +72,136 @@ list(APPEND WebKit_SOURCES
     mac/Carbon/CarbonWindowFrame.m
     mac/Carbon/HIViewAdapter.m
     mac/Carbon/HIWebView.mm
+
+    mac/DOM/DOM.mm
+    mac/DOM/DOMAbstractView.mm
+    mac/DOM/DOMAttr.mm
+    mac/DOM/DOMBlob.mm
+    mac/DOM/DOMCDATASection.mm
+    mac/DOM/DOMCharacterData.mm
+    mac/DOM/DOMComment.mm
+    mac/DOM/DOMCounter.mm
+    mac/DOM/DOMCSS.mm
+    mac/DOM/DOMCSSCharsetRule.mm
+    mac/DOM/DOMCSSFontFaceRule.mm
+    mac/DOM/DOMCSSImportRule.mm
+    mac/DOM/DOMCSSMediaRule.mm
+    mac/DOM/DOMCSSPageRule.mm
+    mac/DOM/DOMCSSPrimitiveValue.mm
+    mac/DOM/DOMCSSRule.mm
+    mac/DOM/DOMCSSRuleList.mm
+    mac/DOM/DOMCSSStyleDeclaration.mm
+    mac/DOM/DOMCSSStyleRule.mm
+    mac/DOM/DOMCSSStyleSheet.mm
+    mac/DOM/DOMCSSUnknownRule.mm
+    mac/DOM/DOMCSSValue.mm
+    mac/DOM/DOMCSSValueList.mm
+    mac/DOM/DOMCustomXPathNSResolver.mm
+    mac/DOM/DOMDOMImplementation.mm
+    mac/DOM/DOMDOMTokenList.mm
+    mac/DOM/DOMDocument.mm
+    mac/DOM/DOMDocumentFragment.mm
+    mac/DOM/DOMDocumentType.mm
+    mac/DOM/DOMElement.mm
+    mac/DOM/DOMEntityReference.mm
+    mac/DOM/DOMEvent.mm
+    mac/DOM/DOMEvents.mm
+    mac/DOM/DOMFile.mm
+    mac/DOM/DOMFileList.mm
+    mac/DOM/DOMHTML.mm
+    mac/DOM/DOMHTMLAnchorElement.mm
+    mac/DOM/DOMHTMLAppletElement.mm
+    mac/DOM/DOMHTMLAreaElement.mm
+    mac/DOM/DOMHTMLBRElement.mm
+    mac/DOM/DOMHTMLBaseElement.mm
+    mac/DOM/DOMHTMLBaseFontElement.mm
+    mac/DOM/DOMHTMLBodyElement.mm
+    mac/DOM/DOMHTMLButtonElement.mm
+    mac/DOM/DOMHTMLCanvasElement.mm
+    mac/DOM/DOMHTMLCollection.mm
+    mac/DOM/DOMHTMLDListElement.mm
+    mac/DOM/DOMHTMLDirectoryElement.mm
+    mac/DOM/DOMHTMLDivElement.mm
+    mac/DOM/DOMHTMLDocument.mm
+    mac/DOM/DOMHTMLElement.mm
+    mac/DOM/DOMHTMLEmbedElement.mm
+    mac/DOM/DOMHTMLFieldSetElement.mm
+    mac/DOM/DOMHTMLFontElement.mm
+    mac/DOM/DOMHTMLFormElement.mm
+    mac/DOM/DOMHTMLFrameElement.mm
+    mac/DOM/DOMHTMLFrameSetElement.mm
+    mac/DOM/DOMHTMLHRElement.mm
+    mac/DOM/DOMHTMLHeadElement.mm
+    mac/DOM/DOMHTMLHeadingElement.mm
+    mac/DOM/DOMHTMLHtmlElement.mm
+    mac/DOM/DOMHTMLIFrameElement.mm
+    mac/DOM/DOMHTMLImageElement.mm
+    mac/DOM/DOMHTMLInputElement.mm
+    mac/DOM/DOMHTMLLIElement.mm
+    mac/DOM/DOMHTMLLabelElement.mm
+    mac/DOM/DOMHTMLLegendElement.mm
+    mac/DOM/DOMHTMLLinkElement.mm
+    mac/DOM/DOMHTMLMapElement.mm
+    mac/DOM/DOMHTMLMarqueeElement.mm
+    mac/DOM/DOMHTMLMediaElement.mm
+    mac/DOM/DOMHTMLMenuElement.mm
+    mac/DOM/DOMHTMLMetaElement.mm
+    mac/DOM/DOMHTMLModElement.mm
+    mac/DOM/DOMHTMLOListElement.mm
+    mac/DOM/DOMHTMLObjectElement.mm
+    mac/DOM/DOMHTMLOptGroupElement.mm
+    mac/DOM/DOMHTMLOptionElement.mm
+    mac/DOM/DOMHTMLOptionsCollection.mm
+    mac/DOM/DOMHTMLParagraphElement.mm
+    mac/DOM/DOMHTMLParamElement.mm
+    mac/DOM/DOMHTMLPreElement.mm
+    mac/DOM/DOMHTMLQuoteElement.mm
+    mac/DOM/DOMHTMLScriptElement.mm
+    mac/DOM/DOMHTMLSelectElement.mm
+    mac/DOM/DOMHTMLStyleElement.mm
+    mac/DOM/DOMHTMLTableCaptionElement.mm
+    mac/DOM/DOMHTMLTableCellElement.mm
+    mac/DOM/DOMHTMLTableColElement.mm
+    mac/DOM/DOMHTMLTableElement.mm
+    mac/DOM/DOMHTMLTableRowElement.mm
+    mac/DOM/DOMHTMLTableSectionElement.mm
+    mac/DOM/DOMHTMLTextAreaElement.mm
+    mac/DOM/DOMHTMLTitleElement.mm
+    mac/DOM/DOMHTMLUListElement.mm
+    mac/DOM/DOMHTMLVideoElement.mm
+    mac/DOM/DOMInternal.mm
+    mac/DOM/DOMKeyboardEvent.mm
+    mac/DOM/DOMMediaError.mm
+    mac/DOM/DOMMediaList.mm
+    mac/DOM/DOMMouseEvent.mm
+    mac/DOM/DOMMutationEvent.mm
+    mac/DOM/DOMNamedNodeMap.mm
+    mac/DOM/DOMNode.mm
+    mac/DOM/DOMNodeIterator.mm
+    mac/DOM/DOMNodeList.mm
+    mac/DOM/DOMObject.mm
+    mac/DOM/DOMOverflowEvent.mm
+    mac/DOM/DOMProcessingInstruction.mm
+    mac/DOM/DOMProgressEvent.mm
+    mac/DOM/DOMRGBColor.mm
+    mac/DOM/DOMRange.mm
+    mac/DOM/DOMRect.mm
+    mac/DOM/DOMStyleSheet.mm
+    mac/DOM/DOMStyleSheetList.mm
+    mac/DOM/DOMText.mm
+    mac/DOM/DOMTextEvent.mm
+    mac/DOM/DOMTimeRanges.mm
+    mac/DOM/DOMTreeWalker.mm
+    mac/DOM/DOMUIEvent.mm
+    mac/DOM/DOMUIKitExtensions.mm
+    mac/DOM/DOMUtility.mm
+    mac/DOM/DOMWheelEvent.mm
+    mac/DOM/DOMXPath.mm
+    mac/DOM/DOMXPathExpression.mm
+    mac/DOM/DOMXPathResult.mm
+    mac/DOM/ExceptionHandlers.mm
+    mac/DOM/ObjCEventListener.mm
+    mac/DOM/ObjCNodeFilterCondition.mm
 
     mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm
     mac/DefaultDelegates/WebDefaultEditingDelegate.m
@@ -259,9 +388,6 @@ set(WebKitLegacy_FORWARDING_HEADERS_FILES
     mac/WebView/WebFrame.h
     mac/WebView/WebView.h
 
-    ${WEBCORE_DIR}/bindings/objc/DOMCore.h
-    ${WEBCORE_DIR}/bindings/objc/DOMExtensions.h
-
     ${WEBCORE_DIR}/plugins/npfunctions.h
 )
 
@@ -354,13 +480,6 @@ WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARD
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKit DIRECTORIES ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy)
 
 # FIXME: Forwarding headers should be copies of actual headers.
-file(GLOB ObjCHeaders ${WEBCORE_DIR}/bindings/objc/*.h)
-foreach (_file ${ObjCHeaders})
-    get_filename_component(_name ${_file} NAME)
-    if (NOT EXISTS ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name})
-        file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name} "#import <WebCore/${_name}>")
-    endif ()
-endforeach ()
 file(GLOB ObjCHeaders ${WEBCORE_DIR}/plugins/*.h)
 foreach (_file ${ObjCHeaders})
     get_filename_component(_name ${_file} NAME)
