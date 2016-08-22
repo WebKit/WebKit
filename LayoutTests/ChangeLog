@@ -1,3 +1,30 @@
+2016-08-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] <a ping> and <area ping> tests time out
+        https://bugs.webkit.org/show_bug.cgi?id=156857
+
+        Reviewed by Simon Fraser.
+
+        Update test to use work in WebKitTestRunner and unskip the tests.
+
+        Also remove some unused files.
+
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html: Include external JavaScript
+        script resources/utilities.js and write code in terms of clickElement(). Additionally, add HTML5 doctype
+        tag and put <head> on its own line so as to be consistent with the placement of </head> on its own line.
+        * http/tests/navigation/ping-attribute/anchor-cross-origin.html: Ditto.
+        * http/tests/navigation/ping-attribute/anchor-same-origin.html: Ditto.
+        * http/tests/navigation/ping-attribute/resources/check-ping.php: Removed.
+        * http/tests/navigation/ping-attribute/resources/delete-ping.php: Removed.
+        * http/tests/navigation/ping-attribute/resources/ping-file-path.php: Removed.
+        * http/tests/navigation/ping-attribute/resources/save-Ping.php: Removed.
+        * http/tests/navigation/ping-attribute/resources/utilities.js:
+        (clearLastPingResultAndRunTest):
+        (clickElement): Make use of UIScriptController to click the element via a tap on platforms that
+        support touch events and implement UIScriptController (window.uiController).
+        * platform/ios-simulator-wk2/TestExpectations: Unskip ping-attribute tests.
+        * platform/ios-simulator/TestExpectations: Ditto.
+
 2016-08-22  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest http/tests/fetch/fetch-in-worker-crash.html is flaky

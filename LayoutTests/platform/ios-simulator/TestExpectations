@@ -317,8 +317,6 @@ fast/shadow-dom/shadow-host-removal-crash.html [ Skip ]
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]
 
-webkit.org/b/156857 http/tests/navigation/ping-attribute [ Skip ]
-
 # RTL Scrollbars are only implemented on certain versions of OS X
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Skip ]
 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Skip ]

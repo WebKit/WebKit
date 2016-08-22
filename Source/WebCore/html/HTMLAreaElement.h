@@ -46,7 +46,7 @@ public:
     Path computePathForFocusRing(const LayoutSize& elementSize) const;
 
     // The parent map's image.
-    HTMLImageElement* imageElement() const;
+    WEBCORE_EXPORT HTMLImageElement* imageElement() const;
     
 private:
     HTMLAreaElement(const QualifiedName&, Document&);

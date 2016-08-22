@@ -1,5 +1,8 @@
-<html><head>
+<!DOCTYPE html>
+<html>
+<head>
 <title>Ping</title>
+<script src="resources/utilities.js"></script>
 <script>
 
 if (window.testRunner) {
@@ -23,12 +26,7 @@ function test() {
         return;
     }
 
-    if (window.eventSender) {
-        var a = document.getElementById("a");
-        eventSender.mouseMoveTo(a.offsetLeft + 2, a.offsetTop + 2);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
+    clickElement(document.getElementById("a"));
 }
 
 </script>

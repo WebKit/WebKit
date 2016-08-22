@@ -405,9 +405,6 @@ http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-same-window.html
 http/tests/navigation/no-referrer-subframe.html
 http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html
-http/tests/navigation/ping-attribute/anchor-cross-origin.html
-http/tests/navigation/ping-attribute/anchor-same-origin.html
 http/tests/navigation/redirect-preserves-referrer.html
 http/tests/navigation/redirect-to-random-url-versus-memory-cache.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
@@ -1741,7 +1738,6 @@ fast/forms/focus-option-control-on-page.html [ Skip ]
 # Skip timeouts
 fast/dom/Geolocation/startUpdatingOnlyWhenPageVisible.html [ Skip ]
 fast/dom/Geolocation/stopUpdatingForHiddenPage.html [ Skip ]
-http/tests/navigation/ping-attribute/anchor-cookie.html [ Skip ]
 webkit.org/b/148709 fast/events/wheelevent-basic.html [ Skip ]
 webkit.org/b/148709 fast/events/wheelevent-mousewheel-interaction.html [ Skip ]
 
