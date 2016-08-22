@@ -48,20 +48,25 @@ for (var i = 0; i < 10000; i++) {
     testCase(af1('G', i), 'AB-CD-EF-G-' + i, txtMsg + "#5");
 }
 
-var af2 = (x, y) => arguments[0] + '-' + x + y;
+if (true) {
+    let arguments = [];
 
-noInline(af2);
+    var af2 = (x, y) => arguments[0] + '-' + x + y;
 
-for (var i = 0; i < 10000; i++) {
-    testCase(af2('ABC', i), 'undefined-ABC' + i, txtMsg + "#6");
-}
+    noInline(af2);
 
-var af3 = () => arguments;
-noInline(af3);
+    for (var i = 0; i < 10000; i++) {
+        testCase(af2('ABC', i), 'undefined-ABC' + i, txtMsg + "#6");
+    }
 
-for (var i = 0; i < 10000; i++) {
-    testCase(typeof af3('ABC', i), 'object', txtMsg + "#7");
-    testCase(typeof af3('ABC', i)[0], 'undefined', txtMsg + "#8");
+    var af3 = () => arguments;
+
+    noInline(af3);
+
+    for (var i = 0; i < 10000; i++) {
+        testCase(typeof af3('ABC', i), 'object', txtMsg + "#7");
+        testCase(typeof af3('ABC', i)[0], 'undefined', txtMsg + "#8");
+    }
 }
 
 var afFactory4 = function () {
@@ -100,15 +105,19 @@ for (var i = 0; i < 10000; i++) {
     testCase(af6.func('VW', 'XY')('Z',i), 'GH_IJ_KL_VW_XY_Z_' + i, txtMsg + "#9");
 }
 
-var obj = {
-    name : 'id',
-    method : (index) => arguments[0] + '-' + index
-};
+if (true) {
+    let arguments = [];
 
-noInline(obj.method);
+    var obj = {
+        name : 'id',
+        method : (index) => arguments[0] + '-' + index
+    };
 
-for (var i = 0; i < 10000; i++) {
-    testCase(obj.method(i), 'undefined-' + i, txtMsg + "#10");
+    noInline(obj.method);
+
+    for (var i = 0; i < 10000; i++) {
+        testCase(obj.method(i), 'undefined-' + i, txtMsg + "#10");
+    }
 }
 
 var objFactory = function () {
