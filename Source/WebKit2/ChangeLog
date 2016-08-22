@@ -1,5 +1,21 @@
 2016-08-22  Anders Carlsson  <andersca@apple.com>
 
+        Move tuple coding to ArgumentCoders.h
+        https://bugs.webkit.org/show_bug.cgi?id=161059
+
+        Reviewed by Tim Horton.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::TupleCoder::encode):
+        (IPC::TupleCoder::decode):
+        * Platform/IPC/Arguments.h:
+        (IPC::TupleCoder::encode): Deleted.
+        (IPC::TupleCoder::decode): Deleted.
+        * Scripts/webkit/messages.py:
+        (forward_declarations_and_headers):
+
+2016-08-22  Anders Carlsson  <andersca@apple.com>
+
         Simplify the generated message structs
         https://bugs.webkit.org/show_bug.cgi?id=161057
 

@@ -31,45 +31,6 @@
 
 namespace IPC {
 
-template<size_t index, typename... Elements>
-struct TupleCoder {
-    static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
-    {
-        encoder << std::get<sizeof...(Elements) - index>(tuple);
-        TupleCoder<index - 1, Elements...>::encode(encoder, tuple);
-    }
-
-    static bool decode(Decoder& decoder, std::tuple<Elements...>& tuple)
-    {
-        if (!decoder.decode(std::get<sizeof...(Elements) - index>(tuple)))
-            return false;
-        return TupleCoder<index - 1, Elements...>::decode(decoder, tuple);
-    }
-};
-
-template<typename... Elements>
-struct TupleCoder<0, Elements...> {
-    static void encode(Encoder&, const std::tuple<Elements...>&)
-    {
-    }
-
-    static bool decode(Decoder&, std::tuple<Elements...>&)
-    {
-        return true;
-    }
-};
-
-template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
-    static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
-    {
-        TupleCoder<sizeof...(Elements), Elements...>::encode(encoder, tuple);
-    }
-
-    static bool decode(Decoder& decoder, std::tuple<Elements...>& tuple)
-    {
-        return TupleCoder<sizeof...(Elements), Elements...>::decode(decoder, tuple);
-    }
-};
 
 template<typename... Types>
 struct Arguments {

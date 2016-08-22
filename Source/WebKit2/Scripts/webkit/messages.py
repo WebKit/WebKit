@@ -165,8 +165,7 @@ def forward_declarations_and_headers(receiver):
     types_by_namespace = collections.defaultdict(set)
 
     headers = set([
-        '"Arguments.h"',
-        '"Encoder.h"',
+        '"ArgumentCoders.h"',
     ])
 
     non_template_wtf_types = frozenset([
