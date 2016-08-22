@@ -97,11 +97,7 @@ def arguments_type(message):
 
 
 def reply_type(message):
-    return 'IPC::Arguments<%s>' % (', '.join(reply_parameter_type(parameter.type) for parameter in message.reply_parameters))
-
-
-def decode_type(message):
-    return 'std::tuple<%s>' % ', '.join(parameter.type for parameter in message.parameters)
+    return 'std::tuple<%s>' % (', '.join(reply_parameter_type(parameter.type) for parameter in message.reply_parameters))
 
 
 def message_to_struct_declaration(message):
@@ -109,7 +105,7 @@ def message_to_struct_declaration(message):
     function_parameters = [(function_parameter_type(x.type), x.name) for x in message.parameters]
     result.append('class %s {\n' % message.name)
     result.append('public:\n')
-    result.append('    typedef %s DecodeType;\n' % decode_type(message))
+    result.append('    typedef %s Arguments;\n' % arguments_type(message))
     result.append('\n')
     result.append('    static IPC::StringReference receiverName() { return messageReceiverName(); }\n')
     result.append('    static IPC::StringReference name() { return IPC::StringReference("%s"); }\n' % message.name)
@@ -136,13 +132,13 @@ def message_to_struct_declaration(message):
         result.append('\n        : m_arguments(%s)\n' % ', '.join([x[1] for x in function_parameters]))
         result.append('    {\n')
         result.append('    }\n\n')
-    result.append('    const %s& arguments() const\n' % arguments_type(message))
+    result.append('    const Arguments& arguments() const\n')
     result.append('    {\n')
     result.append('        return m_arguments;\n')
     result.append('    }\n')
     result.append('\n')
     result.append('private:\n')
-    result.append('    %s m_arguments;\n' % arguments_type(message))
+    result.append('    Arguments m_arguments;\n')
     result.append('};\n')
     return surround_in_condition(''.join(result), message.condition)
 

@@ -1,3 +1,21 @@
+2016-08-22  Anders Carlsson  <andersca@apple.com>
+
+        Simplify the generated message structs
+        https://bugs.webkit.org/show_bug.cgi?id=161057
+
+        Reviewed by Geoffrey Garen.
+
+        Use a class template to transform the Reply and Argument tuple types for encoding/decoding
+        instead of generating them for each message.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessage):
+        (IPC::handleMessageDelayed):
+        * Scripts/webkit/messages.py:
+        (reply_type):
+        (message_to_struct_declaration):
+        (decode_type): Deleted.
+
 2016-08-19  Anders Carlsson  <andersca@apple.com>
 
         Remove MessageRecorder
