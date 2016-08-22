@@ -37,8 +37,8 @@ function clickElement(element)
     var x = element.offsetLeft + 2;
     var y = element.offsetTop + 2;
     var supportsTouchEvents = "TouchEvent" in window;
-    if (testRunner.runUIScript && supportsTouchEvents)
-        testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + "); })()");
+    if (supportsTouchEvents && window.testRunner && testRunner.runUIScript)
+        testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + ", function() { /* Do nothing */ }); })();", function () { /* Do nothing */ });
     else if (window.eventSender) {
         eventSender.mouseMoveTo(x, y);
         eventSender.mouseDown();

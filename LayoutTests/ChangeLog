@@ -1,3 +1,17 @@
+2016-08-22  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the iOS 9 Simulator test bots after <https://trac.webkit.org/changeset/204720>
+        (https://bugs.webkit.org/show_bug.cgi?id=156857)
+
+        Fix JavaScript TypeErrors, "undefined is not an object". Both uiController.singleTapAtPoint() and
+        testRunner.runUIScript() expect to be passed a callback function.
+
+        Additionally, explicitly check that window.testRunner is non-null before checking whether
+        testRunner.runUIScript is non-null to avoid a JavaScript TypeError in desktop Safari.
+
+        * http/tests/navigation/ping-attribute/resources/utilities.js:
+        (clickElement):
+
 2016-08-22  Chris Dumez  <cdumez@apple.com>
 
         Add support for GlobalEventHandlers.oncuechange attribute
