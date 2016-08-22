@@ -38,7 +38,7 @@ using namespace MathMLNames;
 using namespace MathMLOperatorDictionary;
 
 MathMLOperatorElement::MathMLOperatorElement(const QualifiedName& tagName, Document& document)
-    : MathMLTextElement(tagName, document)
+    : MathMLTokenElement(tagName, document)
 {
 }
 
@@ -219,7 +219,7 @@ void MathMLOperatorElement::childrenChanged(const ChildChange& change)
     m_operatorChar = Nullopt;
     m_dictionaryProperty = Nullopt;
     m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
-    MathMLTextElement::childrenChanged(change);
+    MathMLTokenElement::childrenChanged(change);
 }
 
 static Optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag(const QualifiedName& name)
@@ -262,7 +262,7 @@ void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const Atom
         return;
     }
 
-    MathMLTextElement::parseAttribute(name, value);
+    MathMLTokenElement::parseAttribute(name, value);
 }
 
 RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

@@ -27,11 +27,11 @@
 
 #if ENABLE(MATHML)
 #include "MathMLOperatorDictionary.h"
-#include "MathMLTextElement.h"
+#include "MathMLTokenElement.h"
 
 namespace WebCore {
 
-class MathMLOperatorElement final : public MathMLTextElement {
+class MathMLOperatorElement final : public MathMLTokenElement {
 public:
     static Ref<MathMLOperatorElement> create(const QualifiedName& tagName, Document&);
     struct OperatorChar {

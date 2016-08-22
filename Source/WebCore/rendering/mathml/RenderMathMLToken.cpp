@@ -31,6 +31,7 @@
 
 #include "MathMLElement.h"
 #include "MathMLNames.h"
+#include "MathMLTokenElement.h"
 #include "PaintInfo.h"
 #include "RenderElement.h"
 #include "RenderIterator.h"
@@ -51,6 +52,11 @@ RenderMathMLToken::RenderMathMLToken(Document& document, RenderStyle&& style)
     , m_mathVariantGlyph()
     , m_mathVariantGlyphDirty(false)
 {
+}
+
+MathMLTokenElement& RenderMathMLToken::element()
+{
+    return static_cast<MathMLTokenElement&>(nodeForNonAnonymous());
 }
 
 void RenderMathMLToken::updateTokenContent()

@@ -28,17 +28,17 @@
 #pragma once
 
 #if ENABLE(MATHML)
+
 #include "MathMLElement.h"
 
 namespace WebCore {
 
-class MathMLTextElement : public MathMLElement {
+class MathMLTokenElement : public MathMLElement {
 public:
-    static Ref<MathMLTextElement> create(const QualifiedName& tagName, Document&);
-    bool acceptsMathVariantAttribute() final { return true; }
+    static Ref<MathMLTokenElement> create(const QualifiedName& tagName, Document&);
 
 protected:
-    MathMLTextElement(const QualifiedName& tagName, Document&);
+    MathMLTokenElement(const QualifiedName& tagName, Document&);
     void childrenChanged(const ChildChange&) override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
@@ -50,6 +50,7 @@ private:
 
     bool isMathMLToken() const final { return true; }
     bool isPresentationMathML() const final { return true; }
+    bool acceptsMathVariantAttribute() final { return true; }
 };
 
 }

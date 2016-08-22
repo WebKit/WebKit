@@ -2014,7 +2014,7 @@ set(WebCore_SOURCES
     mathml/MathMLScriptsElement.cpp
     mathml/MathMLSelectElement.cpp
     mathml/MathMLSpaceElement.cpp
-    mathml/MathMLTextElement.cpp
+    mathml/MathMLTokenElement.cpp
     mathml/MathMLUnderOverElement.cpp
 
     page/AutoscrollController.cpp

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +28,7 @@
 #include "config.h"
 
 #if ENABLE(MATHML)
-
-#include "MathMLTextElement.h"
+#include "MathMLTokenElement.h"
 
 #include "MathMLNames.h"
 #include "RenderMathMLToken.h"
@@ -37,32 +37,34 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-MathMLTextElement::MathMLTextElement(const QualifiedName& tagName, Document& document)
+MathMLTokenElement::MathMLTokenElement(const QualifiedName& tagName, Document& document)
     : MathMLElement(tagName, document)
 {
     setHasCustomStyleResolveCallbacks();
 }
 
-Ref<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLTokenElement> MathMLTokenElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new MathMLTextElement(tagName, document));
+    return adoptRef(*new MathMLTokenElement(tagName, document));
 }
 
-void MathMLTextElement::didAttachRenderers()
+void MathMLTokenElement::didAttachRenderers()
 {
     MathMLElement::didAttachRenderers();
-    if (is<RenderMathMLToken>(renderer()))
-        downcast<RenderMathMLToken>(*renderer()).updateTokenContent();
+    auto* mathmlRenderer = renderer();
+    if (is<RenderMathMLToken>(mathmlRenderer))
+        downcast<RenderMathMLToken>(*mathmlRenderer).updateTokenContent();
 }
 
-void MathMLTextElement::childrenChanged(const ChildChange& change)
+void MathMLTokenElement::childrenChanged(const ChildChange& change)
 {
     MathMLElement::childrenChanged(change);
-    if (is<RenderMathMLToken>(renderer()))
-        downcast<RenderMathMLToken>(*renderer()).updateTokenContent();
+    auto* mathmlRenderer = renderer();
+    if (is<RenderMathMLToken>(mathmlRenderer))
+        downcast<RenderMathMLToken>(*mathmlRenderer).updateTokenContent();
 }
 
-void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLTokenElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == mathvariantAttr) {
         m_mathVariant = Nullopt;
@@ -73,18 +75,15 @@ void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicSt
     MathMLElement::parseAttribute(name, value);
 }
 
-RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 
     return createRenderer<RenderMathMLToken>(*this, WTFMove(style));
 }
 
-bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const
+bool MathMLTokenElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (hasTagName(MathMLNames::mspaceTag))
-        return false;
-
     // The HTML specification defines <mi>, <mo>, <mn>, <ms> and <mtext> as insertion points.
     return isPhrasingContent(child) && StyledElement::childShouldCreateRenderer(child);
 }

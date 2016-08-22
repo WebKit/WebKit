@@ -36,6 +36,6 @@
 #include "MathMLPaddedElement.cpp"
 #include "MathMLScriptsElement.cpp"
 #include "MathMLSelectElement.cpp"
-#include "MathMLTextElement.cpp"
+#include "MathMLTokenElement.cpp"
 #include "MathMLUnderOverElement.cpp"
 

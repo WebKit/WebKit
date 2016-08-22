@@ -28,17 +28,18 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLTextElement.h"
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
+
+class MathMLTokenElement;
 
 class RenderMathMLToken : public RenderMathMLBlock {
 public:
     RenderMathMLToken(Element&, RenderStyle&&);
     RenderMathMLToken(Document&, RenderStyle&&);
 
-    MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }
+    MathMLTokenElement& element();
 
     virtual void updateTokenContent();
     void updateFromElement() override;
