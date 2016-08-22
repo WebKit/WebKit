@@ -614,7 +614,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitWebGL2EnabledPreferenceKey,
 #endif
 #if ENABLE(FETCH_API)
-        [NSNumber numberWithBool:NO], WebKitFetchAPIEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
 #endif
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
         [NSNumber numberWithBool:NO], WebKitDownloadAttributeEnabledPreferenceKey,
