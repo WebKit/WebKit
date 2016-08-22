@@ -1,3 +1,16 @@
+2016-08-22  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Stretch alignment doesn't work for orthogonal flows
+        https://bugs.webkit.org/show_bug.cgi?id=160076
+
+        Reviewed by Darin Adler.
+
+        Additional layout tests to verify the stretching logic works as
+        expected in orthogonal flow scenarios.
+
+        * fast/css-grid-layout/grid-align-justify-stretch-with-orthogonal-flows-expected.txt: Added.
+        * fast/css-grid-layout/grid-align-justify-stretch-with-orthogonal-flows.html: Added.
+
 2016-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename CustomElementsRegistry to CustomElementRegistry

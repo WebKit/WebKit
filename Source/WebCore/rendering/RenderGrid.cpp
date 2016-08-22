@@ -2166,6 +2166,16 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
     return gridAreaBreadthForChild - (child.needsLayout() ? computeMarginLogicalSizeForChild(ForRows, child) : marginLogicalHeightForChild(child));
 }
 
+StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child) const
+{
+    return child.style().resolvedAlignSelf(style(), selfAlignmentNormalBehavior);
+}
+
+StyleSelfAlignmentData RenderGrid::justifySelfForChild(const RenderBox& child) const
+{
+    return child.style().resolvedJustifySelf(style(), selfAlignmentNormalBehavior);
+}
+
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
 {
@@ -2175,23 +2185,17 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     // not, evaluating the conditions which might have changed since the old values were set.
     child.clearOverrideLogicalContentHeight();
 
-    auto& gridStyle = style();
-    auto& childStyle = child.style();
-    bool isHorizontalMode = isHorizontalWritingMode();
-    bool hasAutoSizeInColumnAxis = isHorizontalMode ? childStyle.height().isAuto() : childStyle.width().isAuto();
-    bool allowedToStretchChildAlongColumnAxis = hasAutoSizeInColumnAxis && !childStyle.marginBeforeUsing(&gridStyle).isAuto() && !childStyle.marginAfterUsing(&gridStyle).isAuto();
-    if (allowedToStretchChildAlongColumnAxis && childStyle.resolvedAlignSelf(style(), selfAlignmentNormalBehavior).position() == ItemPositionStretch) {
-        // TODO (lajava): If the child has orthogonal flow, then it already has an override height set, so use it.
-        // TODO (lajava): grid track sizing and positioning do not support orthogonal modes yet.
-        if (child.isHorizontalWritingMode() == isHorizontalMode) {
-            LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(child.overrideContainingBlockContentLogicalHeight().value(), child);
-            LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, Nullopt);
-            child.setOverrideLogicalContentHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
-            if (desiredLogicalHeight != child.logicalHeight()) {
-                // TODO (lajava): Can avoid laying out here in some cases. See https://webkit.org/b/87905.
-                child.setLogicalHeight(0);
-                child.setNeedsLayout();
-            }
+    GridTrackSizingDirection childBlockDirection = flowAwareDirectionForChild(child, ForRows);
+    bool blockFlowIsColumnAxis = childBlockDirection == ForRows;
+    bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
+    if (allowedToStretchChildBlockSize) {
+        LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(overrideContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
+        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, LayoutUnit(-1));
+        child.setOverrideLogicalContentHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
+        if (desiredLogicalHeight != child.logicalHeight()) {
+            // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+            child.setLogicalHeight(LayoutUnit());
+            child.setNeedsLayout();
         }
     }
 }

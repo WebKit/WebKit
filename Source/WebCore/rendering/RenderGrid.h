@@ -171,7 +171,13 @@ private:
     LayoutUnit marginLogicalHeightForChild(const RenderBox&) const;
     LayoutUnit computeMarginLogicalSizeForChild(GridTrackSizingDirection, const RenderBox&) const;
     LayoutUnit availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox&) const;
+    StyleSelfAlignmentData justifySelfForChild(const RenderBox&) const;
+    StyleSelfAlignmentData alignSelfForChild(const RenderBox&) const;
     void applyStretchAlignmentToChildIfNeeded(RenderBox&);
+    bool hasAutoSizeInColumnAxis(const RenderBox& child) const { return isHorizontalWritingMode() ? child.style().height().isAuto() : child.style().width().isAuto(); }
+    bool hasAutoSizeInRowAxis(const RenderBox& child) const { return isHorizontalWritingMode() ? child.style().width().isAuto() : child.style().height().isAuto(); }
+    bool allowedToStretchChildAlongColumnAxis(const RenderBox& child) const { return alignSelfForChild(child).position() == ItemPositionStretch && hasAutoSizeInColumnAxis(child) && !hasAutoMarginsInColumnAxis(child); }
+    bool allowedToStretchChildAlongRowAxis(const RenderBox& child) const { return justifySelfForChild(child).position() == ItemPositionStretch && hasAutoSizeInRowAxis(child) && !hasAutoMarginsInRowAxis(child); }
     bool hasAutoMarginsInColumnAxis(const RenderBox&) const;
     bool hasAutoMarginsInRowAxis(const RenderBox&) const;
     void resetAutoMarginsAndLogicalTopInColumnAxis(RenderBox& child);
