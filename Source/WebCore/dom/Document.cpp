@@ -4437,7 +4437,7 @@ String Document::cookie(ExceptionCode& ec)
         return String();
 
     if (!isDOMCookieCacheValid())
-        setCachedDOMCookies(cookies(this, cookieURL));
+        setCachedDOMCookies(cookies(*this, cookieURL));
 
     return cachedDOMCookies();
 }
@@ -4461,7 +4461,7 @@ void Document::setCookie(const String& value, ExceptionCode& ec)
         return;
 
     invalidateDOMCookieCache();
-    setCookies(this, cookieURL, value);
+    setCookies(*this, cookieURL, value);
 }
 
 String Document::referrer() const

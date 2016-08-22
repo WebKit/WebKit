@@ -444,7 +444,7 @@ bool WebSocketChannel::processBuffer()
             if (m_identifier)
                 InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_document, m_identifier, m_handshake->serverHandshakeResponse());
             if (!m_handshake->serverSetCookie().isEmpty()) {
-                if (cookiesEnabled(m_document)) {
+                if (m_document && cookiesEnabled(*m_document)) {
                     // Exception (for sandboxed documents) ignored.
                     m_document->setCookie(m_handshake->serverSetCookie(), IGNORE_EXCEPTION);
                 }

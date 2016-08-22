@@ -2127,7 +2127,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 break;
             
             if (Frame* frame = core([self webFrame])) {
-                String cookieString = cookies(frame->document(), URL); 
+                auto* document = frame->document();
+                if (!document)
+                    break;
+
+                String cookieString = cookies(*document, URL);
                 CString cookieStringUTF8 = cookieString.utf8();
                 if (cookieStringUTF8.isNull())
                     return NPERR_GENERIC_ERROR;
@@ -2177,7 +2181,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 break;
             
             if (Frame* frame = core([self webFrame])) {
-                setCookies(frame->document(), URL, cookieString);
+                if (auto* document = frame->document())
+                    setCookies(*document, URL, cookieString);
                 return NPERR_NO_ERROR;
             }
             

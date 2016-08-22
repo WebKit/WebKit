@@ -1281,8 +1281,8 @@ NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, cha
         URL u(m_parentFrame->document()->baseURL(), url);
         if (u.isValid()) {
             Frame* frame = getFrame(parentFrame(), m_element);
-            if (frame) {
-                const CString cookieStr = cookies(frame->document(), u).utf8();
+            if (frame && frame->document()) {
+                const CString cookieStr = cookies(*frame->document(), u).utf8();
                 if (!cookieStr.isNull()) {
                     const int size = cookieStr.length();
                     *value = static_cast<char*>(NPN_MemAlloc(size+1));
@@ -1343,8 +1343,8 @@ NPError PluginView::setValueForURL(NPNURLVariable variable, const char* url, con
         if (u.isValid()) {
             const String cookieStr = String::fromUTF8(value, len);
             Frame* frame = getFrame(parentFrame(), m_element);
-            if (frame && !cookieStr.isEmpty())
-                setCookies(frame->document(), u, cookieStr);
+            if (frame && frame->document() && !cookieStr.isEmpty())
+                setCookies(*frame->document(), u, cookieStr);
         } else
             result = NPERR_INVALID_URL;
         break;

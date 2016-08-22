@@ -556,9 +556,9 @@ void WebAutomationSessionProxy::getCookiesForFrame(uint64_t pageID, uint64_t fra
     }
 
     // This returns the same list of cookies as when evaluating `document.cookies` in JavaScript.
-    WebCore::Document* document = frame->coreFrame()->document();
+    auto& document = *frame->coreFrame()->document();
     Vector<WebCore::Cookie> foundCookies;
-    WebCore::getRawCookies(document, document->cookieURL(), foundCookies);
+    WebCore::getRawCookies(document, document.cookieURL(), foundCookies);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidGetCookiesForFrame(callbackID, foundCookies, String()), 0);
 }
@@ -579,8 +579,8 @@ void WebAutomationSessionProxy::deleteCookie(uint64_t pageID, uint64_t frameID, 
         return;
     }
 
-    WebCore::Document* document = frame->coreFrame()->document();
-    WebCore::deleteCookie(document, document->cookieURL(), cookieName);
+    auto& document = *frame->coreFrame()->document();
+    WebCore::deleteCookie(document, document.cookieURL(), cookieName);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidDeleteCookie(callbackID, String()), 0);
 }

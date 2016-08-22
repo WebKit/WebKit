@@ -37,55 +37,53 @@
 
 namespace WebCore {
 
-static NetworkingContext* networkingContext(const Document* document)
+static NetworkingContext* networkingContext(const Document& document)
 {
     // FIXME: Returning 0 means falling back to default context. That's not a choice that is appropriate to do at runtime
-    if (!document)
-        return nullptr;
-    Frame* frame = document->frame();
+    Frame* frame = document.frame();
     if (!frame)
         return nullptr;
 
     return frame->loader().networkingContext();
 }
 
-inline NetworkStorageSession& storageSession(const Document* document)
+inline NetworkStorageSession& storageSession(const Document& document)
 {
     NetworkingContext* context = networkingContext(document);
     return context ? context->storageSession() : NetworkStorageSession::defaultStorageSession();
 }
 
-String cookies(const Document* document, const URL& url)
+String cookies(const Document& document, const URL& url)
 {
-    return platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document->firstPartyForCookies(), url);
+    return platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), url);
 }
 
-void setCookies(Document* document, const URL& url, const String& cookieString)
+void setCookies(Document& document, const URL& url, const String& cookieString)
 {
-    platformStrategies()->cookiesStrategy()->setCookiesFromDOM(storageSession(document), document->firstPartyForCookies(), url, cookieString);
+    platformStrategies()->cookiesStrategy()->setCookiesFromDOM(storageSession(document), document.firstPartyForCookies(), url, cookieString);
 }
 
-bool cookiesEnabled(const Document* document)
+bool cookiesEnabled(const Document& document)
 {
-    return platformStrategies()->cookiesStrategy()->cookiesEnabled(storageSession(document), document->firstPartyForCookies(), document->cookieURL());
+    return platformStrategies()->cookiesStrategy()->cookiesEnabled(storageSession(document), document.firstPartyForCookies(), document.cookieURL());
 }
 
-String cookieRequestHeaderFieldValue(const Document* document, const URL& url)
+String cookieRequestHeaderFieldValue(const Document& document, const URL& url)
 {
-    return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document->firstPartyForCookies(), url);
+    return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document.firstPartyForCookies(), url);
 }
 
-bool getRawCookies(const Document* document, const URL& url, Vector<Cookie>& cookies)
+bool getRawCookies(const Document& document, const URL& url, Vector<Cookie>& cookies)
 {
-    return platformStrategies()->cookiesStrategy()->getRawCookies(storageSession(document), document->firstPartyForCookies(), url, cookies);
+    return platformStrategies()->cookiesStrategy()->getRawCookies(storageSession(document), document.firstPartyForCookies(), url, cookies);
 }
 
-void deleteCookie(const Document* document, const URL& url, const String& cookieName)
+void deleteCookie(const Document& document, const URL& url, const String& cookieName)
 {
     platformStrategies()->cookiesStrategy()->deleteCookie(storageSession(document), url, cookieName);
 }
 
-void addCookie(const Document* document, const URL& url, const Cookie& cookie)
+void addCookie(const Document& document, const URL& url, const Cookie& cookie)
 {
     platformStrategies()->cookiesStrategy()->addCookie(storageSession(document), url, cookie);
 }

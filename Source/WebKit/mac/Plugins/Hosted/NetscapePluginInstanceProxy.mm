@@ -1525,7 +1525,11 @@ bool NetscapePluginInstanceProxy::getCookies(data_t urlData, mach_msg_type_numbe
         return false;
     
     if (Frame* frame = core([m_pluginView webFrame])) {
-        String cookieString = cookies(frame->document(), url); 
+        auto* document = frame->document();
+        if (!document)
+            return false;
+
+        String cookieString = cookies(*document, url);
         WTF::CString cookieStringUTF8 = cookieString.utf8();
         if (cookieStringUTF8.isNull())
             return false;
@@ -1552,8 +1556,12 @@ bool NetscapePluginInstanceProxy::setCookies(data_t urlData, mach_msg_type_numbe
         String cookieString = String::fromUTF8(cookiesData, cookiesLength);
         if (!cookieString)
             return false;
-        
-        WebCore::setCookies(frame->document(), url, cookieString);
+
+        auto* document = frame->document();
+        if (!document)
+            return false;
+
+        WebCore::setCookies(*document, url, cookieString);
         return true;
     }
 

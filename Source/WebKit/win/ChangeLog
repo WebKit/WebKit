@@ -1,3 +1,13 @@
+2016-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Use Document& instead of Document* when getting cookies
+        https://bugs.webkit.org/show_bug.cgi?id=161011
+
+        Reviewed by Darin Adler.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::getValueForURL):
+
 2016-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         Rename didLayout(LayoutMilestones) to didReachLayoutMilestone(), and related WK2 functions

@@ -1615,12 +1615,12 @@ String PluginView::proxiesForURL(const String& urlString)
 
 String PluginView::cookiesForURL(const String& urlString)
 {
-    return cookies(&m_pluginElement->document(), URL(URL(), urlString));
+    return cookies(m_pluginElement->document(), URL(URL(), urlString));
 }
 
 void PluginView::setCookiesForURL(const String& urlString, const String& cookieString)
 {
-    setCookies(&m_pluginElement->document(), URL(URL(), urlString), cookieString);
+    setCookies(m_pluginElement->document(), URL(URL(), urlString), cookieString);
 }
 
 bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
