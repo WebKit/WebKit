@@ -89,6 +89,9 @@ NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)
     , m_navigationDelegateMethods()
     , m_historyDelegateMethods()
+#if PLATFORM(IOS)
+    , m_releaseActivityTimer(*this, &NavigationState::releaseNetworkActivityToken)
+#endif
 {
     ASSERT(m_webView->_page);
     ASSERT(!navigationStates().contains(m_webView->_page.get()));
@@ -819,15 +822,30 @@ void NavigationState::willChangeIsLoading()
     [m_webView willChangeValueForKey:@"loading"];
 }
 
+#if PLATFORM(IOS)
+void NavigationState::releaseNetworkActivityToken()
+{
+    RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), "%p UIProcess is releasing a background assertion because a page load completed", this);
+    ASSERT(m_activityToken);
+    m_activityToken = nullptr;
+}
+#endif
+
 void NavigationState::didChangeIsLoading()
 {
 #if PLATFORM(IOS)
     if (m_webView->_page->pageLoadState().isLoading()) {
-        RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), "UIProcess is taking a background assertion because a page load started");
-        m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
+        if (m_releaseActivityTimer.isActive())
+            m_releaseActivityTimer.stop();
+        else {
+            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), "%p - UIProcess is taking a background assertion because a page load started", this);
+            ASSERT(!m_activityToken);
+            m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
+        }
     } else {
-        RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), "UIProcess is releasing a background assertion because a page load completed");
-        m_activityToken = nullptr;
+        // Delay releasing the background activity for 3 seconds to give the application a chance to start another navigation
+        // before suspending the WebContent process <rdar://problem/27910964>.
+        m_releaseActivityTimer.startOneShot(3s);
     }
 #endif
 

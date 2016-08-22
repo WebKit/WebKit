@@ -1,3 +1,26 @@
+2016-08-22  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Wait a few seconds before release network activity assertion after a load
+        https://bugs.webkit.org/show_bug.cgi?id=160975
+        <rdar://problem/27910964>
+
+        Reviewed by Darin Adler.
+
+        Some apps do several loads one after the other in a non-visible view.
+        This causes us to release the background assertion every time a load
+        completes and then take one again less than a second after. Every
+        time we release the assertion, we send a PrepareToSuspend IPC to the
+        WebContent process, which does all the clean up to get ready to
+        suspend, only to get a CancelPrepareReadyToSuspend later on because
+        the next load has started. To work around this problem, we now wait
+        a few seconds before releasing the background activity after a load.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::releaseNetworkActivityToken):
+        (WebKit::NavigationState::didChangeIsLoading):
+
 2016-08-22  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Activate fetch api runtime flag by default

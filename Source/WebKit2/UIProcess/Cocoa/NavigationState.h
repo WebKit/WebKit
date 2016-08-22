@@ -35,6 +35,7 @@
 #import "PageLoadState.h"
 #import "ProcessThrottler.h"
 #import "WeakObjCPtr.h"
+#import <WebCore/Timer.h>
 #import <wtf/RetainPtr.h>
 
 @class WKWebView;
@@ -152,6 +153,10 @@ private:
     void willChangeWebProcessIsResponsive() override;
     void didChangeWebProcessIsResponsive() override;
 
+#if PLATFORM(IOS)
+    void releaseNetworkActivityToken();
+#endif
+
     WKWebView *m_webView;
     WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;
 
@@ -199,6 +204,7 @@ private:
 
 #if PLATFORM(IOS)
     ProcessThrottler::BackgroundActivityToken m_activityToken;
+    WebCore::Timer m_releaseActivityTimer;
 #endif
 };
 
