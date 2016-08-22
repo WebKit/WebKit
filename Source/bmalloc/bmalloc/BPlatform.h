@@ -23,21 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BPlatform_h
-#define BPlatform_h
+#pragma once
 
 #ifdef __APPLE__
+#include <Availability.h>
+#include <AvailabilityMacros.h>
 #include <TargetConditionals.h>
 #endif
 
 #define BPLATFORM(PLATFORM) (defined BPLATFORM_##PLATFORM && BPLATFORM_##PLATFORM)
 #define BOS(OS) (defined BOS_##OS && BOS_##OS)
-
-#if ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
-    || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) \
-    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
-#define BPLATFORM_IOS 1
-#endif
 
 #ifdef __APPLE__
 #define BOS_DARWIN 1
@@ -46,6 +41,19 @@
 #ifdef __unix
 #define BOS_UNIX 1
 #endif
+
+#if BOS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
+    || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) \
+    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
+#define BPLATFORM_IOS 1
+#elif BOS(DARWIN) && defined(TARGET_OS_MAC) && TARGET_OS_MAC
+#define BPLATFORM_MAC 1
+#endif
+
+/* ==== Policy decision macros: these define policy choices for a particular port. ==== */
+
+/* BUSE() - use a particular third-party library or optional OS service */
+#define BUSE(FEATURE) (defined BUSE_##FEATURE && BUSE_##FEATURE)
 
 /* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
 
@@ -181,4 +189,8 @@
 
 #endif /* ARM */
 
-#endif // BPlatform_h
+#define BATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
+
+#if (BPLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (BPLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+#define BUSE_OS_LOG 1
+#endif

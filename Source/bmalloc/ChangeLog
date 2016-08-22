@@ -1,3 +1,25 @@
+2016-06-11  David Kilzer  <ddkilzer@apple.com>
+
+        Implement logging for RELEASE_BASSERT_WITH_MESSAGE() in BAssert.h
+        <http://webkit.org/b/155992>
+
+        Reviewed by Geoff Garen.
+
+        * bmalloc/BAssert.h:
+        (BLOG_ERROR): Add method to always log error messages.
+        (RELEASE_BASSERT_WITH_MESSAGE): Use BLOG_ERROR() to implement
+        logging in Debug builds.
+        * bmalloc/BPlatform.h:
+        (BPLATFORM_MAC): Add.
+        (BUSE): Add BUSE() macro.
+        (BATTRIBUTE_PRINTF): Add.
+        (BUSE_OS_LOG): Add.
+        * bmalloc/Logging.cpp:
+        (bmalloc::reportAssertionFailureWithMessage): Add.  Logs to
+        stderr.
+        * bmalloc/Logging.h:
+        (bmalloc::reportAssertionFailureWithMessage): Add declaration.
+
 2016-06-07  Pranjal Jumde  <pjumde@apple.com>
 
         Prevents integer overflow in Vector.h

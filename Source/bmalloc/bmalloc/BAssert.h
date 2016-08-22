@@ -20,13 +20,17 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BAssert_h
-#define BAssert_h
+#pragma once
 
 #include "BPlatform.h"
+#include "Logging.h"
+
+#if BUSE(OS_LOG)
+#include <os/log.h>
+#endif
 
 #if defined(NDEBUG) && BOS(DARWIN)
 
@@ -63,10 +67,25 @@
 
 #define RELEASE_BASSERT(x) BASSERT_IMPL(x)
 
-// FIXME: Implement logging: <https://webkit.org/b/155992>
-#define RELEASE_BASSERT_WITH_MESSAGE(x, f, ...) BASSERT_IMPL(x)
+#if BUSE(OS_LOG)
+#define BMALLOC_LOGGING_PREFIX "bmalloc: "
+#define BLOG_ERROR(format, ...) os_log_error(OS_LOG_DEFAULT, BMALLOC_LOGGING_PREFIX format, __VA_ARGS__)
+#else
+#define BLOG_ERROR(format, ...) bmalloc::reportAssertionFailureWithMessage(__FILE__, __LINE__, __PRETTY_FUNCTION__, format, __VA_ARGS__)
+#endif
 
-#define UNUSED(x) (void)x
+#if defined(NDEBUG)
+#define RELEASE_BASSERT_WITH_MESSAGE(x, format, ...) BASSERT_IMPL(x)
+#else
+#define RELEASE_BASSERT_WITH_MESSAGE(x, format, ...) do { \
+    if (!(x)) { \
+        BLOG_ERROR("ASSERTION FAILED: " #x " :: " format, ##__VA_ARGS__); \
+        BCRASH(); \
+    } \
+} while (0);
+#endif
+
+#define UNUSED(x) ((void)x)
 
 // ===== Release build =====
 
@@ -85,8 +104,6 @@
 
 #define BASSERT(x) BASSERT_IMPL(x)
 
-#define IF_DEBUG(x) x
+#define IF_DEBUG(x) (x)
 
 #endif // !defined(NDEBUG)
-
-#endif // BAssert_h
