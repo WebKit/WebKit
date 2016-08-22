@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
         IPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);

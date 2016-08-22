@@ -1,3 +1,17 @@
+2016-08-22  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        [SOUP] Change MessageDecoder with Decoder
+        https://bugs.webkit.org/show_bug.cgi?id=161040
+
+        Reviewed by Darin Adler.
+
+        Clean up MessageDecoder in files of Soup.
+
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        * WebProcess/soup/WebSoupRequestManager.h:
+
 2016-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Use Document& instead of Document* when getting cookies
