@@ -31,16 +31,15 @@ import subprocess
 import os
 
 class GDBCrashLogGenerator(object):
-    def __init__(self, name, pid, newer_than, filesystem, process_coredump_script_path, path_to_driver):
+    def __init__(self, name, pid, newer_than, filesystem, path_to_driver):
         self.name = name
         self.pid = pid
         self.newer_than = newer_than
         self._filesystem = filesystem
-        self._process_coredump_script_path = process_coredump_script_path
         self._path_to_driver = path_to_driver
 
     def _get_gdb_output(self, coredump_path):
-        process_name = os.path.join(os.path.dirname(str(self._path_to_driver())), self.name)
+        process_name = self._filesystem.join(os.path.dirname(str(self._path_to_driver())), self.name)
         cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', process_name, coredump_path]
         proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
@@ -78,11 +77,11 @@ class GDBCrashLogGenerator(object):
         if not crash_log:
             if not log_directory:
                 log_directory = "/path/to/coredumps"
-            process_coredump_script_path = self._process_coredump_script_path
+            core_pattern = self._filesystem.join(log_directory, "core-pid_%p.dump")
             crash_log = """\
 Coredump %(expected_crash_dump_filename)s not found. To enable crash logs:
 
-- run this command as super-user: echo "|%(process_coredump_script_path)s %(log_directory)s/core-pid_%%p.dump" > /proc/sys/kernel/core_pattern
+- run this command as super-user: echo "%(core_pattern)s" > /proc/sys/kernel/core_pattern
 - enable core dumps: ulimit -c unlimited
 - set the WEBKIT_CORE_DUMPS_DIRECTORY environment variable: export WEBKIT_CORE_DUMPS_DIRECTORY=%(log_directory)s
 

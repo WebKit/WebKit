@@ -41,11 +41,10 @@ class GDBCrashLogGeneratorTest(unittest.TestCase):
         if sys.platform.startswith('win'):
             return
 
-        process_coredump_script_path = "/path/to/coredump-processor"
-        generator = GDBCrashLogGenerator('DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), process_coredump_script_path=process_coredump_script_path, path_to_driver=None)
+        generator = GDBCrashLogGenerator('DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), path_to_driver=None)
 
         core_directory = os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')
-        core_pattern = "|%s %s/core-pid_%%p.dump" % (process_coredump_script_path, core_directory)
+        core_pattern = generator._filesystem.join(core_directory, "core-pid_%p.dump")
         mock_empty_crash_log = """\
 crash log for DumpRenderTree (pid 28529):
 

@@ -1,3 +1,21 @@
+2016-08-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EFL][GTK] Script process-linux-coredump is not needed, switch back to use the kernel core dumper instead.
+        https://bugs.webkit.org/show_bug.cgi?id=160927
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/process-linux-coredump: Removed.
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort._get_crash_log):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._get_crash_log):
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator.__init__):
+        (GDBCrashLogGenerator.generate_crash_log):
+        * Scripts/webkitpy/port/linux_get_crash_log_unittest.py:
+        (GDBCrashLogGeneratorTest.test_generate_crash_log):
+
 2016-08-22  Jonathan Bedard  <jbedard@apple.com>
 
         check-webkit-style does not work with Lambda functions in C++
