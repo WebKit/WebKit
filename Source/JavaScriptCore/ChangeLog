@@ -1,3 +1,13 @@
+2016-08-22  Mark Lam  <mark.lam@apple.com>
+
+        Remove dead code.
+        https://bugs.webkit.org/show_bug.cgi?id=161049
+
+        Reviewed by Michael Saboff.
+
+        * runtime/VM.h:
+        - Deleted unused friend class ClearExceptionScope.
+
 2016-08-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Module should not allow HTML comments
