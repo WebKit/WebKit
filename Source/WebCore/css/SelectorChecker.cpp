@@ -81,6 +81,7 @@ struct SelectorChecker::LocalContext {
     bool pseudoElementEffective { true };
     bool hasScrollbarPseudo { false };
     bool hasSelectionPseudo { false };
+    bool didMoveToShadowHost { false };
 
 };
 
@@ -211,7 +212,6 @@ bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const El
 {
     ASSERT(element.shadowRoot());
     ASSERT(selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassHost);
-    ASSERT(checkingContext.resolvingMode != SelectorChecker::Mode::QueryingRules);
 
     specificity = selector.simpleSelectorSpecificity();
 
@@ -249,8 +249,22 @@ static SelectorChecker::LocalContext localContextForParent(const SelectorChecker
     // Disable :visited matching when we see the first link.
     if (context.element->isLink())
         updatedContext.visitedMatchType = VisitedMatchType::Disabled;
-    updatedContext.element = context.element->parentElement();
+
     updatedContext.isMatchElement = false;
+
+    if (updatedContext.didMoveToShadowHost) {
+        updatedContext.element = nullptr;
+        return updatedContext;
+    }
+
+    // Move to the shadow host if matching :host and the parent is the shadow root.
+    if (context.selector->match() == CSSSelector::PseudoClass && context.selector->pseudoClassType() == CSSSelector::PseudoClassHost && is<ShadowRoot>(context.element->parentNode())) {
+        updatedContext.element = downcast<ShadowRoot>(*context.element->parentNode()).host();
+        updatedContext.didMoveToShadowHost = true;
+        return updatedContext;
+    }
+
+    updatedContext.element = context.element->parentElement();
     return updatedContext;
 }
 
@@ -300,12 +314,12 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     CSSSelector::Relation relation = context.selector->relation();
 
     // Prepare next selector
-    const CSSSelector* historySelector = context.selector->tagHistory();
-    if (!historySelector)
+    const CSSSelector* leftSelector = context.selector->tagHistory();
+    if (!leftSelector)
         return MatchResult::matches(matchType);
 
     LocalContext nextContext(context);
-    nextContext.selector = historySelector;
+    nextContext.selector = leftSelector;
 
     if (relation != CSSSelector::SubSelector) {
         // Bail-out if this selector is irrelevant for the pseudoId
@@ -1021,16 +1035,21 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesPastCuePseudoClass(element);
 #endif
 
-        case CSSSelector::PseudoClassScope:
-            {
-                const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope;
-                if (&element == contextualReferenceNode)
-                    return true;
-                break;
-            }
-        case CSSSelector::PseudoClassHost:
-            // :host matches based on context. Cases that reach selector checker don't match.
-            return false;
+        case CSSSelector::PseudoClassScope: {
+            const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope;
+            if (&element == contextualReferenceNode)
+                return true;
+            break;
+        }
+        case CSSSelector::PseudoClassHost: {
+            if (!context.didMoveToShadowHost)
+                return false;
+            unsigned hostSpecificity;
+            if (!matchHostPseudoClass(selector, element, checkingContext, hostSpecificity))
+                return false;
+            specificity = CSSSelector::addSpecificities(specificity, hostSpecificity);
+            return true;
+        }
 #if ENABLE(CUSTOM_ELEMENTS)
         case CSSSelector::PseudoClassDefined:
             return isDefinedElement(element);

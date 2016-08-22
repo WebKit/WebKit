@@ -1,3 +1,13 @@
+2016-08-22  Antti Koivisto  <antti@apple.com>
+
+        Can't style descendants in shadow tree using the :host pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=160754
+
+        Reviewed by Darin Adler.
+
+        * fast/shadow-dom/css-scoping-host-descendant-expected.html: Added.
+        * fast/shadow-dom/css-scoping-host-descendant.html: Added.
+
 2016-08-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] <a ping> and <area ping> tests time out

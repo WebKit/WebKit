@@ -829,8 +829,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             return functionType;
         }
     case CSSSelector::PseudoClassHost:
-        // :host matches based on context. Cases that reach selector checker don't match.
-        return FunctionType::CannotMatchAnything;
+        return FunctionType::CannotCompile;
     case CSSSelector::PseudoClassUnknown:
         ASSERT_NOT_REACHED();
         return FunctionType::CannotMatchAnything;
