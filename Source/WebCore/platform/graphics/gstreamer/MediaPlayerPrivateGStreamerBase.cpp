@@ -537,9 +537,16 @@ void MediaPlayerPrivateGStreamerBase::repaint()
 
 void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 {
+    bool triggerResize;
     {
         WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+        triggerResize = !m_sample;
         m_sample = sample;
+    }
+
+    if (triggerResize) {
+        LOG_MEDIA_MESSAGE("First sample reached the sink, triggering video dimensions update");
+        m_player->sizeChanged();
     }
 
 #if USE(COORDINATED_GRAPHICS_THREADED)

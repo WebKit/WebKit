@@ -1,3 +1,21 @@
+2016-06-27  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer] top/bottom black bars added needlessly in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=158980
+
+        Reviewed by Carlos Garcia Campos.
+
+        The natural video size calculation depends on the validity of the
+        current sample, so whenever the first sample reached the sink it's a
+        good idea to reflect this on the player which will update its natural
+        size accordingly.
+
+        Fixes an issue where black borders were added on top and bottom of
+        fullscreen video.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+
 2016-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Adaptive streaming issues
