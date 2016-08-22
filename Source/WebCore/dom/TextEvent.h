@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef TextEvent_h
-#define TextEvent_h
+#pragma once
 
 #include "DictationAlternative.h"
 #include "TextEventInputType.h"
@@ -48,7 +47,7 @@ namespace WebCore {
 
         virtual ~TextEvent();
     
-        void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, const String& data);
+        WEBCORE_EXPORT void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, const String& data);
     
         String data() const { return m_data; }
 
@@ -89,5 +88,3 @@ namespace WebCore {
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(TextEvent)
-
-#endif // TextEvent_h

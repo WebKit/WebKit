@@ -56,13 +56,13 @@ public:
     MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult = false);
 
     // Creates evaluator which evaluates full media queries.
-    MediaQueryEvaluator(const String& acceptedMediaType, Document&, const RenderStyle*);
+    WEBCORE_EXPORT MediaQueryEvaluator(const String& acceptedMediaType, Document&, const RenderStyle*);
 
     bool mediaTypeMatch(const String& mediaTypeToMatch) const;
     bool mediaTypeMatchSpecific(const char* mediaTypeToMatch) const;
 
     // Evaluates a list of media queries.
-    bool evaluate(const MediaQuerySet&, StyleResolver* = nullptr) const;
+    WEBCORE_EXPORT bool evaluate(const MediaQuerySet&, StyleResolver* = nullptr) const;
 
     // Evaluates media query subexpression, ie "and (media-feature: value)" part.
     bool evaluate(const MediaQueryExpression&) const;

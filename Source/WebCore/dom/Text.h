@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef Text_h
-#define Text_h
+#pragma once
 
 #include "CharacterData.h"
 #include "RenderPtr.h"
@@ -40,12 +39,12 @@ public:
 
     virtual ~Text();
 
-    RefPtr<Text> splitText(unsigned offset, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Text> splitText(unsigned offset, ExceptionCode&);
 
     // DOM Level 3: http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1312295772
 
-    String wholeText() const;
-    RefPtr<Text> replaceWholeText(const String&, ExceptionCode&);
+    WEBCORE_EXPORT String wholeText() const;
+    WEBCORE_EXPORT RefPtr<Text> replaceWholeText(const String&, ExceptionCode&);
     
     RenderPtr<RenderText> createTextRenderer(const RenderStyle&);
     
@@ -79,5 +78,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Text)
     static bool isType(const WebCore::Node& node) { return node.isTextNode(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // Text_h

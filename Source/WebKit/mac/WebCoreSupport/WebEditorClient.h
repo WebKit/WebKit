@@ -83,7 +83,7 @@ private:
     void setInsertionPasteboard(const String&) final;
     NSURL *canonicalizeURL(NSURL *) final;
     NSURL *canonicalizeURLString(NSString *) final;
-    
+
 #if USE(APPKIT)
     void uppercaseWord() final;
     void lowercaseWord() final;
@@ -144,7 +144,7 @@ private:
     NSArray* readDataFromPasteboard(NSString* type, int index) final;
     bool hasRichlyEditableSelection() final;
     int getPasteboardItemsCount() final;
-    WebCore::DocumentFragment* documentFragmentFromDelegate(int index) final;
+    RefPtr<WebCore::DocumentFragment> documentFragmentFromDelegate(int index) final;
     bool performsTwoStepPaste(WebCore::DocumentFragment*) final;
     int pasteboardChangeCount() final;
 #endif

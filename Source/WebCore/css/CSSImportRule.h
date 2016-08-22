@@ -34,9 +34,9 @@ public:
 
     virtual ~CSSImportRule();
 
-    String href() const;
-    MediaList& media() const;
-    CSSStyleSheet* styleSheet() const;
+    WEBCORE_EXPORT String href() const;
+    WEBCORE_EXPORT MediaList& media() const;
+    WEBCORE_EXPORT CSSStyleSheet* styleSheet() const;
 
 private:
     CSSImportRule(StyleRuleImport&, CSSStyleSheet*);

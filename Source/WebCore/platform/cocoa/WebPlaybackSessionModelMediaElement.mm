@@ -28,13 +28,11 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#import "DOMEventInternal.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
 #import "WebVideoFullscreenInterface.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/AudioTrackList.h>
-#import <WebCore/DOMEventListener.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventListener.h>
 #import <WebCore/EventNames.h>

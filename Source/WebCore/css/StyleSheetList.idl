@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
+    ExportToWrappedFunction,
     GenerateIsReachable=ImplDocument,
     ImplementationLacksVTable,
 ] interface StyleSheetList {
@@ -27,4 +27,3 @@
     getter StyleSheet item(unsigned long index);
     getter CSSStyleSheet (DOMString name);
 };
-

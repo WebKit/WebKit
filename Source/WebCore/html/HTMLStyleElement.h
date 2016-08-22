@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLStyleElement_h
-#define HTMLStyleElement_h
+#pragma once
 
 #include "HTMLElement.h"
 #include "InlineStyleSheetOwner.h"
@@ -32,7 +31,8 @@ class HTMLStyleElement;
 class StyleSheet;
 
 template<typename T> class EventSender;
-typedef EventSender<HTMLStyleElement> StyleEventSender;
+
+using StyleEventSender = EventSender<HTMLStyleElement>;
 
 class HTMLStyleElement final : public HTMLElement {
 public:
@@ -41,8 +41,8 @@ public:
 
     CSSStyleSheet* sheet() const { return m_styleSheetOwner.sheet(); }
 
-    bool disabled() const;
-    void setDisabled(bool);
+    WEBCORE_EXPORT bool disabled() const;
+    WEBCORE_EXPORT void setDisabled(bool);
 
     void dispatchPendingEvent(StyleEventSender*);
     static void dispatchPendingLoadEvents();
@@ -50,7 +50,6 @@ public:
 private:
     HTMLStyleElement(const QualifiedName&, Document&, bool createdByParser);
 
-    // overload from HTMLElement
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     InsertionNotificationRequest insertedInto(ContainerNode&) final;
     void removedFrom(ContainerNode&) final;
@@ -71,5 +70,3 @@ private:
 };
 
 } //namespace
-
-#endif

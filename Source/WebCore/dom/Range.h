@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef Range_h
-#define Range_h
+#pragma once
 
 #include "ExceptionCodePlaceholder.h"
 #include "FloatRect.h"
@@ -70,28 +69,28 @@ public:
     WEBCORE_EXPORT void setEnd(Ref<Node>&& container, unsigned offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
     WEBCORE_EXPORT void collapse(bool toStart);
     WEBCORE_EXPORT bool isPointInRange(Node& refNode, unsigned offset, ExceptionCode&);
-    short comparePoint(Node& refNode, unsigned offset, ExceptionCode&) const;
+    WEBCORE_EXPORT short comparePoint(Node& refNode, unsigned offset, ExceptionCode&) const;
     enum CompareResults { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
-    CompareResults compareNode(Node& refNode, ExceptionCode&) const;
+    WEBCORE_EXPORT CompareResults compareNode(Node& refNode, ExceptionCode&) const;
     enum CompareHow { START_TO_START, START_TO_END, END_TO_END, END_TO_START };
     WEBCORE_EXPORT short compareBoundaryPoints(CompareHow, const Range& sourceRange, ExceptionCode&) const;
-    short compareBoundaryPointsForBindings(unsigned short compareHow, const Range& sourceRange, ExceptionCode&) const;
+    WEBCORE_EXPORT short compareBoundaryPointsForBindings(unsigned short compareHow, const Range& sourceRange, ExceptionCode&) const;
     static short compareBoundaryPoints(Node* containerA, unsigned offsetA, Node* containerB, unsigned offsetB, ExceptionCode&);
     static short compareBoundaryPoints(const RangeBoundaryPoint& boundaryA, const RangeBoundaryPoint& boundaryB, ExceptionCode&);
     WEBCORE_EXPORT bool boundaryPointsValid() const;
-    bool intersectsNode(Node& refNode, ExceptionCode&) const;
-    void deleteContents(ExceptionCode&);
-    RefPtr<DocumentFragment> extractContents(ExceptionCode&);
-    RefPtr<DocumentFragment> cloneContents(ExceptionCode&);
-    void insertNode(Ref<Node>&&, ExceptionCode&);
-    String toString() const;
+    WEBCORE_EXPORT bool intersectsNode(Node& refNode, ExceptionCode&) const;
+    WEBCORE_EXPORT void deleteContents(ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<DocumentFragment> extractContents(ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<DocumentFragment> cloneContents(ExceptionCode&);
+    WEBCORE_EXPORT void insertNode(Ref<Node>&&, ExceptionCode&);
+    WEBCORE_EXPORT String toString() const;
 
     String toHTML() const;
     WEBCORE_EXPORT String text() const;
 
-    RefPtr<DocumentFragment> createContextualFragment(const String& html, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<DocumentFragment> createContextualFragment(const String& html, ExceptionCode&);
 
-    void detach();
+    WEBCORE_EXPORT void detach();
     WEBCORE_EXPORT Ref<Range> cloneRange() const;
 
     WEBCORE_EXPORT void setStartAfter(Node&, ExceptionCode& = ASSERT_NO_EXCEPTION);
@@ -99,7 +98,7 @@ public:
     WEBCORE_EXPORT void setEndAfter(Node&, ExceptionCode& = ASSERT_NO_EXCEPTION);
     WEBCORE_EXPORT void selectNode(Node&, ExceptionCode& = ASSERT_NO_EXCEPTION);
     WEBCORE_EXPORT void selectNodeContents(Node&, ExceptionCode&);
-    void surroundContents(Node&, ExceptionCode&);
+    WEBCORE_EXPORT void surroundContents(Node&, ExceptionCode&);
     WEBCORE_EXPORT void setStartBefore(Node&, ExceptionCode&);
 
     const Position startPosition() const { return m_start.toPosition(); }
@@ -141,7 +140,7 @@ public:
     // Expand range to a unit (word or sentence or block or document) boundary.
     // Please refer to https://bugs.webkit.org/show_bug.cgi?id=27632 comment #5 
     // for details.
-    void expand(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void expand(const String&, ExceptionCode&);
 
     Ref<ClientRectList> getClientRects() const;
     Ref<ClientRect> getBoundingClientRect() const;
@@ -192,6 +191,4 @@ inline bool documentOrderComparator(const Node* a, const Node* b)
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::Range*);
-#endif
-
 #endif

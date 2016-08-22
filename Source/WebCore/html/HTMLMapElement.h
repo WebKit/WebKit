@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLMapElement_h
-#define HTMLMapElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -41,7 +40,7 @@ public:
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
     
     HTMLImageElement* imageElement();
-    Ref<HTMLCollection> areas();
+    WEBCORE_EXPORT Ref<HTMLCollection> areas();
 
 private:
     HTMLMapElement(const QualifiedName&, Document&);
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespaces
-
-#endif

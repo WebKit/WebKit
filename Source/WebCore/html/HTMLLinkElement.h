@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLLinkElement_h
-#define HTMLLinkElement_h
+#pragma once
 
 #include "CSSStyleSheet.h"
 #include "CachedStyleSheetClient.h"
@@ -67,13 +66,13 @@ public:
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
     DOMTokenList& sizes();
 
-    void setCrossOrigin(const AtomicString&);
-    String crossOrigin() const;
+    WEBCORE_EXPORT void setCrossOrigin(const AtomicString&);
+    WEBCORE_EXPORT String crossOrigin() const;
 
     void dispatchPendingEvent(LinkEventSender*);
     static void dispatchPendingLoadEvents();
 
-    DOMTokenList& relList();
+    WEBCORE_EXPORT DOMTokenList& relList();
 
 private:
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
@@ -146,5 +145,3 @@ private:
 };
 
 } //namespace
-
-#endif

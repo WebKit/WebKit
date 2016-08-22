@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2009, 2016 Apple Inc. All rights reserved.
 # Copyright (C) 2009, Julien Chaffraix <jchaffraix@webkit.org>
 # Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
 # Copyright (C) 2011 Ericsson AB. All rights reserved.
@@ -76,12 +76,11 @@ sub generateHeader()
 
     print F $InCompiler->license();
 
-    print F "#ifndef ExceptionCodeDescription_h\n";
-    print F "#define ExceptionCodeDescription_h\n";
+    print F "#pragma once\n";
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
-    print F "typedef int ExceptionCode;\n";
+    print F "using ExceptionCode = int;\n";
     print F "\n";
     print F "enum ExceptionType {\n";
 
@@ -99,7 +98,7 @@ sub generateHeader()
     print F "};\n";
     print F "\n";
     print F "struct ExceptionCodeDescription {\n";
-    print F "    explicit ExceptionCodeDescription(ExceptionCode);\n";
+    print F "    WEBCORE_EXPORT explicit ExceptionCodeDescription(ExceptionCode);\n";
     print F "\n";
     print F "    // |typeName| has spaces and is suitable for use in exception\n";
     print F "    // description strings; maximum length is 10 characters.\n";
@@ -121,8 +120,6 @@ sub generateHeader()
     print F "};\n";
     print F "\n";
     print F "} // namespace WebCore\n";
-    print F "\n";
-    print F "#endif // ExceptionCodeDescription_h\n";
 
     close F;
 }

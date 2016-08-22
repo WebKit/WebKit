@@ -89,7 +89,7 @@ protected:
     HTMLCollection(ContainerNode& base, CollectionType);
 
     virtual void updateNamedElementCache() const;
-    Element* namedItemSlow(const AtomicString& name) const;
+    WEBCORE_EXPORT Element* namedItemSlow(const AtomicString& name) const;
 
     void setNamedItemCache(std::unique_ptr<CollectionNamedElementCache>) const;
     const CollectionNamedElementCache& namedItemCaches() const;

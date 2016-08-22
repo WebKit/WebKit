@@ -140,7 +140,7 @@ String valueToUSVString(ExecState* exec, JSValue value)
         return string;
 
     // Slow path: http://heycam.github.io/webidl/#dfn-obtain-unicode
-    // Replaces unpaired surrogates with the replacememnt character.
+    // Replaces unpaired surrogates with the replacement character.
     StringBuilder result;
     result.reserveCapacity(view.length());
     for (auto codePoint : view.codePoints()) {

@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef HTMLTableRowElement_h
-#define HTMLTableRowElement_h
+#pragma once
 
 #include "HTMLTableCellElement.h"
 #include "HTMLTablePartElement.h"
@@ -36,17 +35,17 @@ public:
     static Ref<HTMLTableRowElement> create(Document&);
     static Ref<HTMLTableRowElement> create(const QualifiedName&, Document&);
 
-    int rowIndex() const;
+    WEBCORE_EXPORT int rowIndex() const;
     void setRowIndex(int);
 
-    int sectionRowIndex() const;
+    WEBCORE_EXPORT int sectionRowIndex() const;
     void setSectionRowIndex(int);
 
     RefPtr<HTMLTableCellElement> insertCell(ExceptionCode& ec) { return insertCell(-1, ec); }
-    RefPtr<HTMLTableCellElement> insertCell(int index, ExceptionCode&);
-    void deleteCell(int index, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<HTMLTableCellElement> insertCell(int index, ExceptionCode&);
+    WEBCORE_EXPORT void deleteCell(int index, ExceptionCode&);
 
-    Ref<HTMLCollection> cells();
+    WEBCORE_EXPORT Ref<HTMLCollection> cells();
     void setCells(HTMLCollection *, ExceptionCode&);
 
 private:
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace
-
-#endif

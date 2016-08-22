@@ -167,7 +167,7 @@ bool XPathResult::invalidIteratorState() const
     return m_document->domTreeVersion() != m_domTreeVersion;
 }
 
-unsigned long XPathResult::snapshotLength(ExceptionCode& ec) const
+unsigned XPathResult::snapshotLength(ExceptionCode& ec) const
 {
     if (resultType() != UNORDERED_NODE_SNAPSHOT_TYPE && resultType() != ORDERED_NODE_SNAPSHOT_TYPE) {
         ec = XPathException::TYPE_ERR;
@@ -199,7 +199,7 @@ Node* XPathResult::iterateNext(ExceptionCode& ec)
     return node;
 }
 
-Node* XPathResult::snapshotItem(unsigned long index, ExceptionCode& ec)
+Node* XPathResult::snapshotItem(unsigned index, ExceptionCode& ec)
 {
     if (resultType() != UNORDERED_NODE_SNAPSHOT_TYPE && resultType() != ORDERED_NODE_SNAPSHOT_TYPE) {
         ec = XPathException::TYPE_ERR;

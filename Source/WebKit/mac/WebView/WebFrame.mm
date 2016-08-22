@@ -1202,10 +1202,10 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 #endif
 
 #if PLATFORM(IOS)
+
 - (unsigned)formElementsCharacterCount
 {
-    WebCore::Frame *frame = core(self);
-    return frame->formElementsCharacterCount();
+    return core(self)->formElementsCharacterCount();
 }
 
 - (void)setTimeoutsPaused:(BOOL)flag
@@ -1386,20 +1386,28 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 
 - (BOOL)hasEditableSelection
 {
-    WebCore::Frame *frame = core(self);
-    return frame->selection().selection().isContentEditable();
+    return core(self)->selection().selection().isContentEditable();
 }
 
 - (int)preferredHeight
 {
-    WebCore::Frame *frame = core(self);
-    return frame->preferredHeight();
+    return core(self)->preferredHeight();
 }
 
 - (int)innerLineHeight:(DOMNode *)node
 {
-    WebCore::Frame *frame = core(self);
-    return frame->innerLineHeight(node);
+    if (!node)
+        return 0;
+
+    auto& coreNode = *core(node);
+
+    coreNode.document().updateLayout();
+
+    auto* renderer = coreNode.renderer();
+    if (!renderer)
+        return 0;
+
+    return renderer->innerLineHeight();
 }
 
 - (void)updateLayout
@@ -1422,14 +1430,12 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 
 - (NSRect)caretRect
 {
-    WebCore::Frame *frame = core(self);
-    return frame->caretRect();
+    return core(self)->caretRect();
 }
 
 - (NSRect)rectForScrollToVisible
 {
-    WebCore::Frame *frame = core(self);
-    return frame->rectForScrollToVisible();
+    return core(self)->rectForScrollToVisible();
 }
 
 - (void)setCaretColor:(CGColorRef)color
@@ -1526,20 +1532,17 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 
 - (unichar)characterInRelationToCaretSelection:(int)amount
 {
-    WebCore::Frame *frame = core(self);
-    return frame->selection().characterInRelationToCaretSelection(amount);
+    return core(self)->selection().characterInRelationToCaretSelection(amount);
 }
 
 - (unichar)characterBeforeCaretSelection
 {
-    WebCore::Frame *frame = core(self);
-    return frame->selection().characterBeforeCaretSelection();
+    return core(self)->selection().characterBeforeCaretSelection();
 }
 
 - (unichar)characterAfterCaretSelection
 {
-    WebCore::Frame *frame = core(self);
-    return frame->selection().characterAfterCaretSelection();
+    return core(self)->selection().characterAfterCaretSelection();
 }
 
 - (DOMRange *)wordRangeContainingCaretSelection
@@ -1558,20 +1561,17 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 
 - (int)wordOffsetInRange:(DOMRange *)range
 {
-    WebCore::Frame *frame = core(self);
-    return frame->selection().wordOffsetInRange(core(range));
+    return core(self)->selection().wordOffsetInRange(core(range));
 }
 
 - (BOOL)spaceFollowsWordInRange:(DOMRange *)range
 {
-    WebCore::Frame *frame = core(self);
-    return frame->selection().spaceFollowsWordInRange(core(range));
+    return core(self)->selection().spaceFollowsWordInRange(core(range));
 }
 
 - (NSArray *)wordsInCurrentParagraph
 {
-    WebCore::Frame *frame = core(self);
-    return frame->wordsInCurrentParagraph();
+    return core(self)->wordsInCurrentParagraph();
 }
 
 - (BOOL)selectionAtDocumentStart

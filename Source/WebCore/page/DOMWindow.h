@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWindow_h
-#define DOMWindow_h
+#pragma once
 
 #include "Base64Utilities.h"
 #include "ContextDestructionObserver.h"
@@ -229,11 +228,11 @@ namespace WebCore {
 
         // DOM Level 2 Style Interface
 
-        RefPtr<CSSStyleDeclaration> getComputedStyle(Element&, const String& pseudoElt) const;
+        WEBCORE_EXPORT RefPtr<CSSStyleDeclaration> getComputedStyle(Element&, const String& pseudoElt) const;
 
         // WebKit extensions
 
-        RefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
+        WEBCORE_EXPORT RefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
         double devicePixelRatio() const;
 
         RefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
@@ -446,5 +445,3 @@ namespace WebCore {
     }
 
 } // namespace WebCore
-
-#endif // DOMWindow_h

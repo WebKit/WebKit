@@ -89,8 +89,7 @@ public:
 
     CSSRule* parentRule() const { return m_parentIsRule ? m_parentRule : 0; }
 
-    // NOTE: Just calls notImplemented().
-    void setCssText(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void setCssText(const String&, ExceptionCode&);
 
 protected:
     CSSRule(CSSStyleSheet* parent)

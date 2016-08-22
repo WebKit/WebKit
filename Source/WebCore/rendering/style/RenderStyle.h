@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef RenderStyle_h
-#define RenderStyle_h
+#pragma once
 
 #include "AnimationList.h"
 #include "BorderValue.h"
@@ -757,7 +756,7 @@ public:
 
     const Length& specifiedLineHeight() const;
     WEBCORE_EXPORT Length lineHeight() const;
-    int computedLineHeight() const;
+    WEBCORE_EXPORT int computedLineHeight() const;
 
     EWhiteSpace whiteSpace() const { return static_cast<EWhiteSpace>(inherited_flags._white_space); }
     static bool autoWrap(EWhiteSpace ws)
@@ -2355,5 +2354,3 @@ inline bool pseudoElementRendererIsNeeded(const RenderStyle* style)
 }
 
 } // namespace WebCore
-
-#endif // RenderStyle_h

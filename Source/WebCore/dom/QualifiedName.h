@@ -44,7 +44,7 @@ public:
             return adoptRef(*new QualifiedNameImpl(prefix, localName, namespaceURI));
         }
 
-        ~QualifiedNameImpl();
+        WEBCORE_EXPORT ~QualifiedNameImpl();
 
         unsigned computeHash() const;
 
@@ -70,7 +70,7 @@ public:
         }        
     };
 
-    QualifiedName(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
+    WEBCORE_EXPORT QualifiedName(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
     explicit QualifiedName(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 #ifdef QNAME_DEFAULT_CONSTRUCTOR
@@ -92,7 +92,7 @@ public:
     // Uppercased localName, cached for efficiency
     const AtomicString& localNameUpper() const;
 
-    String toString() const;
+    WEBCORE_EXPORT String toString() const;
 
     QualifiedNameImpl* impl() const { return m_impl.get(); }
 #if ENABLE(CSS_SELECTOR_JIT)

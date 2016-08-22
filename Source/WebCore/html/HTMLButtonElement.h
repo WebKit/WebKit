@@ -33,7 +33,7 @@ class HTMLButtonElement final : public HTMLFormControlElement {
 public:
     static Ref<HTMLButtonElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
-    void setType(const AtomicString&);
+    WEBCORE_EXPORT void setType(const AtomicString&);
     
     const AtomicString& value() const;
 

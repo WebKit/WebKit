@@ -25,10 +25,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VPATH = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebCorePrivateHeaders
+VPATH = DOM $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebCorePrivateHeaders
 
-INTERNAL_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy
-PUBLIC_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)
 PRIVATE_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)
 
 .PHONY : all
@@ -37,7 +35,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMAbstractView.h \
     $(PRIVATE_HEADERS_DIR)/DOMAttr.h \
     $(PRIVATE_HEADERS_DIR)/DOMBlob.h \
-    $(INTERNAL_HEADERS_DIR)/DOMBlobInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMCDATASection.h \
     $(PRIVATE_HEADERS_DIR)/DOMCSS.h \
     $(PRIVATE_HEADERS_DIR)/DOMCSSCharsetRule.h \
@@ -49,7 +46,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMCSSRule.h \
     $(PRIVATE_HEADERS_DIR)/DOMCSSRuleList.h \
     $(PRIVATE_HEADERS_DIR)/DOMCSSStyleDeclaration.h \
-    $(INTERNAL_HEADERS_DIR)/DOMCSSStyleDeclarationInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMCSSStyleRule.h \
     $(PRIVATE_HEADERS_DIR)/DOMCSSStyleSheet.h \
     $(PRIVATE_HEADERS_DIR)/DOMCSSUnknownRule.h \
@@ -61,13 +57,10 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMCounter.h \
     $(PRIVATE_HEADERS_DIR)/DOMDocument.h \
     $(PRIVATE_HEADERS_DIR)/DOMDocumentFragment.h \
-    $(INTERNAL_HEADERS_DIR)/DOMDocumentFragmentInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMDocumentFragmentPrivate.h \
-    $(INTERNAL_HEADERS_DIR)/DOMDocumentInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMDocumentPrivate.h \
     $(PRIVATE_HEADERS_DIR)/DOMDocumentType.h \
     $(PRIVATE_HEADERS_DIR)/DOMElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMEntity.h \
     $(PRIVATE_HEADERS_DIR)/DOMEntityReference.h \
     $(PRIVATE_HEADERS_DIR)/DOMEvent.h \
@@ -94,12 +87,10 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLDivElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLDocument.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMHTMLElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLEmbedElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFontElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFormElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMHTMLFormElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFrameElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFrameSetElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLHRElement.h \
@@ -110,7 +101,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLImageElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLInputElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLInputElementPrivate.h \
-    $(INTERNAL_HEADERS_DIR)/DOMHTMLInputElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLLIElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLLabelElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLLegendElement.h \
@@ -140,7 +130,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTableRowElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTableSectionElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMHTMLTextAreaElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTitleElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLUListElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLVideoElement.h \
@@ -152,7 +141,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMMutationEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMNamedNodeMap.h \
     $(PRIVATE_HEADERS_DIR)/DOMNode.h \
-    $(INTERNAL_HEADERS_DIR)/DOMNodeInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMNodePrivate.h \
     $(PRIVATE_HEADERS_DIR)/DOMNodeFilter.h \
     $(PRIVATE_HEADERS_DIR)/DOMNodeIterator.h \
@@ -164,7 +152,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMProgressEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMRGBColor.h \
     $(PRIVATE_HEADERS_DIR)/DOMRange.h \
-    $(INTERNAL_HEADERS_DIR)/DOMRangeInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMRangeException.h \
     $(PRIVATE_HEADERS_DIR)/DOMRanges.h \
     $(PRIVATE_HEADERS_DIR)/DOMRect.h \
@@ -178,7 +165,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMUIEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMViews.h \
     $(PRIVATE_HEADERS_DIR)/DOMWheelEvent.h \
-    $(INTERNAL_HEADERS_DIR)/DOMWheelEventInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMXPath.h \
     $(PRIVATE_HEADERS_DIR)/DOMXPathException.h \
     $(PRIVATE_HEADERS_DIR)/DOMXPathExpression.h \
@@ -236,7 +222,4 @@ $(PRIVATE_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)
 
 $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
-	$(WEBCORE_HEADER_MIGRATE_CMD)
-
-$(INTERNAL_HEADERS_DIR)/% : % MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)

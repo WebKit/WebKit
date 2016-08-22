@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollView_h
-#define ScrollView_h
+#pragma once
 
 #include "FloatRect.h"
 #include "IntRect.h"
@@ -211,7 +210,7 @@ public:
 
     // Functions for getting/setting the size webkit should use to layout the contents. By default this is the same as the visible
     // content size. Explicitly setting a layout size value will cause webkit to layout the contents using this size instead.
-    IntSize layoutSize() const;
+    WEBCORE_EXPORT IntSize layoutSize() const;
     int layoutWidth() const { return layoutSize().width(); }
     int layoutHeight() const { return layoutSize().height(); }
     WEBCORE_EXPORT IntSize fixedLayoutSize() const;
@@ -525,5 +524,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_WIDGET(ScrollView, isScrollView())
-
-#endif // ScrollView_h

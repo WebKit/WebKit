@@ -33,10 +33,10 @@ class StyleSheet;
 class StyleSheetList : public RefCounted<StyleSheetList> {
 public:
     static Ref<StyleSheetList> create(Document* document) { return adoptRef(*new StyleSheetList(document)); }
-    ~StyleSheetList();
+    WEBCORE_EXPORT ~StyleSheetList();
 
-    unsigned length() const;
-    StyleSheet* item(unsigned index);
+    WEBCORE_EXPORT unsigned length() const;
+    WEBCORE_EXPORT StyleSheet* item(unsigned index);
 
     HTMLStyleElement* getNamedItem(const String&) const;
     Vector<AtomicString> supportedPropertyNames();

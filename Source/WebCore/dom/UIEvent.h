@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef UIEvent_h
-#define UIEvent_h
+#pragma once
 
 #include "DOMWindow.h"
 #include "Event.h"
@@ -53,7 +52,7 @@ public:
     }
     virtual ~UIEvent();
 
-    void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, int detail);
+    WEBCORE_EXPORT void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, int detail);
 
     DOMWindow* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
@@ -87,5 +86,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(UIEvent)
-
-#endif // UIEvent_h

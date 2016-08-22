@@ -19,7 +19,8 @@
  */
 
 [
-    ImplementationLacksVTable
+    ExportToWrappedFunction,
+    ImplementationLacksVTable,
 ] interface RGBColor {
     readonly attribute CSSPrimitiveValue red;
     readonly attribute CSSPrimitiveValue green;

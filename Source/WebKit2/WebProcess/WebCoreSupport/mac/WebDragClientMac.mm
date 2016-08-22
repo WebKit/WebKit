@@ -34,8 +34,6 @@
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/CachedImage.h>
-#import <WebCore/DOMElementInternal.h>
-#import <WebCore/DOMPrivate.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>

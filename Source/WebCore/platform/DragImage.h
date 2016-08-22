@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DragImage_h
-#define DragImage_h
+#pragma once
 
 #include "FloatSize.h"
 #include "ImageOrientation.h"
@@ -80,12 +79,11 @@ DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
 DragImageRef createDragImageFromImage(Image*, ImageOrientationDescription);
 DragImageRef createDragImageIconForCachedImageFilename(const String&);
 
-DragImageRef createDragImageForNode(Frame&, Node&);
+WEBCORE_EXPORT DragImageRef createDragImageForNode(Frame&, Node&);
 WEBCORE_EXPORT DragImageRef createDragImageForSelection(Frame&, bool forceBlackText = false);
-DragImageRef createDragImageForRange(Frame&, Range&, bool forceBlackText = false);
+WEBCORE_EXPORT DragImageRef createDragImageForRange(Frame&, Range&, bool forceBlackText = false);
 DragImageRef createDragImageForImage(Frame&, Node&, IntRect& imageRect, IntRect& elementRect);
 DragImageRef createDragImageForLink(URL&, const String& label, FontRenderingMode);
 void deleteDragImage(DragImageRef);
-}
 
-#endif // DragImage_h
+}

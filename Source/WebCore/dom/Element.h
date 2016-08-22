@@ -81,10 +81,10 @@ public:
     Vector<String> getAttributeNames() const;
 
     // Typed getters and setters for language bindings.
-    int getIntegralAttribute(const QualifiedName& attributeName) const;
-    void setIntegralAttribute(const QualifiedName& attributeName, int value);
-    unsigned getUnsignedIntegralAttribute(const QualifiedName& attributeName) const;
-    void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
+    WEBCORE_EXPORT int getIntegralAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT void setIntegralAttribute(const QualifiedName& attributeName, int value);
+    WEBCORE_EXPORT unsigned getUnsignedIntegralAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
 
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.
@@ -97,20 +97,20 @@ public:
 #ifdef DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;
 #endif
-    bool hasAttributes() const;
+    WEBCORE_EXPORT bool hasAttributes() const;
     // This variant will not update the potentially invalid attributes. To be used when not interested
     // in style attribute or one of the SVG animation attributes.
     bool hasAttributesWithoutUpdate() const;
 
     WEBCORE_EXPORT bool hasAttribute(const AtomicString& name) const;
-    bool hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
+    WEBCORE_EXPORT bool hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
     WEBCORE_EXPORT const AtomicString& getAttribute(const AtomicString& name) const;
-    const AtomicString& getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
+    WEBCORE_EXPORT const AtomicString& getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
     WEBCORE_EXPORT void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
     static bool parseAttributeName(QualifiedName&, const AtomicString& namespaceURI, const AtomicString& qualifiedName, ExceptionCode&);
-    void setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode&);
+    WEBCORE_EXPORT void setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode&);
 
     const AtomicString& getIdAttribute() const;
     void setIdAttribute(const AtomicString&);
@@ -131,31 +131,31 @@ public:
     unsigned findAttributeIndexByName(const QualifiedName& name) const { return elementData()->findAttributeIndexByName(name); }
     unsigned findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return elementData()->findAttributeIndexByName(name, shouldIgnoreAttributeCase); }
 
-    void scrollIntoView(bool alignToTop = true);
+    WEBCORE_EXPORT void scrollIntoView(bool alignToTop = true);
     WEBCORE_EXPORT void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
     WEBCORE_EXPORT void scrollIntoViewIfNotVisible(bool centerIfNotVisible = true);
 
-    void scrollByLines(int lines);
-    void scrollByPages(int pages);
+    WEBCORE_EXPORT void scrollByLines(int lines);
+    WEBCORE_EXPORT void scrollByPages(int pages);
 
-    double offsetLeft();
-    double offsetTop();
-    double offsetWidth();
-    double offsetHeight();
+    WEBCORE_EXPORT double offsetLeft();
+    WEBCORE_EXPORT double offsetTop();
+    WEBCORE_EXPORT double offsetWidth();
+    WEBCORE_EXPORT double offsetHeight();
 
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;
 
     // FIXME: Replace uses of offsetParent in the platform with calls
     // to the render layer and merge bindingsOffsetParent and offsetParent.
-    Element* bindingsOffsetParent();
+    WEBCORE_EXPORT Element* bindingsOffsetParent();
 
     const Element* rootElement() const;
 
     Element* offsetParent();
-    double clientLeft();
-    double clientTop();
-    double clientWidth();
-    double clientHeight();
+    WEBCORE_EXPORT double clientLeft();
+    WEBCORE_EXPORT double clientTop();
+    WEBCORE_EXPORT double clientWidth();
+    WEBCORE_EXPORT double clientHeight();
     virtual int scrollLeft();
     virtual int scrollTop();
     virtual void setScrollLeft(int);
@@ -173,16 +173,16 @@ public:
     // Returns the absolute bounding box translated into screen coordinates.
     WEBCORE_EXPORT IntRect screenRect() const;
 
-    bool removeAttribute(const AtomicString& name);
-    bool removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
+    WEBCORE_EXPORT bool removeAttribute(const AtomicString& name);
+    WEBCORE_EXPORT bool removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
 
     Ref<Attr> detachAttribute(unsigned index);
 
-    RefPtr<Attr> getAttributeNode(const AtomicString& name);
-    RefPtr<Attr> getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName);
-    RefPtr<Attr> setAttributeNode(Attr&, ExceptionCode&);
-    RefPtr<Attr> setAttributeNodeNS(Attr&, ExceptionCode&);
-    RefPtr<Attr> removeAttributeNode(Attr&, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Attr> getAttributeNode(const AtomicString& name);
+    WEBCORE_EXPORT RefPtr<Attr> getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName);
+    WEBCORE_EXPORT RefPtr<Attr> setAttributeNode(Attr&, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Attr> setAttributeNodeNS(Attr&, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Attr> removeAttributeNode(Attr&, ExceptionCode&);
 
     RefPtr<Attr> attrIfExists(const QualifiedName&);
     RefPtr<Attr> attrIfExists(const AtomicString& localName, bool shouldIgnoreAttributeCase);
@@ -219,10 +219,10 @@ public:
     void normalizeAttributes();
     String nodeNamePreservingCase() const;
 
-    void setBooleanAttribute(const QualifiedName& name, bool);
+    WEBCORE_EXPORT void setBooleanAttribute(const QualifiedName& name, bool);
 
     // For exposing to DOM only.
-    NamedNodeMap& attributes() const;
+    WEBCORE_EXPORT NamedNodeMap& attributes() const;
 
     enum AttributeModificationReason {
         ModifiedDirectly,
@@ -295,12 +295,12 @@ public:
     virtual bool shouldUseInputMethod();
 
     virtual int tabIndex() const;
-    void setTabIndex(int);
+    WEBCORE_EXPORT void setTabIndex(int);
     virtual Element* focusDelegate();
 
-    Element* insertAdjacentElement(const String& where, Element& newChild, ExceptionCode&);
-    void insertAdjacentHTML(const String& where, const String& html, ExceptionCode&);
-    void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
+    WEBCORE_EXPORT Element* insertAdjacentElement(const String& where, Element& newChild, ExceptionCode&);
+    WEBCORE_EXPORT void insertAdjacentHTML(const String& where, const String& html, ExceptionCode&);
+    WEBCORE_EXPORT void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
 
     bool ieForbidsInsertHTML() const;
 
@@ -361,12 +361,12 @@ public:
     virtual void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode = SelectionRevealMode::Reveal);
     virtual void blur();
 
-    String innerHTML() const;
-    String outerHTML() const;
-    void setInnerHTML(const String&, ExceptionCode&);
-    void setOuterHTML(const String&, ExceptionCode&);
+    WEBCORE_EXPORT String innerHTML() const;
+    WEBCORE_EXPORT String outerHTML() const;
+    WEBCORE_EXPORT void setInnerHTML(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void setOuterHTML(const String&, ExceptionCode&);
     WEBCORE_EXPORT String innerText();
-    String outerText();
+    WEBCORE_EXPORT String outerText();
  
     virtual String title() const;
 
@@ -412,11 +412,11 @@ public:
     virtual bool matchesReadWritePseudoClass() const;
     virtual bool matchesIndeterminatePseudoClass() const;
     virtual bool matchesDefaultPseudoClass() const;
-    bool matches(const String& selectors, ExceptionCode&);
-    Element* closest(const String& selectors, ExceptionCode&);
+    WEBCORE_EXPORT bool matches(const String& selectors, ExceptionCode&);
+    WEBCORE_EXPORT Element* closest(const String& selectors, ExceptionCode&);
     virtual bool shouldAppearIndeterminate() const;
 
-    DOMTokenList& classList();
+    WEBCORE_EXPORT DOMTokenList& classList();
 
     DatasetDOMStringMap& dataset();
 
@@ -452,13 +452,13 @@ public:
         LEGACY_MOZILLA_REQUEST = 1 << 1,
     };
     
-    void webkitRequestFullScreen(unsigned short flags);
+    WEBCORE_EXPORT void webkitRequestFullScreen(unsigned short flags);
     WEBCORE_EXPORT bool containsFullScreenElement() const;
     void setContainsFullScreenElement(bool);
     void setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool);
 
     // W3C API
-    void webkitRequestFullscreen();
+    WEBCORE_EXPORT void webkitRequestFullscreen();
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -477,7 +477,7 @@ public:
 #if ENABLE(CSS_REGIONS)
     virtual bool shouldMoveToFlowThread(const RenderStyle&) const;
     
-    const AtomicString& webkitRegionOverset() const;
+    WEBCORE_EXPORT const AtomicString& webkitRegionOverset() const;
     Vector<RefPtr<Range>> webkitGetRegionFlowRanges() const;
 #endif
 

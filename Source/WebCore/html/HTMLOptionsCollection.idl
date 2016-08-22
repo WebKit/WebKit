@@ -19,9 +19,10 @@
  */
 
 [
-    JSGenerateToNativeObject,
     CustomIndexedSetter,
+    ExportToWrappedFunction,
     GenerateIsReachable=ImplOwnerNodeRoot,
+    JSGenerateToNativeObject,
 ] interface HTMLOptionsCollection : HTMLCollection {
     attribute long selectedIndex;
     [CustomSetter, SetterRaisesException] attribute unsigned long length;
@@ -48,4 +49,3 @@
     void remove(HTMLOptionElement option);
 #endif
 };
-

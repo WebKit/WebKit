@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSGroupingRule_h
-#define CSSGroupingRule_h
+#pragma once
 
 #include "CSSRule.h"
 #include "StyleRule.h"
@@ -38,10 +37,10 @@ public:
 
     void reattach(StyleRuleBase&) override;
 
-    CSSRuleList& cssRules() const;
+    WEBCORE_EXPORT CSSRuleList& cssRules() const;
 
-    unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
-    void deleteRule(unsigned index, ExceptionCode&);
+    WEBCORE_EXPORT unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
+    WEBCORE_EXPORT void deleteRule(unsigned index, ExceptionCode&);
         
     // For CSSRuleList
     unsigned length() const;
@@ -58,5 +57,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // CSSGroupingRule_h

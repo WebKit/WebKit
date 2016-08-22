@@ -35,15 +35,14 @@ public:
 
     virtual ~CSSMediaRule();
 
-    void reattach(StyleRuleBase&) override;
-    String cssText() const override;
-
-    MediaList* media() const;
+    WEBCORE_EXPORT MediaList* media() const;
 
 private:
     CSSMediaRule(StyleRuleMedia&, CSSStyleSheet*);
 
-    CSSRule::Type type() const override { return MEDIA_RULE; }
+    CSSRule::Type type() const final { return MEDIA_RULE; }
+    void reattach(StyleRuleBase&) final;
+    String cssText() const final;
 
     MediaQuerySet* mediaQueries() const;
     

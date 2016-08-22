@@ -1,3 +1,17 @@
+2016-08-22  Darin Adler  <darin@apple.com>
+
+        Move Objective-C DOM bindings from WebCore to legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=160654
+
+        Reviewed by Alex Christensen.
+
+        * WebKit.xcodeproj/project.pbxproj: Added the new source files to the project.
+        For now they all have project visibility, since MigrateHeaders.make takes care
+        of exporting them as public and private. Later, we can likely use the built-in
+        Xcode feature instead of that script. Also pass DOM as an acceptable prefix
+        when calling check-for-inappropriate-objc-class-names. Also sorted this file
+        with the sort-Xcode-project-file script.
+
 2016-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Migrate off of deprecated CoreGraphics API CGContextSelectFont() and CGContextShowTextAtPoint()

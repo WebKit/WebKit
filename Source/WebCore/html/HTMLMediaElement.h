@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,7 +156,7 @@ public:
 
 // DOM API
 // error state
-    MediaError* error() const;
+    WEBCORE_EXPORT MediaError* error() const;
 
     void setSrc(const String&);
     const URL& currentSrc() const { return m_currentSrc; }
@@ -166,24 +166,24 @@ public:
     void setSrcObject(ScriptExecutionContext&, MediaStream*);
 #endif
 
-    void setCrossOrigin(const AtomicString&);
-    String crossOrigin() const;
+    WEBCORE_EXPORT void setCrossOrigin(const AtomicString&);
+    WEBCORE_EXPORT String crossOrigin() const;
 
 // network state
     using HTMLMediaElementEnums::NetworkState;
-    NetworkState networkState() const;
+    WEBCORE_EXPORT NetworkState networkState() const;
 
-    String preload() const;    
-    void setPreload(const String&);
+    WEBCORE_EXPORT String preload() const;
+    WEBCORE_EXPORT void setPreload(const String&);
 
     Ref<TimeRanges> buffered() const override;
-    void load();
-    String canPlayType(const String& mimeType, const String& keySystem = String(), const URL& = URL()) const;
+    WEBCORE_EXPORT void load();
+    WEBCORE_EXPORT String canPlayType(const String& mimeType, const String& keySystem = String(), const URL& = URL()) const;
 
 // ready state
     using HTMLMediaElementEnums::ReadyState;
     ReadyState readyState() const override;
-    bool seeking() const;
+    WEBCORE_EXPORT bool seeking() const;
 
 // playback state
     WEBCORE_EXPORT double currentTime() const override;
@@ -201,11 +201,11 @@ public:
     MediaTime currentMediaTime() const;
     void setCurrentTime(const MediaTime&);
     MediaTime durationMediaTime() const;
-    void fastSeek(const MediaTime&);
+    WEBCORE_EXPORT void fastSeek(const MediaTime&);
 
     void updatePlaybackRate();
-    bool webkitPreservesPitch() const;
-    void setWebkitPreservesPitch(bool);
+    WEBCORE_EXPORT bool webkitPreservesPitch() const;
+    WEBCORE_EXPORT void setWebkitPreservesPitch(bool);
     Ref<TimeRanges> played() override;
     Ref<TimeRanges> seekable() const override;
     WEBCORE_EXPORT bool ended() const;
@@ -220,16 +220,16 @@ public:
     WEBCORE_EXPORT void play() override;
     WEBCORE_EXPORT void pause() override;
     void setShouldBufferData(bool) override;
-    void fastSeek(double);
+    WEBCORE_EXPORT void fastSeek(double);
     double minFastReverseRate() const;
     double maxFastForwardRate() const;
 
     void purgeBufferedDataIfPossible();
 
 // captions
-    bool webkitHasClosedCaptions() const;
-    bool webkitClosedCaptionsVisible() const;
-    void setWebkitClosedCaptionsVisible(bool);
+    WEBCORE_EXPORT bool webkitHasClosedCaptions() const;
+    WEBCORE_EXPORT bool webkitClosedCaptionsVisible() const;
+    WEBCORE_EXPORT void setWebkitClosedCaptionsVisible(bool);
 
     bool elementIsHidden() const override { return m_elementIsHidden; }
 
@@ -260,8 +260,8 @@ public:
 #endif
 
 // controls
-    bool controls() const;
-    void setControls(bool);
+    WEBCORE_EXPORT bool controls() const;
+    WEBCORE_EXPORT void setControls(bool);
     WEBCORE_EXPORT double volume() const override;
     void setVolume(double, ExceptionCode&) override;
     WEBCORE_EXPORT bool muted() const override;

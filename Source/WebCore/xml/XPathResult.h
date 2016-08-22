@@ -24,8 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathResult_h
-#define XPathResult_h
+#pragma once
 
 #include "XPathValue.h"
 #include <wtf/Forward.h>
@@ -54,21 +53,21 @@ namespace WebCore {
         };
         
         static Ref<XPathResult> create(Document* document, const XPath::Value& value) { return adoptRef(*new XPathResult(document, value)); }
-        ~XPathResult();
+        WEBCORE_EXPORT ~XPathResult();
         
         void convertTo(unsigned short type, ExceptionCode&);
 
-        unsigned short resultType() const;
+        WEBCORE_EXPORT unsigned short resultType() const;
 
-        double numberValue(ExceptionCode&) const;
-        String stringValue(ExceptionCode&) const;
-        bool booleanValue(ExceptionCode&) const;
-        Node* singleNodeValue(ExceptionCode&) const;
+        WEBCORE_EXPORT double numberValue(ExceptionCode&) const;
+        WEBCORE_EXPORT String stringValue(ExceptionCode&) const;
+        WEBCORE_EXPORT bool booleanValue(ExceptionCode&) const;
+        WEBCORE_EXPORT Node* singleNodeValue(ExceptionCode&) const;
 
-        bool invalidIteratorState() const;
-        unsigned long snapshotLength(ExceptionCode&) const;
-        Node* iterateNext(ExceptionCode&);
-        Node* snapshotItem(unsigned long index, ExceptionCode&);
+        WEBCORE_EXPORT bool invalidIteratorState() const;
+        WEBCORE_EXPORT unsigned snapshotLength(ExceptionCode&) const;
+        WEBCORE_EXPORT Node* iterateNext(ExceptionCode&);
+        WEBCORE_EXPORT Node* snapshotItem(unsigned index, ExceptionCode&);
 
         const XPath::Value& value() const { return m_value; }
 
@@ -84,5 +83,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // XPathResult_h

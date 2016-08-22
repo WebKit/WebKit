@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSPageRule_h
-#define CSSPageRule_h
+#pragma once
 
 #include "CSSRule.h"
 
@@ -37,23 +36,20 @@ public:
 
     virtual ~CSSPageRule();
 
-    String cssText() const override;
-    void reattach(StyleRuleBase&) override;
+    WEBCORE_EXPORT CSSStyleDeclaration& style();
 
-    CSSStyleDeclaration& style();
-
-    String selectorText() const;
-    void setSelectorText(const String&);
+    WEBCORE_EXPORT String selectorText() const;
+    WEBCORE_EXPORT void setSelectorText(const String&);
 
 private:
     CSSPageRule(StyleRulePage&, CSSStyleSheet*);
 
-    CSSRule::Type type() const override { return PAGE_RULE; }
+    CSSRule::Type type() const final { return PAGE_RULE; }
+    String cssText() const final;
+    void reattach(StyleRuleBase&) final;
 
     Ref<StyleRulePage> m_pageRule;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore
-
-#endif // CSSPageRule_h

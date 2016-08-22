@@ -41,8 +41,7 @@
  * version of this file under any of the LGPL, the MPL or the GPL.
  */
 
-#ifndef RenderLayer_h
-#define RenderLayer_h
+#pragma once
 
 #include "ClipRect.h"
 #include "GraphicsLayer.h"
@@ -193,7 +192,7 @@ public:
     // Scrolling methods for layers that can scroll their overflow.
     void scrollByRecursively(const IntSize& delta, ScrollOffsetClamping = ScrollOffsetUnclamped, ScrollableArea** scrolledArea = nullptr);
 
-    void scrollToOffset(const ScrollOffset&, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollOffsetClamping = ScrollOffsetUnclamped);
     void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), clamp); }
     void scrollToYOffset(int y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), clamp); }
 
@@ -1203,5 +1202,3 @@ bool compositedWithOwnBackingStore(const RenderLayer&);
 void showLayerTree(const WebCore::RenderLayer*);
 void showLayerTree(const WebCore::RenderObject*);
 #endif
-
-#endif // RenderLayer_h

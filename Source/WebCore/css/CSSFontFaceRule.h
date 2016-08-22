@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSFontFaceRule_h
-#define CSSFontFaceRule_h
+#pragma once
 
 #include "CSSRule.h"
 
@@ -36,15 +35,14 @@ public:
 
     virtual ~CSSFontFaceRule();
 
-    String cssText() const override;
-    void reattach(StyleRuleBase&) override;
-
-    CSSStyleDeclaration& style();
+    WEBCORE_EXPORT CSSStyleDeclaration& style();
 
 private:
     CSSFontFaceRule(StyleRuleFontFace&, CSSStyleSheet* parent);
 
-    CSSRule::Type type() const override { return FONT_FACE_RULE; }
+    CSSRule::Type type() const final { return FONT_FACE_RULE; }
+    String cssText() const final;
+    void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFace> m_fontFaceRule;
     RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
@@ -53,5 +51,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSFontFaceRule, CSSRule::FONT_FACE_RULE)
-
-#endif // CSSFontFaceRule_h

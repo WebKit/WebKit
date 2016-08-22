@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// Introduced in DOM Level 2:
 [
-    JSCustomHeader,
+    ExportToWrappedFunction,
     GenerateIsReachable,
     ImplementationLacksVTable,
+    JSCustomHeader,
 ] interface MediaList {
-
     [SetterRaisesException, TreatNullAs=EmptyString] attribute DOMString mediaText;
     readonly attribute unsigned long length;
 
@@ -37,6 +36,4 @@
 
     [RaisesException] void deleteMedium(DOMString oldMedium);
     [RaisesException] void appendMedium(DOMString newMedium);
-
 };
-

@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RenderObject_h
-#define RenderObject_h
+#pragma once
 
 #include "CachedImageClient.h"
 #include "Element.h"
@@ -158,7 +157,7 @@ public:
     WEBCORE_EXPORT bool scrollRectToVisible(SelectionRevealMode, const LayoutRect&, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
 
     // Convenience function for getting to the nearest enclosing box of a RenderObject.
-    RenderBox& enclosingBox() const;
+    WEBCORE_EXPORT RenderBox& enclosingBox() const;
     RenderBoxModelObject& enclosingBoxModelObject() const;
 
     bool fixedPositionedWithNamedFlowContainingBlock() const;
@@ -599,7 +598,7 @@ public:
     VisiblePosition createVisiblePosition(const Position&) const;
 
     // returns the containing block level element for this element.
-    RenderBlock* containingBlock() const;
+    WEBCORE_EXPORT RenderBlock* containingBlock() const;
     RenderBlock* containingBlockForObjectInFlow() const;
 
     // Convert the given local point to absolute coordinates. If MapCoordinatesFlags includes UseTransforms, take transforms into account.
@@ -1130,5 +1129,3 @@ void showNodeTree(const WebCore::RenderObject*);
 void showLineTree(const WebCore::RenderObject*);
 void showRenderTree(const WebCore::RenderObject*);
 #endif
-
-#endif // RenderObject_h

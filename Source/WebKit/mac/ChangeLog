@@ -1,3 +1,54 @@
+2016-08-22  Darin Adler  <darin@apple.com>
+
+        Move Objective-C DOM bindings from WebCore to legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=160654
+
+        Reviewed by Alex Christensen.
+
+        * DOM: Added lots of files to the directory.
+        The files are just as they were in bindings/objc except that the paths of includes
+        have been updated as needed, and the code no longer is defined inside the WebCore
+        namespace, requring changes to various functions and their call sites. Also removed
+        all the WEBCORE_EXPORT since we export differently here in legacy WebKit.
+
+        * DOM/DOMInternal.h: Moved. Replaced createDOMWrapper with initializeDOMWrapperHooks.
+        * DOM/DOMUtility.mm: Moved.
+        (createDOMWrapper): Simplified to use toWrapped and not do unneeded namespace tricks.
+        (disconnectWindowWrapper): Added.
+        (initializeDOMWrapperHooks): Added.
+
+        * MigrateHeaders.make: Removed all the internal headers since they are now just
+        normal project headers. Added the "DOM" directory to the VPATH. Some of the headers
+        from WebCore are still being migrated, so we can't remove WebCorePrivateHeaders yet.
+
+        * WebCoreSupport/WebEditorClient.h: Updated to return RefPtr<DocumentFragment>.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::documentFragmentFromDelegate): Use RefPtr.
+
+        * WebKit.exp: Added exports for all the classes that used to use WEBCORE_EXPORT to
+        be exported from WebCore.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame innerLineHeight:]): Moved code from WebCore::Frame::innerLineHeight here.
+        No longer depend on whether this node happens to be in this frame. Also removed
+        unneeded null check since a node's document can't be null.
+
+        * WebView/WebHTMLView.mm: Removed uneeded include of ExceptionHandlers.h, which
+        is now here in WebKitLegacy instead of WebCore. But no need to include it at all.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Call
+        initializeDOMWrapperHooks so WebScriptObject can create DOM binding wrappers when
+        making a script object for a DOM object, rather than just a generic script object.
+        (+[WebView enableWebThread]): Added a call to WebCoreObjCDeallocOnWebThread here for
+        DOMObject along with the other classes. This was done in WebCore before, but DOMObject is now
+        defined here in legacy WebKit.
+        (-[WebView styleAtSelectionStart]): Moved code from WebCore::Frame::styleAtSelectionStart here.
+        Replaced incorrect code that called "new PropertySetCSSStyleDeclaration" with a misleading comment
+        about reference counting; that code was leaking all the style declarations. Instead use
+        MutableStyleProperties::ensureCSSStyleDeclaration, which is designed for this purpose.
+
 2016-08-22  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Activate fetch api runtime flag by default

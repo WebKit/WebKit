@@ -709,7 +709,6 @@ static void StartWebThread()
     WTF::AtomicString::init();
 
     // register class for WebThread deallocation
-    WebCoreObjCDeallocOnWebThread([DOMObject class]);
     WebCoreObjCDeallocOnWebThread([WAKWindow class]);
     WebCoreObjCDeallocWithWebThreadLock([WAKView class]);
 

@@ -21,6 +21,7 @@
 [
     CustomToJSObject,
     CustomIsReachable,
+    ExportToWrappedFunction,
     ImplementationLacksVTable,
     JSCustomFinalize,
 ] interface CSSValue {

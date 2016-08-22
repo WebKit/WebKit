@@ -39,7 +39,6 @@
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
 #include "MediaControlElements.h"
-#include "NamedNodeMap.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PlatformContextCairo.h"
@@ -300,11 +299,9 @@ static GRefPtr<GdkPixbuf> loadThemedIcon(GtkStyleContext* context, const char* i
 }
 #endif // !GTK_CHECK_VERSION(3, 20, 0)
 
-static bool nodeHasPseudo(Node* node, const char* pseudo)
+static bool nodeHasPseudo(Node& node, const char* pseudo)
 {
-    RefPtr<Node> attributeNode = node->attributes()->getNamedItem("pseudo");
-
-    return attributeNode ? attributeNode->nodeValue() == pseudo : false;
+    return is<Element>(node) && downcast<Element>(node).pseudo() == pseudo;
 }
 
 static bool nodeHasClass(Node* node, const char* className)
@@ -1992,7 +1989,7 @@ bool RenderThemeGtk::paintMediaPlayButton(const RenderObject& renderObject, cons
     Node* node = renderObject.node();
     if (!node)
         return true;
-    if (!nodeHasPseudo(node, "-webkit-media-controls-play-button"))
+    if (!nodeHasPseudo(*node, "-webkit-media-controls-play-button"))
         return true;
 
     return paintMediaButton(renderObject, paintInfo.context(), rect, nodeHasClass(node, "paused") ? "media-playback-start-symbolic" : "media-playback-pause-symbolic");

@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef WheelEvent_h
-#define WheelEvent_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "MouseEvent.h"
@@ -69,7 +68,7 @@ public:
         return adoptRef(*new WheelEvent(type, initializer));
     }
 
-    void initWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow*,
+    WEBCORE_EXPORT void initWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow*,
         int screenX, int screenY, int pageX, int pageY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
@@ -114,5 +113,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(WheelEvent)
-
-#endif // WheelEvent_h

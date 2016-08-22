@@ -270,7 +270,7 @@ public:
 
     void cleanup();
 
-    unsigned short primitiveType() const;
+    WEBCORE_EXPORT unsigned short primitiveType() const;
 
     double computeDegrees() const;
     
@@ -311,11 +311,11 @@ public:
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_primitiveUnitType = type; }
 
-    double getDoubleValue(unsigned short unitType, ExceptionCode&) const;
+    WEBCORE_EXPORT double getDoubleValue(unsigned short unitType, ExceptionCode&) const;
     double getDoubleValue(unsigned short unitType) const;
     double getDoubleValue() const;
 
-    void setFloatValue(unsigned short unitType, double floatValue, ExceptionCode&);
+    WEBCORE_EXPORT void setFloatValue(unsigned short unitType, double floatValue, ExceptionCode&);
     float getFloatValue(unsigned short unitType, ExceptionCode& ec) const { return getValue<float>(unitType, ec); }
     float getFloatValue(unsigned short unitType) const { return getValue<float>(unitType); }
     float getFloatValue() const { return getValue<float>(); }
@@ -328,14 +328,14 @@ public:
     template<typename T> inline T getValue(unsigned short unitType) const { return clampTo<T>(getDoubleValue(unitType)); }
     template<typename T> inline T getValue() const { return clampTo<T>(getDoubleValue()); }
 
-    void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
-    String getStringValue(ExceptionCode&) const;
-    String getStringValue() const;
+    WEBCORE_EXPORT void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
+    WEBCORE_EXPORT String getStringValue(ExceptionCode&) const;
+    WEBCORE_EXPORT String getStringValue() const;
 
-    Counter* getCounterValue(ExceptionCode&) const;
+    WEBCORE_EXPORT Counter* getCounterValue(ExceptionCode&) const;
     Counter* getCounterValue() const { return m_primitiveUnitType != CSS_COUNTER ? 0 : m_value.counter; }
 
-    Rect* getRectValue(ExceptionCode&) const;
+    WEBCORE_EXPORT Rect* getRectValue(ExceptionCode&) const;
     Rect* getRectValue() const { return m_primitiveUnitType != CSS_RECT ? 0 : m_value.rect; }
 
     Quad* getQuadValue(ExceptionCode&) const;
@@ -346,7 +346,7 @@ public:
     LengthRepeat* getLengthRepeatValue() const { return m_primitiveUnitType != CSS_LENGTH_REPEAT ? 0 : m_value.lengthRepeat; }
 #endif
 
-    RefPtr<RGBColor> getRGBColorValue(ExceptionCode&) const;
+    WEBCORE_EXPORT RefPtr<RGBColor> getRGBColorValue(ExceptionCode&) const;
     RGBA32 getRGBA32Value() const { return m_primitiveUnitType != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
 
     Pair* getPairValue(ExceptionCode&) const;

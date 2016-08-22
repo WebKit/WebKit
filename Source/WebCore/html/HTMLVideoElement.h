@@ -42,10 +42,10 @@ public:
     WEBCORE_EXPORT unsigned videoWidth() const;
     WEBCORE_EXPORT unsigned videoHeight() const;
 
-    void webkitEnterFullscreen(ExceptionCode&);
-    void webkitExitFullscreen();
-    bool webkitSupportsFullscreen();
-    bool webkitDisplayingFullscreen();
+    WEBCORE_EXPORT void webkitEnterFullscreen(ExceptionCode&);
+    WEBCORE_EXPORT void webkitExitFullscreen();
+    WEBCORE_EXPORT bool webkitSupportsFullscreen();
+    WEBCORE_EXPORT bool webkitDisplayingFullscreen();
 
     void ancestorWillEnterFullscreen() final;
     

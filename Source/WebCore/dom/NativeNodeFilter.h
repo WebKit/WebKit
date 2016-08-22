@@ -49,7 +49,7 @@ public:
     void setCondition(RefPtr<NodeFilterCondition>&& condition) { ASSERT(!m_condition); m_condition = condition; }
 
 private:
-    explicit NativeNodeFilter(RefPtr<NodeFilterCondition>&&);
+    WEBCORE_EXPORT explicit NativeNodeFilter(RefPtr<NodeFilterCondition>&&);
 
     NativeNodeFilter() { }
 

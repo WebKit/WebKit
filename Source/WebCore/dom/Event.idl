@@ -21,6 +21,7 @@
 [
     ConstructorTemplate=Event,
     CustomToJSObject,
+    ExportToWrappedFunction,
     Exposed=(Window,Worker),
 ] interface Event {
     // PhaseType

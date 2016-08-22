@@ -46,27 +46,27 @@ public:
 
     int tabIndex() const override;
 
-    void setInnerText(const String&, ExceptionCode&);
-    void setOuterText(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void setInnerText(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void setOuterText(const String&, ExceptionCode&);
 
     virtual bool hasCustomFocusLogic() const;
     bool supportsFocus() const override;
 
-    String contentEditable() const;
-    void setContentEditable(const String&, ExceptionCode&);
+    WEBCORE_EXPORT String contentEditable() const;
+    WEBCORE_EXPORT void setContentEditable(const String&, ExceptionCode&);
 
     static Editability editabilityFromContentEditableAttr(const Node&);
 
     virtual bool draggable() const;
-    void setDraggable(bool);
+    WEBCORE_EXPORT void setDraggable(bool);
 
-    bool spellcheck() const;
-    void setSpellcheck(bool);
+    WEBCORE_EXPORT bool spellcheck() const;
+    WEBCORE_EXPORT void setSpellcheck(bool);
 
-    bool translate() const;
-    void setTranslate(bool);
+    WEBCORE_EXPORT bool translate() const;
+    WEBCORE_EXPORT void setTranslate(bool);
 
-    void click();
+    WEBCORE_EXPORT void click();
 
     void accessKeyAction(bool sendMouseEvents) override;
 
@@ -75,8 +75,8 @@ public:
 
     HTMLFormElement* form() const { return virtualForm(); }
 
-    const AtomicString& dir() const;
-    void setDir(const AtomicString&);
+    WEBCORE_EXPORT const AtomicString& dir() const;
+    WEBCORE_EXPORT void setDir(const AtomicString&);
 
     bool hasDirectionAuto() const;
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;

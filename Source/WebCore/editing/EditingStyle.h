@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EditingStyle_h
-#define EditingStyle_h
+#pragma once
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -166,8 +165,9 @@ public:
     void setStrikeThroughChange(TextDecorationChange change) { m_strikeThroughChange = static_cast<unsigned>(change); }
     TextDecorationChange strikeThroughChange() const { return static_cast<TextDecorationChange>(m_strikeThroughChange); }
 
-    static PassRefPtr<EditingStyle> styleAtSelectionStart(const VisibleSelection&, bool shouldUseBackgroundColorInEffect = false);
+    WEBCORE_EXPORT static PassRefPtr<EditingStyle> styleAtSelectionStart(const VisibleSelection&, bool shouldUseBackgroundColorInEffect = false);
     static WritingDirection textDirectionForSelection(const VisibleSelection&, EditingStyle* typingStyle, bool& hasNestedOrMultipleEmbeddings);
+
 private:
     EditingStyle();
     EditingStyle(Node*, PropertiesToInclude);
@@ -237,5 +237,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // EditingStyle_h

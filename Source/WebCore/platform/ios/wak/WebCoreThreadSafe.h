@@ -23,14 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreThreadSafe_h
-#define WebCoreThreadSafe_h
-
 #import <Foundation/Foundation.h>
 
 @class WebEvent;
 
 // Listing of methods that are currently thread-safe.
+
+// FIXME: It's not OK to have these additional definitions of all these classes,
+// which can get out of sync with the originals, and also unclear whether there is
+// any reason we need them any more. Should use the real headers instead.
 
 @interface WAKView : NSObject
 @end
@@ -58,11 +59,3 @@
 @protocol WebPolicyDecisionListener <NSObject>
 - (void)use;
 @end
-
-@interface WebScriptObject : NSObject
-@end
-
-@interface DOMObject : WebScriptObject
-@end
-
-#endif // WebCoreThreadSafe_h

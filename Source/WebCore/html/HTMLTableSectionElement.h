@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef HTMLTableSectionElement_h
-#define HTMLTableSectionElement_h
+#pragma once
 
 #include "HTMLNames.h"
 #include "HTMLTablePartElement.h"
@@ -36,8 +35,8 @@ public:
     static Ref<HTMLTableSectionElement> create(const QualifiedName&, Document&);
 
     RefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
-    RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
-    void deleteRow(int index, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
+    WEBCORE_EXPORT void deleteRow(int index, ExceptionCode&);
 
     int numRows() const;
 
@@ -53,7 +52,7 @@ public:
     const AtomicString& vAlign() const;
     void setVAlign(const AtomicString&);
 
-    Ref<HTMLCollection> rows();
+    WEBCORE_EXPORT Ref<HTMLCollection> rows();
 
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document&);
@@ -67,5 +66,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLTableSectionElement)
     static bool isType(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::theadTag) || element.hasTagName(WebCore::HTMLNames::tfootTag) || element.hasTagName(WebCore::HTMLNames::tbodyTag); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

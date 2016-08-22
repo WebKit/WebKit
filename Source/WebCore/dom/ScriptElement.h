@@ -46,7 +46,7 @@ public:
     bool prepareScript(const TextPosition& scriptStartPosition = TextPosition::minimumPosition(), LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
 
     String scriptCharset() const { return m_characterEncoding; }
-    String scriptContent() const;
+    WEBCORE_EXPORT String scriptContent() const;
     void executeScript(const ScriptSourceCode&);
     void execute(CachedScript*);
 

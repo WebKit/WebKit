@@ -850,7 +850,7 @@ int WebEditorClient::getPasteboardItemsCount()
     return 0;
 }
 
-WebCore::DocumentFragment* WebEditorClient::documentFragmentFromDelegate(int index)
+RefPtr<WebCore::DocumentFragment> WebEditorClient::documentFragmentFromDelegate(int index)
 {
     if ([[m_webView _editingDelegateForwarder] respondsToSelector:@selector(documentFragmentForPasteboardItemAtIndex:)]) {
         DOMDocumentFragment *fragmentFromDelegate = [[m_webView _editingDelegateForwarder] documentFragmentForPasteboardItemAtIndex:index];

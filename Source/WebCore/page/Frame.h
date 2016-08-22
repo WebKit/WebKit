@@ -51,12 +51,6 @@
 OBJC_CLASS NSArray;
 #endif
 
-#if PLATFORM(IOS)
-OBJC_CLASS DOMCSSStyleDeclaration;
-OBJC_CLASS DOMNode;
-OBJC_CLASS NSString;
-#endif
-
 #if PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
 #endif
@@ -203,8 +197,7 @@ namespace WebCore {
         WEBCORE_EXPORT Node* nodeRespondingToClickEvents(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation);
         WEBCORE_EXPORT Node* nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLocation);
 
-        int indexCountOfWordPrecedingSelection(NSString* word) const;
-        WEBCORE_EXPORT NSArray* wordsInCurrentParagraph() const;
+        WEBCORE_EXPORT NSArray *wordsInCurrentParagraph() const;
         WEBCORE_EXPORT CGRect renderRectForPoint(CGPoint, bool* isReplaced, float* fontSize) const;
 
         WEBCORE_EXPORT void setSelectionChangeCallbacksDisabled(bool = true);
@@ -241,15 +234,13 @@ namespace WebCore {
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
 #if PLATFORM(IOS)
-        // Scroll the selection in an overflow layer on iOS.
-        void scrollOverflowLayer(RenderLayer* , const IntRect& visibleRect, const IntRect& exposeRect);
+        // Scroll the selection in an overflow layer.
+        void scrollOverflowLayer(RenderLayer*, const IntRect& visibleRect, const IntRect& exposeRect);
 
         WEBCORE_EXPORT int preferredHeight() const;
-        WEBCORE_EXPORT int innerLineHeight(DOMNode*) const;
         WEBCORE_EXPORT void updateLayout() const;
         WEBCORE_EXPORT NSRect caretRect() const;
         WEBCORE_EXPORT NSRect rectForScrollToVisible() const;
-        WEBCORE_EXPORT DOMCSSStyleDeclaration* styleAtSelectionStart() const;
         WEBCORE_EXPORT unsigned formElementsCharacterCount() const;
 
         // This function is used by Legacy WebKit.
@@ -266,7 +257,7 @@ namespace WebCore {
         WEBCORE_EXPORT VisibleSelection rangedSelectionBase() const;
         WEBCORE_EXPORT VisibleSelection rangedSelectionInitialExtent() const;
         WEBCORE_EXPORT void recursiveSetUpdateAppearanceEnabled(bool);
-        WEBCORE_EXPORT NSArray* interpretationsForCurrentRoot() const;
+        WEBCORE_EXPORT NSArray *interpretationsForCurrentRoot() const;
 #endif
         void suspendActiveDOMObjectsAndAnimations();
         void resumeActiveDOMObjectsAndAnimations();

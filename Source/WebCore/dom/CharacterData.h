@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef CharacterData_h
-#define CharacterData_h
+#pragma once
 
 #include "Node.h"
 #include <wtf/text/WTFString.h>
@@ -35,11 +34,11 @@ public:
 
     WEBCORE_EXPORT void setData(const String&);
     unsigned length() const { return m_data.length(); }
-    String substringData(unsigned offset, unsigned count, ExceptionCode&);
-    void appendData(const String&);
-    void insertData(unsigned offset, const String&, ExceptionCode&);
-    void deleteData(unsigned offset, unsigned count, ExceptionCode&);
-    void replaceData(unsigned offset, unsigned count, const String&, ExceptionCode&);
+    WEBCORE_EXPORT String substringData(unsigned offset, unsigned count, ExceptionCode&);
+    WEBCORE_EXPORT void appendData(const String&);
+    WEBCORE_EXPORT void insertData(unsigned offset, const String&, ExceptionCode&);
+    WEBCORE_EXPORT void deleteData(unsigned offset, unsigned count, ExceptionCode&);
+    WEBCORE_EXPORT void replaceData(unsigned offset, unsigned count, const String&, ExceptionCode&);
 
     bool containsOnlyWhitespace() const;
 
@@ -79,5 +78,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CharacterData)
     static bool isType(const WebCore::Node& node) { return node.isCharacterDataNode(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // CharacterData_h

@@ -26,9 +26,8 @@
 #include "config.h"
 #include "JSNamedNodeMap.h"
 
-#include "JSNode.h"
-
-#include "Element.h"
+#include "Attr.h"
+#include "JSAttr.h"
 #include "NamedNodeMap.h"
 
 using namespace JSC;
@@ -40,7 +39,6 @@ bool JSNamedNodeMap::nameGetter(ExecState* exec, PropertyName propertyName, JSVa
     auto item = wrapped().getNamedItem(propertyNameToAtomicString(propertyName));
     if (!item)
         return false;
-
     value = toJS(exec, globalObject(), *item);
     return true;
 }

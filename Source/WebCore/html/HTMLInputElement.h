@@ -77,7 +77,7 @@ public:
     bool tooLong() const final;
     bool typeMismatch() const final;
     bool valueMissing() const final;
-    String validationMessage() const final;
+    WEBCORE_EXPORT String validationMessage() const final;
 
     // Returns the minimum value for type=date, number, or range.  Don't call this for other types.
     double minimum() const;
@@ -94,8 +94,8 @@ public:
 #endif
 
     // Implementations of HTMLInputElement::stepUp() and stepDown().
-    void stepUp(int, ExceptionCode&);
-    void stepDown(int, ExceptionCode&);
+    WEBCORE_EXPORT void stepUp(int, ExceptionCode&);
+    WEBCORE_EXPORT void stepDown(int, ExceptionCode&);
     void stepUp(ExceptionCode& ec) { stepUp(1, ec); }
     void stepDown(ExceptionCode& ec) { stepDown(1, ec); }
     // stepUp()/stepDown() for user-interaction.
@@ -155,21 +155,21 @@ public:
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
 
     bool checked() const { return m_isChecked; }
-    void setChecked(bool, TextFieldEventBehavior = DispatchNoEvent);
+    WEBCORE_EXPORT void setChecked(bool, TextFieldEventBehavior = DispatchNoEvent);
 
     // 'indeterminate' is a state independent of the checked state that causes the control to draw in a way that hides the actual state.
     bool indeterminate() const { return m_isIndeterminate; }
-    void setIndeterminate(bool);
+    WEBCORE_EXPORT void setIndeterminate(bool);
     // shouldAppearChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
     bool shouldAppearChecked() const;
     bool matchesIndeterminatePseudoClass() const final;
     bool shouldAppearIndeterminate() const final;
 
-    unsigned size() const;
+    WEBCORE_EXPORT unsigned size() const;
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
     float decorationWidth() const;
 
-    void setType(const AtomicString&);
+    WEBCORE_EXPORT void setType(const AtomicString&);
 
     WEBCORE_EXPORT String value() const final;
     void setValue(const String&, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
@@ -189,8 +189,8 @@ public:
 
     WEBCORE_EXPORT void setEditingValue(const String&);
 
-    double valueAsDate() const;
-    void setValueAsDate(double, ExceptionCode&);
+    WEBCORE_EXPORT double valueAsDate() const;
+    WEBCORE_EXPORT void setValueAsDate(double, ExceptionCode&);
 
     WEBCORE_EXPORT double valueAsNumber() const;
     WEBCORE_EXPORT void setValueAsNumber(double, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
@@ -223,15 +223,15 @@ public:
 
     int maxResults() const { return m_maxResults; }
 
-    String defaultValue() const;
-    void setDefaultValue(const String&);
+    WEBCORE_EXPORT String defaultValue() const;
+    WEBCORE_EXPORT void setDefaultValue(const String&);
 
     Vector<String> acceptMIMETypes();
     Vector<String> acceptFileExtensions();
     String accept() const;
-    String alt() const;
+    WEBCORE_EXPORT String alt() const;
 
-    void setSize(unsigned);
+    WEBCORE_EXPORT void setSize(unsigned);
     void setSize(unsigned, ExceptionCode&);
 
     URL src() const;
@@ -247,8 +247,8 @@ public:
     AutoFillButtonType autoFillButtonType() const { return (AutoFillButtonType)m_autoFillButtonType; }
     WEBCORE_EXPORT void setShowAutoFillButton(AutoFillButtonType);
 
-    FileList* files();
-    void setFiles(PassRefPtr<FileList>);
+    WEBCORE_EXPORT FileList* files();
+    WEBCORE_EXPORT void setFiles(PassRefPtr<FileList>);
 
 #if ENABLE(DRAG_SUPPORT)
     // Returns true if the given DragData has more than one dropped files.
@@ -301,10 +301,10 @@ public:
 
     static const unsigned maxEffectiveLength;
 
-    unsigned height() const;
-    unsigned width() const;
-    void setHeight(unsigned);
-    void setWidth(unsigned);
+    WEBCORE_EXPORT unsigned height() const;
+    WEBCORE_EXPORT unsigned width() const;
+    WEBCORE_EXPORT void setHeight(unsigned);
+    WEBCORE_EXPORT void setWidth(unsigned);
 
     void blur() final;
     void defaultBlur();
@@ -318,8 +318,8 @@ public:
     static Vector<FileChooserFileInfo> filesFromFileInputFormControlState(const FormControlState&);
 
     bool matchesReadWritePseudoClass() const final;
-    void setRangeText(const String& replacement, ExceptionCode&) final;
-    void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) final;
+    WEBCORE_EXPORT void setRangeText(const String& replacement, ExceptionCode&) final;
+    WEBCORE_EXPORT void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) final;
 
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
     HTMLImageLoader& ensureImageLoader();

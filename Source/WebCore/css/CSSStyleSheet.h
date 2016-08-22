@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSStyleSheet_h
-#define CSSStyleSheet_h
+#pragma once
 
 #include "CSSParserMode.h"
 #include "StyleSheet.h"
@@ -63,14 +62,14 @@ public:
     bool disabled() const override { return m_isDisabled; }
     void setDisabled(bool) override;
     
-    RefPtr<CSSRuleList> cssRules();
-    unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<CSSRuleList> cssRules();
+    WEBCORE_EXPORT unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     unsigned deprecatedInsertRule(const String& rule, ExceptionCode&);
-    void deleteRule(unsigned index, ExceptionCode&);
+    WEBCORE_EXPORT void deleteRule(unsigned index, ExceptionCode&);
     
     // IE Extensions
-    RefPtr<CSSRuleList> rules();
-    int addRule(const String& selector, const String& style, Optional<unsigned> index, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<CSSRuleList> rules();
+    WEBCORE_EXPORT int addRule(const String& selector, const String& style, Optional<unsigned> index, ExceptionCode&);
     void removeRule(unsigned index, ExceptionCode& ec) { deleteRule(index, ec); }
     
     // For CSSRuleList.
@@ -154,5 +153,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSStyleSheet)
     static bool isType(const WebCore::StyleSheet& styleSheet) { return styleSheet.isCSSStyleSheet(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // CSSStyleSheet_h

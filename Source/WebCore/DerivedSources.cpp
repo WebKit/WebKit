@@ -31,7 +31,6 @@
 // #include "PlugInsResourcesData.cpp"
 // #include "UserAgentStyleSheetsData.cpp"
 
-#include "ExceptionCodeDescription.h"
 #include "HTMLElementFactory.cpp"
 #if ENABLE(WEBGL)
 #include "JSANGLEInstancedArrays.cpp"

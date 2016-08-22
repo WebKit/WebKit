@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CollectionIndexCache_h
-#define CollectionIndexCache_h
+#pragma once
 
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-void reportExtraMemoryAllocatedForCollectionIndexCache(size_t);
+WEBCORE_EXPORT void reportExtraMemoryAllocatedForCollectionIndexCache(size_t);
 
 template <class Collection, class Iterator>
 class CollectionIndexCache {
@@ -223,5 +222,3 @@ void CollectionIndexCache<Collection, Iterator>::invalidate(const Collection& co
 
 
 }
-
-#endif

@@ -21,25 +21,11 @@
  *
  */
 
-#ifndef DOMImplementation_h
-#define DOMImplementation_h
+#pragma once
 
-#include "Document.h"
-#include "MediaPlayer.h"
 #include "XMLDocument.h"
-#include <memory>
-#include <wtf/Forward.h>
 
 namespace WebCore {
-
-class CSSStyleSheet;
-class Document;
-class DocumentType;
-class Frame;
-class HTMLDocument;
-class URL;
-
-typedef int ExceptionCode;
 
 class DOMImplementation : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
@@ -51,17 +37,17 @@ public:
     Document& document() { return m_document; }
 
     // DOM methods & attributes for DOMImplementation
-    static bool hasFeature(const String& feature, const String& version);
-    RefPtr<DocumentType> createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId, ExceptionCode&);
-    RefPtr<XMLDocument> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*, ExceptionCode&);
+    WEBCORE_EXPORT static bool hasFeature(const String& feature, const String& version);
+    WEBCORE_EXPORT RefPtr<DocumentType> createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<XMLDocument> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*, ExceptionCode&);
 
     DOMImplementation* getInterface(const String& feature);
 
     // From the DOMImplementationCSS interface
-    static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media, ExceptionCode&);
+    WEBCORE_EXPORT static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media, ExceptionCode&);
 
     // From the HTMLDOMImplementation interface
-    Ref<HTMLDocument> createHTMLDocument(const String& title);
+    WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(const String& title);
 
     // Other methods (not part of DOM)
     static Ref<Document> createDocument(const String& MIMEType, Frame*, const URL&);
@@ -74,5 +60,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

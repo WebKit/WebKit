@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLDocument_h
-#define HTMLDocument_h
+#pragma once
 
 #include "Document.h"
 
@@ -41,24 +40,24 @@ public:
 
     virtual ~HTMLDocument();
 
-    int width();
-    int height();
+    WEBCORE_EXPORT int width();
+    WEBCORE_EXPORT int height();
 
-    const AtomicString& bgColor() const;
-    void setBgColor(const String&);
-    const AtomicString& fgColor() const;
-    void setFgColor(const String&);
-    const AtomicString& alinkColor() const;
-    void setAlinkColor(const String&);
-    const AtomicString& linkColor() const;
-    void setLinkColor(const String&);
-    const AtomicString& vlinkColor() const;
-    void setVlinkColor(const String&);
+    WEBCORE_EXPORT const AtomicString& bgColor() const;
+    WEBCORE_EXPORT void setBgColor(const String&);
+    WEBCORE_EXPORT const AtomicString& fgColor() const;
+    WEBCORE_EXPORT void setFgColor(const String&);
+    WEBCORE_EXPORT const AtomicString& alinkColor() const;
+    WEBCORE_EXPORT void setAlinkColor(const String&);
+    WEBCORE_EXPORT const AtomicString& linkColor() const;
+    WEBCORE_EXPORT void setLinkColor(const String&);
+    WEBCORE_EXPORT const AtomicString& vlinkColor() const;
+    WEBCORE_EXPORT void setVlinkColor(const String&);
 
-    void clear();
+    WEBCORE_EXPORT void clear();
 
-    void captureEvents();
-    void releaseEvents();
+    WEBCORE_EXPORT void captureEvents();
+    WEBCORE_EXPORT void releaseEvents();
 
     Element* documentNamedItem(const AtomicStringImpl& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }
     bool hasDocumentNamedItem(const AtomicStringImpl& name) const { return m_documentNamedItem.contains(name); }
@@ -92,5 +91,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLDocument)
     static bool isType(const WebCore::Document& document) { return document.isHTMLDocument(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // HTMLDocument_h

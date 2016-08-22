@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef MutationEvent_h
-#define MutationEvent_h
+#pragma once
 
 #include "Event.h"
 #include "Node.h"
@@ -50,7 +49,7 @@ namespace WebCore {
             return adoptRef(*new MutationEvent);
         }
 
-        void initMutationEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Node> relatedNode,
+        WEBCORE_EXPORT void initMutationEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Node> relatedNode,
                                const String& prevValue, const String& newValue,
                                const String& attrName, unsigned short attrChange);
 
@@ -76,5 +75,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // MutationEvent_h

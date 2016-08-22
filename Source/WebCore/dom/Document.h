@@ -364,9 +364,9 @@ public:
     void setReferrerPolicy(ReferrerPolicy referrerPolicy) { m_referrerPolicy = referrerPolicy; }
     ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
 
-    DocumentType* doctype() const;
+    WEBCORE_EXPORT DocumentType* doctype() const;
 
-    DOMImplementation& implementation();
+    WEBCORE_EXPORT DOMImplementation& implementation();
     
     Element* documentElement() const
     {
@@ -374,20 +374,20 @@ public:
     }
     static ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
 
-    Element* activeElement();
-    bool hasFocus() const;
+    WEBCORE_EXPORT Element* activeElement();
+    WEBCORE_EXPORT bool hasFocus() const;
 
     bool hasManifest() const;
     
     WEBCORE_EXPORT RefPtr<Element> createElementForBindings(const AtomicString& tagName, ExceptionCode&);
     WEBCORE_EXPORT Ref<DocumentFragment> createDocumentFragment();
     WEBCORE_EXPORT Ref<Text> createTextNode(const String& data);
-    Ref<Comment> createComment(const String& data);
-    RefPtr<CDATASection> createCDATASection(const String& data, ExceptionCode&);
-    RefPtr<ProcessingInstruction> createProcessingInstruction(const String& target, const String& data, ExceptionCode&);
-    RefPtr<Attr> createAttribute(const String& name, ExceptionCode&);
-    RefPtr<Attr> createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&, bool shouldIgnoreNamespaceChecks = false);
-    RefPtr<Node> importNode(Node& nodeToImport, bool deep, ExceptionCode&);
+    WEBCORE_EXPORT Ref<Comment> createComment(const String& data);
+    WEBCORE_EXPORT RefPtr<CDATASection> createCDATASection(const String& data, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<ProcessingInstruction> createProcessingInstruction(const String& target, const String& data, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Attr> createAttribute(const String& name, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Attr> createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&, bool shouldIgnoreNamespaceChecks = false);
+    WEBCORE_EXPORT RefPtr<Node> importNode(Node& nodeToImport, bool deep, ExceptionCode&);
     WEBCORE_EXPORT RefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
     WEBCORE_EXPORT Ref<Element> createElement(const QualifiedName&, bool createdByParser);
 
@@ -403,31 +403,31 @@ public:
     NamedFlowCollection& namedFlows();
 
     Element* elementFromPoint(int x, int y) { return elementFromPoint(LayoutPoint(x, y)); }
-    Element* elementFromPoint(const LayoutPoint& clientPoint);
+    WEBCORE_EXPORT Element* elementFromPoint(const LayoutPoint& clientPoint);
 
-    RefPtr<Range> caretRangeFromPoint(int x, int y);
+    WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y);
     RefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
 
-    Element* scrollingElement();
+    WEBCORE_EXPORT Element* scrollingElement();
 
-    String readyState() const;
+    WEBCORE_EXPORT String readyState() const;
 
-    String defaultCharsetForBindings() const;
+    WEBCORE_EXPORT String defaultCharsetForBindings() const;
 
     String charset() const { return Document::encoding(); }
-    String characterSetWithUTF8Fallback() const;
+    WEBCORE_EXPORT String characterSetWithUTF8Fallback() const;
     TextEncoding textEncoding() const;
 
     AtomicString encoding() const { return textEncoding().domName(); }
 
-    void setCharset(const String&); // Used by ObjC / GOBject bindings only.
+    WEBCORE_EXPORT void setCharset(const String&); // Used by ObjC / GOBject bindings only.
 
     void setContent(const String&);
 
     String suggestedMIMEType() const;
 
     void overrideMIMEType(const String&);
-    String contentType() const;
+    WEBCORE_EXPORT String contentType() const;
 
     String contentLanguage() const { return m_contentLanguage; }
     void setContentLanguage(const String&);
@@ -440,12 +440,12 @@ public:
     bool hasXMLDeclaration() const { return m_hasXMLDeclaration; }
 
     void setXMLEncoding(const String& encoding) { m_xmlEncoding = encoding; } // read-only property, only to be set from XMLDocumentParser
-    void setXMLVersion(const String&, ExceptionCode&);
-    void setXMLStandalone(bool, ExceptionCode&);
+    WEBCORE_EXPORT void setXMLVersion(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void setXMLStandalone(bool, ExceptionCode&);
     void setHasXMLDeclaration(bool hasXMLDeclaration) { m_hasXMLDeclaration = hasXMLDeclaration ? 1 : 0; }
 
     String documentURI() const { return m_documentURI; }
-    void setDocumentURI(const String&);
+    WEBCORE_EXPORT void setDocumentURI(const String&);
 
 #if ENABLE(WEB_REPLAY)
     JSC::InputCursor& inputCursor() const { return *m_inputCursor; }
@@ -453,22 +453,22 @@ public:
 #endif
 
     void visibilityStateChanged();
-    String visibilityState() const;
-    bool hidden() const;
+    WEBCORE_EXPORT String visibilityState() const;
+    WEBCORE_EXPORT bool hidden() const;
 
     void setTimerThrottlingEnabled(bool);
     bool isTimerThrottlingEnabled() const { return m_isTimerThrottlingEnabled; }
 
-    RefPtr<Node> adoptNode(Node& source, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Node> adoptNode(Node& source, ExceptionCode&);
 
-    Ref<HTMLCollection> images();
-    Ref<HTMLCollection> embeds();
-    Ref<HTMLCollection> plugins(); // an alias for embeds() required for the JS DOM bindings.
-    Ref<HTMLCollection> applets();
-    Ref<HTMLCollection> links();
-    Ref<HTMLCollection> forms();
-    Ref<HTMLCollection> anchors();
-    Ref<HTMLCollection> scripts();
+    WEBCORE_EXPORT Ref<HTMLCollection> images();
+    WEBCORE_EXPORT Ref<HTMLCollection> embeds();
+    WEBCORE_EXPORT Ref<HTMLCollection> plugins(); // an alias for embeds() required for the JS DOM bindings.
+    WEBCORE_EXPORT Ref<HTMLCollection> applets();
+    WEBCORE_EXPORT Ref<HTMLCollection> links();
+    WEBCORE_EXPORT Ref<HTMLCollection> forms();
+    WEBCORE_EXPORT Ref<HTMLCollection> anchors();
+    WEBCORE_EXPORT Ref<HTMLCollection> scripts();
     Ref<HTMLCollection> all();
 
     Ref<HTMLCollection> windowNamedItems(const AtomicString& name);
@@ -510,8 +510,7 @@ public:
 
     WEBCORE_EXPORT bool haveStylesheetsLoaded() const;
 
-    // This is a DOM function.
-    StyleSheetList& styleSheets();
+    WEBCORE_EXPORT StyleSheetList& styleSheets();
 
     AuthorStyleSheets& authorStyleSheets() { return *m_authorStyleSheets; }
     const AuthorStyleSheets& authorStyleSheets() const { return *m_authorStyleSheets; }
@@ -550,13 +549,13 @@ public:
     WEBCORE_EXPORT Ref<Range> createRange();
 
     // The last bool parameter is for ObjC bindings.
-    Ref<NodeIterator> createNodeIterator(Node& root, unsigned long whatToShow = 0xFFFFFFFF, RefPtr<NodeFilter>&& = nullptr, bool = false);
+    WEBCORE_EXPORT Ref<NodeIterator> createNodeIterator(Node& root, unsigned long whatToShow = 0xFFFFFFFF, RefPtr<NodeFilter>&& = nullptr, bool = false);
 
     // The last bool parameter is for ObjC bindings.
-    Ref<TreeWalker> createTreeWalker(Node& root, unsigned long whatToShow = 0xFFFFFFFF, RefPtr<NodeFilter>&& = nullptr, bool = false);
+    WEBCORE_EXPORT Ref<TreeWalker> createTreeWalker(Node& root, unsigned long whatToShow = 0xFFFFFFFF, RefPtr<NodeFilter>&& = nullptr, bool = false);
 
     // Special support for editing
-    Ref<CSSStyleDeclaration> createCSSStyleDeclaration();
+    WEBCORE_EXPORT Ref<CSSStyleDeclaration> createCSSStyleDeclaration();
     Ref<Text> createEditingTextNode(const String&);
 
     void recalcStyle(Style::Change = Style::NoChange);
@@ -617,11 +616,11 @@ public:
     
     WEBCORE_EXPORT DocumentLoader* loader() const;
 
-    void open(Document* ownerDocument = nullptr);
+    WEBCORE_EXPORT void open(Document* ownerDocument = nullptr);
     void implicitOpen();
 
     // close() is the DOM API document.close()
-    void close();
+    WEBCORE_EXPORT void close();
     // In some situations (see the code), we ignore document.close().
     // explicitClose() bypass these checks and actually tries to close the
     // input stream.
@@ -632,8 +631,8 @@ public:
     void cancelParsing();
 
     void write(const SegmentedString& text, Document* ownerDocument = nullptr);
-    void write(const String& text, Document* ownerDocument = nullptr);
-    void writeln(const String& text, Document* ownerDocument = nullptr);
+    WEBCORE_EXPORT void write(const String& text, Document* ownerDocument = nullptr);
+    WEBCORE_EXPORT void writeln(const String& text, Document* ownerDocument = nullptr);
 
     bool wellFormed() const { return m_wellFormed; }
 
@@ -686,7 +685,7 @@ public:
     void lockCompatibilityMode() { m_compatibilityModeLocked = true; }
     static ptrdiff_t compatibilityModeMemoryOffset() { return OBJECT_OFFSETOF(Document, m_compatibilityMode); }
 
-    String compatMode() const;
+    WEBCORE_EXPORT String compatMode() const;
 
     bool inQuirksMode() const { return m_compatibilityMode == DocumentCompatibilityMode::QuirksMode; }
     bool inLimitedQuirksMode() const { return m_compatibilityMode == DocumentCompatibilityMode::LimitedQuirksMode; }
@@ -722,9 +721,9 @@ public:
 
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const LayoutPoint&, const PlatformMouseEvent&);
 
-    String preferredStylesheetSet() const;
-    String selectedStylesheetSet() const;
-    void setSelectedStylesheetSet(const String&);
+    WEBCORE_EXPORT String preferredStylesheetSet() const;
+    WEBCORE_EXPORT String selectedStylesheetSet() const;
+    WEBCORE_EXPORT void setSelectedStylesheetSet(const String&);
 
     enum class FocusRemovalEventsMode { Dispatch, DoNotDispatch };
     WEBCORE_EXPORT bool setFocusedElement(Element*, FocusDirection = FocusDirectionNone,
@@ -756,7 +755,7 @@ public:
 
     void registerNodeListForInvalidation(LiveNodeList&);
     void unregisterNodeListForInvalidation(LiveNodeList&);
-    void registerCollection(HTMLCollection&);
+    WEBCORE_EXPORT void registerCollection(HTMLCollection&);
     void unregisterCollection(HTMLCollection&);
     void collectionCachedIdNameMap(const HTMLCollection&);
     void collectionWillClearIdNameMap(const HTMLCollection&);
@@ -798,7 +797,7 @@ public:
     WEBCORE_EXPORT void dispatchWindowEvent(Event&, EventTarget* = nullptr);
     void dispatchWindowLoadEvent();
 
-    RefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
 
     // keep track of what types of event listeners are registered, so we don't
     // dispatch events unnecessarily
@@ -833,7 +832,7 @@ public:
     bool hasMutationObservers() const { return m_mutationObserverTypes; }
     void addMutationObserverTypes(MutationObserverOptions types) { m_mutationObserverTypes |= types; }
 
-    CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
+    WEBCORE_EXPORT CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
     // Handles an HTTP header equivalent set by a meta tag using <meta http-equiv="..." content="...">. This is called
     // when a meta tag is encountered during document parsing, and also when a script dynamically changes or adds a meta
@@ -858,26 +857,26 @@ public:
 
     // Used by DOM bindings; no direction known.
     String title() const { return m_title.string(); }
-    void setTitle(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void setTitle(const String&, ExceptionCode&);
 
-    const AtomicString& dir() const;
-    void setDir(const AtomicString&);
+    WEBCORE_EXPORT const AtomicString& dir() const;
+    WEBCORE_EXPORT void setDir(const AtomicString&);
 
     void titleElementAdded(Element& titleElement);
     void titleElementRemoved(Element& titleElement);
     void titleElementTextChanged(Element& titleElement);
 
-    String cookie(ExceptionCode&);
-    void setCookie(const String&, ExceptionCode&);
+    WEBCORE_EXPORT String cookie(ExceptionCode&);
+    WEBCORE_EXPORT void setCookie(const String&, ExceptionCode&);
 
-    String referrer() const;
+    WEBCORE_EXPORT String referrer() const;
 
-    String origin() const;
+    WEBCORE_EXPORT String origin() const;
 
     WEBCORE_EXPORT String domain() const;
     void setDomain(const String& newDomain, ExceptionCode&);
 
-    String lastModified() const;
+    WEBCORE_EXPORT String lastModified() const;
 
     // The cookieURL is used to query the cookie database for this document's
     // cookies. For example, if the cookie URL is http://example.com, we'll
@@ -921,7 +920,7 @@ public:
 
     HTMLBodyElement* body() const;
     WEBCORE_EXPORT HTMLElement* bodyOrFrameset() const;
-    void setBodyOrFrameset(RefPtr<HTMLElement>&&, ExceptionCode&);
+    WEBCORE_EXPORT void setBodyOrFrameset(RefPtr<HTMLElement>&&, ExceptionCode&);
 
     Location* location() const;
 
@@ -929,20 +928,20 @@ public:
 
     DocumentMarkerController& markers() const { return *m_markers; }
 
-    bool execCommand(const String& command, bool userInterface = false, const String& value = String());
-    bool queryCommandEnabled(const String& command);
-    bool queryCommandIndeterm(const String& command);
-    bool queryCommandState(const String& command);
-    bool queryCommandSupported(const String& command);
-    String queryCommandValue(const String& command);
+    WEBCORE_EXPORT bool execCommand(const String& command, bool userInterface = false, const String& value = String());
+    WEBCORE_EXPORT bool queryCommandEnabled(const String& command);
+    WEBCORE_EXPORT bool queryCommandIndeterm(const String& command);
+    WEBCORE_EXPORT bool queryCommandState(const String& command);
+    WEBCORE_EXPORT bool queryCommandSupported(const String& command);
+    WEBCORE_EXPORT String queryCommandValue(const String& command);
 
     // designMode support
     enum InheritedBool { off = false, on = true, inherit };    
     void setDesignMode(InheritedBool value);
     InheritedBool getDesignMode() const;
     bool inDesignMode() const;
-    String designMode() const;
-    void setDesignMode(const String&);
+    WEBCORE_EXPORT String designMode() const;
+    WEBCORE_EXPORT void setDesignMode(const String&);
 
     Document* parentDocument() const;
     Document& topDocument() const;
@@ -967,9 +966,9 @@ public:
     uint64_t domTreeVersion() const { return m_domTreeVersion; }
 
     // XPathEvaluator methods
-    RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
-    RefPtr<XPathNSResolver> createNSResolver(Node* nodeResolver);
-    RefPtr<XPathResult> evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<XPathNSResolver> createNSResolver(Node* nodeResolver);
+    WEBCORE_EXPORT RefPtr<XPathResult> evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*, ExceptionCode&);
 
     enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
 
@@ -1138,10 +1137,9 @@ public:
     bool isAnimatingFullScreen() const;
     WEBCORE_EXPORT void setAnimatingFullScreen(bool);
 
-    // W3C API
-    bool webkitFullscreenEnabled() const;
+    WEBCORE_EXPORT bool webkitFullscreenEnabled() const;
     Element* webkitFullscreenElement() const { return !m_fullScreenElementStack.isEmpty() ? m_fullScreenElementStack.last().get() : nullptr; }
-    void webkitExitFullscreen();
+    WEBCORE_EXPORT void webkitExitFullscreen();
 #endif
 
 #if ENABLE(POINTER_LOCK)

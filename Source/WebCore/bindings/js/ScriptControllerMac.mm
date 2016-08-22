@@ -30,7 +30,6 @@
 #import "ScriptController.h"
 
 #import "BridgeJSC.h"
-#import "DOMAbstractViewFrame.h"
 #import "DOMWindow.h"
 #import "Frame.h"
 #import "FrameLoader.h"
@@ -95,10 +94,10 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
     return nullptr;
 }
 
-WebScriptObject* ScriptController::windowScriptObject()
+WebScriptObject *ScriptController::windowScriptObject()
 {
     if (!canExecuteScripts(NotAboutToExecuteScript))
-        return 0;
+        return nil;
 
     if (!m_windowScriptObject) {
         JSC::JSLockHolder lock(JSDOMWindowBase::commonVM());
@@ -106,7 +105,6 @@ WebScriptObject* ScriptController::windowScriptObject()
         m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(windowShell(pluginWorld())) originRootObject:root rootObject:root];
     }
 
-    ASSERT([m_windowScriptObject.get() isKindOfClass:[DOMAbstractView class]]);
     return m_windowScriptObject.get();
 }
 
@@ -132,10 +130,8 @@ void ScriptController::updatePlatformScriptObjects()
 
 void ScriptController::disconnectPlatformScriptObjects()
 {
-    if (m_windowScriptObject) {
-        ASSERT([m_windowScriptObject.get() isKindOfClass:[DOMAbstractView class]]);
-        [(DOMAbstractView *)m_windowScriptObject.get() _disconnectFrame];
-    }
+    if (m_windowScriptObject)
+        disconnectWindowWrapper(m_windowScriptObject.get());
 }
 
 }

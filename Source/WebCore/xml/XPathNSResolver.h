@@ -24,23 +24,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathNSResolver_h
-#define XPathNSResolver_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class XPathNSResolver : public RefCounted<XPathNSResolver> {
-    public:
-        virtual ~XPathNSResolver();
-        virtual String lookupNamespaceURI(const String& prefix) = 0;
-        
-    protected:
-        XPathNSResolver() { }
-    };
+class WEBCORE_EXPORT XPathNSResolver : public RefCounted<XPathNSResolver> {
+public:
+    virtual ~XPathNSResolver();
+    virtual String lookupNamespaceURI(const String& prefix) = 0;
+
+protected:
+    XPathNSResolver() { }
+};
 
 }
-
-#endif // XPathNSResolver_h

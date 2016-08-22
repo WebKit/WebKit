@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLImageElement_h
-#define HTMLImageElement_h
+#pragma once
 
 #include "FormNamedItem.h"
 #include "GraphicsTypes.h"
@@ -32,6 +31,7 @@
 namespace WebCore {
 
 class HTMLFormElement;
+
 struct ImageCandidate;
 
 class HTMLImageElement : public HTMLElement, public FormNamedItem {
@@ -43,11 +43,11 @@ public:
 
     virtual ~HTMLImageElement();
 
-    int width(bool ignorePendingStylesheets = false);
-    int height(bool ignorePendingStylesheets = false);
+    WEBCORE_EXPORT int width(bool ignorePendingStylesheets = false);
+    WEBCORE_EXPORT int height(bool ignorePendingStylesheets = false);
 
-    int naturalWidth() const;
-    int naturalHeight() const;
+    WEBCORE_EXPORT int naturalWidth() const;
+    WEBCORE_EXPORT int naturalHeight() const;
     const AtomicString& currentSrc() const { return m_currentSrc; }
 
     bool isServerMap() const;
@@ -62,22 +62,22 @@ public:
 
     bool matchesCaseFoldedUsemap(const AtomicStringImpl&) const;
 
-    const AtomicString& alt() const;
+    WEBCORE_EXPORT const AtomicString& alt() const;
 
-    void setHeight(int);
+    WEBCORE_EXPORT void setHeight(int);
 
     URL src() const;
     void setSrc(const String&);
 
-    void setCrossOrigin(const AtomicString&);
-    String crossOrigin() const;
+    WEBCORE_EXPORT void setCrossOrigin(const AtomicString&);
+    WEBCORE_EXPORT String crossOrigin() const;
 
-    void setWidth(int);
+    WEBCORE_EXPORT void setWidth(int);
 
-    int x() const;
-    int y() const;
+    WEBCORE_EXPORT int x() const;
+    WEBCORE_EXPORT int y() const;
 
-    bool complete() const;
+    WEBCORE_EXPORT bool complete() const;
 
 #if PLATFORM(IOS)
     bool willRespondToMouseClickEvents() override;
@@ -154,5 +154,3 @@ private:
 };
 
 } //namespace
-
-#endif

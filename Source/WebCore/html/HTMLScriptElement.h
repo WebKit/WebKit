@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLScriptElement_h
-#define HTMLScriptElement_h
+#pragma once
 
 #include "HTMLElement.h"
 #include "ScriptElement.h"
@@ -34,15 +33,15 @@ public:
     static Ref<HTMLScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted = false);
 
     String text() const { return scriptContent(); }
-    void setText(const String&);
+    WEBCORE_EXPORT void setText(const String&);
 
     URL src() const;
 
-    void setAsync(bool);
-    bool async() const;
+    WEBCORE_EXPORT void setAsync(bool);
+    WEBCORE_EXPORT bool async() const;
 
-    void setCrossOrigin(const AtomicString&);
-    String crossOrigin() const;
+    WEBCORE_EXPORT void setCrossOrigin(const AtomicString&);
+    WEBCORE_EXPORT String crossOrigin() const;
 
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
@@ -72,5 +71,3 @@ private:
 };
 
 } //namespace
-
-#endif

@@ -54,7 +54,7 @@ public:
     void setParentTreeScope(TreeScope*);
 
     Element* focusedElement();
-    Element* getElementById(const AtomicString&) const;
+    WEBCORE_EXPORT Element* getElementById(const AtomicString&) const;
     WEBCORE_EXPORT Element* getElementById(const String&) const;
     const Vector<Element*>* getAllElementsById(const AtomicString&) const;
     bool hasElementWithId(const AtomicStringImpl&) const;
@@ -62,7 +62,7 @@ public:
     void addElementById(const AtomicStringImpl& elementId, Element&, bool notifyObservers = true);
     void removeElementById(const AtomicStringImpl& elementId, Element&, bool notifyObservers = true);
 
-    Element* getElementByName(const AtomicString&) const;
+    WEBCORE_EXPORT Element* getElementByName(const AtomicString&) const;
     bool hasElementWithName(const AtomicStringImpl&) const;
     bool containsMultipleElementsWithName(const AtomicString&) const;
     void addElementByName(const AtomicStringImpl&, Element&);

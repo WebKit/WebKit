@@ -21,27 +21,25 @@
  *
  */
 
-#ifndef HTMLFrameElementBase_h
-#define HTMLFrameElementBase_h
+#pragma once
 
 #include "FrameLoaderTypes.h"
 #include "HTMLFrameOwnerElement.h"
-#include "ScrollTypes.h"
 
 namespace WebCore {
 
 class HTMLFrameElementBase : public HTMLFrameOwnerElement {
 public:
-    URL location() const;
-    void setLocation(const String&);
+    WEBCORE_EXPORT URL location() const;
+    WEBCORE_EXPORT void setLocation(const String&);
 
     ScrollbarMode scrollingMode() const final { return m_scrolling; }
     
     int marginWidth() const { return m_marginWidth; }
     int marginHeight() const { return m_marginHeight; }
 
-    int width();
-    int height();
+    WEBCORE_EXPORT int width();
+    WEBCORE_EXPORT int height();
 
     bool canContainRangeEndPoint() const final { return false; }
 
@@ -82,5 +80,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFrameElementBase)
     static bool isType(const WebCore::HTMLElement& element) { return is<WebCore::HTMLFrameElement>(element) || is<WebCore::HTMLIFrameElement>(element); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // HTMLFrameElementBase_h

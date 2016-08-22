@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLAreaElement_h
-#define HTMLAreaElement_h
+#pragma once
 
 #include "HTMLAnchorElement.h"
 #include "LayoutRect.h"
@@ -29,8 +28,8 @@
 
 namespace WebCore {
 
-class HitTestResult;
 class HTMLImageElement;
+class HitTestResult;
 class Path;
 
 class HTMLAreaElement final : public HTMLAnchorElement {
@@ -41,8 +40,8 @@ public:
 
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
 
-    // FIXME: Use RenderElement* instead of RenderObject* once we upstream iOS's DOMUIKitExtensions.{h, mm}.
-    LayoutRect computeRect(RenderObject*) const;
+    // FIXME: Use RenderElement& instead of RenderObject*.
+    WEBCORE_EXPORT LayoutRect computeRect(RenderObject*) const;
     Path computePath(RenderObject*) const;
     Path computePathForFocusRing(const LayoutSize& elementSize) const;
 
@@ -73,5 +72,3 @@ private:
 };
 
 } //namespace
-
-#endif

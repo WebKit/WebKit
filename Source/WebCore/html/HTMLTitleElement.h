@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef HTMLTitleElement_h
-#define HTMLTitleElement_h
+
+#pragma once
 
 #include "HTMLElement.h"
 #include "StringWithDirection.h"
@@ -31,8 +31,8 @@ class HTMLTitleElement final : public HTMLElement {
 public:
     static Ref<HTMLTitleElement> create(const QualifiedName&, Document&);
 
-    String text() const;
-    void setText(const String&, ExceptionCode&);
+    WEBCORE_EXPORT String text() const;
+    WEBCORE_EXPORT void setText(const String&, ExceptionCode&);
 
     const StringWithDirection& textWithDirection() const { return m_title; }
 
@@ -49,5 +49,3 @@ private:
 };
 
 } //namespace
-
-#endif

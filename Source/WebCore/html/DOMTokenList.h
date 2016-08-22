@@ -23,17 +23,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMTokenList_h
-#define DOMTokenList_h
+#pragma once
 
-#include <Element.h>
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
+#include "Element.h"
 
 namespace WebCore {
-
-typedef int ExceptionCode;
 
 class DOMTokenList {
     WTF_MAKE_NONCOPYABLE(DOMTokenList); WTF_MAKE_FAST_ALLOCATED;
@@ -48,26 +42,26 @@ public:
     unsigned length() const;
     const AtomicString& item(unsigned index) const;
 
-    bool contains(const AtomicString&) const;
+    WEBCORE_EXPORT bool contains(const AtomicString&) const;
     void add(const Vector<String>&, ExceptionCode&);
     void add(const AtomicString&, ExceptionCode&);
     void remove(const Vector<String>&, ExceptionCode&);
     void remove(const AtomicString&, ExceptionCode&);
-    bool toggle(const AtomicString&, Optional<bool> force, ExceptionCode&);
+    WEBCORE_EXPORT bool toggle(const AtomicString&, Optional<bool> force, ExceptionCode&);
     void replace(const AtomicString& token, const AtomicString& newToken, ExceptionCode&);
 
     const AtomicString& toString() const { return value(); }
 
     Element& element() const { return m_element; }
 
-    void setValue(const String&);
-    const AtomicString& value() const;
+    WEBCORE_EXPORT void setValue(const String&);
+    WEBCORE_EXPORT const AtomicString& value() const;
 
 private:
     void updateTokensFromAttributeValue(const String&);
     void updateAssociatedAttributeFromTokens();
 
-    Vector<AtomicString>& tokens();
+    WEBCORE_EXPORT Vector<AtomicString>& tokens();
     const Vector<AtomicString>& tokens() const { return const_cast<DOMTokenList&>(*this).tokens(); }
 
     static bool validateToken(const String&, ExceptionCode&);
@@ -95,5 +89,3 @@ inline const AtomicString& DOMTokenList::item(unsigned index) const
 }
 
 } // namespace WebCore
-
-#endif // DOMTokenList_h

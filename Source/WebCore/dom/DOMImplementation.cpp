@@ -41,6 +41,7 @@
 #include "ImageDocument.h"
 #include "MainFrame.h"
 #include "MediaDocument.h"
+#include "MediaPlayer.h"
 #include "MediaList.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"

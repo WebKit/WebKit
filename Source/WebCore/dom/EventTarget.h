@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventTarget_h
-#define EventTarget_h
+#pragma once
 
 #include "EventListenerMap.h"
 #include "EventTargetInterfaces.h"
@@ -140,14 +139,14 @@ public:
 
     void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture = false);
     void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture = false);
-    void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const AddEventListenerOptions&);
-    void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const ListenerOptions&);
+    WEBCORE_EXPORT void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const AddEventListenerOptions&);
+    WEBCORE_EXPORT void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const ListenerOptions&);
     virtual bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { });
     virtual bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&);
 
     virtual void removeAllEventListeners();
     virtual bool dispatchEvent(Event&);
-    bool dispatchEventForBindings(Event&, ExceptionCode&); // DOM API
+    WEBCORE_EXPORT bool dispatchEventForBindings(Event&, ExceptionCode&); // DOM API
     virtual void uncaughtExceptionInEventHandler();
 
     // Used for legacy "onEvent" attribute APIs.
@@ -244,5 +243,3 @@ inline void EventTarget::removeEventListenerForBindings(const AtomicString& even
 }
 
 } // namespace WebCore
-
-#endif // EventTarget_h

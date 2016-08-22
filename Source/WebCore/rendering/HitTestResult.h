@@ -170,7 +170,7 @@ private:
     mutable std::unique_ptr<NodeSet> m_rectBasedTestResult;
 };
 
-String displayString(const String&, const Node*);
+WEBCORE_EXPORT String displayString(const String&, const Node*);
 
 } // namespace WebCore
 

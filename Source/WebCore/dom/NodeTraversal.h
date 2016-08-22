@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef NodeTraversal_h
-#define NodeTraversal_h
+#pragma once
 
 #include "ContainerNode.h"
 #include "Text.h"
@@ -47,7 +46,7 @@ Node* nextSkippingChildren(const Node&);
 Node* nextSkippingChildren(const Node&, const Node* stayWithin);
 
 // Does a reverse pre-order traversal to find the node that comes before the current one in document order
-Node* last(const ContainerNode&);
+WEBCORE_EXPORT Node* last(const ContainerNode&);
 Node* previous(const Node&, const Node* stayWithin = nullptr);
 
 // Like previous, but skips children and starts with the next sibling.
@@ -129,5 +128,3 @@ inline Node* previous(const Node& current, const Node* stayWithin)
 
 }
 }
-
-#endif

@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef HTMLOptionElement_h
-#define HTMLOptionElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -42,21 +41,21 @@ public:
     WEBCORE_EXPORT String text() const;
     void setText(const String&, ExceptionCode&);
 
-    int index() const;
+    WEBCORE_EXPORT int index() const;
 
-    String value() const;
-    void setValue(const String&);
+    WEBCORE_EXPORT String value() const;
+    WEBCORE_EXPORT void setValue(const String&);
 
     WEBCORE_EXPORT bool selected();
-    void setSelected(bool);
+    WEBCORE_EXPORT void setSelected(bool);
 
 #if ENABLE(DATALIST_ELEMENT)
     HTMLDataListElement* ownerDataListElement() const;
 #endif
     HTMLSelectElement* ownerSelectElement() const;
 
-    String label() const;
-    void setLabel(const String&);
+    WEBCORE_EXPORT String label() const;
+    WEBCORE_EXPORT void setLabel(const String&);
 
     bool ownElementDisabled() const { return m_disabled; }
 
@@ -89,5 +88,3 @@ private:
 };
 
 } // namespace
-
-#endif

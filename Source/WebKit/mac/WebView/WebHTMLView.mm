@@ -90,7 +90,6 @@
 #import <WebCore/EditorDeleteAction.h>
 #import <WebCore/Element.h>
 #import <WebCore/EventHandler.h>
-#import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Font.h>

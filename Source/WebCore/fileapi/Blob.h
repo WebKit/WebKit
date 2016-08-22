@@ -69,7 +69,7 @@ public:
     const URL& url() const { return m_internalURL; }
     const String& type() const { return m_type; }
 
-    unsigned long long size() const;
+    WEBCORE_EXPORT unsigned long long size() const;
     virtual bool isFile() const { return false; }
 
     // The checks described in the File API spec.

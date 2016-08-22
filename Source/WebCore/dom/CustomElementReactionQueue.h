@@ -33,10 +33,9 @@
 
 namespace WebCore {
 
-class JSCustomElementInterface;
-class Document;
-class Element;
 class CustomElementReactionQueueItem;
+class Element;
+class JSCustomElementInterface;
 class QualifiedName;
 
 class CustomElementReactionQueue {
@@ -77,12 +76,12 @@ public:
     static bool hasCurrentProcessingStack() { return s_currentProcessingStack; }
 
 private:
-    void processQueue();
+    WEBCORE_EXPORT void processQueue();
 
     CustomElementReactionQueue* m_queue { nullptr };
     CustomElementReactionStack* m_previousProcessingStack;
 
-    static CustomElementReactionStack* s_currentProcessingStack;
+    WEBCORE_EXPORT static CustomElementReactionStack* s_currentProcessingStack;
 };
 
 }

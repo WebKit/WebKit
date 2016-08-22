@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -19,6 +19,7 @@
  */
 
 [
+    ExportToWrappedFunction,
     ImplementationLacksVTable,
 ] interface XPathExpression {
     [RaisesException] XPathResult evaluate(optional Node? contextNode = null, optional unsigned short type = 0, optional XPathResult? inResult = null);

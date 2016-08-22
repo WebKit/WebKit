@@ -18,11 +18,11 @@
  */
 
 [
-    ImplementationLacksVTable
+    ExportToWrappedFunction,
+    ImplementationLacksVTable,
 ] interface Rect {
-    readonly attribute CSSPrimitiveValue  top;
-    readonly attribute CSSPrimitiveValue  right;
-    readonly attribute CSSPrimitiveValue  bottom;
-    readonly attribute CSSPrimitiveValue  left;
+    readonly attribute CSSPrimitiveValue top;
+    readonly attribute CSSPrimitiveValue right;
+    readonly attribute CSSPrimitiveValue bottom;
+    readonly attribute CSSPrimitiveValue left;
 };
-

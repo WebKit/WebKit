@@ -19,6 +19,7 @@
  */
 
 [
+    ExportToWrappedFunction,
     GenerateIsReachable=ImplElementRoot,
     ImplementationLacksVTable,
 ] interface NamedNodeMap {

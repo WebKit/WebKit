@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef HTMLTableColElement_h
-#define HTMLTableColElement_h
+#pragma once
 
 #include "HTMLTablePartElement.h"
 
@@ -35,7 +34,7 @@ public:
     static Ref<HTMLTableColElement> create(const QualifiedName& tagName, Document&);
 
     unsigned span() const { return m_span; }
-    void setSpan(unsigned);
+    WEBCORE_EXPORT void setSpan(unsigned);
 
     String width() const;
 
@@ -51,5 +50,3 @@ private:
 };
 
 } //namespace
-
-#endif

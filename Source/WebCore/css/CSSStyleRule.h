@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSStyleRule_h
-#define CSSStyleRule_h
+#pragma once
 
 #include "CSSRule.h"
 
@@ -36,13 +35,10 @@ public:
 
     virtual ~CSSStyleRule();
 
-    String cssText() const override;
-    void reattach(StyleRuleBase&) override;
+    WEBCORE_EXPORT String selectorText() const;
+    WEBCORE_EXPORT void setSelectorText(const String&);
 
-    String selectorText() const;
-    void setSelectorText(const String&);
-
-    CSSStyleDeclaration& style();
+    WEBCORE_EXPORT CSSStyleDeclaration& style();
 
     // FIXME: Not CSSOM. Remove.
     StyleRule& styleRule() const { return const_cast<StyleRule&>(m_styleRule.get()); }
@@ -50,7 +46,9 @@ public:
 private:
     CSSStyleRule(StyleRule&, CSSStyleSheet*);
 
-    CSSRule::Type type() const override { return STYLE_RULE; }
+    CSSRule::Type type() const final { return STYLE_RULE; }
+    String cssText() const final;
+    void reattach(StyleRuleBase&) final;
 
     String generateSelectorText() const;
 
@@ -61,5 +59,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSStyleRule, CSSRule::STYLE_RULE)
-
-#endif // CSSStyleRule_h

@@ -33,6 +33,7 @@
 #include "DeviceMotionClient.h"
 #include "DeviceOrientationClient.h"
 #include "DiagnosticLoggingClient.h"
+#include "DocumentFragment.h"
 #include "DragClient.h"
 #include "EditorClient.h"
 #include "FloatRect.h"
@@ -504,13 +505,13 @@ public:
     NSArray* readDataFromPasteboard(NSString*, int) override { return nullptr; }
     bool hasRichlyEditableSelection() override { return false; }
     int getPasteboardItemsCount() override { return 0; }
-    DocumentFragment* documentFragmentFromDelegate(int) override { return nullptr; }
+    RefPtr<DocumentFragment> documentFragmentFromDelegate(int) override { return nullptr; }
     bool performsTwoStepPaste(DocumentFragment*) override { return false; }
     int pasteboardChangeCount() override { return 0; }
 #endif
 
 #if PLATFORM(COCOA)
-    NSString* userVisibleString(NSURL *) override { return nullptr; }
+    NSString *userVisibleString(NSURL *) override { return nullptr; }
     void setInsertionPasteboard(const String&) override { };
     NSURL *canonicalizeURL(NSURL *) override { return nullptr; }
     NSURL *canonicalizeURLString(NSString *) override { return nullptr; }

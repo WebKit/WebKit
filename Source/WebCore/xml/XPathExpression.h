@@ -24,37 +24,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathExpression_h
-#define XPathExpression_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    typedef int ExceptionCode;
+class Node;
+class XPathNSResolver;
+class XPathResult;
 
-    class Node;
-    class XPathNSResolver;
-    class XPathResult;
-
-    namespace XPath {
-        class Expression;
-    }
-
-    class XPathExpression : public RefCounted<XPathExpression> {
-    public:
-        static RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
-        ~XPathExpression();
-        
-        RefPtr<XPathResult> evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode&);
-            
-    private:
-        explicit XPathExpression(std::unique_ptr<XPath::Expression>);
-
-        std::unique_ptr<XPath::Expression> m_topExpression;
-    };
-
+namespace XPath {
+    class Expression;
 }
 
-#endif // XPathExpression_h
+using ExceptionCode = int;
+
+class XPathExpression : public RefCounted<XPathExpression> {
+public:
+    static RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
+    WEBCORE_EXPORT ~XPathExpression();
+
+    WEBCORE_EXPORT RefPtr<XPathResult> evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode&);
+
+private:
+    explicit XPathExpression(std::unique_ptr<XPath::Expression>);
+
+    std::unique_ptr<XPath::Expression> m_topExpression;
+};
+
+}

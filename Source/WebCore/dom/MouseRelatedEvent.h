@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef MouseRelatedEvent_h
-#define MouseRelatedEvent_h
+#pragma once
 
 #include "LayoutPoint.h"
 #include "UIEventWithKeyState.h"
@@ -57,8 +56,8 @@ public:
     int pageX() const final;
     int pageY() const final;
     virtual const LayoutPoint& pageLocation() const;
-    int x() const;
-    int y() const;
+    WEBCORE_EXPORT int x() const;
+    WEBCORE_EXPORT int y() const;
 
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
     // usable with RenderObject::absoluteToLocal).
@@ -101,5 +100,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MouseRelatedEvent_h

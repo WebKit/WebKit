@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSDOMWindowShell_h
-#define JSDOMWindowShell_h
+#pragma once
 
 #include "DOMWindow.h"
 #include "JSDOMWindow.h"
@@ -49,6 +48,7 @@ namespace WebCore {
         DECLARE_INFO;
 
         DOMWindow& wrapped() const;
+        static WEBCORE_EXPORT DOMWindow* toWrapped(JSC::JSObject*);
 
         static JSDOMWindowShell* create(JSC::VM& vm, RefPtr<DOMWindow>&& window, JSC::Structure* structure, DOMWrapperWorld& world)
         {
@@ -75,5 +75,3 @@ namespace WebCore {
     JSDOMWindowShell* toJSDOMWindowShell(Frame*, DOMWrapperWorld&);
 
 } // namespace WebCore
-
-#endif // JSDOMWindowShell_h

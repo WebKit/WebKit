@@ -61,6 +61,7 @@ EnabledAtRuntime=*
 EnabledBySetting=*
 EnforceRange
 ExportMacro=WEBCORE_EXPORT|WEBCORE_TESTSUPPORT_EXPORT
+ExportToWrappedFunction
 Exposed=*
 ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot|ImplScriptExecutionContext

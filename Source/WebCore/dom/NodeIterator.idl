@@ -18,10 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
 [
-    JSCustomMarkFunction,
+    ExportToWrappedFunction,
     ImplementationLacksVTable,
+    JSCustomMarkFunction,
 ] interface NodeIterator {
     readonly attribute Node root;
     readonly attribute unsigned long whatToShow;
@@ -33,4 +33,3 @@
     Node previousNode();
     void detach();
 };
-

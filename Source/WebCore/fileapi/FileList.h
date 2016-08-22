@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FileList_h
-#define FileList_h
+#pragma once
 
 #include "File.h"
 #include "ScriptWrappable.h"
@@ -47,7 +46,7 @@ public:
     }
 
     unsigned length() const { return m_files.size(); }
-    File* item(unsigned index) const;
+    WEBCORE_EXPORT File* item(unsigned index) const;
 
     bool isEmpty() const { return m_files.isEmpty(); }
     Vector<String> paths() const;
@@ -68,5 +67,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FileList_h

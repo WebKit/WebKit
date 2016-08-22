@@ -161,7 +161,7 @@ private:
     NSArray *readDataFromPasteboard(NSString* type, int index) final;
     bool hasRichlyEditableSelection() final;
     int getPasteboardItemsCount() final;
-    WebCore::DocumentFragment* documentFragmentFromDelegate(int index) final;
+    RefPtr<WebCore::DocumentFragment> documentFragmentFromDelegate(int index) final;
     bool performsTwoStepPaste(WebCore::DocumentFragment*) final;
     int pasteboardChangeCount() final;
 #endif

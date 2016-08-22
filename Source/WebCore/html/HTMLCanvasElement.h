@@ -71,8 +71,8 @@ public:
 
     const IntSize& size() const { return m_size; }
 
-    void setWidth(unsigned);
-    void setHeight(unsigned);
+    WEBCORE_EXPORT void setWidth(unsigned);
+    WEBCORE_EXPORT void setHeight(unsigned);
 
     void setSize(const IntSize& newSize)
     { 
@@ -93,7 +93,7 @@ public:
 #endif
 
     static String toEncodingMimeType(const String& mimeType);
-    String toDataURL(const String& mimeType, const double* quality, ExceptionCode&);
+    WEBCORE_EXPORT String toDataURL(const String& mimeType, const double* quality, ExceptionCode&);
     String toDataURL(const String& mimeType, ExceptionCode& ec) { return toDataURL(mimeType, nullptr, ec); }
 
     // Used for rendering

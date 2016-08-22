@@ -42,8 +42,8 @@ public:
 
     WEBCORE_EXPORT String value() const final;
     WEBCORE_EXPORT void setValue(const String&);
-    String defaultValue() const;
-    void setDefaultValue(const String&);
+    WEBCORE_EXPORT String defaultValue() const;
+    WEBCORE_EXPORT void setDefaultValue(const String&);
     int textLength() const { return value().length(); }
     int maxLengthForBindings() const { return m_maxLength; }
     int effectiveMaxLength() const { return m_maxLength; }
@@ -58,8 +58,8 @@ public:
 
     void rendererWillBeDestroyed();
 
-    void setCols(unsigned);
-    void setRows(unsigned);
+    WEBCORE_EXPORT void setCols(unsigned);
+    WEBCORE_EXPORT void setRows(unsigned);
 
     bool willRespondToMouseClickEvents() final;
 

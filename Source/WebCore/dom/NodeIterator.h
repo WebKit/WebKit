@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef NodeIterator_h
-#define NodeIterator_h
+#pragma once
 
 #include "NodeFilter.h"
 #include "ScriptWrappable.h"
@@ -40,11 +39,11 @@ namespace WebCore {
         {
             return adoptRef(*new NodeIterator(rootNode, whatToShow, WTFMove(filter)));
         }
-        ~NodeIterator();
+        WEBCORE_EXPORT ~NodeIterator();
 
-        RefPtr<Node> nextNode();
-        RefPtr<Node> previousNode();
-        void detach();
+        WEBCORE_EXPORT RefPtr<Node> nextNode();
+        WEBCORE_EXPORT RefPtr<Node> previousNode();
+        WEBCORE_EXPORT void detach();
 
         Node* referenceNode() const { return m_referenceNode.node.get(); }
         bool pointerBeforeReferenceNode() const { return m_referenceNode.isPointerBeforeNode; }
@@ -74,5 +73,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // NodeIterator_h

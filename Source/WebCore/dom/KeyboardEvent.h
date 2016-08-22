@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef KeyboardEvent_h
-#define KeyboardEvent_h
+#pragma once
 
 #include "KeypressCommand.h"
 #include "UIEventWithKeyState.h"
@@ -75,25 +74,25 @@ public:
 
     virtual ~KeyboardEvent();
     
-    void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*,
+    WEBCORE_EXPORT void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*,
         const String& keyIdentifier, unsigned location,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
     
     const String& keyIdentifier() const { return m_keyIdentifier; }
     unsigned location() const { return m_location; }
 
-    bool getModifierState(const String& keyIdentifier) const;
+    WEBCORE_EXPORT bool getModifierState(const String& keyIdentifier) const;
 
     bool altGraphKey() const { return m_altGraphKey; }
     
     const PlatformKeyboardEvent* keyEvent() const { return m_keyEvent.get(); }
 
-    int keyCode() const override; // key code for keydown and keyup, character for keypress
-    int charCode() const override; // character code for keypress, 0 for keydown and keyup
+    WEBCORE_EXPORT int keyCode() const final; // key code for keydown and keyup, character for keypress
+    WEBCORE_EXPORT int charCode() const final; // character code for keypress, 0 for keydown and keyup
 
-    EventInterface eventInterface() const override;
-    bool isKeyboardEvent() const override;
-    int which() const override;
+    EventInterface eventInterface() const final;
+    bool isKeyboardEvent() const final;
+    int which() const final;
 
 #if PLATFORM(COCOA)
     bool handledByInputMethod() const { return m_handledByInputMethod; }
@@ -128,5 +127,3 @@ KeyboardEvent* findKeyboardEvent(Event*);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(KeyboardEvent)
-
-#endif // KeyboardEvent_h

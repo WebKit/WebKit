@@ -97,7 +97,7 @@ public:
 
     virtual ~Event();
 
-    void initEvent(const AtomicString& type, bool canBubble, bool cancelable);
+    WEBCORE_EXPORT void initEvent(const AtomicString& type, bool canBubble, bool cancelable);
     bool isInitialized() const { return m_isInitialized; }
 
     const AtomicString& type() const { return m_type; }
@@ -114,7 +114,7 @@ public:
 
     bool bubbles() const { return m_canBubble; }
     bool cancelable() const { return m_cancelable; }
-    bool composed() const;
+    WEBCORE_EXPORT bool composed() const;
 
     DOMTimeStamp timeStamp() const { return m_createTime; }
 

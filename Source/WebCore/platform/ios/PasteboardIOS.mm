@@ -26,7 +26,6 @@
 #import "Pasteboard.h"
 
 #import "CachedImage.h"
-#import "DOMRangeInternal.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
