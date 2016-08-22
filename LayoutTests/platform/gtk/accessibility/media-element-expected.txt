@@ -5,35 +5,35 @@ Dump <video> element controller accessibility object tree at 'canplaythrough' ev
 
 State at 'canplaythrough' event:
 
-    description: AXDescription: 
+    title: AXTitle: 
     role: AXRole: AXVideo
 
 
-        description: AXDescription: Video Playback
+        title: AXTitle: Video Playback
         role: AXRole: AXToolbar
 
 
-            description: AXDescription: Play
+            title: AXTitle: Play
             role: AXRole: AXButton
 
 
-            description: AXDescription: Duration
+            title: AXTitle: Duration
             role: AXRole: AXSlider
 
 
-            description: AXDescription: Remaining
+            title: AXTitle: Remaining
             role: AXRole: AXTimer
 
 
-            description: AXDescription: Display Full Screen
+            title: AXTitle: Display Full Screen
             role: AXRole: AXButton
 
 
-            description: AXDescription: Mute
+            title: AXTitle: Mute
             role: AXRole: AXButton
 
 
-            description: AXDescription: Volume
+            title: AXTitle: Volume
             role: AXRole: AXSlider
 
 

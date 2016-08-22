@@ -1,10 +1,10 @@
 
-This test makes sure that a img acting as an aria button still returns its alt tag as the description
+This test makes sure that a img acting as an aria button still returns its alt tag as the accessible name
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-imgUIElement.description is AXDescription: alternate
+PASS platformValueForW3CName(imgUIElement) is "alternate"
 PASS successfullyParsed is true
 
 TEST COMPLETE

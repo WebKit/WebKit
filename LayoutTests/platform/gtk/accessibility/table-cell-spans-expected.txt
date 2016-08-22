@@ -55,7 +55,7 @@ AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 147.000000, 84.000000 }
+AXPosition: { 146.000000, 84.000000 }
 AXSize: { 124.000000, 58.000000 }
 AXTitle: 
 AXDescription: 
@@ -77,7 +77,7 @@ AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 147.000000, 84.000000 }
+AXPosition: { 146.000000, 84.000000 }
 AXSize: { 124.000000, 58.000000 }
 AXTitle: 
 AXDescription: 
@@ -99,7 +99,7 @@ AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 516.000000, 84.000000 }
+AXPosition: { 515.000000, 84.000000 }
 AXSize: { 124.000000, 29.000000 }
 AXTitle: 
 AXDescription: 

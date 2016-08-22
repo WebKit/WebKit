@@ -32,3 +32,53 @@ function touchAccessibilityTree(accessibilityObject) {
 
     return true;
 }
+
+function platformValueForW3CName(accessibilityObject, includeSource=false) {
+    var result;
+    if (accessibilityController.platformName == "atk")
+        result = accessibilityObject.title
+    else
+        result = accessibilityObject.description
+
+    if (!includeSource) {
+        var splitResult = result.split(": ");
+        return splitResult[1];
+    }
+
+    return result;
+}
+
+function platformValueForW3CDescription(accessibilityObject, includeSource=false) {
+    var result;
+    if (accessibilityController.platformName == "atk")
+        result = accessibilityObject.description
+    else
+        result = accessibilityObject.helpText;
+
+    if (!includeSource) {
+        var splitResult = result.split(": ");
+        return splitResult[1];
+    }
+
+    return result;
+}
+
+function platformTextAlternatives(accessibilityObject, includeTitleUIElement=false) {
+    if (!accessibilityObject)
+        return "Element not exposed";
+
+    result = "\t" + accessibilityObject.title + "\n\t" + accessibilityObject.description;
+    if (accessibilityController.platformName == "mac")
+       result += "\n\t" + accessibilityObject.helpText;
+    if (includeTitleUIElement)
+        result += "\n\tAXTitleUIElement: " + (accessibilityObject.titleUIElement() ? "non-null" : "null");
+    return result;
+}
+
+function platformRoleForComboBox() {
+    return accessibilityController.platformName == "atk" ? "AXRole: AXComboBox" : "AXRole: AXPopUpButton";
+}
+
+function platformRoleForStaticText() {
+    return accessibilityController.platformName == "atk" ? "AXRole: AXStatic" : "AXRole: AXStaticText";
+}

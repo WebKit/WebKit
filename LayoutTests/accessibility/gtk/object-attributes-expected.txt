@@ -26,24 +26,215 @@ This tests the exposure of Atk object attributes.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS child.role is 'AXRole: heading'
-PASS child.allAttributes() is 'level:1, toolkit:WebKitGtk'
-PASS child.role is 'AXRole: heading'
-PASS child.allAttributes() is 'level:2, toolkit:WebKitGtk'
-PASS child.role is 'AXRole: heading'
-PASS child.allAttributes() is 'level:3, toolkit:WebKitGtk'
-PASS child.role is 'AXRole: heading'
-PASS child.allAttributes() is 'level:4, toolkit:WebKitGtk'
-PASS child.role is 'AXRole: heading'
-PASS child.allAttributes() is 'level:5, toolkit:WebKitGtk'
-PASS child.role is 'AXRole: heading'
-PASS child.allAttributes() is 'level:6, toolkit:WebKitGtk'
-PASS child.role is 'AXRole: link'
-PASS child.allAttributes() is 'toolkit:WebKitGtk'
-PASS child.role is 'AXRole: table'
-PASS child.allAttributes() is 'toolkit:WebKitGtk'
-PASS child.role is 'AXRole: table'
-PASS child.allAttributes() is 'toolkit:WebKitGtk'
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 8.000000, 8.000000 }
+AXSize: { 784.000000, 36.000000 }
+AXTitle: Heading Level 1
+AXDescription: 
+AXValue: Heading Level 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:1, tag:h1, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 8.000000, 65.000000 }
+AXSize: { 784.000000, 27.000000 }
+AXTitle: Heading Level 2
+AXDescription: 
+AXValue: Heading Level 2
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:2, tag:h2, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 8.000000, 111.000000 }
+AXSize: { 784.000000, 22.000000 }
+AXTitle: Heading Level 3
+AXDescription: 
+AXValue: Heading Level 3
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:3, tag:h3, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 8.000000, 153.000000 }
+AXSize: { 784.000000, 18.000000 }
+AXTitle: Heading Level 4
+AXDescription: 
+AXValue: Heading Level 4
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:4, tag:h4, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 8.000000, 192.000000 }
+AXSize: { 784.000000, 16.000000 }
+AXTitle: Heading Level 5
+AXDescription: 
+AXValue: Heading Level 5
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:5, tag:h5, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 8.000000, 232.000000 }
+AXSize: { 784.000000, 13.000000 }
+AXTitle: Heading Level 6
+AXDescription: 
+AXValue: Heading Level 6
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:6, tag:h6, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 1
+AXPosition: { 8.000000, 269.000000 }
+AXSize: { 784.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Link
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 10.000000, 288.000000 }
+AXSize: { 23.000000, 20.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: foo
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 35.000000, 288.000000 }
+AXSize: { 22.000000, 20.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: bar
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 3
+AXPosition: { 8.000000, 309.000000 }
+AXSize: { 81.000000, 74.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
+------------
+AXRole: AXParagraph
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 398.000000 }
+AXSize: { 784.000000, 51.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: This tests the exposure of Atk object attributes.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
+AXFocusable: 1
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: html-id:description, tag:p, toolkit:WebKitGtk
+------------
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

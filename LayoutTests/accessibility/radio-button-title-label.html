@@ -39,15 +39,25 @@
             // 2) aria-labeledby should override the native label semantics and return a title for the radio button, instead of a title ui element.
             var radio2 = accessibilityController.accessibleElementById("r2");
             titleUIElement = radio2.titleUIElement();
-            shouldBe("radio2.description", "'AXDescription: LABEL2a'");
-            shouldBe("radio2.title", "'AXTitle: '");
+            if (accessibilityController.platformName == "atk") {
+                shouldBe("radio2.title", "'AXTitle: LABEL2a'");
+                shouldBe("radio2.description", "'AXDescription: '");
+            } else {
+                shouldBe("radio2.description", "'AXDescription: LABEL2a'");
+                shouldBe("radio2.title", "'AXTitle: '");
+            }
             shouldBeTrue("!titleUIElement || titleUIElement.title == 'AXTitle: '");
 
             // 3) If a radio button has an aria-label and a <label>, the aria-label should be the title.
             var radio3 = accessibilityController.accessibleElementById("r3");
             titleUIElement = radio3.titleUIElement();
-            shouldBe("radio3.description", "'AXDescription: radio3'");
-            shouldBe("radio3.title", "'AXTitle: '");
+            if (accessibilityController.platformName == "atk") {
+                shouldBe("radio3.title", "'AXTitle: radio3'");
+                shouldBe("radio2.description", "'AXDescription: '");
+            } else {
+                shouldBe("radio3.description", "'AXDescription: radio3'");
+                shouldBe("radio3.title", "'AXTitle: '");
+            }
             shouldBeTrue("!titleUIElement || titleUIElement.title == 'AXTitle: '");
 
         }

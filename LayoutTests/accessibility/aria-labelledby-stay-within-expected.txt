@@ -1,13 +1,10 @@
-Some focusable content before the application widgets.
+This tests that aria-labelledby does not append all sibling to an ARIA name
 
-Get New Mail
-Compose New Message
-Reply
-Reply All
-Forward
-Delete
-Item Four
-Item Five
-Item Six
-Item Seven
-Passed
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS platformValueForW3CName(axButton) is "Reply Item Five"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

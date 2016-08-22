@@ -1,11 +1,3 @@
-A
-B
-C
-Link
-Initial text before linkLink
-List item
-Initial text before list
-List item
 This test makes sure that a generic focusable div can get accessibility focus. It should not get accessible text from its children automatically though.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -18,7 +10,7 @@ PASS lastChar(axDiv.title) is ' '
 PASS document.activeElement == div2 is true
 PASS lastChar(axDiv2.title) is ' '
 PASS document.activeElement == div3 is true
-PASS lastChar(axDiv3.description) is "D"
+PASS lastChar(accNameForDiv3) is "D"
 PASS document.activeElement == div4 is true
 PASS axDiv4.title.indexOf('Link') is -1
 PASS document.activeElement == div5 is true

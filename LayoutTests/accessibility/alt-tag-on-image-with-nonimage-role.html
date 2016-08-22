@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -16,7 +17,7 @@
 
 <script>
 
-    description("This tests that setting a role on an img still allows the alt attribute to be used for the description..");
+    description("This tests the alternative text calculation when setting a role on an img with an alt attribute.");
 
     if (window.accessibilityController) {
 
@@ -24,10 +25,10 @@
         shouldBe("text.stringValue", "'AXValue: TEST1'");
 
         var group = accessibilityController.accessibleElementById("group");
-        shouldBe("group.description", "'AXDescription: TEST2'");
-
         var button = accessibilityController.accessibleElementById("button");
-        shouldBe("button.description", "'AXDescription: TEST3'");
+
+        shouldBeEqualToString("platformValueForW3CName(group)", "TEST2");
+        shouldBeEqualToString("platformValueForW3CName(button)", "TEST3");
     }
 
 </script>
