@@ -198,6 +198,8 @@ inline void Vector<T>::resize(size_t size)
 template<typename T>
 void Vector<T>::reallocateBuffer(size_t newCapacity)
 {
+    RELEASE_BASSERT(newCapacity < std::numeric_limits<size_t>::max() / sizeof(T));
+
     size_t vmSize = bmalloc::vmSize(newCapacity * sizeof(T));
     T* newBuffer = vmSize ? static_cast<T*>(vmAllocate(vmSize)) : nullptr;
     if (m_buffer) {
