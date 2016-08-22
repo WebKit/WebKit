@@ -168,6 +168,7 @@ list(APPEND WebCore_SOURCES
     bindings/js/ScriptControllerMac.mm
 
     bridge/objc/ObjCRuntimeObject.mm
+    bridge/objc/WebScriptObject.mm
     bridge/objc/objc_class.mm
     bridge/objc/objc_instance.mm
     bridge/objc/objc_runtime.mm
@@ -598,8 +599,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     bindings/generic
     bindings/js
-    bindings/objc
 
+    bridge/objc
     bridge/jsc
 
     editing/cocoa
@@ -663,6 +664,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     svg/graphics
     svg/properties
+
+    xml
 )
 
 set(WebCore_FORWARDING_HEADERS_FILES

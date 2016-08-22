@@ -1,3 +1,9 @@
+2016-08-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build after r204717.
+
+        * PlatformMac.cmake:
+
 2016-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         <select> menu on iPad causes shifting of hit-testing areas

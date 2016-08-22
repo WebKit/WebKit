@@ -481,6 +481,10 @@ WEBKIT_CREATE_FORWARDING_HEADERS(WebKit DIRECTORIES ${DERIVED_SOURCES_DIR}/Forwa
 
 # FIXME: Forwarding headers should be copies of actual headers.
 file(GLOB ObjCHeaders ${WEBCORE_DIR}/plugins/*.h)
+list(APPEND ObjCHeaders
+    WebKitAvailiability.h
+    WebScriptObject.h
+)
 foreach (_file ${ObjCHeaders})
     get_filename_component(_name ${_file} NAME)
     if (NOT EXISTS ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name})
@@ -489,19 +493,5 @@ foreach (_file ${ObjCHeaders})
 endforeach ()
 
 set(WebKit_OUTPUT_NAME WebKitLegacy)
-
-set(WebKitLegacy_WebCore_FORWARDING_HEADERS
-    DOMElement.h
-    DOMHTMLFormElement.h
-    DOMHTMLInputElement.h
-    DOMWheelEvent.h
-)
-
-# FIXME: These shouldn't be necessary, but it doesn't compile without them.
-foreach (_file ${WebKitLegacy_WebCore_FORWARDING_HEADERS})
-    if (NOT EXISTS ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/${_file})
-        file(WRITE ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/${_file} "#import <WebCore/${_file}>")
-    endif ()
-endforeach ()
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")

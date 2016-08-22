@@ -1,5 +1,11 @@
 2016-08-22  Alex Christensen  <achristensen@webkit.org>
 
+        Fix Mac CMake build after r204717.
+
+        * PlatformMac.cmake:
+
+2016-08-22  Alex Christensen  <achristensen@webkit.org>
+
         Mostly fix Mac CMake build after r204717.
 
         * PlatformMac.cmake:
