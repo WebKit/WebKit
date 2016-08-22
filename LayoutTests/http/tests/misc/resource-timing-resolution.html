@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+<script>
+    window.jsTestIsAsync = true;
+    if (window.internals)
+        window.internals.setResourceTimingSupport(true);
+</script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Verifies the minimum resolution is 5 microseconds.");
+var url = "../resources/square100.png";
+document.write("<img src='" + url + "'>");
+
+var t0, t1, shouldBeNearZeroOrOne;
+window.addEventListener("load", function() {
+    var entries = performance.getEntries();
+    t0 = entries[0].fetchStart;
+    t1 = entries[1].fetchStart;
+    shouldBe("t0 !== t1", "true");
+
+    var expectedResolutionMilliseconds = 0.005;
+    var integerMultipleOfResolution = (t1 - t0) / expectedResolutionMilliseconds;
+    shouldBeNearZeroOrOne = integerMultipleOfResolution % 1;
+    shouldBe("shouldBeNearZeroOrOne < 1e-10 || Math.abs(shouldBeNearZeroOrOne - 1) < 1e-10", "true");
+    if (window.internals)
+        window.internals.setResourceTimingSupport(false);
+    finishJSTest();
+});
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -77,7 +77,7 @@ private:
     const DocumentTiming* documentTiming() const;
     DocumentLoader* documentLoader() const;
     LoadTiming* loadTiming() const;
-    unsigned long long resourceLoadTimeRelativeToFetchStart(int) const;
+    unsigned long long resourceLoadTimeRelativeToFetchStart(double) const;
     unsigned long long monotonicTimeToIntegerMilliseconds(double) const;
 };
 

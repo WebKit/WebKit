@@ -1,3 +1,15 @@
+2016-08-22  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Make NetworkLoadTiming use double for higher precision in Resource Timing
+        https://bugs.webkit.org/show_bug.cgi?id=161051
+
+        Reviewed by Alex Christensen.
+
+        Test that resources timing information are close deltas to a multiple of expected resolution.
+
+        * http/tests/misc/resource-timing-resolution-expected.txt: Added.
+        * http/tests/misc/resource-timing-resolution.html: Added.
+
 2016-08-22  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Stretch alignment doesn't work for orthogonal flows

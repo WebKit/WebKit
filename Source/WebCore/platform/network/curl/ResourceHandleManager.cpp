@@ -169,9 +169,9 @@ static Lock* sharedResourceMutex(curl_lock_data data)
 }
 
 #if ENABLE(WEB_TIMING)
-static int milisecondsSinceRequest(double requestTime)
+static double milisecondsSinceRequest(double requestTime)
 {
-    return static_cast<int>((monotonicallyIncreasingTime() - requestTime) * 1000.0);
+    return (monotonicallyIncreasingTime() - requestTime) * 1000.0;
 }
 
 static void calculateWebTimingInformations(ResourceHandleInternal* d)
@@ -189,16 +189,16 @@ static void calculateWebTimingInformations(ResourceHandleInternal* d)
     curl_easy_getinfo(d->m_handle, CURLINFO_PRETRANSFER_TIME, &preTransferTime);
 
     d->m_response.networkLoadTiming().domainLookupStart = 0;
-    d->m_response.networkLoadTiming().domainLookupEnd = static_cast<int>(dnslookupTime * 1000);
+    d->m_response.networkLoadTiming().domainLookupEnd = dnslookupTime * 1000;
 
-    d->m_response.networkLoadTiming().connectStart = static_cast<int>(dnslookupTime * 1000);
-    d->m_response.networkLoadTiming().connectEnd = static_cast<int>(connectTime * 1000);
+    d->m_response.networkLoadTiming().connectStart = dnslookupTime * 1000;
+    d->m_response.networkLoadTiming().connectEnd = connectTime * 1000;
 
-    d->m_response.networkLoadTiming().requestStart = static_cast<int>(connectTime *1000);
-    d->m_response.networkLoadTiming().responseStart =static_cast<int>(preTransferTime * 1000);
+    d->m_response.networkLoadTiming().requestStart = connectTime * 1000;
+    d->m_response.networkLoadTiming().responseStart = preTransferTime * 1000;
 
     if (appConnectTime)
-        d->m_response.networkLoadTiming().secureConnectionStart = static_cast<int>(connectTime * 1000);
+        d->m_response.networkLoadTiming().secureConnectionStart = connectTime * 1000;
 }
 #endif
 

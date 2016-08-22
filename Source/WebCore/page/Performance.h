@@ -83,6 +83,8 @@ public:
     void webkitClearMeasures(const String& measureName);
 #endif // ENABLE(USER_TIMING)
 
+    static double reduceTimeResolution(double seconds);
+
 private:
     explicit Performance(Frame&);
 

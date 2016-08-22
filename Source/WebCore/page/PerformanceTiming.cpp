@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "LoadTiming.h"
 #include "NetworkLoadTiming.h"
+#include "Performance.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 
@@ -48,7 +49,8 @@ namespace WebCore {
 static unsigned long long toIntegerMilliseconds(double seconds)
 {
     ASSERT(seconds >= 0);
-    return static_cast<unsigned long long>(seconds * 1000.0);
+    double reducedSeconds = Performance::reduceTimeResolution(seconds);
+    return static_cast<unsigned long long>(reducedSeconds * 1000.0);
 }
 
 PerformanceTiming::PerformanceTiming(Frame* frame)
@@ -164,7 +166,7 @@ unsigned long long PerformanceTiming::connectStart() const
     
     // connectStart will be -1 when a network request is not made.
     // Rather than exposing a special value that indicates no new connection, we "backfill" with domainLookupEnd.
-    int connectStart = timing.connectStart;
+    double connectStart = timing.connectStart;
     if (connectStart < 0)
         return domainLookupEnd();
 
@@ -331,7 +333,7 @@ LoadTiming* PerformanceTiming::loadTiming() const
     return &loader->timing();
 }
 
-unsigned long long PerformanceTiming::resourceLoadTimeRelativeToFetchStart(int relativeMilliseconds) const
+unsigned long long PerformanceTiming::resourceLoadTimeRelativeToFetchStart(double relativeMilliseconds) const
 {
     ASSERT(relativeMilliseconds >= 0);
     return fetchStart() + relativeMilliseconds;

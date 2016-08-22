@@ -93,14 +93,14 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, NetworkLoadTiming&);
 
-    // These are millisecond deltas from the navigation start.
-    int domainLookupStart;
-    int domainLookupEnd;
-    int connectStart;
-    int connectEnd;
-    int requestStart;
-    int responseStart;
-    int secureConnectionStart;
+    // These are millisecond deltas from the start time.
+    double domainLookupStart;
+    double domainLookupEnd;
+    double connectStart;
+    double connectEnd;
+    double requestStart;
+    double responseStart;
+    double secureConnectionStart;
 };
 
 #if PLATFORM(COCOA)

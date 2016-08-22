@@ -73,7 +73,7 @@ private:
     PerformanceResourceTiming(const AtomicString& initatorType, const ResourceRequest&, const ResourceResponse&, double initiationTime, double finishTime, Document*);
     ~PerformanceResourceTiming();
 
-    double resourceTimeToDocumentMilliseconds(int deltaMilliseconds) const;
+    double resourceTimeToDocumentMilliseconds(double deltaMilliseconds) const;
 
     AtomicString m_initiatorType;
     NetworkLoadTiming m_timing;

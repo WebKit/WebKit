@@ -238,7 +238,7 @@ static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying = fal
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
 #if ENABLE(WEB_TIMING)
-static int  milisecondsSinceRequest(double requestTime);
+static double milisecondsSinceRequest(double requestTime);
 #endif
 static void continueAfterDidReceiveResponse(ResourceHandle*);
 
@@ -836,9 +836,9 @@ static bool addFormElementsToSoupMessage(SoupMessage* message, const char*, Form
 }
 
 #if ENABLE(WEB_TIMING)
-static int milisecondsSinceRequest(double requestTime)
+static double milisecondsSinceRequest(double requestTime)
 {
-    return static_cast<int>((monotonicallyIncreasingTime() - requestTime) * 1000.0);
+    return (monotonicallyIncreasingTime() - requestTime) * 1000.0;
 }
 
 void ResourceHandle::didStartRequest()
@@ -863,7 +863,7 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
         return;
 
     ResourceHandleInternal* d = handle->getInternal();
-    int deltaTime = milisecondsSinceRequest(handle->m_requestTime);
+    double deltaTime = milisecondsSinceRequest(handle->m_requestTime);
     switch (event) {
     case G_SOCKET_CLIENT_RESOLVING:
         d->m_response.networkLoadTiming().domainLookupStart = deltaTime;
