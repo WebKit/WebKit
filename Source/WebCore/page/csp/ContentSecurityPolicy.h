@@ -69,6 +69,7 @@ public:
     ~ContentSecurityPolicy();
 
     void copyStateFrom(const ContentSecurityPolicy*);
+    void copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy&);
 
     void didCreateWindowShell(JSDOMWindowShell&) const;
 

@@ -114,8 +114,13 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
     for (auto& policy : other->m_policies)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited);
 
-    m_upgradeInsecureRequests = other->m_upgradeInsecureRequests;
-    m_insecureNavigationRequestsToUpgrade.add(other->m_insecureNavigationRequestsToUpgrade.begin(), other->m_insecureNavigationRequestsToUpgrade.end());
+    copyUpgradeInsecureRequestStateFrom(*other);
+}
+
+void ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy& other)
+{
+    m_upgradeInsecureRequests = other.m_upgradeInsecureRequests;
+    m_insecureNavigationRequestsToUpgrade.add(other.m_insecureNavigationRequestsToUpgrade.begin(), other.m_insecureNavigationRequestsToUpgrade.end());
 }
 
 void ContentSecurityPolicy::didCreateWindowShell(JSDOMWindowShell& windowShell) const
