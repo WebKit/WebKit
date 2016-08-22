@@ -1,3 +1,20 @@
+2016-08-22  Jonathan Bedard  <jbedard@apple.com>
+
+        check-webkit-style does not work with Lambda functions in C++
+        https://bugs.webkit.org/show_bug.cgi?id=160910
+
+        Reviewed by Darin Adler.
+
+        This change eliminates false positives on correctly styled lambda functions and includes a few basic checks on capture list.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (regex_for_lambda_functions): Added function which checks if a string is the start of a lambda function.
+        (check_for_non_standard_constructs): Added lambda function check.
+        (check_spacing_for_function_call): Added lambda function check.
+        (check_braces): Added lambda function check.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_lambda_functions): Added test function for lambda function style checks.
+
 2016-08-21  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should parse IPv4 addresses

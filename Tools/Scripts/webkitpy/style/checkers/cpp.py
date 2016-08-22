@@ -1281,6 +1281,26 @@ class _EnumState(object):
         return True
 
 
+def regex_for_lambda_functions(line, line_number, error):
+    result = search(r'\s\[.*?\]\s', line)
+    if result:
+        group = result.group()
+
+        targ_error = None
+
+        if search(r'(\[\s|\s\]|\s,)', group):
+            targ_error = [line_number, 'whitespace/brackets', 4,
+              'Extra space in capture list.']
+
+        if targ_error and regex_for_lambda_functions.__last_error != targ_error:
+            error(targ_error[0], targ_error[1], targ_error[2], targ_error[3])
+        regex_for_lambda_functions.__last_error = targ_error
+        return True
+    return False
+
+regex_for_lambda_functions.__last_error = None
+
+
 def check_for_non_standard_constructs(clean_lines, line_number,
                                       class_state, error):
     """Logs an error if we see certain non-ANSI constructs ignored by gcc-2.
@@ -1469,6 +1489,8 @@ def check_spacing_for_function_call(line, line_number, error):
     # they'll never need to wrap.
     if (  # Ignore control structures.
         not search(r'\b(if|for|while|switch|return|new|delete)\b', function_call)
+        # Ignore lambda functions
+        and not regex_for_lambda_functions(function_call, line_number, error)
         # Ignore pointers/references to functions.
         and not search(r' \([^)]+\)\([^)]*(\)|,$)', function_call)
         # Ignore pointers/references to arrays.
@@ -2431,7 +2453,8 @@ def check_braces(clean_lines, line_number, error):
         # and '- (' and '+ (' for Objective-C methods.
         previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
         if ((not search(r'[;:}{)=]\s*$|\)\s*((const|override|const override)\s*)?(->\s*\S+)?\s*$', previous_line)
-             or search(r'\b(if|for|while|switch|else|NS_ENUM)\b', previous_line))
+             or search(r'\b(if|for|while|switch|else|NS_ENUM)\b', previous_line)
+             or regex_for_lambda_functions(previous_line, line_number, error))
             and previous_line.find('#') < 0
             and previous_line.find('- (') != 0
             and previous_line.find('+ (') != 0):
@@ -2440,6 +2463,7 @@ def check_braces(clean_lines, line_number, error):
     elif (search(r'\)\s*(((const|override)\s*)*\s*)?{\s*$', line)
           and line.count('(') == line.count(')')
           and not search(r'(\s*(if|for|while|switch|NS_ENUM|@synchronized)|} @catch)\b', line)
+          and not regex_for_lambda_functions(line, line_number, error)
           and line.find("](") < 0
           and not match(r'\s+[A-Z_][A-Z_0-9]+\b', line)):
         error(line_number, 'whitespace/braces', 4,

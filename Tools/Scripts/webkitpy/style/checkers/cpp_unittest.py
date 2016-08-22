@@ -1882,6 +1882,14 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('int main(int argc, char* agrv [])', 'Extra space before [.  [whitespace/brackets] [5]')
         self.assert_lint('    str [strLength] = \'\\0\';', 'Extra space before [.  [whitespace/brackets] [5]')
 
+    def test_lambda_functions(self):
+        self.assert_lint('        [&] (Type argument) {', '')
+        self.assert_lint('        [] {', '')
+        self.assert_lint('        [ =] (Type argument) {', 'Extra space in capture list.  [whitespace/brackets] [4]')
+        self.assert_lint('        [var, var_ref&] {', '')
+        self.assert_lint('        [var , var_ref&] {', 'Extra space in capture list.  [whitespace/brackets] [4]')
+        self.assert_lint('        [var,var_ref&] {', 'Missing space after ,  [whitespace/comma] [3]')
+
     def test_spacing_around_else(self):
         self.assert_lint('}else {', 'Missing space before else'
                          '  [whitespace/braces] [5]')
