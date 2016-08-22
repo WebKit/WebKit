@@ -46,6 +46,7 @@ private:
 
     virtual bool isProgressIndicator() const override { return true; }
 
+    virtual String valueDescription() const override;
     virtual float valueForRange() const override;
     virtual float maxValueForRange() const override;
     virtual float minValueForRange() const override;
