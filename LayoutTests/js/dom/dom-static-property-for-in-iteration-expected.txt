@@ -53,6 +53,7 @@ PASS a["oncanplaythrough"] is null
 PASS a["onchange"] is null
 PASS a["onclick"] is null
 PASS a["oncontextmenu"] is null
+PASS a["oncuechange"] is null
 PASS a["ondblclick"] is null
 PASS a["ondrag"] is null
 PASS a["ondragend"] is null
@@ -108,7 +109,7 @@ PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
 PASS a["prefix"] is null
 PASS a["localName"] is a
 PASS a["offsetLeft"] is 8
-PASS a["offsetTop"] is 1659
+PASS a["offsetTop"] is 1674
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
 PASS a["clientLeft"] is 0

@@ -70,7 +70,7 @@ PASS Document interface: attribute onchange
 PASS Document interface: attribute onclick 
 FAIL Document interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
 PASS Document interface: attribute oncontextmenu 
-FAIL Document interface: attribute oncuechange assert_true: The prototype object must have a property "oncuechange" expected true got false
+PASS Document interface: attribute oncuechange 
 PASS Document interface: attribute ondblclick 
 PASS Document interface: attribute ondrag 
 PASS Document interface: attribute ondragend 
@@ -255,7 +255,7 @@ PASS Document interface: iframe.contentDocument must inherit property "onchange"
 PASS Document interface: iframe.contentDocument must inherit property "onclick" with the proper type (99) 
 FAIL Document interface: iframe.contentDocument must inherit property "onclose" with the proper type (100) assert_inherits: property "onclose" not found in prototype chain
 PASS Document interface: iframe.contentDocument must inherit property "oncontextmenu" with the proper type (101) 
-FAIL Document interface: iframe.contentDocument must inherit property "oncuechange" with the proper type (102) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "oncuechange" with the proper type (102) 
 PASS Document interface: iframe.contentDocument must inherit property "ondblclick" with the proper type (103) 
 PASS Document interface: iframe.contentDocument must inherit property "ondrag" with the proper type (104) 
 PASS Document interface: iframe.contentDocument must inherit property "ondragend" with the proper type (105) 
@@ -502,7 +502,7 @@ PASS Document interface: new Document() must inherit property "onchange" with th
 PASS Document interface: new Document() must inherit property "onclick" with the proper type (99) 
 FAIL Document interface: new Document() must inherit property "onclose" with the proper type (100) assert_inherits: property "onclose" not found in prototype chain
 PASS Document interface: new Document() must inherit property "oncontextmenu" with the proper type (101) 
-FAIL Document interface: new Document() must inherit property "oncuechange" with the proper type (102) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: new Document() must inherit property "oncuechange" with the proper type (102) 
 PASS Document interface: new Document() must inherit property "ondblclick" with the proper type (103) 
 PASS Document interface: new Document() must inherit property "ondrag" with the proper type (104) 
 PASS Document interface: new Document() must inherit property "ondragend" with the proper type (105) 
@@ -749,7 +749,7 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclick" with the proper type (99) 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclose" with the proper type (100) assert_inherits: property "onclose" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncontextmenu" with the proper type (101) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncuechange" with the proper type (102) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncuechange" with the proper type (102) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondblclick" with the proper type (103) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrag" with the proper type (104) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragend" with the proper type (105) 
@@ -980,7 +980,7 @@ PASS HTMLElement interface: attribute onchange
 PASS HTMLElement interface: attribute onclick 
 FAIL HTMLElement interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
 PASS HTMLElement interface: attribute oncontextmenu 
-FAIL HTMLElement interface: attribute oncuechange assert_true: The prototype object must have a property "oncuechange" expected true got false
+PASS HTMLElement interface: attribute oncuechange 
 PASS HTMLElement interface: attribute ondblclick 
 PASS HTMLElement interface: attribute ondrag 
 PASS HTMLElement interface: attribute ondragend 
@@ -1070,7 +1070,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onclick" with the proper type (34) 
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onclose" with the proper type (35) assert_inherits: property "onclose" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncontextmenu" with the proper type (36) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "oncuechange" with the proper type (37) assert_inherits: property "oncuechange" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncuechange" with the proper type (37) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondblclick" with the proper type (38) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrag" with the proper type (39) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragend" with the proper type (40) 
@@ -5139,7 +5139,7 @@ PASS Window interface: attribute onchange
 PASS Window interface: attribute onclick 
 FAIL Window interface: attribute onclose assert_own_property: The global object must have a property "onclose" expected property "onclose" missing
 PASS Window interface: attribute oncontextmenu 
-FAIL Window interface: attribute oncuechange assert_own_property: The global object must have a property "oncuechange" expected property "oncuechange" missing
+PASS Window interface: attribute oncuechange 
 PASS Window interface: attribute ondblclick 
 PASS Window interface: attribute ondrag 
 PASS Window interface: attribute ondragend 
@@ -5268,7 +5268,7 @@ PASS Window interface: window must inherit property "onchange" with the proper t
 PASS Window interface: window must inherit property "onclick" with the proper type (46) 
 FAIL Window interface: window must inherit property "onclose" with the proper type (47) assert_own_property: expected property "onclose" missing
 PASS Window interface: window must inherit property "oncontextmenu" with the proper type (48) 
-FAIL Window interface: window must inherit property "oncuechange" with the proper type (49) assert_own_property: expected property "oncuechange" missing
+PASS Window interface: window must inherit property "oncuechange" with the proper type (49) 
 PASS Window interface: window must inherit property "ondblclick" with the proper type (50) 
 PASS Window interface: window must inherit property "ondrag" with the proper type (51) 
 PASS Window interface: window must inherit property "ondragend" with the proper type (52) 

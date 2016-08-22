@@ -1,3 +1,16 @@
+2016-08-22  Chris Dumez  <cdumez@apple.com>
+
+        Add support for GlobalEventHandlers.oncuechange attribute
+        https://bugs.webkit.org/show_bug.cgi?id=161046
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/media/window-oncuechange-expected.txt: Added.
+        * fast/media/window-oncuechange.html: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2016-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         <select> menu on iPad causes shifting of hit-testing areas
