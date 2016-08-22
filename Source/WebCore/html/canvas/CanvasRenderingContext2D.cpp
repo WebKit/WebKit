@@ -645,16 +645,6 @@ void CanvasRenderingContext2D::setLineDashOffset(float offset)
     applyLineDash();
 }
 
-float CanvasRenderingContext2D::webkitLineDashOffset() const
-{
-    return lineDashOffset();
-}
-
-void CanvasRenderingContext2D::setWebkitLineDashOffset(float offset)
-{
-    setLineDashOffset(offset);
-}
-
 void CanvasRenderingContext2D::applyLineDash() const
 {
     GraphicsContext* c = drawingContext();

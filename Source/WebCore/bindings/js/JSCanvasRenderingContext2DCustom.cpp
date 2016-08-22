@@ -59,12 +59,6 @@ static CanvasStyle toHTMLCanvasStyle(ExecState*, JSValue value)
     return CanvasStyle();
 }
 
-JSValue JSCanvasRenderingContext2D::commit(ExecState&)
-{
-    // This is a no-op in a direct-2d canvas.
-    return jsUndefined();
-}
-
 JSValue JSCanvasRenderingContext2D::strokeStyle(ExecState& state) const
 {
     return toJS(&state, globalObject(), wrapped().strokeStyle());
@@ -93,35 +87,6 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState& state, JSValue value)
         return;
     }
     context.setFillStyle(toHTMLCanvasStyle(&state, value));
-}
-
-JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState& state) const
-{
-    const Vector<float>& dash = wrapped().getLineDash();
-
-    MarkedArgumentBuffer list;
-    Vector<float>::const_iterator end = dash.end();
-    for (Vector<float>::const_iterator it = dash.begin(); it != end; ++it)
-        list.append(JSValue(*it));
-    return constructArray(&state, 0, globalObject(), list);
-}
-
-void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState& state, JSValue value)
-{
-    if (!isJSArray(value))
-        return;
-
-    Vector<float> dash;
-    JSArray* valueArray = asArray(value);
-    for (unsigned i = 0; i < valueArray->length(); ++i) {
-        float elem = valueArray->getIndex(&state, i).toFloat(&state);
-        if (elem <= 0 || !std::isfinite(elem))
-            return;
-
-        dash.append(elem);
-    }
-
-    wrapped().setWebkitLineDash(dash);
 }
 
 } // namespace WebCore

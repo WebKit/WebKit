@@ -82,12 +82,11 @@ public:
 
     const Vector<float>& getLineDash() const;
     void setLineDash(const Vector<float>&);
+    const Vector<float>& webkitLineDash() const { return getLineDash(); }
     void setWebkitLineDash(const Vector<float>&);
 
     float lineDashOffset() const;
     void setLineDashOffset(float);
-    float webkitLineDashOffset() const;
-    void setWebkitLineDashOffset(float);
 
     float shadowOffsetX() const;
     void setShadowOffsetX(float);
@@ -109,6 +108,9 @@ public:
 
     void save() { ++m_unrealizedSaveCount; }
     void restore();
+
+    // This is a no-op in a direct-2d canvas.
+    void commit() { }
 
     void scale(float sx, float sy);
     void rotate(float angleInRadians);

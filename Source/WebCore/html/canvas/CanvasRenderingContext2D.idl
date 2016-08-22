@@ -31,7 +31,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void save();
     void restore();
 
-    [Custom] void commit();
+    void commit();
 
     void scale(unrestricted float sx, unrestricted float sy);
     void rotate(unrestricted float angle);
@@ -62,8 +62,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     sequence<unrestricted float> getLineDash();
     attribute unrestricted float lineDashOffset;
 
-    [Custom] attribute Array webkitLineDash;
-    attribute unrestricted float webkitLineDashOffset;
+    attribute sequence<unrestricted float> webkitLineDash;
+    [ImplementedAs=lineDashOffset] attribute unrestricted float webkitLineDashOffset;
 
     void clearRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
     void fillRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
