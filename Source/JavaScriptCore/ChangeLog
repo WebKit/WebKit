@@ -1,5 +1,18 @@
 2016-08-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Should not fixup AnyIntUse in 32_64
+        https://bugs.webkit.org/show_bug.cgi?id=161029
+
+        Reviewed by Saam Barati.
+
+        DFG fixup phase uses AnyIntUse even in 32bit DFG. This patch removes this incorrect filtering.
+        If the 32bit DFG see the TypeAnyInt, it should fallback to the NumberUse case.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2016-08-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, rolling out r204697
         https://bugs.webkit.org/show_bug.cgi?id=161029
 

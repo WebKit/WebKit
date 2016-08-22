@@ -1459,12 +1459,22 @@ private:
             RefPtr<TypeSet> typeSet = node->typeLocation()->m_instructionTypeSet;
             RuntimeTypeMask seenTypes = typeSet->seenTypes();
             if (typeSet->doesTypeConformTo(TypeAnyInt)) {
-                if (node->child1()->shouldSpeculateInt32())
+                if (node->child1()->shouldSpeculateInt32()) {
                     fixEdge<Int32Use>(node->child1());
-                else
+                    node->remove();
+                    break;
+                }
+
+                if (enableInt52()) {
                     fixEdge<AnyIntUse>(node->child1());
-                node->remove();
-            } else if (typeSet->doesTypeConformTo(TypeNumber | TypeAnyInt)) {
+                    node->remove();
+                    break;
+                }
+
+                // Must not perform fixEdge<NumberUse> here since the type set only includes TypeAnyInt. Double values should be logged.
+            }
+
+            if (typeSet->doesTypeConformTo(TypeNumber | TypeAnyInt)) {
                 fixEdge<NumberUse>(node->child1());
                 node->remove();
             } else if (typeSet->doesTypeConformTo(TypeString)) {
