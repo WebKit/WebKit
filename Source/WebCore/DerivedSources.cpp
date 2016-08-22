@@ -138,7 +138,7 @@
 #include "JSCSSValue.cpp"
 #include "JSCSSValueList.cpp"
 #if ENABLE(CUSTOM_ELEMENTS)
-#include "JSCustomElementsRegistry.cpp"
+#include "JSCustomElementRegistry.cpp"
 #endif
 #include "JSCustomEvent.cpp"
 #include "JSDatabase.cpp"

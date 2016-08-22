@@ -195,7 +195,7 @@
     attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
     attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Add metrics to determine when we can remove this.
 
-    [Conditional=CUSTOM_ELEMENTS, ImplementedAs=ensureCustomElementsRegistry] readonly attribute CustomElementsRegistry customElements;
+    [Conditional=CUSTOM_ELEMENTS, EnabledAtRuntime=CustomElements, ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
 #endif
 
     // Event Handlers

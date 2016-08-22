@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "JSCustomElementsRegistry.h"
+#include "JSCustomElementRegistry.h"
 
-#include "CustomElementsRegistry.h"
+#include "CustomElementRegistry.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
@@ -53,8 +53,8 @@ static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype,
     return callback.getObject();
 }
 
-// https://html.spec.whatwg.org/#dom-customelementsregistry-define
-JSValue JSCustomElementsRegistry::define(ExecState& state)
+// https://html.spec.whatwg.org/#dom-customelementregistry-define
+JSValue JSCustomElementRegistry::define(ExecState& state)
 {
     if (UNLIKELY(state.argumentCount() < 2))
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -85,7 +85,7 @@ JSValue JSCustomElementsRegistry::define(ExecState& state)
     // FIXME: Check re-entrancy here.
     // https://github.com/w3c/webcomponents/issues/545
 
-    CustomElementsRegistry& registry = wrapped();
+    CustomElementRegistry& registry = wrapped();
     if (registry.findInterface(localName)) {
         throwNotSupportedError(state, ASCIILiteral("Cannot define multiple custom elements with the same tag name"));
         return jsUndefined();

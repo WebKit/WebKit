@@ -44,10 +44,10 @@ class Element;
 class JSCustomElementInterface;
 class QualifiedName;
 
-class CustomElementsRegistry : public RefCounted<CustomElementsRegistry> {
+class CustomElementRegistry : public RefCounted<CustomElementRegistry> {
 public:
-    static Ref<CustomElementsRegistry> create();
-    ~CustomElementsRegistry();
+    static Ref<CustomElementRegistry> create();
+    ~CustomElementRegistry();
 
     void addElementDefinition(Ref<JSCustomElementInterface>&&);
     void addUpgradeCandidate(Element&);
@@ -58,7 +58,7 @@ public:
     bool containsConstructor(const JSC::JSObject*) const;
 
 private:
-    CustomElementsRegistry();
+    CustomElementRegistry();
 
     HashMap<AtomicString, Vector<RefPtr<Element>>> m_upgradeCandidatesMap;
     HashMap<AtomicString, Ref<JSCustomElementInterface>> m_nameMap;

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Custom Elements: CustomElementsRegistry interface</title>
+<title>Custom Elements: CustomElementRegistry interface</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
-<meta name="assert" content="CustomElementsRegistry interface must exist">
+<meta name="assert" content="CustomElementRegistry interface must exist">
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
 <link rel='stylesheet' href='../../resources/testharness.css'>
@@ -13,9 +13,9 @@
 <script>
 
 test(function () {
-    assert_true('define' in CustomElementsRegistry.prototype, '"define" exists on CustomElementsRegistry.prototype');
+    assert_true('define' in CustomElementRegistry.prototype, '"define" exists on CustomElementRegistry.prototype');
     assert_true('define' in customElements, '"define" exists on window.customElements');
-}, 'CustomElementsRegistry interface must have define as a method');
+}, 'CustomElementRegistry interface must have define as a method');
 
 test(function () {
     class MyCustomElement extends HTMLElement {};

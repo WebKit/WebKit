@@ -38,7 +38,7 @@
 #include "ContentExtensionActions.h"
 #include "ContentExtensionRule.h"
 #include "Crypto.h"
-#include "CustomElementsRegistry.h"
+#include "CustomElementRegistry.h"
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
 #include "DOMStringList.h"
@@ -621,11 +621,11 @@ bool DOMWindow::isCurrentlyDisplayedInFrame() const
 }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-CustomElementsRegistry& DOMWindow::ensureCustomElementsRegistry()
+CustomElementRegistry& DOMWindow::ensureCustomElementRegistry()
 {
-    if (!m_customElementsRegistry)
-        m_customElementsRegistry = CustomElementsRegistry::create();
-    return *m_customElementsRegistry;
+    if (!m_customElementRegistry)
+        m_customElementRegistry = CustomElementRegistry::create();
+    return *m_customElementRegistry;
 }
 #endif
 

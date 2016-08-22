@@ -1,5 +1,5 @@
 
-PASS CustomElementsRegistry interface must have define as a method 
+PASS CustomElementRegistry interface must have define as a method 
 PASS customElements.define must throw with an invalid name 
 PASS customElements.define must throw when there is already a custom element of the same name 
 PASS customElements.define must throw when there is already a custom element with the same class 

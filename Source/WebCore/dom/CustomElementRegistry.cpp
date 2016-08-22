@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CustomElementsRegistry.h"
+#include "CustomElementRegistry.h"
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
@@ -39,18 +39,18 @@
 
 namespace WebCore {
 
-Ref<CustomElementsRegistry> CustomElementsRegistry::create()
+Ref<CustomElementRegistry> CustomElementRegistry::create()
 {
-    return adoptRef(*new CustomElementsRegistry());
+    return adoptRef(*new CustomElementRegistry());
 }
 
-CustomElementsRegistry::CustomElementsRegistry()
+CustomElementRegistry::CustomElementRegistry()
 { }
 
-CustomElementsRegistry::~CustomElementsRegistry()
+CustomElementRegistry::~CustomElementRegistry()
 { }
 
-void CustomElementsRegistry::addElementDefinition(Ref<JSCustomElementInterface>&& elementInterface)
+void CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&& elementInterface)
 {
     AtomicString localName = elementInterface->name().localName();
     ASSERT(!m_nameMap.contains(localName));
@@ -74,7 +74,7 @@ void CustomElementsRegistry::addElementDefinition(Ref<JSCustomElementInterface>&
     ASSERT(!m_upgradeCandidatesMap.contains(localName));
 }
 
-void CustomElementsRegistry::addUpgradeCandidate(Element& candidate)
+void CustomElementRegistry::addUpgradeCandidate(Element& candidate)
 {
     auto result = m_upgradeCandidatesMap.ensure(candidate.localName(), [] {
         return Vector<RefPtr<Element>>();
@@ -84,23 +84,23 @@ void CustomElementsRegistry::addUpgradeCandidate(Element& candidate)
     nodeVector.append(&candidate);
 }
 
-JSCustomElementInterface* CustomElementsRegistry::findInterface(const QualifiedName& name) const
+JSCustomElementInterface* CustomElementRegistry::findInterface(const QualifiedName& name) const
 {
     auto it = m_nameMap.find(name.localName());
     return it == m_nameMap.end() || it->value->name() != name ? nullptr : const_cast<JSCustomElementInterface*>(it->value.ptr());
 }
 
-JSCustomElementInterface* CustomElementsRegistry::findInterface(const AtomicString& name) const
+JSCustomElementInterface* CustomElementRegistry::findInterface(const AtomicString& name) const
 {
     return m_nameMap.get(name);
 }
 
-JSCustomElementInterface* CustomElementsRegistry::findInterface(const JSC::JSObject* constructor) const
+JSCustomElementInterface* CustomElementRegistry::findInterface(const JSC::JSObject* constructor) const
 {
     return m_constructorMap.get(constructor);
 }
 
-bool CustomElementsRegistry::containsConstructor(const JSC::JSObject* constructor) const
+bool CustomElementRegistry::containsConstructor(const JSC::JSObject* constructor) const
 {
     return m_constructorMap.contains(constructor);
 }

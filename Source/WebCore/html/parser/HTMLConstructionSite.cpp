@@ -28,7 +28,7 @@
 #include "HTMLTreeBuilder.h"
 
 #include "Comment.h"
-#include "CustomElementsRegistry.h"
+#include "CustomElementRegistry.h"
 #include "DOMWindow.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
@@ -661,7 +661,7 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
 #if ENABLE(CUSTOM_ELEMENTS)
         auto* window = ownerDocument.domWindow();
         if (customElementInterface && window) {
-            auto* registry = window->customElementsRegistry();
+            auto* registry = window->customElementRegistry();
             if (UNLIKELY(registry)) {
                 if (auto* elementInterface = registry->findInterface(localName)) {
                     *customElementInterface = elementInterface;
@@ -678,7 +678,7 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
         if (window && Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
             element = HTMLElement::create(qualifiedName, ownerDocument);
             element->setIsUnresolvedCustomElement();
-            window->ensureCustomElementsRegistry().addUpgradeCandidate(*element);
+            window->ensureCustomElementRegistry().addUpgradeCandidate(*element);
         } else
 #endif
             element = HTMLUnknownElement::create(qualifiedName, ownerDocument);

@@ -1,3 +1,15 @@
+2016-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename CustomElementsRegistry to CustomElementRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=161028
+
+        Reviewed by Darin Adler.
+
+        Added customElements and CustomElementRegistry to the common identifiers list as they're used on JSDOMWindow
+        to hide window.customElements and CustomElementRegistry interface behind a runtime flag.
+
+        * runtime/CommonIdentifiers.h:
+
 2016-08-22  Mark Lam  <mark.lam@apple.com>
 
         Remove dead code.

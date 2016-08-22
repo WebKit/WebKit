@@ -375,7 +375,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ClientRectList.idl
     dom/Comment.idl
     dom/CompositionEvent.idl
-    dom/CustomElementsRegistry.idl
+    dom/CustomElementRegistry.idl
     dom/CustomEvent.idl
     dom/DOMCoreException.idl
     dom/DOMError.idl
@@ -1136,7 +1136,7 @@ set(WebCore_SOURCES
     bindings/js/JSCryptoKeySerializationJWK.cpp
     bindings/js/JSCryptoOperationData.cpp
     bindings/js/JSCustomElementInterface.cpp
-    bindings/js/JSCustomElementsRegistryCustom.cpp
+    bindings/js/JSCustomElementRegistryCustom.cpp
     bindings/js/JSCustomEventCustom.cpp
     bindings/js/JSCustomSQLStatementErrorCallback.cpp
     bindings/js/JSCustomXPathNSResolver.cpp
@@ -1438,7 +1438,7 @@ set(WebCore_SOURCES
     dom/ContainerNodeAlgorithms.cpp
     dom/ContextDestructionObserver.cpp
     dom/CustomElementReactionQueue.cpp
-    dom/CustomElementsRegistry.cpp
+    dom/CustomElementRegistry.cpp
     dom/CustomEvent.cpp
     dom/DOMCoreException.cpp
     dom/DOMError.cpp

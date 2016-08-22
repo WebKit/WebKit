@@ -3587,20 +3587,20 @@
 		9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BAB6C6B12550631001626D4 /* EditingStyle.cpp */; };
 		9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAF3B2312C1A39800014BF1 /* WritingDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BB737651B41C03500AE13EB /* NSAttributedStringSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BB737641B41C03500AE13EB /* NSAttributedStringSPI.h */; };
-		9BC5F9E01D5AAF6B002B749D /* JSCustomElementsRegistryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC5F9DF1D5AAF6A002B749D /* JSCustomElementsRegistryCustom.cpp */; };
+		9BC5F9E01D5AAF6B002B749D /* JSCustomElementRegistryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */; };
 		9BC6C21B13CCC97B008E0337 /* HTMLTextFormControlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BC6C21913CCC97B008E0337 /* HTMLTextFormControlElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BC6C21C13CCC97B008E0337 /* HTMLTextFormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */; };
 		9BD0BF9312A42BF50072FD43 /* ScopedEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */; };
 		9BD0BF9412A42BF50072FD43 /* ScopedEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */; };
 		9BD4E9161C462872005065BC /* JSCustomElementInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */; };
 		9BD4E9171C462872005065BC /* JSCustomElementInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD4E9151C462872005065BC /* JSCustomElementInterface.h */; };
-		9BD4E91A1C462CFC005065BC /* CustomElementsRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD4E9181C462CFC005065BC /* CustomElementsRegistry.cpp */; };
-		9BD4E91B1C462CFC005065BC /* CustomElementsRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD4E9191C462CFC005065BC /* CustomElementsRegistry.h */; };
+		9BD4E91A1C462CFC005065BC /* CustomElementRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD4E9181C462CFC005065BC /* CustomElementRegistry.cpp */; };
+		9BD4E91B1C462CFC005065BC /* CustomElementRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD4E9191C462CFC005065BC /* CustomElementRegistry.h */; };
 		9BD8A95A18BEFC7600987E9A /* CollectionIndexCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8A95918BEFC7600987E9A /* CollectionIndexCache.cpp */; };
 		9BDA64D71B975CE5009C4387 /* JSShadowRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B6BC9601B975966005AE1F0 /* JSShadowRoot.cpp */; };
 		9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6BC9611B975966005AE1F0 /* JSShadowRoot.h */; };
-		9BE6710B1D5AEB2100345514 /* JSCustomElementsRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BE671091D5AEB0400345514 /* JSCustomElementsRegistry.cpp */; };
-		9BE6710C1D5AEB2500345514 /* JSCustomElementsRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BE6710A1D5AEB0400345514 /* JSCustomElementsRegistry.h */; };
+		9BE6710B1D5AEB2100345514 /* JSCustomElementRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BE671091D5AEB0400345514 /* JSCustomElementRegistry.cpp */; };
+		9BE6710C1D5AEB2500345514 /* JSCustomElementRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BE6710A1D5AEB0400345514 /* JSCustomElementRegistry.h */; };
 		9BF9A8801648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */; };
 		9BF9A8811648DD2F001C6B23 /* JSHTMLFormControlsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */; };
 		9D6380101AF173220031A15C /* StyleSelfAlignmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D63800F1AF16E160031A15C /* StyleSelfAlignmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10762,19 +10762,19 @@
 		9BAB6C6B12550631001626D4 /* EditingStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditingStyle.cpp; sourceTree = "<group>"; };
 		9BAF3B2312C1A39800014BF1 /* WritingDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritingDirection.h; sourceTree = "<group>"; };
 		9BB737641B41C03500AE13EB /* NSAttributedStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringSPI.h; sourceTree = "<group>"; };
-		9BC5F9DE1D5AAD5D002B749D /* CustomElementsRegistry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomElementsRegistry.idl; sourceTree = "<group>"; };
-		9BC5F9DF1D5AAF6A002B749D /* JSCustomElementsRegistryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementsRegistryCustom.cpp; sourceTree = "<group>"; };
+		9BC5F9DE1D5AAD5D002B749D /* CustomElementRegistry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomElementRegistry.idl; sourceTree = "<group>"; };
+		9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementRegistryCustom.cpp; sourceTree = "<group>"; };
 		9BC6C21913CCC97B008E0337 /* HTMLTextFormControlElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTextFormControlElement.h; sourceTree = "<group>"; };
 		9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFormControlElement.cpp; sourceTree = "<group>"; };
 		9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedEventQueue.h; sourceTree = "<group>"; };
 		9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedEventQueue.cpp; sourceTree = "<group>"; };
 		9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementInterface.cpp; sourceTree = "<group>"; };
 		9BD4E9151C462872005065BC /* JSCustomElementInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomElementInterface.h; sourceTree = "<group>"; };
-		9BD4E9181C462CFC005065BC /* CustomElementsRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomElementsRegistry.cpp; sourceTree = "<group>"; };
-		9BD4E9191C462CFC005065BC /* CustomElementsRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomElementsRegistry.h; sourceTree = "<group>"; };
+		9BD4E9181C462CFC005065BC /* CustomElementRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomElementRegistry.cpp; sourceTree = "<group>"; };
+		9BD4E9191C462CFC005065BC /* CustomElementRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomElementRegistry.h; sourceTree = "<group>"; };
 		9BD8A95918BEFC7600987E9A /* CollectionIndexCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectionIndexCache.cpp; sourceTree = "<group>"; };
-		9BE671091D5AEB0400345514 /* JSCustomElementsRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementsRegistry.cpp; sourceTree = "<group>"; };
-		9BE6710A1D5AEB0400345514 /* JSCustomElementsRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomElementsRegistry.h; sourceTree = "<group>"; };
+		9BE671091D5AEB0400345514 /* JSCustomElementRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementRegistry.cpp; sourceTree = "<group>"; };
+		9BE6710A1D5AEB0400345514 /* JSCustomElementRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomElementRegistry.h; sourceTree = "<group>"; };
 		9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollection.cpp; sourceTree = "<group>"; };
 		9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLFormControlsCollection.h; sourceTree = "<group>"; };
 		9D63800F1AF16E160031A15C /* StyleSelfAlignmentData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleSelfAlignmentData.h; sourceTree = "<group>"; };
@@ -19375,8 +19375,8 @@
 				93F9B6DF0BA0FB7200854064 /* JSComment.h */,
 				FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */,
 				FE6FD48C0F676E9300092873 /* JSCoordinates.h */,
-				9BE671091D5AEB0400345514 /* JSCustomElementsRegistry.cpp */,
-				9BE6710A1D5AEB0400345514 /* JSCustomElementsRegistry.h */,
+				9BE671091D5AEB0400345514 /* JSCustomElementRegistry.cpp */,
+				9BE6710A1D5AEB0400345514 /* JSCustomElementRegistry.h */,
 				BCA83E4D0D7CE1E9003421A8 /* JSDataTransfer.cpp */,
 				BCA83E4E0D7CE1E9003421A8 /* JSDataTransfer.h */,
 				31FB1A63120A5D3F00DC02A0 /* JSDeviceMotionEvent.cpp */,
@@ -20924,7 +20924,7 @@
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				AD726FEA16D9F40B003A4E6D /* JSCSSStyleDeclarationCustom.h */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
-				9BC5F9DF1D5AAF6A002B749D /* JSCustomElementsRegistryCustom.cpp */,
+				9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */,
 				DEC2975D1B4DEB2A005F5945 /* JSCustomEventCustom.cpp */,
 				07FBDE2B18FED178001A7CFF /* JSDataCueCustom.cpp */,
 				BCA83E510D7CE205003421A8 /* JSDataTransferCustom.cpp */,
@@ -22761,9 +22761,9 @@
 				97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */,
 				9B56C9A91C89329A00C456DF /* CustomElementReactionQueue.cpp */,
 				9B56C9A81C89312800C456DF /* CustomElementReactionQueue.h */,
-				9BD4E9181C462CFC005065BC /* CustomElementsRegistry.cpp */,
-				9BD4E9191C462CFC005065BC /* CustomElementsRegistry.h */,
-				9BC5F9DE1D5AAD5D002B749D /* CustomElementsRegistry.idl */,
+				9BD4E9181C462CFC005065BC /* CustomElementRegistry.cpp */,
+				9BD4E9191C462CFC005065BC /* CustomElementRegistry.h */,
+				9BC5F9DE1D5AAD5D002B749D /* CustomElementRegistry.idl */,
 				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
 				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
 				62CD32581157E57C0063B0A7 /* CustomEvent.idl */,
@@ -24010,7 +24010,7 @@
 				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,
 				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
 				93D437A01D57B19A00AB85EA /* CustomElementReactionQueue.h in Headers */,
-				9BD4E91B1C462CFC005065BC /* CustomElementsRegistry.h in Headers */,
+				9BD4E91B1C462CFC005065BC /* CustomElementRegistry.h in Headers */,
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
 				A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */,
 				A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */,
@@ -24756,7 +24756,7 @@
 				14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */,
 				A8D05FAC0A23B30F005E7203 /* JSCSSValueList.h in Headers */,
 				9BD4E9171C462872005065BC /* JSCustomElementInterface.h in Headers */,
-				9BE6710C1D5AEB2500345514 /* JSCustomElementsRegistry.h in Headers */,
+				9BE6710C1D5AEB2500345514 /* JSCustomElementRegistry.h in Headers */,
 				E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */,
 				E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */,
 				1AE82F900CAAFA9D002237AE /* JSDatabase.h in Headers */,
@@ -27653,7 +27653,7 @@
 				265541521489B233000DFC5D /* CursorIOS.cpp in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				9B56C9AA1C89329A00C456DF /* CustomElementReactionQueue.cpp in Sources */,
-				9BD4E91A1C462CFC005065BC /* CustomElementsRegistry.cpp in Sources */,
+				9BD4E91A1C462CFC005065BC /* CustomElementRegistry.cpp in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
 				97BC6A201505F081001B74AC /* Database.cpp in Sources */,
 				97BC6A231505F081001B74AC /* DatabaseAuthorizer.cpp in Sources */,
@@ -28342,8 +28342,8 @@
 				BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */,
 				A8D05FAB0A23B30F005E7203 /* JSCSSValueList.cpp in Sources */,
 				9BD4E9161C462872005065BC /* JSCustomElementInterface.cpp in Sources */,
-				9BE6710B1D5AEB2100345514 /* JSCustomElementsRegistry.cpp in Sources */,
-				9BC5F9E01D5AAF6B002B749D /* JSCustomElementsRegistryCustom.cpp in Sources */,
+				9BE6710B1D5AEB2100345514 /* JSCustomElementRegistry.cpp in Sources */,
+				9BC5F9E01D5AAF6B002B749D /* JSCustomElementRegistryCustom.cpp in Sources */,
 				E4778B7F115A581A00B5D372 /* JSCustomEvent.cpp in Sources */,
 				DEC297611B4F2F8D005F5945 /* JSCustomEventCustom.cpp in Sources */,
 				51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */,

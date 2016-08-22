@@ -28,7 +28,7 @@
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
-#include "CustomElementsRegistry.h"
+#include "CustomElementRegistry.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Element.h"
@@ -113,7 +113,7 @@ static JSCustomElementInterface* findInterfaceForCustomElement(Element& element)
     if (!window)
         return nullptr;
 
-    auto* registry = window->customElementsRegistry();
+    auto* registry = window->customElementRegistry();
     if (!registry)
         return nullptr;
 

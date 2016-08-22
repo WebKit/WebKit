@@ -286,7 +286,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/ClientRectList.idl \
     $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/CompositionEvent.idl \
-    $(WebCore)/dom/CustomElementsRegistry.idl \
+    $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \
     $(WebCore)/dom/DOMCoreException.idl \
     $(WebCore)/dom/DOMError.idl \

@@ -38,7 +38,7 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
 #include "CustomElementReactionQueue.h"
-#include "CustomElementsRegistry.h"
+#include "CustomElementRegistry.h"
 #include "DOMTokenList.h"
 #include "Dictionary.h"
 #include "DocumentAnimation.h"

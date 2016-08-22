@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSHTMLElement.h"
 
-#include "CustomElementsRegistry.h"
+#include "CustomElementRegistry.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "HTMLFormElement.h"
@@ -53,7 +53,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
     if (!window)
         return throwVMTypeError(&exec, ASCIILiteral("new.target is not a valid custom element constructor"));
 
-    auto* registry = window->customElementsRegistry();
+    auto* registry = window->customElementRegistry();
     if (!registry)
         return throwVMTypeError(&exec, ASCIILiteral("new.target is not a valid custom element constructor"));
 

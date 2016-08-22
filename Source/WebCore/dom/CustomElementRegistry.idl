@@ -25,9 +25,10 @@
 
 [
     Conditional=CUSTOM_ELEMENTS,
+    EnabledAtRuntime=CustomElements,
     JSGenerateToNativeObject,
     ImplementationLacksVTable
-] interface CustomElementsRegistry {
+] interface CustomElementRegistry {
 
     [CEReactions, Custom] void define(DOMString name, Function constructor);
 

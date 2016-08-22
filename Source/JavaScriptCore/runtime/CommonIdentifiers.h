@@ -37,6 +37,7 @@
     macro(BYTES_PER_ELEMENT) \
     macro(Boolean) \
     macro(Collator) \
+    macro(CustomElementRegistry) \
     macro(Date) \
     macro(DateTimeFormat) \
     macro(DocumentTimeline) \
@@ -135,6 +136,7 @@
     macro(constructor) \
     macro(count) \
     macro(counters) \
+    macro(customElements) \
     macro(day) \
     macro(defineProperty) \
     macro(description) \

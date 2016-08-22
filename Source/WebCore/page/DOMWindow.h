@@ -48,7 +48,7 @@ namespace WebCore {
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Crypto;
-    class CustomElementsRegistry;
+    class CustomElementRegistry;
     class DOMApplicationCache;
     class DOMSelection;
     class DOMURL;
@@ -305,8 +305,8 @@ namespace WebCore {
         DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-        CustomElementsRegistry* customElementsRegistry() { return m_customElementsRegistry.get(); }
-        CustomElementsRegistry& ensureCustomElementsRegistry();
+        CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
+        CustomElementRegistry& ensureCustomElementRegistry();
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
@@ -422,7 +422,7 @@ namespace WebCore {
         mutable RefPtr<DOMApplicationCache> m_applicationCache;
 
 #if ENABLE(CUSTOM_ELEMENTS)
-        RefPtr<CustomElementsRegistry> m_customElementsRegistry;
+        RefPtr<CustomElementRegistry> m_customElementRegistry;
 #endif
 
 #if ENABLE(WEB_TIMING)
