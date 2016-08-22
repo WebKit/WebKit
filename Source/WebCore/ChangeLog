@@ -1,3 +1,57 @@
+2016-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Adaptive streaming issues
+        https://bugs.webkit.org/show_bug.cgi?id=144040
+
+        Reviewed by Philippe Normand.
+
+        There are multiple deadlocks in the web process when HLS content is loaded by GStreamer. It happens because gst
+        is using several threads to download manifest, fragments, monitor the downloads, etc. To download the fragments
+        and manifest it always creates the source element in a separate thread, something that is not actually expected
+        to happen in WebKit source element. Our source element is always scheduling tasks (start, stop, need-data,
+        enough-data and seek) to the main thread, and those downloads that use the ResourceHandleStreamingClient
+        (there's no player associated) also happen in the main thread, because libsoup calls all its async callbacks in
+        the main thread. So, the result is that it can happen that we end up blocking the main thread in a lock until
+        the download finishes, but the download never finishes because tasks are scheduled in the main thread that is
+        blocked in a lock. This can be prevented by always using a secondary thread for downloads made by
+        ResourceHandleStreamingClient, using its own run loop with a different GMainContext so that libsoup sends
+        callbacks to the right thread. We also had to refactor the tasks a bit, leaving the thread safe parts to be run
+        in the calling thread always, and only scheduling to the main thread in case of not using
+        ResourceHandleStreamingClient and only for the non thread safe parts.
+        This patch also includes r200455 that was rolled out, but it was a perfectly valid workaround for GST bug.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::ensureGRef): Consume the floating ref if needed.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init): Check if object is being created in the main thread.
+        (webKitWebSrcStop): Stop the media resource loader in the main thread and the resource handle streaming in the
+        current thread.
+        (webKitWebSrcStart): Start the media resource loader in the main thread and the resource handle streaming in
+        the current thread.
+        (webKitWebSrcChangeState): Call webKitWebSrcStart and webKitWebSrcStop in the current thread.
+        (webKitWebSrcNeedData): Update status in the current thread and notify the media resource loader in the main thread.
+        (webKitWebSrcEnoughData): Ditto.
+        (webKitWebSrcSeek): Ditto.
+        (webKitWebSrcSetMediaPlayer): Add an assert to ensure that source elements used by WebKit are always created in
+        the main thread.
+        (ResourceHandleStreamingClient::ResourceHandleStreamingClient): Use a secondary thread to do the download.
+        (ResourceHandleStreamingClient::~ResourceHandleStreamingClient): Stop the secondary thread.
+        (ResourceHandleStreamingClient::setDefersLoading): Notify the secondary thread.
+
+2016-06-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r200455.
+        https://bugs.webkit.org/show_bug.cgi?id=158740
+
+        hangs twitter/facebook (Requested by mcatanzaro on #webkit).
+
+        Reverted changeset:
+
+        "[GStreamer] Adaptive streaming issues"
+        https://bugs.webkit.org/show_bug.cgi?id=144040
+        http://trac.webkit.org/changeset/200455
+
 2016-05-25  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/meter-element.html is failing
