@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 #include "BSoftLinking.h"
-BSOFT_LINK_FRAMEWORK(CrashReporterSupport);
+BSOFT_LINK_PRIVATE_FRAMEWORK(CrashReporterSupport);
 BSOFT_LINK_FUNCTION(CrashReporterSupport, SimulateCrash, BOOL, (pid_t pid, mach_exception_data_type_t exceptionCode, id description), (pid, exceptionCode, description));
 #endif
 
