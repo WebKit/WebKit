@@ -153,11 +153,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_WEBASSEMBLY)
-#if defined(ENABLE_B3_JIT)
-#define ENABLE_WEBASSEMBLY ENABLE_B3_JIT
-#else
-#define ENABLE_WEBASSEMBLY 0
-#endif
+#define ENABLE_WEBASSEMBLY (defined(ENABLE_B3_JIT) && ENABLE_B3_JIT)
 #endif
 
 #if !defined(ENABLE_WEBGL)
@@ -219,11 +215,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_WEBASSEMBLY)
-#if defined(ENABLE_B3_JIT)
-#define ENABLE_WEBASSEMBLY ENABLE_B3_JIT
-#else
-#define ENABLE_WEBASSEMBLY 0
-#endif
+#define ENABLE_WEBASSEMBLY (defined(ENABLE_B3_JIT) && ENABLE_B3_JIT)
 #endif
 
 #if !defined(ENABLE_WEB_ARCHIVE)

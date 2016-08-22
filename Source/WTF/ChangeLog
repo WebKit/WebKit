@@ -1,3 +1,12 @@
+2016-08-22  Keith Miller  <keith_miller@apple.com>
+
+        Actually enable the WASM build.
+        https://bugs.webkit.org/show_bug.cgi?id=160933
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/FeatureDefines.h:
+
 2016-08-17  Don Olmstead  <don.olmstead@am.sony.com>
 
         Use find_library within Windows build
