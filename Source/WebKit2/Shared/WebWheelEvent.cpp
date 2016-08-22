@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebEvent.h"
 
-#include "Arguments.h"
 #include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;

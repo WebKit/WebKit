@@ -28,7 +28,6 @@
 
 #if ENABLE(TOUCH_EVENTS)
 
-#include "Arguments.h"
 #include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;

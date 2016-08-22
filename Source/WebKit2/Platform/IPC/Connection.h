@@ -27,7 +27,6 @@
 
 #pragma once
 
-#include "Arguments.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include "MessageReceiver.h"

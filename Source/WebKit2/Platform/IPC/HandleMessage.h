@@ -1,9 +1,6 @@
-#ifndef HandleMessage_h
-#define HandleMessage_h
+#pragma once
 
-#include "Arguments.h"
-#include "Decoder.h"
-#include "Encoder.h"
+#include "ArgumentCoders.h"
 #include <wtf/StdLibExtras.h>
 
 namespace IPC {
@@ -155,5 +152,3 @@ void handleMessageDelayed(Connection& connection, Decoder& decoder, std::unique_
 }
 
 } // namespace IPC
-
-#endif // HandleMessage_h

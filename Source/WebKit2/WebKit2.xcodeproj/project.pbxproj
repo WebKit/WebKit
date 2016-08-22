@@ -1337,7 +1337,6 @@
 		BC032DA610F437D10058C15A /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D9E10F437D10058C15A /* Decoder.h */; };
 		BC032DA710F437D10058C15A /* Encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032D9F10F437D10058C15A /* Encoder.cpp */; };
 		BC032DA810F437D10058C15A /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA010F437D10058C15A /* Encoder.h */; };
-		BC032DA910F437D10058C15A /* Arguments.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA110F437D10058C15A /* Arguments.h */; };
 		BC032DAA10F437D10058C15A /* Connection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032DA210F437D10058C15A /* Connection.cpp */; };
 		BC032DAB10F437D10058C15A /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA310F437D10058C15A /* Connection.h */; };
 		BC032DB910F4380F0058C15A /* WebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DAF10F4380F0058C15A /* WebEvent.h */; };
@@ -3425,7 +3424,6 @@
 		BC032D9E10F437D10058C15A /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
 		BC032D9F10F437D10058C15A /* Encoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encoder.cpp; sourceTree = "<group>"; };
 		BC032DA010F437D10058C15A /* Encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encoder.h; sourceTree = "<group>"; };
-		BC032DA110F437D10058C15A /* Arguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arguments.h; sourceTree = "<group>"; };
 		BC032DA210F437D10058C15A /* Connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Connection.cpp; sourceTree = "<group>"; };
 		BC032DA310F437D10058C15A /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connection.h; sourceTree = "<group>"; };
 		BC032DAF10F4380F0058C15A /* WebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEvent.h; sourceTree = "<group>"; };
@@ -4810,7 +4808,6 @@
 				BC032D9E10F437D10058C15A /* Decoder.h */,
 				BC032D9F10F437D10058C15A /* Encoder.cpp */,
 				BC032DA010F437D10058C15A /* Encoder.h */,
-				BC032DA110F437D10058C15A /* Arguments.h */,
 				BCEE966A112FAF57006BCC24 /* Attachment.cpp */,
 				BCEE966B112FAF57006BCC24 /* Attachment.h */,
 				BC032DA210F437D10058C15A /* Connection.cpp */,
@@ -7506,7 +7503,6 @@
 				E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */,
 				BC032DA610F437D10058C15A /* Decoder.h in Headers */,
 				BC032DA810F437D10058C15A /* Encoder.h in Headers */,
-				BC032DA910F437D10058C15A /* Arguments.h in Headers */,
 				CE1A0BD21A48E6C60054EF74 /* AssertionServicesSPI.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* AssistedNodeInformation.h in Headers */,
 				515E7728183DD6F60007203F /* AsyncRequest.h in Headers */,

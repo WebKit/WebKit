@@ -29,7 +29,6 @@
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 
-#include "Arguments.h"
 #include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;

@@ -31,7 +31,6 @@
 
 #include "APIObject.h"
 #include "ArgumentCoders.h"
-#include "Arguments.h"
 #include <wtf/text/CString.h>
 #include <WebCore/ContextMenu.h>
 

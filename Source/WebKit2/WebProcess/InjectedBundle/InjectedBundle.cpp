@@ -28,7 +28,6 @@
 
 #include "APIArray.h"
 #include "APIData.h"
-#include "Arguments.h"
 #include "InjectedBundleScriptWorld.h"
 #include "NotificationPermissionRequestManager.h"
 #include "SessionTracker.h"

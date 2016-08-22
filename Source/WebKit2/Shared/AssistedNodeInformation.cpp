@@ -26,7 +26,6 @@
 #include "config.h"
 #include "AssistedNodeInformation.h"
 
-#include "Arguments.h"
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {

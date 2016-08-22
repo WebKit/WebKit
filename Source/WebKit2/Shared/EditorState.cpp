@@ -26,7 +26,6 @@
 #include "config.h"
 #include "EditorState.h"
 
-#include "Arguments.h"
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
