@@ -10,7 +10,8 @@ onmessage = function(e) {
     });
 
     var stream = new ReadableStream({"start": function(controller) {
-        controller.enqueue("starting but not closing");
+        controller.enqueue(new Uint8Array(1));
+        // Not closing the stream so that below promise will not fulfill.
     }});
     var promise2 = new Response(stream).text().then(() => {
         postMessage("FAIL: promise 2 resolved");

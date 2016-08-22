@@ -1,3 +1,14 @@
+2016-08-22  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest http/tests/fetch/fetch-in-worker-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=160510
+
+        Reviewed by Darin Adler.
+
+        * http/tests/fetch/fetch-in-worker.js:
+        (stream.new.ReadableStream): Enqueuing a Uint8Array not a string, so that the fetch promise is not rejected. This should take care of Fail flakiness.
+        Crash flakiness in Debug mode may still happen due to promise use in Worker.
+
 2016-08-21  Youenn Fablet  <youenn@apple.com>
 
         [Mac] Rebase some failing XMLHttpRequest tests
