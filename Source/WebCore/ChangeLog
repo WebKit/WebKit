@@ -1,3 +1,19 @@
+2016-06-17  Zalan Bujtas  <zalan@apple.com>
+
+        Potential null dereferencing on a detached positioned renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=158879
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes the case when the while loop to search for the absolute positioned ancestor
+        returns null (it happens when positioned renderer has been detached from the render tree).
+
+        Speculative fix.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markFixedPositionObjectForLayoutIfNeeded):
+        * rendering/RenderBlock.h:
+
 2016-06-27  Philippe Normand  <philn@igalia.com>
 
         [GStreamer] top/bottom black bars added needlessly in fullscreen
