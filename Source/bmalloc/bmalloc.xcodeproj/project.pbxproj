@@ -24,6 +24,8 @@
 		147DC6E31CA5B70B00724E8D /* Chunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147DC6E21CA5B70B00724E8D /* Chunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14895D911A3A319C0006235D /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14895D8F1A3A319C0006235D /* Environment.cpp */; };
 		14895D921A3A319C0006235D /* Environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 14895D901A3A319C0006235D /* Environment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		148EFAE81D6B953B008E721E /* ScopeExit.h in Headers */ = {isa = PBXBuildFile; fileRef = 148EFAE61D6B953B008E721E /* ScopeExit.h */; };
+		148EFAE91D6B953B008E721E /* ThreadSwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 148EFAE71D6B953B008E721E /* ThreadSwitch.h */; };
 		14C8992B1CC485E70027A057 /* Map.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C8992A1CC485E70027A057 /* Map.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C8992D1CC578330027A057 /* XLargeRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C8992C1CC578330027A057 /* XLargeRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C919C818FCC59F0028DB43 /* BPlatform.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -110,6 +112,8 @@
 		1485656018A43DBA00ED6942 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = bmalloc/ObjectType.h; sourceTree = "<group>"; };
 		14895D8F1A3A319C0006235D /* Environment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Environment.cpp; path = bmalloc/Environment.cpp; sourceTree = "<group>"; };
 		14895D901A3A319C0006235D /* Environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Environment.h; path = bmalloc/Environment.h; sourceTree = "<group>"; };
+		148EFAE61D6B953B008E721E /* ScopeExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScopeExit.h; path = bmalloc/ScopeExit.h; sourceTree = "<group>"; };
+		148EFAE71D6B953B008E721E /* ThreadSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreadSwitch.h; path = bmalloc/ThreadSwitch.h; sourceTree = "<group>"; };
 		14B650C518F39F4800751968 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		14B650C618F39F4800751968 /* bmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = bmalloc.xcconfig; sourceTree = "<group>"; };
 		14B650C718F39F4800751968 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -262,9 +266,11 @@
 				14446A0717A61FA400F9EA1D /* PerProcess.h */,
 				144469FD17A61F1F00F9EA1D /* PerThread.h */,
 				145F6878179E3A4400D65598 /* Range.h */,
+				148EFAE61D6B953B008E721E /* ScopeExit.h */,
 				143CB81A19022BC900B16A45 /* StaticMutex.cpp */,
 				143CB81B19022BC900B16A45 /* StaticMutex.h */,
 				1417F64F18B7280C0076FA3F /* Syscall.h */,
+				148EFAE71D6B953B008E721E /* ThreadSwitch.h */,
 				1479E21217A1A255006D4E9D /* Vector.h */,
 				1479E21417A1A63E006D4E9D /* VMAllocate.h */,
 			);
@@ -309,6 +315,7 @@
 				4426E2831C839547008EB042 /* BSoftLinking.h in Headers */,
 				14DD789018F48CEB00950702 /* Sizes.h in Headers */,
 				14DD78C718F48D7500950702 /* BAssert.h in Headers */,
+				148EFAE91D6B953B008E721E /* ThreadSwitch.h in Headers */,
 				14DD78D018F48D7500950702 /* VMAllocate.h in Headers */,
 				14DD78CE18F48D7500950702 /* Syscall.h in Headers */,
 				14DD78C618F48D7500950702 /* AsyncTask.h in Headers */,
@@ -316,6 +323,7 @@
 				14895D921A3A319C0006235D /* Environment.h in Headers */,
 				1400274A18F89C2300115C97 /* VMHeap.h in Headers */,
 				1400274918F89C1300115C97 /* Heap.h in Headers */,
+				148EFAE81D6B953B008E721E /* ScopeExit.h in Headers */,
 				140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */,
 				4426E2811C838EE0008EB042 /* Logging.h in Headers */,
 				14DD78C518F48D7500950702 /* Algorithm.h in Headers */,

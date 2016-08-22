@@ -52,6 +52,7 @@ private:
     void lockSlowCase();
 
     std::atomic_flag m_flag;
+    std::atomic_flag m_isSpinning;
 };
 
 static inline void sleep(
@@ -78,6 +79,7 @@ static inline void waitUntilFalse(
 inline void StaticMutex::init()
 {
     m_flag.clear();
+    m_isSpinning.clear();
 }
 
 inline bool StaticMutex::try_lock()

@@ -1,3 +1,105 @@
+2016-08-22  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: speed up the lock slow path
+        https://bugs.webkit.org/show_bug.cgi?id=161058
+
+        Reviewed by Filip Pizlo.
+
+        It is generally accepted practice that a lock should yield instead of
+        spinning when a lock acquisition fails, to avoid wasting CPU and power.
+
+        There are two problems with this generally accepted practice:
+
+        (1) It's a fallacy that yielding is free. In reality, yielding itself
+        consumes CPU and power -- by performing a syscall, running the OS
+        scheduler, and possibly performing a context switch. (Instruments
+        traces of MallocBench show the cost of yielding.) Therefore, spinning a
+        little to avoid yielding can actually *save* CPU and power.
+
+        (2) std::this_thread_yield() on Darwin is way too aggressive: It not only
+        yields but also depresses your priority to absolute zero for 10ms. A
+        recent PLT trace showed a few spots where the main thread just gave up
+        on loading and rendering a page for 10ms so an unimportant background
+        task could run.
+
+        To correct these problems, this patch adds a little bit of spinning to
+        the bmalloc lock slow path.
+
+        Below are performance results on various CPUs.
+
+        Mac Pro (12 hyperthreaded cores = 24 threads):
+
+                                                            Baseline                       Patch                           Δ
+            Execution Time:
+                message_one                                    173ms                       173ms                            
+                message_many                                   953ms                       927ms              ^ 1.03x faster
+                churn --parallel                                60ms                        41ms              ^ 1.46x faster
+                list_allocate --parallel                       224ms                       143ms              ^ 1.57x faster
+                tree_allocate --parallel                     1,190ms                       758ms              ^ 1.57x faster
+                tree_churn --parallel                        1,517ms                       906ms              ^ 1.67x faster
+                facebook --parallel                          6,519ms                     4,580ms              ^ 1.42x faster
+                reddit --parallel                            5,097ms                     3,411ms              ^ 1.49x faster
+                flickr --parallel                            4,903ms                     3,501ms               ^ 1.4x faster
+                theverge --parallel                          6,641ms                     4,505ms              ^ 1.47x faster
+
+                <geometric mean>                             1,158ms                       832ms              ^ 1.39x faster
+                <arithmetic mean>                            2,728ms                     1,895ms              ^ 1.44x faster
+                <harmonic mean>                                332ms                       240ms              ^ 1.38x faster
+
+        MacBook Air (2 hyperthreaded cores = 4 threads):
+
+                                                            Baseline                       Patch                           Δ
+            Execution Time:
+                message_one                                    911ms                       907ms               ^ 1.0x faster
+                message_many                                   515ms                       513ms               ^ 1.0x faster
+                churn --parallel                               132ms                       134ms              ! 1.02x slower
+                list_allocate --parallel                       104ms                       102ms              ^ 1.02x faster
+                tree_allocate --parallel                       117ms                       111ms              ^ 1.05x faster
+                tree_churn --parallel                          154ms                       151ms              ^ 1.02x faster
+                facebook --parallel                            719ms                       687ms              ^ 1.05x faster
+                reddit --parallel                              382ms                       341ms              ^ 1.12x faster
+                flickr --parallel                              372ms                       345ms              ^ 1.08x faster
+                theverge --parallel                            489ms                       444ms               ^ 1.1x faster
+
+                <geometric mean>                               299ms                       287ms              ^ 1.04x faster
+                <arithmetic mean>                              390ms                       374ms              ^ 1.04x faster
+                <harmonic mean>                                227ms                       220ms              ^ 1.03x faster
+
+        iPad (2 cores = 2 threads):
+
+            [ Doesn't run Ruby, so no pretty subtest output. ]
+
+                                                            Baseline                       Patch                           Δ
+            Execution Time:                                 174.14ms                     171.5ms              ^ 1.02x faster
+
+        * bmalloc.xcodeproj/project.pbxproj:
+
+        * bmalloc/ScopeExit.h: Added. A barebones very wimpy version of
+        WTF::ScopeExit.
+        (bmalloc::ScopeExit::ScopeExit):
+        (bmalloc::ScopeExit::~ScopeExit):
+        (bmalloc::makeScopeExit):
+
+        * bmalloc/StaticMutex.cpp:
+        (bmalloc::StaticMutex::lockSlowCase): Spin before yielding -- that's the
+        speedup. Don't spin if another CPU is already spinning. In theory, more
+        than one spinner accomplishes nothing, and I found that there's a cutoff
+        around 8 or 16 spinners that becomes performance negative on Mac Pro.
+
+        (Note: Another way to accomplish a similar result, if you don't want to
+        use a bit of state in the lock, is to spin for a random duration between
+        0 and aLot. I tested a version of WTF::WeakRandom with unsynchronized
+        static state and it worked great. But I ultimately opted for the explicit
+        bit because I thought it was clearer.)
+
+        * bmalloc/StaticMutex.h:
+        (bmalloc::StaticMutex::init): Initialize our new bit.
+
+        * bmalloc/ThreadSwitch.h: Added.
+        (bmalloc::threadSwitch): Don't call yield() on Darwin because it's too
+        aggressive. swtch() does what we want: Go run something else, without
+        any other side-effects.
+
 2016-08-03  Geoffrey Garen  <ggaren@apple.com>
 
         [bmalloc] Merging of XLargeRanges can leak the upper range

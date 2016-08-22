@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,34 +20,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ScopeExit.h"
-#include "StaticMutex.h"
-#include "ThreadSwitch.h"
+#if BOS(DARWIN)
+#include <mach/thread_switch.h>
+#endif
+#include <thread>
 
 namespace bmalloc {
-
-void StaticMutex::lockSlowCase()
-{
-    // The longest critical section in bmalloc is much shorter than the
-    // time it takes to make a system call to yield to the OS scheduler.
-    // So, we try again a lot before we yield.
-    static const size_t aLot = 256;
     
-    if (!m_isSpinning.test_and_set()) {
-        auto clear = makeScopeExit([&] { m_isSpinning.clear(); });
-
-        for (size_t i = 0; i < aLot; ++i) {
-            if (try_lock())
-                return;
-        }
-    }
-
-    // Avoid spinning pathologically.
-    while (!try_lock())
-        threadSwitch();
+inline void threadSwitch()
+{
+    // yield() on Darwin will depress your priority to absolute 0 for 10ms,
+    // and possibly clock down the CPU -- so we avoid it.
+#if BOS(DARWIN)
+    swtch();
+#else
+    std::this_thread::yield();
+#endif
 }
 
 } // namespace bmalloc
