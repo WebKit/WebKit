@@ -184,19 +184,22 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     if (isRedirect) {
         auto& redirectingOriginStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
         
+        // We just inserted to the store, so we need to reget 'targetStatistics'
+        auto& updatedTargetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+
         if (m_store->isPrevalentResource(targetPrimaryDomain))
             redirectingOriginStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
         
         ++redirectingOriginStatistics.subresourceHasBeenRedirectedFrom;
-        ++targetStatistics.subresourceHasBeenRedirectedTo;
+        ++updatedTargetStatistics.subresourceHasBeenRedirectedTo;
 
         redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain);
 
-        ++targetStatistics.subresourceHasBeenSubresourceCount;
+        ++updatedTargetStatistics.subresourceHasBeenSubresourceCount;
 
         auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
         
-        targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
+        updatedTargetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(updatedTargetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
     } else {
         ++targetStatistics.subresourceHasBeenSubresourceCount;
 
