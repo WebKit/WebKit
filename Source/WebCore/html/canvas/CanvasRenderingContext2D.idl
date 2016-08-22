@@ -26,7 +26,14 @@
 enum ImageSmoothingQuality { "low", "medium", "high" };
 enum CanvasWindingRule { "nonzero", "evenodd" };
 
-interface CanvasRenderingContext2D : CanvasRenderingContext {
+[
+    CustomIsReachable,
+    JSGenerateToJSObject,
+    JSCustomMarkFunction,
+] interface CanvasRenderingContext2D {
+
+    // back-reference to the canvas
+    readonly attribute HTMLCanvasElement canvas;
 
     void save();
     void restore();

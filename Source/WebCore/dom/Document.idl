@@ -171,7 +171,8 @@
     CSSStyleDeclaration createCSSStyleDeclaration();
 #endif
 
-    CanvasRenderingContext getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
+    // FIXME: This is not standard and has been dropped from Blink already.
+    [Custom] (CanvasRenderingContext2D or WebGLRenderingContextBase) getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
 
     HTMLCollection getElementsByClassName(DOMString classNames);
 
