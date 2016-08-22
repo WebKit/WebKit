@@ -486,10 +486,11 @@ static const LChar singleCharacterEscapeValuesForASCII[128] = {
 };
 
 template <typename T>
-Lexer<T>::Lexer(VM* vm, JSParserBuiltinMode builtinMode)
+Lexer<T>::Lexer(VM* vm, JSParserBuiltinMode builtinMode, JSParserCommentMode commentMode)
     : m_isReparsingFunction(false)
     , m_vm(vm)
     , m_parsingBuiltinFunction(builtinMode == JSParserBuiltinMode::Builtin)
+    , m_commentMode(commentMode)
 {
 }
 
@@ -1883,8 +1884,10 @@ start:
     case CharacterLess:
         shift();
         if (m_current == '!' && peek(1) == '-' && peek(2) == '-') {
-            // <!-- marks the beginning of a line comment (for www usage)
-            goto inSingleLineComment;
+            if (m_commentMode == JSParserCommentMode::Classic) {
+                // <!-- marks the beginning of a line comment (for www usage)
+                goto inSingleLineComment;
+            }
         }
         if (m_current == '<') {
             shift();
@@ -1936,8 +1939,10 @@ start:
         if (m_current == '-') {
             shift();
             if (m_atLineStart && m_current == '>') {
-                shift();
-                goto inSingleLineComment;
+                if (m_commentMode == JSParserCommentMode::Classic) {
+                    shift();
+                    goto inSingleLineComment;
+                }
             }
             token = (!m_terminator) ? MINUSMINUS : AUTOMINUSMINUS;
             break;

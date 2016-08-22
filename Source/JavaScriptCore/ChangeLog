@@ -1,3 +1,65 @@
+2016-08-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Module should not allow HTML comments
+        https://bugs.webkit.org/show_bug.cgi?id=161041
+
+        Reviewed by Saam Barati.
+
+        ES6 Modules intentionally disable HTML comments[1].
+
+        [1]: https://tc39.github.io/ecma262/#sec-html-like-comments
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::CacheKey::CacheKey):
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::commentMode):
+        (JSC::ExecutableInfo::superBinding): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::commentMode):
+        (JSC::UnlinkedCodeBlock::superBinding): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::commentMode):
+        (JSC::BytecodeGenerator::makeFunction):
+        (JSC::BytecodeGenerator::superBinding): Deleted.
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        (JSC::Lexer<T>::lex):
+        * parser/Lexer.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        * parser/Parser.h:
+        (JSC::parse):
+        * parser/ParserModes.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeFlags::SourceCodeFlags):
+        (JSC::SourceCodeKey::SourceCodeKey):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getModuleProgramCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::checkModuleSyntax):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::checkSyntax):
+        * runtime/Executable.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+
 2016-08-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Should not fixup AnyIntUse in 32_64

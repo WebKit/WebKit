@@ -36,13 +36,14 @@ enum class EvalContextType    : uint8_t { None, FunctionEvalContext };
 // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
 // https://bugs.webkit.org/show_bug.cgi?id=151547
 struct ExecutableInfo {
-    ExecutableInfo(bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, SuperBinding superBinding, SourceParseMode parseMode, DerivedContextType derivedContextType, bool isArrowFunctionContext, bool isClassContext, EvalContextType evalContextType)
+    ExecutableInfo(bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, JSParserCommentMode commentMode, SuperBinding superBinding, SourceParseMode parseMode, DerivedContextType derivedContextType, bool isArrowFunctionContext, bool isClassContext, EvalContextType evalContextType)
         : m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
         , m_isConstructor(isConstructor)
         , m_isBuiltinFunction(isBuiltinFunction)
         , m_constructorKind(static_cast<unsigned>(constructorKind))
         , m_superBinding(static_cast<unsigned>(superBinding))
+        , m_commentMode(static_cast<unsigned>(commentMode))
         , m_parseMode(parseMode)
         , m_derivedContextType(static_cast<unsigned>(derivedContextType))
         , m_isArrowFunctionContext(isArrowFunctionContext)
@@ -51,6 +52,7 @@ struct ExecutableInfo {
     {
         ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
         ASSERT(m_superBinding == static_cast<unsigned>(superBinding));
+        ASSERT(m_commentMode == static_cast<unsigned>(commentMode));
     }
 
     bool usesEval() const { return m_usesEval; }
@@ -59,6 +61,7 @@ struct ExecutableInfo {
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
+    JSParserCommentMode commentMode() const { return static_cast<JSParserCommentMode>(m_commentMode); }
     SourceParseMode parseMode() const { return m_parseMode; }
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
     EvalContextType evalContextType() const { return static_cast<EvalContextType>(m_evalContextType); }
@@ -72,6 +75,7 @@ private:
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructorKind : 2;
     unsigned m_superBinding : 1;
+    unsigned m_commentMode: 1;
     SourceParseMode m_parseMode;
     unsigned m_derivedContextType : 2;
     unsigned m_isArrowFunctionContext : 1;

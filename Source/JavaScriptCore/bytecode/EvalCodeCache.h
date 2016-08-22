@@ -50,7 +50,7 @@ namespace JSC {
         public:
             CacheKey(const String& source, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
                 : m_source(source.impl())
-                , m_flags(SourceCodeType::EvalType, JSParserBuiltinMode::NotBuiltin, JSParserStrictMode::NotStrict, derivedContextType, evalContextType, isArrowFunctionContext)
+                , m_flags(SourceCodeType::EvalType, JSParserBuiltinMode::NotBuiltin, JSParserStrictMode::NotStrict, JSParserCommentMode::Classic, derivedContextType, evalContextType, isArrowFunctionContext)
             {
             }
 

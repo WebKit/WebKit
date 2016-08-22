@@ -568,8 +568,8 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     VM* vm = &exec->vm();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     std::unique_ptr<ProgramNode> programNode = parse<ProgramNode>(
-        vm, m_source, Identifier(), JSParserBuiltinMode::NotBuiltin, 
-        JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error);
+        vm, m_source, Identifier(), JSParserBuiltinMode::NotBuiltin,
+        JSParserStrictMode::NotStrict, JSParserCommentMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error);
     if (programNode)
         return 0;
     ASSERT(error.isValid());

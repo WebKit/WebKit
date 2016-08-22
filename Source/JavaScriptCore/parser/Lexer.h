@@ -48,7 +48,7 @@ class Lexer {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Lexer(VM*, JSParserBuiltinMode);
+    Lexer(VM*, JSParserBuiltinMode, JSParserCommentMode);
     ~Lexer();
 
     // Character manipulation functions.
@@ -216,6 +216,7 @@ private:
 
     VM* m_vm;
     bool m_parsingBuiltinFunction;
+    JSParserCommentMode m_commentMode;
 };
 
 template <>

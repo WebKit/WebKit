@@ -80,7 +80,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     RefPtr<SourceProvider> sourceOverride = isParsingDefaultConstructor ? source.provider() : nullptr;
     std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
         &vm, source, Identifier(), builtinMode,
-        JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error,
+        JSParserStrictMode::NotStrict, JSParserCommentMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error,
         &positionBeforeLastNewline, constructorKind);
 
     if (!program) {
@@ -106,7 +106,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     RELEASE_ASSERT(metadata);
     metadata->overrideName(name);
     VariableEnvironment dummyTDZVariables;
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, kind, constructAbility, dummyTDZVariables, DerivedContextType::None, WTFMove(sourceOverride));
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, kind, constructAbility, JSParserCommentMode::Classic, dummyTDZVariables, DerivedContextType::None, WTFMove(sourceOverride));
     return functionExecutable;
 }
 

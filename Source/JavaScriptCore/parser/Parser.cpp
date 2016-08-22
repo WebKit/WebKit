@@ -189,7 +189,7 @@ void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B
 }
 
 template <typename LexerType>
-Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, SourceParseMode parseMode, SuperBinding superBinding, ConstructorKind defaultConstructorKind, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType)
+Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserCommentMode commentMode, SourceParseMode parseMode, SuperBinding superBinding, ConstructorKind defaultConstructorKind, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType)
     : m_vm(vm)
     , m_source(&source)
     , m_hasStackOverflow(false)
@@ -198,11 +198,12 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     , m_statementDepth(0)
     , m_sourceElements(0)
     , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
+    , m_commentMode(commentMode)
     , m_superBinding(superBinding)
     , m_defaultConstructorKind(defaultConstructorKind)
     , m_immediateParentAllowsFunctionDeclarationInStatement(false)
 {
-    m_lexer = std::make_unique<LexerType>(vm, builtinMode);
+    m_lexer = std::make_unique<LexerType>(vm, builtinMode, commentMode);
     m_lexer->setCode(source, &m_parserArena);
     m_token.m_location.line = source.firstLine();
     m_token.m_location.startOffset = source.startOffset();
