@@ -1171,7 +1171,7 @@ sub GenerateHeader
         } else {
             my $export = "";
             $export = "WEBCORE_EXPORT " if $interface->extendedAttributes->{"ExportToWrappedFunction"};
-            push(@headerContent, "    static $export $nativeType toWrapped(JSC::JSValue);\n");
+            push(@headerContent, "    static $export$nativeType toWrapped(JSC::JSValue);\n");
         }
     }
 
