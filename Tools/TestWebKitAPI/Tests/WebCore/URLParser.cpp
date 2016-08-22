@@ -88,6 +88,45 @@ TEST_F(URLParserTest, Parse)
     checkURL("http://user:pass@webkit.org:123", {"http", "user", "pass", "webkit.org", 123, "/", "", "", "http://user:pass@webkit.org:123/"});
     checkURL("http://user:pass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
     checkURL("http://webkit.org", {"http", "", "", "webkit.org", 0, "/", "", "", "http://webkit.org/"});
+    checkURL("http://127.0.0.1", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
+}
+
+static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
+{
+    URLParser parser;
+    auto url = parser.parse(urlString);
+    EXPECT_STREQ(s(partsNew.protocol), s(url->protocol()));
+    EXPECT_STREQ(s(partsNew.user), s(url->user()));
+    EXPECT_STREQ(s(partsNew.password), s(url->pass()));
+    EXPECT_STREQ(s(partsNew.host), s(url->host()));
+    EXPECT_EQ(partsNew.port, url->port());
+    EXPECT_STREQ(s(partsNew.path), s(url->path()));
+    EXPECT_STREQ(s(partsNew.query), s(url->query()));
+    EXPECT_STREQ(s(partsNew.fragment), s(url->fragmentIdentifier()));
+    EXPECT_STREQ(s(partsNew.string), s(url->string()));
+    
+    auto oldURL = URL(URL(), urlString);
+    EXPECT_STREQ(s(partsOld.protocol), s(oldURL.protocol()));
+    EXPECT_STREQ(s(partsOld.user), s(oldURL.user()));
+    EXPECT_STREQ(s(partsOld.password), s(oldURL.pass()));
+    EXPECT_STREQ(s(partsOld.host), s(oldURL.host()));
+    EXPECT_EQ(partsOld.port, oldURL.port());
+    EXPECT_STREQ(s(partsOld.path), s(oldURL.path()));
+    EXPECT_STREQ(s(partsOld.query), s(oldURL.query()));
+    EXPECT_STREQ(s(partsOld.fragment), s(oldURL.fragmentIdentifier()));
+    EXPECT_STREQ(s(partsOld.string), s(oldURL.string()));
+    
+    EXPECT_FALSE(URLParser::allValuesEqual(url.value(), oldURL));
+}
+
+TEST_F(URLParserTest, ParserDifferences)
+{
+    checkURLDifferences("http://127.0.1",
+        {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"},
+        {"http", "", "", "127.0.1", 0, "/", "", "", "http://127.0.1/"});
+    checkURLDifferences("http://011.11.0X11.0x011",
+        {"http", "", "", "9.11.17.17", 0, "/", "", "", "http://9.11.17.17/"},
+        {"http", "", "", "011.11.0x11.0x011", 0, "/", "", "", "http://011.11.0x11.0x011/"});
 }
 
 static void shouldFail(const String& urlString)

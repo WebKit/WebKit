@@ -1,3 +1,16 @@
+2016-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should parse IPv4 addresses
+        https://bugs.webkit.org/show_bug.cgi?id=161023
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::checkURLDifferences):
+        We are already getting differences between the old URL::parse and the new URLParser.
+        (TestWebKitAPI::shouldFail):
+
 2016-08-21  Daniel Bates  <dabates@apple.com>
 
         prepare-ChangeLog lists unmodified functions as modified and marks functions with few changes as deleted

@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "NotImplemented.h"
+#include <array>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -394,11 +395,139 @@ void URLParser::authorityEndReached()
     m_authorityOrHostBuffer.clear();
 }
 
+static void serializeIPv4(uint32_t address, StringBuilder& buffer)
+{
+    buffer.appendNumber(address >> 24);
+    buffer.append('.');
+    buffer.appendNumber((address >> 16) & 0xFF);
+    buffer.append('.');
+    buffer.appendNumber((address >> 8) & 0xFF);
+    buffer.append('.');
+    buffer.appendNumber(address & 0xFF);
+}
+    
+static Optional<uint32_t> parseIPv4Number(StringView::CodePoints::Iterator& iterator, const StringView::CodePoints::Iterator& end)
+{
+    // FIXME: Check for overflow.
+    enum class State : uint8_t {
+        UnknownBase,
+        Decimal,
+        OctalOrHex,
+        Octal,
+        Hex,
+    };
+    State state = State::UnknownBase;
+    uint32_t value = 0;
+    while (iterator != end) {
+        if (*iterator == '.') {
+            ++iterator;
+            return value;
+        }
+        switch (state) {
+        case State::UnknownBase:
+            if (*iterator == '0') {
+                ++iterator;
+                state = State::OctalOrHex;
+                break;
+            }
+            state = State::Decimal;
+            break;
+        case State::OctalOrHex:
+            if (*iterator == 'x' || *iterator == 'X') {
+                ++iterator;
+                state = State::Hex;
+                break;
+            }
+            state = State::Octal;
+            break;
+        case State::Decimal:
+            if (*iterator < '0' || *iterator > '9')
+                return Nullopt;
+            value *= 10;
+            value += *iterator - '0';
+            ++iterator;
+            break;
+        case State::Octal:
+            if (*iterator < '0' || *iterator > '7')
+                return Nullopt;
+            value *= 8;
+            value += *iterator - '0';
+            ++iterator;
+            break;
+        case State::Hex:
+            if (!isASCIIHexDigit(*iterator))
+                return Nullopt;
+            value *= 16;
+            value += toASCIIHexValue(*iterator);
+            ++iterator;
+            break;
+        }
+    }
+    return value;
+}
+
+static uint64_t pow256(size_t exponent)
+{
+    RELEASE_ASSERT(exponent <= 4);
+    uint64_t values[5] = {1, 256, 256 * 256, 256 * 256 * 256, 256ull * 256 * 256 * 256 };
+    return values[exponent];
+}
+
+static Optional<uint32_t> parseIPv4Host(StringView::CodePoints::Iterator iterator, const StringView::CodePoints::Iterator& end)
+{
+    Vector<uint32_t, 4> items;
+    items.reserveInitialCapacity(4);
+    while (iterator != end) {
+        if (items.size() >= 4)
+            return Nullopt;
+        if (auto item = parseIPv4Number(iterator, end))
+            items.append(item.value());
+        else
+            return Nullopt;
+    }
+    if (!items.size() || items.size() > 4)
+        return Nullopt;
+    for (size_t i = 0; i < items.size() - 2; i++) {
+        if (items[i] > 255)
+            return Nullopt;
+    }
+    if (items[items.size() - 1] >= pow256(5 - items.size()))
+        return Nullopt;
+    for (auto item : items) {
+        if (item > 255)
+            return Nullopt;
+    }
+    uint32_t ipv4 = items.takeLast();
+    for (size_t counter = 0; counter < items.size(); ++counter)
+        ipv4 += items[counter] * pow256(3 - counter);
+    return ipv4;
+}
+
+static Optional<std::array<uint16_t, 8>> parseIPv6Host(StringView::CodePoints::Iterator, StringView::CodePoints::Iterator)
+{
+    notImplemented();
+    return Nullopt;
+}
+
 void URLParser::hostEndReached()
 {
     auto codePoints = StringView(m_authorityOrHostBuffer.toString()).codePoints();
     auto iterator = codePoints.begin();
     auto end = codePoints.end();
+    if (iterator == end)
+        return;
+    if (*iterator == '[') {
+        ++iterator;
+        parseIPv6Host(iterator, end);
+        return;
+    }
+    if (auto address = parseIPv4Host(iterator, end)) {
+        serializeIPv4(address.value(), m_buffer);
+        m_url.m_hostEnd = m_buffer.length();
+        // FIXME: Handle the port correctly.
+        m_url.m_portEnd = m_buffer.length();
+        return;
+    }
     for (; iterator != end; ++iterator) {
         if (*iterator == ':') {
             ++iterator;
