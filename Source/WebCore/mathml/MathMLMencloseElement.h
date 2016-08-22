@@ -52,15 +52,16 @@ public:
         PhasorAngle = 1 << 13 // FIXME: phasorangle is not implemented. See http://wkb.ug/127466
         // We do not implement the Radical notation. Authors should instead use the <msqrt> element.
     };
-    bool hasNotation(MencloseNotationFlag notationFlag) const { return m_notationFlags & notationFlag; }
+    bool hasNotation(MencloseNotationFlag);
 
 private:
     MathMLMencloseElement(const QualifiedName&, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseNotationAttribute();
     void clearNotations() { m_notationFlags = 0; }
-    void addNotation(MencloseNotationFlag notationFlag) { m_notationFlags |= notationFlag; }
-    unsigned short m_notationFlags;
+    void addNotation(MencloseNotationFlag notationFlag) { m_notationFlags.value() |= notationFlag; }
+    Optional<uint16_t> m_notationFlags;
 };
 
 }

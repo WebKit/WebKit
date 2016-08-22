@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+using namespace MathMLNames;
+
 MathMLMencloseElement::MathMLMencloseElement(const QualifiedName& tagName, Document& document)
     : MathMLInlineContainerElement(tagName, document)
 {
@@ -52,58 +54,69 @@ RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(RenderStyl
     return createRenderer<RenderMathMLMenclose>(*this, WTFMove(style));
 }
 
-void MathMLMencloseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLMencloseElement::parseNotationAttribute()
 {
-    if (name == MathMLNames::notationAttr) {
-        clearNotations();
-        if (!hasAttribute(name)) {
-            addNotation(LongDiv); // default value is longdiv
-            return;
-        }
-        Vector<String> notationsList;
-        String(value).split(' ', notationsList);
-        for (auto& notation : notationsList) {
-            if (notation == "longdiv") {
-                addNotation(LongDiv);
-            } else if (notation == "roundedbox") {
-                addNotation(RoundedBox);
-            } else if (notation == "circle") {
-                addNotation(Circle);
-            } else if (notation == "left") {
-                addNotation(Left);
-            } else if (notation == "right") {
-                addNotation(Right);
-            } else if (notation == "top") {
-                addNotation(Top);
-            } else if (notation == "bottom") {
-                addNotation(Bottom);
-            } else if (notation == "updiagonalstrike") {
-                addNotation(UpDiagonalStrike);
-            } else if (notation == "downdiagonalstrike") {
-                addNotation(DownDiagonalStrike);
-            } else if (notation == "verticalstrike") {
-                addNotation(VerticalStrike);
-            } else if (notation == "horizontalstrike") {
-                addNotation(HorizontalStrike);
-            } else if (notation == "updiagonalarrow") {
-                addNotation(UpDiagonalArrow);
-            } else if (notation == "phasorangle") {
-                addNotation(PhasorAngle);
-            } else if (notation == "box") {
-                addNotation(Left);
-                addNotation(Right);
-                addNotation(Top);
-                addNotation(Bottom);
-            } else if (notation == "actuarial") {
-                addNotation(Right);
-                addNotation(Top);
-            } else if (notation == "madruwb") {
-                addNotation(Right);
-                addNotation(Bottom);
-            }
-        }
+    clearNotations();
+    if (!hasAttribute(notationAttr)) {
+        addNotation(LongDiv); // The default value is longdiv.
         return;
     }
+    auto& value = attributeWithoutSynchronization(notationAttr);
+    Vector<String> notationsList;
+    String(value).split(' ', notationsList);
+    for (auto& notation : notationsList) {
+        if (notation == "longdiv") {
+            addNotation(LongDiv);
+        } else if (notation == "roundedbox") {
+            addNotation(RoundedBox);
+        } else if (notation == "circle") {
+            addNotation(Circle);
+        } else if (notation == "left") {
+            addNotation(Left);
+        } else if (notation == "right") {
+            addNotation(Right);
+        } else if (notation == "top") {
+            addNotation(Top);
+        } else if (notation == "bottom") {
+            addNotation(Bottom);
+        } else if (notation == "updiagonalstrike") {
+            addNotation(UpDiagonalStrike);
+        } else if (notation == "downdiagonalstrike") {
+            addNotation(DownDiagonalStrike);
+        } else if (notation == "verticalstrike") {
+            addNotation(VerticalStrike);
+        } else if (notation == "horizontalstrike") {
+            addNotation(HorizontalStrike);
+        } else if (notation == "updiagonalarrow") {
+            addNotation(UpDiagonalArrow);
+        } else if (notation == "phasorangle") {
+            addNotation(PhasorAngle);
+        } else if (notation == "box") {
+            addNotation(Left);
+            addNotation(Right);
+            addNotation(Top);
+            addNotation(Bottom);
+        } else if (notation == "actuarial") {
+            addNotation(Right);
+            addNotation(Top);
+        } else if (notation == "madruwb") {
+            addNotation(Right);
+            addNotation(Bottom);
+        }
+    }
+}
+
+bool MathMLMencloseElement::hasNotation(MencloseNotationFlag notationFlag)
+{
+    if (!m_notationFlags)
+        parseNotationAttribute();
+    return m_notationFlags.value() & notationFlag;
+}
+
+void MathMLMencloseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+{
+    if (name == notationAttr)
+        m_notationFlags = Nullopt;
 
     MathMLInlineContainerElement::parseAttribute(name, value);
 }
