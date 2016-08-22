@@ -162,16 +162,4 @@ bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
     return decodeStringText<UChar>(decoder, length, result);
 }
 
-#if HAVE(DTRACE)
-void ArgumentCoder<uuid_t>::encode(Encoder& encoder, const uuid_t& uuid)
-{
-    SimpleArgumentCoder<uuid_t>::encode(encoder, uuid);
-}
-
-bool ArgumentCoder<uuid_t>::decode(Decoder& decoder, uuid_t& uuid)
-{
-    return SimpleArgumentCoder<uuid_t>::decode(decoder, uuid);
-}
-#endif
-
 } // namespace IPC

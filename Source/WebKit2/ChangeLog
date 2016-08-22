@@ -1,3 +1,34 @@
+2016-08-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove MessageRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=161022
+
+        Reviewed by Tim Horton.
+
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<uuid_t>::encode): Deleted.
+        (IPC::ArgumentCoder<uuid_t>::decode): Deleted.
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::sendSyncMessageFromSecondaryThread):
+        (IPC::Connection::dispatchSyncMessage): Deleted.
+        (IPC::Connection::dispatchMessage): Deleted.
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::encodeHeader): Deleted.
+        * Platform/IPC/MessageRecorder.cpp: Removed.
+        (IPC::MessageRecorder::isEnabled): Deleted.
+        (IPC::MessageRecorder::recordOutgoingMessage): Deleted.
+        (IPC::MessageRecorder::recordIncomingMessage): Deleted.
+        (IPC::MessageRecorder::MessageProcessingToken::MessageProcessingToken): Deleted.
+        (IPC::MessageRecorder::MessageProcessingToken::~MessageProcessingToken): Deleted.
+        * Platform/IPC/MessageRecorder.h: Removed.
+        (IPC::MessageRecorder::MessageRecorder): Deleted.
+        * Platform/IPC/MessageRecorderProbes.d: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-08-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build after r204717.

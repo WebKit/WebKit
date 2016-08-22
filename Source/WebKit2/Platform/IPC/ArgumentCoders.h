@@ -37,10 +37,6 @@
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
-#if HAVE(DTRACE)
-#include <uuid/uuid.h>
-#endif
-
 namespace IPC {
 
 // An argument coder works on POD types
@@ -361,13 +357,6 @@ template<> struct ArgumentCoder<String> {
     static void encode(Encoder&, const String&);
     static bool decode(Decoder&, String&);
 };
-
-#if HAVE(DTRACE)
-template<> struct ArgumentCoder<uuid_t> {
-    static void encode(Encoder&, const uuid_t&);
-    static bool decode(Decoder&, uuid_t&);
-};
-#endif
 
 } // namespace IPC
 

@@ -161,9 +161,6 @@ void Encoder::encodeHeader()
     *this << m_messageReceiverName;
     *this << m_messageName;
     *this << m_destinationID;
-#if HAVE(DTRACE)
-    *this << m_UUID;
-#endif
 }
 
 uint8_t* Encoder::grow(unsigned alignment, size_t size)

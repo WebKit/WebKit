@@ -173,7 +173,7 @@ public:
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags = 0);
 
     std::unique_ptr<Encoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
-    bool sendMessage(std::unique_ptr<Encoder>, unsigned messageSendFlags = 0, bool alreadyRecordedMessage = false);
+    bool sendMessage(std::unique_ptr<Encoder>, unsigned messageSendFlags = 0);
     std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout, unsigned syncSendFlags = 0);
     std::unique_ptr<Decoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout);
     bool sendSyncReply(std::unique_ptr<Encoder>);
