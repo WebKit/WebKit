@@ -1,3 +1,38 @@
+2016-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        <select> menu on iPad causes shifting of hit-testing areas
+        https://bugs.webkit.org/show_bug.cgi?id=150079
+
+        Reviewed by Tim Horton.
+
+        -isAssistingNode (aka the poorly named isEditable) is input into WebPageProxy::computeCustomFixedPositionRect(),
+        so when it changes we have to update visible rects. We were doing this on focus, but failing
+        to do it on blur.
+
+        Added the ability to test by:
+        1. Making it possible to initiate an animated scroll in the UI process
+        2. Adding callbacks for starting and ending interaction with a form control. Sadly
+        the "ending interaction" for <select> popovers on iPad isn't late enough, since we
+        have no way currently to know when the dimming view behind the popover animates out,
+        so for now the test keeps trying to tap a button.
+
+        Test: fast/forms/ios/ipad/unfocus-inside-fixed-hittest.html
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToPoint:atScale:animated:]):
+        (-[WKWebView _scrollToRect:origin:minimumScrollDistance:]):
+        (-[WKWebView _scrollByContentOffset:]):
+        (-[WKWebView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+        (-[WKWebView didStartFormControlInteraction]):
+        (-[WKWebView didEndFormControlInteraction]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setIsEditable:]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+        (-[WKContentView _stopAssistingNode]):
+
 2016-08-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] <a ping> and <area ping> tests time out

@@ -1,3 +1,43 @@
+2016-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        <select> menu on iPad causes shifting of hit-testing areas
+        https://bugs.webkit.org/show_bug.cgi?id=150079
+
+        Reviewed by Tim Horton.
+
+        -isAssistingNode (aka the poorly named isEditable) is input into WebPageProxy::computeCustomFixedPositionRect(),
+        so when it changes we have to update visible rects. We were doing this on focus, but failing
+        to do it on blur.
+
+        Added the ability to test by:
+        1. Making it possible to initiate an animated scroll in the UI process
+        2. Adding callbacks for starting and ending interaction with a form control. Sadly
+        the "ending interaction" for <select> popovers on iPad isn't late enough, since we
+        have no way currently to know when the dimming view behind the popover animates out,
+        so for now the test keeps trying to tap a button.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.h:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setDidStartFormControlInteractionCallback):
+        (WTR::UIScriptController::didStartFormControlInteractionCallback):
+        (WTR::UIScriptController::setDidEndFormControlInteractionCallback):
+        (WTR::UIScriptController::didEndFormControlInteractionCallback):
+        (WTR::UIScriptController::scrollToOffset):
+        (WTR::UIScriptController::platformSetDidStartFormControlInteractionCallback):
+        (WTR::UIScriptController::platformSetDidEndFormControlInteractionCallback):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView didStartFormControlInteraction]):
+        (-[TestRunnerWKWebView didEndFormControlInteraction]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::contentOffsetBoundedInValidRange):
+        (WTR::UIScriptController::scrollToOffset):
+        (WTR::UIScriptController::platformSetDidStartFormControlInteractionCallback):
+        (WTR::UIScriptController::platformSetDidEndFormControlInteractionCallback):
+
 2016-08-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EFL][GTK] Script process-linux-coredump is not needed, switch back to use the kernel core dumper instead.

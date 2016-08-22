@@ -264,6 +264,9 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)dismissFormAccessoryView WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)selectFormAccessoryPickerRow:(int)rowIndex WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
+- (void)didStartFormControlInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)didEndFormControlInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 #endif
 
 #if !TARGET_OS_IPHONE

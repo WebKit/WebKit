@@ -73,6 +73,8 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+    self.didStartFormControlInteractionCallback = nil;
+    self.didEndFormControlInteractionCallback = nil;
     self.willBeginZoomingCallback = nil;
     self.didEndZoomingCallback = nil;
     self.didShowKeyboardCallback = nil;
@@ -83,6 +85,18 @@
     self.showKeyboardCompletionHandler = nil;
 
     [super dealloc];
+}
+
+- (void)didStartFormControlInteraction
+{
+    if (self.didStartFormControlInteractionCallback)
+        self.didStartFormControlInteractionCallback();
+}
+
+- (void)didEndFormControlInteraction
+{
+    if (self.didEndFormControlInteractionCallback)
+        self.didEndFormControlInteractionCallback();
 }
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler

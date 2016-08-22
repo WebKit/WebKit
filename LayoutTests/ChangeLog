@@ -1,3 +1,19 @@
+2016-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        <select> menu on iPad causes shifting of hit-testing areas
+        https://bugs.webkit.org/show_bug.cgi?id=150079
+
+        Reviewed by Tim Horton.
+
+        This test:
+        1. Scrolls in the ui process, so that position:fixed kicks in
+        2. Taps on a <select>, which disabled position:fixed behavior
+        3. Chooses a <select> option, dismissing the <select>, which restores position:fixed behavior
+        4. Tries to tap a button inside position:fixed.
+
+        * fast/forms/ios/ipad/unfocus-inside-fixed-hittest-expected.txt: Added.
+        * fast/forms/ios/ipad/unfocus-inside-fixed-hittest.html: Added.
+
 2016-08-22  Antti Koivisto  <antti@apple.com>
 
         Can't style descendants in shadow tree using the :host pseudo class

@@ -62,6 +62,14 @@ public:
     
     void dismissFormAccessoryView();
     void selectFormAccessoryPickerRow(long);
+    
+    void scrollToOffset(long x, long y);
+
+    void setDidStartFormControlInteractionCallback(JSValueRef);
+    JSValueRef didStartFormControlInteractionCallback() const;
+
+    void setDidEndFormControlInteractionCallback(JSValueRef);
+    JSValueRef didEndFormControlInteractionCallback() const;
 
     void setWillBeginZoomingCallback(JSValueRef);
     JSValueRef willBeginZoomingCallback() const;
@@ -88,7 +96,9 @@ public:
 
 private:
     UIScriptController(UIScriptContext&);
-    
+
+    void platformSetDidStartFormControlInteractionCallback();
+    void platformSetDidEndFormControlInteractionCallback();
     void platformSetWillBeginZoomingCallback();
     void platformSetDidEndZoomingCallback();
     void platformSetDidShowKeyboardCallback();

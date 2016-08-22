@@ -748,6 +748,15 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     return _isEditable;
 }
 
+- (BOOL)setIsEditable:(BOOL)isEditable
+{
+    if (isEditable == _isEditable)
+        return NO;
+
+    _isEditable = isEditable;
+    return YES;
+}
+
 - (BOOL)canBecomeFirstResponder
 {
     if (_resigningFirstResponder)
@@ -3579,7 +3588,7 @@ static bool isAssistableInputType(InputType type)
     if (_assistedNodeInformation.elementType == information.elementType && _assistedNodeInformation.elementRect == information.elementRect)
         return;
 
-    _isEditable = YES;
+    BOOL editableChanged = [self setIsEditable:YES];
     _assistedNodeInformation = information;
     _inputPeripheral = nil;
     _traits = nil;
@@ -3600,7 +3609,8 @@ static bool isAssistableInputType(InputType type)
         break;
     }
     
-    if (information.insideFixedPosition)
+    // The custom fixed position rect behavior is affected by -isAssistingNode, so if that changes we need to recompute rects.
+    if (editableChanged)
         [_webView _updateVisibleContentRects];
     
     [self _displayFormNodeInputView];
@@ -3612,13 +3622,17 @@ static bool isAssistableInputType(InputType type)
         _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self focusedElementInfo:focusedElementInfo.get() userObject:userObject]);
         [inputDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
     }
+    
+    [_webView didStartFormControlInteraction];
 }
 
 - (void)_stopAssistingNode
 {
     [_formInputSession invalidate];
     _formInputSession = nil;
-    _isEditable = NO;
+
+    BOOL editableChanged = [self setIsEditable:NO];
+
     _assistedNodeInformation.elementType = InputType::None;
     _inputPeripheral = nil;
 
@@ -3628,6 +3642,12 @@ static bool isAssistableInputType(InputType type)
     [self _updateAccessory];
     // The name is misleading, but this actually clears the selection views and removes any selection.
     [_webSelectionAssistant resignedFirstResponder];
+
+    // The custom fixed position rect behavior is affected by -isAssistingNode, so if that changes we need to recompute rects.
+    if (editableChanged)
+        [_webView _updateVisibleContentRects];
+
+    [_webView didEndFormControlInteraction];
 }
 
 - (void)_selectionChanged

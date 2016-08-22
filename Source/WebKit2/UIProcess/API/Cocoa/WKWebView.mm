@@ -1433,6 +1433,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     if (scale != zoomScale)
         _page->willStartUserTriggeredZooming();
 
+    LOG_WITH_STREAM(VisibleRects, stream << "_zoomToPoint:" << point << " scale: " << scale << " duration:" << duration);
+
     [_scrollView _zoomToCenter:point scale:scale duration:duration];
 }
 
@@ -1533,6 +1535,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     [_contentView willStartZoomOrScroll];
 
+    LOG_WITH_STREAM(VisibleRects, stream << "_scrollToRect: scrolling to " << [_scrollView contentOffset] + scrollViewOffsetDelta);
+
     [_scrollView setContentOffset:([_scrollView contentOffset] + scrollViewOffsetDelta) animated:YES];
     return true;
 }
@@ -1549,6 +1553,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (CGPointEqualToPoint(boundedOffset, currentOffset))
         return;
     [_contentView willStartZoomOrScroll];
+
+    LOG_WITH_STREAM(VisibleRects, stream << "_scrollByContentOffset: scrolling to " << boundedOffset);
+
     [_scrollView setContentOffset:boundedOffset animated:YES];
 }
 
@@ -1673,6 +1680,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     if (scale != contentZoomScale(self))
         _page->willStartUserTriggeredZooming();
+
+    LOG_WITH_STREAM(VisibleRects, stream << "_zoomToFocusRect: zooming to " << newCenter << " scale:" << scale);
 
     // The newCenter has been computed in the new scale, but _zoomToCenter expected the center to be in the original scale.
     newCenter.scale(1 / scale, 1 / scale);
@@ -4525,6 +4534,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)selectFormAccessoryPickerRow:(int)rowIndex
 {
     [_contentView selectFormAccessoryPickerRow:rowIndex];
+}
+
+- (void)didStartFormControlInteraction
+{
+    // For subclasses to override.
+}
+
+- (void)didEndFormControlInteraction
+{
+    // For subclasses to override.
 }
 
 #endif // PLATFORM(IOS)

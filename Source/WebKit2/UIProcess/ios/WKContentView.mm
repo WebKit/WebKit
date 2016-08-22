@@ -31,6 +31,7 @@
 #import "APIPageConfiguration.h"
 #import "AccessibilityIOS.h"
 #import "ApplicationStateTracker.h"
+#import "Logging.h"
 #import "PageClientImplIOS.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -58,6 +59,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/QuartzCoreSPI.h>
+#import <WebCore/TextStream.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
 
@@ -376,6 +378,8 @@ private:
         _historicalKinematicData.clear();
 
     FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredRect, zoomScale, WebPageProxy::UnobscuredRectConstraint::ConstrainedToDocumentRect);
+
+    LOG_WITH_STREAM(VisibleRects, stream << "didUpdateVisibleRect: visibleRect:" << visibleRect << " unobscuredRect:" << unobscuredRect << " fixedPositionRectForLayout:" << fixedPositionRectForLayout);
 
     VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
         visibleRect,

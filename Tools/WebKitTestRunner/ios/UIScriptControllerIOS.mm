@@ -187,6 +187,28 @@ void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
     [webView selectFormAccessoryPickerRow:rowIndex];
 }
 
+static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
+{
+    UIEdgeInsets contentInsets = scrollView.contentInset;
+    CGSize contentSize = scrollView.contentSize;
+    CGSize scrollViewSize = scrollView.bounds.size;
+
+    CGFloat maxHorizontalOffset = contentSize.width + contentInsets.right - scrollViewSize.width;
+    contentOffset.x = std::min(maxHorizontalOffset, contentOffset.x);
+    contentOffset.x = std::max(-contentInsets.left, contentOffset.x);
+
+    CGFloat maxVerticalOffset = contentSize.height + contentInsets.bottom - scrollViewSize.height;
+    contentOffset.y = std::min(maxVerticalOffset, contentOffset.y);
+    contentOffset.y = std::max(-contentInsets.top, contentOffset.y);
+    return contentOffset;
+}
+
+void UIScriptController::scrollToOffset(long x, long y)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView.scrollView setContentOffset:contentOffsetBoundedInValidRange(webView.scrollView, CGPointMake(x, y)) animated:YES];
+}
+
 void UIScriptController::keyboardAccessoryBarNext()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
@@ -219,6 +241,26 @@ JSObjectRef UIScriptController::contentVisibleRect() const
     
     WKRect wkRect = WKRectMake(contentVisibleRect.origin.x, contentVisibleRect.origin.y, contentVisibleRect.size.width, contentVisibleRect.size.height);
     return m_context->objectFromRect(wkRect);
+}
+
+void UIScriptController::platformSetDidStartFormControlInteractionCallback()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.didStartFormControlInteractionCallback = ^{
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidStartFormControlInteraction);
+    };
+}
+
+void UIScriptController::platformSetDidEndFormControlInteractionCallback()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.didEndFormControlInteractionCallback = ^{
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
+    };
 }
 
 void UIScriptController::platformSetWillBeginZoomingCallback()
