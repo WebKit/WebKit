@@ -1,3 +1,13 @@
+2016-08-22  Daniel Bates  <dabates@apple.com>
+
+        Skip the test in http/tests/navigation/ping-attribute in iOS WebKit 2
+
+        Touch events are not supported in WebKit for iOS Simulator built with the public iOS SDK.
+        The tests simulate mouse events when run in DumpRenderTree. And simulating mouse events
+        is supported in WebKit for iOS Simulator built with the public iOS SDK.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-08-22  Johan K. Jensen  <johan_jensen@apple.com>
 
         Make NetworkLoadTiming use double for higher precision in Resource Timing
