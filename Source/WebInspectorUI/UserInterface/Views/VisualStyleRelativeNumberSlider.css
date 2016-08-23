@@ -43,5 +43,6 @@
 
 .visual-style-property-container.number-input-box.relative-number-slider > .relative-slider {
     width: 47%;
+    margin-top: 0;
     margin-right: 7px;
 }

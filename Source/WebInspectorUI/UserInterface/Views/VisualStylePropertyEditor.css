@@ -32,6 +32,10 @@
     flex-grow: 1;
 }
 
+.visual-style-property-container.inactive {
+    display: none;
+}
+
 .visual-style-property-container > .visual-style-property-title {
     margin: 4px;
     text-align: right;

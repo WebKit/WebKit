@@ -102,13 +102,15 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this.element.appendChild(this._sections.text.element);
 
         // Background Section
+        this._generateSection("fill", WebInspector.UIString("Fill"));
+        this._generateSection("stroke", WebInspector.UIString("Stroke"));
         this._generateSection("background-style", WebInspector.UIString("Style"));
         this._generateSection("border", WebInspector.UIString("Border"));
         this._generateSection("outline", WebInspector.UIString("Outline"));
         this._generateSection("box-shadow", WebInspector.UIString("Box Shadow"));
         this._generateSection("list-style", WebInspector.UIString("List Styles"));
 
-        this._sections.background = new WebInspector.DetailsSection("background", WebInspector.UIString("Background"), [this._groups.backgroundStyle.section, this._groups.border.section, this._groups.outline.section, this._groups.boxShadow.section, this._groups.listStyle.section]);
+        this._sections.background = new WebInspector.DetailsSection("background", WebInspector.UIString("Background"), [this._groups.fill.section, this._groups.stroke.section, this._groups.backgroundStyle.section, this._groups.border.section, this._groups.outline.section, this._groups.boxShadow.section, this._groups.listStyle.section]);
         this.element.appendChild(this._sections.background.element);
 
         // Effects Section
@@ -192,6 +194,57 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let hasMatchedElementPseudoSelector = this._currentStyle.ownerRule && this._currentStyle.ownerRule.hasMatchedPseudoElementSelector();
         this._groups.content.section.element.classList.toggle("inactive", !hasMatchedElementPseudoSelector);
         this._groups.listStyle.section.element.classList.toggle("inactive", hasMatchedElementPseudoSelector);
+
+        let node = this._nodeStyles.node;
+        let isSVGElement = node.isSVGElement();
+
+        this._groups.float.section.element.classList.toggle("inactive", isSVGElement);
+        this._groups.border.section.element.classList.toggle("inactive", isSVGElement);
+        this._groups.boxShadow.section.element.classList.toggle("inactive", isSVGElement);
+        this._groups.listStyle.section.element.classList.toggle("inactive", isSVGElement);
+
+        this._groups.fill.section.element.classList.toggle("inactive", !isSVGElement);
+        this._groups.stroke.section.element.classList.toggle("inactive", !isSVGElement);
+
+        let isSVGCircle = node.nodeName() === "circle";
+        let isSVGEllipse = node.nodeName() === "ellipse";
+        let isSVGRadialGradient = node.nodeName() === "radialGradient";
+        let isSVGRect = node.nodeName() === "rect";
+        let isSVGLine = node.nodeName() === "line";
+        let isSVGLinearGradient = node.nodeName() === "linearGradient";
+
+        // Only show the dimensions section if the current element is not an SVG element or is <ellipse>, <rect>, <circle>, or <radialGradient>.
+        this._groups.dimensions.section.element.classList.toggle("inactive", !(!isSVGElement || isSVGEllipse || isSVGRect || isSVGCircle || isSVGRadialGradient));
+
+        // Only show the non-SVG dimensions group if the current element is not an SVG element or is <rect>.
+        this._groups.dimensions.defaultGroup.element.classList.toggle("inactive", !(!isSVGElement || isSVGRect));
+
+        // Only show the SVG dimensions group if the current element is an SVG element, <rect>, <circle>, or <radialGradient>.
+        this._groups.dimensions.svgGroup.element.classList.toggle("inactive", !(isSVGEllipse || isSVGRect || isSVGCircle || isSVGRadialGradient));
+
+        // Only show editor for "r" if the current element is <circle> or <radialGradient>.
+        this._groups.dimensions.properties.r.element.classList.toggle("inactive", !(isSVGCircle || isSVGRadialGradient));
+
+        // Only show editors for "rx" and "ry" if the current element is <ellipse> or <rect>.
+        this._groups.dimensions.properties.rx.element.classList.toggle("inactive", !(isSVGEllipse || isSVGRect));
+        this._groups.dimensions.properties.ry.element.classList.toggle("inactive", !(isSVGEllipse || isSVGRect));
+
+        // Only show the SVG position group if the current element is <rect>, <circle>, <ellipse>, <line>, <radialGradient>, or <linearGradient>.
+        this._groups.position.svgGroup.element.classList.toggle("inactive", !(isSVGRect || isSVGCircle || isSVGEllipse || isSVGLine || isSVGRadialGradient || isSVGLinearGradient));
+
+        // Only show editors for "x" and "y" if the current element is <rect>.
+        this._groups.position.properties.x.element.classList.toggle("inactive", !isSVGRect);
+        this._groups.position.properties.y.element.classList.toggle("inactive", !isSVGRect);
+
+        // Only show editors for "x1", "y1", "x2", and "y2" if the current element is <line> or <linearGradient>.
+        this._groups.position.properties.x1.element.classList.toggle("inactive", !(isSVGLine || isSVGLinearGradient));
+        this._groups.position.properties.y1.element.classList.toggle("inactive", !(isSVGLine || isSVGLinearGradient));
+        this._groups.position.properties.x2.element.classList.toggle("inactive", !(isSVGLine || isSVGLinearGradient));
+        this._groups.position.properties.y2.element.classList.toggle("inactive", !(isSVGLine || isSVGLinearGradient));
+
+        // Only show editors for "cx" and "cy" if the current element is <circle>, <ellipse>, or <radialGradient>.
+        this._groups.position.properties.cx.element.classList.toggle("inactive", !(isSVGCircle || isSVGEllipse || isSVGRadialGradient));
+        this._groups.position.properties.cy.element.classList.toggle("inactive", !(isSVGCircle || isSVGEllipse || isSVGRadialGradient));
     }
 
     _updateProperties(group, forceStyleUpdate)
@@ -459,10 +512,45 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         positionType.element.appendChild(properties.zIndex.element);
         positionType.element.classList.add("visual-style-separated-row");
 
-        rows.unshift(positionType)
+        rows.unshift(positionType);
 
-        let positionGroup = new WebInspector.DetailsSectionGroup(rows);
-        this._populateSection(group, [positionGroup]);
+        group.defaultGroup = new WebInspector.DetailsSectionGroup(rows);
+
+        let xyRow = new WebInspector.DetailsSectionRow;
+
+        properties.x = new WebInspector.VisualStyleNumberInputBox("x", WebInspector.UIString("X"), this._keywords.boxModel, this._units.defaults, true);
+        properties.y = new WebInspector.VisualStyleNumberInputBox("y", WebInspector.UIString("Y"), this._keywords.boxModel, this._units.defaults, true);
+
+        xyRow.element.appendChild(properties.x.element);
+        xyRow.element.appendChild(properties.y.element);
+
+        let x1y1Row = new WebInspector.DetailsSectionRow;
+
+        properties.x1 = new WebInspector.VisualStyleNumberInputBox("x1", WebInspector.UIString("X1"), this._keywords.boxModel, this._units.defaults, true);
+        properties.y1 = new WebInspector.VisualStyleNumberInputBox("y1", WebInspector.UIString("Y1"), this._keywords.boxModel, this._units.defaults, true);
+
+        x1y1Row.element.appendChild(properties.x1.element);
+        x1y1Row.element.appendChild(properties.y1.element);
+
+        let x2y2Row = new WebInspector.DetailsSectionRow;
+
+        properties.x2 = new WebInspector.VisualStyleNumberInputBox("x2", WebInspector.UIString("X2"), this._keywords.boxModel, this._units.defaults, true);
+        properties.y2 = new WebInspector.VisualStyleNumberInputBox("y2", WebInspector.UIString("Y2"), this._keywords.boxModel, this._units.defaults, true);
+
+        x2y2Row.element.appendChild(properties.x2.element);
+        x2y2Row.element.appendChild(properties.y2.element);
+
+        let cxcyRow = new WebInspector.DetailsSectionRow;
+
+        properties.cx = new WebInspector.VisualStyleNumberInputBox("cx", WebInspector.UIString("Center X"), this._keywords.boxModel, this._units.defaults, true);
+        properties.cy = new WebInspector.VisualStyleNumberInputBox("cy", WebInspector.UIString("Center Y"), this._keywords.boxModel, this._units.defaults, true);
+
+        cxcyRow.element.appendChild(properties.cx.element);
+        cxcyRow.element.appendChild(properties.cy.element);
+
+        group.svgGroup = new WebInspector.DetailsSectionGroup([xyRow, x1y1Row, x2y2Row, cxcyRow]);
+
+        this._populateSection(group, [group.defaultGroup, group.svgGroup]);
 
         let allowedPositionValues = ["relative", "absolute", "fixed", "-webkit-sticky"];
         properties.zIndex.addDependency("position", allowedPositionValues);
@@ -556,8 +644,29 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._addMetricsMouseListeners(group.properties.maxWidth, highlightMode);
         this._addMetricsMouseListeners(group.properties.maxHeight, highlightMode);
 
-        let dimensionsGroup = new WebInspector.DetailsSectionGroup([dimensionsTabController, dimensionsRegularGroup, dimensionsMinGroup, dimensionsMaxGroup]);
-        this._populateSection(group, [dimensionsGroup]);
+        group.defaultGroup = new WebInspector.DetailsSectionGroup([dimensionsTabController, dimensionsRegularGroup, dimensionsMinGroup, dimensionsMaxGroup]);
+
+        let rRow = new WebInspector.DetailsSectionRow;
+
+        properties.r = new WebInspector.VisualStyleRelativeNumberSlider("r", WebInspector.UIString("Radius"), this._keywords.boxModel, this._units.defaults);
+
+        rRow.element.appendChild(properties.r.element);
+
+        let rxRow = new WebInspector.DetailsSectionRow;
+
+        properties.rx = new WebInspector.VisualStyleRelativeNumberSlider("rx", WebInspector.UIString("Radius X"), this._keywords.boxModel, this._units.defaults);
+
+        rxRow.element.appendChild(properties.rx.element);
+
+        let ryRow = new WebInspector.DetailsSectionRow;
+
+        properties.ry = new WebInspector.VisualStyleRelativeNumberSlider("ry", WebInspector.UIString("Radius Y"), this._keywords.boxModel, this._units.defaults);
+
+        ryRow.element.appendChild(properties.ry.element);
+
+        group.svgGroup = new WebInspector.DetailsSectionGroup([rRow, rxRow, ryRow]);
+
+        this._populateSection(group, [group.defaultGroup, group.svgGroup]);
     }
 
     _populateMarginSection()
@@ -845,6 +954,78 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let textShadowGroup = new WebInspector.DetailsSectionGroup([textShadowSizing, textShadowStyle]);
         this._populateSection(group, [textShadowGroup]);
+    }
+
+    _populateFillSection()
+    {
+        let group = this._groups.fill;
+        let properties = group.properties;
+
+        let fillRow = new WebInspector.DetailsSectionRow;
+
+        properties.fill = new WebInspector.VisualStyleColorPicker("fill", WebInspector.UIString("Color"));
+        properties.fillRule = new WebInspector.VisualStyleKeywordPicker("fill-rule", WebInspector.UIString("Rule"), this._keywords.defaults.concat(["Nonzero", "Evenodd"]));
+
+        fillRow.element.appendChild(properties.fill.element);
+        fillRow.element.appendChild(properties.fillRule.element);
+
+        let fillOpacityRow = new WebInspector.DetailsSectionRow;
+
+        properties.fillOpacity = new WebInspector.VisualStyleUnitSlider("fill-opacity", WebInspector.UIString("Opacity"));
+
+        fillOpacityRow.element.appendChild(properties.fillOpacity.element);
+
+        group.specifiedWidthProperties = [properties.fillOpacity];
+
+        let fillGroup = new WebInspector.DetailsSectionGroup([fillRow, fillOpacityRow]);
+        this._populateSection(group, [fillGroup]);
+    }
+
+    _populateStrokeSection()
+    {
+        let group = this._groups.stroke;
+        let properties = group.properties;
+
+        let strokeRow = new WebInspector.DetailsSectionRow;
+
+        properties.stroke = new WebInspector.VisualStyleColorPicker("stroke", WebInspector.UIString("Color"));
+        properties.strokeWidth = new WebInspector.VisualStyleNumberInputBox("stroke-width", WebInspector.UIString("Width"), this._keywords.defaults, this._units.defaults);
+
+        strokeRow.element.appendChild(properties.stroke.element);
+        strokeRow.element.appendChild(properties.strokeWidth.element);
+
+        let strokeOpacity = new WebInspector.DetailsSectionRow;
+
+        properties.strokeOpacity = new WebInspector.VisualStyleUnitSlider("stroke-opacity", WebInspector.UIString("Opacity"));
+
+        strokeOpacity.element.appendChild(properties.strokeOpacity.element);
+
+        let strokeDasharrayRow = new WebInspector.DetailsSectionRow;
+
+        properties.strokeDasharray = new WebInspector.VisualStyleBasicInput("stroke-dasharray", WebInspector.UIString("Dash Array"), WebInspector.UIString("Enter an array value"));
+
+        strokeDasharrayRow.element.appendChild(properties.strokeDasharray.element);
+
+        let strokeDasharrayOptionsRow = new WebInspector.DetailsSectionRow;
+
+        properties.strokeDashoffset = new WebInspector.VisualStyleNumberInputBox("stroke-dashoffset", WebInspector.UIString("Offset"), this._keywords.defaults, this._units.defaults);
+        properties.strokeMiterlimit = new WebInspector.VisualStyleNumberInputBox("stroke-miterlimit", WebInspector.UIString("Miter"), this._keywords.defaults);
+
+        strokeDasharrayOptionsRow.element.appendChild(properties.strokeDashoffset.element);
+        strokeDasharrayOptionsRow.element.appendChild(properties.strokeMiterlimit.element);
+
+        let strokeLineOptionsRow = new WebInspector.DetailsSectionRow;
+
+        properties.strokeLinecap = new WebInspector.VisualStyleKeywordPicker("stroke-linecap", WebInspector.UIString("Cap"), this._keywords.defaults.concat(["Butt", "Round", "Square"]));
+        properties.strokeLinejoin = new WebInspector.VisualStyleKeywordPicker("stroke-linejoin", WebInspector.UIString("Join"), this._keywords.defaults.concat(["Miter", "Round", "Bevel"]));
+
+        strokeLineOptionsRow.element.appendChild(properties.strokeLinecap.element);
+        strokeLineOptionsRow.element.appendChild(properties.strokeLinejoin.element);
+
+        group.specifiedWidthProperties = [properties.strokeOpacity];
+
+        let strokeGroup = new WebInspector.DetailsSectionGroup([strokeRow, strokeOpacity, strokeDasharrayRow, strokeDasharrayOptionsRow, strokeLineOptionsRow]);
+        this._populateSection(group, [strokeGroup]);
     }
 
     _populateBackgroundStyleSection()

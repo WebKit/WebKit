@@ -568,6 +568,22 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         return descendant !== null && descendant.isAncestor(this);
     }
 
+    get ownerSVGElement()
+    {
+        if (this._nodeName === "svg")
+            return this;
+
+        if (!this.parentNode)
+            return null;
+
+        return this.parentNode.ownerSVGElement;
+    }
+
+    isSVGElement()
+    {
+        return !!this.ownerSVGElement;
+    }
+
     _setAttributesPayload(attrs)
     {
         this._attributes = [];

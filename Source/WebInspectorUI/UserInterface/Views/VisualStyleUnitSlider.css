@@ -26,12 +26,9 @@
 .visual-style-property-container.unit-slider > .visual-style-property-value-container > .slider {
     position: relative;
     margin: 5px 1px 0;
+    background-image: linear-gradient(90deg, transparent, black), url(../Images/Checkers.svg);
 }
 
 .visual-style-property-container.unit-slider > .visual-style-property-value-container > .slider > img {
     top: -1px;
-}
-
-.visual-style-property-container.unit-slider.opacity > .visual-style-property-value-container > .slider {
-    background-image: linear-gradient(90deg, hsla(0, 0%, 0%, 0), #000), url(../Images/Checkers.svg);
 }
