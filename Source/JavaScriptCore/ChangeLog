@@ -1,3 +1,55 @@
+2016-08-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Modules' `export default function/class` should be declaration
+        https://bugs.webkit.org/show_bug.cgi?id=160499
+
+        Reviewed by Saam Barati.
+
+        Previously, we parsed the following cases as FunctionExpression and ClassExpression.
+
+            ```
+            export default function () { }
+            export default class { }
+            ```
+
+        But, as per ES6 spec, the above `function ...` and `class ...` parts should be parsed
+        as function declaration and class declaration. This has big difference; the instantiation
+        of the function declarations are done in the function prologue.
+
+        In this patch, we correctly parse the above cases as declaration. To handle no-named
+        declarations, we add a new flag, DeclarationDefaultContext. This indicates [Default]
+        flag in the ES6 spec's BNF.
+
+        Furthermore, this patch also fixes the following name related bugs.
+
+        1. The bug related to "export default"'s function name. If the name is not provided (like the above case), the name of the function becomes
+        "default", not "*default*". This is special handling in ES6 spec. We handle this in JSFunction's reifyName.
+
+        2. `class Hello { hello hello() { } }` is accepted. We introduced FunctionRequirements::Unnamed and fix this bug.
+
+        * parser/ModuleScopeData.h:
+        (JSC::ModuleScopeData::exportBinding):
+        Exported names are already guranteed uniqueness by m_exportedNames. Not necessary to use set here. Use vector instead.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        If we pass FunctionRequirements::NoRequirements, we need to initialize functionInfo.name / classInfo.className
+        with the default fallback name. For example, in the above `export default` case, we initialize it with `*default*`.
+
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClassDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parseClassExpression):
+        (JSC::Parser<LexerType>::parseFunctionExpression):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        * parser/Parser.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::reifyName):
+
 2016-08-23  Saam Barati  <sbarati@apple.com>
 
         JIT::updateTopCallframe() in the baseline JIT should use PC instead of PC+1

@@ -166,13 +166,16 @@ FunctionRareData* JSFunction::initializeRareData(ExecState* exec, size_t inlineC
     return m_rareData.get();
 }
 
-String JSFunction::name()
+String JSFunction::name(VM& vm)
 {
     if (isHostFunction()) {
         NativeExecutable* executable = jsCast<NativeExecutable*>(this->executable());
         return executable->name();
     }
-    return jsExecutable()->name().string();
+    const Identifier identifier = jsExecutable()->name();
+    if (identifier == vm.propertyNames->builtinNames().starDefaultPrivateName())
+        return emptyString();
+    return identifier.string();
 }
 
 String JSFunction::displayName(VM& vm)
@@ -192,7 +195,7 @@ const String JSFunction::calculatedDisplayName(VM& vm)
     if (!explicitName.isEmpty())
         return explicitName;
     
-    const String actualName = name();
+    const String actualName = name(vm);
     if (!actualName.isEmpty() || isHostOrBuiltinFunction())
         return actualName;
     
@@ -616,7 +619,15 @@ void JSFunction::reifyLength(ExecState* exec)
 
 void JSFunction::reifyName(ExecState* exec)
 {
-    String name = jsExecutable()->ecmaName().string();
+    const Identifier& ecmaName = jsExecutable()->ecmaName();
+    String name;
+    // https://tc39.github.io/ecma262/#sec-exports-runtime-semantics-evaluation
+    // When the ident is "*default*", we need to set "default" for the ecma name.
+    // This "*default*" name is never shown to users.
+    if (ecmaName == exec->propertyNames().builtinNames().starDefaultPrivateName())
+        name = exec->propertyNames().defaultKeyword.string();
+    else
+        name = ecmaName.string();
     reifyName(exec, name);
 }
 

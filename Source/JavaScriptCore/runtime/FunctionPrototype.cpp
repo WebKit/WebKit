@@ -82,11 +82,12 @@ CallType FunctionPrototype::getCallData(JSCell*, CallData& callData)
 
 EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
 {
+    VM& vm = exec->vm();
     JSValue thisValue = exec->thisValue();
     if (thisValue.inherits(JSFunction::info())) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
         if (function->isHostOrBuiltinFunction())
-            return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}"));
+            return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(vm), "() {\n    [native code]\n}"));
 
         FunctionExecutable* executable = function->jsExecutable();
         if (executable->isClass()) {
@@ -99,7 +100,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         StringView source = executable->source().provider()->getRange(
             executable->parametersStartOffset(),
             executable->parametersStartOffset() + executable->source().length());
-        return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(), source));
+        return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source));
     }
 
     if (thisValue.inherits(InternalFunction::info())) {

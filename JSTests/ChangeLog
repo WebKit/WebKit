@@ -1,5 +1,31 @@
 2016-08-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [ES6] Modules' `export default function/class` should be declaration
+        https://bugs.webkit.org/show_bug.cgi?id=160499
+
+        Reviewed by Saam Barati.
+
+        Add several module tests. And flip the failed tests flags in test262.
+
+        * modules/export-default-function-name-in-assignment-expression.js: Added.
+        (export.default):
+        * modules/export-default-function-name-in-class-declaration.js: Added.
+        * modules/export-default-function-name-in-function-declaration.js: Added.
+        (export.default):
+        * modules/export-default-function-name-in-generator-declaration.js: Added.
+        (export.default):
+        * stress/method-name.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntaxError.Hello.prototype.hello.hello):
+        (testSyntaxError.Hello):
+        (SyntaxError.Unexpected.identifier.string_appeared_here.Expected.an.opening.string_appeared_here.before.a.method.testSyntaxError.let.obj.hello.hello):
+        (testSyntaxError.Hello.prototype.get hello):
+        (testSyntaxError.Hello.prototype.set hello):
+        * test262.yaml:
+
+2016-08-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Module should not allow HTML comments
         https://bugs.webkit.org/show_bug.cgi?id=161041
 

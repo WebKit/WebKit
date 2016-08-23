@@ -35,7 +35,7 @@ class ModuleScopeData : public RefCounted<ModuleScopeData> {
 WTF_MAKE_NONCOPYABLE(ModuleScopeData);
 WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashMap<RefPtr<UniquedStringImpl>, IdentifierSet, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> IdentifierAliasMap;
+    typedef HashMap<RefPtr<UniquedStringImpl>, Vector<RefPtr<UniquedStringImpl>>, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> IdentifierAliasMap;
 
     static Ref<ModuleScopeData> create() { return adoptRef(*new ModuleScopeData); }
 
@@ -48,7 +48,7 @@ public:
 
     void exportBinding(const Identifier& localName, const Identifier& exportedName)
     {
-        m_exportedBindings.add(localName.impl(), IdentifierSet()).iterator->value.add(exportedName.impl());
+        m_exportedBindings.add(localName.impl(), Vector<RefPtr<UniquedStringImpl>>()).iterator->value.append(exportedName.impl());
     }
 
     void exportBinding(const Identifier& localName)
