@@ -132,10 +132,8 @@ private:
 void Connection::platformInitialize(Identifier identifier)
 {
     m_socketDescriptor = identifier;
-    m_readBuffer.resize(messageMaxSize);
-    m_readBufferSize = 0;
-    m_fileDescriptors.resize(attachmentMaxAmount);
-    m_fileDescriptorsSize = 0;
+    m_readBuffer.reserveInitialCapacity(messageMaxSize);
+    m_fileDescriptors.reserveInitialCapacity(attachmentMaxAmount);
 }
 
 void Connection::platformInvalidate()
@@ -161,7 +159,7 @@ void Connection::platformInvalidate()
 
 bool Connection::processMessage()
 {
-    if (m_readBufferSize < sizeof(MessageInfo))
+    if (m_readBuffer.size() < sizeof(MessageInfo))
         return false;
 
     uint8_t* messageData = m_readBuffer.data();
@@ -170,7 +168,7 @@ bool Connection::processMessage()
     messageData += sizeof(messageInfo);
 
     size_t messageLength = sizeof(MessageInfo) + messageInfo.attachmentCount() * sizeof(AttachmentInfo) + (messageInfo.isMessageBodyIsOutOfLine() ? 0 : messageInfo.bodySize());
-    if (m_readBufferSize < messageLength)
+    if (m_readBuffer.size() < messageLength)
         return false;
 
     size_t attachmentFileDescriptorCount = 0;
@@ -251,25 +249,25 @@ bool Connection::processMessage()
 
     processIncomingMessage(WTFMove(decoder));
 
-    if (m_readBufferSize > messageLength) {
-        memmove(m_readBuffer.data(), m_readBuffer.data() + messageLength, m_readBufferSize - messageLength);
-        m_readBufferSize -= messageLength;
+    if (m_readBuffer.size() > messageLength) {
+        memmove(m_readBuffer.data(), m_readBuffer.data() + messageLength, m_readBuffer.size() - messageLength);
+        m_readBuffer.shrink(m_readBuffer.size() - messageLength);
     } else
-        m_readBufferSize = 0;
+        m_readBuffer.shrink(0);
 
     if (attachmentFileDescriptorCount) {
-        if (m_fileDescriptorsSize > attachmentFileDescriptorCount) {
-            memmove(m_fileDescriptors.data(), m_fileDescriptors.data() + attachmentFileDescriptorCount, (m_fileDescriptorsSize - attachmentFileDescriptorCount) * sizeof(int));
-            m_fileDescriptorsSize -= attachmentFileDescriptorCount;
+        if (m_fileDescriptors.size() > attachmentFileDescriptorCount) {
+            memmove(m_fileDescriptors.data(), m_fileDescriptors.data() + attachmentFileDescriptorCount, (m_fileDescriptors.size() - attachmentFileDescriptorCount) * sizeof(int));
+            m_fileDescriptors.shrink(m_fileDescriptors.size() - attachmentFileDescriptorCount);
         } else
-            m_fileDescriptorsSize = 0;
+            m_fileDescriptors.shrink(0);
     }
 
 
     return true;
 }
 
-static ssize_t readBytesFromSocket(int socketDescriptor, uint8_t* buffer, int count, int* fileDescriptors, size_t* fileDescriptorsCount)
+static ssize_t readBytesFromSocket(int socketDescriptor, Vector<uint8_t>& buffer, Vector<int>& fileDescriptors)
 {
     struct msghdr message;
     memset(&message, 0, sizeof(message));
@@ -282,8 +280,10 @@ static ssize_t readBytesFromSocket(int socketDescriptor, uint8_t* buffer, int co
     memset(attachmentDescriptorBuffer.get(), 0, sizeof(char) * message.msg_controllen);
     message.msg_control = attachmentDescriptorBuffer.get();
 
-    iov[0].iov_base = buffer;
-    iov[0].iov_len = count;
+    size_t previousBufferSize = buffer.size();
+    buffer.grow(buffer.capacity());
+    iov[0].iov_base = buffer.data() + previousBufferSize;
+    iov[0].iov_len = buffer.size() - previousBufferSize;
 
     message.msg_iov = iov;
     message.msg_iovlen = 1;
@@ -295,33 +295,31 @@ static ssize_t readBytesFromSocket(int socketDescriptor, uint8_t* buffer, int co
             if (errno == EINTR)
                 continue;
 
+            buffer.shrink(previousBufferSize);
             return -1;
         }
 
-        bool found = false;
         struct cmsghdr* controlMessage;
         for (controlMessage = CMSG_FIRSTHDR(&message); controlMessage; controlMessage = CMSG_NXTHDR(&message, controlMessage)) {
             if (controlMessage->cmsg_level == SOL_SOCKET && controlMessage->cmsg_type == SCM_RIGHTS) {
-                *fileDescriptorsCount = (controlMessage->cmsg_len - CMSG_LEN(0)) / sizeof(int);
-                memcpy(fileDescriptors, CMSG_DATA(controlMessage), sizeof(int) * *fileDescriptorsCount);
+                size_t previousFileDescriptorsSize = fileDescriptors.size();
+                size_t fileDescriptorsCount = (controlMessage->cmsg_len - CMSG_LEN(0)) / sizeof(int);
+                fileDescriptors.grow(fileDescriptors.size() + fileDescriptorsCount);
+                memcpy(fileDescriptors.data() + previousFileDescriptorsSize, CMSG_DATA(controlMessage), sizeof(int) * fileDescriptorsCount);
 
-                for (size_t i = 0; i < *fileDescriptorsCount; ++i) {
-                    while (fcntl(fileDescriptors[i], F_SETFD, FD_CLOEXEC) == -1) {
+                for (size_t i = 0; i < fileDescriptorsCount; ++i) {
+                    while (fcntl(fileDescriptors[previousFileDescriptorsSize + i], F_SETFD, FD_CLOEXEC) == -1) {
                         if (errno != EINTR) {
                             ASSERT_NOT_REACHED();
                             break;
                         }
                     }
                 }
-
-                found = true;
                 break;
             }
         }
 
-        if (!found)
-            *fileDescriptorsCount = 0;
-
+        buffer.shrink(previousBufferSize + bytesRead);
         return bytesRead;
     }
 
@@ -331,10 +329,7 @@ static ssize_t readBytesFromSocket(int socketDescriptor, uint8_t* buffer, int co
 void Connection::readyReadHandler()
 {
     while (true) {
-        size_t fileDescriptorsCount = 0;
-        size_t bytesToRead = m_readBuffer.size() - m_readBufferSize;
-        ssize_t bytesRead = readBytesFromSocket(m_socketDescriptor, m_readBuffer.data() + m_readBufferSize, bytesToRead,
-                                                m_fileDescriptors.data() + m_fileDescriptorsSize, &fileDescriptorsCount);
+        ssize_t bytesRead = readBytesFromSocket(m_socketDescriptor, m_readBuffer, m_fileDescriptors);
 
         if (bytesRead < 0) {
             // EINTR was already handled by readBytesFromSocket.
@@ -347,9 +342,6 @@ void Connection::readyReadHandler()
             }
             return;
         }
-
-        m_readBufferSize += bytesRead;
-        m_fileDescriptorsSize += fileDescriptorsCount;
 
         if (!bytesRead) {
             connectionDidClose();
