@@ -200,6 +200,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     bridge/c
     bridge/jsc
 
+    css/parser
+
     history/cf
 
     html/forms
