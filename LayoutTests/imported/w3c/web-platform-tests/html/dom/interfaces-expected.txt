@@ -4790,9 +4790,9 @@ FAIL HTMLCanvasElement interface: calling toBlob(BlobCallback,DOMString,any) on 
 PASS CanvasRenderingContext2D interface: existence and properties of interface object 
 PASS CanvasRenderingContext2D interface object length 
 PASS CanvasRenderingContext2D interface object name 
-PASS CanvasRenderingContext2D interface: existence and properties of interface prototype object 
+FAIL CanvasRenderingContext2D interface: existence and properties of interface prototype object assert_equals: prototype of CanvasRenderingContext2D.prototype is not Object.prototype expected object "[object Object]" but got object "[object CanvasRenderingContextPrototype]"
 PASS CanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property 
-PASS CanvasRenderingContext2D interface: attribute canvas 
+FAIL CanvasRenderingContext2D interface: attribute canvas assert_own_property: expected property "canvas" missing
 PASS CanvasRenderingContext2D interface: operation save() 
 PASS CanvasRenderingContext2D interface: operation restore() 
 PASS CanvasRenderingContext2D interface: operation scale(unrestricted double,unrestricted double) 

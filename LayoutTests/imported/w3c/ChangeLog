@@ -1,5 +1,18 @@
 2016-08-22  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r204745.
+
+        Broke the Windows build
+
+        Reverted changeset:
+
+        "CanvasRenderingContext2D should not have a
+        CanvasRenderingContext parent interface"
+        https://bugs.webkit.org/show_bug.cgi?id=161054
+        http://trac.webkit.org/changeset/204745
+
+2016-08-22  Chris Dumez  <cdumez@apple.com>
+
         CanvasRenderingContext2D should not have a CanvasRenderingContext parent interface
         https://bugs.webkit.org/show_bug.cgi?id=161054
 

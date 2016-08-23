@@ -43,10 +43,7 @@ Conditional=WEBGL,
 DoNotCheckConstants,
 JSCustomMarkFunction,
 NoInterfaceObject,
-] interface WebGLRenderingContextBase {
-
-    // back-reference to the canvas
-    readonly attribute HTMLCanvasElement canvas;
+] interface WebGLRenderingContextBase : CanvasRenderingContext {
 
     /* ClearBufferMask */
     const GLenum DEPTH_BUFFER_BIT = 0x00000100;

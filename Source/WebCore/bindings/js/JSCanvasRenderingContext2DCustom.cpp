@@ -38,18 +38,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
-{
-    JSCanvasRenderingContext2D* jsCanvasRenderingContext = jsCast<JSCanvasRenderingContext2D*>(handle.slot()->asCell());
-    void* root = WebCore::root(jsCanvasRenderingContext->wrapped().canvas());
-    return visitor.containsOpaqueRoot(root);
-}
-
-void JSCanvasRenderingContext2D::visitAdditionalChildren(SlotVisitor& visitor)
-{
-    visitor.addOpaqueRoot(root(wrapped().canvas()));
-}
-
 static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const CanvasStyle& style)
 {
     if (style.canvasGradient())

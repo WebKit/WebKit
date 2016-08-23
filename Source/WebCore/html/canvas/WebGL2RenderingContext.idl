@@ -44,7 +44,6 @@ typedef unrestricted float GLclampf;
     Conditional=WEBGL2,
     EnabledAtRuntime=WebGL2,
     JSCustomMarkFunction,
-    JSGenerateToJSObject,
     DoNotCheckConstants,
 ] interface WebGL2RenderingContext : WebGLRenderingContextBase {
     const GLenum READ_BUFFER                                   = 0x0C02;

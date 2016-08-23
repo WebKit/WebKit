@@ -24,9 +24,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
-#include "JSCanvasRenderingContext.h"
 #include "JSCanvasRenderingContext2D.h"
-#include "JSDOMConvert.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
@@ -142,25 +140,6 @@ JSValue JSDocument::createTouchList(ExecState& state)
     return toJSNewlyCreated(&state, globalObject(), WTFMove(touchList));
 }
 #endif
-
-JSValue JSDocument::getCSSCanvasContext(JSC::ExecState& state)
-{
-    if (UNLIKELY(state.argumentCount() < 4))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
-    auto contextId = state.uncheckedArgument(0).toWTFString(&state);
-    if (UNLIKELY(state.hadException()))
-        return jsUndefined();
-    auto name = state.uncheckedArgument(1).toWTFString(&state);
-    if (UNLIKELY(state.hadException()))
-        return jsUndefined();
-    auto width = convert<int32_t>(state, state.uncheckedArgument(2), NormalConversion);
-    if (UNLIKELY(state.hadException()))
-        return jsUndefined();
-    auto height = convert<int32_t>(state, state.uncheckedArgument(3), NormalConversion);
-    if (UNLIKELY(state.hadException()))
-        return jsUndefined();
-    return toJS(&state, globalObject(), wrapped().getCSSCanvasContext(WTFMove(contextId), WTFMove(name), WTFMove(width), WTFMove(height)));
-}
 
 void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)
 {

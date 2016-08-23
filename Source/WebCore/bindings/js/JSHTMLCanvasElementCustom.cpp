@@ -29,7 +29,6 @@
 
 #include "CanvasContextAttributes.h"
 #include "HTMLCanvasElement.h"
-#include "JSCanvasRenderingContext.h"
 #include "JSCanvasRenderingContext2D.h"
 #include <bindings/ScriptObject.h>
 #include <wtf/GetPtr.h>

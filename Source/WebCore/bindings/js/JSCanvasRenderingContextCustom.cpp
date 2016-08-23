@@ -23,9 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=WEBGL,
-    JSCustomMarkFunction,
-    DoNotCheckConstants,
-] interface WebGLRenderingContext : WebGLRenderingContextBase {
-};
+#include "config.h"
+#include "JSCanvasRenderingContext.h"
+
+#include "CanvasRenderingContext2D.h"
+#include "HTMLCanvasElement.h"
+#include "JSCanvasRenderingContext2D.h"
+#include "JSNode.h"
+
+#if ENABLE(WEBGL)
+#include "JSWebGL2RenderingContext.h"
+#include "JSWebGLRenderingContext.h"
+#include "WebGL2RenderingContext.h"
+#include "WebGLRenderingContext.h"
+#endif
+
+using namespace JSC;
+
+namespace WebCore {
+
+void JSCanvasRenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
+{
+    visitor.addOpaqueRoot(root(wrapped().canvas()));
+}
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<CanvasRenderingContext>&& object)
+{
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContext>(object))
+        return CREATE_DOM_WRAPPER(globalObject, WebGLRenderingContext, WTFMove(object));
+#if ENABLE(WEBGL2)
+    if (is<WebGL2RenderingContext>(object))
+        return CREATE_DOM_WRAPPER(globalObject, WebGL2RenderingContext, WTFMove(object));
+#endif
+#endif
+    return CREATE_DOM_WRAPPER(globalObject, CanvasRenderingContext2D, WTFMove(object));
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, CanvasRenderingContext& object)
+{
+    return wrap(state, globalObject, object);
+}
+
+} // namespace WebCore
