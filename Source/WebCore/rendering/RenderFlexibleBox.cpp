@@ -868,10 +868,12 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, Layo
     if (min.isSpecifiedOrIntrinsic())
         return std::max(childSize, computeMainAxisExtentForChild(child, MinSize, min).valueOr(childSize));
 
-    if (!isFlexibleBoxImpl() && min.isAuto() && mainAxisOverflowForChild(child) == OVISIBLE) {
+    if (!isFlexibleBoxImpl() && min.isAuto() && mainAxisOverflowForChild(child) == OVISIBLE && !(isColumnFlow() && is<RenderFlexibleBox>(child))) {
         // This is the implementation of CSS flexbox section 4.5 which defines the minimum size of "pure" flex
         // items. For any other item the value should be 0, this also includes RenderFlexibleBox's derived clases
         // (RenderButton, RenderFullScreen...) because that's just an implementation detail.
+        // FIXME: For now we don't handle nested column flexboxes. Need to implement better intrinsic
+        // size handling from the flex box spec first (4.5).
         LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).value();
         ASSERT(contentSize >= 0);
         contentSize = std::min(contentSize, maxExtent.valueOr(contentSize));
