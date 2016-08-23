@@ -428,7 +428,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         if (!(position instanceof WebInspector.SourceCodePosition))
             return;
 
-        var lineHandle = this._codeMirror.getLineHandle(position.lineNumber);
+        let lineHandle = this._codeMirror.getLineHandle(position.lineNumber);
         if (!lineHandle || !this._visible || this._initialStringNotSet || this._deferReveal) {
             // If we can't get a line handle or are not visible then we wait to do the reveal.
             this._positionToReveal = position;
@@ -451,8 +451,14 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             return;
         }
 
-        if (!textRangeToSelect)
-            textRangeToSelect = new WebInspector.TextRange(position.lineNumber, position.columnNumber, position.lineNumber, position.columnNumber);
+        let line = Number.constrain(position.lineNumber, 0, this._codeMirror.lineCount() - 1);
+        if (line !== position.lineNumber)
+            lineHandle = this._codeMirror.getLineHandle(line);
+
+        if (!textRangeToSelect) {
+            let column = Number.constrain(position.columnNumber, 0, this._codeMirror.getLine(line).length - 1);
+            textRangeToSelect = new WebInspector.TextRange(line, column, line, column);
+        }
 
         function removeStyleClass()
         {

@@ -1,5 +1,17 @@
 2016-08-22  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Entering ":n" in Open Resource Dialog, where n > number of lines, should jump to the last line
+        https://bugs.webkit.org/show_bug.cgi?id=160840
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TextEditor.js:
+        (TextEditor.prototype.revealPosition):
+        Limit the given line and column to the maximum number of lines and the column count on the
+        resulting line.
+
+2016-08-22  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Add indicator to matched selector being a pseudo-element
         https://bugs.webkit.org/show_bug.cgi?id=160893
 
