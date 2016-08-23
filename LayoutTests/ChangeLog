@@ -1,5 +1,11 @@
 2016-08-22  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unreviewed, update failure list of iOS simulator WK1 compositing test.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
+2016-08-22  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, iOS simulator WK1 tests gardening.
 
         Move the following tests from failure to pass:
