@@ -1,5 +1,28 @@
 2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [GTK] Null WebCore::Range dereference in WebEditorClient::updateGlobalSelection
+        https://bugs.webkit.org/show_bug.cgi?id=159341
+
+        Reviewed by Carlos Garcia Campos.
+
+        FrameSelection::toNormalizedRange() can return null. Null check is
+        needed.
+
+        Tests:
+            editing/input/set-value-on-input-and-delete.html
+            editing/selection/selection-in-iframe-removed-crash.html
+            imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html
+            imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html
+            imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea.html
+            imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html
+
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::updateGlobalSelection): Do not update
+        global selection if FrameSelection::toNormalizedRange() returns
+        null.
+
+2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [GTK] ASSERTION_FAILED: m_key != PTHREAD_KEYS_MAX when defining WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH
         https://bugs.webkit.org/show_bug.cgi?id=158149
 
