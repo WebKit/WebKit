@@ -1,3 +1,17 @@
+2016-08-23  Saam Barati  <sbarati@apple.com>
+
+        strict mode eval should not fire the var injection watch point
+        https://bugs.webkit.org/show_bug.cgi?id=161104
+
+        Reviewed by Geoffrey Garen.
+
+        Strict mode eval can't do any variable injections. It was
+        an oversight that we fired the var injection watchpoint when
+        the eval is in strict mode.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
 2016-07-24  Filip Pizlo  <fpizlo@apple.com>
 
         Spilling of constant tmps should make it easier for the spill code optimizer to rematerialize the constant
