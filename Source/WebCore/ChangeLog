@@ -1,3 +1,29 @@
+2016-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        Fix LogicalSelectionOffsetCaches to work with detached render tree.
+        https://bugs.webkit.org/show_bug.cgi?id=159605
+        <rdar://problem/27248845>
+
+        Reviewed by Brent Fulgham.
+
+        When the renderer that is being destroyed is on a selection boundary,
+        we need to ensure that all its cached pointers across the selection code (e.g. SelectionSubtreeData)
+        are getting reset. In order to do that, we call clearSelection() on the RenderView.
+        One of the last steps of clearing selection is to collect the selection gaps. Selection gaps uses this
+        LogicalSelectionOffsetCaches helper class to collect selection information across blocks.
+        LogicalSelectionOffsetCaches normally operates on rooted renderers. However we need to ensure sure that
+        it can also handle renderers that are no longer part of the render tree.
+
+        Test: fast/text/selection-on-a-detached-tree.html
+
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::setBlock):
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::logicalLeftSelectionOffset):
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::logicalRightSelectionOffset):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftSelectionOffset):
+        (WebCore::RenderBlock::logicalRightSelectionOffset):
+
 2016-07-01  Zalan Bujtas  <zalan@apple.com>
 
         prepareForDestruction() always needs to be called before destroying the Document object.
