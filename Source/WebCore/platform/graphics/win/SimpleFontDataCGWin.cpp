@@ -29,6 +29,7 @@
 #include "config.h"
 #include "Font.h"
 
+#include "CoreTextSPIWin.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "FontDescription.h"
@@ -67,7 +68,7 @@ void Font::platformInit()
     // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
     // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
     short typoAscent, typoDescent, typoLineGap;
-    if (OpenType::tryGetTypoMetrics(m_platformData.cgFont(), typoAscent, typoDescent, typoLineGap)) {
+    if (OpenType::tryGetTypoMetrics(adoptCF(CTFontCreateWithGraphicsFont(m_platformData.cgFont(), m_platformData.size(), nullptr, nullptr)).get(), typoAscent, typoDescent, typoLineGap)) {
         iAscent = typoAscent;
         iDescent = typoDescent;
         iLineGap = typoLineGap;
@@ -144,7 +145,6 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     CGSize advance;
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
  
-    // FIXME: Need to add real support for printer fonts.
     bool isPrinterFont = false;
     wkGetGlyphAdvances(font, m, m_platformData.isSystemFont(), isPrinterFont, glyph, advance);
 

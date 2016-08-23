@@ -33,13 +33,24 @@ extern "C" {
 
 typedef const struct __CTFont* CTFontRef;
 typedef const struct __CTLine* CTLineRef;
+typedef UInt32 FourCharCode;
+typedef FourCharCode CTFontTableTag;
 
 extern const CFStringRef kCTFontAttributeName;
 extern const CFStringRef kCTForegroundColorFromContextAttributeName;
 
-CTFontRef CTFontCreateWithName(CFStringRef name, CGFloat size, const CGAffineTransform* matrix);
+typedef CF_OPTIONS(uint32_t, CTFontTableOptions)
+{
+    kCTFontTableOptionNoOptions = 0,
+    kCTFontTableOptionExcludeSynthetic = (1 << 0)
+};
+
+CTFontRef CTFontCreateWithName(CFStringRef, CGFloat size, const CGAffineTransform*);
+CTFontRef CTFontCreateWithGraphicsFont(CGFontRef, CGFloat size, const CGAffineTransform*, CTFontDescriptorRef attributes);
 CTLineRef CTLineCreateWithAttributedString(CFAttributedStringRef);
 void CTLineDraw(CTLineRef, CGContextRef);
+CFDataRef CTFontCopyTable(CTFontRef, CTFontTableTag, CTFontTableOptions);
+CFArrayRef CTFontCopyAvailableTables(CTFontRef, CTFontTableOptions);
 
 }
 

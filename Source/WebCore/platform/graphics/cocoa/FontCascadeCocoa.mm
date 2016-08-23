@@ -131,33 +131,6 @@ static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const F
 #endif
 }
 
-class RenderingStyleSaver {
-public:
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    RenderingStyleSaver(CTFontRef, CGContextRef) { }
-#else
-    RenderingStyleSaver(CTFontRef font, CGContextRef context)
-        : m_context(context)
-    {
-        m_changed = CTFontSetRenderingStyle(font, context, &m_originalStyle, &m_originalDilation);
-    }
-
-    ~RenderingStyleSaver()
-    {
-        if (!m_changed)
-            return;
-        CGContextSetFontRenderingStyle(m_context, m_originalStyle);
-        CGContextSetFontDilation(m_context, m_originalDilation);
-    }
-
-private:
-    bool m_changed;
-    CGContextRef m_context;
-    CGFontRenderingStyle m_originalStyle;
-    CGSize m_originalDilation;
-#endif
-};
-
 static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, unsigned count)
 {
     if (!count)
@@ -167,13 +140,10 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
 
     const FontPlatformData& platformData = font.platformData();
     Vector<CGPoint, 256> positions(count);
-    if (platformData.isColorBitmapFont())
-        fillVectorWithHorizontalGlyphPositions(positions, context, advances, count);
     if (platformData.orientation() == Vertical) {
-        CGAffineTransform savedMatrix;
         CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
-        savedMatrix = CGContextGetTextMatrix(context);
-        CGAffineTransform runMatrix = CGAffineTransformConcat(savedMatrix, rotateLeftTransform);
+        CGAffineTransform textMatrix = CGContextGetTextMatrix(context);
+        CGAffineTransform runMatrix = CGAffineTransformConcat(textMatrix, rotateLeftTransform);
         CGContextSetTextMatrix(context, runMatrix);
 
         Vector<CGSize, 256> translations(count);
@@ -188,21 +158,10 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
             position.x += advances[i].width;
             position.y += advances[i].height;
         }
-        if (!platformData.isColorBitmapFont()) {
-            RenderingStyleSaver saver(platformData.ctFont(), context);
-            CGContextShowGlyphsAtPositions(context, glyphs, positions.data(), count);
-        } else
-            CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
-        CGContextSetTextMatrix(context, savedMatrix);
+        CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     } else {
-        if (!platformData.isColorBitmapFont()) {
-            RenderingStyleSaver saver(platformData.ctFont(), context);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
-#pragma clang diagnostic pop
-        } else
-            CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
+        fillVectorWithHorizontalGlyphPositions(positions, context, advances, count);
+        CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     }
 }
 
@@ -270,8 +229,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     }
 #endif
 
-    CGContextSetFont(cgContext, platformData.cgFont());
-
     bool useLetterpressEffect = shouldUseLetterpressEffect(context);
     FloatPoint point = anchorPoint;
 
@@ -287,7 +244,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         else
             matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -obliqueSkew, 1, 0, 0));
     }
-    CGContextSetTextMatrix(cgContext, matrix);
+    ScopedTextMatrix restorer(matrix, cgContext);
 
     setCGFontRenderingMode(context);
     CGContextSetFontSize(cgContext, platformData.size());

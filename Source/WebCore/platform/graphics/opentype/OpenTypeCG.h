@@ -27,17 +27,17 @@
 #define OpenTypeCG_h
 
 #include <CoreGraphics/CoreGraphics.h>
-#if PLATFORM(COCOA)
 #include <CoreText/CoreText.h>
+
+#if PLATFORM(WIN)
+#include "CoreTextSPIWin.h"
 #endif
 
 namespace WebCore {
 namespace OpenType {
 
-#if PLATFORM(COCOA)
 bool fontHasMathTable(CTFontRef);
-#endif
-bool tryGetTypoMetrics(CGFontRef, short& ascent, short& descent, short& lineGap);
+bool tryGetTypoMetrics(CTFontRef, short& ascent, short& descent, short& lineGap);
 
 } // namespace OpenType
 } // namespace WebCore

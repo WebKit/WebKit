@@ -172,6 +172,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, skew, 1, 0, 0));
     }
 
+    CGAffineTransform savedMatrix = CGContextGetTextMatrix(cgContext);
     CGContextSetTextMatrix(cgContext, matrix);
 
     // Uniscribe gives us offsets to help refine the positioning of combining glyphs.
@@ -215,6 +216,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         graphicsContext.setShadow(shadowOffset, shadowBlur, shadowColor);
 
     wkRestoreFontSmoothingStyle(cgContext, oldFontSmoothingStyle);
+    CGContextSetTextMatrix(cgContext, savedMatrix);
 }
 
 }

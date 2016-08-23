@@ -1652,7 +1652,7 @@ static void paintAttachmentText(GraphicsContext& context, AttachmentInfo& info)
         context.translate(toFloatSize(line.rect.minXMaxYCorner()));
         context.scale(FloatSize(1, -1));
 
-        CGContextSetTextMatrix(context.platformContext(), CGAffineTransformIdentity);
+        CGContextSetTextPosition(context.platformContext(), 0, 0);
         CTLineDraw(line.line.get(), context.platformContext());
     }
 }

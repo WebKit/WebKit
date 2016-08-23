@@ -44,9 +44,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#if PLATFORM(IOS)
-#import <CoreGraphics/CoreGraphics.h>
-#endif
 #if USE(APPKIT)
 OBJC_CLASS NSFont;
 #endif
@@ -56,7 +53,7 @@ typedef const struct __CTFont* CTFontRef;
 #endif
 
 #if USE(CG)
-typedef struct CGFont* CGFontRef;
+#include <CoreGraphics/CoreGraphics.h>
 #endif
 
 #include <wtf/Forward.h>
@@ -290,6 +287,32 @@ inline NSFont *toNSFont(CTFontRef font)
 {
     return (NSFont *)font;
 }
+#endif
+
+#if USE(CG)
+class ScopedTextMatrix {
+public:
+    ScopedTextMatrix(CGAffineTransform newMatrix, CGContextRef context)
+        : m_context(context)
+        , m_textMatrix(CGContextGetTextMatrix(context))
+    {
+        CGContextSetTextMatrix(m_context, newMatrix);
+    }
+
+    ~ScopedTextMatrix()
+    {
+        CGContextSetTextMatrix(m_context, m_textMatrix);
+    }
+
+    CGAffineTransform savedMatrix() const
+    {
+        return m_textMatrix;
+    }
+
+private:
+    CGContextRef m_context;
+    CGAffineTransform m_textMatrix;
+};
 #endif
 
 } // namespace WebCore

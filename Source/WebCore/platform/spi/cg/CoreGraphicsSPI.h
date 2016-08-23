@@ -170,10 +170,6 @@ void CGContextSetCompositeOperation(CGContextRef, CGCompositeOperation);
 void CGContextSetShouldAntialiasFonts(CGContextRef, bool shouldAntialiasFonts);
 void CGContextResetClip(CGContextRef);
 CGContextType CGContextGetType(CGContextRef);
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-void CGContextSetFontDilation(CGContextRef, CGSize);
-void CGContextSetFontRenderingStyle(CGContextRef, CGFontRenderingStyle);
-#endif
 
 CFStringRef CGFontCopyFamilyName(CGFontRef);
 bool CGFontGetDescriptor(CGFontRef, CGFontDescriptor*);

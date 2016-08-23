@@ -22,25 +22,13 @@
 
 #include "FontBaseline.h"
 #include <wtf/MathExtras.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
-const unsigned gDefaultUnitsPerEm = 1000;
-
 class FontMetrics {
 public:
-    FontMetrics()
-        : m_unitsPerEm(gDefaultUnitsPerEm)
-        , m_ascent(0)
-        , m_descent(0)
-        , m_lineGap(0)
-        , m_lineSpacing(0)
-        , m_xHeight(0)
-        , m_zeroWidth(0)
-        , m_hasXHeight(false)
-        , m_hasZeroWidth(false)
-    {
-    }
+    static const unsigned defaultUnitsPerEm = 1000;
 
     unsigned unitsPerEm() const { return m_unitsPerEm; }
     void setUnitsPerEm(unsigned unitsPerEm) { m_unitsPerEm = unitsPerEm; }
@@ -75,22 +63,12 @@ public:
     void setLineSpacing(float lineSpacing) { m_lineSpacing = lineSpacing; }
 
     float xHeight() const { return m_xHeight; }
-    void setXHeight(float xHeight) 
-    { 
-        m_xHeight = xHeight;
-        m_hasXHeight = true;
-    }
-
-    bool hasXHeight() const { return m_hasXHeight && m_xHeight > 0; }
-    void setHasXHeight(bool hasXHeight) { m_hasXHeight = hasXHeight; }
+    void setXHeight(float xHeight) { m_xHeight = xHeight; }
+    bool hasXHeight() const { return m_xHeight > 0; }
     
-    bool hasCapHeight() const { return m_hasCapHeight && m_capHeight > 0; }
+    bool hasCapHeight() const { return m_capHeight > 0; }
     float floatCapHeight() const { return m_capHeight; }
-    void setCapHeight(float capHeight)
-    { 
-        m_capHeight = capHeight;
-        m_hasCapHeight = true;
-    }
+    void setCapHeight(float capHeight) { m_capHeight = capHeight; }
     
     // Integer variants of certain metrics, used for HTML rendering.
     int ascent(FontBaseline baselineType = AlphabeticBaseline) const
@@ -123,40 +101,31 @@ public:
     }
 
     float zeroWidth() const { return m_zeroWidth; }
-    void setZeroWidth(float zeroWidth)
-    {
-        m_zeroWidth = zeroWidth;
-        m_hasZeroWidth = true;
-    }
-
-    bool hasZeroWidth() const { return m_hasZeroWidth; }
-    void setHasZeroWidth(bool hasZeroWidth) { m_hasZeroWidth = hasZeroWidth; }
+    void setZeroWidth(float zeroWidth) { m_zeroWidth = zeroWidth; }
 
 private:
     friend class Font;
 
     void reset()
     {
-        m_unitsPerEm = gDefaultUnitsPerEm;
+        m_unitsPerEm = defaultUnitsPerEm;
         m_ascent = 0;
         m_descent = 0;
         m_lineGap = 0;
         m_lineSpacing = 0;
         m_xHeight = 0;
-        m_hasXHeight = false;
+        m_capHeight = 0;
+        m_zeroWidth = 0;
     }
 
-    unsigned m_unitsPerEm;
-    float m_ascent;
-    float m_descent;
-    float m_lineGap;
-    float m_lineSpacing;
-    float m_xHeight;
-    float m_capHeight;
-    float m_zeroWidth;
-    bool m_hasXHeight;
-    bool m_hasCapHeight;
-    bool m_hasZeroWidth;
+    unsigned m_unitsPerEm { defaultUnitsPerEm };
+    float m_ascent { 0 };
+    float m_descent { 0 };
+    float m_lineGap { 0 };
+    float m_lineSpacing { 0 };
+    float m_zeroWidth { 0 };
+    float m_xHeight { 0 };
+    float m_capHeight { 0 };
 };
 
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm)

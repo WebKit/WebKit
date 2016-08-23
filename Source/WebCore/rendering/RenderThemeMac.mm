@@ -2510,7 +2510,7 @@ static void paintAttachmentTitle(const RenderAttachment&, GraphicsContext& conte
         context.translate(toFloatSize(line.origin));
         context.scale(FloatSize(1, -1));
 
-        CGContextSetTextMatrix(context.platformContext(), CGAffineTransformIdentity);
+        CGContextSetTextPosition(context.platformContext(), 0, 0);
         CTLineDraw(line.line.get(), context.platformContext());
     }
 }
@@ -2522,7 +2522,7 @@ static void paintAttachmentSubtitle(const RenderAttachment&, GraphicsContext& co
     context.translate(toFloatSize(layout.subtitleTextRect.minXMaxYCorner()));
     context.scale(FloatSize(1, -1));
 
-    CGContextSetTextMatrix(context.platformContext(), CGAffineTransformIdentity);
+    CGContextSetTextPosition(context.platformContext(), 0, 0);
     CTLineDraw(layout.subtitleLine.get(), context.platformContext());
 }
 

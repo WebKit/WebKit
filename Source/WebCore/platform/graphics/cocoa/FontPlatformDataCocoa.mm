@@ -157,7 +157,7 @@ RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
 
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
-    if (RetainPtr<CFDataRef> data = adoptCF(CGFontCopyTableForTag(cgFont(), table)))
+    if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(font(), table, kCTFontTableOptionNoOptions)))
         return SharedBuffer::wrapCFData(data.get());
     
     return nullptr;
@@ -166,8 +166,8 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 #ifndef NDEBUG
 String FontPlatformData::description() const
 {
-    RetainPtr<CFStringRef> cgFontDescription = adoptCF(CFCopyDescription(cgFont()));
-    return String(cgFontDescription.get()) + " " + String::number(m_size)
+    auto fontDescription = adoptCF(CFCopyDescription(font()));
+    return String(fontDescription.get()) + " " + String::number(m_size)
             + (m_syntheticBold ? " synthetic bold" : "") + (m_syntheticOblique ? " synthetic oblique" : "") + (m_orientation ? " vertical orientation" : "");
 }
 #endif

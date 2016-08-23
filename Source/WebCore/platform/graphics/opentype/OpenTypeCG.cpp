@@ -35,7 +35,6 @@ namespace OpenType {
 static const unsigned long kCTFontTableOS2 = 'OS/2';
 #endif
 
-#if PLATFORM(COCOA)
 bool fontHasMathTable(CTFontRef ctFont)
 {
     RetainPtr<CFArrayRef> tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
@@ -49,25 +48,24 @@ bool fontHasMathTable(CTFontRef ctFont)
     }
     return false;
 }
-#endif
 
 static inline short readShortFromTable(const UInt8* os2Data, CFIndex offset)
 {
     return *(reinterpret_cast<const OpenType::Int16*>(os2Data + offset));
 }
 
-bool tryGetTypoMetrics(CGFontRef cgFont, short& ascent, short& descent, short& lineGap)
+bool tryGetTypoMetrics(CTFontRef font, short& ascent, short& descent, short& lineGap)
 {
     bool result = false;
-    if (CFDataRef os2Table = CGFontCopyTableForTag(cgFont, kCTFontTableOS2)) {
+    if (auto os2Table = adoptCF(CTFontCopyTable(font, kCTFontTableOS2, kCTFontTableOptionNoOptions))) {
         // For the structure of the OS/2 table, see
         // https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6OS2.html
         const CFIndex fsSelectionOffset = 16 * 2 + 10 + 4 * 4 + 4 * 1;
         const CFIndex sTypoAscenderOffset = fsSelectionOffset + 3 * 2;
         const CFIndex sTypoDescenderOffset = sTypoAscenderOffset + 2;
         const CFIndex sTypoLineGapOffset = sTypoDescenderOffset + 2;
-        if (CFDataGetLength(os2Table) >= sTypoLineGapOffset + 2) {
-            const UInt8* os2Data = CFDataGetBytePtr(os2Table);
+        if (CFDataGetLength(os2Table.get()) >= sTypoLineGapOffset + 2) {
+            const UInt8* os2Data = CFDataGetBytePtr(os2Table.get());
             // We test the use typo bit on the least significant byte of fsSelection.
             const UInt8 useTypoMetricsMask = 1 << 7;
             if (*(os2Data + fsSelectionOffset + 1) & useTypoMetricsMask) {
@@ -77,7 +75,6 @@ bool tryGetTypoMetrics(CGFontRef cgFont, short& ascent, short& descent, short& l
                 result = true;
             }
         }
-        CFRelease(os2Table);
     }
     return result;
 }
