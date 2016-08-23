@@ -1,3 +1,26 @@
+2016-07-08  Daniel Bates  <dabates@apple.com>
+
+        Move shouldInheritSecurityOriginFromOwner() from URL to Document
+        https://bugs.webkit.org/show_bug.cgi?id=158987
+
+        Reviewed by Alex Christensen.
+
+        The URL class should not have knowledge of the concept of an origin or the semantics of origin
+        inheritance as these are higher level concepts. We should make URL::shouldInheritSecurityOriginFromOwner()
+        a static non-member, non-friend function of Document because its implements the origin semantics
+        for a Document object as described in section Origin of the HTML5 spec., <https://html.spec.whatwg.org/multipage/browsers.html#origin> (8 July 2016).
+        These semantics only apply to Documents.
+
+        No functionality changed. So, no new tests.
+
+        * dom/Document.cpp:
+        (WebCore::shouldInheritSecurityOriginFromOwner): Added.
+        (WebCore::Document::initSecurityContext): Modified to call WebCore::shouldInheritSecurityOriginFromOwner().
+        (WebCore::Document::initContentSecurityPolicy): Ditto.
+        * platform/URL.cpp:
+        (WebCore::URL::shouldInheritSecurityOriginFromOwner): Deleted.
+        * platform/URL.h:
+
 2016-06-17  John Wilander  <wilander@apple.com>
 
         Ignore case in the check for security origin inheritance
