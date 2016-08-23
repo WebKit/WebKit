@@ -4,6 +4,7 @@ import os
 import subprocess
 
 from browser_driver import BrowserDriver
+from webkitpy.benchmark_runner.utils import write_defaults
 
 
 _log = logging.getLogger(__name__)
@@ -17,9 +18,14 @@ class OSXBrowserDriver(BrowserDriver):
         self.close_browsers()
         from Quartz import CGWarpMouseCursorPosition
         CGWarpMouseCursorPosition((10, 0))
+        self.updated_dock_animation_defaults = write_defaults('com.apple.dock', 'launchanim', False)
+        if self.updated_dock_animation_defaults:
+            self._terminate_processes('Dock')
 
     def restore_env(self):
-        pass
+        if self.updated_dock_animation_defaults:
+            write_defaults('com.apple.dock', 'launchanim', True)
+            self._terminate_processes('Dock')
 
     def close_browsers(self):
         self._terminate_processes(self.process_name)

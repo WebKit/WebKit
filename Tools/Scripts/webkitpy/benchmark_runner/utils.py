@@ -45,6 +45,23 @@ def force_remove(path):
         pass
 
 
+def write_defaults(domain, key, value):
+    # Returns whether the key in the domain is updated
+    from Foundation import NSUserDefaults
+    defaults = NSUserDefaults.standardUserDefaults()
+    defaults_for_domain = defaults.persistentDomainForName_(domain)
+    if not defaults_for_domain:
+        return False
+    old_value = defaults_for_domain.get(key)
+    if old_value == value:
+        return False
+    mutable_defaults_for_domain = defaults_for_domain.mutableCopy()
+    mutable_defaults_for_domain[key] = value
+    defaults.setPersistentDomain_forName_(mutable_defaults_for_domain, domain)
+    defaults.synchronize()
+    return True
+
+
 # Borrow this code from
 # 'http://stackoverflow.com/questions/2281850/timeout-function-if-it-takes-too-long-to-finish'
 class TimeoutError(Exception):
