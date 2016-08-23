@@ -16,7 +16,7 @@
             consoleWrite("");
             consoleWrite("** Add a text track through JS to the video element **");
             var t = video.addTextTrack('captions', 'English', 'en');
-            t.addCue(new TextTrackCue(0.0, 10.0, 'Some random caption text'));
+            t.addCue(new VTTCue(0.0, 10.0, 'Some random caption text'));
         }
 
         function addUnloadableHTMLTrackElement()

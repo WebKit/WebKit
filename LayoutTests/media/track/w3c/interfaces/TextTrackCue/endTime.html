@@ -10,7 +10,7 @@ setup(function(){
     document.body.appendChild(video);
 });
 test(function(){
-    var c1 = new TextTrackCue(-2, -1, 'text1');
+    var c1 = new VTTCue(-2, -1, 'text1');
     assert_equals(c1.endTime, -1);
     c1.endTime = c1.endTime;
     assert_equals(c1.endTime, -1);

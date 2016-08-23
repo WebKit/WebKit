@@ -1,5 +1,17 @@
 2016-08-22  Chris Dumez  <cdumez@apple.com>
 
+        Drop TextTrackCue's constructor as per the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=161061
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/historical-expected.txt:
+
+2016-08-22  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r204745.
 
         Broke the Windows build

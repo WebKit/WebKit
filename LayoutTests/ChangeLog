@@ -1,3 +1,52 @@
+2016-08-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop TextTrackCue's constructor as per the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=161061
+
+        Reviewed by Alex Christensen.
+
+        Update existing tests to use VTTCue's constructor instead of
+        TextTrackCue's.
+
+        * js/dom/constructor-length.html:
+        * media/track/getCueAsHTMLCrash.html:
+        * media/track/opera/interfaces/TextTrack/activeCues.html:
+        * media/track/opera/interfaces/TextTrackCue/getCueAsHTML.html:
+        * media/track/opera/interfaces/TextTrackCue/line.html:
+        * media/track/opera/interfaces/TextTrackCue/onenter.html:
+        * media/track/opera/interfaces/TextTrackCue/onexit.html:
+        * media/track/opera/interfaces/TextTrackCue/snapToLines.html:
+        * media/track/opera/interfaces/TextTrackCue/text.html:
+        * media/track/opera/interfaces/TextTrackCue/vertical.html:
+        * media/track/opera/interfaces/TextTrackCueList/getter.html:
+        * media/track/opera/track/track-element/src-clear-cues.html:
+        * media/track/opera/track/webvtt/rendering/reftest/repaint.html:
+        * media/track/regions-webvtt/text-track-cue-region-attribute.html:
+        * media/track/track-add-remove-cue-expected.txt:
+        * media/track/track-add-remove-cue.html:
+        * media/track/track-cue-empty-cue-text.html:
+        * media/track/track-cue-empty-text-crash.html:
+        * media/track/track-cue-inline-assertion-crash.html:
+        * media/track/track-cue-negative-timestamp-expected.txt:
+        * media/track/track-cue-negative-timestamp.html:
+        * media/track/track-cue-rendering-empty-cue-crash.html:
+        * media/track/track-cue-rendering-mode-changed.html:
+        * media/track/track-disabled-addcue.html:
+        * media/track/track-remove-active-cue-crash.html:
+        * media/track/w3c/interfaces/TextTrack/addCue.html:
+        * media/track/w3c/interfaces/TextTrack/cues.html:
+        * media/track/w3c/interfaces/TextTrack/removeCue.html:
+        * media/track/w3c/interfaces/TextTrackCue/align.html:
+        * media/track/w3c/interfaces/TextTrackCue/endTime.html:
+        * media/track/w3c/interfaces/TextTrackCue/id.html:
+        * media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html:
+        * media/track/w3c/interfaces/TextTrackCue/startTime.html:
+        * media/track/w3c/interfaces/TextTrackCue/track.html:
+        * media/track/w3c/interfaces/TextTrackCueList/getCueById.html:
+        * media/track/w3c/interfaces/TextTrackCueList/length.html:
+        * media/video-controls-captions.html:
+        * platform/mac/js/dom/constructor-length-expected.txt:
+
 2016-08-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update failure list of iOS simulator WK1 compositing test.

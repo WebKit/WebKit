@@ -12,7 +12,7 @@ setup(function(){
 test(function(){
     var video = document.createElement('video');
     document.body.appendChild(video);
-    var c1 = new TextTrackCue(0, 1, 'text1');
+    var c1 = new VTTCue(0, 1, 'text1');
     assert_equals(c1.vertical, '');
     var track = document.createElement('track');
     var t = track.track;

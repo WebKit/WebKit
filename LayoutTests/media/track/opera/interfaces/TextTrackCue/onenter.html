@@ -5,7 +5,7 @@
 <div id=log></div>
 <script>
 setup(function(){
-    window.c1 = new TextTrackCue(0, 1, 'text1');
+    window.c1 = new VTTCue(0, 1, 'text1');
     window.ev = new Event('enter');
     window.ran = false;
     window.cb = function() { ran = true; };

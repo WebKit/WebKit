@@ -11,7 +11,7 @@ EXPECTED (cues.getCueById('4').startTime == '121') OK
 EXPECTED (cues.getCueById('junk') == 'undefined') OK
 
 *** Create a new cue, check values
-RUN(textCue = new TextTrackCue(33, 3.4, 'Sausage?'))
+RUN(textCue = new VTTCue(33, 3.4, 'Sausage?'))
 EXPECTED (textCue.track == 'null') OK
 EXPECTED (textCue.id == '') OK
 EXPECTED (textCue.startTime == '33') OK
@@ -33,7 +33,7 @@ EXPECTED (cues[3].startTime == '61') OK
 
 *** create a new cue and add it to a track created with video.addTextTrack, make sure it is inserted correctly.
 RUN(newTrack = video.addTextTrack("subtitles", "French subtitles", "fr"))
-RUN(newTrack.addCue(new TextTrackCue(0.0, 1.0, "Test!")))
+RUN(newTrack.addCue(new VTTCue(0.0, 1.0, "Test!")))
 RUN(newCue = newTrack.cues[0])
 EXPECTED (newCue.track == '[object TextTrack]') OK
 EXPECTED (newCue.id == '') OK
@@ -48,7 +48,7 @@ EXPECTED (newCue.size == '100') OK
 EXPECTED (newCue.align == 'middle') OK
 
 *** Create an old-style cue with an id.
-RUN(oldStyleCue = new TextTrackCue('sausage-cue', 33, 3.4, 'Sausage?'))
+RUN(oldStyleCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?'))
 EXPECTED (oldStyleCue.id == '') OK
 EXPECTED (oldStyleCue.startTime.toString() == 'NaN') OK
 EXPECTED (oldStyleCue.endTime == '33') OK
@@ -74,7 +74,7 @@ EXPECTED (cues[2].startTime == '121') OK
 TEST(testTrack.track.removeCue(textCue)) THROWS(DOMException.NOT_FOUND_ERR) OK
 
 *** Add a cue before all the existing cues.
-RUN(testTrack.track.addCue(new TextTrackCue(0, 31, 'I am first')))
+RUN(testTrack.track.addCue(new VTTCue(0, 31, 'I am first')))
 EXPECTED (cues[0].startTime == '0') OK
 EXPECTED (cues[0].endTime == '31') OK
 EXPECTED (cues[1].startTime == '0') OK

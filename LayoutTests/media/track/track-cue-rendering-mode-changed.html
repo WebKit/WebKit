@@ -44,11 +44,11 @@
 
             consoleWrite("Add 'Arabic' text track with one cue");
             testTrackArabic = video.addTextTrack('captions', 'Arabic', 'ar');
-            testTrackArabic.addCue(new TextTrackCue(0.0, 10.0, 'Arabic'));
+            testTrackArabic.addCue(new VTTCue(0.0, 10.0, 'Arabic'));
 
             consoleWrite("Add 'English' text track with one cue");
             testTrackEnglish = video.addTextTrack('captions', 'English', 'en');
-            testTrackEnglish.addCue(new TextTrackCue(0.0, 10.0, 'English'));
+            testTrackEnglish.addCue(new VTTCue(0.0, 10.0, 'English'));
 
             consoleWrite("");
             consoleWrite("Set the mode of the 'Arabic' track to showing");

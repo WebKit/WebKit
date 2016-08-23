@@ -11,7 +11,7 @@ setup(function(){
 test(function() {
     var t1 = video.addTextTrack('subtitles');
     var t2 = video.addTextTrack('subtitles');
-    var c1 = new TextTrackCue(0, 1, 'text1');
+    var c1 = new VTTCue(0, 1, 'text1');
     assert_throws("NOT_FOUND_ERR", function() {
         t1.removeCue(c1);
     }, 'standalone');

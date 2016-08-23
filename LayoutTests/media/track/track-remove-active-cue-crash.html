@@ -30,7 +30,7 @@
             video.addTextTrack("captions", "regular captions track", "en");
 
             consoleWrite("** Add a cue to the track with enter event listener. **");
-            var cue = new TextTrackCue(0.00, 4.00, "Random");
+            var cue = new VTTCue(0.00, 4.00, "Random");
             cue.addEventListener("enter", removeActiveCue);
             video.textTracks[0].addCue(cue);
 

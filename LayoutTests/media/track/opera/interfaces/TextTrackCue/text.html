@@ -10,7 +10,7 @@ setup(function(){
     document.body.appendChild(video);
 });
 test(function(){
-    var c1 = new TextTrackCue(0, 1, 'text1\r\n\n\u0000');
+    var c1 = new VTTCue(0, 1, 'text1\r\n\n\u0000');
     assert_equals(c1.text, 'text1\r\n\n\u0000');
     c1.text = c1.text;
     assert_equals(c1.text, 'text1\r\n\n\u0000');

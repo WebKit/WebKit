@@ -37,7 +37,7 @@ PASS PopStateEvent.length is 1
 PASS ProgressEvent.length is 1
 FAIL ShadowRoot.length should be 1. Was 0.
 PASS StorageEvent.length is 1
-PASS TextTrackCue.length is 3
+PASS TextTrackCue.length is 0
 PASS TrackEvent.length is 1
 PASS Uint16Array.length is 0
 PASS Uint32Array.length is 0

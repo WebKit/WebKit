@@ -23,7 +23,7 @@
                 testExpected("cues.getCueById('junk')", undefined);
 
                 consoleWrite("<br>*** Create a new cue, check values");
-                run("textCue = new TextTrackCue(33, 3.4, 'Sausage?')");
+                run("textCue = new VTTCue(33, 3.4, 'Sausage?')");
                 testExpected("textCue.track", null);
                 testExpected("textCue.id", '');
                 testExpected("textCue.startTime", 33);
@@ -47,7 +47,7 @@
                 findMediaElement();
                 run('newTrack = video.addTextTrack("subtitles", "French subtitles", "fr")');
                 newTrack.mode = 2;
-                run('newTrack.addCue(new TextTrackCue(0.0, 1.0, "Test!"))');
+                run('newTrack.addCue(new VTTCue(0.0, 1.0, "Test!"))');
                 run('newCue = newTrack.cues[0]');
                 testExpected("newCue.track", newTrack);
                 testExpected("newCue.id", "");
@@ -62,7 +62,7 @@
                 testExpected("newCue.align", "middle");
 
                 consoleWrite("<br>*** Create an old-style cue with an id.");
-                run("oldStyleCue = new TextTrackCue('sausage-cue', 33, 3.4, 'Sausage?')");
+                run("oldStyleCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?')");
                 testExpected("oldStyleCue.id", "");
                 testExpected("oldStyleCue.startTime.toString()", "NaN");
                 testExpected("oldStyleCue.endTime", 33);
@@ -88,7 +88,7 @@
                 testDOMException("testTrack.track.removeCue(textCue)", "DOMException.NOT_FOUND_ERR");
 
                 consoleWrite("<br>*** Add a cue before all the existing cues.");
-                run("testTrack.track.addCue(new TextTrackCue(0, 31, 'I am first'))");
+                run("testTrack.track.addCue(new VTTCue(0, 31, 'I am first'))");
                 testExpected("cues[0].startTime", 0);
                 testExpected("cues[0].endTime", 31);
                 testExpected("cues[1].startTime", 0);

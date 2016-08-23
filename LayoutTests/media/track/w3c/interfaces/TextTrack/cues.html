@@ -20,12 +20,12 @@ test(function(){
     assert_equals(t1.cues.length, 0, 't1.cues should have length 0');
 }, document.title+', empty list');
 test(function(){
-    var c = new TextTrackCue(0, 1, "text");
+    var c = new VTTCue(0, 1, "text");
     c.id = "id";
     t1.addCue(c);
     assert_equals(t1.cues, t1_cues, "t1.cues should return same object");
     assert_equals(t1.cues.length, 1, "t1.cues.length");
-    var c2 = new TextTrackCue(1, 2, "text2");
+    var c2 = new VTTCue(1, 2, "text2");
     c2.id = "id2";
     t1.addCue(c2);
     assert_equals(t1.cues, t1_cues, "t1.cues should return the same object after adding a second cue");

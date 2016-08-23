@@ -9,7 +9,7 @@ test(function(){
     var t = video.addTextTrack('subtitles');
     document.body.appendChild(video);
     var cues = t.cues;
-    var c = new TextTrackCue(0, 1, 'text1');
+    var c = new VTTCue(0, 1, 'text1');
     t.addCue(c);
     assert_equals(cues.getCueById(""), null, '""');
     assert_equals(cues.getCueById(null), null, 'null');
@@ -20,7 +20,7 @@ test(function(){
     var t = video.addTextTrack('subtitles');
     document.body.appendChild(video);
     var cues = t.cues;
-    var c = new TextTrackCue(0, 1, 'text1');
+    var c = new VTTCue(0, 1, 'text1');
     c.id = 'foo';
     t.addCue(c);
     assert_equals(cues.getCueById(""), null, '""');
@@ -32,7 +32,7 @@ test(function(){
     var t = video.addTextTrack('subtitles');
     document.body.appendChild(video);
     var cues = t.cues;
-    var c = new TextTrackCue(0, 1, 'text1');
+    var c = new VTTCue(0, 1, 'text1');
     c.id = '1';
     t.addCue(c);
     assert_equals(cues.getCueById(""), null, '""');
@@ -44,7 +44,7 @@ test(function(){
     var t = video.addTextTrack('subtitles');
     document.body.appendChild(video);
     var cues = t.cues;
-    var c = new TextTrackCue(0, 1, 'text1');
+    var c = new VTTCue(0, 1, 'text1');
     c.id = 'a\u0000b';
     t.addCue(c);
     assert_equals(cues.getCueById("a\u0000b"), c, '"a\\u0000b"');

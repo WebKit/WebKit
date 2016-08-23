@@ -41,7 +41,5 @@ PASS video.initialTime should not be supported
 PASS video.audio should not be supported 
 PASS audio.startDate should not be supported 
 PASS video.startDate should not be supported 
-FAIL TextTrackCue constructor should not be supported assert_throws: function "function () {
-    new TextTrackCue(0, 0, '');
-  }" did not throw
+PASS TextTrackCue constructor should not be supported 
 

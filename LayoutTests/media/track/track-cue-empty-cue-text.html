@@ -7,7 +7,7 @@
         var fragment;
         function startTest()
         {
-            var emptyCue = new TextTrackCue(0, 0, "");
+            var emptyCue = new VTTCue(0, 0, "");
             fragment = emptyCue.getCueAsHTML();
 
             consoleWrite("** The getCueAsHTML() method should return a document fragment **");

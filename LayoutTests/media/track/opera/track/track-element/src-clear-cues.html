@@ -6,7 +6,7 @@
 <script>
 (async_test(document.title+', set mode, add cue, set src')).step(function(){
     var track = document.createElement('track');
-    var c = new TextTrackCue(0, 1, 'foo');
+    var c = new VTTCue(0, 1, 'foo');
     c.id = 'id';
     track.track.addCue(c);
     assert_equals(track.track.cues, null, 'cues before setting src or mode');
@@ -24,7 +24,7 @@
     var track = document.createElement('track');
     track.track.mode = 'showing';
     track.src = 'data:,a';
-    var c = new TextTrackCue(0, 1, 'foo');
+    var c = new VTTCue(0, 1, 'foo');
     c.id = 'id';
     track.track.addCue(c);
     assert_equals(track.track.cues.length, 1, 'cues.length before changing src');
@@ -39,7 +39,7 @@
 (async_test(document.title+', set mode, add cue, change mode to disabled, set src')).step(function(){
     var track = document.createElement('track');
     track.track.mode = 'showing';
-    var c = new TextTrackCue(0, 1, 'foo');
+    var c = new VTTCue(0, 1, 'foo');
     c.id = 'id';
     track.track.addCue(c);
     var cues = track.track.cues;

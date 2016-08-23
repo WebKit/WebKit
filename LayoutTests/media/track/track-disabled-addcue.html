@@ -16,7 +16,7 @@
                 for (var i = 0; i < 10; ++i) {
                     var start = i * cueDuration;
                     var end = start + cueDuration;
-                    track.addCue(new TextTrackCue(start, end, "Test Cue " + i));
+                    track.addCue(new VTTCue(start, end, "Test Cue " + i));
                 }
 
                 consoleWrite("Waiting for 2 cue durations to elapse.");

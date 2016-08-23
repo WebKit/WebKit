@@ -46,9 +46,6 @@ class TextTrack;
 
 class TextTrackCue : public RefCounted<TextTrackCue>, public EventTargetWithInlineData {
 public:
-    static Ref<TextTrackCue> create(ScriptExecutionContext&, double start, double end, const String& content);
-    static Ref<TextTrackCue> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
-
     static const AtomicString& cueShadowPseudoId()
     {
         static NeverDestroyed<const AtomicString> cue("cue", AtomicString::ConstructFromLiteral);

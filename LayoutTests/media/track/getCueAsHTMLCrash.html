@@ -5,7 +5,7 @@
 <script src="../../resources/testharnessreport.js"></script>
 <script>
 test(function() {
-    var cue = new TextTrackCue(0, 1, '<c>x\0');
+    var cue = new VTTCue(0, 1, '<c>x\0');
     window.fragment = cue.getCueAsHTML();
 }, document.title + ', creating the cue');
 

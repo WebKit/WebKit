@@ -15,7 +15,7 @@
             var t = video.addTextTrack('captions', 'English', 'en');
 
             consoleWrite("** Add cue to the text track **");
-            t.addCue(new TextTrackCue(0.0, 10.0, 'wow wow'));
+            t.addCue(new VTTCue(0.0, 10.0, 'wow wow'));
 
             consoleWrite("** Set the track mode to showing **");
             t.mode = "showing";

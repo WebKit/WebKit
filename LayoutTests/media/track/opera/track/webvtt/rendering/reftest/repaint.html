@@ -35,7 +35,7 @@ var v = document.querySelector('video');
 var c = document.getElementById('cover');
 var t = v.addTextTrack('subtitles');
 t.mode = "showing";
-t.addCue(new TextTrackCue(0, 100, 'PASS'));
+t.addCue(new VTTCue(0, 100, 'PASS'));
 v.onplaying = function() {
   setTimeout(function() {
     v.pause();

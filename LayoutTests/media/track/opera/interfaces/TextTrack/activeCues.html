@@ -34,11 +34,11 @@ test(function(){
 }, document.title+', empty list');
 test(function(){
     smoke_test();
-    var c = new TextTrackCue(0, 1, "text");
+    var c = new VTTCue(0, 1, "text");
     t1.addCue(c);
     assert_equals(t1.activeCues, t1_cues, "t1.activeCues should return same object");
     assert_equals(t1.activeCues.length, 0, "t1.activeCues.length");
-    var c2 = new TextTrackCue(1, 2, "text2");
+    var c2 = new VTTCue(1, 2, "text2");
     t1.addCue(c2);
     assert_equals(t1.activeCues, t1_cues, "t1.activeCues should return the same object after adding a second cue");
     assert_equals(t1.activeCues.length, 0, "t1.activeCues.length after adding a second cue");
@@ -74,7 +74,7 @@ test1.step(function(){
                 return;
             }
             test3.step(function(){
-                var c3 = new TextTrackCue(0, 2, "text3");
+                var c3 = new VTTCue(0, 2, "text3");
                 t1.addCue(c3);
                 assert_equals(t1.activeCues.length, 1, "t1.activeCues.length after adding a cue in the same script");
                 setTimeout(test3.step_func(function(){
