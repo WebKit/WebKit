@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>This tests the case when fixed positioned elements has a new containing block.</title>
+<title>This tests that we can adjust the contining block for absolute positioned element when containing block changes.</title>
 <style>
 div {
   width: 100px;
   height: 100px;
   background-color: green;
+  top: 100px;
+  left: 100px;
 }
 </style>
 </head>
 <body>
 PASS if no crash or assert.
-<div id=container style="position: absolute; transform: rotate(10deg);">
-  <div id=fixedChild style="position: fixed;"></div>
-</div>
+<div id=container style="background-color: blue;"></div>
 <script>
 if (window.testRunner) {
   testRunner.waitUntilDone();
@@ -22,16 +22,22 @@ if (window.testRunner) {
 }
 var container = document.getElementById("container"); 
 setTimeout(function() {
-  container.style.transform = "";
+  for (var i = 0; i < 50; ++i) {
+    var newChild = document.createElement("div");
+    newChild.style.position = "fixed";
+    container.appendChild(newChild);
+  }
   setTimeout(function() {
-    var removeThis = document.getElementById("fixedChild");
-    removeThis.parentNode.removeChild(removeThis);
+    container.style.transform = "rotate(10deg)";
+    setTimeout(function() {
+      container.style.transform = "";
       setTimeout(function() {
         var newChild = document.createElement("div");
         newChild.style.position = "absolute";
-        container.appendChild(newChild);
+        document.body.appendChild(newChild);
         if (window.testRunner)
           testRunner.notifyDone();
+      }, 0);
     }, 0);
   }, 0);
 }, 0);

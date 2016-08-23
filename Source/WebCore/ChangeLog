@@ -1,3 +1,48 @@
+2016-06-15  Zalan Bujtas  <zalan@apple.com>
+
+        Decouple the percent height and positioned descendants maps.
+        https://bugs.webkit.org/show_bug.cgi?id=158773
+
+        Reviewed by David Hyatt and Chris Dumez.
+
+        We track renderers with percent height across multiple containers using
+        HashMap<const RenderBox*, std::unique_ptr<HashSet<const RenderBlock*>>>.
+        We also use the same data structure to track positioned descendants.
+        However a positioned renderer can have only one containing block so tracking it
+        with a 1:many type is defective.
+        It allows multiple inserts for positioned descendants, which could lead to
+        inconsistent layout state as the rendering logic expects these type of renderers
+        with only one containing block.
+        This patch decouples percent height and positioned tracking by introducing
+        the PositionedDescendantsMap class. This class is responsible for tracking
+        the positioned descendants inbetween layouts.
+
+        No change in functionality.
+
+        Tests: fast/block/positioning/change-containing-block-for-absolute-positioned.html
+               fast/block/positioning/change-containing-block-for-fixed-positioned.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::insertIntoTrackedRendererMaps):
+        (WebCore::removeFromTrackedRendererMaps):
+        (WebCore::PositionedDescendantsMap::addDescendant): Add more defensive ASSERT_NOT_REACHED
+        to the double insert branch when webkit.org/b/158772 gets fixed.
+        (WebCore::PositionedDescendantsMap::removeDescendant):
+        (WebCore::PositionedDescendantsMap::removeContainingBlock):
+        (WebCore::PositionedDescendantsMap::positionedRenderers):
+        (WebCore::positionedDescendantsMap):
+        (WebCore::removeBlockFromPercentageDescendantAndContainerMaps):
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::positionedObjects):
+        (WebCore::RenderBlock::insertPositionedObject):
+        (WebCore::RenderBlock::removePositionedObject):
+        (WebCore::RenderBlock::addPercentHeightDescendant):
+        (WebCore::RenderBlock::removePercentHeightDescendant):
+        (WebCore::RenderBlock::percentHeightDescendants):
+        (WebCore::RenderBlock::checkPositionedObjectsNeedLayout):
+        (WebCore::removeBlockFromDescendantAndContainerMaps): Deleted.
+        * rendering/RenderBlock.h:
+
 2016-06-14  Zalan Bujtas  <zalan@apple.com>
 
         Make RenderBlock::insertInto/RemoveFromTrackedRendererMaps functions static.
