@@ -1,0 +1,7 @@
+Blocked access to external URL http://www1.localhost:8800/
+CONSOLE MESSAGE: line 16: ReferenceError: Can't find variable: fr_load
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: fr_load
+
+NOTRUN Window Security testing 
+

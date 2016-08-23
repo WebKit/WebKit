@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/001-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/001a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/001b.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/002-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/002a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/002b.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/003-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/003a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/003b.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/004-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/004a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/004b.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/005-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/005a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/005b.html

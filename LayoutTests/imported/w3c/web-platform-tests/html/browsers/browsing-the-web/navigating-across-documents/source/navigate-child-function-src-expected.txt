@@ -1,0 +1,3 @@
+
+PASS Set src from a function called from a parent 
+

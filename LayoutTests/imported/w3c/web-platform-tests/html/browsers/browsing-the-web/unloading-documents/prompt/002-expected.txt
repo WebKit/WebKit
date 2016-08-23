@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 6: TypeError: undefined is not an object (evaluating 'parent.events.push')
+
+PASS beforeunload event properties 
+

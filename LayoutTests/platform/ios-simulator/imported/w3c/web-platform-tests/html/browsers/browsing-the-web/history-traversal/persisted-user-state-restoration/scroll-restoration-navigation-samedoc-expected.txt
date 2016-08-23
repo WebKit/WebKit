@@ -1,0 +1,3 @@
+
+FAIL history.{push,replace}State retain scroll restoration mode and navigation in the same document respects it assert_equals: scrollX is correct for #3 expected 555 but got 200
+

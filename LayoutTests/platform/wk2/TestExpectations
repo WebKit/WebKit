@@ -682,6 +682,12 @@ security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.htm
 storage/indexeddb/structured-clone.html
 storage/indexeddb/structured-clone-private.html
 
+# Fails with WK2 only, it does not print the latest line.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/001.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/002.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/003.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/005.html [ Failure ]
+
 # WebKitTestRunner doesn't have eventSender.fireKeyboardEventsToElement
 platform/mac/fast/events/objc-keyboard-event-creation.html
 

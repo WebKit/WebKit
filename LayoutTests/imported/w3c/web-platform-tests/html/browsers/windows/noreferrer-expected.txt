@@ -1,0 +1,3 @@
+
+PASS rel=noreferrer nullifies window.opener 
+

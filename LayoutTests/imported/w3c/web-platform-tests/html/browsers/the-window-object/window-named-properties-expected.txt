@@ -1,0 +1,8 @@
+
+PASS Static name 
+FAIL Static name on the prototype assert_equals: expected true but got false
+PASS constructor 
+FAIL duplicate property names assert_equals: expected 1 but got 0
+PASS Dynamic name 
+PASS Ghost name 
+   

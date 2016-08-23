@@ -1,0 +1,5 @@
+
+FAIL document.createEvent The operation is not supported.
+PASS initPopStateEvent 
+PASS Dispatching a synthetic PopStateEvent 
+

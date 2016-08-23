@@ -1,0 +1,10 @@
+
+PASS Check if the first nested browsing context is returned by window['c'] 
+FAIL Check if window['a'] contains all a, applet, area, embed, form, img, and object elements, and their order assert_equals: The length should be 7. expected 7 but got 5
+FAIL Check if window['fs'] return the frameset element with name='fs' assert_equals: The frameset element should be returned. expected (object) Element node <frameset name="fs" id="fs1">
+  <frame>
+</frameset> but got (undefined) undefined
+PASS Check if window['b'] returns the elements with the id='b' 
+PASS Check if window['d'] returns the element with id='d' 
+PASS Check widow[''] when there are some elements with empty id or name attribute 
+

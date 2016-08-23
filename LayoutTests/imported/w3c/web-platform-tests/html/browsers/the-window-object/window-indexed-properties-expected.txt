@@ -1,0 +1,6 @@
+
+PASS Indexed properties of the window object (non-strict mode) 
+PASS Indexed properties of the window object (non-strict mode) 1 
+FAIL Indexed properties of the window object (non-strict mode) 2 assert_equals: expected (undefined) undefined but got (string) "foo"
+PASS Indexed properties of the window object (non-strict mode) 3 
+

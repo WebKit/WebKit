@@ -1,0 +1,4 @@
+main frame - has 1 onunload handler(s)
+
+PASS Running unload handler in window.close() 
+

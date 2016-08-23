@@ -1,0 +1,4 @@
+
+FAIL  Link with javascript onclick form submission script order  assert_array_equals: property 0, expected "after script" but got "submit"
+
+Test

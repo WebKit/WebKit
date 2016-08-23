@@ -1,0 +1,3 @@
+
+FAIL Triggering navigation from within beforeunload event assert_equals: expected 1000 but got 1
+

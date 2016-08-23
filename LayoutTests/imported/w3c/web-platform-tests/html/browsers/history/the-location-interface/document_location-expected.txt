@@ -1,0 +1,4 @@
+
+PASS document not in a browsing context 
+PASS document.location equals window.location 
+

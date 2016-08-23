@@ -1,0 +1,3 @@
+
+FAIL Indexed child browsing contexts assert_equals: The first child browsing context's container should be the object element. expected (undefined) undefined but got (object) object "[object Window]"
+

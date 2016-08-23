@@ -1,3 +1,14 @@
+2016-08-23  Chris Dumez  <cdumez@apple.com>
+
+        Import html/browsers web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=161067
+
+        Reviewed by Youenn Fablet.
+
+        Skip resource files.
+
+        * TestExpectations:
+
 2016-08-23  Youenn Fablet  <youenn@apple.com>
 
         [WK2] http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html fails

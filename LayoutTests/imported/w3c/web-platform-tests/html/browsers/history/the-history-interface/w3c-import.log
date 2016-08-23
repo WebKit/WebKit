@@ -1,0 +1,89 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/008.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/008.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/009-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/009-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/009-5.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/009.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/010-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/010-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/010-5.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/010.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/011.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/012.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/blank.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/blank2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/blank3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_back-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_back.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_back_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_entry.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_minus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_plus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_undefined-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_undefined.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_err.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_nooptionalparam.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_err.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_nooptionalparam.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_state.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_1-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_2-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_3-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_4-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_4.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_5-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_5.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_unload_1-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_unload_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_after_load_1-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_after_load_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_after_load_2-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_after_load_2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_onload_1-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_onload_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_onload_2-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_onload_2.html

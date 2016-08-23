@@ -1,0 +1,7 @@
+Blocked access to external URL http://www.localhost:8800/html/browsers/history/the-location-interface/cross_origin_joined_frame.sub.html
+
+FAIL same-origin, same-window location cycle cyclic __proto__ value
+FAIL cross-origin location has null prototype assert_equals: cross-origin unjoined location's [[Prototype] expected null but got object "[object LocationPrototype]"
+FAIL same-origin, different-window location cycle cyclic __proto__ value
+FAIL cross-origin, but joined via document.domain, location cycle assert_equals: accessing win.Location before joining win's origin expected true but got false
+ 

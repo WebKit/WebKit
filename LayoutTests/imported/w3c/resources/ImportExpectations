@@ -139,7 +139,6 @@ web-platform-tests/geolocation-API [ Skip ]
 web-platform-tests/gamepad [ Skip ]
 web-platform-tests/hr-time [ Skip ]
 #web-platform-tests/html [ Import ]
-web-platform-tests/html/browsers [ Skip ]
 web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript.sub.html [ Skip ]
 web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters [ Skip ]
 web-platform-tests/html/dom/reflection-original.html [ Skip ] # Not a test file

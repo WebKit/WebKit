@@ -1,0 +1,8 @@
+Blocked access to external URL http://www.localhost:8800/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resources/blank1.html
+CONSOLE MESSAGE: line 2422: Error: assert_equals: navigating back should retain scrollRestoration value expected (string) "manual" but got (undefined) undefined
+
+
+Harness Error (FAIL), message = Error: assert_equals: navigating back should retain scrollRestoration value expected (string) "manual" but got (undefined) undefined
+
+TIMEOUT Manual scroll restoration should take precedent over scrolling to fragment in cross origin navigation Test timed out
+

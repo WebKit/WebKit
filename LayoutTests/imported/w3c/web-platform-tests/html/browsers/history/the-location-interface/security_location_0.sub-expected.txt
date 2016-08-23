@@ -1,0 +1,6 @@
+Blocked access to external URL http://www.localhost:8800/
+Access location object from different origins doesn't raise SECURITY_ERR exception
+
+
+PASS Accessing location object from different origins doesn't raise SECURITY_ERR exception 
+
