@@ -1121,7 +1121,7 @@ private:
 
             // If it's a constant, then it's not as bad to spill. We can rematerialize it in many
             // cases.
-            if (counts->numConstDefs == counts->numDefs)
+            if (counts->numConstDefs == 1 && counts->numDefs == 1)
                 uses /= 2;
 
             return degree / uses;
@@ -1462,25 +1462,41 @@ private:
                 // Try to replace the register use by memory use when possible.
                 inst.forEachArg(
                     [&] (Arg& arg, Arg::Role role, Arg::Type argType, Arg::Width width) {
-                        if (arg.isTmp() && argType == type && !arg.isReg()) {
-                            auto stackSlotEntry = stackSlots.find(arg.tmp());
-                            if (stackSlotEntry != stackSlots.end()
-                                && inst.admitsStack(arg)) {
-
-                                Arg::Width spillWidth = m_tmpWidth.requiredWidth(arg.tmp());
-                                if (Arg::isAnyDef(role) && width < spillWidth)
-                                    return;
-                                ASSERT(inst.opcode == Move || !(Arg::isAnyUse(role) && width > spillWidth));
-
-                                if (spillWidth != Arg::Width32)
-                                    canUseMove32IfDidSpill = false;
-
-                                stackSlotEntry->value->ensureSize(
-                                    canUseMove32IfDidSpill ? 4 : Arg::bytes(width));
-                                arg = Arg::stack(stackSlotEntry->value);
-                                didSpill = true;
-                            }
+                        if (!arg.isTmp())
+                            return;
+                        if (argType != type)
+                            return;
+                        if (arg.isReg())
+                            return;
+                        
+                        auto stackSlotEntry = stackSlots.find(arg.tmp());
+                        if (stackSlotEntry == stackSlots.end())
+                            return;
+                        if (!inst.admitsStack(arg))
+                            return;
+                        
+                        // If the Tmp holds a constant then we want to rematerialize its
+                        // value rather than loading it from the stack. In order for that
+                        // optimization to kick in, we need to avoid placing the Tmp's stack
+                        // address into the instruction.
+                        if (!Arg::isColdUse(role)) {
+                            const UseCounts<Tmp>::Counts* counts = m_useCounts[arg.tmp()];
+                            if (counts && counts->numConstDefs == 1 && counts->numDefs == 1)
+                                return;
                         }
+                        
+                        Arg::Width spillWidth = m_tmpWidth.requiredWidth(arg.tmp());
+                        if (Arg::isAnyDef(role) && width < spillWidth)
+                            return;
+                        ASSERT(inst.opcode == Move || !(Arg::isAnyUse(role) && width > spillWidth));
+                        
+                        if (spillWidth != Arg::Width32)
+                            canUseMove32IfDidSpill = false;
+                        
+                        stackSlotEntry->value->ensureSize(
+                            canUseMove32IfDidSpill ? 4 : Arg::bytes(width));
+                        arg = Arg::stack(stackSlotEntry->value);
+                        didSpill = true;
                     });
 
                 if (didSpill && canUseMove32IfDidSpill)
