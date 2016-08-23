@@ -137,10 +137,10 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);
 #if USE(JSVALUE32_64)
-    Instruction* instruction = m_codeBlock->instructions().begin() + m_bytecodeOffset + 1; 
+    Instruction* instruction = m_codeBlock->instructions().begin() + m_bytecodeOffset; 
     uint32_t locationBits = CallSiteIndex(instruction).bits();
 #else
-    uint32_t locationBits = CallSiteIndex(m_bytecodeOffset + 1).bits();
+    uint32_t locationBits = CallSiteIndex(m_bytecodeOffset).bits();
 #endif
     store32(TrustedImm32(locationBits), intTagFor(CallFrameSlot::argumentCount));
     
