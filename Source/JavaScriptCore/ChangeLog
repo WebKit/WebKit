@@ -1,3 +1,34 @@
+2016-08-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make Math.cos() and Math.sin() work with any argument type
+        https://bugs.webkit.org/show_bug.cgi?id=161069
+
+        Reviewed by Geoffrey Garen.
+
+        Same as the ArithSqrt patch: add a generic path if the argument
+        is not a number.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithCos):
+        (JSC::DFG::SpeculativeJIT::compileArithSin):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithSin):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithCos):
+
 2016-08-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Module namespace object's Symbol.iterator method should only accept module namespace objects

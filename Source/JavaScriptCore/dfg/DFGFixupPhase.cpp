@@ -385,7 +385,9 @@ private:
             }
             break;
         }
-            
+
+        case ArithCos:
+        case ArithSin:
         case ArithSqrt: {
             Edge& child1 = node->child1();
             if (child1->shouldSpeculateNumberOrBoolean())
@@ -395,8 +397,6 @@ private:
             break;
         }
         case ArithFRound:
-        case ArithSin:
-        case ArithCos:
         case ArithLog: {
             fixDoubleOrBooleanEdge(node->child1());
             node->setResult(NodeResultDouble);

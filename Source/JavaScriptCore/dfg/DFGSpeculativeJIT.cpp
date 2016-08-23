@@ -3885,6 +3885,29 @@ void SpeculativeJIT::compileArithClz32(Node* node)
     int32Result(resultReg, node);
 }
 
+void SpeculativeJIT::compileArithCos(Node* node)
+{
+    if (node->child1().useKind() == DoubleRepUse) {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRReg op1FPR = op1.fpr();
+
+        flushRegisters();
+        
+        FPRResult result(this);
+        callOperation(cos, result.fpr(), op1FPR);
+        doubleResult(result.fpr(), node);
+        return;
+    }
+
+    JSValueOperand op1(this, node->child1());
+    JSValueRegs op1Regs = op1.jsValueRegs();
+    flushRegisters();
+    FPRResult result(this);
+    callOperation(operationArithCos, result.fpr(), op1Regs);
+    m_jit.exceptionCheck();
+    doubleResult(result.fpr(), node);
+}
+
 void SpeculativeJIT::compileArithSub(Node* node)
 {
     switch (node->binaryUseKind()) {
@@ -4886,6 +4909,29 @@ void SpeculativeJIT::compileArithRounding(Node* node)
         m_jit.exceptionCheck();
         setResult(resultFPR);
     }
+}
+
+void SpeculativeJIT::compileArithSin(Node* node)
+{
+    if (node->child1().useKind() == DoubleRepUse) {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRReg op1FPR = op1.fpr();
+
+        flushRegisters();
+        
+        FPRResult result(this);
+        callOperation(sin, result.fpr(), op1FPR);
+        doubleResult(result.fpr(), node);
+        return;
+    }
+
+    JSValueOperand op1(this, node->child1());
+    JSValueRegs op1Regs = op1.jsValueRegs();
+    flushRegisters();
+    FPRResult result(this);
+    callOperation(operationArithSin, result.fpr(), op1Regs);
+    m_jit.exceptionCheck();
+    doubleResult(result.fpr(), node);
 }
 
 void SpeculativeJIT::compileArithSqrt(Node* node)

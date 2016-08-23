@@ -1,3 +1,13 @@
+2016-08-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make Math.cos() and Math.sin() work with any argument type
+        https://bugs.webkit.org/show_bug.cgi?id=161069
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/arith-cos-on-various-types.js: Added.
+        * stress/arith-sin-on-various-types.js: Added.
+
 2016-08-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Module namespace object's Symbol.iterator method should only accept module namespace objects

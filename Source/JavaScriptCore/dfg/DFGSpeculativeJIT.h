@@ -2469,6 +2469,7 @@ public:
     void compileArithAdd(Node*);
     void compileMakeRope(Node*);
     void compileArithClz32(Node*);
+    void compileArithCos(Node*);
     void compileArithSub(Node*);
     void compileArithNegate(Node*);
     void compileArithMul(Node*);
@@ -2477,6 +2478,7 @@ public:
     void compileArithPow(Node*);
     void compileArithRounding(Node*);
     void compileArithRandom(Node*);
+    void compileArithSin(Node*);
     void compileArithSqrt(Node*);
     void compileArithLog(Node*);
     void compileConstantStoragePointer(Node*);

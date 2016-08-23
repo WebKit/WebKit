@@ -2020,9 +2020,27 @@ private:
         }
     }
 
-    void compileArithSin() { setDouble(m_out.doubleSin(lowDouble(m_node->child1()))); }
+    void compileArithSin()
+    {
+        if (m_node->child1().useKind() == DoubleRepUse) {
+            setDouble(m_out.doubleSin(lowDouble(m_node->child1())));
+            return;
+        }
+        LValue argument = lowJSValue(m_node->child1());
+        LValue result = vmCall(Double, m_out.operation(operationArithSin), m_callFrame, argument);
+        setDouble(result);
+    }
 
-    void compileArithCos() { setDouble(m_out.doubleCos(lowDouble(m_node->child1()))); }
+    void compileArithCos()
+    {
+        if (m_node->child1().useKind() == DoubleRepUse) {
+            setDouble(m_out.doubleCos(lowDouble(m_node->child1())));
+            return;
+        }
+        LValue argument = lowJSValue(m_node->child1());
+        LValue result = vmCall(Double, m_out.operation(operationArithCos), m_callFrame, argument);
+        setDouble(result);
+    }
 
     void compileArithPow()
     {

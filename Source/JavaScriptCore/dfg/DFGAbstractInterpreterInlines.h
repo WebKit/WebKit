@@ -984,7 +984,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(sin(child.asNumber())));
             break;
         }
-        forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
+        SpeculatedType sinType = SpecFullNumber;
+        if (node->child1().useKind() == DoubleRepUse)
+            sinType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
+        forNode(node).setType(sinType);
         break;
     }
     
@@ -994,7 +997,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(cos(child.asNumber())));
             break;
         }
-        forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
+        SpeculatedType cosType = SpecFullNumber;
+        if (node->child1().useKind() == DoubleRepUse)
+            cosType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
+        forNode(node).setType(cosType);
         break;
     }
 
