@@ -232,27 +232,20 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     ASSERT(m_resource);
     ASSERT(m_resource->loader());
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
-
-    // FIXME: We could remove that restriction, since we can use preflighting.
-    if (!m_simpleRequest) {
-        reportCrossOriginResourceSharingError(*m_client, redirectResponse.url());
-        request = ResourceRequest();
-        return;
-    }
+    ASSERT(m_originalHeaders);
 
     // Loader might have modified the origin to a unique one, let's reuse it for subsequent loads.
     m_origin = m_resource->loader()->origin();
 
     // Except in case where preflight is needed, loading should be able to continue on its own.
     // But we also handle credentials here if it is restricted to SameOrigin.
-    if (m_options.credentials != FetchOptions::Credentials::SameOrigin)
+    if (m_options.credentials != FetchOptions::Credentials::SameOrigin && m_simpleRequest && isSimpleCrossOriginAccessRequest(request.httpMethod(), *m_originalHeaders))
         return;
 
     m_options.allowCredentials = DoNotAllowStoredCredentials;
 
     clearResource();
 
-    ASSERT(m_originalHeaders);
     // Let's fetch the request with the original headers (equivalent to request cloning specified by fetch algorithm).
     // Do not copy the Authorization header if removed by the network layer.
     if (!request.httpHeaderFields().contains(HTTPHeaderName::Authorization))

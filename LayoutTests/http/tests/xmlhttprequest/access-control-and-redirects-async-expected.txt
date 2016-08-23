@@ -3,7 +3,7 @@ CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest
 CONSOLE MESSAGE: Cross-origin redirection to foo://bar.cgi denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=foo://bar.cgi&%20%20access-control-allow-origin=http://127.0.0.1:8000 due to access control checks.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&%20%20url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&%20%20access-control-allow-origin=*. Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=false&%20%20url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&%20%20access-control-allow-origin=*&%20%20access-control-allow-headers=x-webkit. Cross-origin redirection denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi. Request header field x-webkit is not allowed by Access-Control-Allow-Headers.
 Tests that asynchronous XMLHttpRequests handle redirects according to the CORS standard.
 
 Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi without credentials

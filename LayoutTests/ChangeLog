@@ -1,3 +1,15 @@
+2016-08-23  Youenn Fablet  <youenn@apple.com>
+
+        Implement redirect support post CORS-preflight
+        https://bugs.webkit.org/show_bug.cgi?id=159056
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations: Skipping new fetch worker test in Debug mode as it may crash and disrupt other tests.
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/redirections-and-user-headers-expected.txt:
+        * http/tests/xmlhttprequest/redirections-and-user-headers.html:
+
 2016-08-22  Chris Dumez  <cdumez@apple.com>
 
         Drop TextTrackCue's constructor as per the latest specification

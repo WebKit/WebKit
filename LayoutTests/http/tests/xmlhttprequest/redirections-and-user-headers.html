@@ -71,7 +71,6 @@ doTest("Check headers after cross-origin redirection to same-origin resource (si
         "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.php",
         simpleRequest);
 
-// FIXME: Thistest will not pass as long as not-simple cross origin requests are not allowed to redirect. See https://bugs.webkit.org/show_bug.cgi?id=159056.
 doTest("Check headers after cross-origin redirection to same-origin resource (not simple request)",
         "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.php",
         !simpleRequest);
@@ -80,7 +79,6 @@ doTest("Check headers after cross-origin redirection to cross-origin resource (s
         "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php",
         simpleRequest);
 
-// FIXME: Thistest will not pass as long as not-simple cross origin requests are not allowed to redirect. See https://bugs.webkit.org/show_bug.cgi?id=159056.
 doTest("Check headers after cross-origin redirection to cross-origin resource (not simple request)",
         "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php",
         !simpleRequest);

@@ -1,3 +1,17 @@
+2016-08-23  Youenn Fablet  <youenn@apple.com>
+
+        Implement redirect support post CORS-preflight
+        https://bugs.webkit.org/show_bug.cgi?id=159056
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight-worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.js: Added.
+        (corsRedirect):
+
 2016-08-22  Chris Dumez  <cdumez@apple.com>
 
         Drop TextTrackCue's constructor as per the latest specification
