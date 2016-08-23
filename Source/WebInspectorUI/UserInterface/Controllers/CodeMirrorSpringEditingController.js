@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.visual-style-property-container.timing-editor > .visual-style-property-value-container {
-    display: flex;
-}
+WebInspector.CodeMirrorSpringEditingController = class CodeMirrorSpringEditingController extends WebInspector.CodeMirrorEditingController
+{
+    // Public
 
-.visual-style-property-container.timing-editor > .visual-style-property-value-container > .keyword-picker-select {
-    order: 1;
-}
-
-.visual-style-property-container.timing-editor > .visual-style-property-value-container > .inline-swatch:matches(.bezier, .spring) {
-    width: 23px;
-    height: 20px;
-}
-
-.visual-style-property-container.timing-editor > .visual-style-property-value-container:not(.bezier-value) > .inline-swatch.bezier,
-.visual-style-property-container.timing-editor > .visual-style-property-value-container:not(.spring-value) > .inline-swatch.spring {
-    display: none;
-}
-
-@media (-webkit-min-device-pixel-ratio: 2) {
-    .visual-style-property-container.timing-editor > .visual-style-property-value-container > .inline-swatch.bezier {
-        margin-left: 0.5px;
+    get initialValue()
+    {
+        return WebInspector.Spring.fromString(this.text);
     }
-}
+
+    get cssClassName()
+    {
+        return "spring";
+    }
+
+    popoverWillPresent(popover)
+    {
+        this._springEditor = new WebInspector.SpringEditor;
+        this._springEditor.addEventListener(WebInspector.SpringEditor.Event.SpringChanged, this._springEditorSpringChanged, this);
+        popover.content = this._springEditor.element;
+    }
+
+    popoverDidPresent(popover)
+    {
+        this._springEditor.spring = this.value;
+    }
+
+    popoverDidDismiss(popover)
+    {
+        this._springEditor.removeListeners();
+    }
+
+    // Private
+
+    _springEditorSpringChanged(event)
+    {
+        this.value = event.data.spring;
+    }
+};

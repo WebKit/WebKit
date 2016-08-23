@@ -1,3 +1,143 @@
+2016-08-23  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add visual editor for spring() timing-function
+        https://bugs.webkit.org/show_bug.cgi?id=159315
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Base/Utilities.js:
+        (Number.prototype.maxDecimals):
+        Limits the number of decimals for the number object via rounding.
+
+        * UserInterface/Controllers/CodeMirrorSpringEditingController.js:
+        (WebInspector.CodeMirrorSpringEditingController.prototype.get initialValue):
+        (WebInspector.CodeMirrorSpringEditingController.prototype.get cssClassName):
+        (WebInspector.CodeMirrorSpringEditingController.prototype.popoverWillPresent):
+        (WebInspector.CodeMirrorSpringEditingController.prototype.popoverDidPresent):
+        (WebInspector.CodeMirrorSpringEditingController.prototype.popoverDidDismiss):
+        (WebInspector.CodeMirrorSpringEditingController.prototype._springEditorSpringChanged):
+        Controller for Spring editors inside CodeMirror instances.
+
+        * UserInterface/Models/Geometry.js:
+        (WebInspector.Spring):
+        (WebInspector.Spring.fromValues):
+        (WebInspector.Spring.fromString):
+        (WebInspector.Spring.prototype.copy):
+        (WebInspector.Spring.prototype.toString):
+        (WebInspector.Spring.prototype.solve):
+        (WebInspector.Spring.prototype.calculateDuration):
+        Spring data class based on <https://webkit.org/demos/spring/>.
+
+        * UserInterface/Models/TextMarker.js:
+        (WebInspector.TextMarker.Type):
+        Added Spring marker type.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createInlineSwatches):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createInlineSwatches.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._inlineSwatchValueChanged):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._inlineSwatchValueChanged.update):
+
+        * UserInterface/Views/CodeMirrorTextMarkers.js:
+        (createCodeMirrorSpringTextMarkers):
+
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch:matches(.bezier, .spring)):
+        (.inline-swatch:matches(.bezier, .spring):hover):
+        (.inline-swatch:matches(.bezier, .spring):active):
+        (.inline-swatch:matches(.bezier, .spring) > span):
+        (.inline-swatch.bezier): Deleted.
+        (.inline-swatch.bezier:hover): Deleted.
+        (.inline-swatch.bezier:active): Deleted.
+        (.inline-swatch.bezier > span): Deleted.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch):
+        (WebInspector.InlineSwatch.prototype._fallbackValue):
+        (WebInspector.InlineSwatch.prototype._swatchElementClicked):
+        (WebInspector.InlineSwatch.prototype._valueEditorValueDidChange):
+        (WebInspector.InlineSwatch.Type):
+        Added support for Spring editor Inline Swatches.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._updateEditableMarkers):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedMarkedExpression):
+
+        * UserInterface/Views/SpringEditor.css:
+        (.spring-editor):
+        (.spring-editor > .spring-preview):
+        (.spring-editor > .spring-preview > div):
+        (.spring-editor > .spring-timing):
+        (.spring-editor > .spring-timing > div):
+        (.spring-editor > .spring-timing:matches(::before, ::after)):
+        (.spring-editor > .spring-timing::before):
+        (.spring-editor > .spring-timing::after):
+        (.spring-editor > :matches(.spring-preview, .spring-timing) > div):
+        (.spring-editor > .animate:matches(.spring-preview, .spring-timing) > div):
+        (.spring-editor > .number-input-container > .number-input-row):
+        (.spring-editor > .number-input-container > .number-input-row > .number-input-row-title):
+        (.spring-editor > .number-input-container > .number-input-row > input):
+        (.spring-editor > .number-input-container > .number-input-row > input[type="range"]):
+
+        * UserInterface/Views/SpringEditor.js:
+        (WebInspector.SpringEditor):
+        (WebInspector.SpringEditor.prototype.get element):
+        (WebInspector.SpringEditor.prototype.set spring):
+        (WebInspector.SpringEditor.prototype.get spring):
+        (WebInspector.SpringEditor.prototype._handleNumberInputInput):
+        (WebInspector.SpringEditor.prototype._handleNumberInputKeydown):
+        (WebInspector.SpringEditor.prototype._handleNumberSliderInput):
+        (WebInspector.SpringEditor.prototype._handleNumberSliderMousedown):
+        (WebInspector.SpringEditor.prototype._handleNumberSliderMouseup):
+        (WebInspector.SpringEditor.prototype._changeSpringForInput):
+        (WebInspector.SpringEditor.prototype._resetPreviewAnimation):
+        (WebInspector.SpringEditor.prototype._updatePreviewAnimation):
+        (WebInspector.SpringEditor.Event):
+        Visual editor for CSS Spring timing function values.  Organized into 5 rows:
+         - Preview: shows movement of spring and total duration
+         - Mass: slider and input for "mass" parameter
+         - Stiffness: slider and input for "stiffness" parameter
+         - Damping: slider and input for "damping" parameter
+         - Initial Velocity: slider and input for "initial velocity" parameter
+        The preview animation will loop indefinitely until the user clicks the animation row
+        or changes the value of one of the parameters, at which point the duration will also
+        be recalculated.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.createSpringMarkers):
+        (WebInspector.TextEditor.prototype.editingControllerForMarker):
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.set value):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._generateTextFromLonghandProperties):
+        Add support for CSS spring timing functions by allowing parenthesis in comma separated
+        values so long as there are no commas inside the parenthesis.
+
+        * UserInterface/Views/VisualStyleTimingEditor.css:
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .inline-swatch:matches(.bezier, .spring)):
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container:not(.spring-value) > .inline-swatch.spring):
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .inline-swatch.bezier): Deleted.
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container:not(.bezier-value) > .inline-swatch.bezier): Deleted.
+
+        * UserInterface/Views/VisualStyleTimingEditor.js:
+        (WebInspector.VisualStyleTimingEditor):
+        (WebInspector.VisualStyleTimingEditor.prototype.get value):
+        (WebInspector.VisualStyleTimingEditor.prototype.set value):
+        (WebInspector.VisualStyleTimingEditor.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleTimingEditor.prototype.parseValue):
+        (WebInspector.VisualStyleTimingEditor.prototype.get _bezierValue):
+        (WebInspector.VisualStyleTimingEditor.prototype.set _bezierValue):
+        (WebInspector.VisualStyleTimingEditor.prototype.get _springValue):
+        (WebInspector.VisualStyleTimingEditor.prototype.set _springValue):
+        (WebInspector.VisualStyleTimingEditor.prototype._handleKeywordChanged):
+        (WebInspector.VisualStyleTimingEditor.prototype._springSwatchValueChanged):
+        (WebInspector.VisualStyleTimingEditor.prototype.get bezierValue): Renamed.
+        (WebInspector.VisualStyleTimingEditor.prototype.set bezierValue): Renamed.
+        Duplicate Bezier custom timing function logic for Spring timing functions.
+
 2016-08-22  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Styles -> Computed -> Box Model shows NaN x NaN for invisible elements

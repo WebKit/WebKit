@@ -1069,6 +1069,15 @@ Object.defineProperty(Number, "abbreviate",
     }
 });
 
+Object.defineProperty(Number.prototype, "maxDecimals",
+{
+    value(decimals)
+    {
+        let power = 10 ** decimals;
+        return Math.round(this * power) / power;
+    }
+});
+
 Object.defineProperty(Uint32Array, "isLittleEndian",
 {
     value: function()

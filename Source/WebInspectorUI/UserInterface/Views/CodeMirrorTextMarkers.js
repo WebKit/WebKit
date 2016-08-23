@@ -195,3 +195,9 @@ function createCodeMirrorCubicBezierTextMarkers(codeMirror, range, callback)
     var cubicBezierRegex = /(cubic-bezier\([^)]+\)|\b\w+\b(?:-\b\w+\b){0,2})/g;
     return createCodeMirrorTextMarkers("CubicBezier", cubicBezierRegex, null, codeMirror, range, callback);
 }
+
+function createCodeMirrorSpringTextMarkers(codeMirror, range, callback)
+{
+    const springRegex = /(spring\([^)]+\))/g;
+    return createCodeMirrorTextMarkers("Spring", springRegex, null, codeMirror, range, callback);
+}

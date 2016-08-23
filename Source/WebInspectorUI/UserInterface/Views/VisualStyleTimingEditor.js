@@ -31,19 +31,80 @@ WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends Web
 
         this.element.classList.add("timing-editor");
 
-        this._customValueOptionElement = document.createElement("option");
-        this._customValueOptionElement.value = "custom";
-        this._customValueOptionElement.text = WebInspector.UIString("Custom");
-        this._keywordSelectElement.appendChild(this._customValueOptionElement);
+        this._keywordSelectElement.createChild("hr");
+
+        this._customBezierOptionElement = this._keywordSelectElement.createChild("option");
+        this._customBezierOptionElement.value = "bezier";
+        this._customBezierOptionElement.text = WebInspector.UIString("Bezier");
+
+        this._customSpringOptionElement = this._keywordSelectElement.createChild("option");
+        this._customSpringOptionElement.value = "spring";
+        this._customSpringOptionElement.text = WebInspector.UIString("Spring");
 
         this._bezierSwatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Bezier);
         this._bezierSwatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._bezierSwatchValueChanged, this);
         this.contentElement.appendChild(this._bezierSwatch.element);
+
+        this._springSwatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Spring);
+        this._springSwatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._springSwatchValueChanged, this);
+        this.contentElement.appendChild(this._springSwatch.element);
     }
 
-    // Public
+    // Protected
 
-    get bezierValue()
+    get value()
+    {
+        if (this._customBezierOptionElement.selected)
+            return this._bezierValue;
+
+        if (this._customSpringOptionElement.selected)
+            return this._springValue;
+
+        return super.value;
+    }
+
+    set value(value)
+    {
+        this._bezierValue = value;
+        this._springValue = value;
+        if (this.valueIsSupportedKeyword(value)) {
+            super.value = value;
+            this.contentElement.classList.remove("bezier-value", "spring-value");
+            return;
+        }
+
+        let bezier = this._bezierValue;
+        this._customBezierOptionElement.selected = !!bezier;
+        this.contentElement.classList.toggle("bezier-value", !!bezier);
+
+        let spring = this._springValue;
+        this._customSpringOptionElement.selected = !!spring;
+        this.contentElement.classList.toggle("spring-value", !!spring);
+
+        this.specialPropertyPlaceholderElement.hidden = !!bezier || !!spring;
+        if (!bezier && !spring)
+            super.value = value;
+    }
+
+    get synthesizedValue()
+    {
+        if (this._customBezierOptionElement.selected)
+            return this._bezierValue;
+
+        if (this._customSpringOptionElement.selected)
+            return this._springValue;
+
+        return super.synthesizedValue;
+    }
+
+    parseValue(text)
+    {
+        return /((?:cubic-bezier|spring)\(.+\))/.exec(text);
+    }
+
+    // Private
+
+    get _bezierValue()
     {
         let bezier = this._bezierSwatch.value;
         if (!bezier)
@@ -52,59 +113,48 @@ WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends Web
         return bezier.toString();
     }
 
-    set bezierValue(text)
+    set _bezierValue(text)
     {
-        let bezier = WebInspector.CubicBezier.fromString(text);
-        this._bezierSwatch.value = bezier;
+        this._bezierSwatch.value = WebInspector.CubicBezier.fromString(text);
     }
 
-    // Protected
-
-    get value()
+    get _springValue()
     {
-        return this._customValueOptionElement.selected ? this.bezierValue : super.value;
+        let spring = this._springSwatch.value;
+        if (!spring)
+            return null;
+
+        return spring.toString();
     }
 
-    set value(value)
+    set _springValue(text)
     {
-        this.bezierValue = value;
-        if (this.valueIsSupportedKeyword(value)) {
-            super.value = value;
-            this.contentElement.classList.remove("bezier-value");
-            return;
-        }
-
-        let bezier = this.bezierValue;
-        this._customValueOptionElement.selected = !!bezier;
-        this.contentElement.classList.toggle("bezier-value", !!bezier);
-        this.specialPropertyPlaceholderElement.hidden = !!bezier;
-        if (!bezier)
-            super.value = value;
+        this._springSwatch.value = WebInspector.Spring.fromString(text);
     }
-
-    get synthesizedValue()
-    {
-        return this._customValueOptionElement.selected ? this.bezierValue : super.synthesizedValue;
-    }
-
-    parseValue(text)
-    {
-        return /(cubic-bezier\(.+\))/.exec(text);
-    }
-
-    // Private
 
     _handleKeywordChanged()
     {
         super._handleKeywordChanged();
-        let customOptionSelected = this._customValueOptionElement.selected;
-        this.contentElement.classList.toggle("bezier-value", !!customOptionSelected);
-        this.specialPropertyPlaceholderElement.hidden = !!customOptionSelected;
-        if (customOptionSelected)
-            this.bezierValue = "linear";
+
+        let customBezierOptionSelected = this._customBezierOptionElement.selected;
+        this.contentElement.classList.toggle("bezier-value", !!customBezierOptionSelected);
+        if (customBezierOptionSelected)
+            this._bezierValue = "linear";
+
+        let customSpringOptionSelected = this._customSpringOptionElement.selected;
+        this.contentElement.classList.toggle("spring-value", !!customSpringOptionSelected);
+        if (customSpringOptionSelected)
+            this._springValue = "1 100 10 0";
+
+        this.specialPropertyPlaceholderElement.hidden = !!customBezierOptionSelected || !!customSpringOptionSelected;
     }
 
     _bezierSwatchValueChanged(event)
+    {
+        this._valueDidChange();
+    }
+
+    _springSwatchValueChanged(event)
     {
         this._valueDidChange();
     }

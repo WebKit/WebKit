@@ -111,7 +111,9 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
             values[i] += (openParentheses - closedParenthesis === 1) ? ")" : "";
         }
 
-        if (values.length === 1 && !values[0].includes("(") && !values[0].includes(")"))
+        // Allow splitting with parenthesis if the parenthesis does not have any commas.
+        let hasParenthesis = values[0] && (values[0].includes("(") || values[0].includes(")"));
+        if (values.length === 1 && (!hasParenthesis || !/\([^\)]*,[^\)]*\)/.test(values[0])))
             values = values[0].split(/\s*,\s*/);
 
         for (let value of values)
@@ -176,7 +178,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         let count = 0;
         while (count < valuesCount) {
             if (count > 0)
-                text += ",";
+                text += ", ";
 
             for (let valueList of valueLists)
                 text += valueList[count > valueList.length - 1 ? valueList.length - 1 : count] + " ";
