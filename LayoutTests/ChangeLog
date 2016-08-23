@@ -1,3 +1,11 @@
+2016-08-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Skip some tests:
+        https://bugs.webkit.org/show_bug.cgi?id=161114 svg/carto.net/window.svg fails in debug after r204854
+        https://bugs.webkit.org/show_bug.cgi?id=161115 js/regress/put-by-id-transition-with-indexing-header.html sometimes fails in debug after r204854
+
+        * TestExpectations:
+
 2016-08-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rebase iOS simulator WK1 editing tests.
