@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 9: 127.0.0.1
+Test passes if "127.0.0.1" is returned by the worker.
