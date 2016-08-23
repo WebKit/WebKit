@@ -79,6 +79,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         access_log = self._filesystem.join(output_dir, "access_log.txt")
         error_log = self._filesystem.join(output_dir, "error_log.txt")
         document_root = self._filesystem.join(self.tests_dir, "http", "tests")
+        php_ini_dir = self._filesystem.join(self.tests_dir, "http", "conf")
 
         if port_obj.get_option('http_access_log'):
             access_log = port_obj.get_option('http_access_log')
@@ -93,6 +94,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-f', "\"%s\"" % self._get_apache_config_file_path(self.tests_dir, output_dir),
             '-C', "\'DocumentRoot \"%s\"\'" % document_root,
             '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
+            '-c', "\'PHPINIDir \"%s\"\'" % php_ini_dir,
             '-c', "\'CustomLog \"%s\" common\'" % access_log,
             '-c', "\'ErrorLog \"%s\"\'" % error_log,
             '-c', "\'PidFile %s'" % self._pid_file,

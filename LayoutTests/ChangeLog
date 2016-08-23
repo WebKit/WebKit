@@ -1,3 +1,15 @@
+2016-08-23  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (PHP 5.6): http/tests/misc/bad-charset-alias.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=161047
+        rdar://problem/27434307
+
+        Reviewed by Lucas Forschler.
+
+        * http/conf/php.ini: Added. On macOS at least, there is no global php.ini, so we
+        only need to override this one default setting.
+        * platform/mac/TestExpectations: Unmarked the test.
+
 2016-08-23  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION (r204226): LayoutTest editing/deleting/delete-empty-line-breaks-at-end-of-textarea.html "crashing" without a crashlog
