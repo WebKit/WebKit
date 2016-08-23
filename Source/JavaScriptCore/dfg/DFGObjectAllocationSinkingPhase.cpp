@@ -1862,7 +1862,8 @@ private:
         ASSERT(def->value());
 
         Node* result = def->value();
-
+        if (result->replacement())
+            result = result->replacement();
         ASSERT(!result->replacement());
 
         m_localMapping.add(location, result);
