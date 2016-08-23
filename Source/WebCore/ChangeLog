@@ -1,3 +1,19 @@
+2016-07-01  Zalan Bujtas  <zalan@apple.com>
+
+        prepareForDestruction() always needs to be called before destroying the Document object.
+        https://bugs.webkit.org/show_bug.cgi?id=159372
+        rdar://problem/26788150
+
+        Reviewed by Antti Koivisto.
+
+        We should never start destroying the Document object without calling prepareForDestruction() first.
+        It ensures that render tree gets nuked before we start tearing down the node tree.
+
+        Test: fast/history/page-cache-destroy-document.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+
 2016-06-20  Zalan Bujtas  <zalan@apple.com>
 
         Set the end position on the placeholder BidiRun properly.

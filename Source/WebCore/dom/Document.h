@@ -1759,8 +1759,8 @@ private:
     unsigned m_disabledFieldsetElementsCount;
 
     bool m_hasInjectedPlugInsScript;
-    bool m_renderTreeBeingDestroyed;
-    bool m_hasPreparedForDestruction;
+    bool m_renderTreeBeingDestroyed { false };
+    bool m_hasPreparedForDestruction { false };
 
     bool m_hasStyleWithViewportUnits;
     bool m_isTimerThrottlingEnabled { false };
