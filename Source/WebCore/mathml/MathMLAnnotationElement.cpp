@@ -41,7 +41,7 @@ namespace WebCore {
 using namespace MathMLNames;
 
 MathMLAnnotationElement::MathMLAnnotationElement(const QualifiedName& tagName, Document& document)
-    : MathMLElement(tagName, document)
+    : MathMLRowElement(tagName, document)
 {
     ASSERT(hasTagName(annotationTag) || hasTagName(annotation_xmlTag));
 }
@@ -100,7 +100,7 @@ void MathMLAnnotationElement::attributeChanged(const QualifiedName& name, const 
         if (is<MathMLElement>(parent) && parent->hasTagName(semanticsTag))
             downcast<MathMLElement>(*parent).updateSelectedChild();
     }
-    MathMLElement::attributeChanged(name, oldValue, newValue, reason);
+    MathMLRowElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 }

@@ -34,6 +34,7 @@
 #include "FontCache.h"
 #include "GraphicsContext.h"
 #include "MathMLNames.h"
+#include "MathMLRowElement.h"
 #include "PaintInfo.h"
 #include "RenderIterator.h"
 #include "RenderMathMLMenclose.h"
@@ -43,7 +44,7 @@ static const UChar gRadicalCharacter = 0x221A;
 
 namespace WebCore {
 
-RenderMathMLRoot::RenderMathMLRoot(Element& element, RenderStyle&& style)
+RenderMathMLRoot::RenderMathMLRoot(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))
 {
     // Determine what kind of expression we have by element name

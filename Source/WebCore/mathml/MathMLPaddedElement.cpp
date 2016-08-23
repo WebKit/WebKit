@@ -36,7 +36,7 @@ namespace WebCore {
 using namespace MathMLNames;
 
 inline MathMLPaddedElement::MathMLPaddedElement(const QualifiedName& tagName, Document& document)
-    : MathMLInlineContainerElement(tagName, document)
+    : MathMLRowElement(tagName, document)
 {
 }
 

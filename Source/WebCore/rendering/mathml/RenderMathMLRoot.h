@@ -34,11 +34,13 @@
 
 namespace WebCore {
 
+class MathMLRowElement;
+
 // Render base^(1/index), or sqrt(base) using radical notation.
 class RenderMathMLRoot final : public RenderMathMLRow {
 
 public:
-    RenderMathMLRoot(Element&, RenderStyle&&);
+    RenderMathMLRoot(MathMLRowElement&, RenderStyle&&);
     void updateFromElement() final;
     void updateStyle();
 

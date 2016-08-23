@@ -38,11 +38,9 @@ public:
 
 protected:
     MathMLInlineContainerElement(const QualifiedName& tagName, Document&);
-    void childrenChanged(const ChildChange&) override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     bool acceptsDisplayStyleAttribute() override;
-    bool acceptsMathVariantAttribute() override;
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;

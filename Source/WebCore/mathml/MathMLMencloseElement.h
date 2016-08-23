@@ -28,11 +28,11 @@
 
 #if ENABLE(MATHML)
 #include "Element.h"
-#include "MathMLInlineContainerElement.h"
+#include "MathMLRowElement.h"
 
 namespace WebCore {
 
-class MathMLMencloseElement final: public MathMLInlineContainerElement {
+class MathMLMencloseElement final: public MathMLRowElement {
 public:
     static Ref<MathMLMencloseElement> create(const QualifiedName& tagName, Document&);
 

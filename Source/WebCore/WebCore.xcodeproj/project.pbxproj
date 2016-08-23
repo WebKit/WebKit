@@ -6312,9 +6312,11 @@
 		F98FFF4511A2676200F548E8 /* CSSOMUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = F98FFF4311A2676200F548E8 /* CSSOMUtils.h */; };
 		F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */; };
 		FA654A6B1108ABED002615E0 /* MathMLTokenElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA654A691108ABED002615E0 /* MathMLTokenElement.cpp */; };
+		FA765A6B1108ABED002615E0 /* MathMLRowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA765A691108ABED002615E0 /* MathMLRowElement.cpp */; };
 		FA654A6B1108ABED002616F1 /* MathMLOperatorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA654A691108ABED002616F1 /* MathMLOperatorElement.cpp */; };
 		FA654A6B1108ABED002626F1 /* MathMLUnderOverElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA654A691108ABED002626F1 /* MathMLUnderOverElement.cpp */; };
 		FA654A6C1108ABED002615E0 /* MathMLTokenElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002615E0 /* MathMLTokenElement.h */; };
+		FA765A6C1108ABED002615E0 /* MathMLRowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA765A6A1108ABED002615E0 /* MathMLRowElement.h */; };
 		FA654A6C1108ABED002616F1 /* MathMLOperatorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002616F1 /* MathMLOperatorElement.h */; };
 		FA654A6C1108ABED002626F1 /* MathMLUnderOverElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002626F1 /* MathMLUnderOverElement.h */; };
 		FABE72F41059C1EB00D888CC /* MathMLAnnotationElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72ED1059C1EB00D888CC /* MathMLAnnotationElement.cpp */; };
@@ -13884,9 +13886,11 @@
 		FA654A631108ABB7002615E0 /* mathml.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mathml.css; sourceTree = "<group>"; };
 		FA654A671108ABE2002615E0 /* mathattrs.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathattrs.in; sourceTree = "<group>"; };
 		FA654A691108ABED002615E0 /* MathMLTokenElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLTokenElement.cpp; sourceTree = "<group>"; };
+		FA765A691108ABED002615E0 /* MathMLRowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLRowElement.cpp; sourceTree = "<group>"; };
 		FA654A691108ABED002616F1 /* MathMLOperatorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLOperatorElement.cpp; sourceTree = "<group>"; };
 		FA654A691108ABED002626F1 /* MathMLUnderOverElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLUnderOverElement.cpp; sourceTree = "<group>"; };
 		FA654A6A1108ABED002615E0 /* MathMLTokenElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLTokenElement.h; sourceTree = "<group>"; };
+		FA765A6A1108ABED002615E0 /* MathMLRowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLRowElement.h; sourceTree = "<group>"; };
 		FA654A6A1108ABED002616F1 /* MathMLOperatorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLOperatorElement.h; sourceTree = "<group>"; };
 		FA654A6A1108ABED002626F1 /* MathMLUnderOverElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLUnderOverElement.h; sourceTree = "<group>"; };
 		FA6E466FCD0418A9966A5B60 /* DNSResolveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNSResolveQueue.h; sourceTree = "<group>"; };
@@ -23142,6 +23146,8 @@
 				4FA65A6A1108ABED002615E0 /* MathMLSpaceElement.h */,
 				FA654A691108ABED002615E0 /* MathMLTokenElement.cpp */,
 				FA654A6A1108ABED002615E0 /* MathMLTokenElement.h */,
+				FA765A691108ABED002615E0 /* MathMLRowElement.cpp */,
+				FA765A6A1108ABED002615E0 /* MathMLRowElement.h */,
 				FA654A691108ABED002626F1 /* MathMLUnderOverElement.cpp */,
 				FA654A6A1108ABED002626F1 /* MathMLUnderOverElement.h */,
 				FABE72F31059C1EB00D999DD /* mathtags.in */,
@@ -25375,6 +25381,7 @@
 				4FA65A6C1108ABED002615E0 /* MathMLSpaceElement.h in Headers */,
 				439176E012DA25E17BAF80A2 /* MathMLStyle.h in Headers */,
 				FA654A6C1108ABED002615E0 /* MathMLTokenElement.h in Headers */,
+				FA765A6C1108ABED002615E0 /* MathMLRowElement.h in Headers */,
 				FA654A6C1108ABED002626F1 /* MathMLUnderOverElement.h in Headers */,
 				439046EA12DA25E812AF80AC /* MathOperator.h in Headers */,
 				49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */,
@@ -29059,6 +29066,7 @@
 				4FA65A6B1108ABED002615E0 /* MathMLSpaceElement.cpp in Sources */,
 				439176DF12DA25E17BAF80A2 /* MathMLStyle.cpp in Sources */,
 				FA654A6B1108ABED002615E0 /* MathMLTokenElement.cpp in Sources */,
+				FA765A6B1108ABED002615E0 /* MathMLRowElement.cpp in Sources */,
 				FA654A6B1108ABED002626F1 /* MathMLUnderOverElement.cpp in Sources */,
 				439046E912DA25E812AF80AC /* MathOperator.cpp in Sources */,
 				49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */,

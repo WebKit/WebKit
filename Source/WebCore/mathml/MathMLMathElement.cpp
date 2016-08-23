@@ -39,7 +39,7 @@ namespace WebCore {
 using namespace MathMLNames;
 
 inline MathMLMathElement::MathMLMathElement(const QualifiedName& tagName, Document& document)
-    : MathMLInlineContainerElement(tagName, document)
+    : MathMLRowElement(tagName, document)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -83,7 +83,7 @@ void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 void MathMLMathElement::didAttachRenderers()
 {
-    MathMLInlineContainerElement::didAttachRenderers();
+    MathMLRowElement::didAttachRenderers();
 
     MathMLStyle::resolveMathMLStyleTree(renderer());
 }

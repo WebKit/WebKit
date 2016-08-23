@@ -32,12 +32,7 @@
 #include "MathMLInlineContainerElement.h"
 
 #include "MathMLNames.h"
-#include "MathMLOperatorElement.h"
 #include "RenderMathMLBlock.h"
-#include "RenderMathMLFenced.h"
-#include "RenderMathMLMenclose.h"
-#include "RenderMathMLRoot.h"
-#include "RenderMathMLRow.h"
 
 namespace WebCore {
 
@@ -53,24 +48,8 @@ Ref<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const Qua
     return adoptRef(*new MathMLInlineContainerElement(tagName, document));
 }
 
-void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
-{
-    for (auto child = firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(MathMLNames::moTag))
-            static_cast<MathMLOperatorElement*>(child)->setOperatorFormDirty();
-    }
-
-    MathMLElement::childrenChanged(change);
-}
-
 RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (hasTagName(merrorTag) || hasTagName(mphantomTag) || hasTagName(mrowTag) || hasTagName(mstyleTag))
-        return createRenderer<RenderMathMLRow>(*this, WTFMove(style));
-    if (hasTagName(msqrtTag) || hasTagName(mrootTag))
-        return createRenderer<RenderMathMLRoot>(*this, WTFMove(style));
-    if (hasTagName(mfencedTag))
-        return createRenderer<RenderMathMLFenced>(*this, WTFMove(style));
     if (hasTagName(mtableTag))
         return createRenderer<RenderMathMLTable>(*this, WTFMove(style));
 
@@ -79,12 +58,7 @@ RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(Ren
 
 bool MathMLInlineContainerElement::acceptsDisplayStyleAttribute()
 {
-    return hasTagName(mstyleTag) || hasTagName(mtableTag);
-}
-
-bool MathMLInlineContainerElement::acceptsMathVariantAttribute()
-{
-    return hasTagName(mstyleTag);
+    return hasTagName(mtableTag);
 }
 
 void MathMLInlineContainerElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

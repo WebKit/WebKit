@@ -31,9 +31,11 @@
 
 namespace WebCore {
 
+class MathMLRowElement;
+
 class RenderMathMLMath final : public RenderMathMLRow {
 public:
-    RenderMathMLMath(Element&, RenderStyle&&);
+    RenderMathMLMath(MathMLRowElement&, RenderStyle&&);
 
 private:
     bool isRenderMathMLMath() const final { return true; }

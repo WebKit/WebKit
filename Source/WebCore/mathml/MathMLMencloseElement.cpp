@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace MathMLNames;
 
 MathMLMencloseElement::MathMLMencloseElement(const QualifiedName& tagName, Document& document)
-    : MathMLInlineContainerElement(tagName, document)
+    : MathMLRowElement(tagName, document)
 {
     // By default we draw a longdiv.
     clearNotations();
@@ -118,7 +118,7 @@ void MathMLMencloseElement::parseAttribute(const QualifiedName& name, const Atom
     if (name == notationAttr)
         m_notationFlags = Nullopt;
 
-    MathMLInlineContainerElement::parseAttribute(name, value);
+    MathMLRowElement::parseAttribute(name, value);
 }
 
 }

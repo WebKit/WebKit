@@ -26,11 +26,11 @@
 #pragma once
 
 #if ENABLE(MATHML)
-#include "MathMLInlineContainerElement.h"
+#include "MathMLRowElement.h"
 
 namespace WebCore {
 
-class MathMLSelectElement final : public MathMLInlineContainerElement {
+class MathMLSelectElement final : public MathMLRowElement {
 public:
     static Ref<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
     static bool isMathMLEncoding(const AtomicString& value);

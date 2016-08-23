@@ -32,9 +32,12 @@
 
 namespace WebCore {
 
+class MathMLRowElement;
+
 class RenderMathMLRow : public RenderMathMLBlock {
 public:
-    RenderMathMLRow(Element&, RenderStyle&&);
+    RenderMathMLRow(MathMLRowElement&, RenderStyle&&);
+    MathMLRowElement& element() const;
 
 protected:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;

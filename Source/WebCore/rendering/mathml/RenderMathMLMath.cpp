@@ -30,12 +30,13 @@
 #include "RenderMathMLMath.h"
 
 #include "MathMLNames.h"
+#include "MathMLRowElement.h"
 
 namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLMath::RenderMathMLMath(Element& element, RenderStyle&& style)
+RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))
 {
 }

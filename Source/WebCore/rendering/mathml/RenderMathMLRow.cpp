@@ -31,6 +31,7 @@
 #include "RenderMathMLRow.h"
 
 #include "MathMLNames.h"
+#include "MathMLRowElement.h"
 #include "RenderIterator.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMathMLRoot.h"
@@ -39,9 +40,14 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLRow::RenderMathMLRow(Element& element, RenderStyle&& style)
+RenderMathMLRow::RenderMathMLRow(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
 {
+}
+
+MathMLRowElement& RenderMathMLRow::element() const
+{
+    return static_cast<MathMLRowElement&>(nodeForNonAnonymous());
 }
 
 Optional<int> RenderMathMLRow::firstLineBaseline() const

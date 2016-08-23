@@ -26,11 +26,11 @@
 #pragma once
 
 #if ENABLE(MATHML)
-#include "MathMLElement.h"
+#include "MathMLRowElement.h"
 
 namespace WebCore {
 
-class MathMLAnnotationElement final : public MathMLElement {
+class MathMLAnnotationElement final : public MathMLRowElement {
 public:
     static Ref<MathMLAnnotationElement> create(const QualifiedName& tagName, Document&);
 private:
@@ -38,7 +38,6 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     bool isSemanticAnnotation() const final { return true; }
-    bool isPresentationMathML() const final { return true; }
 
     bool childShouldCreateRenderer(const Node&) const final;
     void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason) final;

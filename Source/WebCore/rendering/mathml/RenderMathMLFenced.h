@@ -27,16 +27,16 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLInlineContainerElement.h"
 #include "RenderMathMLFencedOperator.h"
 #include "RenderMathMLRow.h"
 
 namespace WebCore {
 
+class MathMLRowElement;
+
 class RenderMathMLFenced final : public RenderMathMLRow {
 public:
-    RenderMathMLFenced(MathMLInlineContainerElement&, RenderStyle&&);
-    MathMLInlineContainerElement& element() { return static_cast<MathMLInlineContainerElement&>(nodeForNonAnonymous()); }
+    RenderMathMLFenced(MathMLRowElement&, RenderStyle&&);
 
 private:
     bool isRenderMathMLFenced() const final { return true; }

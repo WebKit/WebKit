@@ -2011,6 +2011,7 @@ set(WebCore_SOURCES
     mathml/MathMLOperatorDictionary.cpp
     mathml/MathMLOperatorElement.cpp
     mathml/MathMLPaddedElement.cpp
+    mathml/MathMLRowElement.cpp
     mathml/MathMLScriptsElement.cpp
     mathml/MathMLSelectElement.cpp
     mathml/MathMLSpaceElement.cpp
