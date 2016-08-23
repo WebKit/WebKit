@@ -1,3 +1,31 @@
+2016-08-23  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(204854): ASan is unhappy
+        https://bugs.webkit.org/show_bug.cgi?id=161109
+
+        Reviewed by Geoffrey Garen.
+        
+        I messed up RegExpConstructor: it ends up being a callee and a large allocation.
+        
+        This fixes it to not be a large allocation.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::matchCompareWithInterpreter):
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::genericSplit):
+        * testRegExp.cpp:
+        (testOneRegExp):
+
 2016-08-23  Saam Barati  <sbarati@apple.com>
 
         strict mode eval should not fire the var injection watch point

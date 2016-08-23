@@ -469,7 +469,7 @@ private:
             FrozenValue* constructorFrozenValue = m_graph.freeze(constructor);
 
             MatchResult result;
-            Vector<int, 32> ovector;
+            Vector<int> ovector;
             // We have to call the kind of match function that the main thread would have called.
             // Otherwise, we might not have the desired Yarr code compiled, and the match will fail.
             if (m_node->op() == RegExpExec) {
@@ -651,7 +651,7 @@ private:
             bool ok = true;
             do {
                 MatchResult result;
-                Vector<int, 32> ovector;
+                Vector<int> ovector;
                 // Model which version of match() is called by the main thread.
                 if (replace.isEmpty() && regExp->global()) {
                     if (!regExp->matchConcurrently(vm(), string, startPosition, result)) {
