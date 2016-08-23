@@ -91,13 +91,14 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this.element.appendChild(this._sections.layout.element);
 
         // Text Section
+        this._generateSection("content", WebInspector.UIString("Content"));
         this._generateSection("text-style", WebInspector.UIString("Style"));
         this._generateSection("font", WebInspector.UIString("Font"));
         this._generateSection("font-variants", WebInspector.UIString("Variants"));
         this._generateSection("text-spacing", WebInspector.UIString("Spacing"));
         this._generateSection("text-shadow", WebInspector.UIString("Shadow"));
 
-        this._sections.text = new WebInspector.DetailsSection("text", WebInspector.UIString("Text"), [this._groups.textStyle.section, this._groups.font.section, this._groups.fontVariants.section, this._groups.textSpacing.section, this._groups.textShadow.section]);
+        this._sections.text = new WebInspector.DetailsSection("text", WebInspector.UIString("Text"), [this._groups.content.section, this._groups.textStyle.section, this._groups.font.section, this._groups.fontVariants.section, this._groups.textSpacing.section, this._groups.textShadow.section]);
         this.element.appendChild(this._sections.text.element);
 
         // Background Section
@@ -187,6 +188,10 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
                     section.collapsed = false;
             }
         }
+
+        let hasMatchedElementPseudoSelector = this._currentStyle.ownerRule && this._currentStyle.ownerRule.hasMatchedPseudoElementSelector();
+        this._groups.content.section.element.classList.toggle("inactive", !hasMatchedElementPseudoSelector);
+        this._groups.listStyle.section.element.classList.toggle("inactive", hasMatchedElementPseudoSelector);
     }
 
     _updateProperties(group, forceStyleUpdate)
@@ -651,6 +656,21 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         properties.alignContent.addDependency("display", allowedDisplayValues);
         properties.alignItems.addDependency("display", allowedDisplayValues);
         properties.alignSelf.addDependency("display", allowedDisplayValues);
+    }
+
+    _populateContentSection()
+    {
+        let group = this._groups.content;
+        let properties = group.properties;
+
+        let contentRow = new WebInspector.DetailsSectionRow;
+
+        properties.content = new WebInspector.VisualStyleBasicInput("content", null, WebInspector.UIString("Enter value"));
+
+        contentRow.element.appendChild(properties.content.element);
+
+        let contentGroup = new WebInspector.DetailsSectionGroup([contentRow]);
+        this._populateSection(group, [contentGroup]);
     }
 
     _populateTextStyleSection()

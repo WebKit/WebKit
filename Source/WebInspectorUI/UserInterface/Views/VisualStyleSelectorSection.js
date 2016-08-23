@@ -207,7 +207,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
     currentStyle()
     {
         if (!this._nodeStyles || !this._selectors.selectedTreeElement)
-            return;
+            return null;
 
         return this._selectors.selectedTreeElement.representedObject;
     }

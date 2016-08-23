@@ -1,5 +1,25 @@
 2016-08-22  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Visual Styles: "Text -> Content" section should only be visible for pseudo-element
+        https://bugs.webkit.org/show_bug.cgi?id=158272
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section :matches(.details-section, .group).inactive):
+        (.sidebar > .panel.details.css-style .visual > .details-section :matches(.details-section, .group).inactive > *):
+        (.visual-style-property-container.transition): Deleted.
+        (.visual-style-property-container.animation): Deleted.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype.initialLayout):
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateSections):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateContentSection):
+
+2016-08-22  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Entering ":n" in Open Resource Dialog, where n > number of lines, should jump to the last line
         https://bugs.webkit.org/show_bug.cgi?id=160840
 
