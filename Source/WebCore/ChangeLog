@@ -1,3 +1,28 @@
+2016-06-15  Antti Koivisto  <antti@apple.com>
+
+        GoogleMaps transit schedule explorer comes up blank initially
+        https://bugs.webkit.org/show_bug.cgi?id=158803
+        rdar://problem/25818080
+
+        Reviewed by Andreas Kling.
+
+        In case we had something like
+
+        .foo bar { ... }
+
+        and later a new stylesheet was added dynamically that contained
+
+        .foo baz { ... }
+
+        we would fail to add the new rules to the descendant invalidation rule sets for ".foo". This could
+        cause some style invalidations to be missed.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::collectFeatures):
+
+        Reset the ancestorClassRules and ancestorAttributeRulesForHTML rule set caches when new style sheets
+        are added (==collectFeatures is called).
+
 2016-06-02  Darin Adler  <darin@apple.com>
 
         Fix a couple of mistakes in CSSParserValue memory management

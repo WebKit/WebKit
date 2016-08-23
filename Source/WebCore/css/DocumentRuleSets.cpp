@@ -114,6 +114,9 @@ void DocumentRuleSets::collectFeatures() const
 
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
+
+    m_ancestorClassRuleSets.clear();
+    m_ancestorAttributeRuleSetsForHTML.clear();
 }
 
 RuleSet* DocumentRuleSets::ancestorClassRules(AtomicStringImpl* className) const
