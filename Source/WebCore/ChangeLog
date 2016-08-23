@@ -1,3 +1,22 @@
+2016-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+        marquee with "truespeed" animates at > 60fps, hogging CPU
+        https://bugs.webkit.org/show_bug.cgi?id=160609
+
+        Reviewed by David Hyatt.
+        
+        A <marquee truespeed="" scrollDelay="0"> would fire a zero-delay timer and also
+        fail to animate, hogging CPU.
+        
+        Fix to cap the timer at 16ms intervals. We don't believe it's necessary to
+        maintain web compatibility here.
+
+        Tested by existing tests.
+
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::minimumDelay):
+        * html/HTMLMarqueeElement.h:
+
 2016-07-25  Brady Eidson  <beidson@apple.com>
 
         Allow LocalStorage by default for file URLs.
