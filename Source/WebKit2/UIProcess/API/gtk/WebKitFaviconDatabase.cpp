@@ -259,6 +259,12 @@ GQuark webkit_favicon_database_error_quark(void)
  * This is an asynchronous method. When the operation is finished, callback will
  * be invoked. You can then call webkit_favicon_database_get_favicon_finish()
  * to get the result of the operation.
+ *
+ * You must call webkit_web_context_set_favicon_database_directory() for
+ * the #WebKitWebContext associated with this #WebKitFaviconDatabase
+ * before attempting to use this function; otherwise,
+ * webkit_favicon_database_get_favicon_finish() will return
+ * %WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED.
  */
 void webkit_favicon_database_get_favicon(WebKitFaviconDatabase* database, const gchar* pageURI, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
