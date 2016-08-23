@@ -29,7 +29,6 @@
 #if ENABLE(BATTERY_STATUS)
 
 #include "ArgumentCoders.h"
-#include "Arguments.h"
 
 namespace WebKit {
 

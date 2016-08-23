@@ -1,3 +1,9 @@
+2016-08-23  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] URTBF after r204743.
+
+        * Shared/WebBatteryStatus.cpp: Remove Arguments.h.
+
 2016-08-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use Messages::XXX...::Reply explicitly
