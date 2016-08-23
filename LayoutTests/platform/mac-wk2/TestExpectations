@@ -541,4 +541,3 @@ webkit.org/b/159427 http/tests/loading/basic-credentials-sent-automatically.html
 
 webkit.org/b/160309 fast/dom/Window/child-window-focus.html [ Pass Failure ]
 
-webkit.org/b/160782 [ ElCapitan ] editing/deleting/delete-empty-line-breaks-at-end-of-textarea.html [ Pass Crash ]

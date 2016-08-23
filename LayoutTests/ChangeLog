@@ -1,3 +1,14 @@
+2016-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r204226): LayoutTest editing/deleting/delete-empty-line-breaks-at-end-of-textarea.html "crashing" without a crashlog
+        https://bugs.webkit.org/show_bug.cgi?id=160782
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rolling out r204650.
+
+        * platform/mac-wk2/TestExpectations: editing/deleting/delete-empty-line-breaks-at-end-of-textarea.html removed from list of flakey tests.
+
 2016-08-23  Chris Dumez  <cdumez@apple.com>
 
         Import html/browsers web platform tests
