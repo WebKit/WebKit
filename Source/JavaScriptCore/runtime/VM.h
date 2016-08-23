@@ -644,6 +644,11 @@ private:
         m_lastException = exception;
     }
 
+#if !ENABLE(JIT)    
+    bool ensureStackCapacityForCLoop(Register* newTopOfStack);
+    bool isSafeToRecurseSoftCLoop() const;
+#endif // !ENABLE(JIT)
+
 #if ENABLE(ASSEMBLER)
     bool m_canUseAssembler;
 #endif

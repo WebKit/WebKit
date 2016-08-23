@@ -1,3 +1,18 @@
+2016-08-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix CLoop build.
+        
+        This fixes the CLoop build while still ensuring that Interpreter.h is a project header.
+
+        * llint/LowLevelInterpreter.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::ensureStackCapacityForCLoop):
+        (JSC::VM::isSafeToRecurseSoftCLoop):
+        * runtime/VM.h:
+        * runtime/VMInlines.h:
+        (JSC::VM::ensureStackCapacityFor):
+        (JSC::VM::isSafeToRecurseSoft):
+
 2016-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
