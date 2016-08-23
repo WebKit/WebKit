@@ -104,15 +104,19 @@ enum URLCharacterClasses {
     PathSegmentEndChar = 1 << 5,
 
     // not allowed in path
-    BadChar = 1 << 6
+    BadChar = 1 << 6,
+
+    // "\t" | "\n" | "\r"
+    TabNewline = 1 << 7
 };
 
 static const unsigned char characterClassTable[256] = {
     /* 0 nul */ PathSegmentEndChar,    /* 1 soh */ BadChar,
     /* 2 stx */ BadChar,    /* 3 etx */ BadChar,
     /* 4 eot */ BadChar,    /* 5 enq */ BadChar,    /* 6 ack */ BadChar,    /* 7 bel */ BadChar,
-    /* 8 bs */ BadChar,     /* 9 ht */ BadChar,     /* 10 nl */ BadChar,    /* 11 vt */ BadChar,
-    /* 12 np */ BadChar,    /* 13 cr */ BadChar,    /* 14 so */ BadChar,    /* 15 si */ BadChar,
+    /* 8 bs */ BadChar,     /* 9 ht */ BadChar | TabNewline,                /* 10 nl */ BadChar | TabNewline,
+    /* 11 vt */ BadChar,    /* 12 np */ BadChar,    /* 13 cr */ BadChar | TabNewline,
+    /* 14 so */ BadChar,    /* 15 si */ BadChar,
     /* 16 dle */ BadChar,   /* 17 dc1 */ BadChar,   /* 18 dc2 */ BadChar,   /* 19 dc3 */ BadChar,
     /* 20 dc4 */ BadChar,   /* 21 nak */ BadChar,   /* 22 syn */ BadChar,   /* 23 etb */ BadChar,
     /* 24 can */ BadChar,   /* 25 em */ BadChar,    /* 26 sub */ BadChar,   /* 27 esc */ BadChar,
@@ -350,6 +354,7 @@ static inline bool isIPv6Char(unsigned char c) { return characterClassTable[c] &
 static inline bool isPathSegmentEndChar(char c) { return characterClassTable[static_cast<unsigned char>(c)] & PathSegmentEndChar; }
 static inline bool isPathSegmentEndChar(UChar c) { return c <= 0xff && (characterClassTable[c] & PathSegmentEndChar); }
 static inline bool isBadChar(unsigned char c) { return characterClassTable[c] & BadChar; }
+static inline bool isTabNewline(UChar c) { return c <= 0xff && (characterClassTable[c] & TabNewline); }
 
 static inline bool isSchemeCharacterMatchIgnoringCase(char character, char schemeCharacter)
 {
@@ -455,7 +460,7 @@ URL::URL(const URL& base, const String& relative, const TextEncoding& encoding)
     init(base, relative, encoding.encodingForFormSubmission());
 }
 
-static bool shouldTrimFromURL(unsigned char c)
+static bool shouldTrimFromURL(UChar c)
 {
     // Browsers ignore leading/trailing whitespace and control
     // characters from URLs.  Note that c is an *unsigned* char here
@@ -473,9 +478,14 @@ void URL::init(const URL& base, const String& relative, const TextEncoding& enco
         return;
     }
 
+    // Get rid of leading and trailing whitespace and control characters.
+    String rel = relative.stripWhiteSpace(shouldTrimFromURL);
+
+    // Get rid of any tabs and newlines.
+    rel = rel.removeCharacters(isTabNewline);
+
     // For compatibility with Win IE, treat backslashes as if they were slashes,
     // as long as we're not dealing with javascript: or data: URLs.
-    String rel = relative;
     if (rel.contains('\\') && !(protocolIsJavaScript(rel) || protocolIs(rel, "data")))
         rel = substituteBackslashes(rel);
 
@@ -499,16 +509,6 @@ void URL::init(const URL& base, const String& relative, const TextEncoding& enco
         str = strBuffer.data();
         len = strlen(str);
     }
-
-    // Get rid of leading whitespace and control characters.
-    while (len && shouldTrimFromURL(*str)) {
-        str++;
-        --len;
-    }
-
-    // Get rid of trailing whitespace and control characters.
-    while (len && shouldTrimFromURL(str[len - 1]))
-        str[--len] = '\0';
 
     // According to the RFC, the reference should be interpreted as an
     // absolute URI if possible, using the "leftmost, longest"
@@ -1934,12 +1934,26 @@ bool protocolIs(const String& url, const char* protocol)
 {
     // Do the comparison without making a new string object.
     assertProtocolIsGood(protocol);
-    for (int i = 0; ; ++i) {
-        if (!protocol[i])
+    bool isLeading = true;
+    for (int i = 0, j = 0; url[i]; ++i) {
+        // skip leading whitespace and control characters.
+        if (isLeading && shouldTrimFromURL(url[i]))
+            continue;
+        isLeading = false;
+
+        // skip any tabs and newlines.
+        if (isTabNewline(url[i]))
+            continue;
+
+        if (!protocol[j])
             return url[i] == ':';
-        if (!isLetterMatchIgnoringCase(url[i], protocol[i]))
+        if (!isLetterMatchIgnoringCase(url[i], protocol[j]))
             return false;
+
+        ++j;
     }
+
+    return false;
 }
 
 bool isValidProtocol(const String& protocol)

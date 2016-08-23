@@ -25,8 +25,6 @@ Set host to URL with file: protocol
 PASS a.href is 'file://mydomain.com/path/'
 Set host containing slashes in it
 PASS a.href is 'https://www.otherdom/ain.com/path/'
-Set host to a malformed URL
-PASS a.href is 'https:/\rww.my@domain.com:8080/path/'
 Set host that starts with ':'
 PASS a.href is 'https://domain.com:8080/path/'
 Set host to URL containing username and ..
