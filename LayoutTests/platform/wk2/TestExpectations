@@ -42,8 +42,6 @@
 ########################################
 ### START OF (1) Classified failures with bug reports
 
-webkit.org/b/160445 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html [ Timeout ]
-
 webkit.org/b/156612 http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html [ Failure ]
 webkit.org/b/156612 http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html [ Failure ]
 

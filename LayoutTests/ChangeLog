@@ -1,5 +1,18 @@
 2016-08-23  Youenn Fablet  <youenn@apple.com>
 
+        [WK2] http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=161052
+        <rdar://problem/27954577>
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations: Adding Failure/Timeout expectation to
+        http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html
+        * platform/wk2/TestExpectations: Removing Timeout expectation from
+        http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html
+
+2016-08-23  Youenn Fablet  <youenn@apple.com>
+
         Implement redirect support post CORS-preflight
         https://bugs.webkit.org/show_bug.cgi?id=159056
 
