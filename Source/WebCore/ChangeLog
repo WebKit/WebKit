@@ -1,3 +1,21 @@
+2016-07-14  John Wilander  <wilander@apple.com>
+
+        Remove credentials in URL when accessed through location.href
+        https://bugs.webkit.org/show_bug.cgi?id=139562
+        <rdar://problem/27331164>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/security/location-href-clears-username-password.html
+
+        The reason for this change is to not allow scripts on the page to
+        exfiltrate username and password from the URL.
+
+        * page/Location.cpp:
+        (WebCore::Location::href):
+            Now checks if there is a username or password in the URL. If so,
+            it copies the URL and removes the username and password.
+
 2016-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         The web process hangs when computing elements-based snap points for a container with large max scroll offset
