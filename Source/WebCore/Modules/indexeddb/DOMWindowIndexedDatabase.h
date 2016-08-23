@@ -44,7 +44,7 @@ public:
 
     static DOMWindowIndexedDatabase* from(DOMWindow*);
 
-    static IDBFactory* indexedDB(DOMWindow*);
+    static IDBFactory* indexedDB(DOMWindow&);
 
     virtual void disconnectFrameForDocumentSuspension() override;
     virtual void reconnectFrameFromDocumentSuspension(Frame*) override;
