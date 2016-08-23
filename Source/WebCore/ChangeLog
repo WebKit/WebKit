@@ -1,5 +1,21 @@
 2016-07-19  Zalan Bujtas  <zalan@apple.com>
 
+        REGRESSION(r203415): ASSERTION FAILED: !m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout()
+        https://bugs.webkit.org/show_bug.cgi?id=159952
+
+        Reviewed by Simon Fraser.
+
+        Update ASSERTs to reflect new functionality, that is, now we can end up in a state
+        where the container (RenderView) of one of the dirty subtrees is dirty.
+        See r203415.
+ 
+        Covered by editing/pasteboard/drag-drop-input-in-svg.svg
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+
+2016-07-19  Zalan Bujtas  <zalan@apple.com>
+
         theguardian.co.uk crossword puzzles are sometimes not displaying text
         https://bugs.webkit.org/show_bug.cgi?id=159924
         <rdar://problem/27409483>
