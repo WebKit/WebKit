@@ -37,6 +37,8 @@ class MathMLTokenElement : public MathMLElement {
 public:
     static Ref<MathMLTokenElement> create(const QualifiedName& tagName, Document&);
 
+    static Optional<UChar32> convertToSingleCodePoint(StringView);
+
 protected:
     MathMLTokenElement(const QualifiedName& tagName, Document&);
     void childrenChanged(const ChildChange&) override;

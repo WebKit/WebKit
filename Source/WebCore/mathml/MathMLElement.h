@@ -93,6 +93,8 @@ public:
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
+    static StringView stripLeadingAndTrailingWhitespace(const StringView&);
+
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     bool childShouldCreateRenderer(const Node&) const override;
 

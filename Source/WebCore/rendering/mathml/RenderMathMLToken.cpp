@@ -527,14 +527,12 @@ void RenderMathMLToken::updateMathVariantGlyph()
     }
 
     const auto& tokenElement = element();
-    AtomicString textContent = element().textContent().stripWhiteSpace().simplifyWhiteSpace();
-    if (textContent.length() == 1) {
-        UChar32 codePoint = textContent[0];
+    if (auto codePoint = MathMLTokenElement::convertToSingleCodePoint(element().textContent())) {
         MathMLElement::MathVariant mathvariant = mathMLStyle()->mathVariant();
         if (mathvariant == MathMLElement::MathVariant::None)
             mathvariant = tokenElement.hasTagName(MathMLNames::miTag) ? MathMLElement::MathVariant::Italic : MathMLElement::MathVariant::Normal;
-        UChar32 transformedCodePoint = mathVariant(codePoint, mathvariant);
-        if (transformedCodePoint != codePoint)
+        UChar32 transformedCodePoint = mathVariant(codePoint.value(), mathvariant);
+        if (transformedCodePoint != codePoint.value())
             m_mathVariantGlyph = style().fontCascade().glyphDataForCharacter(transformedCodePoint, !style().isLeftToRightDirection());
     }
 }

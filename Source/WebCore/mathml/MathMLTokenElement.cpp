@@ -88,6 +88,17 @@ bool MathMLTokenElement::childShouldCreateRenderer(const Node& child) const
     return isPhrasingContent(child) && StyledElement::childShouldCreateRenderer(child);
 }
 
+Optional<UChar32> MathMLTokenElement::convertToSingleCodePoint(StringView string)
+{
+    auto codePoints = stripLeadingAndTrailingWhitespace(string).codePoints();
+    auto iterator = codePoints.begin();
+    if (iterator == codePoints.end())
+        return Nullopt;
+    Optional<UChar32> character = *iterator;
+    ++iterator;
+    return iterator == codePoints.end() ? character : Nullopt;
+}
+
 }
 
 #endif // ENABLE(MATHML)

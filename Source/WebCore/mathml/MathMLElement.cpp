@@ -365,7 +365,7 @@ int MathMLElement::tabIndex() const
     return Element::tabIndex();
 }
 
-static inline StringView skipLeadingAndTrailingWhitespace(const StringView& stringView)
+StringView MathMLElement::stripLeadingAndTrailingWhitespace(const StringView& stringView)
 {
     unsigned start = 0, stringLength = stringView.length();
     while (stringLength > 0 && isHTMLSpace(stringView[start])) {
@@ -470,7 +470,7 @@ MathMLElement::Length MathMLElement::parseMathMLLength(const String& string)
     // Instead, we just use isHTMLSpace and toFloat to parse these parts.
 
     // We first skip whitespace from both ends of the string.
-    StringView stringView = skipLeadingAndTrailingWhitespace(string);
+    StringView stringView = stripLeadingAndTrailingWhitespace(string);
 
     if (stringView.isEmpty())
         return Length();

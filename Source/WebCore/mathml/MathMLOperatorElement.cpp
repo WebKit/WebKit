@@ -50,16 +50,18 @@ Ref<MathMLOperatorElement> MathMLOperatorElement::create(const QualifiedName& ta
 MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(const String& string)
 {
     OperatorChar operatorChar;
-
-    // We collapse the whitespace and replace the hyphens by minus signs.
-    AtomicString textContent = string.stripWhiteSpace().simplifyWhiteSpace().replace(hyphenMinus, minusSign).impl();
-
-    // We verify whether the operator text can be represented by a single UChar.
-    // FIXME: This is a really inefficient way to extract a character from a string (https://webkit.org/b/160241#c7).
-    // FIXME: This does not handle surrogate pairs (https://webkit.org/b/122296).
-    // FIXME: This does not handle <mo> operators with multiple characters (https://webkit.org/b/124828).
-    operatorChar.character = textContent.length() == 1 ? textContent[0] : 0;
-    operatorChar.isVertical = MathMLOperatorDictionary::isVertical(operatorChar.character);
+    // FIXME: This operator dictionary does not accept multiple characters (https://webkit.org/b/124828).
+    if (auto codePoint = convertToSingleCodePoint(string)) {
+        // FIXME: MathMLOperatorDictionary/RenderMathMLOperator/MathOperator do not support non-BMP characters (https://webkit.org/b/122296).
+        if (U_IS_BMP(codePoint.value())) {
+            UChar character = codePoint.value();
+            // The minus sign renders better than the hyphen sign used in some MathML formulas.
+            if (character == hyphenMinus)
+                character = minusSign;
+            operatorChar.character = character;
+            operatorChar.isVertical = MathMLOperatorDictionary::isVertical(operatorChar.character);
+        }
+    }
     return operatorChar;
 }
 
