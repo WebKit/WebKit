@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+const double SMILAnimationFrameDelay = 1.0 / 60;
+
 class SMILTime {
 public:
     SMILTime() : m_time(0) { }

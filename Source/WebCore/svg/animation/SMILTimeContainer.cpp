@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-static const double animationFrameDelay = 0.025;
-
 SMILTimeContainer::SMILTimeContainer(SVGSVGElement* owner) 
     : m_beginTime(0)
     , m_pauseTime(0)
@@ -309,7 +307,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 #ifndef NDEBUG
         m_preventScheduledAnimationsChanges = false;
 #endif
-        startTimer(earliestFireTime, animationFrameDelay);
+        startTimer(earliestFireTime, SMILAnimationFrameDelay);
         return;
     }
 
@@ -321,7 +319,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     m_preventScheduledAnimationsChanges = false;
 #endif
 
-    startTimer(earliestFireTime, animationFrameDelay);
+    startTimer(earliestFireTime, SMILAnimationFrameDelay);
 }
 
 }

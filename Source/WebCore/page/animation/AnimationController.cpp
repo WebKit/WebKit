@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-static const double cAnimationTimerDelay = 0.025;
+static const double cAnimationTimerDelay = 1.0 / 60;
 static const double cBeginAnimationUpdateTimeNotSet = -1;
 
 class AnimationPrivateUpdateBlock {
