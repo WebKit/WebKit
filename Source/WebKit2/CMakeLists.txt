@@ -94,6 +94,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge/jsc"
     "${WEBCORE_DIR}/contentextensions"
     "${WEBCORE_DIR}/css"
+    "${WEBCORE_DIR}/css/parser"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/default"
     "${WEBCORE_DIR}/editing"
