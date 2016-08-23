@@ -38,6 +38,7 @@
 #include <glib.h>
 #include <locale.h>
 #include <wtf/RunLoop.h>
+#include <wtf/UniStdExtras.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -125,8 +126,8 @@ void ProcessLauncher::launchProcess()
     }
 
     // Don't expose the parent socket to potential future children.
-    while (fcntl(socketPair.client, F_SETFD, FD_CLOEXEC) == -1)
-        RELEASE_ASSERT(errno != EINTR);
+    if (!setCloseOnExec(socketPair.client))
+        RELEASE_ASSERT_NOT_REACHED();
 
     close(socketPair.client);
     m_processIdentifier = pid;
