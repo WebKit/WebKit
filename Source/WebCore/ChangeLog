@@ -1,3 +1,24 @@
+2016-08-19  Chris Dumez  <cdumez@apple.com>
+
+        DumpRenderTree crashed in com.apple.WebCore: WebCore::DOMWindow::resetDOMWindowProperties + 607
+        https://bugs.webkit.org/show_bug.cgi?id=160983
+        <rdar://problem/26768524>
+
+        Reviewed by Brent Fulgham.
+
+        Update DOMWindow::frameDestroyed() to ref the window object as the crash
+        traces seem to indicate it can get destroyed during the execution of this
+        method. Also update the code in the ~Frame destructor to not iterate over
+        the list of FrameDestructionObservers because observers remove themselves
+        from the list when they get destroyed.
+
+        No new tests, do not know how to reproduce.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::frameDestroyed):
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+
 2016-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         marquee with "truespeed" animates at > 60fps, hogging CPU
