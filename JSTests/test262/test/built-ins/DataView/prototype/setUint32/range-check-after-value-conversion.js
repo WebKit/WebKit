@@ -31,16 +31,8 @@ var poisoned = {
 };
 
 assert.throws(Test262Error, function() {
-  dataView.setUint32(Infinity, poisoned);
-}, "setUint32(Infinity, poisoned)");
-
-assert.throws(Test262Error, function() {
   dataView.setUint32(100, poisoned);
 }, "setUint32(100, poisoned)");
-
-assert.throws(Test262Error, function() {
-  dataView.setUint32('Infinity', poisoned);
-}, "setUint32('Infinity', poisoned)");
 
 assert.throws(Test262Error, function() {
   dataView.setUint32('100', poisoned);

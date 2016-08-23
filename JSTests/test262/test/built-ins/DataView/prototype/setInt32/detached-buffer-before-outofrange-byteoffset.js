@@ -32,9 +32,5 @@ sample = new DataView(buffer, 0);
 $DETACHBUFFER(buffer);
 
 assert.throws(TypeError, function() {
-  sample.setInt32(Infinity, 0);
-}, "Infinity");
-
-assert.throws(TypeError, function() {
   sample.setInt32(13, 0);
 }, "13");

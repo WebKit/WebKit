@@ -13,4 +13,4 @@ info: >
 negative: SyntaxError
 ---*/
 
-/\u{ff0000}/u;
+/\u{110000}/u;

@@ -36,3 +36,7 @@ assert.throws(RangeError, function() {
 assert.throws(RangeError, function() {
   dataView.setUint16(-Infinity, poisoned);
 }, "setUint16(-Infinity, poisoned)");
+
+assert.throws(RangeError, function() {
+  dataView.setUint16(Infinity, poisoned);
+}, "setUint16(Infinity, poisoned)");

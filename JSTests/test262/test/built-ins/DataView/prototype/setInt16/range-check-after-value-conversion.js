@@ -31,16 +31,8 @@ var poisoned = {
 };
 
 assert.throws(Test262Error, function() {
-  dataView.setInt16(Infinity, poisoned);
-}, "setInt16(Infinity, poisoned)");
-
-assert.throws(Test262Error, function() {
   dataView.setInt16(100, poisoned);
 }, "setInt16(100, poisoned)");
-
-assert.throws(Test262Error, function() {
-  dataView.setInt16('Infinity', poisoned);
-}, "setInt16('Infinity', poisoned)");
 
 assert.throws(Test262Error, function() {
   dataView.setInt16('100', poisoned);

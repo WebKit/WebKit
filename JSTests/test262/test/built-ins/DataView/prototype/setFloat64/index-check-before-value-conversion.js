@@ -36,3 +36,7 @@ assert.throws(RangeError, function() {
 assert.throws(RangeError, function() {
   dataView.setFloat64(-Infinity, poisoned);
 }, "setFloat64(-Infinity, poisoned)");
+
+assert.throws(RangeError, function() {
+  dataView.setFloat64(Infinity, poisoned);
+}, "setFloat64(Infinity, poisoned)");

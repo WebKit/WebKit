@@ -31,9 +31,5 @@ sample = new DataView(buffer, 0);
 $DETACHBUFFER(buffer);
 
 assert.throws(TypeError, function() {
-  sample.setUint8(Infinity, 0);
-}, "Infinity");
-
-assert.throws(TypeError, function() {
   sample.setUint8(13, 0);
 }, "13");

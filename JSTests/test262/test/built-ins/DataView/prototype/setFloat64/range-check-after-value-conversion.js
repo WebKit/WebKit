@@ -31,16 +31,8 @@ var poisoned = {
 };
 
 assert.throws(Test262Error, function() {
-  dataView.setFloat64(Infinity, poisoned);
-}, "setFloat64(Infinity, poisoned)");
-
-assert.throws(Test262Error, function() {
   dataView.setFloat64(100, poisoned);
 }, "setFloat64(100, poisoned)");
-
-assert.throws(Test262Error, function() {
-  dataView.setFloat64('Infinity', poisoned);
-}, "setFloat64('Infinity', poisoned)");
 
 assert.throws(Test262Error, function() {
   dataView.setFloat64('100', poisoned);

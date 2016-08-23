@@ -45,7 +45,7 @@ assert.sameValue(
   Object.prototype.hasOwnProperty.call(ns, 'indirect'), true
 );
 desc = Object.getOwnPropertyDescriptor(ns, 'indirect');
-assert.sameValue(desc.indirect, 201);
+assert.sameValue(desc.value, 201);
 assert.sameValue(desc.enumerable, true, 'indirect enumerable');
 assert.sameValue(desc.writable, true, 'indirect writable');
 assert.sameValue(desc.configurable, false, 'indirect configurable');
@@ -54,7 +54,7 @@ assert.sameValue(
   Object.prototype.hasOwnProperty.call(ns, 'default'), true
 );
 desc = Object.getOwnPropertyDescriptor(ns, 'default');
-assert.sameValue(desc.default, 302);
+assert.sameValue(desc.value, 302);
 assert.sameValue(desc.enumerable, true, 'default enumerable');
 assert.sameValue(desc.writable, true, 'default writable');
 assert.sameValue(desc.configurable, false, 'default configurable');

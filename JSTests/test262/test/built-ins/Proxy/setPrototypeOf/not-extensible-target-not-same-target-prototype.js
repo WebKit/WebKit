@@ -21,18 +21,33 @@ info: >
     16. If booleanTrapResult is true and SameValue(V, targetProto) is false,
     throw a TypeError exception.
     ...
-
+features: [Reflect.setPrototypeOf]
 ---*/
 
-var target = {};
-var p = new Proxy(target, {
-    setPrototypeOf: function(t, v) {
-        return true;
-    }
+var target, proxy;
+target = {};
+proxy = new Proxy(target, {
+  setPrototypeOf: function() {
+    return true;
+  }
 });
 
 Object.preventExtensions(target);
 
 assert.throws(TypeError, function() {
-    Object.setPrototypeOf(p, {});
+  Reflect.setPrototypeOf(proxy, {});
+}, "target prototype is different");
+
+var proto = {};
+target = Object.setPrototypeOf({}, proto);
+proxy = new Proxy(target, {
+  setPrototypeOf: function() {
+    Object.setPrototypeOf(target, {});
+    Object.preventExtensions(target);
+    return true;
+  }
 });
+
+assert.throws(TypeError, function() {
+  Reflect.setPrototypeOf(proxy, proto);
+}, "target prototype is changed inside trap handler");

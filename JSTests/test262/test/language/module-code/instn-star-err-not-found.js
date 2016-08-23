@@ -26,4 +26,4 @@ negative: SyntaxError
 flags: [module]
 ---*/
 
-import * as ns from './inst-import-star-err-not-found-faulty_FIXTURE.js';
+import * as ns from './instn-star-err-not-found-faulty_FIXTURE.js';

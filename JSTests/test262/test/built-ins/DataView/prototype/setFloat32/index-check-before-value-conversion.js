@@ -35,3 +35,7 @@ assert.throws(RangeError, function() {
 assert.throws(RangeError, function() {
   dataView.setFloat32(-Infinity, poisoned);
 }, "setFloat32(-Infinity, poisoned)");
+
+assert.throws(RangeError, function() {
+  dataView.setFloat32(Infinity, poisoned);
+}, "setFloat32(Infinity, poisoned)");
