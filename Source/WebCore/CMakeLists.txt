@@ -1412,7 +1412,7 @@ set(WebCore_SOURCES
     css/parser/CSSParser.cpp
     css/parser/CSSParserValues.cpp
     css/parser/SVGCSSParser.cpp
-
+
     cssjit/SelectorCompiler.cpp
 
     dom/ActiveDOMCallbackMicrotask.cpp
