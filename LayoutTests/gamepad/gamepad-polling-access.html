@@ -1,49 +1,99 @@
-<!DOCTYPE html>
-<body>
-<script src="../resources/js-test-pre.js"></script>
+<head>
 <script>
-    if (window.gamepadController)
-    {
-        // start all disconnected
-        gamepadController.disconnect(0);
-        gamepadController.disconnect(1);
-        gamepadController.disconnect(2);
-        gamepadController.disconnect(3);
-        shouldBe("navigator.webkitGetGamepads().length", "4");
-        shouldBeUndefined("navigator.webkitGetGamepads()[0]");
-        shouldBeUndefined("navigator.webkitGetGamepads()[1]");
-        shouldBeUndefined("navigator.webkitGetGamepads()[2]");
-        shouldBeUndefined("navigator.webkitGetGamepads()[3]");
 
-        // connect and disconnect
-        gamepadController.connect(0);
-        shouldBeNonNull("navigator.webkitGetGamepads()[0]");
-        gamepadController.disconnect(0);
-        shouldBeUndefined("navigator.webkitGetGamepads()[0]");
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
-        // connect again, and check standard access
-        gamepadController.connect(0);
-        gamepadController.setId(0, "MockStick 3000");
-        gamepadController.setButtonCount(0, 2);
-        gamepadController.setAxisCount(0, 2);
-        gamepadController.setButtonData(0, 0, 1);
-        gamepadController.setButtonData(0, 1, 0);
-        gamepadController.setAxisData(0, 0, .5);
-        gamepadController.setAxisData(0, 1, -1.0);
-        shouldBe("navigator.webkitGetGamepads()[0].id", "'MockStick 3000'");
-        shouldBe("navigator.webkitGetGamepads()[0].buttons.length", "2");
-        shouldBe("navigator.webkitGetGamepads()[0].axes.length", "2");
-        shouldBe("navigator.webkitGetGamepads()[0].buttons[0]", "1.0");
-        shouldBe("navigator.webkitGetGamepads()[0].buttons[1]", "0.0");
-        shouldBe("navigator.webkitGetGamepads()[0].axes.length", "2");
-        shouldBe("navigator.webkitGetGamepads()[0].axes[0]", "0.5");
-        shouldBe("navigator.webkitGetGamepads()[0].axes[1]", "-1.0");
+function log(msg)
+{
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+function finishTest()
+{
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+function handleGamepadConnect(evt)
+{
+    log("Connecting gamepad:");
+    log(navigator.getGamepads());
+    logGamepad(evt.gamepad);
+    testGenerator.next();
+}
+
+function handleGamepadDisconnect(evt)
+{
+    log("Disconnecting gamepad:");
+    log(navigator.getGamepads());
+    testGenerator.next();
+}
+
+function logGamepad(gp)
+{
+    log("Index: " + gp.index);
+    log("Axes: " + gp.axes);
+    
+    var buttonString = "";
+    for (button in gp.buttons) {
+        buttonString += gp.buttons[button].pressed + "-" + gp.buttons[button].value + " ";
     }
-    else
-    {
-        console.log("FAIL: no gamepadController available.")
+    
+    log("Buttons: " + buttonString);
+}
+
+function* testSteps() {
+    addEventListener("gamepadconnected", handleGamepadConnect);
+    addEventListener("gamepaddisconnected", handleGamepadDisconnect);
+
+    log("Initial gamepads length: " + navigator.getGamepads().length);
+    log("Connecting 20 different gamepads");
+    for (var i = 0; i < 20; ++i) {
+        testRunner.setMockGamepadDetails(i, i, i, i);
+        testRunner.connectMockGamepad(i);
+        yield;
     }
+    
+    log("Verifying there are 20 connected gamepads in the set of all gamepads");
+    var gamepads = navigator.getGamepads();
+    log(gamepads);
+    for (i in gamepads) {
+        logGamepad(gamepads[i]);
+    }
+
+    log("Disconnecting gamepads in reverse order, making sure gamepads array remains as expected");
+    for (var i = 19; i >= 0; --i) {
+        testRunner.disconnectMockGamepad(i);
+        yield;
+    }
+
+    log("Checking non-zero'ed details for a gamepad");
+
+    testRunner.setMockGamepadDetails(10, "Awesome Joystick 5000", 4, 20);
+    testRunner.setMockGamepadAxisValue(10, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(10, 1, -0.9);
+    testRunner.setMockGamepadAxisValue(10, 2, 1.0);
+    testRunner.setMockGamepadAxisValue(10, 3, -1.0);
+    for (var i = 0; i < 20; ++i)
+        testRunner.setMockGamepadButtonValue(10, i, 1.0);
+        
+    testRunner.connectMockGamepad(10);
+    yield;
+
+    finishTest();
+}
+
+function runTest()
+{
+    testGenerator = testSteps();
+    testGenerator.next();
+}
+
 </script>
-<script src="../resources/js-test-post.js"></script>
-<p>Typical polling access to gamepads contents.</p>
+</head>
+<body onload="runTest();">
+<div id="logger"></div>
 </body>

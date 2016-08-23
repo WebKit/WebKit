@@ -86,7 +86,7 @@ class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
 enum class WebsiteDataType;
-struct GamepadData;
+class GamepadData;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;

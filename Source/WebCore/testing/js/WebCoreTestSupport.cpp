@@ -33,6 +33,7 @@
 #include "JSDocument.h"
 #include "JSInternals.h"
 #include "LogInitialization.h"
+#include "MockGamepadProvider.h"
 #include "Page.h"
 #include "WheelEventTestTrigger.h"
 #include <JavaScriptCore/APICast.h>
@@ -117,6 +118,65 @@ void initializeLogChannelsIfNecessary()
 void setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
 {
     InternalSettings::setAllowsAnySSLCertificate(allowAnySSLCertificate);
+}
+
+void installMockGamepadProvider()
+{
+#if ENABLE(GAMEPAD)
+    GamepadProvider::setSharedProvider(MockGamepadProvider::singleton());
+#endif
+}
+
+void connectMockGamepad(unsigned gamepadIndex)
+{
+#if ENABLE(GAMEPAD)
+    MockGamepadProvider::singleton().connectMockGamepad(gamepadIndex);
+#else
+    UNUSED_PARAM(gamepadIndex);
+#endif
+}
+
+void disconnectMockGamepad(unsigned gamepadIndex)
+{
+#if ENABLE(GAMEPAD)
+    MockGamepadProvider::singleton().disconnectMockGamepad(gamepadIndex);
+#else
+    UNUSED_PARAM(gamepadIndex);
+#endif
+}
+
+void setMockGamepadDetails(unsigned gamepadIndex, const WTF::String& gamepadID, unsigned axisCount, unsigned buttonCount)
+{
+#if ENABLE(GAMEPAD)
+    MockGamepadProvider::singleton().setMockGamepadDetails(gamepadIndex, gamepadID, axisCount, buttonCount);
+#else
+    UNUSED_PARAM(gamepadIndex);
+    UNUSED_PARAM(gamepadID);
+    UNUSED_PARAM(axisCount);
+    UNUSED_PARAM(buttonCount);
+#endif
+}
+
+void setMockGamepadAxisValue(unsigned gamepadIndex, unsigned axisIndex, double axisValue)
+{
+#if ENABLE(GAMEPAD)
+    MockGamepadProvider::singleton().setMockGamepadAxisValue(gamepadIndex, axisIndex, axisValue);
+#else
+    UNUSED_PARAM(gamepadIndex);
+    UNUSED_PARAM(axisIndex);
+    UNUSED_PARAM(axisValue);
+#endif
+}
+
+void setMockGamepadButtonValue(unsigned gamepadIndex, unsigned buttonIndex, double buttonValue)
+{
+#if ENABLE(GAMEPAD)
+    MockGamepadProvider::singleton().setMockGamepadButtonValue(gamepadIndex, buttonIndex, buttonValue);
+#else
+    UNUSED_PARAM(gamepadIndex);
+    UNUSED_PARAM(buttonIndex);
+    UNUSED_PARAM(buttonValue);
+#endif
 }
 
 }

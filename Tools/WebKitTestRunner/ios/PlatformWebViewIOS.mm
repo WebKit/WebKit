@@ -48,15 +48,26 @@
 @property (nonatomic, assign) WTR::PlatformWebView* platformWebView;
 @end
 
+static Vector<WebKitTestRunnerWindow*> allWindows;
+
 @implementation WebKitTestRunnerWindow
 @synthesize platformWebView = _platformWebView;
 
 - (id)initWithFrame:(CGRect)frame
 {
+    allWindows.append(self);
+
     if ((self = [super initWithFrame:frame]))
         _initialized = YES;
 
     return self;
+}
+
+- (void)dealloc
+{
+    allWindows.removeFirst(self);
+    ASSERT(!allWindows.contains(self));
+    [super dealloc];
 }
 
 - (BOOL)isKeyWindow
@@ -129,6 +140,18 @@ PlatformWebView::~PlatformWebView()
     m_window.platformWebView = nil;
     [m_view release];
     [m_window release];
+}
+
+PlatformWindow PlatformWebView::keyWindow()
+{
+    size_t i = allWindows.size();
+    while (i) {
+        if ([allWindows[i] isKeyWindow])
+            return allWindows[i];
+        --i;
+    }
+
+    return nil;
 }
 
 void PlatformWebView::setWindowIsKey(bool isKey)

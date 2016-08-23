@@ -28,6 +28,7 @@
 #define WebCoreTestSupport_h
 
 typedef const struct OpaqueJSContext* JSContextRef;
+typedef struct OpaqueJSString* JSStringRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 
 #if PLATFORM(COCOA)
@@ -56,6 +57,13 @@ void setLogChannelToAccumulate(const WTF::String& name) TEST_SUPPORT_EXPORT;
 void initializeLogChannelsIfNecessary() TEST_SUPPORT_EXPORT;
 void setAllowsAnySSLCertificate(bool) TEST_SUPPORT_EXPORT;
 
-} // namespace WebCore
+void installMockGamepadProvider() TEST_SUPPORT_EXPORT;
+void connectMockGamepad(unsigned index) TEST_SUPPORT_EXPORT;
+void disconnectMockGamepad(unsigned index) TEST_SUPPORT_EXPORT;
+void setMockGamepadDetails(unsigned index, const WTF::String& gamepadID, unsigned axisCount, unsigned buttonCount) TEST_SUPPORT_EXPORT;
+void setMockGamepadAxisValue(unsigned index, unsigned axisIndex, double value) TEST_SUPPORT_EXPORT;
+void setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value) TEST_SUPPORT_EXPORT;
+
+} // namespace WebCoreTestSupport
 
 #endif

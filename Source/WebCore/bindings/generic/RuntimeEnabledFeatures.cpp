@@ -105,9 +105,6 @@ void RuntimeEnabledFeatures::reset()
 #if ENABLE(FONT_LOAD_EVENTS)
     m_isFontLoadEventsEnabled = true;
 #endif
-#if ENABLE(GAMEPAD)
-    m_areGamepadsEnabled = false;
-#endif
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     m_areAnimationTriggersEnabled = false;
 #endif

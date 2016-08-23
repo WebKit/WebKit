@@ -1926,6 +1926,14 @@
 		510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */; };
 		510192D518B6B9B7007FC7A1 /* ImageControlsRootElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */; };
 		510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */; };
+		51058ADB1D6792C1009A538C /* MockGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51058AD71D679257009A538C /* MockGamepad.cpp */; };
+		51058ADC1D6792C1009A538C /* MockGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 51058AD81D679257009A538C /* MockGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51058ADD1D6792C1009A538C /* MockGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51058AD91D679257009A538C /* MockGamepadProvider.cpp */; };
+		51058ADE1D6792C1009A538C /* MockGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51058ADA1D679257009A538C /* MockGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51058ADF1D67C229009A538C /* MockGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51058AD71D679257009A538C /* MockGamepad.cpp */; };
+		51058AE01D67C229009A538C /* MockGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 51058AD81D679257009A538C /* MockGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51058AE11D67C229009A538C /* MockGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51058AD91D679257009A538C /* MockGamepadProvider.cpp */; };
+		51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51058ADA1D679257009A538C /* MockGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5105F0691D4BA9D900FB80BC /* IDBGetRecordData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5105F0681D4BA54100FB80BC /* IDBGetRecordData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5105F06B1D4BB12700FB80BC /* IDBGetRecordData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5105F06A1D4BB0BC00FB80BC /* IDBGetRecordData.cpp */; };
 		5106D7BD18BDB76F000AB166 /* ContextMenuContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */; };
@@ -8863,6 +8871,10 @@
 		510192D818B7D7AB007FC7A1 /* imageControlsMac.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = imageControlsMac.css; sourceTree = "<group>"; };
 		5103105E1BA8E090003329C0 /* IDBDatabaseIdentifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseIdentifier.cpp; sourceTree = "<group>"; };
 		5103105F1BA8E090003329C0 /* IDBDatabaseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseIdentifier.h; sourceTree = "<group>"; };
+		51058AD71D679257009A538C /* MockGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockGamepad.cpp; sourceTree = "<group>"; };
+		51058AD81D679257009A538C /* MockGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockGamepad.h; sourceTree = "<group>"; };
+		51058AD91D679257009A538C /* MockGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockGamepadProvider.cpp; sourceTree = "<group>"; };
+		51058ADA1D679257009A538C /* MockGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockGamepadProvider.h; sourceTree = "<group>"; };
 		5105F0681D4BA54100FB80BC /* IDBGetRecordData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBGetRecordData.h; sourceTree = "<group>"; };
 		5105F06A1D4BB0BC00FB80BC /* IDBGetRecordData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBGetRecordData.cpp; sourceTree = "<group>"; };
 		5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuContext.cpp; sourceTree = "<group>"; };
@@ -15818,6 +15830,10 @@
 				A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */,
 				A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */,
 				A19AEA1C1AAA7C4900B52B25 /* MockContentFilterSettings.idl */,
+				51058AD71D679257009A538C /* MockGamepad.cpp */,
+				51058AD81D679257009A538C /* MockGamepad.h */,
+				51058AD91D679257009A538C /* MockGamepadProvider.cpp */,
+				51058ADA1D679257009A538C /* MockGamepadProvider.h */,
 				2D6F3E8A1C1ECB1C0061DBD4 /* MockPageOverlay.cpp */,
 				2D6F3E8B1C1ECB1C0061DBD4 /* MockPageOverlay.h */,
 				2D6F3E8C1C1ECB1C0061DBD4 /* MockPageOverlay.idl */,
@@ -23514,6 +23530,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51058ADE1D6792C1009A538C /* MockGamepadProvider.h in Headers */,
+				51058ADC1D6792C1009A538C /* MockGamepad.h in Headers */,
 				51714EAD1CF65951004723C4 /* GCObservation.h in Headers */,
 				417DA6DA13734E6E007C57FB /* Internals.h in Headers */,
 				A7BF7EE014C9175A0014489D /* InternalSettings.h in Headers */,
@@ -23660,6 +23678,7 @@
 				BEF29EEB1715DD0900C4B4C9 /* AudioTrackPrivate.h in Headers */,
 				CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */,
 				CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */,
+				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
 				CD54A763180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h in Headers */,
 				07D6A4F81BF2307D00174146 /* AudioTrackPrivateMediaStream.h in Headers */,
 				FD31608B12B026F700C1A359 /* AudioUtilities.h in Headers */,
@@ -23939,6 +23958,7 @@
 				31BC742E1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h in Headers */,
 				CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */,
 				FBD6AF8815EF25C9008B7110 /* CSSBasicShapes.h in Headers */,
+				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */,
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
 				49AE2D8F134EE50C0072920A /* CSSCalculationValue.h in Headers */,
@@ -27229,6 +27249,7 @@
 				417DA6D913734E6E007C57FB /* Internals.cpp in Sources */,
 				E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */,
 				A7BF7EDF14C9175A0014489D /* InternalSettings.cpp in Sources */,
+				51058ADD1D6792C1009A538C /* MockGamepadProvider.cpp in Sources */,
 				53E29E5E167A8A1900586D3D /* InternalSettingsGenerated.cpp in Sources */,
 				51714EB01CF665CE004723C4 /* JSGCObservation.cpp in Sources */,
 				417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */,
@@ -27238,6 +27259,7 @@
 				CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */,
 				A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */,
 				A1E5B31F1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp in Sources */,
+				51058ADB1D6792C1009A538C /* MockGamepad.cpp in Sources */,
 				2D4150DE1C1F868C000A3BA2 /* JSMockPageOverlay.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,
 				CDC26B40160A8CC60026757B /* MockCDM.cpp in Sources */,
@@ -29213,6 +29235,7 @@
 				443F04270E75C8FB007E5407 /* NetworkStateNotifierIOS.mm in Sources */,
 				1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */,
 				5C3C856D1D5A7ADE0088B9EC /* NetworkStorageSession.cpp in Sources */,
+				51058ADF1D67C229009A538C /* MockGamepad.cpp in Sources */,
 				E13EF34916850C470034C83F /* NetworkStorageSessionCFNet.cpp in Sources */,
 				269397261A4A5FBD00E8349D /* NFA.cpp in Sources */,
 				267726001A5B3AD9003C24DD /* NFAToDFA.cpp in Sources */,
@@ -29246,6 +29269,7 @@
 				FDA9325D16703B2A008982DC /* OfflineAudioContext.cpp in Sources */,
 				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
 				B2D3DA640D006CD600EF6F3A /* OpenTypeCG.cpp in Sources */,
+				51058AE11D67C229009A538C /* MockGamepadProvider.cpp in Sources */,
 				B2D3DA640D006CD600EF6F27 /* OpenTypeMathData.cpp in Sources */,
 				CDE7FC44181904B1002BBB77 /* OrderIterator.cpp in Sources */,
 				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,

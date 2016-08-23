@@ -1,3 +1,54 @@
+2016-08-23  Brady Eidson  <beidson@apple.com>
+
+        WK2 Gamepad layout test support.
+        https://bugs.webkit.org/show_bug.cgi?id=134671
+
+        Reviewed by Alex Christensen.
+        
+        Have the injected bundle expose the MockGamepadProvider to the UI process, which will then 
+        feed back into the UIGamepadProvider.
+        
+        Also, fool NSApplication into treating the most recently created "isKeyWindow" of the test windows
+        as the actual keyWindow for the test runner, which will allow the view to get gamepad updates.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setMockGamepadDetails):
+        (WTR::TestRunner::setMockGamepadAxisValue):
+        (WTR::TestRunner::setMockGamepadButtonValue):
+        
+        * WebKitTestRunner/PlatformWebView.h:
+        
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Deleted.
+        
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[WebKitTestRunnerWindow initWithFrame:]):
+        (-[WebKitTestRunnerWindow dealloc]):
+        (WTR::PlatformWebView::keyWindow):
+        
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::wtr_NSApplication_keyWindow):
+        (WTR::TestController::platformInitialize):
+        
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (+[WebKitTestRunnerWindow _WTR_keyWindow]):
+        (-[WebKitTestRunnerWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebKitTestRunnerWindow dealloc]):
+        (WTR::PlatformWebView::keyWindow):
+        
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::wtr_NSApplication_keyWindow):
+        (WTR::TestController::platformInitialize):
+        * WebKitTestRunner/mac/main.mm:
+
 2016-08-23  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (PHP 5.6): http/tests/misc/bad-charset-alias.html fails

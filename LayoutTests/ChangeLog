@@ -1,3 +1,21 @@
+2016-08-23  Brady Eidson  <beidson@apple.com>
+
+        WK2 Gamepad layout test support.
+        https://bugs.webkit.org/show_bug.cgi?id=134671
+        
+        Reviewed by Alex Christensen.
+
+        * gamepad/gamepad-api-expected.txt:
+        * gamepad/gamepad-api.html:
+        * gamepad/gamepad-out-of-range-crasher-expected.txt: Removed.
+        * gamepad/gamepad-out-of-range-crasher.html: Removed.
+        * gamepad/gamepad-polling-access-expected.txt:
+        * gamepad/gamepad-polling-access.html:
+
+        * platform/mac/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+
 2016-08-23  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (PHP 5.6): http/tests/misc/bad-charset-alias.html fails

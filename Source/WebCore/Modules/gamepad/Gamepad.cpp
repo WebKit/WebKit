@@ -41,6 +41,7 @@ Gamepad::Gamepad(const PlatformGamepad& platformGamepad)
     , m_timestamp(platformGamepad.lastUpdateTime())
 {
     m_axes.resize(platformGamepad.axisValues().size());
+    m_axes.fill(0.0);
     unsigned buttonCount = platformGamepad.buttonValues().size();
     for (unsigned i = 0; i < buttonCount; ++i)
         m_buttons.append(GamepadButton::create());

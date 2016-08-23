@@ -66,6 +66,7 @@ public:
     WKPageRef page();
     PlatformWKView platformView() { return m_view; }
     PlatformWindow platformWindow() { return m_window; }
+    static PlatformWindow keyWindow();
     void resizeTo(unsigned width, unsigned height);
     void focus();
 

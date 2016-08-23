@@ -54,8 +54,35 @@ enum {
 @property (nonatomic, assign) PlatformWebView* platformWebView;
 @end
 
+static Vector<WebKitTestRunnerWindow*> allWindows;
+
 @implementation WebKitTestRunnerWindow
 @synthesize platformWebView = _platformWebView;
+
++ (NSWindow *)_WTR_keyWindow
+{
+    size_t i = allWindows.size();
+    while (i) {
+        if ([allWindows[i] isKeyWindow])
+            return allWindows[i];
+        --i;
+    }
+
+    return nil;
+}
+
+- (instancetype)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+{
+    allWindows.append(self);
+    return [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+}
+
+- (void)dealloc
+{
+    allWindows.removeFirst(self);
+    ASSERT(!allWindows.contains(self));
+    [super dealloc];
+}
 
 - (BOOL)isKeyWindow
 {
@@ -150,6 +177,18 @@ PlatformWebView::~PlatformWebView()
     [m_window close];
     [m_window release];
     [m_view release];
+}
+
+PlatformWindow PlatformWebView::keyWindow()
+{
+    size_t i = allWindows.size();
+    while (i) {
+        --i;
+        if ([allWindows[i] isKeyWindow])
+            return allWindows[i];
+    }
+
+    return nil;
 }
 
 WKPageRef PlatformWebView::page()

@@ -232,5 +232,11 @@ interface TestRunner {
     void clearTestRunnerCallbacks();
 
     void accummulateLogsForChannel(DOMString channel);
-};
 
+    // Gamepad
+    void setMockGamepadDetails(unsigned long index, DOMString id, unsigned long axisCount, unsigned long buttonCount);
+    void setMockGamepadAxisValue(unsigned long index, unsigned long axisIndex, double value);
+    void setMockGamepadButtonValue(unsigned long index, unsigned long buttonIndex, double value);
+    void connectMockGamepad(unsigned long index);
+    void disconnectMockGamepad(unsigned long index);
+};

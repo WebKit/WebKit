@@ -33,7 +33,7 @@ namespace WebKit {
 
 class SharedMemory;
 
-struct GamepadData;
+class GamepadData;
 
 class WebGamepad : public WebCore::PlatformGamepad {
 public:

@@ -70,20 +70,19 @@ void WebGamepadProvider::setInitialGamepads(const Vector<GamepadData>& gamepadDa
 
 void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData)
 {
-    if (m_gamepads.size() <= gamepadData.index) {
-        m_gamepads.resize(gamepadData.index + 1);
-        m_rawGamepads.resize(gamepadData.index + 1);
+    if (m_gamepads.size() <= gamepadData.index()) {
+        m_gamepads.resize(gamepadData.index() + 1);
+        m_rawGamepads.resize(gamepadData.index() + 1);
     }
 
-    ASSERT(!m_gamepads[gamepadData.index]);
+    ASSERT(!m_gamepads[gamepadData.index()]);
 
-    m_gamepads[gamepadData.index] = std::make_unique<WebGamepad>(gamepadData);
-    m_rawGamepads[gamepadData.index] = m_gamepads[gamepadData.index].get();
+    m_gamepads[gamepadData.index()] = std::make_unique<WebGamepad>(gamepadData);
+    m_rawGamepads[gamepadData.index()] = m_gamepads[gamepadData.index()].get();
 
     for (auto* client : m_clients)
-        client->platformGamepadConnected(*m_gamepads[gamepadData.index]);
+        client->platformGamepadConnected(*m_gamepads[gamepadData.index()]);
 }
-
 
 void WebGamepadProvider::gamepadDisconnected(unsigned index)
 {

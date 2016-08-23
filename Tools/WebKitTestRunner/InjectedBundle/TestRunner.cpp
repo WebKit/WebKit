@@ -1077,4 +1077,135 @@ void TestRunner::callDidRemoveSwipeSnapshotCallback()
     callTestRunnerCallback(DidRemoveSwipeSnapshotCallbackID);
 }
 
+#if PLATFORM(MAC)
+void TestRunner::connectMockGamepad(unsigned index)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("ConnectMockGamepad"));
+    WKRetainPtr<WKTypeRef> messageBody(AdoptWK, WKUInt64Create(index));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::disconnectMockGamepad(unsigned index)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("DisconnectMockGamepad"));
+    WKRetainPtr<WKTypeRef> messageBody(AdoptWK, WKUInt64Create(index));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::setMockGamepadDetails(unsigned index, JSStringRef gamepadID, unsigned axisCount, unsigned buttonCount)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("GamepadID") });
+    values.append(toWK(gamepadID));
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("GamepadIndex") });
+    values.append({ AdoptWK, WKUInt64Create(index) });
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("AxisCount") });
+    values.append({ AdoptWK, WKUInt64Create(axisCount) });
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("ButtonCount") });
+    values.append({ AdoptWK, WKUInt64Create(buttonCount) });
+
+    Vector<WKStringRef> rawKeys;
+    Vector<WKTypeRef> rawValues;
+    rawKeys.resize(keys.size());
+    rawValues.resize(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetMockGamepadDetails"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::setMockGamepadAxisValue(unsigned index, unsigned axisIndex, double value)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("GamepadIndex") });
+    values.append({ AdoptWK, WKUInt64Create(index) });
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("AxisIndex") });
+    values.append({ AdoptWK, WKUInt64Create(axisIndex) });
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("Value") });
+    values.append({ AdoptWK, WKDoubleCreate(value) });
+
+    Vector<WKStringRef> rawKeys;
+    Vector<WKTypeRef> rawValues;
+    rawKeys.resize(keys.size());
+    rawValues.resize(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetMockGamepadAxisValue"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("GamepadIndex") });
+    values.append({ AdoptWK, WKUInt64Create(index) });
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("ButtonIndex") });
+    values.append({ AdoptWK, WKUInt64Create(buttonIndex) });
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("Value") });
+    values.append({ AdoptWK, WKDoubleCreate(value) });
+
+    Vector<WKStringRef> rawKeys;
+    Vector<WKTypeRef> rawValues;
+    rawKeys.resize(keys.size());
+    rawValues.resize(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetMockGamepadButtonValue"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+#else
+void TestRunner::connectMockGamepad(unsigned)
+{
+}
+
+void TestRunner::disconnectMockGamepad(unsigned)
+{
+}
+
+void TestRunner::setMockGamepadDetails(unsigned, JSStringRef, unsigned, unsigned)
+{
+}
+
+void TestRunner::setMockGamepadAxisValue(unsigned, unsigned, double)
+{
+}
+
+void TestRunner::setMockGamepadButtonValue(unsigned, unsigned, double)
+{
+}
+#endif // PLATFORM(MAC)
+
 } // namespace WTR

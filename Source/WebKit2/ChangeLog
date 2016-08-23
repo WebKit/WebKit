@@ -1,3 +1,59 @@
+2016-08-23  Brady Eidson  <beidson@apple.com>
+
+        WK2 Gamepad layout test support.
+        https://bugs.webkit.org/show_bug.cgi?id=134671
+
+        Reviewed by Alex Christensen.
+        
+        - Teach the UIGamepadProvider to use the default shared provider.
+        - Especially if its the MockGamepadProvider, don't overwrite it.
+
+        * Shared/Gamepad/GamepadData.cpp:
+        (WebKit::GamepadData::GamepadData):
+        (WebKit::GamepadData::encode):
+        (WebKit::GamepadData::decode):
+        (WebKit::GamepadData::loggingString):
+        (WebKit::GamepadData::isNull): Deleted.
+        * Shared/Gamepad/GamepadData.h:
+        (WebKit::GamepadData::GamepadData):
+        (WebKit::GamepadData::isNull):
+        (WebKit::GamepadData::index):
+        (WebKit::GamepadData::axisValues):
+        (WebKit::GamepadData::buttonValues):
+
+        * UIProcess/Gamepad/UIGamepad.h:
+
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::UIGamepadProvider):
+        (WebKit::UIGamepadProvider::~UIGamepadProvider):
+        (WebKit::UIGamepadProvider::platformGamepadInputActivity):
+        (WebKit::UIGamepadProvider::startMonitoringGamepads):
+        (WebKit::UIGamepadProvider::stopMonitoringGamepads):
+        (WebKit::UIGamepadProvider::platformSetDefaultGamepadProvider):
+        * UIProcess/Gamepad/UIGamepadProvider.h:
+
+        * UIProcess/Gamepad/mac/UIGamepadProviderHID.cpp:
+        (WebKit::UIGamepadProvider::platformSetDefaultGamepadProvider):
+        (WebKit::UIGamepadProvider::platformStopMonitoringInput):
+        (WebKit::UIGamepadProvider::platformStartMonitoringInput):
+        (WebKit::UIGamepadProvider::platformStartMonitoringGamepads): Deleted.
+        (WebKit::UIGamepadProvider::platformStopMonitoringGamepads): Deleted.
+        (WebKit::UIGamepadProvider::platformGamepads): Deleted.
+
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/Gamepad/WebGamepad.cpp:
+        (WebKit::WebGamepad::WebGamepad):
+        (WebKit::WebGamepad::updateValues):
+        * WebProcess/Gamepad/WebGamepad.h:
+
+        * WebProcess/Gamepad/WebGamepadProvider.cpp:
+        (WebKit::WebGamepadProvider::gamepadConnected):
+        * WebProcess/Gamepad/WebGamepadProvider.h:
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.h:
+
 2016-08-23  Dave Hyatt  <hyatt@apple.com>
 
         Add pref for enabling new CSS parsing and move parser files into subdirectory.

@@ -3453,6 +3453,8 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/GCObservation.cpp
     testing/InternalSettings.cpp
     testing/Internals.cpp
+    testing/MockGamepad.cpp
+    testing/MockGamepadProvider.cpp
     testing/MockPageOverlay.cpp
     testing/MockPageOverlayClient.cpp
 

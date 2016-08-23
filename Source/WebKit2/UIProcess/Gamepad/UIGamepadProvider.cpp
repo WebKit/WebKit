@@ -32,6 +32,7 @@
 #include "UIGamepad.h"
 #include "WebProcessPool.h"
 #include <WebCore/HIDGamepadProvider.h>
+#include <WebCore/MockGamepadProvider.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -49,12 +50,13 @@ UIGamepadProvider& UIGamepadProvider::singleton()
 UIGamepadProvider::UIGamepadProvider()
     : m_gamepadSyncTimer(RunLoop::main(), this, &UIGamepadProvider::gamepadSyncTimerFired)
 {
+    platformSetDefaultGamepadProvider();
 }
 
 UIGamepadProvider::~UIGamepadProvider()
 {
     if (!m_processPoolsUsingGamepads.isEmpty())
-        platformStopMonitoringGamepads();
+        GamepadProvider::singleton().stopMonitoringGamepads(*this);
 }
 
 void UIGamepadProvider::gamepadSyncTimerFired()
@@ -126,7 +128,7 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
 
 void UIGamepadProvider::platformGamepadInputActivity()
 {
-    auto platformGamepads = this->platformGamepads();
+    auto platformGamepads = GamepadProvider::singleton().platformGamepads();
     ASSERT(platformGamepads.size() == m_gamepads.size());
 
     for (size_t i = 0; i < platformGamepads.size(); ++i) {
@@ -189,7 +191,8 @@ void UIGamepadProvider::startMonitoringGamepads()
         return;
 
     m_isMonitoringGamepads = true;
-    platformStartMonitoringGamepads();
+    ASSERT(!m_processPoolsUsingGamepads.isEmpty());
+    GamepadProvider::singleton().startMonitoringGamepads(*this);
 }
 
 void UIGamepadProvider::stopMonitoringGamepads()
@@ -198,7 +201,10 @@ void UIGamepadProvider::stopMonitoringGamepads()
         return;
 
     m_isMonitoringGamepads = false;
-    platformStopMonitoringGamepads();
+
+    ASSERT(m_processPoolsUsingGamepads.isEmpty());
+    GamepadProvider::singleton().stopMonitoringGamepads(*this);
+
     m_gamepads.clear();
 }
 
@@ -218,6 +224,11 @@ Vector<GamepadData> UIGamepadProvider::snapshotGamepads()
 }
 
 #if !PLATFORM(MAC)
+
+void UIGamepadProvider::platformSetDefaultGamepadProvider()
+{
+    // FIXME: Implement for other platforms
+}
 
 void UIGamepadProvider::platformStartMonitoringGamepads()
 {

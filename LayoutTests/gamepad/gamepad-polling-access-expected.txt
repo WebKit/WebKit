@@ -1,19 +1,212 @@
-PASS navigator.webkitGetGamepads().length is 4
-PASS navigator.webkitGetGamepads()[0] is undefined.
-PASS navigator.webkitGetGamepads()[1] is undefined.
-PASS navigator.webkitGetGamepads()[2] is undefined.
-PASS navigator.webkitGetGamepads()[3] is undefined.
-PASS navigator.webkitGetGamepads()[0] is non-null.
-PASS navigator.webkitGetGamepads()[0] is undefined.
-PASS navigator.webkitGetGamepads()[0].id is 'MockStick 3000'
-PASS navigator.webkitGetGamepads()[0].buttons.length is 2
-PASS navigator.webkitGetGamepads()[0].axes.length is 2
-PASS navigator.webkitGetGamepads()[0].buttons[0] is 1.0
-PASS navigator.webkitGetGamepads()[0].buttons[1] is 0.0
-PASS navigator.webkitGetGamepads()[0].axes.length is 2
-PASS navigator.webkitGetGamepads()[0].axes[0] is 0.5
-PASS navigator.webkitGetGamepads()[0].axes[1] is -1.0
-PASS successfullyParsed is true
+Initial gamepads length: 0
+Connecting 20 different gamepads
+Connecting gamepad:
+[object Gamepad]
+Index: 0
+Axes: 
+Buttons: 
+Connecting gamepad:
+[object Gamepad],[object Gamepad]
+Index: 1
+Axes: 0
+Buttons: false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 2
+Axes: 0,0
+Buttons: false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 3
+Axes: 0,0,0
+Buttons: false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 4
+Axes: 0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 5
+Axes: 0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 6
+Axes: 0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 7
+Axes: 0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 8
+Axes: 0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 9
+Axes: 0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 10
+Axes: 0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 11
+Axes: 0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 12
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 13
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 14
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 15
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 16
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 17
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 18
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Connecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 19
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Verifying there are 20 connected gamepads in the set of all gamepads
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
+Index: 0
+Axes: 
+Buttons: 
+Index: 1
+Axes: 0
+Buttons: false-0 
+Index: 2
+Axes: 0,0
+Buttons: false-0 false-0 
+Index: 3
+Axes: 0,0,0
+Buttons: false-0 false-0 false-0 
+Index: 4
+Axes: 0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 
+Index: 5
+Axes: 0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 
+Index: 6
+Axes: 0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 7
+Axes: 0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 8
+Axes: 0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 9
+Axes: 0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 10
+Axes: 0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 11
+Axes: 0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 12
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 13
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 14
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 15
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+Index: 16
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 17
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 18
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Index: 19
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 
+Disconnecting gamepads in reverse order, making sure gamepads array remains as expected
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],[object Gamepad],,,,,,,,,,,,,,,,,,
+Disconnecting gamepad:
+[object Gamepad],,,,,,,,,,,,,,,,,,,
+Disconnecting gamepad:
+,,,,,,,,,,,,,,,,,,,
+Checking non-zero'ed details for a gamepad
+Connecting gamepad:
+,,,,,,,,,,[object Gamepad],,,,,,,,,
+Index: 10
+Axes: 0.7,-0.9,1,-1
+Buttons: true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 
 
-TEST COMPLETE
-Typical polling access to gamepads contents.

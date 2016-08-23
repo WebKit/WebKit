@@ -147,9 +147,6 @@ fast/forms/month
 fast/forms/time
 fast/forms/week
 
-# ENABLE_GAMEPAD not enabled.
-gamepad/
-
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
 webkit.org/b/136452 http/tests/security/contentTypeOptions
 

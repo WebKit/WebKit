@@ -35,7 +35,7 @@ class PlatformGamepad;
 
 namespace WebKit {
 
-struct GamepadData;
+class GamepadData;
 
 class UIGamepad {
 public:

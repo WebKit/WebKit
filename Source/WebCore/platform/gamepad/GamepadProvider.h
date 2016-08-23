@@ -44,6 +44,8 @@ public:
     virtual void startMonitoringGamepads(GamepadProviderClient&) = 0;
     virtual void stopMonitoringGamepads(GamepadProviderClient&) = 0;
     virtual const Vector<PlatformGamepad*>& platformGamepads() = 0;
+    virtual bool isMockGamepadProvider() const { return false; }
+
 };
 
 } // namespace WebCore

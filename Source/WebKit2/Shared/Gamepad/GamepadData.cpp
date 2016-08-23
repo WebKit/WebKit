@@ -33,28 +33,40 @@
 
 namespace WebKit {
 
+GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues)
+    : m_index(index)
+    , m_axisValues(axisValues)
+    , m_buttonValues(buttonValues)
+{
+}
+
 void GamepadData::encode(IPC::Encoder& encoder) const
 {
-    encoder << index << axisValues << buttonValues;
+    encoder << m_isNull;
+    if (m_isNull)
+        return;
+
+    encoder << m_index << m_axisValues << m_buttonValues;
 }
 
 bool GamepadData::decode(IPC::Decoder& decoder, GamepadData& data)
 {
-    if (!decoder.decode(data.index))
+    if (!decoder.decode(data.m_isNull))
         return false;
 
-    if (!decoder.decode(data.axisValues))
+    if (data.m_isNull)
+        return true;
+
+    if (!decoder.decode(data.m_index))
         return false;
 
-    if (!decoder.decode(data.buttonValues))
+    if (!decoder.decode(data.m_axisValues))
+        return false;
+
+    if (!decoder.decode(data.m_buttonValues))
         return false;
 
     return true;
-}
-
-bool GamepadData::isNull() const
-{
-    return !index && axisValues.isEmpty() && buttonValues.isEmpty();
 }
 
 #if !LOG_DISABLED
@@ -62,24 +74,24 @@ String GamepadData::loggingString() const
 {
     StringBuilder builder;
 
-    builder.appendNumber(axisValues.size());
+    builder.appendNumber(m_axisValues.size());
     builder.appendLiteral(" axes, ");
-    builder.appendNumber(buttonValues.size());
+    builder.appendNumber(m_buttonValues.size());
     builder.appendLiteral(" buttons\n");
 
-    for (size_t i = 0; i < axisValues.size(); ++i) {
+    for (size_t i = 0; i < m_axisValues.size(); ++i) {
         builder.appendLiteral(" Axis ");
         builder.appendNumber(i);
         builder.appendLiteral(": ");
-        builder.appendNumber(axisValues[i]);
+        builder.appendNumber(m_axisValues[i]);
     }
 
     builder.append('\n');
-    for (size_t i = 0; i < buttonValues.size(); ++i) {
+    for (size_t i = 0; i < m_buttonValues.size(); ++i) {
         builder.appendLiteral(" Button ");
         builder.appendNumber(i);
         builder.appendLiteral(": ");
-        builder.appendNumber(buttonValues[i]);
+        builder.appendNumber(m_buttonValues[i]);
     }
 
     return builder.toString();

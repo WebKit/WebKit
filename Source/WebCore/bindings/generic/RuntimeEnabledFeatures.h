@@ -305,7 +305,7 @@ private:
 #endif
 
 #if ENABLE(GAMEPAD)
-    bool m_areGamepadsEnabled;
+    bool m_areGamepadsEnabled { false };
 #endif
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)

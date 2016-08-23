@@ -31,6 +31,7 @@
 #include "StringFunctions.h"
 #include "TestController.h"
 #include "UIScriptController.h"
+#include "WebCoreTestSupport.h"
 #include <WebKit/WKContextPrivate.h>
 #include <WebKit/WKCookieManager.h>
 #include <WebKit/WKData.h>
@@ -751,6 +752,78 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKWebsiteDataStoreRemoveAllIndexedDatabases(WKContextGetWebsiteDataStore(TestController::singleton().context()));
         return nullptr;
     }
+
+#if PLATFORM(MAC)
+    if (WKStringIsEqualToUTF8CString(messageName, "ConnectMockGamepad")) {
+        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
+
+        uint64_t index = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
+        WebCoreTestSupport::connectMockGamepad(index);
+        
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DisconnectMockGamepad")) {
+        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
+
+        uint64_t index = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
+        WebCoreTestSupport::disconnectMockGamepad(index);
+
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMockGamepadDetails")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> gamepadIndexKey(AdoptWK, WKStringCreateWithUTF8CString("GamepadIndex"));
+        WKRetainPtr<WKStringRef> gamepadIDKey(AdoptWK, WKStringCreateWithUTF8CString("GamepadID"));
+        WKRetainPtr<WKStringRef> axisCountKey(AdoptWK, WKStringCreateWithUTF8CString("AxisCount"));
+        WKRetainPtr<WKStringRef> buttonCountKey(AdoptWK, WKStringCreateWithUTF8CString("ButtonCount"));
+
+        WKUInt64Ref gamepadIndex = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, gamepadIndexKey.get()));
+        WKStringRef gamepadID = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, gamepadIDKey.get()));
+        WKUInt64Ref axisCount = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, axisCountKey.get()));
+        WKUInt64Ref buttonCount = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, buttonCountKey.get()));
+
+        WebCoreTestSupport::setMockGamepadDetails(WKUInt64GetValue(gamepadIndex), toWTFString(gamepadID), WKUInt64GetValue(axisCount), WKUInt64GetValue(buttonCount));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMockGamepadAxisValue")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> gamepadIndexKey(AdoptWK, WKStringCreateWithUTF8CString("GamepadIndex"));
+        WKRetainPtr<WKStringRef> axisIndexKey(AdoptWK, WKStringCreateWithUTF8CString("AxisIndex"));
+        WKRetainPtr<WKStringRef> valueKey(AdoptWK, WKStringCreateWithUTF8CString("Value"));
+
+        WKUInt64Ref gamepadIndex = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, gamepadIndexKey.get()));
+        WKUInt64Ref axisIndex = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, axisIndexKey.get()));
+        WKDoubleRef value = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, valueKey.get()));
+
+        WebCoreTestSupport::setMockGamepadAxisValue(WKUInt64GetValue(gamepadIndex), WKUInt64GetValue(axisIndex), WKDoubleGetValue(value));
+
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMockGamepadButtonValue")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> gamepadIndexKey(AdoptWK, WKStringCreateWithUTF8CString("GamepadIndex"));
+        WKRetainPtr<WKStringRef> buttonIndexKey(AdoptWK, WKStringCreateWithUTF8CString("ButtonIndex"));
+        WKRetainPtr<WKStringRef> valueKey(AdoptWK, WKStringCreateWithUTF8CString("Value"));
+
+        WKUInt64Ref gamepadIndex = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, gamepadIndexKey.get()));
+        WKUInt64Ref buttonIndex = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, buttonIndexKey.get()));
+        WKDoubleRef value = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, valueKey.get()));
+
+        WebCoreTestSupport::setMockGamepadButtonValue(WKUInt64GetValue(gamepadIndex), WKUInt64GetValue(buttonIndex), WKDoubleGetValue(value));
+
+        return nullptr;
+    }
+#endif // PLATFORM(MAC)
 
     ASSERT_NOT_REACHED();
     return nullptr;

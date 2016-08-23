@@ -104,7 +104,7 @@ messages -> WebProcess LegacyReceiver {
 
 #if ENABLE(GAMEPAD)
     SetInitialGamepads(Vector<WebKit::GamepadData> gamepadDatas)
-    GamepadConnected(struct WebKit::GamepadData gamepadData)
+    GamepadConnected(WebKit::GamepadData gamepadData)
     GamepadDisconnected(unsigned index)
 #endif
 }

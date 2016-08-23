@@ -25,6 +25,8 @@
 
 #include "BaseTarget.xcconfig"
 
+LD_RUNPATH_SEARCH_PATHS = "@loader_path";
+
 PRODUCT_NAME = WebKitTestRunner;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -lWebKitTestRunner -framework Carbon -framework Cocoa -framework JavaScriptCore -framework WebKit;
