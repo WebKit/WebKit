@@ -1,3 +1,14 @@
+2016-08-23  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
+
+        Order feature option list in FeatureList.pm
+        https://bugs.webkit.org/show_bug.cgi?id=161074
+
+        Reviewed by Michael Catanzaro.
+
+        Reorder features in alphabetical order based on command line option. Also, sort variables in alphabetical order.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2016-08-22  Dewei Zhu  <dewei_zhu@apple.com>
 
         Stop python icon bouncing in the dock while running browser benchmarks.
