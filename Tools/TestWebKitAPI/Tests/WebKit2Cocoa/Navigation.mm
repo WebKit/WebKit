@@ -27,11 +27,7 @@
 
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
-#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -39,7 +35,6 @@
 #if WK_API_ENABLED
 
 static bool isDone;
-static std::function<void()> crashHandler;
 static RetainPtr<WKNavigation> currentNavigation;
 
 @interface NavigationDelegate : NSObject <WKNavigationDelegate>
@@ -63,11 +58,6 @@ static RetainPtr<WKNavigation> currentNavigation;
     EXPECT_EQ(currentNavigation, navigation);
 
     isDone = true;
-}
-
-- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
-{
-    crashHandler();
 }
 
 @end
@@ -195,50 +185,6 @@ TEST(WKNavigation, DecidePolicyForPageCacheNavigation)
     TestWebKitAPI::Util::run(&isDone);
 
     ASSERT_TRUE([delegate decidedPolicyForBackForwardNavigation]);
-}
-
-TEST(WKNavigation, WebContentProcessDidTerminate)
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    RetainPtr<_WKProcessPoolConfiguration> poolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    poolConfiguration.get().maximumProcessCount = 1;
-    RetainPtr<WKProcessPool> processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:poolConfiguration.get()]);
-
-    RetainPtr<WKWebViewConfiguration> configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration1.get().processPool = processPool.get();
-    RetainPtr<WKWebView> webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration1.get()]);
-
-    RetainPtr<NavigationDelegate> delegate1 = adoptNS([[NavigationDelegate alloc] init]);
-    [webView1 setNavigationDelegate:delegate1.get()];
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,1"]];
-
-    isDone = false;
-    currentNavigation = [webView1 loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
-
-    RetainPtr<WKWebViewConfiguration> configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration2.get().processPool = processPool.get();
-    configuration2.get()._relatedWebView = webView1.get();
-    RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration2.get()]);
-
-    RetainPtr<NavigationDelegate> delegate2 = adoptNS([[NavigationDelegate alloc] init]);
-    [webView2 setNavigationDelegate:delegate2.get()];
-
-    isDone = false;
-    currentNavigation = [webView2 loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
-
-    bool didTerminate = false;
-    crashHandler = [&] {
-        webView1 = nullptr;
-        webView2 = nullptr;
-        [pool drain]; // Make sure the views get deallocated.
-        didTerminate = true;
-    };
-
-    [webView2 _killWebContentProcessAndResetState];
-    TestWebKitAPI::Util::run(&didTerminate);
 }
 
 #endif
