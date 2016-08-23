@@ -1,5 +1,21 @@
 2016-08-23  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: No open/copy src resource in context menu
+        https://bugs.webkit.org/show_bug.cgi?id=159028
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._populateTagContextMenu):
+        Add options in the context menu of link attributes of DOM nodes to
+         - Open in New Tab
+         - Reveal in Resources Tab
+         - Copy Link Address
+
+2016-08-23  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Add visual editor for spring() timing-function
         https://bugs.webkit.org/show_bug.cgi?id=159315
 

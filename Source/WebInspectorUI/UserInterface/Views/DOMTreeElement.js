@@ -643,9 +643,32 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _populateTagContextMenu(contextMenu, event)
     {
-        var node = this.representedObject;
+        let node = this.representedObject;
         if (!node.isInUserAgentShadowTree()) {
-            var attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
+            let attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
+
+            if (event.target && event.target.tagName === "A") {
+                let url = event.target.href;
+
+                contextMenu.appendItem(WebInspector.UIString("Open in New Tab"), () => {
+                    const frame = null;
+                    const alwaysOpenExternally = true;
+                    WebInspector.openURL(url, frame, alwaysOpenExternally);
+                });
+
+                if (WebInspector.frameResourceManager.resourceForURL(url)) {
+                    contextMenu.appendItem(WebInspector.UIString("Reveal in Resources Tab"), () => {
+                        let frame = WebInspector.frameResourceManager.frameForIdentifier(node.frameIdentifier);
+                        WebInspector.openURL(url, frame);
+                    });
+                }
+
+                contextMenu.appendItem(WebInspector.UIString("Copy Link Address"), () => {
+                    InspectorFrontendHost.copyText(url);
+                });
+
+                contextMenu.appendSeparator();
+            }
 
             // Add attribute-related actions.
             if (this.editable) {
@@ -656,7 +679,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             }
 
             if (WebInspector.cssStyleManager.canForcePseudoClasses()) {
-                var pseudoSubMenu = contextMenu.appendSubMenuItem(WebInspector.UIString("Forced Pseudo-Classes"));
+                let pseudoSubMenu = contextMenu.appendSubMenuItem(WebInspector.UIString("Forced Pseudo-Classes"));
                 this._populateForcedPseudoStateItems(pseudoSubMenu);
                 contextMenu.appendSeparator();
             }
