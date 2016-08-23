@@ -112,10 +112,13 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
         function createElement(type, value, name, propertyName, style)
         {
             // Check if the value is a float and whether it should be rounded.
-            var floatValue = parseFloat(value);
-            var shouldRoundValue = (!isNaN(floatValue) && floatValue % 1 !== 0);
+            let floatValue = parseFloat(value);
+            let shouldRoundValue = (!isNaN(floatValue) && floatValue % 1 !== 0);
 
-            var element = document.createElement(type);
+            if (isNaN(floatValue))
+                value = figureDash;
+
+            let element = document.createElement(type);
             element.textContent = shouldRoundValue ? ("~" + Math.round(floatValue * 100) / 100) : value;
             if (shouldRoundValue)
                 element.title = value;
@@ -125,15 +128,14 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
         function createBoxPartElement(style, name, side, suffix)
         {
-            var propertyName = (name !== "position" ? name + "-" : "") + side + suffix;
-            var value = style.propertyForName(propertyName).value;
-            if (value === "" || (name !== "position" && value === "0px"))
-                value = "\u2012";
-            else if (name === "position" && value === "auto")
-                value = "\u2012";
-            value = value.replace(/px$/, "");
+            let propertyName = (name !== "position" ? name + "-" : "") + side + suffix;
+            let value = style.propertyForName(propertyName).value;
+            if (value === "" || (name !== "position" && value === "0px") || (name === "position" && value === "auto"))
+                value = "";
+            else
+                value = value.replace(/px$/, "");
 
-            var element = createElement.call(this, "div", value, name, propertyName, style);
+            let element = createElement.call(this, "div", value, name, propertyName, style);
             element.className = side;
             return element;
         }
@@ -379,9 +381,9 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             return;
         }
 
-        if (context.box !== "position" && (!userInput || userInput === "\u2012"))
+        if (context.box !== "position" && (!userInput || userInput === figureDash))
             userInput = "0px";
-        else if (context.box === "position" && (!userInput || userInput === "\u2012"))
+        else if (context.box === "position" && (!userInput || userInput === figureDash))
             userInput = "auto";
 
         userInput = userInput.toLowerCase();

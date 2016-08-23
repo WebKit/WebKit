@@ -1,5 +1,20 @@
 2016-08-22  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Styles -> Computed -> Box Model shows NaN x NaN for invisible elements
+        https://bugs.webkit.org/show_bug.cgi?id=161038
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Utilities.js:
+        Add figureDash variable.
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow.prototype._updateMetrics.createElement):
+        (WebInspector.BoxModelDetailsSectionRow.prototype._updateMetrics.createBoxPartElement):
+        Moved isNaN check of value to common createElement.
+
+2016-08-22  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Visual styles sidebar should do something sane for SVG elements
         https://bugs.webkit.org/show_bug.cgi?id=148269
 
