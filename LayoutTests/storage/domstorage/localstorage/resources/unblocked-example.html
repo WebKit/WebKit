@@ -5,10 +5,10 @@ function runTest()
 {
     try {
         if (window.localStorage) {
-            console.log("FAIL: window.localStorage WAS accessible");
+            console.log("PASS: window.localStorage WAS accessible");
         }
     } catch(e) {
-        console.log("PASS: window.localStorage is NOT accessible");
+        console.log("FAIL: window.localStorage is NOT accessible");
         console.log("Exception: " + e.message);
     }
     if (window.testRunner)
