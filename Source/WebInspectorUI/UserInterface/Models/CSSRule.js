@@ -155,6 +155,14 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
         return this._matchedSelectorText;
     }
 
+    hasMatchedPseudoElementSelector()
+    {
+        if (this.nodeStyles && this.nodeStyles.node && this.nodeStyles.node.isPseudoElement())
+            return true;
+
+        return this.matchedSelectors.some((selector) => selector.isPseudoElementSelector());
+    }
+
     get style()
     {
         return this._style;

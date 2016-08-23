@@ -1,3 +1,43 @@
+2016-08-22  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add indicator to matched selector being a pseudo-element
+        https://bugs.webkit.org/show_bug.cgi?id=160893
+
+        Reviewed by Joseph Pecoraro.
+
+        Instead of using "{}" icons for CSS rules, use a "P" icon with the same coloring to identify
+        that the rule contains a pseudo-selector that is currently being applied to the selected element.
+
+        * UserInterface/Base/Utilities.js:
+        (Array.prototype.toggleIncludes):
+        Toggles whether or not to include the given value in the array based on its existence or a
+        "force" flag parameter.
+
+        * UserInterface/Images/StyleRuleAuthorPseudo.svg:
+        * UserInterface/Images/StyleRuleInspectorPseudo.svg:
+        * UserInterface/Images/StyleRuleUserAgentPseudo.svg:
+        * UserInterface/Images/StyleRuleUserPseudo.svg:
+
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.hasMatchedPseudoElementSelector):
+
+        * UserInterface/Models/CSSSelector.js:
+        (WebInspector.CSSSelector.prototype.isPseudoElementSelector):
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+
+        * UserInterface/Views/StyleRuleIcons.css:
+        (.author-style-rule-icon.pseudo-element-selector .icon):
+        (.user-style-rule-icon.pseudo-element-selector .icon):
+        (.user-agent-style-rule-icon.pseudo-element-selector .icon):
+        (.inspector-style-rule-icon.pseudo-element-selector .icon):
+
+         * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.get iconClassName):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._updateSelectorIcon):
+
 2016-08-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Make an icon for Code Coverage Profiler

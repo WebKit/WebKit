@@ -56,4 +56,9 @@ WebInspector.CSSSelector = class CSSSelector extends WebInspector.Object
 
         return false;
     }
+
+    isPseudoElementSelector()
+    {
+        return WebInspector.CSSStyleManager.PseudoElementNames.some((name) => this._text.includes(`:${name}`));
+    }
 };

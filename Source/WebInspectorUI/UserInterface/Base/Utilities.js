@@ -469,6 +469,21 @@ Object.defineProperty(Array.prototype, "remove",
     }
 });
 
+Object.defineProperty(Array.prototype, "toggleIncludes",
+{
+    value: function(value, force)
+    {
+        let exists = this.includes(value);
+        if (exists === !!force)
+            return;
+
+        if (exists)
+            this.remove(value);
+        else
+            this.push(value);
+    }
+});
+
 Object.defineProperty(Array.prototype, "insertAtIndex",
 {
     value: function(value, index)

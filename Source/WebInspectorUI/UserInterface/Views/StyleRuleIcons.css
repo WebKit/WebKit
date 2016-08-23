@@ -27,16 +27,32 @@
     content: url(../Images/StyleRuleAuthor.svg);
 }
 
+.author-style-rule-icon.pseudo-element-selector .icon {
+    content: url(../Images/StyleRuleAuthorPseudo.svg);
+}
+
 .user-style-rule-icon .icon {
     content: url(../Images/StyleRuleUser.svg);
+}
+
+.user-style-rule-icon.pseudo-element-selector .icon {
+    content: url(../Images/StyleRuleUserPseudo.svg);
 }
 
 .user-agent-style-rule-icon .icon {
     content: url(../Images/StyleRuleUserAgent.svg);
 }
 
+.user-agent-style-rule-icon.pseudo-element-selector .icon {
+    content: url(../Images/StyleRuleUserAgentPseudo.svg);
+}
+
 .inspector-style-rule-icon .icon {
     content: url(../Images/StyleRuleInspector.svg);
+}
+
+.inspector-style-rule-icon.pseudo-element-selector .icon {
+    content: url(../Images/StyleRuleInspectorPseudo.svg);
 }
 
 .inherited-style-rule-icon .icon {
