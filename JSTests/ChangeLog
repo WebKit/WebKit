@@ -1,3 +1,16 @@
+2016-08-23  Keith Miller  <keith_miller@apple.com>
+
+        %TypedArray%.prototype.slice needs to check that the source and destination have not been detached.
+        https://bugs.webkit.org/show_bug.cgi?id=161031
+        <rdar://problem/27937019>
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/typedarray-slice.js:
+        (get let):
+        (get try):
+        (testSpeciesWithTransferring):
+
 2016-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression

@@ -1,3 +1,15 @@
+2016-08-23  Keith Miller  <keith_miller@apple.com>
+
+        %TypedArray%.prototype.slice needs to check that the source and destination have not been detached.
+        https://bugs.webkit.org/show_bug.cgi?id=161031
+        <rdar://problem/27937019>
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+
 2016-08-23  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(204854): ASan is unhappy
