@@ -1495,12 +1495,14 @@ public:
     
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
+        ASSERT(cond == Zero || cond == NonZero || cond == Signed || cond == PositiveOrZero);
         m_assembler.tst(reg, mask);
         return Jump(makeBranch(cond));
     }
 
     Jump branchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
+        ASSERT(cond == Zero || cond == NonZero || cond == Signed || cond == PositiveOrZero);
         test32(reg, mask);
         return Jump(makeBranch(cond));
     }

@@ -704,14 +704,14 @@ public:
 
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
-        ASSERT((cond == Zero) || (cond == NonZero));
+        ASSERT(cond == Zero || cond == NonZero || cond == Signed || cond == PositiveOrZero);
         m_assembler.tst(reg, mask);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
     Jump branchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero));
+        ASSERT(cond == Zero || cond == NonZero || cond == Signed || cond == PositiveOrZero);
         ARMWord w = m_assembler.getImm(mask.m_value, ARMRegisters::S0, true);
         if (w & ARMAssembler::Op2InvertedImmediate)
             m_assembler.bics(ARMRegisters::S0, reg, w & ~ARMAssembler::Op2InvertedImmediate);
