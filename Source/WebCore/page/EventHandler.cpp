@@ -1128,14 +1128,14 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
         }
     }
 
+    // We should always start hit testing a clean tree.
+    if (m_frame.document())
+        m_frame.document()->updateLayoutIgnorePendingStylesheets();
     HitTestResult result(point, padding.height(), padding.width(), padding.height(), padding.width());
-
     RenderView* renderView = m_frame.contentRenderer();
     if (!renderView)
         return result;
-    
-    // We should always start hittesting a clean tree.
-    renderView->document().updateLayoutIgnorePendingStylesheets();
+
     // hitTestResultAtPoint is specifically used to hitTest into all frames, thus it always allows child frame content.
     HitTestRequest request(hitType | HitTestRequest::AllowChildFrameContent);
     renderView->hitTest(request, result);
