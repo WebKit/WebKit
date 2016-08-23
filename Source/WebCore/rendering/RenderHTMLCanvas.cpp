@@ -101,18 +101,7 @@ void RenderHTMLCanvas::canvasSizeChanged()
 
     if (!parent())
         return;
-
-    if (!preferredLogicalWidthsDirty())
-        setPreferredLogicalWidthsDirty(true);
-
-    LayoutSize oldSize = size();
-    updateLogicalWidth();
-    updateLogicalHeight();
-    if (oldSize == size())
-        return;
-
-    if (!selfNeedsLayout())
-        setNeedsLayout();
+    setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 }
 
 } // namespace WebCore

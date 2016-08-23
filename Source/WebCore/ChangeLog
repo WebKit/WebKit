@@ -1,3 +1,27 @@
+2016-06-09  Antoine Quint  <graouts@apple.com>
+
+        Changing canvas height immediately after page load does not relayout canvas
+        https://bugs.webkit.org/show_bug.cgi?id=156097
+
+        Reviewed by Zalan Bujtas.
+
+        Promote the logic use to identify whether we should perform a layout after a change of
+        intrinsic size from RenderImage to RenderReplaced such that RenderCanvas may use it
+        in canvasSizeChanged() and correctly update its layout in the case where the width
+        or height attribute is updated and there are no explicit sizing performed with CSS.
+        Additionally, this will also account for the object-fix property to only perform
+        a layout if necessary.
+
+        Test: fast/canvas/canvas-css-size-after-height-change-with-display-flex.html
+
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::repaintOrMarkForLayout):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange):
+        * rendering/RenderReplaced.h:
+
 2016-06-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         URLs containing tabs or newlines are parsed incorrectly
