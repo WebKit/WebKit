@@ -1,3 +1,14 @@
+2016-08-23  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: hasOverflowingCell == this->hasOverflowingCell() in WebCore::RenderTableSection::computeOverflowFromCells
+        https://bugs.webkit.org/show_bug.cgi?id=155702
+        <rdar://problem/27720731>
+
+        Reviewed by David Hyatt.
+
+        * fast/table/assert-when-visual-overflow-is-cleared-expected.txt: Added.
+        * fast/table/assert-when-visual-overflow-is-cleared.html: Added.
+
 2016-08-23  Brady Eidson  <beidson@apple.com>
 
         WK2 Gamepad layout test support.
