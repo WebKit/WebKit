@@ -1,5 +1,20 @@
 2016-06-12  Zalan Bujtas  <zalan@apple.com>
 
+        Cleanup RenderBlock::removePositionedObjects
+        https://bugs.webkit.org/show_bug.cgi?id=158670
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::insertPositionedObject):
+        (WebCore::RenderBlock::removePositionedObject):
+        (WebCore::RenderBlock::removePositionedObjects):
+        * rendering/RenderBlock.h:
+
+2016-06-12  Zalan Bujtas  <zalan@apple.com>
+
         Remove positioned descendants when RenderBlock is no longer a containing block.
         https://bugs.webkit.org/show_bug.cgi?id=158655
         <rdar://problem/26510032>

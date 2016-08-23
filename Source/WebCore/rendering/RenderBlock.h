@@ -84,7 +84,7 @@ public:
 
     void insertPositionedObject(RenderBox&);
     static void removePositionedObject(RenderBox&);
-    void removePositionedObjects(RenderBlock*, ContainingBlockState = SameContainingBlock);
+    void removePositionedObjects(const RenderBlock*, ContainingBlockState = SameContainingBlock);
 
     TrackedRendererListHashSet* positionedObjects() const;
     bool hasPositionedObjects() const
