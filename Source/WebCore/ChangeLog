@@ -1,3 +1,22 @@
+2016-07-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Infinite Canvas context save() causes WebKit to crash
+        https://bugs.webkit.org/show_bug.cgi?id=159586
+        <rdar://problem/26759984>
+
+        Reviewed by Simon Fraser.
+
+        Limit the size of the canvas context state stack to 1024 * 16 saves. All
+        the saves which come after that limit will stay unrealized. The restore() 
+        should not have any effect till there is no unrealized saves.
+         
+        Test: fast/canvas/canvas-context-save-limit.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::realizeSaves):
+        (WebCore::CanvasRenderingContext2D::realizeSavesLoop):
+        * html/canvas/CanvasRenderingContext2D.h: 
+
 2016-08-19  Chris Dumez  <cdumez@apple.com>
 
         DumpRenderTree crashed in com.apple.WebCore: WebCore::DOMWindow::resetDOMWindowProperties + 607
