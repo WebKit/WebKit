@@ -1,3 +1,39 @@
+2016-08-01  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r196383): Drop down CSS menus not working on cnet.com, apmex.com
+        https://bugs.webkit.org/show_bug.cgi?id=160390
+
+        Reviewed by Simon Fraser.
+
+        The case here is that we have a rule like
+
+            .enableHover:hover .child { ... }
+
+        and the "enableHover" class is added dynamically. The class change invalidation optimization code would figure out
+        that nothing needs to be invalidated as the class change doesn't make the rule match (since :hover doesn't match).
+
+        However for event driven hover to actually work the hover element needs to have its childrenAffectedByHover bit set.
+        This bits is set when the selector match is attempted, whether it actually matches or not. Since we optimized away
+        the style invalidation we never set the bit either.
+
+        Fix by treating :hover as always matching (==ignored) when collecting rules for invalidation optimization purposes.
+        Dynamic pseudo elements are already treated this way for similar reasons.
+
+        Test: fast/selectors/hover-invalidation-descendant-dynamic.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+
+            Match always in CollectingRulesIgnoringVirtualPseudoElements mode (now slightly misnamed).
+
+            This mode is used for optimization purposes in StyleInvalidationAnalysis (which we care about here) and
+            StyleSharingResolver. The change is fine for both.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsHovered):
+
+            Same change for the slow path selector checker.
+
 2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Null Node dereference in FrameSelection::notifyAccessibilityForSelectionChange of FrameSelectionAtk.cpp
