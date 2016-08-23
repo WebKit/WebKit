@@ -67,7 +67,7 @@ private:
     SMILTimeContainer(SVGSVGElement* owner);
 
     void timerFired();
-    void startTimer(SMILTime fireTime, SMILTime minimumDelay = 0);
+    void startTimer(SMILTime elapsed, SMILTime fireTime, SMILTime minimumDelay = 0);
     void updateAnimations(SMILTime elapsed, bool seekToTime = false);
     
     void updateDocumentOrderIndexes();
