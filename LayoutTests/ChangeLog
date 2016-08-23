@@ -1,5 +1,18 @@
 2016-08-22  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unreviewed, iOS simulator WK1 tests gardening.
+
+        Move the following tests from failure to pass:
+        compositing/iframes/become-composited-nested-iframes.html,
+        compositing/images/clip-on-directly-composited-image.html,
+        compositing/overflow/dynamic-composited-scrolling-status.html.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
+2016-08-22  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, iOS simulator WK1 tests rebasing.
 
         * platform/ios-simulator-wk1/compositing/absolute-inside-out-of-view-fixed-expected.txt: Removed.

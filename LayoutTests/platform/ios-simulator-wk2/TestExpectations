@@ -33,6 +33,8 @@ compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
 compositing/reflections/nested-reflection-on-overflow.html [ Failure ]
 compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
 
+webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
+
 webkit.org/b/157105 compositing/contents-scale/incremental-change.html [ Pass ImageOnlyFailure ]
 
 # Compositing test that time out:
