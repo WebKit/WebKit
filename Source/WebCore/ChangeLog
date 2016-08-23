@@ -1,3 +1,17 @@
+2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Null Node dereference in FrameSelection::notifyAccessibilityForSelectionChange of FrameSelectionAtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=159411
+
+        Reviewed by Carlos Garcia Campos.
+
+        Tests:
+            editing/selection/selection-in-iframe-removed-crash.html
+
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        Added a null check for the return value of containerNode().
+
 2016-07-14  Brent Fulgham  <bfulgham@apple.com>
 
         editing/spelling/spellcheck-async.html sometimes crashes with GuardMalloc 
