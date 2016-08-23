@@ -100,6 +100,7 @@ include_directories(
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${THIRDPARTY_DIR}/gtest/include
     ${WEBCORE_DIR}/css
+    ${WEBCORE_DIR}/css/parser
     ${WEBCORE_DIR}/dom
     ${WEBCORE_DIR}/editing
     ${WEBCORE_DIR}/loader/cache

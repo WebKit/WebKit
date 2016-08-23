@@ -1,3 +1,10 @@
+2016-08-23  Alex Christensen  <achristensen@webkit.org>
+
+        Fix EFL build.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        Include new directory.
+
 2016-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
