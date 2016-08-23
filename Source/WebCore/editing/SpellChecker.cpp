@@ -77,6 +77,8 @@ void SpellCheckRequest::didSucceed(const Vector<TextCheckingResult>& results)
 {
     if (!m_checker)
         return;
+
+    Ref<SpellCheckRequest> protectedThis(*this);
     m_checker->didCheckSucceed(m_requestData.sequence(), results);
     m_checker = nullptr;
 }
@@ -85,6 +87,8 @@ void SpellCheckRequest::didCancel()
 {
     if (!m_checker)
         return;
+
+    Ref<SpellCheckRequest> protectedThis(*this);
     m_checker->didCheckCancel(m_requestData.sequence());
     m_checker = nullptr;
 }
