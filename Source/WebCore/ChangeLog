@@ -1,3 +1,21 @@
+2016-07-11  Zalan Bujtas  <zalan@apple.com>
+
+        Unable to edit fields or drag to select text in Dashboard widgets.
+        https://bugs.webkit.org/show_bug.cgi?id=159647
+        <rdar://problem/26941698>
+
+        Reviewed by Brent Fulgham.
+
+        RenderObject::computeAbsoluteRepaintRect's first paramenter is no longer in/out. Use the return
+        value to set the clip on the dashboard region.
+
+        Not testable.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addAnnotatedRegions):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addAnnotatedRegions):
+
 2016-07-10  Zalan Bujtas  <zalan@apple.com>
 
         Fix LogicalSelectionOffsetCaches to work with detached render tree.
