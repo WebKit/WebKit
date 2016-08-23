@@ -1,3 +1,63 @@
+2016-06-16  John Wilander  <wilander@apple.com>
+
+        Restrict security origin inheritance to empty, about:blank, and about:srcdoc URLs
+        https://bugs.webkit.org/show_bug.cgi?id=158855
+        <rdar://problem/26142632>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/dom/window-open-about-blank-and-access-document.html
+               http/tests/dom/window-open-about-webkit-org-and-access-document.html
+
+        Document.cpp previously checked whether a document should inherit its owner's 
+        security origin by checking if the URL is either empty or blank. URL.cpp in 
+        turn only checks if the protocol is "about:" in the isBlankURL() function. 
+        Thus all about:* URLs inherited security origin. This patch restricts 
+        security origin inheritance to empty, about:blank, and about:srcdoc URLs.
+
+        Quotes and links from the WHATWG spec regarding about:srcdoc:
+
+        7.1 Browsing contexts
+        A browsing context can have a creator browsing context, the browsing context 
+        that was responsible for its creation. If a browsing context has a parent 
+        browsing context, then that is its creator browsing context. Otherwise, if the 
+        browsing context has an opener browsing context, then that is its creator 
+        browsing context. Otherwise, the browsing context has no creator browsing 
+        context.
+        https://html.spec.whatwg.org/multipage/browsers.html#concept-document-bc
+
+        7.1.1 Nested browsing contexts
+        Certain elements (for example, iframe elements) can instantiate further 
+        browsing contexts. These are called nested browsing contexts. If a browsing 
+        context P has a Document D with an element E that nests another browsing 
+        context C inside it, then C is said to be nested through D, and E is said to 
+        be the browsing context container of C. If the browsing context container 
+        element E is in the Document D, then P is said to be the parent browsing 
+        context of C and C is said to be a child browsing context of P. Otherwise, 
+        the nested browsing context C has no parent browsing context.
+        https://html.spec.whatwg.org/multipage/browsers.html#nested-browsing-context
+
+        4.8.5 The iframe element
+        The iframe element represents a nested browsing context.
+        ...
+        If the srcdoc attribute is specified
+            Navigate the element's child browsing context to a new response whose 
+            url list consists of about:srcdoc ...
+        https://html.spec.whatwg.org/multipage/embedded-content.html#attr-iframe-srcdoc
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+            Now uses the URL::shouldInheritSecurityOriginFromOwner() function instead.
+        (WebCore::Document::initContentSecurityPolicy):
+            Now uses the URL::shouldInheritSecurityOriginFromOwner() function instead.
+        (WebCore::shouldInheritSecurityOriginFromOwner): Deleted.
+            Moved to URL::shouldInheritSecurityOriginFromOwner() and restricted the check.
+        * platform/URL.cpp:
+        (WebCore::URL::shouldInheritSecurityOriginFromOwner):
+        * platform/URL.h:
+            Moved the function from Document and restricted the check to only allow
+            security origin inheritance for empty, about:blank, and about:srcdoc URLs.
+
 2016-05-24  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r196629): Safari can get into a state where switching Reader theme doesn't apply to the webpage

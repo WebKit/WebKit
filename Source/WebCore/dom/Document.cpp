@@ -343,19 +343,6 @@ static inline bool isValidNamePart(UChar32 c)
     return true;
 }
 
-static bool shouldInheritSecurityOriginFromOwner(const URL& url)
-{
-    // http://www.whatwg.org/specs/web-apps/current-work/#origin-0
-    //
-    // If a Document has the address "about:blank"
-    //     The origin of the Document is the origin it was assigned when its browsing context was created.
-    //
-    // Note: We generalize this to all "blank" URLs and invalid URLs because we
-    // treat all of these URLs as about:blank.
-    //
-    return url.isEmpty() || url.isBlankURL();
-}
-
 static Widget* widgetForElement(Element* focusedElement)
 {
     if (!focusedElement)
@@ -5131,7 +5118,7 @@ void Document::initSecurityContext()
         setBaseURLOverride(parentDocument->baseURL());
     }
 
-    if (!shouldInheritSecurityOriginFromOwner(m_url))
+    if (!m_url.shouldInheritSecurityOriginFromOwner())
         return;
 
     // If we do not obtain a meaningful origin from the URL, then we try to
@@ -5164,7 +5151,7 @@ void Document::initSecurityContext()
 
 void Document::initContentSecurityPolicy()
 {
-    if (!m_frame->tree().parent() || (!shouldInheritSecurityOriginFromOwner(m_url) && !isPluginDocument()))
+    if (!m_frame->tree().parent() || (!m_url.shouldInheritSecurityOriginFromOwner() && !isPluginDocument()))
         return;
 
     contentSecurityPolicy()->copyStateFrom(m_frame->tree().parent()->document()->contentSecurityPolicy());
