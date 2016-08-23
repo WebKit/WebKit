@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Igalia, S.L.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2015 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -540,9 +540,12 @@ void FEGaussianBlur::platformApplySoftware()
     IntSize paintSize = absolutePaintRect().size();
     paintSize.scale(filter().filterScale());
     RefPtr<Uint8ClampedArray> tmpImageData = Uint8ClampedArray::createUninitialized(paintSize.width() * paintSize.height() * 4);
-    Uint8ClampedArray* tmpPixelArray = tmpImageData.get();
+    if (!tmpImageData) {
+        WTFLogAlways("FEGaussianBlur::platformApplySoftware Unable to create buffer. Requested size was %d x %d\n", paintSize.width(), paintSize.height());
+        return;
+    }
 
-    platformApply(srcPixelArray, tmpPixelArray, kernelSize.width(), kernelSize.height(), paintSize);
+    platformApply(srcPixelArray, tmpImageData.get(), kernelSize.width(), kernelSize.height(), paintSize);
 }
 
 void FEGaussianBlur::dump()

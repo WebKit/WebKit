@@ -1,3 +1,27 @@
+2016-07-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Return values of JSArray::createUninitialized (and related) are not consistently checked for nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=159495
+        <rdar://problem/26075433>
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/canvas/canvas-getImageData-invalid-result-buffer-crash.html
+
+        * html/ImageData.cpp:
+        (WebCore::ImageData::ImageData): Assert at construction if we could not create a valid
+        buffer.
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::createArrayBuffer): Check for a null buffer before using it.
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData): Ditto.
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware): Ditto.
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::copyImageBytes): Ditto.
+        (WebCore::FilterEffect::copyUnmultipliedImage): Ditto.
+        (WebCore::FilterEffect::copyPremultipliedImage): Ditto.
+
 2016-07-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Infinite Canvas context save() causes WebKit to crash
