@@ -1,5 +1,38 @@
 2016-08-23  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: resource tree elements should provide "Download File" context menu items
+        https://bugs.webkit.org/show_bug.cgi?id=158035
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a context menu item to elements representing resources that
+        initiates a download of that resource.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.saveDataToFile):
+        Add support for saving base64 objects.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WebInspector.fileExtensionForMIMEType):
+        Returns a file extension for the given MIME type if able.
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement.prototype.onattach):
+        Add contextmenu event listener since superclass onattach call is explicitly not used.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.appendContextMenuItems):
+        Add Save File context menu item.
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype.onattach):
+        (WebInspector.ResourceTreeElement.prototype._handleContextMenuEvent):
+        Add contextmenu event listener and Save File context menu item.
+
+2016-08-23  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: No open/copy src resource in context menu
         https://bugs.webkit.org/show_bug.cgi?id=159028
 

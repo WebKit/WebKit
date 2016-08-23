@@ -806,11 +806,32 @@ WebInspector.saveDataToFile = function(saveData, forceSaveAs)
     }
 
     console.assert(saveData.url);
-    console.assert(typeof saveData.content === "string");
-    if (!saveData.url || typeof saveData.content !== "string")
+    console.assert(saveData.content);
+    if (!saveData.url || !saveData.content)
         return;
 
-    InspectorFrontendHost.save(saveData.url, saveData.content, false, forceSaveAs || saveData.forceSaveAs);
+    let suggestedName = parseURL(saveData.url).lastPathComponent;
+    if (!suggestedName) {
+        suggestedName = WebInspector.UIString("Untitled");
+        let dataURLTypeMatch = /^data:([^;]+)/.exec(saveData.url);
+        if (dataURLTypeMatch)
+            suggestedName += WebInspector.fileExtensionForMIMEType(dataURLTypeMatch[1]) || "";
+    }
+
+    if (typeof saveData.content === "string") {
+        const base64Encoded = false;
+        InspectorFrontendHost.save(suggestedName, saveData.content, base64Encoded, forceSaveAs || saveData.forceSaveAs);
+        return;
+    }
+
+    let fileReader = new FileReader;
+    fileReader.readAsDataURL(saveData.content);
+    fileReader.addEventListener("loadend", () => {
+        let dataURLComponents = parseDataURL(fileReader.result);
+
+        const base64Encoded = true;
+        InspectorFrontendHost.save(suggestedName, dataURLComponents.data, base64Encoded, forceSaveAs || saveData.forceSaveAs);
+    });
 };
 
 WebInspector.isConsoleFocused = function()

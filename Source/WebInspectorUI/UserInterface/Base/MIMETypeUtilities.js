@@ -78,3 +78,47 @@ WebInspector.mimeTypeForFileExtension = function(extension)
 
     return extensionToMIMEType[extension] || null;
 };
+
+WebInspector.fileExtensionForMIMEType = function(mimeType)
+{
+    const mimeTypeToExtension = {
+        // Document types.
+        "text/html": "html",
+        "application/xhtml+xml": "xhtml",
+        "text/xml": "xml",
+
+        // Script types.
+        "text/javascript": "js",
+        "application/json": "json",
+        "text/x-clojure": "clj",
+        "text/x-coffeescript": "coffee",
+        "text/x-livescript": "ls",
+        "text/typescript": "ts",
+
+        // Stylesheet types.
+        "text/css": "css",
+        "text/x-less": "less",
+        "text/x-sass": "sass",
+        "text/x-scss": "scss",
+
+        // Image types.
+        "image/bmp": "bmp",
+        "image/gif": "gif",
+        "image/jpeg": "jpeg",
+        "image/jpeg": "jpg",
+        "application/pdf": "pdf",
+        "image/png": "png",
+        "image/tiff": "tif",
+        "image/tiff": "tiff",
+
+        // Font types and Media types are ignored for now.
+
+        // Miscellaneous types.
+        "image/svg+xml": "svg",
+        "text/plain": "txt",
+        "text/xsl": "xsl",
+    };
+
+    let extension = mimeTypeToExtension[mimeType];
+    return extension ? `.${extension}` : null;
+};
