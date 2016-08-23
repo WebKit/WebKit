@@ -201,10 +201,10 @@ bool JSModuleNamespaceObject::defineOwnProperty(JSObject*, ExecState* exec, Prop
 
 EncodedJSValue JSC_HOST_CALL moduleNamespaceObjectSymbolIterator(ExecState* exec)
 {
-    JSValue thisValue = exec->thisValue();
-    if (!thisValue.isObject())
-        return JSValue::encode(throwTypeError(exec, ASCIILiteral("|this| should be an object")));
-    return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), asObject(thisValue)));
+    JSModuleNamespaceObject* object = jsDynamicCast<JSModuleNamespaceObject*>(exec->thisValue());
+    if (!object)
+        return throwVMTypeError(exec, ASCIILiteral("|this| should be a module namespace object"));
+    return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), object));
 }
 
 } // namespace JSC
