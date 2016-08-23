@@ -48,7 +48,6 @@
 #include "JSCanvasGradient.cpp"
 #include "JSCanvasPattern.cpp"
 #include "JSCanvasProxy.cpp"
-#include "JSCanvasRenderingContext.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
 #if ENABLE(STREAMS_API)
 #include "JSByteLengthQueuingStrategy.cpp"
