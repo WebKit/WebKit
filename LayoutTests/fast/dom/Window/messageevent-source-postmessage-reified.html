@@ -7,8 +7,7 @@ description("Tests that MessageEvent.source is correct and can be used for messa
 jsTestIsAsync = true;
 
 // Reify the window.
-window.test = 1;
-delete window.test;
+delete window.name;
 
 if (window.testRunner)
     testRunner.dumpChildFramesAsText();
