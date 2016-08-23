@@ -1,3 +1,12 @@
+2016-06-16  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Include cstdlib before using std::atexit
+        https://bugs.webkit.org/show_bug.cgi?id=158681
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/PlatformDisplay.cpp:
+
 2016-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Wayland] PlatformDisplayWayland destructor is super crashy

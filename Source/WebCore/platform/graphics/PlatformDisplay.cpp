@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformDisplay.h"
 
+#include <cstdlib>
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 
