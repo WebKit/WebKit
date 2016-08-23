@@ -63,7 +63,7 @@ WebIDBConnectionToServer::WebIDBConnectionToServer()
 {
     relaxAdoptionRequirement();
 
-    m_isOpenInServer = sendSync(Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer(), m_identifier);
+    m_isOpenInServer = sendSync(Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer(), Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer::Reply(m_identifier));
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
 }
 

@@ -1,3 +1,22 @@
+2016-08-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use Messages::XXX...::Reply explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=161075
+
+        Reviewed by Carlos Garcia Campos.
+
+        std::tuple's constructor is annotated as `explicit`.
+        So we cannot use the implicit conversion here.
+        This causes the build failure in EFL and GTK.
+
+        Looking through code, the other places use ::Reply explicitly.
+        So in this patch, we follow that.
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer):
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp:
+        (WebKit::InjectedBundlePageFullScreenClient::supportsFullScreen):
+
 2016-08-22  Anders Carlsson  <andersca@apple.com>
 
         Remove Arguments.h
