@@ -791,9 +791,6 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     return parentNode();
 }
 
-Node* commonAncestor(Node&, Node&);
-Node* commonAncestorCrossingShadowBoundary(Node&, Node&);
-
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
