@@ -1,3 +1,16 @@
+2016-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] Fix a crash in fast/canvas/canvas-getImageData-invalid-result-buffer-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=160014
+
+        Reviewed by Michael Catanzaro.
+
+        In r202887 some null checks were added for JSArray::createUninitialized (and related) but not for the
+        ImageBuffer cairo implementation.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::getImageData): Return early if Uint8ClampedArray::createUninitialized() returns nullptr.
+
 2016-07-06  Brent Fulgham  <bfulgham@apple.com>
 
         Return values of JSArray::createUninitialized (and related) are not consistently checked for nullptr
