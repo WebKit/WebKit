@@ -28,8 +28,7 @@
 #include "config.h"
 
 #if ENABLE(MATHML)
-
-#include "MathMLInlineContainerElement.h"
+#include "MathMLPresentationElement.h"
 
 #include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
@@ -38,17 +37,17 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& tagName, Document& document)
+MathMLPresentationElement::MathMLPresentationElement(const QualifiedName& tagName, Document& document)
     : MathMLElement(tagName, document)
 {
 }
 
-Ref<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLPresentationElement> MathMLPresentationElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new MathMLInlineContainerElement(tagName, document));
+    return adoptRef(*new MathMLPresentationElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLPresentationElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (hasTagName(mtableTag))
         return createRenderer<RenderMathMLTable>(*this, WTFMove(style));
@@ -56,12 +55,12 @@ RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(Ren
     return createRenderer<RenderMathMLBlock>(*this, WTFMove(style));
 }
 
-bool MathMLInlineContainerElement::acceptsDisplayStyleAttribute()
+bool MathMLPresentationElement::acceptsDisplayStyleAttribute()
 {
     return hasTagName(mtableTag);
 }
 
-void MathMLInlineContainerElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLPresentationElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     bool displayStyleAttribute = name == displaystyleAttr && acceptsDisplayStyleAttribute();
     bool mathVariantAttribute = name == mathvariantAttr && acceptsMathVariantAttribute();

@@ -2005,12 +2005,12 @@ set(WebCore_SOURCES
     mathml/MathMLAnnotationElement.cpp
     mathml/MathMLElement.cpp
     mathml/MathMLFractionElement.cpp
-    mathml/MathMLInlineContainerElement.cpp
     mathml/MathMLMathElement.cpp
     mathml/MathMLMencloseElement.cpp
     mathml/MathMLOperatorDictionary.cpp
     mathml/MathMLOperatorElement.cpp
     mathml/MathMLPaddedElement.cpp
+    mathml/MathMLPresentationElement.cpp
     mathml/MathMLRowElement.cpp
     mathml/MathMLScriptsElement.cpp
     mathml/MathMLSelectElement.cpp

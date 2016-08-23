@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-class MathMLInlineContainerElement : public MathMLElement {
+class MathMLPresentationElement : public MathMLElement {
 public:
-    static Ref<MathMLInlineContainerElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLPresentationElement> create(const QualifiedName& tagName, Document&);
 
 protected:
-    MathMLInlineContainerElement(const QualifiedName& tagName, Document&);
+    MathMLPresentationElement(const QualifiedName& tagName, Document&);
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     bool acceptsDisplayStyleAttribute() override;

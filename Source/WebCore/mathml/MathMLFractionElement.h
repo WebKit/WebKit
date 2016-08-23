@@ -26,11 +26,11 @@
 #pragma once
 
 #if ENABLE(MATHML)
-#include "MathMLInlineContainerElement.h"
+#include "MathMLPresentationElement.h"
 
 namespace WebCore {
 
-class MathMLFractionElement final : public MathMLInlineContainerElement {
+class MathMLFractionElement final : public MathMLPresentationElement {
 public:
     static Ref<MathMLFractionElement> create(const QualifiedName& tagName, Document&);
     const Length& lineThickness();

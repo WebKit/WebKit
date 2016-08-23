@@ -6323,8 +6323,8 @@
 		FABE72F41059C1EB00D999DD /* MathMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */; };
 		FABE72F51059C1EB00D888CC /* MathMLAnnotationElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D888CC /* MathMLAnnotationElement.h */; };
 		FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D999DD /* MathMLElement.h */; };
-		FABE72F61059C1EB00D999DD /* MathMLInlineContainerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */; };
-		FABE72F71059C1EB00D999DD /* MathMLInlineContainerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72F01059C1EB00D999DD /* MathMLInlineContainerElement.h */; };
+		FABE72F61059C1EB00D999DD /* MathMLPresentationElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72EF1059C1EB00D999DD /* MathMLPresentationElement.cpp */; };
+		FABE72F71059C1EB00D999DD /* MathMLPresentationElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72F01059C1EB00D999DD /* MathMLPresentationElement.h */; };
 		FABE72F81059C1EB00D999DD /* MathMLMathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72F11059C1EB00D999DD /* MathMLMathElement.cpp */; };
 		FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72F21059C1EB00D999DD /* MathMLMathElement.h */; };
 		FABE72FD1059C21100D999DD /* MathMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */; };
@@ -13898,8 +13898,8 @@
 		FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElement.cpp; sourceTree = "<group>"; };
 		FABE72EE1059C1EB00D888CC /* MathMLAnnotationElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLAnnotationElement.h; sourceTree = "<group>"; };
 		FABE72EE1059C1EB00D999DD /* MathMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLElement.h; sourceTree = "<group>"; };
-		FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLInlineContainerElement.cpp; sourceTree = "<group>"; };
-		FABE72F01059C1EB00D999DD /* MathMLInlineContainerElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLInlineContainerElement.h; sourceTree = "<group>"; };
+		FABE72EF1059C1EB00D999DD /* MathMLPresentationElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLPresentationElement.cpp; sourceTree = "<group>"; };
+		FABE72F01059C1EB00D999DD /* MathMLPresentationElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLPresentationElement.h; sourceTree = "<group>"; };
 		FABE72F11059C1EB00D999DD /* MathMLMathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLMathElement.cpp; sourceTree = "<group>"; };
 		FABE72F21059C1EB00D999DD /* MathMLMathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLMathElement.h; sourceTree = "<group>"; };
 		FABE72F31059C1EB00D999DD /* mathtags.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathtags.in; sourceTree = "<group>"; };
@@ -23126,8 +23126,8 @@
 				FABE72EE1059C1EB00D999DD /* MathMLElement.h */,
 				0BCF83EF1059C1EB00D999DD /* MathMLFractionElement.cpp */,
 				0BCF83F01059C1EB00D999DD /* MathMLFractionElement.h */,
-				FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */,
-				FABE72F01059C1EB00D999DD /* MathMLInlineContainerElement.h */,
+				FABE72EF1059C1EB00D999DD /* MathMLPresentationElement.cpp */,
+				FABE72F01059C1EB00D999DD /* MathMLPresentationElement.h */,
 				FABE72F11059C1EB00D999DD /* MathMLMathElement.cpp */,
 				FABE72F21059C1EB00D999DD /* MathMLMathElement.h */,
 				C3E61C653A64807A83E76FB8 /* MathMLMencloseElement.cpp */,
@@ -25374,7 +25374,7 @@
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
 				44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */,
 				0BCF83F71059C1EB00D999DD /* MathMLFractionElement.h in Headers */,
-				FABE72F71059C1EB00D999DD /* MathMLInlineContainerElement.h in Headers */,
+				FABE72F71059C1EB00D999DD /* MathMLPresentationElement.h in Headers */,
 				FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */,
 				44A28AAF12DFB8BF00AE923B /* MathMLNames.h in Headers */,
 				FA654A6C1108ABED002616F1 /* MathMLOperatorElement.h in Headers */,
@@ -29054,7 +29054,7 @@
 				FABE72F41059C1EB00D999DD /* MathMLElement.cpp in Sources */,
 				FABE72FD1059C21100D999DD /* MathMLElementFactory.cpp in Sources */,
 				0BCF83F61059C1EB00D999DD /* MathMLFractionElement.cpp in Sources */,
-				FABE72F61059C1EB00D999DD /* MathMLInlineContainerElement.cpp in Sources */,
+				FABE72F61059C1EB00D999DD /* MathMLPresentationElement.cpp in Sources */,
 				FABE72F81059C1EB00D999DD /* MathMLMathElement.cpp in Sources */,
 				05D913CEEAB2A60534218ACF /* MathMLMencloseElement.cpp in Sources */,
 				FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */,

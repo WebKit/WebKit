@@ -40,7 +40,7 @@ namespace WebCore {
 using namespace MathMLNames;
 
 MathMLRowElement::MathMLRowElement(const QualifiedName& tagName, Document& document)
-    : MathMLInlineContainerElement(tagName, document)
+    : MathMLPresentationElement(tagName, document)
 {
 }
 
@@ -56,7 +56,7 @@ void MathMLRowElement::childrenChanged(const ChildChange& change)
             static_cast<MathMLOperatorElement*>(child)->setOperatorFormDirty();
     }
 
-    MathMLInlineContainerElement::childrenChanged(change);
+    MathMLPresentationElement::childrenChanged(change);
 }
 
 RenderPtr<RenderElement> MathMLRowElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

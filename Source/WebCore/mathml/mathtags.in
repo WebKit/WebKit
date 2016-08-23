@@ -28,13 +28,13 @@ ms interfaceName=MathMLTokenElement
 mspace interfaceName=MathMLSpaceElement
 msub interfaceName=MathMLScriptsElement
 msup interfaceName=MathMLScriptsElement
-mtable interfaceName=MathMLInlineContainerElement
+mtable interfaceName=MathMLPresentationElement
 mtr interfaceName=MathMLElement
 mtd interfaceName=MathMLElement
 mmultiscripts interfaceName=MathMLScriptsElement
-mprescripts interfaceName=MathMLInlineContainerElement
+mprescripts interfaceName=MathMLPresentationElement
 menclose interfaceName=MathMLMencloseElement
-none interfaceName=MathMLInlineContainerElement
+none interfaceName=MathMLPresentationElement
 semantics interfaceName=MathMLSelectElement
 
 maligngroup interfaceName=MathMLElement

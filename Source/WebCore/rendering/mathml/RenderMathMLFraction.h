@@ -30,7 +30,6 @@
 #if ENABLE(MATHML)
 
 #include "MathMLFractionElement.h"
-#include "MathMLInlineContainerElement.h"
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
