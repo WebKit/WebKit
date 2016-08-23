@@ -1,3 +1,26 @@
+2016-06-14  Zalan Bujtas  <zalan@apple.com>
+
+        Make RenderBlock::insertInto/RemoveFromTrackedRendererMaps functions static.
+        https://bugs.webkit.org/show_bug.cgi?id=158722
+
+        Reviewed by Simon Fraser.
+
+        These functions manipulate static tracker hashmaps. They don't need to be on RenderBlock.
+        This is also in preparation for decoupling positioned descendant tracking from descendent percentage height handling.
+        (gPositionedDescendantsMap and gPercentHeightDescendantsMap) 
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::insertIntoTrackedRendererMaps):
+        (WebCore::removeFromTrackedRendererMaps):
+        (WebCore::removeBlockFromDescendantAndContainerMaps):
+        (WebCore::RenderBlock::insertPositionedObject):
+        (WebCore::RenderBlock::addPercentHeightDescendant):
+        (WebCore::RenderBlock::insertIntoTrackedRendererMaps): Deleted.
+        (WebCore::RenderBlock::removeFromTrackedRendererMaps): Deleted.
+        * rendering/RenderBlock.h:
+
 2016-06-12  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup RenderBlock::removePositionedObjects
