@@ -1,3 +1,88 @@
+2016-08-23  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 editing tests.
+
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-002-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-003-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-005-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-006-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-007-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-008-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-009-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-contents-003-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-002-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-009-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-013-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-014-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-016-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-018-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-022-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-023-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-block-merge-contents-024-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-br-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-br-003-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-br-010-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-character-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-contiguous-ws-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-emoji-expected.txt: Added.
+        * platform/ios-simulator-wk1/editing/deleting/delete-hr-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-image-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-image-002-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-image-003-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-002-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-003-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-005-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-007-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-009-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-010-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-013-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-015-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-line-017-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-listitem-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-listitem-002-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-selection-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/delete-ws-fixup-002-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/list-item-1-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/merge-unrendered-space-expected.txt:
+        * platform/ios-simulator-wk1/editing/deleting/non-smart-delete-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-3778059-fix-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-br-at-tabspan-003-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-br-quoted-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-br-quoted-004-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-br-quoted-006-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-div-012-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-div-014-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-div-017-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-div-018-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-div-020-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-div-022-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-div-025-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-div-027-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-html-crash-01-expected.txt: Added.
+        * platform/ios-simulator-wk1/editing/inserting/insert-paragraph-04-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-text-at-tabspan-001-expected.txt:
+        * platform/ios-simulator-wk1/editing/inserting/insert-text-at-tabspan-003-expected.txt:
+        * platform/ios-simulator-wk1/editing/selection/5057506-2-expected.txt:
+        * platform/ios-simulator-wk1/editing/selection/5057506-expected.txt:
+        * platform/ios-simulator-wk1/editing/selection/5131716-1-expected.txt:
+        * platform/ios-simulator-wk1/editing/selection/5131716-2-expected.txt:
+        * platform/ios-simulator-wk1/editing/selection/5131716-3-expected.txt:
+        * platform/ios-simulator-wk1/editing/selection/5131716-4-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/block-styles-007-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/create-block-for-style-002-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/create-block-for-style-003-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/create-block-for-style-010-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/create-block-for-style-012-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/create-block-for-style-013-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/relative-font-size-change-002-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/relative-font-size-change-004-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/style-3998892-fix-expected.txt:
+        * platform/ios-simulator-wk1/editing/style/style-boundary-004-expected.txt:
+        * platform/ios-simulator-wk1/editing/undo/undo-delete-expected.txt:
+
 2016-08-23  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: hasOverflowingCell == this->hasOverflowingCell() in WebCore::RenderTableSection::computeOverflowFromCells
