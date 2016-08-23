@@ -49,28 +49,27 @@ public:
     virtual bool isEmpty() const = 0;
     virtual bool isMandatory() const = 0;
 
-    virtual bool getMin(int&) const;
-    virtual bool getMax(int&) const;
-    virtual bool getExact(int&) const;
-    virtual bool getIdeal(int&) const;
+    virtual bool getMin(int&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getMax(int&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getExact(int&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getIdeal(int&) const { ASSERT_NOT_REACHED(); return false; }
 
-    virtual bool getMin(double&) const;
-    virtual bool getMax(double&) const;
-    virtual bool getExact(double&) const;
-    virtual bool getIdeal(double&) const;
+    virtual bool getMin(double&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getMax(double&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getExact(double&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getIdeal(double&) const { ASSERT_NOT_REACHED(); return false; }
 
-    virtual bool getMin(bool&) const;
-    virtual bool getMax(bool&) const;
-    virtual bool getExact(bool&) const;
-    virtual bool getIdeal(bool&) const;
+    virtual bool getMin(bool&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getMax(bool&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getExact(bool&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getIdeal(bool&) const { ASSERT_NOT_REACHED(); return false; }
 
-    virtual bool getMin(Vector<String>&) const;
-    virtual bool getMax(Vector<String>&) const;
-    virtual bool getExact(Vector<String>&) const;
-    virtual bool getIdeal(Vector<String>&) const;
+    virtual bool getMin(Vector<String>&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getMax(Vector<String>&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getExact(Vector<String>&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool getIdeal(Vector<String>&) const { ASSERT_NOT_REACHED(); return false; }
 
     MediaConstraintType type() const { return m_type; }
-
 
 protected:
     explicit MediaConstraint(MediaConstraintType type)
@@ -82,10 +81,48 @@ private:
     MediaConstraintType m_type;
 };
 
+template<class ValueType>
 class NumericConstraint : public MediaConstraint {
 public:
-    bool isEmpty() const override { return !m_hasMin && !m_hasMax && !m_hasExact && !m_hasIdeal; }
-    bool isMandatory() const override { return m_hasMin || m_hasMax || m_hasExact; }
+    bool isEmpty() const override { return !m_min && !m_max && !m_exact && !m_ideal; }
+    bool isMandatory() const override { return m_min || m_max || m_exact; }
+
+    void setMin(ValueType value) { m_min = value; }
+    void setMax(ValueType value) { m_max = value; }
+    void setExact(ValueType value) { m_exact = value; }
+    void setIdeal(ValueType value) { m_ideal = value; }
+
+    bool getMin(ValueType& min) const final {
+        if (!m_min)
+            return false;
+
+        min = m_min.value();
+        return true;
+    }
+
+    bool getMax(ValueType& max) const final {
+        if (!m_max)
+            return false;
+
+        max = m_max.value();
+        return true;
+    }
+
+    bool getExact(ValueType& exact) const final {
+        if (!m_exact)
+            return false;
+
+        exact = m_exact.value();
+        return true;
+    }
+
+    bool getIdeal(ValueType& ideal) const final {
+        if (!m_ideal)
+            return false;
+
+        ideal = m_ideal.value();
+        return true;
+    }
 
 protected:
     explicit NumericConstraint(MediaConstraintType type)
@@ -93,87 +130,47 @@ protected:
     {
     }
 
-    void setHasMin(bool value) { m_hasMin = value; }
-    void setHasMax(bool value) { m_hasMax = value; }
-    void setHasExact(bool value) { m_hasExact = value; }
-    void setHasIdeal(bool value) { m_hasIdeal = value; }
-
-    bool hasMin() const { return m_hasMin; }
-    bool hasMax() const { return m_hasMax; }
-    bool hasExact() const { return m_hasExact; }
-    bool hasIdeal() const { return m_hasIdeal; }
-
 private:
-    bool m_hasMin { false };
-    bool m_hasMax { false };
-    bool m_hasExact { false };
-    bool m_hasIdeal { false };
+    Optional<ValueType> m_min;
+    Optional<ValueType> m_max;
+    Optional<ValueType> m_exact;
+    Optional<ValueType> m_ideal;
 };
 
-class IntConstraint final : public NumericConstraint {
+class IntConstraint final : public NumericConstraint<int> {
 public:
-    static Ref<IntConstraint> create(MediaConstraintType);
-
-    void setMin(int value);
-    void setMax(int value);
-    void setExact(int value);
-    void setIdeal(int value);
-
-    bool getMin(int&) const final;
-    bool getMax(int&) const final;
-    bool getExact(int&) const final;
-    bool getIdeal(int&) const final;
+    static Ref<IntConstraint> create(MediaConstraintType type) { return adoptRef(*new IntConstraint(type)); }
 
 private:
     explicit IntConstraint(MediaConstraintType type)
-        : WebCore::NumericConstraint(type)
+        : NumericConstraint<int>(type)
     {
     }
-
-    int m_min;
-    int m_max;
-    int m_exact;
-    int m_ideal;
 };
 
-class DoubleConstraint final : public NumericConstraint {
+class DoubleConstraint final : public NumericConstraint<double> {
 public:
-    static Ref<DoubleConstraint> create(MediaConstraintType);
-
-    void setMin(double value);
-    void setMax(double value);
-    void setExact(double value);
-    void setIdeal(double value);
-
-    bool getMin(double&) const final;
-    bool getMax(double&) const final;
-    bool getExact(double&) const final;
-    bool getIdeal(double&) const final;
+    static Ref<DoubleConstraint> create(MediaConstraintType type) { return adoptRef(*new DoubleConstraint(type)); }
 
 private:
     explicit DoubleConstraint(MediaConstraintType type)
-        : WebCore::NumericConstraint(type)
+        : NumericConstraint<double>(type)
     {
     }
-
-    double m_min;
-    double m_max;
-    double m_exact;
-    double m_ideal;
 };
 
 class BooleanConstraint final : public MediaConstraint {
 public:
-    static Ref<BooleanConstraint> create(MediaConstraintType);
+    static Ref<BooleanConstraint> create(MediaConstraintType type) { return adoptRef(*new BooleanConstraint(type)); }
 
-    void setExact(bool value);
-    void setIdeal(bool value);
+    void setExact(bool value) { m_exact = value; }
+    void setIdeal(bool value) { m_ideal = value; }
 
     bool getExact(bool&) const final;
     bool getIdeal(bool&) const final;
 
-    bool isEmpty() const final { return !m_hasExact && !m_hasIdeal; };
-    bool isMandatory() const final { return m_hasExact; }
+    bool isEmpty() const final { return !m_exact && !m_ideal; };
+    bool isMandatory() const final { return bool(m_exact); }
 
 private:
     explicit BooleanConstraint(MediaConstraintType type)
@@ -181,15 +178,13 @@ private:
     {
     }
 
-    bool m_exact { false };
-    bool m_ideal { false };
-    bool m_hasExact { false };
-    bool m_hasIdeal { false };
+    Optional<bool> m_exact { false };
+    Optional<bool> m_ideal { false };
 };
 
 class StringConstraint final : public MediaConstraint {
 public:
-    static Ref<StringConstraint> create(MediaConstraintType);
+    static Ref<StringConstraint> create(MediaConstraintType type) { return adoptRef(*new StringConstraint(type)); }
 
     void setExact(const String&);
     void appendExact(const String&);
