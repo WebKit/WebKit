@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+
+.container {
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+PASS if no crash.
+<div class=container><span><div id=foo></div></div></div>
+<script>
+if (window.internals)
+    internals.settings.setNewBlockInsideInlineModelEnabled(true)
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();  
+}
+
+setTimeout(function() {
+    document.getElementById("foo").style.height = "200px";
+    if (window.testRunner)
+        testRunner.notifyDone();  
+}, 10);
+</script>

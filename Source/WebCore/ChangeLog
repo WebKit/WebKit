@@ -1,3 +1,15 @@
+2016-06-16  Zalan Bujtas  <zalan@apple.com>
+
+        [New Block-Inside-Inline Model] Do not attempt to re-run margin collapsing on the block sequence.
+        https://bugs.webkit.org/show_bug.cgi?id=158854
+
+        Reviewed by David Hyatt.
+
+        Test: fast/block/inside-inlines/crash-on-first-line-change.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::marginCollapseLinesFromStart):
+
 2016-06-15  Zalan Bujtas  <zalan@apple.com>
 
         Decouple the percent height and positioned descendants maps.
