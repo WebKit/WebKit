@@ -820,7 +820,6 @@ webkit.org/b/121452 [ Debug ] fast/frames/lots-of-iframes.html [ Slow ]
 webkit.org/b/135053 [ Debug ] html5lib/webkit-resumer.html [ Slow ]
 [ Debug ] js/dfg-double-vote-fuzz.html [ Slow ]
 [ Debug ] js/dom/string-replacement-outofmemory.html [ Slow ]
-[ Debug ] js/regress-139548.html [ Slow ]
 [ Debug ] webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Slow ]
 [ Debug ] editing/selection/move-by-character-brute-force.html [ Slow ]
@@ -879,8 +878,6 @@ webkit.org/b/142937 ietestcenter/Javascript/15.2.3.13-1.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-1.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-2.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-3.html [ Failure ]
-
-[ Debug ] js/regress-141098.html [ Slow ]
 
 # IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,
 # after we implement the IDBVersionChangeEvent constructor.
@@ -1174,11 +1171,6 @@ media/video-contained-in-fullscreen-element-going-into-pip.html [ WontFix ]
 
 webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Skip ]
 
-[ Debug ] js/regress/misc-bugs-847389-jpeg2000.html [ Skip ]
-
-# This runs slowly in debug.
-[ Debug ] js/regress/bound-function-construction-performance.html [ Skip ]
-
 webkit.org/b/159678 http/tests/preload/single_download_preload_runner.html [ Timeout ]
 
 # This test is way too slow for debug.
@@ -1242,7 +1234,4 @@ webkit.org/b/159755 fast/text/emoji-gender-fe0f-8.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 
-webkit.org/b/160017 js/regress-139548.html [ Slow ]
-
 [Debug] webkit.org/b/161114 svg/carto.net/window.svg [ Skip ]
-[Debug] webkit.org/b/161115 js/regress/put-by-id-transition-with-indexing-header.html [ Skip ]

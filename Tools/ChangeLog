@@ -1,3 +1,19 @@
+2016-08-23  Saam Barati  <sbarati@apple.com>
+
+        JSC should have a "microbenchmarks" directory instead of "regress" directory
+        https://bugs.webkit.org/show_bug.cgi?id=161096
+
+        Rubber stamped by Mark Lam.
+
+        This patch moves LayoutTests/js/regress/script-tests to the JSTests/microbenchmarks
+        directory and removes all the related html and txt files. I did this because
+        that directory was only there for microbenchmarks, and not for "regression"
+        tests. I also changed the various scripts to point to it.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-benchmarks:
+
 2016-08-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix EFL build.

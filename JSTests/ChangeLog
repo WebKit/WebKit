@@ -1,3 +1,12 @@
+2016-08-23  Saam Barati  <sbarati@apple.com>
+
+        JSC should have a "microbenchmarks" directory instead of "regress" directory
+        https://bugs.webkit.org/show_bug.cgi?id=161096
+
+        Rubber stamped by Mark Lam.
+
+        * microbenchmarks: Copied from LayoutTests/js/regress/script-tests.
+
 2016-08-23  Keith Miller  <keith_miller@apple.com>
 
         %TypedArray%.prototype.slice needs to check that the source and destination have not been detached.

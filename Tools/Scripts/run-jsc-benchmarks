@@ -48,7 +48,7 @@ PERFORMANCETESTS_PATH = OPENSOURCE_PATH + "PerformanceTests"
 SUNSPIDER_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "sunspider-1.0"
 LONGSPIDER_PATH = PERFORMANCETESTS_PATH + "LongSpider"
 V8_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "v8-v6"
-JSREGRESS_PATH = OPENSOURCE_PATH + "LayoutTests" + "js" + "regress" + "script-tests"
+MICROBENCHMARKS_PATH = OPENSOURCE_PATH + "JSTests" + "microbenchmarks"
 OCTANE_WRAPPER_PATH = PERFORMANCETESTS_PATH + "Octane" + "wrappers"
 JSBENCH_PATH = PERFORMANCETESTS_PATH + "JSBench"
 
@@ -216,7 +216,7 @@ $includeLongSpider=true
 $includeV8=true
 $includeKraken=true
 $includeJSBench=true
-$includeJSRegress=true
+$includeMicrobenchmarks=true
 $includeAsmBench=true
 $includeDSPJS=true
 $includeBrowsermarkJS=false
@@ -308,7 +308,7 @@ def usage
   puts "--v8-spider          Only run V8."
   puts "--kraken             Only run Kraken."
   puts "--js-bench           Only run JSBench."
-  puts "--js-regress         Only run JSRegress."
+  puts "--microbenchmarks    Only run microbenchmarks."
   puts "--dsp                Only run DSP."
   puts "--asm-bench          Only run AsmBench."
   puts "--browsermark-js     Only run browsermark-js."
@@ -1620,7 +1620,7 @@ class JSBenchBenchmark
   end
 end
 
-class JSRegressBenchmark
+class MicrobenchmarksBenchmark
   include Benchmark
   
   def initialize(name)
@@ -1628,7 +1628,7 @@ class JSRegressBenchmark
   end
   
   def emitRunCode(plan)
-    emitBenchRunCode(fullname, plan, SingleFileTimedBenchmarkParameters.new(ensureFile("JSRegress-#{@name}", "#{JSREGRESS_PATH}/#{@name}.js")))
+    emitBenchRunCode(fullname, plan, SingleFileTimedBenchmarkParameters.new(ensureFile("Microbenchmarks-#{@name}", "#{MICROBENCHMARKS_PATH}/#{@name}.js")))
   end
 end
 
@@ -2645,7 +2645,7 @@ begin
       $includeV8 = false
       $includeKraken = false
       $includeJSBench = false
-      $includeJSRegress = false
+      $includeMicrobenchmarks = false
       $includeAsmBench = false
       $includeDSPJS = false
       $includeBrowsermarkJS = false
@@ -2669,7 +2669,7 @@ begin
                  ['--v8-spider', GetoptLong::NO_ARGUMENT],
                  ['--kraken', GetoptLong::NO_ARGUMENT],
                  ['--js-bench', GetoptLong::NO_ARGUMENT],
-                 ['--js-regress', GetoptLong::NO_ARGUMENT],
+                 ['--microbenchmarks', GetoptLong::NO_ARGUMENT],
                  ['--asm-bench', GetoptLong::NO_ARGUMENT],
                  ['--dsp', GetoptLong::NO_ARGUMENT],
                  ['--browsermark-js', GetoptLong::NO_ARGUMENT],
@@ -2755,9 +2755,9 @@ begin
     when '--js-bench'
       resetBenchOptionsIfNecessary
       $includeJSBench = true
-    when '--js-regress'
+    when '--microbenchmarks'
       resetBenchOptionsIfNecessary
-      $includeJSRegress = true
+      $includeMicrobenchmarks = true
     when '--asm-bench'
       resetBenchOptionsIfNecessary
       $includeAsmBench = true
@@ -2993,12 +2993,12 @@ begin
     JSBENCH.add JSBenchBenchmark.new(*nameAndMode)
   }
   
-  JSREGRESS = BenchmarkSuite.new("JSRegress", :geometricMean, 0)
-  Dir.foreach(JSREGRESS_PATH) {
+  MICROBENCHMARKS = BenchmarkSuite.new("Microbenchmarks", :geometricMean, 0)
+  Dir.foreach(MICROBENCHMARKS_PATH) {
     | filename |
     if filename =~ /\.js$/
       name = $~.pre_match
-      JSREGRESS.add JSRegressBenchmark.new(name)
+      MICROBENCHMARKS.add MicrobenchmarksBenchmark.new(name)
     end
   }
   
@@ -3098,8 +3098,8 @@ begin
     end
   end
   
-  if $includeJSRegress and not JSREGRESS.empty?
-    $suites << JSREGRESS
+  if $includeMicrobenchmarks and not MICROBENCHMARKS.empty?
+    $suites << MICROBENCHMARKS
   end
   
   if $includeAsmBench and not ASMBENCH.empty?

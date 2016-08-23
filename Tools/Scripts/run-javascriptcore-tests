@@ -269,7 +269,7 @@ sub runJSCStressTests
             "PerformanceTests/SunSpider/shadow-chicken.yaml",
             "PerformanceTests/SunSpider/tests/v8-v6",
             "JSTests/stress",
-            "LayoutTests/js/regress/script-tests",
+            "JSTests/microbenchmarks",
             "PerformanceTests/SunSpider/profiler-test.yaml",
             "LayoutTests/jsc-layout-tests.yaml",
             "JSTests/typeProfiler.yaml",
