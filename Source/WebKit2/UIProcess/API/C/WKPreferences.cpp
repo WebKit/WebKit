@@ -1261,6 +1261,16 @@ bool WKPreferencesGetNewBlockInsideInlineModelEnabled(WKPreferencesRef preferenc
     return toImpl(preferencesRef)->newBlockInsideInlineModelEnabled();
 }
 
+void WKPreferencesSetNewCSSParserEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setNewCSSParserEnabled(flag);
+}
+
+bool WKPreferencesGetNewCSSParserEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->newCSSParserEnabled();
+}
+
 void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSubpixelCSSOMElementMetricsEnabled(flag);

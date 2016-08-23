@@ -44,6 +44,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/crypto/keys"
     "${WEBCORE_DIR}/crypto/parameters"
     "${WEBCORE_DIR}/css"
+    "${WEBCORE_DIR}/css/parser"
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/default"
@@ -1344,8 +1345,6 @@ set(WebCore_SOURCES
     css/CSSNamedImageValue.cpp
     css/CSSOMUtils.cpp
     css/CSSPageRule.cpp
-    css/CSSParser.cpp
-    css/CSSParserValues.cpp
     css/CSSPrimitiveValue.cpp
     css/CSSProperty.cpp
     css/CSSPropertySourceData.cpp
@@ -1389,7 +1388,6 @@ set(WebCore_SOURCES
     css/RuleFeature.cpp
     css/RuleSet.cpp
     css/SVGCSSComputedStyleDeclaration.cpp
-    css/SVGCSSParser.cpp
     css/SelectorChecker.cpp
     css/SelectorFilter.cpp
     css/SourceSizeList.cpp
@@ -1411,6 +1409,10 @@ set(WebCore_SOURCES
     css/WebKitCSSTransformValue.cpp
     css/WebKitCSSViewportRule.cpp
 
+    css/parser/CSSParser.cpp
+    css/parser/CSSParserValues.cpp
+    css/parser/SVGCSSParser.cpp
+
     cssjit/SelectorCompiler.cpp
 
     dom/ActiveDOMCallbackMicrotask.cpp

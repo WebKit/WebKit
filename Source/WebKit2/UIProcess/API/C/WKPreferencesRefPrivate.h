@@ -328,6 +328,10 @@ WK_EXPORT void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef
 WK_EXPORT bool WKPreferencesGetNewBlockInsideInlineModelEnabled(WKPreferencesRef);
 
 // Defaults to false.
+WK_EXPORT void WKPreferencesSetNewCSSParserEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetNewCSSParserEnabled(WKPreferencesRef);
+
+// Defaults to false.
 WK_EXPORT void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef);
 

@@ -251,6 +251,8 @@ attachmentElementEnabled initial=true, conditional=ATTACHMENT_ELEMENT
 
 newBlockInsideInlineModelEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
+newCSSParserEnabled initial=false
+
 httpEquivEnabled initial=true
 
 # Some ports (e.g. iOS) might choose to display attachments inline, regardless of whether the response includes the

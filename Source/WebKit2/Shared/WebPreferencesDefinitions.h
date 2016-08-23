@@ -221,6 +221,7 @@
     macro(EnableInheritURIQueryComponent, enableInheritURIQueryComponent, Bool, bool, false, "", "") \
     macro(ServiceControlsEnabled, serviceControlsEnabled, Bool, bool, false, "", "") \
     macro(NewBlockInsideInlineModelEnabled, newBlockInsideInlineModelEnabled, Bool, bool, false, "", "") \
+    macro(NewCSSParserEnabled, newCSSParserEnabled, Bool, bool, false, "", "") \
     macro(HTTPEquivEnabled, httpEquivEnabled, Bool, bool, true, "", "") \
     macro(MockCaptureDevicesEnabled, mockCaptureDevicesEnabled, Bool, bool, false, "", "") \
     macro(ShadowDOMEnabled, shadowDOMEnabled, Bool, bool, true, "Shadow DOM", "HTML Shadow DOM prototype") \
