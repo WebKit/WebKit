@@ -1,0 +1,8 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Scroll-snap offsets: horizontal = { 0, 200, 400, 600, 800, 1000, 1500 }
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
