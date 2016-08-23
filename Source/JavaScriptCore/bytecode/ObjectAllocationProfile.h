@@ -80,14 +80,15 @@ public:
         ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
 
         size_t allocationSize = JSFinalObject::allocationSize(inlineCapacity);
-        MarkedAllocator* allocator = &vm.heap.allocatorForObjectWithoutDestructor(allocationSize);
-        ASSERT(allocator->cellSize());
-
+        MarkedAllocator* allocator = vm.heap.allocatorForObjectWithoutDestructor(allocationSize);
+        
         // Take advantage of extra inline capacity available in the size class.
-        size_t slop = (allocator->cellSize() - allocationSize) / sizeof(WriteBarrier<Unknown>);
-        inlineCapacity += slop;
-        if (inlineCapacity > JSFinalObject::maxInlineCapacity())
-            inlineCapacity = JSFinalObject::maxInlineCapacity();
+        if (allocator) {
+            size_t slop = (allocator->cellSize() - allocationSize) / sizeof(WriteBarrier<Unknown>);
+            inlineCapacity += slop;
+            if (inlineCapacity > JSFinalObject::maxInlineCapacity())
+                inlineCapacity = JSFinalObject::maxInlineCapacity();
+        }
 
         Structure* structure = vm.prototypeMap.emptyObjectStructureForPrototype(prototype, inlineCapacity);
 

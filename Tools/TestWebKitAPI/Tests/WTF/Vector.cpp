@@ -66,8 +66,7 @@ TEST(WTF_Vector, Iterator)
 TEST(WTF_Vector, OverloadedOperatorAmpersand)
 {
     struct Test {
-    private:
-        Test* operator&();
+        Test* operator&() = delete;
     };
 
     Vector<Test> vector;

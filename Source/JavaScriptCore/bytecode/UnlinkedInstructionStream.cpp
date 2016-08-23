@@ -26,6 +26,8 @@
 #include "config.h"
 #include "UnlinkedInstructionStream.h"
 
+#include "Opcode.h"
+
 namespace JSC {
 
 static void append8(unsigned char*& ptr, unsigned char value)

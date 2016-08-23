@@ -29,12 +29,9 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "Exception.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

@@ -26,10 +26,8 @@
 #include "config.h"
 #include "ProxyRevoke.h"
 
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "ProxyObject.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

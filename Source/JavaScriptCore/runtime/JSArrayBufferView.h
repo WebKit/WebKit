@@ -26,6 +26,7 @@
 #ifndef JSArrayBufferView_h
 #define JSArrayBufferView_h
 
+#include "CopyBarrier.h"
 #include "JSObject.h"
 
 namespace JSC {

@@ -40,6 +40,7 @@
 #include "RegExpConstructor.h"
 #include "StringPrototype.h"
 #include <cstdlib>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace DFG {
 
@@ -420,7 +421,7 @@ private:
                     dataLog("Giving up because of pattern limit.\n");
                 break;
             }
-
+            
             unsigned lastIndex;
             if (regExp->globalOrSticky()) {
                 // This will only work if we can prove what the value of lastIndex is. To do this
@@ -514,7 +515,8 @@ private:
                     }
 
                     unsigned publicLength = resultArray.size();
-                    unsigned vectorLength = std::max(BASE_VECTOR_LEN, publicLength);
+                    unsigned vectorLength =
+                        Butterfly::optimalContiguousVectorLength(structure, publicLength);
 
                     UniquedStringImpl* indexUID = vm().propertyNames->index.impl();
                     UniquedStringImpl* inputUID = vm().propertyNames->input.impl();

@@ -38,6 +38,7 @@
 #include "InspectorFrontendRouter.h"
 #include "InspectorHeapAgent.h"
 #include "InspectorScriptProfilerAgent.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectConsoleAgent.h"
 #include "JSGlobalObjectConsoleClient.h"

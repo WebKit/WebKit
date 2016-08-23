@@ -27,10 +27,8 @@
 #include "GeneratorPrototype.h"
 
 #include "JSCBuiltins.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
-#include "StructureInlines.h"
 
 #include "GeneratorPrototype.lut.h"
 

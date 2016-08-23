@@ -55,7 +55,7 @@ namespace JSC {
 
 
 #define OPCODE_ID_ENUM(opcode, length) opcode,
-    typedef enum { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) } OpcodeID;
+    enum OpcodeID : unsigned { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) };
 #undef OPCODE_ID_ENUM
 
 const int maxOpcodeLength = 9;

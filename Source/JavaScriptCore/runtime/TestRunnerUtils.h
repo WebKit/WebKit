@@ -53,6 +53,8 @@ JS_EXPORT_PRIVATE unsigned numberOfExecutableAllocationFuzzChecks();
 JS_EXPORT_PRIVATE unsigned numberOfStaticOSRExitFuzzChecks();
 JS_EXPORT_PRIVATE unsigned numberOfOSRExitFuzzChecks();
 
+JS_EXPORT_PRIVATE void finalizeStatsAtEndOfTesting();
+
 } // namespace JSC
 
 #endif // TestRunnerUtils_h

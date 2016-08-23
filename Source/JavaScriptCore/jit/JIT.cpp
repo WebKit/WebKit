@@ -66,6 +66,14 @@ void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr new
         newCalleeFunction);
 }
 
+JIT::CodeRef JIT::compileCTINativeCall(VM* vm, NativeFunction func)
+{
+    if (!vm->canUseJIT())
+        return CodeRef::createLLIntCodeRef(llint_native_call_trampoline);
+    JIT jit(vm, 0);
+    return jit.privateCompileCTINativeCall(vm, func);
+}
+
 JIT::JIT(VM* vm, CodeBlock* codeBlock)
     : JSInterfaceJIT(vm, codeBlock)
     , m_interpreter(vm->interpreter)

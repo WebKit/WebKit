@@ -510,25 +510,15 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     // up. But if you do *anything* to trigger a GC watermark check, it will know
     // that you *had* done those allocations and it will GC appropriately.
     Heap* heap = Heap::heap(thisObject);
+    VM& vm = *heap->vm();
     DeferGCForAWhile deferGC(*heap);
     
     ASSERT(!thisObject->hasIndexingHeader());
 
-    size_t size = thisObject->byteSize();
-    
-    if (thisObject->m_mode == FastTypedArray
-        && !thisObject->butterfly() && size >= sizeof(IndexingHeader)) {
-        ASSERT(thisObject->m_vector);
-        // Reuse already allocated memory if at all possible.
-        thisObject->m_butterfly.setWithoutBarrier(
-            bitwise_cast<IndexingHeader*>(thisObject->vector())->butterfly());
-    } else {
-        RELEASE_ASSERT(!thisObject->hasIndexingHeader());
-        VM& vm = *heap->vm();
-        thisObject->m_butterfly.set(vm, thisObject, Butterfly::createOrGrowArrayRight(
-            thisObject->butterfly(), vm, thisObject, thisObject->structure(),
-            thisObject->structure()->outOfLineCapacity(), false, 0, 0));
-    }
+    RELEASE_ASSERT(!thisObject->hasIndexingHeader());
+    thisObject->m_butterfly.set(vm, thisObject, Butterfly::createOrGrowArrayRight(
+        thisObject->butterfly(), vm, thisObject, thisObject->structure(),
+        thisObject->structure()->outOfLineCapacity(), false, 0, 0));
 
     RefPtr<ArrayBuffer> buffer;
     

@@ -70,6 +70,7 @@
 #include "JSPropertyNameEnumerator.h"
 #include "JSTemplateRegistryKey.h"
 #include "JSWithScope.h"
+#include "LLIntData.h"
 #include "Lexer.h"
 #include "Lookup.h"
 #include "MapData.h"

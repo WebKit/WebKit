@@ -26,7 +26,8 @@
 #ifndef Exception_h
 #define Exception_h
 
-#include "Interpreter.h"
+#include "JSObject.h"
+#include "StackFrame.h"
 #include <wtf/Vector.h>
 
 namespace JSC {

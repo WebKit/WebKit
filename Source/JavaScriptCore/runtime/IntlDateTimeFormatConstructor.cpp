@@ -33,11 +33,8 @@
 #include "IntlDateTimeFormatPrototype.h"
 #include "IntlObject.h"
 #include "IntlObjectInlines.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "Lookup.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

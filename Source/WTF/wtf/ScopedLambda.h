@@ -126,10 +126,65 @@ ScopedLambdaFunctor<FunctionType, Functor> scopedLambda(Functor&& functor)
     return ScopedLambdaFunctor<FunctionType, Functor>(WTFMove(functor));
 }
 
+template<typename FunctionType, typename Functor> class ScopedLambdaRefFunctor;
+template<typename ResultType, typename... ArgumentTypes, typename Functor>
+class ScopedLambdaRefFunctor<ResultType (ArgumentTypes...), Functor> : public ScopedLambda<ResultType (ArgumentTypes...)> {
+public:
+    ScopedLambdaRefFunctor(const Functor& functor)
+        : ScopedLambda<ResultType (ArgumentTypes...)>(implFunction, this)
+        , m_functor(&functor)
+    {
+    }
+    
+    // We need to make sure that copying and moving ScopedLambdaRefFunctor results in a
+    // ScopedLambdaRefFunctor whose ScopedLambda supertype still points to this rather than
+    // other.
+    ScopedLambdaRefFunctor(const ScopedLambdaRefFunctor& other)
+        : ScopedLambda<ResultType (ArgumentTypes...)>(implFunction, this)
+        , m_functor(other.m_functor)
+    {
+    }
+
+    ScopedLambdaRefFunctor(ScopedLambdaRefFunctor&& other)
+        : ScopedLambda<ResultType (ArgumentTypes...)>(implFunction, this)
+        , m_functor(other.m_functor)
+    {
+    }
+    
+    ScopedLambdaRefFunctor& operator=(const ScopedLambdaRefFunctor& other)
+    {
+        m_functor = other.m_functor;
+        return *this;
+    }
+    
+    ScopedLambdaRefFunctor& operator=(ScopedLambdaRefFunctor&& other)
+    {
+        m_functor = other.m_functor;
+        return *this;
+    }
+
+private:
+    static ResultType implFunction(void* argument, ArgumentTypes... arguments)
+    {
+        return (*static_cast<ScopedLambdaRefFunctor*>(argument)->m_functor)(arguments...);
+    }
+
+    const Functor* m_functor;
+};
+
+// This is for when you already refer to a functor by reference, and you know its lifetime is
+// good. This just creates a ScopedLambda that points to your functor.
+template<typename FunctionType, typename Functor>
+ScopedLambdaRefFunctor<FunctionType, Functor> scopedLambdaRef(const Functor& functor)
+{
+    return ScopedLambdaRefFunctor<FunctionType, Functor>(functor);
+}
+
 } // namespace WTF
 
 using WTF::ScopedLambda;
 using WTF::scopedLambda;
+using WTF::scopedLambdaRef;
 
 #endif // ScopedLambda_h
 

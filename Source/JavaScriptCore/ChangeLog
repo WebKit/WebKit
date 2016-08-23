@@ -1,3 +1,810 @@
+2016-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
+        https://bugs.webkit.org/show_bug.cgi?id=160125
+
+        Reviewed by Geoffrey Garen.
+
+        In order to make the GC concurrent (bug 149432), we would either need to enable concurrent
+        copying or we would need to not copy. Concurrent copying carries a 1-2% throughput overhead
+        from the barriers alone. Considering that MarkedSpace does a decent job of avoiding
+        fragmentation, it's unlikely that it's worth paying 1-2% throughput for copying. So, we want
+        to get rid of copied space. This change moves copied space's biggest client over to marked
+        space.
+        
+        Moving butterflies to marked space means having them use the new Auxiliary HeapCell
+        allocation path. This is a fairly mechanical change, but it caused performance regressions
+        everywhere, so this change also fixes MarkedSpace's performance issues.
+        
+        At a high level the mechanical changes are:
+        
+        - We use AuxiliaryBarrier instead of CopyBarrier.
+        
+        - We use tryAllocateAuxiliary instead of tryAllocateStorage. I got rid of the silly
+          CheckedBoolean stuff, since it's so much more trouble than it's worth.
+        
+        - The JITs have to emit inlined marked space allocations instead of inline copy space
+          allocations.
+        
+        - Everyone has to get used to zeroing their butterflies after allocation instead of relying
+          on them being pre-zeroed by the GC. Copied space would zero things for you, while marked
+          space doesn't.
+        
+        That's about 1/3 of this change. But this led to performance problems, which I fixed with
+        optimizations that amounted to a major MarkedSpace rewrite:
+        
+        - MarkedSpace always causes internal fragmentation for array allocations because the vector
+          length we choose when we resize usually leads to a cell size that doesn't correspond to any
+          size class. I got around this by making array allocations usually round up vectorLength to
+          the maximum allowed by the size class that we would have allocated in. Also,
+          ensureLengthSlow() and friends first make sure that the requested length can't just be
+          fulfilled with the current allocation size. This safeguard means that not every array
+          allocation has to do size class queries. For example, the fast path of new Array(length)
+          never does any size class queries, under the assumption that (1) the speed gained from
+          avoiding an ensureLengthSlow() call, which then just changes the vectorLength by doing the
+          size class query, is too small to offset the speed lost by doing the query on every
+          allocation and (2) new Array(length) is a pretty good hint that resizing is not very
+          likely.
+        
+        - Size classes in MarkedSpace were way too precise, which led to external fragmentation. This
+          changes MarkedSpace size classes to use a linear progression for very small sizes followed
+          by a geometric progression that naturally transitions to a hyperbolic progression. We want
+          hyperbolic sizes when we get close to blockSize: for example the largest size we want is
+          payloadSize / 2 rounded down, to ensure we get exactly two cells with minimal slop. The
+          next size down should be payloadSize / 3 rounded down, and so on. After the last precise
+          size (80 bytes), we proceed using a geometric progression, but round up each size to
+          minimize slop at the end of the block. This naturally causes the geometric progression to
+          turn hyperbolic for large sizes. The size class configuration happens at VM start-up, so
+          can be controlled with runtime options. I found that a base of 1.4 works pretty well.
+        
+        - Large allocations caused massive internal fragmentation, since the smallest large
+          allocation had to use exactly blockSize, and the largest small allocation used
+          blockSize / 2. The next size up - the first large allocation size to require two blocks -
+          also had 50% internal fragmentation. This is because we required large allocations to be
+          blockSize aligned, so that MarkedBlock::blockFor() would work. I decided to rewrite all of
+          that. Cells no longer have to be owned by a MarkedBlock. They can now alternatively be
+          owned by a LargeAllocation. These two things are abstracted as CellContainer. You know that
+          a cell is owned by a LargeAllocation if the MarkedBlock::atomSize / 2 bit is set.
+          Basically, large allocations are deliberately misaligned by 8 bytes. This actually works
+          out great since (1) typed arrays won't use large allocations anyway since they have their
+          own malloc fallback and (2) large array butterflies already have a 8 byte header, which
+          means that the 8 byte base misalignment aligns the large array payload on a 16 byte
+          boundary. I took extreme care to make sure that the isLargeAllocation bit checks are as
+          rare as possible; for example, ExecState::vm() skips the check because we know that callees
+          must be small allocations. It's also possible to use template tricks to do one check for
+          cell container kind, and then invoke a function specialized for MarkedBlock or a function
+          specialized for LargeAllocation. LargeAllocation includes stubs for all MarkedBlock methods
+          that get used from functions that are template-specialized like this. That's mostly to
+          speed up the GC marking code. Most other code can use CellContainer API or HeapCell API
+          directly. That's another thing: HeapCell, the common base of JSCell and auxiliary
+          allocations, is now smart enough to do a lot of things for you, like HeapCell::vm(),
+          HeapCell::heap(), HeapCell::isLargeAllocation(), and HeapCell::cellContainer(). The size
+          cutoff for large allocations is runtime-configurable, so long as you don't choose something
+          so small that callees end up large. I found that 400 bytes is roughly optimal. This means
+          that the MarkedBlock size classes end up being:
+          
+          16, 32, 48, 64, 80, 112, 160, 224, 320
+          
+          The next size class would have been 432, but that's above the 400 byte cutoff. All of this
+          is configurable with --sizeClassProgression and --largeAllocationCutoff. You can see what
+          size classes you end up with by doing --dumpSizeClasses=true.
+        
+        - Copied space uses 64KB blocks, while marked space used to use 16KB blocks. Allocating a lot
+          of stuff in 16KB blocks is slower than allocating it in 64KB blocks. I got more speed from
+          changing MarkedBlock::blockSize to 64KB. This would have been a space fail before, but now
+          that we have LargeAllocation, it ends up being an overall win.
+        
+        - Even after all of that, copying butterflies was still faster because it allowed us to skip
+          sweeping dead space. A good GC allocates over dead bytes without explicitly freeing them,
+          so the GC pause is O(size of live), not O(size of live + dead). O(dead) is usually much
+          larger than O(live), especially in an eden collection. Copying satisfies this premise while
+          mark+sweep does not. So, I invented a new kind of allocator: bump'n'pop. Previously, our
+          MarkedSpace allocator was a freelist pop. That's simple and easy to inline but requires
+          that we walk the block to build a free list. This means walking dead space. The new
+          allocator allows totally free MarkedBlocks to simply set up a bump-pointer arena instead.
+          The allocator is a hybrid of bump-pointer and freelist pop. It tries bump first. The bump
+          pointer always bumps by cellSize, so the result of filling a block with bumping looks as if
+          we had used freelist popping to fill it. Additionally, each MarkedBlock now has a bit to
+          quickly tell if the block is entirely free. This makes sweeping O(1) whenever a MarkedBlock
+          is completely empty, which is the common case because of the generational hypothesis: the
+          number of objects that survive an eden collection is a tiny fraction of the number of
+          objects that had been allocated, and this fraction is so small that there are typically
+          fewer than one survivors per MarkedBlock. This change was enough to make this change a net
+          win over tip-of-tree.
+        
+        - FTL now shares the same allocation fast paths as everything else, which is great, because
+          bump'n'pop has gnarly control flow. We don't really want B3 to have to think about that
+          control flow, since it won't be able to improve the machine code we write ourselves. GC
+          fast paths are best written in assembly. So, I've empowered B3 to have even better support
+          for Patchpoint terminals. It's now totally fine for a Patchpoint terminal to be non-Void.
+          So, the new FTL allocation fast paths are just Patchpoint terminals that call through to
+          AssemblyHelpers::emitAllocate(). B3 still reasons about things like constant-folding the
+          size class calculation and constant-hoisting the allocator. Also, I gave the FTL the
+          ability to constant-fold some allocator logic (in case we first assume that we're doing a
+          variable-length allocation but then realize that the length is known). I think it makes
+          sense to have constant folding rules in FTL::Output, or whatever the B3 IR builder is,
+          since this makes lowering easier (you can constant fold during lowering more easily) and it
+          reduces the amount of malloc traffic. In the future, we could teach B3 how to better
+          constant-fold this code. That would require allowing loads to be constant-folded, which is
+          doable but hella tricky.
+        
+        All of this put together gives us neutral perf on JetStream, Speedometer, and PLT3. SunSpider
+        sometimes gets penalized depending on how you run it. By comparison, the alternative approach
+        of using a copy barrier would have cost us 1-2%. That's the real apples-to-apples comparison
+        if your premise is that we should have a concurrent GC. After we finish removing copied
+        space, we will be barrier-ready for concurrent GC: we already have a marking barrier and we
+        simply won't need a copying barrier. This change gets us there for the purposes of our
+        benchmarks, since the remaining clients of copied space are not very important. On the other
+        hand, if we keep copying, then getting barrier-ready would mean adding back the copy barrier,
+        which costs more perf.
+        
+        We might get bigger speed-ups once we remove CopiedSpace altogether. That requires moving
+        typed arrays and a few other weird things over to Aux MarkedSpace.
+        
+        This also includes some header sanitization. The introduction of AuxiliaryBarrier, HeapCell,
+        and CellContainer meant that I had to include those files from everywhere. Fortunately,
+        just including JSCInlines.h (instead of manually including the files that includes) is
+        usually enough. So, I made most of JSC's cpp files include JSCInlines.h, which is something
+        that we were already basically doing. In places where JSCInlines.h would be too much, I just
+        included HeapInlines.h. This got weird, because we previously included HeapInlines.h from
+        JSObject.h. That's bad because it led to some circular dependencies, so I fixed it - but that
+        meant having to manually include HeapInlines.h from the places that previously got it
+        implicitly via JSObject.h. But that led to more problems for some reason: I started getting
+        build errors because non-JSC files were having trouble including Opcode.h. That's just silly,
+        since Opcode.h is meant to be an internal JSC header. So, I made it an internal header and
+        made it impossible to include it from outside JSC. This was a lot of work, but it was
+        necessary to get the patch to build on all ports. It's also a net win. There were many places
+        in WebCore that were transitively including a *ton* of JSC headers just because of the
+        JSObject.h->HeapInlines.h edge and a bunch of dependency edges that arose from some public
+        (for WebCore) JSC headers needing Interpreter.h or Opcode.h for bad reasons.
+
+        * API/JSTypedArray.cpp:
+        * API/ObjCCallbackFunction.mm:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/builtins/builtins_generate_combined_implementation.py:
+        (BuiltinsCombinedImplementationGenerator.generate_secondary_header_includes):
+        * Scripts/builtins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_secondary_header_includes):
+        * Scripts/builtins/builtins_generate_separate_implementation.py:
+        (BuiltinsSeparateImplementationGenerator.generate_secondary_header_includes):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::JumpList::JumpList):
+        (JSC::AbstractMacroAssembler::JumpList::link):
+        (JSC::AbstractMacroAssembler::JumpList::linkTo):
+        (JSC::AbstractMacroAssembler::JumpList::append):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::add32):
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::appendIntConstant):
+        (JSC::B3::BasicBlock::appendBoolConstant):
+        (JSC::B3::BasicBlock::clearSuccessors):
+        * b3/B3BasicBlock.h:
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3StackmapGenerationParams.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testBranchBitAndImmFusion):
+        (JSC::B3::testPatchpointTerminalReturnValue):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+        * bindings/ScriptValue.cpp:
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::initialize):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/StructureStubInfo.cpp:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSCell):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCompile.cpp:
+        * ftl/FTLJITFinalizer.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::initializeArrayElements):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::emitRightShiftSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell):
+        (JSC::FTL::DFG::LowerDFGToB3::storeStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateCell):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatorForSize):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::constBool):
+        (JSC::FTL::Output::constInt32):
+        (JSC::FTL::Output::add):
+        (JSC::FTL::Output::shl):
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::lShr):
+        (JSC::FTL::Output::zeroExt):
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        (JSC::FTL::Output::above):
+        (JSC::FTL::Output::aboveOrEqual):
+        (JSC::FTL::Output::below):
+        (JSC::FTL::Output::belowOrEqual):
+        (JSC::FTL::Output::greaterThan):
+        (JSC::FTL::Output::greaterThanOrEqual):
+        (JSC::FTL::Output::lessThan):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::select):
+        (JSC::FTL::Output::unreachable):
+        (JSC::FTL::Output::appendSuccessor):
+        (JSC::FTL::Output::speculate):
+        (JSC::FTL::Output::addIncomingToPhi):
+        * ftl/FTLOutput.h:
+        * ftl/FTLValueFromBlock.h:
+        (JSC::FTL::ValueFromBlock::ValueFromBlock):
+        (JSC::FTL::ValueFromBlock::operator bool):
+        (JSC::FTL::ValueFromBlock::value):
+        (JSC::FTL::ValueFromBlock::block):
+        * ftl/FTLWeightedTarget.h:
+        (JSC::FTL::WeightedTarget::target):
+        (JSC::FTL::WeightedTarget::weight):
+        (JSC::FTL::WeightedTarget::frequentedBlock):
+        * heap/CellContainer.h: Added.
+        (JSC::CellContainer::CellContainer):
+        (JSC::CellContainer::operator bool):
+        (JSC::CellContainer::isMarkedBlock):
+        (JSC::CellContainer::isLargeAllocation):
+        (JSC::CellContainer::markedBlock):
+        (JSC::CellContainer::largeAllocation):
+        * heap/CellContainerInlines.h: Added.
+        (JSC::CellContainer::isMarkedOrRetired):
+        (JSC::CellContainer::isMarked):
+        (JSC::CellContainer::isMarkedOrNewlyAllocated):
+        (JSC::CellContainer::setHasAnyMarked):
+        (JSC::CellContainer::cellSize):
+        (JSC::CellContainer::weakSet):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::~ConservativeRoots):
+        (JSC::ConservativeRoots::grow):
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::genericAddSpan):
+        * heap/ConservativeRoots.h:
+        (JSC::ConservativeRoots::size):
+        (JSC::ConservativeRoots::roots):
+        * heap/CopyToken.h:
+        * heap/FreeList.cpp: Added.
+        (JSC::FreeList::dump):
+        * heap/FreeList.h: Added.
+        (JSC::FreeList::FreeList):
+        (JSC::FreeList::list):
+        (JSC::FreeList::bump):
+        (JSC::FreeList::operator==):
+        (JSC::FreeList::operator!=):
+        (JSC::FreeList::operator bool):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::copyBackingStores):
+        (JSC::Heap::gatherStackRoots):
+        (JSC::Heap::gatherJSStackRoots):
+        (JSC::Heap::gatherScratchBufferRoots):
+        (JSC::Heap::clearLivenessData):
+        (JSC::Heap::visitSmallStrings):
+        (JSC::Heap::visitConservativeRoots):
+        (JSC::Heap::removeDeadCompilerWorklistEntries):
+        (JSC::Heap::gatherExtraHeapSnapshotData):
+        (JSC::Heap::removeDeadHeapSnapshotNodes):
+        (JSC::Heap::visitProtectedObjects):
+        (JSC::Heap::visitArgumentBuffers):
+        (JSC::Heap::visitException):
+        (JSC::Heap::visitStrongHandles):
+        (JSC::Heap::visitHandleStack):
+        (JSC::Heap::visitSamplingProfiler):
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines):
+        (JSC::Heap::converge):
+        (JSC::Heap::visitWeakHandles):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::clearUnmarkedExecutables):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collect):
+        (JSC::Heap::collectWithoutAnySweep):
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::suspendCompilerThreads):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::flushOldStructureIDTables):
+        (JSC::Heap::flushWriteBarrierBuffer):
+        (JSC::Heap::stopAllocation):
+        (JSC::Heap::reapWeakHandles):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCMaps):
+        (JSC::Heap::sweepArrayBuffers):
+        (JSC::Heap::snapshotMarkedSpace):
+        (JSC::Heap::deleteSourceProviderCaches):
+        (JSC::Heap::notifyIncrementalSweeper):
+        (JSC::Heap::writeBarrierCurrentlyExecutingCodeBlocks):
+        (JSC::Heap::resetAllocators):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::resumeCompilerThreads):
+        (JSC::Zombify::visit):
+        * heap/Heap.h:
+        (JSC::Heap::subspaceForObjectDestructor):
+        (JSC::Heap::subspaceForAuxiliaryData):
+        (JSC::Heap::allocatorForObjectWithoutDestructor):
+        (JSC::Heap::allocatorForObjectWithDestructor):
+        (JSC::Heap::allocatorForAuxiliaryData):
+        (JSC::Heap::storageAllocator):
+        * heap/HeapCell.h:
+        (JSC::HeapCell::zap):
+        (JSC::HeapCell::isZapped):
+        * heap/HeapCellInlines.h: Added.
+        (JSC::HeapCell::isLargeAllocation):
+        (JSC::HeapCell::cellContainer):
+        (JSC::HeapCell::markedBlock):
+        (JSC::HeapCell::largeAllocation):
+        (JSC::HeapCell::heap):
+        (JSC::HeapCell::vm):
+        (JSC::HeapCell::cellSize):
+        (JSC::HeapCell::allocatorAttributes):
+        (JSC::HeapCell::destructionMode):
+        (JSC::HeapCell::cellKind):
+        * heap/HeapInlines.h:
+        (JSC::Heap::isCollecting):
+        (JSC::Heap::heap):
+        (JSC::Heap::isLive):
+        (JSC::Heap::isMarked):
+        (JSC::Heap::testAndSetMarked):
+        (JSC::Heap::setMarked):
+        (JSC::Heap::cellSize):
+        (JSC::Heap::writeBarrier):
+        (JSC::Heap::allocateWithoutDestructor):
+        (JSC::Heap::allocateObjectOfType):
+        (JSC::Heap::subspaceForObjectOfType):
+        (JSC::Heap::allocatorForObjectOfType):
+        (JSC::Heap::allocateAuxiliary):
+        (JSC::Heap::tryAllocateAuxiliary):
+        (JSC::Heap::tryReallocateAuxiliary):
+        (JSC::Heap::tryAllocateStorage):
+        (JSC::Heap::didFreeBlock):
+        (JSC::Heap::isPointerGCObject): Deleted.
+        (JSC::Heap::isValueGCObject): Deleted.
+        * heap/HeapUtil.h: Added.
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        (JSC::HeapUtil::isPointerGCObjectJSCell):
+        (JSC::HeapUtil::isValueGCObject):
+        * heap/LargeAllocation.cpp: Added.
+        (JSC::LargeAllocation::tryCreate):
+        (JSC::LargeAllocation::LargeAllocation):
+        (JSC::LargeAllocation::lastChanceToFinalize):
+        (JSC::LargeAllocation::shrink):
+        (JSC::LargeAllocation::visitWeakSet):
+        (JSC::LargeAllocation::reapWeakSet):
+        (JSC::LargeAllocation::clearMarks):
+        (JSC::LargeAllocation::clearMarksWithCollectionType):
+        (JSC::LargeAllocation::isEmpty):
+        (JSC::LargeAllocation::sweep):
+        (JSC::LargeAllocation::destroy):
+        (JSC::LargeAllocation::dump):
+        * heap/LargeAllocation.h: Added.
+        (JSC::LargeAllocation::fromCell):
+        (JSC::LargeAllocation::cell):
+        (JSC::LargeAllocation::isLargeAllocation):
+        (JSC::LargeAllocation::heap):
+        (JSC::LargeAllocation::vm):
+        (JSC::LargeAllocation::weakSet):
+        (JSC::LargeAllocation::clearNewlyAllocated):
+        (JSC::LargeAllocation::isNewlyAllocated):
+        (JSC::LargeAllocation::isMarked):
+        (JSC::LargeAllocation::isMarkedOrNewlyAllocated):
+        (JSC::LargeAllocation::isLive):
+        (JSC::LargeAllocation::hasValidCell):
+        (JSC::LargeAllocation::cellSize):
+        (JSC::LargeAllocation::aboveLowerBound):
+        (JSC::LargeAllocation::belowUpperBound):
+        (JSC::LargeAllocation::contains):
+        (JSC::LargeAllocation::attributes):
+        (JSC::LargeAllocation::testAndSetMarked):
+        (JSC::LargeAllocation::setMarked):
+        (JSC::LargeAllocation::clearMarked):
+        (JSC::LargeAllocation::setHasAnyMarked):
+        (JSC::LargeAllocation::headerSize):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::isListPagedOut):
+        (JSC::MarkedAllocator::isPagedOut):
+        (JSC::MarkedAllocator::retire):
+        (JSC::MarkedAllocator::tryAllocateWithoutCollectingImpl):
+        (JSC::MarkedAllocator::tryAllocateWithoutCollecting):
+        (JSC::MarkedAllocator::allocateSlowCase):
+        (JSC::MarkedAllocator::tryAllocateSlowCase):
+        (JSC::MarkedAllocator::allocateSlowCaseImpl):
+        (JSC::blockHeaderSize):
+        (JSC::MarkedAllocator::blockSizeForBytes):
+        (JSC::MarkedAllocator::tryAllocateBlock):
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        (JSC::MarkedAllocator::reset):
+        (JSC::MarkedAllocator::lastChanceToFinalize):
+        (JSC::MarkedAllocator::setFreeList):
+        (JSC::MarkedAllocator::tryAllocateHelper): Deleted.
+        (JSC::MarkedAllocator::tryPopFreeList): Deleted.
+        (JSC::MarkedAllocator::tryAllocate): Deleted.
+        (JSC::MarkedAllocator::allocateBlock): Deleted.
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::destruction):
+        (JSC::MarkedAllocator::cellKind):
+        (JSC::MarkedAllocator::heap):
+        (JSC::MarkedAllocator::takeLastActiveBlock):
+        (JSC::MarkedAllocator::offsetOfFreeList):
+        (JSC::MarkedAllocator::offsetOfCellSize):
+        (JSC::MarkedAllocator::tryAllocate):
+        (JSC::MarkedAllocator::allocate):
+        (JSC::MarkedAllocator::stopAllocating):
+        (JSC::MarkedAllocator::resumeAllocating):
+        (JSC::MarkedAllocator::offsetOfFreeListHead): Deleted.
+        (JSC::MarkedAllocator::MarkedAllocator): Deleted.
+        (JSC::MarkedAllocator::init): Deleted.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::tryCreate):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::sweepHelperSelectResetMode):
+        (JSC::MarkedBlock::sweepHelperSelectStateAndSweepMode):
+        (JSC::MarkedBlock::stopAllocating):
+        (JSC::MarkedBlock::clearMarksWithCollectionType):
+        (JSC::MarkedBlock::lastChanceToFinalize):
+        (JSC::MarkedBlock::resumeAllocating):
+        (JSC::MarkedBlock::didRetireBlock):
+        (JSC::MarkedBlock::forEachFreeCell):
+        (JSC::MarkedBlock::create): Deleted.
+        (JSC::MarkedBlock::callDestructor): Deleted.
+        (JSC::MarkedBlock::sweepHelper): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::VoidFunctor::returnValue):
+        (JSC::MarkedBlock::setHasAnyMarked):
+        (JSC::MarkedBlock::hasAnyMarked):
+        (JSC::MarkedBlock::clearHasAnyMarked):
+        (JSC::MarkedBlock::firstAtom):
+        (JSC::MarkedBlock::isAtomAligned):
+        (JSC::MarkedBlock::cellAlign):
+        (JSC::MarkedBlock::blockFor):
+        (JSC::MarkedBlock::isEmpty):
+        (JSC::MarkedBlock::cellSize):
+        (JSC::MarkedBlock::isMarkedOrRetired):
+        (JSC::MarkedBlock::FreeList::FreeList): Deleted.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::initializeSizeClassForStepSize):
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::allocateLarge):
+        (JSC::MarkedSpace::tryAllocateLarge):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::sweepABit):
+        (JSC::MarkedSpace::sweepLargeAllocations):
+        (JSC::MarkedSpace::zombifySweep):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::visitWeakSets):
+        (JSC::MarkedSpace::reapWeakSets):
+        (JSC::MarkedSpace::stopAllocating):
+        (JSC::MarkedSpace::resumeAllocating):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::shrink):
+        (JSC::MarkedSpace::clearNewlyAllocated):
+        (JSC::MarkedSpace::clearMarks):
+        (JSC::MarkedSpace::didFinishIterating):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::size):
+        (JSC::MarkedSpace::capacity):
+        (JSC::MarkedSpace::forEachAllocator): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::sizeClassIndex):
+        (JSC::MarkedSpace::subspaceForObjectsWithDestructor):
+        (JSC::MarkedSpace::subspaceForObjectsWithoutDestructor):
+        (JSC::MarkedSpace::subspaceForAuxiliaryData):
+        (JSC::MarkedSpace::blocksWithNewObjects):
+        (JSC::MarkedSpace::largeAllocations):
+        (JSC::MarkedSpace::largeAllocationsNurseryOffset):
+        (JSC::MarkedSpace::largeAllocationsOffsetForThisCollection):
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionBegin):
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionEnd):
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionSize):
+        (JSC::MarkedSpace::forEachLiveCell):
+        (JSC::MarkedSpace::forEachDeadCell):
+        (JSC::MarkedSpace::allocatorFor):
+        (JSC::MarkedSpace::destructorAllocatorFor):
+        (JSC::MarkedSpace::auxiliaryAllocatorFor):
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::tryAllocate):
+        (JSC::MarkedSpace::allocateWithoutDestructor):
+        (JSC::MarkedSpace::allocateWithDestructor):
+        (JSC::MarkedSpace::allocateAuxiliary):
+        (JSC::MarkedSpace::tryAllocateAuxiliary):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::didAllocateInBlock):
+        (JSC::MarkedSpace::forEachAllocator):
+        (JSC::MarkedSpace::forEachSubspace):
+        (JSC::MarkedSpace::optimalSizeFor):
+        (JSC::MarkedSpace::objectCount): Deleted.
+        (JSC::MarkedSpace::size): Deleted.
+        (JSC::MarkedSpace::capacity): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::clearMarkStack):
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::markAuxiliary):
+        (JSC::SlotVisitor::noteLiveAuxiliaryCell):
+        (JSC::SetCurrentCellScope::SetCurrentCellScope):
+        (JSC::SlotVisitor::visitChildren):
+        * heap/SlotVisitor.h:
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create):
+        (JSC::WeakBlock::destroy):
+        (JSC::WeakBlock::WeakBlock):
+        (JSC::WeakBlock::visit):
+        (JSC::WeakBlock::reap):
+        * heap/WeakBlock.h:
+        (JSC::WeakBlock::disconnectContainer):
+        (JSC::WeakBlock::disconnectMarkedBlock): Deleted.
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep):
+        (JSC::WeakSet::addAllocator):
+        * heap/WeakSet.h:
+        (JSC::WeakSet::WeakSet):
+        * heap/WeakSetInlines.h:
+        (JSC::WeakSet::allocate):
+        * inspector/InjectedScriptManager.cpp:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/ScriptDebugServer.cpp:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocate):
+        (JSC::AssemblyHelpers::emitAllocateJSCell):
+        (JSC::AssemblyHelpers::emitAllocateJSObject):
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateVariableSized):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+        * jsc.cpp:
+        (functionDescribeArray):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ModuleAnalyzer.cpp:
+        * runtime/ArrayConventions.h:
+        (JSC::indexIsSufficientlyBeyondLengthForSparseMap):
+        (JSC::indexingHeaderForArrayStorage):
+        (JSC::baseIndexingHeaderForArrayStorage):
+        (JSC::indexingHeaderForArray): Deleted.
+        (JSC::baseIndexingHeaderForArray): Deleted.
+        * runtime/ArrayStorage.h:
+        (JSC::ArrayStorage::length):
+        (JSC::ArrayStorage::setLength):
+        (JSC::ArrayStorage::vectorLength):
+        (JSC::ArrayStorage::setVectorLength):
+        (JSC::ArrayStorage::copyHeaderFromDuringGC):
+        (JSC::ArrayStorage::sizeFor):
+        (JSC::ArrayStorage::totalSizeFor):
+        (JSC::ArrayStorage::totalSize):
+        (JSC::ArrayStorage::availableVectorLength):
+        (JSC::ArrayStorage::optimalVectorLength):
+        * runtime/AuxiliaryBarrier.h: Added.
+        (JSC::AuxiliaryBarrier::AuxiliaryBarrier):
+        (JSC::AuxiliaryBarrier::clear):
+        (JSC::AuxiliaryBarrier::get):
+        (JSC::AuxiliaryBarrier::slot):
+        (JSC::AuxiliaryBarrier::operator bool):
+        (JSC::AuxiliaryBarrier::setWithoutBarrier):
+        * runtime/AuxiliaryBarrierInlines.h: Added.
+        (JSC::AuxiliaryBarrier<T>::AuxiliaryBarrier):
+        (JSC::AuxiliaryBarrier<T>::set):
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::fromBase):
+        (JSC::Butterfly::fromPointer):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::availableContiguousVectorLength):
+        (JSC::Butterfly::optimalContiguousVectorLength):
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::growArrayRight):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+        * runtime/DataView.cpp:
+        * runtime/DirectArguments.h:
+        * runtime/ECMAScriptSpecInternalFunctions.cpp:
+        * runtime/GeneratorFrame.cpp:
+        * runtime/GeneratorPrototype.cpp:
+        * runtime/IntlCollator.cpp:
+        * runtime/IntlCollatorConstructor.cpp:
+        * runtime/IntlCollatorPrototype.cpp:
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlNumberFormat.cpp:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/JSArray.cpp:
+        (JSC::createArrayButterflyInDictionaryIndexingMode):
+        (JSC::JSArray::tryCreateUninitialized):
+        (JSC::JSArray::setLengthWritable):
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::setLengthWithArrayStorage):
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArray.h:
+        (JSC::createContiguousArrayButterfly):
+        (JSC::createArrayButterfly):
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized): Deleted.
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCInlines.h:
+        * runtime/JSCJSValue.cpp:
+        * runtime/JSCallee.cpp:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::estimatedSize):
+        (JSC::JSCell::copyBackingStore):
+        * runtime/JSCell.h:
+        (JSC::JSCell::cellStateOffset):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::visitChildren):
+        (JSC::ExecState::vm):
+        (JSC::JSCell::canUseFastGetOwnProperty):
+        (JSC::JSCell::classInfo):
+        (JSC::JSCell::toBoolean):
+        (JSC::JSCell::pureToBoolean):
+        (JSC::JSCell::callDestructor):
+        (JSC::JSCell::vm): Deleted.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::JSFunction::setFunctionName):
+        (JSC::JSFunction::reifyLength):
+        (JSC::JSFunction::reifyName):
+        (JSC::JSFunction::reifyLazyPropertyIfNeeded):
+        (JSC::JSFunction::reifyBoundNameIfNeeded):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::createWithInvalidatedReallocationWatchpoint):
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * runtime/JSInternalPromise.cpp:
+        * runtime/JSInternalPromiseConstructor.cpp:
+        * runtime/JSInternalPromiseDeferred.cpp:
+        * runtime/JSInternalPromisePrototype.cpp:
+        * runtime/JSJob.cpp:
+        * runtime/JSMapIterator.cpp:
+        * runtime/JSModuleNamespaceObject.cpp:
+        * runtime/JSModuleRecord.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::visitChildren):
+        (JSC::JSObject::heapSnapshot):
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::createInitialArrayStorage):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectNativeFunctionWithoutTransition):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::growOutOfLineStorage):
+        (JSC::JSObject::copyButterfly): Deleted.
+        (JSC::JSObject::copyBackingStore): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::globalObject):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putOwnDataProperty):
+        (JSC::JSObject::setStructureAndReallocateStorageIfNecessary): Deleted.
+        * runtime/JSObjectInlines.h:
+        * runtime/JSPromise.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        * runtime/JSPromiseDeferred.cpp:
+        * runtime/JSPromisePrototype.cpp:
+        * runtime/JSPropertyNameIterator.cpp:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolve):
+        * runtime/JSScope.h:
+        (JSC::JSScope::globalObject):
+        (JSC::Register::operator=):
+        (JSC::JSScope::vm): Deleted.
+        * runtime/JSSetIterator.cpp:
+        * runtime/JSStringIterator.cpp:
+        * runtime/JSTemplateRegistryKey.cpp:
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        * runtime/JSWeakMap.cpp:
+        * runtime/JSWeakSet.cpp:
+        * runtime/MapConstructor.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/NativeStdFunctionCell.cpp:
+        * runtime/Operations.h:
+        (JSC::jsAdd):
+        (JSC::resetFreeCellsBadly):
+        (JSC::resetBadly):
+        * runtime/Options.h:
+        * runtime/PropertyTable.cpp:
+        * runtime/ProxyConstructor.cpp:
+        * runtime/ProxyObject.cpp:
+        * runtime/ProxyRevoke.cpp:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        (JSC::createRegExpMatchesArray):
+        * runtime/RuntimeType.cpp:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * runtime/SetConstructor.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/TemplateRegistry.cpp:
+        * runtime/TypeProfilerLog.cpp:
+        * runtime/TypeSet.cpp:
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakMapData.cpp:
+        * runtime/WeakMapPrototype.cpp:
+        * runtime/WeakSetConstructor.cpp:
+        * runtime/WeakSetPrototype.cpp:
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::isInObjectSpace):
+        (JSC::JSDollarVMPrototype::isInStorageSpace):
+
 2016-08-23  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make Math.cos() and Math.sin() work with any argument type

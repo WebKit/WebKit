@@ -32,6 +32,7 @@
 #include "CopiedSpaceInlines.h"
 #include "Exception.h"
 #include "Heap.h"
+#include "Interpreter.h"
 #include "JITInlines.h"
 #include "JSArray.h"
 #include "JSCell.h"
@@ -83,21 +84,24 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
 {
     Structure* structure = currentInstruction[3].u.objectAllocationProfile->structure();
     size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-    MarkedAllocator* allocator = &m_vm->heap.allocatorForObjectWithoutDestructor(allocationSize);
+    MarkedAllocator* allocator = m_vm->heap.allocatorForObjectWithoutDestructor(allocationSize);
 
     RegisterID resultReg = regT0;
     RegisterID allocatorReg = regT1;
     RegisterID scratchReg = regT2;
 
     move(TrustedImmPtr(allocator), allocatorReg);
+    if (allocator)
+        addSlowCase(Jump());
     JumpList slowCases;
-    emitAllocateJSObject(resultReg, allocatorReg, TrustedImmPtr(structure), TrustedImmPtr(0), scratchReg, slowCases);
+    emitAllocateJSObject(resultReg, allocator, allocatorReg, TrustedImmPtr(structure), TrustedImmPtr(0), scratchReg, slowCases);
     addSlowCase(slowCases);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
 void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    linkSlowCase(iter);
     linkSlowCase(iter);
     int dst = currentInstruction[1].u.operand;
     Structure* structure = currentInstruction[3].u.objectAllocationProfile->structure();
@@ -772,7 +776,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     hasSeenMultipleCallees.link(this);
 
     JumpList slowCases;
-    emitAllocateJSObject(resultReg, allocatorReg, structureReg, TrustedImmPtr(0), scratchReg, slowCases);
+    emitAllocateJSObject(resultReg, nullptr, allocatorReg, structureReg, TrustedImmPtr(0), scratchReg, slowCases);
     addSlowCase(slowCases);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -782,7 +786,8 @@ void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCa
     linkSlowCase(iter); // Callee::m_type != JSFunctionType.
     linkSlowCase(iter); // doesn't have rare data
     linkSlowCase(iter); // doesn't have an allocation profile
-    linkSlowCase(iter); // allocation failed
+    linkSlowCase(iter); // allocation failed (no allocator)
+    linkSlowCase(iter); // allocation failed (allocator empty)
     linkSlowCase(iter); // cached function didn't match
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_this);

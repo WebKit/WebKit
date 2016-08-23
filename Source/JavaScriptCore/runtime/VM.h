@@ -39,7 +39,6 @@
 #include "JITThunks.h"
 #include "JSCJSValue.h"
 #include "JSLock.h"
-#include "LLIntData.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
 #include "NumericStrings.h"

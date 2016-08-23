@@ -29,6 +29,7 @@
 #include "ShareableBitmap.h"
 #include "WebImage.h"
 #include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/HeapInlines.h>
 #include <WebCore/Document.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/Frame.h>

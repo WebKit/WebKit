@@ -33,6 +33,7 @@
 #import "WebProcessProxy.h"
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 

@@ -195,6 +195,20 @@ ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
     return jsAddSlowCase(callFrame, v1, v2);
 }
 
+inline bool scribbleFreeCells()
+{
+    return !ASSERT_DISABLED || Options::scribbleFreeCells();
+}
+
+inline void scribble(void* base, size_t size)
+{
+    for (size_t i = size / sizeof(EncodedJSValue); i--;) {
+        // Use a 16-byte aligned value to ensure that it passes the cell check.
+        static_cast<EncodedJSValue*>(base)[i] = JSValue::encode(
+            bitwise_cast<JSCell*>(static_cast<intptr_t>(0xbadbeef0)));
+    }
+}
+
 } // namespace JSC
 
 #endif // Operations_h

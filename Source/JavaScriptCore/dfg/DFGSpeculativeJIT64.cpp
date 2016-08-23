@@ -4013,7 +4013,7 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorGPR);
         m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, allocatorGPR));
-        emitAllocateJSObject(resultGPR, allocatorGPR, structureGPR, TrustedImmPtr(0), scratchGPR, slowPath);
+        emitAllocateJSObject(resultGPR, nullptr, allocatorGPR, structureGPR, TrustedImmPtr(0), scratchGPR, slowPath);
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationCreateThis, resultGPR, calleeGPR, node->inlineCapacity()));
         
@@ -4034,10 +4034,10 @@ void SpeculativeJIT::compile(Node* node)
 
         Structure* structure = node->structure();
         size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-        MarkedAllocator* allocatorPtr = &m_jit.vm()->heap.allocatorForObjectWithoutDestructor(allocationSize);
+        MarkedAllocator* allocatorPtr = m_jit.vm()->heap.allocatorForObjectWithoutDestructor(allocationSize);
 
         m_jit.move(TrustedImmPtr(allocatorPtr), allocatorGPR);
-        emitAllocateJSObject(resultGPR, allocatorGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, slowPath);
+        emitAllocateJSObject(resultGPR, allocatorPtr, allocatorGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, slowPath);
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationNewObject, resultGPR, structure));
         
@@ -5272,7 +5272,7 @@ void SpeculativeJIT::compile(Node* node)
 
         unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex;
         auto triggerIterator = m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex);
-        RELEASE_ASSERT(triggerIterator != m_jit.jitCode()->tierUpEntryTriggers.end());
+        DFG_ASSERT(m_jit.graph(), node, triggerIterator != m_jit.jitCode()->tierUpEntryTriggers.end());
         uint8_t* forceEntryTrigger = &(m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);
 
         MacroAssembler::Jump forceOSREntry = m_jit.branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(forceEntryTrigger));
@@ -5459,31 +5459,34 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     MacroAssembler::JumpList slowCases;
     if (shouldConvertLargeSizeToArrayStorage)
         slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, sizeGPR, TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)));
-    
+            
     ASSERT((1 << 3) == sizeof(JSValue));
     m_jit.move(sizeGPR, scratchGPR);
     m_jit.lshift32(TrustedImm32(3), scratchGPR);
     m_jit.add32(TrustedImm32(sizeof(IndexingHeader)), scratchGPR, resultGPR);
-    slowCases.append(
-        emitAllocateBasicStorage(resultGPR, storageGPR));
-    m_jit.subPtr(scratchGPR, storageGPR);
+    m_jit.emitAllocateVariableSized(
+        storageGPR, m_jit.vm()->heap.subspaceForAuxiliaryData(), resultGPR, scratchGPR,
+        scratch2GPR, slowCases);
+    m_jit.addPtr(TrustedImm32(sizeof(IndexingHeader)), storageGPR);
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+            
     emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
     
     m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
     m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
-    
-    if (hasDouble(indexingType)) {
+            
+    if (hasDouble(indexingType))
         m_jit.move(TrustedImm64(bitwise_cast<int64_t>(PNaN)), scratchGPR);
-        m_jit.move(sizeGPR, scratch2GPR);
-        MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, scratch2GPR);
-        MacroAssembler::Label loop = m_jit.label();
-        m_jit.sub32(TrustedImm32(1), scratch2GPR);
-        m_jit.store64(scratchGPR, MacroAssembler::BaseIndex(storageGPR, scratch2GPR, MacroAssembler::TimesEight));
-        m_jit.branchTest32(MacroAssembler::NonZero, scratch2GPR).linkTo(loop, &m_jit);
-        done.link(&m_jit);
-    }
-    
+    else
+        m_jit.move(TrustedImm64(JSValue::encode(JSValue())), scratchGPR);
+    m_jit.move(sizeGPR, scratch2GPR);
+    MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, scratch2GPR);
+    MacroAssembler::Label loop = m_jit.label();
+    m_jit.sub32(TrustedImm32(1), scratch2GPR);
+    m_jit.store64(scratchGPR, MacroAssembler::BaseIndex(storageGPR, scratch2GPR, MacroAssembler::TimesEight));
+    m_jit.branchTest32(MacroAssembler::NonZero, scratch2GPR).linkTo(loop, &m_jit);
+    done.link(&m_jit);
+            
     addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableSizeSlowPathGenerator>(
         slowCases, this, operationNewArrayWithSize, resultGPR,
         structure,

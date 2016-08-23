@@ -27,6 +27,7 @@
 #define MarkedAllocator_h
 
 #include "AllocatorAttributes.h"
+#include "FreeList.h"
 #include "MarkedBlock.h"
 #include <wtf/DoublyLinkedList.h>
 
@@ -40,9 +41,10 @@ class MarkedAllocator {
     friend class LLIntOffsetsExtractor;
 
 public:
-    static ptrdiff_t offsetOfFreeListHead();
+    static ptrdiff_t offsetOfFreeList();
+    static ptrdiff_t offsetOfCellSize();
 
-    MarkedAllocator();
+    MarkedAllocator(Heap*, MarkedSpace*, size_t cellSize, const AllocatorAttributes&);
     void lastChanceToFinalize();
     void reset();
     void stopAllocating();
@@ -53,6 +55,7 @@ public:
     DestructionMode destruction() const { return m_attributes.destruction; }
     HeapCell::Kind cellKind() const { return m_attributes.cellKind; }
     void* allocate(size_t);
+    void* tryAllocate(size_t);
     Heap* heap() { return m_heap; }
     MarkedBlock* takeLastActiveBlock()
     {
@@ -65,69 +68,78 @@ public:
     
     void addBlock(MarkedBlock*);
     void removeBlock(MarkedBlock*);
-    void init(Heap*, MarkedSpace*, size_t cellSize, const AllocatorAttributes&);
 
     bool isPagedOut(double deadline);
+    
+    static size_t blockSizeForBytes(size_t);
    
 private:
     JS_EXPORT_PRIVATE void* allocateSlowCase(size_t);
-    void* tryAllocate(size_t);
-    void* tryAllocateHelper(size_t);
-    void* tryPopFreeList(size_t);
-    MarkedBlock* allocateBlock(size_t);
+    JS_EXPORT_PRIVATE void* tryAllocateSlowCase(size_t);
+    void* allocateSlowCaseImpl(size_t, bool crashOnFailure);
+    void* tryAllocateWithoutCollecting(size_t);
+    void* tryAllocateWithoutCollectingImpl(size_t);
+    MarkedBlock* tryAllocateBlock();
     ALWAYS_INLINE void doTestCollectionsIfNeeded();
-    void retire(MarkedBlock*, MarkedBlock::FreeList&);
+    void retire(MarkedBlock*, FreeList&);
     
-    MarkedBlock::FreeList m_freeList;
+    void setFreeList(const FreeList&);
+    
+    FreeList m_freeList;
     MarkedBlock* m_currentBlock;
     MarkedBlock* m_lastActiveBlock;
     MarkedBlock* m_nextBlockToSweep;
     DoublyLinkedList<MarkedBlock> m_blockList;
     DoublyLinkedList<MarkedBlock> m_retiredBlocks;
-    size_t m_cellSize;
+    unsigned m_cellSize;
     AllocatorAttributes m_attributes;
     Heap* m_heap;
     MarkedSpace* m_markedSpace;
 };
 
-inline ptrdiff_t MarkedAllocator::offsetOfFreeListHead()
+inline ptrdiff_t MarkedAllocator::offsetOfFreeList()
 {
-    return OBJECT_OFFSETOF(MarkedAllocator, m_freeList) + OBJECT_OFFSETOF(MarkedBlock::FreeList, head);
+    return OBJECT_OFFSETOF(MarkedAllocator, m_freeList);
 }
 
-inline MarkedAllocator::MarkedAllocator()
-    : m_currentBlock(0)
-    , m_lastActiveBlock(0)
-    , m_nextBlockToSweep(0)
-    , m_cellSize(0)
-    , m_heap(0)
-    , m_markedSpace(0)
+inline ptrdiff_t MarkedAllocator::offsetOfCellSize()
 {
+    return OBJECT_OFFSETOF(MarkedAllocator, m_cellSize);
 }
 
-inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, const AllocatorAttributes& attributes)
+ALWAYS_INLINE void* MarkedAllocator::tryAllocate(size_t bytes)
 {
-    m_heap = heap;
-    m_markedSpace = markedSpace;
-    m_cellSize = cellSize;
-    m_attributes = attributes;
-}
-
-inline void* MarkedAllocator::allocate(size_t bytes)
-{
-    MarkedBlock::FreeCell* head = m_freeList.head;
-    if (UNLIKELY(!head)) {
-        void* result = allocateSlowCase(bytes);
-#ifndef NDEBUG
-        memset(result, 0xCD, bytes);
-#endif
-        return result;
+    unsigned remaining = m_freeList.remaining;
+    if (remaining) {
+        unsigned cellSize = m_cellSize;
+        remaining -= cellSize;
+        m_freeList.remaining = remaining;
+        return m_freeList.payloadEnd - remaining - cellSize;
     }
     
+    FreeCell* head = m_freeList.head;
+    if (UNLIKELY(!head))
+        return tryAllocateSlowCase(bytes);
+    
     m_freeList.head = head->next;
-#ifndef NDEBUG
-    memset(head, 0xCD, bytes);
-#endif
+    return head;
+}
+
+ALWAYS_INLINE void* MarkedAllocator::allocate(size_t bytes)
+{
+    unsigned remaining = m_freeList.remaining;
+    if (remaining) {
+        unsigned cellSize = m_cellSize;
+        remaining -= cellSize;
+        m_freeList.remaining = remaining;
+        return m_freeList.payloadEnd - remaining - cellSize;
+    }
+    
+    FreeCell* head = m_freeList.head;
+    if (UNLIKELY(!head))
+        return allocateSlowCase(bytes);
+    
+    m_freeList.head = head->next;
     return head;
 }
 
@@ -135,14 +147,14 @@ inline void MarkedAllocator::stopAllocating()
 {
     ASSERT(!m_lastActiveBlock);
     if (!m_currentBlock) {
-        ASSERT(!m_freeList.head);
+        ASSERT(!m_freeList);
         return;
     }
     
     m_currentBlock->stopAllocating(m_freeList);
     m_lastActiveBlock = m_currentBlock;
     m_currentBlock = 0;
-    m_freeList = MarkedBlock::FreeList();
+    m_freeList = FreeList();
 }
 
 inline void MarkedAllocator::resumeAllocating()

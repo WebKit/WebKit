@@ -27,10 +27,13 @@
 #define ProfilerBytecode_h
 
 #include "JSCJSValue.h"
-#include "Opcode.h"
 #include <wtf/text/CString.h>
 
-namespace JSC { namespace Profiler {
+namespace JSC {
+
+enum OpcodeID : unsigned;
+
+namespace Profiler {
 
 class Bytecode {
 public:

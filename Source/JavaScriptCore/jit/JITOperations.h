@@ -38,6 +38,8 @@
 
 namespace JSC {
 
+typedef int64_t EncodedJSValue;
+    
 class ArrayAllocationProfile;
 class ArrayProfile;
 class CallLinkInfo;
@@ -45,17 +47,24 @@ class CodeBlock;
 class ExecState;
 class JITAddGenerator;
 class JSArray;
+class JSCell;
 class JSFunction;
+class JSGlobalObject;
 class JSLexicalEnvironment;
+class JSObject;
 class JSScope;
+class JSString;
+class JSValue;
 class RegExpObject;
 class Register;
+class Structure;
 class StructureStubInfo;
 class SymbolTable;
 class WatchpointSet;
 
 struct ByValInfo;
 struct InlineCallFrame;
+struct Instruction;
 struct ArithProfile;
 
 typedef ExecState CallFrame;
@@ -320,7 +329,6 @@ void JIT_OPERATION operationPutByIdStrictBuildList(ExecState*, StructureStubInfo
 void JIT_OPERATION operationPutByIdNonStrictBuildList(ExecState*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDirectStrictBuildList(ExecState*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDirectNonStrictBuildList(ExecState*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl*) WTF_INTERNAL;
-void JIT_OPERATION operationReallocateStorageAndFinishPut(ExecState*, JSObject*, Structure*, PropertyOffset, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValOptimize(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
 void JIT_OPERATION operationDirectPutByValOptimize(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValGeneric(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;

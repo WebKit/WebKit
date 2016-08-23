@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,9 @@
 #include "TestRunnerUtils.h"
 
 #include "CodeBlock.h"
+#include "HeapStatistics.h"
 #include "JSCInlines.h"
+#include "LLIntData.h"
 
 namespace JSC {
 
@@ -148,6 +150,15 @@ JSValue optimizeNextInvocation(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
     return optimizeNextInvocation(exec->uncheckedArgument(0));
+}
+
+// This is a hook called at the bitter end of some of our tests.
+void finalizeStatsAtEndOfTesting()
+{
+    if (Options::logHeapStatisticsAtExit())
+        HeapStatistics::reportSuccess();
+    if (Options::reportLLIntStats())
+        LLInt::Data::finalizeStats();
 }
 
 } // namespace JSC

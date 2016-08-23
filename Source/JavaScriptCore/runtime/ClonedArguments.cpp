@@ -44,16 +44,19 @@ ClonedArguments::ClonedArguments(VM& vm, Structure* structure, Butterfly* butter
 ClonedArguments* ClonedArguments::createEmpty(
     VM& vm, Structure* structure, JSFunction* callee, unsigned length)
 {
-    unsigned vectorLength = std::max(BASE_VECTOR_LEN, length);
+    unsigned vectorLength = length;
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
         return 0;
 
-    void* temp;
-    if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)), &temp))
+    void* temp = vm.heap.tryAllocateAuxiliary(nullptr, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)));
+    if (!temp)
         return 0;
     Butterfly* butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());
     butterfly->setVectorLength(vectorLength);
     butterfly->setPublicLength(length);
+    
+    for (unsigned i = length; i < vectorLength; ++i)
+        butterfly->contiguous()[i].clear();
 
     ClonedArguments* result =
         new (NotNull, allocateCell<ClonedArguments>(vm.heap))

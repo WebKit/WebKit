@@ -35,7 +35,7 @@ inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(
     VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
     ASSERT(executable->singletonFunction()->hasBeenInvalidated());
-    return createImpl(vm, executable, scope, scope->globalObject()->functionStructure());
+    return createImpl(vm, executable, scope, scope->globalObject(vm)->functionStructure());
 }
 
 inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
@@ -47,7 +47,7 @@ inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* s
 
 #if ENABLE(WEBASSEMBLY)
 inline JSFunction::JSFunction(VM& vm, WebAssemblyExecutable* executable, JSScope* scope)
-    : Base(vm, scope, scope->globalObject()->functionStructure())
+    : Base(vm, scope, scope->globalObject(vm)->functionStructure())
     , m_executable(vm, this, executable)
     , m_rareData()
 {

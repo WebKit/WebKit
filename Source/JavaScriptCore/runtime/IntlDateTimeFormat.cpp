@@ -34,14 +34,14 @@
 #include "IntlDateTimeFormatConstructor.h"
 #include "IntlObject.h"
 #include "JSBoundFunction.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 #include <unicode/ucal.h>
 #include <unicode/udatpg.h>
 #include <unicode/uenum.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

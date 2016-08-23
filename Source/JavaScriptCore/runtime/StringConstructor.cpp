@@ -28,6 +28,7 @@
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
 #include "StringPrototype.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

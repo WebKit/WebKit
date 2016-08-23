@@ -28,11 +28,9 @@
 
 #include "Error.h"
 #include "Exception.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "Microtask.h"
-#include "SlotVisitorInlines.h"
 #include "StrongInlines.h"
 
 namespace JSC {

@@ -29,7 +29,7 @@
 #include "BuiltinNames.h"
 #include "CallFrame.h"
 #include "GetterSetter.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGenericTypedArrayViewPrototypeFunctions.h"
 #include "TypedArrayAdaptors.h"

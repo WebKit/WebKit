@@ -23,14 +23,12 @@
 #define Heap_h
 
 #include "ArrayBuffer.h"
-#include "CodeBlockSet.h"
 #include "CopyVisitor.h"
 #include "GCIncomingRefCountedSet.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
 #include "HeapObserver.h"
 #include "HeapOperation.h"
-#include "JITStubRoutineSet.h"
 #include "ListableHandler.h"
 #include "MachineStackMarker.h"
 #include "MarkedAllocator.h"
@@ -53,6 +51,7 @@
 namespace JSC {
 
 class CodeBlock;
+class CodeBlockSet;
 class CopiedSpace;
 class EdenGCActivityCallback;
 class ExecutableBase;
@@ -65,6 +64,7 @@ class HeapRootVisitor;
 class HeapVerifier;
 class IncrementalSweeper;
 class JITStubRoutine;
+class JITStubRoutineSet;
 class JSCell;
 class JSValue;
 class LLIntOffsetsExtractor;
@@ -83,13 +83,15 @@ typedef HashCountedSet<const char*> TypeCountSet;
 
 enum HeapType { SmallHeap, LargeHeap };
 
+class HeapUtil;
+
 class Heap {
     WTF_MAKE_NONCOPYABLE(Heap);
 public:
     friend class JIT;
     friend class DFG::SpeculativeJIT;
     static Heap* heap(const JSValue); // 0 for immediate values
-    static Heap* heap(const JSCell*);
+    static Heap* heap(const HeapCell*);
 
     // This constant determines how many blocks we iterate between checks of our 
     // deadline when calling Heap::isPagedOut. Decreasing it will cause us to detect 
@@ -101,11 +103,8 @@ public:
     static bool isMarked(const void*);
     static bool testAndSetMarked(const void*);
     static void setMarked(const void*);
-
-    // This function must be run after stopAllocation() is called and 
-    // before liveness data is cleared to be accurate.
-    static bool isPointerGCObject(TinyBloomFilter, MarkedBlockSet&, void* pointer);
-    static bool isValueGCObject(TinyBloomFilter, MarkedBlockSet&, JSValue);
+    
+    static size_t cellSize(const void*);
 
     void writeBarrier(const JSCell*);
     void writeBarrier(const JSCell*, JSValue);
@@ -147,10 +146,14 @@ public:
     MarkedSpace::Subspace& subspaceForObjectDestructor() { return m_objectSpace.subspaceForObjectsWithDestructor(); }
     MarkedSpace::Subspace& subspaceForAuxiliaryData() { return m_objectSpace.subspaceForAuxiliaryData(); }
     template<typename ClassType> MarkedSpace::Subspace& subspaceForObjectOfType();
-    MarkedAllocator& allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
-    MarkedAllocator& allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
-    template<typename ClassType> MarkedAllocator& allocatorForObjectOfType(size_t bytes);
+    MarkedAllocator* allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
+    MarkedAllocator* allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
+    template<typename ClassType> MarkedAllocator* allocatorForObjectOfType(size_t bytes);
+    MarkedAllocator* allocatorForAuxiliaryData(size_t bytes) { return m_objectSpace.auxiliaryAllocatorFor(bytes); }
     CopiedAllocator& storageAllocator() { return m_storageSpace.allocator(); }
+    void* allocateAuxiliary(JSCell* intendedOwner, size_t);
+    void* tryAllocateAuxiliary(JSCell* intendedOwner, size_t);
+    void* tryReallocateAuxiliary(JSCell* intendedOwner, void* oldBase, size_t oldSize, size_t newSize);
     CheckedBoolean tryAllocateStorage(JSCell* intendedOwner, size_t, void**);
     CheckedBoolean tryReallocateStorage(JSCell* intendedOwner, void**, size_t, size_t);
     void ascribeOwner(JSCell* intendedOwner, void*);
@@ -230,7 +233,7 @@ public:
     void didAllocate(size_t);
     bool isPagedOut(double deadline);
     
-    const JITStubRoutineSet& jitStubRoutines() { return m_jitStubRoutines; }
+    const JITStubRoutineSet& jitStubRoutines() { return *m_jitStubRoutines; }
     
     void addReference(JSCell*, ArrayBuffer*);
     
@@ -238,7 +241,7 @@ public:
 
     StructureIDTable& structureIDTable() { return m_structureIDTable; }
 
-    CodeBlockSet& codeBlockSet() { return m_codeBlocks; }
+    CodeBlockSet& codeBlockSet() { return *m_codeBlocks; }
 
 #if USE(FOUNDATION)
     template<typename T> void releaseSoon(RetainPtr<T>&&);
@@ -267,6 +270,7 @@ private:
     friend class GCLogging;
     friend class GCThread;
     friend class HandleSet;
+    friend class HeapUtil;
     friend class HeapVerifier;
     friend class JITStubRoutine;
     friend class LLIntOffsetsExtractor;
@@ -282,6 +286,8 @@ private:
     friend class WeakSet;
     template<typename T> friend void* allocateCell(Heap&);
     template<typename T> friend void* allocateCell(Heap&, size_t);
+
+    void collectWithoutAnySweep(HeapOperation collectionType = AnyCollection);
 
     void* allocateWithDestructor(size_t); // For use with objects with destructors.
     void* allocateWithoutDestructor(size_t); // For use with objects without destructors.
@@ -304,6 +310,7 @@ private:
     void flushOldStructureIDTables();
     void flushWriteBarrierBuffer();
     void stopAllocation();
+    void prepareForMarking();
     
     void markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
     void gatherStackRoots(ConservativeRoots&, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
@@ -362,6 +369,8 @@ private:
     size_t threadBytesVisited();
     size_t threadBytesCopied();
 
+    void forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>&);
+
     const HeapType m_heapType;
     const size_t m_ramSize;
     const size_t m_minBytesPerCycle;
@@ -408,8 +417,8 @@ private:
 
     HandleSet m_handleSet;
     HandleStack m_handleStack;
-    CodeBlockSet m_codeBlocks;
-    JITStubRoutineSet m_jitStubRoutines;
+    std::unique_ptr<CodeBlockSet> m_codeBlocks;
+    std::unique_ptr<JITStubRoutineSet> m_jitStubRoutines;
     FinalizerOwner m_finalizerOwner;
     
     bool m_isSafeToCollect;

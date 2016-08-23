@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,8 @@
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlines.h"
 #include "HeapInlines.h"
+#include "HeapUtil.h"
+#include "JITStubRoutineSet.h"
 #include "JSCell.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
@@ -39,28 +41,27 @@
 
 namespace JSC {
 
-ConservativeRoots::ConservativeRoots(MarkedBlockSet* blocks, CopiedSpace* copiedSpace)
+ConservativeRoots::ConservativeRoots(Heap& heap)
     : m_roots(m_inlineRoots)
     , m_size(0)
     , m_capacity(inlineCapacity)
-    , m_blocks(blocks)
-    , m_copiedSpace(copiedSpace)
+    , m_heap(heap)
 {
 }
 
 ConservativeRoots::~ConservativeRoots()
 {
     if (m_roots != m_inlineRoots)
-        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(JSCell*));
+        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(HeapCell*));
 }
 
 void ConservativeRoots::grow()
 {
     size_t newCapacity = m_capacity == inlineCapacity ? nonInlineCapacity : m_capacity * 2;
-    JSCell** newRoots = static_cast<JSCell**>(OSAllocator::reserveAndCommit(newCapacity * sizeof(JSCell*)));
-    memcpy(newRoots, m_roots, m_size * sizeof(JSCell*));
+    HeapCell** newRoots = static_cast<HeapCell**>(OSAllocator::reserveAndCommit(newCapacity * sizeof(HeapCell*)));
+    memcpy(newRoots, m_roots, m_size * sizeof(HeapCell*));
     if (m_roots != m_inlineRoots)
-        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(JSCell*));
+        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(HeapCell*));
     m_capacity = newCapacity;
     m_roots = newRoots;
 }
@@ -70,15 +71,16 @@ inline void ConservativeRoots::genericAddPointer(void* p, TinyBloomFilter filter
 {
     markHook.mark(p);
 
-    m_copiedSpace->pinIfNecessary(p);
+    m_heap.storageSpace().pinIfNecessary(p);
 
-    if (!Heap::isPointerGCObject(filter, *m_blocks, p))
-        return;
-
-    if (m_size == m_capacity)
-        grow();
-
-    m_roots[m_size++] = static_cast<JSCell*>(p);
+    HeapUtil::findGCObjectPointersForMarking(
+        m_heap, filter, p,
+        [&] (void* p) {
+            if (m_size == m_capacity)
+                grow();
+            
+            m_roots[m_size++] = bitwise_cast<HeapCell*>(p);
+        });
 }
 
 template<typename MarkHook>
@@ -94,7 +96,7 @@ void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHoo
     RELEASE_ASSERT(isPointerAligned(begin));
     RELEASE_ASSERT(isPointerAligned(end));
 
-    TinyBloomFilter filter = m_blocks->filter(); // Make a local copy of filter to show the compiler it won't alias, and can be register-allocated.
+    TinyBloomFilter filter = m_heap.objectSpace().blocks().filter(); // Make a local copy of filter to show the compiler it won't alias, and can be register-allocated.
     for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it)
         genericAddPointer(*it, filter, markHook);
 }

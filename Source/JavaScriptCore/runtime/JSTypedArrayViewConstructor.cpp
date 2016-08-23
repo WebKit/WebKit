@@ -30,9 +30,8 @@
 #include "Error.h"
 #include "GetterSetter.h"
 #include "JSCBuiltins.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
-#include "JSObject.h"
 #include "JSTypedArrayViewPrototype.h"
 #include "JSTypedArrays.h"
 

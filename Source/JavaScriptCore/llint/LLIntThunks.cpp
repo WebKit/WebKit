@@ -33,6 +33,7 @@
 #include "JSInterfaceJIT.h"
 #include "JSObject.h"
 #include "LLIntCLoop.h"
+#include "LLIntData.h"
 #include "LinkBuffer.h"
 #include "LowLevelInterpreter.h"
 #include "ProtoCallFrame.h"

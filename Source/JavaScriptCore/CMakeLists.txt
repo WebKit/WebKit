@@ -66,6 +66,7 @@ set(JavaScriptCore_SOURCES
     assembler/MacroAssembler.cpp
     assembler/MacroAssemblerARM.cpp
     assembler/MacroAssemblerARMv7.cpp
+    assembler/MacroAssemblerCodeRef.cpp
     assembler/MacroAssemblerPrinter.cpp
     assembler/MacroAssemblerX86Common.cpp
 
@@ -445,6 +446,7 @@ set(JavaScriptCore_SOURCES
     heap/DestructionMode.cpp
     heap/EdenGCActivityCallback.cpp
     heap/FullGCActivityCallback.cpp
+    heap/FreeList.cpp
     heap/GCActivityCallback.cpp
     heap/GCLogging.cpp
     heap/HandleSet.cpp
@@ -460,6 +462,7 @@ set(JavaScriptCore_SOURCES
     heap/HeapVerifier.cpp
     heap/IncrementalSweeper.cpp
     heap/JITStubRoutineSet.cpp
+    heap/LargeAllocation.cpp
     heap/LiveObjectList.cpp
     heap/MachineStackMarker.cpp
     heap/MarkStack.cpp
@@ -798,6 +801,7 @@ set(JavaScriptCore_SOURCES
     runtime/SimpleTypedArrayController.cpp
     runtime/SmallStrings.cpp
     runtime/SparseArrayValueMap.cpp
+    runtime/StackFrame.cpp
     runtime/StrictEvalActivation.cpp
     runtime/StringConstructor.cpp
     runtime/StringIteratorPrototype.cpp

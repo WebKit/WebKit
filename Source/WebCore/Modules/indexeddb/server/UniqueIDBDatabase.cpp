@@ -39,6 +39,8 @@
 #include "ScopeGuard.h"
 #include "SerializedScriptValue.h"
 #include "UniqueIDBDatabaseConnection.h"
+#include <heap/HeapInlines.h>
+#include <runtime/AuxiliaryBarrierInlines.h>
 #include <runtime/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

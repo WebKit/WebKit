@@ -28,10 +28,7 @@
 
 #include "CodeBlock.h"
 #include "HeapIterationScope.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

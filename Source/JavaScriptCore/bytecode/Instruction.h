@@ -31,7 +31,6 @@
 
 #include "BasicBlockLocation.h"
 #include "MacroAssembler.h"
-#include "Opcode.h"
 #include "PutByIdFlags.h"
 #include "SymbolTable.h"
 #include "TypeLocation.h"
@@ -51,6 +50,12 @@ class ObjectAllocationProfile;
 class WatchpointSet;
 struct LLIntCallLinkInfo;
 struct ValueProfile;
+
+#if ENABLE(COMPUTED_GOTO_OPCODES)
+typedef void* Opcode;
+#else
+typedef OpcodeID Opcode;
+#endif
 
 struct Instruction {
     Instruction()
