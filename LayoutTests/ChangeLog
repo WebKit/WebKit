@@ -1,3 +1,14 @@
+2016-08-23  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !view().layoutStateEnabled() || style().styleType() == FIRST_LETTER in WebCore::RenderInline::clippedOverflowRectForRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=155363
+        <rdar://problem/27720434>
+
+        Reviewed by David Hyatt.
+
+        * fast/layers/assert-on-self-painting-inline-with-scrolling-expected.txt: Added.
+        * fast/layers/assert-on-self-painting-inline-with-scrolling.html: Added.
+
 2016-08-23  Chris Dumez  <cdumez@apple.com>
 
         Add support for CanvasRenderingContext2D.resetTransform()
