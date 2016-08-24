@@ -47,6 +47,7 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
         unrestricted float dx, unrestricted float dy);
     void setTransform(unrestricted float m11, unrestricted float m12, unrestricted float m21, unrestricted float m22, 
         unrestricted float dx, unrestricted float dy);
+    void resetTransform();
 
     attribute unrestricted float globalAlpha;
 

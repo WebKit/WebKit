@@ -1,3 +1,19 @@
+2016-08-23  Chris Dumez  <cdumez@apple.com>
+
+        Add support for CanvasRenderingContext2D.resetTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=161089
+
+        Reviewed by Simon Fraser.
+
+        Import corresponding Blink test.
+
+        * imported/blink/fast/canvas/canvas-resetTransform-expected.txt: Added.
+        * imported/blink/fast/canvas/canvas-resetTransform.html: Added.
+        * imported/blink/fast/canvas/script-tests/canvas-resetTransform.js: Added.
+
+        * platform/ios-simulator/TestExpectations:
+        Skip new Canvas test on iOS as it is failing (very small visual difference).
+
 2016-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         Hook up UIScriptController in DumpRenderTree

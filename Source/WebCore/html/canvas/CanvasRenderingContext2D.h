@@ -117,6 +117,7 @@ public:
     void translate(float tx, float ty);
     void transform(float m11, float m12, float m21, float m22, float dx, float dy);
     void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
+    void resetTransform();
 
     void setStrokeColor(const String& color, Optional<float> alpha = Nullopt);
     void setStrokeColor(float grayLevel, float alpha = 1.0);

@@ -1,5 +1,19 @@
 2016-08-23  Chris Dumez  <cdumez@apple.com>
 
+        Add support for CanvasRenderingContext2D.resetTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=161089
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001-expected.html: Added.
+        * web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html: Added.
+        Import W3C test to cover CanvasRenderingContext2D.resetTransform().
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        Rebaseline existing test now that more checks are passing.
+
+2016-08-23  Chris Dumez  <cdumez@apple.com>
+
         HTMLAreaElement should have a stringifier
         https://bugs.webkit.org/show_bug.cgi?id=161105
 

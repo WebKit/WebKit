@@ -4802,7 +4802,7 @@ PASS CanvasRenderingContext2D interface: operation transform(unrestricted double
 FAIL CanvasRenderingContext2D interface: operation getTransform() assert_own_property: interface prototype object missing non-static operation expected property "getTransform" missing
 FAIL CanvasRenderingContext2D interface: operation setTransform(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_equals: property has wrong .length expected 0 but got 6
 FAIL CanvasRenderingContext2D interface: operation setTransform(DOMMatrixInit) assert_equals: property has wrong .length expected 0 but got 6
-FAIL CanvasRenderingContext2D interface: operation resetTransform() assert_own_property: interface prototype object missing non-static operation expected property "resetTransform" missing
+PASS CanvasRenderingContext2D interface: operation resetTransform() 
 PASS CanvasRenderingContext2D interface: attribute globalAlpha 
 PASS CanvasRenderingContext2D interface: attribute globalCompositeOperation 
 PASS CanvasRenderingContext2D interface: attribute imageSmoothingEnabled 
@@ -4889,7 +4889,7 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: calling setTransform(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setTransform" with the proper type (9) 
 PASS CanvasRenderingContext2D interface: calling setTransform(DOMMatrixInit) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "resetTransform" with the proper type (10) assert_inherits: property "resetTransform" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "resetTransform" with the proper type (10) 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalAlpha" with the proper type (11) 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalCompositeOperation" with the proper type (12) 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "imageSmoothingEnabled" with the proper type (13) 

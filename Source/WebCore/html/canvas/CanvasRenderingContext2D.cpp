@@ -807,18 +807,28 @@ void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, flo
     if (!std::isfinite(m11) | !std::isfinite(m21) | !std::isfinite(dx) | !std::isfinite(m12) | !std::isfinite(m22) | !std::isfinite(dy))
         return;
 
-    AffineTransform ctm = state().transform;
-    if (!ctm.isInvertible())
+    resetTransform();
+    transform(m11, m12, m21, m22, dx, dy);
+}
+
+void CanvasRenderingContext2D::resetTransform()
+{
+    GraphicsContext* c = drawingContext();
+    if (!c)
         return;
 
+    AffineTransform ctm = state().transform;
+    bool hasInvertibleTransform = state().hasInvertibleTransform;
+
     realizeSaves();
-    
+
     c->setCTM(canvas()->baseTransform());
     modifiableState().transform = AffineTransform();
-    m_path.transform(ctm);
+
+    if (hasInvertibleTransform)
+        m_path.transform(ctm);
 
     modifiableState().hasInvertibleTransform = true;
-    transform(m11, m12, m21, m22, dx, dy);
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color, Optional<float> alpha)
