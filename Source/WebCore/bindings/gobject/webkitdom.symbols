@@ -1,5 +1,8 @@
 GType webkit_dom_attr_get_type(void)
+gchar* webkit_dom_attr_get_local_name(WebKitDOMAttr*)@2.14
 gchar* webkit_dom_attr_get_name(WebKitDOMAttr*)
+gchar* webkit_dom_attr_get_namespace_uri(WebKitDOMAttr*)@2.14
+gchar* webkit_dom_attr_get_prefix(WebKitDOMAttr*)@2.14
 gboolean webkit_dom_attr_get_specified(WebKitDOMAttr*)
 gchar* webkit_dom_attr_get_value(WebKitDOMAttr*)
 void webkit_dom_attr_set_value(WebKitDOMAttr*, const gchar*, GError**)
@@ -119,6 +122,9 @@ gchar* webkit_dom_document_type_get_internal_subset(WebKitDOMDocumentType*)
 GType webkit_dom_element_get_type(void)
 gchar* webkit_dom_element_get_id(WebKitDOMElement*)
 void webkit_dom_element_set_id(WebKitDOMElement*, const gchar*)
+gchar* webkit_dom_element_get_namespace_uri(WebKitDOMElement*)@2.14
+gchar* webkit_dom_element_get_local_name(WebKitDOMElement*)@2.14
+gchar* webkit_dom_element_get_prefix(WebKitDOMElement*)@2.14
 WebKitDOMCSSStyleDeclaration* webkit_dom_element_get_style(WebKitDOMElement*)
 gchar* webkit_dom_element_get_class_name(WebKitDOMElement*)
 void webkit_dom_element_set_class_name(WebKitDOMElement*, const gchar*)

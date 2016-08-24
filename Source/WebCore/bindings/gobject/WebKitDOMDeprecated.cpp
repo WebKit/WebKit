@@ -32,6 +32,7 @@
 #include "WebKitDOMHTMLInputElementPrivate.h"
 #include "WebKitDOMHTMLTitleElement.h"
 #include "WebKitDOMNodeListPrivate.h"
+#include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMTextPrivate.h"
 #include <wtf/GetPtr.h>
@@ -225,6 +226,47 @@ WebKitDOMHTMLCollection* webkit_dom_html_document_get_scripts(WebKitDOMHTMLDocum
 {
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), nullptr);
     return webkit_dom_document_get_scripts(WEBKIT_DOM_DOCUMENT(self));
+}
+
+gchar* webkit_dom_node_get_namespace_uri(WebKitDOMNode* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    return convertToUTF8String(WebKit::core(self)->namespaceURI());
+}
+
+gchar* webkit_dom_node_get_prefix(WebKitDOMNode* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), nullptr);
+    WebCore::JSMainThreadNullState state;
+    return convertToUTF8String(WebKit::core(self)->prefix());
+}
+
+void webkit_dom_node_set_prefix(WebKitDOMNode* self, const gchar* value, GError** error)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_NODE(self));
+    g_return_if_fail(value);
+    g_return_if_fail(!error || !*error);
+
+    g_warning("%s: prefix is now a readonly property according to the DOM spec.", __func__);
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::Node* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    WebCore::ExceptionCode ec = 0;
+    item->setPrefix(convertedValue, ec);
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc(ec);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+}
+
+gchar* webkit_dom_node_get_local_name(WebKitDOMNode* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), nullptr);
+    WebCore::JSMainThreadNullState state;
+    return convertToUTF8String(WebKit::core(self)->localName());
 }
 
 G_DEFINE_TYPE(WebKitDOMEntityReference, webkit_dom_entity_reference, WEBKIT_DOM_TYPE_NODE)

@@ -291,6 +291,50 @@ webkit_dom_html_document_get_plugins(WebKitDOMHTMLDocument* self);
 WEBKIT_DEPRECATED_FOR(webkit_dom_document_get_scripts) WebKitDOMHTMLCollection*
 webkit_dom_html_document_get_scripts(WebKitDOMHTMLDocument* self);
 
+/**
+ * webkit_dom_node_get_namespace_uri:
+ * @self: A #WebKitDOMNode
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.14: Use webkit_dom_attr_get_namespace_uri() or webkit_dom_element_get_namespace_uri() instead.
+ */
+WEBKIT_DEPRECATED gchar*
+webkit_dom_node_get_namespace_uri(WebKitDOMNode* self);
+
+/**
+ * webkit_dom_node_get_prefix:
+ * @self: A #WebKitDOMNode
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.14: Use webkit_dom_attr_get_prefix() or webkit_dom_element_get_prefix() instead.
+ */
+WEBKIT_DEPRECATED gchar*
+webkit_dom_node_get_prefix(WebKitDOMNode* self);
+
+/**
+ * webkit_dom_node_set_prefix:
+ * @self: A #WebKitDOMNode
+ * @value: A #gchar
+ * @error: #GError
+ *
+ * Deprecated: 2.14
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_node_set_prefix(WebKitDOMNode* self, const gchar* value, GError** error);
+
+/**
+ * webkit_dom_node_get_local_name:
+ * @self: A #WebKitDOMNode
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.14: Use webkit_dom_attr_get_local_name() or webkit_dom_element_get_local_name() instead.
+ */
+WEBKIT_DEPRECATED gchar*
+webkit_dom_node_get_local_name(WebKitDOMNode* self);
+
 #define WEBKIT_DOM_TYPE_ENTITY_REFERENCE            (webkit_dom_entity_reference_get_type())
 #define WEBKIT_DOM_ENTITY_REFERENCE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_ENTITY_REFERENCE, WebKitDOMEntityReference))
 #define WEBKIT_DOM_ENTITY_REFERENCE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_DOM_TYPE_ENTITY_REFERENCE, WebKitDOMEntityReferenceClass)
