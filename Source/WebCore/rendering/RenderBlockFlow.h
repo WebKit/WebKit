@@ -345,7 +345,7 @@ public:
     RootInlineBox* firstRootBox() const { return downcast<RootInlineBox>(m_lineBoxes.firstLineBox()); }
     RootInlineBox* lastRootBox() const { return downcast<RootInlineBox>(m_lineBoxes.lastLineBox()); }
 
-    bool hasLines() const final;
+    bool hasLines() const;
     void invalidateLineLayoutPath() final;
 
     enum LineLayoutPath { UndeterminedPath = 0, SimpleLinesPath, LineBoxesPath, ForceLineBoxesPath };

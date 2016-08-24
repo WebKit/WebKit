@@ -417,9 +417,6 @@ private:
     bool isSelfCollapsingBlock() const override;
     virtual bool childrenPreventSelfCollapsing() const;
     
-    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
-    virtual bool hasLines() const { return false; }
-
     void createFirstLetterRenderer(RenderElement* firstLetterBlock, RenderText* currentTextChild);
     void updateFirstLetterStyle(RenderElement* firstLetterBlock, RenderObject* firstLetterContainer);
 

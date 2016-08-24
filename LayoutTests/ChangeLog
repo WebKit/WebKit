@@ -1,3 +1,14 @@
+2016-08-24  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: childrenInline() in WebCore::RenderBlockFlow::hasLines
+        https://bugs.webkit.org/show_bug.cgi?id=139396
+        <rdar://problem/27704339>
+
+        Reviewed by David Hyatt.
+
+        * fast/ruby/assert-with-block-rt-child-and-emphasis-expected.txt: Added.
+        * fast/ruby/assert-with-block-rt-child-and-emphasis.html: Added.
+
 2016-08-24  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] http server is not starting.
