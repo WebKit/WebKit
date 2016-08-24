@@ -879,6 +879,8 @@ webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-1.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-2.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-3.html [ Failure ]
 
+[ Debug ] js/regress-141098.html [ Slow ]
+
 # IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,
 # after we implement the IDBVersionChangeEvent constructor.
 webkit.org/b/145390 storage/indexeddb/events.html [ Failure ]
@@ -1233,5 +1235,7 @@ webkit.org/b/159755 fast/text/emoji-gender-fe0f-7.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-fe0f-8.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender.html [ ImageOnlyFailure ]
+
+webkit.org/b/160017 js/regress-139548.html [ Slow ]
 
 [Debug] webkit.org/b/161114 svg/carto.net/window.svg [ Skip ]
