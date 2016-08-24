@@ -249,6 +249,21 @@
         "category": "webapps"
     },
     {
+        "name": "User Timing",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "http://www.w3.org/TR/user-timing/",
+        "keywords": ["usertiming","user timing"],
+        "description": "Provides high precision timestamp marking APIs.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "WOFF File Format 2.0",
         "status": {
             "status": "Done"
