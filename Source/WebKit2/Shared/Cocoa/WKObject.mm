@@ -178,6 +178,13 @@ static inline void initializeTargetIfNeeded(WKObject *self)
     return _target ? [_target description] : [NSString stringWithFormat:@"<%s %p>", class_getName(object_getClass(self)), self];
 }
 
+- (NSString *)debugDescription
+{
+    initializeTargetIfNeeded(self);
+
+    return _target ? [_target debugDescription] : [self description];
+}
+
 - (instancetype)retain
 {
     return _objc_rootRetain(self);

@@ -1,3 +1,14 @@
+2016-08-24  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Can’t "po" WKObject instances
+        https://bugs.webkit.org/show_bug.cgi?id=161151
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/WKObject.mm:
+        (-[WKObject debugDescription]): Implement and forward to the target or print a generic
+          description.
+
 2016-08-24  Brady Eidson  <beidson@apple.com>
 
         Get timestamps and ids working in WK2 gamepads (and test them!)
