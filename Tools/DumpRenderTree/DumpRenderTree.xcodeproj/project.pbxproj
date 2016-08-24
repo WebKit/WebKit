@@ -494,7 +494,6 @@
 				A8D79CE80FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.h */,
 				A8D79CE90FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m */,
 				2CE88FA117124CEE00734FC0 /* JavaScriptThreading.cpp */,
-				0F18E70E1D6BACB60027E547 /* UIScriptControllerMac.mm */,
 				44A997820FCDE86400580F10 /* WebArchiveDumpSupport.h */,
 				44A997830FCDE86400580F10 /* WebArchiveDumpSupport.cpp */,
 				440590701268453800CFD48D /* WebArchiveDumpSupportMac.mm */,
@@ -519,6 +518,8 @@
 			children = (
 				0F18E6EE1D6B9C0C0027E547 /* Bindings */,
 				0F18E6EF1D6B9C120027E547 /* Derived Sources */,
+				0F6A0DFF1D6E0F8600F1C9A8 /* ios */,
+				0F6A0E001D6E0F8A00F1C9A8 /* mac */,
 				0F18E6E81D6B9C070027E547 /* UIScriptContext.cpp */,
 				0F18E6E91D6B9C070027E547 /* UIScriptContext.h */,
 				0F18E6EA1D6B9C070027E547 /* UIScriptController.cpp */,
@@ -548,6 +549,22 @@
 			name = "Derived Sources";
 			path = DerivedSources/DumpRenderTree;
 			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0F6A0DFF1D6E0F8600F1C9A8 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				0F18E70C1D6BAC8C0027E547 /* UIScriptControllerIOS.mm */,
+			);
+			name = ios;
+			sourceTree = "<group>";
+		};
+		0F6A0E001D6E0F8A00F1C9A8 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				0F18E70E1D6BACB60027E547 /* UIScriptControllerMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
 		};
 		141BF1F5096A439800E0753C /* TestNetscapePlugIn */ = {
 			isa = PBXGroup;
@@ -728,7 +745,6 @@
 				A1158D56189273EB0088C17B /* DumpRenderTreeBrowserView.mm */,
 				A19317FC1892855F001C52B1 /* Info.plist */,
 				0F4E43E11D5C037A008EBA5C /* Launch.storyboard */,
-				0F18E70C1D6BAC8C0027E547 /* UIScriptControllerIOS.mm */,
 			);
 			name = ios;
 			sourceTree = "<group>";

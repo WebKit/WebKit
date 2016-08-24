@@ -1,5 +1,11 @@
 2016-08-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Minor project rearrangement.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
+2016-08-24  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS DRT] Make iOS DRT use the same window size as WebKitTestRunner for flexible viewport tests
         https://bugs.webkit.org/show_bug.cgi?id=161124
 
