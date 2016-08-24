@@ -1,3 +1,42 @@
+2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 fast/table tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/fast/table/003-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/024-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/031-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/032-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/004-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/bug14274-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-cell-append-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-cell-remove-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-cell-border-color-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-cell-sl-border-color-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-col-border-color-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-col-border-width-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-colgroup-border-color-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-colgroup-border-width-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-row-border-color-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-table-border-color-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-table-border-width-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-tbody-border-color-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/collapsed-borders-adjoining-sections-vertical-rl-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/collapsed-borders-painted-once-on-inner-cells-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/colspan-with-all-percent-cells-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/edge-offsets-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/table/overflowHidden-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/percent-widths-stretch-vertical-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/simple_paint-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/table-anonymous-cell-bug-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/table-anonymous-row-bug-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/table-anonymous-section-bug-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/table-cell-split-expected.txt:
+        * platform/ios-simulator-wk1/fast/table/table-insert-before-non-anonymous-block-expected.txt:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-08-24  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver on iOS ignores aria-checked on menuitemradio and menuitemcheckbox

@@ -876,7 +876,6 @@ fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-left.htm
 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-right.html [ ImageOnlyFailure ]
 fast/shapes/shape-outside-floats/shape-outside-insert-svg-shape.html [ ImageOnlyFailure ]
 fast/sub-pixel/simple-clipping.html [ ImageOnlyFailure ]
-fast/table/caption-encloses-overhanging-float.html [ ImageOnlyFailure ]
 fast/text/delete-hard-break-character.html [ Failure ]
 fast/text/simple-lines-hover-after.html [ ImageOnlyFailure ]
 fast/text/small-line-height.html [ ImageOnlyFailure ]
