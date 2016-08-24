@@ -1,3 +1,18 @@
+2016-08-24  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKit2 needs layoutTestController.setDeferMainResourceDataLoad
+        https://bugs.webkit.org/show_bug.cgi?id=42777
+
+        Reviewed by Darin Adler.
+
+        The setDeferMainResourceDataLoad method was not correctly tested in DumpRenderTree and would pass even when setDeterMainResourceDataLoad was not called.  Removed function and test.
+
+        * fast/loader/non-deferred-substitute-load-expected.txt: Removed fast/loader/non-deferred-substitute-load.html.
+        * fast/loader/non-deferred-substitute-load.html: Ditto.
+        * platform/ios-simulator-wk2/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wk2/TestExpectations: Ditto.
+
 2016-08-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, temporarily skipping W3C tests trying to load www1.localhost.

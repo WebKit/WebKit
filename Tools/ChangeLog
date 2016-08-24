@@ -1,3 +1,19 @@
+2016-08-24  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKit2 needs layoutTestController.setDeferMainResourceDataLoad
+        https://bugs.webkit.org/show_bug.cgi?id=42777
+
+        Reviewed by Darin Adler.
+
+        The setDeferMainResourceDataLoad method was not correctly tested in DumpRenderTree and would pass even when setDeterMainResourceDataLoad was not called.  Removed function and test.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setDeferMainResourceDataLoadCallback): Removed setDeferMainResourceDataLoad.
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::deferMainResourceDataLoad): Ditto.
+        (TestRunner::setDeferMainResourceDataLoad): Ditto.
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm: Ditto.
+
 2016-08-23  Anders Carlsson  <andersca@apple.com>
 
         Add enum traits and use them in the IPC::Decoder

@@ -295,9 +295,6 @@ public:
     double databaseMaxQuota() const { return m_databaseMaxQuota; }
     void setDatabaseMaxQuota(double quota) { m_databaseMaxQuota = quota; }
 
-    bool deferMainResourceDataLoad() const { return m_deferMainResourceDataLoad; }
-    void setDeferMainResourceDataLoad(bool flag) { m_deferMainResourceDataLoad = flag; }
-
     bool useDeferredFrameLoading() const { return m_useDeferredFrameLoading; }
     void setUseDeferredFrameLoading(bool flag) { m_useDeferredFrameLoading = flag; }
 
@@ -431,7 +428,6 @@ private:
     bool m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges;
     bool m_handlesAuthenticationChallenges;
     bool m_isPrinting;
-    bool m_deferMainResourceDataLoad;
     bool m_useDeferredFrameLoading;
     bool m_shouldPaintBrokenImage;
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;

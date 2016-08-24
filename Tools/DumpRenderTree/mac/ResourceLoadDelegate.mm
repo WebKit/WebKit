@@ -150,10 +150,6 @@ BOOL isAllowedHost(NSString *host)
         printf("%s\n", [string UTF8String]);
     }
 
-    if (!done && !gTestRunner->deferMainResourceDataLoad()) {
-        [dataSource _setDeferMainResourceDataLoad:false];
-    }
-
     if (!done && gTestRunner->willSendRequestReturnsNull())
         return nil;
 

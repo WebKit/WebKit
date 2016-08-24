@@ -150,10 +150,6 @@ http/tests/security/no-referrer.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42700>
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 
-# WebKit2 needs testRunner.setDeferMainResourceDataLoad
-# <https://bugs.webkit.org/show_bug.cgi?id=42777>
-fast/loader/non-deferred-substitute-load.html
-
 # WebKitTestRunner needs testRunner.removeAllVisitedLinks
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 

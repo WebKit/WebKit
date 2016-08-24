@@ -107,7 +107,6 @@ TestRunner::TestRunner(const std::string& testURL, const std::string& expectedPi
     , m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges(false)
     , m_handlesAuthenticationChallenges(false)
     , m_isPrinting(false)
-    , m_deferMainResourceDataLoad(true)
     , m_useDeferredFrameLoading(false)
     , m_shouldPaintBrokenImage(true)
     , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
@@ -911,18 +910,6 @@ static JSValueRef setDatabaseQuotaCallback(JSContextRef context, JSObjectRef fun
     if (!std::isnan(quota))
         controller->setDatabaseQuota(static_cast<unsigned long long>(quota));
         
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef setDeferMainResourceDataLoadCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    // Has Mac and Windows implementation
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setDeferMainResourceDataLoad(JSValueToBoolean(context, arguments[0]));
-
     return JSValueMakeUndefined(context);
 }
 
@@ -2150,7 +2137,6 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "setCloseRemainingWindowsWhenComplete", setCloseRemainingWindowsWhenCompleteCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setCustomPolicyDelegate", setCustomPolicyDelegateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setDatabaseQuota", setDatabaseQuotaCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete }, 
-        { "setDeferMainResourceDataLoad", setDeferMainResourceDataLoadCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setDefersLoading", setDefersLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setUseDeferredFrameLoading", setUseDeferredFrameLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setDomainRelaxationForbiddenForURLScheme", setDomainRelaxationForbiddenForURLSchemeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
