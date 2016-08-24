@@ -1,3 +1,9 @@
+2016-08-23  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update expectations of iOS simulator WK1 editing tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-08-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION: SVG clip-path doesn't work on root <svg>
