@@ -1,3 +1,46 @@
+2016-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move generic data structures out of B3
+        https://bugs.webkit.org/show_bug.cgi?id=161155
+
+        Reviewed by Saam Barati.
+
+        Add IndexSet, IndexMap, and IndexedContainerIterator.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/IndexMap.h: Copied from Source/JavaScriptCore/b3/B3IndexMap.h.
+        (WTF::IndexMap::IndexMap):
+        (WTF::IndexMap::resize):
+        (WTF::IndexMap::clear):
+        (WTF::IndexMap::size):
+        (WTF::IndexMap::operator[]):
+        * wtf/IndexSet.h: Renamed from Source/JavaScriptCore/b3/B3IndexSet.h.
+        (WTF::IndexSet::IndexSet):
+        (WTF::IndexSet::add):
+        (WTF::IndexSet::addAll):
+        (WTF::IndexSet::remove):
+        (WTF::IndexSet::contains):
+        (WTF::IndexSet::size):
+        (WTF::IndexSet::isEmpty):
+        (WTF::IndexSet::Iterable::Iterable):
+        (WTF::IndexSet::Iterable::iterator::iterator):
+        (WTF::IndexSet::Iterable::iterator::operator*):
+        (WTF::IndexSet::Iterable::iterator::operator++):
+        (WTF::IndexSet::Iterable::iterator::operator==):
+        (WTF::IndexSet::Iterable::iterator::operator!=):
+        (WTF::IndexSet::Iterable::begin):
+        (WTF::IndexSet::Iterable::end):
+        (WTF::IndexSet::values):
+        (WTF::IndexSet::indices):
+        (WTF::IndexSet::dump):
+        * wtf/IndexedContainerIterator.h: Renamed from Source/JavaScriptCore/b3/B3IndexMap.h.
+        (WTF::IndexedContainerIterator::IndexedContainerIterator):
+        (WTF::IndexedContainerIterator::operator++):
+        (WTF::IndexedContainerIterator::operator==):
+        (WTF::IndexedContainerIterator::operator!=):
+        (WTF::IndexedContainerIterator::findNext):
+
 2016-08-24  Andreas Kling  <akling@apple.com>
 
         Add WTF::isFastMallocEnabled().

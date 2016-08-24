@@ -28,8 +28,9 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3IndexSet.h"
 #include "B3Value.h"
+#include <wtf/IndexSet.h>
+#include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
 

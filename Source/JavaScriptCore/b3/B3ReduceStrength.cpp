@@ -32,7 +32,6 @@
 #include "B3BlockInsertionSet.h"
 #include "B3ComputeDivisionMagic.h"
 #include "B3Dominators.h"
-#include "B3IndexSet.h"
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValue.h"
 #include "B3PhaseScope.h"
@@ -48,6 +47,7 @@
 #include "B3VariableValue.h"
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/HashMap.h>
+#include <wtf/IndexSet.h>
 
 namespace JSC { namespace B3 {
 

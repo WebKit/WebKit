@@ -28,10 +28,10 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3IndexMap.h"
 #include "B3Procedure.h"
 #include "B3UpsilonValue.h"
 #include <wtf/GraphNodeWorklist.h>
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace B3 {
 

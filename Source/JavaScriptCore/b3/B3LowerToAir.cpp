@@ -40,8 +40,6 @@
 #include "B3CheckSpecial.h"
 #include "B3Commutativity.h"
 #include "B3Dominators.h"
-#include "B3IndexMap.h"
-#include "B3IndexSet.h"
 #include "B3MemoryValue.h"
 #include "B3PatchpointSpecial.h"
 #include "B3PatchpointValue.h"
@@ -55,6 +53,8 @@
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "B3VariableValue.h"
+#include <wtf/IndexMap.h>
+#include <wtf/IndexSet.h>
 #include <wtf/ListDump.h>
 
 #if COMPILER(GCC) && ASSERT_DISABLED

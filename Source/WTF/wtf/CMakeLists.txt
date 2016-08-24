@@ -45,6 +45,10 @@ set(WTF_HEADERS
     HashTable.h
     HashTraits.h
     HexNumber.h
+    IndexMap.h
+    IndexSet.h
+    IndexSparseSet.h
+    IndexedContainerIterator.h
     IteratorAdaptors.h
     IteratorRange.h
     ListHashSet.h

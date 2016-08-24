@@ -48,13 +48,13 @@
 #include "AirSpillEverything.h"
 #include "AirValidate.h"
 #include "B3Common.h"
-#include "B3IndexMap.h"
 #include "B3Procedure.h"
 #include "B3TimingScope.h"
 #include "B3ValueInlines.h"
 #include "CCallHelpers.h"
 #include "DisallowMacroScratchRegisterUsage.h"
 #include "LinkBuffer.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

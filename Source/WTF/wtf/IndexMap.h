@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3IndexMap_h
-#define B3IndexMap_h
-
-#if ENABLE(B3_JIT)
+#pragma once
 
 #include <wtf/Vector.h>
 
-namespace JSC { namespace B3 {
+namespace WTF {
 
 // This is a map for keys that have an index(). It's super efficient for BasicBlocks. It's only
 // efficient for Values if you don't create too many of these maps, since Values can have very
@@ -80,8 +77,6 @@ private:
     Vector<Value> m_vector;
 };
 
-} } // namespace JSC::B3
+} // namespace WTF
 
-#endif // ENABLE(B3_JIT)
-
-#endif // B3IndexMap_h
+using WTF::IndexMap;

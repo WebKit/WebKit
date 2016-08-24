@@ -786,8 +786,6 @@
 		0FEC85181BDACDAC0080FF74 /* B3Generate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC84CE1BDACDAC0080FF74 /* B3Generate.cpp */; };
 		0FEC85191BDACDAC0080FF74 /* B3Generate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84CF1BDACDAC0080FF74 /* B3Generate.h */; };
 		0FEC851A1BDACDAC0080FF74 /* B3GenericFrequentedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84D01BDACDAC0080FF74 /* B3GenericFrequentedBlock.h */; };
-		0FEC851B1BDACDAC0080FF74 /* B3IndexMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84D11BDACDAC0080FF74 /* B3IndexMap.h */; };
-		0FEC851C1BDACDAC0080FF74 /* B3IndexSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84D21BDACDAC0080FF74 /* B3IndexSet.h */; };
 		0FEC851D1BDACDAC0080FF74 /* B3LowerToAir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC84D31BDACDAC0080FF74 /* B3LowerToAir.cpp */; };
 		0FEC851E1BDACDAC0080FF74 /* B3LowerToAir.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84D41BDACDAC0080FF74 /* B3LowerToAir.h */; };
 		0FEC851F1BDACDAC0080FF74 /* B3MemoryValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC84D51BDACDAC0080FF74 /* B3MemoryValue.cpp */; };
@@ -3013,8 +3011,6 @@
 		0FEC84CE1BDACDAC0080FF74 /* B3Generate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Generate.cpp; path = b3/B3Generate.cpp; sourceTree = "<group>"; };
 		0FEC84CF1BDACDAC0080FF74 /* B3Generate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Generate.h; path = b3/B3Generate.h; sourceTree = "<group>"; };
 		0FEC84D01BDACDAC0080FF74 /* B3GenericFrequentedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3GenericFrequentedBlock.h; path = b3/B3GenericFrequentedBlock.h; sourceTree = "<group>"; };
-		0FEC84D11BDACDAC0080FF74 /* B3IndexMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3IndexMap.h; path = b3/B3IndexMap.h; sourceTree = "<group>"; };
-		0FEC84D21BDACDAC0080FF74 /* B3IndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3IndexSet.h; path = b3/B3IndexSet.h; sourceTree = "<group>"; };
 		0FEC84D31BDACDAC0080FF74 /* B3LowerToAir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3LowerToAir.cpp; path = b3/B3LowerToAir.cpp; sourceTree = "<group>"; };
 		0FEC84D41BDACDAC0080FF74 /* B3LowerToAir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3LowerToAir.h; path = b3/B3LowerToAir.h; sourceTree = "<group>"; };
 		0FEC84D51BDACDAC0080FF74 /* B3MemoryValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3MemoryValue.cpp; path = b3/B3MemoryValue.cpp; sourceTree = "<group>"; };
@@ -4812,8 +4808,6 @@
 				0FEC84D01BDACDAC0080FF74 /* B3GenericFrequentedBlock.h */,
 				0FEC85BF1BE167A00080FF74 /* B3HeapRange.cpp */,
 				0FEC85C01BE167A00080FF74 /* B3HeapRange.h */,
-				0FEC84D11BDACDAC0080FF74 /* B3IndexMap.h */,
-				0FEC84D21BDACDAC0080FF74 /* B3IndexSet.h */,
 				DC69B99A1D15F90F002E3C00 /* B3InferSwitches.cpp */,
 				DC69B99B1D15F90F002E3C00 /* B3InferSwitches.h */,
 				0FEC85B41BE1462F0080FF74 /* B3InsertionSet.cpp */,
@@ -7177,8 +7171,6 @@
 				0FEC85C31BE167A00080FF74 /* B3HeapRange.h in Headers */,
 				26718BA51BE99F780052017B /* AirIteratedRegisterCoalescing.h in Headers */,
 				0F96303C1D4192CD005609D9 /* DestructionMode.h in Headers */,
-				0FEC851B1BDACDAC0080FF74 /* B3IndexMap.h in Headers */,
-				0FEC851C1BDACDAC0080FF74 /* B3IndexSet.h in Headers */,
 				0FEC85BA1BE1462F0080FF74 /* B3InsertionSet.h in Headers */,
 				0FEC85BB1BE1462F0080FF74 /* B3InsertionSetInlines.h in Headers */,
 				0FEC851E1BDACDAC0080FF74 /* B3LowerToAir.h in Headers */,

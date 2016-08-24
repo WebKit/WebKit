@@ -20,39 +20,62 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AirGenerationContext_h
-#define AirGenerationContext_h
+#pragma once
 
-#if ENABLE(B3_JIT)
+#include <type_traits>
 
-#include "AirBasicBlock.h"
-#include "CCallHelpers.h"
-#include <wtf/Box.h>
-#include <wtf/IndexMap.h>
-#include <wtf/SharedTask.h>
-#include <wtf/Vector.h>
+namespace WTF {
 
-namespace JSC { namespace B3 { namespace Air {
+template<class Container>
+class IndexedContainerIterator {
+public:
+    IndexedContainerIterator()
+        : m_container(nullptr)
+        , m_index(0)
+    {
+    }
 
-class Code;
+    IndexedContainerIterator(const Container& container, unsigned index)
+        : m_container(&container)
+        , m_index(findNext(index))
+    {
+    }
 
-struct GenerationContext {
-    typedef void LatePathFunction(CCallHelpers&, GenerationContext&);
-    typedef SharedTask<LatePathFunction> LatePath;
+    auto operator*() -> typename std::result_of<decltype(&Container::at)(const Container, unsigned)>::type
+    {
+        return m_container->at(m_index);
+    }
 
-    Vector<RefPtr<LatePath>> latePaths;
-    IndexMap<BasicBlock, Box<CCallHelpers::Label>> blockLabels;
-    BasicBlock* currentBlock { nullptr };
-    unsigned indexInBlock { UINT_MAX };
-    Code* code { nullptr };
+    IndexedContainerIterator& operator++()
+    {
+        m_index = findNext(m_index + 1);
+        return *this;
+    }
+
+    bool operator==(const IndexedContainerIterator& other) const
+    {
+        ASSERT(m_container == other.m_container);
+        return m_index == other.m_index;
+    }
+
+    bool operator!=(const IndexedContainerIterator& other) const
+    {
+        return !(*this == other);
+    }
+
+private:
+    unsigned findNext(unsigned index)
+    {
+        while (index < m_container->size() && !m_container->at(index))
+            index++;
+        return index;
+    }
+
+    const Container* m_container;
+    unsigned m_index;
 };
 
-} } } // namespace JSC::B3::Air
-
-#endif // ENABLE(B3_JIT)
-
-#endif // AirGenerationContext_h
-
+} // namespace WTF

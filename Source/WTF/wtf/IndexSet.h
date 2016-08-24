@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3IndexSet_h
-#define B3IndexSet_h
+#pragma once
 
 #include <wtf/BitVector.h>
 #include <wtf/CommaPrinter.h>
 
-namespace JSC { namespace B3 {
+namespace WTF {
 
 // This is a set for things that have an index(). It's super efficient for BasicBlocks. It's only
 // efficient for Values if you don't create too many of these sets, since Values can have very sparse
@@ -159,7 +158,6 @@ private:
     BitVector m_set;
 };
 
-} } // namespace JSC::B3
+} // namespace WTF
 
-#endif // B3IndexSet_h
-
+using WTF::IndexSet;

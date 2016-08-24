@@ -29,9 +29,9 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Dominators.h"
-#include "B3IndexMap.h"
 #include "B3ProcedureInlines.h"
 #include <wtf/Bag.h>
+#include <wtf/IndexMap.h>
 #include <wtf/SegmentedVector.h>
 
 namespace JSC { namespace B3 {

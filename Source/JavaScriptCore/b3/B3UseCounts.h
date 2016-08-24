@@ -28,8 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3IndexMap.h"
 #include "B3Value.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace B3 {
 

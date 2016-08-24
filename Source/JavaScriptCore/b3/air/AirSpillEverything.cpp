@@ -35,7 +35,7 @@
 #include "AirLiveness.h"
 #include "AirPhaseScope.h"
 #include "AirRegisterPriority.h"
-#include "B3IndexMap.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

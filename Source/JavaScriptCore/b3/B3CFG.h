@@ -29,9 +29,9 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BasicBlock.h"
-#include "B3IndexMap.h"
-#include "B3IndexSet.h"
 #include "B3Procedure.h"
+#include <wtf/IndexMap.h>
+#include <wtf/IndexSet.h>
 
 namespace JSC { namespace B3 {
 

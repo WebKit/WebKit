@@ -28,12 +28,13 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3BasicBlock.h"
-#include "B3IndexSet.h"
 #include <wtf/GraphNodeWorklist.h>
+#include <wtf/IndexSet.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
+
+class BasicBlock;
 
 typedef GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> BlockWorklist;
 

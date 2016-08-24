@@ -1,3 +1,70 @@
+2016-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move generic data structures out of B3
+        https://bugs.webkit.org/show_bug.cgi?id=161155
+
+        Reviewed by Saam Barati.
+
+        Move B3's good generic data structures to WTF.
+        They can be used for the other kind of basic blocks and nodes.
+        For example, the generator patch[1] will make BytecodeBasicBlock usable with these structures.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=152723
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3BasicBlockUtils.h:
+        * b3/B3BlockWorklist.h:
+        * b3/B3CFG.h:
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3FixSSA.cpp:
+        * b3/B3FixSSA.h:
+        * b3/B3IndexMap.h:
+        (JSC::B3::IndexMap::IndexMap): Deleted.
+        (JSC::B3::IndexMap::resize): Deleted.
+        (JSC::B3::IndexMap::clear): Deleted.
+        (JSC::B3::IndexMap::size): Deleted.
+        (JSC::B3::IndexMap::operator[]): Deleted.
+        * b3/B3IndexSet.h:
+        (JSC::B3::IndexSet::IndexSet): Deleted.
+        (JSC::B3::IndexSet::add): Deleted.
+        (JSC::B3::IndexSet::addAll): Deleted.
+        (JSC::B3::IndexSet::remove): Deleted.
+        (JSC::B3::IndexSet::contains): Deleted.
+        (JSC::B3::IndexSet::size): Deleted.
+        (JSC::B3::IndexSet::isEmpty): Deleted.
+        (JSC::B3::IndexSet::Iterable::Iterable): Deleted.
+        (JSC::B3::IndexSet::Iterable::iterator::iterator): Deleted.
+        (JSC::B3::IndexSet::Iterable::iterator::operator*): Deleted.
+        (JSC::B3::IndexSet::Iterable::iterator::operator++): Deleted.
+        (JSC::B3::IndexSet::Iterable::iterator::operator==): Deleted.
+        (JSC::B3::IndexSet::Iterable::iterator::operator!=): Deleted.
+        (JSC::B3::IndexSet::Iterable::begin): Deleted.
+        (JSC::B3::IndexSet::Iterable::end): Deleted.
+        (JSC::B3::IndexSet::values): Deleted.
+        (JSC::B3::IndexSet::indices): Deleted.
+        (JSC::B3::IndexSet::dump): Deleted.
+        * b3/B3LowerToAir.cpp:
+        * b3/B3PhiChildren.h:
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::iterator::iterator): Deleted.
+        (JSC::B3::Procedure::iterator::operator*): Deleted.
+        (JSC::B3::Procedure::iterator::operator++): Deleted.
+        (JSC::B3::Procedure::iterator::operator==): Deleted.
+        (JSC::B3::Procedure::iterator::operator!=): Deleted.
+        (JSC::B3::Procedure::iterator::findNext): Deleted.
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3SSACalculator.h:
+        * b3/B3UseCounts.h:
+        * b3/air/AirCode.h:
+        * b3/air/AirEliminateDeadCode.cpp:
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        * b3/air/AirGenerate.cpp:
+        * b3/air/AirGenerationContext.h:
+        * b3/air/AirLiveness.h:
+        * b3/air/AirSpillEverything.cpp:
+
 2016-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.

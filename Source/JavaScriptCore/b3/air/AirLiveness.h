@@ -33,8 +33,8 @@
 #include "AirInstInlines.h"
 #include "AirStackSlot.h"
 #include "AirTmpInlines.h"
-#include "B3IndexMap.h"
-#include "B3IndexSet.h"
+#include <wtf/IndexMap.h>
+#include <wtf/IndexSet.h>
 #include <wtf/IndexSparseSet.h>
 #include <wtf/ListDump.h>
 

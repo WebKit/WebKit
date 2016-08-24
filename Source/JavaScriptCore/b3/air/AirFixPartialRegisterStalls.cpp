@@ -34,9 +34,9 @@
 #include "AirInst.h"
 #include "AirInstInlines.h"
 #include "AirPhaseScope.h"
-#include "B3IndexMap.h"
-#include "B3IndexSet.h"
 #include "MacroAssembler.h"
+#include <wtf/IndexMap.h>
+#include <wtf/IndexSet.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 { namespace Air {
