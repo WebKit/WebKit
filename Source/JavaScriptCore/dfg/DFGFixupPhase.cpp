@@ -387,6 +387,7 @@ private:
         }
 
         case ArithCos:
+        case ArithLog:
         case ArithSin:
         case ArithSqrt: {
             Edge& child1 = node->child1();
@@ -396,8 +397,7 @@ private:
                 fixEdge<UntypedUse>(child1);
             break;
         }
-        case ArithFRound:
-        case ArithLog: {
+        case ArithFRound: {
             fixDoubleOrBooleanEdge(node->child1());
             node->setResult(NodeResultDouble);
             break;

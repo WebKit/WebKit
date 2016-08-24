@@ -155,7 +155,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithMax:
     case ArithPow:
     case ArithFRound:
-    case ArithLog:
     case GetScope:
     case SkipScope:
     case GetGlobalObject:
@@ -188,6 +187,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case ArithCos:
+    case ArithLog:
     case ArithSin:
     case ArithSqrt:
         if (node->child1().useKind() == DoubleRepUse)

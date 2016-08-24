@@ -2302,7 +2302,16 @@ private:
         setDouble(result);
     }
 
-    void compileArithLog() { setDouble(m_out.doubleLog(lowDouble(m_node->child1()))); }
+    void compileArithLog()
+    {
+        if (m_node->child1().useKind() == DoubleRepUse) {
+            setDouble(m_out.doubleLog(lowDouble(m_node->child1())));
+            return;
+        }
+        LValue argument = lowJSValue(m_node->child1());
+        LValue result = vmCall(Double, m_out.operation(operationArithLog), m_callFrame, argument);
+        setDouble(result);
+    }
     
     void compileArithFRound()
     {

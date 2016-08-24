@@ -1010,7 +1010,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(log(child.asNumber())));
             break;
         }
-        forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
+        SpeculatedType logType = SpecFullNumber;
+        if (node->child1().useKind() == DoubleRepUse)
+            logType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
+        forNode(node).setType(logType);
         break;
     }
             

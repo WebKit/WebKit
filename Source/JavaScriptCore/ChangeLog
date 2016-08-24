@@ -1,3 +1,27 @@
+2016-08-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Make ArithLog works with any type
+        https://bugs.webkit.org/show_bug.cgi?id=161110
+
+        Reviewed by Geoffrey Garen.
+
+        Same old: if the type is not a number, assume the worst in every
+        phase and generate a fallback function call.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithLog):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithLog):
+
 2016-08-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline builtins-generator-tests after r204854.

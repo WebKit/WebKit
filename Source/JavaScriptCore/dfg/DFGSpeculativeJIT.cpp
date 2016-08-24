@@ -5125,11 +5125,22 @@ void SpeculativeJIT::compileArithPow(Node* node)
 
 void SpeculativeJIT::compileArithLog(Node* node)
 {
-    SpeculateDoubleOperand op1(this, node->child1());
-    FPRReg op1FPR = op1.fpr();
+    if (node->child1().useKind() == DoubleRepUse) {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRReg op1FPR = op1.fpr();
+        flushRegisters();
+        FPRResult result(this);
+        callOperation(log, result.fpr(), op1FPR);
+        doubleResult(result.fpr(), node);
+        return;
+    }
+
+    JSValueOperand op1(this, node->child1());
+    JSValueRegs op1Regs = op1.jsValueRegs();
     flushRegisters();
     FPRResult result(this);
-    callOperation(log, result.fpr(), op1FPR);
+    callOperation(operationArithLog, result.fpr(), op1Regs);
+    m_jit.exceptionCheck();
     doubleResult(result.fpr(), node);
 }
 

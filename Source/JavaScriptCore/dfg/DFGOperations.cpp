@@ -334,6 +334,18 @@ double JIT_OPERATION operationArithCos(ExecState* exec, EncodedJSValue encodedOp
     return cos(a);
 }
 
+double JIT_OPERATION operationArithLog(ExecState* exec, EncodedJSValue encodedOp1)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    double a = op1.toNumber(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
+    return log(a);
+}
+
 double JIT_OPERATION operationArithSin(ExecState* exec, EncodedJSValue encodedOp1)
 {
     VM* vm = &exec->vm();
