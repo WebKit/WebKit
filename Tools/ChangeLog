@@ -1,3 +1,24 @@
+2016-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS DRT] Make iOS DRT use the same window size as WebKitTestRunner for flexible viewport tests
+        https://bugs.webkit.org/show_bug.cgi?id=161124
+
+        Reviewed by Daniel Bates.
+        
+        Use the main UIScreen's bounds for the size of the window in flexible viewport mode,
+        and remove the 'phoneBrowserAddressBarOffset' hack, so that it matches WTR.
+        
+        Remove some unnecessary zero initializations of static variables.
+        
+        Change _setVisibleSize to use the window size, which should not be a behavior change
+        because this it just used for text autosizing, which is disabled by default,
+        and only the width is consulted.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (adjustWebDocumentForFlexibleViewport):
+        (adjustWebDocumentForStandardViewport):
+        (createWebViewAndOffscreenWindow):
+
 2016-08-24  Jonathan Bedard  <jbedard@apple.com>
 
         WebKit2 needs layoutTestController.setDeferMainResourceDataLoad
