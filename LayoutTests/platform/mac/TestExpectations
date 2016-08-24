@@ -1344,9 +1344,6 @@ webkit.org/b/159003 [ Yosemite ElCapitan ] fast/text/font-cursive-italic-cjk-2.h
 
 webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure ]
 
-# <rdar://problem/22950905> REGRESSION (Sierra): canvas-alphaImageData-behavior very flaky
-[ Sierra+ ] fast/canvas/canvas-alphaImageData-behavior.html [ Pass Failure ]
-
 # <rdar://problem/23500327> storage/websql/alter-to-info-table.html
 [ Sierra+ ] storage/websql/alter-to-info-table.html [ Pass Failure ]
 

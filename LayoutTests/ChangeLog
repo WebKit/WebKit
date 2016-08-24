@@ -1,3 +1,11 @@
+2016-08-23  Dean Jackson  <dino@apple.com>
+
+        fast/canvas/canvas-alphaImageData-behavior.html doesn't appear to be flakey any
+        more. Removing the "Fail" marker for macOS Sierra.
+        <rdar://problem/22950905>
+
+        * platform/mac/TestExpectations:
+
 2016-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         iOS layout test gardening in fast/events
