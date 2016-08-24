@@ -1,3 +1,16 @@
+2016-08-23  Filip Pizlo  <fpizlo@apple.com>
+
+        js/regress/put-by-id-transition-with-indexing-header.html and svg/carto.net/window.svg fail in debug after r204854
+        https://bugs.webkit.org/show_bug.cgi?id=161115
+
+        Reviewed by Keith Miller.
+        
+        There were two small goofs.
+
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::isNull): The new policy is that the allocator can be null. So now the way you tell if the profile is null is by checking the structure.
+        * jit/JITOperations.cpp: This was using DeferGC, which is now definitely wrong. It forces the GC to happen when the structure and butterfly are mismatched. It's better for the GC to happen before we put the butterfly in the object.
+
 2016-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         AssemblyHelpers::emitAllocateWithNonNullAllocator() crashes in the FTL on ARM64

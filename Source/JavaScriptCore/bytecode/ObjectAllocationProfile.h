@@ -45,7 +45,7 @@ public:
     {
     }
 
-    bool isNull() { return !m_allocator; }
+    bool isNull() { return !m_structure; }
 
     void initialize(VM& vm, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity)
     {

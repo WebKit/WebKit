@@ -2119,7 +2119,6 @@ char* JIT_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitial
     NativeCallFrameTracer tracer(&vm, exec);
 
     ASSERT(!object->structure()->outOfLineCapacity());
-    DeferGC deferGC(vm.heap);
     Butterfly* result = object->growOutOfLineStorage(vm, 0, initialOutOfLineCapacity);
     object->setButterflyWithoutChangingStructure(vm, result);
     return reinterpret_cast<char*>(result);
@@ -2130,7 +2129,6 @@ char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    DeferGC deferGC(vm.heap);
     Butterfly* result = object->growOutOfLineStorage(vm, object->structure()->outOfLineCapacity(), newSize);
     object->setButterflyWithoutChangingStructure(vm, result);
     return reinterpret_cast<char*>(result);
