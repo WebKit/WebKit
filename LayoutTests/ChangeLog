@@ -1,5 +1,13 @@
 2016-08-23  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS layout test gardening in fast/events
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
+2016-08-23  Simon Fraser  <simon.fraser@apple.com>
+
         Fix a formatting error in TestExpectations.
 
         * platform/ios-simulator-wk1/TestExpectations:

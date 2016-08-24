@@ -813,7 +813,6 @@ fast/dom/MutationObserver/observer-wrapper-dropoff-transient.html
 fast/dom/Window/window-open-pending-url.html
 fast/events/media-element-focus-tab.html
 fast/events/message-port-no-wrapper.html
-fast/events/page-visibility-iframe-move-test.html
 fast/events/scroll-event-during-modal-dialog.html
 fast/forms/fallback-content-submission.html
 fast/frames/hover-timer-crash.html
@@ -1740,8 +1739,6 @@ fast/forms/focus-option-control-on-page.html [ Skip ]
 # Skip timeouts
 fast/dom/Geolocation/startUpdatingOnlyWhenPageVisible.html [ Skip ]
 fast/dom/Geolocation/stopUpdatingForHiddenPage.html [ Skip ]
-webkit.org/b/148709 fast/events/wheelevent-basic.html [ Skip ]
-webkit.org/b/148709 fast/events/wheelevent-mousewheel-interaction.html [ Skip ]
 
 # Flaky tests that need bugs
 fast/dom/Window/post-message-crash.html [ Pass Failure ]

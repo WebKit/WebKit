@@ -60,13 +60,31 @@ fast/history/page-cache-suspended-audiocontext.html
 # WebRTC tests are skipped on iOS for now.
 fast/events/constructors/media-stream-event-constructor.html
 
-# No mousewheel events on iOS
+# No wheel events on iOS
 fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
 fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 fast/events/wheel-event-destroys-frame.html [ Skip ]
 fast/events/wheel-event-destroys-overflow.html [ Skip ]
 fast/events/wheel-event-outside-body.html [ Skip ]
 fast/scrolling/scroll-container-horizontally.html [ Failure ]
+fast/events/wheelevent-basic.html [ Skip ]
+fast/events/wheelevent-direction-inverted-from-device.html [ Skip ]
+fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Skip ]
+fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Skip ]
+fast/events/wheelevent-mousewheel-interaction.html [ Skip ]
+fast/events/platform-wheelevent-in-scrolling-div.html [ Skip ]
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Skip ]
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Skip ]
+fast/events/platform-wheelevent-paging-x-in-scrolling-div.html [ Skip ]
+fast/events/platform-wheelevent-paging-x-in-scrolling-page.html [ Skip ]
+fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html [ Skip ]
+fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html [ Skip ]
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Skip ]
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Skip ]
+fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Skip ]
+fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
+fast/events/wheelevent-in-text-node.html [ Skip ]
+fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Skip ]
 
 # Not supported on iOS
 batterystatus
@@ -1587,7 +1605,6 @@ fast/events/constructors/mouse-event-constructor.html [ Failure ]
 fast/events/constructors/wheel-event-constructor.html [ Failure ]
 fast/events/context-onmousedown-event.html [ Failure ]
 fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
-fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
 fast/events/data-transfer-files-attribute-identity.html [ Failure ]
 fast/events/dblclick-addEventListener.html [ Failure ]
 fast/events/document-elementFromPoint.html [ Failure ]
@@ -1644,17 +1661,6 @@ fast/events/ondrop-text-html.html [ Failure ]
 fast/events/overflow-scroll-fake-mouse-move.html [ Failure ]
 fast/events/page-scaled-mouse-click-iframe.html [ Failure ]
 fast/events/page-scaled-mouse-click.html [ Failure ]
-fast/events/platform-wheelevent-in-scrolling-div.html [ Failure ]
-fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
-fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
-fast/events/platform-wheelevent-paging-x-in-scrolling-div.html [ Failure ]
-fast/events/platform-wheelevent-paging-x-in-scrolling-page.html [ Failure ]
-fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html [ Failure ]
-fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html [ Failure ]
-fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Failure ]
-fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
-fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
-fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
 fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 fast/events/right-click-focus.html [ Failure ]
 fast/events/scale-and-scroll-body.html [ Failure ]
@@ -1681,12 +1687,6 @@ fast/events/tabindex-focus-blur-all.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html [ ImageOnlyFailure ]
 # Ref-test imported form W3C that is failing because the test is off by a couple of pixels on iOS.
 imported/w3c/css/css-multicol-1/multicol-fill-auto-block-children-001.xht [ ImageOnlyFailure ]
-
-fast/events/wheelevent-basic.html [ Failure ]
-fast/events/wheelevent-direction-inverted-from-device.html [ Failure ]
-fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
-fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
-fast/events/wheelevent-mousewheel-interaction.html [ Failure ]
 
 fast/events/zoom-dblclick.html [ Failure ]
 fast/files/file-list-test.html [ Failure ]
@@ -2366,7 +2366,6 @@ fast/events/mouse-cursor-image-set.html
 fast/events/recorded-keydown-event.html
 fast/events/remove-child-onscroll.html
 fast/events/resize-subframe.html
-fast/events/wheelevent-in-text-node.html
 fast/events/will-reveal-edges-body-attributes.html
 fast/events/will-reveal-edges-event-listeners.html
 fast/events/will-reveal-edges-window-attributes.html
@@ -3147,3 +3146,5 @@ media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
 media/video-seek-to-current-time.html [ Failure ]
 
 fast/attachment/attachment-wrapping-action.html [ Pass ]
+
+fast/events/page-visibility-iframe-move-test.html [ Skip ]
