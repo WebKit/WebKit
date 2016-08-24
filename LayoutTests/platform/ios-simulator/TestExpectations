@@ -3147,3 +3147,5 @@ media/video-seek-to-current-time.html [ Failure ]
 fast/attachment/attachment-wrapping-action.html [ Pass ]
 
 fast/events/page-visibility-iframe-move-test.html [ Skip ]
+
+webkit.org/b/161143 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-samedoc.html [ Pass Failure ]

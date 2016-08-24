@@ -1,3 +1,12 @@
+2016-08-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking wpt LayoutTest scroll-restoration-fragment-scrolling-samedoc.html as flaky on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=161143
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update expectations of iOS simulator WK1 svg tests
