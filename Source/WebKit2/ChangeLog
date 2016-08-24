@@ -1,3 +1,17 @@
+2016-08-24  Anders Carlsson  <andersca@apple.com>
+
+        In some cases, an IPC::Connection won't know when the other end has gone away
+        https://bugs.webkit.org/show_bug.cgi?id=161153
+        rdar://problem/27896368
+
+        Reviewed by Dan Bernstein.
+
+        When being asked to invalidate a connection that isn't yet connected, make sure to release
+        our send and receive rights so that the other end will get a failure when trying to connect.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate):
+
 2016-08-24  Dan Bernstein  <mitz@apple.com>
 
         Add a convenience function for creating a WKFrameHandleRef from a WKFrameRef without going through WKFrameInfoRef
