@@ -1,3 +1,16 @@
+2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 css3 tests
+
+        * platform/ios-simulator-wk1/css3/blending/blend-mode-accelerated-with-multiple-stacking-contexts-expected.txt: Removed.
+        * platform/ios-simulator-wk1/css3/blending/blend-mode-ancestor-clipping-layer-expected.txt: Removed.
+        * platform/ios-simulator-wk1/css3/blending/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer-expected.txt: Removed.
+        * platform/ios-simulator-wk1/css3/blending/blend-mode-isolation-accelerated-overflow-hidden-expected.txt: Removed.
+        * platform/ios-simulator-wk1/css3/blending/blend-mode-with-accelerated-sibling-expected.txt: Removed.
+        * platform/ios-simulator-wk1/css3/blending/blend-mode-with-composited-descendant-should-have-layer-expected.txt: Removed.
+        * platform/ios-simulator-wk1/css3/filters/backdrop/backdrop-filter-does-not-size-properly-border-and-padding-expected.txt: Removed.
+        * platform/ios-simulator-wk1/css3/filters/filtered-compositing-descendant-expected.txt: Removed.
+
 2016-08-24  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS DRT] Get basic viewport tests working in DRT
