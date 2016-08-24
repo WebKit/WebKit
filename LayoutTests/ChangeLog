@@ -1,3 +1,14 @@
+2016-08-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] http server is not starting.
+        https://bugs.webkit.org/show_bug.cgi?id=161134
+
+        Reviewed by Alexey Proskuryakov.
+
+        Avoid setting the php ini folder twice, it is not allowed by xampp.
+
+        * http/conf/apache2.4-httpd-win.conf:
+
 2016-08-24  Nan Wang  <n_wang@apple.com>
 
         AX: Add test for line text marker range on iOS
