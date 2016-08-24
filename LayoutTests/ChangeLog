@@ -1,3 +1,12 @@
+2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update expectations of iOS simulator WK1 css3 tests
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-08-24  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit: ASSERT(!m_parserScheduler) in ~HTMLDocumentParser()

@@ -725,13 +725,17 @@ css2.1/t1508-c527-font-07-b.html [ Failure ]
 css2.1/t1508-c527-font-08-b.html [ Failure ]
 css2.1/t1508-c527-font-09-b.html [ Failure ]
 css2.1/t1508-c527-font-10-c.html [ Failure ]
+css3/blending/blend-mode-isolation-flags-turn-off-blending.html [ Failure ]
+css3/blending/blend-mode-isolation-flags-turn-on-stacking-context.html [ Failure ]
 css3/filters/remove-filter-repaint.html [ ImageOnlyFailure ]
 css3/flexbox/content-height-with-scrollbars.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
-css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-030.html [ ImageOnlyFailure ]
-css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-031.html [ ImageOnlyFailure ]
-css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-030.html [ ImageOnlyFailure ]
-css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-031.html [ ImageOnlyFailure ]
+
+# CSS tests that pass:
+css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
+css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
+css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
+css3/flexbox/image-percent-max-height.html [ Pass ]
 
 # Perf tests that fail:
 perf/show-hide-table-rows.html [ Failure ]
