@@ -98,3 +98,114 @@
             throw new Error("bad result: " + o1.y + "!==" + o2.y);
     }
 })();
+
+(function() {
+    var foo = function(a, b) {
+        for (var p = b in a) {}
+        return p;
+    };
+    noInline(foo);
+    for (var i = 0; i < 10000; ++i) {
+        var expected = 'expected-result';
+        var result = foo({}, expected);
+        if (expected !== result)
+            throw new Error("bad result: " + result + "!==" + expected);
+    }
+    for (var i = 0; i < 10000; ++i) {
+        var expected = 'a';
+        var result = foo({a:'abcd'}, expected);
+        if (expected !== result)
+            throw new Error("bad result: " + result + "!==" + expected);
+    }
+    for (var i = 0; i < 10000; ++i) {
+        var expected = 'b';
+        var result = foo({a:'abcd', b: 'bcde'}, expected);
+        if (expected !== result)
+            throw new Error("bad result: " + result + "!==" + expected);
+    }
+
+    for (var i = 0; i < 10000; ++i) {
+        var expected = 'c';
+        var o = {a:'abcd', b: 'bcde'};
+        o.c = 'cdef';
+        var result = foo(o, expected);
+        if (expected !== result)
+            throw new Error("bad result: " + result + "!==" + expected);
+    }
+})();
+
+(function() {
+    var boo = function () { return 'expected-result'; };
+    var foo = function(a) {
+        for (var p = boo() in a) {}
+        return p;
+    };
+    noInline(foo);
+    for (var i = 0; i < 10000; ++i) {
+        var expected = 'expected-result';
+        var result = foo({});
+        if (expected !== result)
+            throw new Error("bad result: " + result + "!==" + expected);
+    }
+})();
+
+(function() {
+    var foo = function(a, b, first) {
+        {   
+            let p = 'some-value';
+            for (var p = b in a) {}
+            if (first)
+                return p;
+        }
+        return p;
+    };
+    noInline(foo);
+    for (var i = 0; i < 10000; ++i) {
+        var expected = 'expected-result';
+        var result = foo({}, expected, true);
+        if (expected !== result)
+            throw new Error("bad result: " + result + "!==" + expected);
+    }
+    for (var i = 0; i < 10000; ++i) {
+        var expected = 'expected-result';
+        var result = foo({}, expected, false);
+        if (typeof result !== 'undefined')
+            throw new Error("bad result: " + result + "!== undefined");
+    }
+})();
+
+(function() {
+    var foo = function(a, b, c) {
+        for (var p = b + c in a) {}
+        return p;
+    };
+    noInline(foo);
+    for (var i = 0; i < 10000; ++i) {
+        var expected = 'expected-result';
+        var result = foo({}, 'expected', '-result');
+        if (expected !== result)
+            throw new Error("bad result: " + result + "!==" + expected);
+    }
+})();
+
+(function() {
+    var error = false;
+    try {
+        eval("(function() { 'use strict'; for (var i = 0 in {}) {}})()");
+    } catch(e) {
+        error = e instanceof SyntaxError;
+    }
+    if (!error)
+        throw new Error("Expected SyntaxError error");
+})();
+
+(function() {
+    var error = false;
+    try {
+        eval("(function() { const i = 10; for (var i = 0 in {}) {}})()");
+    } catch(e) {
+        error = e instanceof SyntaxError;
+    }
+    if (!error)
+        throw new Error("Expected SyntaxError error");
+})();

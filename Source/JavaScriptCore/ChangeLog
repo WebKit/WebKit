@@ -1,3 +1,23 @@
+2016-08-24  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES2016] Allow assignment in for-in head in not-strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=160955
+
+        Reviewed by Saam Barati.
+
+        This patch allow make assignment in for..in head in not-strict mode, 
+        according to the spec https://tc39.github.io/ecma262/#sec-initializers-in-forin-statement-heads
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isAssignResolveNode):
+        (JSC::AssignResolveNode::identifier):
+        (JSC::ExpressionNode::isResolveNode): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseForStatement):
+
 2016-08-23  Saam Barati  <sbarati@apple.com>
 
         It should be easy to run ES6SampleBench from the jsc shell

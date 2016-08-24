@@ -346,7 +346,7 @@ invalid("for (a ? b : c in c) break");
 valid  ("for ((a ? b : c) in c) break");
 valid  ("for (var a in b in c) break");
 valid("for (var a = 5 += 6 in b) break");
-valid("for (var a = debug('should not be hit') in b) break");
+valid("for (var a = foo('should be hit') in b) break");
 invalid("for (var a += 5 in b) break");
 invalid("for (var a = in b) break");
 invalid("for (var a, b in b) break");

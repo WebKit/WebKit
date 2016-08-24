@@ -1,3 +1,15 @@
+2016-08-24  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES2016] Allow assignment in for-in head in not-strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=160955
+
+        Reviewed by Saam Barati.
+
+        * stress/for-in-tests.js:
+        (foo):
+        (boo):
+        (catch):
+
 2016-08-23  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Make ArithLog works with any type

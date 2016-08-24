@@ -1,3 +1,13 @@
+2016-08-24  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES2016] Allow assignment in for-in head in not-strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=160955
+
+        Reviewed by Saam Barati.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2016-08-24  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Test gardening

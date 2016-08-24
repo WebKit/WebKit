@@ -1203,8 +1203,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         TreeStatement result;
         if (isOfEnumeration)
             result = context.createForOfLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
-        else
-            result = context.createForInLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
+        else {
+            if (isVarDeclaraton && forInInitializer)
+                result = context.createForInLoop(location, decls, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
+            else
+                result = context.createForInLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
+        }
         popLexicalScopeIfNecessary();
         return result;
     }
