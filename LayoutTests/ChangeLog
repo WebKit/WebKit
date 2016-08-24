@@ -1,3 +1,9 @@
+2016-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix a formatting error in TestExpectations.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-08-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update expectations of iOS simulator WK1 editing tests
