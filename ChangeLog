@@ -1,3 +1,9 @@
+2016-08-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Add svn:global-ignores to the root to ignore *.pyc files everythere in the repository.
+
+        * .: Added property svn:global-ignores.
+
 2016-08-19  Dean Jackson  <dino@apple.com>
 
         Implement preferLowPowerToHighPerformance for WebGL
