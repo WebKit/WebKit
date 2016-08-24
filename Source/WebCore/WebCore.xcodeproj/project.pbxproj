@@ -25,6 +25,7 @@
 			buildConfigurationList = DD041FC109D9DDDC0010AF2A /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
 				DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */,
+				1A932ED91D6D2DFC00AB8E6F /* Make Phony WebKitLegacy.framework */,
 			);
 			dependencies = (
 			);
@@ -27142,6 +27143,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1A932ED91D6D2DFC00AB8E6F /* Make Phony WebKitLegacy.framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Configurations/WebKitLegacyStub.iOS.tbd",
+			);
+			name = "Make Phony WebKitLegacy.framework";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PhonyWebKitLegacy/WebKitLegacy.framework/WebKitLegacy.tbd",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ditto \"${SRCROOT}/Configurations/WebKitLegacyStub.iOS.tbd\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/PhonyWebKitLegacy/WebKitLegacy.framework/WebKitLegacy.tbd\"";
+		};
 		37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
