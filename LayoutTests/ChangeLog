@@ -1,3 +1,16 @@
+2016-08-24  Nan Wang  <n_wang@apple.com>
+
+        AX: Add test for line text marker range on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=161108
+        <rdar://problem/27976405>
+
+        Reviewed by Chris Fleizach.
+
+        Added a new test to test line text marker ranges on iOS.
+
+        * accessibility/ios-simulator/text-marker-range-for-line-expected.txt: Added.
+        * accessibility/ios-simulator/text-marker-range-for-line.html: Added.
+
 2016-08-24  Brady Eidson  <beidson@apple.com>
 
         Changing gamepad test to try to get more info about the failure mode on the bots.

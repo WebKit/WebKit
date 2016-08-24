@@ -1,3 +1,18 @@
+2016-08-24  Nan Wang  <n_wang@apple.com>
+
+        AX: Add test for line text marker range on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=161108
+        <rdar://problem/27976405>
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::textMarkerRangeForElement):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::textMarkerRangeForElement):
+
 2016-08-24  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Warning fixes.
