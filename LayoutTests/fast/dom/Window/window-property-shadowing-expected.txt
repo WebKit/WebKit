@@ -158,6 +158,7 @@ PASS: HTMLUListElement successfully shadowed
 PASS: Event successfully shadowed
 PASS: MutationEvent successfully shadowed
 PASS: NodeFilter successfully shadowed
+PASS: OverconstrainedError successfully shadowed
 PASS: Range successfully shadowed
 PASS: RangeException successfully shadowed
 PASS: XMLDocument successfully shadowed

@@ -155,6 +155,8 @@ PASS: canGet('NodeFilter') should be 'true' and is.
 PASS: canSet('NodeFilter') should be 'true' and is.
 PASS: canGet('Option') should be 'true' and is.
 PASS: canSet('Option') should be 'true' and is.
+PASS: canGet('OverconstrainedError') should be 'true' and is.
+PASS: canSet('OverconstrainedError') should be 'true' and is.
 PASS: canGet('ProcessingInstruction') should be 'true' and is.
 PASS: canSet('ProcessingInstruction') should be 'true' and is.
 PASS: canGet('Range') should be 'true' and is.
