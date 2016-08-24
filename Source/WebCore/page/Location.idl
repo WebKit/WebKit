@@ -27,6 +27,7 @@
  */
 
 [
+    CheckSecurity,
     CustomDeleteProperty,
     CustomEnumerateProperty,
     CustomNamedSetter,
@@ -40,7 +41,7 @@
     [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString href;
 
     [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void assign(USVString url);
-    [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(USVString url);
+    [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(USVString url);
     [CallWith=ActiveWindow, ForwardDeclareInHeader] void reload();
 
     // URI decomposition attributes

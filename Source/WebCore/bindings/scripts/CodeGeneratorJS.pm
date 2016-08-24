@@ -2830,7 +2830,11 @@ sub GenerateImplementation
             if ($interface->extendedAttributes->{"CheckSecurity"} &&
                 !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} &&
                 !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
-                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
+                if ($interfaceName eq "DOMWindow") {
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
+                } else {
+                    push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))\n");
+                }
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
 
@@ -3387,9 +3391,12 @@ END
             } else {
                 GenerateFunctionCastedThis($interface, $className, $function);
 
-                if ($interface->extendedAttributes->{"CheckSecurity"} and
-                    !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
-                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
+                if ($interface->extendedAttributes->{"CheckSecurity"} and !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
+                    if ($interfaceName eq "DOMWindow") {
+                        push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
+                    } else {
+                        push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))\n");
+                    }
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                 }
 
