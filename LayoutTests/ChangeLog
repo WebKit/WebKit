@@ -1,3 +1,11 @@
+2016-08-24  Brady Eidson  <beidson@apple.com>
+
+        Changing gamepad test to try to get more info about the failure mode on the bots.
+
+        Unreviewed.
+
+        * gamepad/gamepad-timestamp.html:
+
 2016-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add ios-simulator baseline for newly imported test.

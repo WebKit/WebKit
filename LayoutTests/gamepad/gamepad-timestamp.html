@@ -40,6 +40,7 @@ function rafCallback()
 
     if (++rafCount == 120) {
         log("Went 120 RAF cycles without seeing 10 increasing timestamp values... yikes!");
+        log("Number of actual timestamp increases seen: " + increasingTimestampsSeen);
         finishTest();
     }
 
