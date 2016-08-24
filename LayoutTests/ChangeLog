@@ -1,3 +1,9 @@
+2016-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, temporarily mark imported/w3c/web-platform-tests/html/dom/interfaces.html as flaky.
+
+        * TestExpectations:
+
 2016-08-23  Filip Pizlo  <fpizlo@apple.com>
 
         js/regress/put-by-id-transition-with-indexing-header.html and svg/carto.net/window.svg fail in debug after r204854

@@ -1212,6 +1212,9 @@ imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
 
 editing/deleting/delete-emoji.html [ Slow ]
 
+# Apparently became flaky after r204844.
+webkit.org/b/161142 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure ]
+
 # New emoji requires system support.
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Failure ]
 webkit.org/b/159755 fast/text/emoji-gender-2-3.html [ ImageOnlyFailure ]
@@ -1237,3 +1240,5 @@ webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 
 webkit.org/b/160017 js/regress-139548.html [ Slow ]
+
+
