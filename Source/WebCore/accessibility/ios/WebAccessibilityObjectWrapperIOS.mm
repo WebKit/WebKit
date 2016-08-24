@@ -698,9 +698,11 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             break;
         case MenuButtonRole:
         case MenuItemRole:
+            traits |= [self _axMenuItemTrait];
+            break;
         case MenuItemCheckboxRole:
         case MenuItemRadioRole:
-            traits |= [self _axMenuItemTrait];
+            traits |= ([self _axMenuItemTrait] | [self _axToggleTrait]);
             break;
         default:
             break;
@@ -1247,7 +1249,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (value)
         return value;
     
-    if (m_object->isCheckboxOrRadio()) {
+    AccessibilityRole role = m_object->roleValue();
+    if (m_object->isCheckboxOrRadio() || role == MenuItemCheckboxRole || role == MenuItemRadioRole) {
         switch (m_object->checkboxOrRadioValue()) {
         case ButtonStateOff:
             return [NSString stringWithFormat:@"%d", 0];

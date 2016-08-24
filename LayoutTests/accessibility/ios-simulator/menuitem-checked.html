@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input id="radio" type="radio" name="group">
+<div id="menuitem1" role="menuitemradio" aria-checked="true">Item one</div>
+<div id="menuitem2" role="menuitemradio" aria-checked="false">Item two</div>
+
+<div id="menuitem3" role="menuitemcheckbox" aria-checked="true">Item three</div>
+<div id="menuitem4" role="menuitemcheckbox" aria-checked="false">Item four</div>
+
+<div id="menuitem5" role="menuitem">Item five</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that menu items can report the right value whether it's checked.");
+
+    if (window.accessibilityController) {
+
+        var radio = accessibilityController.accessibleElementById("radio");
+        
+        var menuItem1 = accessibilityController.accessibleElementById("menuitem1");
+        var menuItem2 = accessibilityController.accessibleElementById("menuitem2");
+
+        // Verify radio and menuitemradio have different traits.
+        shouldBeTrue("radio.traits != menuItem1.traits");
+        // Verify the value of the checked menu item is correct.
+        shouldBe("menuItem1.stringValue", "'AXValue: 1'");
+        shouldBe("menuItem2.stringValue", "'AXValue: 0'");
+        
+        var menuItem3 = accessibilityController.accessibleElementById("menuitem3");
+        var menuItem4 = accessibilityController.accessibleElementById("menuitem4");
+        
+        // Verify menuitemcheckbox and menuitemradio have same traits.
+        shouldBeTrue("menuItem1.traits == menuItem3.traits");
+        // Verify the value of the checked menu item is correct.
+        shouldBe("menuItem3.stringValue", "'AXValue: 1'");
+        shouldBe("menuItem4.stringValue", "'AXValue: 0'");
+        
+        // Verify menuitem and menuitemradio/menuitemcheckbox have different traits.
+        var menuItem5 = accessibilityController.accessibleElementById("menuitem5");
+        shouldBeTrue("menuItem5.traits != menuItem4.traits");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

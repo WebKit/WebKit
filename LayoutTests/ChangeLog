@@ -1,3 +1,13 @@
+2016-08-24  Nan Wang  <n_wang@apple.com>
+
+        AX: VoiceOver on iOS ignores aria-checked on menuitemradio and menuitemcheckbox
+        https://bugs.webkit.org/show_bug.cgi?id=161118
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/menuitem-checked-expected.txt: Added.
+        * accessibility/ios-simulator/menuitem-checked.html: Added.
+
 2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update expectations of iOS simulator WK1 css3 tests
