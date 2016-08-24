@@ -1,5 +1,12 @@
 2016-08-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Windows DRT build.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::mainFrameJSContext):
+
+2016-08-23  Simon Fraser  <simon.fraser@apple.com>
+
         Try to fix Windows build.
         
         Pass Tools/DumpRenderTree/Bindings as the working directory for the generate_bindings.pl

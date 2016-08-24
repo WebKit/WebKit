@@ -76,11 +76,7 @@ TestRunner::~TestRunner()
 
 JSContextRef TestRunner::mainFrameJSContext()
 {
-    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
-    if (!framePrivate)
-        return;
-
-    return framePrivate->globalContext();
+    return frame->globalContext();
 }
 
 void TestRunner::addDisallowedURL(JSStringRef url)
