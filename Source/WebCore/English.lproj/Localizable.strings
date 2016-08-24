@@ -127,6 +127,9 @@
 /* Undo action name */
 "Bold (Undo action name)" = "Bold";
 
+/* Option in segmented control for inserting a bulleted list in text editing */
+"Bulleted list" = "Bulleted list";
+
 /* menu item title for phone number */
 "Call Using iPhone:" = "Call Using iPhone:";
 
@@ -292,12 +295,6 @@
 /* Undo action name */
 "Insert List (Undo action name)" = "Insert List";
 
-/* Option in segmented control for inserting a bulleted list in text editing */
-"Insert a bulleted list" = "Insert a bulleted list";
-
-/* Option in segmented control for inserting a numbered list in text editing */
-"Insert a numbered list" = "Insert a numbered list";
-
 /* Inspect Element context menu item */
 "Inspect Element" = "Inspect Element";
 
@@ -373,9 +370,6 @@
 /* Empty select list */
 "No Options Select Popover" = "No Options";
 
-/* Accessibility label for not inserting a list in text editing */
-"No list" = "No list";
-
 /* Label for only item in menu that appears when clicking on the search field image, when no searches have been performed */
 "No recent searches" = "No recent searches";
 
@@ -384,6 +378,9 @@
 
 /* WebKitErrorCannotUseRestrictedPort description */
 "Not allowed to use restricted network port" = "Not allowed to use restricted network port";
+
+/* Option in segmented control for inserting a numbered list in text editing */
+"Numbered list" = "Numbered list";
 
 /* OK button label in PDF password failure alert */
 "OK (PDF password failure alert)" = "OK";
