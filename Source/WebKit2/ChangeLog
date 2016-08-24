@@ -1,5 +1,9 @@
 2016-08-24  Babak Shafiei  <bshafiei@apple.com>
 
+        Rollout r204922. rdar://problem/27896368
+
+2016-08-24  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r204911. rdar://problem/27896368
 
     2016-08-24  Anders Carlsson  <andersca@apple.com>

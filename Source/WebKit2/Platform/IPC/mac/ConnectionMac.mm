@@ -111,19 +111,8 @@ private:
     
 void Connection::platformInvalidate()
 {
-    if (!m_isConnected) {
-        if (m_sendPort) {
-            mach_port_deallocate(mach_task_self(), m_sendPort);
-            m_sendPort = MACH_PORT_NULL;
-        }
-
-        if (m_receivePort) {
-            mach_port_mod_refs(mach_task_self(), m_receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
-            m_receivePort = MACH_PORT_NULL;
-        }
-
+    if (!m_isConnected)
         return;
-    }
 
     m_isConnected = false;
 
