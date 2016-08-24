@@ -1,3 +1,13 @@
+2016-08-24  Jonathan Bedard  <jbedard@apple.com>
+
+        FocusController multiple dereferenced NULL pointers
+        https://bugs.webkit.org/show_bug.cgi?id=160808
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setInitialFocus): Should use nullptr, not 0 to initialize NULL pointer.
+
 2016-08-23  Anders Carlsson  <andersca@apple.com>
 
         Add enum traits and use them in the IPC::Decoder
