@@ -500,9 +500,8 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ S
 # Failing assertion with dynamic message
 imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
 
-webkit.org/b/160510 http/tests/fetch/fetch-in-worker-crash.html [ Failure Crash Pass ]
 imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Skip ]
-[ Release ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-worker.html [ Failure Pass ]
+
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering-worker.html [ Skip ]
@@ -528,6 +527,7 @@ imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-origin-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/worker.html [ Skip ]
+webkit.org/b/160510 [ Debug ] http/tests/fetch/fetch-in-worker-crash.html [ Crash ]
 
 webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Skip ]
 webkit.org/b/157145 imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html [ Failure Pass ]

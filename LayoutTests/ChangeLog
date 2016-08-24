@@ -1,3 +1,18 @@
+2016-08-24  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=161128
+
+        Unreviewed.
+
+        * TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-08-23  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !view().layoutStateEnabled() || style().styleType() == FIRST_LETTER in WebCore::RenderInline::clippedOverflowRectForRepaint
