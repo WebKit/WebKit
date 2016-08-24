@@ -1,3 +1,9 @@
+2016-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.12.4 release.
+
+        * gtk/NEWS: Add release notes for 2.12.4.
+
 2016-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bad performance in accelerated compositing mode with the modesetting intel driver and DRI3 enabled

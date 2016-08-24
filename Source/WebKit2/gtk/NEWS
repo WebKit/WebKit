@@ -1,4 +1,23 @@
 ==================
+WebKitGTK+  2.12.4
+==================
+
+What's new in WebKitGTK+ 2.12.4?
+
+  - Fix performance in accelerated compositing mode with the modesetting intel driver and DRI3 enabled.
+  - Reduce the amount of file descriptors that the Web Process keeps open.
+  - Fix Web Process deadlocks when loading HLS videos.
+  - Make CSS and SVG animations run at 60fps.
+  - Make meter elements accessible.
+  - Improve accessibility name and description of elements to make it more compatible with W3C specs and
+    fix several bugs in which the accessible name of objects was missing or broken.
+  - Fix a crash when running windowed plugins under Wayland.
+  - Fix a crash at process exit under Wayland.
+  - Fix several crashes and rendering issues.
+  - Translation updates: German.
+  - Security fixes: CVE-2016-4622, CVE-2016-4624, CVE-2016-4591, CVE-2016-4590.
+
+==================
 WebKitGTK+  2.12.3
 ==================
 
