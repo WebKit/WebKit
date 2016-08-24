@@ -38,6 +38,8 @@ private:
     mutable void* m_data;
 };
 
+WTF_EXPORT_PRIVATE bool isFastMallocEnabled();
+
 // These functions call CRASH() if an allocation fails.
 WTF_EXPORT_PRIVATE void* fastMalloc(size_t);
 WTF_EXPORT_PRIVATE void* fastZeroedMalloc(size_t);
@@ -99,6 +101,7 @@ template<typename T> inline bool TryMallocReturnValue::getValue(T*& data)
 
 } // namespace WTF
 
+using WTF::isFastMallocEnabled;
 using WTF::fastCalloc;
 using WTF::fastFree;
 using WTF::fastMalloc;

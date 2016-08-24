@@ -227,11 +227,15 @@ void ResourceUsageThread::platformThreadBody(JSC::VM* vm, ResourceUsageData& dat
     data.categories[MemoryCategory::GCOwned].dirtySize = currentGCOwnedExtra - currentGCOwnedExternal;
     data.categories[MemoryCategory::GCOwned].externalSize = currentGCOwnedExternal;
 
-    // Subtract known subchunks from the bmalloc bucket.
-    // FIXME: Handle running with bmalloc disabled.
-    size_t currentGCOwnedGenerallyInBmalloc = currentGCOwnedExtra - currentGCOwnedExternal;
-    ASSERT(currentGCOwnedGenerallyInBmalloc < data.categories[MemoryCategory::bmalloc].dirtySize);
-    data.categories[MemoryCategory::bmalloc].dirtySize -= currentGCHeapCapacity + currentGCOwnedGenerallyInBmalloc;
+    // Subtract known subchunks from the appropriate malloc bucket.
+    size_t currentGCOwnedGenerallyInMalloc = currentGCOwnedExtra - currentGCOwnedExternal;
+    if (isFastMallocEnabled()) {
+        RELEASE_ASSERT(currentGCOwnedGenerallyInMalloc < data.categories[MemoryCategory::bmalloc].dirtySize);
+        data.categories[MemoryCategory::bmalloc].dirtySize -= currentGCHeapCapacity + currentGCOwnedGenerallyInMalloc;
+    } else {
+        RELEASE_ASSERT(currentGCOwnedGenerallyInMalloc < data.categories[MemoryCategory::LibcMalloc].dirtySize);
+        data.categories[MemoryCategory::LibcMalloc].dirtySize -= currentGCHeapCapacity + currentGCOwnedGenerallyInMalloc;
+    }
 
     data.totalExternalSize = currentGCOwnedExternal;
 

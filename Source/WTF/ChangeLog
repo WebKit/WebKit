@@ -1,3 +1,14 @@
+2016-08-24  Andreas Kling  <akling@apple.com>
+
+        Add WTF::isFastMallocEnabled().
+        <https://webkit.org/b/160534>
+
+        Reviewed by Joseph Pecoraro.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::isFastMallocEnabled):
+        * wtf/FastMalloc.h:
+
 2016-08-23  Anders Carlsson  <andersca@apple.com>
 
         Add enum traits and use them in the IPC::Decoder

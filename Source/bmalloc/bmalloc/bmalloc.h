@@ -73,5 +73,11 @@ inline void scavenge()
     PerProcess<Heap>::get()->scavenge(lock, std::chrono::milliseconds(0));
 }
 
+inline bool isEnabled()
+{
+    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
+    return PerProcess<Heap>::getFastCase()->environment().isBmallocEnabled();
+}
+
 } // namespace api
 } // namespace bmalloc

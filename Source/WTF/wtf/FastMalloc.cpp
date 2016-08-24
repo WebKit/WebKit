@@ -81,6 +81,11 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 
 namespace WTF {
 
+bool isFastMallocEnabled()
+{
+    return false;
+}
+
 size_t fastMallocGoodSize(size_t bytes)
 {
 #if OS(DARWIN)
@@ -187,6 +192,11 @@ size_t fastMallocSize(const void* p)
 #include <bmalloc/bmalloc.h>
 
 namespace WTF {
+
+bool isFastMallocEnabled()
+{
+    return bmalloc::api::isEnabled();
+}
 
 void* fastMalloc(size_t size)
 {
