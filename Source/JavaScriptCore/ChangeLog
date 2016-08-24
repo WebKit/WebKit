@@ -1,3 +1,19 @@
+2016-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        AssemblyHelpers::emitAllocateWithNonNullAllocator() crashes in the FTL on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=161138
+        rdar://problem/27985868
+
+        Reviewed by Saam Barati.
+        
+        The FTL expects that this method can be used with scratch registers disallowed, but it
+        uses addPtr(Addr, Reg).
+
+        The solution is to only use addPtr(Addr, Reg) on x86.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+
 2016-08-24  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES2016] Allow assignment in for-in head in not-strict mode

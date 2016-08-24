@@ -1432,7 +1432,13 @@ public:
         }
         negPtr(resultGPR);
         store32(scratchGPR, Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, remaining)));
-        addPtr(Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, payloadEnd)), resultGPR);
+        Address payloadEndAddr = Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, payloadEnd));
+        if (isX86())
+            addPtr(payloadEndAddr, resultGPR);
+        else {
+            loadPtr(payloadEndAddr, scratchGPR);
+            addPtr(scratchGPR, resultGPR);
+        }
         
         done = jump();
         
