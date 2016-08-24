@@ -572,11 +572,6 @@
         return lineRects;
     });
 
-    function ignoreKey(codeMirror)
-    {
-        // Do nothing to ignore the key.
-    }
-
     CodeMirror.keyMap["default"] = {
         "Alt-Up": alterNumber.bind(null, 1),
         "Ctrl-Alt-Up": alterNumber.bind(null, 0.1),
@@ -589,7 +584,7 @@
         "Alt-PageDown": alterNumber.bind(null, -10),
         "Shift-Alt-PageDown": alterNumber.bind(null, -100),
         "Cmd-/": "toggleComment",
-        "Shift-Tab": ignoreKey,
+        "Shift-Tab": "indentLess",
         fallthrough: "macDefault"
     };
 
