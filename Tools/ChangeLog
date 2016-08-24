@@ -1,5 +1,14 @@
 2016-08-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Try to fix Windows build.
+        
+        Pass Tools/DumpRenderTree/Bindings as the working directory for the generate_bindings.pl
+        so that perl finds CodeGeneratorDumpRenderTree.pm.
+
+        * DumpRenderTree/CMakeLists.txt:
+
+2016-08-23  Simon Fraser  <simon.fraser@apple.com>
+
         Hook up UIScriptController in DumpRenderTree
         https://bugs.webkit.org/show_bug.cgi?id=161064
 
