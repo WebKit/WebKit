@@ -237,8 +237,6 @@ webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
 # Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit. 
 webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
 
-webkit.org/b/161083 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Crash ]
-
 # Resource files not in resources folder
 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html [ Skip ]
