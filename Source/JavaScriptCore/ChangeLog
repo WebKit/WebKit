@@ -1,3 +1,18 @@
+2016-08-24  Andreas Kling  <akling@apple.com>
+
+        Shrink DFG::OSRExit a bit.
+        <https://webkit.org/b/161169>
+
+        Reviewed by Geoffrey Garen.
+
+        Rearrange the members of OSRExitBase and DFG::OSRExit to save 16 bytes per instance.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+
 2016-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline builtins-generator-tests since r204854 was rolled out.

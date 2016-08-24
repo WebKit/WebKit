@@ -40,7 +40,6 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     : OSRExitBase(kind, jit->m_origin.forExit, jit->m_origin.semantic, jit->m_origin.wasHoisted)
     , m_jsValueSource(jsValueSource)
     , m_valueProfile(valueProfile)
-    , m_patchableCodeOffset(0)
     , m_recoveryIndex(recoveryIndex)
     , m_streamIndex(streamIndex)
 {
