@@ -1212,8 +1212,11 @@ imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
 
 editing/deleting/delete-emoji.html [ Slow ]
 
-# Apparently became flaky after r204844.
-webkit.org/b/161142 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure ]
+# W3C tests what are trying to access www1.localhost.
+webkit.org/b/161142 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/security_location_0.sub.htm [ Skip ]
+webkit.org/b/161142 imported/w3c/web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub.html [ Skip ]
+webkit.org/b/161142 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub.html [ Skip ]
+webkit.org/b/161142 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.html [ Skip ]
 
 # New emoji requires system support.
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Failure ]

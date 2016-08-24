@@ -1,3 +1,9 @@
+2016-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, temporarily skipping W3C tests trying to load www1.localhost.
+
+        * TestExpectations:
+
 2016-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.
