@@ -28,6 +28,7 @@
 #include "ArgumentCoder.h"
 #include "Attachment.h"
 #include "StringReference.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
 
 #if HAVE(QOS_CLASSES)
@@ -83,6 +84,18 @@ public:
     bool decode(float&);
     bool decode(double&);
 
+    template<typename E>
+    auto decode(E& e) -> std::enable_if_t<std::is_enum<E>::value, bool>
+    {
+        uint64_t value;
+        if (!decode(value))
+            return false;
+        if (!isValidEnum<E>(value))
+            return false;
+
+        return true;
+    }
+
     template<typename T> bool decodeEnum(T& result)
     {
         static_assert(sizeof(T) <= 8, "Enum type T must not be larger than 64 bits!");
@@ -106,8 +119,8 @@ public:
         return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
     }
 
-    // Generic type decode function.
-    template<typename T> bool decode(T& t)
+    template<typename T>
+    auto decode(T& t) -> std::enable_if_t<!std::is_enum<T>::value, bool>
     {
         return ArgumentCoder<T>::decode(*this, t);
     }

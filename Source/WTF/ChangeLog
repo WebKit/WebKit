@@ -1,3 +1,16 @@
+2016-08-23  Anders Carlsson  <andersca@apple.com>
+
+        Add enum traits and use them in the IPC::Decoder
+        https://bugs.webkit.org/show_bug.cgi?id=161103
+
+        Reviewed by Sam Weinig.
+
+        Add EnumTraits.h which provides a forward declaration for WTF::EnumTraits as well as
+        the WTF::isValidEnum function.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/EnumTraits.h: Added.
+
 2016-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.

@@ -28,11 +28,11 @@
 #include "ArgumentCoder.h"
 #include "Attachment.h"
 #include "StringReference.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
 
-class Encoder;
 class DataReference;
 
 class Encoder final {
@@ -65,7 +65,8 @@ public:
         encode(static_cast<uint64_t>(t));
     }
 
-    template<typename T> void encode(T&& t)
+    template<typename T>
+    auto encode(T&& t) -> std::enable_if_t<!std::is_enum<typename std::remove_const_t<std::remove_reference_t<T>>>::value>
     {
         ArgumentCoder<typename std::remove_const<typename std::remove_reference<T>::type>::type>::encode(*this, std::forward<T>(t));
     }
@@ -95,6 +96,15 @@ private:
     void encode(int64_t);
     void encode(float);
     void encode(double);
+
+    template<typename E>
+    auto encode(E value) -> std::enable_if_t<std::is_enum<E>::value>
+    {
+        static_assert(sizeof(E) <= sizeof(uint64_t), "Enum type must not be larger than 64 bits.");
+
+        ASSERT(isValidEnum<E>(static_cast<uint64_t>(value)));
+        encode(static_cast<uint64_t>(value));
+    }
 
     void encodeHeader();
 
