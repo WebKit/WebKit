@@ -153,7 +153,6 @@ inline void UnguardedBuiltinBuiltinsWrapper::exportNames()
 #include "UnguardedBuiltinBuiltins.h"
 
 #include "WebCoreJSClientData.h"
-#include <heap/HeapInlines.h>
 #include <runtime/Executable.h>
 #include <runtime/Intrinsic.h>
 #include <runtime/JSCJSValueInlines.h>
