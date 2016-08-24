@@ -78,6 +78,10 @@ private:
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
     void willBeDestroyed() override;
+
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
+
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
     void removeChild(RenderObject&) override;

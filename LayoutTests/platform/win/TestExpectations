@@ -1883,10 +1883,6 @@ svg/batik/text/verticalTextOnPath.svg [ Failure ]
 svg/animations/animate-linear-discrete-additive.svg [ Pass Timeout ]
 svg/custom/use-display-none.svg [ Pass Timeout ]
 
-# Regressions in svg/clip-path
-webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
-webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
-
 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 svg/custom/inline-svg-in-xhtml.xml [ Failure ]

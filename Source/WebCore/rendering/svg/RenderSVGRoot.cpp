@@ -298,6 +298,18 @@ void RenderSVGRoot::willBeDestroyed()
     RenderReplaced::willBeDestroyed();
 }
 
+void RenderSVGRoot::insertedIntoTree()
+{
+    RenderReplaced::insertedIntoTree();
+    SVGResourcesCache::clientWasAddedToTree(*this);
+}
+
+void RenderSVGRoot::willBeRemovedFromTree()
+{
+    SVGResourcesCache::clientWillBeRemovedFromTree(*this);
+    RenderReplaced::willBeRemovedFromTree();
+}
+
 void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifferenceLayout)
