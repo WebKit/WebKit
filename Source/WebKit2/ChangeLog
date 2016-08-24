@@ -1,5 +1,16 @@
 2016-08-24  Dan Bernstein  <mitz@apple.com>
 
+        Add a convenience function for creating a WKFrameHandleRef from a WKFrameRef without going through WKFrameInfoRef
+        https://bugs.webkit.org/show_bug.cgi?id=161152
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCreateFrameHandle): Added. Creates a handle with the frame’s frameID.
+        * UIProcess/API/C/WKFrame.h:
+
+2016-08-24  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Can’t "po" WKObject instances
         https://bugs.webkit.org/show_bug.cgi?id=161151
 

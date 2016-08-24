@@ -68,6 +68,7 @@ WK_EXPORT bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frame);
 
 WK_EXPORT bool WKFrameIsFrameSet(WKFrameRef frame);
 
+WK_EXPORT WKFrameHandleRef WKFrameCreateFrameHandle(WKFrameRef frame);
 WK_EXPORT WKFrameInfoRef WKFrameCreateFrameInfo(WKFrameRef frame);
 
 typedef void (*WKFrameGetResourceDataFunction)(WKDataRef data, WKErrorRef error, void* functionContext);

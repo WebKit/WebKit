@@ -68,6 +68,7 @@
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
 		33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */; };
 		375E0E171D66674400EFEC2C /* WKNSNumber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 375E0E151D66674400EFEC2C /* WKNSNumber.mm */; };
+		376C8C061D6E197C007D2BB9 /* FrameHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */; };
 		378E64771632655E00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */; };
 		378E64791632707400B6C676 /* link-with-title.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 378E647816326FDF00B6C676 /* link-with-title.html */; };
 		379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 379028B814FABE49007E6B43 /* acceptsFirstMouse.html */; };
@@ -745,6 +746,7 @@
 		3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageFromDOMRange.mm; sourceTree = "<group>"; };
 		3751AF7A169518F800764319 /* DOMNodeFromJSObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNodeFromJSObject.mm; sourceTree = "<group>"; };
 		375E0E151D66674400EFEC2C /* WKNSNumber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSNumber.mm; sourceTree = "<group>"; };
+		376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameHandle.cpp; sourceTree = "<group>"; };
 		3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceScaleFactorInDashboardRegions.mm; sourceTree = "<group>"; };
 		378E64711632646D00B6C676 /* InjectedBundleFrameHitTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFrameHitTest.cpp; sourceTree = "<group>"; };
 		378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFrameHitTest_Bundle.cpp; sourceTree = "<group>"; };
@@ -1519,6 +1521,7 @@
 				1A02C84E125D4A8400E3F4BD /* Find.cpp */,
 				C51AFB98169F49FF009CCF66 /* FindMatches.mm */,
 				1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */,
+				376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */,
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
 				BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */,
 				26F52EAA182872600023D412 /* Geolocation.cpp */,
@@ -2268,6 +2271,7 @@
 				7CCE7F021A411AE600447C4C /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */,
 				7CCE7F031A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */,
 				7CCE7F041A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */,
+				376C8C061D6E197C007D2BB9 /* FrameHandle.cpp in Sources */,
 				7CCE7F051A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */,
 				7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */,
 				7CCB4DA91C83AE7300CC6918 /* PageGroup.cpp in Sources */,

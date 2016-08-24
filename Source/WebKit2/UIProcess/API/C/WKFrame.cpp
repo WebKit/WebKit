@@ -27,6 +27,7 @@
 #include "WKFrame.h"
 
 #include "APIData.h"
+#include "APIFrameHandle.h"
 #include "APIFrameInfo.h"
 #include "WKAPICast.h"
 #include "WebCertificateInfo.h"
@@ -124,6 +125,11 @@ bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frameRef)
 bool WKFrameIsFrameSet(WKFrameRef frameRef)
 {
     return toImpl(frameRef)->isFrameSet();
+}
+
+WKFrameHandleRef WKFrameCreateFrameHandle(WKFrameRef frameRef)
+{
+    return toAPI(&API::FrameHandle::create(toImpl(frameRef)->frameID()).leakRef());
 }
 
 WKFrameInfoRef WKFrameCreateFrameInfo(WKFrameRef frameRef)
