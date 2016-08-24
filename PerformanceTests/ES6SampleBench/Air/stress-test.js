@@ -31,7 +31,7 @@ load("payload-airjs-ACLj8C.js");
 load("payload-typescript-scanIdentifier.js");
 load("benchmark.js");
 
-let benchmark = new Benchmark();
+let benchmark = new AirBenchmark();
 let before = preciseTime();
 
 // Run for at least 10 iterations.

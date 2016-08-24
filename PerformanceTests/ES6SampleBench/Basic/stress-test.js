@@ -35,7 +35,7 @@ load("state.js");
 load("util.js");
 load("benchmark.js");
 
-let benchmark = new Benchmark();
+let benchmark = new BasicBenchmark();
 let before = preciseTime();
 
 // Run for at least 10 iterations.

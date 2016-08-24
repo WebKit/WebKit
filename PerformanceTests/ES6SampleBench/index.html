@@ -8,6 +8,8 @@ window.onerror = function(message, url, lineNumber)
 {
     document.getElementById("trigger").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
 }
+
+const isInBrowser = true;
 </script>
 <script src="driver.js"></script>
 <script src="results.js"></script>

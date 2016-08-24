@@ -48,7 +48,7 @@ const AirBenchmarkCode = String.raw`
 <script src="Air/benchmark.js"></script>
 <script>
 var results = [];
-var benchmark = new Benchmark();
+var benchmark = new AirBenchmark();
 var numIterations = 200;
 for (var i = 0; i < numIterations; ++i) {
     var before = currentTime();
@@ -59,13 +59,47 @@ for (var i = 0; i < numIterations; ++i) {
 reportResult(results);
 </script>`;
 
-const AirBenchmark = {
+let runAirBenchmark = null;
+if (!isInBrowser) {
+    let sources = [
+        "Air/symbols.js"
+        , "Air/tmp_base.js"
+        , "Air/arg.js"
+        , "Air/basic_block.js"
+        , "Air/code.js"
+        , "Air/frequented_block.js"
+        , "Air/inst.js"
+        , "Air/opcode.js"
+        , "Air/reg.js"
+        , "Air/stack_slot.js"
+        , "Air/tmp.js"
+        , "Air/util.js"
+        , "Air/custom.js"
+        , "Air/liveness.js"
+        , "Air/insertion_set.js"
+        , "Air/allocate_stack.js"
+        , "Air/payload-gbemu-executeIteration.js"
+        , "Air/payload-imaging-gaussian-blur-gaussianBlur.js"
+        , "Air/payload-airjs-ACLj8C.js"
+        , "Air/payload-typescript-scanIdentifier.js"
+        , "Air/benchmark.js"
+    ];
+
+    runAirBenchmark = makeBenchmarkRunner(sources, "AirBenchmark");
+}
+
+const AirBenchmarkRunner = {
     code: AirBenchmarkCode,
-    cells: {
+    run: runAirBenchmark,
+    cells: { },
+    name: "Air"
+};
+
+if (isInBrowser) {
+    AirBenchmarkRunner.cells = {
         firstIteration: document.getElementById("AirFirstIteration"),
         averageWorstCase: document.getElementById("AirAverageWorstCase"),
         steadyState: document.getElementById("AirSteadyState"),
         message: document.getElementById("AirMessage")
     }
-};
-
+}

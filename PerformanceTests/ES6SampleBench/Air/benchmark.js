@@ -24,7 +24,7 @@
  */
 "use strict";
 
-class Benchmark {
+class AirBenchmark {
     constructor(verbose = 0)
     {
         this._verbose = verbose;

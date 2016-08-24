@@ -25,10 +25,16 @@
 "use strict";
 
 class Stats {
-    constructor(cell)
+    constructor(cell, prefix)
     {
         this._cell = cell;
         this._data = [];
+        this._prefix = "";
+        if (!isInBrowser && prefix) {
+            this._prefix = prefix + ": ";
+            if (this._prefix.length < 20)
+                this._prefix += " ".repeat(20 - this._prefix.length);
+        }
     }
     
     reset(...data)
@@ -91,15 +97,18 @@ class Stats {
             return "ERROR";
         
         if ("interval" in result)
-            return `${result.mean.toFixed(2)} ms &plusmn; ${result.interval.toFixed(2)} ms`;
+            return `${this._prefix}${result.mean.toFixed(2)} ms +- ${result.interval.toFixed(2)} ms`;
 
-        return `${result.mean.toFixed(2)} ms`;
+        return `${this._prefix}${result.mean.toFixed(2)} ms`;
     }
     
     _update()
     {
-        if (this._cell)
-            this._cell.innerHTML = this.toString();
+        if (isInBrowser) {
+            if (this._cell)
+                this._cell.innerHTML = this.toString();
+        } else
+            print(this.toString());
     }
 }
 

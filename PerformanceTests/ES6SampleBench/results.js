@@ -29,7 +29,7 @@ class Results {
     {
         this._benchmark = benchmark;
         for (let subResult of Results.subResults)
-            this[subResult] = new Stats(benchmark.cells[subResult]);
+            this[subResult] = new Stats(benchmark.cells[subResult], subResult);
     }
     
     get benchmark() { return this._benchmark; }
@@ -42,12 +42,14 @@ class Results {
     
     reportRunning()
     {
-        this._benchmark.cells.message.innerHTML = "Running...";
+        if (isInBrowser)
+            this._benchmark.cells.message.innerHTML = "Running...";
     }
     
     reportDone()
     {
-        this._benchmark.cells.message.innerHTML = "";
+        if (isInBrowser)
+            this._benchmark.cells.message.innerHTML = "";
     }
     
     reportResult(times)
@@ -99,7 +101,8 @@ class Results {
     {
         for (let subResult of Results.subResults)
             this[subResult].reportResult(Stats.error);
-        this._benchmark.cells.message.innerHTML = url + ":" + lineNumber + ": " + message;
+        if (isInBrowser)
+            this._benchmark.cells.message.innerHTML = url + ":" + lineNumber + ": " + message;
     }
 }
 

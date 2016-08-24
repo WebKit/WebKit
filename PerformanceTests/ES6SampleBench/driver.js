@@ -31,10 +31,11 @@ class Driver {
         this._triggerCell = triggerCell;
         this._triggerLink = triggerLink;
         this._magicCell = magicCell;
-        this._summary = new Stats(summaryCell);
+        this._summary = new Stats(summaryCell, "summary");
         this._key = key;
         this._hadErrors = false;
-        window[key] = this;
+        if (isInBrowser)
+            window[key] = this;
     }
     
     addBenchmark(benchmark)
@@ -96,7 +97,7 @@ class Driver {
             for (let subResult of Results.subResults)
                 statses.push(results[subResult]);
         }
-        
+
         let numIterations = Math.min(...statses.map(stats => stats.numIterations));
         let data = new Array(numIterations);
         for (let i = 0; i < data.length; ++i)
@@ -117,9 +118,12 @@ class Driver {
         this._benchmark = this._iterator ? this._iterator.next().value : null;
         if (!this._benchmark) {
             if (!this._numIterations) {
-                this._triggerCell.innerHTML =
-                    (this._hadErrors ? "Failures encountered!" : "Success!") +
-                    ` <a href="${this._triggerLink}">Restart Benchmark</a>`;
+                if (isInBrowser) {
+                    this._triggerCell.innerHTML =
+                        (this._hadErrors ? "Failures encountered!" : "Success!") +
+                        ` <a href="${this._triggerLink}">Restart Benchmark</a>`;
+                } else
+                    print(this._hadErrors ? "Failures encountered!" : "Success! Benchmark is now finished.");
                 return;
             }
             this._numIterations--;
@@ -130,31 +134,48 @@ class Driver {
         
         this._benchmarks.get(this._benchmark).reportRunning();
         
-        window.setTimeout(() => {
-            if (!this._isRunning)
-                return;
-            
-            this._magicCell.contentDocument.body.textContent = "";
-            this._magicCell.contentDocument.body.innerHTML = "<iframe id=\"magicFrame\" frameborder=\"0\">";
-            
-            let magicFrame = this._magicCell.contentDocument.getElementById("magicFrame");
-            magicFrame.contentDocument.open();
-            magicFrame.contentDocument.write(
-                `<!DOCTYPE html><head><title>benchmark payload</title></head><body><script>` +
-                `window.onerror = top.${this._key}.reportError;\n` +
-                `function reportResult()\n` +
-                `{\n` +
-                `    var driver = top.${this._key};\n` +
-                `    driver.reportResult.apply(driver, arguments);\n` +
-                `}\n` +
-                `</script>\n` +
-                `${this._benchmark.code}</body></html>`);
-        }, 100);
+        let benchmark = this._benchmark;
+        if (isInBrowser) {
+            window.setTimeout(() => {
+                if (!this._isRunning)
+                    return;
+                
+                this._magicCell.contentDocument.body.textContent = "";
+                this._magicCell.contentDocument.body.innerHTML = "<iframe id=\"magicFrame\" frameborder=\"0\">";
+                
+                let magicFrame = this._magicCell.contentDocument.getElementById("magicFrame");
+                magicFrame.contentDocument.open();
+                magicFrame.contentDocument.write(
+                    `<!DOCTYPE html><head><title>benchmark payload</title></head><body><script>` +
+                    `window.onerror = top.${this._key}.reportError;\n` +
+                    `function reportResult()\n` +
+                    `{\n` +
+                    `    var driver = top.${this._key};\n` +
+                    `    driver.reportResult.apply(driver, arguments);\n` +
+                    `}\n` +
+                    `</script>\n` +
+                    `${this._benchmark.code}</body></html>`);
+            }, 100);
+        } else {
+            Promise.resolve(20).then(() => {
+                if (!this._isRunning)
+                    return;
+                
+                try {
+                    print(`Running... ${this._benchmark.name} ( ${this._numIterations + 1}  to go)`);
+                    benchmark.run();
+                    print("\n");
+                } catch(e) {
+                    print(e);
+                    print(e.stack);
+                }
+            });
+        }
     }
     
     _updateIterations()
     {
-        this._triggerCell.innerHTML = "Running... (" + (this._numIterations + 1) + " to go)";
+        if (isInBrowser)
+            this._triggerCell.innerHTML = "Running... (" + (this._numIterations + 1) + " to go)";
     }
 }
-

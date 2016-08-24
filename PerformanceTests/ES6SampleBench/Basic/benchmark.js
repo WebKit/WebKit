@@ -24,7 +24,7 @@
  */
 "use strict";
 
-class Benchmark {
+class BasicBenchmark {
     constructor(verbose = 0)
     {
         this._verbose = verbose;
@@ -63,4 +63,3 @@ function runBenchmark()
     let after = currentTime();
     return after - before;
 }
-

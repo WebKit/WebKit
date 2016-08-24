@@ -589,6 +589,7 @@ static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
 #endif
 static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionRunString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionLoad(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionLoadString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState*);
@@ -785,6 +786,7 @@ protected:
 #endif
         addFunction(vm, "version", functionVersion, 1);
         addFunction(vm, "run", functionRun, 1);
+        addFunction(vm, "runString", functionRunString, 1);
         addFunction(vm, "load", functionLoad, 1);
         addFunction(vm, "loadString", functionLoadString, 1);
         addFunction(vm, "readFile", functionReadFile, 1);
@@ -1441,6 +1443,31 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     }
     
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
+}
+
+EncodedJSValue JSC_HOST_CALL functionRunString(ExecState* exec)
+{
+    String source = exec->argument(0).toWTFString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    GlobalObject* globalObject = GlobalObject::create(exec->vm(), GlobalObject::createStructure(exec->vm(), jsNull()), Vector<String>());
+
+    JSArray* array = constructEmptyArray(globalObject->globalExec(), 0);
+    for (unsigned i = 1; i < exec->argumentCount(); ++i)
+        array->putDirectIndex(globalObject->globalExec(), i - 1, exec->uncheckedArgument(i));
+    globalObject->putDirect(
+        exec->vm(), Identifier::fromString(globalObject->globalExec(), "arguments"), array);
+
+    NakedPtr<Exception> exception;
+    evaluate(globalObject->globalExec(), makeSource(source), JSValue(), exception);
+
+    if (exception) {
+        exec->vm().throwException(globalObject->globalExec(), exception);
+        return JSValue::encode(jsUndefined());
+    }
+    
+    return JSValue::encode(globalObject);
 }
 
 EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
