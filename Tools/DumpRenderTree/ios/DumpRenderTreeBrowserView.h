@@ -33,3 +33,9 @@
 @property (nonatomic, assign) BOOL scrollingUsesUIWebScrollView;
 
 @end
+
+@interface DumpRenderTreeBrowserView (DRTTesting)
+
+- (CGRect)documentVisibleRect;
+
+@end

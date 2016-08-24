@@ -1,3 +1,24 @@
+2016-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS DRT] Get basic viewport tests working in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=161160
+
+        Reviewed by Tim Horton.
+        
+        Enable some fast/viewport/ios/ tests for ios-simulator-wk1 that work now.
+        
+        "body-overflow-hidden" tests should pass everywhere now since the behavior of overflow:hidden
+        on the body was reverted.
+
+        * fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing-expected.txt:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt: Renamed from LayoutTests/platform/ios-simulator/fast/viewport/ios/width-is-device-width-overflowing-expected.txt.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-expected.txt: Removed.
+        * platform/ios-simulator/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt: Removed.
+
 2016-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking wpt LayoutTest scroll-restoration-fragment-scrolling-samedoc.html as flaky on ios-simulator.

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "config.h"
 #import "DumpRenderTreeBrowserView.h"
 
 #if PLATFORM(IOS)
@@ -31,6 +32,10 @@
 
 @interface UIWebBrowserView (WebUIKitDelegate)
 - (BOOL)webView:(WebView *)webView shouldScrollToPoint:(CGPoint)point forFrame:(WebFrame *)frame;
+@end
+
+@interface UIWebBrowserView (UIKitInternals)
+- (CGRect)_documentViewVisibleRect;
 @end
 
 @implementation DumpRenderTreeBrowserView
@@ -69,6 +74,15 @@
     // Forward this to DRT UIDelegate since iOS WebKit by default sends this message to UIKitDelegate.
     id uiDelegate = [[self webView] UIDelegate];
     [uiDelegate webView:sender addMessageToConsole:dictionary withSource:source];
+}
+
+@end
+
+@implementation DumpRenderTreeBrowserView (DRTTesting)
+
+- (CGRect)documentVisibleRect
+{
+    return [self _documentViewVisibleRect];
 }
 
 @end

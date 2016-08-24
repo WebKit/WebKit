@@ -69,8 +69,8 @@ unsigned worldIDForWorld(WebScriptWorld *);
 - (void)_waitForWebThread;
 @end
 
-@class UIWebBrowserView;
-extern UIWebBrowserView *gWebBrowserView;
+@class DumpRenderTreeBrowserView;
+extern DumpRenderTreeBrowserView *gWebBrowserView;
 #endif
 
 int DumpRenderTreeMain(int, const char *[]);

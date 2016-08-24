@@ -221,7 +221,7 @@ static WebHistoryItem *prevTestBFItem; // current b/f item at the end of the pre
 
 #if PLATFORM(IOS)
 const CGRect layoutTestViewportRect = { {0, 0}, {static_cast<CGFloat>(TestRunner::viewWidth), static_cast<CGFloat>(TestRunner::viewHeight)} };
-UIWebBrowserView *gWebBrowserView = nil;
+DumpRenderTreeBrowserView *gWebBrowserView = nil;
 UIWebScrollView *gWebScrollView = nil;
 DumpRenderTreeWindow *gDrtWindow = nil;
 #endif
@@ -758,7 +758,7 @@ WebView *createWebViewAndOffscreenWindow()
     NSRect rect = NSMakeRect(0, 0, TestRunner::viewWidth, TestRunner::viewHeight);
     WebView *webView = [[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"];
 #else
-    UIWebBrowserView *webBrowserView = [[[DumpRenderTreeBrowserView alloc] initWithFrame:layoutTestViewportRect] autorelease];
+    DumpRenderTreeBrowserView *webBrowserView = [[[DumpRenderTreeBrowserView alloc] initWithFrame:layoutTestViewportRect] autorelease];
     [webBrowserView setInputViewObeysDOMFocus:YES];
     WebView *webView = [[webBrowserView webView] retain];
     [webView setGroupName:@"org.webkit.DumpRenderTree"];

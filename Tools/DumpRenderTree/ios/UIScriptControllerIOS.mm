@@ -28,7 +28,12 @@
 
 #if PLATFORM(IOS)
 
+#import "DumpRenderTreeBrowserView.h"
 #import "UIScriptContext.h"
+#import <WebCore/FloatRect.h>
+
+extern DumpRenderTreeBrowserView *gWebBrowserView;
+extern UIWebScrollView *gWebScrollView;
 
 namespace WTR {
 
@@ -49,7 +54,7 @@ void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 
 double UIScriptController::zoomScale() const
 {
-    return 1;
+    return gWebScrollView.zoomScale;
 }
 
 void UIScriptController::touchDownAtPoint(long x, long y, long touchCount, JSValueRef callback)
@@ -106,17 +111,19 @@ void UIScriptController::keyboardAccessoryBarPrevious()
 
 double UIScriptController::minimumZoomScale() const
 {
-    return 1;
+    return gWebScrollView.minimumZoomScale;
 }
 
 double UIScriptController::maximumZoomScale() const
 {
-    return 1;
+    return gWebScrollView.maximumZoomScale;
 }
 
 JSObjectRef UIScriptController::contentVisibleRect() const
 {
-    return nullptr;
+    CGRect contentVisibleRect = [gWebBrowserView documentVisibleRect];
+    WebCore::FloatRect rect(contentVisibleRect.origin.x, contentVisibleRect.origin.y, contentVisibleRect.size.width, contentVisibleRect.size.height);
+    return m_context->objectFromRect(rect);
 }
 
 void UIScriptController::platformSetDidStartFormControlInteractionCallback()

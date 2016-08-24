@@ -2,6 +2,14 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+# Selectively re-enable viewport tests that work
+fast/viewport/ios/width-is-device-width.html [ Pass ]
+fast/viewport/ios/width-is-device-width-overflowing.html [ Pass ]
+fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit.html [ Pass ]
+fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden.html [ Pass ]
+fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Pass ]
+fast/viewport/ios/ipad/width-is-device-width.html [ Pass ]
+
 # <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
 editing/deleting/4922367.html
 editing/deleting/5126166.html
