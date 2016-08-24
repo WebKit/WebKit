@@ -1,3 +1,11 @@
+2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update expectations of iOS simulator WK1 svg tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unskip inspector/codemirror tests on mac-wk1 debug.

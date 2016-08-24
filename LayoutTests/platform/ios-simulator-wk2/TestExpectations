@@ -128,7 +128,6 @@ svg/animations/animate-path-animation-lL-vV-hH-inverse.html
 svg/animations/animate-path-animation-qQ-tT-inverse.html
 svg/animations/animate-path-nested-transforms.html
 svg/animations/animate-path-to-animation.html
-svg/animations/animate-text-nested-transforms.html
 svg/animations/animateTransform-pattern-transform.html
 svg/animations/animateTransform-translate-attributetype-auto.html
 svg/animations/animateTransform-translate-invalid-attributetype.html
@@ -297,6 +296,7 @@ svg/hixie/intrinsic/003.html [ Failure ]
 svg/text/foreignObject-repaint.xml [ Failure ]
 svg/zoom/page/absolute-sized-document-no-scrollbars.svg [ Failure ]
 svg/zoom/page/relative-sized-document-scrollbars.svg [ Failure ]
+svg/zoom/page/zoom-background-image-tiled.html [ Failure ]
 svg/zoom/page/zoom-foreign-content.svg [ Failure ]
 svg/zoom/page/zoom-hixie-mixed-008.xml [ Failure ]
 svg/zoom/page/zoom-hixie-mixed-009.xml [ Failure ]
