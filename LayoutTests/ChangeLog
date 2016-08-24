@@ -1,3 +1,12 @@
+2016-08-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unskip inspector/codemirror tests on mac-wk1 debug.
+        https://bugs.webkit.org/show_bug.cgi?id=161117
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-08-24  Chris Dumez  <cdumez@apple.com>
 
         It should not be possible to access Location attributes cross origin
