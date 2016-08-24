@@ -1,21 +1,13 @@
 
 PASS HTMLAreaElement stringifier 
-FAIL HTMLAreaElement stringifier 1 assert_throws: function "function () {
-        aObject.toString.call(v);
-      }" did not throw
-FAIL HTMLAreaElement stringifier 2 assert_throws: function "function () {
-        aObject.toString.call(v)
-      }" did not throw
+PASS HTMLAreaElement stringifier 1 
+PASS HTMLAreaElement stringifier 2 
 PASS HTMLAreaElement stringifier 3 
-FAIL HTMLAreaElement stringifier 4 assert_equals: expected "" but got "[object HTMLAreaElement]"
-FAIL HTMLAreaElement stringifier 5 assert_equals: expected "" but got "[object HTMLAreaElement]"
-FAIL HTMLAreaElement stringifier 6 assert_throws: function "function () {
-        aObject.toString.call(v);
-      }" did not throw
-FAIL HTMLAreaElement stringifier 7 assert_throws: function "function () {
-        aObject.toString.call(v)
-      }" did not throw
+PASS HTMLAreaElement stringifier 4 
+PASS HTMLAreaElement stringifier 5 
+PASS HTMLAreaElement stringifier 6 
+PASS HTMLAreaElement stringifier 7 
 PASS HTMLAreaElement stringifier 8 
-FAIL HTMLAreaElement stringifier 9 assert_equals: expected "http://localhost:8800/html/semantics/embedded-content/the-area-element/foo" but got "[object HTMLAreaElement]"
-FAIL HTMLAreaElement stringifier 10 assert_equals: expected "http://localhost:8800/html/semantics/embedded-content/the-area-element/foo" but got "[object HTMLAreaElement]"
+PASS HTMLAreaElement stringifier 9 
+PASS HTMLAreaElement stringifier 10 
 

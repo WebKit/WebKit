@@ -123,12 +123,34 @@ sub GenerateInterface
     my ($object, $interface, $defines, $enumerations, $dictionaries) = @_;
 
     $codeGenerator->LinkOverloadedFunctions($interface);
+    AddStringifierOperationIfNeeded($interface);
+
     if ($interface->isCallback) {
         $object->GenerateCallbackHeader($interface);
         $object->GenerateCallbackImplementation($interface, $enumerations, $dictionaries);
     } else {
         $object->GenerateHeader($interface);
         $object->GenerateImplementation($interface, $enumerations, $dictionaries);
+    }
+}
+
+sub AddStringifierOperationIfNeeded
+{
+    my $interface = shift;
+
+    foreach my $attribute (@{$interface->attributes}) {
+        next unless $attribute->isStringifier;
+
+        my $stringifier = domFunction->new();
+        $stringifier->signature(domSignature->new());
+        my $extendedAttributeList = {};
+        $extendedAttributeList->{"ImplementedAs"} = $attribute->signature->name;
+        $stringifier->signature->extendedAttributes($extendedAttributeList);
+        $stringifier->signature->name("toString");
+        die "stringifier can only be used on attributes of String types" unless $codeGenerator->IsStringType($attribute->signature->type);
+        $stringifier->signature->type($attribute->signature->type);
+        push(@{$interface->functions}, $stringifier);
+        last;
     }
 }
 

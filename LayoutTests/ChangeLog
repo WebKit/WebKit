@@ -1,3 +1,19 @@
+2016-08-23  Chris Dumez  <cdumez@apple.com>
+
+        HTMLAreaElement should have a stringifier
+        https://bugs.webkit.org/show_bug.cgi?id=161105
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage to check that HTMLAreaElement.prototype.toString
+        and HTMLAnchorElement.prototype.toString have the right attributes:
+        - http://heycam.github.io/webidl/#es-stringifier
+
+        * fast/dom/toString_attributes-expected.txt: Added.
+        * fast/dom/toString_attributes.html: Added.
+        * js/dom/toString-dontEnum-expected.txt:
+        * js/dom/toString-dontEnum.html:
+
 2016-08-23  Saam Barati  <sbarati@apple.com>
 
         JSC should have a "microbenchmarks" directory instead of "regress" directory

@@ -73,6 +73,7 @@ struct( domFunction => {
 struct( domAttribute => {
     type => '$',              # Attribute type (including namespace)
     isStatic => '$',
+    isStringifier => '$',
     isReadOnly => '$',
     signature => '$',         # Attribute signature
 });
@@ -1032,8 +1033,9 @@ sub parseAttributeOrOperationOrIterator
     if ($next->value() =~ /$nextAttributeOrOperation_1/) {
         my $qualifier = $self->parseQualifier();
         my $newDataNode = $self->parseAttributeOrOperationRest($extendedAttributeList);
-        if (defined($newDataNode) && $qualifier eq "static") {
-            $newDataNode->isStatic(1);
+        if (defined($newDataNode)) {
+            $newDataNode->isStatic(1) if $qualifier eq "static";
+            $newDataNode->isStringifier(1) if $qualifier eq "stringifier";
         }
         return $newDataNode;
     }

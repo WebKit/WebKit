@@ -26,8 +26,8 @@
 [
     NoInterfaceObject
 ] interface HTMLHyperlinkElementUtils {
-    [Reflect, URL] attribute DOMString href;
-    readonly attribute DOMString origin;
+    [Reflect, URL] stringifier attribute USVString href;
+    readonly attribute USVString origin;
 
     attribute USVString protocol;
     attribute USVString username;

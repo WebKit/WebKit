@@ -2098,6 +2098,27 @@ webkit_dom_test_obj_get_put_forwards_attribute(WebKitDOMTestObj* self);
 WEBKIT_API WebKitDOMTestNode*
 webkit_dom_test_obj_get_put_forwards_nullable_attribute(WebKitDOMTestObj* self);
 
+/**
+ * webkit_dom_test_obj_get_stringifier_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_obj_get_stringifier_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_stringifier_attribute:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_stringifier_attribute(WebKitDOMTestObj* self, const gchar* value);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */

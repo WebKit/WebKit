@@ -146,6 +146,7 @@ enum {
     PROP_ATTRIBUTE,
     PROP_PUT_FORWARDS_ATTRIBUTE,
     PROP_PUT_FORWARDS_NULLABLE_ATTRIBUTE,
+    PROP_STRINGIFIER_ATTRIBUTE,
 };
 
 static void webkit_dom_test_obj_finalize(GObject* object)
@@ -270,6 +271,9 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     case PROP_NULLABLE_STRING_VALUE:
         webkit_dom_test_obj_set_nullable_string_value(self, g_value_get_long(value));
+        break;
+    case PROP_STRINGIFIER_ATTRIBUTE:
+        webkit_dom_test_obj_set_stringifier_attribute(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -482,6 +486,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_PUT_FORWARDS_NULLABLE_ATTRIBUTE:
         g_value_set_object(value, webkit_dom_test_obj_get_put_forwards_nullable_attribute(self));
+        break;
+    case PROP_STRINGIFIER_ATTRIBUTE:
+        g_value_take_string(value, webkit_dom_test_obj_get_stringifier_attribute(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -1178,6 +1185,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "read-only WebKitDOMTestNode* TestObj:put-forwards-nullable-attribute",
             WEBKIT_DOM_TYPE_TEST_NODE,
             WEBKIT_PARAM_READABLE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_STRINGIFIER_ATTRIBUTE,
+        g_param_spec_string(
+            "stringifier-attribute",
+            "TestObj:stringifier-attribute",
+            "read-write gchar* TestObj:stringifier-attribute",
+            "",
+            WEBKIT_PARAM_READWRITE));
 
 }
 
@@ -3071,5 +3088,24 @@ WebKitDOMTestNode* webkit_dom_test_obj_get_put_forwards_nullable_attribute(WebKi
     WebCore::TestObj* item = WebKit::core(self);
     RefPtr<WebCore::TestNode> gobjectResult = WTF::getPtr(item->putForwardsNullableAttribute());
     return WebKit::kit(gobjectResult.get());
+}
+
+gchar* webkit_dom_test_obj_get_stringifier_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->stringifierAttribute());
+    return result;
+}
+
+void webkit_dom_test_obj_set_stringifier_attribute(WebKitDOMTestObj* self, const gchar* value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(value);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setStringifierAttribute(convertedValue);
 }
 

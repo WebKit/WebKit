@@ -337,11 +337,6 @@ void HTMLAnchorElement::setText(const String& text, ExceptionCode& ec)
     setTextContent(text, ec);
 }
 
-String HTMLAnchorElement::toString() const
-{
-    return href().string();
-}
-
 bool HTMLAnchorElement::isLiveLink() const
 {
     return isLink() && treatLinkAsLiveForEventType(m_wasShiftKeyDownOnMouseDown ? MouseEventWithShiftKey : MouseEventWithoutShiftKey);

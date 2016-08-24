@@ -72,8 +72,6 @@ public:
     WEBCORE_EXPORT String text();
     void setText(const String&, ExceptionCode&);
 
-    String toString() const;
-
     bool isLiveLink() const;
 
     bool willRespondToMouseClickEvents() final;

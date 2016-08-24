@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that the toString() stringifier has the right attributes");
+
+function testStringifier(object)
+{
+    descriptor = Object.getOwnPropertyDescriptor(object.__proto__, "toString");
+    shouldBeType("descriptor.value", "Function");
+    shouldBeTrue("descriptor.writable");
+    shouldBeTrue("descriptor.enumerable");
+    shouldBeTrue("descriptor.configurable");
+}
+
+debug("* HTMLAnchorElement");
+var anchor = document.createElement("a");
+testStringifier(anchor);
+
+debug("");
+debug("* HTMLAreaElement");
+var area = document.createElement("area");
+testStringifier(area);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

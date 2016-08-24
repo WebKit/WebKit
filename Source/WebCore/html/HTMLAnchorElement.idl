@@ -36,10 +36,6 @@ interface HTMLAnchorElement : HTMLElement {
 
     [SetterRaisesException] attribute DOMString text;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
-    [NotEnumerable] DOMString toString();
-#endif
-
     [PutForwards=value] readonly attribute DOMTokenList relList;
 };
 

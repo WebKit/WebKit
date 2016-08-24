@@ -394,6 +394,8 @@ enum TestConfidence { "high", "kinda-low" };
 #endif
 
     void attachShadowRoot(TestDictionary init);
+
+    stringifier attribute USVString stringifierAttribute;
 };
 
 // The following comment should not generate any code.
